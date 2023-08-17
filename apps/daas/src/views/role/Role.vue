@@ -17,19 +17,17 @@
       <div class="role-tableBox">
         <div class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2">
           <VIcon class="color-warning mr-3" size="20">warning</VIcon>
-          <span
-            >勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。</span
-          >
+          <span>{{ $t('daas_role_role_gouxuanxiangyingmo') }}</span>
         </div>
         <ul class="role-table page-table">
           <li class="role-head">
             <el-row class="e-row">
-              <el-col class="e-col borderRight" :span="4"> 功能模块 </el-col>
-              <el-col class="e-col borderRight" :span="4"> 页面权限 </el-col>
-              <el-col class="e-col borderRight" :span="14"> 功能权限 </el-col>
+              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_gongnengmokuai') }}</el-col>
+              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_yemianquanxian') }}</el-col>
+              <el-col class="e-col borderRight" :span="14">{{ $t('daas_role_role_gongnengquanxian') }}</el-col>
               <el-col class="e-col flex align-items-center" :span="2">
-                <span>查看全部数据</span>
-                <ElTooltip transition="tooltip-fade-in" placement="top" content="查看全部数据">
+                <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
+                <ElTooltip transition="tooltip-fade-in" placement="top" :content="$t('daas_role_role_chakanquanbushu')">
                   <VIcon size="16" class="color-info ml-2">info</VIcon>
                 </ElTooltip>
               </el-col>
@@ -72,7 +70,7 @@
                     v-if="!second.buttons || !second.buttons.length"
                     v-cloak
                   >
-                    <span> 全部功能 </span>
+                    <span>{{ $t('daas_role_role_quanbugongneng') }}</span>
                   </el-checkbox>
                   <el-checkbox
                     v-else
@@ -112,6 +110,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
 
 let pageSort = [
@@ -123,11 +123,11 @@ let pageSort = [
         name: 'v2_datasource_menu',
         buttons: [
           {
-            label: '创建连接',
+            label: i18n.t('public_connection_button_create'),
             name: 'v2_datasource_creation'
           },
           {
-            label: '复制连接',
+            label: i18n.t('public_connection_button_copy'),
             name: 'v2_datasource_copy'
           }
         ],
@@ -146,22 +146,22 @@ let pageSort = [
         name: 'v2_data_replication',
         buttons: [
           {
-            label: '创建任务',
-            name: 'v2_data_replication_edit',
+            label: i18n.t('public_task_create'),
+            name: 'v2_data_replication_creation',
             checked: false
           },
           {
-            label: '复制任务',
+            label: i18n.t('public_task_copy'),
             name: 'v2_data_replication_copy',
             checked: false
           },
           {
-            label: '导入任务',
+            label: i18n.t('public_task_import'),
             name: 'v2_data_replication_import',
             checked: false
           },
           {
-            label: '导出任务',
+            label: i18n.t('public_task_export'),
             name: 'v2_data_replication_export',
             checked: false
           }
@@ -176,22 +176,22 @@ let pageSort = [
         name: 'v2_data_flow',
         buttons: [
           {
-            label: '创建任务',
-            name: 'v2_data_flow_edit',
+            label: i18n.t('public_task_create'),
+            name: 'v2_data_flow_creation',
             checked: false
           },
           {
-            label: '复制任务',
+            label: i18n.t('public_task_copy'),
             name: 'v2_data_flow_copy',
             checked: false
           },
           {
-            label: '导入任务',
+            label: i18n.t('public_task_export'),
             name: 'v2_data_flow_import',
             checked: false
           },
           {
-            label: '导出任务',
+            label: i18n.t('daas_role_role_daochurenwu'),
             name: 'v2_data_flow_export',
             checked: false
           }
@@ -470,7 +470,7 @@ export default {
         return
       }
 
-      this.$confirm('您还未保存设置的权限，是否要保存权限设置？', this.$t('public_message_title_prompt'), {
+      this.$confirm(i18n.t('daas_role_role_ninhaiweibaocun'), this.$t('public_message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
       }).then(flag => {

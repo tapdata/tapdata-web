@@ -206,6 +206,7 @@ export default {
   public_connection_schema_status_tip: 'Schema加载完成的连接才可以正常创建任务',
   public_connection_table_structure_update_time: '表结构更新时间',
   public_connection_button_create: '创建连接',
+  public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',
   public_connection_button_load_schema: '加载Schema',
   public_connection_form_database_name: '数据库名称',
@@ -241,6 +242,10 @@ export default {
   public_task_mission_error: '任务出错',
   public_task_reasons_for_error: '错误原因',
   public_task_log: '任务日志',
+  public_task_create: '创建任务',
+  public_task_copy: '复制任务',
+  public_task_import: '导入任务',
+  public_task_export: '导出任务',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',
