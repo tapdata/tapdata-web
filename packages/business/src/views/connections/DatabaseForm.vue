@@ -1,13 +1,23 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
-      <main class="connection-from-main">
-        <div class="connection-from-title">
+      <main class="connection-from-main border-end">
+        <div class="connection-from-title flex align-center">
           {{
             $route.params.id
               ? this.$t('packages_business_connection_form_edit_connection')
               : this.$t('public_connection_button_create')
           }}
+
+          <ElDivider direction="vertical" />
+
+          <div class="flex align-center">
+            <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
+            <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
+            <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+              {{ $t('packages_business_connection_form_change') }}
+            </el-button>
+          </div>
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
           <label class="label">{{ $t('public_connection_name') }}: </label>
@@ -21,7 +31,7 @@
             </div>
           </div>
         </div>
-        <div class="connection-from-label" v-else>
+        <!--<div class="connection-from-label" v-else>
           <label class="label">{{ $t('packages_business_connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
@@ -32,7 +42,7 @@
               {{ $t('packages_business_connection_form_change') }}
             </el-button>
           </div>
-        </div>
+        </div>-->
         <div class="form-wrap">
           <div class="form pr-3">
             <SchemaToForm
@@ -41,6 +51,7 @@
               :scope="schemaScope"
               wrapperWidth="600"
               :colon="true"
+              layout="vertical"
               label-width="160"
             ></SchemaToForm>
             <span class="status">
@@ -78,12 +89,15 @@
           </div>
         </footer>
       </main>
-      <GitBook
-        v-resize.left="{
-          minWidth: 350
-        }"
-        :value="doc"
-      ></GitBook>
+      <div class="flex-1">
+        <!--<GitBook :value="doc"></GitBook>-->
+        <iframe
+          ref="docsIframe"
+          src="https://deploy-preview-113--tapdata.netlify.app/enterprise/prerequisites/certified/mysql?from=cloud"
+          class="w-100 h-100"
+          @load="onIframeLoad"
+        ></iframe>
+      </div>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <SceneDialog
@@ -141,10 +155,21 @@ import { ConnectionDebug } from './ConnectionDebug'
 import { JsDebug } from './JsDebug'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
+import { DatabaseIcon } from '../../components'
 
 export default {
   name: 'DatabaseForm',
-  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug, UsedTaskDialog, JsDebug },
+  components: {
+    DatabaseIcon,
+    SceneDialog,
+    Test,
+    VIcon,
+    SchemaToForm,
+    GitBook,
+    ConnectionDebug,
+    UsedTaskDialog,
+    JsDebug
+  },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -1249,6 +1274,15 @@ export default {
         key,
         data
       }
+    },
+
+    onIframeLoad() {
+      const iframe = this.$refs.docsIframe
+      let style = document.createElement('style')
+      style.type = 'text/css'
+      style.innerHTML = `.navbar { display: none }`
+      console.log('iframe.contentWindow', iframe)
+      iframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
     }
   }
 }
@@ -1276,7 +1310,6 @@ export default {
         padding-top: 20px;
         margin-bottom: 24px;
         font-size: $fontSubtitle;
-        font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: map-get($fontColor, dark);
         line-height: 28px;
@@ -1301,7 +1334,6 @@ export default {
           max-width: 680px;
           line-height: 22px;
           font-size: $fontBaseTitle;
-          font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
           color: map-get($fontColor, dark);
           align-items: center;
