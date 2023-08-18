@@ -22,7 +22,7 @@
         <!--存储地区-->
         <ElFormItem>
           <div slot="label" class="font-color-dark fw-sub">
-            {{ $t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi') }}
+            {{ $t('dfs_subscribe_storage_deploy_region') }}
           </div>
 
           <div class="cloud-region-grid">
@@ -93,7 +93,7 @@
         <!--请选择您需要的存储资源规格-->
         <ElFormItem>
           <div slot="label" class="font-color-dark fw-sub">
-            {{ $t('dfs_instance_createagent_qingxuanzeninxu2') }}
+            {{ $t('dfs_subscribe_storage_specification') }}
           </div>
           <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
             <template slot="template">
