@@ -25,7 +25,7 @@ export default {
   packages_ldp_data_hub_intro_scene_api_sub: '数据库到API',
   packages_ldp_data_hub_intro_how_do: '实时数据中心是如何工作的?',
   packages_ldp_data_hub_intro_how_do_step1: '配置数据中心存储',
-  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,在云端配置一个数据存储 ,Tapdata 使用 MongoDB Atlas。',
+  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
   packages_ldp_data_hub_intro_how_do_step2: '同步数据并合并',
   packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
   packages_ldp_data_hub_intro_how_do_step3: '发布API或发送到仪表板',

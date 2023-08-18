@@ -1736,7 +1736,7 @@ export default {
   dfs_subscribe_free_storage_tip_content:
     'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
   dfs_subscribe_storage_tip_content:
-    'Tapdata uses MongoDB Atlas, managed cloud database as the centralized storage. MongoDB Atlas supports most of regions of AWS, Azure & GCP. Tapdata will gradually add support for all the Atlas regions. You may choose region and AZ that is closest to your data sources and target applications. Tapdata creates a dedicated cluster for each customer to ensure data security.',
+    'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc for secure data storage. When you select an instance below, Tapdata will automatically create a MonogDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Not Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
   dfs_offline_deployment: 'Offline Deployment',
   dfs_wait_storage_init:
     'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.',
