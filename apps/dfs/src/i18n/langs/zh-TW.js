@@ -1583,6 +1583,7 @@ export default {
   dfs_subscribe_storage_tip_content:
     'Tapdata使用MongoDB Atlas作為集中式存儲的托管雲數據庫。MongoDB Atlas支持AWS、Azure和GCP的大多數地區。Tapdata將逐步添加對所有Atlas地區的支持。您可以選擇最接近您的數據源和目標應用程序的區域和可用區。<br/>Tapdata為每個客戶創建一個專用集群，以確保數據安全。',
   dfs_offline_deployment: '線下部署',
+  dfs_offline_deployment_tip: '由於線上版本使用MongoDB Atlas，該產品在國內沒有服務，所以國內僅提供線下版本。',
   dfs_wait_storage_init: '订阅成功。您訂閱的儲存正在初始化，這可能需要1到20分鐘。請耐心等待。',
   dfs_replication_tour_dialog_desc: '在開始資料複製任務之前，您需要創建源資料庫和目標資料庫連接，我們將引導您完成：',
   dfs_replication_tour_dialog_steps: '1.創建源資料庫連接  ｜  2.創建目標資料庫連接  ｜  3.配置資料複製任務',
