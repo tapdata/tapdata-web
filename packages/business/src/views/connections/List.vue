@@ -191,7 +191,7 @@ import dayjs from 'dayjs'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
-import PermissionseSettingsCreate from '@tap/business/src/components/permissionse-settings/Create'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
 import { TablePage, SchemaProgress } from '../../components'
 import Preview from './Preview'

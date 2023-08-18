@@ -732,7 +732,7 @@ export default {
   role_list_create: 'Create roles',
   role_list_edit: 'Edit roles',
   role_list_default_role: 'Default role',
-  role_list_setting_permissions: 'Set permissions',
+  role_list_setting_permissions: 'Set Permissions',
   role_list_delete_remind: 'Confirm to delete role {0}',
   role_list_delete_success: 'Delete the role successfully',
   role_form_yes: 'Yes',
@@ -1856,18 +1856,18 @@ export default {
   daas_data_server_drawer_base_path: 'Base Path',
   daas_data_server_drawer_path: 'Path',
   daas_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
-  daas_notification_center_yonghucaozuo: 'User action',
+  daas_notification_center_yonghucaozuo: 'User Action',
   daas_cluster_cluster_lianjieshuliang: 'Number of connections',
   daas_cluster_cluster_mubiaoIPhe: 'Target IP and port',
   daas_cluster_cluster_lianjiezongshu: 'Total number of connections',
   daas_cluster_cluster_yinqingduiwaijian: 'The number of external connections established by the engine',
   daas_role_role_ninhaiweibaocun:
     'You have not saved the permission settings, do you want to save the permission settings? ',
-  daas_role_role_quanbugongneng: 'All functions',
+  daas_role_role_quanbugongneng: 'All Functions',
   daas_role_role_chakanquanbushu: 'View all data',
-  daas_role_role_gongnengquanxian: 'Function authority',
-  daas_role_role_yemianquanxian: 'page authority',
-  daas_role_role_gongnengmokuai: 'function module',
+  daas_role_role_gongnengquanxian: 'Function Permission',
+  daas_role_role_yemianquanxian: 'Page Permission',
+  daas_role_role_gongnengmokuai: 'Function Module',
   daas_role_role_gouxuanxiangyingmo:
     'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. '
 }

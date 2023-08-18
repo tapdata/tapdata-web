@@ -312,7 +312,7 @@ import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
 import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import PermissionseSettingsCreate from '@tap/business/src/components/permissionse-settings/Create'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
 import { TablePage, TaskStatus } from '../../components'
 import SkipError from './SkipError'
