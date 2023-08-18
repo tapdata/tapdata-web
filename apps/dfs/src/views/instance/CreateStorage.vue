@@ -8,7 +8,7 @@
     </div>
 
     <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
-      <div class="px-4 py-2 my-4 lh-base color-primary-light-9 rounded-lg">
+      <div v-if="!loadingMongoCluster" class="px-4 py-2 mt-4 lh-base color-primary-light-9 rounded-lg">
         <div class="mb-1 flex align-center">
           <VIcon class="text-primary mr-2" size="18">info</VIcon>
           <div class="font-color-dark fs-6 fw-sub">{{ $t('dfs_subscribe_storage_tip_title') }}</div>
@@ -18,7 +18,7 @@
           v-html="$t(mdbPrices > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')"
         ></div>
       </div>
-      <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto">
+      <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto mt-4">
         <!--存储地区-->
         <ElFormItem>
           <div slot="label" class="font-color-dark fw-sub">
@@ -34,19 +34,30 @@
               ]"
               >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
             >
-            <ElRadioGroup v-model="provider" @input="changeProviderInStorage" class="flex gap-4">
-              <ElRadio
-                v-for="(item, index) in cloudProviderList"
-                :key="index"
-                :label="item.cloudProvider"
-                border
-                class="rounded-4 subscription-radio m-0 position-relative"
-              >
-                <span class="inline-flex align-center">
-                  {{ item.cloudProviderName }}
-                </span>
-              </ElRadio>
-            </ElRadioGroup>
+
+            <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
+              <template slot="template">
+                <div class="flex gap-4">
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                </div>
+              </template>
+              <template>
+                <ElRadioGroup v-model="provider" @input="changeProviderInStorage" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
+
             <span
               class="font-color-light inline-block"
               :class="[
@@ -55,19 +66,28 @@
               ]"
               >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
             >
-            <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
-              <ElRadio
-                v-for="(item, index) in cloudDetail"
-                :key="index"
-                :label="item.region"
-                border
-                class="rounded-4 subscription-radio m-0 position-relative"
-              >
-                <span class="inline-flex align-center">
-                  {{ item.regionName }}
-                </span>
-              </ElRadio>
-            </ElRadioGroup>
+            <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
+              <template slot="template">
+                <div class="flex gap-4">
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                </div>
+              </template>
+              <template>
+                <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
           </div>
         </ElFormItem>
         <!--请选择您需要的存储资源规格-->
@@ -103,19 +123,28 @@
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_instance_createagent_qingxuanzeninxu') }}
           </div>
-          <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
-            <ElRadio
-              v-for="(item, index) in memoryMap"
-              :key="index"
-              :label="item.key"
-              border
-              class="rounded-4 subscription-radio m-0 position-relative"
-            >
-              <span class="inline-flex align-center">
-                {{ item.value }}
-              </span>
-            </ElRadio>
-          </ElRadioGroup>
+          <el-skeleton :loading="loadingCloudMdbSource || loadingMongoCluster" animated>
+            <template slot="template">
+              <div class="flex gap-4">
+                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+              </div>
+            </template>
+            <template>
+              <ElRadioGroup v-model="memorySpace" class="flex gap-4" @change="changeMongodbMemory">
+                <ElRadio
+                  v-for="(item, index) in memoryMap"
+                  :key="index"
+                  :label="item.key"
+                  border
+                  class="rounded-4 subscription-radio m-0 position-relative"
+                >
+                  <span class="inline-flex align-center">
+                    {{ item.value }}
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
         </ElFormItem>
         <!--订阅方式-->
         <ElFormItem v-show="mdbPrices > 0">
@@ -325,7 +354,7 @@ export default {
       orderStorage: false,
       isDomesticStation: true,
       loadingCloudMdbSource: false,
-      loadingMongoCluster: false
+      loadingMongoCluster: true
     }
   },
 
@@ -376,6 +405,8 @@ export default {
       this.currencyType = currencyType
       this.defaultCurrencyType = currencyType
     }
+
+    this.loadingMongoCluster = true
 
     //获取是否有存储实例
     await this.getMdbCount()
@@ -656,86 +687,84 @@ export default {
       }
     },
     //查找云厂商
-    getCloudProvider() {
-      return this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
-        //数据模式（带存储）过滤只带存储的云厂商
-        if (this.platform === 'realTime') {
-          let original = data?.items || []
-          original.forEach(it => {
-            if (it.cloudDetail?.length > 0) {
-              it.cloudDetail =
-                it.cloudDetail.filter(item => item.productList.includes('mongodb') && it.cloudProvider === 'GCP') || []
-            }
-          })
-          this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
-        } else this.cloudProviderList = data?.items || []
-        //初始化云厂商
-        this.provider = this.cloudProviderList?.[0].cloudProvider
-        this.changeProvider()
-        this.getPrice()
-      })
+    async getCloudProvider() {
+      const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
+      //数据模式（带存储）过滤只带存储的云厂商
+      if (this.platform === 'realTime') {
+        let original = data?.items || []
+        original.forEach(it => {
+          if (it.cloudDetail?.length > 0) {
+            it.cloudDetail =
+              it.cloudDetail.filter(item => item.productList.includes('mongodb') && it.cloudProvider === 'GCP') || []
+          }
+        })
+        this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
+      } else this.cloudProviderList = data?.items || []
+      //初始化云厂商
+      this.provider = this.cloudProviderList?.[0].cloudProvider
+      this.changeProvider()
+      await this.getPrice()
     },
     //查询规格价格
-    getPrice() {
+    async getPrice() {
       const params = {
         productType: this.agentDeploy
       }
-      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
-        const { paidPrice = [] } = data?.[0] || {}
-        // 规格
-        this.specificationItems = uniqBy(
-          paidPrice.map(t => {
-            const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
-              val: this.getSuggestPipelineNumber(cpu, memory)
-            })
-            if (t.chargeProvider == 'FreeTier') {
-              desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
-            }
-            return {
-              label: getSpec(t.spec),
-              value: getSpec(t.spec),
-              cpu,
-              memory,
-              name: t.spec.name.toUpperCase(),
-              chargeProvider: t.chargeProvider,
-              desc: desc
-            }
-          }),
-          'value'
-        ).sort((a, b) => {
-          return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
-        })
-        // 已体验过免费
-        if (this.freeAgentCount > 0) {
-          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
-        }
-        // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
-        this.specification =
-          !this.freeAgentCount && this.orderStorage
-            ? this.specificationItems[1]?.value
-            : this.specificationItems[0]?.value
-        // 价格套餐
-        this.allPackages = paidPrice.map(t => {
-          return Object.assign(t, {
-            label: getPaymentMethod(t),
-            value: t.priceId,
-            price: t.price,
-            priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
-            desc: '',
-            specification: getSpec(t.spec),
-            currencyOption: t.currencyOption || []
+      const data = await this.$axios.get('api/tcm/orders/paid/price', { params })
+      const { paidPrice = [] } = data?.[0] || {}
+      // 规格
+      this.specificationItems = uniqBy(
+        paidPrice.map(t => {
+          const { cpu = 0, memory = 0 } = t.spec || {}
+          let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+            val: this.getSuggestPipelineNumber(cpu, memory)
           })
-        })
-        this.loadPackageItems()
-        // this.changeCurrency(this.packageItems[0])
-        if (!this.currencyType) {
-          this.currencyType = this.packageItems[0]?.currencyOption[0]?.currency
-        }
-        this.handleChange(this.packageItems[0])
-
-        console.log('specificationItems', this.specificationItems) // eslint-disable-line
+          if (t.chargeProvider == 'FreeTier') {
+            desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
+          }
+          return {
+            label: getSpec(t.spec),
+            value: getSpec(t.spec),
+            cpu,
+            memory,
+            name: t.spec.name.toUpperCase(),
+            chargeProvider: t.chargeProvider,
+            desc: desc
+          }
+        }),
+        'value'
+      ).sort((a, b) => {
+        return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
       })
+      // 已体验过免费
+      if (this.freeAgentCount > 0) {
+        this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+      }
+      // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
+      this.specification =
+        !this.freeAgentCount && this.orderStorage
+          ? this.specificationItems[1]?.value
+          : this.specificationItems[0]?.value
+      // 价格套餐
+      this.allPackages = paidPrice.map(t => {
+        return Object.assign(t, {
+          label: getPaymentMethod(t),
+          value: t.priceId,
+          price: t.price,
+          priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
+          desc: '',
+          specification: getSpec(t.spec),
+          currencyOption: t.currencyOption || []
+        })
+      })
+      this.loadPackageItems()
+      // this.changeCurrency(this.packageItems[0])
+      if (!this.currencyType) {
+        this.currencyType = this.packageItems[0]?.currencyOption[0]?.currency
+      }
+      this.handleChange(this.packageItems[0])
+
+      console.log('specificationItems', this.specificationItems) // eslint-disable-line
     },
     //订购时长对应价格
     loadPackageItems() {
@@ -937,7 +966,7 @@ export default {
     },
     //是否有存储agent
     getMdbCount() {
-      this.$axios.get('api/tcm/mdb/stats').then(data => {
+      return this.$axios.get('api/tcm/mdb/stats').then(data => {
         this.mdbCount = data?.totalCount > 0
         this.mdbFreeCount = data?.freeCount
       })
