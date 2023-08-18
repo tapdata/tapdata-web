@@ -80,6 +80,9 @@
       </div>
 
       <div class="text-center">
+        <p class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
+          <VIcon>info</VIcon>{{ $t('dfs_offline_deployment_tip') }}
+        </p>
         <ElButton
           v-if="!isDomesticStation"
           @click="$router.push({ name: 'CreateStorage' })"
@@ -88,7 +91,7 @@
           >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
         >
         <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
-          $t('dfs_offline_deployment')
+          $t('dfs_offline_deployment_get')
         }}</ElButton>
       </div>
     </div>

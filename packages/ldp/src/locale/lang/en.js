@@ -15,7 +15,7 @@ export default {
   packages_ldp_upgrade_storage: 'Upgrade Storage',
   packages_ldp_data_hub_intro_title: 'What is Real Time Data Hub?',
   packages_ldp_data_hub_intro_desc1:
-    'A data hub allows organization to connect different data sources and provide these consolidated data to multiple applications or users from an uniformed, centralized location.',
+    'A data hub allows you to consolidate mission critical data from siloed sources into centralized storage, then provide fresh data to downstream applications or dashboards from a single location.',
   packages_ldp_data_hub_intro_desc2:
     'Tapdata uses CDC technology to sync the data from source and uses MongoDB / MongoDB Atlas as hub storage, to achieve the near real time data latency experiecne.',
   packages_ldp_data_hub_intro_scene_title: 'Which Use Cases Can I Use Real Time Data Hub?',
@@ -35,7 +35,7 @@ export default {
   packages_ldp_data_hub_intro_how_do_step3: 'Publish API or Send to Dashboards',
   packages_ldp_data_hub_intro_how_do_step3_sub:
     'from data hub, or connect to the Bl product of your choice You may then publish API.',
-  packages_ldp_data_hub_subscribe: 'Subscription Storage',
+  packages_ldp_data_hub_subscribe: 'Configure Storage',
   page_title_data_hub: 'Real Time Data Hub',
   packages_ldp_source_empty_text: '1. Create your own data source first',
   packages_ldp_target_empty_text: '2. Next, create your target database.'

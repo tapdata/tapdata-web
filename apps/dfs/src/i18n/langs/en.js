@@ -1348,7 +1348,7 @@ export default {
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
   dfs_instance_instance_daoqishijian: 'Exp. Date',
-  dfs_instance_instance_dingyuefangshi: 'Suscription Method',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
   dfs_instance_instance_guige: 'Spec',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
@@ -1736,8 +1736,13 @@ export default {
   dfs_subscribe_free_storage_tip_content:
     'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
   dfs_subscribe_storage_tip_content:
-    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas.',
+    'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc. for secure data storage. When you select an instance below, Tapdata will automatically create a MonogDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Note Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
+  dfs_subscribe_storage_deploy_region: 'Please select the MongoDB Atlas region you want to deploy',
+  dfs_subscribe_storage_specification: 'Please select the specification of MongoDB Atlas Cluster',
   dfs_offline_deployment: 'Offline Deployment',
+  dfs_offline_deployment_get: 'Get Offline Version',
+  dfs_offline_deployment_tip:
+    'Due to the use of MongoDB Atlas for the online version, this product is not available in China, so only the offline version is provided domestically.',
   dfs_wait_storage_init:
     'The storage you subscribed to is being initialized, which may take 1 to 20 minutes. Please be patient and wait.',
   dfs_replication_tour_dialog_desc:
