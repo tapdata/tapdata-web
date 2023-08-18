@@ -42,6 +42,7 @@ export class MergeTable extends NodeType {
               externalStorageId: {
                 title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
                 type: 'string',
+                'x-visible': '{{$isDaas}}',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-reactions': [

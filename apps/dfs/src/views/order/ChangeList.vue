@@ -14,7 +14,7 @@ export default {
       changeList: [],
       changeColumns: [
         {
-          label: '变更编号',
+          label: i18n.t('dfs_change_number'),
           prop: 'id',
           width: 220
         },
@@ -24,7 +24,7 @@ export default {
           width: 180
         },
         {
-          label: '变更申请时间',
+          label: i18n.t('dfs_change_time'),
           prop: 'createTime',
           width: 180
         },

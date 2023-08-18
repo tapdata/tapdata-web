@@ -1860,5 +1860,14 @@ export default {
   daas_cluster_cluster_lianjieshuliang: 'Number of connections',
   daas_cluster_cluster_mubiaoIPhe: 'Target IP and port',
   daas_cluster_cluster_lianjiezongshu: 'Total number of connections',
-  daas_cluster_cluster_yinqingduiwaijian: 'The number of external connections established by the engine'
+  daas_cluster_cluster_yinqingduiwaijian: 'The number of external connections established by the engine',
+  daas_role_role_ninhaiweibaocun:
+    'You have not saved the permission settings, do you want to save the permission settings? ',
+  daas_role_role_quanbugongneng: 'All functions',
+  daas_role_role_chakanquanbushu: 'View all data',
+  daas_role_role_gongnengquanxian: 'Function authority',
+  daas_role_role_yemianquanxian: 'page authority',
+  daas_role_role_gongnengmokuai: 'function module',
+  daas_role_role_gouxuanxiangyingmo:
+    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. '
 }

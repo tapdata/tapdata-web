@@ -1113,5 +1113,16 @@ export default {
   packages_business_verification_form_index_field_count_is_not_equal:
     '因為源表與目標表的索引字段個數不相等，以下來源表將會自動跳過校驗：',
   packages_business_verification_list_renyibiaoshuju: '任意表數據校驗',
-  packages_business_verification_list_renwuyizhixing: '任務一致性校驗'
+  packages_business_verification_list_renwuyizhixing: '任務一致性校驗',
+  packages_business_permissionse_settings_create_quanxianshezhi: '權限設置',
+  packages_business_permissionse_settings_create_shezhiquanxian: '設置權限',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: '選擇授權角色',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan: '無法對以下數據進行授權，將跳過保存',
+  packages_business_connections_permissionsdialog_tianjiashouquan: '添加授權',
+  packages_business_connections_permissionsdialog_gongnengquanxian: '功能權限',
+  packages_business_connections_permissionsdialog_shouquanjuese: '授權角色',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: '連接權限設置',
+  packages_business_connections_preview_quanxianguanli: '權限管理',
+  packages_business_connections_preview_shujulianjiequan: '數據連接權限',
+  packages_business_notice_list_gonggaobiaoti: '公告標題'
 }

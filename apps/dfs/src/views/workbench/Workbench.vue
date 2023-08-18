@@ -32,7 +32,7 @@
     </ElRow>
 
     <ElRow type="flex" :gutter="16">
-      <ElCol :span="18">
+      <ElCol :span="isDomesticStation ? 18 : 24">
         <!--概览	-->
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
@@ -63,7 +63,7 @@
           </div>
         </div>
       </ElCol>
-      <ElCol :span="6">
+      <ElCol v-if="isDomesticStation" :span="6">
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
           <div class="aside-main notice-list flex-grow-1">
@@ -215,14 +215,14 @@ export default {
           },
           {
             type: 'all',
-            title: 'Data development',
+            title: 'Data Transformation',
             subTitle: '',
             img: require('@/assets/image/dashboard/io_scene3.png'),
             url: 'https://youtu.be/xQsaEaPxaXo?t=4'
           },
           {
             type: 'all',
-            title: 'Agent Local Installation',
+            title: 'Install Agent Locally',
             subTitle: '',
             img: require('@/assets/image/dashboard/io_scene4.png'),
             url: 'https://youtu.be/e-HTtN7JKJU'

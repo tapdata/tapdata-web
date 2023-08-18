@@ -1807,5 +1807,13 @@ export default {
   daas_cluster_cluster_lianjieshuliang: '连接数量',
   daas_cluster_cluster_mubiaoIPhe: '目标IP和端口',
   daas_cluster_cluster_lianjiezongshu: '连接总数',
-  daas_cluster_cluster_yinqingduiwaijian: '引擎对外建立的连接数'
+  daas_cluster_cluster_yinqingduiwaijian: '引擎对外建立的连接数',
+  daas_role_role_ninhaiweibaocun: '您还未保存设置的权限，是否要保存权限设置？',
+  daas_role_role_quanbugongneng: ' 全部功能 ',
+  daas_role_role_chakanquanbushu: '查看全部数据',
+  daas_role_role_gongnengquanxian: '功能权限',
+  daas_role_role_yemianquanxian: '页面权限',
+  daas_role_role_gongnengmokuai: '功能模块',
+  daas_role_role_gouxuanxiangyingmo:
+    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。'
 }

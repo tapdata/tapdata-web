@@ -130,7 +130,7 @@
 
       <ElButton
         v-if="dataflow.disabledData && !dataflow.disabledData.reset"
-        :disabled="$disabledReadonlyUserBtn()"
+        :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.reset"
         key="reset"
         class="ml-3"
         :class="{ 'btn--text': isViewer }"
@@ -152,7 +152,9 @@
           key="edit"
           class="ml-3 btn--text"
           size="medium"
-          :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
+          :disabled="
+            (dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn() || !buttonShowMap.Edit
+          "
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
@@ -162,7 +164,7 @@
           key="forceStop"
           v-if="dataflow.status === 'stopping'"
           class="ml-3 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
+          :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || !buttonShowMap.Stop"
           size="medium"
           @click="$emit('forceStop')"
         >
@@ -173,7 +175,7 @@
           key="stop"
           v-else
           class="ml-3 btn--text"
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || !buttonShowMap.Stop"
           size="medium"
           @click="$emit('stop')"
         >
@@ -183,7 +185,9 @@
       </template>
 
       <ElButton
-        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
+        :disabled="
+          isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading || !buttonShowMap.Start
+        "
         class="ml-3"
         size="medium"
         type="primary"
@@ -200,6 +204,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { VIcon, TextEditable, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { dataPermissionApi } from '@tap/api'
 
 export default {
   name: 'TopHeader',
@@ -229,7 +234,15 @@ export default {
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: ''
+      nodeSearchInput: '',
+      buttonShowMap: {
+        View: false,
+        Edit: false,
+        Delete: false,
+        Reset: false,
+        Start: false,
+        Stop: false
+      }
     }
   },
 
@@ -254,6 +267,7 @@ export default {
 
   mounted() {
     this.name = this.dataflowName
+    this.getTaskPermissions()
   },
 
   methods: {
@@ -293,6 +307,19 @@ export default {
         }
       }
       backToList()
+    },
+
+    getTaskPermissions() {
+      dataPermissionApi
+        .dataActions({
+          dataType: 'Task',
+          dataId: this.dataflow.id || this.$route.params?.id
+        })
+        .then(data => {
+          for (let key in this.buttonShowMap) {
+            this.buttonShowMap[key] = data.includes(key)
+          }
+        })
     }
   }
 }

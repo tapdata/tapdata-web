@@ -29,7 +29,7 @@ export default {
   packages_ldp_data_hub_intro_how_do_step1: 'Configure Data Hub Storage',
   packages_ldp_data_hub_intro_how_do_step1_sub:
     'First configure a data storage in the cloud, Tapdata uses MongoDB Atlas.',
-  packages_ldp_data_hub_intro_how_do_step2: 'Sync data and consolidate',
+  packages_ldp_data_hub_intro_how_do_step2: 'Sync Data & Consolidate',
   packages_ldp_data_hub_intro_how_do_step2_sub:
     'Use Tapdata Replication & Transformation, sync data from your data sources into Data Hub.',
   packages_ldp_data_hub_intro_how_do_step3: 'Publish API or Send to Dashboards',

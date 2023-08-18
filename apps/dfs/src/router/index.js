@@ -396,7 +396,7 @@ const routes = [
             name: 'changeList',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
             meta: {
-              title: '变更记录',
+              title: i18n.t('dfs_change_record'),
               code: ''
             }
           }

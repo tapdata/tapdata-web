@@ -22,6 +22,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <ElButton
           v-if="isDaas"
           v-show="multipleSelection.length > 0"
@@ -34,6 +37,7 @@
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
+          v-if="buttonShowMap.create"
           id="connection-list-create"
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
@@ -131,13 +135,15 @@
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              scope.row.agentType === 'Cloud' ||
+              getDisabled(scope.row.permissionActions, 'Edit')
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElButton
+            v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
             type="text"
             :loading="scope.row.copyLoading"
@@ -152,7 +158,8 @@
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
+              scope.row.agentType === 'Cloud' ||
+              getDisabled(scope.row.permissionActions, 'Delete')
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
@@ -173,6 +180,7 @@
     ></SceneDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>
 <script>
@@ -183,6 +191,7 @@ import dayjs from 'dayjs'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import PermissionseSettingsCreate from '@tap/business/src/components/permissionse-settings/Create'
 
 import { TablePage, SchemaProgress } from '../../components'
 import Preview from './Preview'
@@ -203,7 +212,8 @@ export default {
     VIcon,
     SchemaProgress,
     FilterBar,
-    UsedTaskDialog
+    UsedTaskDialog,
+    PermissionseSettingsCreate
   },
   inject: ['checkAgent', 'buried'],
   data() {
@@ -276,6 +286,12 @@ export default {
   computed: {
     table() {
       return this.$refs.table
+    },
+    buttonShowMap() {
+      return {
+        create: this.$has('v2_datasource_creation'),
+        copy: this.$has('v2_datasource_copy')
+      }
     }
   },
   watch: {
@@ -766,6 +782,13 @@ export default {
     },
     getType(type) {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
+    },
+    getDisabled(data = [], type = '') {
+      return !data.includes(type)
+    },
+    // 显示权限设置
+    handlePermissionsSettings() {
+      this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
     }
   }
 }

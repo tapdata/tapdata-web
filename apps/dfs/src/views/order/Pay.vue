@@ -3,13 +3,13 @@
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
         <IconButton @click="$router.push({ name: 'order' })">left</IconButton>
-        <span class="fs-5 ml-2">待支付</span>
+        <span class="fs-5 ml-2">{{ $t('dfs_pending_payment') }}</span>
       </div>
     </div>
 
     <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
       <div class="bg-white rounded-lg p-4">
-        <div class="font-color-dark fw-sub text-label mb-2">所选配置</div>
+        <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_spec_configuration') }}</div>
         <VTable
           class="border rounded-lg h-auto mb-5"
           :columns="columns"
@@ -107,12 +107,17 @@
       </div>
 
       <div class="bg-white rounded-lg p-4">
-        <ElButton v-if="payForm.paymentMethod === 'Stripe'" class="mr-4" type="primary" size="large" @click="handlePay"
-          >立即支付</ElButton
+        <ElButton
+          v-if="payForm.paymentMethod === 'Stripe'"
+          class="mr-4"
+          type="primary"
+          size="large"
+          @click="handlePay"
+          >{{ $t('dfs_pay_now') }}</ElButton
         >
 
         <span class="mr-4">
-          <span class="fw-sub font-color-dark mt-2">合计:</span
+          <span class="fw-sub font-color-dark mt-2">{{ $t('dfs_order_total') }}:</span
           ><span class="color-primary fw-sub fs-5 ml-2">{{ price }}</span>
         </span>
 
