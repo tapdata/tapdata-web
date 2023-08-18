@@ -1261,7 +1261,8 @@ export default {
         this.upgradeDialog = true
       })
     },
-    showUpgradeErrorDialogFnc() {
+    showUpgradeErrorDialogFnc(row) {
+      this.rowClick(row)
       this.upgradeErrorDialog = true
     },
     //自动升级
