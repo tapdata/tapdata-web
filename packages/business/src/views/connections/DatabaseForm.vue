@@ -2,7 +2,7 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main border-end">
-        <div class="connection-from-title flex align-center">
+        <div class="connection-from-title flex align-center my-4">
           {{
             $route.params.id
               ? this.$t('packages_business_connection_form_edit_connection')
@@ -46,13 +46,11 @@
         <div class="form-wrap">
           <div class="form pr-3">
             <SchemaToForm
+              class="pdk-schema-form"
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600"
-              :colon="true"
               layout="vertical"
-              label-width="160"
             ></SchemaToForm>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
@@ -1307,8 +1305,6 @@ export default {
       flex: 1;
       flex-direction: column;
       .connection-from-title {
-        padding-top: 20px;
-        margin-bottom: 24px;
         font-size: $fontSubtitle;
         font-weight: 500;
         color: map-get($fontColor, dark);
@@ -1454,6 +1450,30 @@ export default {
       justify-content: flex-start;
       margin: 0 auto;
       padding-top: 18px;
+    }
+  }
+}
+
+.pdk-schema-form {
+  ::v-deep {
+    .formily-element-form-item-feedback-layout-loose {
+      margin-bottom: 20px;
+    }
+    .formily-element-form-item-layout-vertical {
+      > .formily-element-form-item-label {
+        margin-bottom: 8px;
+
+        .formily-element-form-item-label-content {
+          min-height: unset;
+          height: unset;
+        }
+        .formily-element-form-item-label-tooltip {
+          height: unset;
+        }
+        * {
+          line-height: 22px;
+        }
+      }
     }
   }
 }
