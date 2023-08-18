@@ -108,7 +108,7 @@
                       :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
                       @click="openChangeSubscribe(item)"
-                      >变更</ElButton
+                      >{{ $t('dfs_order_change') }}</ElButton
                     >
                   </template>
                 </VTable>

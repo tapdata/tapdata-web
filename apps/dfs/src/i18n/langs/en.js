@@ -1750,6 +1750,7 @@ export default {
     'Congratulations! You have successfully completed the guided tour for the replication task.',
   dfs_replication_tour_dialog_finish: 'Finish',
   dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
+  dfs_order_change: 'Change',
   dfs_change_record: 'Change Record',
   dfs_pending_payment: 'Pending Payment',
   dfs_spec_configuration: 'Specification Configuration',
