@@ -293,7 +293,7 @@ export default {
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
-  connection_manage: 'Connection',
+  connection_manage: 'Connections',
   connection_form_creat_connection: 'Create connection',
   connection_form_mq_broker_url: 'MQ connection string',
   task_manage: 'Task',
