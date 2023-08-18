@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon mock/mock.js & vue-cli-service serve --open",
-    "start:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider SERVE_ENV=dev vue-cli-service serve --open",
-    "start:test": "cross-env NODE_OPTIONS=--openssl-legacy-provider SERVE_ENV=test vue-cli-service serve --open",
+    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
+    "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:e2e": "vue-cli-service test:e2e",
