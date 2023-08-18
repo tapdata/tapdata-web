@@ -1740,6 +1740,7 @@ export default {
   dfs_subscribe_storage_deploy_region: 'Please select the MongoDB Atlas region you want to deploy',
   dfs_subscribe_storage_specification: 'Please select the specification of MongoDB Atlas Cluster',
   dfs_offline_deployment: 'Offline Deployment',
+  dfs_offline_deployment_get: 'Get Offline Version',
   dfs_offline_deployment_tip:
     'Due to the use of MongoDB Atlas for the online version, this product is not available in China, so only the offline version is provided domestically.',
   dfs_wait_storage_init:

@@ -1585,6 +1585,7 @@ export default {
   dfs_subscribe_storage_deploy_region: '請選擇需要部署的MongoDB Atlas區域',
   dfs_subscribe_storage_specification: '請選擇MongoDB Atlas集群的規格',
   dfs_offline_deployment: '線下部署',
+  dfs_offline_deployment_get: '線下部署',
   dfs_offline_deployment_tip: '由於線上版本使用MongoDB Atlas，該產品在國內沒有服務，所以國內僅提供線下版本。',
   dfs_wait_storage_init: '订阅成功。您訂閱的儲存正在初始化，這可能需要1到20分鐘。請耐心等待。',
   dfs_replication_tour_dialog_desc: '在開始資料複製任務之前，您需要創建源資料庫和目標資料庫連接，我們將引導您完成：',

@@ -91,7 +91,7 @@
           >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
         >
         <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
-          $t('dfs_offline_deployment')
+          $t('dfs_offline_deployment_get')
         }}</ElButton>
       </div>
     </div>
