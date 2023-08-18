@@ -1621,5 +1621,12 @@ export default {
   dfs_replication_tour_dialog_start: '开始',
   dfs_replication_tour_dialog_success_title: '恭喜您已经完成复制任务的引导',
   dfs_replication_tour_dialog_finish: '完成',
-  dfs_subscribe_to_professional_plan: '订阅专业版'
+  dfs_subscribe_to_professional_plan: '订阅专业版',
+  dfs_change_record: '变更记录',
+  dfs_pending_payment: '待支付',
+  dfs_spec_configuration: '规格配置',
+  dfs_pay_now: '立即支付',
+  dfs_order_total: '合计',
+  dfs_change_number: '变更编号',
+  dfs_change_time: '变更申请时间'
 }
