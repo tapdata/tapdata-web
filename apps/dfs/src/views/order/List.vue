@@ -34,7 +34,7 @@
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
                   ></span>
                 </div>
-                <div class="flex justify-content-center align-items-center">
+                <div class="flex justify-content-center align-items-center subscribe-header-action">
                   <ElButton
                     :disabled="
                       !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
@@ -48,9 +48,9 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
-                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)"
-                    >变更记录</ElButton
-                  >
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                    $t('dfs_change_record')
+                  }}</ElButton>
 
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
@@ -108,7 +108,7 @@
                       :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
                       @click="openChangeSubscribe(item)"
-                      >变更</ElButton
+                      >{{ $t('dfs_order_change') }}</ElButton
                     >
                   </template>
                 </VTable>
@@ -643,6 +643,11 @@ export default {
   padding: 10px;
   border-bottom: 1px solid #ebeef5;
   background: #f7f8fa;
+}
+.subscribe-header-action {
+  .el-divider:last-child {
+    display: none;
+  }
 }
 ::v-deep {
   .el-dropdown-menu__item.dropdown-item--disabled {

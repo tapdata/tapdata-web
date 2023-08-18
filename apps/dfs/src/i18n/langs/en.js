@@ -293,7 +293,7 @@ export default {
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
   agent_tip_no_running: 'No agent available, Check the Agent running status or create a new Agent',
-  connection_manage: 'Connection',
+  connection_manage: 'Connections',
   connection_form_creat_connection: 'Create connection',
   connection_form_mq_broker_url: 'MQ connection string',
   task_manage: 'Task',
@@ -1093,7 +1093,7 @@ export default {
   _workbench_workbench_jichengaliyun: 'Integrate Alibaba Cloud Computing Nest',
   _workbench_workbench_jiangshujudaoru: 'Sync To',
   _workbench_workbench_jiangshujudaorusub: 'AliCloud Tablestore',
-  _workbench_workbench_tansuoshili: 'Explore Use Cases',
+  _workbench_workbench_tansuoshili: 'Product Tutorials',
   dfs_workbench_workbench_zhongyaobanbensheng: 'The Important Announcement for Version Upgrade and Service Switching',
   dfs_workbench_workbench_xinzengzidingyi:
     '· Added support for custom operators, users can define their own operators through flexible JS capabilities',
@@ -1749,5 +1749,13 @@ export default {
   dfs_replication_tour_dialog_success_title:
     'Congratulations! You have successfully completed the guided tour for the replication task.',
   dfs_replication_tour_dialog_finish: 'Finish',
-  dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan'
+  dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
+  dfs_order_change: 'Change',
+  dfs_change_record: 'Change Record',
+  dfs_pending_payment: 'Pending Payment',
+  dfs_spec_configuration: 'Specification Configuration',
+  dfs_pay_now: 'Pay Now',
+  dfs_order_total: 'Total',
+  dfs_change_number: 'Change Number',
+  dfs_change_time: 'Change Time'
 }
