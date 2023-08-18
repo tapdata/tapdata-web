@@ -1348,7 +1348,7 @@ export default {
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
   dfs_instance_instance_daoqishijian: 'Exp. Date',
-  dfs_instance_instance_dingyuefangshi: 'Suscription Method',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
   dfs_instance_instance_guige: 'Spec',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
