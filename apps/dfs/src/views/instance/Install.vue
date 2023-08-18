@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
         <IconButton @click="$router.push({ name: 'Instance' })">left</IconButton>
-        <span class="fs-5 ml-2">部署计算引擎</span>
+        <span class="fs-5 ml-2">{{ $t('dfs_guide_index_bushujisuanyin') }}</span>
       </div>
     </div>
     <main class="bg-white rounded-lg px-6 py-4 flex-1 overflow-auto">
@@ -90,7 +90,6 @@
 <script>
 import i18n from '@/i18n'
 
-import TheHeader from '@/components/the-header'
 import { IconButton } from '@tap/component'
 export default {
   name: 'Install',
