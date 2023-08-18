@@ -186,12 +186,12 @@ let pageSort = [
             checked: false
           },
           {
-            label: i18n.t('public_task_export'),
+            label: i18n.t('public_task_import'),
             name: 'v2_data_flow_import',
             checked: false
           },
           {
-            label: i18n.t('daas_role_role_daochurenwu'),
+            label: i18n.t('public_task_export'),
             name: 'v2_data_flow_export',
             checked: false
           }
