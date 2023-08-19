@@ -33,5 +33,7 @@ export default {
   packages_ldp_data_hub_subscribe: '订阅存储',
   page_title_data_hub: '实时数据中心',
   packages_ldp_source_empty_text: '1. 创建源数据库',
-  packages_ldp_target_empty_text: '2. 创建目标数据库'
+  packages_ldp_target_empty_text: '2. 创建目标数据库',
+  packages_ldp_not_support_increments: '当前源数据不支持增量',
+  packages_ldp_drag_source_table_to_start: '将源表拖入此处开始复制'
 }
