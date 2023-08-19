@@ -80,7 +80,7 @@
       </div>
 
       <div class="text-center">
-        <p class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
+        <p v-if="isDomesticStation" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
           <VIcon>info</VIcon>{{ $t('dfs_offline_deployment_tip') }}
         </p>
         <ElButton

@@ -178,7 +178,10 @@
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
             <ElRadioGroup v-model="taskDialogConfig.task.type">
-              <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+              <ElTooltip
+                :disabled="!taskDialogConfig.notSupportedCDC"
+                :content="$t('packages_ldp_not_support_increments')"
+              >
                 <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
                   {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
                 </ElRadio>
@@ -376,7 +379,7 @@ const TaskList = defineComponent({
               )}
             </div>
           ) : (
-            <VEmpty small description={'将源表拖入此处开始复制'}></VEmpty>
+            <VEmpty small description={i18n.t('packages_ldp_drag_source_table_to_start')}></VEmpty>
           )}
         </div>
       )

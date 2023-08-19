@@ -38,5 +38,12 @@ export default {
   packages_ldp_data_hub_subscribe: 'Configure Storage',
   page_title_data_hub: 'Real Time Data Hub',
   packages_ldp_source_empty_text: '1. Create your own data source first',
-  packages_ldp_target_empty_text: '2. Next, create your target database.'
+  packages_ldp_target_empty_text: '2. Next, create your target database.',
+  packages_ldp_not_support_increments: 'Current source data does not support increments.',
+  packages_ldp_drag_source_table_to_start: 'Drag the source table here to start copying.',
+  packages_ldp_run_only_once: 'Run only once',
+  packages_ldp_run_every_10_minutes: 'Run every 10 minutes',
+  packages_ldp_run_every_hour: 'Run every 1 hour',
+  packages_ldp_run_every_day: 'Run every day',
+  packages_ldp_custom_cron_expression: 'Custom cron expression'
 }
