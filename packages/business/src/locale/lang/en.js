@@ -1000,7 +1000,7 @@ export default {
   packages_business_create_connection_scenedialog_shujukutongbu: 'Database Synchronization',
   packages_business_create_connection_scenedialog_chaxunjiasu: 'Query Acceleration',
   packages_business_create_connection_scenedialog_rushucang: 'Into the warehouse',
-  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Scene',
+  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Target',
   packages_business_create_connection_scenedialog_qingxuanzeninde: 'Please select your usage scenario',
   packages_business_create_connection_serveform_fenleimingcheng: 'Category Name',
   packages_business_components_tableview_yizhegemoxing: 'Tasks with this model source/target',
@@ -1104,6 +1104,8 @@ export default {
     'Kafka is ideal for high-throughput real-time data streaming, handling log collection, data transmission, message publishing/subscribing, and stream processing, particularly for large-scale data streams.',
   packages_business_create_connection_doris_desc:
     'Doris is well-suited for real-time data analysis and reporting, with support for high-concurrency queries and complex analysis. It is widely used in data warehouses, BI reports, and data visualization.',
+  packages_business_create_connection_mongodbatlas_desc:
+    'MongoDB Atlas is a fully managed service for MongoDB databases, automating deployment, scaling, and monitoring. It enables developers to prioritize application development while providing features like elastic scaling, global deployment, and security for various applications.',
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',

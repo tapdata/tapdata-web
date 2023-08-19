@@ -1061,6 +1061,8 @@ export default {
     'Kafka 适用于高吞吐量的实时数据流处理，用于日志收集、数据传输、消息发布/订阅和流式处理应用，特别擅长大规模数据流处理。',
   packages_business_create_connection_doris_desc:
     'Doris 适用于实时数据分析和报表，支持高并发查询和复杂分析，广泛应用于数据仓库、BI报表和数据可视化。',
+  packages_business_create_connection_mongodbatlas_desc:
+    'MongoDB Atlas是全托管的MongoDB数据库服务，它通过自动化数据库管理，简化了部署、扩展和监控过程，使开发者可以更专注于应用程序开发。Atlas支持弹性扩展、全球部署和安全性功能，适用于各种规模和类型的应用。',
   packages_business_swimlane_tablepreview_chuangjianrenwu: '创建任务',
   packages_business_as_source: '作为源头',
   packages_business_as_target: '作为目标',
