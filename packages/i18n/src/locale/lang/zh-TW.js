@@ -27,6 +27,7 @@ export default {
   public_recommend: '推薦',
   public_board_view: '面板',
   public_list_view: '列表',
+  public_all: '全部',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
