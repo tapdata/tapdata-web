@@ -1,15 +1,14 @@
 <template>
   <div class="connection-from" v-loading="loadingFrom">
-    <div class="connection-from-body">
-      <main class="connection-from-main border-end">
-        <div class="connection-from-title flex align-center my-4">
-          {{
+    <div class="connection-from-body gap-4">
+      <main class="connection-from-main bg-white rounded-lg overflow-hidden">
+        <div class="connection-from-title flex align-center p-4">
+          <span class="flex-1">{{
             $route.params.id
               ? this.$t('packages_business_connection_form_edit_connection')
               : this.$t('public_connection_button_create')
-          }}
-
-          <ElDivider direction="vertical" />
+          }}</span>
+          <!--<ElDivider direction="vertical" />-->
 
           <div class="flex align-center">
             <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
@@ -44,13 +43,14 @@
           </div>
         </div>-->
         <div class="form-wrap">
-          <div class="form pr-3">
+          <div class="form px-4">
             <SchemaToForm
               class="pdk-schema-form"
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
               layout="vertical"
+              labelWidth="100%"
             ></SchemaToForm>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
@@ -74,20 +74,18 @@
             </span>
           </div>
         </div>
-        <footer slot="footer" class="footer">
-          <div class="footer-btn">
-            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
-            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
-              $t('packages_business_connections_databaseform_jiaobentiaoshi')
-            }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('public_button_save') }}
-            </el-button>
-          </div>
+        <footer slot="footer" class="footer text-center border-top py-4">
+          <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
+          <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
+            $t('packages_business_connections_databaseform_jiaobentiaoshi')
+          }}</el-button>
+          <el-button type="primary" :loading="submitBtnLoading" @click="submit">
+            {{ $t('public_button_save') }}
+          </el-button>
         </footer>
       </main>
-      <div class="flex-1">
+      <div class="flex-1 bg-white rounded-lg">
         <!--<GitBook :value="doc"></GitBook>-->
         <iframe
           ref="docsIframe"
@@ -495,9 +493,18 @@ export default {
       let END = {
         type: 'void',
         'x-index': 1000000,
+        'x-component': 'FormCollapse',
+        'x-component-props': {
+          class: 'border-bottom-0',
+          activeKey: []
+        },
         properties: {
           __TAPDATA: {
             type: 'object',
+            'x-component': 'FormCollapse.Item',
+            'x-component-props': {
+              title: i18n.t('public_advanced_settings')
+            },
             'x-index': 1000000,
             properties: {}
           }
@@ -841,7 +848,6 @@ export default {
                   connection_type: connectionTypeJson,
                   connection_form_source_and_target_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -862,7 +868,6 @@ export default {
                   },
                   connection_form_source_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -881,7 +886,6 @@ export default {
                   },
                   connection_form_target_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -1286,10 +1290,10 @@ export default {
   .connection-from-body {
     display: flex;
     flex: 1;
-    padding-left: 24px;
-    border-radius: 4px;
+    //padding-left: 24px;
+    //border-radius: 4px;
     overflow: hidden;
-    background-color: map-get($bgColor, white);
+    //background-color: map-get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1428,7 +1432,7 @@ export default {
     }
   }
   .footer {
-    width: 100%;
+    /*width: 100%;
     height: 62px;
     background-color: map-get($bgColor, white);
     border-left: none;
@@ -1440,7 +1444,7 @@ export default {
       justify-content: flex-start;
       margin: 0 auto;
       padding-top: 18px;
-    }
+    }*/
   }
 }
 
@@ -1458,11 +1462,24 @@ export default {
           height: unset;
         }
         .formily-element-form-item-label-tooltip {
+          margin-left: 4px;
           height: unset;
         }
         * {
           line-height: 22px;
         }
+      }
+    }
+
+    .formily-element-form-collapse {
+      &.border-bottom-0 {
+        .el-collapse-item__header {
+          border-bottom: none;
+        }
+      }
+
+      .el-collapse-item__content {
+        padding-bottom: 0;
       }
     }
   }
