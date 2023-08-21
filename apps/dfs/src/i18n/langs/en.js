@@ -1428,7 +1428,7 @@ export default {
   dfs_agent_download_fastdownload_shuangjizhixingt:
     '3. Double-click to execute tapdata.exe to start the installation. ',
   dfs_agent_download_fastdownload_jiangwenjianta:
-    ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
+    ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Non-Latin and Multi-byte characters. ',
   dfs_agent_download_fastdownload_he: 'and',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Method One: Use configuration file deployment to start Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
