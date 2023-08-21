@@ -190,6 +190,7 @@ export default {
             'Oracle',
             'SQL Server',
             'MongoDB',
+            'MongoDB Atlas',
             'PostgreSQL',
             'Clickhouse',
             'Elasticsearch',
@@ -223,6 +224,7 @@ export default {
           types: ['MongoDB', 'Redis', 'Elasticsearch']
         },
         {
+          key: 'Database',
           name: i18n.t('packages_business_create_connection_scenedialog_shujukutongbu'),
           types: ['MongoDB']
         },
@@ -257,7 +259,8 @@ export default {
         Elasticsearch: i18n.t('packages_business_create_connection_elasticsearch_desc'),
         Dummy: i18n.t('packages_business_create_connection_dummy_desc'),
         Kafka: i18n.t('packages_business_create_connection_kafka_desc'),
-        Doris: i18n.t('packages_business_create_connection_doris_desc')
+        Doris: i18n.t('packages_business_create_connection_doris_desc'),
+        'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc')
       },
       currentScene: 'recommend',
       tagList: [
@@ -312,11 +315,13 @@ export default {
         return this.database.filter(db => db.name.toLowerCase().includes(search))
       }
 
-      if (this.currentScene === 'all') {
+      const { currentScene } = this
+
+      if (currentScene === 'all') {
         return this.database
       }
 
-      if (this.currentScene === 'recommend' || this.selectorType === 'target') {
+      if (currentScene === 'recommend' || (this.selectorType === 'target' && currentScene !== 'Database')) {
         const types = this.sceneMap[this.currentScene]
         const arr = []
 
@@ -328,10 +333,9 @@ export default {
         })
 
         return arr
-        // return types?.length ? types.map(type => this.databaseTypeMap[type]) : []
       }
 
-      return this.database.filter(db => db.tags?.includes(this.currentScene))
+      return this.database.filter(db => db.tags?.includes(currentScene))
     },
     options() {
       let list = this.selectorType === 'target' ? this.sceneList : this.tagList

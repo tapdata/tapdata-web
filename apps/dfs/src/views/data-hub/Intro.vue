@@ -5,12 +5,12 @@
       <div class="mb-6">
         <div class="text-lg font-color-dark fw-sub mb-4">{{ $t('packages_ldp_data_hub_intro_title') }}</div>
         <div class="border rounded-lg p-4 flex gap-4 align-center">
+          <div style="width: 218px" class="flex-shrink-0">
+            <ElImage :src="require('@/assets/image/data_hub_banner.png')"></ElImage>
+          </div>
           <div class="lh-base flex-1">
             <p class="mb-4">{{ $t('packages_ldp_data_hub_intro_desc1') }}</p>
             <p>{{ $t('packages_ldp_data_hub_intro_desc2') }}</p>
-          </div>
-          <div style="width: 218px" class="flex-shrink-0">
-            <ElImage :src="require('@/assets/image/data_hub_banner.png')"></ElImage>
           </div>
         </div>
       </div>
@@ -80,6 +80,18 @@
       </div>
 
       <div class="text-center">
+        <p v-if="isDomesticStation" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
+          <VIcon>info</VIcon>{{ $t('dfs_offline_deployment_tip') }}
+        </p>
+        <p v-else class="mb-2">
+          <ElLink
+            type="primary"
+            class="text-decoration-underline"
+            href="https://calendly.com/umer-tapdata"
+            target="_blank"
+            >Feel free to Book a Demo with us</ElLink
+          >
+        </p>
         <ElButton
           v-if="!isDomesticStation"
           @click="$router.push({ name: 'CreateStorage' })"
@@ -88,7 +100,7 @@
           >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
         >
         <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
-          $t('dfs_offline_deployment')
+          $t('dfs_offline_deployment_get')
         }}</ElButton>
       </div>
     </div>

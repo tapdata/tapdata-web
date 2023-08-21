@@ -1,6 +1,7 @@
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
 import { validateCron } from '@tap/form'
+import i18n from '@tap/i18n'
 
 export default {
   data() {
@@ -46,23 +47,23 @@ export default {
 
     const cronOptions = [
       {
-        label: '仅运行一次',
+        label: i18n.t('packages_ldp_run_only_once'),
         value: 'once'
       },
       {
-        label: '每10分钟运行一次',
+        label: i18n.t('packages_ldp_run_every_10_minutes'),
         value: '0 */10 * * * ?'
       },
       {
-        label: '每1小时运行一次',
+        label: i18n.t('packages_ldp_run_every_hour'),
         value: '0 0 * * * ?'
       },
       {
-        label: '每天运行一次',
+        label: i18n.t('packages_ldp_run_every_day'),
         value: '0 0 0 * * ?'
       },
       {
-        label: '自定义cron表达式',
+        label: i18n.t('packages_ldp_custom_cron_expression'),
         value: 'custom'
       }
     ]

@@ -494,6 +494,7 @@ export const FieldAddDel = connect(
               }
             }
             this.$refs.tree.remove(node)
+            this.updateFieldsAfter()
           } else {
             let originalField = this.getNativeData(data.id)
             let self = this

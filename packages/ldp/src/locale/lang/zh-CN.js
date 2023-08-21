@@ -25,7 +25,7 @@ export default {
   packages_ldp_data_hub_intro_scene_api_sub: '数据库到API',
   packages_ldp_data_hub_intro_how_do: '实时数据中心是如何工作的?',
   packages_ldp_data_hub_intro_how_do_step1: '配置数据中心存储',
-  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,在云端配置一个数据存储 ,Tapdata 使用 MongoDB Atlas。',
+  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
   packages_ldp_data_hub_intro_how_do_step2: '同步数据并合并',
   packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
   packages_ldp_data_hub_intro_how_do_step3: '发布API或发送到仪表板',
@@ -33,5 +33,12 @@ export default {
   packages_ldp_data_hub_subscribe: '订阅存储',
   page_title_data_hub: '实时数据中心',
   packages_ldp_source_empty_text: '1. 创建源数据库',
-  packages_ldp_target_empty_text: '2. 创建目标数据库'
+  packages_ldp_target_empty_text: '2. 创建目标数据库',
+  packages_ldp_not_support_increments: '当前源数据不支持增量',
+  packages_ldp_drag_source_table_to_start: '将源表拖入此处开始复制',
+  packages_ldp_run_only_once: '仅运行一次',
+  packages_ldp_run_every_10_minutes: '每10分钟运行一次',
+  packages_ldp_run_every_hour: '每1小时运行一次',
+  packages_ldp_run_every_day: '每天运行一次',
+  packages_ldp_custom_cron_expression: '自定义cron表达式'
 }
