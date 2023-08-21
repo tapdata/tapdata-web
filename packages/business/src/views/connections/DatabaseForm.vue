@@ -93,7 +93,6 @@
           ref="docsIframe"
           src="https://deploy-preview-113--tapdata.netlify.app/enterprise/prerequisites/certified/mysql?from=cloud"
           class="w-100 h-100"
-          @load="onIframeLoad"
         ></iframe>
       </div>
     </div>
@@ -1272,15 +1271,6 @@ export default {
         key,
         data
       }
-    },
-
-    onIframeLoad() {
-      const iframe = this.$refs.docsIframe
-      let style = document.createElement('style')
-      style.type = 'text/css'
-      style.innerHTML = `.navbar { display: none }`
-      console.log('iframe.contentWindow', iframe)
-      iframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
     }
   }
 }
