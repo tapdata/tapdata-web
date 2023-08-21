@@ -676,6 +676,10 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
+      if (process.env.NODE_ENV === 'development') {
+        this.dialogDatabaseTypeVisible = true
+        return
+      }
       this.buried('connectionCreateDialog')
       this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
