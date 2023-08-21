@@ -168,11 +168,6 @@ export default {
           icon: 'workbench'
         },
         {
-          name: 'connections',
-          title: $t('connection_manage'),
-          icon: 'connection'
-        },
-        {
           name: 'migrate',
           title: $t('task_manage_migrate'),
           icon: 'migrate'
@@ -253,6 +248,11 @@ export default {
       return el
     })
     let subMenu = [
+      {
+        name: 'connections',
+        title: this.$t('connection_manage'),
+        icon: 'connection'
+      },
       {
         name: 'Instance',
         title: this.$t('tap_agent_management'),

@@ -27,6 +27,7 @@ export default {
   public_recommend: 'Recommend',
   public_board_view: 'Board',
   public_list_view: 'List',
+  public_all: 'All',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

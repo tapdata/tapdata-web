@@ -19,7 +19,15 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
+          <template #connectionType>
+            <ElRadioGroup v-model="searchParams.databaseModel" size="mini" @change="table.fetch(1)">
+              <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
+              <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
+              <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
+            </ElRadioGroup>
+          </template>
+        </FilterBar>
       </template>
       <div slot="operation">
         <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
@@ -384,7 +392,13 @@ export default {
         where.name = { like: verify(keyword), options: 'i' }
       }
       databaseType && (where.database_type = databaseType)
-      databaseModel && (where.connection_type = databaseModel)
+
+      if (databaseModel) {
+        where.connection_type = {
+          $ne: databaseModel === 'source' ? 'target' : 'source'
+        }
+      }
+
       sourceType && (where.sourceType = sourceType)
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -713,17 +727,18 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
+          slotName: 'connectionType',
+          // label: this.$t('public_connection_type'),
+          key: 'databaseModel'
+          // type: 'select-inner',
+          // items: this.databaseModelOptions
+        },
+        {
           label: this.$t('packages_business_connection_list_status'),
           key: 'status',
           type: 'select-inner',
           items: this.databaseStatusOptions,
           selectedWidth: '200px'
-        },
-        {
-          label: this.$t('public_connection_type'),
-          key: 'databaseModel',
-          type: 'select-inner',
-          items: this.databaseModelOptions
         },
         {
           label: this.$t('packages_business_connection_list_form_database_type'),
