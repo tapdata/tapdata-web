@@ -1432,7 +1432,7 @@ export default {
   dfs_agent_download_fastdownload_he: 'and',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Method One: Use configuration file deployment to start Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
-  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Maximum of 3 tasks',
+  dfs_agent_download_subscriptionmodeldialog_mianfeishilizui: 'Maximum of 2 tasks',
   dfs_agent_download_subscriptionmodeldialog_ge: '',
   dfs_agent_download_subscriptionmodeldialog_renwushujianyi: 'Maximum of {val} tasks running',
   dfs_agent_download_subscriptionmodeldialog_extra: 'EXTRA SMALL: 1C 2G - FREE (only one can be created)',
