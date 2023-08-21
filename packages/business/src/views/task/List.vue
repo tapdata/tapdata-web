@@ -166,7 +166,7 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn() || getDisabled(row, 'Start')"
               @click="start([row.id])"
             >
               {{ $t('public_button_start') }}
@@ -176,7 +176,7 @@
                 v-if="row.status === 'stopping'"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
+                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn() || getDisabled(row, 'Stop')"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -185,7 +185,7 @@
                 v-else
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
+                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn() || getDisabled(row, 'Stop')"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
@@ -195,7 +195,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn() || getDisabled(row, 'Edit')"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
@@ -213,7 +213,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn() || getDisabled(row, 'Reset')"
               @click="initialize([row.id], row)"
             >
               {{ $t('public_button_reset') }}
@@ -232,7 +232,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn() || getDisabled(row, 'Delete')"
               @click="del([row.id], row)"
             >
               {{ $t('public_button_delete') }}
@@ -993,6 +993,10 @@ export default {
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
+    },
+    getDisabled(row = {}, type = '') {
+      const data = row.permissionActions || []
+      return !data.includes(type)
     }
   }
 }
