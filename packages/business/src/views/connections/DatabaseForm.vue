@@ -85,13 +85,13 @@
           </el-button>
         </footer>
       </main>
-      <div class="flex-1 bg-white rounded-lg">
-        <!--<GitBook :value="doc"></GitBook>-->
-        <iframe
-          ref="docsIframe"
-          src="https://deploy-preview-113--tapdata.netlify.app/enterprise/prerequisites/certified/mysql?from=cloud"
-          class="w-100 h-100"
-        ></iframe>
+      <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
+        <GitBook class="bg-white border-0" :value="doc"></GitBook>
+        <!--<iframe-->
+        <!--  ref="docsIframe"-->
+        <!--  src="https://deploy-preview-113&#45;&#45;tapdata.netlify.app/enterprise/prerequisites/certified/mysql?from=cloud"-->
+        <!--  class="w-100 h-100"-->
+        <!--&gt;</iframe>-->
       </div>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
