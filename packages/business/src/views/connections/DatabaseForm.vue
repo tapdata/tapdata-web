@@ -1,5 +1,5 @@
 <template>
-  <div class="connection-from" v-loading="loadingFrom">
+  <div class="connection-from" v-loading="loadingFrom" :class="{ 'bg-white': isDaas }">
     <div class="connection-from-body gap-4">
       <main class="connection-from-main bg-white rounded-lg overflow-hidden">
         <div class="connection-from-title flex align-center p-4">
@@ -8,40 +8,23 @@
               ? this.$t('packages_business_connection_form_edit_connection')
               : this.$t('public_connection_button_create')
           }}</span>
-          <!--<ElDivider direction="vertical" />-->
-
           <div class="flex align-center">
             <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
-            <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
-            <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
-              {{ $t('packages_business_connection_form_change') }}
-            </el-button>
+            <template v-if="!$route.params.id">
+              <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
+              <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+                {{ $t('packages_business_connection_form_change') }}
+              </el-button>
+            </template>
+            <template v-else>
+              <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
+              <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+                {{ $t('packages_business_connection_form_rename') }}
+              </el-button>
+            </template>
           </div>
         </div>
-        <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('public_connection_name') }}: </label>
-          <div class="content-box">
-            <div class="img-box ml-2">
-              <img :src="getConnectionIcon()" alt="" />
-            </div>
-            <div class="content ml-2">{{ model.name }}</div>
-            <div class="addBtn cursor-pointer color-primary ml-2" @click="dialogEditNameVisible = true">
-              {{ $t('packages_business_connection_form_rename') }}
-            </div>
-          </div>
-        </div>
-        <!--<div class="connection-from-label" v-else>
-          <label class="label">{{ $t('packages_business_connection_form_data_source_type') }}:</label>
-          <div class="content-box">
-            <div class="img-box ml-2">
-              <img :src="getConnectionIcon()" alt="" />
-            </div>
-            <span class="ml-2">{{ pdkOptions.name }}</span>
-            <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
-              {{ $t('packages_business_connection_form_change') }}
-            </el-button>
-          </div>
-        </div>-->
+
         <div class="form-wrap">
           <div class="form px-4">
             <SchemaToForm
