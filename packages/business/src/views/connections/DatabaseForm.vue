@@ -781,6 +781,11 @@ export default {
         }
       })
 
+      const connectionProperties = data?.properties?.connection?.properties || {}
+      const { OPTIONAL_FIELDS } = connectionProperties
+
+      delete connectionProperties.OPTIONAL_FIELDS
+
       let result = {
         type: 'object',
         'x-component-props': {
@@ -876,7 +881,7 @@ export default {
               }
             }
           },
-          ...(data?.properties?.connection?.properties || {}),
+          ...connectionProperties,
           END: {
             type: 'void',
             'x-index': 1000000,
@@ -893,9 +898,10 @@ export default {
                   title: i18n.t('public_advanced_settings')
                 },
                 properties: {
+                  OPTIONAL_FIELDS,
                   __TAPDATA: {
                     type: 'object',
-                    'x-index': 1000000,
+                    // 'x-index': 1000000,
                     properties: endProperties
                   }
                 }
