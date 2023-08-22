@@ -995,6 +995,7 @@ export default {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
     },
     getDisabled(row = {}, type = '') {
+      if (!this.isDaas) return false
       const data = row.permissionActions || []
       return !data.includes(type)
     }
