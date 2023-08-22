@@ -35,7 +35,9 @@
             class="flex-fill min-w-0"
             size="mini"
             @click="edit()"
-            :disabled="$disabledReadonlyUserBtn() || connection.agentType === 'Cloud'"
+            :disabled="
+              $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
+            "
           >
             {{ $t('public_button_edit') }}
           </el-button>
@@ -623,6 +625,12 @@ export default {
               .filter(t => !!t.roleName)
           })
       })
+    },
+
+    getDisabled(row = {}, type) {
+      if (!this.isDaas) return false
+      const data = row.permissionActions || []
+      return !data.includes(type)
     }
   }
 }

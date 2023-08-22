@@ -803,6 +803,7 @@ export default {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
     },
     getDisabled(data = [], type = '') {
+      if (!this.isDaas) return false
       return !data.includes(type)
     },
     // 显示权限设置

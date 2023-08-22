@@ -262,12 +262,14 @@ export default {
   watch: {
     dataflowName(v) {
       this.name = v
+    },
+    'dataflow.id'(v) {
+      v && this.getTaskPermissions()
     }
   },
 
   mounted() {
     this.name = this.dataflowName
-    this.getTaskPermissions()
   },
 
   methods: {
@@ -310,16 +312,18 @@ export default {
     },
 
     getTaskPermissions() {
-      dataPermissionApi
-        .dataActions({
-          dataType: 'Task',
-          dataId: this.dataflow.id || this.$route.params?.id
-        })
-        .then(data => {
-          for (let key in this.buttonShowMap) {
-            this.buttonShowMap[key] = data.includes(key)
-          }
-        })
+      const id = this.dataflow.id || this.$route.params?.id
+      id &&
+        dataPermissionApi
+          .dataActions({
+            dataType: 'Task',
+            dataId: id
+          })
+          .then(data => {
+            for (let key in this.buttonShowMap) {
+              this.buttonShowMap[key] = data.includes(key)
+            }
+          })
     }
   }
 }
