@@ -55,7 +55,7 @@
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
-            <ElTooltip v-else placement="bottom">
+            <ElTooltip v-else class="flex-fill" placement="bottom">
               <div class="inline-flex">
                 <ElProgress
                   class="flex-1 my-2"
@@ -81,17 +81,21 @@
               </div>
             </ElTooltip>
           </div>
-          <div
-            v-if="dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal"
-            class="mb-4 flex align-items-center"
-          >
-            <span class="mr-2 sync-info-item__title">{{
-              $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu')
-            }}</span>
-            <ElProgress class="flex-1 my-2" :show-text="false" :percentage="currentTotalDataPercentage" />
-            <span class="ml-2">{{
-              (totalData.currentSnapshotTableInsertRowTotal || 0) + '/' + (totalData.currentSnapshotTableRowTotal || 0)
-            }}</span>
+          <div v-if="dataflow.syncType === 'migrate' && tableSyncStatusStatistics.length" class="mb-4">
+            <div class="mr-2 sync-info-item__title">
+              {{ $t('packages_dag_components_nodedetaildialog_dangqianbiaotongbu') }}
+            </div>
+            <div v-for="(sItem, sIndex) in tableSyncStatusStatistics" :key="sIndex" class="flex align-items-center">
+              <span class="mr-2 sync-info-item__title">{{ sItem._id }}</span>
+              <div class="flex align-items-center flex-fill">
+                <ElProgress
+                  class="flex-1 my-2"
+                  :show-text="false"
+                  :percentage="Math.ceil(sItem.syncTotal / sItem.dataTotal)"
+                />
+                <span class="ml-2">{{ sItem.syncTotal + '/' + sItem.dataTotal }}</span>
+              </div>
+            </div>
           </div>
         </template>
         <template v-if="dataflow.type !== 'initial_sync'">
@@ -584,6 +588,18 @@ export default {
 
     showToInitialList() {
       return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
+    },
+
+    tableSyncStatusStatistics() {
+      let result = this.quota.samples.tableSyncStatusStatistics || []
+
+      return result
+        .filter(t => !/^\*\*.*\*\*$/.test(t._id))
+        .map(t => {
+          t.dataTotal = t.dataTotal || 0
+          t.syncTotal = t.syncTotal || 0
+          return t
+        })
     }
   },
 

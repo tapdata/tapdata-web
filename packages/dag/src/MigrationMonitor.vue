@@ -876,6 +876,13 @@ export default {
             size: 200,
             page: 1
           }
+        },
+        tableSyncStatusStatistics: {
+          uri: '/api/measurement/table_sync_status_statistics',
+          param: {
+            taskId,
+            taskRecordId
+          }
         }
       }
       return params
@@ -920,11 +927,11 @@ export default {
         time: [],
         interval: 5000
       }
-      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData']
+      let arr = ['totalData', 'barChartData', 'lineChartData', 'dagData', 'agentData', 'tableSyncStatusStatistics']
       arr.forEach(el => {
         const item = data[el]
         if (item.code === 'ok') {
-          quota.samples[el] = item.data?.samples?.data
+          quota.samples[el] = item.data?.samples?.data || item.data
           if (item.data?.interval) {
             quota.interval = item.data.interval
           }
