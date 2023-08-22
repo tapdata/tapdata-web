@@ -119,7 +119,9 @@
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
-        :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
+        :disabled="
+          (dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn() || !buttonShowMap.Edit
+        "
         class="ml-3"
         size="medium"
         @click="$emit('save')"
@@ -224,6 +226,7 @@ export default {
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
@@ -312,6 +315,7 @@ export default {
     },
 
     getTaskPermissions() {
+      if (!this.isDaas) return
       const id = this.dataflow.id || this.$route.params?.id
       id &&
         dataPermissionApi
