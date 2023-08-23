@@ -95,7 +95,7 @@
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
           v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
-          :disabled="$disabledReadonlyUserBtn()"
+          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Edit"
           class="ml-3"
           size="medium"
           @click="$emit('edit')"
@@ -104,7 +104,7 @@
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
-          :disabled="$disabledReadonlyUserBtn()"
+          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Reset"
           class="ml-3"
           size="medium"
           type="warning"
@@ -114,7 +114,7 @@
         </ElButton>
         <ElButton
           v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
-          :disabled="$disabledReadonlyUserBtn()"
+          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Start"
           class="ml-3"
           size="medium"
           type="primary"
@@ -125,7 +125,11 @@
         <template v-else>
           <ElButton
             v-if="isShowForceStop(dataflow)"
-            :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
+            :disabled="
+              (dataflow.disabledData && dataflow.disabledData.forceStop) ||
+              $disabledReadonlyUserBtn() ||
+              !buttonShowMap.Stop
+            "
             key="forceStop"
             class="ml-3"
             size="medium"
@@ -136,7 +140,9 @@
           </ElButton>
           <ElButton
             v-else
-            :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
+            :disabled="
+              (dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn() || !buttonShowMap.Stop
+            "
             key="stop"
             size="medium"
             type="danger"
@@ -177,7 +183,13 @@ export default {
       type: Array,
       default: () => []
     },
-    quota: Object
+    quota: Object,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   mixins: [syncTaskAgent],

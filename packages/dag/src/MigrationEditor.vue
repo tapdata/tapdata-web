@@ -7,6 +7,7 @@
       :dataflow-name="dataflow.name"
       :dataflow="dataflow"
       :scale="scale"
+      :buttonShowMap="buttonShowMap"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -84,6 +85,7 @@
         :settings="dataflow"
         :scope="scope"
         :sync-type="dataflow.syncType"
+        :buttonShowMap="buttonShowMap"
         @hide="onHideSidebar"
       />
     </section>
@@ -174,6 +176,9 @@ export default {
       if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
+    },
+    'dataflow.id'() {
+      this.getTaskPermissions()
     }
   },
 
@@ -183,6 +188,8 @@ export default {
     await this.initPdkProperties()
     this.initNodeType()
     this.autoAddNode()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()

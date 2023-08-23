@@ -218,7 +218,13 @@ export default {
     isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
-    scale: Number
+    scale: Number,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   components: { TextEditable, TaskStatus, VDivider, VIcon },
@@ -237,15 +243,7 @@ export default {
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: '',
-      buttonShowMap: {
-        View: false,
-        Edit: false,
-        Delete: false,
-        Reset: false,
-        Start: false,
-        Stop: false
-      }
+      nodeSearchInput: ''
     }
   },
 
@@ -265,9 +263,6 @@ export default {
   watch: {
     dataflowName(v) {
       this.name = v
-    },
-    'dataflow.id'(v) {
-      v && this.getTaskPermissions()
     }
   },
 
@@ -312,22 +307,6 @@ export default {
         }
       }
       backToList()
-    },
-
-    getTaskPermissions() {
-      if (!this.isDaas) return
-      const id = this.dataflow.id || this.$route.params?.id
-      id &&
-        dataPermissionApi
-          .dataActions({
-            dataType: 'Task',
-            dataId: id
-          })
-          .then(data => {
-            for (let key in this.buttonShowMap) {
-              this.buttonShowMap[key] = data.includes(key)
-            }
-          })
     }
   }
 }

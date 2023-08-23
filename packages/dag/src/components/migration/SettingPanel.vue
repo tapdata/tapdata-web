@@ -21,7 +21,8 @@ export default observer({
   components: { FormRender },
   props: {
     settings: Object,
-    scope: Object
+    scope: Object,
+    buttonShowMap: Object
   },
 
   data() {
@@ -725,7 +726,6 @@ export default observer({
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
                     type: 'boolean',
                     default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -734,7 +734,6 @@ export default observer({
                   },
                   'alarmSettings.0.notify': {
                     type: 'array',
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Checkbox.Group',
                     'x-component-props': {
@@ -747,7 +746,6 @@ export default observer({
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
                     type: 'boolean',
                     default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -756,7 +754,6 @@ export default observer({
                   },
                   'alarmSettings.1.notify': {
                     type: 'array',
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Checkbox.Group',
                     'x-component-props': {
@@ -769,7 +766,6 @@ export default observer({
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
                     type: 'boolean',
                     default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -778,7 +774,6 @@ export default observer({
                   },
                   'alarmSettings.2.notify': {
                     type: 'array',
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Checkbox.Group',
                     'x-component-props': {
@@ -791,7 +786,6 @@ export default observer({
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
                     type: 'boolean',
                     default: true,
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -808,7 +802,6 @@ export default observer({
                   },
                   'alarmSettings.3.notify': {
                     type: 'array',
-                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Checkbox.Group',
                     'x-component-props': {
@@ -837,7 +830,6 @@ export default observer({
                       'alarmRules.0._point': {
                         title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
                         type: 'number',
-                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -865,7 +857,6 @@ export default observer({
                         title: i18n.t('public_time_m'),
                         type: 'number',
                         default: 1,
-                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -911,7 +902,6 @@ export default observer({
                       'alarmRules.0._ms': {
                         title: '',
                         type: 'number',
-                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -995,7 +985,6 @@ export default observer({
                           properties: {
                             checked: {
                               type: 'array',
-                              'x-editable': true,
                               'x-decorator': 'FormItem',
                               'x-component': 'Checkbox.Group',
                               'x-component-props': {
@@ -1187,6 +1176,16 @@ export default observer({
 
   created() {
     this.form.setState({ disabled: this.stateIsReadonly })
+    // 告警设置和权限设置，禁用单独控制
+    this.form.setFieldState('tab3', {
+      disabled: !this.buttonShowMap.Edit
+    })
+    this.form.setFieldState('*(alarmRules.*.*)', {
+      disabled: !this.buttonShowMap.Edit
+    })
+    this.form.setFieldState('tab4', {
+      disabled: !this.buttonShowMap.Edit
+    })
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
     this.lazySavePermissionsConfig = debounce(this.savePermissionsConfig, 300)
 

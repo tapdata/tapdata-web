@@ -9,6 +9,7 @@
       :scale="scale"
       :showBottomPanel="showBottomPanel"
       :quota="quota"
+      :buttonShowMap="buttonShowMap"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -138,6 +139,7 @@
         :scope="formScope"
         :show-schema-panel="dataflow.syncType === 'sync'"
         :sync-type="dataflow.syncType"
+        :buttonShowMap="buttonShowMap"
         @hide="onHideSidebar"
       />
 
@@ -341,6 +343,9 @@ export default {
         this.handleBottomPanel(!flag)
       }
       this.toggleConnectionRun(v1 === 'running')
+    },
+    'dataflow.id'() {
+      this.getTaskPermissions()
     }
   },
 
@@ -354,6 +359,8 @@ export default {
     // 收集pdk上节点的schema
     await this.initPdkProperties()
     await this.initNodeType()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initConnectionType()

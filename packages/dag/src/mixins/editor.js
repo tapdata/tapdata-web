@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { databaseTypesApi, sharedCacheApi, taskApi } from '@tap/api'
+import { databaseTypesApi, dataPermissionApi, sharedCacheApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -39,7 +39,16 @@ export default {
     })
 
     return {
-      dataflow
+      dataflow,
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      buttonShowMap: {
+        View: false,
+        Edit: false,
+        Delete: false,
+        Reset: false,
+        Start: false,
+        Stop: false
+      }
     }
   },
 
@@ -2234,6 +2243,19 @@ export default {
         .catch(() => {
           this.buried(buriedCode, { result: false })
         })
+    },
+    // 获取任务的按钮权限
+    async getTaskPermissions() {
+      if (!this.isDaas) return
+      const id = this.dataflow.id || this.$route.params?.id
+      if (!id) return
+      const data = await dataPermissionApi.dataActions({
+        dataType: 'Task',
+        dataId: id
+      })
+      for (let key in this.buttonShowMap) {
+        this.buttonShowMap[key] = data.includes(key)
+      }
     }
   }
 }
