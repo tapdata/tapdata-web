@@ -19,7 +19,9 @@
         @click="handleQuit"
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
-      <IconButton v-if="isDaas" class="ml-auto" @click="handleSettings" lg>cog-o</IconButton>
+      <IconButton v-if="isDaas || $route.path === '/data-console'" class="ml-auto" @click="handleSettings" lg
+        >cog-o</IconButton
+      >
       <!--升级存储-->
       <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
     </div>
