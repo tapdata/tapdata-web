@@ -763,12 +763,9 @@ export default {
           }
         }
       })
-
       const connectionProperties = data?.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
-
       delete connectionProperties.OPTIONAL_FIELDS
-
       let result = {
         type: 'object',
         'x-component-props': {
