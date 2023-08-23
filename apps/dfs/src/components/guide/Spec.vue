@@ -29,13 +29,11 @@
         :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
         v-if="platform === 'fullManagement'"
       >
-        <div class="flex">
-          <span
-            class="font-color-light inline-block"
-            :class="[{ 'form-label': this.$i18n.locale === 'zh-CN' }, { 'form-label-en': this.$i18n.locale === 'en' }]"
-            >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
-          >
-          <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+        <div class="cloud-region-grid">
+          <span class="font-color-light inline-block">{{
+            $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
+          }}</span>
+          <ElRadioGroup v-model="provider" @input="changeProvider" class="flex flex-wrap gap-4">
             <ElRadio
               v-for="(item, index) in cloudProviderList"
               :key="index"
@@ -48,14 +46,8 @@
               </span>
             </ElRadio>
           </ElRadioGroup>
-        </div>
-        <div class="flex mt-4">
-          <span
-            class="font-color-light inline-block"
-            :class="[{ 'form-label': this.$i18n.locale === 'zh-CN' }, { 'form-label-en': this.$i18n.locale === 'en' }]"
-            >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
-          >
-          <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
+          <span class="font-color-light inline-block">{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span>
+          <ElRadioGroup v-model="region" class="flex flex-wrap gap-4" @change="changeRegion">
             <ElRadio
               v-for="(item, index) in cloudDetail"
               :key="index"
@@ -585,5 +577,11 @@ export default {
       display: contents;
     }
   }
+}
+
+.cloud-region-grid {
+  display: grid;
+  grid-template-columns: auto 1fr; /* 两列 */
+  grid-gap: 16px;
 }
 </style>
