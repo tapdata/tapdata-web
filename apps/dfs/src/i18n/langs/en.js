@@ -1531,7 +1531,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
   dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Availability zone:',
   dfs_agent_download_subscriptionmodeldialog_diqu: 'Region',
-  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
+  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud Provider',
   dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: 'Please select the region you want to deploy',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
     'Include all of the Integration Platform use cases, plus more:',

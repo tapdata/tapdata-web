@@ -157,6 +157,7 @@ export default {
   mixins: [tour],
   data() {
     const $t = this.$t.bind(this)
+    let isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
       activeMenu: '',
       menus: [],
@@ -207,7 +208,7 @@ export default {
       userInfo: '',
       // aliyunMaketVisible: false,
       isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation: true
+      isDomesticStation
     }
   },
 
@@ -227,10 +228,7 @@ export default {
       //生产环境隐藏数据校验
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
     }
-    //海外版隐藏数据服务
-    if (window.__config__?.station) {
-      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
-    }
+
     let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
     const findRoute = name => {
       return children.find(item => item.name === name)
@@ -373,8 +371,11 @@ export default {
 
     loadChat() {
       let $zoho = $zoho || {}
+      const { isDomesticStation } = this
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        widgetcode: isDomesticStation
+          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
+          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
         values: {},
         ready: function () {}
       }
@@ -384,7 +385,7 @@ export default {
       s.type = 'text/javascript'
       s.id = 'zsiqscript'
       s.defer = true
-      s.src = 'https://salesiq.zoho.com.cn/widget'
+      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
