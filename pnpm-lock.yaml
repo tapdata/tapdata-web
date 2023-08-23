@@ -351,8 +351,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       driver.js:
-        specifier: ^1.0.4
-        version: 1.0.5
+        specifier: ^1.2.1
+        version: 1.2.1
       echarts:
         specifier: ^5.0.2
         version: 5.4.2
@@ -5784,8 +5784,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /driver.js@1.0.5:
-    resolution: {integrity: sha512-yLue+o82AeEnKrG77n1LZBygsc2T/F0txMxhXj2vA8E0VtzObpWqN+VMOp1uQsVFh582eA+1x07lM5o6IKtX3g==}
+  /driver.js@1.2.1:
+    resolution: {integrity: sha512-6nDbVnZdjRgTsJOOmGRmMf/t6cHnMyyZK/wLSbdLZp33I7odPglw1cVlX3TMaPnMDYIJUq7h8a0buejOLqM7XQ==}
     dev: false
 
   /duplexer@0.1.2:

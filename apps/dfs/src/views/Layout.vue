@@ -140,7 +140,6 @@ import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
 import ReplicationTour from '@/components/ReplicationTour'
-import Mousetrap from 'mousetrap'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -296,11 +295,6 @@ export default {
     // }
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
-
-    // 🎉🥚
-    Mousetrap.bind('up up down down left right left right', () => {
-      this.subscriptionModelVisible = !this.subscriptionModelVisible
-    })
   },
   beforeDestroy() {
     clearTimeout(this.loopLoadAgentCountTimer)

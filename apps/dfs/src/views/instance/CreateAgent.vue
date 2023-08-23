@@ -520,7 +520,7 @@ export default {
         subscriptionMethodLabel: label || '',
         platform: this.platform,
         quantity: '',
-        paymentMethod: 'Stripe',
+        // paymentMethod: 'Stripe',
         successUrl: location.origin + location.pathname + agentUrl.href,
         cancelUrl: location.origin + location.pathname + agentUrl.href,
         periodUnit,

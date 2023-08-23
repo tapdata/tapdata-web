@@ -32,8 +32,7 @@
             ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
-        <div class="flex-grow-1"></div>
-        <ElButton v-if="swimType === 'mdm'" size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>

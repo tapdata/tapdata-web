@@ -46,6 +46,11 @@ const VerifyDetails = async () => {
   return VerifyDetails
 }
 
+const DataConsoleDashboard = async () => {
+  const { Dashboard } = await import('@tap/ldp')
+  return Dashboard
+}
+
 const NoticeList = async () => {
   const { NoticeList } = await import('@tap/business')
   return NoticeList
@@ -453,6 +458,16 @@ const routes = [
           hideTitle: true,
           icon: 'data-server',
           activeMenu: '/data-hub'
+        }
+      },
+      {
+        path: '/data-console',
+        name: 'dataConsole',
+        component: DataConsoleDashboard,
+        meta: {
+          title: 'page_title_data_console',
+          hideTitle: true,
+          icon: 'data-server'
         }
       },
       {
