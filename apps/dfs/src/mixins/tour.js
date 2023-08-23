@@ -1,3 +1,4 @@
+import Mousetrap from 'mousetrap'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
@@ -38,15 +39,28 @@ export default {
     await this.checkGuide()
     this.loopLoadAgentCount()
     this.setBaiduIndex() // 百度推广索引
+    let unwatch
 
     if (this.subscriptionModelVisible) {
-      const unwatch = this.$watch('subscriptionModelVisible', val => {
+      unwatch = this.$watch('subscriptionModelVisible', val => {
         if (!val) {
           unwatch()
           this.checkReplicationTour()
         }
       })
     } else this.checkReplicationTour()
+
+    // 🎉🥚
+    Mousetrap.bind('up up down down left right left right', () => {
+      unwatch?.()
+      if (this.startingTour) {
+        this.showReplicationTour = false
+        this.completeTour()
+        this.destroyDriver()
+      } else {
+        this.subscriptionModelVisible = !this.subscriptionModelVisible
+      }
+    })
   },
 
   destroyed() {
@@ -358,6 +372,7 @@ export default {
       } else {
         this.driverObj = driver({
           allowClose: false,
+          allowKeyboardControl: false,
           showProgress: true,
           // onDestroyed: () => {
           //   this.startingTour = false
@@ -436,6 +451,7 @@ export default {
       this.driverObj?.destroy()
       this.driverObj = driver({
         showButtons: ['close'],
+        allowKeyboardControl: false,
         steps,
         onDestroyed: () => {
           unwatch()
@@ -609,7 +625,9 @@ export default {
         }
       ]
       this.replicationDriverObj = driver({
-        allowClose: process.env.NODE_ENV === 'development',
+        allowClose: false,
+        // allowClose: process.env.NODE_ENV === 'development',
+        allowKeyboardControl: false,
         showProgress: true,
         steps,
         onHighlightStarted: (element, step, { state }) => {
@@ -617,6 +635,8 @@ export default {
           this.setTourIndex(state.activeIndex)
         }
       })
+
+      console.log('this.replicationDriverObj', this.replicationDriverObj)
 
       const unwatch = this.$watch('replicationTour.behavior', behavior => {
         if (!this.startingTour || !this.replicationDriverObj) {
