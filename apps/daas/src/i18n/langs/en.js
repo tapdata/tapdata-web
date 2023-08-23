@@ -314,7 +314,7 @@ export default {
   task_list_status_all: 'All status',
   task_list_important_reminder: 'Important reminder',
   task_list_stop_confirm_message:
-    'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
+    'Pausing job while it is in the full sync stage may cause it to run from the beginning, are you sure you want to pause?',
   task_status_running: 'Running',
   task_status_not_running: 'Not running',
   task_info_progress: 'Running',
