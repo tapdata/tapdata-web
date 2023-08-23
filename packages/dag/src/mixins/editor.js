@@ -42,12 +42,12 @@ export default {
       dataflow,
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       buttonShowMap: {
-        View: false,
-        Edit: false,
-        Delete: false,
-        Reset: false,
-        Start: false,
-        Stop: false
+        View: true,
+        Edit: true,
+        Delete: true,
+        Reset: true,
+        Start: true,
+        Stop: true
       }
     }
   },
