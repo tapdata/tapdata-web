@@ -120,8 +120,8 @@
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
         <div slot="header" class="flex align-center">
-          <span>可用操作</span>
-          <ElTooltip class="ml-2" placement="top" content="无权限的操作已被隐藏">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>

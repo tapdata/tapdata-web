@@ -8,6 +8,7 @@ export default {
   public_description: '描述',
   public_version: '版本',
   public_operation: '操作',
+  public_operation_available: '可用操作',
   public_object: '对象',
   public_create_time: '创建时间',
   public_creator: '创建人',

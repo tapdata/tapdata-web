@@ -163,8 +163,8 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
         <div slot="header" class="flex align-center">
-          <span>可用操作</span>
-          <ElTooltip class="ml-2" placement="top" content="无权限的操作已被隐藏">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -1024,8 +1024,7 @@ export default {
       }
 
       cause &&
-        cause !==
-          '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
+        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
     // 显示权限设置

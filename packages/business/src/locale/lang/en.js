@@ -1187,5 +1187,6 @@ export default {
   packages_business_connections_permissionsdialog_lianjiequanxianshe: 'Connection permission settings',
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
   packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
-  packages_business_notice_list_gonggaobiaoti: 'Notice Title'
+  packages_business_notice_list_gonggaobiaoti: 'Notice Title',
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden'
 }

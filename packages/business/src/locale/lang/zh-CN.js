@@ -1134,5 +1134,6 @@ export default {
   packages_business_connections_permissionsdialog_lianjiequanxianshe: '连接权限设置',
   packages_business_connections_preview_quanxianguanli: '权限管理',
   packages_business_connections_preview_shujulianjiequan: '数据连接权限',
-  packages_business_notice_list_gonggaobiaoti: '公告标题'
+  packages_business_notice_list_gonggaobiaoti: '公告标题',
+  packages_business_connections_list_wuquanxiandecao: '无权限的操作已被隐藏'
 }

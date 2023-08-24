@@ -8,6 +8,7 @@ export default {
   public_description: 'Description',
   public_version: 'Version',
   public_operation: 'Operation',
+  public_operation_available: 'Available Operation',
   public_object: 'Object',
   public_create_time: 'Create Time',
   public_creator: 'Creator',
