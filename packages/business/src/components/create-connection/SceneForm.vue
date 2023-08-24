@@ -32,15 +32,8 @@
         </footer>
       </main>
       <div class="flex-1 overflow-x-hidden bg-white border-start">
-        <ConnectorDoc :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>
+        <ConnectorDoc v-if="params.pdkHash" :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>
       </div>
-      <!--<GitBook
-        v-resize.left="{
-          minWidth: 450
-        }"
-        :value="doc"
-        class="git-book"
-      ></GitBook>-->
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <el-dialog
@@ -81,7 +74,7 @@ import {
   externalStorageApi,
   proxyApi
 } from '@tap/api'
-import { VIcon, GitBook } from '@tap/component'
+import { VIcon } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
 import Test from '@tap/business/src/views/connections/Test'
@@ -92,7 +85,7 @@ import ConnectorDoc from '../ConnectorDoc'
 
 export default {
   name: 'SceneForm',
-  components: { ConnectorDoc, Test, VIcon, SchemaToForm, GitBook },
+  components: { ConnectorDoc, Test, SchemaToForm },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -167,7 +160,6 @@ export default {
 
   async created() {
     this.id = this.params.id || ''
-    this.getPdkDoc()
     await this.getPdkForm()
 
     if (this.$route.query.connectionConfig) {
@@ -1081,12 +1073,6 @@ export default {
     getConnectionIcon() {
       const { pdkHash } = this.params || {}
       return getConnectionIcon(pdkHash)
-    },
-    getPdkDoc() {
-      const { pdkHash } = this.params || {}
-      pdkApi.doc(pdkHash).then(res => {
-        this.doc = res?.data
-      })
     },
     async setConnectionConfig() {
       const { connectionConfig } = this.$route.query || {}

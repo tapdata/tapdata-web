@@ -116,8 +116,8 @@ import { action } from '@formily/reactive'
 import { cloneDeep, isEmpty } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { clusterApi, connectionsApi, databaseTypesApi, pdkApi, externalStorageApi, proxyApi } from '@tap/api'
-import { VIcon, GitBook } from '@tap/component'
+import { clusterApi, connectionsApi, databaseTypesApi, externalStorageApi, proxyApi } from '@tap/api'
+import { VIcon } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
 import { checkConnectionName, submitForm, uuid } from '@tap/shared'
 import resize from '@tap/component/src/directives/resize'
@@ -140,7 +140,6 @@ export default {
     Test,
     VIcon,
     SchemaToForm,
-    GitBook,
     ConnectionDebug,
     UsedTaskDialog,
     JsDebug
@@ -214,7 +213,6 @@ export default {
   created() {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
-    this.getPdkDoc()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -1193,12 +1191,6 @@ export default {
     getConnectionIcon() {
       const { pdkHash } = this.$route.query || {}
       return getConnectionIcon(pdkHash)
-    },
-    getPdkDoc() {
-      const { pdkHash } = this.$route.query || {}
-      pdkApi.doc(pdkHash).then(res => {
-        this.doc = res?.data
-      })
     },
 
     getForm() {
