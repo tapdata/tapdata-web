@@ -75,7 +75,13 @@
         ></BottomPanel>
       </section>
       <!--配置面板-->
-      <ConfigPanel ref="configPanel" :settings="dataflow" :scope="formScope" @hide="onHideSidebar" />
+      <ConfigPanel
+        ref="configPanel"
+        :settings="dataflow"
+        :scope="formScope"
+        :buttonShowMap="buttonShowMap"
+        @hide="onHideSidebar"
+      />
 
       <!--   节点详情   -->
       <NodeDetailDialog
@@ -221,6 +227,8 @@ export default {
     // 收集pdk上节点的schema
     await this.initPdkProperties()
     await this.initNodeType()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()

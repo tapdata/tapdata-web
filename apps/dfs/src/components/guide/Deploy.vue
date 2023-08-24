@@ -8,7 +8,10 @@ export default {
   components: { VIcon },
   props: ['agentId'],
   data() {
+    let isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
+
     return {
+      isDomesticStation,
       downLoadType: '',
       showTooltip: false,
       showAllCode: true,
@@ -79,6 +82,7 @@ export default {
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
       <span> {{ $t('dfs_components_taskalarmtour_deployment_zhunbei') }}</span>
       <el-link
+        v-if="isDomesticStation"
         type="primary"
         class="fs-6 align-top ml-2"
         href="https://salesiq.zoho.com.cn/signaturesupport.ls?widgetcode=39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f"

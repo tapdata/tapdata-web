@@ -218,7 +218,9 @@
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <!--68-2 免费实例可以删除-->
                 <ElButton
-                  v-if="item.publicAgent && !disableUnsubscribe(item)"
+                  v-if="
+                    (item.publicAgent || (item.orderInfo && item.orderInfo.subscriptionId)) && !disableUnsubscribe(item)
+                  "
                   size="mini"
                   :loading="item.btnLoading.delete"
                   @click="openUnsubscribe(item)"
@@ -227,7 +229,7 @@
                 >
                 <ElButton
                   size="mini"
-                  v-else-if="(!item.orderInfo || item.orderInfo.chargeProvider !== 'Stripe') && !delBtnDisabled(item)"
+                  v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleUnsubscribe(item)"
                   >{{ $t('public_button_unsubscribe') }}</ElButton
@@ -408,15 +410,16 @@
               <!--              >-->
               <!--                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton-->
               <!--              >-->
-              <VButton
+
+              <!--<VButton
                 v-if="!selectedRow.orderInfo"
                 type="primary"
                 :loading="selectedRow.btnLoading.delete"
                 :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                @click="handleUnsubscribe(selectedRow)"
+                @click="openUnsubscribe(selectedRow)"
               >
                 <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
-              >
+              >-->
             </div>
           </Details>
           <!--   创建订阅   -->

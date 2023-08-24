@@ -116,7 +116,8 @@ module.exports = {
     // 按需添加需要babel处理的模块
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/,
-    /[/\\]node_modules[/\\](.+?)?@figmania[/\\]webcomponent(.*)[/\\]/
+    /[/\\]node_modules[/\\](.+?)?@figmania[/\\]webcomponent(.*)[/\\]/,
+    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/
   ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']

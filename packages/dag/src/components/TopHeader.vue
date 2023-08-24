@@ -119,7 +119,9 @@
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
-        :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
+        :disabled="
+          (dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn() || !buttonShowMap.Edit
+        "
         class="ml-3"
         size="medium"
         @click="$emit('save')"
@@ -216,7 +218,13 @@ export default {
     isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
-    scale: Number
+    scale: Number,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   components: { TextEditable, TaskStatus, VDivider, VIcon },
@@ -224,6 +232,7 @@ export default {
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
@@ -234,15 +243,7 @@ export default {
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: '',
-      buttonShowMap: {
-        View: false,
-        Edit: false,
-        Delete: false,
-        Reset: false,
-        Start: false,
-        Stop: false
-      }
+      nodeSearchInput: ''
     }
   },
 
@@ -262,9 +263,6 @@ export default {
   watch: {
     dataflowName(v) {
       this.name = v
-    },
-    'dataflow.id'(v) {
-      v && this.getTaskPermissions()
     }
   },
 
@@ -309,21 +307,6 @@ export default {
         }
       }
       backToList()
-    },
-
-    getTaskPermissions() {
-      const id = this.dataflow.id || this.$route.params?.id
-      id &&
-        dataPermissionApi
-          .dataActions({
-            dataType: 'Task',
-            dataId: id
-          })
-          .then(data => {
-            for (let key in this.buttonShowMap) {
-              this.buttonShowMap[key] = data.includes(key)
-            }
-          })
     }
   }
 }

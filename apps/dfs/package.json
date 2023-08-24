@@ -41,7 +41,7 @@
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
     "default-passive-events": "^2.0.0",
-    "driver.js": "^1.0.4",
+    "driver.js": "^1.2.1",
     "echarts": "^5.0.2",
     "element-ui": "2.15.7",
     "github-markdown-css": "^4.0.0",

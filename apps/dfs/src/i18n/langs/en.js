@@ -315,10 +315,10 @@ export default {
   task_milestone_error: 'Error',
   task_milestone_finish: 'Finish',
   task_milestone_paused: 'Paused',
-  task_sync_type_cdc: 'CDC',
+  task_sync_type_cdc: 'Incremental Sync',
   task_type: 'Task Type',
-  task_initial_sync: 'initial_sync',
-  task_initial_sync_cdc: 'initial_sync + cdc',
+  task_initial_sync: 'Full Sync',
+  task_initial_sync_cdc: 'Full and Incremental Sync',
   task_reset_tsk: 'Do you want to reset this task? ',
   task_reset: 'Reset',
   task_reset_failed: 'Reset failed',
@@ -1428,7 +1428,7 @@ export default {
   dfs_agent_download_fastdownload_shuangjizhixingt:
     '3. Double-click to execute tapdata.exe to start the installation. ',
   dfs_agent_download_fastdownload_jiangwenjianta:
-    ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
+    ' 2. Put the files tapdata.exe and application.yml into the directory you want to install. The installation path cannot contain Non-Latin and Multi-byte characters. ',
   dfs_agent_download_fastdownload_he: 'and',
   dfs_agent_download_fastdownload_shiyongpeizhiwen: 'Method One: Use configuration file deployment to start Agent',
   dfs_agent_download_subscriptionmodeldialog_yongjiu: 'Permanent',
@@ -1531,7 +1531,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_apIfuwu: 'API service publishing',
   dfs_agent_download_subscriptionmodeldialog_yunchangshangkeyong: 'Availability zone:',
   dfs_agent_download_subscriptionmodeldialog_diqu: 'Region',
-  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud service provider',
+  dfs_agent_download_subscriptionmodeldialog_yunfuwushang: 'Cloud Provider',
   dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi: 'Please select the region you want to deploy',
   dfs_agent_download_subscriptionmodeldialog_chuzhichisuoyou:
     'Include all of the Integration Platform use cases, plus more:',
@@ -1736,7 +1736,7 @@ export default {
   dfs_subscribe_free_storage_tip_content:
     'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
   dfs_subscribe_storage_tip_content:
-    'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc. for secure data storage. When you select an instance below, Tapdata will automatically create a MonogDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Note Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
+    'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc. for secure data storage. When you select an instance below, Tapdata will automatically create a MongoDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Note Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
   dfs_subscribe_storage_deploy_region: 'Please select the MongoDB Atlas region you want to deploy',
   dfs_subscribe_storage_specification: 'Please select the specification of MongoDB Atlas Cluster',
   dfs_offline_deployment: 'Offline Deployment',

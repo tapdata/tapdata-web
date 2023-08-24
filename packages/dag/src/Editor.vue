@@ -7,6 +7,7 @@
       :dataflow-name="dataflow.name"
       :dataflow="dataflow"
       :scale="scale"
+      :buttonShowMap="buttonShowMap"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -88,6 +89,7 @@
         :scope="scope"
         :settings="dataflow"
         :sync-type="dataflow.syncType"
+        :buttonShowMap="buttonShowMap"
         show-schema-panel
       />
     </section>
@@ -183,6 +185,9 @@ export default {
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
+    },
+    'dataflow.id'() {
+      this.getTaskPermissions()
     }
   },
 
@@ -198,6 +203,8 @@ export default {
     await this.initPdkProperties()
     // 初始化所有节点类型
     await this.initNodeType()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
