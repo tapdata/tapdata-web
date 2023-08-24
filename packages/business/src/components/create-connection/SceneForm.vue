@@ -31,13 +31,16 @@
           </div>
         </footer>
       </main>
-      <GitBook
+      <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
+        <ConnectorDoc :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>
+      </div>
+      <!--<GitBook
         v-resize.left="{
           minWidth: 450
         }"
         :value="doc"
         class="git-book"
-      ></GitBook>
+      ></GitBook>-->
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <el-dialog
@@ -86,10 +89,11 @@ import Test from '@tap/business/src/views/connections/Test'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import resize from '@tap/component/src/directives/resize'
 import { cloneDeep } from 'lodash'
+import ConnectorDoc from '../ConnectorDoc'
 
 export default {
   name: 'SceneForm',
-  components: { Test, VIcon, SchemaToForm, GitBook },
+  components: { ConnectorDoc, Test, VIcon, SchemaToForm, GitBook },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -1019,7 +1023,8 @@ export default {
             name: 'dataConsole',
             query: {
               type: `add-${this.selectorType}`,
-              pdkHash: this.params.pdkHash
+              pdkHash: this.params.pdkHash,
+              pdkId: this.params.pdkId
             },
             params: routeParams
           })

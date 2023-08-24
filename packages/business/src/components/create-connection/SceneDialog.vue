@@ -167,6 +167,7 @@ export default {
       formParams: {
         name: '',
         pdkHash: null,
+        pdkId: null,
         md: null
       },
       selected: {},
@@ -364,7 +365,7 @@ export default {
   },
 
   mounted() {
-    const { type, pdkHash } = this.$route.query
+    const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
     if (type?.startsWith('add-')) {
@@ -372,6 +373,7 @@ export default {
       this.showDialog = true
       this.$nextTick(() => {
         this.formParams.pdkHash = pdkHash
+        this.formParams.pdkId = pdkId
         this.showForm = true
       })
     }
@@ -381,7 +383,7 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null })
+      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       this.activeTab = ''
     },
 
@@ -400,13 +402,13 @@ export default {
         return
       }
 
-      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash })
+      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash, pdkId: item.pdkId })
       this.selected = item
       this.showForm = true
     },
 
     handleSelectSpecial(item) {
-      Object.assign(this.formParams, { ...item, pdkHash: null })
+      Object.assign(this.formParams, { ...item, pdkHash: null, pdkId: null })
       this.showForm = true
     },
 

@@ -69,12 +69,7 @@
         </footer>
       </main>
       <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
-        <GitBook class="bg-white border-0" :value="doc"></GitBook>
-        <!--<iframe-->
-        <!--  ref="docsIframe"-->
-        <!--  src="https://deploy-preview-113&#45;&#45;tapdata.netlify.app/enterprise/prerequisites/certified/mysql?from=cloud"-->
-        <!--  class="w-100 h-100"-->
-        <!--&gt;</iframe>-->
+        <ConnectorDoc :pdk-hash="$route.query.pdkHash" :pdk-id="$route.query.pdkId"></ConnectorDoc>
       </div>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
@@ -134,10 +129,12 @@ import { JsDebug } from './JsDebug'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
 import { DatabaseIcon } from '../../components'
+import ConnectorDoc from '../../components/ConnectorDoc'
 
 export default {
   name: 'DatabaseForm',
   components: {
+    ConnectorDoc,
     DatabaseIcon,
     SceneDialog,
     Test,
@@ -409,11 +406,13 @@ export default {
     },
     handleDatabaseType(item) {
       this.dialogDatabaseTypeVisible = false
-      const { pdkHash } = item
-      let query = { pdkHash }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: {
+          pdkHash,
+          pdkId
+        }
       })
       location.reload()
     },

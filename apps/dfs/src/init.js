@@ -200,12 +200,14 @@ export default ({ routes }) => {
     })
   window.axios
     .get('config/config.json', {
+      cache: false,
       responseType: 'json',
       headers: {
         Accept: 'application/json'
       }
     })
     .then(res => {
+      store.commit('setConfig', res.data)
       window.__config__ = res.data
       getData()
     })

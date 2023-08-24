@@ -312,13 +312,10 @@ export default {
     createConnection(item) {
       this.dialogVisible = false
       this.buried('connectionCreate')
-      const { pdkHash } = item
-      let query = {
-        pdkHash
-      }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     },
     showGuide() {

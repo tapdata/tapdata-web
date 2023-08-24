@@ -669,13 +669,10 @@ export default {
     },
     handleDatabaseType(item) {
       this.handleDialogDatabaseTypeVisible()
-      const { pdkHash } = item
-      let query = {
-        pdkHash
-      }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     },
 

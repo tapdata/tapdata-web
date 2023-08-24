@@ -1,0 +1,168 @@
+<template>
+  <div class="h-100">
+    <GitBook v-if="isDaas" class="bg-white border-0" :value="doc"></GitBook>
+    <iframe v-else ref="docsIframe" :src="src" class="w-100 h-100 block"> </iframe>
+  </div>
+</template>
+
+<script>
+import { GitBook } from '@tap/component'
+import { pdkApi } from '@tap/api'
+
+const pdkDocMap = {
+  'big-query': 'cloud/prerequisites/warehouses-and-lake/big-query',
+  clickhouse: 'cloud/prerequisites/warehouses-and-lake/clickhouse',
+  databend: 'cloud/prerequisites/warehouses-and-lake/databend',
+  doris: 'cloud/prerequisites/warehouses-and-lake/doris',
+  selectdb: 'cloud/prerequisites/warehouses-and-lake/selectdb',
+  tablestore: 'cloud/prerequisites/warehouses-and-lake/tablestore',
+  yashandb: 'cloud/prerequisites/warehouses-and-lake/yashandb',
+  dameng: 'cloud/prerequisites/on-prem-databases/dameng',
+  db2: 'cloud/prerequisites/on-prem-databases/db2',
+  elasticsearch: 'cloud/prerequisites/on-prem-databases/elasticsearch',
+  'gbase-8a': 'cloud/prerequisites/on-prem-databases/gbase-8a',
+  'gbase-8s': 'cloud/prerequisites/on-prem-databases/gbase-8s',
+  hive1: 'cloud/prerequisites/on-prem-databases/hive1',
+  hive3: 'cloud/prerequisites/on-prem-databases/hive3',
+  informix: 'cloud/prerequisites/on-prem-databases/informix',
+  'kingbase-es-r3': 'cloud/prerequisites/on-prem-databases/kingbase-es-r3',
+  'kingbase-es-r6': 'cloud/prerequisites/on-prem-databases/kingbase-es-r6',
+  mariadb: 'cloud/prerequisites/on-prem-databases/mariadb',
+  mongodb: 'cloud/prerequisites/on-prem-databases/mongodb',
+  'mongodb-atlas': 'cloud/prerequisites/on-prem-databases/mongodb-atlas',
+  'mrs-hive3': 'cloud/prerequisites/on-prem-databases/mrs-hive3',
+  mysql: 'cloud/prerequisites/on-prem-databases/mysql',
+  'mysql-pxc': 'cloud/prerequisites/on-prem-databases/mysql-pxc',
+  oceanbase: 'cloud/prerequisites/on-prem-databases/oceanbase',
+  opengauss: 'cloud/prerequisites/on-prem-databases/opengauss',
+  oracle: 'cloud/prerequisites/on-prem-databases/oracle',
+  postgresql: 'cloud/prerequisites/on-prem-databases/postgresql',
+  redis: 'cloud/prerequisites/on-prem-databases/redis',
+  sqlserver: 'cloud/prerequisites/on-prem-databases/sqlserver',
+  tdengine: 'cloud/prerequisites/on-prem-databases/tdengine',
+  tidb: 'cloud/prerequisites/on-prem-databases/tidb',
+  'aliyun-adb-mysql': 'cloud/prerequisites/cloud-databases/aliyun-adb-mysql',
+  'aliyun-adb-postgresql': 'cloud/prerequisites/cloud-databases/aliyun-adb-postgresql',
+  'aliyun-mongodb': 'cloud/prerequisites/cloud-databases/aliyun-mongodb',
+  'aliyun-rds-for-mariadb': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mariadb',
+  'aliyun-rds-for-mongodb': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mongodb',
+  'aliyun-rds-for-mysql': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mysql',
+  'aliyun-rds-for-pg': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-pg',
+  'amazon-rds-mysql': 'cloud/prerequisites/cloud-databases/amazon-rds-mysql',
+  'polardb-mysql': 'cloud/prerequisites/cloud-databases/polardb-mysql',
+  'polardb-postgresql': 'cloud/prerequisites/cloud-databases/polardb-postgresql',
+  'tencentdb-for-mariadb': 'cloud/prerequisites/cloud-databases/tencentdb-for-mariadb',
+  'tencentdb-for-mongodb': 'cloud/prerequisites/cloud-databases/tencentdb-for-mongodb',
+  'tencentdb-for-mysql': 'cloud/prerequisites/cloud-databases/tencentdb-for-mysql',
+  'tencentdb-for-pg': 'cloud/prerequisites/cloud-databases/tencentdb-for-pg',
+  activemq: 'cloud/prerequisites/mq-and-middleware/activemq',
+  'ai-chat': 'cloud/prerequisites/mq-and-middleware/ai-chat',
+  'bes-channels': 'cloud/prerequisites/mq-and-middleware/bes-channels',
+  'hazelcast-cloud': 'cloud/prerequisites/mq-and-middleware/hazelcast-cloud',
+  kafka: 'cloud/prerequisites/mq-and-middleware/kafka',
+  rabbitmq: 'cloud/prerequisites/mq-and-middleware/rabbitmq',
+  rocketmq: 'cloud/prerequisites/mq-and-middleware/rocketmq',
+  hubspot: 'cloud/prerequisites/crm-and-sales-analytics/hubspot',
+  metabase: 'cloud/prerequisites/crm-and-sales-analytics/metabase',
+  salesforce: 'cloud/prerequisites/crm-and-sales-analytics/salesforce',
+  'zoho-crm': 'cloud/prerequisites/crm-and-sales-analytics/zoho-crm',
+  coding: 'cloud/prerequisites/saas-and-api/coding',
+  github: 'cloud/prerequisites/saas-and-api/github',
+  'lark-approval': 'cloud/prerequisites/saas-and-api/lark-approval',
+  'lark-doc': 'cloud/prerequisites/saas-and-api/lark-doc',
+  'lark-im': 'cloud/prerequisites/saas-and-api/lark-im',
+  'lark-task': 'cloud/prerequisites/saas-and-api/lark-task',
+  'quick-api': 'cloud/prerequisites/saas-and-api/quick-api',
+  vika: 'cloud/prerequisites/saas-and-api/vika',
+  'zoho-desk': 'cloud/prerequisites/saas-and-api/zoho-desk',
+  'alibaba-1688': 'cloud/prerequisites/e-commerce/alibaba-1688',
+  shein: 'cloud/prerequisites/e-commerce/shein',
+  csv: 'cloud/prerequisites/files/csv',
+  excel: 'cloud/prerequisites/files/excel',
+  json: 'cloud/prerequisites/files/json',
+  xml: 'cloud/prerequisites/files/xml',
+  'custom-connection': 'cloud/prerequisites/others/custom-connection',
+  dummy: 'cloud/prerequisites/others/dummy',
+  'http-receiver': 'cloud/prerequisites/others/http-receiver'
+}
+const pdkNameDictionary = {
+  ali1688: 'ali1688',
+  'aliyun-adb-postgres': 'aliyun-adb-postgres',
+  'aliyun-db-mongodb': 'aliyun-db-mongodb',
+  'aliyun-rds-mariadb': 'aliyun-rds-mariadb',
+  'aliyun-rds-mysql': 'aliyun-rds-mysql',
+  'aliyun-rds-postgres': 'aliyun-rds-postgres',
+  'aliyun-rds-sqlserver': 'aliyun-rds-sqlserver',
+  'aws-rds-mysql': 'aws-rds-mysql',
+  bigquery: 'bigquery',
+  custom: 'custom',
+  gbase8a: 'gbase8a',
+  gbase8s: 'gbase8s',
+  greenplum: 'greenplum',
+  hazelcast: 'hazelcast',
+  kingbaser3: 'kingbaser3',
+  kingbaser6: 'kingbaser6',
+  'open-gauss': 'open-gauss',
+  'polar-db-mysql': 'polar-db-mysql',
+  'polar-db-postgres': 'polar-db-postgres',
+  postgres: 'postgres',
+  quickapi: 'quickapi',
+  'tdd-benchmark-notable-source': 'tdd-benchmark-notable-source',
+  'tdd-benchmark-source': 'tdd-benchmark-source',
+  'tdd-source': 'tdd-source',
+  'tdd-target': 'tdd-target',
+  tddbenchmarktarget: 'tddbenchmarktarget',
+  'tencent-db-mariadb': 'tencent-db-mariadb',
+  'tencent-db-mongodb': 'tencent-db-mongodb',
+  'tencent-db-mysql': 'tencent-db-mysql',
+  'tencent-db-postgres': 'tencent-db-postgres',
+  'tencent-db-sqlserver': 'tencent-db-sqlserver'
+}
+
+export default {
+  name: 'ConnectorDoc',
+
+  props: {
+    pdkId: String,
+    pdkHash: String
+  },
+
+  components: {
+    GitBook
+  },
+
+  data() {
+    return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      doc: ''
+    }
+  },
+
+  computed: {
+    src() {
+      const domain = this.$store.getters.isDomesticStation ? 'https://docs.tapdata.net/' : 'https://docs.tapdata.io/'
+      const name = pdkNameDictionary[this.pdkId] || this.pdkId
+      const url = pdkDocMap[name]
+
+      return domain + url + '?from=cloud'
+    }
+  },
+
+  created() {
+    if (this.isDaas) {
+      this.getPdkDoc()
+    }
+  },
+
+  methods: {
+    getPdkDoc() {
+      const { pdkHash } = this.$route.query || {}
+      pdkApi.doc(pdkHash).then(res => {
+        this.doc = res?.data
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss"></style>
