@@ -190,11 +190,7 @@
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
                 :class="{ grabbable: !stateIsReadonly }"
               >
-                <OverflowTooltip
-                  :text="tb.name"
-                  placement="right"
-                  :open-delay="400"
-                >
+                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400">
                   <span>
                     <span>{{ tb.name }}</span>
                     <span v-if="tb.comment" class="font-color-sslight">{{ `(${tb.comment})` }}</span>
@@ -809,11 +805,10 @@ export default {
 
     handleDatabaseType(item) {
       this.connectionDialog = false
-      const { pdkHash } = item
-      let query = { pdkHash }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     }
   }

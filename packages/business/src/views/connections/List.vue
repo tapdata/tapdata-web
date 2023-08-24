@@ -21,7 +21,12 @@
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
           <template #connectionType>
-            <ElRadioGroup v-model="searchParams.databaseModel" size="mini" @change="table.fetch(1)">
+            <ElRadioGroup
+              :class="{ 'ml-2': isDaas }"
+              v-model="searchParams.databaseModel"
+              size="mini"
+              @change="table.fetch(1)"
+            >
               <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
               <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
               <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
@@ -670,18 +675,19 @@ export default {
     },
     handleDatabaseType(item) {
       this.handleDialogDatabaseTypeVisible()
-      const { pdkHash } = item
-      let query = {
-        pdkHash
-      }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     },
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
+      if (process.env.NODE_ENV === 'development') {
+        this.dialogDatabaseTypeVisible = true
+        return
+      }
       this.buried('connectionCreateDialog')
       this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true

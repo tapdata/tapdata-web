@@ -64,16 +64,25 @@ const store = new Vuex.Store({
         FreeTier: 0,
         Stripe: 0
       }
+    },
+
+    config: {
+      station: '' //标记国际站international 国内站 domestic
     }
   },
 
   getters: {
+    isDomesticStation: state => state.config.station === 'domestic',
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',
     completedTour: state => state.replicationTour.status === 'completed'
   },
 
   mutations: {
+    setConfig(state, config) {
+      Object.assign(state.config, config)
+    },
+
     setInstanceLoading(state, loading) {
       state.instanceLoading = loading
     },
