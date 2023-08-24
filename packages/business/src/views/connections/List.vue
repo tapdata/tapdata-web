@@ -124,6 +124,12 @@
         </template>
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
+        <div slot="header" class="flex align-center">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+            <VIcon class="color-primary" size="14">info</VIcon>
+          </ElTooltip>
+        </div>
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>

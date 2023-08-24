@@ -123,7 +123,7 @@
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name flex">
-            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
+            <span v-if="!handleClickNameDisabled(row)">{{ row.name }}</span>
             <ElLink
               v-else
               role="ellipsis"
@@ -162,47 +162,62 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
+        <div slot="header" class="flex align-center">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+            <VIcon class="color-primary" size="14">info</VIcon>
+          </ElTooltip>
+        </div>
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
-              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn() || getDisabled(row, 'Start')"
+              :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id])"
             >
               {{ $t('public_button_start') }}
             </ElLink>
             <template v-else>
               <ElLink
-                v-if="row.status === 'stopping'"
+                v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn() || getDisabled(row, 'Stop')"
+                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
               </ElLink>
               <ElLink
-                v-else
+                v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn() || getDisabled(row, 'Stop')"
+                :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
               </ElLink>
             </template>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Start') || havePermission(row, 'Stop')"
+              v-readonlybtn="'SYNC_job_operation'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn() || getDisabled(row, 'Edit')"
+              :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Edit')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -213,14 +228,19 @@
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn() || getDisabled(row, 'Reset')"
+              :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider v-if="buttonShowMap.copy" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Reset')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
@@ -230,11 +250,16 @@
             >
               {{ $t('public_button_copy') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="buttonShowMap.copy && havePermission(row, 'Delete')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn() || getDisabled(row, 'Delete')"
+              :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
               {{ $t('public_button_delete') }}
@@ -630,10 +655,12 @@ export default {
 
     handleClickNameDisabled(row = {}) {
       if (!this.isDaas) return false
+
       return (
-        (row.btnDisabled?.edit || this.$disabledReadonlyUserBtn() || this.getDisabled(row, 'Edit')) &&
-        row.btnDisabled.monitor &&
-        !row.lastStartDate
+        row.btnDisabled?.edit ||
+        this.$disabledReadonlyUserBtn() ||
+        !this.havePermission(row, 'Edit') ||
+        (row.btnDisabled.monitor && !row.lastStartDate)
       )
     },
 
@@ -997,18 +1024,17 @@ export default {
       }
 
       cause &&
-        cause !==
-          '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
+        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
     },
-    getDisabled(row = {}, type = '') {
-      if (!this.isDaas) return false
+    havePermission(row = {}, type = '') {
+      if (!this.isDaas) return true
       const data = row.permissionActions || []
-      return !data.includes(type)
+      return data.includes(type)
     }
   }
 }
