@@ -430,22 +430,23 @@ export default {
           unwatch()
         }
       })
+      const startStep = this.getButtonStep({
+        type: 'button',
+        route: 'Instance',
+        element,
+        description: i18n.t('dfs_mixins_tour_qingxianqidongnin')
+      })
+      delete startStep.popover.showButtons
       const steps = [
         {
           type: 'menu',
           route: 'Instance',
           element: '#menu-Instance',
           popover: {
-            description: i18n.t('dfs_mixins_tour_qingxianqidongnin'),
-            showButtons: []
+            description: i18n.t('dfs_mixins_tour_qingxianqidongnin')
           }
         },
-        this.getButtonStep({
-          type: 'button',
-          route: 'Instance',
-          element,
-          description: i18n.t('dfs_mixins_tour_qingxianqidongnin')
-        })
+        startStep
       ]
 
       this.driverObj?.destroy()

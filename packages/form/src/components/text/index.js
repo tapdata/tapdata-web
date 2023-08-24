@@ -11,7 +11,8 @@ export const Text = defineComponent({
       const iconClass = props.iconClass || 'color-primary mr-2 fs-7'
       const style = Object.assign(
         {
-          'white-space': 'pre',
+          lineHeight: '22px',
+          'white-space': 'pre-wrap',
           color: '#535f72'
         },
         props.contentStyle || {}

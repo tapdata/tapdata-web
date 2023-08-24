@@ -551,11 +551,10 @@ export default {
 
     handleDatabaseType(item) {
       this.connectionDialog = false
-      const { pdkHash } = item
-      let query = { pdkHash }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     }
   }

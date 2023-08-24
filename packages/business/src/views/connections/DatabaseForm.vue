@@ -1,47 +1,39 @@
 <template>
-  <div class="connection-from" v-loading="loadingFrom">
-    <div class="connection-from-body">
-      <main class="connection-from-main">
-        <div class="connection-from-title">
-          {{
+  <div class="connection-from" v-loading="loadingFrom" :class="{ 'bg-white': isDaas }">
+    <div class="connection-from-body gap-4">
+      <main class="connection-from-main bg-white rounded-lg overflow-hidden">
+        <div class="connection-from-title flex align-center p-4">
+          <span class="flex-1">{{
             $route.params.id
               ? this.$t('packages_business_connection_form_edit_connection')
               : this.$t('public_connection_button_create')
-          }}
-        </div>
-        <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('public_connection_name') }}: </label>
-          <div class="content-box">
-            <div class="img-box ml-2">
-              <img :src="getConnectionIcon()" alt="" />
-            </div>
-            <div class="content ml-2">{{ model.name }}</div>
-            <div class="addBtn cursor-pointer color-primary ml-2" @click="dialogEditNameVisible = true">
-              {{ $t('packages_business_connection_form_rename') }}
-            </div>
+          }}</span>
+          <div class="flex align-center">
+            <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
+            <template v-if="!$route.params.id">
+              <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
+              <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+                {{ $t('packages_business_connection_form_change') }}
+              </el-button>
+            </template>
+            <template v-else>
+              <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
+              <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+                {{ $t('packages_business_connection_form_rename') }}
+              </el-button>
+            </template>
           </div>
         </div>
-        <div class="connection-from-label" v-else>
-          <label class="label">{{ $t('packages_business_connection_form_data_source_type') }}:</label>
-          <div class="content-box">
-            <div class="img-box ml-2">
-              <img :src="getConnectionIcon()" alt="" />
-            </div>
-            <span class="ml-2">{{ pdkOptions.name }}</span>
-            <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
-              {{ $t('packages_business_connection_form_change') }}
-            </el-button>
-          </div>
-        </div>
+
         <div class="form-wrap">
-          <div class="form pr-3">
+          <div class="form px-4">
             <SchemaToForm
+              class="pdk-schema-form"
               ref="schemaToForm"
               :schema="schemaData"
               :scope="schemaScope"
-              wrapperWidth="600"
-              :colon="true"
-              label-width="160"
+              layout="vertical"
+              labelWidth="100%"
             ></SchemaToForm>
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
@@ -65,25 +57,20 @@
             </span>
           </div>
         </div>
-        <footer slot="footer" class="footer">
-          <div class="footer-btn">
-            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
-            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
-              $t('packages_business_connections_databaseform_jiaobentiaoshi')
-            }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('public_button_save') }}
-            </el-button>
-          </div>
+        <footer slot="footer" class="footer text-center border-top py-4">
+          <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
+          <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
+            $t('packages_business_connections_databaseform_jiaobentiaoshi')
+          }}</el-button>
+          <el-button type="primary" :loading="submitBtnLoading" @click="submit">
+            {{ $t('public_button_save') }}
+          </el-button>
         </footer>
       </main>
-      <GitBook
-        v-resize.left="{
-          minWidth: 350
-        }"
-        :value="doc"
-      ></GitBook>
+      <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
+        <ConnectorDoc :pdk-hash="$route.query.pdkHash" :pdk-id="$route.query.pdkId"></ConnectorDoc>
+      </div>
     </div>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData"></Test>
     <SceneDialog
@@ -141,10 +128,23 @@ import { ConnectionDebug } from './ConnectionDebug'
 import { JsDebug } from './JsDebug'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
+import { DatabaseIcon } from '../../components'
+import ConnectorDoc from '../../components/ConnectorDoc'
 
 export default {
   name: 'DatabaseForm',
-  components: { SceneDialog, Test, VIcon, SchemaToForm, GitBook, ConnectionDebug, UsedTaskDialog, JsDebug },
+  components: {
+    ConnectorDoc,
+    DatabaseIcon,
+    SceneDialog,
+    Test,
+    VIcon,
+    SchemaToForm,
+    GitBook,
+    ConnectionDebug,
+    UsedTaskDialog,
+    JsDebug
+  },
   inject: ['checkAgent', 'buried'],
   directives: {
     resize
@@ -406,11 +406,13 @@ export default {
     },
     handleDatabaseType(item) {
       this.dialogDatabaseTypeVisible = false
-      const { pdkHash } = item
-      let query = { pdkHash }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: {
+          pdkHash,
+          pdkId
+        }
       })
       location.reload()
     },
@@ -419,85 +421,56 @@ export default {
       const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.$route.params.id
       this.pdkOptions = data || {}
+
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
-      let connectionTypeJson = {
-        type: 'string',
-        title: this.$t('public_connection_type'),
-        required: true,
-        default: this.pdkOptions.connectionType || 'source_and_target',
-        enum: [
-          {
-            label: this.$t('public_connection_type_source_and_target'),
-            value: 'source_and_target',
-            tip: this.$t('packages_business_connection_form_source_and_target_tip')
-          },
-          {
-            label: this.$t('public_connection_type_source'),
-            value: 'source',
-            tip: this.$t('packages_business_connection_form_source_tip')
-          },
-          {
-            label: this.$t('public_connection_type_target'),
-            value: 'target',
-            tip: this.$t('packages_business_connection_form_target_tip')
-          }
-        ],
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          feedbackLayout: 'none'
-        },
-        'x-component': 'Radio.Group',
-        'x-component-props': {
-          optionType: 'button'
-        }
-      }
-      if (this.pdkOptions.connectionType === 'source') {
-        connectionTypeJson.enum = [
-          {
-            label: this.$t('public_connection_type_source'),
-            value: 'source',
-            tip: this.$t('packages_business_connection_form_source_tip')
-          }
-        ]
-      } else if (this.pdkOptions.connectionType === 'target') {
-        connectionTypeJson.enum = [
-          {
-            label: this.$t('public_connection_type_target'),
-            value: 'target',
-            tip: this.$t('packages_business_connection_form_target_tip')
-          }
-        ]
-      }
-      let END = {
-        type: 'void',
-        'x-index': 1000000,
-        properties: {
-          __TAPDATA: {
-            type: 'object',
-            'x-index': 1000000,
-            properties: {}
-          }
-        }
-      }
+
+      const { connectionType } = this.pdkOptions
+      let typeEnum = ['source', 'target'].includes(connectionType)
+        ? [
+            {
+              label: this.$t(`public_connection_type_${connectionType}`),
+              value: connectionType,
+              tip: this.$t(`packages_business_connection_form_${connectionType}_tip`)
+            }
+          ]
+        : [
+            {
+              label: this.$t('public_connection_type_source_and_target'),
+              value: 'source_and_target',
+              tip: this.$t('packages_business_connection_form_source_and_target_tip')
+            },
+            {
+              label: this.$t('public_connection_type_source'),
+              value: 'source',
+              tip: this.$t('packages_business_connection_form_source_tip')
+            },
+            {
+              label: this.$t('public_connection_type_target'),
+              value: 'target',
+              tip: this.$t('packages_business_connection_form_target_tip')
+            }
+          ]
+
+      const endProperties = {}
+
       // 是否支持共享挖掘
       if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
-        END.properties.__TAPDATA.properties.shareCdcEnable = {
-          type: 'boolean',
-          default: false,
-          title: this.$t('packages_business_connection_form_shared_mining'),
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            tooltip: this.$t('packages_business_connection_form_shared_mining_tip')
+        Object.assign(endProperties, {
+          shareCdcEnable: {
+            type: 'boolean',
+            default: false,
+            title: this.$t('packages_business_connection_form_shared_mining'),
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              tooltip: this.$t('packages_business_connection_form_shared_mining_tip')
+            },
+            'x-component': 'Switch',
+            'x-component-props': {
+              placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
+            }
           },
-          'x-component': 'Switch',
-          'x-component-props': {
-            placeholder: this.$t('packages_business_connection_form_shared_mining_tip')
-          }
-        }
-        // 共享挖掘设置
-        let config = {
           shareCDCExternalStorageId: {
             title: this.$t('packages_business_external_storage'), //外存配置
             type: 'string',
@@ -529,7 +502,6 @@ export default {
           },
           shareCDCExternalStorageIdTips: {
             type: 'void',
-            title: ' ',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               colon: false,
@@ -568,14 +540,12 @@ export default {
               }
             }
           }
-        }
-        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
+        })
       }
 
       // 是否支持包含表
       if (this.pdkOptions.capabilities?.some(t => t.id === 'get_table_names_function')) {
-        let config = {
-          //对象配置
+        Object.assign(endProperties, {
           loadAllTables: {
             type: 'boolean',
             default: true,
@@ -595,7 +565,6 @@ export default {
           },
           table_filter: {
             type: 'string',
-            title: ' ',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
@@ -625,7 +594,6 @@ export default {
           },
           openTableExcludeFilterTips: {
             type: 'void',
-            title: ' ',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               colon: false
@@ -638,7 +606,6 @@ export default {
           },
           tableExcludeFilter: {
             type: 'string',
-            title: ' ',
             'x-decorator': 'FormItem',
             'x-component': 'Input.TextArea',
             'x-component-props': {
@@ -659,66 +626,66 @@ export default {
               }
             }
           }
-        }
-        END.properties.__TAPDATA.properties = Object.assign({}, END.properties.__TAPDATA.properties, config)
+        })
       }
-      END.properties.__TAPDATA.properties.accessNodeType = {
-        type: 'string',
-        title: this.$t('packages_business_connection_form_access_node'),
-        default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          tooltip: this.$t('packages_business_connection_form_access_node_tip')
-        },
-        'x-component': 'Select',
-        enum: [
-          { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-          { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
-        ],
-        'x-reactions': [
-          {
-            target: '__TAPDATA.accessNodeProcessId',
-            fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+
+      Object.assign(endProperties, {
+        accessNodeType: {
+          type: 'string',
+          title: this.$t('packages_business_connection_form_access_node'),
+          default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            tooltip: this.$t('packages_business_connection_form_access_node_tip')
           },
-          {
-            target: '__TAPDATA.accessNodeProcessId',
-            effects: ['onFieldInputValueChange'],
-            fulfill: {
-              state: {
-                value:
-                  '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
+          'x-component': 'Select',
+          enum: [
+            { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+          ],
+          'x-reactions': [
+            {
+              target: '__TAPDATA.accessNodeProcessId',
+              fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
+            },
+            {
+              target: '__TAPDATA.accessNodeProcessId',
+              effects: ['onFieldInputValueChange'],
+              fulfill: {
+                state: {
+                  value:
+                    '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
+                }
               }
             }
-          }
-        ]
-      }
-      END.properties.__TAPDATA.properties.accessNodeProcessId = {
-        type: 'string',
-        title: ' ',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          colon: false
+          ]
         },
-        'x-component': 'Select',
-        'x-component-props': {
-          onChange: `{{ () => $self.setSelfErrors('') }}`
-        },
-        'x-reactions': [
-          '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
-          // 根据下拉数据判断是否存在已选的agent
-          {
-            fulfill: {
-              run: `if ($self.dataSource?.length && $self.value) {
+        accessNodeProcessId: {
+          type: 'string',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            colon: false
+          },
+          'x-component': 'Select',
+          'x-component-props': {
+            onChange: `{{ () => $self.setSelfErrors('') }}`
+          },
+          'x-reactions': [
+            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
+            // 根据下拉数据判断是否存在已选的agent
+            {
+              fulfill: {
+                run: `if ($self.dataSource?.length && $self.value) {
                 const current = $self.dataSource.find(item => item.value === $self.value)
                 if (!current) {
                   $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
                 }
               }`
+              }
             }
-          }
-        ],
-        // 校验下拉数据判断是否存在已选的agent
-        'x-validator': `{{(value, rule, ctx)=> {
+          ],
+          // 校验下拉数据判断是否存在已选的agent
+          'x-validator': `{{(value, rule, ctx)=> {
             if (!value) {
               return '${this.$t('packages_business_agent_select_placeholder')}'
             } else if (value && ctx.field.dataSource?.length) {
@@ -729,73 +696,75 @@ export default {
               }
             }
           }}}`
-      }
-
-      END.properties.__TAPDATA.properties.schemaUpdateHour = {
-        type: 'string',
-        title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-decorator-props': {
-          tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
         },
-        default: '02:00',
-        enum: [
-          {
-            label: i18n.t('packages_business_connections_databaseform_bujiazai'),
-            value: 'false'
+        schemaUpdateHour: {
+          type: 'string',
+          title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
+          'x-decorator': 'FormItem',
+          'x-component': 'Select',
+          'x-decorator-props': {
+            tooltip: i18n.t('packages_business_connections_databaseform_shujuyuanzhongmo')
           },
-          '00:00',
-          '01:00',
-          '02:00',
-          '03:00',
-          '04:00',
-          '05:00',
-          '06:00',
-          '07:00',
-          '08:00',
-          '09:00',
-          '10:00',
-          '11:00',
-          '12:00',
-          '13:00',
-          '14:00',
-          '15:00',
-          '16:00',
-          '17:00',
-          '18:00',
-          '19:00',
-          '20:00',
-          '21:00',
-          '22:00',
-          '23:00'
-        ]
-      }
-
-      END.properties.__TAPDATA.properties.heartbeatObject = {
-        type: 'void',
-        'x-component': 'Space',
-        title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+          default: '02:00',
+          enum: [
+            {
+              label: i18n.t('packages_business_connections_databaseform_bujiazai'),
+              value: 'false'
+            },
+            '00:00',
+            '01:00',
+            '02:00',
+            '03:00',
+            '04:00',
+            '05:00',
+            '06:00',
+            '07:00',
+            '08:00',
+            '09:00',
+            '10:00',
+            '11:00',
+            '12:00',
+            '13:00',
+            '14:00',
+            '15:00',
+            '16:00',
+            '17:00',
+            '18:00',
+            '19:00',
+            '20:00',
+            '21:00',
+            '22:00',
+            '23:00'
+          ]
         },
-        properties: {
-          heartbeatEnable: {
-            type: 'boolean',
-            default: false,
-            'x-component': 'Switch'
-          }
-        },
-        'x-reactions': {
-          dependencies: ['__TAPDATA.connection_type'],
-          fulfill: {
-            state: {
-              display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+        heartbeatObject: {
+          type: 'void',
+          'x-component': 'Space',
+          title: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            tooltip: i18n.t('packages_business_connections_databaseform_dakaixintiaobiao')
+          },
+          properties: {
+            heartbeatEnable: {
+              type: 'boolean',
+              default: false,
+              'x-component': 'Switch'
+            }
+          },
+          'x-reactions': {
+            dependencies: ['__TAPDATA.connection_type'],
+            fulfill: {
+              state: {
+                display: '{{$deps[0] === "source_and_target" ? "visible":"hidden"}}'
+              }
             }
           }
         }
-      }
+      })
+      const connectionProperties = data?.properties?.connection?.properties || {}
+      const { OPTIONAL_FIELDS } = connectionProperties
+      delete connectionProperties.OPTIONAL_FIELDS
       let result = {
         type: 'object',
         'x-component-props': {
@@ -816,10 +785,23 @@ export default {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input'
                   },
-                  connection_type: connectionTypeJson,
+                  connection_type: {
+                    type: 'string',
+                    title: this.$t('public_connection_type'),
+                    required: true,
+                    default: this.pdkOptions.connectionType || 'source_and_target',
+                    enum: typeEnum,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      feedbackLayout: 'none'
+                    },
+                    'x-component': 'Radio.Group',
+                    'x-component-props': {
+                      optionType: 'button'
+                    }
+                  },
                   connection_form_source_and_target_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -840,7 +822,6 @@ export default {
                   },
                   connection_form_source_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -859,7 +840,6 @@ export default {
                   },
                   connection_form_target_tip: {
                     type: 'void',
-                    title: ' ',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       colon: false
@@ -880,10 +860,36 @@ export default {
               }
             }
           },
-          ...(data?.properties?.connection?.properties || {}),
-          END: END
+          ...connectionProperties,
+          END: {
+            type: 'void',
+            'x-index': 1000000,
+            'x-component': 'FormCollapse',
+            'x-component-props': {
+              class: 'border-bottom-0',
+              activeKey: []
+            },
+            properties: {
+              advance: {
+                type: 'void',
+                'x-component': 'FormCollapse.Item',
+                'x-component-props': {
+                  title: i18n.t('public_advanced_settings')
+                },
+                properties: {
+                  OPTIONAL_FIELDS,
+                  __TAPDATA: {
+                    type: 'object',
+                    // 'x-index': 1000000,
+                    properties: endProperties
+                  }
+                }
+              }
+            }
+          }
         }
       }
+
       if (id) {
         await this.getPdkData(id)
         // 开启了共享挖掘
@@ -1264,19 +1270,16 @@ export default {
   .connection-from-body {
     display: flex;
     flex: 1;
-    padding-left: 24px;
-    border-radius: 4px;
+    //padding-left: 24px;
+    //border-radius: 4px;
     overflow: hidden;
-    background-color: map-get($bgColor, white);
+    //background-color: map-get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
       flex-direction: column;
       .connection-from-title {
-        padding-top: 20px;
-        margin-bottom: 24px;
         font-size: $fontSubtitle;
-        font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
         color: map-get($fontColor, dark);
         line-height: 28px;
@@ -1301,7 +1304,6 @@ export default {
           max-width: 680px;
           line-height: 22px;
           font-size: $fontBaseTitle;
-          font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
           color: map-get($fontColor, dark);
           align-items: center;
@@ -1410,7 +1412,7 @@ export default {
     }
   }
   .footer {
-    width: 100%;
+    /*width: 100%;
     height: 62px;
     background-color: map-get($bgColor, white);
     border-left: none;
@@ -1422,6 +1424,43 @@ export default {
       justify-content: flex-start;
       margin: 0 auto;
       padding-top: 18px;
+    }*/
+  }
+}
+
+.pdk-schema-form {
+  ::v-deep {
+    .formily-element-form-item-feedback-layout-loose {
+      margin-bottom: 20px;
+    }
+    .formily-element-form-item-layout-vertical {
+      > .formily-element-form-item-label {
+        margin-bottom: 8px;
+
+        .formily-element-form-item-label-content {
+          min-height: unset;
+          height: unset;
+        }
+        .formily-element-form-item-label-tooltip {
+          margin-left: 4px;
+          height: unset;
+        }
+        * {
+          line-height: 22px;
+        }
+      }
+    }
+
+    .formily-element-form-collapse {
+      &.border-bottom-0 {
+        .el-collapse-item__header {
+          border-bottom: none;
+        }
+      }
+
+      .el-collapse-item__content {
+        padding-bottom: 0;
+      }
     }
   }
 }
