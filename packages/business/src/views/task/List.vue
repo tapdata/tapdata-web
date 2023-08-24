@@ -123,7 +123,7 @@
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name flex">
-            <span v-if="!handleClickNameDisabled(row)">{{ row.name }}</span>
+            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
             <ElLink
               v-else
               role="ellipsis"
@@ -657,10 +657,9 @@ export default {
       if (!this.isDaas) return false
 
       return (
-        row.btnDisabled?.edit ||
-        this.$disabledReadonlyUserBtn() ||
-        !this.havePermission(row, 'Edit') ||
-        (row.btnDisabled.monitor && !row.lastStartDate)
+        (row.btnDisabled?.edit || this.$disabledReadonlyUserBtn() || !this.havePermission(row, 'Edit')) &&
+        row.btnDisabled.monitor &&
+        !row.lastStartDate
       )
     },
 
