@@ -178,12 +178,6 @@
         <span class="font-color-dark mx-2" v-if="selected">
           {{ selected.label }}
         </span>
-        <!--<div v-if="getDiscount(selected)">
-          <span class="price-detail-label text-end inline-block mr-2"
-            >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(selected) }) }}:
-          </span>
-          <span class="color-warning fw-sub">-{{ mongodbSpecPrice }}</span>
-        </div>-->
       </div>
     </div>
   </section>
@@ -426,117 +420,6 @@ export default {
   },
 
   methods: {
-    prevStep() {
-      //存储点击上一步需要清掉存储规格以及价格
-      if (this.platform === 'realTime') {
-        this.mdbPriceId = 'FreeTier'
-        this.mongodbSpecPrice = ''
-        this.mdbPrices = 0
-        this.mongodbSpec = '0-0'
-        this.memorySpace = 5
-      }
-      this.activeStep--
-      //授权码 带存储 不加不减步数
-      if (this.agentDeploy === 'aliyun' && this.mdbCount) {
-        this.activeStep++
-      }
-      //授权码 特殊的第二步
-      if (this.agentDeploy === 'aliyun' && this.activeStep === 1) {
-        this.agentDeploy = 'selfHost'
-      }
-    },
-    async next() {
-      if (
-        this.activeStep === 4 &&
-        this.platform === 'realTime' &&
-        this.agentDeploy === 'selfHost' &&
-        this.mongodbUrl === ''
-      ) {
-        this.$message.error(i18n.t('dfs_instance_createagent_qingtianxieninzi'))
-        return
-      }
-      //检测 mdbPriceId, 价格不能为空
-      if ((this.mdbPriceId === '' || !this.mdbPriceId) && this.activeStep === 4 && this.platform === 'realTime') {
-        this.$message.error(i18n.t('dfs_instance_createagent_meiyouhuoqudao'))
-        return
-      }
-      this.activeStep++
-      this.buried('productTypeNext')
-      //存储方案请求接口得到存储价格
-      if (this.activeStep === 4 && this.platform === 'realTime') {
-        // await this.getCloudMdbSource()
-        await this.getMongoCluster()
-        if (this.provider === 'GCP') {
-          this.mongodbSpec = this.mongodbSpecItems[0]?.value || ''
-        }
-        this.changeMongodbMemory()
-      }
-      //第一次选择授权码 返回托管模式选择 不切换类型，导致价格丢失
-      if ([1, 2].includes(this.activeStep) && this.agentDeploy !== 'aliyun') {
-        this.getPrice()
-      }
-    },
-    //选择平台
-    changePlatform(type) {
-      this.platform = type
-      this.loadPackageItems()
-      //更新存储资源价格
-      this.changeMongodbMemory()
-      //云厂商
-      this.getCloudProvider()
-      //数据初始化
-      this.mdbPriceId = 'FreeTier'
-      this.mongodbSpecPrice = ''
-      this.mdbPrices = 0
-      this.mongodbSpec = '0-0'
-      this.memorySpace = 5
-    },
-    //选择订阅模式
-    changeAgentDeploy(type) {
-      this.cancelPrice() //数据初始化
-      this.agentDeploy = type
-      this.getCloudProvider()
-      if (type === 'aliyun') {
-        this.activeStep++
-        this.getAvailableCode()
-        this.buried('productTypeAliyunCode')
-      } else {
-        this.getPrice()
-      }
-      //有存储 不加步数
-      if (type === 'aliyun' && this.mdbCount) {
-        this.activeStep--
-      }
-    },
-    //价格初始化
-    cancelPrice() {
-      //数据初始化
-      this.mdbPriceId = 'FreeTier'
-      this.mongodbSpecPrice = ''
-      this.selected = {}
-      this.currency = ''
-      this.mdbPrices = 0
-      this.mongodbSpec = '0-0'
-      this.memorySpace = 5
-    },
-    //切换规格
-    changeSpec(item, disabled) {
-      if (disabled) return
-      this.specification = item
-      this.loadPackageItems()
-      this.handleChange(this.packageItems[0]) // 更新订阅方式
-      if (!this.currencyType) {
-        this.currencyType = this.packageItems[0]?.currency
-      }
-      let currentItem = this.packageItems[0]
-      if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
-        currentItem = this.packageItems.find(
-          it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
-        )
-      }
-      this.handleChange(currentItem)
-      this.buried('changeSpec')
-    },
     async changeProviderInStorage() {
       this.changeProvider()
       await this.getMongoCluster()
@@ -561,6 +444,7 @@ export default {
       let region = this.cloudDetail.filter(it => it.region === this.region) || []
       this.regionName = region?.[0]?.regionName
     },
+
     //切换订阅方式
     handleChange(item = {}) {
       if (!isObj(item)) {
@@ -579,18 +463,7 @@ export default {
       this.changeMongodbMemory()
       this.buried('changeSubscriptionMethod')
     },
-    //切换币种
-    // changeCurrency(item) {
-    //   if (isStr(item)) {
-    //     this.currencyType = item
-    //     this.currency = this.currencyOption.find(it => it.currency === item)
-    //   } else {
-    //     this.currencyType = item.currency
-    //     this.currency = item
-    //   }
-    //   //更新存储资源价格
-    //   this.changeMongodbMemory()
-    // },
+
     changeCurrencyOption(item) {
       const options = item.currencyOption
       const { defaultCurrencyType } = this
@@ -604,6 +477,7 @@ export default {
       }
       this.currencyOption = options
     },
+
     getAmount(item, isOriginalPrice) {
       const current = this.selected
       let amount = item.amount
@@ -619,6 +493,7 @@ export default {
 
       return amount
     },
+
     formatPriceOff(item) {
       if (!item || item?.chargeProvider === 'FreeTier') return CURRENCY_SYMBOL_MAP[item.currency] + 0
 
@@ -631,6 +506,7 @@ export default {
         })
       )
     },
+
     //格式化价格
     formatPrice(item, isOriginalPrice) {
       if (!item || item?.chargeProvider === 'FreeTier') return 0
@@ -645,6 +521,7 @@ export default {
         })
       )
     },
+
     specPrice(item, isOriginalPrice) {
       if (!item || item?.chargeProvider === 'FreeTier') return 0
 
@@ -659,16 +536,6 @@ export default {
       )
     },
 
-    //检查Agent个数
-    async checkAgentCount() {
-      await this.getCloudProvider()
-    },
-    getImg(name) {
-      return require(`../../../public/images/agent/${name}.jpg`)
-    },
-    getAliiyunImg(name) {
-      return require(`../../../public/images/dashboard/${name}.svg`)
-    },
     //查询定价列表
     getSuggestPipelineNumber(cpu, memory) {
       if (memory == 2) {
@@ -679,6 +546,7 @@ export default {
       }
       return memory / 0.8
     },
+
     updateAgentCap(cpu, memory) {
       return {
         mem: parseInt(memory * 1.1 + 2) + 'G',
@@ -686,6 +554,7 @@ export default {
         tps: cpu * 2000
       }
     },
+
     //查找云厂商
     async getCloudProvider() {
       const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
@@ -705,6 +574,7 @@ export default {
       this.changeProvider()
       await this.getPrice()
     },
+
     //查询规格价格
     async getPrice() {
       const params = {
@@ -766,6 +636,7 @@ export default {
 
       console.log('specificationItems', this.specificationItems) // eslint-disable-line
     },
+
     //订购时长对应价格
     loadPackageItems() {
       const specification = this.specificationItems.find(t => t.value === this.specification)
@@ -862,6 +733,7 @@ export default {
           this.loadingMongoCluster = false
         })
     },
+
     //判断是否可选存储规格
     async getCloudMdbSource(provider = 'AliCloud') {
       this.loadingCloudMdbSource = true
@@ -922,11 +794,13 @@ export default {
       if (this.provider !== 'AliCloud') return
       this.mdbZone = this.spec2Zone[price?.mdbSpec]
     },
+
     //存储价格
     mdbPrice(price) {
       this.mdbPrices = price
       this.mongodbSpecPrice = this.formatAmount(price)
     },
+
     formatAmount(price) {
       return (
         CURRENCY_SYMBOL_MAP[this.currencyType] +
@@ -938,32 +812,6 @@ export default {
       )
     },
 
-    getEmailRules() {
-      return [
-        {
-          required: this.selected.type === 'recurring',
-          message: i18n.t('dfs_instance_create_qingshuruninde')
-        },
-        {
-          type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque')
-        }
-      ]
-    },
-
-    getPlaceholder() {
-      return this.selected.type === 'recurring'
-        ? i18n.t('dfs_instance_create_yongyujieshoumei')
-        : i18n.t('dfs_instance_create_kexuan')
-    },
-
-    validateForm(ref) {
-      return new Promise(resolve => {
-        this.$refs[ref].validate(valid => {
-          resolve(valid)
-        })
-      })
-    },
     //是否有存储agent
     getMdbCount() {
       return this.$axios.get('api/tcm/mdb/stats').then(data => {
@@ -971,6 +819,7 @@ export default {
         this.mdbFreeCount = data?.freeCount
       })
     },
+
     //提交订单
     async submit(row = {}, paymentType = 'online') {
       const { type, priceId, currency, periodUnit } = this.selected
@@ -1052,97 +901,6 @@ export default {
             this.submitLoading = false
           }
         })
-    },
-    finish() {
-      this.$message.success(this.$t('public_message_operation_success'))
-    },
-    //创建agent
-    handleNewAgentActiveCode(row) {
-      this.currentAliyunAgentType = row?.agentType
-      if (row?.agentType === 'Cloud') {
-        //全托管，跳转到下一步
-        this.saveCurrentAliyun(row)
-      } else {
-        //半托管直接创建订单
-        this.submit(row)
-      }
-    },
-    //授权码下一步数据保留
-    saveCurrentAliyun(row) {
-      this.activeStep++
-      this.currentAliyunCode = row
-      this.specificationAliyunCode = row.spec
-      this.specificationAliyunCode.name = this.specificationAliyunCode.name?.toUpperCase()
-      this.agentSizeCap = this.updateAgentCap(this.specificationAliyunCode.cpu, this.specificationAliyunCode.memory)
-    },
-    //激活
-    handleNewCode(val) {
-      this.hiddenNewCode = val
-      this.buried('goActivateCode')
-    },
-    save() {
-      this.saveLoading = true
-      this.buried('activateAliyunCode')
-      this.$axios
-        .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
-        .then(data => {
-          if (data.licenseStatus === 'ACTIVATED') {
-            if (data?.agentType === 'Cloud') {
-              this.saveCurrentAliyun(data)
-            } else {
-              this.submit(data)
-            }
-            this.buried('activateAliyunCode', '', {
-              result: true
-            })
-          } else {
-            this.close()
-            this.buried('activateAliyunCode', '', {
-              result: false
-            })
-          }
-        })
-        .catch(() => {
-          this.buried('activateAliyunCode', '', {
-            result: false
-          })
-        })
-        .finally(() => {
-          this.saveLoading = false
-        })
-    },
-    getAvailableCode() {
-      this.aliyunLoading = true
-      this.$axios
-        .get('api/tcm/aliyun/market/license/available')
-        .then(data => {
-          this.codeData =
-            data.map((t = {}) => {
-              t.bindAgent = t.agentId
-                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                : i18n.t('user_Center_weiBangDing')
-              t.specLabel = t.spec?.name?.toUpperCase()
-              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
-              return t
-            }) || []
-          this.hiddenNewCode = this.codeData?.length > 0
-          this.aliyunLoading = false
-        })
-        .finally(() => {
-          this.aliyunLoading = false
-        })
-    },
-    getDiscount(item) {
-      const { locale } = this.$i18n
-      if (item.type === 'recurring' && item.periodUnit === 'month') {
-        return locale === 'en' ? 5 : 95
-      } else if (item.periodUnit === 'year') {
-        return locale === 'en' ? 10 : 9
-      }
-    },
-    checkSpecDisabled({ mdbSpec }) {
-      if (this.provider !== 'AliCloud' || !mdbSpec) return false
-      return this.spec2Zone && !this.spec2Zone[mdbSpec]
     }
   }
 }
