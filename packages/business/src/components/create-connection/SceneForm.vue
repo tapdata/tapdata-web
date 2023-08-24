@@ -31,7 +31,7 @@
           </div>
         </footer>
       </main>
-      <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
+      <div class="flex-1 overflow-x-hidden bg-white border-start">
         <ConnectorDoc :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>
       </div>
       <!--<GitBook
@@ -78,7 +78,6 @@ import {
   databaseTypesApi,
   logcollectorApi,
   pdkApi,
-  settingsApi,
   externalStorageApi,
   proxyApi
 } from '@tap/api'
