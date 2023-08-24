@@ -500,6 +500,8 @@ export default {
       this.$refs.preview.open(row)
     },
     edit(id, item) {
+      const { pdkHash, definitionPdkId: pdkId } = item
+
       if (item.agentType === 'Local') {
         this.$confirm(
           i18n.t('packages_business_connections_list_dangqianlianjie') +
@@ -514,29 +516,27 @@ export default {
           if (!resFlag) {
             return
           }
-          const { pdkHash } = item
-          let query = {
-            pdkHash
-          }
           this.$router.push({
             name: 'connectionsEdit',
             params: {
               id: id
             },
-            query
+            query: {
+              pdkHash,
+              pdkId
+            }
           })
         })
       } else {
-        const { pdkHash } = item
-        let query = {
-          pdkHash
-        }
         this.$router.push({
           name: 'connectionsEdit',
           params: {
             id: id
           },
-          query
+          query: {
+            pdkHash,
+            pdkId
+          }
         })
       }
     },
