@@ -202,5 +202,12 @@ export default class Task extends Http {
   getTaskByTableName(params, config) {
     return this.axios.get(`${this.url}/stats/task`, { params, ...config })
   }
+  getParentTaskSign(id, parentId) {
+    return this.axios.get(`${this.url}/${id}/parent-task-sign`, {
+      params: {
+        parentId
+      }
+    })
+  }
 }
 export { Task }
