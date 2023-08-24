@@ -24,8 +24,14 @@
         :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')"
         prop="checked"
       >
-        <ElCheckboxGroup v-model="form.checked" size="mini" class="inline-flex ml-4">
-          <ElCheckbox v-for="item in items" :label="item.value" :key="item.value">{{ item.label }}</ElCheckbox>
+        <ElCheckboxGroup v-model="form.checked" size="mini" class="inline-flex ml-4" @change="handleChange">
+          <ElCheckbox
+            v-for="item in items"
+            :label="item.value"
+            :key="item.value"
+            :disabled="item.value === 'View' && form.checked.length > 1"
+            >{{ item.label }}</ElCheckbox
+          >
         </ElCheckboxGroup>
       </ElFormItem>
     </ElForm>
@@ -211,6 +217,13 @@ export default {
         .finally(() => {
           this.saveLoading = false
         })
+    },
+
+    handleChange(val) {
+      let { checked } = this.form
+      if (!checked.includes('View') && checked.length) {
+        checked.unshift('View')
+      }
     }
   }
 }

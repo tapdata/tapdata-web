@@ -149,18 +149,22 @@
           </ElTooltip>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
+            v-if="havePermission(scope.row.permissionActions, 'Edit')"
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud' ||
-              getDisabled(scope.row.permissionActions, 'Edit')
+              scope.row.agentType === 'Cloud'
             "
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
           </ElButton>
-          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider
+            v-if="havePermission(scope.row.permissionActions, 'Edit')"
+            direction="vertical"
+            v-readonlybtn="'datasource_edition'"
+          ></ElDivider>
           <ElButton
             v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
@@ -170,15 +174,15 @@
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElButton
+            v-if="havePermission(scope.row.permissionActions, 'Delete')"
             v-readonlybtn="'datasource_delete'"
             type="text"
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud' ||
-              getDisabled(scope.row.permissionActions, 'Delete')
+              scope.row.agentType === 'Cloud'
             "
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}
@@ -810,9 +814,9 @@ export default {
     getType(type) {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
     },
-    getDisabled(data = [], type = '') {
-      if (!this.isDaas) return false
-      return !data.includes(type)
+    havePermission(data = [], type = '') {
+      if (!this.isDaas) return true
+      return data.includes(type)
     },
     // 显示权限设置
     handlePermissionsSettings() {

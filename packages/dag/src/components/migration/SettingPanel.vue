@@ -1176,16 +1176,6 @@ export default observer({
 
   created() {
     this.form.setState({ disabled: this.stateIsReadonly })
-    // 告警设置和权限设置，禁用单独控制
-    this.form.setFieldState('tab3', {
-      disabled: !this.buttonShowMap.Edit
-    })
-    this.form.setFieldState('*(alarmRules.*.*)', {
-      disabled: !this.buttonShowMap.Edit
-    })
-    this.form.setFieldState('tab4', {
-      disabled: !this.buttonShowMap.Edit
-    })
     this.lazySaveAlarmConfig = debounce(this.saveAlarmConfig, 100)
     this.lazySavePermissionsConfig = debounce(this.savePermissionsConfig, 300)
 
@@ -1195,6 +1185,16 @@ export default observer({
   mounted() {
     this.$nextTick(() => {
       this.form.setEffects(this.useEffects)
+      // 告警设置和权限设置，禁用单独控制
+      this.form.setFieldState('tab3', {
+        disabled: !this.buttonShowMap.Edit
+      })
+      this.form.setFieldState('*(alarmRules.*.*)', {
+        disabled: !this.buttonShowMap.Edit
+      })
+      this.form.setFieldState('tab4', {
+        disabled: !this.buttonShowMap.Edit
+      })
     })
   },
 
