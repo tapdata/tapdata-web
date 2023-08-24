@@ -94,8 +94,8 @@
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
-          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Edit"
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit && buttonShowMap.Edit"
+          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
           @click="$emit('edit')"
@@ -103,8 +103,8 @@
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
-          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Reset"
+          v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
+          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
           type="warning"
@@ -113,8 +113,8 @@
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
-          :disabled="$disabledReadonlyUserBtn() || !buttonShowMap.Start"
+          v-if="!(dataflow.disabledData && dataflow.disabledData.start) && buttonShowMap.Start"
+          :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
           type="primary"
@@ -124,12 +124,8 @@
         </ElButton>
         <template v-else>
           <ElButton
-            v-if="isShowForceStop(dataflow)"
-            :disabled="
-              (dataflow.disabledData && dataflow.disabledData.forceStop) ||
-              $disabledReadonlyUserBtn() ||
-              !buttonShowMap.Stop
-            "
+            v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
+            :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
             key="forceStop"
             class="ml-3"
             size="medium"
@@ -139,10 +135,8 @@
             {{ $t('public_button_force_stop') }}
           </ElButton>
           <ElButton
-            v-else
-            :disabled="
-              (dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn() || !buttonShowMap.Stop
-            "
+            v-else-if="buttonShowMap.Stop"
+            :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
             key="stop"
             size="medium"
             type="danger"
