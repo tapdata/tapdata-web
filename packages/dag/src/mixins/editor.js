@@ -2021,7 +2021,8 @@ export default {
     async loadDataflow(id, params) {
       this.loading = true
       try {
-        const data = await taskApi.get(id, params)
+        const { parent_task_sign } = this.$route.query || {}
+        const data = await taskApi.get(id, params, { parent_task_sign })
         if (!data) {
           this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
@@ -2048,7 +2049,8 @@ export default {
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
-        const data = await taskApi.get(id)
+        const { parent_task_sign } = this.$route.query || {}
+        const data = await taskApi.get(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
           // 同步下任务上的属性，重置后会改变

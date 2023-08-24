@@ -7,6 +7,23 @@ export default class Task extends Http {
     super('/api/Task')
   }
 
+  get(params: unknown, filter: unknown, headers: unknown) {
+    if (Array.isArray(params)) {
+      let queryStr = ''
+      if (typeof filter === 'object') {
+        queryStr = JSON.stringify(filter)
+      } else if (typeof filter === 'string') {
+        queryStr = filter
+      }
+      const qs = queryStr ? '?filter=' + encodeURIComponent(queryStr) : ''
+      return this.axios.get(this.url + '/' + params.join('/') + qs)
+    } else if (typeof params === 'string') {
+      return this.axios.get(this.url + '/' + params, { params: filter, headers })
+    }
+    params = params || {}
+    return this.axios.get(this.url, { params })
+  }
+
   /**
    * 确认保存
    * @param params

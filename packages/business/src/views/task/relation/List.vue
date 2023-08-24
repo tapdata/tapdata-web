@@ -326,10 +326,14 @@ export default {
         logCollector: 'SharedMiningMonitor',
         mem_cache: 'SharedCacheMonitor'
       }
+      const parent_task_sign = this.$attrs.dataflow?.id
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
         params: {
           id
+        },
+        query: {
+          parent_task_sign
         }
       })
       openUrl(routeUrl.href)

@@ -1245,12 +1245,13 @@ export default observer({
         dataId: this.form.values.id
       }
       dataPermissionApi.permissions(filter).then(data => {
-        this.settings.permissions = data.map(t => {
-          return {
-            checked: t.actions,
-            roleId: t.typeId
-          }
-        })
+        this.settings.permissions =
+          data?.map(t => {
+            return {
+              checked: t.actions,
+              roleId: t.typeId
+            }
+          }) || []
       })
     }
   }
