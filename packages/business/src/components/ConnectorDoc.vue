@@ -48,6 +48,7 @@ const pdkDocMap = {
   'aliyun-rds-for-mongodb': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mongodb',
   'aliyun-rds-for-mysql': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mysql',
   'aliyun-rds-for-pg': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-pg',
+  'aliyun-rds-for-sql-server': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-sql-server',
   'amazon-rds-mysql': 'cloud/prerequisites/cloud-databases/amazon-rds-mysql',
   'polardb-mysql': 'cloud/prerequisites/cloud-databases/polardb-mysql',
   'polardb-postgresql': 'cloud/prerequisites/cloud-databases/polardb-postgresql',
@@ -84,7 +85,8 @@ const pdkDocMap = {
   xml: 'cloud/prerequisites/files/xml',
   'custom-connection': 'cloud/prerequisites/others/custom-connection',
   dummy: 'cloud/prerequisites/others/dummy',
-  'http-receiver': 'cloud/prerequisites/others/http-receiver'
+  'http-receiver': 'cloud/prerequisites/others/http-receiver',
+  greenplum: 'cloud/prerequisites/warehouses-and-lake/greenplum'
 }
 const pdkNameDictionary = {
   ali1688: 'alibaba-1688',
@@ -93,7 +95,7 @@ const pdkNameDictionary = {
   'aliyun-rds-mariadb': 'aliyun-rds-for-mariadb',
   'aliyun-rds-mysql': 'aliyun-rds-for-mysql',
   'aliyun-rds-postgres': 'aliyun-rds-for-pg',
-  'aliyun-rds-sqlserver': 'aliyun-rds-sqlserver',
+  'aliyun-rds-sqlserver': 'aliyun-rds-for-sql-server',
   'aws-rds-mysql': 'amazon-rds-mysql',
   bigquery: 'big-query',
   custom: 'custom-connection',
