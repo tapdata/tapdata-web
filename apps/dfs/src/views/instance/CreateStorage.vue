@@ -97,7 +97,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model="current.clusterTier" @change="handleChangeTier" class="flex gap-4">
+              <ElRadioGroup v-model="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in tierOptions"
                   :key="index"
@@ -125,7 +125,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model="current.storageSize" @change="handleChangeSize" class="flex gap-4">
+              <ElRadioGroup v-model="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in sizeOptions"
                   :key="index"
