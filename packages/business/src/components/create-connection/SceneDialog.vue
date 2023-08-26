@@ -29,7 +29,7 @@
         </ElInput>
       </template>
       <template v-else>
-        <IconButton @click="showForm = false" class="mr-2">left</IconButton>
+        <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
         <DatabaseIcon
           key="databaseIcon"
           v-if="formParams.pdkHash"
@@ -106,7 +106,12 @@
         <VEmpty v-else></VEmpty>
       </div>
     </div>
-    <div v-else class="form__content flex flex-column h-100 overflow-hidden border-top">
+    <div
+      v-else
+      v-loading="loading"
+      element-loading-background="#fff"
+      class="form__content flex flex-column h-100 overflow-hidden border-top"
+    >
       <ServeForm
         v-if="!formParams.pdkHash"
         :params="formParams"
@@ -119,6 +124,7 @@
         v-else
         :params="formParams"
         :selector-type="selectorType"
+        :hide-connection-type="!!fixedPdkId"
         class="flex-fill"
         @back="init"
         @success="handleSuccess"
@@ -157,7 +163,8 @@ export default {
       type: String,
       default: 'scene' // tag
     },
-    selectorType: String
+    selectorType: String,
+    fixedPdkId: String
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
@@ -350,13 +357,26 @@ export default {
     }
   },
   watch: {
-    visible(v) {
+    async visible(v) {
       this.showDialog = v
+      this.showForm = false
+      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
-        console.log('visible', this.selectorType) // eslint-disable-line
         this.search = ''
         this.currentScene = 'recommend'
-        this.getData()
+
+        if (this.fixedPdkId) {
+          this.loading = true
+          this.showForm = true
+          const pdk = await this.getPdkById(this.fixedPdkId)
+
+          if (!pdk) return
+
+          this.formParams.pdkHash = pdk.pdkHash
+          this.formParams.pdkId = pdk.pdkId
+        } else {
+          this.getData()
+        }
       }
     },
     showDialog(v) {
@@ -384,11 +404,10 @@ export default {
     init() {
       this.showForm = false
       Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
-      this.activeTab = ''
     },
 
     handleOpen() {
-      this.init()
+      // this.init()
     },
 
     handleClose() {
@@ -456,6 +475,19 @@ export default {
 
     handleSearchInput() {
       this.resetScroll()
+    },
+
+    async getPdkById(id) {
+      this.loading = true
+      const data = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          where: {
+            pdkId: id
+          }
+        })
+      })
+      this.loading = false
+      return data?.[0]
     }
   }
 }

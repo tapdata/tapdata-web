@@ -15,8 +15,16 @@
         </div>
         <div
           class="lh-lg"
-          v-html="$t(mdbPrices > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')"
+          v-html="
+            $t(currentPaid.price > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')
+          "
         ></div>
+        <div class="lh-lg">
+          {{ $t('dfs_use_self_atlas') }},
+          <ElLink type="primary" class="text-decoration-underline align-baseline" @click="addAtlasVisible = true">{{
+            $t('dfs_use_self_atlas_click_here')
+          }}</ElLink>
+        </div>
       </div>
       <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto mt-4">
         <!--存储地区-->
@@ -184,81 +192,41 @@
         </span>
       </div>
     </div>
+
+    <SceneDialog
+      :visible.sync="addAtlasVisible"
+      fixed-pdk-id="mongodb-atlas"
+      selector-type="source_and_target"
+      @success="handleSaveAtlas"
+    ></SceneDialog>
   </section>
 </template>
 
 <script>
-import { uniqBy } from 'lodash'
-
 import i18n from '@tap/i18n'
 import { IconButton } from '@tap/component'
-import { isObj } from '@tap/shared'
-import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP, PERIOD_MAP } from '@tap/business'
-
-import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
-import { dayjs } from '@tap/business/src/shared/dayjs'
+import { CURRENCY_SYMBOL_MAP, PERIOD_MAP, SceneDialog } from '@tap/business'
+import { databaseTypesApi, liveDataPlatformApi } from '@tap/api'
 
 export default {
   name: 'CreateAgent',
 
   inject: ['buried'],
 
-  components: { IconButton },
+  components: { IconButton, SceneDialog },
 
   data() {
     return {
-      activeStep: 1,
-      platform: 'realTime',
-      allPackages: '',
-      packageItems: [],
       cloudProviderList: [],
       cloudDetail: [],
       region: '',
       provider: '',
-      regionName: '',
-      cloudProviderName: '',
-      specificationItems: [],
-      specification: '',
-      currentAliyunCode: '',
-      specificationAliyunCode: '',
-      currentAliyunAgentType: '',
-      email: '',
-      selected: {},
-      form: {
-        email: ''
-      },
-      mongodbSpecItems: [],
-      mongodbUrl: '',
-      mdbPriceId: 'FreeTier', //价格ID
-      mongodbSpecPrice: '', //格式化存储价格
-      memorySpace: 5, //存储空间
-      mdbPrices: 0, //存储价格 与计算资源计算
-      mongodbSpec: '0-0', //存储规格
       paidPrice: [], //原始所有存储价格
-      currentMemorySpecName: i18n.t('dfs_instance_createagent_mianfeishiyonggui'),
-      specMap: {
-        '1C2G': i18n.t('dfs_agent_download_subscriptionmodeldialog_extra')
-      },
-      CURRENCY_MAP: CURRENCY_MAP,
       submitLoading: false,
       submitOnlineLoading: false,
-      agentCount: 0,
-      currentSpecName: '1C2G',
-      currencyOption: [],
-      currency: '',
       currencyType: '',
-      agentSizeCap: {
-        mem: '-',
-        pipeline: '-',
-        tps: '-'
-      },
-      currentPackage: '',
-      //是否有存储Agent
       mdbCount: false, //默认没有存储
       mdbFreeCount: 0, //免费存储个数
-      mdbZone: '',
-      spec2Zone: null,
-      loadingCloudMdbSource: false,
       loading: true,
       loadingProvider: false,
       loadingMongoCluster: true,
@@ -268,7 +236,9 @@ export default {
         clusterTier: '',
         storageSize: '',
         priceId: ''
-      }
+      },
+      loadingAtlas: false,
+      addAtlasVisible: false
     }
   },
 
@@ -279,6 +249,10 @@ export default {
 
     priceMap() {
       return this.paidPrice.reduce((map, curr) => ((map[curr.priceId] = curr), map), {})
+    },
+
+    currentPaid() {
+      return this.priceMap[this.current.priceId]
     },
 
     priceLabel() {
@@ -371,13 +345,28 @@ export default {
     // 获取存储规格
     await this.getMongoCluster()
     this.loading = false
+
+    this.loadAtlas()
   },
 
   methods: {
+    async loadAtlas() {
+      this.loadingAtlas = true
+      const data = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          where: {
+            pdkId: 'mongodb-atlas'
+          }
+        })
+      })
+
+      console.log('loadAtlas', data) // eslint-disable-line no-console
+      this.loadingAtlas = false
+    },
+
     //切换云厂商
     changeProvider() {
       let cloudProvider = this.providerMap[this.provider]
-      this.cloudProviderName = cloudProvider.cloudProviderName
       this.cloudDetail = cloudProvider.cloudDetail || []
       this.region = this.cloudDetail[0].region
       this.changeRegion()
@@ -425,11 +414,6 @@ export default {
     },
 
     //存储价格
-    mdbPrice(price) {
-      this.mdbPrices = price
-      this.mongodbSpecPrice = this.formatAmount(price)
-    },
-
     formatAmount(price) {
       return (
         CURRENCY_SYMBOL_MAP[this.currencyType] +
@@ -541,6 +525,24 @@ export default {
 
     handleChangeSize() {
       this.current.priceId = this.periodOptions[0].value
+    },
+
+    async handleSaveAtlas(connection) {
+      const ldp = await liveDataPlatformApi.findOne()
+
+      Object.assign(ldp, {
+        mode: 'service',
+        fdmStorageCluster: 'self',
+        fdmStorageConnectionId: connection.id,
+        mdmStorageCluster: 'self',
+        mdmStorageConnectionId: connection.id
+      })
+
+      await liveDataPlatformApi.patch(ldp)
+
+      this.$router.push({
+        name: 'dataConsole'
+      })
     }
   }
 }

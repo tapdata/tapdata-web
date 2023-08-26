@@ -91,6 +91,7 @@ export default {
     resize
   },
   props: {
+    hideConnectionType: Boolean,
     params: {
       type: Object,
       default: () => {
@@ -414,7 +415,7 @@ export default {
             }
           ]
 
-      let hideConnectionType = ['source', 'target'].includes(this.selectorType)
+      let hideConnectionType = this.hideConnectionType || ['source', 'target'].includes(this.selectorType)
       const endProperties = {}
 
       // 是否支持共享挖掘

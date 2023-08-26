@@ -1762,5 +1762,7 @@ export default {
   dfs_pay_now: 'Pay Now',
   dfs_order_total: 'Total',
   dfs_change_number: 'Change Number',
-  dfs_change_time: 'Change Time'
+  dfs_change_time: 'Change Time',
+  dfs_use_self_atlas: 'If you want to use your own MongoDB storage cluster',
+  dfs_use_self_atlas_click_here: 'please click here to provide the connection information'
 }

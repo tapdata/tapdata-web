@@ -1633,5 +1633,7 @@ export default {
   dfs_pay_now: '立即支付',
   dfs_order_total: '合计',
   dfs_change_number: '变更编号',
-  dfs_change_time: '变更申请时间'
+  dfs_change_time: '变更申请时间',
+  dfs_use_self_atlas: '如果您想使用自己的 MongoDB Atlas',
+  dfs_use_self_atlas_click_here: '请单击此处提供连接信息'
 }

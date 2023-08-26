@@ -462,7 +462,7 @@ const routes = [
       },
       {
         path: '/data-console',
-        name: 'dataConsole',
+        name: 'DataConsole',
         component: DataConsoleDashboard,
         meta: {
           title: 'page_title_data_console',
