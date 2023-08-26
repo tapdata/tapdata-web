@@ -1051,6 +1051,13 @@ export default observer({
                       }
                     }
                   }
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      visible: '{{$isDaas}}'
+                    }
+                  }
                 }
               }
             }
@@ -1186,15 +1193,17 @@ export default observer({
     this.$nextTick(() => {
       this.form.setEffects(this.useEffects)
       // 告警设置和权限设置，禁用单独控制
-      this.form.setFieldState('tab3', {
-        disabled: !this.buttonShowMap.Edit
-      })
-      this.form.setFieldState('*(alarmRules.*.*)', {
-        disabled: !this.buttonShowMap.Edit
-      })
-      this.form.setFieldState('tab4', {
-        disabled: !this.buttonShowMap.Edit
-      })
+      if (this.isDaas) {
+        this.form.setFieldState('tab3', {
+          disabled: !this.buttonShowMap.Edit
+        })
+        this.form.setFieldState('*(alarmRules.*.*)', {
+          disabled: !this.buttonShowMap.Edit
+        })
+        this.form.setFieldState('tab4', {
+          disabled: !this.buttonShowMap.Edit
+        })
+      }
     })
   },
 

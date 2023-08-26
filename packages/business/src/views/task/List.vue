@@ -162,7 +162,7 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
-        <div slot="header" class="flex align-center">
+        <div v-if="isDaas" slot="header" class="flex align-center">
           <span>{{ $t('public_operation_available') }}</span>
           <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
             <VIcon class="color-primary" size="14">info</VIcon>
