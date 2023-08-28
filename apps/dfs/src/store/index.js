@@ -67,6 +67,7 @@ const store = new Vuex.Store({
     },
 
     config: {
+      slackLink: '',
       station: '' //标记国际站international 国内站 domestic
     }
   },

@@ -271,10 +271,7 @@ export default {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
     goSlack() {
-      window.open(
-        'https://join.slack.com/share/enQtNTc2MTYwNDAyMzI5OC0xYjJmZTAzMjRhN2FiMzc0ZTgyZjdjZGUxMGQ3OGRlMjk3Yzk2NTM1YjU5ZGMxYmNiZmQ5OGZlMmJlZGM3NTY1',
-        '_blank'
-      )
+      window.open(this.$store.state.config.slackLink, '_blank')
     },
     goOfflineDeploy() {
       window.open('https://tapdata.net/tapdata-on-prem/demo.html')
