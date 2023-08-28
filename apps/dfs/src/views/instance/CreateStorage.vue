@@ -87,6 +87,8 @@
                     <span class="inline-flex align-center">
                       {{ item.regionName }}
                     </span>
+
+                    <sup v-if="item.hasFreeTrial" class="el-badge__content is-fixed is-dot bg-color-warning"></sup>
                   </ElRadio>
                 </ElRadioGroup>
               </template>
@@ -393,7 +395,10 @@ export default {
       this.cloudProviderList = original.filter(it => {
         // 暂时过滤掉阿里云
         it.cloudDetail =
-          it.cloudDetail.filter(item => item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud') || []
+          it.cloudDetail.filter(item => {
+            item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
+            return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
+          }) || []
         return it.cloudDetail.length
       })
 
