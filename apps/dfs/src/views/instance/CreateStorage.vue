@@ -8,7 +8,7 @@
     </div>
 
     <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
-      <div v-if="!loading" class="px-4 py-2 mt-4 lh-base color-primary-light-9 rounded-lg">
+      <div v-if="!loading" class="px-4 py-2 mt-6 lh-base color-primary-light-9 rounded-lg">
         <div class="mb-1 flex align-center">
           <VIcon class="text-primary mr-2" size="18">info</VIcon>
           <div class="font-color-dark fs-6 fw-sub">{{ $t('dfs_subscribe_storage_tip_title') }}</div>
@@ -113,8 +113,11 @@
                   border
                   class="rounded-4 subscription-radio m-0 position-relative"
                 >
-                  <span class="inline-flex align-center">
-                    {{ item.label }}
+                  <span
+                    class="inline-flex align-center"
+                    :class="{ 'color-warning': freeTierNames.includes(item.value) }"
+                  >
+                    {{ freeTierNames.includes(item.value) ? 'Free Trial' : item.label }}
                   </span>
                 </ElRadio>
               </ElRadioGroup>
@@ -231,6 +234,7 @@ export default {
       loadingProvider: false,
       loadingMongoCluster: true,
 
+      freeTierNames: [],
       priceList: [],
       current: {
         clusterTier: '',
@@ -273,17 +277,18 @@ export default {
 
     clusterTierMap() {
       return this.paidPrice.reduce((map, curr) => {
-        const { name, storageSize } = curr.spec
+        const { name, storageSize, storageUnit = 'G' } = curr.spec
+        const storageLabel = `${storageSize} ${storageUnit}`
         let tier = map[name]
 
         if (!tier) {
           tier = map[name] = {}
         }
 
-        let periodArr = tier[storageSize]
+        let periodArr = tier[storageLabel]
 
         if (!periodArr) {
-          periodArr = tier[storageSize] = []
+          periodArr = tier[storageLabel] = []
         }
 
         periodArr.push(curr)
@@ -292,10 +297,12 @@ export default {
     },
 
     tierOptions() {
-      return Object.keys(this.clusterTierMap).map(name => ({
-        label: `MongoDB Atlas ${name}`,
-        value: name
-      }))
+      return Object.keys(this.clusterTierMap)
+        .sort((name1, name2) => name1.localeCompare(name2))
+        .map(name => ({
+          label: `MongoDB Atlas ${name}`,
+          value: name
+        }))
     },
 
     sizeOptions() {
@@ -303,7 +310,7 @@ export default {
       const sizeMap = this.clusterTierMap[clusterTier] || {}
 
       return Object.keys(sizeMap).map(size => ({
-        label: `${size} G`,
+        label: size,
         value: size
       }))
     },
@@ -407,6 +414,14 @@ export default {
       })
       this.loadingMongoCluster = false
       const { paidPrice = [] } = data?.[0] || {}
+      const freeTierNames = [] // 记录免费存储实例名
+      for (let item of paidPrice) {
+        if (!item.price) {
+          freeTierNames.push(item.spec.name)
+        }
+      }
+      this.freeTierNames = freeTierNames
+
       this.paidPrice = paidPrice
       this.current.clusterTier = this.tierOptions[0].value
       this.current.storageSize = this.sizeOptions[0].value
