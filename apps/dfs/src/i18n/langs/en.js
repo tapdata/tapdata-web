@@ -1042,7 +1042,7 @@ export default {
   page_title_data_verify: 'Validations',
   page_title_data_difference_details: 'Difference Details',
   page_title_data_hub: 'Real Time Data Hub',
-  page_title_subscribe_storage: 'Subscription Data Storage',
+  page_title_subscribe_storage: 'Configure Storage',
   notify_abnormally_stopped: 'Stopped Unexpectedly',
   header_upgrade: 'Access old version',
   dfs_src_init_huoquyonghuxin: 'Failed to obtain user information, stop retrying and jump to 500',
