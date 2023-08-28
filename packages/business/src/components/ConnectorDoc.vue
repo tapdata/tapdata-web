@@ -1,6 +1,6 @@
 <template>
   <div class="h-100">
-    <GitBook v-if="isDaas" class="bg-white border-0" :value="doc"></GitBook>
+    <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc"></GitBook>
     <iframe v-else ref="docsIframe" :src="src" class="w-100 h-100 block"> </iframe>
   </div>
 </template>
@@ -137,17 +137,20 @@ export default {
   },
 
   computed: {
+    docUrl() {
+      return pdkDocMap[pdkNameDictionary[this.pdkId] || this.pdkId]
+    },
     src() {
       const domain = this.$store.getters.isDomesticStation ? 'https://docs.tapdata.net/' : 'https://docs.tapdata.io/'
-      const name = pdkNameDictionary[this.pdkId] || this.pdkId
-      const url = pdkDocMap[name]
-
-      return domain + url + '?from=cloud'
+      return domain + this.docUrl + '?from=cloud'
+    },
+    showIframe() {
+      return !this.isDaas && this.docUrl
     }
   },
 
   created() {
-    if (this.isDaas) {
+    if (!this.showIframe) {
       this.getPdkDoc()
     }
   },
