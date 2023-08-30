@@ -9,7 +9,7 @@
 import { GitBook } from '@tap/component'
 import { pdkApi } from '@tap/api'
 
-const pdkDocMap = window.__config__.docLinkDictionary || {
+const pdkDocMap = {
   'big-query': 'cloud/prerequisites/warehouses-and-lake/big-query',
   clickhouse: 'cloud/prerequisites/warehouses-and-lake/clickhouse',
   databend: 'cloud/prerequisites/warehouses-and-lake/databend',
@@ -138,7 +138,8 @@ export default {
 
   computed: {
     docUrl() {
-      return pdkDocMap[pdkNameDictionary[this.pdkId] || this.pdkId]
+      const map = window.__config__?.docLinkDictionary || pdkDocMap
+      return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {
       const domain = this.$store.getters.isDomesticStation ? 'https://docs.tapdata.net/' : 'https://docs.tapdata.io/'
