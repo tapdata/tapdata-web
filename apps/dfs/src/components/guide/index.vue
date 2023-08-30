@@ -138,7 +138,7 @@ export default {
       timer: null,
       activeStep: this.step ? this.step : 1,
       scenes: [], //使用场景
-      platform: 'selfHost',
+      platform: 'fullManagement',
       agentId: '',
       orderId: '',
       orderInfo: '',
