@@ -395,10 +395,19 @@ export default {
       this.cloudProviderList = original.filter(it => {
         // 暂时过滤掉阿里云
         it.cloudDetail =
-          it.cloudDetail.filter(item => {
-            item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
-            return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
-          }) || []
+          it.cloudDetail
+            .filter(item => {
+              item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
+              return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
+            })
+            .sort((item1, item2) => {
+              const a = item1.hasFreeTrial ? 1 : 2
+              const b = item2.hasFreeTrial ? 1 : 2
+
+              if (a === b) return item1.regionName.localeCompare(item2.regionName)
+
+              return a - b
+            }) || []
         return it.cloudDetail.length
       })
 
