@@ -1,5 +1,5 @@
 <template>
-  <div class="swim-lane flex flex-column h-100">
+  <div class="swim-lane flex flex-column h-100 position-relative">
     <div class="page-header-title bg-white box-card flex align-center position-relative">
       <span>{{ $t('page_title_data_hub') }}</span>
       <ElTooltip
@@ -213,16 +213,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbIns.connect({
-        source: this.$refs.source[0].$el,
-        target: this.$refs.source[0].$el,
-        endpoint: 'Dot',
-        connector: ['Bezier'],
-        anchor: ['Left', 'Right'],
-        endpointStyle: { fill: 'white', radius: 0 }
-      })
-      this.jsPlumbIns.reset()
-
+      this.jsPlumbIns.setContainer(this.$el)
       window.addEventListener('keydown', this.handleListenerEsc)
     })
   },
