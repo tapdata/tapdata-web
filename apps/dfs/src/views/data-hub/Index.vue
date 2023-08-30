@@ -18,6 +18,7 @@
 <script>
 import { Dashboard } from '@tap/ldp'
 import Intro from './Intro'
+import { liveDataPlatformApi } from '@tap/api'
 
 export default {
   name: 'DataHub',
@@ -40,12 +41,20 @@ export default {
     }
 
     this.loading = true
-    await this.loadMdbCount()
 
-    if (this.hasMDB) {
-      await this.loadMDBStatus()
+    const setting = await liveDataPlatformApi.findOne()
+
+    if (setting?.fdmStorageCluster === 'self' && setting?.fdmStorageConnectionId) {
+      this.hasMDB = true
+      this.hasActive = true
     } else {
-      await this.loadMdbSubscribeCount()
+      await this.loadMdbCount()
+
+      if (this.hasMDB) {
+        await this.loadMDBStatus()
+      } else {
+        await this.loadMdbSubscribeCount()
+      }
     }
 
     this.loading = false
