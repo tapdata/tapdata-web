@@ -10,7 +10,7 @@
         <ElButton @click="handleRefresh" type="primary" plain>{{ $t('public_button_refresh') }}</ElButton>
       </div>
     </div>
-    <Dashboard v-if="hasMDB"></Dashboard>
+    <Dashboard v-else-if="hasMDB"></Dashboard>
     <Intro v-else-if="!loading"></Intro>
   </div>
 </template>
