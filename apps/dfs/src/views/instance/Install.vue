@@ -129,13 +129,8 @@ export default {
     }
   },
 
-  computed: {
-    agentId() {
-      return this.$route.params.id
-    }
-  },
-
   created() {
+    this.agentId = this.$route.params.id
     this.getUrl()
     this.getInstance()
   },
