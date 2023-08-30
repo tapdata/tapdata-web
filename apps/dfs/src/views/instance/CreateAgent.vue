@@ -388,7 +388,11 @@ export default {
       const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(it => this.specification === it.specification && !(it.type === 'one_time' && it.periodUnit === 'year'))
+        .filter(
+          it =>
+            this.specification === it.specification &&
+            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year'))
+        )
         .map(t => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
@@ -405,9 +409,16 @@ export default {
         .sort((a, b) => {
           const aType = a.type === 'recurring' ? 1 : 2
           const bType = b.type === 'recurring' ? 1 : 2
-          const aOrder = a.order
-          const bOrder = b.order
-          return aType + aOrder - (bType + bOrder)
+          const aOrder = a.periodUnit === 'month' ? 1 : 2
+          const bOrder = b.periodUnit === 'month' ? 1 : 2
+
+          if (aType < bType) {
+            return -1
+          } else if (aType > bType) {
+            return 1
+          } else {
+            return aOrder - bOrder
+          }
         })
     },
 
