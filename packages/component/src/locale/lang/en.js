@@ -20,7 +20,7 @@ export default {
   packages_component_classification_addChildernNode: 'Add Child Category',
   packages_component_classification_nodeName: 'Please enter classification',
   packages_component_classification_deteleMessage:
-    'This operation will remove all subclasses currently present in this category. Are you sure you want to proceed with the deletion?',
+    'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
   packages_component_formBuilder_file_placeholder: 'Please select a file',
   packages_component_formBuilder_file_button: 'Select',
   packages_component_src_discoveryclassification_qingshurumulu: 'Please enter a directory description',
