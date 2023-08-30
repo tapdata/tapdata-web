@@ -4,6 +4,7 @@
     width="812px"
     :show-close="false"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
     custom-class="tour-dialog"
   >
     <template v-if="!finish">
