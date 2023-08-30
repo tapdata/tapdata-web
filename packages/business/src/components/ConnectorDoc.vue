@@ -9,7 +9,7 @@
 import { GitBook } from '@tap/component'
 import { pdkApi } from '@tap/api'
 
-const pdkDocMap = window.__config__?.docLinkDictionary || {
+const pdkDocMap = window.__config__.docLinkDictionary || {
   'big-query': 'cloud/prerequisites/warehouses-and-lake/big-query',
   clickhouse: 'cloud/prerequisites/warehouses-and-lake/clickhouse',
   databend: 'cloud/prerequisites/warehouses-and-lake/databend',
