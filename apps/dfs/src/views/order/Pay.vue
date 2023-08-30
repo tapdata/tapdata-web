@@ -314,7 +314,7 @@ export default {
 
         if (it.productType === 'MongoDB') {
           it.specLabel = `MongoDB Atlas ${it.spec.name}`
-          it.storageSizeLabel = `${it.spec.storageSize}GB`
+          it.storageSizeLabel = `${it.spec.storageSize} ${it.spec.storageSize || 'GB'}`
         } else {
           it.specLabel = getSpec(it.spec) || '-'
         }
@@ -323,14 +323,6 @@ export default {
       })
 
       // const subscribe = await this.$axios.get(`api/tcm/subscribe/${this.subscribeId}`)
-      console.log('subscribe', subscribe) // eslint-disable-line
-
-      const fastDownloadUrl = this.$router.resolve({
-        name: 'FastDownload',
-        query: {
-          id: subscribeItems[0].resourceId
-        }
-      })
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {

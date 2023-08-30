@@ -279,7 +279,7 @@ export default {
 
     clusterTierMap() {
       return this.paidPrice.reduce((map, curr) => {
-        const { name, storageSize, storageUnit = 'G' } = curr.spec
+        const { name, storageSize, storageUnit = 'GB' } = curr.spec
         const storageLabel = `${storageSize} ${storageUnit}`
         let tier = map[name]
 
