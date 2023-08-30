@@ -567,8 +567,14 @@ export default {
             result: true
           })
 
-          if (data.status === 'active') {
-            // 免费实例不需要跳转到支付
+          if (data.status === 'incomplete') {
+            this.$router.push({
+              name: 'pay',
+              params: {
+                id: data.subscribe
+              }
+            })
+          } else {
             const agentId = data.subscribeItems[0].resourceId
             this.$router.push(
               data.platform === 'fullManagement'
@@ -585,13 +591,6 @@ export default {
                     }
                   }
             )
-          } else {
-            this.$router.push({
-              name: 'pay',
-              params: {
-                id: data.subscribe
-              }
-            })
           }
         })
         .catch(() => {
