@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" element-loading-background="#fff" class="h-100">
     <div
-      v-if="hasMDB && creating"
+      v-if="hasMDB && !hasActive"
       class="text-center h-100 bg-white rounded-lg flex justify-center align-center flex-column"
     >
       <ElImage style="width: 200px; height: 200px" :src="require('@tap/assets/images/empty_waiting.png')"></ElImage>
@@ -27,17 +27,25 @@ export default {
   data() {
     return {
       hasMDB: false,
+      hasActive: false,
       loading: true,
-      creating: true
+      paying: true
     }
   },
 
   async created() {
+    if (this.$store.getters.isDomesticStation) {
+      this.loading = false
+      return
+    }
+
     this.loading = true
     await this.loadMdbCount()
 
     if (this.hasMDB) {
       await this.loadMDBStatus()
+    } else {
+      await this.loadMdbSubscribeCount()
     }
 
     this.loading = false
@@ -52,14 +60,37 @@ export default {
       this.loading = true
       const { totalCount } = await this.$axios.get('api/tcm/mdb/stats')
       this.hasMDB = totalCount > 0
+
+      if (!this.hasMDB) {
+        await this.loadMdbSubscribeCount()
+      }
+    },
+
+    async loadMdbSubscribeCount() {
+      const data = await this.$axios.get(
+        `api/tcm/subscribe?filter=${encodeURIComponent(
+          JSON.stringify({
+            where: {
+              status: {
+                $in: ['incomplete', 'active']
+              },
+              'subscribeItems.productType': 'MongoDB'
+            }
+          })
+        )}`
+      )
+
+      if (data?.total) {
+        this.hasMDB = true
+      }
     },
 
     async loadMDBStatus() {
       clearTimeout(this.timer)
       const { items } = await this.$axios.get('api/tcm/mdb')
-      this.creating = items.some(item => item.status === 'Creating')
+      this.hasActive = items.some(item => item.status === 'Activated')
 
-      if (this.creating) {
+      if (!this.hasActive) {
         this.timer = setTimeout(() => {
           this.loadMDBStatus()
         }, 10000)
