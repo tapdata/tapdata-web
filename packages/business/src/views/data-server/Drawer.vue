@@ -50,14 +50,14 @@
           </ElFormItem>
           <template v-if="tab === 'form' && data.status !== 'active'">
             <div v-if="isEdit" class="ml-10">
-              <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
-                $t('public_button_cancel')
-              }}</ElButton>
+              <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false"
+                >{{ $t('public_button_cancel') }}
+              </ElButton>
               <ElButton type="primary" size="mini" @click="save()">{{ $t('public_button_save') }}</ElButton>
             </div>
-            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{
-              $t('public_button_edit')
-            }}</ElButton>
+            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit"
+              >{{ $t('public_button_edit') }}
+            </ElButton>
           </template>
         </div>
         <div class="flex-1 mt-4" size="small">
@@ -393,8 +393,8 @@
               type="primary"
               size="mini"
               @click="generate"
-              >{{ $t('public_button_generate') }}</ElButton
-            >
+              >{{ $t('public_button_generate') }}
+            </ElButton>
           </div>
           <ul v-if="data.path" class="data-server-path">
             <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
@@ -416,9 +416,9 @@
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" size="mini" :disabled="debugDisabled" @click="debugData">{{
-              $t('public_button_submit')
-            }}</ElButton>
+            <ElButton type="primary" size="mini" :disabled="debugDisabled" @click="debugData"
+              >{{ $t('public_button_submit') }}
+            </ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">
@@ -1013,14 +1013,16 @@ export default {
           this.fieldLoading = false
         })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => {
-          return Object.assign({}, it, {
-            id: it.id,
-            field_name: it.field_name,
-            originalDataType: it.data_type,
-            comment: ''
+        data?.items?.[0]?.fields
+          ?.map(it => {
+            return Object.assign({}, it, {
+              id: it.id,
+              field_name: it.field_name,
+              originalDataType: it.data_type,
+              comment: ''
+            })
           })
-        }) || []
+          .filter(it => !it.field_name.includes('.')) || [] // 把嵌套字段过滤掉
       if (!this.form.id) {
         this.form.fields = cloneDeep(this.allFields)
       }
@@ -1189,14 +1191,16 @@ export default {
         filter: JSON.stringify(filter)
       })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => {
-          return Object.assign({}, it, {
-            id: it.id,
-            field_name: it.field_name,
-            originalDataType: it.data_type,
-            comment: ''
+        data?.items?.[0]?.fields
+          ?.map(it => {
+            return Object.assign({}, it, {
+              id: it.id,
+              field_name: it.field_name,
+              originalDataType: it.data_type,
+              comment: ''
+            })
           })
-        }) || []
+          .filter(it => !it.field_name.includes('.')) || [] // 把嵌套字段过滤掉
     }
   }
 }
@@ -1206,40 +1210,49 @@ export default {
   font-size: 15px;
   cursor: pointer;
 }
+
 .el-icon-remove {
   color: map-get($iconFillColor, normal);
 }
+
 .line-height {
   line-height: 22px;
 }
+
 .data-server__tabs {
   ::v-deep {
     .el-tabs__nav-wrap.is-top {
       padding-left: 112px;
     }
+
     .el-tabs__header.is-top {
       margin: 0;
     }
   }
 }
+
 .data-server__form {
   ::v-deep {
     .el-form-item {
       margin-bottom: 0;
     }
+
     .el-form-item__label {
       line-height: 30px;
     }
   }
 }
+
 .data-server-form-base__item {
   padding: 4px 8px;
   width: 30%;
+
   .text {
     font-size: 12px;
     word-break: break-word;
   }
 }
+
 .data-server-panel__title {
   display: flex;
   justify-content: space-between;
@@ -1253,12 +1266,14 @@ export default {
   color: map-get($fontColor, dark);
   user-select: none;
 }
+
 .data-server-path__item {
   display: flex;
   align-items: center;
   padding: 8px 0;
   font-family: PingFangSC-Regular, PingFang SC;
 }
+
 .data-server-path__method {
   margin-right: 40px;
   width: 62px;
@@ -1268,22 +1283,27 @@ export default {
   border-radius: 2px;
 
   color: map-get($fontColor, white);
+
   &.method--POST {
     background: #478c6c;
   }
+
   &.method--GET {
     background: #09819c;
   }
+
   &.method--TOKEN {
     background: #f2994b;
   }
 }
+
 .data-server-debug__url {
   border: 1px solid map-get($borderColor, form);
   background: map-get($bgColor, form);
   border-radius: 4px;
   font-family: PingFangSC-Regular, PingFang SC;
 }
+
 .data-server__form {
   ::v-deep {
     .form-item-name {
@@ -1293,6 +1313,7 @@ export default {
     }
   }
 }
+
 .data-server-debug__method {
   ::v-deep {
     .el-input__inner {
