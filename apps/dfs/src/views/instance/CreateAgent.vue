@@ -576,19 +576,16 @@ export default {
             })
           } else {
             const agentId = data.subscribeItems[0].resourceId
+            const params = agentId ? { id: agentId } : {}
             this.$router.push(
-              data.platform === 'fullManagement'
+              this.platform === 'fullManagement'
                 ? {
                     name: 'Instance',
-                    query: {
-                      id: agentId
-                    }
+                    query: params
                   }
                 : {
                     name: 'installAgent',
-                    params: {
-                      id: agentId
-                    }
+                    params
                   }
             )
           }
