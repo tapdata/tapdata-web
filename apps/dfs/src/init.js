@@ -18,6 +18,7 @@ import FormBuilder from '@tap/component/src/form-builder'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
+import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -209,6 +210,11 @@ export default ({ routes }) => {
     .then(res => {
       store.commit('setConfig', res.data)
       window.__config__ = res.data
+
+      if (res.data.onlyEnglishLanguage) {
+        setCurrentLanguage('en', i18n)
+      }
+
       getData()
     })
 }

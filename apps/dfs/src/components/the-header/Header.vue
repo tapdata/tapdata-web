@@ -108,7 +108,6 @@ import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
-import Cookie from '@tap/shared/src/cookie'
 
 export default {
   inject: ['buried'],
@@ -125,7 +124,6 @@ export default {
       lang: '',
       languages: langMenu,
       domain: document.domain,
-      onlyEnglishLanguage: false,
       configMock: window.__configMock__,
       mockUserId: null,
       openUpgradeFee: false,
@@ -135,15 +133,15 @@ export default {
       showQuestionnaire: false
     }
   },
+
+  computed: {
+    onlyEnglishLanguage() {
+      return this.$store.state.config.onlyEnglishLanguage
+    }
+  },
+
   created() {
     this.lang = getCurrentLanguage()
-    setCurrentLanguage(this.lang, this.$i18n)
-    if (window.__config__?.onlyEnglishLanguage) {
-      this.onlyEnglishLanguage = true
-      //默认只有英文则当前浏览器语言设置为英文
-      this.lang = 'en'
-      setCurrentLanguage(this.lang, this.$i18n)
-    }
     if (window.__configMock__) {
       this.mockUserId = window.__configMock__?.mockUserId || false
     }
