@@ -388,7 +388,7 @@ export default {
     const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
-    if (type?.startsWith('add-')) {
+    if (type?.startsWith('add-') && this.selectorType !== 'source_and_target') {
       this.$emit('update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {

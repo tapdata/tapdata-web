@@ -31,6 +31,7 @@ const store = new Vuex.Store({
     highlightBoard: false,
     driverIndex: 0,
     driverBehavior: '', // add-source, add-target, add-task
+    replicationConnectionDialog: false,
     replicationTour: {
       enable: false,
       activeIndex: null,
@@ -142,6 +143,10 @@ const store = new Vuex.Store({
 
     setReplicationView(state, view) {
       state.replicationTour.view = view
+    },
+
+    setReplicationConnectionDialog(state, visible) {
+      state.replicationConnectionDialog = visible
     }
   }
 })

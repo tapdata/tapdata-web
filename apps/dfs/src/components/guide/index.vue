@@ -86,9 +86,14 @@
             v-else-if="this.activeStep === 1 && bindPhoneVisible"
             >{{ $t('public_button_next') }}</VButton
           >
-          <ElButton size="default" type="primary" @click="submitConfirm()" v-else>{{
-            $t('public_button_next')
-          }}</ElButton>
+          <ElButton
+            size="default"
+            type="primary"
+            :disabled="activeKey === 'Scenes' && !scenes.length"
+            @click="submitConfirm()"
+            v-else
+            >{{ $t('public_button_next') }}</ElButton
+          >
         </div>
       </div>
     </div>

@@ -196,7 +196,7 @@ export default {
       const payMethods = [
         {
           icon: 'pay-stripe',
-          label: '在线支付',
+          label: this.$t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
           value: 'Stripe'
         }
       ]

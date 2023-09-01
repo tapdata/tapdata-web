@@ -24,7 +24,8 @@
       ></TargetItem>
     </div>
     <SceneDialog
-      :visible.sync="showSceneDialog"
+      :visible="showSceneDialog"
+      @update:visible="handleUpdateVisible"
       :selector-type.sync="selectorType"
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
@@ -478,6 +479,11 @@ export default {
       if (e.keyCode === 27 && this.showParentLineage) {
         this.handleQuit()
       }
+    },
+
+    handleUpdateVisible(val) {
+      this.showSceneDialog = val
+      this.$store.commit('setReplicationConnectionDialog', val)
     }
   }
 }

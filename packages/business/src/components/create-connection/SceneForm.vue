@@ -170,6 +170,7 @@ export default {
           ...this.$route.query,
           type: undefined,
           pdkHash: undefined,
+          pdkId: undefined,
           connectionConfig: undefined
         }
       })
@@ -1012,8 +1013,9 @@ export default {
           const routeParams = this.$route.params
           delete routeQuery['connectionConfig']
           let routeUrl = this.$router.resolve({
-            name: 'dataConsole',
+            name: this.$route.name,
             query: {
+              ...routeQuery,
               type: `add-${this.selectorType}`,
               pdkHash: this.params.pdkHash,
               pdkId: this.params.pdkId

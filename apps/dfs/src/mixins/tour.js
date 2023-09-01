@@ -560,8 +560,7 @@ export default {
 
     checkReplicationTour() {
       const tour = this.replicationTour
-      const hasConnectionConfig = this.$route.query?.hasOwnProperty('connectionConfig') // 跳转授权才会有的内容
-      if (tour.enable && !this.completedTour && !hasConnectionConfig) {
+      if (tour.enable && !this.completedTour) {
         this.initReplicationTour()
 
         if (!tour.status) {
@@ -658,9 +657,11 @@ export default {
         to => {
           if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
             this.startTour()
-            this.$nextTick(() => {
-              this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
-            })
+            if (!this.$store.state.replicationConnectionDialog) {
+              this.$nextTick(() => {
+                this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+              })
+            }
           } else {
             this.destroyDriver()
           }
