@@ -560,7 +560,8 @@ export default {
 
     checkReplicationTour() {
       const tour = this.replicationTour
-      if (tour.enable && !this.completedTour) {
+      const hasConnectionConfig = this.$route.query?.hasOwnProperty('connectionConfig') // 跳转授权才会有的内容
+      if (tour.enable && !this.completedTour && !hasConnectionConfig) {
         this.initReplicationTour()
 
         if (!tour.status) {

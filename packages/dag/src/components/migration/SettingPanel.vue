@@ -726,6 +726,7 @@ export default observer({
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuyunxingchu'),
                     type: 'boolean',
                     default: true,
+                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -740,12 +741,14 @@ export default observer({
                       onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`
                     },
                     default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   'alarmSettings.1.open': {
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuquanliangwan'),
                     type: 'boolean',
                     default: true,
+                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -760,12 +763,14 @@ export default observer({
                       onChange: `{{val=>(!val.length && ($values.alarmSettings[1].open=false))}}`
                     },
                     default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   'alarmSettings.2.open': {
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangkai'),
                     type: 'boolean',
                     default: true,
+                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -780,12 +785,14 @@ export default observer({
                       onChange: `{{val=>(!val.length && ($values.alarmSettings[2].open=false))}}`
                     },
                     default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   'alarmSettings.3.open': {
                     title: i18n.t('packages_dag_migration_alarmpanel_renwuzengliangyan'),
                     type: 'boolean',
                     default: true,
+                    'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     'x-component-props': {
@@ -808,6 +815,7 @@ export default observer({
                       onChange: `{{val=>(!val.length && ($values.alarmSettings[3].open=false))}}`
                     },
                     default: ['SYSTEM', 'EMAIL'],
+                    'x-editable': true,
                     'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
                   },
                   space: {
@@ -830,6 +838,7 @@ export default observer({
                       'alarmRules.0._point': {
                         title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
                         type: 'number',
+                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -857,6 +866,7 @@ export default observer({
                         title: i18n.t('public_time_m'),
                         type: 'number',
                         default: 1,
+                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -902,6 +912,7 @@ export default observer({
                       'alarmRules.0._ms': {
                         title: '',
                         type: 'number',
+                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -929,6 +940,7 @@ export default observer({
                         title: 's',
                         type: 'void',
                         default: 0,
+                        'x-editable': true,
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           layout: 'horizontal'
@@ -1192,14 +1204,8 @@ export default observer({
   mounted() {
     this.$nextTick(() => {
       this.form.setEffects(this.useEffects)
-      // 告警设置和权限设置，禁用单独控制
+      // 权限设置，禁用单独控制
       if (this.isDaas) {
-        this.form.setFieldState('tab3', {
-          disabled: !this.buttonShowMap.Edit
-        })
-        this.form.setFieldState('*(alarmRules.*.*)', {
-          disabled: !this.buttonShowMap.Edit
-        })
         this.form.setFieldState('tab4', {
           disabled: !this.buttonShowMap.Edit
         })
