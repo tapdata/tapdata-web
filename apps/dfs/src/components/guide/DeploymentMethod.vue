@@ -19,7 +19,7 @@ export default {
         :class="{
           active: platform === 'fullManagement'
         }"
-        class="flex flex-column position-relative cursor-pointer overflow-hidden"
+        class="flex flex-column position-relative cursor-pointer overflow-hidden mb-4"
         @click="$emit('changePlatform', 'fullManagement')"
       >
         <div class="flex justify-content-around align-items-center px-4 py-4">
@@ -40,7 +40,7 @@ export default {
         :class="{
           active: platform === 'selfHost'
         }"
-        class="flex flex-column position-relative cursor-pointer mb-4 overflow-hidden"
+        class="flex flex-column position-relative cursor-pointer overflow-hidden"
         @click="$emit('changePlatform', 'selfHost')"
       >
         <div class="flex justify-content-around align-items-center px-4 py-4">
