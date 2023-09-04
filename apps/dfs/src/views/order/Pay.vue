@@ -229,17 +229,17 @@ export default {
               width: 180
             },
             {
-              label: '存储空间',
+              label: i18n.t('dfs_instance_createagent_cunchukongjian'),
               prop: 'storageSizeLabel',
               width: 180
             },
             {
-              label: '云服务商',
+              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang'),
               prop: 'provider',
               width: 180
             },
             {
-              label: '地区',
+              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
               prop: 'region',
               width: 180
             },

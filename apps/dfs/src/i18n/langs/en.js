@@ -1571,7 +1571,7 @@ export default {
   dfs_instance_createagent_apIkuaisu: 'Customer Data Platform',
   dfs_instance_createagent_cunchuziyuan: 'Storage resource costs: ',
   dfs_instance_createagent_jisuanziyuan: 'Computing resources costs: ',
-  dfs_instance_createagent_cunchukongjian: 'Storage Space',
+  dfs_instance_createagent_cunchukongjian: 'Storage Size',
   dfs_instance_createagent_cunchuguige: 'Storage Specification',
   dfs_instance_createagent_qingxuanzeninxu: 'Please select the storage space you need:',
   dfs_instance_createagent_qingxuanzeninxu2: 'Please select the storage resource specification you need:',
@@ -1737,7 +1737,7 @@ export default {
   dfs_select_server_type: 'Please select your server type',
   dfs_subscribe_storage_tip_title: 'Where does Tapdata store data?',
   dfs_subscribe_free_storage_tip_content:
-    'Tapdata provides 10GB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
+    'Tapdata provides 512MB storage space in a shared MongoDB Cluster for Free Trial users. You may use this free storage during the 15 day trial period. Only your account can access your data.<br/>Note for Free Trial users a shared cluster is used instead of MongoDB Atlas',
   dfs_subscribe_storage_tip_content:
     'Tapdata uses MongoDB Atlas, a managed MongoDB service provided by MongoDB Inc. for secure data storage. When you select an instance below, Tapdata will automatically create a MongoDB Atlas Cluster on your behalf. This cluster is exclusively for you and no one except for you and Tapdata can access it.<br/>Note Free Trial users will use a separate MongoDB Cluster that is managed by Tapdata.',
   dfs_subscribe_storage_deploy_region: 'Please select the MongoDB Atlas region you want to deploy',
