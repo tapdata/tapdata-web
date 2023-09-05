@@ -48,7 +48,8 @@ export default {
         Reset: true,
         Start: true,
         Stop: true
-      }
+      },
+      materializedViewVisible: false
     }
   },
 
@@ -577,7 +578,11 @@ export default {
       if (node?.hiddenMap?.setting) return
       node && this.nodeSelected(node)
       if (setActive) {
-        this.setActiveNode(node.id)
+        if (node.type === 'merge_table_processor') {
+          this.materializedViewVisible = true
+        } else {
+          this.setActiveNode(node.id)
+        }
       }
     },
 

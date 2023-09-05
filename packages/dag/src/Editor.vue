@@ -92,6 +92,8 @@
         :buttonShowMap="buttonShowMap"
         show-schema-panel
       />
+
+      <MaterializedView :visible.sync="materializedViewVisible"></MaterializedView>
     </section>
   </section>
 </template>
@@ -122,6 +124,7 @@ import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
 import ConsolePanel from './components/migration/ConsolePanel'
 import PaperEmpty from './components/PaperEmpty'
+import MaterializedView from './components/materialized-view/MaterializedView.vue'
 
 export default {
   name: 'Editor',
@@ -129,6 +132,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    MaterializedView,
     NodePopover,
     VEmpty,
     ConfigPanel,
