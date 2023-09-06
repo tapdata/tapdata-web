@@ -51,19 +51,14 @@
             </ElRadio>
           </ElRadioGroup>
           <span class="font-color-light inline-block">{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span>
-          <ElRadioGroup v-model="region" class="flex flex-wrap gap-4" @change="changeRegion">
-            <ElRadio
+          <ElSelect v-model="region" @change="changeRegion" style="width: 254px">
+            <ElOption
               v-for="(item, index) in cloudDetail"
+              :value="item.region"
+              :label="item.regionName"
               :key="index"
-              :label="item.region"
-              border
-              class="rounded-4 subscription-radio m-0 position-relative"
-            >
-              <span class="inline-flex align-center">
-                {{ item.regionName }}
-              </span>
-            </ElRadio>
-          </ElRadioGroup>
+            ></ElOption>
+          </ElSelect>
         </div>
       </ElFormItem>
       <ElFormItem

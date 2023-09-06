@@ -1694,10 +1694,10 @@ export default {
   dfs_instance_instance_xintiaobinlu: 'Heartbeat Frequency',
   dfs_components_taskalarmtour_deployment_qingwen:
     'Can your source and target databases be directly accessed from the Internet?',
-  dfs_components_taskalarmtour_deployment_bukeyi: 'No - Self-Hosted Mode',
+  dfs_components_taskalarmtour_deployment_bukeyi: 'No (Self-Hosted Mode)',
   dfs_components_taskalarmtour_deployment_wodeshujuku:
     'Your databases are in the restricted network, for security reason data cannot be transferred out of your network.',
-  dfs_components_taskalarmtour_deployment_keyi: 'Yes - Fully Managed Mode',
+  dfs_components_taskalarmtour_deployment_keyi: 'Yes (Fully Managed Mode)',
   dfs_components_taskalarmtour_deployment_yunshujuku:
     'You can use our managed instance to sync the data between your source and targets if they are accessible by our instances in our cloud. ',
   dfs_components_taskalarmtour_deployment_zhunbei: 'Follow the steps to install Tapdata Agent on your server',
