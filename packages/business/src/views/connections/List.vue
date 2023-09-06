@@ -220,7 +220,7 @@ import { TablePage, SchemaProgress } from '../../components'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
-import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
 

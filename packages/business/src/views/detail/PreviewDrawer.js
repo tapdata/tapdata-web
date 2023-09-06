@@ -2,7 +2,7 @@ import i18n from '@/i18n'
 import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
 import { VTable, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
-import { NodeViewer } from '@tap/dag'
+import NodeViewer from '@tap/dag/src/nodeView'
 import './index.scss'
 import dayjs from 'dayjs'
 

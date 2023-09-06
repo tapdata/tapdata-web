@@ -1,6 +1,5 @@
 import i18n from '@/i18n'
 import Parent from './Parent'
-import Layout from '../views/Layout.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
@@ -95,7 +94,7 @@ const VerificationResult = async () => {
 const routes = [
   {
     path: '/',
-    component: Layout,
+    component: () => import(/* webpackChunkName: "layout" */ '../views/Layout.vue'),
     meta: {},
     children: [
       {
