@@ -129,6 +129,7 @@
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
+          @action="handleBottomPanelAction"
         ></BottomPanel>
         <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
@@ -1256,19 +1257,17 @@ export default {
       this.$refs.sharedCacheDetails?.getData(row.id)
     },
 
-    handleShowUpgradeFee() {
-      this.upgradeFeeVisible = true
-    },
-
-    handleShowUpgradeCharges() {
-      this.upgradeChargesVisible = true
-    },
-
     upgradeFeeGoPage() {
       const routeUrl = this.$router.resolve({
         name: 'createAgent'
       })
       window.open(routeUrl.href, '_blank')
+    },
+
+    handleBottomPanelAction(data = {}) {
+      if (data.type === 'ScheduleLimit') {
+        this.handleShowUpgradeDialog()
+      }
     }
   }
 }
