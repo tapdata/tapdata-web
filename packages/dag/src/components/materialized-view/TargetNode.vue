@@ -17,9 +17,9 @@
         itemQuery="value"
       ></TableSelect>
     </div>
-    <div class="p-2">
+    <div class="p-2 node-body">
       <code class="color-success-light-5">{</code>
-      <ElTree></ElTree>
+      <ElTree :indent="8" :data="treeData" :render-content="renderContent"></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
   </div>
@@ -49,9 +49,20 @@ export default {
     jsPlumbIns: Object
   },
 
+  data() {
+    return {
+      loading: false,
+      treeData: []
+    }
+  },
+
   components: {
     AsyncSelect,
     TableSelect
+  },
+
+  mounted() {
+    this.loadSchema()
   },
 
   methods: {
@@ -312,6 +323,91 @@ export default {
         }
       }
       return data
+    },
+
+    createTree(data, columnsMap) {
+      const root = { children: [] }
+
+      for (const item of data) {
+        if (item.is_deleted) continue
+
+        const { field_name } = item
+        let parent = root
+        const fields = field_name.split('.')
+        item.dataType = item.data_type.replace(/\(.+\)/, '')
+        item.indicesUnique = !!columnsMap[field_name]
+
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i]
+          let child = parent.children.find(c => c.field_name === field)
+
+          if (!child) {
+            child = { field_name: field, children: [] }
+            parent.children.push(child)
+          }
+
+          parent = child
+
+          if (i === fields.length - 1) {
+            Object.assign(parent, item, {
+              field_name: field
+            })
+          }
+        }
+      }
+
+      return root.children
+    },
+
+    async loadSchema() {
+      this.loading = true
+      const params = {
+        nodeId: this.node.id,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        page: 1,
+        pageSize: 20
+      }
+      const {
+        items: [schema = {}]
+      } = await metadataInstancesApi.nodeSchemaPage(params)
+      const { fields = [], indices = [] } = schema
+
+      let columnsMap = indices.reduce((map, item) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = true))
+        return map
+      }, {})
+
+      this.treeData = this.createTree(
+        fields.sort((a, b) => a.columnPosition - b.columnPosition),
+        columnsMap
+      )
+      this.loading = false
+    },
+
+    renderContent(h, { node, data, store }) {
+      let icon
+
+      if (data.primary_key_position > 0) {
+        icon = (
+          <VIcon size="12" class="field-icon position-absolute">
+            key
+          </VIcon>
+        )
+      } else if (data.indicesUnique) {
+        icon = (
+          <VIcon size="12" class="field-icon position-absolute">
+            fingerprint
+          </VIcon>
+        )
+      }
+
+      return (
+        <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
+          {icon}
+          <span class="ellipsis">{data.field_name}</span>
+          <span class="ml-1 font-color-slight">{data.dataType}</span>
+        </div>
+      )
     }
   }
 }
@@ -321,10 +417,6 @@ export default {
 .materialized-view-node {
   width: 300px;
 
-  &.--target {
-    border: 2px solid map-get($color, primary);
-  }
-
   code {
     font-family: $codeFontFamily;
   }
@@ -332,6 +424,37 @@ export default {
   .node-header {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
+  }
+
+  .node-body {
+    ::v-deep {
+      .field-icon {
+        left: -18px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  &.--target {
+    .node-header {
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+      border: 2px solid map-get($color, primary);
+
+      ::v-deep {
+        .el-input .el-input__inner {
+          border-color: transparent;
+        }
+      }
+    }
+
+    .node-body {
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+      border: 2px solid map-get($color, primary);
+      border-top: none;
+    }
   }
 }
 .color-success-light-5 {

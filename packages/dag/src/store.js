@@ -80,7 +80,8 @@ const getState = () => ({
   showConsole: false,
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
-  taskSaving: false
+  taskSaving: false,
+  materializedViewVisible: false
 })
 
 // 初始化 state
@@ -890,6 +891,10 @@ const mutations = {
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
     state.taskSaving = flag
+  },
+
+  setMaterializedViewVisible(state, visible) {
+    state.materializedViewVisible = visible
   }
 }
 

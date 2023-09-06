@@ -48,8 +48,7 @@ export default {
         Reset: true,
         Start: true,
         Stop: true
-      },
-      materializedViewVisible: false
+      }
     }
   },
 
@@ -77,6 +76,16 @@ export default {
             height: attr.h + 'px'
           }
         : null
+    },
+
+    materializedViewVisible: {
+      get() {
+        return this.$store.state.dataflow.materializedViewVisible
+      },
+
+      set(visible) {
+        this.setMaterializedViewVisible(visible)
+      }
     }
   },
 
@@ -131,7 +140,8 @@ export default {
       'addProcessorNode',
       'toggleConsole',
       'setPdkPropertiesMap',
-      'setPdkSchemaFreeMap'
+      'setPdkSchemaFreeMap',
+      'setMaterializedViewVisible'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -578,11 +588,12 @@ export default {
       if (node?.hiddenMap?.setting) return
       node && this.nodeSelected(node)
       if (setActive) {
-        if (node.type === 'merge_table_processor') {
+        this.setActiveNode(node.id)
+        /*if (node.type === 'merge_table_processor') {
           this.materializedViewVisible = true
         } else {
           this.setActiveNode(node.id)
-        }
+        }*/
       }
     },
 

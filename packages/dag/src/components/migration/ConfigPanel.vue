@@ -4,7 +4,27 @@
     class="config-panel border-start flex-column"
     :class="{ flex: showPanel, 'show-settings': activeType === 'settings' }"
   >
-    <NodeIcon v-if="activeNode" v-show="activeType === 'node'" class="config-node-icon" :node="activeNode" />
+    <div
+      v-if="activeNode"
+      v-show="activeType === 'node'"
+      class="position-absolute config-tabs-left-extra flex align-center"
+    >
+      <NodeIcon :node="activeNode" :size="24" />
+    </div>
+    <div
+      v-if="activeNode && activeNode.type === 'merge_table_processor'"
+      class="position-absolute config-tabs-right-extra flex align-center"
+    >
+      <ElButton
+        @click="setMaterializedViewVisible(true)"
+        class="--with-icon flex align-center px-2 py-0 gap-1"
+        size="mini"
+      >
+        <VIcon size="30">beta</VIcon>
+        物化视图</ElButton
+      >
+    </div>
+
     <FormPanel
       class="config-form-panel"
       v-show="activeType !== 'settings'"
@@ -42,9 +62,6 @@ import FormPanel from '../FormPanel'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import NodeIcon from '../NodeIcon'
 import SettingPanel from './SettingPanel'
-import MetaPane from '../MetaPane'
-import AlarmPanel from './AlarmPanel'
-import MigrateMetaPane from './MigrateMetaPane'
 
 export default {
   name: 'ConfigPanel',
@@ -75,7 +92,7 @@ export default {
     }
   },
 
-  components: { MetaPane, SettingPanel, NodeIcon, FormPanel, AlarmPanel, MigrateMetaPane },
+  components: { SettingPanel, NodeIcon, FormPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
@@ -101,7 +118,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
+    ...mapMutations('dataflow', [
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setActiveType',
+      'setMaterializedViewVisible'
+    ]),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -163,46 +186,13 @@ export default {
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
+$tabHeight: 44px;
 
-.title-input-wrap {
-  position: relative;
-  flex: 1;
-  font-size: 14px;
-  min-width: 0;
-  color: map_get($fontColor, normal);
-  &:hover {
-    .title-input {
-      border-color: #dcdfe6;
+.el-button.--with-icon {
+  ::v-deep {
+    > span {
+      display: contents;
     }
-    .v-icon {
-      color: $color;
-    }
-  }
-
-  .title-input {
-    position: relative;
-    padding: 2px 28px 1px 8px;
-    width: 100%;
-    height: 28px;
-    line-height: 28px;
-    outline: none;
-    box-shadow: none;
-    background: 0 0;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    font-size: inherit;
-    transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &:focus {
-      border-color: #409eff;
-      & + .title-input-icon {
-        color: $color;
-      }
-    }
-  }
-
-  .title-input-icon {
-    height: 28px;
   }
 }
 
@@ -221,33 +211,6 @@ $headerHeight: 40px;
     width: 640px;
   }
 
-  &-close {
-  }
-
-  .config-tabs-wrap {
-    position: relative;
-    height: 100%;
-  }
-
-  .panel-header {
-    height: $headerHeight;
-
-    .el-image {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  .panel-content {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .header-icon {
-    color: $color;
-    font-size: 18px;
-  }
-
   .setting-panel-wrap {
     position: absolute;
     z-index: 10;
@@ -258,12 +221,16 @@ $headerHeight: 40px;
     background: #fff;
   }
 
-  .config-node-icon {
-    position: absolute;
-    left: 16px;
-    top: 8px;
-    width: 20px;
-    height: 20px;
+  .config-tabs-left-extra {
+    height: $tabHeight;
+    left: 14px;
+    z-index: 1;
+  }
+
+  .config-tabs-right-extra {
+    height: $tabHeight;
+    right: 16px;
+    z-index: 2;
   }
 
   .config-form-panel {
@@ -308,6 +275,8 @@ $headerHeight: 40px;
 
         .el-tabs__item {
           //padding: 0 12px;
+          line-height: $tabHeight;
+          height: $tabHeight;
           font-weight: 400;
 
           &.is-active,
@@ -318,7 +287,7 @@ $headerHeight: 40px;
       }
 
       > .el-tabs__content {
-        height: calc(100% - 36px);
+        height: calc(100% - $tabHeight);
         padding: 4px 16px;
         overflow: auto;
         .el-tab-pane {
