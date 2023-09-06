@@ -48,7 +48,7 @@ import { getSpec, getPaymentMethod } from '@tap/business/src/shared/util'
 import OrderChange from '@tap/business/src/views/order/Change'
 
 export default {
-  name: 'UpgradeDetollDialog',
+  name: 'UpgradeCharges',
   components: { VIcon, OrderChange },
 
   props: ['visible', 'tooltip', 'goPage'],

@@ -123,9 +123,6 @@ export default {
     },
     handleClose() {
       this.$emit('update:visible', false)
-    },
-    getImg(name) {
-      return require(`../../assets/images/${name}.png`)
     }
   }
 }
@@ -212,7 +209,7 @@ export default {
     //position: fixed;
   }
   .bg {
-    background: url('../../assets/images/subscription_img_zyb.png');
+    background: url('../../../assets/images/subscription_img_zyb.png');
     background-repeat: no-repeat;
     background-position: right;
     background-position-y: top;

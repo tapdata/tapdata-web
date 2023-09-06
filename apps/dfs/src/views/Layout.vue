@@ -129,8 +129,8 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import TheHeader from '@/components/the-header'
-import { UpgradeFee, VIcon } from '@tap/component'
-import { PageHeader, SceneDialog as ConnectionTypeDialog } from '@tap/business'
+import { VIcon } from '@tap/component'
+import { PageHeader, SceneDialog as ConnectionTypeDialog, UpgradeFee } from '@tap/business'
 
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
