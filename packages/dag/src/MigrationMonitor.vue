@@ -165,6 +165,18 @@
       <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
 
       <SharedCacheEditor v-if="['shareCache'].includes(dataflow.syncType)" ref="sharedCacheEditor"></SharedCacheEditor>
+
+      <UpgradeFee
+        :visible.sync="upgradeFeeVisible"
+        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :go-page="upgradeFeeGoPage"
+      ></UpgradeFee>
+
+      <UpgradeCharges
+        :visible.sync="upgradeChargesVisible"
+        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :go-page="upgradeFeeGoPage"
+      ></UpgradeCharges>
     </section>
   </section>
 </template>
@@ -176,7 +188,7 @@ import { observable } from '@formily/reactive'
 import { debounce } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
+import { VExpandXTransition, VEmpty, VIcon, UpgradeFee, UpgradeCharges } from '@tap/component'
 import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
@@ -215,6 +227,8 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    UpgradeFee,
+    UpgradeCharges,
     AlarmStatistics,
     VExpandXTransition,
     VEmpty,
@@ -283,7 +297,9 @@ export default {
       taskRecord: {
         total: 0,
         items: []
-      }
+      },
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -1238,6 +1254,21 @@ export default {
 
     handleOpenSharedCache(row = {}) {
       this.$refs.sharedCacheDetails?.getData(row.id)
+    },
+
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
     }
   }
 }
