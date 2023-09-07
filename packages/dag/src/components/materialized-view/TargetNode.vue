@@ -5,12 +5,14 @@
         v-model="node.connectionId"
         placeholder="请选择存储数据库"
         :method="loadDatabases"
+        :params="params"
         itemValue="id"
         itemQuery="name"
       ></AsyncSelect>
       <TableSelect
         v-model="node.tableName"
         placeholder="请选择存储表"
+        :disabled="!node.connectionId"
         :method="loadTable"
         :connectionId="node.connectionId"
         itemType="object"
@@ -40,7 +42,10 @@ export default {
   name: 'TargetNode',
 
   props: {
-    node: Object,
+    node: {
+      type: Object,
+      default: () => ({})
+    },
     data: Object,
     nodeId: {
       type: String,
@@ -52,6 +57,9 @@ export default {
   data() {
     return {
       loading: false,
+      params: {
+        where: { database_type: 'MongoDB' }
+      },
       treeData: []
     }
   },
@@ -62,7 +70,7 @@ export default {
   },
 
   mounted() {
-    this.loadSchema()
+    this.node.id && this.loadSchema()
   },
 
   methods: {

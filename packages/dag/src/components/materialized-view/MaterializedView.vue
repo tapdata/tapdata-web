@@ -4,8 +4,8 @@
       <header class="px-4 h-48 flex align-center">
         <div class="fs-6 font-color-dark">构建物化视图</div>
       </header>
-      <PaperScroller class="flex-1" ref="paperScroller">
-        <TargetNode :node="allNodes[0]"></TargetNode>
+      <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller">
+        <TargetNode :node="targetNode"></TargetNode>
       </PaperScroller>
     </div>
   </el-drawer>
@@ -36,13 +36,26 @@ export default {
       'allNodes',
       'allEdges',
       'activeType',
+      'activeNode',
       'isActionActive',
       'nodeById',
       'stateIsDirty',
       'stateIsReadonly',
       'processorNodeTypes',
       'hasNodeError'
-    ])
+    ]),
+
+    showPaper() {
+      return this.visible && this.activeNode?.type === 'merge_table_processor'
+    },
+
+    targetNode() {
+      const { $outputs } = this.activeNode
+
+      if (!$outputs.length) return
+
+      return this.nodeById($outputs[0])
+    }
   },
 
   methods: {
