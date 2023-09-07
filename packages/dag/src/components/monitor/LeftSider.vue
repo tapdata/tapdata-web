@@ -440,7 +440,7 @@ export default {
       }
 
       const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
-      const delay = open ? this.dataflow.alarmRules.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
       const max = Math.max(...data.replicateLag)
       return {
         x: time,
