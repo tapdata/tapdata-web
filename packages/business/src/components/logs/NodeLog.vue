@@ -119,7 +119,7 @@
                     class="ml-2 text-decoration-underline"
                     @click="$emit('action', { ...item, ...{ type: 'ScheduleLimit' } })"
                   >
-                    请升级订阅以获取更多任务数量，点击弹窗显示升级引导
+                    {{ $t('packages_business_logs_nodelog_qingshengjidingyue') }}
                   </ElLink>
                 </div>
                 <div v-if="item.expand" class="log-detail bg-color-normal p-3">
@@ -597,7 +597,26 @@ export default {
         return
       }
       monitoringLogsApi.query(filter).then((data = {}) => {
-        const items = this.getFormatRow(data.items)
+        const items = this.getFormatRow([
+          {
+            "id": "64f69274a75aac0a72c5148a",
+            "lastUpdBy": "62bc5008d4958d013d97c7a6",
+            "createUser": "admin@admin.com",
+            "level": "ERROR",
+            "timestamp": 1693880948935,
+            "date": "2023-09-05T02:29:08.935+00:00",
+            "taskId": "64f55237bde10c62081e6cbf",
+            "taskRecordId": "64f5e5937f0eb66df13d2475",
+            "taskName": "新任务@11:42:47",
+            "message": "引擎可以被调用的任务超过了限制数",
+            "logTags": [],
+            "data": [],
+            "fullErrorCode": "Task.ScheduleLimit",
+            "createTime": "2023-09-05T02:29:08.936+00:00",
+            "last_updated": "2023-09-05T02:29:08.936+00:00",
+            "user_id": "62bc5008d4958d013d97c7a6"
+          }
+        ]||data.items)
         this.newPageObj.total = data.total || 0
         const arr = uniqBy([...this.list, ...items], 'id')
         if (arr.length === this.list.length) {

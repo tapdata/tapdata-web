@@ -1135,5 +1135,14 @@ export default {
   packages_business_connections_preview_quanxianguanli: '权限管理',
   packages_business_connections_preview_shujulianjiequan: '数据连接权限',
   packages_business_notice_list_gonggaobiaoti: '公告标题',
-  packages_business_connections_list_wuquanxiandecao: '无权限的操作已被隐藏'
+  packages_business_connections_list_wuquanxiandecao: '无权限的操作已被隐藏',
+  packages_business_components_upgradecharges_dingyuexinyinqing: '订阅新引擎',
+  packages_business_components_upgradecharges_shengjiguige: '升级规格',
+  packages_business_components_upgradecharges_dingyuefangshi: '订阅方式',
+  packages_business_components_upgradecharges_keyongrenwushu: '可用任务数',
+  packages_business_components_upgradecharges_dangqianguige: '当前规格',
+  packages_business_components_upgradecharges_dingyueshengji: '订阅升级',
+  packages_business_create_connection_sceneform_lianjieceshiwu: '连接测试无效，请检查您的连接配置',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: '请先进行连接测试',
+  packages_business_logs_nodelog_qingshengjidingyue: '请升级订阅以获取更多任务数量，点击弹窗显示升级引导'
 }

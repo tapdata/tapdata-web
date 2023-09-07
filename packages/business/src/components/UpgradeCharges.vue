@@ -1,7 +1,7 @@
 <template>
   <section>
     <el-dialog
-      title="订阅升级"
+      :title="$t('packages_business_components_upgradecharges_dingyueshengji')"
       :visible.sync="visible"
       :append-to-body="true"
       width="880px"
@@ -16,10 +16,10 @@
       <ul class="dialog__ul mt-6">
         <li v-for="(item, index) in list" :key="index" class="mb-6">
           <ElRow class="pl-2 py-2 bg-light border">
-            <ElCol :span="6">当前规格</ElCol>
-            <ElCol :span="6">可用任务数</ElCol>
-            <ElCol :span="6">订阅方式</ElCol>
-            <ElCol :span="6">操作</ElCol>
+            <ElCol :span="6">{{ $t('packages_business_components_upgradecharges_dangqianguige') }}</ElCol>
+            <ElCol :span="6">{{ $t('packages_business_components_upgradecharges_keyongrenwushu') }}</ElCol>
+            <ElCol :span="6">{{ $t('packages_business_components_upgradecharges_dingyuefangshi') }}</ElCol>
+            <ElCol :span="6">{{ $t('public_operation') }}</ElCol>
           </ElRow>
 
           <ElRow class="content__row pl-2 py-2 border">
@@ -27,14 +27,18 @@
             <ElCol :span="6"> {{ item.canUsedNum }}/{{ item.taskNum }} </ElCol>
             <ElCol :span="6"> {{ item.subscriptionMethodLabel }} </ElCol>
             <ElCol :span="6">
-              <ElLink type="primary" :disabled="item.isMaximal" @click="openChangeSubscribe(item)">升级规格</ElLink>
+              <ElLink type="primary" :disabled="item.isMaximal" @click="openChangeSubscribe(item)">{{
+                $t('packages_business_components_upgradecharges_shengjiguige')
+              }}</ElLink>
             </ElCol>
           </ElRow>
         </li>
       </ul>
 
       <div slot="footer" class="dialog-footer">
-        <ElButton type="primary" @click="submit" size="mini">订阅新引擎</ElButton>
+        <ElButton type="primary" @click="submit" size="mini">{{
+          $t('packages_business_components_upgradecharges_dingyuexinyinqing')
+        }}</ElButton>
       </div>
     </el-dialog>
     <!--变更-->

@@ -1127,5 +1127,14 @@ export default {
   packages_business_connections_preview_quanxianguanli: '權限管理',
   packages_business_connections_preview_shujulianjiequan: '數據連接權限',
   packages_business_notice_list_gonggaobiaoti: '公告標題',
-  packages_business_connections_list_wuquanxiandecao: '無權限的操作已被隱藏'
+  packages_business_connections_list_wuquanxiandecao: '無權限的操作已被隱藏',
+  packages_business_components_upgradecharges_dingyuexinyinqing: '訂閱新引擎',
+  packages_business_components_upgradecharges_shengjiguige: '升級規格',
+  packages_business_components_upgradecharges_dingyuefangshi: '訂閱方式',
+  packages_business_components_upgradecharges_keyongrenwushu: '可用任務數',
+  packages_business_components_upgradecharges_dangqianguige: '當前規格',
+  packages_business_components_upgradecharges_dingyueshengji: '訂閱升級',
+  packages_business_create_connection_sceneform_lianjieceshiwu: '連接測試無效，請檢查您的連接配置',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: '請先進行連接測試',
+  packages_business_logs_nodelog_qingshengjidingyue: '請升級訂閱以獲取更多任務數量，點擊彈窗顯示升級引導'
 }
