@@ -153,8 +153,8 @@ export default {
       return this.startingTour && this.status !== 'ready'
     },
     saveBtnTip() {
-      if (!this.status) return '请先进行连接测试'
-      if (this.status === 'invalid') return '连接测试无效，请检查您的连接配置'
+      if (!this.status) return i18n.t('packages_business_create_connection_sceneform_qingxianjinxinglian')
+      if (this.status === 'invalid') return i18n.t('packages_business_create_connection_sceneform_lianjieceshiwu')
       return ''
     }
   },

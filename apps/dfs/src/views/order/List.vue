@@ -179,18 +179,19 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import i18n from '@/i18n'
 import { FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
-import dayjs from 'dayjs'
+import Change from '@tap/business/src/views/order/Change'
+import { getPaymentMethod, getSpec } from '@tap/business/src/shared/util'
+import { AGENT_TYPE_MAP } from '@tap/business/src/shared/const'
 
-import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import transferDialog from '../agent-download/transferDialog'
 import StatusTag from '../../components/StatusTag.vue'
 import Unsubscribe from '../../components/Unsubscribe.vue'
 import Renew from '../../components/Renew.vue'
-import Change from './Change.vue'
 
 export default {
   components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew, Change },

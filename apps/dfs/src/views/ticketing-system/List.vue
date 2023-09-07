@@ -312,13 +312,15 @@ export default {
           let { userId, email, telephone, nickname } = window.__USER_INFO__
           let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
           let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
+          const country = this.$store.getters.isDomesticStation ? 'China' : 'Abroad'
           let params = Object.assign(this.createForm, {
             connectionName: connectionName,
             jobName: taskName,
             userId: userId,
             phone: telephone,
             email: email,
-            nickname: nickname
+            nickname: nickname,
+            country
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.closeDialog()

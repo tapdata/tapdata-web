@@ -148,6 +148,15 @@ export const AGENT_SPEC_MAP = {
   '32C64G': '4Large'
 }
 
+export const AGENT_TYPE_MAP = {
+  local: i18n.t('dfs_instance_utils_bantuoguan'),
+  cloud: i18n.t('dfs_instance_utils_quantuoguan'),
+  selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
+  fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
+  Local: i18n.t('dfs_instance_utils_bantuoguan'),
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
+}
+
 export const TIME_MAP = {
   year: i18n.t('public_time_year'),
   month: i18n.t('public_time_month'),
