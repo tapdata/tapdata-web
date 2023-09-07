@@ -1,14 +1,19 @@
 <template>
   <div class="inline-input-wrap">
     <span class="inline-input-body" v-show="!editing">
-      <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
-        value
-      }}</span>
+      <span
+        :style="{
+          width: inputStyle && inputStyle.width
+        }"
+        :class="[wordBreak ? 'word-break' : 'ellipsis']"
+        :title="value"
+        @click="$emit('click-text')"
+        >{{ value }}</span
+      >
       <ElLink
         v-if="type === 'text'"
         type="primary"
         class="inline-input-link"
-        style="margin-left: 5px"
         :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
@@ -44,10 +49,8 @@
         >
       </template>
       <template v-else-if="type === 'text'">
-        <ElButton type="text" class="icon-button min-w-0" size="medium" :disabled="disabled" @click="save">{{
-          saveText
-        }}</ElButton>
-        <ElButton type="text" class="icon-button m-0 min-w-0" size="medium" @click="cancel">{{ cancelText }}</ElButton>
+        <ElButton type="text" class="min-w-0" size="medium" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
+        <ElButton type="text" class="m-0 min-w-0" size="medium" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
         <ElButton class="inline-input-button" type="primary" size="mini" :disabled="disabled" @click="save">{{
@@ -70,6 +73,7 @@ export default {
   props: {
     value: [String, Number],
     type: String,
+    inputWidth: String,
     iconConfig: Object,
     wordBreak: Boolean,
     inputStyle: Object,
