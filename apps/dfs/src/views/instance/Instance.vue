@@ -438,6 +438,7 @@
         </div>
       </el-tab-pane>
       <el-tab-pane
+        v-if="!isDomesticStation"
         class="order-flex flex-column overflow-hidden h-100"
         :label="$t('dfs_instance_instance_cunchuziyuan')"
         name="second"
@@ -533,6 +534,7 @@ import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import Renew from '../../components/Renew.vue'
 import { secondDifference } from '../../util'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { mapGetters } from 'vuex'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -743,6 +745,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isDomesticStation']),
+
     statusItems() {
       let result = []
       let filter = ['Creating', 'Running', 'Stopped']

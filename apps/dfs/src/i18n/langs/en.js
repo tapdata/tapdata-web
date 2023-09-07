@@ -654,10 +654,10 @@ export default {
   user_Center_weiBangDing: 'Unbound',
   user_Center_weiTianXie: 'Not filled in',
   user_Center_geRenXinXi: 'Personal Information',
-  user_Center_yongHuNiCheng: 'User nickname:',
+  user_Center_yongHuNiCheng: 'User Nickname:',
   user_Center_xiuGai: 'Modify',
   user_Center_qiYeXinXi: 'Enterprise Information',
-  user_Center_gongSiMingCheng: 'corporate name:',
+  user_Center_gongSiMingCheng: 'Corporate Name:',
   user_Center_gongSiGuanWang: 'Official website of the company:',
   user_Center_suoShuHangYe: 'Industry:',
   user_Center_suoShuChengShi: 'City:',
@@ -1694,10 +1694,10 @@ export default {
   dfs_instance_instance_xintiaobinlu: 'Heartbeat Frequency',
   dfs_components_taskalarmtour_deployment_qingwen:
     'Can your source and target databases be directly accessed from the Internet?',
-  dfs_components_taskalarmtour_deployment_bukeyi: 'No - Self-Hosted Mode',
+  dfs_components_taskalarmtour_deployment_bukeyi: 'No (Self-Hosted Mode)',
   dfs_components_taskalarmtour_deployment_wodeshujuku:
     'Your databases are in the restricted network, for security reason data cannot be transferred out of your network.',
-  dfs_components_taskalarmtour_deployment_keyi: 'Yes - Fully Managed Mode',
+  dfs_components_taskalarmtour_deployment_keyi: 'Yes (Fully Managed Mode)',
   dfs_components_taskalarmtour_deployment_yunshujuku:
     'You can use our managed instance to sync the data between your source and targets if they are accessible by our instances in our cloud. ',
   dfs_components_taskalarmtour_deployment_zhunbei: 'Follow the steps to install Tapdata Agent on your server',
