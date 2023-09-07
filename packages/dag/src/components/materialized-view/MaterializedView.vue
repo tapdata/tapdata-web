@@ -5,6 +5,7 @@
         <div class="fs-6 font-color-dark">构建物化视图</div>
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller">
+        <Node v-for="node in nodes" :key="node.id" :node="node"></Node>
         <TargetNode :node="targetNode"></TargetNode>
       </PaperScroller>
     </div>
@@ -14,6 +15,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PaperScroller from '../PaperScroller'
+import Node from './Node'
 import TargetNode from './TargetNode'
 
 export default {
@@ -23,11 +25,11 @@ export default {
     visible: Boolean
   },
 
-  components: { PaperScroller, TargetNode },
+  components: { PaperScroller, TargetNode, Node },
 
   data() {
     return {
-      drawerVisible: false
+      nodes: []
     }
   },
 
@@ -58,11 +60,37 @@ export default {
     }
   },
 
+  watch: {
+    visible(val) {
+      if (!val) return
+      this.transformToDag()
+    }
+  },
+
   methods: {
     handleUpdateVisible(val) {
       this.$emit('update:visible', val)
+    },
 
-      console.log(this.allNodes)
+    transformToDag() {
+      const { mergeProperties } = this.activeNode
+      const nodes = []
+      const edges = []
+      const traverse = (children, target) => {
+        for (const item of children) {
+          nodes.push(this.nodeById(item.id))
+          target && edges.push({ source: item.id, target })
+
+          if (item.children?.length) {
+            traverse(item.children, item.id)
+          }
+        }
+      }
+
+      traverse(mergeProperties, this.targetNode?.id)
+
+      this.nodes = nodes
+      console.log('transformToDag', nodes, edges)
     }
   }
 }
