@@ -1188,5 +1188,16 @@ export default {
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
   packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
   packages_business_notice_list_gonggaobiaoti: 'Notice Title',
-  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden'
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
+  packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
+  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription method',
+  packages_business_components_upgradecharges_keyongrenwushu: 'Number of tasks available',
+  packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
+  packages_business_components_upgradecharges_dingyueshengji: 'Subscription upgrade',
+  packages_business_create_connection_sceneform_lianjieceshiwu:
+    'The connection test is invalid, please check your connection configuration',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
+  packages_business_logs_nodelog_qingshengjidingyue:
+    'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide'
 }

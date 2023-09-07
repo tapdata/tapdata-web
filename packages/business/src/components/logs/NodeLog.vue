@@ -113,6 +113,14 @@
                     >{{ item.fullErrorCode || item.errorCode }}</span
                   >
                   <span :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></span>
+                  <ElLink
+                    v-if="item.level === 'ERROR' && item.fullErrorCode === 'Task.ScheduleLimit'"
+                    type="primary"
+                    class="ml-2 text-decoration-underline"
+                    @click="$emit('action', { ...item, ...{ type: 'ScheduleLimit' } })"
+                  >
+                    {{ $t('packages_business_logs_nodelog_qingshengjidingyue') }}
+                  </ElLink>
                 </div>
                 <div v-if="item.expand" class="log-detail bg-color-normal p-3">
                   <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>

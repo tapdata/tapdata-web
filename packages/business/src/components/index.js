@@ -10,6 +10,8 @@ import TaskStatus from './TaskStatus'
 import PageHeader from './PageHeader'
 import DiscoveryClassification from './DiscoveryClassification'
 import StageButton from './StageButton'
+import UpgradeFee from './UpgradeFee'
+import UpgradeCharges from './UpgradeCharges'
 
 export {
   StatusItem,
@@ -23,7 +25,9 @@ export {
   TaskStatus,
   PageHeader,
   DiscoveryClassification,
-  StageButton
+  StageButton,
+  UpgradeFee,
+  UpgradeCharges
 }
 
 export * from './DatabaseIcon'
