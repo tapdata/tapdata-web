@@ -637,5 +637,6 @@ export default {
     '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但次操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。',
   packages_dag_mergeMode: '合并模式',
   packages_dag_main_table_first: '全量主表优先',
-  packages_dag_sub_table_first: '全量子表优先'
+  packages_dag_sub_table_first: '全量子表优先',
+  packages_dag_model_generation: '模型生成中'
 }
