@@ -1,7 +1,7 @@
 <template>
-  <div class="materialized-view-node position-absolute rounded-lg bg-white">
+  <div class="materialized-view-node position-absolute rounded-lg bg-white" :class="nodeClass" :style="nodeStyle">
     <div class="p-2 node-header">
-      <div class="flex gap-2">
+      <div class="flex gap-2 mb-2">
         <AsyncSelect
           v-model="node.connectionId"
           placeholder="请选择存储数据库"
@@ -19,17 +19,33 @@
           itemQuery="value"
         ></TableSelect>
       </div>
-      <ElForm label-position="top">
-        <ElFormItem label="关联条件">
-          <div slot="label" class="">
-            {{ $t('dfs_subscribe_storage_deploy_region') }}
+      <ElForm class="node-form" label-position="top">
+        <ElFormItem>
+          <div slot="label" class="flex align-center justify-content-between">
+            <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
+            <ElLink type="primary" size="mini">
+              <VIcon>add</VIcon>
+              {{ $t('public_button_add') }}</ElLink
+            >
           </div>
-          <div class="flex">
+          <div class="flex align-center gap-2">
             <FieldSelect></FieldSelect>
+            <span>=</span>
+            <FieldSelect></FieldSelect>
+            <IconButton>delete</IconButton>
           </div>
+        </ElFormItem>
+
+        <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
+          <ElInput></ElInput>
+        </ElFormItem>
+
+        <ElFormItem :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')">
+          <ElInput></ElInput>
         </ElFormItem>
       </ElForm>
     </div>
+    <ElDivider class="my-0" />
     <div class="p-2 node-body">
       <code class="color-success-light-5">{</code>
       <ElTree :indent="8" :data="treeData" :render-content="renderContent"></ElTree>
@@ -45,10 +61,10 @@ import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { Time } from '@tap/shared'
 import { AsyncSelect, FieldSelect } from '@tap/form'
+import { IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
 import { sourceEndpoint, targetEndpoint } from '../../style'
-import { NODE_PREFIX } from '../../constants'
 export default {
   name: 'Node',
 
@@ -65,6 +81,13 @@ export default {
     jsPlumbIns: Object
   },
 
+  components: {
+    AsyncSelect,
+    TableSelect,
+    FieldSelect,
+    IconButton
+  },
+
   data() {
     return {
       loading: false,
@@ -75,14 +98,31 @@ export default {
     }
   },
 
-  components: {
-    AsyncSelect,
-    TableSelect,
-    FieldSelect
+  computed: {
+    ins() {
+      return this.node?.__Ctor || {}
+    },
+
+    nodeClass() {
+      const list = []
+      this.ins && list.push(`node--${this.ins.group}`)
+      return list
+    },
+
+    nodeStyle() {
+      const [left = 0, top = 0] = this.node.attrs?.position || []
+      return {
+        left: left + 'px',
+        top: top + 'px'
+      }
+    }
   },
 
   mounted() {
     this.node.id && this.loadSchema()
+    if (this.node && this.ins) {
+      this.__init()
+    }
   },
 
   methods: {
@@ -97,7 +137,9 @@ export default {
     ]),
 
     __init() {
-      const { id, nodeId } = this
+      // const { id, nodeId } = this
+      const { id } = this.node
+      const nodeId = id
 
       const targetParams = {
         ...targetEndpoint
@@ -134,7 +176,7 @@ export default {
           // console.log('node-drag-stop', params)
           // 更新节点坐标
           this.isNotMove = false
-          const { position } = this.data.attrs
+          const { position } = this.node.attrs
           const newProperties = []
           const oldProperties = []
 
@@ -142,12 +184,12 @@ export default {
             const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
 
             if (!this.isNodeSelected(this.nodeId)) {
-              moveNodes.push(this.data)
+              moveNodes.push(this.node)
             }
             /*const selectedNodeNames = moveNodes.map(node => node.id)
 
-            if (!selectedNodeNames.includes(this.data.id)) {
-              moveNodes.push(this.data)
+            if (!selectedNodeNames.includes(this.node.id)) {
+              moveNodes.push(this.node)
             }*/
 
             let x = parseFloat(this.$el.style.left)
@@ -172,7 +214,7 @@ export default {
             }
 
             moveNodes.forEach(node => {
-              const nodeElement = NODE_PREFIX + node.id
+              const nodeElement = node.id
               const element = document.getElementById(nodeElement)
               if (element === null) {
                 return
@@ -480,5 +522,19 @@ export default {
 }
 .color-success-light-5 {
   color: #009a29;
+}
+.node-form {
+  ::v-deep {
+    .el-form-item {
+      margin-bottom: 8px;
+
+      .el-form-item__label {
+        width: 100%;
+        line-height: 20px;
+        padding-bottom: 0;
+        margin-bottom: 6px;
+      }
+    }
+  }
 }
 </style>

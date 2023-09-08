@@ -47,10 +47,6 @@ export default {
       default: () => ({})
     },
     data: Object,
-    nodeId: {
-      type: String,
-      required: true
-    },
     jsPlumbIns: Object
   },
 

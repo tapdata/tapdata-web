@@ -5,7 +5,14 @@
         <div class="fs-6 font-color-dark">构建物化视图</div>
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller">
-        <Node v-for="node in nodes" :key="node.id" :node="node"></Node>
+        <Node
+          v-for="node in nodes"
+          :key="node.id"
+          :node="node"
+          :id="node.id"
+          :node-id="node.id"
+          :js-plumb-ins="jsPlumbIns"
+        ></Node>
         <TargetNode :node="targetNode"></TargetNode>
       </PaperScroller>
     </div>
@@ -17,6 +24,7 @@ import { mapGetters } from 'vuex'
 import PaperScroller from '../PaperScroller'
 import Node from './Node'
 import TargetNode from './TargetNode'
+import { config, jsPlumb } from '../../instance'
 
 export default {
   name: 'MaterializedView',
@@ -29,7 +37,8 @@ export default {
 
   data() {
     return {
-      nodes: []
+      nodes: [],
+      jsPlumbIns: jsPlumb.getInstance(config)
     }
   },
 
