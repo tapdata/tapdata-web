@@ -1,5 +1,5 @@
 <template>
-  <div class="workbench-container overflow-hidden">
+  <div class="workbench-container overflow-hidden flex flex-column">
     <ElRow type="flex" :gutter="16" class="align-items-stretch mb-4">
       <ElCol :span="18">
         <!--探索示例-->
@@ -31,8 +31,8 @@
       </ElCol>
     </ElRow>
 
-    <ElRow type="flex" :gutter="16">
-      <ElCol :span="isDomesticStation ? 18 : 24">
+    <ElRow type="flex" :gutter="16" class="min-h-0">
+      <ElCol :span="18">
         <!--概览	-->
         <div class="bg-white rounded-xl p-4 shadow-sm">
           <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
@@ -63,13 +63,13 @@
           </div>
         </div>
       </ElCol>
-      <ElCol v-if="isDomesticStation" :span="6">
-        <div class="bg-white rounded-xl p-4 shadow-sm">
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
           <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
-          <div class="aside-main notice-list flex-grow-1">
-            <ul class="notice-list__list h-100 overflow-y-auto">
+          <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">
+            <ul class="notice-list__list">
               <li
-                v-for="(item, index) in notices.slice(0, 5)"
+                v-for="(item, index) in notices"
                 :key="index"
                 class="notice-list__item flex align-items-center mb-4 px-1 pointer"
               >
@@ -79,7 +79,7 @@
                 <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                   {{ item.name }}
                 </ElLink>
-                <div class="notice-list__time">
+                <div class="notice-list__time font-color-sslight">
                   {{ fromNow(item.time) }}
                 </div>
               </li>
@@ -154,11 +154,7 @@ export default {
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
-    let isDomesticStation = true
-
-    if (window.__config__?.station) {
-      isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
-    }
+    let isDomesticStation = this.$store.getters.isDomesticStation
 
     let examplesList = isDomesticStation
       ? [
@@ -412,83 +408,128 @@ export default {
       }
     },
     loadNotices() {
-      this.notices = [
-        {
-          id: 11,
-          type: '',
-          name: 'Tapdata Cloud 3.2.2 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
-          time: '2023-05-4 21:00'
-        },
-        {
-          id: 10,
-          type: '',
-          name: 'Tapdata Cloud 3.2.1 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
-          time: '2023-04-20 21:00'
-        },
-        {
-          id: 9,
-          type: '',
-          name: 'Tapdata Cloud 3.1.9 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
-          time: '2023-03-20 21:00'
-        },
-        {
-          id: 8,
-          type: '',
-          name: 'Tapdata Cloud 3.1.8 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/WQZx38g93lYuPpsWjbETZg',
-          time: '2023-03-2 21:00'
-        },
-        {
-          id: 7,
-          type: '',
-          name: this.$t('workbench_Notice_tAPDA12'),
-          time: '2023-03-2 21:00'
-        },
-        {
-          id: 6,
-          type: '',
-          name: 'Tapdata Cloud 3.1.7 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
-          time: '2023-02-21 21:00'
-        },
-        {
-          id: 5,
-          type: '',
-          name: 'Tapdata Cloud 3.1.6 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
-          time: '2023-02-3 21:00'
-        },
-        {
-          id: 4,
-          type: '',
-          name: 'Tapdata Cloud 3.1.5 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
-          time: '2023-01-20 21:00'
-        },
-        {
-          id: 3,
-          type: '',
-          name: 'Tapdata Cloud 3.1.4 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
-          time: '2023-01-3 21:00'
-        },
-        {
-          id: 2,
-          type: '',
-          name: 'Tapdata Cloud 3.1.3 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
-          time: '2022-12-15 21:00'
-        },
-        {
-          id: 1,
-          type: '',
-          name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-          time: '2022-12-03 18:00'
-        }
-      ]
+      this.notices = this.isDomesticStation
+        ? [
+            {
+              id: 14,
+              type: '',
+              name: 'Tapdata Cloud 3.5.1 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-5-1.html',
+              time: '2023-08-28 21:00'
+            },
+            {
+              id: 13,
+              type: '',
+              name: 'Tapdata Cloud 3.4 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-4.html',
+              time: '2023-08-15 21:00'
+            },
+            {
+              id: 12,
+              type: '',
+              name: 'Tapdata Cloud 3.2.6 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-2-6.html',
+              time: '2023-07-31 21:00'
+            },
+            {
+              id: 11,
+              type: '',
+              name: 'Tapdata Cloud 3.2.2 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
+              time: '2023-05-4 21:00'
+            },
+            {
+              id: 10,
+              type: '',
+              name: 'Tapdata Cloud 3.2.1 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
+              time: '2023-04-20 21:00'
+            },
+            {
+              id: 9,
+              type: '',
+              name: 'Tapdata Cloud 3.1.9 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
+              time: '2023-03-20 21:00'
+            },
+            {
+              id: 8,
+              type: '',
+              name: 'Tapdata Cloud 3.1.8 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/WQZx38g93lYuPpsWjbETZg',
+              time: '2023-03-2 21:00'
+            },
+            {
+              id: 7,
+              type: '',
+              name: this.$t('workbench_Notice_tAPDA12'),
+              time: '2023-03-2 21:00'
+            },
+            {
+              id: 6,
+              type: '',
+              name: 'Tapdata Cloud 3.1.7 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
+              time: '2023-02-21 21:00'
+            },
+            {
+              id: 5,
+              type: '',
+              name: 'Tapdata Cloud 3.1.6 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
+              time: '2023-02-3 21:00'
+            },
+            {
+              id: 4,
+              type: '',
+              name: 'Tapdata Cloud 3.1.5 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
+              time: '2023-01-20 21:00'
+            },
+            {
+              id: 3,
+              type: '',
+              name: 'Tapdata Cloud 3.1.4 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
+              time: '2023-01-3 21:00'
+            },
+            {
+              id: 2,
+              type: '',
+              name: 'Tapdata Cloud 3.1.3 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
+              time: '2022-12-15 21:00'
+            },
+            {
+              id: 1,
+              type: '',
+              name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
+              time: '2022-12-03 18:00'
+            }
+          ]
+        : [
+            {
+              id: 14,
+              type: '',
+              name: 'Tapdata Cloud 3.5.1 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-1-release-notes/',
+              time: '2023-08-28 21:00'
+            },
+            {
+              id: 13,
+              type: '',
+              name: 'Tapdata Cloud 3.4 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-4-release-notes/',
+              time: '2023-08-15 21:00'
+            },
+            {
+              id: 12,
+              type: '',
+              name: 'Tapdata Cloud 3.2.6 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-2-6-release-notes/',
+              time: '2023-07-31 21:00'
+            }
+          ]
     },
     loadBarData() {
       let granularity = 'month'
@@ -745,12 +786,6 @@ export default {
   white-space: nowrap;
 }
 
-.aside-main {
-  height: 213px;
-  background-color: #fff;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
 .agent-list__list {
   background: map-get($color, white);
 }
@@ -793,9 +828,7 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: map-get($fontColor, light);
   white-space: nowrap;
-  //width: 80px;
   text-align: right;
 }
 .guide-list {
@@ -817,8 +850,14 @@ export default {
   }
 }
 .notice-list {
-  height: 190px;
+  //height: 190px;
   border-radius: 8px;
+
+  .notice-list__list {
+    .notice-list__item:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
 }
 .common-card {
   border: 1px solid #e1e3e9;
