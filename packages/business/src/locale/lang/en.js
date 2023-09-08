@@ -1203,5 +1203,8 @@ export default {
   packages_business_logs_nodelog_yinqingkeyibei:
     'The number of tasks that the engine can be invoked exceeds the limit,',
   packages_business_task_list_nindekeyunxing:
-    'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks! '
+    'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks!',
+  packages_business_setting_alarmsetting_qubangding: 'to bind',
+  packages_business_setting_alarmsetting_jiancedaoninhai:
+    'It has been detected that you have not bound your email address, so email notification cannot be enabled.'
 }

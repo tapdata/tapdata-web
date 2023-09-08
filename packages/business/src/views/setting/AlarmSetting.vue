@@ -338,10 +338,14 @@ export default {
       if (this.isDaas || email || !val) {
         return
       }
-      this.$confirm('检测到您还未绑定邮箱，无法开启邮件通知。', this.$t('public_message_title_prompt'), {
-        type: 'warning',
-        confirmButtonText: '去绑定'
-      }).then(flag => {
+      this.$confirm(
+        i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
+        this.$t('public_message_title_prompt'),
+        {
+          type: 'warning',
+          confirmButtonText: i18n.t('packages_business_setting_alarmsetting_qubangding')
+        }
+      ).then(flag => {
         if (flag) {
           this.$router.push({
             name: 'userCenter',
