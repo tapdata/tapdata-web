@@ -797,9 +797,17 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(() => {
+      taskApi.batchStart(ids).then((data) => {
         this.getTasks(true)
-        this.$message.success(this.$t('public_message_operation_success'))
+        if (data.every(t => t.code === 'ok')) {
+          this.$message.success(this.$t('public_message_operation_success'))
+        } else {
+          if (data.some(t => t.code === 'Task.ScheduleLimit')) {
+            this.$emit('handle-show-upgrade')
+            return
+          }
+          this.$message.error(data[0]?.message)
+        }
       })
     },
 
