@@ -623,7 +623,7 @@ export default {
         row.expand = false
         row.hideContent = false
         if (row.fullErrorCode === 'Task.ScheduleLimit') {
-          row.message = '引擎可以被调用的任务超过了限制数，'
+          row.message = i18n.t('packages_business_logs_nodelog_yinqingkeyibei')
         }
       })
       return result

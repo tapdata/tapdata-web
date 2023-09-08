@@ -1136,5 +1136,7 @@ export default {
   packages_business_components_upgradecharges_dingyueshengji: '訂閱升級',
   packages_business_create_connection_sceneform_lianjieceshiwu: '連接測試無效，請檢查您的連接配置',
   packages_business_create_connection_sceneform_qingxianjinxinglian: '請先進行連接測試',
-  packages_business_logs_nodelog_qingshengjidingyue: '請升級訂閱以獲取更多任務數量，點擊彈窗顯示升級引導'
+  packages_business_logs_nodelog_qingshengjidingyue: '請升級訂閱以獲取更多任務數量，點擊彈窗顯示升級引導',
+  packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被調用的任務超過了限制數，',
+  packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！ '
 }
