@@ -1855,7 +1855,7 @@ export default {
         }).then(resFlag => {
           resFlag && location.reload()
         })
-      } else if (code === 'Task.AgentNotFound') {
+      } else if (code === 'Task.ScheduleLimit') {
         this.handleShowUpgradeDialog()
       } else {
         const msg = error?.data?.message || msg
@@ -2273,22 +2273,23 @@ export default {
     },
 
     handleShowUpgradeDialog() {
-      !this.isDaas && this.$axios
+      !this.isDaas &&
+        this.$axios
           .get(
-              'api/tcm/agent?filter=' +
+            'api/tcm/agent?filter=' +
               encodeURIComponent(
-                  JSON.stringify({
-                    size: 100,
-                    page: 1
-                  })
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
               )
           )
           .then(async data => {
             const { items = [] } = data
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
-                ? this.handleShowUpgradeFee()
-                : this.handleShowUpgradeCharges()
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
           })
-    },
+    }
   }
 }

@@ -330,6 +330,18 @@
       </span>
     </el-dialog>
     <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </section>
 </template>
 
@@ -341,7 +353,7 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
@@ -358,7 +370,16 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PermissionseSettingsCreate },
+  components: {
+    FilterBar,
+    TablePage,
+    SkipError,
+    Upload,
+    TaskStatus,
+    PermissionseSettingsCreate,
+    UpgradeCharges,
+    UpgradeFee
+  },
 
   mixins: [syncTaskAgent],
 
@@ -409,7 +430,9 @@ export default {
       showTooltip: false,
       showDelTooltip: false,
       failList: [], //错误列表
-      taskErrorCause: {}
+      taskErrorCause: {},
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -682,7 +705,11 @@ export default {
     responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
+      console.log('failList', failList)
       if (failList.length) {
+        if (failList.some(t => t.code === 'Task.ScheduleLimit')) {
+          this.handleShowUpgradeDialog()
+        }
         let nameMapping = {}
         this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
@@ -1026,14 +1053,53 @@ export default {
         cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
+
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
     },
+
     havePermission(row = {}, type = '') {
       if (!this.isDaas) return true
       const data = row.permissionActions || []
       return data.includes(type)
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }
