@@ -243,15 +243,16 @@ export default {
   },
 
   async created() {
-    await this.loadAgentCount()
-    this.getPrice()
-    this.getCloudProvider()
     const currencyType = window.__config__?.currencyType
 
     if (currencyType) {
       this.currencyType = currencyType
       this.defaultCurrencyType = currencyType
     }
+
+    await this.loadAgentCount()
+
+    this.handleChangePlatform('selfHost')
   },
 
   methods: {
@@ -340,6 +341,12 @@ export default {
 
     handleChangePlatform(platform) {
       this.platform = platform
+
+      if (this.platform === 'fullManagement') {
+        this.getCloudProvider()
+      } else {
+        this.getPrice()
+      }
     },
 
     //切换云厂商
