@@ -8,6 +8,7 @@ import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 import Lang from '../views/Lang.vue'
 
 const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
+const UserContactUs = () => import(/* webpackChunkName: "task-form" */ '../views/user/ContactUs.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
@@ -358,6 +359,14 @@ const routes = [
         component: UserCenter,
         meta: {
           title: 'tap_user_center'
+        }
+      },
+      {
+        path: '/user/contact-us',
+        name: 'userContactUs',
+        component: UserContactUs,
+        meta: {
+          title: 'tap_contact_us'
         }
       },
       {
