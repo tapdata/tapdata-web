@@ -6,17 +6,34 @@
     <div class="mt-6 fs-5 fw-bold font-color-dark">联系方式</div>
     <ul class="flex justify-content-between mt-6 fs-8">
       <li class="p-4 border rounded-2 flex-fill">
-        <div class="fs-7">在线咨询</div>
+        <div class="fs-7 flex align-items-center">
+          <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
+          <span>在线咨询</span>
+        </div>
         <ElButton type="primary" class="mt-2" size="mini" @click="loadChat">立即对话</ElButton>
         <div class="mt-2 font-color-sslight">工作日 09:00 - 20:00 节假日 09:00 - 18:00</div>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-fill">
-        <div class="fs-7">邮箱</div>
+      <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+        <div class="fs-7 flex align-items-center">
+          <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
+          <span>Slack</span>
+        </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-fill">
-        <div class="fs-7">企业微信</div>
+        <div class="fs-7 flex align-items-center">
+          <VIcon size="20" class="mr-2 color-primary">email</VIcon>
+          <span>邮箱</span>
+        </div>
+        <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
+        <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
+      </li>
+      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+        <div class="fs-7 flex align-items-center">
+          <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
+          <span>企业微信</span>
+        </div>
         <ElTooltip placement="top" effect="light" popper-class="contact-us-enterprise-wechat shadow p-0">
           <ElButton type="primary" class="mt-2" size="mini">联系我们</ElButton>
           <template #content>
@@ -26,11 +43,13 @@
             </div>
           </template>
         </ElTooltip>
-        <!--        <ElButton type="primary" class="mt-2" size="mini">联系我们</ElButton>-->
         <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-fill">
-        <div class="fs-7">电话咨询</div>
+      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+        <div class="fs-7 flex align-items-center">
+          <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
+          <span>电话咨询</span>
+        </div>
         <ElButton type="text" class="mt-2" size="mini">0755-26656080-3</ElButton>
         <div class="mt-2 font-color-sslight">工作日 09:00 - 20:00 节假日 09:00 - 18:00</div>
       </li>
@@ -39,13 +58,13 @@
     <ul class="flex justify-content-between mt-6">
       <li class="p-4 border rounded-2 flex-fill">
         <div class="font-color-dark">我的工单</div>
-        <div type="primary" class="mt-2 fs-8" size="mini">提交工单解决问题</div>
-        <ElLink type="primary" class="mt-2 font-color-sslight" @click="goTicketSystem">创建工单</ElLink>
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">提交工单解决问题</div>
+        <ElLink type="primary" class="mt-2" @click="goTicketSystem">创建工单</ElLink>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-fill">
         <div class="font-color-dark">产品文档</div>
-        <div type="primary" class="mt-2 fs-8" size="mini">提供产品介绍、使用指导、等</div>
-        <ElLink type="primary" class="mt-2 font-color-sslight" @click="handleDocs">查看文档</ElLink>
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">提供产品介绍、使用指导、等</div>
+        <ElLink type="primary" class="mt-2" @click="handleDocs">查看文档</ElLink>
       </li>
       <!--      <li class="p-4 border rounded-2 ml-4 flex-fill">-->
       <!--        <div class="font-color-dark">社区</div>-->
@@ -64,7 +83,9 @@ export default {
   name: 'Center',
   inject: ['buried'],
   data() {
-    return {}
+    return {
+      isEn: i18n.locale === 'en'
+    }
   },
   methods: {
     goTicketSystem() {
@@ -150,5 +171,9 @@ export default {
 .code-image {
   width: 92px;
   height: 92px;
+}
+.slack-image {
+  width: 18px;
+  height: 18px;
 }
 </style>
