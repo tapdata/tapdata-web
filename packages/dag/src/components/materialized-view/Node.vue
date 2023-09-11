@@ -1,5 +1,10 @@
 <template>
-  <div class="materialized-view-node position-absolute rounded-lg bg-white" :class="nodeClass" :style="nodeStyle">
+  <div
+    class="materialized-view-node position-absolute rounded-lg bg-white"
+    :class="nodeClass"
+    :style="nodeStyle"
+    @click="mouseClick"
+  >
     <div class="p-2 node-header">
       <div class="flex gap-2 mb-2">
         <AsyncSelect
@@ -65,10 +70,12 @@ import { IconButton } from '@tap/component'
 import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
 import { sourceEndpoint, targetEndpoint } from '../../style'
+import BaseNode from '../BaseNode.vue'
 export default {
   name: 'Node',
 
   props: {
+    position: Array,
     node: {
       type: Object,
       default: () => ({})
@@ -82,6 +89,7 @@ export default {
   },
 
   components: {
+    BaseNode,
     AsyncSelect,
     TableSelect,
     FieldSelect,
@@ -110,7 +118,7 @@ export default {
     },
 
     nodeStyle() {
-      const [left = 0, top = 0] = this.node.attrs?.position || []
+      const [left = 0, top = 0] = this.position || []
       return {
         left: left + 'px',
         top: top + 'px'
@@ -251,8 +259,7 @@ export default {
       this.jsPlumbIns.addEndpoint(
         this.$el,
         {
-          ...sourceEndpoint,
-          enabled: false
+          ...sourceEndpoint
         },
         {
           uuid: id + '_source'

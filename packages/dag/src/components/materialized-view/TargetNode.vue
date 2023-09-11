@@ -1,5 +1,9 @@
 <template>
-  <div class="materialized-view-node --target position-absolute rounded-lg bg-white">
+  <div
+    class="materialized-view-node --target position-absolute rounded-lg bg-white"
+    :class="nodeClass"
+    :style="nodeStyle"
+  >
     <div class="flex gap-2 p-2 bg-primary node-header">
       <AsyncSelect
         v-model="node.connectionId"
@@ -42,12 +46,18 @@ export default {
   name: 'TargetNode',
 
   props: {
+    position: Array,
     node: {
       type: Object,
       default: () => ({})
     },
     data: Object,
     jsPlumbIns: Object
+  },
+
+  components: {
+    AsyncSelect,
+    TableSelect
   },
 
   data() {
@@ -60,13 +70,31 @@ export default {
     }
   },
 
-  components: {
-    AsyncSelect,
-    TableSelect
+  computed: {
+    ins() {
+      return this.node?.__Ctor || {}
+    },
+
+    nodeClass() {
+      const list = []
+      this.ins && list.push(`node--${this.ins.group}`)
+      return list
+    },
+
+    nodeStyle() {
+      const [left = 0, top = 0] = this.position || []
+      return {
+        left: left + 'px',
+        top: top + 'px'
+      }
+    }
   },
 
   mounted() {
-    this.node.id && this.loadSchema()
+    if (this.node.id) {
+      this.loadSchema()
+      this.__init()
+    }
   },
 
   methods: {
@@ -81,7 +109,8 @@ export default {
     ]),
 
     __init() {
-      const { id, nodeId } = this
+      const { id } = this.node
+      const nodeId = id
 
       const targetParams = {
         ...targetEndpoint
@@ -96,7 +125,7 @@ export default {
         start: params => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
-          if (params.e && !this.isNodeSelected(this.nodeId)) {
+          if (params.e && !this.isNodeSelected(this.node.id)) {
             // 只有直接拖动的节点params才会有事件
             // 检查当前拖动的节点是否被选中，如果未选中则clearDragSelection
             this.jsPlumbIns.clearDragSelection()
@@ -125,7 +154,7 @@ export default {
           if (this.isActionActive('dragActive')) {
             const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
 
-            if (!this.isNodeSelected(this.nodeId)) {
+            if (!this.isNodeSelected(this.node.id)) {
               moveNodes.push(this.data)
             }
             /*const selectedNodeNames = moveNodes.map(node => node.id)
@@ -189,17 +218,6 @@ export default {
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
         uuid: id + '_target'
       })
-
-      this.jsPlumbIns.addEndpoint(
-        this.$el,
-        {
-          ...sourceEndpoint,
-          enabled: false
-        },
-        {
-          uuid: id + '_source'
-        }
-      )
     },
 
     mouseClick(e) {
@@ -212,11 +230,11 @@ export default {
           this.$emit('deselectAllNodes')
         }
 
-        if (this.isNodeSelected(this.nodeId)) {
-          this.$emit('deselectNode', this.nodeId)
+        if (this.isNodeSelected(this.node.id)) {
+          this.$emit('deselectNode', this.node.id)
         } else {
           // 选中节点并且active
-          this.$emit('nodeSelected', this.nodeId, true)
+          this.$emit('nodeSelected', this.node.id, true)
         }
       }
     },
