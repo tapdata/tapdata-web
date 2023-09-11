@@ -1,17 +1,19 @@
 <template>
   <div class="flex-fill p-4 bg-white rounded-4">
     <div class="bg-box pt-10 pl-10">
-      <span class="fs-4 fw-bold font-color-dark">为您提供专业的服务支持</span>
+      <span class="fs-4 fw-bold font-color-dark">{{ $t('dfs_user_contactus_weinintigongzhuan') }}</span>
     </div>
-    <div class="mt-6 fs-5 fw-bold font-color-dark">联系方式</div>
+    <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_lianxifangshi') }}</div>
     <ul class="flex justify-content-between mt-6 fs-8">
       <li class="p-4 border rounded-2 flex-fill">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
-          <span>在线咨询</span>
+          <span>{{ $t('dfs_user_contactus_zaixianzixun') }}</span>
         </div>
-        <ElButton type="primary" class="mt-2" size="mini" @click="loadChat">立即对话</ElButton>
-        <div class="mt-2 font-color-sslight">工作日 09:00 - 20:00 节假日 09:00 - 18:00</div>
+        <ElButton type="primary" class="mt-2" size="mini" @click="loadChat">{{
+          $t('dfs_user_contactus_lijiduihua')
+        }}</ElButton>
+        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>
       </li>
       <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-fill">
         <div class="fs-7 flex align-items-center">
@@ -19,58 +21,59 @@
           <span>Slack</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
-        <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
+        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-fill">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">email</VIcon>
-          <span>邮箱</span>
+          <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
-        <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
+        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
       <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
-          <span>企业微信</span>
+          <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
         </div>
         <ElTooltip placement="top" effect="light" popper-class="contact-us-enterprise-wechat shadow p-0">
-          <ElButton type="primary" class="mt-2" size="mini">联系我们</ElButton>
+          <ElButton type="primary" class="mt-2" size="mini">{{ $t('tap_contact_us') }}</ElButton>
           <template #content>
             <div class="px-4 py-5 text-center rounded-4">
               <ElImage :src="require('@/assets/image/enterprise-wechat-code.png')" class="code-image mb-2"></ElImage>
-              <div>扫码添加客服微信</div>
+              <div>{{ $t('dfs_user_contactus_saomatianjiake') }}</div>
             </div>
           </template>
         </ElTooltip>
-        <div class="mt-2 font-color-sslight">为您提供产品配置指导、问题排查等技术支持</div>
+        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
       <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
         <div class="fs-7 flex align-items-center">
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
-          <span>电话咨询</span>
+          <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">0755-26656080-3</ElButton>
-        <div class="mt-2 font-color-sslight">工作日 09:00 - 20:00 节假日 09:00 - 18:00</div>
+        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>
       </li>
     </ul>
-    <div class="mt-6 fs-5 fw-bold font-color-dark">更多服务</div>
+    <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_gengduofuwu') }}</div>
     <ul class="flex justify-content-between mt-6">
       <li class="p-4 border rounded-2 flex-fill">
-        <div class="font-color-dark">我的工单</div>
-        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">提交工单解决问题</div>
-        <ElLink type="primary" class="mt-2" @click="goTicketSystem">创建工单</ElLink>
+        <div class="font-color-dark">{{ $t('dfs_user_contactus_wodegongdan') }}</div>
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
+          {{ $t('dfs_user_contactus_tijiaogongdanjie') }}
+        </div>
+        <ElLink type="primary" class="mt-2" @click="goTicketSystem">{{
+          $t('dfs_user_contactus_chuangjiangongdan')
+        }}</ElLink>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-fill">
-        <div class="font-color-dark">产品文档</div>
-        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">提供产品介绍、使用指导、等</div>
-        <ElLink type="primary" class="mt-2" @click="handleDocs">查看文档</ElLink>
+        <div class="font-color-dark">{{ $t('workbench_guide_documentation') }}</div>
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
+          {{ $t('dfs_user_contactus_tigongchanpinjie') }}
+        </div>
+        <ElLink type="primary" class="mt-2" @click="handleDocs">{{ $t('dfs_user_contactus_chakanwendang') }}</ElLink>
       </li>
-      <!--      <li class="p-4 border rounded-2 ml-4 flex-fill">-->
-      <!--        <div class="font-color-dark">社区</div>-->
-      <!--        <div type="primary" class="mt-2 fs-8" size="mini">提供云上技术学习、信息交流的平台</div>-->
-      <!--        <ElLink type="primary" class="mt-2 font-color-sslight">进入社区</ElLink>-->
-      <!--      </li>-->
     </ul>
   </div>
 </template>

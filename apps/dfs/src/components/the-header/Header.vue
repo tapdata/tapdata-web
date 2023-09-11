@@ -41,7 +41,7 @@
         <!--联系我们-->
         <div class="command-item flex align-center gap-1 rounded-4" @click="goContactUs">
           <VIcon size="16">workorder</VIcon>
-          <span class="cursor-pointer">联系我们</span>
+          <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
         </div>
         <!---demo环境-->
         <div

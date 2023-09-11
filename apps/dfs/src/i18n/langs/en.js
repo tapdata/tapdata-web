@@ -143,6 +143,7 @@ export default {
   tap_agent_download_now: 'Agent Download Now',
   tap_upgrade: 'Agent Upgrade',
   tap_user_center: 'Profile',
+  tap_contact_us: 'Contact Us',
   agent_key: 'Agent',
   agent_manage: 'Agent Management',
   agent_name: 'Agent Name',
@@ -1767,5 +1768,24 @@ export default {
   dfs_change_number: 'Change Number',
   dfs_change_time: 'Change Time',
   dfs_use_self_atlas: 'If you want to use your own MongoDB storage cluster',
-  dfs_use_self_atlas_click_here: 'please click here to provide the connection information'
+  dfs_use_self_atlas_click_here: 'please click here to provide the connection information',
+  dfs_order_pay_duigonghuikuan: 'Remittance to business',
+  dfs_order_pay_old_shifujine: 'Actual payment amount:',
+  dfs_user_contactus_chakanwendang: 'View the document',
+  dfs_user_contactus_tigongchanpinjie: 'Provide product introduction, usage guidance, etc.',
+  dfs_user_contactus_chuangjiangongdan: 'Create a ticket',
+  dfs_user_contactus_tijiaogongdanjie: 'Submit a ticket to resolve the issue',
+  dfs_user_contactus_wodegongdan: 'My Ticket',
+  dfs_user_contactus_gengduofuwu: 'More Services',
+  dfs_user_contactus_gongzuorijiejia: 'Weekdays 09:00 - 20:00 Holidays 09:00 - 18:00',
+  dfs_user_contactus_dianhuazixun: 'Telephone consultation',
+  dfs_user_contactus_weinintigongchan:
+    'Provide you with product configuration guidance, troubleshooting and other technical support',
+  dfs_user_contactus_saomatianjiake: 'Scan the QR code to add customer service WeChat',
+  dfs_user_contactus_qiyeweixin: 'Enterprise WeChat',
+  dfs_user_contactus_youxiang: 'Email',
+  dfs_user_contactus_lijiduihua: 'Contact now',
+  dfs_user_contactus_zaixianzixun: 'Online Support',
+  dfs_user_contactus_lianxifangshi: 'Contact Information',
+  dfs_user_contactus_weinintigongzhuan: 'Provide you with professional service support'
 }

@@ -4,7 +4,7 @@
     <!--费用清单-->
     <section v-if="orderInfo" class="pay-main" ref="details">
       <div class="mb-4" :class="{ card: isCard, 'mt-6 ': !isCard }">
-        <div class="font-color-dark fw-sub fs-5 mb-4">所选配置</div>
+        <div class="font-color-dark fw-sub fs-5 mb-4">{{ $t('dfs_instance_create_spec_summary') }}</div>
         <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
       </div>
       <div :class="{ card: isCard }">
@@ -15,7 +15,7 @@
             <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
           </ElFormItem>
 
-          <div>选择支付方式</div>
+          <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
           <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
             <ElRadio
               v-for="(item, index) in types"
@@ -37,12 +37,12 @@
           <span class="ml-2"> {{ priceOff }}</span>
         </li>
         <li v-if="orderInfo.price">
-          <span class="fw-sub font-color-dark mt-2 mr-4">实付金额:</span
+          <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_order_pay_old_shifujine') }}</span
           ><span class="color-primary fw-sub fs-5">{{ orderInfo.price }}</span>
         </li>
 
         <div class="mt-4">
-          <ElButton type="primary" size="large" @click="handlePay">立即支付</ElButton>
+          <ElButton type="primary" size="large" @click="handlePay">{{ $t('dfs_pay_now') }}</ElButton>
         </div>
       </ul>
     </section>
@@ -90,7 +90,7 @@ export default {
       subscribeItems: [],
       types: [
         {
-          label: '在线支付',
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
           value: 'Stripe'
         }
       ],
