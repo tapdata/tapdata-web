@@ -40,7 +40,7 @@
         </div>
         <!--联系我们-->
         <div class="command-item flex align-center gap-1 rounded-4" @click="goContactUs">
-          <VIcon size="16">workorder</VIcon>
+          <VIcon size="16">consultation</VIcon>
           <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
         </div>
         <!---demo环境-->

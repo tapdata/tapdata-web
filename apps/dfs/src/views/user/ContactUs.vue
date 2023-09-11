@@ -5,7 +5,7 @@
     </div>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_lianxifangshi') }}</div>
     <ul class="flex justify-content-between mt-6 fs-8">
-      <li class="p-4 border rounded-2 flex-fill">
+      <li class="p-4 border rounded-2 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_zaixianzixun') }}</span>
@@ -15,7 +15,7 @@
         }}</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>
       </li>
-      <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+      <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
@@ -23,7 +23,7 @@
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-fill">
+      <li class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">email</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
@@ -31,7 +31,7 @@
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
           <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
@@ -47,7 +47,7 @@
         </ElTooltip>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-fill">
+      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
@@ -58,7 +58,7 @@
     </ul>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_gengduofuwu') }}</div>
     <ul class="flex justify-content-between mt-6">
-      <li class="p-4 border rounded-2 flex-fill">
+      <li class="p-4 border rounded-2 flex-grow-1">
         <div class="font-color-dark">{{ $t('dfs_user_contactus_wodegongdan') }}</div>
         <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
           {{ $t('dfs_user_contactus_tijiaogongdanjie') }}
@@ -67,7 +67,7 @@
           $t('dfs_user_contactus_chuangjiangongdan')
         }}</ElLink>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-fill">
+      <li class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="font-color-dark">{{ $t('workbench_guide_documentation') }}</div>
         <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
           {{ $t('dfs_user_contactus_tigongchanpinjie') }}
@@ -178,5 +178,8 @@ export default {
 .slack-image {
   width: 18px;
   height: 18px;
+}
+li {
+  width: 30%;
 }
 </style>
