@@ -1199,5 +1199,12 @@ export default {
     'The connection test is invalid, please check your connection configuration',
   packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
   packages_business_logs_nodelog_qingshengjidingyue:
-    'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide'
+    'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide',
+  packages_business_logs_nodelog_yinqingkeyibei:
+    'The number of tasks that the engine can be invoked exceeds the limit,',
+  packages_business_task_list_nindekeyunxing:
+    'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks!',
+  packages_business_setting_alarmsetting_qubangding: 'to bind',
+  packages_business_setting_alarmsetting_jiancedaoninhai:
+    'It has been detected that you have not bound your email address, so email notification cannot be enabled.'
 }

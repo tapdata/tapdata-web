@@ -116,7 +116,7 @@
                   <ElLink
                     v-if="item.level === 'ERROR' && item.fullErrorCode === 'Task.ScheduleLimit'"
                     type="primary"
-                    class="ml-2 text-decoration-underline"
+                    class="text-decoration-underline"
                     @click="$emit('action', { ...item, ...{ type: 'ScheduleLimit' } })"
                   >
                     {{ $t('packages_business_logs_nodelog_qingshengjidingyue') }}
@@ -622,6 +622,9 @@ export default {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
+        if (row.fullErrorCode === 'Task.ScheduleLimit') {
+          row.message = i18n.t('packages_business_logs_nodelog_yinqingkeyibei')
+        }
       })
       return result
     },

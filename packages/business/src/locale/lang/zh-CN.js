@@ -1144,5 +1144,9 @@ export default {
   packages_business_components_upgradecharges_dingyueshengji: '订阅升级',
   packages_business_create_connection_sceneform_lianjieceshiwu: '连接测试无效，请检查您的连接配置',
   packages_business_create_connection_sceneform_qingxianjinxinglian: '请先进行连接测试',
-  packages_business_logs_nodelog_qingshengjidingyue: '请升级订阅以获取更多任务数量，点击弹窗显示升级引导'
+  packages_business_logs_nodelog_qingshengjidingyue: '请升级订阅以获取更多任务数量，点击弹窗显示升级引导',
+  packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被调用的任务超过了限制数，',
+  packages_business_task_list_nindekeyunxing: '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
+  packages_business_setting_alarmsetting_qubangding: '去绑定',
+  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。'
 }
