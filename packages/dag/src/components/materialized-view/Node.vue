@@ -34,7 +34,7 @@
             >
           </div>
           <div class="flex align-center gap-2">
-            <FieldSelect></FieldSelect>
+            <FieldSelect :options="schema"></FieldSelect>
             <span>=</span>
             <FieldSelect></FieldSelect>
             <IconButton>delete</IconButton>
@@ -61,7 +61,7 @@
 
 <script>
 import { merge } from 'lodash'
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { Time } from '@tap/shared'
@@ -76,6 +76,7 @@ export default {
 
   props: {
     position: Array,
+    schema: Array,
     node: {
       type: Object,
       default: () => ({})
@@ -89,7 +90,6 @@ export default {
   },
 
   components: {
-    BaseNode,
     AsyncSelect,
     TableSelect,
     FieldSelect,
@@ -101,12 +101,23 @@ export default {
       loading: false,
       params: {
         where: { database_type: 'MongoDB' }
-      },
-      treeData: []
+      }
     }
   },
 
   computed: {
+    ...mapGetters('dataflow', [
+      'nodeById',
+      'isActionActive',
+      'isNodeActive',
+      'isNodeSelected',
+      'isMultiSelect',
+      'processorNodeTypes',
+      'hasNodeError',
+      'stateIsReadonly',
+      'activeType'
+    ]),
+
     ins() {
       return this.node?.__Ctor || {}
     },
@@ -123,11 +134,16 @@ export default {
         left: left + 'px',
         top: top + 'px'
       }
+    },
+
+    treeData() {
+      console.log('computed:treeData')
+      return this.schema ? this.createTree(this.schema) : []
     }
   },
 
   mounted() {
-    this.node.id && this.loadSchema()
+    // this.node.id && this.loadSchema()
     if (this.node && this.ins) {
       this.__init()
     }
@@ -189,62 +205,7 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
-
-            if (!this.isNodeSelected(this.nodeId)) {
-              moveNodes.push(this.node)
-            }
-            /*const selectedNodeNames = moveNodes.map(node => node.id)
-
-            if (!selectedNodeNames.includes(this.node.id)) {
-              moveNodes.push(this.node)
-            }*/
-
-            let x = parseFloat(this.$el.style.left)
-            let y = parseFloat(this.$el.style.top)
-
-            const distance = Math.sqrt(Math.pow(x - position[0], 2) + Math.pow(y - position[1], 2))
-
-            if (x === position[0] && y === position[1]) {
-              // 拖拽结束后位置没有改变
-              console.log('NotMove') // eslint-disable-line
-              this.isNotMove = true
-              this.removeActiveAction('dragActive')
-            }
-
-            if (distance < 4 || Time.now() - this.onMouseDownAt < 10) {
-              console.log(
-                i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
-                Time.now() - this.onMouseDownAt,
-                distance
-              ) // eslint-disable-line
-              this.removeActiveAction('dragActive')
-            }
-
-            moveNodes.forEach(node => {
-              const nodeElement = node.id
-              const element = document.getElementById(nodeElement)
-              if (element === null) {
-                return
-              }
-
-              let newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
-
-              const updateInformation = {
-                id: node.id,
-                properties: {
-                  attrs: { position: newNodePosition }
-                }
-              }
-
-              oldProperties.push({
-                id: node.id,
-                properties: {
-                  attrs: { position }
-                }
-              })
-              newProperties.push(updateInformation)
-            })
+            this.position.splice(0, 2, parseFloat(this.$el.style.left), parseFloat(this.$el.style.top))
           }
 
           this.onMouseDownAt = undefined
@@ -259,7 +220,13 @@ export default {
       this.jsPlumbIns.addEndpoint(
         this.$el,
         {
-          ...sourceEndpoint
+          ...sourceEndpoint,
+          connectorStyle: {
+            strokeWidth: 1,
+            stroke: '#9f9f9f',
+            outlineStroke: 'transparent',
+            outlineWidth: 20
+          }
         },
         {
           uuid: id + '_source'
@@ -272,10 +239,10 @@ export default {
         this.removeActiveAction('dragActive')
       } else {
         if (!this.ins) return
-        if (this.isCtrlKeyPressed(e) === false) {
+        /*if (this.isCtrlKeyPressed(e) === false) {
           // 如果不是多选模式则取消所有节点选中
           this.$emit('deselectAllNodes')
-        }
+        }*/
 
         if (this.isNodeSelected(this.nodeId)) {
           this.$emit('deselectNode', this.nodeId)
@@ -394,7 +361,7 @@ export default {
       return data
     },
 
-    createTree(data, columnsMap) {
+    createTree(data) {
       const root = { children: [] }
 
       for (const item of data) {
@@ -403,8 +370,6 @@ export default {
         const { field_name } = item
         let parent = root
         const fields = field_name.split('.')
-        item.dataType = item.data_type.replace(/\(.+\)/, '')
-        item.indicesUnique = !!columnsMap[field_name]
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]

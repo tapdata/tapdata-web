@@ -47,6 +47,7 @@ export default {
 
   props: {
     position: Array,
+    schema: Array,
     node: {
       type: Object,
       default: () => ({})
@@ -65,8 +66,7 @@ export default {
       loading: false,
       params: {
         where: { database_type: 'MongoDB' }
-      },
-      treeData: []
+      }
     }
   },
 
@@ -87,12 +87,17 @@ export default {
         left: left + 'px',
         top: top + 'px'
       }
+    },
+
+    treeData() {
+      console.log('computed:treeData')
+      return this.schema ? this.createTree(this.schema) : []
     }
   },
 
   mounted() {
     if (this.node.id) {
-      this.loadSchema()
+      // this.loadSchema()
       this.__init()
     }
   },
@@ -347,7 +352,7 @@ export default {
       return data
     },
 
-    createTree(data, columnsMap) {
+    createTree(data) {
       const root = { children: [] }
 
       for (const item of data) {
@@ -356,8 +361,6 @@ export default {
         const { field_name } = item
         let parent = root
         const fields = field_name.split('.')
-        item.dataType = item.data_type.replace(/\(.+\)/, '')
-        item.indicesUnique = !!columnsMap[field_name]
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]

@@ -1,10 +1,11 @@
 <template>
-  <el-drawer :visible="visible" size="calc(100% - 260px)" :with-header="false" @update:visible="handleUpdateVisible">
+  <el-drawer :visible="visible" size="100%" :with-header="false" @update:visible="handleUpdateVisible">
     <div class="h-100 flex flex-column">
       <header class="px-4 h-48 flex align-center">
-        <div class="fs-6 font-color-dark">构建物化视图</div>
+        <IconButton @click="handleUpdateVisible(false)">close</IconButton>
+        <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
       </header>
-      <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller">
+      <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
         <Node
           v-for="node in nodes"
           :key="node.id"
@@ -13,11 +14,13 @@
           :node-id="node.id"
           :js-plumb-ins="jsPlumbIns"
           :position="nodePositionMap[node.id]"
+          :schema="nodeSchemaMap[node.id]"
         ></Node>
         <TargetNode
           :id="targetNode.id"
           :node="targetNode"
           :js-plumb-ins="jsPlumbIns"
+          :schema="nodeSchemaMap[targetNode.id]"
           :position="nodePositionMap[targetNode.id]"
         ></TargetNode>
       </PaperScroller>
@@ -28,12 +31,13 @@
 <script>
 import dagre from 'dagre'
 import { mapGetters } from 'vuex'
+import { IconButton } from '@tap/component'
+import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import PaperScroller from '../PaperScroller'
 import Node from './Node'
 import TargetNode from './TargetNode'
 import { config, jsPlumb } from '../../instance'
-import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../../constants'
-import { connectorActiveStyle } from '../../style'
+import tree from 'element-ui/packages/tree'
 
 export default {
   name: 'MaterializedView',
@@ -42,12 +46,13 @@ export default {
     visible: Boolean
   },
 
-  components: { PaperScroller, TargetNode, Node },
+  components: { PaperScroller, TargetNode, Node, IconButton },
 
   data() {
     return {
       nodes: [],
       nodePositionMap: {},
+      nodeSchemaMap: {},
       jsPlumbIns: jsPlumb.getInstance(config)
     }
   },
@@ -76,23 +81,32 @@ export default {
       if (!$outputs.length) return
 
       return this.nodeById($outputs[0])
+    },
+
+    viewNodes() {
+      return this.nodes.concat(this.targetNode ? [this.targetNode] : [])
     }
   },
 
   watch: {
     visible(val) {
-      if (!val) return
+      if (!val) {
+        this.resetView()
+        return
+      }
+      this.initView()
       this.transformToDag()
+      this.loadSchema()
       setTimeout(() => {
         this.handleAutoLayout()
       }, 1000)
     }
   },
 
-  mounted() {
-    const { jsPlumbIns } = this
-    jsPlumbIns.setContainer('#node-view')
-  },
+  // mounted() {
+  //   const { jsPlumbIns } = this
+  //   jsPlumbIns.setContainer('#node-view')
+  // },
 
   methods: {
     handleUpdateVisible(val) {
@@ -134,7 +148,7 @@ export default {
      * 自动布局
      */
     handleAutoLayout() {
-      const nodes = [...this.nodes, this.targetNode]
+      const nodes = this.viewNodes
 
       if (nodes.length < 2) return
 
@@ -178,6 +192,94 @@ export default {
         this.$refs.paperScroller.autoResizePaper()
         this.$refs.paperScroller.centerContent(false, 24)
       })
+    },
+
+    initView() {
+      const { jsPlumbIns } = this
+      jsPlumbIns.setContainer('#node-view')
+    },
+
+    resetView() {
+      this.jsPlumbIns.reset()
+    },
+
+    createTree(data, columnsMap) {
+      const root = { children: [] }
+
+      for (const item of data) {
+        if (item.is_deleted) continue
+
+        const { field_name } = item
+        let parent = root
+        const fields = field_name.split('.')
+        item.dataType = item.data_type.replace(/\(.+\)/, '')
+        item.indicesUnique = !!columnsMap[field_name]
+
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i]
+          let child = parent.children.find(c => c.field_name === field)
+
+          if (!child) {
+            child = { field_name: field, children: [] }
+            parent.children.push(child)
+          }
+
+          parent = child
+
+          if (i === fields.length - 1) {
+            Object.assign(parent, item, {
+              field_name: field
+            })
+          }
+        }
+      }
+
+      return root.children
+    },
+
+    loadSchema() {
+      Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
+    },
+
+    async loadNodeSchema(nodeId) {
+      const params = {
+        nodeId,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        page: 1,
+        pageSize: 20
+      }
+      const {
+        items: [schema = {}]
+      } = await metadataInstancesApi.nodeSchemaPage(params)
+      const { fields = [], indices = [] } = schema
+
+      let columnsMap = indices.reduce((map, item) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = true))
+        return map
+      }, {})
+
+      const treeData = this.createTree(
+        fields.sort((a, b) => a.columnPosition - b.columnPosition),
+        columnsMap
+      )
+
+      this.$set(
+        this.nodeSchemaMap,
+        nodeId,
+        fields
+          .sort((a, b) => a.columnPosition - b.columnPosition)
+          .map(item => {
+            item.dataType = item.data_type.replace(/\(.+\)/, '')
+            item.indicesUnique = !!columnsMap[item.field_name]
+            return item
+          })
+      )
+      console.log(this.nodeSchemaMap)
+    },
+
+    handleChangeScale(scale) {
+      this.scale = scale
+      this.jsPlumbIns.setZoom(scale)
     }
   }
 }
