@@ -161,7 +161,7 @@ export default {
     },
 
     openChat() {
-      window.$zoho.salesiq.visitor.chat()
+      window.$zoho.salesiq.chat.start?.()
     }
   }
 }
