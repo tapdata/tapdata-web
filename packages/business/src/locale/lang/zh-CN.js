@@ -855,6 +855,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: '退款失败',
   packages_business_shared_const_yituikuan: '已退款',
   packages_business_shared_const_zhifushibai: '支付失败',
+  packages_business_payment_timeout: '支付超时',
   packages_business_shared_const_yizhifu: '已支付',
   packages_business_shared_const_weizhifu: '未支付',
   packages_business_shared_ws_client_webso: 'websocket 消息解析失败: ',

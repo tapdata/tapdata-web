@@ -13,8 +13,8 @@
           </div>
           <ul class="mt-4 overflow-auto flex-1">
             <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
-              <div class="sub-li-header flex justify-content-between">
-                <div>
+              <div class="sub-li-header flex justify-content-between align-center">
+                <div class="felx align-center">
                   <span class="font-color-dark fw-sub mr-2"
                     >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
                   >
@@ -68,7 +68,13 @@
                 </div>
               </div>
               <div>
-                <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
+                <VTable
+                  :columns="columns"
+                  :data="item.subscribeItems"
+                  ref="table"
+                  :has-pagination="false"
+                  header-cell-class-name="bg-white"
+                >
                   <template #subscriptionMethodLabel="{ row }">
                     <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
                   </template>
@@ -350,7 +356,7 @@ export default {
               value: 'refund'
             },
             {
-              label: this.$t('packages_business_shared_const_tuikuanshibai'),
+              label: this.$t('packages_business_payment_timeout'),
               value: 'past_due'
             },
             {
