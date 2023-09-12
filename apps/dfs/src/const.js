@@ -27,7 +27,7 @@ export const INSTANCE_STATUS_MAP = {
     active: { text: i18n.t('packages_business_shared_const_yizhifu'), type: 'success' },
     payFail: { text: i18n.t('packages_business_shared_const_zhifushibai'), type: 'warning' },
     refund: { text: i18n.t('packages_business_shared_const_yituikuan'), type: 'disable' },
-    past_due: { text: i18n.t('packages_business_shared_const_tuikuanshibai'), type: 'warning' },
+    past_due: { text: i18n.t('packages_business_payment_timeout'), type: 'warning' },
     refunding: { text: i18n.t('packages_business_shared_const_tuikuanzhong') },
     incomplete_expired: { text: i18n.t('packages_business_shared_const_shixiao'), type: 'disable' },
     canceled: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' },

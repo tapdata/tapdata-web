@@ -888,6 +888,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: 'Refund Failed',
   packages_business_shared_const_yituikuan: 'Refunded',
   packages_business_shared_const_zhifushibai: 'Payment Failed',
+  packages_business_payment_timeout: 'Payment Timeout',
   packages_business_shared_const_yizhifu: 'Paid',
   packages_business_shared_const_weizhifu: 'Unpaid',
   packages_business_shared_ws_client_webso: 'Websocket message parsing failed: ',
