@@ -10,7 +10,7 @@
           <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_zaixianzixun') }}</span>
         </div>
-        <ElButton type="primary" class="mt-2" size="mini" @click="loadChat">{{
+        <ElButton type="primary" class="mt-2" size="mini" @click="openChat">{{
           $t('dfs_user_contactus_lijiduihua')
         }}</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>
@@ -90,12 +90,18 @@ export default {
       isEn: i18n.locale === 'en'
     }
   },
+
+  created() {
+    this.loadChat()
+  },
+
   methods: {
     goTicketSystem() {
       this.$router.push({
         name: 'TicketSystem'
       })
     },
+
     loadChat() {
       let $zoho = $zoho || {}
       const { isDomesticStation } = this
@@ -138,6 +144,7 @@ export default {
         }
       }
     },
+
     hideCustomTip() {
       setTimeout(() => {
         let tDom = document.getElementById('titlediv')
@@ -148,8 +155,13 @@ export default {
         }
       }, 5000)
     },
+
     handleDocs() {
       openUrl('https://docs.tapdata.net/cloud/what-is-tapdata-cloud')
+    },
+
+    openChat() {
+      window.$zoho.salesiq.visitor.chat()
     }
   }
 }
