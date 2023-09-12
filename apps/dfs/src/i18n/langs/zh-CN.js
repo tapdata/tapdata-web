@@ -160,6 +160,7 @@ export default {
   tap_agent_download_now: 'Agent 立即下载',
   tap_upgrade: 'Agent 升级',
   tap_user_center: '用户中心',
+  tap_contact_us: '联系我们',
   // Agent
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
@@ -1635,5 +1636,23 @@ export default {
   dfs_change_number: '变更编号',
   dfs_change_time: '变更申请时间',
   dfs_use_self_atlas: '如果您想使用自己的 MongoDB Atlas',
-  dfs_use_self_atlas_click_here: '请单击此处提供连接信息'
+  dfs_use_self_atlas_click_here: '请单击此处提供连接信息',
+  dfs_order_pay_duigonghuikuan: '对公汇款',
+  dfs_order_pay_old_shifujine: '实付金额:',
+  dfs_user_contactus_chakanwendang: '查看文档',
+  dfs_user_contactus_tigongchanpinjie: '提供产品介绍、使用指导等',
+  dfs_user_contactus_chuangjiangongdan: '创建工单',
+  dfs_user_contactus_tijiaogongdanjie: '提交工单解决问题',
+  dfs_user_contactus_wodegongdan: '我的工单',
+  dfs_user_contactus_gengduofuwu: '更多服务',
+  dfs_user_contactus_gongzuorijiejia: '工作日 09:00 - 20:00 节假日 09:00 - 18:00',
+  dfs_user_contactus_dianhuazixun: '电话咨询',
+  dfs_user_contactus_weinintigongchan: '为您提供产品配置指导、问题排查等技术支持',
+  dfs_user_contactus_saomatianjiake: '扫码添加客服微信',
+  dfs_user_contactus_qiyeweixin: '企业微信',
+  dfs_user_contactus_youxiang: '邮箱',
+  dfs_user_contactus_lijiduihua: '立即对话',
+  dfs_user_contactus_zaixianzixun: '在线咨询',
+  dfs_user_contactus_lianxifangshi: '联系方式',
+  dfs_user_contactus_weinintigongzhuan: '为您提供专业的服务支持'
 }
