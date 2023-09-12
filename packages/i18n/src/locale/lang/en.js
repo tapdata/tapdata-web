@@ -105,7 +105,7 @@ export default {
   public_button_inquire: 'Inquire',
   public_button_generate: 'Generate',
   public_button_sort: 'Sort',
-  public_button_subscription: 'Subscription',
+  public_button_subscription: 'Subscribe',
   public_button_unsubscribe: 'Unsubscribe',
   public_button_renew: 'Renew',
   public_button_pay: 'Pay',
