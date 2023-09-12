@@ -29,6 +29,7 @@ export default {
   public_board_view: 'Board',
   public_list_view: 'List',
   public_all: 'All',
+  public_no_permissions: 'No Permissions',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

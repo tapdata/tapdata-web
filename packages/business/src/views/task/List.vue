@@ -889,7 +889,7 @@ export default {
           let message = ''
           const { isDaas } = this
           this.failList.forEach(el => {
-            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? '没有权限' : el.message}<br/>`
+            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message}<br/>`
           })
           this.$message.info({
             dangerouslyUseHTMLString: true,
