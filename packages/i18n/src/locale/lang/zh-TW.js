@@ -29,6 +29,7 @@ export default {
   public_board_view: '面板',
   public_list_view: '列表',
   public_all: '全部',
+  public_no_permissions: '沒有權限',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
