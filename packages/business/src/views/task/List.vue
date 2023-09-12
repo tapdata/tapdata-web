@@ -838,9 +838,14 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(data => {
+        taskApi.batchDelete(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) => ids.includes(id))
           const { toggleRowSelection } = this.table.$refs.table
+          data.forEach(item => {
+            const { name, permissionActions = [] } = selected.find(t => t.id === item.id) || {}
+            item.name = name
+            item.permissionActions = permissionActions
+          })
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
           this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
@@ -849,10 +854,21 @@ export default {
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
-      this.failList = [...this.failList, ...canNotList]
+      this.failList = [...(data?.filter(t => t.code !== 'ok') || []), ...canNotList]
       if (this.failList.length) {
-        this.dialogDelMsgVisible = true
+        if (this.failList.some(t => t.code === 'Clear.Slot')) {
+          this.dialogDelMsgVisible = true
+        } else {
+          let message = ''
+          const { isDaas } = this
+          this.failList.forEach(el => {
+            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? '没有权限' : el.message}<br/>`
+          })
+          this.$message.info({
+            dangerouslyUseHTMLString: true,
+            message
+          })
+        }
       } else if (msg) {
         this.$message.success(msg, false)
       }
