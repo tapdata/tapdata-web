@@ -129,7 +129,7 @@
       </ElButton>
 
       <ElButton
-        v-if="dataflow.disabledData && !dataflow.disabledData.reset && buttonShowMap.reset"
+        v-if="dataflow.disabledData && !dataflow.disabledData.reset && buttonShowMap.Reset"
         :disabled="$disabledReadonlyUserBtn()"
         key="reset"
         class="ml-3"
