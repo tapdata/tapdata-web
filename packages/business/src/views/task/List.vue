@@ -447,7 +447,7 @@ export default {
     buttonShowMap() {
       if (this.$route.name === 'dataflowList') {
         return {
-          create: this.$has('v2_data_flow_edit'),
+          create: this.$has('v2_data_flow_creation'),
           copy: this.$has('v2_data_flow_copy'),
           import: this.$has('v2_data_flow_import'),
           export: this.$has('v2_data_flow_export')
@@ -455,7 +455,7 @@ export default {
       }
 
       return {
-        create: this.$has('v2_data_replication_edit'),
+        create: this.$has('v2_data_replication_creation'),
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
@@ -862,7 +862,9 @@ export default {
           let message = ''
           const { isDaas } = this
           this.failList.forEach(el => {
-            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message}<br/>`
+            message += `${el.name || el.id}: ${
+              isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message
+            }<br/>`
           })
           this.$message.info({
             dangerouslyUseHTMLString: true,
