@@ -447,7 +447,24 @@ export default {
       return false
     },
 
+    matchesSelector(el, selector, ctx) {
+      ctx = ctx || el.parentNode
+      var possibles = ctx.querySelectorAll(selector)
+      for (var i = 0; i < possibles.length; i++) {
+        if (possibles[i] === el) {
+          return true
+        }
+      }
+      return false
+    },
+
+    inputFilter(e, el, selector = 'input,textarea,select,button,option') {
+      return this.matchesSelector(e.srcElement || e.target, selector, el)
+    },
+
     mouseDown(e) {
+      if (this.inputFilter(e, this.$el)) return
+
       this.initState(e)
       on(window, 'mousemove', this.mouseMove)
       on(window, 'mouseup', this.mouseUp)

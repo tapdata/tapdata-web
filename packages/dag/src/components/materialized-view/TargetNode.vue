@@ -145,6 +145,7 @@ export default {
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
+        handle: '.node-title, .node-title *',
         start: params => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)

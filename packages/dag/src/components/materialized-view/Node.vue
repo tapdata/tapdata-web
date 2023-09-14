@@ -8,7 +8,7 @@
     @click="mouseClick"
   >
     <div class="node-header overflow-hidden">
-      <div class="node-title text-white lh-base flex align-center px-2 py-1">
+      <div class="node-title text-white lh-base flex align-center p-2">
         <VIcon class="mr-1">drag</VIcon><span>{{ dagNode.tableName }}</span>
       </div>
       <div class="flex gap-2 p-2">
@@ -63,7 +63,12 @@
                   :options="schema"
                 ></FieldSelect>
                 <span>=</span>
-                <FieldSelect v-model="keys.target"></FieldSelect>
+                <FieldSelect
+                  v-model="keys.target"
+                  itemLabel="field_name"
+                  itemValue="field_name"
+                  :options="parentFieldOptions"
+                ></FieldSelect>
                 <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
               </div>
             </div>
@@ -112,6 +117,7 @@ export default {
   props: {
     position: Array,
     schema: Array,
+    parentSchema: Array,
     node: {
       type: Object,
       default: () => ({})
@@ -191,6 +197,10 @@ export default {
 
     newTableOptions() {
       return this.tableOptions.filter(({ value }) => this.node.id !== value)
+    },
+
+    parentFieldOptions() {
+      return this.parentSchema
     }
   },
 
@@ -249,6 +259,7 @@ export default {
       this.jsPlumbIns.makeTarget(id, targetParams)
 
       this.jsPlumbIns.draggable(this.$el, {
+        handle: '.node-title, .node-title *',
         // containment: 'parent',
         start: params => {
           this.onMouseDownAt = Time.now()

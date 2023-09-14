@@ -1,5 +1,11 @@
 <template>
-  <el-drawer :visible="visible" size="100%" :with-header="false" @update:visible="handleUpdateVisible">
+  <el-drawer
+    :visible="visible"
+    size="100%"
+    :with-header="false"
+    :close-on-press-escape="false"
+    @update:visible="handleUpdateVisible"
+  >
     <div class="h-100 flex flex-column">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
@@ -76,6 +82,7 @@
           :js-plumb-ins="jsPlumbIns"
           :position="nodePositionMap[node.id]"
           :schema="nodeSchemaMap[node.id]"
+          :parentSchema="nodeSchemaMap[node.parentId]"
           :getInputs="getInputs"
           :getOutputs="getOutputs"
           :tableOptions="tableOptions"
@@ -427,34 +434,48 @@ export default {
       this.updateDag({ vm: this })
 
       if (!node.targetPath) {
-        const connectionIns = this.jsPlumbIns.getConnections({
-          source: node.id,
-          target: oldParentId
-        })[0]
-        this.jsPlumbIns.deleteConnection(connectionIns)
-        this.jsPlumbIns.connect({ uuids: [node.id + '_source', parentId + '_target'] })
-        this.handleAutoLayout()
+        this.updateSourceTarget(node.id, oldParentId, parentId)
       }
     },
 
     handleChangePath(node, path) {
       const arr = path.split('.')
+      const outputs = this.outputsMap[node.id]
+      let { parentId } = node
 
       if (arr.length > 1) {
         const parentPath = arr.slice(0, arr.length - 1).join('.')
         const parentNode = this.nodes.find(node => node.targetPath === parentPath)
-        const outputs = this.outputsMap[node.id]
-
-        if (parentNode && parentNode.id !== outputs[0]) {
-          const connectionIns = this.jsPlumbIns.getConnections({
-            source: node.id,
-            target: outputs[0]
-          })[0]
-          this.jsPlumbIns.deleteConnection(connectionIns)
-          this.jsPlumbIns.connect({ uuids: [node.id + '_source', parentNode.id + '_target'] })
-          this.handleAutoLayout()
-        }
+        parentId = parentNode?.id || parentId
       }
+
+      if (parentId !== outputs[0]) {
+        this.updateSourceTarget(node.id, outputs[0], parentId)
+      }
+    },
+
+    updateSourceTarget(source, target, newTarget) {
+      const inputs = this.inputsMap[target]
+      const inputIndex = inputs.indexOf(source)
+      const outputs = this.outputsMap[source]
+      const outputIndex = outputs.indexOf(target)
+      let newTargetInputs = this.inputsMap[newTarget]
+      const connectionIns = this.jsPlumbIns.getConnections({
+        source,
+        target
+      })[0]
+
+      if (!newTargetInputs) {
+        newTargetInputs = this.inputsMap[newTarget] = []
+      }
+
+      ~inputIndex && inputs.splice(inputIndex, 1)
+      ~outputIndex && outputs.splice(outputIndex, 1)
+      outputs.push(newTarget)
+      newTargetInputs.push(source)
+      this.jsPlumbIns.deleteConnection(connectionIns)
+      this.jsPlumbIns.connect({ uuids: [source + '_source', newTarget + '_target'] })
+      this.handleAutoLayout()
     }
   }
 }
