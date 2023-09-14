@@ -52,7 +52,7 @@
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini">0755-26656080-3</ElButton>
+        <ElButton type="text" class="mt-2" size="mini">0755-26656080</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>
       </li>
     </ul>
