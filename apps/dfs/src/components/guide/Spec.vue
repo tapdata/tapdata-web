@@ -7,28 +7,6 @@
       v-html="$t('dfs_guide_spec_offline_deployment_tip')"
     ></div>
     <el-form class="flex flex-column flex-1 overflow-hidden" label-position="top" ref="ruleForm">
-      <!--订阅方式-->
-      <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
-        <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
-          <ElRadio
-            v-for="(item, index) in packageItems"
-            :key="index"
-            :label="item.value"
-            border
-            class="rounded-4 subscription-radio m-0 position-relative"
-          >
-            <span class="inline-flex align-center">
-              <span>{{ item.label }}</span>
-              <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
-                <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
-                  $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
-                }}</ElTag>
-                <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-              </template>
-            </span>
-          </ElRadio>
-        </ElRadioGroup>
-      </ElFormItem>
       <ElFormItem
         :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxi')"
         v-if="platform === 'fullManagement'"
@@ -106,6 +84,28 @@
             ></div>
           </li>
         </ul>
+      </ElFormItem>
+      <!--订阅方式-->
+      <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
+        <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
+          <ElRadio
+            v-for="(item, index) in packageItems"
+            :key="index"
+            :label="item.value"
+            border
+            class="rounded-4 subscription-radio m-0 position-relative"
+          >
+            <span class="inline-flex align-center">
+              <span>{{ item.label }}</span>
+              <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
+                <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
+                  $t('dfs_agent_subscription_discount', { val: getDiscount(item) })
+                }}</ElTag>
+                <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
+              </template>
+            </span>
+          </ElRadio>
+        </ElRadioGroup>
       </ElFormItem>
     </el-form>
     <div class="spec-price flex align-items-end align-items-center ml-4">
