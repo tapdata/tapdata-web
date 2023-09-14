@@ -1,51 +1,80 @@
 <template>
   <div
     class="materialized-view-node position-absolute rounded-lg bg-white"
-    :class="nodeClass"
+    :class="{
+      '--main-table': isMainTable
+    }"
     :style="nodeStyle"
     @click="mouseClick"
   >
-    <div class="p-2 node-header">
-      <div class="flex gap-2 mb-2">
+    <div class="node-header overflow-hidden">
+      <div class="node-title text-white lh-base flex align-center px-2 py-1">
+        <VIcon class="mr-1">drag</VIcon><span>{{ dagNode.tableName }}</span>
+      </div>
+      <div class="flex gap-2 p-2">
         <AsyncSelect
-          v-model="node.connectionId"
+          v-model="dagNode.connectionId"
           placeholder="请选择存储数据库"
           :method="loadDatabases"
           itemValue="id"
           itemQuery="name"
-        ></AsyncSelect>
+        >
+          <template #prefix>
+            <div class="flex align-center h-100">
+              <NodeIcon :node="dagNode" :size="20" />
+            </div>
+          </template>
+        </AsyncSelect>
         <TableSelect
-          v-model="node.tableName"
+          v-model="dagNode.tableName"
           placeholder="请选择存储表"
-          :disabled="!node.connectionId"
+          :disabled="!dagNode.connectionId"
           :method="loadTable"
-          :connectionId="node.connectionId"
+          :connectionId="dagNode.connectionId"
           itemType="object"
           itemQuery="value"
         ></TableSelect>
       </div>
-      <ElForm class="node-form" label-position="top">
-        <ElFormItem>
-          <div slot="label" class="flex align-center justify-content-between">
-            <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
-            <ElLink type="primary" size="mini">
+      <ElForm class="node-form px-2" label-position="top">
+        <template v-if="!isMainTable">
+          <ElFormItem label="关联表">
+            <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
+              <ElOption v-for="option in newTableOptions" :key="option.value" v-bind="option"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem>
+            <div slot="label" class="flex align-center justify-content-between">
+              <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
+              <ElLink class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
+                <VIcon>add</VIcon>
+                {{ $t('public_button_add') }}</ElLink
+              >
+            </div>
+            <ElButton v-if="!node.joinKeys.length" type="ghost" class="w-100 fs-8" @click="handleAddJoinKey">
               <VIcon>add</VIcon>
-              {{ $t('public_button_add') }}</ElLink
-            >
-          </div>
-          <div class="flex align-center gap-2">
-            <FieldSelect :options="schema"></FieldSelect>
-            <span>=</span>
-            <FieldSelect></FieldSelect>
-            <IconButton>delete</IconButton>
-          </div>
-        </ElFormItem>
+              {{ $t('public_button_add') }}
+            </ElButton>
+            <div v-else class="flex flex-column gap-2">
+              <div class="flex align-center gap-2" v-for="(keys, i) in node.joinKeys" :key="i">
+                <FieldSelect
+                  v-model="keys.source"
+                  itemLabel="field_name"
+                  itemValue="field_name"
+                  :options="schema"
+                ></FieldSelect>
+                <span>=</span>
+                <FieldSelect v-model="keys.target"></FieldSelect>
+                <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
+              </div>
+            </div>
+          </ElFormItem>
+        </template>
 
         <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
-          <ElInput></ElInput>
+          <ElInput v-model="node.targetPath" @change="$emit('change-path', node, $event)"></ElInput>
         </ElFormItem>
 
-        <ElFormItem :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')">
+        <ElFormItem v-if="!isMainTable" :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')">
           <ElInput></ElInput>
         </ElFormItem>
       </ElForm>
@@ -53,7 +82,12 @@
     <ElDivider class="my-0" />
     <div class="p-2 node-body">
       <code class="color-success-light-5">{</code>
-      <ElTree :indent="8" :data="treeData" :render-content="renderContent"></ElTree>
+      <ElTree
+        class="fs-8 node-schema-tree overflow-y-auto"
+        :indent="8"
+        :data="treeData"
+        :render-content="renderContent"
+      ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
   </div>
@@ -71,6 +105,7 @@ import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
 import { sourceEndpoint, targetEndpoint } from '../../style'
 import BaseNode from '../BaseNode.vue'
+import NodeIcon from '../NodeIcon.vue'
 export default {
   name: 'Node',
 
@@ -86,10 +121,15 @@ export default {
       type: String,
       required: true
     },
-    jsPlumbIns: Object
+    jsPlumbIns: Object,
+    getInputs: Function,
+    getOutputs: Function,
+    isMainTable: Boolean,
+    tableOptions: Array
   },
 
   components: {
+    NodeIcon,
     AsyncSelect,
     TableSelect,
     FieldSelect,
@@ -139,6 +179,18 @@ export default {
     treeData() {
       console.log('computed:treeData')
       return this.schema ? this.createTree(this.schema) : []
+    },
+
+    sourceNodes() {
+      return this.findParentNodes(this.node.id, true)
+    },
+
+    dagNode() {
+      return this.node.tableNode
+    },
+
+    newTableOptions() {
+      return this.tableOptions.filter(({ value }) => this.node.id !== value)
     }
   },
 
@@ -159,6 +211,29 @@ export default {
       'setNodeError',
       'clearNodeError'
     ]),
+
+    findParentNodes(id, ifMyself) {
+      let node = this.nodeById(id)
+      const parents = []
+      let parentIds = node.$inputs || []
+
+      if (ifMyself && !parentIds.length) return [node]
+
+      parentIds.forEach(pid => {
+        let parent = this.nodeById(pid)
+        if (parent) {
+          if (parent.$inputs?.length) {
+            parent.$inputs.forEach(ppid => {
+              parents.push(...this.findParentNodes(ppid, true))
+            })
+          } else {
+            parents.push(parent)
+          }
+        }
+      })
+
+      return parents
+    },
 
     __init() {
       // const { id, nodeId } = this
@@ -221,6 +296,7 @@ export default {
         this.$el,
         {
           ...sourceEndpoint,
+          enabled: false,
           connectorStyle: {
             strokeWidth: 1,
             stroke: '#9f9f9f',
@@ -442,71 +518,18 @@ export default {
           <span class="ml-1 font-color-slight">{data.dataType}</span>
         </div>
       )
+    },
+
+    handleAddJoinKey() {
+      this.node.joinKeys.push({
+        source: '',
+        target: ''
+      })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.materialized-view-node {
-  width: 300px;
-
-  code {
-    font-family: $codeFontFamily;
-  }
-
-  .node-header {
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
-    border-top: 6px solid map-get($color, primary);
-  }
-
-  .node-body {
-    ::v-deep {
-      .field-icon {
-        left: -18px;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  }
-
-  &.--target {
-    .node-header {
-      border-top-left-radius: inherit;
-      border-top-right-radius: inherit;
-      border: 2px solid map-get($color, primary);
-
-      ::v-deep {
-        .el-input .el-input__inner {
-          border-color: transparent;
-        }
-      }
-    }
-
-    .node-body {
-      border-bottom-left-radius: inherit;
-      border-bottom-right-radius: inherit;
-      border: 2px solid map-get($color, primary);
-      border-top: none;
-    }
-  }
-}
-.color-success-light-5 {
-  color: #009a29;
-}
-.node-form {
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 8px;
-
-      .el-form-item__label {
-        width: 100%;
-        line-height: 20px;
-        padding-bottom: 0;
-        margin-bottom: 6px;
-      }
-    }
-  }
-}
+@import 'style';
 </style>

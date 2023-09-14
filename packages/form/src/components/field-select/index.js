@@ -14,6 +14,7 @@ const DefineFieldSelect = defineComponent({
       ) {
         newAttrs.defaultFirstOption = true
       }
+      const itemLabel = newAttrs.itemLabel || 'label'
       return (
         <Select
           attrs={newAttrs}
@@ -21,7 +22,7 @@ const DefineFieldSelect = defineComponent({
           scopedSlots={{
             option: ({ option }) => (
               <div class="flex align-center">
-                {option.label}
+                {option[itemLabel]}
                 {option.isPrimaryKey && (
                   <VIcon size="12" class="text-warning ml-1">
                     key

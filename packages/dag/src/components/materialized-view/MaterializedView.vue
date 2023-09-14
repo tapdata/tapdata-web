@@ -1,9 +1,70 @@
 <template>
   <el-drawer :visible="visible" size="100%" :with-header="false" @update:visible="handleUpdateVisible">
     <div class="h-100 flex flex-column">
-      <header class="px-4 h-48 flex align-center">
+      <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
+        <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
+          <!--删除-->
+          <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
+            <button @click="$emit('delete')" class="icon-btn">
+              <VIcon size="20">delete</VIcon>
+            </button>
+          </ElTooltip>
+          <!--内容居中-->
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
+            <button @click="$emit('center-content')" class="icon-btn">
+              <VIcon size="20">compress</VIcon>
+            </button>
+          </ElTooltip>
+          <!--自动布局-->
+          <ElTooltip
+            transition="tooltip-fade-in"
+            :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
+          >
+            <button @click="$emit('auto-layout')" class="icon-btn">
+              <VIcon size="20">auto-layout</VIcon>
+            </button>
+          </ElTooltip>
+          <!--&lt;!&ndash;拖选画布&ndash;&gt;
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_mouse_selection')">
+            <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
+              <VIcon size="20">kuangxuan</VIcon>
+            </button>
+          </ElTooltip>-->
+          <VDivider class="mx-3" vertical inset></VDivider>
+          <!--缩小-->
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
+            <button @click="$emit('zoom-out')" class="icon-btn">
+              <VIcon size="20">remove-outline</VIcon>
+            </button>
+          </ElTooltip>
+          <div class="choose-size mx-2">
+            <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
+              <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+              <div class="choose-list p-2">
+                <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
+                  <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
+                  <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+                </div>
+                <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+                  <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
+                  <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+                </div>
+                <VDivider class="my-2"></VDivider>
+                <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+                  {{ val * 100 }}%
+                </div>
+              </div>
+            </ElPopover>
+          </div>
+          <!--放大-->
+          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
+            <button @click="$emit('zoom-in')" class="icon-btn">
+              <VIcon size="20">add-outline</VIcon>
+            </button>
+          </ElTooltip>
+        </div>
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
         <Node
@@ -15,6 +76,12 @@
           :js-plumb-ins="jsPlumbIns"
           :position="nodePositionMap[node.id]"
           :schema="nodeSchemaMap[node.id]"
+          :getInputs="getInputs"
+          :getOutputs="getOutputs"
+          :tableOptions="tableOptions"
+          :isMainTable="checkMainTable(node.id)"
+          @change-parent="handleChangeParent"
+          @change-path="handleChangePath"
         ></Node>
         <TargetNode
           :id="targetNode.id"
@@ -30,8 +97,8 @@
 
 <script>
 import dagre from 'dagre'
-import { mapGetters } from 'vuex'
-import { IconButton } from '@tap/component'
+import { mapActions, mapGetters } from 'vuex'
+import { IconButton, VDivider, VIcon } from '@tap/component'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import PaperScroller from '../PaperScroller'
 import Node from './Node'
@@ -46,14 +113,22 @@ export default {
     visible: Boolean
   },
 
-  components: { PaperScroller, TargetNode, Node, IconButton },
+  components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
 
   data() {
+    const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
+
     return {
       nodes: [],
       nodePositionMap: {},
       nodeSchemaMap: {},
-      jsPlumbIns: jsPlumb.getInstance(config)
+      inputsMap: {},
+      outputsMap: {},
+      jsPlumbIns: jsPlumb.getInstance(config),
+      scale: 1,
+      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
+      commandCode: isMacOs ? '⌘' : 'Ctrl',
+      optionCode: isMacOs ? 'Option' : 'Alt'
     }
   },
 
@@ -71,6 +146,10 @@ export default {
       'hasNodeError'
     ]),
 
+    scaleTxt() {
+      return Math.round(this.scale * 100) + '%'
+    },
+
     showPaper() {
       return this.visible && this.activeNode?.type === 'merge_table_processor'
     },
@@ -85,21 +164,33 @@ export default {
 
     viewNodes() {
       return this.nodes.concat(this.targetNode ? [this.targetNode] : [])
+    },
+
+    tableOptions() {
+      return this.nodes.map(node => ({
+        label: node.tableNode.tableName,
+        value: node.id
+      }))
+    },
+
+    nodeMap() {
+      return this.nodes.reduce((map, node) => {
+        map[node.id] = node
+        return map
+      }, {})
     }
   },
 
   watch: {
-    visible(val) {
+    async visible(val) {
       if (!val) {
         this.resetView()
         return
       }
       this.initView()
       this.transformToDag()
-      this.loadSchema()
-      setTimeout(() => {
-        this.handleAutoLayout()
-      }, 1000)
+      await this.loadSchema()
+      this.handleAutoLayout()
     }
   },
 
@@ -109,20 +200,84 @@ export default {
   // },
 
   methods: {
+    ...mapActions('dataflow', ['updateDag']),
+
     handleUpdateVisible(val) {
       this.$emit('update:visible', val)
+    },
+
+    findParentNodes(id, ifMyself) {
+      let node = this.nodeById(id)
+      const parents = []
+      let parentIds = node.$inputs || []
+
+      if (ifMyself && !parentIds.length) return [node]
+
+      parentIds.forEach(pid => {
+        let parent = this.nodeById(pid)
+        if (parent) {
+          if (parent.$inputs?.length) {
+            parent.$inputs.forEach(ppid => {
+              parents.push(...this.findParentNodes(ppid, true))
+            })
+          } else {
+            parents.push(parent)
+          }
+        }
+      })
+
+      return parents
     },
 
     async transformToDag() {
       const { mergeProperties } = this.activeNode
       const nodes = []
       const edges = []
-      const traverse = (children, target) => {
+      const inputsMap = {}
+      const outputsMap = {}
+      const targetPathMap = {} // path: Node
+      const traverse = (children, _target) => {
         for (const item of children) {
-          nodes.push(this.nodeById(item.id))
-          this.$set(this.nodePositionMap, item.id, [0, 0]) // 初始化坐标
-          target && edges.push({ source: item.id, target })
+          let source = item.id
+          let target = _target
+          let tableNode = this.findParentNodes(item.id, true)[0]
 
+          item.parentId = target
+          item.tableNode = tableNode
+          nodes.push(item)
+          this.$set(this.nodePositionMap, item.id, [0, 0]) // 初始化坐标
+
+          if (item.targetPath) {
+            const arr = item.targetPath.split('.')
+
+            if (arr.length > 1) {
+              const parentPath = arr.slice(0, arr.length - 1).join('.')
+              target = targetPathMap[parentPath] || target
+            }
+
+            targetPathMap[item.targetPath] = item.id
+          }
+
+          // 连线
+          edges.push({ source, target })
+
+          // 上下游节点ID数组
+          let outputs = outputsMap[source]
+          let inputs = inputsMap[target]
+
+          if (!outputs) {
+            outputs = outputsMap[source] = []
+          }
+
+          outputs.push(target)
+
+          if (!inputs) {
+            inputs = inputsMap[target] = []
+          }
+
+          inputs.push(source)
+
+          // 递归
           if (item.children?.length) {
             traverse(item.children, item.id)
           }
@@ -132,15 +287,16 @@ export default {
       traverse(mergeProperties, this.targetNode?.id)
 
       this.$set(this.nodePositionMap, this.targetNode?.id, [0, 0]) // 初始化坐标
-
       this.nodes = nodes
+      this.inputsMap = inputsMap
+      this.outputsMap = outputsMap
+      this.targetPathMap = targetPathMap
 
       await this.$nextTick()
 
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${source}_source`, `${target}_target`] })
       })
-
       console.log('transformToDag', nodes, edges)
     },
 
@@ -203,42 +359,8 @@ export default {
       this.jsPlumbIns.reset()
     },
 
-    createTree(data, columnsMap) {
-      const root = { children: [] }
-
-      for (const item of data) {
-        if (item.is_deleted) continue
-
-        const { field_name } = item
-        let parent = root
-        const fields = field_name.split('.')
-        item.dataType = item.data_type.replace(/\(.+\)/, '')
-        item.indicesUnique = !!columnsMap[field_name]
-
-        for (let i = 0; i < fields.length; i++) {
-          const field = fields[i]
-          let child = parent.children.find(c => c.field_name === field)
-
-          if (!child) {
-            child = { field_name: field, children: [] }
-            parent.children.push(child)
-          }
-
-          parent = child
-
-          if (i === fields.length - 1) {
-            Object.assign(parent, item, {
-              field_name: field
-            })
-          }
-        }
-      }
-
-      return root.children
-    },
-
     loadSchema() {
-      Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
+      return Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
     },
 
     async loadNodeSchema(nodeId) {
@@ -258,11 +380,6 @@ export default {
         return map
       }, {})
 
-      const treeData = this.createTree(
-        fields.sort((a, b) => a.columnPosition - b.columnPosition),
-        columnsMap
-      )
-
       this.$set(
         this.nodeSchemaMap,
         nodeId,
@@ -271,21 +388,110 @@ export default {
           .map(item => {
             item.dataType = item.data_type.replace(/\(.+\)/, '')
             item.indicesUnique = !!columnsMap[item.field_name]
+            item.isPrimaryKey = item.primary_key_position > 0
             return item
           })
       )
-      console.log(this.nodeSchemaMap)
     },
 
     handleChangeScale(scale) {
       this.scale = scale
       this.jsPlumbIns.setZoom(scale)
+    },
+
+    getInputs(nodeId) {
+      return this.inputsMap[nodeId]
+    },
+
+    getOutputs(nodeId) {
+      return this.outputsMap[nodeId]
+    },
+
+    checkMainTable(nodeId) {
+      console.log('checkMainTable', this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id)
+      return this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id
+    },
+
+    handleChangeParent(node, parentId) {
+      const oldParentId = node.parentId
+      const oldParent = this.nodeMap[oldParentId]
+      const newParent = this.nodeMap[parentId]
+      const index = oldParent.children.indexOf(node)
+
+      if (~index) {
+        oldParent.children.splice(index, 1)
+      }
+
+      node.parentId = parentId
+      newParent.children.push(node)
+      this.updateDag({ vm: this })
+
+      if (!node.targetPath) {
+        const connectionIns = this.jsPlumbIns.getConnections({
+          source: node.id,
+          target: oldParentId
+        })[0]
+        this.jsPlumbIns.deleteConnection(connectionIns)
+        this.jsPlumbIns.connect({ uuids: [node.id + '_source', parentId + '_target'] })
+        this.handleAutoLayout()
+      }
+    },
+
+    handleChangePath(node, path) {
+      const arr = path.split('.')
+
+      if (arr.length > 1) {
+        const parentPath = arr.slice(0, arr.length - 1).join('.')
+        const parentNode = this.nodes.find(node => node.targetPath === parentPath)
+        const outputs = this.outputsMap[node.id]
+
+        if (parentNode && parentNode.id !== outputs[0]) {
+          const connectionIns = this.jsPlumbIns.getConnections({
+            source: node.id,
+            target: outputs[0]
+          })[0]
+          this.jsPlumbIns.deleteConnection(connectionIns)
+          this.jsPlumbIns.connect({ uuids: [node.id + '_source', parentNode.id + '_target'] })
+          this.handleAutoLayout()
+        }
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+$sidebarW: 236px;
+$hoverBg: #eef3ff;
+$radius: 6px;
+$baseHeight: 26px;
+$sidebarBg: #fff;
+
+.icon-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  color: #4e5969;
+  background: #fff;
+  outline: none;
+  border: 1px solid transparent;
+  border-radius: $radius;
+  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  cursor: pointer;
+
+  &.active,
+  &:hover {
+    color: map-get($color, primary);
+    background: $hoverBg;
+  }
+}
+
+.icon-btn + .icon-btn {
+  margin-left: 12px;
+}
 .h-48 {
   height: 48px;
 }

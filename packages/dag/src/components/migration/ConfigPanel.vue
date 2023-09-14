@@ -26,6 +26,7 @@
     </div>
 
     <FormPanel
+      v-if="!materializedViewVisible"
       class="config-form-panel"
       v-show="activeType !== 'settings'"
       v-on="$listeners"
@@ -96,7 +97,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion']),
+    ...mapState('dataflow', ['editVersion', 'materializedViewVisible']),
 
     showPanel() {
       return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)

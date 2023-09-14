@@ -4,28 +4,44 @@
     :class="nodeClass"
     :style="nodeStyle"
   >
-    <div class="flex gap-2 p-2 bg-primary node-header">
-      <AsyncSelect
-        v-model="node.connectionId"
-        placeholder="请选择存储数据库"
-        :method="loadDatabases"
-        :params="params"
-        itemValue="id"
-        itemQuery="name"
-      ></AsyncSelect>
-      <TableSelect
-        v-model="node.tableName"
-        placeholder="请选择存储表"
-        :disabled="!node.connectionId"
-        :method="loadTable"
-        :connectionId="node.connectionId"
-        itemType="object"
-        itemQuery="value"
-      ></TableSelect>
+    <div class="node-header bg-primary">
+      <div class="node-title text-white lh-base flex align-center px-2 py-1">
+        <VIcon class="mr-1">drag</VIcon><span>{{ node.tableName }}</span>
+      </div>
+      <div class="flex gap-2 p-2">
+        <AsyncSelect
+          v-model="node.connectionId"
+          placeholder="请选择存储数据库"
+          :method="loadDatabases"
+          :params="params"
+          itemValue="id"
+          itemQuery="name"
+        >
+          <template #prefix>
+            <div class="flex align-center h-100">
+              <NodeIcon :node="node" :size="20" />
+            </div>
+          </template>
+        </AsyncSelect>
+        <TableSelect
+          v-model="node.tableName"
+          placeholder="请选择存储表"
+          :disabled="!node.connectionId"
+          :method="loadTable"
+          :connectionId="node.connectionId"
+          itemType="object"
+          itemQuery="value"
+        ></TableSelect>
+      </div>
     </div>
     <div class="p-2 node-body">
       <code class="color-success-light-5">{</code>
-      <ElTree :indent="8" :data="treeData" :render-content="renderContent"></ElTree>
+      <ElTree
+        class="fs-8 node-schema-tree overflow-y-auto"
+        :indent="8"
+        :data="treeData"
+        :render-content="renderContent"
+      ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
   </div>
@@ -42,6 +58,7 @@ import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
 import { sourceEndpoint, targetEndpoint } from '../../style'
 import { NODE_PREFIX } from '../../constants'
+import NodeIcon from '../NodeIcon.vue'
 export default {
   name: 'TargetNode',
 
@@ -57,6 +74,7 @@ export default {
   },
 
   components: {
+    NodeIcon,
     AsyncSelect,
     TableSelect
   },
@@ -439,50 +457,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.materialized-view-node {
-  width: 300px;
-
-  code {
-    font-family: $codeFontFamily;
-  }
-
-  .node-header {
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
-  }
-
-  .node-body {
-    ::v-deep {
-      .field-icon {
-        left: -18px;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-  }
-
-  &.--target {
-    .node-header {
-      border-top-left-radius: inherit;
-      border-top-right-radius: inherit;
-      border: 2px solid map-get($color, primary);
-
-      ::v-deep {
-        .el-input .el-input__inner {
-          border-color: transparent;
-        }
-      }
-    }
-
-    .node-body {
-      border-bottom-left-radius: inherit;
-      border-bottom-right-radius: inherit;
-      border: 2px solid map-get($color, primary);
-      border-top: none;
-    }
-  }
-}
-.color-success-light-5 {
-  color: #009a29;
-}
+@import 'style';
 </style>
