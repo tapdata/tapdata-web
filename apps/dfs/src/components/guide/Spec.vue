@@ -29,7 +29,7 @@
             </ElRadio>
           </ElRadioGroup>
           <span class="font-color-light inline-block">{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span>
-          <ElSelect v-model="region" @change="changeRegion" style="width: 254px">
+          <ElSelect v-model="region" @change="changeRegion">
             <ElOption
               v-for="(item, index) in cloudDetail"
               :value="item.region"
@@ -40,12 +40,12 @@
         </div>
       </ElFormItem>
       <ElFormItem
-        class="flex flex-column flex-1 form-item-flex overflow-hidden mb-0"
+        class="flex flex-column form-item-flex overflow-hidden"
         :label="$t('dfs_agent_download_subscriptionmodeldialog_qingxuanzeninxu')"
       >
-        <ul class="flex flex-wrap overflow-auto gap-4 pr-2">
+        <ul class="flex flex-wrap overflow-auto gap-4">
           <li
-            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 rounded-4 overflow-hidden"
+            class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 rounded-4 overflow-hidden w-100"
             :class="{
               active: specification === item.value,
               disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
@@ -86,7 +86,7 @@
         </ul>
       </ElFormItem>
       <!--订阅方式-->
-      <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')">
+      <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')" class="mb-0">
         <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
           <ElRadio
             v-for="(item, index) in packageItems"
@@ -536,7 +536,7 @@ export default {
   border: 1px solid map-get($color, primary);
 }
 .spec-li {
-  width: 580px;
+  //width: 580px;
   border: 1px solid #dedede;
   border-radius: 4px;
   .is-active {
