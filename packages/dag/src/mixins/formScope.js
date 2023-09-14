@@ -676,7 +676,7 @@ export default {
           const updateField = field.query('dmlPolicy.updatePolicy').take()
 
           const func = (policy, policyField) => {
-            if (!policy || !policy.alternatives) {
+            if (!policy || !policy.alternatives?.length) {
               setTimeout(() => {
                 policyField.setState({ display: 'none' })
               }, 50)
@@ -684,6 +684,11 @@ export default {
             } else {
               const values = policyField.dataSource.map(item => item.value)
               const alternatives = policy.alternatives.filter(key => values.includes(key))
+              // 设置成特性中的选项
+              if (alternatives.length) {
+                policyField.dataSource = policyField.dataSource.filter(item => policy.alternatives.includes(item.value))
+              }
+
               if (alternatives.length <= 1) {
                 setTimeout(() => {
                   policyField.setPattern('readPretty')

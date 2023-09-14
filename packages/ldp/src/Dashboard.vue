@@ -1,12 +1,7 @@
 <template>
-  <div class="swim-lane flex flex-column h-100">
-    <div v-if="!isDaas" class="position-absolute" style="right: 55%">
-      <VIcon v-if="overViewVisible" size="32" @click="toggleOverview(overViewVisible)">fold-pack-up</VIcon>
-      <VIcon v-else size="32" @click="toggleOverview(overViewVisible)">fold-expend</VIcon>
-    </div>
-    <OverView v-if="!isDaas" :visible="overViewVisible"></OverView>
-    <div class="page-header-title flex align-center position-relative">
-      <span>{{ $t('page_title_data_console') }}</span>
+  <div class="swim-lane flex flex-column h-100 position-relative">
+    <div class="page-header-title bg-white box-card flex align-center position-relative">
+      <span>{{ $t('page_title_data_hub') }}</span>
       <ElTooltip
         placement="top"
         v-if="currentView === 'swimlane'"
@@ -24,9 +19,13 @@
         @click="handleQuit"
         >{{ $t('packages_ldp_src_dashboard_anEsctui') }}</span
       >
-      <IconButton class="ml-auto" @click="handleSettings" md>cog-o</IconButton>
+      <IconButton v-if="isDaas || $route.path === '/data-console'" class="ml-auto" @click="handleSettings" lg
+        >cog-o</IconButton
+      >
+      <!--升级存储-->
+      <!--<ElButton v-else type="primary" plain class="ml-auto">{{ $t('packages_ldp_upgrade_storage') }}</ElButton>-->
     </div>
-    <div class="list flex flex-fill overflow-hidden position-relative">
+    <div class="list flex flex-fill overflow-hidden bg-white">
       <div v-if="currentView === 'catalog'" class="px-5 pb-5 w-100 border-top">
         <Catalogue @create-single-task="hanldeCreateSingleTask"></Catalogue>
       </div>
@@ -71,16 +70,28 @@
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
-    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
+    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask"  @handle-show-upgrade="handleShowUpgradeDialog" />
     <ConnectionPreview ref="connectionView" />
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </div>
 </template>
 
 <script>
-import { IconButton } from '@tap/component'
-import { SceneDialog, EventEmitter } from '@tap/business'
-import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
+import { IconButton } from '@tap/component'
+import { SceneDialog, EventEmitter, UpgradeFee, UpgradeCharges } from '@tap/business'
+import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 
 import SourceItem from './Source'
 import TargetItem from './Target'
@@ -112,7 +123,9 @@ export default {
     IconButton,
     Catalogue,
     SceneDialog,
-    OverView
+    OverView,
+    UpgradeFee,
+    UpgradeCharges
   },
 
   data() {
@@ -147,7 +160,9 @@ export default {
       jsPlumbIns: jsPlumb.getInstance(),
       showParentLineage: false,
       nodes: [],
-      edgsLinks: []
+      edgsLinks: [],
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -214,22 +229,15 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbIns.connect({
-        source: this.$refs.source[0].$el,
-        target: this.$refs.source[0].$el,
-        endpoint: 'Dot',
-        connector: ['Bezier'],
-        anchor: ['Left', 'Right'],
-        endpointStyle: { fill: 'white', radius: 0 }
-      })
-      this.jsPlumbIns.reset()
-
+      this.jsPlumbIns.setContainer(this.$el)
       window.addEventListener('keydown', this.handleListenerEsc)
     })
   },
 
   beforeDestroy() {
     window.removeEventListener('keyword', this.handleListenerEsc)
+    // 销毁画布实例
+    this.jsPlumbIns?.destroy()
   },
 
   methods: {
@@ -546,20 +554,67 @@ export default {
       if (e.keyCode === 27 && this.showParentLineage) {
         this.handleQuit()
       }
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.box-card {
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
 .list {
   ::v-deep {
     .list__title {
       height: 48px;
       min-height: 48px;
-      border-top: 1px solid #e1e3e9;
-      border-bottom: 1px solid #e1e3e9;
       background: #f3f7fa;
+    }
+    .list__title__source {
+      color: map-get($color, primary);
+      background: #e8f3ff;
+    }
+    .list__title__target {
+      color: #009a29;
+      background: #e8ffea;
     }
     .list__item {
       border-left: 1px solid #e1e3e9;

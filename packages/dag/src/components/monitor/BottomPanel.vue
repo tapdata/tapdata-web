@@ -1,6 +1,12 @@
 <template>
   <section class="bottom-panel border-top flex-column">
-    <NodeLog v-if="onlyLog" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
+    <NodeLog
+      v-if="onlyLog"
+      v-bind="$attrs"
+      :currentTab="currentTab"
+      ref="log"
+      @action="$emit('action', arguments[0])"
+    ></NodeLog>
     <div v-else class="panel-header flex h-100">
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
@@ -8,11 +14,19 @@
             v-if="currentTab === 'milestone'"
             v-bind="$attrs"
             :currentTab="currentTab"
+            :nodeId.sync="nodeId"
             ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
         <ElTabPane :label="$t('public_task_log')" name="log">
-          <NodeLog v-if="currentTab === 'log'" v-bind="$attrs" :currentTab="currentTab" ref="log"></NodeLog>
+          <NodeLog
+            v-if="currentTab === 'log'"
+            :nodeId.sync="nodeId"
+            v-bind="$attrs"
+            :currentTab="currentTab"
+            ref="log"
+            @action="$emit('action', arguments[0])"
+          ></NodeLog>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
           <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
@@ -77,7 +91,8 @@ export default {
     return {
       currentTab: 'milestone',
       name: this.activeNode?.name,
-      relationCount: 0
+      relationCount: 0,
+      nodeId: ''
     }
   },
 

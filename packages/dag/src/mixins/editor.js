@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import { databaseTypesApi, sharedCacheApi, taskApi } from '@tap/api'
+import { databaseTypesApi, dataPermissionApi, sharedCacheApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
@@ -39,7 +39,16 @@ export default {
     })
 
     return {
-      dataflow
+      dataflow,
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      buttonShowMap: {
+        View: true,
+        Edit: true,
+        Delete: true,
+        Reset: true,
+        Start: true,
+        Stop: true
+      }
     }
   },
 
@@ -365,7 +374,11 @@ export default {
     },
 
     async newDataflow(name) {
-      this.dataflow.name = name || i18n.t('packages_dag_mixins_editor_xinrenwu') + new Date().toLocaleTimeString()
+      if (!name) {
+        name = await this.makeTaskName(`${i18n.t('public_task')} `)
+      }
+
+      this.dataflow.name = name
       await this.saveAsNewDataflow()
       this.titleSet()
     },
@@ -374,21 +387,41 @@ export default {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
           fields: { name: 1 },
-          where: { name: { like: `^${source} +` } }
+          where: { name: { like: `^${source}\\d+$` } }
         })
       })
       let def = 1
       if (taskNames?.items.length) {
         let arr = [0]
         taskNames.items.forEach(item => {
-          const res = item.name.match(/\+(\d+)$/)
+          const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })
-        arr.sort()
+        arr.sort((a, b) => a - b)
         def = arr.pop() + 1
       }
-      return `${source} +${def}`
+      return `${source}${def}`
     },
+
+    // async makeTaskName(source) {
+    //   const taskNames = await taskApi.get({
+    //     filter: JSON.stringify({
+    //       fields: { name: 1 },
+    //       where: { name: { like: `^${source} +` } }
+    //     })
+    //   })
+    //   let def = 1
+    //   if (taskNames?.items.length) {
+    //     let arr = [0]
+    //     taskNames.items.forEach(item => {
+    //       const res = item.name.match(/\+(\d+)$/)
+    //       if (res && res[1]) arr.push(+res[1])
+    //     })
+    //     arr.sort()
+    //     def = arr.pop() + 1
+    //   }
+    //   return `${source} +${def}`
+    // },
 
     onNodeDragStart() {
       if (this.ifNodeDragStart) {
@@ -650,6 +683,8 @@ export default {
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
       this.$set(this.dataflow, 'pingTime', data.pingTime)
+      // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
+      // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
       this.dataflow.attrs = data.attrs
 
@@ -709,7 +744,7 @@ export default {
         return Promise.resolve()
       }
 
-      this.dataflow.id = id
+      // this.dataflow.id = id
 
       if (!first) {
         this.resetWorkspace()
@@ -1628,6 +1663,7 @@ export default {
         const source = this.getRealId(connection.sourceId)
         const target = this.getRealId(connection.targetId)
         this.addNodeOnConn(item, newPosition, source, target)
+        this.jsPlumbIns.select().removeClass('connection-highlight')
       } else {
         this.handleAddNodeToPos(newPosition, item)
       }
@@ -1715,6 +1751,8 @@ export default {
       const b = this.createNode(position, nodeType)
       const c = this.nodeById(target)
 
+      // 表和数据库节点不允许即使源又是目标的情况
+      if ('table' === nodeType.type || 'database' === nodeType.type) return
       if (!this.checkAsTarget(b, true)) return
       if (!this.checkAsSource(b, true)) return
       if (!this.checkTargetMaxInputs(b, true)) return
@@ -1817,6 +1855,8 @@ export default {
         }).then(resFlag => {
           resFlag && location.reload()
         })
+      } else if (code === 'Task.ScheduleLimit') {
+        this.handleShowUpgradeDialog()
       } else {
         const msg = error?.data?.message || msg
         this.$message.error(msg)
@@ -1983,7 +2023,8 @@ export default {
     async loadDataflow(id, params) {
       this.loading = true
       try {
-        const data = await taskApi.get(id, params)
+        const { parent_task_sign } = this.$route.query || {}
+        const data = await taskApi.get(id, params, { parent_task_sign })
         if (!data) {
           this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
@@ -2010,7 +2051,8 @@ export default {
       clearTimeout(this.startLoopTaskTimer)
       if (!id) return
       this.startLoopTaskTimer = setTimeout(async () => {
-        const data = await taskApi.get(id)
+        const { parent_task_sign } = this.$route.query || {}
+        const data = await taskApi.get(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
           // 同步下任务上的属性，重置后会改变
@@ -2029,6 +2071,8 @@ export default {
           this.dataflow.lastStartDate = data.lastStartDate
           this.dataflow.startTime = data.startTime
           this.dataflow.pingTime = data.pingTime
+          this.dataflow.shareCdcStop = data.shareCdcStop
+          this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 
@@ -2203,6 +2247,49 @@ export default {
         .catch(() => {
           this.buried(buriedCode, { result: false })
         })
+    },
+    // 获取任务的按钮权限
+    async getTaskPermissions() {
+      if (!this.isDaas) return
+      const id = this.dataflow.id || this.$route.params?.id
+      if (!id) return
+      const data = await dataPermissionApi.dataActions({
+        dataType: 'Task',
+        dataId: id
+      })
+      for (let key in this.buttonShowMap) {
+        this.buttonShowMap[key] = data.includes(key)
+      }
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }

@@ -21,7 +21,7 @@
           <ElInput
             v-model="item.accept"
             :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
-            :disabled="readonly"
+            disabled
           ></ElInput>
         </ElCol>
         <ElCol :span="3">
@@ -33,7 +33,7 @@
           <ElInput
             v-model="item.result.dataType"
             :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
-            :disabled="readonly"
+            disabled
             class="mr-1"
           ></ElInput>
           <VIcon v-if="item.result.tapType === null" class="color-danger">error</VIcon>

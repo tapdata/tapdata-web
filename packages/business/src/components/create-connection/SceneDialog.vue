@@ -4,6 +4,7 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    :show-close="!startingTour"
     width="80%"
     top="10vh"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
@@ -28,7 +29,7 @@
         </ElInput>
       </template>
       <template v-else>
-        <IconButton @click="showForm = false" class="mr-2">left</IconButton>
+        <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
         <DatabaseIcon
           key="databaseIcon"
           v-if="formParams.pdkHash"
@@ -60,7 +61,24 @@
         </div>
       </div>
       <div ref="connectorContainer" v-loading="loading" class="flex-1 bg-light p-4 overflow-y-auto">
-        <div v-if="sceneDatabases.length" class="connector-list grid gap-4">
+        <div v-if="specialScene[currentScene]" class="connector-list grid gap-4">
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else-if="sceneDatabases.length" class="connector-list grid gap-4">
           <div
             v-for="item in sceneDatabases"
             :key="item.pdkId"
@@ -80,32 +98,20 @@
                 </div>
               </div>
             </div>
-            <div v-if="currentScene === 'recommended' && !search" class="font-color-light fs-8 mt-2">
+            <div v-if="currentScene === 'recommend' && !search" class="font-color-light fs-8 mt-2">
               {{ connectorDescMap[item.type] }}
-            </div>
-          </div>
-        </div>
-        <div v-else-if="specialScene[currentScene]" class="connector-list grid gap-4">
-          <div
-            v-for="item in specialScene[currentScene]"
-            :key="item.key"
-            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-            @click="handleSelectSpecial(item)"
-          >
-            <div class="flex gap-3">
-              <VIcon size="38">{{ item.icon }}</VIcon>
-              <div class="connector-item-content flex-1 overflow-hidden">
-                <div class="connector-item-title font-color-dark flex align-center">
-                  <span class="ellipsis mr-1">{{ item.name }}</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
         <VEmpty v-else></VEmpty>
       </div>
     </div>
-    <div v-else class="form__content flex flex-column h-100 overflow-hidden border-top">
+    <div
+      v-else
+      v-loading="loading"
+      element-loading-background="#fff"
+      class="form__content flex flex-column h-100 overflow-hidden border-top"
+    >
       <ServeForm
         v-if="!formParams.pdkHash"
         :params="formParams"
@@ -118,6 +124,7 @@
         v-else
         :params="formParams"
         :selector-type="selectorType"
+        :hide-connection-type="!!fixedPdkId"
         class="flex-fill"
         @back="init"
         @success="handleSuccess"
@@ -128,6 +135,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@tap/i18n'
 
 import ConnectionForm from './SceneForm'
@@ -155,7 +163,8 @@ export default {
       type: String,
       default: 'scene' // tag
     },
-    selectorType: String
+    selectorType: String,
+    fixedPdkId: String
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
@@ -165,6 +174,7 @@ export default {
       formParams: {
         name: '',
         pdkHash: null,
+        pdkId: null,
         md: null
       },
       selected: {},
@@ -172,6 +182,7 @@ export default {
       timer: null,
       activeTab: '',
       database: [],
+      databaseTypeMap: {},
       loading: false,
       showDialog: this.visible,
       sceneList: [
@@ -180,9 +191,22 @@ export default {
           name: i18n.t('public_select_option_all')
         },
         {
-          key: 'recommended',
+          key: 'recommend',
           name: i18n.t('packages_business_create_connection_scenedialog_tuijianchangjing'),
-          types: ['BigQuery', 'Tablestore', 'MongoDB', 'Redis', 'SelectDB']
+          types: [
+            'Mysql',
+            'Oracle',
+            'SQL Server',
+            'MongoDB',
+            'MongoDB Atlas',
+            'PostgreSQL',
+            'Clickhouse',
+            'Elasticsearch',
+            'Dummy',
+            'Kafka',
+            'Doris',
+            'BigQuery'
+          ]
         },
         {
           key: 'api',
@@ -208,6 +232,7 @@ export default {
           types: ['MongoDB', 'Redis', 'Elasticsearch']
         },
         {
+          key: 'Database',
           name: i18n.t('packages_business_create_connection_scenedialog_shujukutongbu'),
           types: ['MongoDB']
         },
@@ -233,13 +258,27 @@ export default {
         MongoDB: i18n.t('packages_business_create_connection_scenedialog_mongo'),
         Redis: i18n.t('packages_business_create_connection_scenedialog_redis'),
         SelectDB: i18n.t('packages_business_create_connection_scenedialog_selec'),
-        Tablestore: i18n.t('packages_business_create_connection_scenedialog_table')
+        Tablestore: i18n.t('packages_business_create_connection_scenedialog_table'),
+        Mysql: i18n.t('packages_business_create_connection_mysql_desc'),
+        Oracle: i18n.t('packages_business_create_connection_oracle_desc'),
+        'SQL Server': i18n.t('packages_business_create_connection_sqlserver_desc'),
+        PostgreSQL: i18n.t('packages_business_create_connection_postgresql_desc'),
+        Clickhouse: i18n.t('packages_business_create_connection_clickhouse_desc'),
+        Elasticsearch: i18n.t('packages_business_create_connection_elasticsearch_desc'),
+        Dummy: i18n.t('packages_business_create_connection_dummy_desc'),
+        Kafka: i18n.t('packages_business_create_connection_kafka_desc'),
+        Doris: i18n.t('packages_business_create_connection_doris_desc'),
+        'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc')
       },
-      currentScene: 'recommended',
+      currentScene: 'recommend',
       tagList: [
         {
           key: 'all',
           name: i18n.t('public_select_option_all')
+        },
+        {
+          key: 'recommend',
+          name: i18n.t('public_recommend')
         },
         {
           name: i18n.t('public_database'),
@@ -271,6 +310,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['startingTour']),
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types
@@ -283,16 +323,27 @@ export default {
         return this.database.filter(db => db.name.toLowerCase().includes(search))
       }
 
-      if (this.currentScene === 'all') {
+      const { currentScene } = this
+
+      if (currentScene === 'all') {
         return this.database
       }
 
-      if (this.selectorType === 'target') {
+      if (currentScene === 'recommend' || (this.selectorType === 'target' && currentScene !== 'Database')) {
         const types = this.sceneMap[this.currentScene]
-        return types?.length ? this.database.filter(db => types.includes(db.type)) : []
+        const arr = []
+
+        if (!types.length) return arr
+
+        types.forEach(type => {
+          const item = this.databaseTypeMap[type]
+          item && arr.push(item)
+        })
+
+        return arr
       }
 
-      return this.database.filter(db => db.tags?.includes(this.currentScene))
+      return this.database.filter(db => db.tags?.includes(currentScene))
     },
     options() {
       let list = this.selectorType === 'target' ? this.sceneList : this.tagList
@@ -306,13 +357,26 @@ export default {
     }
   },
   watch: {
-    visible(v) {
+    async visible(v) {
       this.showDialog = v
+      this.showForm = false
+      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
-        console.log('visible', this.selectorType) // eslint-disable-line
         this.search = ''
-        this.currentScene = this.selectorType === 'target' ? 'recommended' : 'all'
-        this.getData()
+        this.currentScene = 'recommend'
+
+        if (this.fixedPdkId) {
+          this.loading = true
+          this.showForm = true
+          const pdk = await this.getPdkById(this.fixedPdkId)
+
+          if (!pdk) return
+
+          this.formParams.pdkHash = pdk.pdkHash
+          this.formParams.pdkId = pdk.pdkId
+        } else {
+          this.getData()
+        }
       }
     },
     showDialog(v) {
@@ -321,14 +385,15 @@ export default {
   },
 
   mounted() {
-    const { type, pdkHash } = this.$route.query
+    const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
-    if (type?.startsWith('add-')) {
+    if (type?.startsWith('add-') && this.selectorType !== 'source_and_target') {
       this.$emit('update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {
         this.formParams.pdkHash = pdkHash
+        this.formParams.pdkId = pdkId
         this.showForm = true
       })
     }
@@ -338,12 +403,11 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null })
-      this.activeTab = ''
+      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
     },
 
     handleOpen() {
-      this.init()
+      // this.init()
     },
 
     handleClose() {
@@ -357,13 +421,13 @@ export default {
         return
       }
 
-      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash })
+      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash, pdkId: item.pdkId })
       this.selected = item
       this.showForm = true
     },
 
     handleSelectSpecial(item) {
-      Object.assign(this.formParams, { ...item, pdkHash: null })
+      Object.assign(this.formParams, { ...item, pdkHash: null, pdkId: null })
       this.showForm = true
     },
 
@@ -393,7 +457,8 @@ export default {
         where: {
           tag: 'All',
           authentication: 'All'
-        }
+        },
+        order: 'name ASC'
       }
       if (!noLoading) this.loading = true
       const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
@@ -401,12 +466,28 @@ export default {
         this.selectorType !== 'source_and_target'
           ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
-      this.database = data
+      this.database = data.sort((o1, o2) => {
+        return o1.name.localeCompare(o2.name)
+      })
+      this.databaseTypeMap = data.reduce((map, db) => ((map[db.type] = db), map), {})
       this.loading = false
     },
 
     handleSearchInput() {
       this.resetScroll()
+    },
+
+    async getPdkById(id) {
+      this.loading = true
+      const data = await databaseTypesApi.get({
+        filter: JSON.stringify({
+          where: {
+            pdkId: id
+          }
+        })
+      })
+      this.loading = false
+      return data?.[0]
     }
   }
 }

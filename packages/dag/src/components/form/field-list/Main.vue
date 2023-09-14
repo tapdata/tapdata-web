@@ -89,6 +89,10 @@ export default {
     hideNav: {
       type: Boolean,
       default: false
+    },
+    includesDataTypes: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -153,6 +157,12 @@ export default {
         filterType: this.activeClassification
       })
       const { items, total } = res
+      if (this.includesDataTypes.length) {
+        const types = this.includesDataTypes.map(t => t.split(/[[(]/)?.[0])
+        items.forEach(el => {
+          el.fields = el.fields.filter(t => types.includes(t.data_type.split(/[[(]/)?.[0]))
+        })
+      }
       this.navList = items
 
       this.page.total = total

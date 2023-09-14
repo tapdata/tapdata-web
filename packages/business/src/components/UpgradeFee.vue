@@ -1,18 +1,21 @@
 <template>
   <el-dialog
-    :title="$t('packages_component_src_upgradefee_dingyueshengji')"
+    :title="$t('dfs_subscribe_to_professional_plan')"
     :visible.sync="visible"
     :append-to-body="true"
     width="880px"
     custom-class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
-    <ul class="flex paid-upgrade-ul mt-4">
+    <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
+      <VIcon size="20" class="color-warning">info</VIcon>
+      <span class="ml-2 color-warning">{{ tooltip }}</span>
+    </div>
+    <ul class="flex paid-upgrade-ul mt-6 mx-4">
       <li class="paid-upgrade-left flex flex-column disabled">
         <div class="px-4 py-4 flex-1">
           <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
-          <br />
-          <div class="desc">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
+          <div class="desc mt-6">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
           <div class="paid-upgrade-l-height flex align-items-center">
             <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
           </div>
@@ -51,17 +54,16 @@
           src="https://github.githubassets.com/images/modules/site/copilot/copilot-pricing-card-glow.png"
         />
         <div class="copilot-pricing-card-glow-border1">
-          <div class="px-4 py-4 flex-1 bg-white paid-upgrade-right-border">
-            <div class="flex bg">
-              <div>
+          <div class="px-4 pb-4 flex-1 bg-white paid-upgrade-right-border">
+            <div class="flex bg mr-n4 rounded-4">
+              <div class="pt-4">
                 <div class="version mb-2">
                   {{ $t('packages_component_src_upgradefee_zhuanyeban') }}
                   <span class="discount inline-block fs-8 fw-normal">{{
                     $t('packages_component_src_upgradefee_xianshiyouhui')
                   }}</span>
                 </div>
-                <br />
-                <div class="desc_professional">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
+                <div class="desc_professional mt-6">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
                 <div
                   class="paid-upgrade-height flex align-items-center"
                   :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
@@ -92,7 +94,7 @@
             class="footer-right flex justify-content-between align-items-center px-4 cursor-pointer"
             @click="goPaidUpgrade"
           >
-            {{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}<VIcon size="20">right</VIcon>
+            {{ $t('dfs_subscribe_to_professional_plan') }}<VIcon size="20">right</VIcon>
           </div>
         </div>
       </li>
@@ -106,9 +108,14 @@ export default {
   name: 'UpgradeFeeDialog',
   components: { VIcon },
 
-  props: ['visible'],
+  props: ['visible', 'tooltip', 'goPage'],
   methods: {
     goPaidUpgrade() {
+      if (this.goPage) {
+        this.handleClose()
+        this.goPage()
+        return
+      }
       this.$router.push({
         name: 'createAgent'
       })
@@ -116,9 +123,6 @@ export default {
     },
     handleClose() {
       this.$emit('update:visible', false)
-    },
-    getImg(name) {
-      return require(`../../assets/images/${name}.png`)
     }
   }
 }
@@ -162,7 +166,7 @@ export default {
   .version {
     font-weight: 600;
     font-size: 16px;
-    line-height: 21px;
+    //line-height: 21px;
     max-width: 252px;
     color: map-get($fontColor, dark);
   }
@@ -202,10 +206,10 @@ export default {
     border-radius: 4px;
     padding: 1px 5px;
     margin-left: 10px;
-    position: fixed;
+    //position: fixed;
   }
   .bg {
-    background: url('../../assets/images/subscription_img_zyb.png');
+    background: url('../../../assets/images/subscription_img_zyb.png');
     background-repeat: no-repeat;
     background-position: right;
     background-position-y: top;
@@ -307,8 +311,8 @@ export default {
   padding: 1.5px;
   z-index: 2;
   border-radius: 8px;
-  background: -webkit-linear-gradient(135deg, #A3E4D7, #a77bf3);
-  background: linear-gradient(135deg, #A3E4D7, #a77bf3);
+  background: -webkit-linear-gradient(135deg, #a3e4d7, #a77bf3);
+  background: linear-gradient(135deg, #a3e4d7, #a77bf3);
 }
 ::v-deep {
   .el-dialog__body {

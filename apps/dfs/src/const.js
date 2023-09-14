@@ -2,6 +2,7 @@ import i18n from '@/i18n'
 
 export const INSTANCE_STATUS_MAP = {
     Creating: { text: i18n.t('public_agent_status_to_be_deployed'), type: 'waiting' },
+    Starting: { text: i18n.t('public_status_starting'), type: 'waiting' },
     Running: { text: i18n.t('public_status_running'), type: 'success' },
     Stopping: { text: i18n.t('public_status_stopping') },
     Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
@@ -26,10 +27,12 @@ export const INSTANCE_STATUS_MAP = {
     active: { text: i18n.t('packages_business_shared_const_yizhifu'), type: 'success' },
     payFail: { text: i18n.t('packages_business_shared_const_zhifushibai'), type: 'warning' },
     refund: { text: i18n.t('packages_business_shared_const_yituikuan'), type: 'disable' },
-    past_due: { text: i18n.t('packages_business_shared_const_tuikuanshibai'), type: 'warning' },
+    past_due: { text: i18n.t('packages_business_payment_timeout'), type: 'warning' },
     refunding: { text: i18n.t('packages_business_shared_const_tuikuanzhong') },
     incomplete_expired: { text: i18n.t('packages_business_shared_const_shixiao'), type: 'disable' },
-    canceled: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' }
+    canceled: { text: i18n.t('packages_business_shared_const_yiquxiao'), type: 'disable' },
+    altering: { text: i18n.t('public_status_altering') },
+    complete: { text: i18n.t('public_status_finished'), type: 'success' }
   },
   TICKET_STATUS_MAP = {
     Closed: { text: i18n.t('button_close'), type: 'success' },

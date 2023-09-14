@@ -7,6 +7,7 @@
       :dataflow-name="dataflow.name"
       :dataflow="dataflow"
       :scale="scale"
+      :buttonShowMap="buttonShowMap"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -67,7 +68,7 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
-          <!--<PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>-->
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <TransformLoading :show="transformLoading" />
           <NodePopover
             :popover="nodeMenu"
@@ -84,6 +85,7 @@
         :settings="dataflow"
         :scope="scope"
         :sync-type="dataflow.syncType"
+        :buttonShowMap="buttonShowMap"
         @hide="onHideSidebar"
       />
     </section>
@@ -114,6 +116,7 @@ import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import { VExpandXTransition, VEmpty } from '@tap/component'
 import ConsolePanel from './components/migration/ConsolePanel'
+import PaperEmpty from './components/PaperEmpty.vue'
 
 export default {
   name: 'MigrationEditor',
@@ -125,6 +128,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    PaperEmpty,
     ConsolePanel,
     VExpandXTransition,
     NodePopover,
@@ -172,6 +176,9 @@ export default {
       if (['DataflowViewer', 'MigrateViewer'].includes(this.$route.name) && ['renewing', 'renew_failed'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
+    },
+    'dataflow.id'() {
+      this.getTaskPermissions()
     }
   },
 
@@ -181,6 +188,8 @@ export default {
     await this.initPdkProperties()
     this.initNodeType()
     this.autoAddNode()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -227,7 +236,7 @@ export default {
           type: 'migrate_date_processor'
         },
         {
-          name: '类型过滤',
+          name: i18n.t('packages_dag_src_editor_leixingguolu'),
           type: 'migrate_field_mod_type_filter_processor'
         }
       ])
@@ -304,7 +313,7 @@ export default {
         this.buried('migrationSubmit', { result: false })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
-          this.newDataflow(newName)
+          await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
             name: 'migrateList'

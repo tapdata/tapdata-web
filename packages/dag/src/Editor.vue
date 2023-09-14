@@ -7,6 +7,7 @@
       :dataflow-name="dataflow.name"
       :dataflow="dataflow"
       :scale="scale"
+      :buttonShowMap="buttonShowMap"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -72,8 +73,8 @@
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <VEmpty large />
           </div>
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <TransformLoading :show="transformLoading" />
-
           <NodePopover
             :popover="nodeMenu"
             @click-node="handleClickNodePopover"
@@ -88,6 +89,7 @@
         :scope="scope"
         :settings="dataflow"
         :sync-type="dataflow.syncType"
+        :buttonShowMap="buttonShowMap"
         show-schema-panel
       />
     </section>
@@ -119,6 +121,7 @@ import NodePopover from './components/NodePopover'
 import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
 import ConsolePanel from './components/migration/ConsolePanel'
+import PaperEmpty from './components/PaperEmpty'
 
 export default {
   name: 'Editor',
@@ -134,7 +137,8 @@ export default {
     DFNode,
     LeftSidebar,
     TransformLoading,
-    ConsolePanel
+    ConsolePanel,
+    PaperEmpty
   },
 
   inject: ['buried'],
@@ -181,6 +185,9 @@ export default {
       if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
         this.handleConsoleAutoLoad()
       }
+    },
+    'dataflow.id'() {
+      this.getTaskPermissions()
     }
   },
 
@@ -196,6 +203,8 @@ export default {
     await this.initPdkProperties()
     // 初始化所有节点类型
     await this.initNodeType()
+    // 加载权限
+    await this.getTaskPermissions()
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -220,6 +229,10 @@ export default {
     async initNodeType() {
       let nodes = [
         {
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+          type: 'merge_table_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
           type: 'union_processor'
         },
@@ -232,10 +245,10 @@ export default {
           type: 'js_processor',
           beta: true
         },
-        {
-          name: 'Python',
-          type: 'python_processor'
-        },
+        // {
+        //   name: 'Python',
+        //   type: 'python_processor'
+        // },
         {
           name: 'Row Filter',
           type: 'row_filter_processor'
@@ -265,7 +278,7 @@ export default {
           type: 'date_processor'
         },
         {
-          name: '类型过滤',
+          name: i18n.t('packages_dag_src_editor_leixingguolu'),
           type: 'field_mod_type_filter_processor'
         }
       ]
@@ -275,10 +288,6 @@ export default {
           {
             name: i18n.t('packages_dag_src_editor_join'),
             type: 'join_processor' //join 节点
-          },
-          {
-            name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-            type: 'merge_table_processor'
           }
         ]
         nodes = [...isDaasNode, ...nodes]
@@ -403,7 +412,7 @@ export default {
         this.buried('taskSubmit', { result: true })
         if (e?.data?.code === 'Task.RepeatName') {
           const newName = await this.makeTaskName(data.name)
-          this.newDataflow(newName)
+          await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
             name: 'dataflowList'
@@ -471,36 +480,6 @@ export default {
       hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
-    },
-
-    /**
-     * 通过拖拽添加节点
-     * 🎉 支持拖到连线上快速添加
-     * @param item
-     * @param position
-     * @param rect
-     */
-    handleAddNodeByDrag(item, position, rect) {
-      const paper = this.$refs.paperScroller
-      // const newPosition = paper.getDropPositionWithinPaper(position, rect)
-      const point = paper.getMouseToPage(rect)
-      const newPosition = [point.x, point.y]
-      const $elemBelow = document.elementFromPoint(...position)
-
-      // 节点拖放在连线上
-      if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
-        const connection = $elemBelow.parentElement._jsPlumb
-        const source = this.getRealId(connection.sourceId)
-        const target = this.getRealId(connection.targetId)
-        this.addNodeOnConn(item, newPosition, source, target)
-        this.jsPlumbIns.select().removeClass('connection-highlight')
-      } else {
-        this.handleAddNodeToPos(newPosition, item)
-      }
-
-      paper.autoResizePaper()
-      // 重置导航线
-      this.navLines = []
     },
 
     handleAddTableAsNode(item) {

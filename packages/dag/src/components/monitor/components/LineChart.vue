@@ -8,7 +8,7 @@
 <script>
 import i18n from '@tap/i18n'
 
-import { debounce } from 'lodash'
+import { debounce, isNumber } from 'lodash'
 import dayjs from 'dayjs'
 import { Chart } from '@tap/component'
 import { calcUnit, calcTimeUnit } from '@tap/shared'
@@ -72,13 +72,28 @@ export default {
     timeValue: {
       type: Boolean,
       default: false
+    },
+    // 不支持存在负数的情况
+    autoScale: {
+      type: Boolean,
+      default: false
     }
   },
 
   data() {
     return {
       extend: null,
-      end: 100
+      end: 100,
+      max: 0,
+      min: 0,
+      minNotZero: 0
+    }
+  },
+
+  computed: {
+    canScale() {
+      const { max, minNotZero } = this
+      return this.autoScale && Math.ceil(max / minNotZero / 100) > 1
     }
   },
 
@@ -97,21 +112,31 @@ export default {
 
   methods: {
     init() {
-      const { x, value, name } = this.data
+      this.max = 0
+      this.min = 0
+      this.minNotZero = 0
+
+      const { x, value, name, markLine, yAxisMax } = this.data
       const { limit } = this
-      let options = this.getOptions()
       let series = []
+
       if (value?.[0] instanceof Array) {
         value.forEach((el, index) => {
-          series.push(this.getSeriesItem(el?.map(t => Math.abs(t || 0)) || [], index, name?.[index]))
+          series.push(this.getSeriesItem(el || [], index, name?.[index], markLine?.[index]))
         })
       } else {
-        series.push(this.getSeriesItem(value?.map(t => Math.abs(t || 0)) || []))
+        series.push(this.getSeriesItem(value || []))
       }
+      let options = this.getOptions()
       options.series = series
-      const seriesNoData = series.every(t => !t.data.length)
-      options.yAxis.max = seriesNoData ? 1 : null
-      options.yAxis.min = seriesNoData ? 0 : null
+      const seriesNoData = series.every(t => !t.data.filter(d => !!d).length)
+      if (seriesNoData) {
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : 1
+        options.yAxis.min = 0
+      } else {
+        options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : null
+      }
+
       if (x.length) {
         options.xAxis.data = x
       } else {
@@ -166,10 +191,11 @@ export default {
       }
     },
     getOptions() {
+      const { canScale, max, minNotZero } = this
       let result = {
         tooltip: {
           trigger: 'axis',
-          backgroundColor: '#364252',
+          backgroundColor: 'rgba(54, 66, 82, 0.7)',
           textStyle: {
             color: '#fff',
             fontSize: 12
@@ -182,14 +208,14 @@ export default {
               if (!index) {
                 result += dayjs(Number(axisValue)).format('YYYY-MM-DD HH:mm:ss')
               }
-              let val = data
+              let val = (canScale && data < 0 ? 0 : data) || 0
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
-                  val = calcTimeUnit(data || 0, 2, {
+                  val = calcTimeUnit(val, 2, {
                     digits: 2
                   })
                 } else {
-                  val = (data || 0).toLocaleString('zh', {
+                  val = val.toLocaleString('zh', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                   })
@@ -226,7 +252,7 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#E9E9E9'
+              color: canScale ? '#fff' : '#E9E9E9'
             }
           },
           axisLabel: {
@@ -237,6 +263,7 @@ export default {
           }
         },
         yAxis: {
+          min: !canScale ? null : 0 - Math.ceil(max / minNotZero / 100),
           axisLine: {
             show: true,
             lineStyle: {
@@ -250,16 +277,25 @@ export default {
             }
           },
           axisLabel: {
+            show: true,
             color: '#535F72',
             formatter: val => {
+              if (canScale) {
+                if (val < 0) {
+                  val = 0
+                } else if (val === 0) {
+                  val = null
+                }
+              }
+
               return this.timeValue
                 ? calcTimeUnit(val || 0, 2, {
                     digits: 2
                   })
                 : calcUnit(val)
-            }
+            },
             // showMaxLabel: false,
-            // showMinLabel: false
+            showMinLabel: canScale ? true : null
           }
         },
         series: []
@@ -278,11 +314,40 @@ export default {
       }
       return result
     },
-    getSeriesItem(data = [], index = 0, name = '') {
+    getSeriesItem(data = [], index = 0, name = '', markLine) {
+      let myData = data
+
+      // 最大值
+      const max = Math.max(...myData)
+      if (!this.max || max > this.max) {
+        this.max = max
+      }
+
+      // 最小值
+      const min = Math.min(...myData)
+      if (!this.min || min < this.min) {
+        this.min = min
+      }
+
+      // 非零的最小值
+      const minNotZero = Math.min(...myData.filter(t => !!t))
+      if (!this.minNotZero || minNotZero < this.minNotZero) {
+        this.minNotZero = minNotZero
+      }
+
+      if (this.canScale) {
+        // 0改成负数，按照比例计算
+        const { max, minNotZero } = this
+        myData = myData.map(el => {
+          el = el ? el : 0 - Math.ceil(max / minNotZero / 100)
+          return el
+        })
+      }
+
       return {
         name,
         type: 'line',
-        data: data,
+        data: myData,
         smooth: true,
         symbol: 'none',
         label: {
@@ -294,8 +359,10 @@ export default {
         },
         areaStyle: {
           color: this.color[index],
-          opacity: 0.1
-        }
+          opacity: 0.1,
+          origin: 'start'
+        },
+        markLine: markLine
       }
     },
     reset() {

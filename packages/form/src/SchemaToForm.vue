@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { createForm, setValidateLanguage } from '@formily/core'
+import { createForm, onFormValuesChange, setValidateLanguage } from '@formily/core'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import { SchemaField } from './shared'
@@ -46,12 +46,27 @@ export default {
     },
     scope: {
       type: Object
+    },
+    value: {
+      type: Object
     }
   },
   data() {
     return {
-      form: createForm(),
+      form: createForm(
+        this.value
+          ? {
+              values: this.value,
+              effects: this.useEffects
+            }
+          : {}
+      ),
       objData: null
+    }
+  },
+  computed: {
+    validate() {
+      return this.form.validate
     }
   },
   watch: {
@@ -81,6 +96,11 @@ export default {
     },
     getFormCheckStatus() {
       return this.form.valid
+    },
+    useEffects() {
+      onFormValuesChange(form => {
+        Object.assign(this.value, form.values)
+      })
     }
   }
 }

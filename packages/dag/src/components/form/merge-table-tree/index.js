@@ -6,6 +6,7 @@ import { FormItem, Space, h as createElement, useFieldSchema, useForm, Recursion
 import { getNodeIconSrc } from '@tap/business'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
+import NodeIcon from '../../NodeIcon'
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -121,11 +122,9 @@ export const MergeTableTree = observer(
         const dagNode = props.findNodeById(data.id)
         if (!dagNode) return
 
-        const iconSrc = getNodeIconSrc(dagNode)
-
         return (
-          <div class="flex flex-1 align-center ml-n2 overflow-hidden">
-            <ElImage class="mr-2" src={iconSrc}></ElImage>
+          <div class="flex flex-1 align-center ml-n2 overflow-hidden gap-1">
+            <NodeIcon size={20} node={dagNode}></NodeIcon>
             <div class="flex-1 text-truncate">{dagNode.name}</div>
           </div>
         )

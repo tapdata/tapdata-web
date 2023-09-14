@@ -375,13 +375,6 @@ export class Database extends NodeType {
                     'x-component-props': {
                       size: 'middle'
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    },
                     properties: {
                       writeBatchSize: {
                         title: i18n.t('packages_dag_nodes_database_piliangxierutiao'), //增量批次读取条数
@@ -846,6 +839,10 @@ export class Database extends NodeType {
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                                 value: 'insert_on_nonexists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_bucunzaishidayinrizhi'),
+                                value: 'log_on_nonexists'
                               }
                             ]
                           },

@@ -8,6 +8,7 @@ export default {
   public_description: '描述',
   public_version: '版本',
   public_operation: '操作',
+  public_operation_available: '可用操作',
   public_object: '对象',
   public_create_time: '创建时间',
   public_creator: '创建人',
@@ -24,7 +25,11 @@ export default {
   public_schema: '模型',
   public_basic_settings: '基础设置',
   public_advanced_settings: '高级设置',
-
+  public_recommend: '推荐',
+  public_board_view: '面板',
+  public_list_view: '列表',
+  public_all: '全部',
+  public_no_permissions: '没有权限',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -183,7 +188,7 @@ export default {
   // agent
   public_agent: 'Agent',
   public_agent_name: 'Agent名称',
-  public_agent_button_create: '创建Agent',
+  public_agent_button_create: '创建计算引擎',
   public_agent_button_deploy: '部署',
   public_agent_button_deploy_now: '立即部署',
   public_agent_button_deploy_later: '稍后部署',
@@ -203,6 +208,7 @@ export default {
   public_connection_schema_status_tip: 'Schema加载完成的连接才可以正常创建任务',
   public_connection_table_structure_update_time: '表结构更新时间',
   public_connection_button_create: '创建连接',
+  public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',
   public_connection_button_load_schema: '加载Schema',
   public_connection_form_database_name: '数据库名称',
@@ -216,6 +222,7 @@ export default {
   public_connection_form_time_zone_of_time_type: '时间类型的时区',
   public_connection_form_link_plugin_source: '链接插件来源',
   // 任务
+  public_task: '任务',
   public_task_name: '任务名称',
   public_task_type: '任务类型',
   public_task_sync_type: '同步类型',
@@ -237,6 +244,10 @@ export default {
   public_task_mission_error: '任务出错',
   public_task_reasons_for_error: '错误原因',
   public_task_log: '任务日志',
+  public_task_create: '创建任务',
+  public_task_copy: '复制任务',
+  public_task_import: '导入任务',
+  public_task_export: '导出任务',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',

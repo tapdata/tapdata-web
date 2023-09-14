@@ -94,7 +94,7 @@
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
         <ElButton
-          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit"
+          v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit && buttonShowMap.Edit"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
@@ -103,7 +103,7 @@
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.reset)"
+          v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
@@ -113,7 +113,7 @@
           {{ $t('public_button_reset') }}
         </ElButton>
         <ElButton
-          v-if="!(dataflow.disabledData && dataflow.disabledData.start)"
+          v-if="!(dataflow.disabledData && dataflow.disabledData.start) && buttonShowMap.Start"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
           size="medium"
@@ -124,7 +124,7 @@
         </ElButton>
         <template v-else>
           <ElButton
-            v-if="isShowForceStop(dataflow)"
+            v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
             key="forceStop"
             class="ml-3"
@@ -135,7 +135,7 @@
             {{ $t('public_button_force_stop') }}
           </ElButton>
           <ElButton
-            v-else
+            v-else-if="buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
             key="stop"
             size="medium"
@@ -177,7 +177,13 @@ export default {
       type: Array,
       default: () => []
     },
-    quota: Object
+    quota: Object,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   mixins: [syncTaskAgent],
@@ -191,7 +197,7 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc')
       },
@@ -245,8 +251,8 @@ export default {
     },
 
     hideSetting() {
-      // 挖掘、心跳任务、共享缓存，不显示设置
-      return ['logCollector', 'connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
+      // 心跳任务、共享缓存，不显示设置
+      return ['connHeartbeat', 'shareCache'].includes(this.dataflow.syncType)
     },
 
     hideEdit() {

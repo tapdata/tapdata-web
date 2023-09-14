@@ -425,10 +425,7 @@ export default {
 
     handleOrderStorage() {
       this.$router.push({
-        name: 'createAgent',
-        query: {
-          order: 'storage'
-        }
+        name: 'CreateStorage'
       })
     }
   }

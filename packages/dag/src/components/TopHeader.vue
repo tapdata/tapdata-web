@@ -117,7 +117,7 @@
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
       <ElButton
-        v-if="!stateIsReadonly"
+        v-if="!stateIsReadonly && buttonShowMap.Edit"
         :loading="isSaving"
         :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
         class="ml-3"
@@ -129,7 +129,7 @@
       </ElButton>
 
       <ElButton
-        v-if="dataflow.disabledData && !dataflow.disabledData.reset"
+        v-if="dataflow.disabledData && !dataflow.disabledData.reset && buttonShowMap.Reset"
         :disabled="$disabledReadonlyUserBtn()"
         key="reset"
         class="ml-3"
@@ -148,7 +148,7 @@
           {{ $t('packages_dag_task_list_button_monitor') }}
         </ElButton>
         <ElButton
-          v-if="$route.name !== 'MigrateEditor'"
+          v-if="$route.name !== 'MigrateEditor' && buttonShowMap.Edit"
           key="edit"
           class="ml-3 btn--text"
           size="medium"
@@ -160,7 +160,7 @@
 
         <ElButton
           key="forceStop"
-          v-if="dataflow.status === 'stopping'"
+          v-if="dataflow.status === 'stopping' && buttonShowMap.Stop"
           class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
           size="medium"
@@ -171,7 +171,7 @@
         </ElButton>
         <ElButton
           key="stop"
-          v-else
+          v-else-if="buttonShowMap.Stop"
           class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
           size="medium"
@@ -183,6 +183,7 @@
       </template>
 
       <ElButton
+        v-if="buttonShowMap.Start"
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
         class="ml-3"
         size="medium"
@@ -200,6 +201,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { VIcon, TextEditable, VDivider } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { dataPermissionApi } from '@tap/api'
 
 export default {
   name: 'TopHeader',
@@ -211,7 +213,13 @@ export default {
     isSaving: Boolean,
     dataflowName: String,
     dataflow: Object,
-    scale: Number
+    scale: Number,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   components: { TextEditable, TaskStatus, VDivider, VIcon },
@@ -219,11 +227,12 @@ export default {
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
       syncMap: {
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc')
       },

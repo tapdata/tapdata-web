@@ -18,11 +18,11 @@
               {{ $t('user_Center_yongHuNiCheng') }}
             </div>
             <InlineInput
-              class="inline-input fs-8"
+              class="inline-input"
               :value="userData.nickname"
-              :icon-config="{ class: 'color-primary', size: '12' }"
+              :icon-config="{ class: 'color-primary', size: '14' }"
               type="text"
-              style="width: 202px"
+              :inputStyle="{ width: '180px' }"
               @save="updateName($event)"
             ></InlineInput>
           </ElCol>
@@ -433,7 +433,7 @@
       :close-on-click-modal="false"
       :visible.sync="dialogObj.bindEmail"
     >
-      <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
+      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.native.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
           <ElInput
             v-model="emailForm.email"
@@ -442,14 +442,19 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
-          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
-            :disabled="!emailForm.email"
-            :style="{ width: '120px', textAlign: 'center' }"
-            class="ml-6"
-            type="text"
-          ></VerificationCode>
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.code"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+              class="flex-1"
+            ></ElInput>
+            <VerificationCode
+              :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
+              :disabled="!emailForm.email"
+              type="text"
+            ></VerificationCode>
+          </div>
         </ElFormItem>
       </ElForm>
 
@@ -472,7 +477,7 @@
       :close-on-click-modal="false"
       :visible.sync="dialogObj.editEmail"
     >
-      <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
+      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.native.prevent>
         <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
             v-model="emailForm.email"
@@ -482,14 +487,19 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
-          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
-            :disabled="!emailForm.email"
-            :style="{ width: '120px', textAlign: 'center' }"
-            class="ml-6"
-            type="text"
-          ></VerificationCode>
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.code"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+              class="flex-1"
+            ></ElInput>
+            <VerificationCode
+              :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
+              :disabled="!emailForm.email"
+              type="text"
+            ></VerificationCode>
+          </div>
         </ElFormItem>
         <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
           <ElInput
@@ -499,18 +509,18 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
-          <ElInput
-            v-model="emailForm.newCode"
-            :placeholder="$t('user_Center_qingShuRuYanZheng')"
-            maxlength="50"
-          ></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
-            :disabled="!emailForm.newEmail"
-            :style="{ width: '120px', textAlign: 'center' }"
-            class="ml-6"
-            type="text"
-          ></VerificationCode>
+          <div class="flex gap-4 w-100">
+            <ElInput
+              v-model="emailForm.newCode"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+            ></ElInput>
+            <VerificationCode
+              :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
+              :disabled="!emailForm.newEmail"
+              type="text"
+            ></VerificationCode>
+          </div>
         </ElFormItem>
       </ElForm>
 
@@ -682,6 +692,10 @@ export default {
   mounted() {
     this.init()
     this.getCountryCode()
+
+    if (this.$route.query.bind === 'email' && !this.userData.email) {
+      this.dialogObj.bindEmail = true
+    }
   },
   methods: {
     init() {
@@ -959,6 +973,7 @@ export default {
           code: emailForm.code
         })
         .then(() => {
+          this.$store.commit('setUserEmail', emailForm.email)
           this.userData.email = emailForm.email
           this.resetEmailForm()
           this.$message.success(i18n.t('user_Center_bangDingYouXiangCheng'))
@@ -1180,7 +1195,6 @@ export default {
 }
 .click-style {
   padding-left: 10px;
-  font-size: 12px;
   font-style: normal;
   color: map-get($color, primary);
   font-weight: normal;

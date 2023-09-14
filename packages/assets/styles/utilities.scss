@@ -317,6 +317,14 @@
   overflow: hidden !important;
 }
 
+.overflow-x-hidden {
+  overflow-x: hidden !important;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden !important;
+}
+
 .overflow-visible {
   overflow: visible !important;
 }
@@ -497,6 +505,9 @@
 .border-bottom {
   border-bottom: 1px solid #dee2e6 !important;
 }
+.border-left {
+  border-left: 1px solid #dee2e6 !important;
+}
 
 .border-bottom-0 {
   border-bottom: 0 !important;
@@ -587,7 +598,6 @@
 .w-60 {
   width: 60% !important;
 }
-
 
 .w-75 {
   width: 75% !important;
@@ -2677,6 +2687,10 @@
 
 .bg-warning {
   background-color: #ffc107 !important;
+}
+
+.bg-warning-light {
+  background-color: #FFF7E8 !important;
 }
 
 .bg-danger {
@@ -12329,7 +12343,7 @@
 /*
 * 列表头部样式
 */
-.page-header-title{
+.page-header-title {
   font-size: 18px;
   line-height: 24px;
   padding: 16px 24px;
@@ -12338,22 +12352,22 @@
 /*
 通用卡片布局
  */
-.isCardBox{
+.isCardBox {
   padding: 0 24px 24px 24px;
 }
-.isCard-title{
+.isCard-title {
   font-size: 18px;
   line-height: 24px;
 }
 
 //基本字体
-.fs-basic{
+.fs-basic {
   font-size: 14px;
 }
-.fs-basic-16{
+.fs-basic-16 {
   font-size: 16px;
 }
-.color-white{
+.color-white {
   color: white;
 }
 
@@ -12365,4 +12379,13 @@
 // TODO: 将来使用Tailwind CSS 或者 Windi CSS 替换
 .border-gray-200 {
   border-color: rgb(243, 243, 243) !important;
+}
+
+.bg-secondary-100 {
+  background-color: #f1f2f4;
+}
+
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
 }

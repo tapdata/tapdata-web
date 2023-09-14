@@ -12,28 +12,29 @@
             </div>
           </div>
           <ul class="mt-4 overflow-auto flex-1">
-            <li class="sub-li mb-4" v-for="item in subscribeList" :key="item.id">
-              <div class="sub-li-header flex justify-content-between">
-                <div>
+            <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
+              <div class="sub-li-header flex justify-content-between align-center">
+                <div class="felx align-center">
                   <span class="font-color-dark fw-sub mr-2"
-                    >{{ $t('dfs_components_renew_dingyuebianhao') }}{{ item.id }}</span
+                    >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}</span>
+                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}: </span>
                     {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
                     ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
-                    {{ formatterTime(item.startAt) }} ~ {{ formatterTime(item.endAt) }}</span
+                    {{ formatterTime(item.startAt, 'YYYY-MM-DD') }} ~
+                    {{ formatterTime(item.endAt, 'YYYY-MM-DD') }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
                   ></span>
                 </div>
-                <div class="flex justify-content-center align-items-center">
+                <div class="flex justify-content-center align-items-center subscribe-header-action">
                   <ElButton
                     :disabled="
                       !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
@@ -47,6 +48,10 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                    $t('dfs_change_record')
+                  }}</ElButton>
+
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
                   <!--                    type="text"-->
@@ -63,7 +68,13 @@
                 </div>
               </div>
               <div>
-                <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
+                <VTable
+                  :columns="columns"
+                  :data="item.subscribeItems"
+                  ref="table"
+                  :has-pagination="false"
+                  header-cell-class-name="bg-white"
+                >
                   <template #subscriptionMethodLabel="{ row }">
                     <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
                   </template>
@@ -95,6 +106,15 @@
                       type="text"
                       @click="openUnsubscribe(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
+                    >
+                    <ElButton
+                      v-if="
+                        !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
+                      "
+                      :disabled="!row.amount && row.agentType === 'Cloud'"
+                      type="text"
+                      @click="openChangeSubscribe(item)"
+                      >{{ $t('dfs_order_change') }}</ElButton
                     >
                   </template>
                 </VTable>
@@ -158,26 +178,29 @@
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
     <!--续订-->
     <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
+    <!--变更-->
+    <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
-import { FilterBar, VTable } from '@tap/component'
-import transferDialog from '../agent-download/transferDialog'
-import { openUrl } from '@tap/shared'
-
-import i18n from '@/i18n'
-import { isEmpty } from '@/util'
-import { CURRENCY_SYMBOL_MAP } from '@tap/business'
-import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import dayjs from 'dayjs'
+import i18n from '@/i18n'
+import { FilterBar, VTable } from '@tap/component'
+import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { openUrl } from '@tap/shared'
+import Change from '@tap/business/src/views/order/Change'
+import { getPaymentMethod, getSpec } from '@tap/business/src/shared/util'
+import { AGENT_TYPE_MAP } from '@tap/business/src/shared/const'
+
+import transferDialog from '../agent-download/transferDialog'
 import StatusTag from '../../components/StatusTag.vue'
 import Unsubscribe from '../../components/Unsubscribe.vue'
 import Renew from '../../components/Renew.vue'
 
 export default {
-  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew },
+  components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew, Change },
   inject: ['buried'],
   data() {
     return {
@@ -263,12 +286,12 @@ export default {
         {
           label: i18n.t('task_monitor_status'),
           slotName: 'statusLabel'
+        },
+        {
+          label: i18n.t('public_operation'),
+          prop: 'extendArray',
+          slotName: 'operation'
         }
-        // {
-        //   label: i18n.t('public_operation'),
-        //   prop: 'extendArray',
-        //   slotName: 'operation'
-        // }
       ],
       //订阅列表
       subscribeList: [],
@@ -333,7 +356,7 @@ export default {
               value: 'refund'
             },
             {
-              label: this.$t('packages_business_shared_const_tuikuanshibai'),
+              label: this.$t('packages_business_payment_timeout'),
               value: 'past_due'
             },
             {
@@ -429,7 +452,7 @@ export default {
           if (item.subscribeItems && item.subscribeItems.length > 0) {
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
-              it.storageSize = it.spec?.storageSize ? it.spec?.storageSize + 'GB' : '-'
+              it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
               it.subscriptionMethodLabel =
                 it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
               it.status = it.resource?.status || ''
@@ -440,8 +463,8 @@ export default {
         })
       })
     },
-    formatterTime(time) {
-      return time ? dayjs(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    formatterTime(time, template = 'YYYY-MM-DD') {
+      return time ? dayjs(time).format(template) : '-'
     },
     formatterPrice(currency, price) {
       if (price === 0) {
@@ -475,6 +498,19 @@ export default {
     openUnsubscribe(row, type) {
       this.$refs?.UnsubscribeDetailDialog.getUnsubscribePrice(row, type)
     },
+    //变更
+    openChangeSubscribe(row) {
+      this.$refs?.ChangeSubscribeDetailDialog.openChange(row)
+    },
+    //查看变更记录
+    goOpenChange(item) {
+      this.$router.push({
+        name: 'changeList',
+        query: {
+          id: item.id
+        }
+      })
+    },
     //续订
     openRenew(row) {
       this.$refs?.RenewDetailDialog.openRenew(row)
@@ -492,7 +528,13 @@ export default {
     //支付
     handlePay(row = {}) {
       this.buried('payAgentStripe')
-      if (row.paymentType === 'offline') {
+      this.$router.push({
+        name: 'pay',
+        params: {
+          id: row.id
+        }
+      })
+      /*if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
         this.pricePay = row.formatPrice
       } else {
@@ -507,7 +549,7 @@ export default {
         ).then(() => {
           this.$refs.table?.fetch()
         })
-      }
+      }*/
     },
     handleCreateAgent() {
       this.$router.push({
@@ -555,6 +597,10 @@ export default {
       this.buried('goRenewalAliyunCode')
       const href = 'https://market.console.aliyun.com/imageconsole/index.htm'
       openUrl(href)
+    },
+    //变更记录
+    getChangeList() {
+      this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then(data => {})
     }
   }
 }
@@ -604,6 +650,11 @@ export default {
   padding: 10px;
   border-bottom: 1px solid #ebeef5;
   background: #f7f8fa;
+}
+.subscribe-header-action {
+  .el-divider:last-child {
+    display: none;
+  }
 }
 ::v-deep {
   .el-dropdown-menu__item.dropdown-item--disabled {

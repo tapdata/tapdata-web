@@ -2,13 +2,15 @@
   "name": "daas-monorepo",
   "private": true,
   "scripts": {
-    "start:daas": "pnpm --filter daas start:test ",
+    "start:daas": "pnpm --filter daas start:test",
     "start:dfs": "pnpm --filter dfs start:test",
     "start:local": "pnpm --filter dfs start:local",
     "dev:daas": "pnpm --filter daas start:dev",
     "dev:dfs": "pnpm --filter dfs start:dev",
     "build:daas": "pnpm --filter daas build",
     "build:dfs": "pnpm --filter dfs build",
+    "daas": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:test",
+    "dfs": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter dfs start:test",
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-typescript": "^9.1.0",
     "babel-plugin-dynamic-import-node": "^2.3.3",
+    "cross-env": "^7.0.3",
     "eslint": "^7.1.0",
     "prettier": "^2.2.1",
     "sass": "^1.34.1",

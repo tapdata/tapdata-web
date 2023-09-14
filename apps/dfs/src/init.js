@@ -18,6 +18,7 @@ import FormBuilder from '@tap/component/src/form-builder'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
+import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -83,6 +84,9 @@ export default ({ routes }) => {
       path = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1)
     }
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
+
+    store.commit('setUser', window.__USER_INFO__)
+
     window.App = new Vue({
       router,
       store,
@@ -195,10 +199,24 @@ export default ({ routes }) => {
       // }
       // window.__configMock__ = data
     })
-  window.axios.get('config/config.json').then(res => {
-    window.__config__ = res.data
-    getData()
-  })
+  window.axios
+    .get('config/config.json', {
+      cache: false,
+      responseType: 'json',
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+    .then(res => {
+      store.commit('setConfig', res.data)
+      window.__config__ = res.data
+
+      if (res.data.onlyEnglishLanguage) {
+        setCurrentLanguage('en', i18n)
+      }
+
+      getData()
+    })
 }
 
 startTimeOnSite()

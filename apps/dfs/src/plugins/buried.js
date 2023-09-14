@@ -7,7 +7,7 @@ const TIME_ON_PAGE_KEY = 'TAPDATA_PAGE_SESSTION'
 export const buried = (code, page, attrs, sid) => {
   let userInfo = window.__USER_INFO__ || {}
   let data = {
-    user_id: userInfo.user_id || '',
+    user_id: userInfo.userId || '',
     code,
     page
   }

@@ -19,9 +19,25 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
+          <template #connectionType>
+            <ElRadioGroup
+              :class="{ 'ml-2': isDaas }"
+              v-model="searchParams.databaseModel"
+              size="mini"
+              @change="table.fetch(1)"
+            >
+              <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
+              <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
+              <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
+            </ElRadioGroup>
+          </template>
+        </FilterBar>
       </template>
       <div slot="operation">
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <ElButton
           v-if="isDaas"
           v-show="multipleSelection.length > 0"
@@ -34,6 +50,8 @@
           <span> {{ $t('public_button_bulk_tag') }}</span>
         </ElButton>
         <ElButton
+          v-if="buttonShowMap.create"
+          id="connection-list-create"
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
@@ -106,6 +124,12 @@
         </template>
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
+        <div v-if="isDaas" slot="header" class="flex align-center">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+            <VIcon class="color-primary" size="14">info</VIcon>
+          </ElTooltip>
+        </div>
         <template slot-scope="scope">
           <ElButton type="text" @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
@@ -125,6 +149,7 @@
           </ElTooltip>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton
+            v-if="havePermission(scope.row.permissionActions, 'Edit')"
             v-readonlybtn="'datasource_edition'"
             type="text"
             :disabled="
@@ -135,8 +160,13 @@
             @click="edit(scope.row.id, scope.row)"
             >{{ $t('public_button_edit') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
+          <ElDivider
+            v-if="havePermission(scope.row.permissionActions, 'Edit')"
+            direction="vertical"
+            v-readonlybtn="'datasource_edition'"
+          ></ElDivider>
           <ElButton
+            v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
             type="text"
             :loading="scope.row.copyLoading"
@@ -144,8 +174,9 @@
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElButton
+            v-if="havePermission(scope.row.permissionActions, 'Delete')"
             v-readonlybtn="'datasource_delete'"
             type="text"
             :disabled="
@@ -172,6 +203,7 @@
     ></SceneDialog>
     <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
     <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>
 <script>
@@ -182,12 +214,13 @@ import dayjs from 'dayjs'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
 import { TablePage, SchemaProgress } from '../../components'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
-import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '@tap/business/src/shared'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
 
@@ -202,7 +235,8 @@ export default {
     VIcon,
     SchemaProgress,
     FilterBar,
-    UsedTaskDialog
+    UsedTaskDialog,
+    PermissionseSettingsCreate
   },
   inject: ['checkAgent', 'buried'],
   data() {
@@ -275,6 +309,12 @@ export default {
   computed: {
     table() {
       return this.$refs.table
+    },
+    buttonShowMap() {
+      return {
+        create: this.$has('v2_datasource_creation'),
+        copy: this.$has('v2_datasource_copy')
+      }
     }
   },
   watch: {
@@ -367,7 +407,13 @@ export default {
         where.name = { like: verify(keyword), options: 'i' }
       }
       databaseType && (where.database_type = databaseType)
-      databaseModel && (where.connection_type = databaseModel)
+
+      if (databaseModel) {
+        where.connection_type = {
+          $ne: databaseModel === 'source' ? 'target' : 'source'
+        }
+      }
+
       sourceType && (where.sourceType = sourceType)
       if (tags && tags.length) {
         where['listtags.id'] = {
@@ -458,6 +504,8 @@ export default {
       this.$refs.preview.open(row)
     },
     edit(id, item) {
+      const { pdkHash, definitionPdkId: pdkId } = item
+
       if (item.agentType === 'Local') {
         this.$confirm(
           i18n.t('packages_business_connections_list_dangqianlianjie') +
@@ -472,29 +520,27 @@ export default {
           if (!resFlag) {
             return
           }
-          const { pdkHash } = item
-          let query = {
-            pdkHash
-          }
           this.$router.push({
             name: 'connectionsEdit',
             params: {
               id: id
             },
-            query
+            query: {
+              pdkHash,
+              pdkId
+            }
           })
         })
       } else {
-        const { pdkHash } = item
-        let query = {
-          pdkHash
-        }
         this.$router.push({
           name: 'connectionsEdit',
           params: {
             id: id
           },
-          query
+          query: {
+            pdkHash,
+            pdkId
+          }
         })
       }
     },
@@ -633,18 +679,19 @@ export default {
     },
     handleDatabaseType(item) {
       this.handleDialogDatabaseTypeVisible()
-      const { pdkHash } = item
-      let query = {
-        pdkHash
-      }
+      const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query: { pdkHash, pdkId }
       })
     },
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
+      if (process.env.NODE_ENV === 'development') {
+        this.dialogDatabaseTypeVisible = true
+        return
+      }
       this.buried('connectionCreateDialog')
       this.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
@@ -696,17 +743,18 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
+          slotName: 'connectionType',
+          // label: this.$t('public_connection_type'),
+          key: 'databaseModel'
+          // type: 'select-inner',
+          // items: this.databaseModelOptions
+        },
+        {
           label: this.$t('packages_business_connection_list_status'),
           key: 'status',
           type: 'select-inner',
           items: this.databaseStatusOptions,
           selectedWidth: '200px'
-        },
-        {
-          label: this.$t('public_connection_type'),
-          key: 'databaseModel',
-          type: 'select-inner',
-          items: this.databaseModelOptions
         },
         {
           label: this.$t('packages_business_connection_list_form_database_type'),
@@ -765,6 +813,14 @@ export default {
     },
     getType(type) {
       return CONNECTION_TYPE_MAP[type]?.text || '-'
+    },
+    havePermission(data = [], type = '') {
+      if (!this.isDaas) return true
+      return data.includes(type)
+    },
+    // 显示权限设置
+    handlePermissionsSettings() {
+      this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
     }
   }
 }

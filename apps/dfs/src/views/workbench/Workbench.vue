@@ -1,114 +1,75 @@
 <template>
-  <div v-if="$route.name === 'Workbench'" class="workbench-container">
-    <!--	快速开始	-->
-    <div class="workbench-start workbench-section">
-      <ul class="flex pt-6">
-        <!--        <li>-->
-        <!--          <div class="create-list__item quick-start-video flex justify-content-center align-items-center">-->
-        <!--            <VIcon size="50" class="mr-4">quick-start-read</VIcon>-->
-        <!--            <div class="flex flex-column">-->
-        <!--              <div class="color-white mb-2">新人教程视频</div>-->
-        <!--              <el-button size="mini" class="quick-start-button">点击查看</el-button>-->
-        <!--            </div>-->
-        <!--          </div>-->
-        <!--        </li>-->
-        <li v-for="(item, index) in createList" :key="index">
-          <div class="create-list__item flex justify-content-center align-items-center p-2">
-            <el-link class="create-list__main ml-4" :disabled="$disabledReadonlyUserBtn()" @click="item.action">
-              <VIcon class="ml-2 mr-2" size="20">{{ item.icon }}</VIcon>
-              <span> {{ index + 1 }}. {{ item.name }} </span>
-              <VIcon class="ml-8" size="14">add</VIcon>
-            </el-link>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <!--	{{$t('_workbench_workbench_tansuoshili')}}	-->
-    <div v-show="$i18n.locale !== 'en'" class="workbench-overview workbench-section">
-      <!-- <ElRow :gutter="40" class="section-header py-6">-->
-      <!--  <ElCol :span="18" class="main-title">{{ $t('_workbench_workbench_tansuoshili') }}</ElCol>-->
-      <!--  </ElRow>-->
-      <!--      <el-tabs class="explore-examples" active-name="first">-->
-      <!--        <el-tab-pane label="全部" name="first">-->
-      <!--          <ul class="flex flex-row">-->
-      <!--            <li-->
-      <!--              class="cursor-pointer mr-6"-->
-      <!--              v-for="(item, index) in examplesList"-->
-      <!--              :key="index"-->
-      <!--              @click="goScenes(item.url)"-->
-      <!--            >-->
-      <!--              <div class="position-relative">-->
-      <!--                <img :src="getImg(item.img)" />-->
-      <!--                <div v-if="item.title" class="position-absolute position-text">{{ item.title }}</div>-->
-      <!--                <div v-if="item.subTitle" class="position-absolute position-sub-text">{{ item.subTitle }}</div>-->
-      <!--              </div>-->
-      <!--              <div class="text-center">{{ item.title }}{{ item.subTitle }}</div>-->
-      <!--            </li>-->
-      <!--          </ul>-->
-      <!--        </el-tab-pane>-->
-      <!--      </el-tabs>-->
-      <!--暂时不分类-->
-      <div class="explore-examples explore-examples-wrap">
-        <div class="main-title mb-2">{{ $t('_workbench_workbench_tansuoshili') }}</div>
-        <ul class="flex flex-row overflow-x-auto">
-          <li
-            class="cursor-pointer mr-6"
-            v-for="(item, index) in examplesList"
-            :key="index"
-            @click="goScenes(item.url)"
-          >
-            <div class="position-relative">
-              <img :src="getImg(item.img)" />
-              <div class="position-absolute position-text flex justify-content-center align-items-center flex-column">
-                <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
-                <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <!--	概览	-->
-    <div class="workbench-overview workbench-section">
-      <ElRow :gutter="24" class="section-header py-4">
-        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
-        <ElCol v-if="$i18n.locale !== 'en'" :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
-      </ElRow>
-      <ElRow :gutter="24" class="section-body">
-        <ElCol :span="$i18n.locale !== 'en' ? 18 : 24">
-          <ul class="agent-list__list flex">
-            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item" :ref="item.key">
-              <div class="agent-list__name flex align-items-center mx-auto mb-3">
-                <VIcon size="14" class="icon">{{ item.icon }}</VIcon>
-                <span class="ml-1 fs-7">{{ item.name }}</span>
-              </div>
-              <div class="fs-1">
-                {{ item.value }}
-              </div>
-              <div
-                class="flex justify-content-between align-items-center mt-3 px-1"
-                style="height: 80px"
-                v-if="item.list.length > 0"
-              >
-                <div>
-                  <div class="mb-2" v-for="(detail, dIndex) in item.list" :key="dIndex">
-                    <span>{{ detail.label }}</span>
-                    <span>:</span>
-                    <span :class="['ml-1']">{{ detail.value }}</span>
-                  </div>
-                </div>
-                <div style="height: 80px; width: 80px; margin-bottom: 16px">
-                  <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
+  <div class="workbench-container overflow-hidden flex flex-column">
+    <ElRow type="flex" :gutter="16" class="align-items-stretch mb-4">
+      <ElCol :span="18">
+        <!--探索示例-->
+        <div class="workbench-overview workbench-section bg-white rounded-xl p-4 shadow-sm h-100">
+          <div class="main-title mb-4">{{ $t('_workbench_workbench_tansuoshili') }}</div>
+          <ul class="flex flex-row overflow-x-auto gap-4">
+            <li class="cursor-pointer" v-for="(item, index) in examplesList" :key="index" @click="goScenes(item.url)">
+              <div class="position-relative">
+                <ElImage class="scene-img" :src="item.img" />
+                <div
+                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
+                  style="min-height: 40px"
+                >
+                  <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">{{ item.title }}</div>
+                  <div v-if="item.subTitle" class="text-center explore-examples-ellipsis">{{ item.subTitle }}</div>
                 </div>
               </div>
             </li>
           </ul>
-        </ElCol>
-        <ElCol v-if="$i18n.locale !== 'en'" :span="6">
-          <div class="aside-main notice-list flex-grow-1 p-4">
-            <ul class="notice-list__list h-100 overflow-y-auto">
+        </div>
+      </ElCol>
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm h-100">
+          <div class="main-title mb-4">Welcome to Tapdata</div>
+          <div class="clickable" @click="setUpgradeFeeVisible(true)">
+            <ElImage :src="bannerImg"></ElImage>
+          </div>
+        </div>
+      </ElCol>
+    </ElRow>
+
+    <ElRow type="flex" :gutter="16" class="min-h-0">
+      <ElCol :span="18">
+        <!--概览	-->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+          <div class="main-title mb-4">{{ $t('workbench_overview') }}</div>
+          <div class="section-body">
+            <ul class="agent-list__list flex">
+              <li v-for="(item, index) in agentList" :key="index" class="agent-list__item px-4 py-6" :ref="item.key">
+                <div class="agent-list__name flex align-items-center mx-auto mb-3">
+                  <VIcon size="16" class="icon">{{ item.icon }}</VIcon>
+                  <span class="ml-1 fs-6">{{ item.name }}</span>
+                </div>
+                <div class="fs-1">
+                  {{ item.value }}
+                </div>
+                <div class="flex justify-content-between align-items-center mt-3 px-1" v-if="item.list.length > 0">
+                  <div class="flex flex-column gap-2">
+                    <div v-for="(detail, dIndex) in item.list" :key="dIndex">
+                      <span>{{ detail.label }}</span>
+                      <span>:</span>
+                      <span :class="['ml-1']">{{ detail.value }}</span>
+                    </div>
+                  </div>
+                  <div style="height: 80px; width: 80px">
+                    <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ElCol>
+      <ElCol :span="6">
+        <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
+          <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
+          <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">
+            <ul class="notice-list__list">
               <li
-                v-for="(item, index) in notices.slice(0, 5)"
+                v-for="(item, index) in notices"
                 :key="index"
                 class="notice-list__item flex align-items-center mb-4 px-1 pointer"
               >
@@ -118,29 +79,16 @@
                 <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                   {{ item.name }}
                 </ElLink>
-                <div class="notice-list__time">
+                <div class="notice-list__time font-color-sslight">
                   {{ fromNow(item.time) }}
                 </div>
               </li>
             </ul>
           </div>
-        </ElCol>
-      </ElRow>
-    </div>
-    <!--  任务数据量统计  -->
-    <div class="workbench-overview workbench-section">
-      <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
-      <div class="p-6 common-card">
-        <div class="fs-7" style="color: #000">
-          <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
-          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
-          <span class="color-primary" style="font-family: DIN">{{ taskInputNumber }}</span>
         </div>
-        <div class="pr-4" style="height: 200px">
-          <Chart type="pie" :extend="getLineOption()"></Chart>
-        </div>
-      </div>
-    </div>
+      </ElCol>
+    </ElRow>
+
     <!-- 版本升级弹窗-->
     <el-dialog
       class="dialog-upgrade"
@@ -186,9 +134,8 @@
         <el-button type="primary" @click="showUpgrade = false">{{ $t('public_button_cancel') }}</el-button>
       </span>
     </el-dialog>
-    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>
+    <!--<CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
   </div>
-  <RouterView v-else></RouterView>
 </template>
 
 <script>
@@ -198,15 +145,92 @@ import { connectionsApi, taskApi } from '@tap/api'
 import { VIcon, Chart } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, Chart, CheckLicense },
+  components: { VIcon, Chart },
   inject: ['checkAgent'],
   mixins: [timeFunction],
   data() {
     const $t = this.$t.bind(this)
+    let isDomesticStation = this.$store.getters.isDomesticStation
+
+    let examplesList = isDomesticStation
+      ? [
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_jiangshujudaoru'),
+            subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
+            img: require('@/assets/image/dashboard/scene1.png'),
+            url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujuruhucang'),
+            subTitle: 'MySQL → Doris',
+            img: require('@/assets/image/dashboard/scene2.png'),
+            url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_yigoushishitong'),
+            subTitle: 'Oracle → MySQL ',
+            img: require('@/assets/image/dashboard/scene3.png'),
+            url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujurucang'),
+            subTitle: 'SQL Server → BigQuery ',
+            img: require('@/assets/image/dashboard/scene4.png'),
+            url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
+          },
+          {
+            type: 'all',
+            title: i18n.t('_workbench_workbench_shujurucang'),
+            subTitle: 'MySQL → ClickHouse',
+            img: require('@/assets/image/dashboard/scene5.png'),
+            url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
+          }
+        ]
+      : [
+          {
+            type: 'all',
+            title: 'Tapdata',
+            subTitle: 'Cloud Version Intro',
+            img: require('@/assets/image/dashboard/io_scene1.png'),
+            url: 'https://youtu.be/WpV5mAOPNL0?t=280'
+          },
+          {
+            type: 'all',
+            title: 'Data Replication Feature',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene2.png'),
+            url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
+          },
+          {
+            type: 'all',
+            title: 'Data Transformation',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene3.png'),
+            url: 'https://youtu.be/xQsaEaPxaXo?t=4'
+          },
+          {
+            type: 'all',
+            title: 'Install Agent Locally',
+            subTitle: '',
+            img: require('@/assets/image/dashboard/io_scene4.png'),
+            url: 'https://youtu.be/e-HTtN7JKJU'
+          }
+        ]
+
     return {
+      isDomesticStation,
+      bannerImg:
+        this.$i18n.locale === 'en'
+          ? require('@/assets/image/plan_banner.png')
+          : require('@/assets/image/plan_banner_cn.png'),
       userInfo: '',
       //云市场
       aliyunMaketVisible: false,
@@ -234,24 +258,6 @@ export default {
         }
       ], // 创建列表
       agentList: [
-        {
-          name: 'Agent',
-          key: 'agent',
-          icon: 'agent',
-          value: 0,
-          list: [
-            {
-              label: $t('public_status_running'),
-              value: 0,
-              class: 'success'
-            },
-            {
-              label: $t('public_agent_status_offline'),
-              value: 0,
-              class: 'error'
-            }
-          ]
-        },
         {
           name: $t('workbench_overview_connection'),
           key: 'connection',
@@ -287,6 +293,24 @@ export default {
               value: 0
             }
           ]
+        },
+        {
+          name: 'Agent',
+          key: 'agent',
+          icon: 'agent',
+          value: 0,
+          list: [
+            {
+              label: $t('public_status_running'),
+              value: 0,
+              class: 'success'
+            },
+            {
+              label: $t('public_agent_status_offline'),
+              value: 0,
+              class: 'error'
+            }
+          ]
         }
       ], // 介绍列表
       notices: [], // 公告列表
@@ -312,49 +336,14 @@ export default {
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
       //探索实例
-      examplesList: [
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_jiangshujudaoru'),
-          subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
-          img: 'table-store',
-          url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujuruhucang'),
-          subTitle: 'MySQL → Doris',
-          img: 'mysql-doris',
-          url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_yigoushishitong'),
-          subTitle: 'Oracle → MySQL ',
-          img: 'oracle-mysql',
-          url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
-          subTitle: 'SQL Server → BigQuery ',
-          img: 'bigQuery',
-          url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
-        },
-        {
-          type: 'all',
-          title: i18n.t('_workbench_workbench_shujurucang'),
-          subTitle: 'MySQL → ClickHouse',
-          img: 'clickHouse',
-          url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
-        }
-      ]
+      examplesList
     }
   },
   mounted() {
     this.init()
   },
   methods: {
+    ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
       this.getConnectionStats() // 任务
@@ -365,21 +354,21 @@ export default {
       let user = window.__USER_INFO__
       this.userInfo = user
       //检查是云市场用户授权码有效期
-      if (user?.enableLicense) {
-        this.checkLicense(user)
-      }
+      // if (user?.enableLicense) {
+      //   this.checkLicense(user)
+      // }
     },
     loadAgent() {
-      let agentList = this.agentList
+      let agent = this.agentList.find(({ key }) => key === 'agent')
       const loading = this.$loading({
         target: this.$refs.agent?.[0]
       })
       this.$axios
         .get('api/tcm/agent/agentCount')
         .then(data => {
-          agentList[0].value = data.agentTotalCount || 0
-          agentList[0].list[0].value = data.agentRunningCount || 0
-          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
+          agent.value = data.agentTotalCount || 0
+          agent.list[0].value = data.agentRunningCount || 0
+          agent.list[1].value = agent.value - agent.list[0].value
         })
         .finally(() => {
           loading.close()
@@ -393,12 +382,12 @@ export default {
       const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
       })
-      let agentList = this.agentList
+      const connection = this.agentList.find(({ key }) => key === 'connection')
       const stats = data || {}
       if (stats) {
-        agentList[1].value = stats.total
-        agentList[1].list[0].value = stats.ready || 0
-        agentList[1].list[1].value = stats.invalid || 0
+        connection.value = stats.total
+        connection.list[0].value = stats.ready || 0
+        connection.list[1].value = stats.invalid || 0
       }
     },
     // 获取任务数据
@@ -409,93 +398,138 @@ export default {
       const data = await taskApi.getStats().finally(() => {
         taskLoading.close()
       })
-      let agentList = this.agentList
+      const task = this.agentList.find(({ key }) => key === 'task')
       const stats = data.taskTypeStats
       if (stats) {
-        agentList[2].value = stats.total
-        agentList[2].list[0].value = stats.initial_sync || 0
-        agentList[2].list[1].value = stats.cdc || 0
-        agentList[2].list[2].value = stats['initial_sync+cdc'] || 0
+        task.value = stats.total
+        task.list[0].value = stats.initial_sync || 0
+        task.list[1].value = stats.cdc || 0
+        task.list[2].value = stats['initial_sync+cdc'] || 0
       }
     },
     loadNotices() {
-      this.notices = [
-        {
-          id: 11,
-          type: '',
-          name: 'Tapdata Cloud 3.2.2 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
-          time: '2023-05-4 21:00'
-        },
-        {
-          id: 10,
-          type: '',
-          name: 'Tapdata Cloud 3.2.1 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
-          time: '2023-04-20 21:00'
-        },
-        {
-          id: 9,
-          type: '',
-          name: 'Tapdata Cloud 3.1.9 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
-          time: '2023-03-20 21:00'
-        },
-        {
-          id: 8,
-          type: '',
-          name: 'Tapdata Cloud 3.1.8 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/WQZx38g93lYuPpsWjbETZg',
-          time: '2023-03-2 21:00'
-        },
-        {
-          id: 7,
-          type: '',
-          name: this.$t('workbench_Notice_tAPDA12'),
-          time: '2023-03-2 21:00'
-        },
-        {
-          id: 6,
-          type: '',
-          name: 'Tapdata Cloud 3.1.7 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
-          time: '2023-02-21 21:00'
-        },
-        {
-          id: 5,
-          type: '',
-          name: 'Tapdata Cloud 3.1.6 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
-          time: '2023-02-3 21:00'
-        },
-        {
-          id: 4,
-          type: '',
-          name: 'Tapdata Cloud 3.1.5 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
-          time: '2023-01-20 21:00'
-        },
-        {
-          id: 3,
-          type: '',
-          name: 'Tapdata Cloud 3.1.4 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
-          time: '2023-01-3 21:00'
-        },
-        {
-          id: 2,
-          type: '',
-          name: 'Tapdata Cloud 3.1.3 Release Notes',
-          link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
-          time: '2022-12-15 21:00'
-        },
-        {
-          id: 1,
-          type: '',
-          name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-          time: '2022-12-03 18:00'
-        }
-      ]
+      this.notices = this.isDomesticStation
+        ? [
+            {
+              id: 14,
+              type: '',
+              name: 'Tapdata Cloud 3.5.1 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-5-1.html',
+              time: '2023-08-28 21:00'
+            },
+            {
+              id: 13,
+              type: '',
+              name: 'Tapdata Cloud 3.4 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-4.html',
+              time: '2023-08-15 21:00'
+            },
+            {
+              id: 12,
+              type: '',
+              name: 'Tapdata Cloud 3.2.6 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-2-6.html',
+              time: '2023-07-31 21:00'
+            },
+            {
+              id: 11,
+              type: '',
+              name: 'Tapdata Cloud 3.2.2 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
+              time: '2023-05-4 21:00'
+            },
+            {
+              id: 10,
+              type: '',
+              name: 'Tapdata Cloud 3.2.1 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
+              time: '2023-04-20 21:00'
+            },
+            {
+              id: 9,
+              type: '',
+              name: 'Tapdata Cloud 3.1.9 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
+              time: '2023-03-20 21:00'
+            },
+            {
+              id: 8,
+              type: '',
+              name: 'Tapdata Cloud 3.1.8 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/WQZx38g93lYuPpsWjbETZg',
+              time: '2023-03-2 21:00'
+            },
+            {
+              id: 7,
+              type: '',
+              name: this.$t('workbench_Notice_tAPDA12'),
+              time: '2023-03-2 21:00'
+            },
+            {
+              id: 6,
+              type: '',
+              name: 'Tapdata Cloud 3.1.7 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
+              time: '2023-02-21 21:00'
+            },
+            {
+              id: 5,
+              type: '',
+              name: 'Tapdata Cloud 3.1.6 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
+              time: '2023-02-3 21:00'
+            },
+            {
+              id: 4,
+              type: '',
+              name: 'Tapdata Cloud 3.1.5 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
+              time: '2023-01-20 21:00'
+            },
+            {
+              id: 3,
+              type: '',
+              name: 'Tapdata Cloud 3.1.4 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
+              time: '2023-01-3 21:00'
+            },
+            {
+              id: 2,
+              type: '',
+              name: 'Tapdata Cloud 3.1.3 Release Notes',
+              link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
+              time: '2022-12-15 21:00'
+            },
+            {
+              id: 1,
+              type: '',
+              name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
+              time: '2022-12-03 18:00'
+            }
+          ]
+        : [
+            {
+              id: 14,
+              type: '',
+              name: 'Tapdata Cloud 3.5.1 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-1-release-notes/',
+              time: '2023-08-28 21:00'
+            },
+            {
+              id: 13,
+              type: '',
+              name: 'Tapdata Cloud 3.4 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-4-release-notes/',
+              time: '2023-08-15 21:00'
+            },
+            {
+              id: 12,
+              type: '',
+              name: 'Tapdata Cloud 3.2.6 Release Notes',
+              link: 'https://tapdata.io/release-notes/tapdata-cloud-3-2-6-release-notes/',
+              time: '2023-07-31 21:00'
+            }
+          ]
     },
     loadBarData() {
       let granularity = 'month'
@@ -566,29 +600,31 @@ export default {
     },
     //图表数据组装
     getPieOption(index) {
+      const item = this.agentList[index]
       let data = [
         {
           itemStyle: {
-            color: '#00b42a'
+            color: '#2C65FF'
           },
-          value: this.agentList[index].list[0].value,
-          name: this.agentList[index].list[0].label
+          value: item.list[0].value,
+          name: item.list[0].label
         },
         {
           itemStyle: {
-            color: '#ff7d00'
+            color: '#F3961A'
           },
-          value: this.agentList[index].list[1].value,
-          name: this.agentList[index].list[1].label
+          value: item.list[1].value,
+          name: item.list[1].label
         }
       ]
-      if (index === 2) {
+
+      if (item.key === 'task') {
         let node = {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#0FC6C2'
           },
-          value: this.agentList[index].list[2].value,
-          name: this.agentList[index].list[2].label
+          value: item.list[2].value,
+          name: item.list[2].label
         }
         data.push(node)
       }
@@ -712,10 +748,8 @@ export default {
 <style lang="scss" scoped>
 .workbench-container {
   height: 100%;
-  min-height: 610px;
   min-width: 1100px;
   box-sizing: border-box;
-  padding: 0 24px 24px 24px;
   .pointer {
     cursor: pointer;
   }
@@ -752,22 +786,15 @@ export default {
   white-space: nowrap;
 }
 
-.aside-main {
-  height: 213px;
-  background-color: #fff;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
 .agent-list__list {
   background: map-get($color, white);
 }
 .agent-list__item {
   width: 33%;
-  height: 190px;
-  border: 1px solid #e1e3e9;
   border-radius: 8px;
-  margin-right: 24px;
+  margin-right: 16px;
   padding: 16px;
+  background-color: #f5f7fa;
   color: map-get($fontColor, dark);
 }
 .agent-list__item:last-child {
@@ -801,9 +828,7 @@ export default {
   background: #f7f8f9;
 }
 .notice-list__time {
-  color: map-get($fontColor, light);
   white-space: nowrap;
-  //width: 80px;
   text-align: right;
 }
 .guide-list {
@@ -825,9 +850,14 @@ export default {
   }
 }
 .notice-list {
-  height: 190px;
-  border: 1px solid #e1e3e9;
+  //height: 190px;
   border-radius: 8px;
+
+  .notice-list__list {
+    .notice-list__item:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
 }
 .common-card {
   border: 1px solid #e1e3e9;
@@ -855,11 +885,10 @@ export default {
   left: 0;
   color: map-get($color, white);
   width: 100%;
-  height: 60px;
+  line-height: 14px;
 }
 .explore-examples-ellipsis {
   /* white-space: nowrap; */
-  width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -871,5 +900,22 @@ export default {
 .quick-start-button {
   padding: 4px 15px;
   border-radius: 5px;
+}
+.scene-img {
+  width: 161px;
+  height: 92px;
+}
+.welcome-banner {
+  height: 76px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 73, 255, 0.8) 0%,
+    rgba(50, 102, 244, 0.8) 39.58%,
+    rgba(79, 50, 255, 0.8) 100%
+  );
+
+  .el-image {
+    height: 50px;
+  }
 }
 </style>

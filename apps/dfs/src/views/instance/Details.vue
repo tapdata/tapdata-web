@@ -34,7 +34,7 @@
           </div>
         </div>
       </div>
-      <div class="mt-4">
+      <div class="mt-4 flex flex-wrap gap-3">
         <ElButton
           size="mini"
           type="primary"
@@ -42,14 +42,10 @@
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
-        <ElButton class="mt-4" size="mini" @click="downServeFn(agent)">{{
-          $t('dfs_instance_details_xianchengziyuanxia')
+        <ElButton size="mini" @click="downServeFn(agent)">{{ $t('dfs_instance_details_xianchengziyuanxia') }}</ElButton>
+        <ElButton size="mini" @click="downConnectorsFn(agent)">{{
+          $t('dfs_instance_details_shujuyuanziyuan')
         }}</ElButton>
-        <div>
-          <ElButton class="mt-4" size="mini" @click="downConnectorsFn(agent)">{{
-            $t('dfs_instance_details_shujuyuanziyuan')
-          }}</ElButton>
-        </div>
       </div>
     </div>
     <!-- 日志上传   -->
@@ -576,7 +572,7 @@ export default {
   }
 }
 .el-button + .el-button {
-  margin-left: 16px;
+  margin-left: 0;
 }
 .box-line {
   padding: 8px 0;

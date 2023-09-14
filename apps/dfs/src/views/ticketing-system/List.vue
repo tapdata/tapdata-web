@@ -51,7 +51,8 @@
         <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
           <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
             <el-input
-              v-model.trim="createForm.subject"
+              v-model="createForm.subject"
+              @change="createForm.subject = createForm.subject.trim()"
               :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')"
               required
             ></el-input>
@@ -84,7 +85,8 @@
           </el-form-item>
           <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="description">
             <el-input
-              v-model.trim="createForm.description"
+              v-model="createForm.description"
+              @change="createForm.description = createForm.description.trim()"
               type="textarea"
               :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
               required
@@ -310,13 +312,15 @@ export default {
           let { userId, email, telephone, nickname } = window.__USER_INFO__
           let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
           let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
+          const country = this.$store.getters.isDomesticStation ? 'China' : 'Abroad'
           let params = Object.assign(this.createForm, {
             connectionName: connectionName,
             jobName: taskName,
             userId: userId,
             phone: telephone,
             email: email,
-            nickname: nickname
+            nickname: nickname,
+            country
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.closeDialog()

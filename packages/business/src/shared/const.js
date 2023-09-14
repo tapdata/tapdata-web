@@ -148,6 +148,15 @@ export const AGENT_SPEC_MAP = {
   '32C64G': '4Large'
 }
 
+export const AGENT_TYPE_MAP = {
+  local: i18n.t('dfs_instance_utils_bantuoguan'),
+  cloud: i18n.t('dfs_instance_utils_quantuoguan'),
+  selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
+  fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
+  Local: i18n.t('dfs_instance_utils_bantuoguan'),
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
+}
+
 export const TIME_MAP = {
   year: i18n.t('public_time_year'),
   month: i18n.t('public_time_month'),
@@ -158,4 +167,11 @@ export const EXTERNAL_STORAGE_TYPE_MAP = {
   mongodb: 'MongoDB',
   rocksdb: 'RocksDB',
   memory: 'MEM'
+}
+
+export const PERIOD_MAP = {
+  recurring_month: { order: 1, label: i18n.t('dfs_instance_utils_baoyue') },
+  recurring_year: { order: 2, label: i18n.t('dfs_instance_utils_baonian') },
+  one_time_month: { order: 3, label: i18n.t('dfs_instance_utils_one_month_only') },
+  one_time_year: { order: 4, label: i18n.t('dfs_instance_utils_one_year_only') }
 }

@@ -415,6 +415,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: '請添加校驗條件',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     '校驗條件{val}中源表或目標表未選擇',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    '校驗條件{val}中源表或目標表数据过滤未選擇',
   packages_business_verification_message_error_joint_table_field_not_match:
     '校驗條件{val}中源表與目標表的索引欄位個數不相等',
   packages_business_verification_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
@@ -555,6 +557,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: '校驗任務模式',
   packages_business_task_status_agent_tooltip_time: '距上次狀態上報時間已經{time}',
   packages_business_task_status_agent_tooltip_agent: '任務所在的引擎為',
+  packages_business_task_status_retrying_tooltip: '任務正在重試中',
   packages_business_select_placeholder: '請添加或選擇',
   packages_business_verification_form_youjiantongzhi: '郵件通知',
   packages_business_verification_form_xitongtongzhi: '系統通知',
@@ -848,6 +851,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: '退款失败',
   packages_business_shared_const_yituikuan: '已退款',
   packages_business_shared_const_zhifushibai: '支付失败',
+  packages_business_payment_timeout: '支付超時',
   packages_business_shared_const_yizhifu: '已支付',
   packages_business_shared_const_weizhifu: '未支付',
   packages_business_shared_ws_client_webso: 'websocket 消息解析失败: ',
@@ -1032,6 +1036,26 @@ export default {
     'MongoDB是一種非關係型數據庫，具有靈活性、高性能、易用性和可擴展性，適用於需要處理大量非結構化數據和需要快速查詢和可擴展性的應用場景。 ',
   packages_business_create_connection_scenedialog_bigQu:
     'BigQuery是Google Cloud提供的託管式數據倉庫，以高速、可擴展和安全著稱，可以處理PB級數據，與多個工具集成，適用於各種數據分析和挖掘場景。 ',
+  packages_business_create_connection_mysql_desc:
+    'MySQL 適用於中小規模網站和應用程式，輕量級資料庫管理系統，支援資料儲存、查詢和簡單分析，廣泛用於 Web 開發和輕負載應用。',
+  packages_business_create_connection_oracle_desc:
+    'Oracle 適用於企業級資料庫解決方案，支援大規模資料處理、高效能交易處理和複雜查詢，在企業的核心業務系統和資料管理上廣泛應用。',
+  packages_business_create_connection_sqlserver_desc:
+    'SQL Server 主要用於管理和處理大規模資料庫，適用於企業級應用程式和網站，支援資料儲存、查詢、分析和報告等功能。',
+  packages_business_create_connection_postgresql_desc:
+    'PostgreSQL 適用於高度穩定的資料儲存和複雜查詢，廣泛應用於 Web 應用程式、地理資訊系統、資料分析和企業級應用。',
+  packages_business_create_connection_clickhouse_desc:
+    'ClickHouse 適用於快速查詢和分析大規模資料，特別擅長處理實時分析、日誌分析、資料倉儲和時間序列資料。',
+  packages_business_create_connection_elasticsearch_desc:
+    'Elasticsearch 適用於全文搜尋、日誌分析、實時資料分析和大規模資料索引，廣泛應用於搜尋引擎、監控和企業級應用。',
+  packages_business_create_connection_dummy_desc:
+    'Dummy 通常用於表示虛擬或佔位符實體，無實際資料。在軟體開發和測試中，Dummy 物件用於填充空缺或模擬佔位行為。',
+  packages_business_create_connection_kafka_desc:
+    'Kafka 適用於高吞吐量的實時資料流處理，用於日誌收集、資料傳輸、消息發布/訂閱和流式處理應用，特別擅長大規模資料流處理。',
+  packages_business_create_connection_doris_desc:
+    'Doris 適用於實時資料分析和報表，支援高並發查詢和複雜分析，廣泛應用於資料倉儲、BI 報表和資料視覺化。',
+  packages_business_create_connection_mongodbatlas_desc:
+    'MongoDB Atlas是全托管的MongoDB數據庫服務，它通過自動化數據庫管理，簡化了部署、擴展和監控過程，使開發者可以更專注於應用程序開發。Atlas支持彈性擴展、全球部署和安全性功能，適用於各種規模和類型的應用。',
   packages_business_swimlane_tablepreview_chuangjianrenwu: '創建任務',
   packages_business_as_source: '作為源頭',
   packages_business_as_target: '作為目標',
@@ -1079,5 +1103,43 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: '查看自定義字段',
   packages_business_components_fielddialog_ziduanbuyunxu: '字段不允許為空',
   packages_business_components_fielddialog_zidingyiziduan: '自定義字段',
-  packages_business_verification_list_biaobufenziduan: '表部分字段校驗'
+  packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
+  packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_data_server_list_apIwendang: 'API文檔導出',
+  packages_business_verification_form_gaojipeizhi: '高級配置',
+  packages_business_verification_form_validate_table_is_empty: '源表和目標表不能為空，請修改校驗表配置',
+  packages_business_verification_form_validate_table_is_empty1:
+    '因為找不到源表或目標表，以下來源連接將會自動跳過校驗：',
+  packages_business_verification_form_condition_is_empty: '關聯校驗條件不能為空，請修改校驗表配置',
+  packages_business_verification_form_index_field_is_empty: '因為找不到索引字段，以下來源表將會自動跳過校驗：',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    '因為源表與目標表的索引字段個數不相等，以下來源表將會自動跳過校驗：',
+  packages_business_verification_list_renyibiaoshuju: '任意表數據校驗',
+  packages_business_verification_list_renwuyizhixing: '任務一致性校驗',
+  packages_business_permissionse_settings_create_quanxianshezhi: '權限設置',
+  packages_business_permissionse_settings_create_shezhiquanxian: '設置權限',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: '選擇授權角色',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan: '無法對以下數據進行授權，將跳過保存',
+  packages_business_connections_permissionsdialog_tianjiashouquan: '添加授權',
+  packages_business_connections_permissionsdialog_gongnengquanxian: '功能權限',
+  packages_business_connections_permissionsdialog_shouquanjuese: '授權角色',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: '連接權限設置',
+  packages_business_connections_preview_quanxianguanli: '權限管理',
+  packages_business_connections_preview_shujulianjiequan: '數據連接權限',
+  packages_business_notice_list_gonggaobiaoti: '公告標題',
+  packages_business_connections_list_wuquanxiandecao: '無權限的操作已被隱藏',
+  packages_business_components_upgradecharges_dingyuexinyinqing: '訂閱新引擎',
+  packages_business_components_upgradecharges_shengjiguige: '升級規格',
+  packages_business_components_upgradecharges_dingyuefangshi: '訂閱方式',
+  packages_business_components_upgradecharges_keyongrenwushu: '可用任務數',
+  packages_business_components_upgradecharges_dangqianguige: '當前規格',
+  packages_business_components_upgradecharges_dingyueshengji: '訂閱升級',
+  packages_business_create_connection_sceneform_lianjieceshiwu: '連接測試無效，請檢查您的連接配置',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: '請先進行連接測試',
+  packages_business_logs_nodelog_qingshengjidingyue: '請升級訂閱以獲取更多任務數量，點擊彈窗顯示升級引導',
+  packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被調用的任務超過了限制數，',
+  packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！',
+  packages_business_setting_alarmsetting_qubangding: '去綁定',
+  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。'
 }

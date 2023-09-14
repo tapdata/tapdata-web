@@ -67,15 +67,19 @@ export default {
       default: () => {
         return {}
       }
-    }
+    },
+    nodeId: String
   },
 
   components: { NodeList, VTable },
 
   data() {
+    const activeNodeId = this.nodeId
+    const activeNode = activeNodeId ? this.$store.getters['dataflow/nodeById'](activeNodeId) : {}
+
     return {
-      activeNodeId: '',
-      activeNode: {},
+      activeNodeId,
+      activeNode,
       columns: [
         {
           label: i18n.t('packages_business_milestone_list_guanjianbuzhou'),
@@ -428,9 +432,17 @@ export default {
     }
   },
 
+  watch: {
+    nodeId(v) {
+      this.activeNodeId = v
+      this.activeNode = v ? this.$store.getters['dataflow/nodeById'](v) : {}
+    }
+  },
+
   methods: {
     handleChange(val, node) {
       this.activeNode = val ? node : {}
+      this.$emit('update:nodeId', val)
     },
 
     handleError(row = {}) {

@@ -42,6 +42,7 @@ export class MergeTable extends NodeType {
               externalStorageId: {
                 title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
                 type: 'string',
+                'x-visible': '{{$isDaas}}',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-reactions': [
@@ -62,6 +63,24 @@ export class MergeTable extends NodeType {
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-component': 'Input'
+              },
+
+              mergeMode: {
+                type: 'string',
+                title: i18n.t('packages_dag_mergeMode'),
+                default: 'main_table_first',
+                enum: [
+                  {
+                    label: i18n.t('packages_dag_main_table_first'),
+                    value: 'main_table_first'
+                  },
+                  {
+                    label: i18n.t('packages_dag_sub_table_first'),
+                    value: 'sub_table_first'
+                  }
+                ],
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group'
               },
 
               mergeProperties: {

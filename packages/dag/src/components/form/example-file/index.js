@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { connect, mapProps } from '@tap/form'
+import { connect, mapProps, HighlightCode } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import './index.scss'
@@ -21,85 +21,91 @@ export const ExpressionExample = connect(
       },
 
       render() {
-        // eslint-disable-next-line no-console
-        console.log('################')
         return (
-          <div class="expression">
-            <div style="color: #888888; font-size: 12px">
-              <h3 style="font-size: 14px; font-weight: bold">
-                {' '}
-                {i18n.t('packages_form_example_file_index_biaodashishili')}
-              </h3>
-              <p style="text-indent: 2em">{i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
-              <p style="text-indent: 2em">
-                <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
-                <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
-                <span style="color: red">)</span>
-                <span style="color: #f5af3f"> || </span>
-                <span style="color: red">(</span> record.age <span style="color: #f5af3f">&gt;=</span> 30
-                <span style="color: #f5af3f">&&</span> record.salary <span style="color: #f5af3f">&lt;=</span> 10000
-                <span style="color: red">)</span>
-              </p>
+          <div class="font-color-light">
+            <div class="fw-sub">{i18n.t('packages_form_example_file_index_biaodashishili')}</div>
+            <p>{i18n.t('packages_form_example_file_index_shaixuanchusuiyi')}</p>
+            <pre class="javascript bg-subtle rounded-4 px-1 mt-0 mb-2 overflow-x-auto" style="font-family:monospace;">
+              <span style="color: #009900;">&#40;</span>record.<span style="color: #660066;">gender</span>{' '}
+              <span style="color: #339933;">==</span> <span style="color: #CC0000;">0</span>{' '}
+              <span style="color: #339933;">&amp;&amp;</span> record.<span style="color: #660066;">age</span>{' '}
+              <span style="color: #339933;">&gt;</span> <span style="color: #CC0000;">50</span>
+              <span style="color: #009900;">&#41;</span> <span style="color: #339933;">||</span>{' '}
+              <span style="color: #009900;">&#40;</span>record.<span style="color: #660066;">age</span>{' '}
+              <span style="color: #339933;">&gt;=</span> <span style="color: #CC0000;">30</span>{' '}
+              <span style="color: #339933;">&amp;&amp;</span> record.<span style="color: #660066;">salary</span>{' '}
+              <span style="color: #339933;">&lt;=</span> <span style="color: #CC0000;">10000</span>
+              <span style="color: #009900;">&#41;</span>
+            </pre>
+            <p>{i18n.t('packages_form_example_file_index_timestamp')}</p>
+            <pre class="javascript bg-subtle rounded-4 px-1 mt-0 mb-2 overflow-x-auto" style="font-family:monospace;">
+              record.<span style="color: #660066;">CLAIM_DATE</span>.<span style="color: #660066;">getEpochSecond</span>
+              <span style="color: #009900;">&#40;</span>
+              <span style="color: #009900;">&#41;</span>
+              <span style="color: #339933;">*</span>
+              <span style="color: #CC0000;">1000</span> <span style="color: #339933;">&gt;=</span> DateUtil.
+              <span style="color: #660066;">parse</span>
+              <span style="color: #009900;">&#40;</span>
+              <span style="color: #3366CC;">'2023-07-03 00:00:00'</span>
+              <span style="color: #339933;">,</span> <span style="color: #CC0000;">8</span>
+              <span style="color: #009900;">&#41;</span>.<span style="color: #660066;">getTime</span>
+              <span style="color: #009900;">&#40;</span>
+              <span style="color: #009900;">&#41;</span>
+            </pre>
+            <div class="fw-sub">{i18n.t('packages_form_example_file_index_zhichidefuhao')}</div>
+            <table>
+              <tr>
+                <td style="width: 80px; text-align: center">
+                  <span style="color: #f5af3f">&gt;, &lt;</span>
+                  <span style="color: #f5af3f"></span>
+                </td>
+                <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dayuxiaoyu')}</td>
 
-              <h3 style="font-size: 14px; font-weight: bold">
-                {i18n.t('packages_form_example_file_index_zhichidefuhao')}
-              </h3>
-              <table>
-                <tr>
-                  <td style="width: 80px; text-align: center">
-                    <span style="color: #f5af3f">&gt;, &lt;</span>
-                    <span style="color: #f5af3f"></span>
-                  </td>
-                  <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_dayuxiaoyu')}
-                  </td>
+                <td style="width: 80px; text-align: center">
+                  <span style="color: #f5af3f">&gt;=, &lt;=</span>
+                </td>
+                <td style="width: 140px; text-align: left">
+                  {i18n.t('packages_form_example_file_index_dayudengyuxiao')}
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">==</span>
+                </td>
+                <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dengyu')}</td>
 
-                  <td style="width: 80px; text-align: center">
-                    <span style="color: #f5af3f">&gt;=, &lt;=</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_dayudengyuxiao')}
-                  </td>
-                </tr>
-                <tr>
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">==</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_dengyu')}</td>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">!</span>
+                </td>
+                <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_fei')}</td>
+              </tr>
+              <tr>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">&&</span>
+                </td>
+                <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_qie')}</td>
 
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">!</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_fei')}</td>
-                </tr>
-                <tr>
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">&&</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_qie')}</td>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">||</span>
+                </td>
+                <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_huo')}</td>
+              </tr>
+              <tr>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">/^.*$/.test( )</span>
+                </td>
+                <td style="width: 140px; text-align: left">
+                  {i18n.t('packages_form_example_file_index_zhengzebiaodashi')}
+                </td>
 
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">||</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">{i18n.t('packages_form_example_file_index_huo')}</td>
-                </tr>
-                <tr>
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">/^.*$/.test( )</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_zhengzebiaodashi')}
-                  </td>
-
-                  <td style="width: 60px; text-align: center">
-                    <span style="color: #f5af3f">( )</span>
-                  </td>
-                  <td style="width: 140px; text-align: left">
-                    {i18n.t('packages_form_example_file_index_tiaojianfenzu')}
-                  </td>
-                </tr>
-              </table>
-            </div>
+                <td style="width: 60px; text-align: center">
+                  <span style="color: #f5af3f">( )</span>
+                </td>
+                <td style="width: 140px; text-align: left">
+                  {i18n.t('packages_form_example_file_index_tiaojianfenzu')}
+                </td>
+              </tr>
+            </table>
           </div>
         )
       }

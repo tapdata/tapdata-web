@@ -65,7 +65,7 @@ export class FieldProcessor extends NodeType {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '数据模型'
+              label: i18n.t('packages_dag_data_schema')
             },
             properties: {
               schemaPanel: {

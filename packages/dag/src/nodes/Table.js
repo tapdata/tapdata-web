@@ -238,9 +238,15 @@ export class Table extends NodeType {
                     'x-reactions': [
                       `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
                       {
-                        effects: ['onFieldMount', 'onFieldValueChange'],
+                        effects: ['onFieldMount'],
                         fulfill: {
                           run: '$self.visible && $self.validate()'
+                        }
+                      },
+                      {
+                        effects: ['onFieldInputValueChange'],
+                        fulfill: {
+                          run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
                         }
                       },
                       {
@@ -1295,6 +1301,10 @@ export class Table extends NodeType {
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
                                 value: 'insert_on_nonexists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_nodes_database_bucunzaishidayinrizhi'),
+                                value: 'log_on_nonexists'
                               }
                             ]
                           },

@@ -172,8 +172,10 @@ import App from './App'
 const appApi = new App()
 
 import Lineage from './Lineage'
-
 const lineageApi = new Lineage()
+
+import DataPermission from './DataPermission'
+const dataPermissionApi = new DataPermission()
 
 export {
   connectionsApi,
@@ -233,7 +235,8 @@ export {
   liveDataPlatformApi,
   ldpApi,
   appApi,
-  lineageApi
+  lineageApi,
+  dataPermissionApi
 }
 export * from './ApiClient'
 

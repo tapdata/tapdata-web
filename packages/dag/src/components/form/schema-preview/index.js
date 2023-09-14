@@ -75,7 +75,7 @@ export const SchemaPreview = defineComponent({
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
-      treeData.value = createTree(fields)
+      treeData.value = createTree(fields.sort((a, b) => a.columnPosition - b.columnPosition))
       loading.value = false
     }
 

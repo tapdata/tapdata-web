@@ -334,14 +334,14 @@ export default {
   packages_business_verification_details_jiaoyanzhong: 'Verifying',
   packages_business_verification_details_jiaoyan: 'Verify',
   packages_business_verification_details_qingshurubiaoming: 'Please enter the table name...',
-  packages_business_shared_const_gaojingzhong: 'Alarming',
-  packages_business_shared_const_yihuifu: 'Restored',
+  packages_business_shared_const_gaojingzhong: 'Alerting',
+  packages_business_shared_const_yihuifu: 'Recovered',
   packages_business_components_alert_yiguanbi: 'Closed',
-  packages_business_components_alert_huifu: 'Restore',
-  packages_business_shared_const_yiban: 'General',
+  packages_business_components_alert_huifu: 'Recovery',
+  packages_business_shared_const_yiban: 'Normal',
   packages_business_shared_const_jinggao: 'Warning',
-  packages_business_shared_const_yanzhong: 'Severe',
-  packages_business_shared_const_jinji: 'Urgent',
+  packages_business_shared_const_yanzhong: 'Critical',
+  packages_business_shared_const_jinji: 'Emergency',
   packages_business_external_storage: 'External Storage',
   packages_business_relation_details_chakanrenwu: 'View Tasks',
   packages_business_relation_details_shiyonggaiguanlian: 'Use the task list for this {val}',
@@ -423,6 +423,8 @@ export default {
   packages_business_verification_message_error_joint_table_not_set: 'Please add validation conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the validation condition {val}',
+  packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
+    'The source table or target table data filter is not selected in the verification condition {val}',
   packages_business_verification_message_error_joint_table_field_not_match:
     'The number of index fields in the source table and the target table for validation condition {val} is not equal.',
   packages_business_verification_message_error_script_no_enter:
@@ -578,6 +580,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
   packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',
+  packages_business_task_status_retrying_tooltip: 'The task is retrying',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
@@ -586,11 +589,11 @@ export default {
     'Warning: there was an error encountered during the validation task run.',
   packages_business_verification_form_jiaoyangaojing: 'Validation Warning',
   packages_business_verification_form_zanbuzhichi_doris: 'Doris is not supported yet.',
-  packages_business_verification_form_task_alarm: 'Verification task alarm',
-  packages_business_verification_form_task_alarm_when_error: 'Alarm when the verification task fails',
+  packages_business_verification_form_task_alarm: 'Verification task alert',
+  packages_business_verification_form_task_alarm_when_error: 'Alert when the verification task fails',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
     'When the number of difference rows of the count verification result is greater than',
-  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alarm',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alert',
   packages_business_verification_form_task_alarm_when_result_table_over_count1:
     'When the difference between the table data of the value verification result is greater than',
   packages_business_task_status_error_tip:
@@ -609,11 +612,11 @@ export default {
   packages_business_notify_email_notification: 'Email Notification',
   packages_business_notify_webchat_notification: 'WeChat Notification',
   packages_business_notify_system_notice: 'System Notification',
-  packages_business_notify_alarm_title: 'Agent Alarm Setting',
+  packages_business_notify_alarm_title: 'Agent Alert Setting',
   packages_business_setting_alarm_notification_notify_noticeInterval: 'Sending Interval',
   packages_business_notify_notice_level: 'Notice Level',
-  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alarm Notification',
-  packages_business_setting_alarmnotification_gaojingzhibiao: 'Alarm Indicator',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alert Notification',
+  packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
     'When the average processing time of the node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanjie:
@@ -632,7 +635,7 @@ export default {
   packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
   packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
-  packages_business_setting_alarmnotification_msshigaojing: 'Alarm when s',
+  packages_business_setting_alarmnotification_msshigaojing: 's',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: 'When the verification task encounters an error',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
@@ -645,10 +648,10 @@ export default {
   packages_business_notify_mask_read_all: 'Mark All Read',
   packages_business_notify_no_notice: 'No notice yet',
   packages_business_setting_alarmnotification_cichugaojinggui:
-    'The alarm rule setting here is the system global alarm rule setting, and the priority of the alarm rule setting on the task running monitoring page is higher than the system global setting',
-  packages_business_setting_alarmnotification_renwumorengao: 'Task default alarm rule setting',
-  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alarm Rule',
-  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alarm Setting',
+    'The alert rule setting here is the system global alert rule setting, and the priority of the alert rule setting on the task running monitoring page is higher than the system global setting',
+  packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
+  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
@@ -757,7 +760,7 @@ export default {
   packages_business_shared_detail_incremental_time: 'The time point',
   packages_business_shared_mining_detail_wajuexiangqingx: 'Mining details x-axis:',
   packages_business_stop_confirm_message:
-    'Pausing job while it is in the initial sync stage may cause it to run from the beginning, are you sure you want to pause?',
+    'Pausing job while it is in the full sync stage may cause it to run from the beginning, are you sure you want to pause?',
   packages_business_important_reminder: 'Important reminder',
   packages_business_tablename: 'Table name',
   packages_business_shared_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
@@ -843,8 +846,8 @@ export default {
   packages_business_create_clone_task: 'Create Cloning Pipeline',
   packages_business_create_sync_task: 'Create Sync Pipeline',
   packages_business_table_prefix: 'Table Prefix',
-  packages_business_last_data_change_time: 'Last Updated Date',
-  packages_business_cdc_delay_time: 'CDC Delay Date',
+  packages_business_last_data_change_time: 'Last Event Time',
+  packages_business_cdc_delay_time: 'Replication Delay',
   packages_business_rows: 'Rows',
   packages_business_columns: 'Columns',
   packages_business_storage_size: 'Storage Size',
@@ -885,6 +888,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: 'Refund Failed',
   packages_business_shared_const_yituikuan: 'Refunded',
   packages_business_shared_const_zhifushibai: 'Payment Failed',
+  packages_business_payment_timeout: 'Payment Timeout',
   packages_business_shared_const_yizhifu: 'Paid',
   packages_business_shared_const_weizhifu: 'Unpaid',
   packages_business_shared_ws_client_webso: 'Websocket message parsing failed: ',
@@ -997,7 +1001,7 @@ export default {
   packages_business_create_connection_scenedialog_shujukutongbu: 'Database Synchronization',
   packages_business_create_connection_scenedialog_chaxunjiasu: 'Query Acceleration',
   packages_business_create_connection_scenedialog_rushucang: 'Into the warehouse',
-  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Scene',
+  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Target',
   packages_business_create_connection_scenedialog_qingxuanzeninde: 'Please select your usage scenario',
   packages_business_create_connection_serveform_fenleimingcheng: 'Category Name',
   packages_business_components_tableview_yizhegemoxing: 'Tasks with this model source/target',
@@ -1080,9 +1084,29 @@ export default {
   packages_business_create_connection_scenedialog_redis:
     'Redis is a high-performance memory database that supports multiple data structures and persistence methods. It is scalable and reliable, and is suitable for application scenarios such as caching, session management, leaderboards, and message queues. ',
   packages_business_create_connection_scenedialog_mongo:
-    'MongoDB is a non-relational database with flexibility, high performance, ease of use and scalability, suitable for application scenarios that need to process large amounts of unstructured data and require fast query and scalability. ',
+    'MongoDB is a flexible and high-performance non-relational database, ideal for processing large amounts of unstructured data with fast querying and scalability in application scenarios.',
   packages_business_create_connection_scenedialog_bigQu:
-    'BigQuery is a managed data warehouse provided by Google Cloud. It is famous for its high speed, scalability and security. It can process PB-level data, integrate with multiple tools, and is suitable for various data analysis and mining scenarios. ',
+    'BigQuery is a Google Cloud-managed data warehouse known for its speed, scalability, and security. It handles PB-scale data, integrates with multiple tools, and suits various data analysis and mining needs.',
+  packages_business_create_connection_mysql_desc:
+    'MySQL is a lightweight database management system used for small and medium-sized websites and applications. It supports data storage, querying, and simple analysis, making it popular for web development and light workloads.',
+  packages_business_create_connection_oracle_desc:
+    'Oracle is a powerful enterprise-level database solution known for its support of large-scale data processing, high-performance transactions, and complex queries. It is widely used in core business systems and data management in enterprises.',
+  packages_business_create_connection_sqlserver_desc:
+    'SQL Server is primarily used for managing and processing large databases. It is suitable for enterprise-level applications and websites, offering features for data storage, querying, analysis, and reporting.',
+  packages_business_create_connection_postgresql_desc:
+    'PostgreSQL is a highly stable database system suitable for complex data storage and queries. It is widely employed in web applications, geographic information systems, data analysis, and enterprise-level applications.',
+  packages_business_create_connection_clickhouse_desc:
+    'ClickHouse is designed for fast querying and analysis of large-scale data. It excels in real-time and log analysis, data warehousing, and handling time-series data.',
+  packages_business_create_connection_elasticsearch_desc:
+    'Elasticsearch is used for full-text search, log analysis, real-time data analysis, and large-scale data indexing. It finds significant applications in search engines, monitoring, and enterprise-level systems.',
+  packages_business_create_connection_dummy_desc:
+    'Dummy is commonly used to represent virtual or placeholder entities with no actual data. In software development and testing, Dummy objects serve to fill gaps or simulate placeholder behavior.',
+  packages_business_create_connection_kafka_desc:
+    'Kafka is ideal for high-throughput real-time data streaming, handling log collection, data transmission, message publishing/subscribing, and stream processing, particularly for large-scale data streams.',
+  packages_business_create_connection_doris_desc:
+    'Doris is well-suited for real-time data analysis and reporting, with support for high-concurrency queries and complex analysis. It is widely used in data warehouses, BI reports, and data visualization.',
+  packages_business_create_connection_mongodbatlas_desc:
+    'MongoDB Atlas is a fully managed service for MongoDB databases, automating deployment, scaling, and monitoring. It enables developers to prioritize application development while providing features like elastic scaling, global deployment, and security for various applications.',
   packages_business_swimlane_tablepreview_chuangjianrenwu: 'Create Task',
   packages_business_as_source: 'As Source',
   packages_business_as_target: 'As Target',
@@ -1108,7 +1132,7 @@ export default {
   packages_business_shared_mining_table_yihebingdelian: 'Merged Connections',
   packages_business_shared_mining_table_shengyuyigelian:
     'In the mining task, at least one table must be mining, and all tables cannot be stopped.',
-  packages_business_logs_nodelog_yijianfuzhi: 'One key copy',
+  packages_business_logs_nodelog_yijianfuzhi: 'Copy',
   packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
   packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data',
   packages_business_shared_mining_list_shanchurenwus:
@@ -1135,5 +1159,53 @@ export default {
   packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
   packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
   packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
-  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table'
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
+  packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
+  packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
+  packages_business_data_server_list_apIwendang: 'API Document Export',
+  packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
+  packages_business_verification_form_validate_table_is_empty:
+    'The source table and target table cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_validate_table_is_empty1:
+    'Because the source or target table could not be found, the following source connections will automatically skip validation:',
+  packages_business_verification_form_condition_is_empty:
+    'The associated verification condition cannot be empty, please modify the verification table configuration',
+  packages_business_verification_form_index_field_is_empty:
+    'Because the index field cannot be found, the following source tables will automatically skip verification:',
+  packages_business_verification_form_index_field_count_is_not_equal:
+    'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
+  packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification',
+  packages_business_connections_preview_quanxianguanli: 'Permission Management',
+  packages_business_permissionse_settings_create_quanxianshezhi: 'Permission Settings',
+  packages_business_permissionse_settings_create_shezhiquanxian: 'Set Permissions',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: 'Select authorization role',
+  packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan:
+    'Unable to authorize the following data, saving will be skipped',
+  packages_business_connections_permissionsdialog_tianjiashouquan: 'Add Permissions',
+  packages_business_connections_permissionsdialog_gongnengquanxian: 'Function Permissions',
+  packages_business_connections_permissionsdialog_shouquanjuese: 'Authorization Role',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: 'Connection permission settings',
+  packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
+  packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
+  packages_business_notice_list_gonggaobiaoti: 'Notice Title',
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
+  packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
+  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription method',
+  packages_business_components_upgradecharges_keyongrenwushu: 'Number of tasks available',
+  packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
+  packages_business_components_upgradecharges_dingyueshengji: 'Subscription upgrade',
+  packages_business_create_connection_sceneform_lianjieceshiwu:
+    'The connection test is invalid, please check your connection configuration',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
+  packages_business_logs_nodelog_qingshengjidingyue:
+    'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide',
+  packages_business_logs_nodelog_yinqingkeyibei:
+    'The number of tasks that the engine can be invoked exceeds the limit,',
+  packages_business_task_list_nindekeyunxing:
+    'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks!',
+  packages_business_setting_alarmsetting_qubangding: 'to bind',
+  packages_business_setting_alarmsetting_jiancedaoninhai:
+    'It has been detected that you have not bound your email address, so email notification cannot be enabled.'
 }

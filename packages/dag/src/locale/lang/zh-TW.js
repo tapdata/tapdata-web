@@ -314,6 +314,7 @@ export default {
   packages_dag_nodes_database_bucunzaishidiu: '不存在時丟棄',
   packages_dag_nodes_database_shanchushijian: '刪除事件',
   packages_dag_nodes_database_bucunzaishicha: '不存在時插入',
+  packages_dag_nodes_database_bucunzaishidayinrizhi: '不存在時打印日誌',
   packages_dag_nodes_database_gengxinshijian: '更新事件',
   packages_dag_nodes_database_mubiaocunzaishi: '目標存在時更新',
   packages_dag_nodes_database_charushijian: '插入事件',
@@ -610,5 +611,18 @@ export default {
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
   packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
-  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型'
+  packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
+  packages_dag_field_add_del_index_zhidi: '置底',
+  packages_dag_field_add_del_index_xiayi: '下移',
+  packages_dag_field_add_del_index_shangyi: '上移',
+  packages_dag_field_add_del_index_zhiding: '置頂',
+  packages_dag_src_editor_leixingguolu: '類型過濾',
+  packages_dag_src_editor_date_processor_field_list: '受運算影響的字段',
+  packages_dag_dynamicAdjustMemoryUsage_title: '動態調整記憶體使用',
+  packages_dag_dynamicAdjustMemoryUsage_tip:
+    '全量同步階段，當識別到同步的數據佔用記憶體較大時，自動按照比例降低記憶體佇列的使用，以防止出現記憶體溢出的錯誤，但次操作會導致同步速度的下降。當確認機器資源较小時，建議啟用，可以有效的保障同步任務的穩定運行。當機器資源充足時，建議關閉。',
+  packages_dag_mergeMode: '合併模式',
+  packages_dag_main_table_first: '全量主表優先',
+  packages_dag_sub_table_first: '全量子表優先',
+  packages_dag_model_generation: '模型生成中'
 }

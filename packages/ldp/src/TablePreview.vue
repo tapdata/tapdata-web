@@ -32,8 +32,7 @@
             ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
-        <div class="flex-grow-1"></div>
-        <ElButton v-if="swimType === 'mdm'" size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
@@ -101,22 +100,36 @@
                   </VTable>
                 </el-tab-pane>
                 <el-tab-pane :label="$t('packages_business_sample_data')" name="sampleData">
-                  <div class="">
+                  <div class="position-relative" v-loading="loadingSampleData">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
-                    <el-table v-else :data="sampleData" v-loading="loadingSampleData" max-height="381px">
-                      <el-table-column type="index" label="#"></el-table-column>
-                      <el-table-column
-                        v-for="(item, index) in sampleHeader"
-                        :key="index"
-                        :prop="item"
-                        :label="item"
-                        min-width="200"
-                      >
-                        <template #header="{ column }">
-                          <span :title="column.label">{{ column.label }}</span>
-                        </template>
-                      </el-table-column>
-                    </el-table>
+                    <template v-else>
+                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn shadow-sm">{{
+                        !isTableView ? 'table-grid' : 'code-json'
+                      }}</IconButton>
+                      <VCodeEditor
+                        v-if="!isTableView"
+                        class="py-0"
+                        :height="360"
+                        :value="sampleDataJson"
+                        lang="json"
+                        :options="{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }"
+                        theme="chrome"
+                      ></VCodeEditor>
+                      <el-table v-else :data="sampleData" max-height="360px">
+                        <el-table-column type="index" label="#"></el-table-column>
+                        <el-table-column
+                          v-for="(item, index) in sampleHeader"
+                          :key="index"
+                          :prop="item"
+                          :label="item"
+                          min-width="200"
+                        >
+                          <template #header="{ column }">
+                            <span :title="column.label">{{ column.label }}</span>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </template>
                   </div>
                 </el-tab-pane>
               </el-tabs>
@@ -314,7 +327,7 @@
 import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
 
-import { Drawer, VTable, VEmpty } from '@tap/component'
+import { Drawer, VTable, VEmpty, VCodeEditor, IconButton } from '@tap/component'
 import { calcTimeUnit, calcUnit, isNum } from '@tap/shared'
 import {
   discoveryApi,
@@ -338,7 +351,7 @@ export default {
       default: 'Drawer'
     }
   },
-  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage },
+  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage, VCodeEditor, IconButton },
   data() {
     return {
       visible: false,
@@ -468,7 +481,8 @@ export default {
       swimType: '', // source/fdm/mdm/target
       asTaskType: 'all',
       connection: null,
-      taskLoading: false
+      taskLoading: false,
+      isTableView: false
     }
   },
 
@@ -515,6 +529,10 @@ export default {
             status: 110,
             operation: 280
           }
+    },
+
+    sampleDataJson() {
+      return JSON.stringify(this.sampleData.slice(0, 10), null, 2)
     }
   },
 
@@ -779,9 +797,17 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(() => {
+      taskApi.batchStart(ids).then((data) => {
         this.getTasks(true)
-        this.$message.success(this.$t('public_message_operation_success'))
+        if (data.every(t => t.code === 'ok')) {
+          this.$message.success(this.$t('public_message_operation_success'))
+        } else {
+          if (data.some(t => t.code === 'Task.ScheduleLimit')) {
+            this.$emit('handle-show-upgrade')
+            return
+          }
+          this.$message.error(data[0]?.message)
+        }
       })
     },
 
@@ -907,6 +933,10 @@ export default {
           this.callback?.onDelete?.(this.selected.parent_id)
         })
       })
+    },
+
+    toggleSampleData() {
+      this.isTableView = !this.isTableView
     }
   }
 }
@@ -974,6 +1004,16 @@ export default {
   .status-error {
     color: #d44d4d;
     background-color: #ffecec;
+  }
+
+  .toggle-sample-btn {
+    top: 6px;
+    right: 16px;
+    z-index: 10;
+    background-color: #fff;
+    &:hover {
+      background-color: rgb(239, 240, 241);
+    }
   }
 }
 </style>

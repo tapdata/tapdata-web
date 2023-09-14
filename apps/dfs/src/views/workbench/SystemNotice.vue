@@ -1,5 +1,5 @@
 <template>
-  <section class="system-notice g-panel-container" v-if="$route.name === 'SystemNotice'">
+  <section class="system-notice bg-white pt-4" v-if="$route.name === 'SystemNotice'">
     <AlarmNotification></AlarmNotification>
   </section>
 </template>

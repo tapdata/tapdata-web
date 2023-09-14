@@ -181,6 +181,7 @@
             :data="qpsData"
             :color="['#26CF6C', '#2C65FF']"
             :time-format="timeFormat"
+            auto-scale
             class="line-chart"
           ></LineChart>
         </div>
@@ -402,15 +403,54 @@ export default {
         return {
           x: [],
           name: [],
-          value: [[], []]
+          value: [[], []],
+          markLine: [
+            {
+              data: []
+            }
+          ]
         }
       }
       const { time = [] } = this.quota
-      return {
+      let inputQps = data.inputQps?.map(t => Math.abs(t))
+      const outputQps = data.outputQps?.map(t => Math.abs(t))
+      // 计算距离增量时间点，最近的时间点
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
+      let markLineTime = 0
+      time.forEach(el => {
+        if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
+          markLineTime = el
+        }
+      })
+
+      let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [data.inputQps, data.outputQps]
+        value: [inputQps, outputQps],
+        zoomValue: 10
       }
+
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        opt.markLine = [
+          {
+            symbol: 'none',
+            data: [
+              {
+                xAxis: markLineTime + '',
+                lineStyle: {
+                  color: '#000'
+                },
+                label: {
+                  show: false
+                }
+              }
+            ]
+          }
+        ]
+      }
+
+      return opt
     },
 
     // 处理耗时
@@ -438,22 +478,33 @@ export default {
           value: []
         }
       }
+
+      const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
+      const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const max = Math.max(...data.replicateLag)
       return {
         x: time,
-        value: data.replicateLag
+        value: data.replicateLag,
+        yAxisMax: Math.max(delay, max)
       }
     },
 
     // 全量信息
     initialData() {
       const data = this.quota.samples?.totalData?.[0] || {}
-      const { snapshotRowTotal = 0, snapshotInsertRowTotal = 0, snapshotDoneAt, snapshotStartAt, replicateLag } = data
-      const usedTime = Time.now() - snapshotStartAt
+      const {
+        snapshotRowTotal = 0,
+        snapshotInsertRowTotal = 0,
+        snapshotDoneAt,
+        snapshotStartAt,
+        replicateLag,
+        lastFiveMinutesQps
+      } = data
       let time
-      if (!snapshotInsertRowTotal || !snapshotRowTotal || !snapshotStartAt) {
+      if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
         time = 0
       } else {
-        time = snapshotRowTotal / (snapshotInsertRowTotal / usedTime) - usedTime
+        time = ((snapshotRowTotal - snapshotInsertRowTotal) / lastFiveMinutesQps) * 1000
       }
       return {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',

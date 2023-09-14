@@ -1,5 +1,6 @@
 <script>
 import { defineComponent } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   props: {
@@ -16,12 +17,12 @@ export default defineComponent({
         <div class="connection-type-tag-wrap d-flex flex-nowrap flex-shrink-0 align-center gap-1">
           {type.includes('source') && (
             <el-tag class="type-source" effect="plain" size="mini">
-              源头
+              {i18n.t('packages_business_connection_type_source')}
             </el-tag>
           )}
           {type.includes('target') && (
             <el-tag class="type-target" effect="plain" size="mini">
-              目标
+              {i18n.t('packages_business_connection_type_target')}
             </el-tag>
           )}
         </div>

@@ -1702,7 +1702,6 @@ export default {
   daas_setting_settingcenter_gaojingshezhi: '告警設置',
   packages_nodeDesign_custom_node_name_required: '請輸入節點名稱',
   packages_nodeDesign_message_save_ok: '保存成功',
-  dialog_tip_copied: '已復制',
   share_detail_title: '挖掘表詳情',
   shared_cache_messge_no_table: '找不對所選表模型',
   shared_cache_placeholder_max_memory: '請輸入緩存最大內存',
@@ -1804,5 +1803,13 @@ export default {
   daas_cluster_cluster_lianjieshuliang: '連接數量',
   daas_cluster_cluster_mubiaoIPhe: '目標IP和端口',
   daas_cluster_cluster_lianjiezongshu: '連接總數',
-  daas_cluster_cluster_yinqingduiwaijian: '引擎對外建立的連接數'
+  daas_cluster_cluster_yinqingduiwaijian: '引擎對外建立的連接數',
+  daas_role_role_ninhaiweibaocun: '您還未保存設置的權限，是否要保存權限設置？ ',
+  daas_role_role_quanbugongneng: ' 全部功能 ',
+  daas_role_role_chakanquanbushu: '查看全部數據',
+  daas_role_role_gongnengquanxian: '功能權限',
+  daas_role_role_yemianquanxian: '頁面權限',
+  daas_role_role_gongnengmokuai: '功能模塊',
+  daas_role_role_gouxuanxiangyingmo:
+    '勾選相應模塊表示此導航對當前角色下用戶可見，開啟【查看全部數據】則表示角色可以查看和操作該模塊下所有的數據，不勾選則只能查看和操作自己創建和被授權的數據。 '
 }

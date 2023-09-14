@@ -17,7 +17,7 @@
             <el-checkbox label="SYSTEM" v-if="channels.includes('system')">{{
               $t('packages_business_notify_system_notice')
             }}</el-checkbox>
-            <el-checkbox label="EMAIL" v-if="channels.includes('email')">{{
+            <el-checkbox label="EMAIL" v-if="channels.includes('email')" @change="handleCheckMail">{{
               $t('packages_business_notify_email_notification')
             }}</el-checkbox>
             <div v-if="!isDaas">
@@ -330,6 +330,30 @@ export default {
       alarmApi.channels().then(data => {
         this.channels = []
         this.channels = data.map(item => item.type)
+      })
+    },
+
+    handleCheckMail(val) {
+      const email = window.__USER_INFO__?.email
+      if (this.isDaas || email || !val) {
+        return
+      }
+      this.$confirm(
+        i18n.t('packages_business_setting_alarmsetting_jiancedaoninhai'),
+        this.$t('public_message_title_prompt'),
+        {
+          type: 'warning',
+          confirmButtonText: i18n.t('packages_business_setting_alarmsetting_qubangding')
+        }
+      ).then(flag => {
+        if (flag) {
+          this.$router.push({
+            name: 'userCenter',
+            query: {
+              bind: 'email'
+            }
+          })
+        }
       })
     }
   }

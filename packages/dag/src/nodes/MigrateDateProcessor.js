@@ -91,6 +91,16 @@ export class MigrateDateProcessor extends NodeType {
                     }
                   }
                 }
+              },
+              fieldList: {
+                type: 'void',
+                title: i18n.t('packages_dag_src_editor_date_processor_field_list'),
+                'x-decorator': 'FormItem',
+                'x-component': 'fieldList',
+                'x-component-props': {
+                  nodeId: '{{$values.id}}',
+                  includesDataTypes: `{{$values.dataTypes}}`
+                }
               }
             }
           },
@@ -98,7 +108,7 @@ export class MigrateDateProcessor extends NodeType {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: '数据模型'
+              label: i18n.t('packages_dag_data_schema')
             },
             properties: {
               schemaPanel: {

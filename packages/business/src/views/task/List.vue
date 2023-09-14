@@ -24,6 +24,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+          $t('packages_business_permissionse_settings_create_quanxianshezhi')
+        }}</ElButton>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
@@ -71,6 +74,7 @@
         </el-dropdown>
         <template>
           <el-button
+            v-if="buttonShowMap.export"
             v-show="multipleSelection.length > 0 && isDaas"
             :disabled="$disabledReadonlyUserBtn()"
             v-readonlybtn="'SYNC_job_export'"
@@ -82,7 +86,7 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="isDaas"
+            v-if="isDaas && buttonShowMap.import"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
@@ -94,10 +98,12 @@
           </el-button>
         </template>
         <el-button
+          v-if="buttonShowMap.create"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
           size="mini"
+          id="task-list-create"
           :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
           @click="create"
@@ -116,8 +122,10 @@
       </el-table-column>
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name link-primary flex">
+          <span class="dataflow-name flex">
+            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
             <ElLink
+              v-else
               role="ellipsis"
               type="primary"
               class="justify-content-start ellipsis block"
@@ -154,10 +162,16 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
+        <div v-if="isDaas" slot="header" class="flex align-center">
+          <span>{{ $t('public_operation_available') }}</span>
+          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+            <VIcon class="color-primary" size="14">info</VIcon>
+          </ElTooltip>
+        </div>
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
-              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
+              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
@@ -167,7 +181,7 @@
             </ElLink>
             <template v-else>
               <ElLink
-                v-if="row.status === 'stopping'"
+                v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
                 :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
@@ -176,7 +190,7 @@
                 {{ $t('public_button_force_stop') }}
               </ElLink>
               <ElLink
-                v-else
+                v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
@@ -185,8 +199,13 @@
                 {{ $t('public_button_stop') }}
               </ElLink>
             </template>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Start') || havePermission(row, 'Stop')"
+              v-readonlybtn="'SYNC_job_operation'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
@@ -194,17 +213,22 @@
             >
               {{ $t('public_button_edit') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Edit')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="row.btnDisabled.monitor && !row.startTime"
+              :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="toDetail(row)"
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
             <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
@@ -212,8 +236,13 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="havePermission(row, 'Reset')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
+              v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="$disabledReadonlyUserBtn()"
@@ -221,8 +250,13 @@
             >
               {{ $t('public_button_copy') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-if="buttonShowMap.copy && havePermission(row, 'Delete')"
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
+              v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
@@ -295,6 +329,19 @@
         <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
       </span>
     </el-dialog>
+    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </section>
 </template>
 
@@ -304,7 +351,9 @@ import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
 import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus } from '../../components'
+import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
+
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
@@ -321,7 +370,16 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus },
+  components: {
+    FilterBar,
+    TablePage,
+    SkipError,
+    Upload,
+    TaskStatus,
+    PermissionseSettingsCreate,
+    UpgradeCharges,
+    UpgradeFee
+  },
 
   mixins: [syncTaskAgent],
 
@@ -343,7 +401,7 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       },
       typeOptions: [
         { label: this.$t('public_select_option_all'), value: '' },
@@ -356,7 +414,7 @@ export default {
           value: 'cdc'
         },
         {
-          label: this.$t('public_task_type_initial_sync') + this.$t('public_task_type_cdc'),
+          label: this.$t('public_task_type_initial_sync_and_cdc'),
           value: 'initial_sync+cdc'
         }
       ],
@@ -372,7 +430,9 @@ export default {
       showTooltip: false,
       showDelTooltip: false,
       failList: [], //错误列表
-      taskErrorCause: {}
+      taskErrorCause: {},
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -405,6 +465,24 @@ export default {
             status: 110,
             operation: 280
           }
+    },
+
+    buttonShowMap() {
+      if (this.$route.name === 'dataflowList') {
+        return {
+          create: this.$has('v2_data_flow_edit'),
+          copy: this.$has('v2_data_flow_copy'),
+          import: this.$has('v2_data_flow_import'),
+          export: this.$has('v2_data_flow_export')
+        }
+      }
+
+      return {
+        create: this.$has('v2_data_replication_edit'),
+        copy: this.$has('v2_data_replication_copy'),
+        import: this.$has('v2_data_replication_import'),
+        export: this.$has('v2_data_replication_export')
+      }
     }
   },
 
@@ -456,7 +534,11 @@ export default {
         crontabExpressionFlag: true,
         crontabExpression: true,
         crontabScheduleMsg: true,
-        lastStartDate: true
+        lastStartDate: true,
+        functionRetryStatus: true,
+        taskRetryStatus: true,
+        shareCdcStop: true,
+        shareCdcStopMessage: true
       }
       let where = {
         syncType
@@ -594,6 +676,16 @@ export default {
       }
     },
 
+    handleClickNameDisabled(row = {}) {
+      if (!this.isDaas) return false
+
+      return (
+        (row.btnDisabled?.edit || this.$disabledReadonlyUserBtn() || !this.havePermission(row, 'Edit')) &&
+        row.btnDisabled.monitor &&
+        !row.lastStartDate
+      )
+    },
+
     openRoute(route, newTab = true) {
       if (newTab) {
         // 这里预期是任务已经打开了，不要重复开新标签页
@@ -613,7 +705,11 @@ export default {
     responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
+      console.log('failList', failList)
       if (failList.length) {
+        if (failList.some(t => t.code === 'Task.ScheduleLimit')) {
+          this.handleShowUpgradeDialog()
+        }
         let nameMapping = {}
         this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
@@ -769,9 +865,14 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(data => {
+        taskApi.batchDelete(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) => ids.includes(id))
           const { toggleRowSelection } = this.table.$refs.table
+          data.forEach(item => {
+            const { name, permissionActions = [] } = selected.find(t => t.id === item.id) || {}
+            item.name = name
+            item.permissionActions = permissionActions
+          })
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
           this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
@@ -780,10 +881,21 @@ export default {
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
-      this.failList = [...this.failList, ...canNotList]
+      this.failList = [...(data?.filter(t => t.code !== 'ok') || []), ...canNotList]
       if (this.failList.length) {
-        this.dialogDelMsgVisible = true
+        if (this.failList.some(t => t.code === 'Clear.Slot')) {
+          this.dialogDelMsgVisible = true
+        } else {
+          let message = ''
+          const { isDaas } = this
+          this.failList.forEach(el => {
+            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message}<br/>`
+          })
+          this.$message.info({
+            dangerouslyUseHTMLString: true,
+            message
+          })
+        }
       } else if (msg) {
         this.$message.success(msg, false)
       }
@@ -954,9 +1066,56 @@ export default {
       }
 
       cause &&
-        cause !==
-          '\u6ca1\u6709\u53d1\u73b0\u60a8\u6700\u8fd1\u6709\u4efb\u52a1\u62a5\u9519, \u5982\u679c\u6709\u5176\u4ed6\u95ee\u9898, \u6b22\u8fce\u54a8\u8be2\u6211\u4eec\u7684\u4eba\u5de5\u5ba2\u670d' &&
+        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
+    },
+
+    // 显示权限设置
+    handlePermissionsSettings() {
+      this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
+    },
+
+    havePermission(row = {}, type = '') {
+      if (!this.isDaas) return true
+      const data = row.permissionActions || []
+      return data.includes(type)
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }

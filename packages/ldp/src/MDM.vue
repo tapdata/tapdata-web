@@ -4,7 +4,9 @@
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
       <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')">folder-plus</IconButton>
-      <IconButton :disabled="mdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <IconButton :disabled="mdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+        >search-outline</IconButton
+      >
       <!--<ElDropdown trigger="click" @command="handleCommand">
         <IconButton class="ml-3">more</IconButton>
         <ElDropdownMenu slot="dropdown">
@@ -103,13 +105,13 @@
         v-if="mdmNotExist"
         class="drop-mask pe-auto flex justify-center align-center absolute-fill font-color-dark fs-6"
       >
-        {{$t('packages_ldp_connection_expired')}}
+        {{ $t('packages_ldp_connection_expired') }}
       </div>
     </div>
 
     <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
-      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent>
+      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           {{ $t('packages_business_mdm_create_task_dialog_desc_prefix') }}
           <ul>
@@ -127,6 +129,37 @@
             <template slot="prepend">{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>
+        <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
+            <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+              <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+                {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
+              </ElRadio>
+            </ElTooltip>
+
+            <ElRadio label="initial_sync">
+              {{ $t('public_task_type_initial_sync') }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+        <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+          <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
+            <ElSelect
+              v-model="taskDialogConfig.task.crontabExpressionType"
+              @change="handleChangeCronType"
+              class="flex-1"
+            >
+              <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem
+            v-if="taskDialogConfig.task.crontabExpressionType === 'custom'"
+            prop="task.crontabExpression"
+            label-width="0"
+          >
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+          </ElFormItem>
+        </div>
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
@@ -223,7 +256,13 @@ export default {
         visible: false,
         prefix: 'f_',
         tableName: null,
-        newTableName: null
+        newTableName: null,
+        task: {
+          type: 'initial_sync+cdc',
+          crontabExpressionFlag: false,
+          crontabExpression: '',
+          crontabExpressionType: 'once'
+        }
       },
       expandedKeys: [],
       dialogConfig: {
@@ -459,80 +498,86 @@ export default {
       this.taskDialogConfig.newTableName = object.data.name.replace(/^FDM_/, '')
       this.taskDialogConfig.tagId = tagId
       this.taskDialogConfig.visible = true
+      this.$refs.form?.resetFields()
+      this.taskDialogConfig.task.crontabExpressionFlag = false
+      this.taskDialogConfig.task.crontabExpression = ''
     },
 
     async taskDialogSubmit(start, confirmTable) {
-      const { tableName, from, newTableName, tagId } = this.taskDialogConfig
-      let task = this.makeTask(from, tableName, this.tablePrefix + newTableName)
-      this.creating = true
-      const h = this.$createElement
-      try {
-        const result = await ldpApi.createMDMTask(task, {
-          silenceMessage: true,
-          params: { tagId, confirmTable, start }
-        })
-        this.taskDialogConfig.visible = false
-        this.$message.success({
-          message: h(
-            'span',
-            {
-              class: 'color-primary fs-7 clickable',
-              on: {
-                click: () => {
-                  this.handleClickName(result)
-                }
-              }
-            },
-            this.$t('packages_business_task_created_success')
-          )
-        })
-        setTimeout(() => {
-          this.setNodeExpand(tagId)
-        }, 1000)
-      } catch (response) {
-        console.log(response) // eslint-disable-line
-        const code = response?.data?.code
-        const data = response?.data?.data
-        if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
+      this.$refs.form.validate(async valid => {
+        if (!valid) return
+        const { tableName, from, newTableName, tagId, task: settings } = this.taskDialogConfig
+        let task = Object.assign(this.makeTask(from, tableName, this.tablePrefix + newTableName), settings)
+        this.creating = true
+        const h = this.$createElement
+        try {
+          const result = await ldpApi.createMDMTask(task, {
+            silenceMessage: true,
+            params: { tagId, confirmTable, start }
+          })
           this.taskDialogConfig.visible = false
-          this.$message.warning({
-            duration: 6000,
-            showClose: true,
+          this.$message.success({
             message: h(
               'span',
               {
                 class: 'color-primary fs-7 clickable',
                 on: {
                   click: () => {
-                    this.handleClickName(data)
+                    this.handleClickName(result)
                   }
                 }
               },
-              this.$t('packages_business_task_created_fail_no_primary_key')
+              this.$t('packages_business_task_created_success')
             )
           })
           setTimeout(() => {
             this.setNodeExpand(tagId)
           }, 1000)
-        } else if (code === 'Ldp.RepeatTableName') {
-          this.$confirm('', i18n.t('packages_business_mdm_table_duplication_confirm'), {
-            onlyTitle: true,
-            type: 'warning',
-            closeOnClickModal: false,
-            zIndex: 999999
-          }).then(resFlag => {
-            if (!resFlag) {
-              return
-            }
-            this.taskDialogSubmit(start, true)
-          })
-        } else if (code === 'Task.ListWarnMessage' && data) {
-          const keys = Object.keys(data)
-          const msg = data[keys[0]]?.[0]?.msg
-          this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
+        } catch (response) {
+          console.log(response) // eslint-disable-line
+          const code = response?.data?.code
+          const data = response?.data?.data
+          if (code === 'Ldp.MdmTargetNoPrimaryKey' && data) {
+            this.taskDialogConfig.visible = false
+            this.$message.warning({
+              duration: 6000,
+              showClose: true,
+              message: h(
+                'span',
+                {
+                  class: 'color-primary fs-7 clickable',
+                  on: {
+                    click: () => {
+                      this.handleClickName(data)
+                    }
+                  }
+                },
+                this.$t('packages_business_task_created_fail_no_primary_key')
+              )
+            })
+            setTimeout(() => {
+              this.setNodeExpand(tagId)
+            }, 1000)
+          } else if (code === 'Ldp.RepeatTableName') {
+            this.$confirm('', i18n.t('packages_business_mdm_table_duplication_confirm'), {
+              onlyTitle: true,
+              type: 'warning',
+              closeOnClickModal: false,
+              zIndex: 999999
+            }).then(resFlag => {
+              if (!resFlag) {
+                return
+              }
+              this.taskDialogSubmit(start, true)
+            })
+          } else if (code === 'Task.ListWarnMessage' && data) {
+            const keys = Object.keys(data)
+            const msg = data[keys[0]]?.[0]?.msg
+            this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
+          }
         }
-      }
-      this.creating = false
+        this.creating = false
+      })
     },
 
     makeTask(from, tableName, newTableName) {
@@ -549,7 +594,7 @@ export default {
       }
     },
 
-    getTableNode(db, tableName) {
+    getTableNode(db = {}, tableName) {
       return {
         id: uuid(),
         type: 'table',

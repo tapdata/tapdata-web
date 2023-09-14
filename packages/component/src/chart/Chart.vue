@@ -12,7 +12,8 @@ import {
   ToolboxComponent,
   LegendComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
+  MarkLineComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { delayTrigger } from '@tap/shared'
@@ -27,7 +28,8 @@ use([
   ToolboxComponent,
   LegendComponent,
   GridComponent,
-  DataZoomComponent
+  DataZoomComponent,
+  MarkLineComponent
 ])
 
 export default {

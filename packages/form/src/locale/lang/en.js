@@ -82,6 +82,7 @@ export default {
   packages_form_ddl_event_checkbox_index_xiugaiziduanming: 'Modify field name',
   packages_form_example_file_index_tiaojianfenzu: 'Conditional grouping',
   packages_form_example_file_index_zhengzebiaodashi: 'regular expression',
+  packages_form_example_file_index_timestamp: 'Filter by timestamp type',
   packages_form_example_file_index_huo: 'or',
   packages_form_example_file_index_qie: 'and',
   packages_form_example_file_index_fei: 'Not',

@@ -12,7 +12,9 @@ const serveUrlMap = {
 // const userId = '60b60af1147bce7705727188' // zed?
 // const userId = '60b064e9a65d8e852c8523bc' // lemon
 // const userId = '610a3d43d7f65cfcd80837b5' // auto
-const userId = '60cc0c304e190a579cbe306c' // jason
+// const userId = '60cc0c304e190a579cbe306c' // jason
+// const userId = '64ba40c389c61b08683c71b0' // xf
+const userId = '64be2c812c268c9dd5afaf25' // devin
 let origin
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
@@ -94,6 +96,7 @@ module.exports = {
       SERVE_ENV === 'PROD'
         ? prodProxyConfig
         : {
+            '/config/': proxy,
             '/private_ask/': proxy,
             '/api/tcm/': proxy,
             '/api/gw/': proxy,
@@ -112,7 +115,9 @@ module.exports = {
   transpileDependencies: [
     // 按需添加需要babel处理的模块
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
-    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/
+    /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/,
+    /[/\\]node_modules[/\\](.+?)?@figmania[/\\]webcomponent(.*)[/\\]/,
+    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/
   ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']

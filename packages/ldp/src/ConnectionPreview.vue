@@ -4,11 +4,11 @@
       <header>
         <div class="flex justify-content-between">
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
-          <!--<div class="flex justify-content-end mt-4 mb-4">
-            <el-button size="mini" type="primary">加载Schema</el-button>
-            <el-button size="mini" @click="edit">编辑</el-button>
-            <el-button size="mini">测试连接</el-button>
-          </div>-->
+          <div class="flex justify-content-end mt-4 mb-4">
+            <!--<el-button size="mini" type="primary">加载Schema</el-button>-->
+            <el-button size="mini" @click="edit">{{ $t('public_button_edit') }}</el-button>
+            <!--<el-button size="mini">测试连接</el-button>-->
+          </div>
         </div>
         <div class="color-info mb-4">
           {{ getType(viewData.connection_type) }}
@@ -162,7 +162,7 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync') + '+' + this.$t('public_task_type_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       },
       asTaskType: 'all'
     }
@@ -230,16 +230,16 @@ export default {
       this.reset()
     },
     edit() {
-      const { id, pdkHash } = this.viewData
-      let query = {
-        pdkHash
-      }
+      const { id, pdkHash, definitionPdkId: pdkId } = this.viewData
       this.$router.push({
         name: 'connectionsEdit',
         params: {
           id
         },
-        query
+        query: {
+          pdkHash,
+          pdkId
+        }
       })
     },
     isFileSource(database_type) {

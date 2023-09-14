@@ -279,58 +279,7 @@ export default {
   mixins: [commonMix],
 
   data() {
-    const validatePrefix = (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('public_form_not_empty')))
-      } else if (!/\w+/.test(value)) {
-        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
-      } else {
-        callback()
-      }
-    }
-
-    const validateCrontabExpression = (rule, value, callback) => {
-      value = value.trim()
-      if (!value) {
-        callback(new Error(this.$t('public_form_not_empty')))
-      } else if (!validateCron(value)) {
-        callback(this.$t('packages_dag_migration_settingpanel_cronbiao'))
-      } else {
-        callback()
-      }
-    }
-
-    // 2、每10分钟运行1次
-    // 3、每1小时运行一次
-    // 4、每天运行一次
-    // 5、自定义cron表达式
-
-    const cronOptions = [
-      {
-        label: '仅运行一次',
-        value: 'once'
-      },
-      {
-        label: '每10分钟运行一次',
-        value: '0 */10 * * * ?'
-      },
-      {
-        label: '每1小时运行一次',
-        value: '0 0 * * * ?'
-      },
-      {
-        label: '每天运行一次',
-        value: '0 0 0 * * ?'
-      },
-      {
-        label: '自定义cron表达式',
-        value: 'custom'
-      }
-    ]
-
     return {
-      cronOptions,
       fixedPrefix: 'FDM_',
       maxPrefixLength: 10,
       keyword: '',
@@ -352,13 +301,6 @@ export default {
       },
       creating: false,
       expandedKeys: [],
-      formRules: {
-        prefix: [{ validator: validatePrefix, trigger: 'blur' }],
-        'task.crontabExpression': [
-          { required: true, message: this.$t('public_form_not_empty'), trigger: ['blur', 'change'] },
-          { validator: validateCrontabExpression, trigger: ['blur', 'change'] }
-        ]
-      },
       searchIng: false,
       search: '',
       enableSearch: false,
@@ -374,7 +316,8 @@ export default {
         visible: false
       },
       checkCanStartIng: false,
-      startedTags: []
+      startedTags: [],
+      prefixMap: {}
     }
   },
 
@@ -427,7 +370,7 @@ export default {
   methods: {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
-        console.log('autoUpdateObjects', this.expandedKeys) // eslint-disable-line
+        if (this.showSearch) return
         this.expandedKeys.forEach(id => {
           this.updateObject(id)
         })
@@ -619,9 +562,17 @@ export default {
     },
 
     showTaskDialog() {
+      const connectionId = this.taskDialogConfig.from?.id
+
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
       this.$refs.form?.resetFields()
+
+      // 读取缓存
+      if (this.prefixMap[connectionId]) {
+        this.taskDialogConfig.prefix = this.prefixMap[connectionId]
+      }
+
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
 
@@ -654,6 +605,10 @@ export default {
       const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
 
       if (tag) {
+        const task = this.tag2Task[tag.id]
+        this.taskDialogConfig.task.type = task.type
+        this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
+        this.taskDialogConfig.task.crontabExpression = task.crontabExpression
         this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
         // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
       } else {
@@ -667,8 +622,10 @@ export default {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
-        const { tableName, from, task: settings } = this.taskDialogConfig
+        const { tableName, from = {}, task: settings, prefix } = this.taskDialogConfig
         let task = Object.assign(this.makeMigrateTask(from, tableName), settings)
+        // 缓存表名前缀
+        this.prefixMap[from.id] = prefix
 
         this.creating = true
         try {
@@ -1061,10 +1018,17 @@ export default {
       const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
-        let [task] = map[tagId].filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+        let task = map[tagId].find(
+          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+        )
         if (task) {
           task = makeStatusAndDisabled(task)
           newMap[tagId] = {
+            id: task.id,
+            name: task.name,
+            type: task.type,
+            crontabExpressionFlag: task.crontabExpressionFlag,
+            crontabExpression: task.crontabExpression,
             status: task.status,
             disabledData: task.disabledData
           }

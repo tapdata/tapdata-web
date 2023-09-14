@@ -13,351 +13,290 @@
               </ElButton>
             </div>
           </div>
-          <ElTable
-            class="instance-table table-border mt-4"
-            height="100%"
-            :data="list"
-            @sort-change="sortChange"
-            @row-click="rowClick"
-          >
-            <ElTableColumn min-width="160px" :label="$t('agent_name')">
-              <template slot-scope="scope">
-                <div class="flex">
-                  <div>
-                    <span v-if="scope.row.publicAgent">{{ scope.row.name }}</span>
-                    <InlineInput
-                      v-else
-                      :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
-                      :value="scope.row.name"
-                      :icon-config="{ class: 'color-primary', size: '12' }"
-                      type="icon"
-                      @click-text="handleDetails(scope.row)"
-                      @save="updateName($event, scope.row.id)"
-                    ></InlineInput>
+          <ul class="agent-ul flex flex-wrap mt-4">
+            <li
+              class="agent-item flex flex-column align-items-start"
+              v-for="item in list"
+              :key="item.id"
+              :id="`agent-${item.id}`"
+            >
+              <div class="flex justify-content-around w-100 border-bottom py-4 px-4 text-center" v-if="agentData(item)">
+                <div>
+                  <el-progress
+                    :width="68"
+                    type="circle"
+                    :percentage="agentData(item).cpuUsage"
+                    :color="customColors"
+                  ></el-progress>
+                  <div class="font-color-light text-center">CPU</div>
+                </div>
+                <div>
+                  <el-progress
+                    :width="68"
+                    type="circle"
+                    :percentage="agentData(item).memoryRate"
+                    :color="customColors"
+                  ></el-progress>
+                  <div class="font-color-light text-center">MEM</div>
+                </div>
+                <div>
+                  <el-progress
+                    :width="68"
+                    type="circle"
+                    :percentage="agentData(item).gcRate"
+                    :color="customColors"
+                  ></el-progress>
+                  <div class="font-color-light text-center">GC</div>
+                </div>
+                <div>
+                  <div class="position-relative">
+                    <el-progress
+                      :width="68"
+                      type="circle"
+                      :percentage="item.pingTimePercent"
+                      :color="customColors"
+                      :show-text="false"
+                    ></el-progress>
+                    <div class="absolute-fill flex align-center justify-content-center fs-8 font-color-light">
+                      <div style="width: 68px">{{ item.pingTimes }}</div>
+                    </div>
                   </div>
+
+                  <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
+                </div>
+              </div>
+              <div class="flex justify-content-between w-100 pt-4 px-4">
+                <div>
+                  <span v-if="item.publicAgent">{{ item.name }}</span>
+                  <InlineInput
+                    v-else
+                    :class="['inline-input', 'color-primary', { 'cursor-pointer': item.agentType !== 'Cloud' }]"
+                    :value="item.name"
+                    :icon-config="{ class: 'color-primary', size: '12' }"
+                    type="icon"
+                    @click-text="handleDetails(item)"
+                    @save="updateName($event, item.id)"
+                  ></InlineInput>
                 </div>
                 <div>
-                  <span v-if="scope.row.ips">{{ scope.row.ips }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn width="80px" :label="$t('dfs_instance_instance_guige')">
-              <template slot-scope="scope">
-                <span>{{ scope.row.specLabel }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn width="120px" :label="$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi')">
-              <template slot-scope="scope">
-                <span>{{ agentTypeMap[scope.row.agentType] }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('agent_status')" width="110">
-              <template slot-scope="scope">
-                <StatusTag
-                  v-if="scope.row.agentType === 'Cloud' && scope.row.status === 'Creating'"
-                  type="tag"
-                  status="Deploying"
-                  default-status="Stopped"
-                ></StatusTag>
-                <StatusTag v-else type="tag" :status="scope.row.status" default-status="Stopped"></StatusTag>
-                <ElTooltip v-if="scope.row.status == 'Stopped'" placement="top">
-                  <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
-                  <template #content>
-                    <div style="max-width: 380px">
-                      {{ $t('dfs_instance_stopped_help_tip_prefix') }}
-                      <a
-                        target="_blank"
-                        href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
-                        class="color-primary"
-                        >{{ $t('dfs_online_help_docs') }}</a
-                      >
-                      {{ $t('dfs_instance_stopped_help_tip_suffix') }}
-                    </div>
-                  </template>
-                </ElTooltip>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('public_version')" width="120">
-              <template slot-scope="scope">
-                <div class="flex align-items-center">
-                  <span v-if="showVersionFlag(scope.row)">{{ scope.row.spec && scope.row.spec.version }}</span>
-                  <template v-if="showUpgradeIcon(scope.row)">
-                    <ElTooltip
-                      v-if="upgradingFlag(scope.row)"
-                      class="ml-1"
-                      effect="dark"
-                      placement="top"
-                      :content="getTooltipContent(scope.row, 'upgrading')"
-                      key="upgrading"
-                    >
-                      <div class="upgrading-box">
-                        <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
-                        <ElProgress
-                          v-if="upgradingProgres(scope.row) !== undefined"
-                          class="upgrading-progress"
-                          type="circle"
-                          color="rgb(61, 156, 64)"
-                          :percentage="upgradingProgres(scope.row)"
-                          :show-text="false"
-                          :format="
-                            value => {
-                              return value
-                            }
-                          "
-                        ></ElProgress>
-                      </div>
-                    </ElTooltip>
-                    <ElTooltip
-                      v-else-if="upgradeFailedFlag(scope.row)"
-                      class="ml-1"
-                      effect="dark"
-                      placement="top"
-                      :content="getTooltipContent(scope.row, 'fail')"
-                      key="fail"
-                    >
-                      <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(scope.row)"
-                        >upgrade-error-color</VIcon
-                      >
-                    </ElTooltip>
-                    <ElTooltip
-                      v-else-if="!upgradeFlag(scope.row)"
-                      class="ml-1"
-                      effect="dark"
-                      placement="top"
-                      :content="getTooltipContent(scope.row)"
-                      key="done"
-                    >
-                      <VIcon size="20" class="cursor-pointer block" @click="showUpgradeDialogFnc(scope.row)"
-                        >upgrade-color</VIcon
-                      >
-                    </ElTooltip>
-                  </template>
-                </div>
-              </template>
-            </ElTableColumn>
-            <!--        <ElTableColumn prop="createAt" sortable="custom" :label="$t('public_create_time')" width="180">-->
-            <!--          <template slot-scope="scope">-->
-            <!--            <span>{{ formatTime(scope.row.createAt) }}</span>-->
-            <!--          </template>-->
-            <!--        </ElTableColumn>-->
-            <ElTableColumn width="130px" :label="$t('dfs_instance_instance_dingyuefangshi')">
-              <template slot-scope="scope">
-                <span :class="{ 'color-success': scope.row.chargeProvider === 'FreeTier' }">{{
-                  scope.row.subscriptionMethodLabel
-                }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn width="120" :label="$t('dfs_instance_instance_daoqishijian')">
-              <template slot-scope="scope">
-                <div>
-                  <ElTooltip
-                    :disabled="!getExpiredTimeLevel(scope.row)"
-                    placement="top"
-                    :visible-arrow="false"
-                    effect="light"
-                  >
-                    <div>
-                      <span>{{ scope.row.expiredTimeLabel.split(' ')[0] }}</span>
-                      <VIcon v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="ml-2 color-info">error</VIcon>
-                      <VIcon v-else-if="getExpiredTimeLevel(scope.row) === 'expiringSoon'" class="ml-2 color-warning"
-                        >warning</VIcon
-                      >
-                    </div>
+                  <StatusTag
+                    v-if="item.agentType === 'Cloud' && item.status === 'Creating'"
+                    type="tag"
+                    status="Deploying"
+                    default-status="Stopped"
+                  ></StatusTag>
+                  <StatusTag
+                    v-else
+                    type="tag"
+                    :status="item.engineStatus === 'starting' ? 'Starting' : item.status"
+                    default-status="Stopped"
+                  ></StatusTag>
+                  <ElTooltip v-if="item.status == 'Stopped'" placement="top">
+                    <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
                     <template #content>
-                      <div v-if="getExpiredTimeLevel(scope.row) === 'expired'" class="font-color-dark">
-                        <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
-                        <div v-if="scope.row.agentType === 'Cloud'">
-                          <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
-                        </div>
-                        <div v-else>
-                          <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
-                          <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
-                        </div>
+                      <div style="max-width: 380px">
+                        {{ $t('dfs_instance_stopped_help_tip_prefix') }}
+                        <a
+                          target="_blank"
+                          href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                          class="color-primary"
+                          >{{ $t('dfs_online_help_docs') }}</a
+                        >
+                        {{ $t('dfs_instance_stopped_help_tip_suffix') }}
                       </div>
-                      <span v-else-if="scope.row.paidType === 'recurring'">{{
-                        $t('dfs_instance_instance_xiacifufeishi')
-                      }}</span>
-                      <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
                     </template>
                   </ElTooltip>
                 </div>
-              </template>
-            </ElTableColumn>
-
-            <ElTableColumn width="180px" :label="$t('agent_heartbeat')">
-              <template slot-scope="scope">
-                <span>{{ handlePingTime(scope.row) }}</span>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('agent_task_number')" width="180">
-              <template slot-scope="scope">
-                <div>
-                  <div class="flex align-center">
-                    {{ $t('task_manage_migrate') }}：
+              </div>
+              <div class="agent-item__content flex flex-wrap px-4">
+                <div class="flex mb-2 w-50" v-for="col in agentConfig">
+                  <span class="font-color-light mr-2">{{ col.label }}: </span>
+                  <!--数据复制-->
+                  <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="
-                        (scope.row.metric && scope.row.metric.runningTask
-                          ? scope.row.metric.runningTask.migrate || 0
-                          : 0) < 1
-                      "
-                      @click="toDataFlow(scope.row.tmInfo.agentId)"
-                      >{{
-                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.migrate || 0 : 0
-                      }}</ElLink
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
+                      @click="toDataFlow(item.tmInfo.agentId)"
+                      >{{ item[col.value] }}</ElLink
                     >
-                  </div>
-                  <div class="flex align-center">
-                    {{ $t('task_manage_etl') }}：
+                  </span>
+                  <span v-else-if="col.value === 'runningTaskSync'" class="font-color-dark">
                     <ElLink
                       type="primary"
-                      :disabled="
-                        (scope.row.metric && scope.row.metric.runningTask
-                          ? scope.row.metric.runningTask.sync || 0
-                          : 0) < 1
-                      "
-                      @click="toDataFlow(scope.row.tmInfo.agentId, 'dataflowList')"
-                      >{{
-                        scope.row.metric && scope.row.metric.runningTask ? scope.row.metric.runningTask.sync || 0 : 0
-                      }}</ElLink
+                      :disabled="!item.tmInfo.agentId || !item[col.value]"
+                      @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
+                      >{{ item[col.value] }}</ElLink
                     >
-                  </div>
+                  </span>
+                  <!--到期时间-->
+                  <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark flex align-center">
+                    <ElTooltip :disabled="!getExpiredTimeLevel(item)" placement="top" :visible-arrow="false">
+                      <div class="flex align-center">
+                        <span>{{ item.expiredTimeLabel.split(' ')[0] }}</span>
+                        <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" size="16" class="ml-1 color-danger"
+                          >warning</VIcon
+                        >
+                        <VIcon
+                          v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'"
+                          size="16"
+                          class="ml-1 color-warning"
+                          >warning-circle</VIcon
+                        >
+                      </div>
+                      <template #content>
+                        <div v-if="getExpiredTimeLevel(item) === 'expired'">
+                          <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
+                          <div v-if="item.agentType === 'Cloud'">
+                            <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
+                            <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
+                          </div>
+                          <div v-else>
+                            <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                            <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                            <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
+                          </div>
+                        </div>
+                        <span v-else-if="item.paidType === 'recurring'">{{
+                          $t('dfs_instance_instance_xiacifufeishi')
+                        }}</span>
+                        <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
+                      </template>
+                    </ElTooltip>
+                  </span>
+                  <!--订阅方式-->
+                  <span
+                    v-else-if="col.value === 'subscriptionMethodLabel'"
+                    :class="{ 'color-success': item.chargeProvider === 'FreeTier' }"
+                    >{{ item[col.value] }}</span
+                  >
+                  <span v-else class="font-color-dark">{{ item[col.value] }}</span>
                 </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('public_operation')" width="240">
-              <template slot-scope="scope">
+              </div>
+              <div class="w-100 flex justify-content-end mt-2 py-4 px-4">
                 <ElButton
-                  v-if="scope.row.agentType !== 'Cloud'"
-                  type="text"
-                  :disabled="deployBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="toDeploy(scope.row)"
+                  size="mini"
+                  v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
+                  @click="toDeploy(item)"
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
-                <ElDivider v-if="scope.row.agentType !== 'Cloud'" direction="vertical"></ElDivider>
                 <ElButton
+                  name="start"
                   size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Local' && !['Running'].includes(scope.row.status)"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="startBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleStart(scope.row)"
+                  v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
+                  @click="handleStart(item)"
                   >{{ $t('public_button_start') }}</ElButton
                 >
-                <ElDivider
-                  v-if="scope.row.agentType === 'Local' && !['Running'].includes(scope.row.status)"
-                  direction="vertical"
-                ></ElDivider>
                 <!--全托管没有部署停止按钮，离线状态不能停止-->
                 <ElButton
-                  v-if="scope.row.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(scope.row.status)"
+                  v-if="
+                    item.agentType !== 'Cloud' &&
+                    !['Stopped', 'Stopping'].includes(item.status) &&
+                    !stopBtnDisabled(item)
+                  "
                   size="mini"
-                  type="text"
-                  :disabled="stopBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  :loading="scope.row.btnLoading.stop"
-                  @click="handleStop(scope.row)"
+                  :loading="item.btnLoading.stop"
+                  @click="handleStop(item)"
                   >{{ $t('public_button_stop') }}</ElButton
                 >
-                <ElDivider
-                  v-if="scope.row.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(scope.row.status)"
-                  direction="vertical"
-                ></ElDivider>
                 <ElButton
+                  name="restart"
                   size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Cloud' && !scope.row.publicAgent"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="renewBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleRenew(scope.row)"
+                  v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
+                  @click="handleRenew(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
                 <ElButton
+                  name="restart"
                   size="mini"
-                  type="text"
-                  v-if="scope.row.agentType === 'Local'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="restartBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleRestart(scope.row)"
+                  v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
+                  @click="handleRestart(item)"
                   >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
                 >
-                <ElDivider
-                  v-if="!scope.row.orderInfo || scope.row.orderInfo.chargeProvider !== 'Stripe'"
-                  direction="vertical"
-                ></ElDivider>
                 <!--需要考虑老实例/免费实例 无订单信息的-->
-                <ElButton
-                  size="mini"
-                  type="text"
-                  v-if="!scope.row.orderInfo || scope.row.orderInfo.chargeProvider !== 'Stripe'"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="delBtnDisabled(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="handleUnsubscribe(scope.row)"
-                  >{{ $t('public_button_unsubscribe') }}</ElButton
-                >
-                <!--                <ElButton-->
-                <!--                  v-else-->
-                <!--                  size="mini"-->
-                <!--                  type="text"-->
-                <!--                  :loading="scope.row.btnLoading.delete"-->
-                <!--                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"-->
-                <!--                  @click="openUnsubscribe(scope.row)"-->
-                <!--                >-->
-                <!--                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton-->
-                <!--                >-->
-                <ElButton
-                  v-if="scope.row.orderInfo || scope.row.orderInfo.chargeProvider === 'Stripe'"
-                  class="mr-2"
-                  type="text"
-                  :disabled="disableRenew(scope.row)"
-                  @click="openRenew(scope.row)"
-                  >{{ $t('public_button_renew') }}</ElButton
-                >
                 <!--68-2 免费实例可以删除-->
                 <ElButton
-                  v-if="scope.row.publicAgent"
+                  v-if="
+                    (item.publicAgent || (item.orderInfo && item.orderInfo.subscriptionId)) && !disableUnsubscribe(item)
+                  "
                   size="mini"
-                  type="text"
-                  :loading="scope.row.btnLoading.delete"
-                  :disabled="disableUnsubscribe(scope.row) || $disabledReadonlyUserBtn()"
-                  @click="openUnsubscribe(scope.row)"
+                  :loading="item.btnLoading.delete"
+                  @click="openUnsubscribe(item)"
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
-              </template>
-            </ElTableColumn>
+                <ElButton
+                  size="mini"
+                  v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
+                  :loading="item.btnLoading.delete"
+                  @click="handleUnsubscribe(item)"
+                  >{{ $t('public_button_unsubscribe') }}</ElButton
+                >
+                <ElButton
+                  v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
+                  class="mr-2"
+                  size="mini"
+                  @click="openRenew(item)"
+                  >{{ $t('public_button_renew') }}</ElButton
+                >
 
-            <div v-if="!isSearching" class="instance-table__empty" slot="empty">
-              <VIcon size="120">no-data-color</VIcon>
-              <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-                <span>{{ $t('agent_list_empty_desc1') }}</span>
-                <span class="color-primary cursor-pointer fs-7 ml-1" @click="handleCreateAgent">{{
-                  $t('public_agent_button_create')
-                }}</span>
-                <span>{{ $t('agent_list_empty_desc2') }}</span>
+                <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
+                <template v-if="showUpgradeIcon(item)">
+                  <ElTooltip
+                    v-if="upgradingFlag(item)"
+                    class="ml-1"
+                    effect="dark"
+                    placement="top"
+                    :content="getTooltipContent(item, 'upgrading')"
+                    key="upgrading"
+                  >
+                    <div class="upgrading-box">
+                      <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
+                      <ElProgress
+                        v-if="upgradingProgres(item) !== undefined"
+                        class="upgrading-progress"
+                        type="circle"
+                        color="rgb(61, 156, 64)"
+                        :percentage="upgradingProgres(item)"
+                        :show-text="false"
+                        :format="
+                          value => {
+                            return value
+                          }
+                        "
+                      ></ElProgress>
+                    </div>
+                  </ElTooltip>
+                  <ElTooltip
+                    v-else-if="upgradeFailedFlag(item)"
+                    class="ml-1"
+                    effect="dark"
+                    placement="top"
+                    :content="getTooltipContent(item, 'fail')"
+                    key="fail"
+                  >
+                    <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(item)"
+                      >upgrade-error-color</VIcon
+                    >
+                  </ElTooltip>
+                  <ElTooltip
+                    v-else-if="!upgradeFlag(item)"
+                    class="ml-1"
+                    effect="dark"
+                    placement="top"
+                    :content="getTooltipContent(item)"
+                    key="done"
+                  >
+                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)">{{
+                      $t('dfs_instance_instance_shengji')
+                    }}</el-button>
+                  </ElTooltip>
+                </template>
               </div>
-            </div>
-            <div v-else class="instance-table__empty" slot="empty">
-              <VIcon size="120">search-no-data-color</VIcon>
-              <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-                <span>{{ $t('public_data_no_find_result') }}</span>
-                <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('link_back_to_list') }}</span>
-              </div>
-            </div>
-          </ElTable>
-          <ElPagination
-            background
-            class="mt-3"
-            layout="total, sizes, ->, prev, pager, next, jumper"
-            :current-page.sync="page.current"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
-            :total="page.total"
-            @size-change="fetch(1)"
-            @current-change="fetch"
-          >
-          </ElPagination>
+            </li>
+          </ul>
           <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
             <div>
               <div class="flex upgrade-mb24">
@@ -413,7 +352,7 @@
             </div>
             <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
           </ElDialog>
-          <!--   升级失败   -->
+          <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
           <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
             <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
             <div class="dialog-btn flex justify-content-evenly mt-6">
@@ -471,15 +410,16 @@
               <!--              >-->
               <!--                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton-->
               <!--              >-->
-              <VButton
+
+              <!--<VButton
                 v-if="!selectedRow.orderInfo"
                 type="primary"
                 :loading="selectedRow.btnLoading.delete"
                 :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                @click="handleUnsubscribe(selectedRow)"
+                @click="openUnsubscribe(selectedRow)"
               >
                 <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
-              >
+              >-->
             </div>
           </Details>
           <!--   创建订阅   -->
@@ -498,49 +438,61 @@
         </div>
       </el-tab-pane>
       <el-tab-pane
+        v-if="!isDomesticStation"
         class="order-flex flex-column overflow-hidden h-100"
         :label="$t('dfs_instance_instance_cunchuziyuan')"
         name="second"
       >
         <section class="flex flex-column overflow-hidden flex-1">
-          <VTable
-            :columns="specColumns"
-            :remoteMethod="specRemoteMethod"
-            :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper'
-            }"
-            ref="tableCode"
-            class="mt-4"
-          >
-            <template #status="{ row }">
-              <StatusTag type="tag" :status="row.status" default-status="Stopped" target="mdb"></StatusTag>
-            </template>
-            <template #whiteList="{ row }">
-              <span v-if="row.scope === 'Private'">{{ row.whiteList }}</span>
-            </template>
-            <template #operation="{ row }">
-              <ElButton
-                v-if="row.scope === 'Private' && row.deploymentType !== 'Local'"
-                size="mini"
-                type="text"
-                @click="handleCreateIps(row)"
-                >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
-              >
-              <ElButton class="mr-2" type="text" :disabled="disableRenew(row)" @click="openRenew(row)">{{
-                $t('public_button_renew')
-              }}</ElButton>
-              <!--68-2 免费实例可以删除-->
-              <ElButton v-if="row.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(row)">
-                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
-              >
-            </template>
-            <div class="instance-table__empty" slot="empty">
-              <VIcon size="120">no-data-color</VIcon>
-              <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-                <span>{{ $t('data_no_data') }}</span>
+          <ul class="mdb-ul flex flex-wrap mt-4" v-if="mdbData.length > 0">
+            <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
+              <div class="flex justify-content-around align-items-center border-right w-40 py-4 px-4">
+                <el-progress
+                  :width="68"
+                  type="circle"
+                  :percentage="item.percentage"
+                  :color="customColors"
+                ></el-progress>
+                <div class="ml-4">
+                  <div>
+                    {{ $t('dfs_order_list_total_space') }} ：<span>{{ item.storageLabel || '-' }}</span>
+                  </div>
+                  <div>
+                    {{ $t('dfs_order_list_used_space') }} ：<span>{{ item.dataSizeLabel || '-' }}</span>
+                  </div>
+                  <div>
+                    {{ $t('dfs_order_list_remaining_space') }} ：<span>{{ item.dataSizeLast || '-' }}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </VTable>
+              <div class="agent-item__content border-left flex flex-wrap py-4 px-4">
+                <div class="flex align-items-center mb-2 w-50" v-for="(col, i) in specColumns" :key="i">
+                  <span class="font-color-light mr-2">{{ col.label }}:</span>
+                  <!--状态-->
+                  <span v-if="col.prop === 'status'" class="font-color-dark">
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="mdb"></StatusTag>
+                  </span>
+                  <span v-else>{{ item[col.prop] }}</span>
+                </div>
+              </div>
+              <div class="w-25 flex justify-content-end align-items-start mt-2 py-4 px-4">
+                <ElButton
+                  v-if="item.scope === 'Private' && item.deploymentType !== 'Local'"
+                  type="text"
+                  @click="handleCreateIps(item)"
+                  >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
+                >
+                <ElButton class="mr-2" type="text" :disabled="disableRenew(item)" @click="openRenew(item)">{{
+                  $t('public_button_renew')
+                }}</ElButton>
+                <!--68-2 免费实例可以删除-->
+                <ElButton v-if="item.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(item)">
+                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+                >
+              </div>
+            </li>
+          </ul>
+          <ul v-else></ul>
         </section>
         <!-- 新建白名单 -->
         <el-dialog :visible.sync="showCreateIps" :title="$t('dfs_instance_instance_tianjiabaimingdan')">
@@ -559,14 +511,14 @@
     <!--退订-->
     <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
     <!--续订-->
-    <Renew ref="RenewDetailDialog" @closeVisible="tableCode.fetch()"></Renew>
+    <Renew ref="RenewDetailDialog" @closeVisible="specRemoteMethod"></Renew>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
 import i18n from '@/i18n'
-import { VIcon, FilterBar, VTable } from '@tap/component'
+import { VIcon, FilterBar } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 import Time from '@tap/shared/src/time'
@@ -580,6 +532,9 @@ import { INSTANCE_STATUS_MAP } from '../../const'
 import Details from './Details'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import Renew from '../../components/Renew.vue'
+import { secondDifference } from '../../util'
+import updateLocale from 'dayjs/plugin/updateLocale'
+import { mapGetters } from 'vuex'
 
 const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
 const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
@@ -594,7 +549,6 @@ export default {
     VIcon,
     Details,
     FilterBar,
-    VTable,
     CreateDialog,
     SelectListDialog,
     transferDialog,
@@ -613,9 +567,57 @@ export default {
         keyword: ''
       },
       list: [],
+      customColors: [
+        { color: '#23C343', percentage: 25 },
+        { color: '#2C65FF', percentage: 50 },
+        { color: '#F3961A', percentage: 80 },
+        { color: '#F53F3F', percentage: 100 }
+      ],
+      agentConfig: [
+        {
+          label: this.$t('dfs_instance_instance_guige'),
+          value: 'specLabel'
+        },
+        {
+          label: this.$t('dfs_instance_instance_subscribe_time'),
+          value: 'periodStartTime'
+        },
+        {
+          label: this.$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
+          value: 'agentTypeLabel'
+        },
+        {
+          label: this.$t('dfs_instance_instance_daoqishijian'),
+          value: 'expiredTimeLabel'
+        },
+        {
+          label: this.$t('dfs_instance_instance_dingyuefangshi'),
+          value: 'subscriptionMethodLabel'
+        },
+        {
+          label: this.$t('agent_heartbeat'),
+          value: 'pingTimeLabel'
+        },
+        {
+          label: this.$t('task_manage_etl'),
+          value: 'runningTaskSync'
+        },
+        {
+          label: 'IP',
+          value: 'ips'
+        },
+        {
+          label: this.$t('task_manage_migrate'),
+          value: 'runningTaskMigrate'
+        },
+        {
+          label: this.$t('public_version'),
+          value: 'versionLabel'
+        }
+      ],
       page: {
         current: 0,
-        size: 10,
+        size: 1000,
         total: 0
       },
       order: 'createAt desc',
@@ -656,38 +658,28 @@ export default {
       refundAmount: '',
       columns: [
         {
-          label: this.$t('agent_name'),
-          prop: 'agentName',
-          minWidth: 120
-        },
-        {
           label: this.$t('dfs_instance_instance_guige'),
           prop: 'spec'
         },
         {
           label: this.$t('start_time'),
-          prop: 'periodStart',
-          dataType: 'time'
+          prop: 'periodStart'
         },
         {
           label: this.$t('end_time'),
-          prop: 'periodEnd',
-          dataType: 'time'
+          prop: 'periodEnd'
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
-          prop: 'actualAmount',
-          slotName: 'actualAmount'
+          prop: 'actualAmount'
         },
         {
           label: i18n.t('dfs_instance_instance_yixiaohaojine'),
-          prop: 'spentAmount',
-          slotName: 'spentAmount'
+          prop: 'spentAmount'
         },
         {
           label: i18n.t('dfs_instance_instance_tuidingjine'),
-          prop: 'refundAmount',
-          slotName: 'refundAmount'
+          prop: 'refundAmount'
         }
       ],
       rules: {
@@ -700,35 +692,41 @@ export default {
         Private: i18n.t('dfs_instance_instance_duxiangshili'),
         Share: i18n.t('dfs_instance_instance_gongxiangshili')
       },
+      mdbData: [],
       //存储资源
+      percentage: 0,
       specColumns: [
         {
           label: i18n.t('dfs_instance_instance_yunchangshang'),
           prop: 'providerName'
         },
         {
+          label: i18n.t('dfs_instance_instance_cunchuleixing'),
+          prop: 'scopeLabel'
+        },
+        {
           label: i18n.t('dfs_instance_instance_fuwushang'),
           prop: 'serviceProvider'
+        },
+        {
+          label: i18n.t('dfs_instance_instance_bushufangshi'),
+          prop: 'deploymentTypeLabel'
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
           prop: 'regionName'
         },
         {
+          label: i18n.t('dfs_instance_instance_baimingdanIp'),
+          prop: 'whiteList'
+        },
+        {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specLabel'
         },
         {
-          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageSize'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_cunchuleixing'),
-          prop: 'scopeLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_bushufangshi'),
-          prop: 'deploymentTypeLabel'
+          label: i18n.t('dfs_instance_instance_daoqishijian'),
+          prop: 'expiredTimeLabel'
         },
         {
           label: i18n.t('agent_status'),
@@ -736,17 +734,8 @@ export default {
           slotName: 'status'
         },
         {
-          label: i18n.t('dfs_instance_instance_daoqishijian'),
-          prop: 'expiredTimeLabel'
-        },
-        {
-          label: i18n.t('dfs_instance_instance_baimingdanIp'),
-          slotName: 'whiteList'
-        },
-        {
-          label: i18n.t('list_operation'),
-          slotName: 'operation',
-          width: '150'
+          label: i18n.t('dfs_instance_createagent_cunchukongjian'),
+          prop: 'storageLabel'
         }
       ],
       //创建白名单
@@ -756,6 +745,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isDomesticStation']),
+
     statusItems() {
       let result = []
       let filter = ['Creating', 'Running', 'Stopped']
@@ -863,16 +854,16 @@ export default {
     },
     changeTabs() {
       if (this.activeName === 'second') {
-        this.tableCode.fetch()
+        this.specRemoteMethod()
       }
     },
     //存储资源
     specRemoteMethod() {
-      return this.$axios.get('api/tcm/mdb').then(data => {
+      this.$axios.get('api/tcm/mdb').then(data => {
         const items = data.items || []
-        return {
-          total: data.total,
-          data: items.map(item => {
+        this.mdbData = items
+          .filter(t => !(t.deploymentType == 'Local' && t.scope === 'Private'))
+          .map(item => {
             const { subscribeDto = {} } = item.orderInfo
             const { endAt } = subscribeDto || {}
 
@@ -882,11 +873,20 @@ export default {
             item.providerName = item.providerName || '-'
             item.regionName = item.regionName || '-'
             item.serviceProvider = item.serviceProvider || '-'
-            item.storageSize = item.spec?.storageSize ? item.spec?.storageSize + 'GB' : '-'
             item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+
+            const { storageSize, storageUnit = 'GB' } = item.spec || {}
+            let num = Number(item?.dataSize) || 0
+            // 字节转G
+            if (storageSize) {
+              item.storageLabel = `${storageSize} ${storageUnit}`
+              let size = Math.min(storageSize, num / (storageUnit === 'MB' ? 1048576 : 1073741824)).toFixed(2)
+              item.percentage = Math.round((size / storageSize).toFixed(1) * 100)
+              item.dataSizeLast = `${(storageSize - size).toFixed(2)} ${storageUnit}`
+              item.dataSizeLabel = `${size} ${storageUnit}`
+            }
             return item
           })
-        }
       })
     },
     getFilterItems() {
@@ -920,6 +920,8 @@ export default {
       if (!hideLoading) {
         this.loading = true
       }
+
+      this.$store.commit('setInstanceLoading', true)
       let current = pageNum || this.page.current
       let { keyword, status } = this.searchParams
       let where = {}
@@ -933,7 +935,7 @@ export default {
       }
       let filter = {
         where,
-        size: this.page.size,
+        size: 100,
         page: current,
         sort: [this.order]
       }
@@ -945,29 +947,31 @@ export default {
         .then(async data => {
           let list = data.items || []
           this.list = list.map(item => {
-            // item.status = item.status === 'Running' ? 'Running' : item.status === 'Stopping' ? 'Stopping' : 'Offline'
             item.deployDisable = item?.tmInfo?.pingTime || false
             const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
             item.chargeProvider = chargeProvider
             item.specLabel = getSpec(item.spec) || '-'
-            if (item.publicAgent) {
+            if (chargeProvider === 'FreeTier') {
+              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
+            } else if (item.publicAgent) {
               item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_gongyongshili')
-            } else if (chargeProvider === 'Stripe') {
+            } else if (['Stripe', 'Balance'].includes(chargeProvider)) {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
                   { periodUnit: periodUnit, type: subscribeType },
                   paymentMethod || 'Stripe',
                   chargeProvider
                 ) || '-'
-            } else if (chargeProvider === 'FreeTier') {
-              item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
             } else {
               item.subscriptionMethodLabel = '-'
             }
             item.periodLabel =
               dayjs(startAt).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(endAt).format('YY-MM-DD HH:mm:ss')
+            //订阅时间
+            item.periodStartTime = dayjs(startAt).format('YY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
+            //过期时间
             if (item.publicAgent) {
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Aliyun') {
@@ -981,9 +985,31 @@ export default {
               item.expiredTime = ''
               item.expiredTimeLabel = '-'
             }
-            // item.expiredTime =
-            //   chargeProvider === 'Aliyun' ? license.expiredTime : chargeProvider === 'Stripe' ? periodEnd : ''
-            // item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD') : '-'
+            //心跳时间
+            item.pingTimeLabel = this.handlePingTime(item)
+            //数据开发任务个数
+            item.runningTaskMigrate = item?.metric?.runningTask?.migrate || 0
+            //数据复制任务个数
+            item.runningTaskSync = item?.metric?.runningTask?.sync || 0
+            //版本
+            item.versionLabel = item?.spec?.version || 0
+            //托管方式
+            item.agentTypeLabel = this.agentTypeMap[item.agentType]
+            item.second = secondDifference(item?.tmInfo?.pingTime, 'second')
+            //心跳頻率 = 當前时间- 心跳时间 单位秒
+            let max = 10 * 60
+            let pingTimes = item?.tmInfo?.pingTime
+            if (pingTimes) {
+              let second = secondDifference(item?.tmInfo?.pingTime, 'second')
+              item.pingTimePercent = Math.min(100, Math.round((second / max).toFixed(2) * 100))
+              const date1 = dayjs(pingTimes)
+              const date2 = dayjs(Time.now())
+              const diff = date2.diff(date1, 'second')
+              item.pingTimes = diff < 60 ? diff + 's' : date1.from(date2, true)
+            } else {
+              item.pingTimePercent = 0
+              item.pingTimes = '-'
+            }
 
             item.paidType =
               chargeProvider === 'Aliyun' ? license.type : chargeProvider === 'Stripe' ? subscribeDto.type : ''
@@ -1010,7 +1036,37 @@ export default {
           if (!hideLoading) {
             this.loading = false
           }
+          this.$store.commit('setInstanceLoading', false)
         })
+    },
+    //自定义百分比文案
+    formatPingTimePercantage(second) {
+      return i18n.t('dfs_instance_instance_perce_minute', { val1: second })
+    },
+    ////指標計算
+    agentData(row) {
+      if (!row?.cpuUsage) {
+        return { cpuUsage: 0, memoryRate: 0, gcRate: 0 }
+      }
+      //指標計算
+      const { cpuUsage = 0, gcRate = 0, memoryRate = 0 } = row?.cpuUsage
+      let cpu =
+        typeof cpuUsage === 'number'
+          ? (cpuUsage * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
+      let memory =
+        typeof memoryRate === 'number'
+          ? (memoryRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
+      let gc =
+        typeof gcRate === 'number'
+          ? (gcRate * 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : 0
+      return {
+        cpuUsage: cpu === '0.00' ? 0 : Number(cpu),
+        memoryRate: memory === '0.00' ? 0 : Number(memory),
+        gcRate: gc === '0.00' ? 0 : Number(gc)
+      }
     },
     handlePingTime(row) {
       let pingTime = row?.tmInfo?.pingTime
@@ -1047,14 +1103,12 @@ export default {
         return
       }
       this.buried('agentDeploy')
-      let downloadUrl = window.App.$router.resolve({
-        name: 'FastDownload',
-        query: {
+      this.$router.push({
+        name: 'installAgent',
+        params: {
           id: row?.id
         }
       })
-
-      window.open(downloadUrl.href, '_blank')
     },
     // 停止
     handleStop(row, from) {
@@ -1186,8 +1240,7 @@ export default {
       this.$router.push({
         name,
         query: {
-          agentId: id,
-          status: 'running'
+          agentId: id
         }
       })
     },
@@ -1215,7 +1268,8 @@ export default {
         this.upgradeDialog = true
       })
     },
-    showUpgradeErrorDialogFnc() {
+    showUpgradeErrorDialogFnc(row) {
+      this.rowClick(row)
       this.upgradeErrorDialog = true
     },
     //自动升级
@@ -1339,7 +1393,7 @@ export default {
       if (ips.length > 0 && this.ipAddress && this.ipAddress !== '') {
         for (let i = 0; i < ips.length; i++) {
           if (!ipRegex.test(ips[i])) {
-            this.$message.error(ips[i] + i18n.t('dfs_instance_instance_buhefaIp'))
+            this.$message.error(i18n.t('dfs_instance_instance_buhefaIp'))
             return
           }
         }
@@ -1352,7 +1406,7 @@ export default {
         .post('api/tcm/mdb/update/whitelist', params)
         .then(() => {
           this.showCreateIps = false
-          this.tableCode.fetch()
+          this.specRemoteMethod()
         })
         .finally(() => {
           this.showCreateIps = false
@@ -1450,12 +1504,18 @@ export default {
     },
     //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return ['Creating', 'Stopping', 'Stopped'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+      return (
+        ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
+        row.tapdataAgentStatus === 'stopped' ||
+        ['starting'].includes(row.engineStatus)
+      ) //tapdataAgent 失活了
     },
     //agent运行中，预期 启动 不能点击
     startBtnDisabled(row) {
       return (
-        ['Creating', 'Stopping', 'Running'].includes(row.status) || row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        ['Creating', 'Stopping', 'Running'].includes(row.status) ||
+        row.tapdataAgentStatus === 'stopped' ||
+        ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
     showVersionFlag(row) {
@@ -1699,7 +1759,7 @@ export default {
       if (query.active === 'storage') {
         this.activeName = 'second'
         this.$nextTick(() => {
-          this.tableCode?.fetch()
+          this.specRemoteMethod()
         })
       }
     }
@@ -1710,6 +1770,31 @@ export default {
 <style lang="scss" scoped>
 .order-flex {
   display: flex;
+}
+// agent列表
+.agent-ul {
+  gap: 16px;
+  //height: 100%;
+  overflow: auto;
+}
+.agent-item {
+  width: 48%;
+  border-radius: 8px;
+  border: 1px solid var(--unnamed, #e5e6eb);
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+}
+.mdb-ul {
+  gap: 16px;
+  overflow: auto;
+}
+.mdb-item {
+  width: 99%;
+  min-height: 205px;
+  border-radius: 8px;
+  border: 1px solid var(--unnamed, #e5e6eb);
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
 }
 .instance-wrapper {
   display: flex;
@@ -1874,6 +1959,9 @@ export default {
 }
 </style>
 <style lang="scss">
+:not(body):has(> .agent-item .driver-active-element) {
+  overflow: hidden !important;
+}
 .el-message-box {
   &.delete-agent {
     .el-message-box__title {

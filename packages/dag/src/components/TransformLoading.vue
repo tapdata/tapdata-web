@@ -1,5 +1,6 @@
 <script>
 import { defineComponent } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 export default defineComponent({
   name: 'TransformLoading',
 
@@ -13,7 +14,7 @@ export default defineComponent({
             <svg viewBox="25 25 50 50" class="circular">
               <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
             </svg>
-            <span class="ml-1 font-color-light">模型生成中</span>
+            <span class="ml-1 font-color-light">{i18n.t('packages_dag_model_generation')}</span>
           </div>
         </transition>
       )
