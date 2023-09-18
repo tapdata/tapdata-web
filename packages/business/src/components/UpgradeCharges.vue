@@ -81,36 +81,38 @@ export default {
       }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
         this.list =
-          data.items?.map(t => {
-            const specLabel = getSpec(t.spec)
-            const taskNum = (t.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
-            const canUsedNum = taskNum - (t.metric?.runningTaskNum || 0)
-            const isMaximal = t.spec.name === '8xlarge'
-            const { subscribeDto = {}, license = {}, chargeProvider } = t.orderInfo || {}
-            const { periodUnit, subscribeType, paymentMethod } = subscribeDto
+          data.items
+            ?.filter(t => t.orderInfo?.chargeProvider !== 'FreeTier')
+            ?.map(t => {
+              const specLabel = getSpec(t.spec)
+              const taskNum = (t.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
+              const canUsedNum = taskNum - (t.metric?.runningTaskNum || 0)
+              const isMaximal = t.spec.name === '8xlarge'
+              const { subscribeDto = {}, license = {}, chargeProvider } = t.orderInfo || {}
+              const { periodUnit, subscribeType, paymentMethod } = subscribeDto
 
-            let subscriptionMethodLabel = '-'
-            if (chargeProvider === 'FreeTier') {
-              subscriptionMethodLabel = this.$t('dfs_instance_instance_mianfei')
-            } else if (t.publicAgent) {
-              subscriptionMethodLabel = this.$t('dfs_instance_instance_gongyongshili')
-            } else if (['Stripe', 'Balance'].includes(chargeProvider)) {
-              subscriptionMethodLabel =
-                getPaymentMethod(
-                  { periodUnit: periodUnit, type: subscribeType },
-                  paymentMethod || 'Stripe',
-                  chargeProvider
-                ) || '-'
-            }
+              let subscriptionMethodLabel = '-'
+              if (chargeProvider === 'FreeTier') {
+                subscriptionMethodLabel = this.$t('dfs_instance_instance_mianfei')
+              } else if (t.publicAgent) {
+                subscriptionMethodLabel = this.$t('dfs_instance_instance_gongyongshili')
+              } else if (['Stripe', 'Balance'].includes(chargeProvider)) {
+                subscriptionMethodLabel =
+                  getPaymentMethod(
+                    { periodUnit: periodUnit, type: subscribeType },
+                    paymentMethod || 'Stripe',
+                    chargeProvider
+                  ) || '-'
+              }
 
-            return Object.assign({}, t, {
-              specLabel,
-              taskNum,
-              canUsedNum,
-              subscriptionMethodLabel,
-              isMaximal
-            })
-          }) || []
+              return Object.assign({}, t, {
+                specLabel,
+                taskNum,
+                canUsedNum,
+                subscriptionMethodLabel,
+                isMaximal
+              })
+            }) || []
       })
     },
 

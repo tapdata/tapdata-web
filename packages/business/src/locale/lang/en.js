@@ -1192,10 +1192,10 @@ export default {
   packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
   packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
   packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
-  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription method',
+  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',
   packages_business_components_upgradecharges_keyongrenwushu: 'Number of tasks available',
   packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
-  packages_business_components_upgradecharges_dingyueshengji: 'Subscription upgrade',
+  packages_business_components_upgradecharges_dingyueshengji: 'Subscription Upgrade',
   packages_business_create_connection_sceneform_lianjieceshiwu:
     'The connection test is invalid, please check your connection configuration',
   packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
