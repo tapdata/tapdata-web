@@ -24,9 +24,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-          $t('packages_business_permissionse_settings_create_quanxianshezhi')
-        }}</ElButton>
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+          >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+        </ElButton>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
@@ -53,23 +53,20 @@
               command="start"
               v-readonlybtn="'SYNC_job_operation'"
               :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkScheuled') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              command="stop"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkStopping') }}</el-dropdown-item
-            >
+              >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkStopping') }}
+            </el-dropdown-item>
             <el-dropdown-item
               command="initialize"
               v-readonlybtn="'SYNC_job_operation'"
               :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
-            >
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()">{{
-              $t('packages_business_dataFlow_batchDelete')
-            }}</el-dropdown-item>
+              >{{ $t('packages_business_dataFlow_batchRest') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_batchDelete') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <template>
@@ -470,7 +467,7 @@ export default {
     buttonShowMap() {
       if (this.$route.name === 'dataflowList') {
         return {
-          create: this.$has('v2_data_flow_edit'),
+          create: this.$has('v2_data_flow_creation'),
           copy: this.$has('v2_data_flow_copy'),
           import: this.$has('v2_data_flow_import'),
           export: this.$has('v2_data_flow_export')
@@ -478,7 +475,7 @@ export default {
       }
 
       return {
-        create: this.$has('v2_data_replication_edit'),
+        create: this.$has('v2_data_replication_creation'),
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
@@ -889,7 +886,9 @@ export default {
           let message = ''
           const { isDaas } = this
           this.failList.forEach(el => {
-            message += `${el.name || el.id}: ${isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message}<br/>`
+            message += `${el.name || el.id}: ${
+              isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message
+            }<br/>`
           })
           this.$message.info({
             dangerouslyUseHTMLString: true,
@@ -1126,6 +1125,7 @@ export default {
   height: 100%;
   padding: 0 24px 24px 0;
   background: #fff;
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -1133,37 +1133,47 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .data-flow-list {
     .search-bar {
       display: flex;
       flex-wrap: wrap;
+
       li {
         margin-right: 10px;
+
         &:last-child {
           margin-right: 0;
         }
       }
     }
+
     .buttons {
       white-space: nowrap;
+
       .btn + .btn {
         margin-left: 12px;
       }
+
       .btn {
         i.iconfont {
           font-size: 12px;
         }
+
         &.btn-dropdowm {
           margin-left: 12px;
         }
+
         &.btn-create {
           margin-left: 12px;
         }
+
         &.btn-createText {
           margin-left: 12px;
         }
       }
     }
+
     .dataflow-name {
       .tag {
         padding: 2px 5px;
@@ -1176,6 +1186,7 @@ export default {
         border-radius: 2px;
         margin-left: 5px;
       }
+
       .name {
         &:not(.has-children) {
           cursor: pointer;
@@ -1183,11 +1194,13 @@ export default {
         }
       }
     }
+
     .table-operations {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
     }
+
     .el-table {
       ::v-deep {
         .el-table__cell {
@@ -1196,6 +1209,7 @@ export default {
       }
     }
   }
+
   .dialogDelMsgDialog {
     .box {
       padding: 10px;
