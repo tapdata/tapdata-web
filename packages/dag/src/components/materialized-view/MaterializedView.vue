@@ -87,6 +87,8 @@
           :getOutputs="getOutputs"
           :tableOptions="tableOptions"
           :isMainTable="checkMainTable(node.id)"
+          :targetPathMap="targetPathMap"
+          :nodeSchemaMap="nodeSchemaMap"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
         ></Node>
@@ -111,7 +113,6 @@ import PaperScroller from '../PaperScroller'
 import Node from './Node'
 import TargetNode from './TargetNode'
 import { config, jsPlumb } from '../../instance'
-import tree from 'element-ui/packages/tree'
 
 export default {
   name: 'MaterializedView',
@@ -183,6 +184,15 @@ export default {
     nodeMap() {
       return this.nodes.reduce((map, node) => {
         map[node.id] = node
+        return map
+      }, {})
+    },
+
+    targetPathMap() {
+      return this.nodes.reduce((map, node) => {
+        if (node.targetPath) {
+          map[node.targetPath] = node
+        }
         return map
       }, {})
     }
@@ -297,8 +307,9 @@ export default {
       this.nodes = nodes
       this.inputsMap = inputsMap
       this.outputsMap = outputsMap
-      this.targetPathMap = targetPathMap
+      // this.targetPathMap = targetPathMap
 
+      console.log('nodes', this.nodes)
       await this.$nextTick()
 
       edges.forEach(({ source, target }) => {
@@ -439,6 +450,7 @@ export default {
     },
 
     handleChangePath(node, path) {
+      node.targetPath = path
       const arr = path.split('.')
       const outputs = this.outputsMap[node.id]
       let { parentId } = node

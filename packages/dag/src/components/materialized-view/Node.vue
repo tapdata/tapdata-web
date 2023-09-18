@@ -9,7 +9,7 @@
   >
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
-        <VIcon class="mr-1">drag</VIcon><span>{{ dagNode.tableName }}</span>
+        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.tableName }}</span>
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -65,9 +65,8 @@
                 <span>=</span>
                 <FieldSelect
                   v-model="keys.target"
-                  itemLabel="field_name"
-                  itemValue="field_name"
-                  :options="parentFieldOptions"
+                  :options="targetFields"
+                  @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
                 <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
               </div>
@@ -76,7 +75,7 @@
         </template>
 
         <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
-          <ElInput v-model="node.targetPath" @change="$emit('change-path', node, $event)"></ElInput>
+          <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
         </ElFormItem>
 
         <ElFormItem v-if="!isMainTable" :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')">
@@ -86,7 +85,20 @@
     </div>
     <ElDivider class="my-0" />
     <div class="p-2 node-body">
-      <code class="color-success-light-5">{</code>
+      <div class="flex align-center">
+        <ElDropdown trigger="click">
+          <IconButton sm> plus-circle </IconButton>
+          <ElDropdownMenu slot="dropdown">
+            <!--Flatten-->
+            <ElDropdownItem command="updateWrite">平铺</ElDropdownItem>
+            <!--Embedded Document-->
+            <ElDropdownItem command="updateOrInsert">内嵌文档</ElDropdownItem>
+            <!--Embedded Array-->
+            <ElDropdownItem command="updateIntoArray">内嵌数组</ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
+        <code class="color-success-light-5">{</code>
+      </div>
       <ElTree
         class="fs-8 node-schema-tree overflow-y-auto"
         :indent="8"
@@ -131,7 +143,9 @@ export default {
     getInputs: Function,
     getOutputs: Function,
     isMainTable: Boolean,
-    tableOptions: Array
+    tableOptions: Array,
+    targetPathMap: Object,
+    nodeSchemaMap: Object
   },
 
   components: {
@@ -147,7 +161,9 @@ export default {
       loading: false,
       params: {
         where: { database_type: 'MongoDB' }
-      }
+      },
+      targetFields: [],
+      targetPath: this.node.targetPath
     }
   },
 
@@ -183,8 +199,36 @@ export default {
     },
 
     treeData() {
-      console.log('computed:treeData')
-      return this.schema ? this.createTree(this.schema) : []
+      // console.log('computed:treeData')
+      if (!this.schema) return []
+
+      const treeData = this.createTree(this.schema)
+      const { targetPath } = this.node
+
+      // 根据写入路径组装treeData
+      if (targetPath) {
+        const arr = this.node.targetPath.split('.')
+        const prefix = targetPath + '.'
+        const pathArr = Object.keys(this.targetPathMap).filter(path => path !== targetPath && path.startsWith(prefix))
+
+        if (pathArr.length > 1) {
+          console.warn('多层路径暂不支持解析')
+        }
+
+        for (const path of pathArr) {
+          const node = this.targetPathMap[path]
+          const newPath = path.substring(prefix.length)
+          const pathKeys = newPath.split('.')
+
+          treeData.unshift({
+            field_name: pathKeys[0],
+            dataType: 'DOCUMENT',
+            children: this.nodeSchemaMap[node.id]
+          })
+        }
+      }
+
+      return treeData
     },
 
     sourceNodes() {
@@ -526,7 +570,7 @@ export default {
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
           {icon}
           <span class="ellipsis">{data.field_name}</span>
-          <span class="ml-1 font-color-slight">{data.dataType}</span>
+          <span class="ml-1 font-color-sslight">{data.dataType}</span>
         </div>
       )
     },
@@ -536,6 +580,20 @@ export default {
         source: '',
         target: ''
       })
+    },
+
+    handleFieldSelectVisible(visible) {
+      visible && this.loadTargetField()
+    },
+
+    async loadTargetField() {
+      const fields = await metadataInstancesApi.getMergerNodeParentFields(this.$route.params.id, this.node.id)
+
+      this.targetFields = fields.map(item => ({
+        label: item.field_name,
+        value: item.field_name,
+        isPrimaryKey: item.primary_key_position > 0
+      }))
     }
   }
 }

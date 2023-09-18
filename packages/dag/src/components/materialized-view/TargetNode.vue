@@ -6,7 +6,7 @@
   >
     <div class="node-header bg-primary">
       <div class="node-title text-white lh-base flex align-center px-2 py-1">
-        <VIcon class="mr-1">drag</VIcon><span>{{ node.tableName }}</span>
+        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ node.tableName }}</span>
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -449,7 +449,7 @@ export default {
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
           {icon}
           <span class="ellipsis">{data.field_name}</span>
-          <span class="ml-1 font-color-slight">{data.dataType}</span>
+          <span class="ml-1 font-color-sslight">{data.dataType}</span>
         </div>
       )
     }

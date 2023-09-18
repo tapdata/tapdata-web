@@ -21,10 +21,25 @@
 
   .node-body {
     ::v-deep {
-      .field-icon {
-        left: -18px;
-        top: 50%;
-        transform: translateY(-50%);
+      .el-tree-node__content {
+        border-radius: 6px;
+        .field-icon {
+          left: -18px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+        .field-add-btn {
+          display: none;
+          left: -24px;
+        }
+        /*&:hover {
+          .field-icon {
+            display: none;
+          }
+          .field-add-btn {
+            display: inline-flex;
+          }
+        }*/
       }
     }
   }
