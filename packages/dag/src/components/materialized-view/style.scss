@@ -1,6 +1,19 @@
 .materialized-view-node {
   width: 300px;
 
+  &.active:before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    z-index: -1;
+    transform: translateZ(0);
+  }
+
   code {
     font-family: $codeFontFamily;
   }
@@ -11,12 +24,22 @@
     //border-top: 6px solid map-get($color, primary);
   }
 
-  &:not(.--target) .node-title {
-    background-color: #86909c;
+  &:not(.--target) {
+    &.active:before {
+      border-color: #86909c;
+    }
+    .node-title {
+      background-color: #86909c;
+    }
   }
 
-  &.--main-table .node-title {
-    background-color: #f3961a;
+  &.--main-table {
+    &.active:before {
+      border-color: #f3961a;
+    }
+    .node-title {
+      background-color: #f3961a;
+    }
   }
 
   .node-body {
@@ -86,7 +109,7 @@
       }
 
       .el-button--ghost {
-        border: 1px dashed #DCDFE6;
+        border: 1px dashed #dcdfe6;
       }
     }
   }

@@ -88,6 +88,7 @@
     <ElDivider class="my-0" />
     <div class="p-2 node-body">
       <div class="flex align-center">
+        <code class="color-success-light-5 mr-2">{</code>
         <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
           <div ref="fieldPopover">
             <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
@@ -98,15 +99,16 @@
           </div>
           <template #reference>
             <ElDropdown trigger="click" @command="handleCommand">
-              <IconButton
+              <ElButton
+                size="mini"
                 v-click-outside="{
                   handler: onClickOutside,
                   include
                 }"
-                sm
               >
-                plus-circle
-              </IconButton>
+                <VIcon>add</VIcon>
+                新增字段
+              </ElButton>
               <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
                 <!--Flatten-->
                 <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
@@ -118,8 +120,6 @@
             </ElDropdown>
           </template>
         </ElPopover>
-
-        <code class="color-success-light-5">{</code>
       </div>
       <ElTree
         class="fs-8 node-schema-tree overflow-y-auto"
@@ -667,13 +667,17 @@ export default {
     },
 
     onConnectionSelect(connection) {
-      Object.assign(this.dagNode.attrs, {
+      const nodeAttrs = {
         connectionName: connection.name,
         connectionType: connection.connection_type,
         accessNodeProcessId: connection.accessNodeProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || []
+      }
+
+      Object.keys(nodeAttrs).forEach(key => {
+        this.$set(this.dagNode.attrs, key, nodeAttrs[key])
       })
     },
 

@@ -6,20 +6,20 @@
     :close-on-press-escape="false"
     @update:visible="handleUpdateVisible"
   >
-    <div class="h-100 flex flex-column" v-loading="schemaLoading">
+    <div class="h-100 flex flex-column" v-loading="schemaLoading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
           <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
-            <button @click="$emit('delete')" class="icon-btn">
+            <button @click="handleDelete" class="icon-btn">
               <VIcon size="20">delete</VIcon>
             </button>
           </ElTooltip>
           <!--内容居中-->
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
-            <button @click="$emit('center-content')" class="icon-btn">
+            <button @click="handleCenterContent" class="icon-btn">
               <VIcon size="20">compress</VIcon>
             </button>
           </ElTooltip>
@@ -28,7 +28,7 @@
             transition="tooltip-fade-in"
             :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
           >
-            <button @click="$emit('auto-layout')" class="icon-btn">
+            <button @click="handleAutoLayout" class="icon-btn">
               <VIcon size="20">auto-layout</VIcon>
             </button>
           </ElTooltip>
@@ -76,6 +76,9 @@
         <Node
           v-for="node in nodes"
           :key="node.id"
+          :class="{
+            active: selectedNodeId === node.id
+          }"
           :node="node"
           :id="node.id"
           :node-id="node.id"
@@ -89,6 +92,7 @@
           :isMainTable="checkMainTable(node.id)"
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
+          @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
           @add-node="$emit('add-node', node, $event)"
@@ -138,7 +142,8 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
-      schemaLoading: false
+      schemaLoading: false,
+      selectedNodeId: ''
     }
   },
 
@@ -214,16 +219,48 @@ export default {
     }
   },
 
-  // mounted() {
-  //   const { jsPlumbIns } = this
-  //   jsPlumbIns.setContainer('#node-view')
-  // },
-
   methods: {
     ...mapActions('dataflow', ['updateDag']),
 
     handleUpdateVisible(val) {
       this.$emit('update:visible', val)
+    },
+
+    handleCenterContent() {
+      const allNodes = this.viewNodes.map(node => {
+        return {
+          id: node.id,
+          attrs: {
+            position: this.nodePositionMap[node.id]
+          }
+        }
+      })
+      this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
+    },
+
+    handleDelete() {
+      if (!this.selectedNodeId) return
+
+      const { selectedNodeId: id } = this
+      const managedElements = this.jsPlumbIns.getManagedElements()
+      const el = document.getElementById(id)
+
+      this.jsPlumbIns.removeAllEndpoints(id)
+      this.jsPlumbIns.destroyDraggable(el)
+      this.jsPlumbIns.destroyDroppable(el)
+      delete managedElements[id] // 删除managed可以出发锚点位置更新
+
+      const node = this.nodeMap[id]
+      const parentNode = this.nodeMap[node.parentId]
+      const indexOfParent = parentNode.children.findIndex(n => n.id === id)
+      const index = this.nodes.findIndex(n => n.id === id)
+      ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
+      ~index && this.nodes.splice(index, 1)
+      this.$delete(this.nodePositionMap, id)
+      this.$delete(this.nodeSchemaMap, id)
+      this.$delete(this.inputsMap, id)
+      this.$delete(this.outputsMap, id)
+      this.$emit('delete-node', id)
     },
 
     findParentNodes(id, ifMyself) {
@@ -502,6 +539,11 @@ export default {
       this.jsPlumbIns.deleteConnection(connectionIns)
       this.jsPlumbIns.connect({ uuids: [source + '_source', newTarget + '_target'] })
       this.handleAutoLayout()
+    },
+
+    onClickNode(node) {
+      console.log('onClickNode', node)
+      this.selectedNodeId = node.id
     }
   }
 }

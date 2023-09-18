@@ -96,6 +96,7 @@
       <MaterializedView
         :visible.sync="materializedViewVisible"
         @add-node="onAddMaterializedViewNode"
+        @delete-node="handleDeleteById"
       ></MaterializedView>
     </section>
   </section>
