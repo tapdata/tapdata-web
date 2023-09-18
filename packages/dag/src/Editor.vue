@@ -93,7 +93,10 @@
         show-schema-panel
       />
 
-      <MaterializedView :visible.sync="materializedViewVisible"></MaterializedView>
+      <MaterializedView
+        :visible.sync="materializedViewVisible"
+        @add-node="onAddMaterializedViewNode"
+      ></MaterializedView>
     </section>
   </section>
 </template>
@@ -616,6 +619,29 @@ export default {
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
+    },
+
+    onAddMaterializedViewNode(parentNode, props) {
+      const activeNode = this.$store.getters['dataflow/activeNode']
+      const newNode = this.quickAddSourceNode(activeNode, {
+        name: '',
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      })
+
+      parentNode.children.push({
+        ...props,
+        id: newNode.id,
+        parentId: parentNode.id,
+        tableName: newNode.name,
+        joinKeys: [],
+        children: []
+      })
     }
   }
 }

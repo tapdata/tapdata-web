@@ -12,6 +12,7 @@ import {
   CommandManager,
   MoveNodeCommand,
   QuickAddTargetCommand,
+  QuickAddSourceCommand,
   RemoveConnectionCommand,
   RemoveNodeCommand
 } from '../command'
@@ -1702,6 +1703,7 @@ export default {
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
       }
+      return node
     },
 
     handleMouseSelect(ifMoved, showSelectBox, selectBoxAttr) {
@@ -1753,6 +1755,26 @@ export default {
       if (!this.checkSourceMaxOutputs(source, true)) return
       if (!this.checkAllowTargetOrSource(source, target, true)) return
       this.command.exec(new QuickAddTargetCommand(source.id, target))
+    },
+
+    quickAddSourceNode(target, nodeType) {
+      const spaceX = 120
+      const spaceY = 120
+
+      const newPosition = [target.attrs.position[0] - (NODE_WIDTH + spaceX), target.attrs.position[1]]
+      let movePosition = [spaceX, 0]
+
+      if (this.isSource(target)) {
+        newPosition[1] += spaceY
+        movePosition = [0, spaceY]
+      }
+
+      const position = this.getNewNodePosition(newPosition, movePosition)
+      const source = this.createNode(position, nodeType)
+
+      this.command.exec(new QuickAddSourceCommand(target.id, source))
+
+      return source
     },
 
     /**

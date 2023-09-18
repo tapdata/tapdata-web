@@ -6,7 +6,7 @@
     :close-on-press-escape="false"
     @update:visible="handleUpdateVisible"
   >
-    <div class="h-100 flex flex-column">
+    <div class="h-100 flex flex-column" v-loading="schemaLoading">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
@@ -91,6 +91,7 @@
           :nodeSchemaMap="nodeSchemaMap"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
+          @add-node="$emit('add-node', node, $event)"
         ></Node>
         <TargetNode
           :id="targetNode.id"
@@ -136,7 +137,8 @@ export default {
       scale: 1,
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       commandCode: isMacOs ? '⌘' : 'Ctrl',
-      optionCode: isMacOs ? 'Option' : 'Alt'
+      optionCode: isMacOs ? 'Option' : 'Alt',
+      schemaLoading: false
     }
   },
 
@@ -204,8 +206,9 @@ export default {
         this.resetView()
         return
       }
+
       this.initView()
-      this.transformToDag()
+      await this.transformToDag()
       await this.loadSchema()
       this.handleAutoLayout()
     }
@@ -363,8 +366,17 @@ export default {
 
       this.$nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
-        this.$refs.paperScroller.autoResizePaper()
-        this.$refs.paperScroller.centerContent(false, 24)
+        // this.$refs.paperScroller.initVisibleArea()
+        const allNodes = this.viewNodes.map(node => {
+          return {
+            id: node.id,
+            attrs: {
+              position: this.nodePositionMap[node.id]
+            }
+          }
+        })
+        this.$refs.paperScroller.autoResizePaper(allNodes, '')
+        this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
       })
     },
 
@@ -377,8 +389,10 @@ export default {
       this.jsPlumbIns.reset()
     },
 
-    loadSchema() {
-      return Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
+    async loadSchema() {
+      this.schemaLoading = true
+      await Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
+      this.schemaLoading = false
     },
 
     async loadNodeSchema(nodeId) {

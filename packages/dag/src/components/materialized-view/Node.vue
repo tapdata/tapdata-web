@@ -18,6 +18,7 @@
           :method="loadDatabases"
           itemValue="id"
           itemQuery="name"
+          :onSetSelected="onConnectionSelect"
         >
           <template #prefix>
             <div class="flex align-center h-100">
@@ -33,6 +34,7 @@
           :connectionId="dagNode.connectionId"
           itemType="object"
           itemQuery="value"
+          @change="onChangeTable"
         ></TableSelect>
       </div>
       <ElForm class="node-form px-2" label-position="top">
@@ -86,17 +88,37 @@
     <ElDivider class="my-0" />
     <div class="p-2 node-body">
       <div class="flex align-center">
-        <ElDropdown trigger="click">
-          <IconButton sm> plus-circle </IconButton>
-          <ElDropdownMenu slot="dropdown">
-            <!--Flatten-->
-            <ElDropdownItem command="updateWrite">平铺</ElDropdownItem>
-            <!--Embedded Document-->
-            <ElDropdownItem command="updateOrInsert">内嵌文档</ElDropdownItem>
-            <!--Embedded Array-->
-            <ElDropdownItem command="updateIntoArray">内嵌数组</ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
+        <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+          <div ref="fieldPopover">
+            <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
+            <div class="mt-2 text-end">
+              <el-button size="mini" type="text" @click="fieldNameVisible = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="onSaveFieldName">确定</el-button>
+            </div>
+          </div>
+          <template #reference>
+            <ElDropdown trigger="click" @command="handleCommand">
+              <IconButton
+                v-click-outside="{
+                  handler: onClickOutside,
+                  include
+                }"
+                sm
+              >
+                plus-circle
+              </IconButton>
+              <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
+                <!--Flatten-->
+                <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
+                <!--Embedded Document-->
+                <ElDropdownItem command="Document">内嵌文档</ElDropdownItem>
+                <!--Embedded Array-->
+                <ElDropdownItem command="Array">内嵌数组</ElDropdownItem>
+              </ElDropdownMenu>
+            </ElDropdown>
+          </template>
+        </ElPopover>
+
         <code class="color-success-light-5">{</code>
       </div>
       <ElTree
@@ -113,15 +135,14 @@
 <script>
 import { merge } from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
+import { ClickOutside } from '@tap/shared'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { Time } from '@tap/shared'
 import { AsyncSelect, FieldSelect } from '@tap/form'
 import { IconButton } from '@tap/component'
-import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
 import { sourceEndpoint, targetEndpoint } from '../../style'
-import BaseNode from '../BaseNode.vue'
 import NodeIcon from '../NodeIcon.vue'
 export default {
   name: 'Node',
@@ -156,6 +177,8 @@ export default {
     IconButton
   },
 
+  directives: { ClickOutside },
+
   data() {
     return {
       loading: false,
@@ -163,7 +186,9 @@ export default {
         where: { database_type: 'MongoDB' }
       },
       targetFields: [],
-      targetPath: this.node.targetPath
+      targetPath: this.node.targetPath,
+      fieldNameVisible: false,
+      fieldName: ''
     }
   },
 
@@ -428,13 +453,14 @@ export default {
 
         result.items = result.items.map(item => {
           return {
-            id: item.id,
-            name: item.name,
+            // id: item.id,
+            // name: item.name,
             label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            ...item
+            // accessNodeProcessId: item.accessNodeProcessId
           }
         })
 
@@ -594,6 +620,65 @@ export default {
         value: item.field_name,
         isPrimaryKey: item.primary_key_position > 0
       }))
+    },
+
+    handleCommand(command) {
+      this.currentCommand = command
+      switch (command) {
+        case 'Flatten':
+          break
+        case 'Document':
+        case 'Array':
+          this.fieldName = ''
+          this.fieldNameVisible = true
+          break
+      }
+    },
+
+    handleAddTableNode() {
+      const props = {
+        name: '',
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      }
+
+      this.$emit('add-node', {
+        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite',
+        targetPath: `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
+      })
+    },
+
+    include() {
+      return [this.$refs.dropDownMenu.$el, this.$refs.fieldPopover]
+    },
+
+    onClickOutside() {
+      this.fieldNameVisible = false
+    },
+
+    onSaveFieldName() {
+      this.fieldNameVisible = false
+      this.handleAddTableNode()
+    },
+
+    onConnectionSelect(connection) {
+      Object.assign(this.dagNode.attrs, {
+        connectionName: connection.name,
+        connectionType: connection.connection_type,
+        accessNodeProcessId: connection.accessNodeProcessId,
+        pdkType: connection.pdkType,
+        pdkHash: connection.pdkHash,
+        capabilities: connection.capabilities || []
+      })
+    },
+
+    onChangeTable(table) {
+      this.dagNode.name = table
     }
   }
 }
