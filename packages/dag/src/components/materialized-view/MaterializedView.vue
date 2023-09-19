@@ -100,7 +100,7 @@
           :schema="nodeSchemaMap[targetNode.id]"
           :position="nodePositionMap[targetNode.id]"
           @add-node="$emit('add-node', arguments[0], arguments[1])"
-          @load-schema="onLoadSchema(targetNode.id)"
+          @load-schema="onLoadTargetSchema"
         ></TargetNode>
       </PaperScroller>
     </div>
@@ -600,7 +600,13 @@ export default {
 
     onLoadSchema(id) {
       this.loadNodeSchema(id)
+      this.jsPlumbIns.revalidate(id)
+      this.onLoadTargetSchema()
+    },
+
+    onLoadTargetSchema() {
       this.loadNodeSchema(this.targetNode.id)
+      this.jsPlumbIns.revalidate(this.targetNode.id)
     },
 
     afterTaskSaved() {
