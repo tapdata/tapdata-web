@@ -319,7 +319,6 @@ export default {
     },
 
     async transformToDag() {
-      const { mergeProperties } = this.activeNode
       const nodes = []
       const edges = []
       const inputsMap = {}
@@ -372,6 +371,9 @@ export default {
           }
         }
       }
+      let mergeProperties = this.activeNode.mergeProperties
+
+      if (!mergeProperties) mergeProperties = this.activeNode.mergeProperties = []
 
       inputsMap[this.targetNode.id] = []
       outputsMap[this.targetNode.id] = []
@@ -614,7 +616,8 @@ export default {
         setTimeout(() => {
           console.log('afterTaskSaved', this.taskSaving)
           if (this.taskSaving) {
-            this.$watch('taskSaving', () => {
+            let unwatch = this.$watch('taskSaving', () => {
+              unwatch()
               resolve()
             })
           } else {

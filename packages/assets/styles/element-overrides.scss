@@ -711,13 +711,21 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .v-icon {
     vertical-align: -0.125em;
   }
-}
-.el-button--text {
-  min-width: auto;
-  border: none;
-}
-.el-button.is-disabled {
-  cursor: default !important;
+
+  &.--with-icon {
+    > span {
+      display: contents;
+    }
+  }
+
+  &.el-button--text {
+    min-width: auto;
+    border: none;
+  }
+
+  &.is-disabled {
+    cursor: default !important;
+  }
 }
 
 /* Select

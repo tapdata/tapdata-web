@@ -39,7 +39,7 @@
         ref="leftSidebar"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
-        @add-table-as-node="handleAddTableAsNode"
+        @add-table-as-node="handleAddNodeToCenter"
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
@@ -97,7 +97,7 @@
         ref="materializedView"
         :visible.sync="materializedViewVisible"
         @add-node="onAddMaterializedViewNode"
-        @add-target-node="onAddMaterializedViewTargetNode"
+        @add-target-node="onAddMaterializedViewTargetNode()"
         @delete-node="handleDeleteById"
       ></MaterializedView>
     </section>
@@ -131,6 +131,7 @@ import editor from './mixins/editor'
 import ConsolePanel from './components/migration/ConsolePanel'
 import PaperEmpty from './components/PaperEmpty'
 import MaterializedView from './components/materialized-view/MaterializedView.vue'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Editor',
@@ -221,6 +222,7 @@ export default {
         this.initNodeView()
         await this.initView(true)
         this.autoAddNode(query)
+        this.checkMaterializedView(query)
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -492,13 +494,15 @@ export default {
       this.$refs.paperScroller.centerContent()
     },
 
-    handleAddTableAsNode(item) {
+    handleAddNodeToCenter(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
       }
+
+      return node
     },
 
     createNode(position, item) {
@@ -650,8 +654,7 @@ export default {
       this.$refs.materializedView.addNode(viewNode)
     },
 
-    onAddMaterializedViewTargetNode() {
-      const activeNode = this.$store.getters['dataflow/activeNode']
+    onAddMaterializedViewTargetNode(activeNode = this.$store.getters['dataflow/activeNode']) {
       const newNode = this.quickAddNode(activeNode, {
         name: `Node ${this.allNodes.length + 1}`,
         type: 'table',
@@ -663,6 +666,34 @@ export default {
           hasCreated: false
         }
       })
+    },
+
+    async checkMaterializedView(query = {}) {
+      if (query.by === 'materialized-view') {
+        // 清空路由参数
+        await this.$router.replace({
+          params: {
+            action: 'dataflowEdit'
+          },
+          query: {
+            ...query,
+            by: undefined
+          }
+        })
+
+        const node = this.handleAddNodeToCenter({
+          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+          type: 'merge_table_processor'
+        })
+
+        this.onAddMaterializedViewTargetNode(node)
+        await this.$nextTick()
+        await this.afterTaskSaved()
+        this.$refs.paperScroller.centerNode(node)
+        this.setActiveNode(node.id)
+        await this.$nextTick()
+        this.setMaterializedViewVisible(true)
+      }
     }
   }
 }

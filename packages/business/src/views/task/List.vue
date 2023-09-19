@@ -94,6 +94,16 @@
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
         </template>
+        <ElButton
+          v-if="$route.name === 'dataflowList'"
+          class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+          size="mini"
+          :loading="createBtnLoading"
+          @click="handleCreateMaterializedView"
+        >
+          <VIcon size="28">beta</VIcon>
+          构建物化视图</ElButton
+        >
         <el-button
           v-if="buttonShowMap.create"
           v-readonlybtn="'SYNC_job_creation'"
@@ -103,7 +113,7 @@
           id="task-list-create"
           :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
-          @click="create"
+          @click="create()"
         >
           {{ $t('public_button_create') }}
         </el-button>
@@ -790,16 +800,23 @@ export default {
       return tagList
     },
 
-    async create() {
+    async create(query) {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
       this.checkAgent(() => {
         this.$router.push({
-          name: this.route.new
+          name: this.route.new,
+          query
         })
       }).catch(() => {
         this.createBtnLoading = false
         this.buried(this.taskBuried.newFail)
+      })
+    },
+
+    handleCreateMaterializedView() {
+      this.create({
+        by: 'materialized-view'
       })
     },
 
