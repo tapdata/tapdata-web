@@ -6,7 +6,7 @@
     :close-on-press-escape="false"
     @update:visible="handleUpdateVisible"
   >
-    <div class="h-100 flex flex-column" v-loading="schemaLoading" element-loading-background="#fff">
+    <div ref="container" class="h-100 flex flex-column" v-loading="schemaLoading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
@@ -32,16 +32,10 @@
               <VIcon size="20">auto-layout</VIcon>
             </button>
           </ElTooltip>
-          <!--&lt;!&ndash;拖选画布&ndash;&gt;
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_mouse_selection')">
-            <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
-              <VIcon size="20">kuangxuan</VIcon>
-            </button>
-          </ElTooltip>-->
           <VDivider class="mx-3" vertical inset></VDivider>
           <!--缩小-->
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
-            <button @click="$emit('zoom-out')" class="icon-btn">
+            <button @click="handleZoomOut" class="icon-btn">
               <VIcon size="20">remove-outline</VIcon>
             </button>
           </ElTooltip>
@@ -49,16 +43,16 @@
             <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
               <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
               <div class="choose-list p-2">
-                <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
+                <div @click="handleZoomOut" class="choose-item pl-4 flex justify-content-between align-center">
                   <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
                   <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
                 </div>
-                <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+                <div @click="handleZoomIn" class="choose-item pl-4 flex justify-content-between align-center">
                   <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
                   <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
                 </div>
                 <VDivider class="my-2"></VDivider>
-                <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+                <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="handleZoomTo(val)">
                   {{ val * 100 }}%
                 </div>
               </div>
@@ -66,7 +60,7 @@
           </div>
           <!--放大-->
           <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
-            <button @click="$emit('zoom-in')" class="icon-btn">
+            <button @click="handleZoomIn" class="icon-btn">
               <VIcon size="20">add-outline</VIcon>
             </button>
           </ElTooltip>
@@ -96,13 +90,17 @@
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
           @add-node="$emit('add-node', node, $event)"
+          @load-schema="onLoadSchema(node.id)"
         ></Node>
         <TargetNode
+          v-if="targetNode"
           :id="targetNode.id"
           :node="targetNode"
           :js-plumb-ins="jsPlumbIns"
           :schema="nodeSchemaMap[targetNode.id]"
           :position="nodePositionMap[targetNode.id]"
+          @add-node="$emit('add-node', arguments[0], arguments[1])"
+          @load-schema="onLoadSchema(targetNode.id)"
         ></TargetNode>
       </PaperScroller>
     </div>
@@ -111,7 +109,8 @@
 
 <script>
 import dagre from 'dagre'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import Mousetrap from 'mousetrap'
 import { IconButton, VDivider, VIcon } from '@tap/component'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import PaperScroller from '../PaperScroller'
@@ -160,6 +159,7 @@ export default {
       'processorNodeTypes',
       'hasNodeError'
     ]),
+    ...mapState('dataflow', ['taskSaving']),
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
@@ -213,10 +213,26 @@ export default {
       }
 
       this.initView()
+
+      if (!this.targetNode) {
+        this.$emit('add-target-node')
+        await this.afterTaskSaved()
+      }
+
       await this.transformToDag()
       await this.loadSchema()
       this.handleAutoLayout()
     }
+  },
+
+  mounted() {
+    Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
+      this.handleDelete()
+    })
+    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
+      e.preventDefault()
+      this.handleAutoLayout()
+    })
   },
 
   methods: {
@@ -252,15 +268,31 @@ export default {
 
       const node = this.nodeMap[id]
       const parentNode = this.nodeMap[node.parentId]
-      const indexOfParent = parentNode.children.findIndex(n => n.id === id)
       const index = this.nodes.findIndex(n => n.id === id)
-      ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
       ~index && this.nodes.splice(index, 1)
+
+      if (parentNode) {
+        const indexOfParent = parentNode.children.findIndex(n => n.id === id)
+        ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
+      }
+
       this.$delete(this.nodePositionMap, id)
       this.$delete(this.nodeSchemaMap, id)
       this.$delete(this.inputsMap, id)
       this.$delete(this.outputsMap, id)
       this.$emit('delete-node', id)
+    },
+
+    handleZoomIn() {
+      this.$refs.paperScroller.zoomIn()
+    },
+
+    handleZoomOut() {
+      this.$refs.paperScroller.zoomOut()
+    },
+
+    handleZoomTo(scale) {
+      this.$refs.paperScroller.zoomTo(scale)
     },
 
     findParentNodes(id, ifMyself) {
@@ -341,9 +373,10 @@ export default {
         }
       }
 
-      traverse(mergeProperties, this.targetNode?.id)
-
-      this.$set(this.nodePositionMap, this.targetNode?.id, [0, 0]) // 初始化坐标
+      inputsMap[this.targetNode.id] = []
+      outputsMap[this.targetNode.id] = []
+      traverse(mergeProperties, this.targetNode.id)
+      this.$set(this.nodePositionMap, this.targetNode.id, [0, 0]) // 初始化坐标
       this.nodes = nodes
       this.inputsMap = inputsMap
       this.outputsMap = outputsMap
@@ -364,7 +397,7 @@ export default {
     handleAutoLayout() {
       const nodes = this.viewNodes
 
-      if (nodes.length < 2) return
+      // if (nodes.length < 2) return
 
       const scale = this.$refs.paperScroller.getPaperScale()
       const nodePositionMap = {}
@@ -515,6 +548,9 @@ export default {
       if (parentId !== outputs[0]) {
         this.updateSourceTarget(node.id, outputs[0], parentId)
       }
+
+      // 更新目标节点schema
+      this.loadNodeSchema(this.targetNode.id)
     },
 
     updateSourceTarget(source, target, newTarget) {
@@ -542,8 +578,44 @@ export default {
     },
 
     onClickNode(node) {
-      console.log('onClickNode', node)
       this.selectedNodeId = node.id
+    },
+
+    addNode(node) {
+      const { id: source, parentId: target } = node
+      let inputs = this.inputsMap[target]
+
+      if (!inputs) inputs = this.inputsMap[target] = []
+
+      inputs.push(source)
+      this.outputsMap[source] = [target]
+      this.nodes.push(node)
+      this.$set(this.nodePositionMap, source, [0, 0]) // 初始化坐标
+
+      this.$nextTick(() => {
+        this.jsPlumbIns.connect({ uuids: [node.id + '_source', node.parentId + '_target'] })
+        this.handleAutoLayout()
+      })
+    },
+
+    onLoadSchema(id) {
+      this.loadNodeSchema(id)
+      this.loadNodeSchema(this.targetNode.id)
+    },
+
+    afterTaskSaved() {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          console.log('afterTaskSaved', this.taskSaving)
+          if (this.taskSaving) {
+            this.$watch('taskSaving', () => {
+              resolve()
+            })
+          } else {
+            resolve()
+          }
+        }, 100)
+      })
     }
   }
 }

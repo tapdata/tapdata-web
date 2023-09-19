@@ -6,7 +6,7 @@
   >
     <div class="node-header bg-primary">
       <div class="node-title text-white lh-base flex align-center px-2 py-1">
-        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ node.tableName }}</span>
+        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ node.name }}</span>
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -16,6 +16,8 @@
           :params="params"
           itemValue="id"
           itemQuery="name"
+          :onSetSelected="onConnectionSelect"
+          @change="onChangeConnection"
         >
           <template #prefix>
             <div class="flex align-center h-100">
@@ -31,16 +33,51 @@
           :connectionId="node.connectionId"
           itemType="object"
           itemQuery="value"
+          allowCreate
         ></TableSelect>
       </div>
     </div>
     <div class="p-2 node-body">
-      <code class="color-success-light-5">{</code>
+      <div class="flex align-center">
+        <code class="color-success-light-5 mr-2">{</code>
+        <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+          <div ref="fieldPopover">
+            <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
+            <div class="mt-2 text-end">
+              <el-button size="mini" type="text" @click="fieldNameVisible = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="onSaveFieldName">确定</el-button>
+            </div>
+          </div>
+          <template #reference>
+            <ElDropdown trigger="click" @command="handleCommand">
+              <ElButton
+                size="mini"
+                v-click-outside="{
+                  handler: onClickOutside,
+                  include
+                }"
+              >
+                <VIcon>add</VIcon>
+                新增字段
+              </ElButton>
+              <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
+                <!--Flatten-->
+                <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
+                <!--Embedded Document-->
+                <ElDropdownItem command="Document">内嵌文档</ElDropdownItem>
+                <!--Embedded Array-->
+                <ElDropdownItem command="Array">内嵌数组</ElDropdownItem>
+              </ElDropdownMenu>
+            </ElDropdown>
+          </template>
+        </ElPopover>
+      </div>
       <ElTree
         class="fs-8 node-schema-tree overflow-y-auto"
         :indent="8"
         :data="treeData"
         :render-content="renderContent"
+        :empty-text="treeEmptyText"
       ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
@@ -49,10 +86,10 @@
 
 <script>
 import { merge } from 'lodash'
-import { mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { Time } from '@tap/shared'
+import { Time, ClickOutside } from '@tap/shared'
 import { AsyncSelect } from '@tap/form'
 import i18n from '@tap/i18n'
 import { TableSelect } from '../form'
@@ -79,16 +116,22 @@ export default {
     TableSelect
   },
 
+  directives: { ClickOutside },
+
   data() {
     return {
       loading: false,
       params: {
         where: { database_type: 'MongoDB' }
-      }
+      },
+      fieldNameVisible: false,
+      fieldName: ''
     }
   },
 
   computed: {
+    ...mapGetters('dataflow', ['activeNode']),
+
     ins() {
       return this.node?.__Ctor || {}
     },
@@ -110,6 +153,18 @@ export default {
     treeData() {
       console.log('computed:treeData')
       return this.schema ? this.createTree(this.schema) : []
+    },
+
+    treeEmptyText() {
+      if (!this.node.connectionId) {
+        return '请选择连接'
+      }
+
+      if (!this.node.tableName) {
+        return '请选择连表'
+      }
+
+      return '暂无数据'
     }
   },
 
@@ -121,6 +176,7 @@ export default {
   },
 
   methods: {
+    ...mapActions('dataflow', ['updateDag']),
     ...mapMutations('dataflow', [
       'setActiveNode',
       'addActiveAction',
@@ -452,6 +508,95 @@ export default {
           <span class="ml-1 font-color-sslight">{data.dataType}</span>
         </div>
       )
+    },
+
+    handleCommand(command) {
+      this.currentCommand = command
+      switch (command) {
+        case 'Flatten':
+          this.fieldName = ''
+          this.handleAddTableNode()
+          break
+        case 'Document':
+        case 'Array':
+          this.fieldName = ''
+          this.fieldNameVisible = true
+          break
+      }
+    },
+
+    handleAddTableNode() {
+      const props = {
+        name: '',
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      }
+
+      let mergeProperties = this.activeNode.mergeProperties
+
+      if (!mergeProperties) {
+        mergeProperties = this.activeNode.mergeProperties = []
+      }
+
+      this.$emit(
+        'add-node',
+        {
+          id: this.node.id,
+          children: mergeProperties
+        },
+        {
+          mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite',
+          targetPath: this.fieldName
+            ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
+            : this.node.targetPath || ''
+        }
+      )
+    },
+
+    include() {
+      return [this.$refs.dropDownMenu.$el, this.$refs.fieldPopover]
+    },
+
+    onClickOutside() {
+      this.fieldNameVisible = false
+    },
+
+    onSaveFieldName() {
+      this.fieldNameVisible = false
+      this.handleAddTableNode()
+    },
+
+    onConnectionSelect(connection) {
+      const nodeAttrs = {
+        connectionName: connection.name,
+        connectionType: connection.connection_type,
+        accessNodeProcessId: connection.accessNodeProcessId,
+        pdkType: connection.pdkType,
+        pdkHash: connection.pdkHash,
+        capabilities: connection.capabilities || []
+      }
+
+      Object.keys(nodeAttrs).forEach(key => {
+        this.$set(this.node.attrs, key, nodeAttrs[key])
+      })
+    },
+
+    async onChangeConnection() {
+      this.node.tableName = ''
+      await this.updateDag({ vm: this, isNow: true })
+      this.$emit('load-schema')
+    },
+
+    async onChangeTable(table) {
+      this.node.name = table
+      let result = this.updateDag()
+      await this.updateDag({ vm: this, isNow: true })
+      this.$emit('load-schema')
     }
   }
 }

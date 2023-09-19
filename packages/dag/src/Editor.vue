@@ -94,8 +94,10 @@
       />
 
       <MaterializedView
+        ref="materializedView"
         :visible.sync="materializedViewVisible"
         @add-node="onAddMaterializedViewNode"
+        @add-target-node="onAddMaterializedViewTargetNode"
         @delete-node="handleDeleteById"
       ></MaterializedView>
     </section>
@@ -634,14 +636,32 @@ export default {
           hasCreated: false
         }
       })
-
-      parentNode.children.push({
+      const viewNode = {
         ...props,
         id: newNode.id,
         parentId: parentNode.id,
         tableName: newNode.name,
+        tableNode: newNode,
         joinKeys: [],
         children: []
+      }
+
+      parentNode.children.push(viewNode)
+      this.$refs.materializedView.addNode(viewNode)
+    },
+
+    onAddMaterializedViewTargetNode() {
+      const activeNode = this.$store.getters['dataflow/activeNode']
+      const newNode = this.quickAddNode(activeNode, {
+        name: `Node ${this.allNodes.length + 1}`,
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          capabilities: [{ id: 'master_slave_merge' }], // 允许作为主从合并的目标
+          hasCreated: false
+        }
       })
     }
   }

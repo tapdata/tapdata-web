@@ -1,5 +1,6 @@
 <template>
   <div
+    tabindex="1"
     class="materialized-view-node position-absolute rounded-lg bg-white"
     :class="{
       '--main-table': isMainTable
@@ -9,7 +10,7 @@
   >
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
-        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.tableName }}</span>
+        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -19,6 +20,7 @@
           itemValue="id"
           itemQuery="name"
           :onSetSelected="onConnectionSelect"
+          @change="onChangeConnection"
         >
           <template #prefix>
             <div class="flex align-center h-100">
@@ -52,7 +54,12 @@
                 {{ $t('public_button_add') }}</ElLink
               >
             </div>
-            <ElButton v-if="!node.joinKeys.length" type="ghost" class="w-100 fs-8" @click="handleAddJoinKey">
+            <ElButton
+              v-if="!node.joinKeys || !node.joinKeys.length"
+              type="ghost"
+              class="w-100 fs-8"
+              @click="handleAddJoinKey"
+            >
               <VIcon>add</VIcon>
               {{ $t('public_button_add') }}
             </ElButton>
@@ -80,8 +87,17 @@
           <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
         </ElFormItem>
 
-        <ElFormItem v-if="!isMainTable" :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')">
-          <ElInput></ElInput>
+        <ElFormItem
+          v-if="!isMainTable && node.mergeType === 'updateIntoArray'"
+          :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')"
+        >
+          <FieldSelect
+            v-model="node.arrayKeys"
+            itemLabel="field_name"
+            itemValue="field_name"
+            :options="schema"
+            multiple
+          ></FieldSelect>
         </ElFormItem>
       </ElForm>
     </div>
@@ -126,6 +142,7 @@
         :indent="8"
         :data="treeData"
         :render-content="renderContent"
+        :empty-text="treeEmptyText"
       ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
@@ -134,11 +151,10 @@
 
 <script>
 import { merge } from 'lodash'
-import { mapGetters, mapMutations } from 'vuex'
-import { ClickOutside } from '@tap/shared'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
-import { Time } from '@tap/shared'
+import { Time, ClickOutside } from '@tap/shared'
 import { AsyncSelect, FieldSelect } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { TableSelect } from '../form'
@@ -270,6 +286,18 @@ export default {
 
     parentFieldOptions() {
       return this.parentSchema
+    },
+
+    treeEmptyText() {
+      if (!this.dagNode.connectionId) {
+        return '请选择连接'
+      }
+
+      if (!this.dagNode.tableName) {
+        return '请选择连表'
+      }
+
+      return '暂无数据'
     }
   },
 
@@ -281,6 +309,7 @@ export default {
   },
 
   methods: {
+    ...mapActions('dataflow', ['updateDag']),
     ...mapMutations('dataflow', [
       'setActiveNode',
       'addActiveAction',
@@ -602,6 +631,15 @@ export default {
     },
 
     handleAddJoinKey() {
+      if (!this.node.joinKeys) {
+        this.node.joinKeys = [
+          {
+            source: '',
+            target: ''
+          }
+        ]
+        return
+      }
       this.node.joinKeys.push({
         source: '',
         target: ''
@@ -626,6 +664,8 @@ export default {
       this.currentCommand = command
       switch (command) {
         case 'Flatten':
+          this.fieldName = ''
+          this.handleAddTableNode()
           break
         case 'Document':
         case 'Array':
@@ -649,7 +689,9 @@ export default {
 
       this.$emit('add-node', {
         mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite',
-        targetPath: `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
+        targetPath: this.fieldName
+          ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
+          : this.node.targetPath || ''
       })
     },
 
@@ -681,8 +723,17 @@ export default {
       })
     },
 
-    onChangeTable(table) {
+    async onChangeConnection() {
+      this.dagNode.tableName = ''
+      await this.updateDag({ vm: this, isNow: true })
+      this.$emit('load-schema')
+    },
+
+    async onChangeTable(table) {
       this.dagNode.name = table
+      let result = this.updateDag()
+      await this.updateDag({ vm: this, isNow: true })
+      this.$emit('load-schema')
     }
   }
 }

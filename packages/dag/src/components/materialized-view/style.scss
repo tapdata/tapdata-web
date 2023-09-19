@@ -95,8 +95,8 @@
 .color-success-light-5 {
   color: #009a29;
 }
-.node-form {
-  ::v-deep {
+::v-deep {
+  .node-form {
     .el-form-item {
       margin-bottom: 8px;
 
@@ -112,5 +112,9 @@
         border: 1px dashed #dcdfe6;
       }
     }
+  }
+
+  .el-input--small .el-input__inner {
+    height: 32px !important;
   }
 }
