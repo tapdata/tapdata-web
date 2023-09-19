@@ -17,6 +17,7 @@
           v-model="dagNode.connectionId"
           placeholder="请选择存储数据库"
           :method="loadDatabases"
+          :params="{ isSource: true }"
           itemValue="id"
           itemQuery="name"
           :onSetSelected="onConnectionSelect"
@@ -482,14 +483,11 @@ export default {
 
         result.items = result.items.map(item => {
           return {
-            // id: item.id,
-            // name: item.name,
             label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
             ...item
-            // accessNodeProcessId: item.accessNodeProcessId
           }
         })
 

@@ -123,6 +123,7 @@ export default {
     return {
       loading: false,
       params: {
+        isTarget: true,
         where: { database_type: 'MongoDB' }
       },
       fieldNameVisible: false,
@@ -364,13 +365,11 @@ export default {
 
         result.items = result.items.map(item => {
           return {
-            id: item.id,
-            name: item.name,
             label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            ...item
           }
         })
 
@@ -589,7 +588,7 @@ export default {
 
     async onChangeConnection() {
       this.node.tableName = ''
-      await this.updateDag({ vm: this, isNow: true`` })
+      await this.updateDag({ vm: this, isNow: true })
       this.$emit('load-schema')
     },
 
