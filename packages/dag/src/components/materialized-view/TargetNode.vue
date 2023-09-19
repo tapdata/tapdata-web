@@ -34,6 +34,7 @@
           itemType="object"
           itemQuery="value"
           allowCreate
+          @change="onChangeTable"
         ></TableSelect>
       </div>
     </div>
@@ -588,13 +589,12 @@ export default {
 
     async onChangeConnection() {
       this.node.tableName = ''
-      await this.updateDag({ vm: this, isNow: true })
+      await this.updateDag({ vm: this, isNow: true`` })
       this.$emit('load-schema')
     },
 
     async onChangeTable(table) {
       this.node.name = table
-      let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })
       this.$emit('load-schema')
     }
