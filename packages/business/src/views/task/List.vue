@@ -24,9 +24,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
       <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-          $t('packages_business_permissionse_settings_create_quanxianshezhi')
-        }}</ElButton>
+        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+          >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+        </ElButton>
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
@@ -53,23 +53,20 @@
               command="start"
               v-readonlybtn="'SYNC_job_operation'"
               :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkScheuled') }}</el-dropdown-item
-            >
-            <el-dropdown-item
-              command="stop"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkStopping') }}</el-dropdown-item
-            >
+              >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_bulkStopping') }}
+            </el-dropdown-item>
             <el-dropdown-item
               command="initialize"
               v-readonlybtn="'SYNC_job_operation'"
               :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchRest') }}</el-dropdown-item
-            >
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()">{{
-              $t('packages_business_dataFlow_batchDelete')
-            }}</el-dropdown-item>
+              >{{ $t('packages_business_dataFlow_batchRest') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
+              >{{ $t('packages_business_dataFlow_batchDelete') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <template>
@@ -330,6 +327,18 @@
       </span>
     </el-dialog>
     <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
+
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </section>
 </template>
 
@@ -341,7 +350,7 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
@@ -358,7 +367,16 @@ export default {
 
   inject: ['checkAgent', 'buried'],
 
-  components: { FilterBar, TablePage, SkipError, Upload, TaskStatus, PermissionseSettingsCreate },
+  components: {
+    FilterBar,
+    TablePage,
+    SkipError,
+    Upload,
+    TaskStatus,
+    PermissionseSettingsCreate,
+    UpgradeCharges,
+    UpgradeFee
+  },
 
   mixins: [syncTaskAgent],
 
@@ -409,7 +427,9 @@ export default {
       showTooltip: false,
       showDelTooltip: false,
       failList: [], //错误列表
-      taskErrorCause: {}
+      taskErrorCause: {},
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -447,7 +467,7 @@ export default {
     buttonShowMap() {
       if (this.$route.name === 'dataflowList') {
         return {
-          create: this.$has('v2_data_flow_edit'),
+          create: this.$has('v2_data_flow_creation'),
           copy: this.$has('v2_data_flow_copy'),
           import: this.$has('v2_data_flow_import'),
           export: this.$has('v2_data_flow_export')
@@ -455,7 +475,7 @@ export default {
       }
 
       return {
-        create: this.$has('v2_data_replication_edit'),
+        create: this.$has('v2_data_replication_creation'),
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
@@ -682,7 +702,11 @@ export default {
     responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
+      console.log('failList', failList)
       if (failList.length) {
+        if (failList.some(t => t.code === 'Task.ScheduleLimit')) {
+          this.handleShowUpgradeDialog()
+        }
         let nameMapping = {}
         this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
@@ -838,9 +862,14 @@ export default {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(data => {
+        taskApi.batchDelete(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) => ids.includes(id))
           const { toggleRowSelection } = this.table.$refs.table
+          data.forEach(item => {
+            const { name, permissionActions = [] } = selected.find(t => t.id === item.id) || {}
+            item.name = name
+            item.permissionActions = permissionActions
+          })
           selected.forEach(row => toggleRowSelection(row, false))
           this.table.fetch()
           this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
@@ -849,10 +878,23 @@ export default {
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      this.failList = data?.filter(t => t.code === 'Clear.Slot') || []
-      this.failList = [...this.failList, ...canNotList]
+      this.failList = [...(data?.filter(t => t.code !== 'ok') || []), ...canNotList]
       if (this.failList.length) {
-        this.dialogDelMsgVisible = true
+        if (this.failList.some(t => t.code === 'Clear.Slot')) {
+          this.dialogDelMsgVisible = true
+        } else {
+          let message = ''
+          const { isDaas } = this
+          this.failList.forEach(el => {
+            message += `${el.name || el.id}: ${
+              isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message
+            }<br/>`
+          })
+          this.$message.info({
+            dangerouslyUseHTMLString: true,
+            message
+          })
+        }
       } else if (msg) {
         this.$message.success(msg, false)
       }
@@ -1026,14 +1068,53 @@ export default {
         cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
         this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
+
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Task')
     },
+
     havePermission(row = {}, type = '') {
       if (!this.isDaas) return true
       const data = row.permissionActions || []
       return data.includes(type)
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }
@@ -1044,6 +1125,7 @@ export default {
   height: 100%;
   padding: 0 24px 24px 0;
   background: #fff;
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -1051,37 +1133,47 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .data-flow-list {
     .search-bar {
       display: flex;
       flex-wrap: wrap;
+
       li {
         margin-right: 10px;
+
         &:last-child {
           margin-right: 0;
         }
       }
     }
+
     .buttons {
       white-space: nowrap;
+
       .btn + .btn {
         margin-left: 12px;
       }
+
       .btn {
         i.iconfont {
           font-size: 12px;
         }
+
         &.btn-dropdowm {
           margin-left: 12px;
         }
+
         &.btn-create {
           margin-left: 12px;
         }
+
         &.btn-createText {
           margin-left: 12px;
         }
       }
     }
+
     .dataflow-name {
       .tag {
         padding: 2px 5px;
@@ -1094,6 +1186,7 @@ export default {
         border-radius: 2px;
         margin-left: 5px;
       }
+
       .name {
         &:not(.has-children) {
           cursor: pointer;
@@ -1101,11 +1194,13 @@ export default {
         }
       }
     }
+
     .table-operations {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
     }
+
     .el-table {
       ::v-deep {
         .el-table__cell {
@@ -1114,6 +1209,7 @@ export default {
       }
     }
   }
+
   .dialogDelMsgDialog {
     .box {
       padding: 10px;

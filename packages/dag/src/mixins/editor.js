@@ -1893,6 +1893,8 @@ export default {
         }).then(resFlag => {
           resFlag && location.reload()
         })
+      } else if (code === 'Task.ScheduleLimit') {
+        this.handleShowUpgradeDialog()
       } else {
         const msg = error?.data?.message || msg
         this.$message.error(msg)
@@ -2296,6 +2298,36 @@ export default {
       for (let key in this.buttonShowMap) {
         this.buttonShowMap[key] = data.includes(key)
       }
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee() {
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges() {
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog() {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+              ? this.handleShowUpgradeFee()
+              : this.handleShowUpgradeCharges()
+          })
     }
   }
 }

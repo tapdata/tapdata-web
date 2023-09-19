@@ -316,7 +316,8 @@ export default {
         visible: false
       },
       checkCanStartIng: false,
-      startedTags: []
+      startedTags: [],
+      prefixMap: {}
     }
   },
 
@@ -561,9 +562,17 @@ export default {
     },
 
     showTaskDialog() {
+      const connectionId = this.taskDialogConfig.from?.id
+
       this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
       this.taskDialogConfig.visible = true
       this.$refs.form?.resetFields()
+
+      // 读取缓存
+      if (this.prefixMap[connectionId]) {
+        this.taskDialogConfig.prefix = this.prefixMap[connectionId]
+      }
+
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
 
@@ -613,8 +622,10 @@ export default {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
-        const { tableName, from, task: settings } = this.taskDialogConfig
+        const { tableName, from = {}, task: settings, prefix } = this.taskDialogConfig
         let task = Object.assign(this.makeMigrateTask(from, tableName), settings)
+        // 缓存表名前缀
+        this.prefixMap[from.id] = prefix
 
         this.creating = true
         try {

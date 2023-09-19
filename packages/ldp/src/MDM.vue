@@ -594,7 +594,7 @@ export default {
       }
     },
 
-    getTableNode(db, tableName) {
+    getTableNode(db = {}, tableName) {
       return {
         id: uuid(),
         type: 'table',

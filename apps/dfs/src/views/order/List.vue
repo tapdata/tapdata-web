@@ -13,8 +13,8 @@
           </div>
           <ul class="mt-4 overflow-auto flex-1">
             <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
-              <div class="sub-li-header flex justify-content-between">
-                <div>
+              <div class="sub-li-header flex justify-content-between align-center">
+                <div class="felx align-center">
                   <span class="font-color-dark fw-sub mr-2"
                     >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
                   >
@@ -68,7 +68,13 @@
                 </div>
               </div>
               <div>
-                <VTable :columns="columns" :data="item.subscribeItems" ref="table" :has-pagination="false">
+                <VTable
+                  :columns="columns"
+                  :data="item.subscribeItems"
+                  ref="table"
+                  :has-pagination="false"
+                  header-cell-class-name="bg-white"
+                >
                   <template #subscriptionMethodLabel="{ row }">
                     <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
                   </template>
@@ -179,18 +185,19 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import i18n from '@/i18n'
 import { FilterBar, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
-import dayjs from 'dayjs'
+import Change from '@tap/business/src/views/order/Change'
+import { getPaymentMethod, getSpec } from '@tap/business/src/shared/util'
+import { AGENT_TYPE_MAP } from '@tap/business/src/shared/const'
 
-import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
 import transferDialog from '../agent-download/transferDialog'
 import StatusTag from '../../components/StatusTag.vue'
 import Unsubscribe from '../../components/Unsubscribe.vue'
 import Renew from '../../components/Renew.vue'
-import Change from './Change.vue'
 
 export default {
   components: { Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew, Change },
@@ -349,7 +356,7 @@ export default {
               value: 'refund'
             },
             {
-              label: this.$t('packages_business_shared_const_tuikuanshibai'),
+              label: this.$t('packages_business_payment_timeout'),
               value: 'past_due'
             },
             {

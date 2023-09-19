@@ -129,6 +129,7 @@
           @load-data="init"
           ref="bottomPanel"
           @showBottomPanel="handleShowBottomPanel"
+          @action="handleBottomPanelAction"
         ></BottomPanel>
         <ConsolePanel ref="console" @stopAuto="handleStopAuto"></ConsolePanel>
       </section>
@@ -165,6 +166,18 @@
       <SharedCacheDetails ref="sharedCacheDetails" width="380px"></SharedCacheDetails>
 
       <SharedCacheEditor v-if="['shareCache'].includes(dataflow.syncType)" ref="sharedCacheEditor"></SharedCacheEditor>
+
+      <UpgradeFee
+        :visible.sync="upgradeFeeVisible"
+        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :go-page="upgradeFeeGoPage"
+      ></UpgradeFee>
+
+      <UpgradeCharges
+        :visible.sync="upgradeChargesVisible"
+        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :go-page="upgradeFeeGoPage"
+      ></UpgradeCharges>
     </section>
   </section>
 </template>
@@ -182,7 +195,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
-import { ALARM_LEVEL_SORT, TASK_STATUS_MAP } from '@tap/business'
+import { ALARM_LEVEL_SORT, TASK_STATUS_MAP, UpgradeFee, UpgradeCharges } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
@@ -215,6 +228,8 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    UpgradeFee,
+    UpgradeCharges,
     AlarmStatistics,
     VExpandXTransition,
     VEmpty,
@@ -283,7 +298,9 @@ export default {
       taskRecord: {
         total: 0,
         items: []
-      }
+      },
+      upgradeFeeVisible: false,
+      upgradeChargesVisible: false
     }
   },
 
@@ -1238,6 +1255,19 @@ export default {
 
     handleOpenSharedCache(row = {}) {
       this.$refs.sharedCacheDetails?.getData(row.id)
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    handleBottomPanelAction(data = {}) {
+      if (data.type === 'ScheduleLimit') {
+        this.handleShowUpgradeDialog()
+      }
     }
   }
 }

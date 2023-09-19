@@ -204,7 +204,7 @@ export default {
       if (this.isDomesticStation && !this.isRecurring) {
         payMethods.push({
           icon: 'pay-cmbc',
-          label: '对公汇款',
+          label: i18n.t('dfs_order_pay_duigonghuikuan'),
           value: 'Balance'
         })
       }

@@ -38,6 +38,11 @@
           <VIcon size="16">workorder</VIcon>
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_wodegongdan') }}</span>
         </div>
+        <!--联系我们-->
+        <div class="command-item flex align-center gap-1 rounded-4" @click="goContactUs">
+          <VIcon size="16">consultation</VIcon>
+          <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
+        </div>
         <!---demo环境-->
         <div
           v-if="domain === 'demo.cloud.tapdata.net' && lang !== 'en'"
@@ -177,7 +182,7 @@ export default {
       // let downloadUrl = '';
       switch (command) {
         case 'workbench':
-          this.$router.push({ name: 'Workbench' })
+          this.$router.push({ name: 'Home' })
           break
         case 'help':
           window.open('https://docs.tapdata.io/', '_blank')
@@ -250,10 +255,16 @@ export default {
     handleGo(item) {
       window.open(item.link, '_blank')
     },
-    //
+    // 我的工单
     goTicketSystem() {
       this.$router.push({
         name: 'TicketSystem'
+      })
+    },
+    // 联系我们
+    goContactUs() {
+      this.$router.push({
+        name: 'userContactUs'
       })
     },
     //判断是否是付费用户

@@ -851,6 +851,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: '退款失败',
   packages_business_shared_const_yituikuan: '已退款',
   packages_business_shared_const_zhifushibai: '支付失败',
+  packages_business_payment_timeout: '支付超時',
   packages_business_shared_const_yizhifu: '已支付',
   packages_business_shared_const_weizhifu: '未支付',
   packages_business_shared_ws_client_webso: 'websocket 消息解析失败: ',
@@ -1127,5 +1128,18 @@ export default {
   packages_business_connections_preview_quanxianguanli: '權限管理',
   packages_business_connections_preview_shujulianjiequan: '數據連接權限',
   packages_business_notice_list_gonggaobiaoti: '公告標題',
-  packages_business_connections_list_wuquanxiandecao: '無權限的操作已被隱藏'
+  packages_business_connections_list_wuquanxiandecao: '無權限的操作已被隱藏',
+  packages_business_components_upgradecharges_dingyuexinyinqing: '訂閱新引擎',
+  packages_business_components_upgradecharges_shengjiguige: '升級規格',
+  packages_business_components_upgradecharges_dingyuefangshi: '訂閱方式',
+  packages_business_components_upgradecharges_keyongrenwushu: '可用任務數',
+  packages_business_components_upgradecharges_dangqianguige: '當前規格',
+  packages_business_components_upgradecharges_dingyueshengji: '訂閱升級',
+  packages_business_create_connection_sceneform_lianjieceshiwu: '連接測試無效，請檢查您的連接配置',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: '請先進行連接測試',
+  packages_business_logs_nodelog_qingshengjidingyue: '請升級訂閱以獲取更多任務數量，點擊彈窗顯示升級引導',
+  packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被調用的任務超過了限制數，',
+  packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！',
+  packages_business_setting_alarmsetting_qubangding: '去綁定',
+  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。'
 }
