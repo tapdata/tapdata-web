@@ -702,10 +702,10 @@ export default {
     responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
-      console.log('failList', failList)
       if (failList.length) {
         if (failList.some(t => t.code === 'Task.ScheduleLimit')) {
           this.handleShowUpgradeDialog()
+          return
         }
         let nameMapping = {}
         this.table.list.forEach(item => {
@@ -1111,6 +1111,12 @@ export default {
           )
           .then(async data => {
             const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              this.$message.error(this.$t('public_task_error_schedule_limit'))
+              return
+            }
+
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()
