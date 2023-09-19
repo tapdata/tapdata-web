@@ -13,7 +13,23 @@
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
+          <ElCol v-if="!isDomesticStation" :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              firstName:
+            </div>
+            <span>{{ userData.firstName || '-' }}</span>
+            <div
+              class="user-item__label font-color-light ml-3"
+              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
+            >
+              lastName:
+            </div>
+            <span>{{ userData.lastName || '-' }}</span>
+            <ElLink type="primary" class="ml-4" @click="dialogObj.firstName = true">{{
+              $t('public_button_revise')
+            }}</ElLink>
+          </ElCol>
+          <ElCol v-else :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_Center_yongHuNiCheng') }}
             </div>
@@ -246,7 +262,15 @@
       :visible.sync="dialogObj.password"
     >
       <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent label-position="top">
-        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+        <ElFormItem v-if="!isDomesticStation" prop="email" :label="$t('user_Center_youXiang')">
+          <ElInput
+            v-model="emailForm.email"
+            disabled
+            :placeholder="$t('user_Center_qingShuRuYouXiang')"
+            maxlength="50"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem v-else prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
             v-model="passwordForm.telephone"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
@@ -261,7 +285,26 @@
             </el-select>
           </ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
+        <ElFormItem
+          v-if="!isDomesticStation"
+          prop="newPassword"
+          :label="$t('user_Center_dangQianYouXiangYan')"
+          class="inline-form-item"
+        >
+          <ElInput
+            v-model="passwordForm.emailCode"
+            :placeholder="$t('user_Center_qingShuRuYanZheng')"
+            maxlength="50"
+          ></ElInput>
+          <VerificationCode
+            :request-options="getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')"
+            :disabled="!emailForm.email"
+            :style="{ width: '180px', textAlign: 'center' }"
+            class="ml-6"
+            type="text"
+          ></VerificationCode>
+        </ElFormItem>
+        <ElFormItem v-else prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
           <ElInput
             v-model="passwordForm.code"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
@@ -297,7 +340,7 @@
 
       <span slot="footer" class="dialog-footer">
         <VButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</VButton>
-        <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])" @>{{
+        <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])">{{
           $t('public_button_confirm')
         }}</VButton>
       </span>
@@ -543,10 +586,35 @@
         <span class="font-color-dark">{{ item.value }}</span>
       </div>
     </ElDialog>
+
+    <ElDialog
+      width="435px"
+      append-to-body
+      :title="$t('public_button_revise')"
+      :close-on-click-modal="false"
+      :visible.sync="dialogObj.firstName"
+    >
+      <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.native.prevent>
+        <ElFormItem prop="email" label="firstName">
+          <ElInput v-model="nameForm.firstName" maxlength="50"></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="email" label="lastName">
+          <ElInput v-model="nameForm.lastName" maxlength="50"></ElInput>
+        </ElFormItem>
+      </ElForm>
+
+      <span slot="footer" class="dialog-footer">
+        <VButton @click="dialogObj.firstName = false">{{ $t('public_button_cancel') }}</VButton>
+        <VButton type="primary" auto-loading @click="updateFirstName(arguments[0])">{{
+          $t('public_button_confirm')
+        }}</VButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
@@ -558,6 +626,7 @@ import { VTable } from '@tap/component'
 import { AGENT_TYPE_MAP } from '../instance/utils'
 import { NUMBER_MAP } from '@tap/business'
 import { openUrl, urlToBase64 } from '@tap/shared'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Center',
@@ -569,6 +638,8 @@ export default {
       userData: {
         username: '',
         nickname: '',
+        firstName: '',
+        lastName: '',
         avatar: '',
         telephone: '',
         wx: '',
@@ -577,7 +648,9 @@ export default {
         licenseCodes: []
       },
       nameForm: {
-        nickname: ''
+        nickname: '',
+        firstName: '',
+        lastName: ''
       },
       avatar: '',
       dialogObj: {
@@ -587,11 +660,13 @@ export default {
         editPhone: false,
         bindWx: false,
         bindEmail: false,
-        editEmail: false
+        editEmail: false,
+        firstName: false
       },
       passwordForm: {
         telephone: '',
         code: '',
+        emailCode: '',
         countryCode: '86',
         newPassword: '',
         newAgainPassword: ''
@@ -688,6 +763,9 @@ export default {
       },
       countryCode: []
     }
+  },
+  computed: {
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.init()
@@ -796,6 +874,24 @@ export default {
           this.$message.success(i18n.t('user_Center_xiuGaiNiChengCheng'))
         })
     },
+    updateFirstName(resetLoading) {
+      const { firstName, lastName } = this.nameForm
+      const params = {
+        firstName,
+        lastName
+      }
+      this.$axios
+        .patch('api/tcm/user', params)
+        .then(() => {
+          this.userData.firstName = cloneDeep(params.firstName)
+          this.userData.lastName = cloneDeep(params.lastName)
+          this.$message.success(i18n.t('public_message_operation_success'))
+          this.dialogObj.firstName = false
+        })
+        .finally(() => {
+          resetLoading?.()
+        })
+    },
     upload(evt) {
       let file = evt.target.files[0]
       const leftThan = file.size / 1024 < 500
@@ -878,6 +974,7 @@ export default {
         .patch('api/tcm/user/password', {
           phoneCode: passwordForm.code,
           countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86',
+          emailCode: passwordForm.emailCode, // 邮件验证吗
           password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
