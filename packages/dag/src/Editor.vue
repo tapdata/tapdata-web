@@ -689,7 +689,6 @@ export default {
         this.onAddMaterializedViewTargetNode(node)
         await this.$nextTick()
         await this.afterTaskSaved()
-        this.$refs.paperScroller.centerNode(node)
         this.setActiveNode(node.id)
         await this.$nextTick()
         this.setMaterializedViewVisible(true)
