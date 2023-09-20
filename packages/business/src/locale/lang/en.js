@@ -1207,5 +1207,6 @@ export default {
     'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks!',
   packages_business_setting_alarmsetting_qubangding: 'to bind',
   packages_business_setting_alarmsetting_jiancedaoninhai:
-    'It has been detected that you have not bound your email address, so email notification cannot be enabled.'
+    'It has been detected that you have not bound your email address, so email notification cannot be enabled.',
+  packages_business_verification_form_zhengzaijiyuren: 'Generating verification conditions based on tasks in progress'
 }

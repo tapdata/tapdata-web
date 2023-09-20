@@ -99,7 +99,7 @@
                 <span
                   v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"
                   class="ml-3 font-color-sslight"
-                  >正在基于任务生成校验条件</span
+                  >{{ $t('packages_business_verification_form_zhengzaijiyuren') }}</span
                 >
                 <VIcon
                   v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"

@@ -1141,5 +1141,6 @@ export default {
   packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被調用的任務超過了限制數，',
   packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！',
   packages_business_setting_alarmsetting_qubangding: '去綁定',
-  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。'
+  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
+  packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件'
 }
