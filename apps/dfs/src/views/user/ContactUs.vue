@@ -20,7 +20,7 @@
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
+        <ElButton type="text" class="mt-2" size="mini" @click="goSlack">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-grow-1">
@@ -162,6 +162,10 @@ export default {
 
     openChat() {
       window.$zoho.salesiq.chat.start?.()
+    },
+
+    goSlack() {
+      window.open(this.$store.state.config.slackLink, '_blank')
     }
   }
 }
