@@ -1036,6 +1036,8 @@ export default {
 
     async autoAddTable() {
       if (!this.taskId || this.list.length) return
+      this.autoAddTableLoading = true
+      this.updateAutoAddTableLoading()
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
@@ -1048,6 +1050,8 @@ export default {
       // 加载数据源的Capabilities
       const capabilitiesMap = await this.getCapabilities(connectionIds)
       if (!matchNodeList.length) {
+        this.autoAddTableLoading = false
+        this.updateAutoAddTableLoading()
         if (this.allStages.length > this.flowStages.length)
           return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
         return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
@@ -1063,8 +1067,8 @@ export default {
           inq: Array.from(new Set(tableNames))
         }
       }
-      this.autoAddTableLoading = true
-      this.updateAutoAddTableLoading()
+      // this.autoAddTableLoading = true
+      // this.updateAutoAddTableLoading()
       metadataInstancesApi
         .findInspect({
           where,
