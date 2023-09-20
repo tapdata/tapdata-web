@@ -359,7 +359,7 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '当前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '关联条件',
   packages_dag_nodes_mergetable_neiqianshuzupi: '内嵌数组匹配条件',
-  packages_dag_nodes_mergetable_guanlianhouxieru: '关联后写入路径',
+  packages_dag_nodes_mergetable_guanlianhouxieru: '字段写入路径',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新进内嵌数组',
   packages_dag_nodes_mergetable_shujuxierumo: '数据写入模式',
   packages_dag_nodes_rowfilter_tiaojianbiaodashi: '条件表达式',

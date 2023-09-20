@@ -526,17 +526,6 @@ export default {
     },
 
     handleAddTableNode() {
-      const props = {
-        name: '',
-        type: 'table',
-        databaseType: '',
-        connectionId: '',
-        tableName: '',
-        attrs: {
-          hasCreated: false
-        }
-      }
-
       let mergeProperties = this.activeNode.mergeProperties
 
       if (!mergeProperties) {

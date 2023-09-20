@@ -1755,16 +1755,18 @@ export default {
       if (!this.checkSourceMaxOutputs(source, true)) return
       if (!this.checkAllowTargetOrSource(source, target, true)) return
       this.command.exec(new QuickAddTargetCommand(source.id, target))
+
+      return target
     },
 
     quickAddSourceNode(target, nodeType) {
       const spaceX = 120
       const spaceY = 120
 
-      const newPosition = [target.attrs.position[0] - (NODE_WIDTH + spaceX), target.attrs.position[1]]
-      let movePosition = [spaceX, 0]
+      const newPosition = [target.attrs.position[0] - NODE_WIDTH - spaceX, target.attrs.position[1]]
+      let movePosition = [-spaceX, 0]
 
-      if (this.isSource(target)) {
+      if (target.$inputs.length) {
         newPosition[1] += spaceY
         movePosition = [0, spaceY]
       }

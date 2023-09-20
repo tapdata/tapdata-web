@@ -373,7 +373,7 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
-  packages_dag_nodes_mergetable_guanlianhouxieru: 'Write path after association',
+  packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
   packages_dag_nodes_mergetable_shujuxierumo: 'Data write mode',
   packages_dag_nodes_rowfilter_tiaojianbiaodashi: 'Conditional expression',

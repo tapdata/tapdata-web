@@ -6,7 +6,7 @@
     :close-on-press-escape="false"
     @update:visible="handleUpdateVisible"
   >
-    <div ref="container" class="h-100 flex flex-column" v-loading="schemaLoading" element-loading-background="#fff">
+    <div ref="container" class="h-100 flex flex-column" v-loading="loading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
@@ -83,13 +83,15 @@
           :getInputs="getInputs"
           :getOutputs="getOutputs"
           :tableOptions="tableOptions"
-          :isMainTable="checkMainTable(node.id)"
+          :isMainTable="checkMainTable(node)"
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
+          :has-target-node="!!targetNode"
           @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
           @add-node="$emit('add-node', node, $event)"
+          @add-target-node="$emit('add-target-node')"
           @load-schema="onLoadSchema(node.id)"
         ></Node>
         <TargetNode
@@ -141,6 +143,7 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
+      loading: false,
       schemaLoading: false,
       selectedNodeId: ''
     }
@@ -214,13 +217,15 @@ export default {
 
       this.initView()
 
-      if (!this.targetNode) {
+      /*if (!this.targetNode) {
         this.$emit('add-target-node')
         await this.afterTaskSaved()
-      }
+      }*/
 
+      this.loading = true
       await this.transformToDag()
       await this.loadSchema()
+      this.loading = false
       this.handleAutoLayout()
     }
   },
@@ -255,7 +260,7 @@ export default {
     },
 
     handleDelete() {
-      if (!this.selectedNodeId) return
+      if (!this.selectedNodeId || this.nodes.length === 1) return
 
       const { selectedNodeId: id } = this
       const managedElements = this.jsPlumbIns.getManagedElements()
@@ -319,78 +324,101 @@ export default {
     },
 
     async transformToDag() {
-      const nodes = []
-      const edges = []
-      const inputsMap = {}
-      const outputsMap = {}
-      const targetPathMap = {} // path: Node
-      const traverse = (children, _target) => {
-        for (const item of children) {
-          let source = item.id
-          let target = _target
-          let tableNode = this.findParentNodes(item.id, true)[0]
+      let mergeProperties = this.activeNode.mergeProperties
+      this.nodes = []
 
-          item.parentId = target
-          item.tableNode = tableNode
-          nodes.push(item)
-          this.$set(this.nodePositionMap, item.id, [0, 0]) // 初始化坐标
+      if (!mergeProperties?.length) {
+        mergeProperties = this.activeNode.mergeProperties = []
+        this.initMainNode()
+        await this.afterTaskSaved()
+      } else {
+        const nodes = []
+        const edges = []
+        const inputsMap = {}
+        const outputsMap = {}
+        const targetPathMap = {} // path: Node
+        const traverse = (children, _target) => {
+          for (const item of children) {
+            let source = item.id
+            let target = _target
+            let tableNode = this.findParentNodes(item.id, true)[0]
 
-          if (item.targetPath) {
-            const arr = item.targetPath.split('.')
+            item.parentId = target
+            item.tableNode = tableNode
+            nodes.push(item)
+            this.$set(this.nodePositionMap, item.id, [0, 0]) // 初始化坐标
 
-            if (arr.length > 1) {
-              const parentPath = arr.slice(0, arr.length - 1).join('.')
-              target = targetPathMap[parentPath] || target
+            if (item.targetPath) {
+              const arr = item.targetPath.split('.')
+
+              if (arr.length > 1) {
+                const parentPath = arr.slice(0, arr.length - 1).join('.')
+                target = targetPathMap[parentPath] || target
+              }
+
+              targetPathMap[item.targetPath] = item.id
             }
 
-            targetPathMap[item.targetPath] = item.id
-          }
+            if (target) {
+              // 连线
+              edges.push({ source, target })
 
-          // 连线
-          edges.push({ source, target })
+              // 上下游节点ID数组
+              let outputs = outputsMap[source]
+              let inputs = inputsMap[target]
 
-          // 上下游节点ID数组
-          let outputs = outputsMap[source]
-          let inputs = inputsMap[target]
+              if (!outputs) {
+                outputs = outputsMap[source] = []
+              }
 
-          if (!outputs) {
-            outputs = outputsMap[source] = []
-          }
+              outputs.push(target)
 
-          outputs.push(target)
+              if (!inputs) {
+                inputs = inputsMap[target] = []
+              }
 
-          if (!inputs) {
-            inputs = inputsMap[target] = []
-          }
+              inputs.push(source)
+            }
 
-          inputs.push(source)
-
-          // 递归
-          if (item.children?.length) {
-            traverse(item.children, item.id)
+            // 递归
+            if (item.children?.length) {
+              traverse(item.children, item.id)
+            }
           }
         }
+        traverse(mergeProperties, this.targetNode?.id)
+        this.nodes = nodes
+        this.inputsMap = inputsMap
+        this.outputsMap = outputsMap
+        await this.$nextTick()
+        edges.forEach(({ source, target }) => {
+          this.jsPlumbIns.connect({ uuids: [`${source}_source`, `${target}_target`] })
+        })
       }
+
+      this.initTargetNode()
+    },
+
+    initMainNode() {
       let mergeProperties = this.activeNode.mergeProperties
 
-      if (!mergeProperties) mergeProperties = this.activeNode.mergeProperties = []
+      this.$emit(
+        'add-node',
+        {
+          children: mergeProperties
+        },
+        {
+          mergeType: 'updateOrInsert'
+        }
+      )
+    },
 
-      inputsMap[this.targetNode.id] = []
-      outputsMap[this.targetNode.id] = []
-      traverse(mergeProperties, this.targetNode.id)
+    initTargetNode() {
+      if (!this.targetNode?.id) return
+
+      this.inputsMap[this.targetNode.id] = []
+      this.outputsMap[this.targetNode.id] = []
       this.$set(this.nodePositionMap, this.targetNode.id, [0, 0]) // 初始化坐标
-      this.nodes = nodes
-      this.inputsMap = inputsMap
-      this.outputsMap = outputsMap
-      // this.targetPathMap = targetPathMap
-
-      console.log('nodes', this.nodes)
-      await this.$nextTick()
-
-      edges.forEach(({ source, target }) => {
-        this.jsPlumbIns.connect({ uuids: [`${source}_source`, `${target}_target`] })
-      })
-      console.log('transformToDag', nodes, edges)
     },
 
     /**
@@ -511,9 +539,9 @@ export default {
       return this.outputsMap[nodeId]
     },
 
-    checkMainTable(nodeId) {
-      console.log('checkMainTable', this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id)
-      return this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id
+    checkMainTable(node) {
+      let nodeId = node.id
+      return !node.parentId || (this.targetNode && this.outputsMap?.[nodeId]?.[0] === this.targetNode.id)
     },
 
     handleChangeParent(node, parentId) {
@@ -585,19 +613,35 @@ export default {
 
     addNode(node) {
       const { id: source, parentId: target } = node
-      let inputs = this.inputsMap[target]
-
-      if (!inputs) inputs = this.inputsMap[target] = []
-
-      inputs.push(source)
-      this.outputsMap[source] = [target]
       this.nodes.push(node)
       this.$set(this.nodePositionMap, source, [0, 0]) // 初始化坐标
 
-      this.$nextTick(() => {
-        this.jsPlumbIns.connect({ uuids: [node.id + '_source', node.parentId + '_target'] })
-        this.handleAutoLayout()
+      if (target) {
+        let inputs = this.inputsMap[target]
+        if (!inputs) inputs = this.inputsMap[target] = []
+        inputs.push(source)
+        this.outputsMap[source] = [target]
+        this.$nextTick(() => {
+          this.jsPlumbIns.connect({ uuids: [node.id + '_source', node.parentId + '_target'] })
+          this.handleAutoLayout()
+        })
+      }
+    },
+
+    async addTargetNode(node) {
+      console.log('addTargetNode', node)
+      let mergeProperties = this.activeNode.mergeProperties
+      let inputs = (this.inputsMap[node.id] = [])
+      this.$set(this.nodePositionMap, node.id, [0, 0]) // 初始化坐标
+      await this.$nextTick()
+      mergeProperties.forEach(item => {
+        inputs.push(item.id)
+        this.outputsMap[item.id] = [node.id]
+        this.jsPlumbIns.connect({ uuids: [item.id + '_source', node.id + '_target'] })
       })
+      this.handleAutoLayout()
+      await this.afterTaskSaved()
+      this.onLoadTargetSchema()
     },
 
     onLoadSchema(id) {
@@ -607,6 +651,8 @@ export default {
     },
 
     onLoadTargetSchema() {
+      if (!this.targetNode?.id) return
+
       this.loadNodeSchema(this.targetNode.id)
       this.jsPlumbIns.revalidate(this.targetNode.id)
     },

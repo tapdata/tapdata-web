@@ -11,6 +11,15 @@
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
+        <ElLink
+          v-if="!hasTargetNode && isMainTable"
+          class="fs-8 ml-auto text-white"
+          size="mini"
+          @click="$emit('add-target-node')"
+        >
+          <VIcon>add</VIcon>
+          写入目标</ElLink
+        >
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -183,7 +192,8 @@ export default {
     isMainTable: Boolean,
     tableOptions: Array,
     targetPathMap: Object,
-    nodeSchemaMap: Object
+    nodeSchemaMap: Object,
+    hasTargetNode: Boolean
   },
 
   components: {
@@ -686,7 +696,7 @@ export default {
       }
 
       this.$emit('add-node', {
-        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite',
+        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateOrInsert',
         targetPath: this.fieldName
           ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
           : this.node.targetPath || ''
@@ -715,7 +725,7 @@ export default {
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || []
       }
-
+      this.dagNode.databaseType = connection.databaseType
       Object.keys(nodeAttrs).forEach(key => {
         this.$set(this.dagNode.attrs, key, nodeAttrs[key])
       })
@@ -728,6 +738,7 @@ export default {
     },
 
     async onChangeTable(table) {
+      this.node.tableName = table
       this.dagNode.name = table
       let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })

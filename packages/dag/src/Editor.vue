@@ -646,7 +646,7 @@ export default {
         parentId: parentNode.id,
         tableName: newNode.name,
         tableNode: newNode,
-        joinKeys: [],
+        // joinKeys: [],
         children: []
       }
 
@@ -666,6 +666,8 @@ export default {
           hasCreated: false
         }
       })
+
+      this.$refs.materializedView.addTargetNode(newNode)
     },
 
     async checkMaterializedView(query = {}) {
