@@ -326,12 +326,12 @@
                 ></li>
               </ul>
               <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
-              <div class="upgrade-text upgrade-mb16">
-                {{ $t('dfs_instance_instance_ruxuliaojiegeng')
-                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">
-                  Release Notes</el-link
-                >
-              </div>
+<!--              <div class="upgrade-text upgrade-mb16">-->
+<!--                {{ $t('dfs_instance_instance_ruxuliaojiegeng')-->
+<!--                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">-->
+<!--                  Release Notes</el-link-->
+<!--                >-->
+<!--              </div>-->
             </div>
             <div class="dialog-btn flex justify-content-end mt-6">
               <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
