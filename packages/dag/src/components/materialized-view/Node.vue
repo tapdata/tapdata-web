@@ -74,7 +74,7 @@
               {{ $t('public_button_add') }}
             </ElButton>
             <div v-else class="flex flex-column gap-2">
-              <div class="flex align-center gap-2" v-for="(keys, i) in node.joinKeys" :key="i">
+              <div class="flex align-center gap-1" v-for="(keys, i) in node.joinKeys" :key="i">
                 <FieldSelect
                   v-model="keys.source"
                   itemLabel="field_name"

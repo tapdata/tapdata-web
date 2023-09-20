@@ -96,25 +96,34 @@
   color: #009a29;
 }
 ::v-deep {
-  .node-form {
-    .el-form-item {
-      margin-bottom: 8px;
+  .el-form-item {
+    margin-bottom: 8px;
 
-      .el-form-item__label {
-        width: 100%;
-        font-size: 12px;
-        line-height: 20px;
-        padding-bottom: 0;
-        margin-bottom: 6px;
-      }
+    .el-form-item__label {
+      width: 100%;
+      font-size: 12px;
+      line-height: 20px;
+      padding-bottom: 0;
+      margin-bottom: 6px;
+    }
 
-      .el-button--ghost {
-        border: 1px dashed #dcdfe6;
-      }
+    .el-button--ghost {
+      border: 1px dashed #dcdfe6;
     }
   }
 
-  .el-input--small .el-input__inner {
-    height: 32px !important;
+  .el-input {
+    .el-input__inner {
+      height: 32px !important;
+      padding-right: 24px;
+      font-size: 12px;
+    }
+    .el-input__suffix {
+      right: 0;
+    }
+
+    &:not(.el-input--prefix) .el-input__inner {
+      padding-left: 8px;
+    }
   }
 }
