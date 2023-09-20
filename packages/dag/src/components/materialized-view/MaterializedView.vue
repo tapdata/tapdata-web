@@ -82,11 +82,15 @@
           :parentSchema="nodeSchemaMap[node.parentId]"
           :getInputs="getInputs"
           :getOutputs="getOutputs"
+          :inputs="inputsMap[node.id]"
           :tableOptions="tableOptions"
           :isMainTable="checkMainTable(node)"
+          :inputsMap="inputsMap"
+          :nodeMap="nodeMap"
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
           :has-target-node="!!targetNode"
+          :getNodeById="getNodeById"
           @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
@@ -689,7 +693,9 @@ export default {
           }
         }, 100)
       })
-    }
+    },
+
+    getNodeById() {}
   }
 }
 </script>

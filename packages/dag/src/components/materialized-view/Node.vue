@@ -155,8 +155,9 @@
 </template>
 
 <script>
-import { merge } from 'lodash'
+import { unionBy, orderBy, merge } from 'lodash'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { Path } from '@formily/path'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { Time, ClickOutside } from '@tap/shared'
@@ -170,6 +171,7 @@ export default {
 
   props: {
     position: Array,
+    inputs: Array,
     schema: Array,
     parentSchema: Array,
     node: {
@@ -188,6 +190,8 @@ export default {
     tableOptions: Array,
     targetPathMap: Object,
     nodeSchemaMap: Object,
+    nodeMap: Object,
+    inputsMap: Object,
     hasTargetNode: Boolean
   },
 
@@ -247,13 +251,57 @@ export default {
 
     treeData() {
       // console.log('computed:treeData')
-      if (!this.schema) return []
+      let { schema } = this
 
-      const treeData = this.createTree(this.schema)
+      if (!schema) return []
+
       const { targetPath } = this.node
+      const richFields = inputs => {
+        // const inputFields = []
+        let arr = []
+        for (const input of inputs) {
+          const inputNode = this.nodeMap[input]
+          let fields = this.nodeSchemaMap[input]
+
+          if (!fields) continue
+
+          if (this.inputsMap[input]?.length) {
+            arr = unionBy(arr, fields, richFields(this.inputsMap[input]), 'field_name')
+            // Object.assign(map, richFields($parent.inputsMap[input]))
+          } else {
+            if (inputNode.targetPath) {
+              fields = fields.map(field => {
+                return {
+                  ...field,
+                  field_name: `${inputNode.targetPath}.${field.field_name}`
+                }
+              })
+              fields.unshift({
+                field_name: inputNode.targetPath,
+                dataType: 'DOCUMENT'
+              })
+            }
+            arr = unionBy(arr, fields)
+          }
+        }
+        return arr
+      }
+      const inputs = this.inputsMap?.[this.node.id]
+
+      if (inputs?.length) {
+        const mergedFields = richFields(this.inputsMap[this.node.id])
+        schema = unionBy(schema, mergedFields, 'field_name')
+        schema.sort((a, b) => {
+          return a.field_name.localeCompare(b.field_name)
+        })
+        console.log('newFields', mergedFields)
+        console.log('schema', schema)
+      }
+
+      const treeData = this.createTree(schema)
 
       // 根据写入路径组装treeData
-      if (targetPath) {
+      /*if (targetPath) {
         const arr = this.node.targetPath.split('.')
         const prefix = targetPath + '.'
         const pathArr = Object.keys(this.targetPathMap).filter(path => path !== targetPath && path.startsWith(prefix))
@@ -273,7 +321,7 @@ export default {
             children: this.nodeSchemaMap[node.id]
           })
         }
-      }
+      }*/
 
       return treeData
     },
