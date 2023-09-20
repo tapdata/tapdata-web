@@ -238,11 +238,11 @@ export default {
 
   mounted() {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
-      this.handleDelete()
+      this.visible && this.handleDelete()
     })
     Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
       e.preventDefault()
-      this.handleAutoLayout()
+      this.visible && this.handleAutoLayout()
     })
   },
 
@@ -600,9 +600,11 @@ export default {
         }
       }
 
-      await this.afterTaskSaved()
-      // 更新目标节点schema
-      await this.loadNodeSchema(this.targetNode.id)
+      if (this.targetNode?.id) {
+        // 更新目标节点schema
+        await this.afterTaskSaved()
+        await this.loadNodeSchema(this.targetNode.id)
+      }
     },
 
     updateSourceTarget(source, target, newTarget) {
@@ -617,7 +619,8 @@ export default {
       })[0]
 
       if (!newTargetInputs) {
-        newTargetInputs = this.inputsMap[newTarget] = []
+        this.$set(this.inputsMap, newTarget, [])
+        newTargetInputs = this.inputsMap[newTarget]
       }
 
       ~inputIndex && inputs.splice(inputIndex, 1)
@@ -640,9 +643,15 @@ export default {
 
       if (target) {
         let inputs = this.inputsMap[target]
-        if (!inputs) inputs = this.inputsMap[target] = []
+
+        if (!inputs) {
+          this.$set(this.inputsMap, target, [])
+          inputs = this.inputsMap[target]
+        }
+
         inputs.push(source)
-        this.outputsMap[source] = [target]
+        this.$set(this.outputsMap, source, [target])
+
         this.$nextTick(() => {
           this.jsPlumbIns.connect({ uuids: [node.id + '_source', node.parentId + '_target'] })
           this.handleAutoLayout()
@@ -653,7 +662,8 @@ export default {
     async addTargetNode(node) {
       console.log('addTargetNode', node)
       let mergeProperties = this.activeNode.mergeProperties
-      let inputs = (this.inputsMap[node.id] = [])
+      this.$set(this.inputsMap, node.id, [])
+      let inputs = this.inputsMap[node.id]
       this.$set(this.nodePositionMap, node.id, [0, 0]) // 初始化坐标
       await this.$nextTick()
       mergeProperties.forEach(item => {
@@ -663,7 +673,7 @@ export default {
       })
       this.handleAutoLayout()
       await this.afterTaskSaved()
-      this.onLoadTargetSchema()
+      await this.onLoadTargetSchema()
     },
 
     async onLoadSchema(id) {

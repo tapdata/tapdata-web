@@ -37,6 +37,7 @@
           v-model="dagNode.tableName"
           placeholder="请选择存储表"
           :disabled="!dagNode.connectionId"
+          collapse-tags
           :method="loadTable"
           :connectionId="dagNode.connectionId"
           itemType="object"
@@ -44,7 +45,7 @@
           @change="onChangeTable"
         ></TableSelect>
       </div>
-      <ElForm class="node-form px-2" label-position="top">
+      <ElForm class="node-form px-2" label-position="top" @submit.prevent>
         <template v-if="!isMainTable">
           <ElFormItem label="关联表">
             <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
@@ -97,6 +98,7 @@
           :label="$t('packages_dag_nodes_mergetable_neiqianshuzupi')"
         >
           <FieldSelect
+            class="w-100"
             v-model="node.arrayKeys"
             itemLabel="field_name"
             itemValue="field_name"
@@ -112,7 +114,12 @@
         <code class="color-success-light-5 mr-2">{</code>
         <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
           <div ref="fieldPopover">
-            <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
+            <ElInput
+              v-model="fieldName"
+              autofocus
+              placeholder="输入字段名"
+              @keydown.native.enter="onSaveFieldName"
+            ></ElInput>
             <div class="mt-2 text-end">
               <el-button size="mini" type="text" @click="fieldNameVisible = false">取消</el-button>
               <el-button type="primary" size="mini" @click="onSaveFieldName">确定</el-button>
@@ -255,29 +262,34 @@ export default {
 
       if (!schema) return []
 
-      const { targetPath } = this.node
-      const richFields = inputs => {
-        // const inputFields = []
+      const richFields = (inputs, targetPath) => {
         let arr = []
         for (const input of inputs) {
           const inputNode = this.nodeMap[input]
           let fields = this.nodeSchemaMap[input]
-
           if (!fields) continue
 
+          let nodeTargetPath = inputNode.targetPath
+          if (nodeTargetPath && targetPath) {
+            nodeTargetPath = nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
+          }
+
           if (this.inputsMap[input]?.length) {
-            arr = unionBy(arr, fields, richFields(this.inputsMap[input]), 'field_name')
-            // Object.assign(map, richFields($parent.inputsMap[input]))
+            arr = unionBy(arr, fields, richFields(this.inputsMap[input], nodeTargetPath), 'field_name')
           } else {
-            if (inputNode.targetPath) {
+            // if (nodeTargetPath && targetPath) {
+            //   nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
+            // }
+
+            if (nodeTargetPath) {
               fields = fields.map(field => {
                 return {
                   ...field,
-                  field_name: `${inputNode.targetPath}.${field.field_name}`
+                  field_name: `${nodeTargetPath}.${field.field_name}`
                 }
               })
               fields.unshift({
-                field_name: inputNode.targetPath,
+                field_name: nodeTargetPath,
                 dataType: 'DOCUMENT'
               })
             }
@@ -289,39 +301,15 @@ export default {
       const inputs = this.inputsMap?.[this.node.id]
 
       if (inputs?.length) {
-        const mergedFields = richFields(this.inputsMap[this.node.id])
+        const mergedFields = richFields(this.inputsMap[this.node.id], this.node.targetPath)
         schema = unionBy(schema, mergedFields, 'field_name')
         schema.sort((a, b) => {
           return a.field_name.localeCompare(b.field_name)
         })
-        console.log('newFields', mergedFields)
         console.log('schema', schema)
       }
 
       const treeData = this.createTree(schema)
-
-      // 根据写入路径组装treeData
-      /*if (targetPath) {
-        const arr = this.node.targetPath.split('.')
-        const prefix = targetPath + '.'
-        const pathArr = Object.keys(this.targetPathMap).filter(path => path !== targetPath && path.startsWith(prefix))
-
-        if (pathArr.length > 1) {
-          console.warn('多层路径暂不支持解析')
-        }
-
-        for (const path of pathArr) {
-          const node = this.targetPathMap[path]
-          const newPath = path.substring(prefix.length)
-          const pathKeys = newPath.split('.')
-
-          treeData.unshift({
-            field_name: pathKeys[0],
-            dataType: 'DOCUMENT',
-            children: this.nodeSchemaMap[node.id]
-          })
-        }
-      }*/
 
       return treeData
     },
@@ -722,6 +710,9 @@ export default {
         case 'Array':
           this.fieldName = ''
           this.fieldNameVisible = true
+          this.$nextTick(() => {
+            this.$refs.fieldPopover.querySelector('input')?.focus()
+          })
           break
       }
     },
