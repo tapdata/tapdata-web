@@ -11,14 +11,9 @@
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
-        <ElLink
-          v-if="!hasTargetNode && isMainTable"
-          class="fs-8 ml-auto text-white"
-          size="mini"
-          @click="$emit('add-target-node')"
-        >
+        <ElButton v-if="!hasTargetNode && isMainTable" class="ml-auto" size="mini" @click="$emit('add-target-node')">
           <VIcon>add</VIcon>
-          写入目标</ElLink
+          写入目标</ElButton
         >
       </div>
       <div class="flex gap-2 p-2">
@@ -640,12 +635,12 @@ export default {
 
     handleAddJoinKey() {
       if (!this.node.joinKeys) {
-        this.node.joinKeys = [
+        this.$set(this.node, 'joinKeys', [
           {
             source: '',
             target: ''
           }
-        ]
+        ])
         return
       }
       this.node.joinKeys.push({

@@ -212,6 +212,7 @@ export default {
     async visible(val) {
       if (!val) {
         this.resetView()
+        this.unwatchMergeProperties?.()
         return
       }
 
@@ -227,6 +228,7 @@ export default {
       await this.loadSchema()
       this.loading = false
       this.handleAutoLayout()
+      this.watchMergeProperties()
     }
   },
 
@@ -242,6 +244,19 @@ export default {
 
   methods: {
     ...mapActions('dataflow', ['updateDag']),
+
+    // activeNode.mergeProperties
+    watchMergeProperties() {
+      this.unwatchMergeProperties?.()
+      this.unwatchMergeProperties = this.$watch(
+        'activeNode.mergeProperties',
+        () => {
+          console.log('watchMergeProperties')
+          this.updateDag({ vm: this })
+        },
+        { deep: true }
+      )
+    },
 
     handleUpdateVisible(val) {
       this.$emit('update:visible', val)
@@ -556,31 +571,34 @@ export default {
 
       node.parentId = parentId
       newParent.children.push(node)
-      this.updateDag({ vm: this })
+      // this.updateDag({ vm: this })
 
       if (!node.targetPath) {
         this.updateSourceTarget(node.id, oldParentId, parentId)
       }
     },
 
-    handleChangePath(node, path) {
-      node.targetPath = path
+    async handleChangePath(node, path) {
+      this.$set(node, 'targetPath', path)
       const arr = path.split('.')
       const outputs = this.outputsMap[node.id]
       let { parentId } = node
 
-      if (arr.length > 1) {
-        const parentPath = arr.slice(0, arr.length - 1).join('.')
-        const parentNode = this.nodes.find(node => node.targetPath === parentPath)
-        parentId = parentNode?.id || parentId
+      if (!this.checkMainTable(node)) {
+        if (arr.length > 1) {
+          const parentPath = arr.slice(0, arr.length - 1).join('.')
+          const parentNode = this.nodes.find(node => node.targetPath === parentPath)
+          parentId = parentNode?.id || parentId
+        }
+
+        if (parentId !== outputs[0]) {
+          this.updateSourceTarget(node.id, outputs[0], parentId)
+        }
       }
 
-      if (parentId !== outputs[0]) {
-        this.updateSourceTarget(node.id, outputs[0], parentId)
-      }
-
+      await this.afterTaskSaved()
       // 更新目标节点schema
-      this.loadNodeSchema(this.targetNode.id)
+      await this.loadNodeSchema(this.targetNode.id)
     },
 
     updateSourceTarget(source, target, newTarget) {
@@ -644,16 +662,16 @@ export default {
       this.onLoadTargetSchema()
     },
 
-    onLoadSchema(id) {
-      this.loadNodeSchema(id)
+    async onLoadSchema(id) {
+      await this.loadNodeSchema(id)
       this.jsPlumbIns.revalidate(id)
-      this.onLoadTargetSchema()
+      await this.onLoadTargetSchema()
     },
 
-    onLoadTargetSchema() {
+    async onLoadTargetSchema() {
       if (!this.targetNode?.id) return
 
-      this.loadNodeSchema(this.targetNode.id)
+      await this.loadNodeSchema(this.targetNode.id)
       this.jsPlumbIns.revalidate(this.targetNode.id)
     },
 
