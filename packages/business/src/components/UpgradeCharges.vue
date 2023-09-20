@@ -74,44 +74,37 @@ export default {
   methods: {
     loadData() {
       let filter = {
-        where: {},
-        size: 100,
-        page: 1
-        // sort: [this.order]
+        limit: 500,
+        skip: 0,
+        sort: ['createAt desc'],
+        where: {
+          status: {
+            $ne: 'invalid' //过滤 invild
+          }
+        }
       }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(async data => {
+      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
         this.list =
           data.items
-            ?.filter(t => t.orderInfo?.chargeProvider !== 'FreeTier')
-            ?.map(t => {
-              const specLabel = getSpec(t.spec)
-              const taskNum = (t.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
-              const canUsedNum = taskNum - (t.metric?.runningTaskNum || 0)
-              const isMaximal = t.spec.name === '8xlarge'
-              const { subscribeDto = {}, license = {}, chargeProvider } = t.orderInfo || {}
-              const { periodUnit, subscribeType, paymentMethod } = subscribeDto
+            ?.filter(t => t.status === 'active' && t.totalAmount !== 0)
+            ?.map(item => {
+              item.subscriptionMethodLabel =
+                getPaymentMethod(
+                  { periodUnit: item.periodUnit, type: item.subscribeType },
+                  item.paymentMethod || 'Stripe'
+                ) || '-'
 
-              let subscriptionMethodLabel = '-'
-              if (chargeProvider === 'FreeTier') {
-                subscriptionMethodLabel = this.$t('dfs_instance_instance_mianfei')
-              } else if (t.publicAgent) {
-                subscriptionMethodLabel = this.$t('dfs_instance_instance_gongyongshili')
-              } else if (['Stripe', 'Balance'].includes(chargeProvider)) {
-                subscriptionMethodLabel =
-                  getPaymentMethod(
-                    { periodUnit: periodUnit, type: subscribeType },
-                    paymentMethod || 'Stripe',
-                    chargeProvider
-                  ) || '-'
+              if (item.subscribeItems?.length > 0) {
+                const it = item.subscribeItems[0] || {}
+                item.specLabel = it.specLabel = getSpec(it.spec) || '-'
+                const { resource = {} } = it
+                item.taskNum = (resource.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
+                item.canUsedNum = item.taskNum - (resource.metric?.runningTaskNum || 0)
+                item.isMaximal = resource.spec?.name === '8xlarge'
+                item.subscriptionMethodLabel =
+                  it.amount === 0 ? this.$t('packages_component_src_upgradefee_mianfei') : item.subscriptionMethodLabel
               }
-
-              return Object.assign({}, t, {
-                specLabel,
-                taskNum,
-                canUsedNum,
-                subscriptionMethodLabel,
-                isMaximal
-              })
+              return item
             }) || []
       })
     },
