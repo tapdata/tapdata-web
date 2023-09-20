@@ -15,7 +15,7 @@
         }}</ElButton>
 <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
-      <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="!isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
@@ -31,7 +31,7 @@
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
           <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
@@ -47,7 +47,7 @@
         </ElTooltip>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
@@ -86,8 +86,9 @@ export default {
   name: 'Center',
   inject: ['buried'],
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic'
     return {
-      isEn: i18n.locale === 'en'
+      isDomesticStation
     }
   },
 
