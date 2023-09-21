@@ -31,6 +31,11 @@
     .node-title {
       background-color: #86909c;
     }
+    ::v-deep {
+      .field-icon {
+        color: #86909c;
+      }
+    }
   }
 
   &.--main-table {
@@ -39,6 +44,11 @@
     }
     .node-title {
       background-color: #f3961a;
+    }
+    ::v-deep {
+      .field-icon {
+        color: #f3961a;
+      }
     }
   }
 

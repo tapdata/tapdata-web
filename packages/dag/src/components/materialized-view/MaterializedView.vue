@@ -89,7 +89,6 @@
           :nodeMap="nodeMap"
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
-          :has-target-node="!!targetNode"
           :getNodeById="getNodeById"
           @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
@@ -535,12 +534,28 @@ export default {
         this.nodeSchemaMap,
         nodeId,
         fields
-          .sort((a, b) => a.columnPosition - b.columnPosition)
           .map(item => {
             item.dataType = item.data_type.replace(/\(.+\)/, '')
             item.indicesUnique = !!columnsMap[item.field_name]
             item.isPrimaryKey = item.primary_key_position > 0
             return item
+          })
+          .sort((a, b) => {
+            let aVal, bVal
+
+            if (a.isPrimaryKey) aVal = 1
+            else if (a.indicesUnique) aVal = 2
+            else aVal = 3
+
+            if (b.isPrimaryKey) bVal = 1
+            else if (b.indicesUnique) bVal = 2
+            else bVal = 3
+
+            if (aVal === bVal) {
+              return a.field_name.localeCompare(b.field_name)
+            }
+
+            return aVal - bVal
           })
       )
     },

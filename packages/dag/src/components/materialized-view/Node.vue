@@ -6,7 +6,6 @@
       '--main-table': isMainTable
     }"
     :style="nodeStyle"
-    @click="mouseClick"
   >
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
@@ -226,17 +225,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', [
-      'nodeById',
-      'isActionActive',
-      'isNodeActive',
-      'isNodeSelected',
-      'isMultiSelect',
-      'processorNodeTypes',
-      'hasNodeError',
-      'stateIsReadonly',
-      'activeType'
-    ]),
+    ...mapGetters('dataflow', ['nodeById', 'isActionActive', 'isNodeSelected']),
 
     ins() {
       return this.node?.__Ctor || {}
@@ -304,7 +293,21 @@ export default {
         const mergedFields = richFields(this.inputsMap[this.node.id], this.node.targetPath)
         schema = unionBy(schema, mergedFields, 'field_name')
         schema.sort((a, b) => {
-          return a.field_name.localeCompare(b.field_name)
+          let aVal, bVal
+
+          if (a.isPrimaryKey) aVal = 1
+          else if (a.indicesUnique) aVal = 2
+          else aVal = 3
+
+          if (b.isPrimaryKey) bVal = 1
+          else if (b.indicesUnique) bVal = 2
+          else bVal = 3
+
+          if (aVal === bVal) {
+            return a.field_name.localeCompare(b.field_name)
+          }
+
+          return aVal - bVal
         })
         console.log('schema', schema)
       }
@@ -344,7 +347,6 @@ export default {
   },
 
   mounted() {
-    // this.node.id && this.loadSchema()
     if (this.node && this.ins) {
       this.__init()
     }
@@ -616,31 +618,6 @@ export default {
       }
 
       return root.children
-    },
-
-    async loadSchema() {
-      this.loading = true
-      const params = {
-        nodeId: this.node.id,
-        fields: ['original_name', 'fields', 'qualified_name'],
-        page: 1,
-        pageSize: 20
-      }
-      const {
-        items: [schema = {}]
-      } = await metadataInstancesApi.nodeSchemaPage(params)
-      const { fields = [], indices = [] } = schema
-
-      let columnsMap = indices.reduce((map, item) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = true))
-        return map
-      }, {})
-
-      this.treeData = this.createTree(
-        fields.sort((a, b) => a.columnPosition - b.columnPosition),
-        columnsMap
-      )
-      this.loading = false
     },
 
     renderContent(h, { node, data, store }) {
