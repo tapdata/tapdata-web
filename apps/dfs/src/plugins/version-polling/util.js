@@ -24,16 +24,16 @@ export function createWorkerFunc() {
   let timer
   let options
 
-  self.onmessage = event => {
+  self.onmessage = function (event) {
     let code = event.data['code']
     options = Object.assign({}, options, event.data['data'])
     const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } = options
 
-    const runReq = () => {
+    const runReq = function () {
       fetch(htmlFileUrl, {
         method: 'HEAD',
         cache: 'no-cache'
-      }).then(response => {
+      }).then(function (response) {
         const etag = response.headers.get('etag')
 
         if (lastEtag !== etag) {

@@ -25,7 +25,7 @@ function handleVisibilityChange() {
   }
 }
 
-export class Index {
+export class VersionPolling {
   appEtag = ''
 
   constructor(options) {
@@ -56,6 +56,8 @@ export class Index {
     if (silent) {
       return
     }
+
+    console.log('createWorkerFunc', createWorkerFunc)
 
     myWorker = createWorker(createWorkerFunc)
 
@@ -101,7 +103,7 @@ export class Index {
 }
 
 export function createVersionPolling(options) {
-  const versionPolling = new Index(options)
+  const versionPolling = new VersionPolling(options)
 
   return versionPolling
 }
