@@ -107,7 +107,7 @@ export default ({ routes }) => {
       onUpdate: self => {
         const h = window.App.$createElement
         Notification({
-          customClass: 'w-auto',
+          customClass: 'version-upgrade-notification',
           title: '',
           message: h(
             'div',
@@ -115,10 +115,10 @@ export default ({ routes }) => {
               class: 'flex align-items-start gap-2 ml-n3 mr-n2'
             },
             [
-              h('ElImage', { attrs: { src: require('@/assets/image/version-rocket.svg') } }),
-              h('div', { class: 'flex flex-column align-items-start gap-2' }, [
-                h('span', { class: 'text-primary fs-6 fw-sub' }, '系统更新'),
-                h('span', { class: '' }, '系统已升级, 点击刷新，立即体验新功能！'),
+              h('ElImage', { class: 'flex-shrink-0', attrs: { src: require('@/assets/image/version-rocket.svg') } }),
+              h('div', { class: 'flex flex-column align-items-start gap-2 text-start' }, [
+                h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
+                h('span', { class: '' }, i18n.t('dfs_system_description')),
                 h(
                   'el-button',
                   {
@@ -126,7 +126,7 @@ export default ({ routes }) => {
                     props: { type: 'primary', size: 'mini' },
                     on: { click: () => self.onRefresh() }
                   },
-                  '刷新'
+                  i18n.t('public_button_refresh')
                 )
               ])
             ]
