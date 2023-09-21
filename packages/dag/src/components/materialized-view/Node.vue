@@ -95,7 +95,7 @@
           </ElFormItem>
         </template>
 
-        <ElFormItem v-if="node.parentId" :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
+        <ElFormItem v-if="node.parentId || hasTargetNode" :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
           <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
         </ElFormItem>
 
