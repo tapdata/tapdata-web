@@ -19,6 +19,8 @@ import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { Notification } from 'element-ui'
+import { createVersionPolling } from './plugins/version-polling'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -96,6 +98,44 @@ export default ({ routes }) => {
       },
       render: h => h(App)
     }).$mount('#app')
+
+    // 版本升级检测
+    createVersionPolling({
+      appETagKey: '__APP_ETAG__',
+      pollingInterval: 5 * 1000, // 单位为毫秒
+      silent: process.env.NODE_ENV === 'development', // 开发环境下不检测
+      onUpdate: self => {
+        const h = window.App.$createElement
+        Notification({
+          customClass: 'w-auto',
+          title: '',
+          message: h(
+            'div',
+            {
+              class: 'flex align-items-start gap-2 ml-n3 mr-n2'
+            },
+            [
+              h('ElImage', { attrs: { src: require('@/assets/image/version-rocket.svg') } }),
+              h('div', { class: 'flex flex-column align-items-start gap-2' }, [
+                h('span', { class: 'text-primary fs-6 fw-sub' }, '系统更新'),
+                h('span', { class: '' }, '系统已升级, 点击刷新，立即体验新功能！'),
+                h(
+                  'el-button',
+                  {
+                    class: 'ml-auto',
+                    props: { type: 'primary', size: 'mini' },
+                    on: { click: () => self.onRefresh() }
+                  },
+                  '刷新'
+                )
+              ])
+            ]
+          ),
+          duration: 0,
+          position: 'bottom-right'
+        })
+      }
+    })
 
     // 路由守卫
     router.beforeEach((to, from, next) => {
