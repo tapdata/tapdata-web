@@ -41,6 +41,7 @@
           </template>
         </AsyncSelect>
         <TableSelect
+          class="table-select"
           v-model="dagNode.tableName"
           placeholder="请选择表"
           :disabled="!dagNode.connectionId"
