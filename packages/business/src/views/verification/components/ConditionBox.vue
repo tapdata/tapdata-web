@@ -1093,7 +1093,7 @@ export default {
             } = m
 
             const sourceTableList = Object.keys(tableNameRelation)
-            sourceTableList.forEach((ge, geIndex) => {
+            sourceTableList.forEach(ge => {
               let item = this.getItemOptions()
               // 填充source
               item.source.nodeId = source
@@ -1404,17 +1404,6 @@ export default {
         .join(',')
     },
 
-    useHandle(handle, item) {
-      return (...args) => {
-        handle(item, ...args)
-      }
-    },
-
-    handleChangeFieldBox(data, item) {
-      item.source.columns = data.map(t => t.source)
-      item.target.columns = data.map(t => t.target)
-    },
-
     debounceValidate: debounce(function () {
       this.validate()
     }, 200),
@@ -1543,7 +1532,6 @@ export default {
       }
 
       this.updateErrorMsg('')
-      return
     },
 
     loadDoc() {
