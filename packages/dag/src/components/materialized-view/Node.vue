@@ -10,7 +10,9 @@
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-1">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }} </span>
-        <span class="ml-1 flex-shrink-0 ellipsis" style="color: rgba(255, 255, 255, 0.8)">({{ tableComment }})</span>
+        <span v-if="tableComment" class="ml-1 flex-shrink-0 ellipsis" style="color: rgba(255, 255, 255, 0.8)"
+          >({{ tableComment }})</span
+        >
         <ElButton
           v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
           class="ml-auto"
