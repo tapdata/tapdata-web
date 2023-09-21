@@ -799,31 +799,31 @@ export default {
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
-      Mousetrap.bind('mod+c', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+c', () => {
         !this.stateIsReadonly && this.copyNodes()
       })
-      Mousetrap.bind('mod+v', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+v', () => {
         if (!this.stateIsReadonly) {
           this.pasteNodes(this.command)
           this.handleCenterContent()
         }
       })
-      Mousetrap.bind('mod+z', e => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+z', e => {
         e.preventDefault()
         !this.stateIsReadonly && this.command.undo()
       })
-      Mousetrap.bind('mod+shift+z', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+shift+z', () => {
         !this.stateIsReadonly && this.command.redo()
       })
-      Mousetrap.bind('mod+shift+o', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
-      Mousetrap.bind(['backspace', 'del'], () => {
+      Mousetrap(this.$refs.layoutContent).bind(['backspace', 'del'], () => {
         if (!this.stateIsReadonly && document.getElementById('dfEditorContent').contains(document.activeElement)) {
           this.handleDelete()
         }
       })
-      Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
+      Mousetrap(this.$refs.layoutContent).bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
         this.handleAutoLayout()
       })
