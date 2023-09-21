@@ -20,7 +20,7 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { Notification } from 'element-ui'
-import { createVersionPolling } from './plugins/VersionPolling'
+import { createVersionPolling } from './plugins/version-polling'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
