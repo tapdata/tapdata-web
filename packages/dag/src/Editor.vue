@@ -667,7 +667,7 @@ export default {
         }
       })
 
-      this.$refs.materializedView.addTargetNode(newNode)
+      // this.$refs.materializedView.addTargetNode(newNode)
     },
 
     async checkMaterializedView(query = {}) {
@@ -688,7 +688,7 @@ export default {
           type: 'merge_table_processor'
         })
 
-        this.onAddMaterializedViewTargetNode(node)
+        // this.onAddMaterializedViewTargetNode(node)
         await this.$nextTick()
         await this.afterTaskSaved()
         this.setActiveNode(node.id)

@@ -669,11 +669,22 @@ export default {
     async loadTargetField() {
       const fields = await metadataInstancesApi.getMergerNodeParentFields(this.$route.params.id, this.node.id)
 
-      this.targetFields = fields.map(item => ({
-        label: item.field_name,
-        value: item.field_name,
-        isPrimaryKey: item.primary_key_position > 0
-      }))
+      this.targetFields = fields.map(item => {
+        let label = item.field_name
+        const arr = label.split('.')
+
+        if (arr.length > 1) {
+          const parentPath = arr.slice(0, arr.length - 1).join('.')
+          const tableName = this.targetPathMap[parentPath].tableNode.tableName
+          label = `${tableName}.${arr.pop()}`
+        }
+
+        return {
+          label,
+          value: item.field_name,
+          isPrimaryKey: item.primary_key_position > 0
+        }
+      })
     },
 
     handleCommand(command) {

@@ -153,18 +153,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', [
-      'allNodes',
-      'allEdges',
-      'activeType',
-      'activeNode',
-      'isActionActive',
-      'nodeById',
-      'stateIsDirty',
-      'stateIsReadonly',
-      'processorNodeTypes',
-      'hasNodeError'
-    ]),
+    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById']),
     ...mapState('dataflow', ['taskSaving']),
 
     scaleTxt() {
