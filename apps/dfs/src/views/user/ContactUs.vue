@@ -25,7 +25,7 @@
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
-          <VIcon size="20" class="mr-2 color-primary">email</VIcon>
+          <VIcon size="20" class="mr-2 color-primary">email-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
@@ -122,7 +122,7 @@ export default {
       s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
+      // this.hideCustomTip()
 
       $zoho.salesiq.ready = function () {
         const user = window.__USER_INFO__
