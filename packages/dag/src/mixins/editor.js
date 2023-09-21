@@ -2326,6 +2326,12 @@ export default {
           )
           .then(async data => {
             const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              this.$message.error(this.$t('public_task_error_schedule_limit'))
+              return
+            }
+
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()

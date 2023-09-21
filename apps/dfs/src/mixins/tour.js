@@ -5,6 +5,7 @@ import 'driver.js/dist/driver.css'
 import i18n from '@/i18n'
 import { connectionsApi, taskApi } from '@tap/api'
 import Cookie from '@tap/shared/src/cookie'
+import { getUrlSearch } from '@tap/shared/src/util'
 
 export default {
   data() {
@@ -38,7 +39,7 @@ export default {
     await this.loadGuide()
     await this.checkGuide()
     this.loopLoadAgentCount()
-    this.setBaiduIndex() // 百度推广索引
+    this.setUrlParams() // url携带的自定义参数
     let unwatch
 
     if (this.subscriptionModelVisible) {
@@ -505,50 +506,41 @@ export default {
       this.isUnDeploy = val
     },
 
-    setBaiduIndex() {
+    setUrlParams() {
       // 上报百度索引
       const logidUrlCloud = Cookie.get('logidUrlCloud')
       const { guide } = this.$store.state
-      if (logidUrlCloud) {
-        const bd_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^bd_vid=/))
-          ?.replace(/^bd_vid=/, '')
 
-        const tp_vid = logidUrlCloud
-          .split(/[?&]/)
-          .find(t => t.match(/^tp_vid=/))
-          ?.replace(/^tp_vid=/, '')
-        let params = {}
+      const bd_vid = getUrlSearch('bd_vid')
+      const tp_vid = getUrlSearch('tp_vid')
+      let params = {}
 
-        if (tp_vid && !guide.tpVid) {
-          guide.tpVid = params.tpVid = tp_vid
-        }
+      if (tp_vid && !guide.tpVid) {
+        guide.tpVid = params.tpVid = tp_vid
+      }
 
-        if (bd_vid && !guide.bdVid) {
-          guide.bdVid = params.bdVid = bd_vid
-          const conversionTypes = [
-            {
-              logidUrl: logidUrlCloud,
-              newType: 25
+      if (bd_vid && !guide.bdVid) {
+        guide.bdVid = params.bdVid = bd_vid
+        const conversionTypes = [
+          {
+            logidUrl: logidUrlCloud,
+            newType: 25
+          }
+        ]
+        this.$axios
+          .post('api/tcm/track/send_convert_data', conversionTypes)
+          .then(data => {
+            if (data) {
+              this.buried('registerSuccess')
             }
-          ]
-          this.$axios
-            .post('api/tcm/track/send_convert_data', conversionTypes)
-            .then(data => {
-              if (data) {
-                this.buried('registerSuccess')
-                Cookie.remove('logidUrlCloud')
-              }
-            })
-            .catch(e => {
-              console.log('ocpc.baidu.com', e)
-            })
-        }
+          })
+          .catch(e => {
+            console.log('ocpc.baidu.com', e)
+          })
+      }
 
-        if (Object.keys(params).length) {
-          this.$axios.post('api/tcm/user_guide', params)
-        }
+      if (Object.keys(params).length) {
+        this.$axios.post('api/tcm/user_guide', params)
       }
     },
 

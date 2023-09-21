@@ -169,13 +169,13 @@
 
       <UpgradeFee
         :visible.sync="upgradeFeeVisible"
-        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :tooltip="$t('packages_business_task_list_nindekeyunxing')"
         :go-page="upgradeFeeGoPage"
       ></UpgradeFee>
 
       <UpgradeCharges
         :visible.sync="upgradeChargesVisible"
-        tooltip="您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！"
+        :tooltip="$t('packages_business_task_list_nindekeyunxing')"
         :go-page="upgradeFeeGoPage"
       ></UpgradeCharges>
     </section>

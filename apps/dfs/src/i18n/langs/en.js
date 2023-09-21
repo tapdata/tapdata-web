@@ -1787,5 +1787,7 @@ export default {
   dfs_user_contactus_lijiduihua: 'Contact now',
   dfs_user_contactus_zaixianzixun: 'Online Support',
   dfs_user_contactus_lianxifangshi: 'Contact Information',
-  dfs_user_contactus_weinintigongzhuan: 'Provide you with professional service support'
+  dfs_user_contactus_weinintigongzhuan: 'Provide you with professional service support',
+  dfs_system_update: 'System Update',
+  dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!"
 }

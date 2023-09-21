@@ -176,7 +176,7 @@ export default {
   },
   methods: {
     openChange(item = {}) {
-      let agent = item.orderInfo?.subscribeDto?.subscribeItems.find(it => it.productType === 'Engine') || {}
+      let agent = item.subscribeItems?.find(it => it.productType === 'Engine')
       let specLabel = getSpec(agent?.spec)
       //组装续订列表
       let node = {

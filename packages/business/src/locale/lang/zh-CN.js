@@ -1149,5 +1149,6 @@ export default {
   packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被调用的任务超过了限制数，',
   packages_business_task_list_nindekeyunxing: '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
   packages_business_setting_alarmsetting_qubangding: '去绑定',
-  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。'
+  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。',
+  packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件'
 }
