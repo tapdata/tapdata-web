@@ -98,7 +98,7 @@ export default {
                 const it = item.subscribeItems[0] || {}
                 item.specLabel = it.specLabel = getSpec(it.spec) || '-'
                 const { resource = {} } = it
-                item.taskNum = (resource.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
+                item.taskNum = resource.tags.length ? (resource.tags[0]?.split('limitScheduleTask:')[1] || 0) * 1 : 0
                 item.canUsedNum = item.taskNum - (resource.metric?.runningTaskNum || 0)
                 item.isMaximal = resource.spec?.name === '8xlarge'
                 item.subscriptionMethodLabel =
