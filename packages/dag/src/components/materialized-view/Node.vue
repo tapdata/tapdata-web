@@ -9,7 +9,8 @@
   >
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-1">
-        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
+        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }} </span>
+        <span class="ml-1 flex-shrink-0 ellipsis" style="color: rgba(255, 255, 255, 0.8)">({{ tableComment }})</span>
         <ElButton
           v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
           class="ml-auto"
@@ -46,6 +47,7 @@
           :connectionId="dagNode.connectionId"
           itemType="object"
           itemQuery="value"
+          :onSetSelected="onTableSelect"
           @change="onChangeTable"
         ></TableSelect>
       </div>
@@ -227,7 +229,8 @@ export default {
       targetFields: [],
       targetPath: this.node.targetPath,
       fieldNameVisible: false,
-      fieldName: ''
+      fieldName: '',
+      tableComment: ''
     }
   },
 
@@ -580,7 +583,8 @@ export default {
       data.items = data.items.map(item => {
         return {
           label: item.original_name + (item.comment ? `(${item.comment})` : ''),
-          value: item.original_name
+          value: item.original_name,
+          comment: item.comment
         }
       })
       const table = filter.where.original_name?.like
@@ -776,6 +780,10 @@ export default {
       let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })
       this.$emit('load-schema')
+    },
+
+    onTableSelect(table) {
+      this.tableComment = table.comment
     }
   }
 }
