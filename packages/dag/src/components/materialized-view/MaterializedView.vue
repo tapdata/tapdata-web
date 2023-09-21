@@ -89,6 +89,7 @@
           :nodeMap="nodeMap"
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
+          :has-target-node="!!targetNode"
           :getNodeById="getNodeById"
           @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
@@ -97,7 +98,7 @@
           @add-target-node="$emit('add-target-node')"
           @load-schema="onLoadSchema(node.id)"
         ></Node>
-        <!--<TargetNode
+        <TargetNode
           v-if="targetNode"
           :id="targetNode.id"
           :node="targetNode"
@@ -106,7 +107,7 @@
           :position="nodePositionMap[targetNode.id]"
           @add-node="$emit('add-node', arguments[0], arguments[1])"
           @load-schema="onLoadTargetSchema"
-        ></TargetNode>-->
+        ></TargetNode>
       </PaperScroller>
     </div>
   </el-drawer>
@@ -164,13 +165,13 @@ export default {
       return this.visible && this.activeNode?.type === 'merge_table_processor'
     },
 
-    /*targetNode() {
+    targetNode() {
       const { $outputs } = this.activeNode
 
       if (!$outputs.length) return
 
       return this.nodeById($outputs[0])
-    },*/
+    },
 
     viewNodes() {
       return this.nodes.concat(this.targetNode ? [this.targetNode] : [])
@@ -403,7 +404,7 @@ export default {
         })
       }
 
-      // this.initTargetNode()
+      this.initTargetNode()
     },
 
     initMainNode() {

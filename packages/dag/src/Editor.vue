@@ -667,7 +667,7 @@ export default {
         }
       })
 
-      // this.$refs.materializedView.addTargetNode(newNode)
+      this.$refs.materializedView.addTargetNode(newNode)
     },
 
     async checkMaterializedView(query = {}) {

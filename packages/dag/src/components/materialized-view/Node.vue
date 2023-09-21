@@ -10,10 +10,15 @@
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-2">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
-        <!--<ElButton v-if="!hasTargetNode && isMainTable" class="ml-auto" size="mini" @click="$emit('add-target-node')">
+        <ElButton
+          v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
+          class="ml-auto"
+          size="mini"
+          @click="$emit('add-target-node')"
+        >
           <VIcon>add</VIcon>
           写入目标</ElButton
-        >-->
+        >
       </div>
       <div class="flex gap-2 p-2">
         <AsyncSelect
@@ -70,6 +75,7 @@
             </ElButton>
             <div v-else class="flex flex-column gap-2">
               <div class="flex align-center gap-1" v-for="(keys, i) in node.joinKeys" :key="i">
+                <!--<div class="flex flex-column">-->
                 <FieldSelect
                   v-model="keys.source"
                   itemLabel="field_name"
@@ -82,13 +88,14 @@
                   :options="targetFields"
                   @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
+                <!--</div>-->
                 <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
               </div>
             </div>
           </ElFormItem>
         </template>
 
-        <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
+        <ElFormItem v-if="node.parentId" :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
           <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
         </ElFormItem>
 
@@ -111,7 +118,7 @@
     <div class="p-2 node-body">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+        <ElPopover v-if="displaySchema" placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
           <div ref="fieldPopover">
             <ElInput
               v-model="fieldName"
@@ -245,6 +252,10 @@ export default {
       }
     },
 
+    displaySchema() {
+      return this.dagNode.connectionId && this.dagNode.tableName
+    },
+
     treeData() {
       // console.log('computed:treeData')
       let { schema } = this
@@ -335,11 +346,11 @@ export default {
 
     treeEmptyText() {
       if (!this.dagNode.connectionId) {
-        return '请选择连接'
+        return this.isMainTable ? '请选择模型主表' : '请选择连接'
       }
 
       if (!this.dagNode.tableName) {
-        return '请选择连表'
+        return this.isMainTable ? '请选择模型主表' : '请选择连表'
       }
 
       return '暂无数据'

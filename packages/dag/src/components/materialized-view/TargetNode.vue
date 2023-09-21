@@ -41,7 +41,7 @@
     <div class="p-2 node-body">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+        <!--<ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
           <div ref="fieldPopover">
             <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
             <div class="mt-2 text-end">
@@ -62,16 +62,16 @@
                 新增字段
               </ElButton>
               <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
-                <!--Flatten-->
+                &lt;!&ndash;Flatten&ndash;&gt;
                 <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
-                <!--Embedded Document-->
+                &lt;!&ndash;Embedded Document&ndash;&gt;
                 <ElDropdownItem command="Document">内嵌文档</ElDropdownItem>
-                <!--Embedded Array-->
+                &lt;!&ndash;Embedded Array&ndash;&gt;
                 <ElDropdownItem command="Array">内嵌数组</ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>
           </template>
-        </ElPopover>
+        </ElPopover>-->
       </div>
       <ElTree
         class="fs-8 node-schema-tree overflow-y-auto"
