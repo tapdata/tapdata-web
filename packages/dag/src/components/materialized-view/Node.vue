@@ -8,7 +8,7 @@
     :style="nodeStyle"
   >
     <div class="node-header overflow-hidden">
-      <div class="node-title text-white lh-base flex align-center p-2">
+      <div class="node-title text-white lh-base flex align-center p-1">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }}</span>
         <ElButton
           v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
@@ -20,10 +20,10 @@
           写入目标</ElButton
         >
       </div>
-      <div class="flex gap-2 p-2">
+      <div class="flex gap-2 p-1">
         <AsyncSelect
           v-model="dagNode.connectionId"
-          placeholder="请选择存储数据库"
+          placeholder="请选择数据库"
           :method="loadDatabases"
           :params="{ isSource: true }"
           itemValue="id"
@@ -39,7 +39,7 @@
         </AsyncSelect>
         <TableSelect
           v-model="dagNode.tableName"
-          placeholder="请选择存储表"
+          placeholder="请选择表"
           :disabled="!dagNode.connectionId"
           collapse-tags
           :method="loadTable"
@@ -49,7 +49,7 @@
           @change="onChangeTable"
         ></TableSelect>
       </div>
-      <ElForm class="node-form px-2" label-position="top" @submit.prevent>
+      <ElForm class="node-form px-1" label-position="top" @submit.prevent>
         <template v-if="!isMainTable">
           <ElFormItem label="关联表">
             <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
