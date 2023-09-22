@@ -1193,7 +1193,7 @@ export default {
   packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
   packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
   packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',
-  packages_business_components_upgradecharges_keyongrenwushu: 'Number of tasks available',
+  packages_business_components_upgradecharges_keyongrenwushu: 'Remaining available tasks',
   packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
   packages_business_components_upgradecharges_dingyueshengji: 'Subscription Upgrade',
   packages_business_create_connection_sceneform_lianjieceshiwu:
