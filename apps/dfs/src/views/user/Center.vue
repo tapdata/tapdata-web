@@ -287,7 +287,7 @@
         </ElFormItem>
         <ElFormItem
           v-if="!isDomesticStation"
-          prop="newPassword"
+          prop="emailCode"
           :label="$t('user_Center_dangQianYouXiangYan')"
           class="inline-form-item"
         >
