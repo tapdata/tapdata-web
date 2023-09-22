@@ -3,6 +3,9 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
+      <ElTooltip placement="top" content="构建物化视图">
+        <IconButton :disabled="mdmNotExist" @click="openMaterializedDialog">materialized</IconButton>
+      </ElTooltip>
       <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')">folder-plus</IconButton>
       <IconButton :disabled="mdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch"
         >search-outline</IconButton
@@ -213,6 +216,23 @@
         </ElButton>
       </span>
     </ElDialog>
+
+    <ElDialog :visible.sync="showMaterialized" width="480px" :close-on-click-modal="false">
+      <span slot="title" class="fs-6 fw-sub">构建物化视图</span>
+      <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
+        <ElFormItem label="物化视图存储表">
+          <ElInput size="small" v-model="materializedTableName">
+            <template #prepend>{{ tablePrefix }}</template>
+          </ElInput>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="showMaterialized = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" :disabled="!materializedTableName.trim()" @click="createMaterializedView">
+          {{ $t('public_button_confirm') }}
+        </ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -279,7 +299,9 @@ export default {
       search: '',
       enableSearch: false,
       filterTreeData: [],
-      tablePrefix: 'MDM_'
+      tablePrefix: 'MDM_',
+      showMaterialized: false,
+      materializedTableName: ''
     }
   },
 
@@ -873,7 +895,27 @@ export default {
 
     handleScroll: debounce(function () {
       this.$emit('handle-connection')
-    }, 200)
+    }, 200),
+
+    openMaterializedDialog() {
+      this.materializedTableName = ''
+      this.showMaterialized = true
+    },
+
+    createMaterializedView() {
+      const tableName = this.materializedTableName.trim()
+
+      if (!tableName) return
+
+      this.$router.push({
+        name: 'DataflowNew',
+        query: {
+          by: 'materialized-view',
+          connectionId: this.mdmConnection.id,
+          tableName: this.tablePrefix + tableName
+        }
+      })
+    }
   }
 }
 </script>

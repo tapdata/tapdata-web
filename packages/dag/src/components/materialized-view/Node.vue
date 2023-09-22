@@ -23,7 +23,7 @@
           写入目标</ElButton
         >
       </div>
-      <div class="flex gap-2 p-1">
+      <div class="flex gap-1 p-1">
         <AsyncSelect
           v-model="dagNode.connectionId"
           placeholder="请选择数据库"

@@ -8,7 +8,7 @@
       <div class="node-title text-white lh-base flex align-center px-2 py-1">
         <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ node.name }}</span>
       </div>
-      <div class="flex gap-2 p-2">
+      <div class="flex gap-1 p-1">
         <AsyncSelect
           v-model="node.connectionId"
           placeholder="请选择存储数据库"
@@ -124,7 +124,11 @@ export default {
       loading: false,
       params: {
         isTarget: true,
-        where: { database_type: 'MongoDB' }
+        where: {
+          database_type: {
+            in: ['MongoDB', 'MongoDB Atlas']
+          }
+        }
       },
       fieldNameVisible: false,
       fieldName: ''

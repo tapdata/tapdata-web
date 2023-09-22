@@ -654,8 +654,9 @@ export default {
       this.$refs.materializedView.addNode(viewNode)
     },
 
-    onAddMaterializedViewTargetNode(activeNode = this.$store.getters['dataflow/activeNode']) {
-      const newNode = this.quickAddNode(activeNode, {
+    onAddMaterializedViewTargetNode(
+      activeNode = this.$store.getters['dataflow/activeNode'],
+      nodeType = {
         name: `Node ${this.allNodes.length + 1}`,
         type: 'table',
         databaseType: '',
@@ -665,36 +666,70 @@ export default {
           capabilities: [{ id: 'master_slave_merge' }], // 允许作为主从合并的目标
           hasCreated: false
         }
-      })
+      }
+    ) {
+      const newNode = this.quickAddNode(activeNode, nodeType)
 
       this.$refs.materializedView.addTargetNode(newNode)
     },
 
     async checkMaterializedView(query = {}) {
-      if (query.by === 'materialized-view') {
-        // 清空路由参数
-        await this.$router.replace({
-          params: {
-            action: 'dataflowEdit'
-          },
-          query: {
-            ...query,
-            by: undefined
-          }
-        })
+      const { by, connectionId, tableName } = query
+      let connection
 
-        const node = this.handleAddNodeToCenter({
-          name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
-        })
+      if (by !== 'materialized-view') return
 
-        // this.onAddMaterializedViewTargetNode(node)
-        await this.$nextTick()
-        await this.afterTaskSaved()
-        this.setActiveNode(node.id)
-        await this.$nextTick()
-        this.setMaterializedViewVisible(true)
+      await this.$router.replace({
+        params: {
+          action: 'dataflowEdit'
+        },
+        query: {
+          ...query,
+          by: undefined,
+          connectionId: undefined,
+          tableName: undefined
+        }
+      })
+
+      if (connectionId) {
+        connection = await connectionsApi.get(connectionId)
       }
+
+      // 统一添加节点，可以通过节流走一个updateDag请求
+      // 添加源节点
+      const sourceNode = this.handleAddNodeToCenter({
+        name: `SourceNode`,
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      })
+      // 添加主从合并节点
+      const mergeTableNode = this.quickAddNode(sourceNode, {
+        name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+        type: 'merge_table_processor'
+      })
+      // 添加目标节点
+      if (connection) {
+        this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+      }
+
+      // 因为有节流，等一个$nextTick
+      await this.$nextTick()
+      console.log('this.taskSaving', this.taskSaving)
+      await this.afterTaskSaved()
+      console.log('this.taskSaving', this.taskSaving)
+      // 打开主从合并节点
+      this.setActiveNode(mergeTableNode.id)
+
+      // 等待主从合并节点的默认配置生成（渲染一次表单）
+      setTimeout(() => {
+        // 显示物化视图
+        this.setMaterializedViewVisible(true)
+      }, 50)
     }
   }
 }

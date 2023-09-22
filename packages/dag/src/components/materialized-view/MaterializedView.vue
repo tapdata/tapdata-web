@@ -210,12 +210,6 @@ export default {
       }
 
       this.initView()
-
-      /*if (!this.targetNode) {
-        this.$emit('add-target-node')
-        await this.afterTaskSaved()
-      }*/
-
       this.loading = true
       await this.transformToDag()
       await this.loadSchema()
@@ -336,6 +330,7 @@ export default {
       this.nodes = []
 
       if (!mergeProperties?.length) {
+        // 主从合并没有源和目标
         mergeProperties = this.activeNode.mergeProperties = []
         this.initMainNode()
         await this.afterTaskSaved()
