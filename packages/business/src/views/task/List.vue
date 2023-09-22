@@ -594,9 +594,9 @@ export default {
             return item
           })
 
-          if (!this.isDaas) {
+          /*if (!this.isDaas) {
             this.loadTaskErrorCause(errorTaskIds)
-          }
+          }*/
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {

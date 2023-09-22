@@ -1140,7 +1140,7 @@ export default {
   packages_business_components_upgradecharges_dingyuexinyinqing: '订阅新引擎',
   packages_business_components_upgradecharges_shengjiguige: '升级规格',
   packages_business_components_upgradecharges_dingyuefangshi: '订阅方式',
-  packages_business_components_upgradecharges_keyongrenwushu: '可用任务数',
+  packages_business_components_upgradecharges_keyongrenwushu: '剩余可用任务数',
   packages_business_components_upgradecharges_dangqianguige: '当前规格',
   packages_business_components_upgradecharges_dingyueshengji: '订阅升级',
   packages_business_create_connection_sceneform_lianjieceshiwu: '连接测试无效，请检查您的连接配置',
