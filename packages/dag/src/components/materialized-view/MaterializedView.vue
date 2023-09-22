@@ -90,6 +90,7 @@
           :targetPathMap="targetPathMap"
           :nodeSchemaMap="nodeSchemaMap"
           :has-target-node="!!targetNode"
+          :schemaLoading="loadingSchemaNodeId === node.id"
           :getNodeById="getNodeById"
           @click.native="onClickNode(node)"
           @change-parent="handleChangeParent"
@@ -105,6 +106,7 @@
           :js-plumb-ins="jsPlumbIns"
           :schema="nodeSchemaMap[targetNode.id]"
           :position="nodePositionMap[targetNode.id]"
+          :schemaLoading="targetNodeSchemaLoading"
           @add-node="$emit('add-node', arguments[0], arguments[1])"
           @load-schema="onLoadTargetSchema"
         ></TargetNode>
@@ -149,7 +151,9 @@ export default {
       optionCode: isMacOs ? 'Option' : 'Alt',
       loading: false,
       schemaLoading: false,
-      selectedNodeId: ''
+      targetNodeSchemaLoading: false,
+      selectedNodeId: '',
+      loadingSchemaNodeId: ''
     }
   },
 
@@ -411,7 +415,7 @@ export default {
           children: mergeProperties
         },
         {
-          mergeType: 'updateOrInsert'
+          mergeType: 'updateOrInsert' // 主表默认是更新已存在或插入新数据
         }
       )
     },
@@ -677,7 +681,14 @@ export default {
     },
 
     async onLoadSchema(id) {
-      await this.loadNodeSchema(id)
+      this.loadingSchemaNodeId = id
+
+      try {
+        await this.loadNodeSchema(id)
+      } finally {
+        this.loadingSchemaNodeId = ''
+      }
+
       this.jsPlumbIns.revalidate(id)
       await this.onLoadTargetSchema()
     },
@@ -685,7 +696,14 @@ export default {
     async onLoadTargetSchema() {
       if (!this.targetNode?.id) return
 
-      await this.loadNodeSchema(this.targetNode.id)
+      this.targetNodeSchemaLoading = true
+
+      try {
+        await this.loadNodeSchema(this.targetNode.id)
+      } finally {
+        this.targetNodeSchemaLoading = false
+      }
+
       this.jsPlumbIns.revalidate(this.targetNode.id)
     },
 

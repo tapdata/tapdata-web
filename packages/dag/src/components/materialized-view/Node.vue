@@ -120,7 +120,7 @@
       </ElForm>
     </div>
     <ElDivider class="my-0" />
-    <div class="p-2 node-body">
+    <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
         <ElPopover v-if="displaySchema" placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
@@ -210,7 +210,8 @@ export default {
     nodeSchemaMap: Object,
     nodeMap: Object,
     inputsMap: Object,
-    hasTargetNode: Boolean
+    hasTargetNode: Boolean,
+    schemaLoading: Boolean
   },
 
   components: {
@@ -736,7 +737,7 @@ export default {
       }
 
       this.$emit('add-node', {
-        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateOrInsert',
+        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite', // 非主表非内嵌数组默认是更新写入
         targetPath: this.fieldName
           ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
           : this.node.targetPath || ''
@@ -774,7 +775,7 @@ export default {
     async onChangeConnection() {
       this.dagNode.tableName = ''
       await this.updateDag({ vm: this, isNow: true })
-      this.$emit('load-schema')
+      // this.$emit('load-schema')
     },
 
     async onChangeTable(table) {

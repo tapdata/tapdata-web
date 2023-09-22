@@ -38,6 +38,14 @@
     }
   }
 
+  &.--target {
+    ::v-deep {
+      .field-icon {
+        color: map-get($color, primary);
+      }
+    }
+  }
+
   &.--main-table {
     &.active:before {
       border-color: #f3961a;

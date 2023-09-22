@@ -38,7 +38,7 @@
         ></TableSelect>
       </div>
     </div>
-    <div class="p-2 node-body">
+    <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
         <!--<ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
@@ -108,7 +108,8 @@ export default {
       default: () => ({})
     },
     data: Object,
-    jsPlumbIns: Object
+    jsPlumbIns: Object,
+    schemaLoading: Boolean
   },
 
   components: {
@@ -582,7 +583,7 @@ export default {
     async onChangeConnection() {
       this.node.tableName = ''
       await this.updateDag({ vm: this, isNow: true })
-      this.$emit('load-schema')
+      // this.$emit('load-schema')
     },
 
     async onChangeTable(table) {
