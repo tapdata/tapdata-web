@@ -24,7 +24,9 @@
 
           <ElRow class="content__row pl-2 py-2 border">
             <ElCol :span="6"> {{ item.specLabel }} </ElCol>
-            <ElCol :span="6"> {{ item.canUsedNum }}/{{ item.taskNum }} </ElCol>
+            <ElCol :span="6">
+              <span class="color-danger">0</span>/<span>{{ item.taskNum }}</span>
+            </ElCol>
             <ElCol :span="6"> {{ item.subscriptionMethodLabel }} </ElCol>
             <ElCol :span="6">
               <ElLink type="primary" :disabled="item.isMaximal" @click="openChangeSubscribe(item)">{{
@@ -98,7 +100,7 @@ export default {
                 const it = item.subscribeItems[0] || {}
                 item.specLabel = it.specLabel = getSpec(it.spec) || '-'
                 const { resource = {} } = it
-                item.taskNum = (resource.tags?.[0].split('limitScheduleTask:')[1] || 0) * 1
+                item.taskNum = resource.tags.length ? (resource.tags[0]?.split('limitScheduleTask:')[1] || 0) * 1 : 0
                 item.canUsedNum = item.taskNum - (resource.metric?.runningTaskNum || 0)
                 item.isMaximal = resource.spec?.name === '8xlarge'
                 item.subscriptionMethodLabel =
