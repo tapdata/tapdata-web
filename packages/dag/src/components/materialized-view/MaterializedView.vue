@@ -278,19 +278,41 @@ export default {
       delete managedElements[id] // 删除managed可以出发锚点位置更新
 
       const node = this.nodeMap[id]
+      const childrenNodes = node.children
       const parentNode = this.nodeMap[node.parentId]
+      const { parentId = this.targetNode?.id } = node
       const index = this.nodes.findIndex(n => n.id === id)
       ~index && this.nodes.splice(index, 1)
 
       if (parentNode) {
         const indexOfParent = parentNode.children.findIndex(n => n.id === id)
         ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
+        parentNode.children.push(...childrenNodes)
+      } else {
+        const { mergeProperties } = this.activeNode
+        const index = mergeProperties.findIndex(n => n.id === id)
+        ~index && mergeProperties.splice(index, 1)
+        mergeProperties.push(...childrenNodes)
       }
 
       this.$delete(this.nodePositionMap, id)
       this.$delete(this.nodeSchemaMap, id)
       this.$delete(this.inputsMap, id)
       this.$delete(this.outputsMap, id)
+
+      for (const childrenNode of childrenNodes) {
+        const childId = childrenNode.id
+        const oldIndex = this.outputsMap[childId].indexOf(id)
+        this.outputsMap[childId].splice(oldIndex, 1, parentId)
+
+        if (parentId) {
+          this.inputsMap[parentId].push(childId)
+          this.jsPlumbIns.connect({ uuids: [childId + '_source', parentId + '_target'] })
+        }
+
+        childrenNode.parentId = parentId
+      }
+
       this.$emit('delete-node', id)
     },
 
@@ -671,6 +693,7 @@ export default {
       this.$set(this.nodePositionMap, node.id, [0, 0]) // 初始化坐标
       await this.$nextTick()
       mergeProperties.forEach(item => {
+        item.parentId = node.id
         inputs.push(item.id)
         this.outputsMap[item.id] = [node.id]
         this.jsPlumbIns.connect({ uuids: [item.id + '_source', node.id + '_target'] })
