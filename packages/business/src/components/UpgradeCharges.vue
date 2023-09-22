@@ -24,7 +24,9 @@
 
           <ElRow class="content__row pl-2 py-2 border">
             <ElCol :span="6"> {{ item.specLabel }} </ElCol>
-            <ElCol :span="6"> {{ item.canUsedNum }}/{{ item.taskNum }} </ElCol>
+            <ElCol :span="6">
+              <span class="color-danger">0</span>/<span>{{ item.taskNum }}</span>
+            </ElCol>
             <ElCol :span="6"> {{ item.subscriptionMethodLabel }} </ElCol>
             <ElCol :span="6">
               <ElLink type="primary" :disabled="item.isMaximal" @click="openChangeSubscribe(item)">{{
