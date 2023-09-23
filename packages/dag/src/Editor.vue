@@ -40,6 +40,7 @@
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
         @add-table-as-node="handleAddNodeToCenter"
+        @add-node="handleAddNodeToConnect"
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
@@ -730,6 +731,17 @@ export default {
         // 显示物化视图
         this.setMaterializedViewVisible(true)
       }, 50)
+    },
+
+    handleAddNodeToConnect(item) {
+      if (!this.allNodes.length) {
+        this.handleAddNodeToCenter(item)
+        return
+      }
+
+      const source = this.allNodes.find(n => !n.$outputs.length)
+      const target = this.quickAddNode(source, item)
+      this.$refs.paperScroller.centerNode(target)
     }
   }
 }
