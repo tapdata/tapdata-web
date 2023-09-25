@@ -13,7 +13,7 @@
         <ElButton type="primary" class="mt-2" size="mini" @click="openChat">{{
           $t('dfs_user_contactus_lijiduihua')
         }}</ElButton>
-<!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
+        <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
       <li v-if="!isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
@@ -53,7 +53,7 @@
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">0755-26656080</ElButton>
-<!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
+        <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
     </ul>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_gengduofuwu') }}</div>
@@ -158,7 +158,10 @@ export default {
     },
 
     handleDocs() {
-      openUrl('https://docs.tapdata.net/cloud/what-is-tapdata-cloud')
+      const url = this.isDomesticStation
+        ? 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud'
+        : 'https://docs.tapdata.io'
+      openUrl(url)
     },
 
     openChat() {
