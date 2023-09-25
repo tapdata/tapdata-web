@@ -92,58 +92,11 @@ export default {
     }
   },
 
-  created() {
-    this.loadChat()
-  },
-
   methods: {
     goTicketSystem() {
       this.$router.push({
         name: 'TicketSystem'
       })
-    },
-
-    loadChat() {
-      let $zoho = $zoho || {}
-      const { isDomesticStation } = this
-      $zoho.salesiq = $zoho.salesiq || {
-        widgetcode: isDomesticStation
-          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
-          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
-        values: {},
-        ready: function () {}
-      }
-      window.$zoho = $zoho
-      let d = document
-      let s = d.createElement('script')
-      s.type = 'text/javascript'
-      s.id = 'zsiqscript'
-      s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
-      let t = d.getElementsByTagName('script')[0]
-      t.parentNode.insertBefore(s, t)
-      this.hideCustomTip()
-
-      $zoho.salesiq.ready = function () {
-        const user = window.__USER_INFO__
-        $zoho.salesiq.visitor.contactnumber(user.telephone)
-        $zoho.salesiq.visitor.info({
-          tapdata_username: user.nickname || user.username,
-          tapdata_phone: user.telephone,
-          tapdata_email: user.email
-        })
-
-        $zoho.salesiq.onload = function () {
-          let siqiframe = document.getElementById('siqiframe')
-
-          if (siqiframe) {
-            let style = document.createElement('style')
-            style.type = 'text/css'
-            style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
-          }
-        }
-      }
     },
 
     hideCustomTip() {
@@ -165,10 +118,7 @@ export default {
     },
 
     openChat() {
-      this.$nextTick(() => {
-        document.getElementById('zsiq_float')?.click?.()
-        window.$zoho.salesiq.chat.start?.()
-      })
+      window.$zoho.salesiq.chat.start?.()
     },
 
     goSlack() {
