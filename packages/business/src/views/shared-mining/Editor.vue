@@ -12,7 +12,7 @@
       v-loading="loading"
       ref="form"
       label-position="left"
-      label-width="150px"
+      label-width="160px"
       :model="editForm"
       :rules="rulesEdit"
       class="my-n6"
@@ -50,6 +50,13 @@
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
+      <SchemaToForm
+        ref="schemaToForm"
+        :schema="schemaData"
+        :scope="schemaScope"
+        :colon="true"
+        label-width="160"
+      ></SchemaToForm>
     </ElForm>
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
@@ -60,10 +67,13 @@
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi, taskApi } from '@tap/api'
+import { logcollectorApi, taskApi, databaseTypesApi } from '@tap/api'
+import { SchemaToForm } from '@tap/form'
 
 export default {
   name: 'Editor',
+
+  components: { SchemaToForm },
 
   data() {
     return {
@@ -93,7 +103,9 @@ export default {
       dagForm: {
         cdcConcurrent: false,
         cdcConcurrentWriteNum: 4
-      }
+      },
+      schemaData: null,
+      schemaScope: null
     }
   },
 
@@ -153,10 +165,29 @@ export default {
       taskApi.get(this.taskId).then(data => {
         this.dag = data.dag
 
-        this.dag.nodes.forEach(el => {
+        this.dag.nodes.forEach((el = {}) => {
           if (el.type === 'hazelcastIMDG') {
             this.dagForm.cdcConcurrent = el.cdcConcurrent || false
             this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
+          } else if (el.type === 'logCollector') {
+            // 获取连接信息
+            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
+              const nodeProperties = con.properties.node?.properties
+              if (Object.keys(nodeProperties).length) {
+                this.schemaData = {
+                  type: 'object',
+                  properties: {
+                    $inputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: [{}]
+                    },
+                    ...nodeProperties
+                  }
+                }
+                Object.assign(this.schemaData.properties, nodeProperties)
+              }
+            })
           }
         })
       })
@@ -224,11 +255,17 @@ export default {
     saveTaskDag() {
       let { dag } = this
       const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
+
+      const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
       dag.nodes.forEach(el => {
         if (el.type === 'hazelcastIMDG') {
           Object.assign(el, {
             cdcConcurrent,
             cdcConcurrentWriteNum
+          })
+        } else if (el.type === 'logCollector') {
+          Object.assign(el, {
+            nodeConfig: getFormValues
           })
         }
       })
