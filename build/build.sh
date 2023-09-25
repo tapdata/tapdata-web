@@ -21,7 +21,9 @@ done
 
 sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
-npm i  pnpm@7.30.5 -g
+if [[ `pnpm -v` != "7.30.5" ]]; then
+  npm i pnpm@7.30.5 -g
+fi
 
 echo "pnpm build:$app --dest $dist --mode $mode"
 
