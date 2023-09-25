@@ -165,7 +165,10 @@ export default {
     },
 
     openChat() {
-      window.$zoho.salesiq.chat.start?.()
+      this.$nextTick(() => {
+        document.getElementById('zsiq_float')?.click?.()
+        window.$zoho.salesiq.chat.start?.()
+      })
     },
 
     goSlack() {
