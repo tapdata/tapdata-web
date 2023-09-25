@@ -31,6 +31,8 @@
           :params="{ isSource: true }"
           itemValue="id"
           itemQuery="name"
+          lazy
+          :currentLabel="dagNode.attrs.connectionName"
           :onSetSelected="onConnectionSelect"
           @change="onChangeConnection"
         >
@@ -50,6 +52,7 @@
           :connectionId="dagNode.connectionId"
           itemType="object"
           itemQuery="value"
+          lazy
           :onSetSelected="onTableSelect"
           @change="onChangeTable"
         ></TableSelect>
@@ -233,13 +236,16 @@ export default {
       targetFields: [],
       targetPath: this.node.targetPath,
       fieldNameVisible: false,
-      fieldName: '',
-      tableComment: ''
+      fieldName: ''
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['nodeById', 'isActionActive', 'isNodeSelected']),
+
+    tableComment() {
+      return this.dagNode.attrs.tableComment
+    },
 
     ins() {
       return this.node?.__Ctor || {}
@@ -787,7 +793,7 @@ export default {
     },
 
     onTableSelect(table) {
-      this.tableComment = table.comment
+      this.dagNode.attrs.tableComment = table.comment
     }
   }
 }
