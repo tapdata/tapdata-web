@@ -103,9 +103,16 @@
           </ElFormItem>
         </template>
 
-        <ElFormItem v-if="node.parentId || hasTargetNode" :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
-          <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
-        </ElFormItem>
+        <template v-if="node.parentId || hasTargetNode">
+          <ElFormItem label="字段类型">
+            <ElSelect v-model="fieldType" class="w-100" @change="onChangeType">
+              <ElOption v-for="(option, i) in fieldTypeOptions" :key="i" v-bind="option"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
+            <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
+          </ElFormItem>
+        </template>
 
         <ElFormItem
           v-if="!isMainTable && node.mergeType === 'updateIntoArray'"
@@ -152,12 +159,9 @@
                 新增字段
               </ElButton>
               <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
-                <!--Flatten-->
-                <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
-                <!--Embedded Document-->
-                <ElDropdownItem command="Document">内嵌文档</ElDropdownItem>
-                <!--Embedded Array-->
-                <ElDropdownItem command="Array">内嵌数组</ElDropdownItem>
+                <ElDropdownItem v-for="(option, i) in fieldTypeOptions" :key="i" :command="option.value">{{
+                  option.label
+                }}</ElDropdownItem>
               </ElDropdownMenu>
             </ElDropdown>
           </template>
@@ -228,6 +232,14 @@ export default {
   directives: { ClickOutside },
 
   data() {
+    let fieldType = 'Flatten'
+
+    if (this.node.mergeType === 'updateIntoArray') {
+      fieldType = 'Array'
+    } else if (this.node.targetPath) {
+      fieldType = 'Document'
+    }
+
     return {
       loading: false,
       params: {
@@ -236,7 +248,22 @@ export default {
       targetFields: [],
       targetPath: this.node.targetPath,
       fieldNameVisible: false,
-      fieldName: ''
+      fieldName: '',
+      fieldType,
+      fieldTypeOptions: [
+        {
+          label: '平铺',
+          value: 'Flatten'
+        },
+        {
+          label: '内嵌文档',
+          value: 'Document'
+        },
+        {
+          label: '内嵌数组',
+          value: 'Array'
+        }
+      ]
     }
   },
 
@@ -368,6 +395,23 @@ export default {
 
       return '暂无数据'
     }
+
+    /*fieldType: {
+      get() {
+        const { mergeType, targetPath } = this.node
+        if (mergeType === 'updateIntoArray') {
+          return 'Array'
+        }
+        if (targetPath) {
+          return 'Document'
+        }
+        return 'Flatten'
+      },
+
+      set(v) {
+        console.log('v', v)
+      }
+    }*/
   },
 
   mounted() {
@@ -794,6 +838,18 @@ export default {
 
     onTableSelect(table) {
       this.dagNode.attrs.tableComment = table.comment
+    },
+
+    onChangeType(type) {
+      if (type === 'Array') {
+        this.node.mergeType = 'updateIntoArray'
+      } else {
+        this.node.mergeType = 'updateWrite'
+        if (type === 'Flatten') {
+          this.targetPath = ''
+          this.$emit('change-path', this.node, '')
+        }
+      }
     }
   }
 }
