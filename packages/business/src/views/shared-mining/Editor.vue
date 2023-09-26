@@ -177,11 +177,6 @@ export default {
                 this.schemaData = {
                   type: 'object',
                   properties: {
-                    $inputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: [{}]
-                    },
                     $outputs: {
                       type: 'array',
                       'x-display': 'hidden',
@@ -276,7 +271,7 @@ export default {
             cdcConcurrentWriteNum
           })
         } else if (el.type === 'logCollector') {
-          const { $inputs, ...formVal } = getFormValues
+          const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
             nodeConfig: formVal.nodeConfig
           })
