@@ -707,22 +707,28 @@ export default {
               item.target.connectionName = `${targetName} / ${targetConnectionName}`
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
+              let updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
               let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
                 t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
               )
 
               if (findTable) {
+                if (updateList.length && findTargetTable?.fields) {
+                  updateList = findTargetTable.fields
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
+                }
+
                 let sourceSortColumn = updateList.length
                   ? updateList.join(',')
                   : this.getPrimaryKeyFieldStr(findTable.fields)
-                if (updateList.length && findTargetTable?.fields) {
-                  sourceSortColumn = findTargetTable.fields
-                    .filter(t => updateList.includes(t.field_name))
-                    .map(t => t.original_field_name)
-                    .join(',')
-                }
+                // if (updateList.length && findTargetTable?.fields) {
+                //   sourceSortColumn = findTargetTable.fields
+                //     .filter(t => updateList.includes(t.field_name))
+                //     .map(t => t.original_field_name)
+                //     .join(',')
+                // }
                 item.source.fields = findTable.fields
                 item.source.sortColumn = sourceSortColumn
               }
