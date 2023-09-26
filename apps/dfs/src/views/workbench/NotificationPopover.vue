@@ -95,7 +95,7 @@ export default {
           debounce(res => {
             let data = res?.data
             if (data?.msg !== 'alarm') {
-              this.getUnReadNum()
+              this.getUnreadData(false)
             }
             if (data) {
               data.levelLabel = ALARM_LEVEL_MAP[data.level]?.text
@@ -121,7 +121,7 @@ export default {
         this.unRead = res
       })
     },
-    getUnreadData() {
+    getUnreadData(loadData = true) {
       let where = {
         msgType: 'ALARM',
         page: 1,
@@ -131,11 +131,12 @@ export default {
       notificationApi.list(where).then(data => {
         let list = data?.items || []
         this.unRead = data?.total
-        this.listData = list.map(item => {
-          item.levelLabel = ALARM_LEVEL_MAP[item.level].text
-          item.levelType = ALARM_LEVEL_MAP[item.level].type
-          return item
-        })
+        loadData &&
+          (this.listData = list.map(item => {
+            item.levelLabel = ALARM_LEVEL_MAP[item.level].text
+            item.levelType = ALARM_LEVEL_MAP[item.level].type
+            return item
+          }))
       })
     },
     // 已读消息
