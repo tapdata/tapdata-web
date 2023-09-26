@@ -182,10 +182,22 @@ export default {
                       'x-display': 'hidden',
                       default: [{}]
                     },
+                    $outputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: [{}]
+                    },
                     ...nodeProperties
                   }
                 }
                 Object.assign(this.schemaData.properties, nodeProperties)
+              }
+
+              const { nodeConfig = {syncIndex: true} } = el
+              if (nodeConfig) {
+                this.$refs.schemaToForm.getForm()?.setValues({
+                  nodeConfig
+                })
               }
             })
           }
@@ -264,8 +276,9 @@ export default {
             cdcConcurrentWriteNum
           })
         } else if (el.type === 'logCollector') {
+          const { $inputs, ...formVal } = getFormValues
           Object.assign(el, {
-            nodeConfig: getFormValues
+            nodeConfig: formVal.nodeConfig
           })
         }
       })
