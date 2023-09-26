@@ -538,10 +538,12 @@ export default {
         let updateConditionFieldMap = {}
         let tableNames = []
         let tableNameRelation = {}
+        let objectNames = []
         if (targetNode.type === 'database') {
           tableNames = el.tableNames
           updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+          objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
           tableNames = [targetNode.tableName]
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
@@ -561,6 +563,7 @@ export default {
           targetDatabaseType: targetNode.databaseType,
           updateConditionFieldMap,
           tableNames,
+          objectNames,
           tableName: targetNode.tableName,
           tableNameRelation
         }
@@ -643,7 +646,7 @@ export default {
       matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
-        tableNames.push(...m.tableNames)
+        tableNames.push(...m.tableNames, ...m.objectNames)
       })
       if (!matchNodeList.length) {
         if (this.allStages.length > this.flowStages.length)
@@ -659,7 +662,8 @@ export default {
         },
         original_name: {
           inq: Array.from(new Set(tableNames))
-        }
+        },
+        taskId: this.taskId
       }
       this.autoAddTableLoading = true
       metadataInstancesApi
