@@ -2,27 +2,40 @@
   <div class="connection-from" v-loading="loadingFrom" :class="{ 'bg-white': isDaas }">
     <div class="connection-from-body gap-4">
       <main class="connection-from-main bg-white rounded-lg overflow-hidden">
-        <div class="connection-from-title flex align-center p-4">
-          <span class="flex-1">{{
-            $route.params.id
-              ? this.$t('packages_business_connection_form_edit_connection')
-              : this.$t('public_connection_button_create')
-          }}</span>
+        <div class="connection-from-title p-4">
           <div class="flex align-center">
-            <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
-            <template v-if="!$route.params.id">
-              <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
-              <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
-                {{ $t('packages_business_connection_form_change') }}
-              </el-button>
-            </template>
-            <template v-else>
-              <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
-              <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
-                {{ $t('packages_business_connection_form_rename') }}
-              </el-button>
-            </template>
+            <span class="flex-1">{{
+              $route.params.id
+                ? this.$t('packages_business_connection_form_edit_connection')
+                : this.$t('public_connection_button_create')
+            }}</span>
+            <div class="flex align-center">
+              <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
+              <template v-if="!$route.params.id">
+                <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
+                <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+                  {{ $t('packages_business_connection_form_change') }}
+                </el-button>
+              </template>
+              <template v-else>
+                <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
+                <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+                  {{ $t('packages_business_connection_form_rename') }}
+                </el-button>
+              </template>
+            </div>
           </div>
+
+          <ElAlert v-if="!isDaas" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
+            <span slot="title">
+              请确保您数据库的网络安全策略，允许全托管Agent的访问，详请<a
+                :href="docUrl"
+                target="_blank"
+                class="text-decoration-underline text-primary"
+                >查看文档</a
+              >
+            </span>
+          </ElAlert>
         </div>
 
         <div class="form-wrap">
@@ -208,6 +221,11 @@ export default {
     },
     connectionId() {
       return this.model?.id || this.commandCallbackFunctionId
+    },
+    docUrl() {
+      return `https://docs.tapdata.${
+        this.$store.getters.isDomesticStation ? 'net' : 'io'
+      }/cloud/prerequisites/allow-access-network`
     }
   },
   created() {
@@ -1259,6 +1277,9 @@ export default {
   height: 100%;
   overflow: hidden;
   background-color: #eff1f4;
+  .alert-primary {
+    background: #e8f3ff;
+  }
   .connection-from-body {
     display: flex;
     flex: 1;
