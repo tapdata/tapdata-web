@@ -26,14 +26,26 @@
             </div>
           </div>
 
-          <ElAlert v-if="!isDaas" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
-            <span slot="title">
-              请确保您数据库的网络安全策略，允许全托管Agent的访问，详请<a
+          <ElAlert
+            v-if="!isDaas && showAgentIpAlert"
+            class="alert-primary text-primary mt-2"
+            type="info"
+            show-icon
+            :closable="false"
+          >
+            <span slot="title" class="inline-block lh-sm align-middle">
+              请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问，详情请<a
                 :href="docUrl"
                 target="_blank"
                 class="text-decoration-underline text-primary"
                 >查看文档</a
-              >
+              >。
+              <!--              请确保您数据库的网络安全策略，允许全托管Agent的访问，详情请<a
+                :href="docUrl"
+                target="_blank"
+                class="text-decoration-underline text-primary"
+                >查看文档</a
+              >-->
             </span>
           </ElAlert>
         </div>
@@ -212,7 +224,8 @@ export default {
       connectionLogCollectorTaskData: {
         items: [],
         total: 0
-      }
+      },
+      showAgentIpAlert: false
     }
   },
   computed: {
@@ -228,9 +241,27 @@ export default {
       }/cloud/prerequisites/allow-access-network`
     }
   },
-  created() {
+  async created() {
     this.id = this.$route.params.id || ''
     this.getPdkForm()
+
+    if (!this.isDaas) {
+      const { items: agentData } = await this.$axios.get(
+        'api/tcm/agent?filter=' +
+          encodeURIComponent(
+            JSON.stringify({
+              where: {
+                agentType: 'Cloud',
+                status: 'Running'
+              }
+            })
+          )
+      )
+
+      if (agentData.length) {
+        this.showAgentIpAlert = true
+      }
+    }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
