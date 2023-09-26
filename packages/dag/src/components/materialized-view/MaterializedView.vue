@@ -520,22 +520,21 @@ export default {
 
     async loadSchema() {
       this.schemaLoading = true
-      await Promise.all(this.viewNodes.map(node => this.loadNodeSchema(node.id)))
+      const params = {
+        nodeIds: this.viewNodes.map(node => node.id).join(','),
+        fields: ['original_name', 'fields', 'qualified_name']
+      }
+      const data = await metadataInstancesApi.getNodeSchemaMapByIds(params)
+
+      for (let nodeId in data) {
+        const [schema = {}] = data[nodeId]
+        this.setNodeSchema(nodeId, schema)
+      }
+
       this.schemaLoading = false
     },
 
-    async loadNodeSchema(nodeId) {
-      const params = {
-        nodeId,
-        fields: ['original_name', 'fields', 'qualified_name'],
-        page: 1,
-        pageSize: 20
-      }
-      const {
-        items: [schema = {}]
-      } = await metadataInstancesApi.nodeSchemaPage(params)
-      const { fields = [], indices = [] } = schema
-
+    setNodeSchema(nodeId, { fields = [], indices = [] }) {
       let columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
@@ -569,6 +568,19 @@ export default {
             return aVal - bVal
           })
       )
+    },
+
+    async loadNodeSchema(nodeId) {
+      const params = {
+        nodeId,
+        fields: ['original_name', 'fields', 'qualified_name'],
+        page: 1,
+        pageSize: 20
+      }
+      const {
+        items: [schema = {}]
+      } = await metadataInstancesApi.nodeSchemaPage(params)
+      this.setNodeSchema(nodeId, schema)
     },
 
     handleChangeScale(scale) {

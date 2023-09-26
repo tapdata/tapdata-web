@@ -837,7 +837,7 @@ export default {
     },
 
     onTableSelect(table) {
-      this.dagNode.attrs.tableComment = table.comment
+      this.$set(this.dagNode.attrs, 'tableComment', table.comment)
     },
 
     onChangeType(type) {
