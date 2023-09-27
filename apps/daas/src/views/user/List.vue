@@ -100,7 +100,7 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_role')" prop="roleMappings">
         <template slot-scope="scope">
-          {{ permissionsmethod(scope.row.roleMappings) }}
+          {{ permissionsoption(scope.row.roleusers) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
@@ -778,6 +778,15 @@ export default {
           }
         })
       }
+      return html.substring(0, html.lastIndexOf(','))
+    },
+    permissionsoption(data){
+      let html = ''
+      this.roleList.forEach(db => {
+        if(data.indexOf(db.id)!==-1 ){
+          html += ' ' + db.name + ','
+        }
+      })
       return html.substring(0, html.lastIndexOf(','))
     },
     // 重置激活码
