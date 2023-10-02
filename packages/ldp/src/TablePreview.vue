@@ -15,21 +15,21 @@
         }}</span>
       </div>
       <div class="flex align-center gap-8">
-        <span class="inline-flex align-center text-uppercase">
+        <span class="inline-flex align-center text-uppercase text-nowrap">
           <VIcon class="mr-1" size="18">table</VIcon> {{ $t('public_table') }}</span
         >
         <span class="inline-flex align-center">
           <VIcon class="mr-1" size="18">database</VIcon>
-          <span>{{ databaseName }}</span></span
+          <span class="text-nowrap">{{ databaseName }}</span></span
         >
         <template v-if="swimType !== 'source'">
           <span
             ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
-            ><span class="table-dec-txt">{{ lastDataChangeTime || '-' }}</span></span
+            ><span class="table-dec-txt text-nowrap">{{ lastDataChangeTime || '-' }}</span></span
           >
           <span
             ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
-            ><span class="table-dec-txt">{{ cdcDelayTime || '-' }}</span></span
+            ><span class="table-dec-txt text-nowrap">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
         <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
@@ -797,7 +797,7 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then((data) => {
+      taskApi.batchStart(ids).then(data => {
         this.getTasks(true)
         if (data.every(t => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
