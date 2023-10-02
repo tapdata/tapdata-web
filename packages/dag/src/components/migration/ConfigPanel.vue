@@ -21,7 +21,7 @@
         size="mini"
       >
         <VIcon size="30">beta</VIcon>
-        物化视图</ElButton
+        {{ $t('packages_dag_materialized_view') }}</ElButton
       >
     </div>
 

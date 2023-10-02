@@ -102,7 +102,7 @@
           @click="handleCreateMaterializedView"
         >
           <VIcon size="28">beta</VIcon>
-          构建物化视图</ElButton
+          {{ $t('packages_dag_build_materialized_view') }}</ElButton
         >
         <el-button
           v-if="buttonShowMap.create"

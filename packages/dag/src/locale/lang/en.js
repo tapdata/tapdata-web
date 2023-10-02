@@ -677,5 +677,7 @@ export default {
   packages_dag_mergeMode: 'Merge Mode',
   packages_dag_main_table_first: 'Snapshot read primary table priority',
   packages_dag_sub_table_first: 'Snaphost read child table priority',
-  packages_dag_model_generation: 'Schema Generating'
+  packages_dag_model_generation: 'Schema Generating',
+  packages_dag_materialized_view: 'Materialized View',
+  packages_dag_build_materialized_view: 'Build Materialized View'
 }

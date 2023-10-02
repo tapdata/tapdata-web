@@ -638,5 +638,7 @@ export default {
   packages_dag_mergeMode: '合并模式',
   packages_dag_main_table_first: '全量主表优先',
   packages_dag_sub_table_first: '全量子表优先',
-  packages_dag_model_generation: '模型生成中'
+  packages_dag_model_generation: '模型生成中',
+  packages_dag_materialized_view: '物化视图',
+  packages_dag_build_materialized_view: '构建物化视图'
 }
