@@ -11,7 +11,7 @@
       <div class="flex gap-1 p-1">
         <AsyncSelect
           v-model="node.connectionId"
-          placeholder="请选择存储数据库"
+          :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
           :params="params"
           itemValue="id"
@@ -19,7 +19,7 @@
           :onSetSelected="onConnectionSelect"
           @change="onChangeConnection"
         >
-          <template #prefix>
+          <template #prefix v-if="node.connectionId">
             <div class="flex align-center h-100">
               <NodeIcon :node="node" :size="20" />
             </div>
@@ -27,7 +27,7 @@
         </AsyncSelect>
         <TableSelect
           v-model="node.tableName"
-          placeholder="请选择存储表"
+          :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!node.connectionId"
           :method="loadTable"
           :connectionId="node.connectionId"
@@ -41,37 +41,6 @@
     <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <!--<ElPopover placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
-          <div ref="fieldPopover">
-            <ElInput v-model="fieldName" placeholder="输入字段名"></ElInput>
-            <div class="mt-2 text-end">
-              <el-button size="mini" type="text" @click="fieldNameVisible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="onSaveFieldName">确定</el-button>
-            </div>
-          </div>
-          <template #reference>
-            <ElDropdown trigger="click" @command="handleCommand">
-              <ElButton
-                size="mini"
-                v-click-outside="{
-                  handler: onClickOutside,
-                  include
-                }"
-              >
-                <VIcon>add</VIcon>
-                新增字段
-              </ElButton>
-              <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
-                &lt;!&ndash;Flatten&ndash;&gt;
-                <ElDropdownItem command="Flatten">平铺</ElDropdownItem>
-                &lt;!&ndash;Embedded Document&ndash;&gt;
-                <ElDropdownItem command="Document">内嵌文档</ElDropdownItem>
-                &lt;!&ndash;Embedded Array&ndash;&gt;
-                <ElDropdownItem command="Array">内嵌数组</ElDropdownItem>
-              </ElDropdownMenu>
-            </ElDropdown>
-          </template>
-        </ElPopover>-->
       </div>
       <ElTree
         class="fs-8 node-schema-tree overflow-y-auto"
@@ -164,14 +133,14 @@ export default {
 
     treeEmptyText() {
       if (!this.node.connectionId) {
-        return '请选择连接'
+        return this.$t('packages_dag_select_database_tips')
       }
 
       if (!this.node.tableName) {
-        return '请选择连表'
+        return this.$t('packages_dag_select_table_tips')
       }
 
-      return '暂无数据'
+      return this.$t('public_data_no_data')
     }
   },
 

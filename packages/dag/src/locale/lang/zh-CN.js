@@ -640,5 +640,15 @@ export default {
   packages_dag_sub_table_first: '全量子表优先',
   packages_dag_model_generation: '模型生成中',
   packages_dag_materialized_view: '物化视图',
-  packages_dag_build_materialized_view: '构建物化视图'
+  packages_dag_build_materialized_view: '构建物化视图',
+  packages_dag_select_database_tips: '请选择数据库',
+  packages_dag_select_table_tips: '请选择表',
+  packages_dag_join_table: '关联表',
+  packages_dag_write_target: '写入目标',
+  packages_dag_materialized_view_field_type: '字段类型',
+  packages_dag_materialized_view_main_talbe_tips: '请选择模型主表',
+  packages_dag_materialized_view_field_flatten: '平铺',
+  packages_dag_materialized_view_field_document: '内嵌文档',
+  packages_dag_materialized_view_field_array: '内嵌数组',
+  packages_dag_add_field: '新增字段'
 }

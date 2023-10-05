@@ -20,13 +20,13 @@
           @click="$emit('add-target-node')"
         >
           <VIcon>add</VIcon>
-          写入目标</ElButton
+          {{ $t('packages_dag_write_target') }}</ElButton
         >
       </div>
       <div class="flex gap-1 p-1">
         <AsyncSelect
           v-model="dagNode.connectionId"
-          placeholder="请选择数据库"
+          :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
           :params="{ isSource: true }"
           itemValue="id"
@@ -36,7 +36,7 @@
           :onSetSelected="onConnectionSelect"
           @change="onChangeConnection"
         >
-          <template #prefix>
+          <template #prefix v-if="dagNode.connectionId">
             <div class="flex align-center h-100">
               <NodeIcon :node="dagNode" :size="20" />
             </div>
@@ -45,7 +45,7 @@
         <TableSelect
           class="table-select"
           v-model="dagNode.tableName"
-          placeholder="请选择表"
+          :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!dagNode.connectionId"
           collapse-tags
           :method="loadTable"
@@ -59,7 +59,7 @@
       </div>
       <ElForm class="node-form px-1" label-position="top" @submit.prevent>
         <template v-if="!isMainTable">
-          <ElFormItem label="关联表">
+          <ElFormItem :label="$t('packages_dag_join_table')">
             <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
               <ElOption v-for="option in newTableOptions" :key="option.value" v-bind="option"></ElOption>
             </ElSelect>
@@ -104,7 +104,7 @@
         </template>
 
         <template v-if="node.parentId || hasTargetNode">
-          <ElFormItem label="字段类型">
+          <ElFormItem :label="$t('packages_dag_materialized_view_field_type')">
             <ElSelect v-model="fieldType" class="w-100" @change="onChangeType">
               <ElOption v-for="(option, i) in fieldTypeOptions" :key="i" v-bind="option"></ElOption>
             </ElSelect>
@@ -138,12 +138,16 @@
             <ElInput
               v-model="fieldName"
               autofocus
-              placeholder="输入字段名"
+              :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
               @keydown.native.enter="onSaveFieldName"
             ></ElInput>
             <div class="mt-2 text-end">
-              <el-button size="mini" type="text" @click="fieldNameVisible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="onSaveFieldName">确定</el-button>
+              <el-button size="mini" type="text" @click="fieldNameVisible = false">{{
+                $t('public_button_cancel')
+              }}</el-button>
+              <el-button type="primary" size="mini" @click="onSaveFieldName">{{
+                $t('public_button_confirm')
+              }}</el-button>
             </div>
           </div>
           <template #reference>
@@ -156,7 +160,7 @@
                 }"
               >
                 <VIcon>add</VIcon>
-                新增字段
+                {{ $t('packages_dag_add_field') }}
               </ElButton>
               <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
                 <ElDropdownItem v-for="(option, i) in fieldTypeOptions" :key="i" :command="option.value">{{
@@ -252,15 +256,15 @@ export default {
       fieldType,
       fieldTypeOptions: [
         {
-          label: '平铺',
+          label: this.$t('packages_dag_materialized_view_field_flatten'),
           value: 'Flatten'
         },
         {
-          label: '内嵌文档',
+          label: this.$t('packages_dag_materialized_view_field_document'),
           value: 'Document'
         },
         {
-          label: '内嵌数组',
+          label: this.$t('packages_dag_materialized_view_field_array'),
           value: 'Array'
         }
       ]
@@ -386,32 +390,19 @@ export default {
 
     treeEmptyText() {
       if (!this.dagNode.connectionId) {
-        return this.isMainTable ? '请选择模型主表' : '请选择连接'
+        return this.$t(
+          this.isMainTable ? 'packages_dag_materialized_view_main_talbe_tips' : 'packages_dag_select_database_tips'
+        )
       }
 
       if (!this.dagNode.tableName) {
-        return this.isMainTable ? '请选择模型主表' : '请选择连表'
+        return this.$t(
+          this.isMainTable ? 'packages_dag_materialized_view_main_talbe_tips' : 'packages_dag_select_table_tips'
+        )
       }
 
-      return '暂无数据'
+      return this.$t('public_data_no_data')
     }
-
-    /*fieldType: {
-      get() {
-        const { mergeType, targetPath } = this.node
-        if (mergeType === 'updateIntoArray') {
-          return 'Array'
-        }
-        if (targetPath) {
-          return 'Document'
-        }
-        return 'Flatten'
-      },
-
-      set(v) {
-        console.log('v', v)
-      }
-    }*/
   },
 
   mounted() {

@@ -9,7 +9,7 @@
     <div ref="container" class="h-100 flex flex-column" v-loading="loading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
-        <div class="fs-6 font-color-dark ml-1">构建物化视图</div>
+        <div class="fs-6 font-color-dark ml-1">{{ $t('packages_dag_materialized_view') }}</div>
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
           <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
@@ -45,11 +45,17 @@
               <div class="choose-list p-2">
                 <div @click="handleZoomOut" class="choose-item pl-4 flex justify-content-between align-center">
                   <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
-                  <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+                  <div class="kbd-wrap flex align-center mr-2">
+                    <kbd>{{ commandCode }}</kbd
+                    ><span class="mx-1">+</span><kbd>+</kbd>
+                  </div>
                 </div>
                 <div @click="handleZoomIn" class="choose-item pl-4 flex justify-content-between align-center">
                   <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
-                  <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+                  <div class="kbd-wrap flex align-center mr-2">
+                    <kbd>{{ commandCode }}</kbd
+                    ><span class="mx-1">+</span><kbd>–</kbd>
+                  </div>
                 </div>
                 <VDivider class="my-2"></VDivider>
                 <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="handleZoomTo(val)">

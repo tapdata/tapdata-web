@@ -679,5 +679,15 @@ export default {
   packages_dag_sub_table_first: 'Snaphost read child table priority',
   packages_dag_model_generation: 'Schema Generating',
   packages_dag_materialized_view: 'Materialized View',
-  packages_dag_build_materialized_view: 'Build Materialized View'
+  packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_select_database_tips: 'Select a Database',
+  packages_dag_select_table_tips: 'Select a Table',
+  packages_dag_join_table: 'Join Table',
+  packages_dag_write_target: 'Write Target',
+  packages_dag_materialized_view_field_type: 'Field Type',
+  packages_dag_materialized_view_main_talbe_tips: 'Please select a main table',
+  packages_dag_materialized_view_field_flatten: 'Flatten',
+  packages_dag_materialized_view_field_document: 'Embedded Document',
+  packages_dag_materialized_view_field_array: 'Embedded Array',
+  packages_dag_add_field: 'Add Field'
 }
