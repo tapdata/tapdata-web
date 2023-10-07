@@ -10,11 +10,11 @@ export const getLeftmostTopNode = nodes => {
   })
 }
 
-export const getDataflowCorners = (nodes, scale) => {
+export const getDataflowCorners = (nodes, scale, prefix = NODE_PREFIX) => {
   return nodes.reduce(
     (accu, node) => {
       const { width = NODE_WIDTH, height = NODE_HEIGHT } =
-        document.getElementById(NODE_PREFIX + node.id)?.getBoundingClientRect() || {}
+        document.getElementById(prefix + node.id)?.getBoundingClientRect() || {}
       let [left, top] = node.attrs.position
 
       if (left < accu.minX) {

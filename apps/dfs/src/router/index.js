@@ -110,7 +110,7 @@ const routes = [
       {
         path: '/workbench',
         name: 'Workbench',
-        redirect: { name: 'dashboard' },
+        redirect: { name: 'Dashboard' },
         hidden: true
       },
       {

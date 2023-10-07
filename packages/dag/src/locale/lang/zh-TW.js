@@ -624,5 +624,17 @@ export default {
   packages_dag_mergeMode: '合併模式',
   packages_dag_main_table_first: '全量主表優先',
   packages_dag_sub_table_first: '全量子表優先',
-  packages_dag_model_generation: '模型生成中'
+  packages_dag_model_generation: '模型生成中',
+  packages_dag_materialized_view: '物化視圖',
+  packages_dag_build_materialized_view: '構建物化視圖',
+  packages_dag_select_database_tips: '請選擇數據庫',
+  packages_dag_select_table_tips: '請選擇表',
+  packages_dag_join_table: '關聯表',
+  packages_dag_write_target: '寫入目標',
+  packages_dag_materialized_view_field_type: '字段類型',
+  packages_dag_materialized_view_main_talbe_tips: '請選擇模型主表',
+  packages_dag_materialized_view_field_flatten: '平鋪',
+  packages_dag_materialized_view_field_document: '內嵌文檔',
+  packages_dag_materialized_view_field_array: '內嵌數組',
+  packages_dag_add_field: '新增字段'
 }

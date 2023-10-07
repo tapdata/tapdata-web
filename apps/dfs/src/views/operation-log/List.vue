@@ -240,6 +240,16 @@ export default {
           value: 'agent&&update',
           desc: this.$t('operation_log_agent_update_tip')
         },
+        {
+          label: this.$t('operation_log_agent_start'),
+          value: 'agent&&start',
+          desc: this.$t('operation_log_agent_start_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_restart'),
+          value: 'agent&&restart',
+          desc: this.$t('operation_log_agent_restart_tip')
+        },
         // 校验
         {
           label: this.$t('operation_log_inspect_create'),

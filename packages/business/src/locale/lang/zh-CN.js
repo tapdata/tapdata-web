@@ -1150,5 +1150,7 @@ export default {
   packages_business_task_list_nindekeyunxing: '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
   packages_business_setting_alarmsetting_qubangding: '去绑定',
   packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。',
-  packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件'
+  packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件',
+  packages_business_agent_ip_tips_prefix: '请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问。',
+  packages_business_agent_ip_tips_suffix: '点击查看全托管Agent的IP地址信息'
 }

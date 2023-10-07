@@ -41,7 +41,7 @@
                 :size-dependencies="[fItem.id, fItem.source, fItem.target]"
               >
                 <div class="list-table__line flex pt-3 align-items-center">
-                  <span class="px-2">{{ fIndex + 1 }}</span>
+                  <div class="line__index mr-2 text-center">{{ fIndex + 1 }}</div>
                   <VirtualSelect
                     v-model="fItem.source"
                     :item-size="30"
@@ -86,7 +86,7 @@
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 
 import i18n from '@tap/i18n'
-import { appApi, metadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 import { VirtualSelect } from '@tap/component'
 import { cloneDeep } from 'lodash'
 
@@ -132,7 +132,7 @@ export default {
         this.sourceFields = await this.getFields(item.source.table, item.source.connectionId)
         this.targetFields = await this.getFields(item.target.table, item.target.connectionId)
 
-        let list = this.sourceFields.map((el, i) => {
+        let list = this.sourceFields.map(el => {
           const findTarget = this.targetFields.find(t => t.value === el.value) || {}
           findTarget.used = true
           return {
@@ -214,7 +214,7 @@ export default {
           .map(t => {
             return {
               source: t.value,
-              target: ''
+              target: t.value
             }
           })
       )
@@ -225,7 +225,7 @@ export default {
           .filter(t => !Object.values(fieldMap).includes(t.value))
           .map(t => {
             return {
-              source: '',
+              source: t.value,
               target: t.value
             }
           })
@@ -322,5 +322,9 @@ export default {
 
 .list-table__content {
   max-height: 450px;
+}
+
+.line__index {
+  width: 36px;
 }
 </style>

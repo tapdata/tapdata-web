@@ -1142,5 +1142,7 @@ export default {
   packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！',
   packages_business_setting_alarmsetting_qubangding: '去綁定',
   packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
-  packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件'
+  packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件',
+  packages_business_agent_ip_tips_prefix: '請確保您數據庫的網絡安全策略，允許全托管Agent所在的IP地址訪問。',
+  packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息'
 }

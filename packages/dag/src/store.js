@@ -80,7 +80,8 @@ const getState = () => ({
   showConsole: false,
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
-  taskSaving: false
+  taskSaving: false,
+  materializedViewVisible: false
 })
 
 // 初始化 state
@@ -257,11 +258,50 @@ const actions = {
     commit('toggleTaskSaving', false)
   }, 50),
 
+  async patchTaskNow({ state, commit }, { vm }) {
+    commit('toggleTaskSaving', true)
+    try {
+      const data = await taskApi.patch(
+        {
+          id: state.taskId,
+          editVersion: state.editVersion,
+          pageVersion: state.pageVersion,
+          dag: state.dag
+        },
+        {
+          silenceMessage: true
+        }
+      )
+      data?.editVersion && commit('setEditVersion', data.editVersion)
+    } catch (e) {
+      console.error(e) // eslint-disable-line
+      if (e?.data?.code === 'Task.OldVersion') {
+        vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
+          onlyTitle: true,
+          type: 'warning',
+          closeOnClickModal: false,
+          confirmButtonText: i18n.t('public_button_refresh')
+        }).then(resFlag => {
+          resFlag && location.reload()
+        })
+      } else if (e?.data?.message) {
+        vm.$message.error(e.data.message)
+      }
+    }
+    commit('toggleTaskSaving', false)
+  },
+
   async updateDag({ state, commit, dispatch }, data = {}) {
     if (!state.taskId || state.stateIsReadonly) return
 
     commit('toggleTaskSaving', true)
-    dispatch('patchTask', data)
+    // let result = dispatch('patchTask', data)
+    // console.log('result', result)
+    if (data.isNow) {
+      await dispatch('patchTaskNow', data)
+    } else {
+      await dispatch('patchTask', data)
+    }
   },
 
   async addNodeAsync({ dispatch, commit }, nodeData) {
@@ -890,6 +930,10 @@ const mutations = {
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
     state.taskSaving = flag
+  },
+
+  setMaterializedViewVisible(state, visible) {
+    state.materializedViewVisible = visible
   }
 }
 

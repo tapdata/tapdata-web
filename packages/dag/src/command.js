@@ -295,6 +295,29 @@ class QuickAddTargetCommand extends ConnectionCommand {
   }
 }
 
+class QuickAddSourceCommand extends ConnectionCommand {
+  constructor(target, node) {
+    super({
+      source: node.id,
+      target
+    })
+    this.node = node
+  }
+
+  exec(state) {
+    state.store.commit('dataflow/addNode', this.node)
+    Vue.nextTick(() => {
+      this.add(state)
+    })
+  }
+
+  undo(state) {
+    const { node } = this
+    state.instance.remove(NODE_PREFIX + node.id)
+    state.store.commit('dataflow/removeNode', node)
+  }
+}
+
 /**
  * 添加dag，包含节点和连线
  */
@@ -327,5 +350,6 @@ export {
   MoveNodeCommand,
   AddNodeOnConnectionCommand,
   QuickAddTargetCommand,
+  QuickAddSourceCommand,
   AddDagCommand
 }
