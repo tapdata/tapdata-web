@@ -126,6 +126,8 @@ export default {
     '标准 JS 节点只能对数据记录进行处理和运算，如需使用所有的系统内置函数，实现外部调用（如网络、数据库等），可使用增强 JS 节点。',
   packages_form_js_processor_index_tooltip2:
     '增强 JS 节点可使用所有的内置函数，实现外部调用（如网络、数据库等），但目前为Beta版本，可能会出现性能问题，请谨慎使用。如仅需对数据记录进行处理和运算，推荐使用标准 JS 节点。',
+  packages_form_python_processor_index_tooltip:
+    'Python 节点可使用所有的内置函数，实现外部调用（如网络、数据库等），但目前为Beta版本，可能会出现性能问题，请谨慎使用。',
   packages_form_js_processor_index_qingqiuchaoshiqing: '请求超时，请重试',
   packages_form_js_processor_index_rengzaipinmingjia: '仍在拼命加载中，请耐心等待',
   packages_form_table_rename_index_qingkong: '清空',

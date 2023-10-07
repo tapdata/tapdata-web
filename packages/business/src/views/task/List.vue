@@ -94,6 +94,16 @@
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
           </el-button>
         </template>
+        <ElButton
+          v-if="$route.name === 'dataflowList'"
+          class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+          size="mini"
+          :loading="createBtnLoading"
+          @click="handleCreateMaterializedView"
+        >
+          <VIcon size="28">beta</VIcon>
+          {{ $t('packages_dag_build_materialized_view') }}</ElButton
+        >
         <el-button
           v-if="buttonShowMap.create"
           v-readonlybtn="'SYNC_job_creation'"
@@ -103,7 +113,7 @@
           id="task-list-create"
           :disabled="$disabledReadonlyUserBtn()"
           :loading="createBtnLoading"
-          @click="create"
+          @click="create()"
         >
           {{ $t('public_button_create') }}
         </el-button>
@@ -584,9 +594,9 @@ export default {
             return item
           })
 
-          if (!this.isDaas) {
+          /*if (!this.isDaas) {
             this.loadTaskErrorCause(errorTaskIds)
-          }
+          }*/
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -702,10 +712,10 @@ export default {
     responseHandler(data, msg, canNotList = []) {
       let failList = data?.filter(t => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
-      console.log('failList', failList)
       if (failList.length) {
         if (failList.some(t => t.code === 'Task.ScheduleLimit')) {
           this.handleShowUpgradeDialog()
+          return
         }
         let nameMapping = {}
         this.table.list.forEach(item => {
@@ -790,16 +800,23 @@ export default {
       return tagList
     },
 
-    async create() {
+    async create(query) {
       this.buried(this.taskBuried.new)
       this.createBtnLoading = true
       this.checkAgent(() => {
         this.$router.push({
-          name: this.route.new
+          name: this.route.new,
+          query
         })
       }).catch(() => {
         this.createBtnLoading = false
         this.buried(this.taskBuried.newFail)
+      })
+    },
+
+    handleCreateMaterializedView() {
+      this.create({
+        by: 'materialized-view'
       })
     },
 
@@ -1111,6 +1128,12 @@ export default {
           )
           .then(async data => {
             const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              this.$message.error(this.$t('public_task_error_schedule_limit'))
+              return
+            }
+
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()

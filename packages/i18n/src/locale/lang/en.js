@@ -248,6 +248,8 @@ export default {
   public_task_copy: 'Copy Task',
   public_task_import: 'Import Task',
   public_task_export: 'Export Task',
+  public_task_error_schedule_limit:
+    'Your currently online Agent has reached its maximum task limit. Please start the offline Agents first.\n',
   // node
   public_node_name: 'Node Name',
   public_node_type: 'Node Type',

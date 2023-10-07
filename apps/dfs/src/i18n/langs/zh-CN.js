@@ -476,12 +476,16 @@ export default {
   operation_log_agent_create_tip: '创建了Agent【@{parameter1}】',
   operation_log_agent_stop: '停止Agent',
   operation_log_agent_stop_tip: '停止了Agent【@{parameter1}】',
-  operation_log_agent_delete: '删除Agent',
-  operation_log_agent_delete_tip: '删除了Agent【${parameter1}】',
+  operation_log_agent_delete: '退订Agent',
+  operation_log_agent_delete_tip: '退订了Agent【@{parameter1}】',
   operation_log_agent_rename: '修改Agent名称',
   operation_log_agent_rename_tip: '将Agent名称[${parameter2}]修改为【@{parameter1}】',
   operation_log_agent_update: 'Agent升级',
   operation_log_agent_update_tip: '进行了Agent升级',
+  operation_log_agent_start: '启动Agent',
+  operation_log_agent_start_tip: '启动了Agent【@{parameter1}】',
+  operation_log_agent_restart: '重启Agent',
+  operation_log_agent_restart_tip: '重启了Agent【@{parameter1}】',
   operation_log_inspect_create: '新建数据校验',
   operation_log_inspect_create_tip: '新建了数据校验任务【@{parameter1}】',
   operation_log_inspect_start: '执行数据校验',
@@ -1654,5 +1658,7 @@ export default {
   dfs_user_contactus_lijiduihua: '立即对话',
   dfs_user_contactus_zaixianzixun: '在线咨询',
   dfs_user_contactus_lianxifangshi: '联系方式',
-  dfs_user_contactus_weinintigongzhuan: '为您提供专业的服务支持'
+  dfs_user_contactus_weinintigongzhuan: '为您提供专业的服务支持',
+  dfs_system_update: '系统更新',
+  dfs_system_description: '系统已升级, 点击刷新，立即体验新功能!'
 }

@@ -19,6 +19,8 @@ import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { Notification } from 'element-ui'
+import { createVersionPolling } from './plugins/version-polling'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -97,6 +99,44 @@ export default ({ routes }) => {
       render: h => h(App)
     }).$mount('#app')
 
+    // 版本升级检测
+    createVersionPolling({
+      appETagKey: '__APP_ETAG__',
+      pollingInterval: 5 * 1000, // 单位为毫秒
+      silent: process.env.NODE_ENV === 'development', // 开发环境下不检测
+      onUpdate: self => {
+        const h = window.App.$createElement
+        Notification({
+          customClass: 'version-upgrade-notification',
+          title: '',
+          message: h(
+            'div',
+            {
+              class: 'flex align-items-start gap-2 ml-n3 mr-n2'
+            },
+            [
+              h('ElImage', { class: 'flex-shrink-0', attrs: { src: require('@/assets/image/version-rocket.svg') } }),
+              h('div', { class: 'flex flex-column align-items-start gap-2 text-start' }, [
+                h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
+                h('span', { class: '' }, i18n.t('dfs_system_description')),
+                h(
+                  'el-button',
+                  {
+                    class: 'ml-auto',
+                    props: { type: 'primary', size: 'mini' },
+                    on: { click: () => self.onRefresh() }
+                  },
+                  i18n.t('public_button_refresh')
+                )
+              ])
+            ]
+          ),
+          duration: 0,
+          position: 'bottom-right'
+        })
+      }
+    })
+
     // 路由守卫
     router.beforeEach((to, from, next) => {
       let domainName = document.domain
@@ -168,7 +208,9 @@ export default ({ routes }) => {
       })
   }
   window.axios
-    .get('api/gw/user')
+    .get('api/gw/user', {
+      maxRedirects: 0
+    })
     .then(data => {
       window.__configMock__ = data
     })

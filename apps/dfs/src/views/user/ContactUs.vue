@@ -13,25 +13,25 @@
         <ElButton type="primary" class="mt-2" size="mini" @click="openChat">{{
           $t('dfs_user_contactus_lijiduihua')
         }}</ElButton>
-<!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
+        <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
-      <li v-if="isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="!isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
+        <ElButton type="text" class="mt-2" size="mini" @click="goSlack">Join Slack</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
       <li class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
-          <VIcon size="20" class="mr-2 color-primary">email</VIcon>
+          <VIcon size="20" class="mr-2 color-primary">email-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
           <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
@@ -47,13 +47,13 @@
         </ElTooltip>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="!isEn" class="p-4 border rounded-2 ml-4 flex-grow-1">
+      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
         <div class="fs-7 flex align-items-center">
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">0755-26656080</ElButton>
-<!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
+        <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
     </ul>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_gengduofuwu') }}</div>
@@ -86,8 +86,9 @@ export default {
   name: 'Center',
   inject: ['buried'],
   data() {
+    const isDomesticStation = window.__config__?.station === 'domestic'
     return {
-      isEn: i18n.locale === 'en'
+      isDomesticStation
     }
   },
 
@@ -157,11 +158,18 @@ export default {
     },
 
     handleDocs() {
-      openUrl('https://docs.tapdata.net/cloud/what-is-tapdata-cloud')
+      const url = this.isDomesticStation
+        ? 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud'
+        : 'https://docs.tapdata.io'
+      openUrl(url)
     },
 
     openChat() {
       window.$zoho.salesiq.chat.start?.()
+    },
+
+    goSlack() {
+      window.open(this.$store.state.config.slackLink, '_blank')
     }
   }
 }

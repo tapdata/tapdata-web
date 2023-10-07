@@ -39,7 +39,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { getDataflowCorners } from '../helpers'
 import movePaper from '../mixins/movePaper'
 import MiniView from '../components/MiniView'
-import { NODE_HEIGHT, NODE_WIDTH } from '../constants'
+import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
 import Mousetrap from 'mousetrap'
 
 import Time from '@tap/shared/src/time'
@@ -301,10 +301,15 @@ export default {
     },
 
     // 画布内容居中
-    centerContent(ifZoomToFit, paddingX = 0) {
-      const allNodes = this.$store.getters['dataflow/allNodes']
+    centerContent(
+      ifZoomToFit,
+      paddingX = 0,
+      allNodes = this.$store.getters['dataflow/allNodes'],
+      nodeIdPrefix = NODE_PREFIX
+    ) {
+      // const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
-      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale)
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale, nodeIdPrefix)
 
       minX -= paddingX
 
@@ -352,11 +357,10 @@ export default {
     },
 
     // 自动延伸画布，类似于无限画布
-    autoResizePaper() {
+    autoResizePaper(allNodes = this.$store.getters['dataflow/allNodes'], nodeIdPrefix = NODE_PREFIX) {
       const { width, height } = this.options
-      const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
-      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale)
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes, this.paperScale, nodeIdPrefix)
       let w = 0
       let h = 0
       let forwardW = 0
@@ -447,7 +451,24 @@ export default {
       return false
     },
 
+    matchesSelector(el, selector, ctx) {
+      ctx = ctx || el.parentNode
+      var possibles = ctx.querySelectorAll(selector)
+      for (var i = 0; i < possibles.length; i++) {
+        if (possibles[i] === el) {
+          return true
+        }
+      }
+      return false
+    },
+
+    inputFilter(e, el, selector = 'input,textarea,select,button,option') {
+      return this.matchesSelector(e.srcElement || e.target, selector, el)
+    },
+
     mouseDown(e) {
+      if (this.inputFilter(e, this.$el)) return
+
       this.initState(e)
       on(window, 'mousemove', this.mouseMove)
       on(window, 'mouseup', this.mouseUp)

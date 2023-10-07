@@ -1140,7 +1140,7 @@ export default {
   packages_business_components_upgradecharges_dingyuexinyinqing: '订阅新引擎',
   packages_business_components_upgradecharges_shengjiguige: '升级规格',
   packages_business_components_upgradecharges_dingyuefangshi: '订阅方式',
-  packages_business_components_upgradecharges_keyongrenwushu: '可用任务数',
+  packages_business_components_upgradecharges_keyongrenwushu: '剩余可用任务数',
   packages_business_components_upgradecharges_dangqianguige: '当前规格',
   packages_business_components_upgradecharges_dingyueshengji: '订阅升级',
   packages_business_create_connection_sceneform_lianjieceshiwu: '连接测试无效，请检查您的连接配置',
@@ -1149,5 +1149,8 @@ export default {
   packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被调用的任务超过了限制数，',
   packages_business_task_list_nindekeyunxing: '您的可运行任务数已达上限，请订阅升级规格，以便您运行更多的任务！',
   packages_business_setting_alarmsetting_qubangding: '去绑定',
-  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。'
+  packages_business_setting_alarmsetting_jiancedaoninhai: '检测到您还未绑定邮箱，无法开启邮件通知。',
+  packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件',
+  packages_business_agent_ip_tips_prefix: '请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问。',
+  packages_business_agent_ip_tips_suffix: '点击查看全托管Agent的IP地址信息'
 }

@@ -247,6 +247,7 @@ export default {
   public_task_copy: '複製任務',
   public_task_import: '導入任務',
   public_task_export: '導出任務',
+  public_task_error_schedule_limit: '您的線上Agent已達最大任務限制，請啟動離線的Agent。',
   // 任節點
   public_node_name: '節點名稱',
   public_node_type: '節點類型',

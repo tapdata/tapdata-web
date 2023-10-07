@@ -212,3 +212,8 @@ $x3: $dotLeft + $dotSpace;
     box-shadow: $x1 0 0 -5px $primary, $x2 0 0 0 $primary, $x3 0 0 2px $primary;
   }
 }
+
+.version-upgrade-notification {
+  width: auto;
+  max-width: 357px;
+}

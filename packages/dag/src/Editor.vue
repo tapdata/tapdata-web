@@ -39,7 +39,8 @@
         ref="leftSidebar"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
-        @add-table-as-node="handleAddTableAsNode"
+        @add-table-as-node="handleAddNodeToCenter"
+        @add-node="handleAddNodeToConnect"
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
@@ -92,6 +93,14 @@
         :buttonShowMap="buttonShowMap"
         show-schema-panel
       />
+
+      <MaterializedView
+        ref="materializedView"
+        :visible.sync="materializedViewVisible"
+        @add-node="onAddMaterializedViewNode"
+        @add-target-node="onAddMaterializedViewTargetNode()"
+        @delete-node="handleDeleteById"
+      ></MaterializedView>
     </section>
   </section>
 </template>
@@ -122,6 +131,8 @@ import TransformLoading from './components/TransformLoading'
 import editor from './mixins/editor'
 import ConsolePanel from './components/migration/ConsolePanel'
 import PaperEmpty from './components/PaperEmpty'
+import MaterializedView from './components/materialized-view/MaterializedView.vue'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Editor',
@@ -129,6 +140,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    MaterializedView,
     NodePopover,
     VEmpty,
     ConfigPanel,
@@ -211,6 +223,7 @@ export default {
         this.initNodeView()
         await this.initView(true)
         this.autoAddNode(query)
+        this.checkMaterializedView(query)
         // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
@@ -247,7 +260,8 @@ export default {
         },
         {
           name: 'Python',
-          type: 'python_processor'
+          type: 'python_processor',
+          beta: true
         },
         {
           name: 'Row Filter',
@@ -482,13 +496,15 @@ export default {
       this.$refs.paperScroller.centerContent()
     },
 
-    handleAddTableAsNode(item) {
+    handleAddNodeToCenter(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
       }
+
+      return node
     },
 
     createNode(position, item) {
@@ -612,6 +628,121 @@ export default {
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
+    },
+
+    onAddMaterializedViewNode(parentNode, props) {
+      const activeNode = this.$store.getters['dataflow/activeNode']
+      const newNode = this.quickAddSourceNode(activeNode, {
+        name: '',
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      })
+      const viewNode = {
+        ...props,
+        id: newNode.id,
+        parentId: parentNode.id,
+        tableName: newNode.name,
+        tableNode: newNode,
+        // joinKeys: [],
+        children: []
+      }
+
+      parentNode.children.push(viewNode)
+      this.$refs.materializedView.addNode(viewNode)
+    },
+
+    onAddMaterializedViewTargetNode(
+      activeNode = this.$store.getters['dataflow/activeNode'],
+      nodeType = {
+        name: `Node ${this.allNodes.length + 1}`,
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          capabilities: [{ id: 'master_slave_merge' }], // 允许作为主从合并的目标
+          hasCreated: false
+        }
+      }
+    ) {
+      const newNode = this.quickAddNode(activeNode, nodeType)
+
+      this.$refs.materializedView.addTargetNode(newNode)
+    },
+
+    async checkMaterializedView(query = {}) {
+      const { by, connectionId, tableName } = query
+      let connection
+
+      if (by !== 'materialized-view') return
+
+      await this.$router.replace({
+        params: {
+          action: 'dataflowEdit'
+        },
+        query: {
+          ...query,
+          by: undefined,
+          connectionId: undefined,
+          tableName: undefined
+        }
+      })
+
+      if (connectionId) {
+        connection = await connectionsApi.get(connectionId)
+      }
+
+      // 统一添加节点，可以通过节流走一个updateDag请求
+      // 添加源节点
+      const sourceNode = this.handleAddNodeToCenter({
+        name: `SourceNode`,
+        type: 'table',
+        databaseType: '',
+        connectionId: '',
+        tableName: '',
+        attrs: {
+          hasCreated: false
+        }
+      })
+      // 添加主从合并节点
+      const mergeTableNode = this.quickAddNode(sourceNode, {
+        name: i18n.t('packages_dag_src_editor_zhuconghebing'),
+        type: 'merge_table_processor'
+      })
+      // 添加目标节点
+      if (connection) {
+        this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+      }
+
+      // 因为有节流，等一个$nextTick
+      await this.$nextTick()
+      console.log('this.taskSaving', this.taskSaving)
+      await this.afterTaskSaved()
+      console.log('this.taskSaving', this.taskSaving)
+      // 打开主从合并节点
+      this.setActiveNode(mergeTableNode.id)
+
+      // 等待主从合并节点的默认配置生成（渲染一次表单）
+      setTimeout(() => {
+        // 显示物化视图
+        this.setMaterializedViewVisible(true)
+      }, 50)
+    },
+
+    handleAddNodeToConnect(item) {
+      if (!this.allNodes.length) {
+        this.handleAddNodeToCenter(item)
+        return
+      }
+
+      const source = this.allNodes.find(n => !n.$outputs.length)
+      const target = this.quickAddNode(source, item)
+      this.$refs.paperScroller.centerNode(target)
     }
   }
 }

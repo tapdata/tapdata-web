@@ -92,9 +92,23 @@
             </div>
           </ElFormItem>
 
-          <!--     折叠     -->
           <ElCollapse class="collapse-fill db-list-container" accordion>
-            <ElCollapseItem :title="$t('packages_business_verification_form_gaojipeizhi')" name="1">
+            <ElCollapseItem name="1">
+              <template #title>
+                <span>{{ $t('packages_business_verification_form_gaojipeizhi') }}</span>
+                <span
+                  v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"
+                  class="ml-3 font-color-sslight"
+                  >{{ $t('packages_business_verification_form_zhengzaijiyuren') }}</span
+                >
+                <VIcon
+                  v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"
+                  class="ml-2 animation-rotate"
+                  size="14"
+                  color="rgb(61, 156, 64)"
+                  >loading-circle</VIcon
+                >
+              </template>
               <ElFormItem
                 class="form-item"
                 prop="inspectDifferenceMode"
@@ -482,7 +496,7 @@ export default {
   },
   computed: {
     saveDisabled() {
-      return this.errorMessageLevel === 'error' || this.autoAddTableLoading
+      return this.errorMessageLevel === 'error' || this.autoAddTableLoading || this.loading
     }
   },
   created() {
@@ -526,10 +540,12 @@ export default {
           this.form['dataFlowName'] = flow.name
           if (id) {
             this.getData(id)
+          } else {
+            this.loading = false
           }
         })
-        .finally(() => {
-          !id && (this.loading = false)
+        .catch(() => {
+          this.loading = false
         })
     },
     //获取表单数据
@@ -580,7 +596,7 @@ export default {
             this.getFlowStages()
           }
         })
-        .finally(() => {
+        .catch(() => {
           this.loading = false
         })
     },
@@ -624,9 +640,16 @@ export default {
 
           this.edges = edges
           this.allStages = stages
-          setTimeout(cb, 800)
+          if (cb) {
+            setTimeout(() => {
+              cb()
+              this.loading = false
+            }, 800)
+          } else {
+            this.loading = false
+          }
         })
-        .finally(() => {
+        .catch(() => {
           this.loading = false
         })
     },

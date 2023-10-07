@@ -78,73 +78,76 @@ export default {
       this.form.setState({ disabled: v })
     },
 
-    async activeNodeId(n, o) {
-      const formSchema = this.$store.getters['dataflow/formSchema'] || {}
+    activeNodeId: {
+      async handler(n, o) {
+        const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
-      // 重置TAB
-      this.scope?.formTab?.setActiveKey('tab1')
+        // 重置TAB
+        this.scope?.formTab?.setActiveKey('tab1')
 
-      if (!this.ins) {
-        // 节点不存在，比如删掉了，清除表单
-        this.schema = null
-        return
-      }
-      await this.setSchema(this.ins.getSchema() || formSchema.node)
+        if (!this.ins) {
+          // 节点不存在，比如删掉了，清除表单
+          this.schema = null
+          return
+        }
+        await this.setSchema(this.ins.getSchema() || formSchema.node)
 
-      // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
-      // 脏代码。节点错误原先是布尔值，又增加字符串类型
-      // 布尔值代表表单校验，字符串目前仅是任务增量、全量校验
-      if (this.hasNodeError(n) && typeof this.hasNodeError(n) !== 'string') {
-        await this.validate()
-      }
+        // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
+        // 脏代码。节点错误原先是布尔值，又增加字符串类型
+        // 布尔值代表表单校验，字符串目前仅是任务增量、全量校验
+        if (this.hasNodeError(n) && typeof this.hasNodeError(n) !== 'string') {
+          await this.validate()
+        }
 
-      // 校验上一个节点配置
-      if (o && !this.stateIsReadonly) {
-        const node = this.nodeById(o)
-        try {
-          if (node) {
-            const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
-            await validateBySchema(schema, node, this.scope)
-          }
+        // 校验上一个节点配置
+        if (o && !this.stateIsReadonly) {
+          const node = this.nodeById(o)
+          try {
+            if (node) {
+              const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
+              await validateBySchema(schema, node, this.scope)
+            }
 
-          if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
-            this.clearNodeError(o)
-          }
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(e)
-          if (node.type === 'table_rename_processor') {
-            // 节点的特殊处理，直接拿表单校验结果设置错误信息
-            this.setNodeErrorMsg({
-              id: node.id,
-              msg: e[0].messages[0]
-            })
-          } else {
-            this.setNodeError(node.id)
+            if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
+              this.clearNodeError(o)
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e)
+            if (node.type === 'table_rename_processor') {
+              // 节点的特殊处理，直接拿表单校验结果设置错误信息
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: e[0].messages[0]
+              })
+            } else {
+              this.setNodeError(node.id)
+            }
           }
         }
-      }
 
-      this.setNodeInputsWatcher(
-        this.$watch('node.$inputs', v => {
-          if (!this.node || !v) return
-          const $inputs = this.form.getFieldState('$inputs')
-          if ($inputs && $inputs.value.join(',') !== v.join(',')) {
-            this.form.setValuesIn('$inputs', [...v])
-            this.$emit('update:InputsOrOutputs')
-          }
-        })
-      )
-      this.setNodeOutputsWatcher(
-        this.$watch('node.$outputs', v => {
-          if (!this.node || !v) return
-          const $outputs = this.form.getFieldState('$outputs')
-          if ($outputs && $outputs.value.join(',') !== v.join(',')) {
-            this.form.setValuesIn('$outputs', [...v])
-            this.$emit('update:InputsOrOutputs')
-          }
-        })
-      )
+        this.setNodeInputsWatcher(
+          this.$watch('node.$inputs', v => {
+            if (!this.node || !v) return
+            const $inputs = this.form.getFieldState('$inputs')
+            if ($inputs && $inputs.value.join(',') !== v.join(',')) {
+              this.form.setValuesIn('$inputs', [...v])
+              this.$emit('update:InputsOrOutputs')
+            }
+          })
+        )
+        this.setNodeOutputsWatcher(
+          this.$watch('node.$outputs', v => {
+            if (!this.node || !v) return
+            const $outputs = this.form.getFieldState('$outputs')
+            if ($outputs && $outputs.value.join(',') !== v.join(',')) {
+              this.form.setValuesIn('$outputs', [...v])
+              this.$emit('update:InputsOrOutputs')
+            }
+          })
+        )
+      },
+      immediate: true
     }
   },
 

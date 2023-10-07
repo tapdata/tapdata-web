@@ -142,7 +142,10 @@ export default {
       return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {
-      const domain = this.$store.getters.isDomesticStation ? 'https://docs.tapdata.net/' : 'https://docs.tapdata.io/'
+      const domain =
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+          ? 'https://docs.tapdata.io/'
+          : 'https://docs.tapdata.net/'
       return domain + this.docUrl + '?from=cloud'
     },
     showIframe() {

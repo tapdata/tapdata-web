@@ -12,6 +12,7 @@ import {
   CommandManager,
   MoveNodeCommand,
   QuickAddTargetCommand,
+  QuickAddSourceCommand,
   RemoveConnectionCommand,
   RemoveNodeCommand
 } from '../command'
@@ -76,6 +77,16 @@ export default {
             height: attr.h + 'px'
           }
         : null
+    },
+
+    materializedViewVisible: {
+      get() {
+        return this.$store.state.dataflow.materializedViewVisible
+      },
+
+      set(visible) {
+        this.setMaterializedViewVisible(visible)
+      }
     }
   },
 
@@ -130,7 +141,8 @@ export default {
       'addProcessorNode',
       'toggleConsole',
       'setPdkPropertiesMap',
-      'setPdkSchemaFreeMap'
+      'setPdkSchemaFreeMap',
+      'setMaterializedViewVisible'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -578,6 +590,11 @@ export default {
       node && this.nodeSelected(node)
       if (setActive) {
         this.setActiveNode(node.id)
+        /*if (node.type === 'merge_table_processor') {
+          this.materializedViewVisible = true
+        } else {
+          this.setActiveNode(node.id)
+        }*/
       }
     },
 
@@ -782,31 +799,31 @@ export default {
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
-      Mousetrap.bind('mod+c', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+c', () => {
         !this.stateIsReadonly && this.copyNodes()
       })
-      Mousetrap.bind('mod+v', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+v', () => {
         if (!this.stateIsReadonly) {
           this.pasteNodes(this.command)
           this.handleCenterContent()
         }
       })
-      Mousetrap.bind('mod+z', e => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+z', e => {
         e.preventDefault()
         !this.stateIsReadonly && this.command.undo()
       })
-      Mousetrap.bind('mod+shift+z', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+shift+z', () => {
         !this.stateIsReadonly && this.command.redo()
       })
-      Mousetrap.bind('mod+shift+o', () => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
-      Mousetrap.bind(['backspace', 'del'], () => {
+      Mousetrap(this.$refs.layoutContent).bind(['backspace', 'del'], () => {
         if (!this.stateIsReadonly && document.getElementById('dfEditorContent').contains(document.activeElement)) {
           this.handleDelete()
         }
       })
-      Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
+      Mousetrap(this.$refs.layoutContent).bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
         this.handleAutoLayout()
       })
@@ -1686,6 +1703,7 @@ export default {
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
       }
+      return node
     },
 
     handleMouseSelect(ifMoved, showSelectBox, selectBoxAttr) {
@@ -1737,6 +1755,28 @@ export default {
       if (!this.checkSourceMaxOutputs(source, true)) return
       if (!this.checkAllowTargetOrSource(source, target, true)) return
       this.command.exec(new QuickAddTargetCommand(source.id, target))
+
+      return target
+    },
+
+    quickAddSourceNode(target, nodeType) {
+      const spaceX = 120
+      const spaceY = 120
+
+      const newPosition = [target.attrs.position[0] - NODE_WIDTH - spaceX, target.attrs.position[1]]
+      let movePosition = [-spaceX, 0]
+
+      if (target.$inputs.length) {
+        newPosition[1] += spaceY
+        movePosition = [0, spaceY]
+      }
+
+      const position = this.getNewNodePosition(newPosition, movePosition)
+      const source = this.createNode(position, nodeType)
+
+      this.command.exec(new QuickAddSourceCommand(target.id, source))
+
+      return source
     },
 
     /**
@@ -2286,6 +2326,12 @@ export default {
           )
           .then(async data => {
             const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              this.$message.error(this.$t('public_task_error_schedule_limit'))
+              return
+            }
+
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()

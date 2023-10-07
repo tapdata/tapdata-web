@@ -1132,7 +1132,7 @@ export default {
   packages_business_components_upgradecharges_dingyuexinyinqing: '訂閱新引擎',
   packages_business_components_upgradecharges_shengjiguige: '升級規格',
   packages_business_components_upgradecharges_dingyuefangshi: '訂閱方式',
-  packages_business_components_upgradecharges_keyongrenwushu: '可用任務數',
+  packages_business_components_upgradecharges_keyongrenwushu: '剩餘可用任務數',
   packages_business_components_upgradecharges_dangqianguige: '當前規格',
   packages_business_components_upgradecharges_dingyueshengji: '訂閱升級',
   packages_business_create_connection_sceneform_lianjieceshiwu: '連接測試無效，請檢查您的連接配置',
@@ -1141,5 +1141,8 @@ export default {
   packages_business_logs_nodelog_yinqingkeyibei: '引擎可以被調用的任務超過了限制數，',
   packages_business_task_list_nindekeyunxing: '您的可運行任務數已達上限，請訂閱升級規格，以便您運行更多的任務！',
   packages_business_setting_alarmsetting_qubangding: '去綁定',
-  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。'
+  packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
+  packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件',
+  packages_business_agent_ip_tips_prefix: '請確保您數據庫的網絡安全策略，允許全托管Agent所在的IP地址訪問。',
+  packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息'
 }
