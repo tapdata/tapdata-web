@@ -790,6 +790,9 @@ export default {
       this.resetPhoneForm()
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
+      const { customData = {} } = userData
+      nameForm.firstName = customData.firstName
+      nameForm.lastName = customData.lastName
 
       userData.licenseCodes =
         userData.licenseCodes?.map(item => {
@@ -877,14 +880,16 @@ export default {
     updateFirstName(resetLoading) {
       const { firstName, lastName } = this.nameForm
       const params = {
-        firstName,
-        lastName
+        customData: {
+          firstName,
+          lastName
+        }
       }
       this.$axios
         .patch('api/tcm/user', params)
         .then(() => {
-          this.userData.firstName = cloneDeep(params.firstName)
-          this.userData.lastName = cloneDeep(params.lastName)
+          this.userData.firstName = cloneDeep(params.customData.firstName)
+          this.userData.lastName = cloneDeep(params.customData.lastName)
           this.$message.success(i18n.t('public_message_operation_success'))
           this.dialogObj.firstName = false
         })
