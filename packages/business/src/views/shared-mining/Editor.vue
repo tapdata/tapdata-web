@@ -12,7 +12,7 @@
       v-loading="loading"
       ref="form"
       label-position="left"
-      label-width="150px"
+      label-width="160px"
       :model="editForm"
       :rules="rulesEdit"
       class="my-n6"
@@ -50,6 +50,15 @@
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
+      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">{{ $t('packages_dag_config_datasource') }}</div>
+      <SchemaToForm
+        ref="schemaToForm"
+        :schema="schemaData"
+        :scope="schemaScope"
+        :colon="true"
+        label-width="160"
+        class="scheme-to-form"
+      ></SchemaToForm>
     </ElForm>
     <span class="dialog-footer" slot="footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
@@ -60,10 +69,13 @@
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi, taskApi } from '@tap/api'
+import { logcollectorApi, taskApi, databaseTypesApi } from '@tap/api'
+import { SchemaToForm } from '@tap/form'
 
 export default {
   name: 'Editor',
+
+  components: { SchemaToForm },
 
   data() {
     return {
@@ -93,7 +105,9 @@ export default {
       dagForm: {
         cdcConcurrent: false,
         cdcConcurrentWriteNum: 4
-      }
+      },
+      schemaData: null,
+      schemaScope: null
     }
   },
 
@@ -105,7 +119,7 @@ export default {
         storageTime: 3,
         syncPoints: []
       }
-
+      this.schemaData = null
       this.loadDag()
       this.loadData()
     },
@@ -153,10 +167,40 @@ export default {
       taskApi.get(this.taskId).then(data => {
         this.dag = data.dag
 
-        this.dag.nodes.forEach(el => {
+        this.dag.nodes.forEach((el = {}) => {
           if (el.type === 'hazelcastIMDG') {
             this.dagForm.cdcConcurrent = el.cdcConcurrent || false
             this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
+          } else if (el.type === 'logCollector') {
+            // 获取连接信息
+            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
+              const nodeProperties = con.properties.node?.properties
+              if (Object.keys(nodeProperties).length) {
+                this.schemaData = {
+                  type: 'object',
+                  'x-component': 'FormLayout',
+                  'x-decorator': 'FormItem',
+                  properties: {
+                    $outputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: [{}]
+                    },
+                    nodeConfig: {
+                      type: 'object',
+                      properties: nodeProperties
+                    }
+                  }
+                }
+              }
+
+              const { nodeConfig } = el
+              if (nodeConfig) {
+                this.$refs.schemaToForm.getForm()?.setValues({
+                  nodeConfig
+                })
+              }
+            })
           }
         })
       })
@@ -224,11 +268,18 @@ export default {
     saveTaskDag() {
       let { dag } = this
       const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
+
+      const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
       dag.nodes.forEach(el => {
         if (el.type === 'hazelcastIMDG') {
           Object.assign(el, {
             cdcConcurrent,
             cdcConcurrentWriteNum
+          })
+        } else if (el.type === 'logCollector') {
+          const { $inputs, $outputs, ...formVal } = getFormValues
+          Object.assign(el, {
+            nodeConfig: formVal.nodeConfig
           })
         }
       })
@@ -240,3 +291,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item {
+      margin-bottom: 10px;
+    }
+  }
+}
+</style>
