@@ -17,14 +17,14 @@
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               firstName:
             </div>
-            <span>{{ userData.firstName || '-' }}</span>
+            <span>{{ userData.customData.firstName || '-' }}</span>
             <div
               class="user-item__label font-color-light ml-3"
               :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
             >
               lastName:
             </div>
-            <span>{{ userData.lastName || '-' }}</span>
+            <span>{{ userData.customData.lastName || '-' }}</span>
             <ElLink type="primary" class="ml-4" @click="dialogObj.firstName = true">{{
               $t('public_button_revise')
             }}</ElLink>
@@ -614,7 +614,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
 import i18n from '@/i18n'
 
 import InlineInput from '@/components/InlineInput'
@@ -638,14 +637,16 @@ export default {
       userData: {
         username: '',
         nickname: '',
-        firstName: '',
-        lastName: '',
         avatar: '',
         telephone: '',
         wx: '',
         email: '',
         enableLicense: false,
-        licenseCodes: []
+        licenseCodes: [],
+        customData: {
+          firstName: '',
+          lastName: ''
+        }
       },
       nameForm: {
         nickname: '',
@@ -887,9 +888,9 @@ export default {
       }
       this.$axios
         .patch('api/tcm/user', params)
-        .then(() => {
-          this.userData.firstName = cloneDeep(params.customData.firstName)
-          this.userData.lastName = cloneDeep(params.customData.lastName)
+        .then((data = {}) => {
+          this.userData.customData.firstName = data.customData?.firstName
+          this.userData.customData.lastName = data.customData?.lastName
           this.$message.success(i18n.t('public_message_operation_success'))
           this.dialogObj.firstName = false
         })
