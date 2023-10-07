@@ -50,12 +50,14 @@
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
+      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">{{ $t('packages_dag_config_datasource') }}</div>
       <SchemaToForm
         ref="schemaToForm"
         :schema="schemaData"
         :scope="schemaScope"
         :colon="true"
         label-width="160"
+        class="scheme-to-form"
       ></SchemaToForm>
     </ElForm>
     <span class="dialog-footer" slot="footer">
@@ -117,7 +119,7 @@ export default {
         storageTime: 3,
         syncPoints: []
       }
-
+      this.schemaData = null
       this.loadDag()
       this.loadData()
     },
@@ -176,19 +178,23 @@ export default {
               if (Object.keys(nodeProperties).length) {
                 this.schemaData = {
                   type: 'object',
+                  'x-component': 'FormLayout',
+                  'x-decorator': 'FormItem',
                   properties: {
                     $outputs: {
                       type: 'array',
                       'x-display': 'hidden',
                       default: [{}]
                     },
-                    ...nodeProperties
+                    nodeConfig: {
+                      type: 'object',
+                      properties: nodeProperties
+                    }
                   }
                 }
-                Object.assign(this.schemaData.properties, nodeProperties)
               }
 
-              const { nodeConfig = {syncIndex: true} } = el
+              const { nodeConfig } = el
               if (nodeConfig) {
                 this.$refs.schemaToForm.getForm()?.setValues({
                   nodeConfig
@@ -285,3 +291,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.scheme-to-form {
+  ::v-deep {
+    .formily-element-form-item {
+      margin-bottom: 10px;
+    }
+  }
+}
+</style>
