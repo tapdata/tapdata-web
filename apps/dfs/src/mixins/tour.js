@@ -42,15 +42,6 @@ export default {
     this.setUrlParams() // url携带的自定义参数
     let unwatch
 
-    if (this.subscriptionModelVisible) {
-      unwatch = this.$watch('subscriptionModelVisible', val => {
-        if (!val) {
-          unwatch()
-          this.checkReplicationTour()
-        }
-      })
-    } else this.checkReplicationTour()
-
     // 🎉🥚
     Mousetrap.bind('up up down down left right left right', () => {
       unwatch?.()
@@ -268,87 +259,6 @@ export default {
       }
     },
 
-    async getSteps() {
-      const _steps = [
-        {
-          key: 'sourceConnection',
-          handle: this.checkSourceCount
-        },
-        {
-          key: 'targetConnection',
-          handle: this.checkTargetCount
-        },
-        {
-          key: 'task',
-          handle: this.checkTaskCount
-        }
-      ]
-      const steps = []
-      const stepMap = {
-        sourceConnection: [
-          {
-            type: 'menu',
-            route: 'connections',
-            element: '#menu-connections',
-            description: i18n.t('dfs_mixins_tour_qingchuangjianninde3'),
-            progressText: '1/6'
-          },
-          {
-            type: 'button',
-            route: 'connections',
-            element: '#connection-list-create',
-            description: i18n.t('dfs_mixins_tour_dianjicichuchuang3'),
-            progressText: '2/6'
-          }
-        ],
-        targetConnection: [
-          {
-            type: 'menu',
-            route: 'connections',
-            element: '#menu-connections',
-            description: i18n.t('dfs_mixins_tour_qingchuangjianninde2'),
-            progressText: '3/6'
-          },
-          {
-            type: 'button',
-            route: 'connections',
-            element: '#connection-list-create',
-            description: i18n.t('dfs_mixins_tour_dianjicichuchuang2'),
-            progressText: '4/6'
-          }
-        ],
-        task: [
-          {
-            type: 'menu',
-            route: 'migrateList',
-            element: '#menu-migrate',
-            description: i18n.t('dfs_mixins_tour_qingchuangjianninde'),
-            progressText: '5/6'
-          },
-          {
-            type: 'button',
-            route: 'migrateList',
-            element: '#task-list-create',
-            description: i18n.t('dfs_mixins_tour_dianjicichuchuang'),
-            progressText: '6/6'
-          }
-        ]
-      }
-
-      for (let item of _steps) {
-        const enable = await item.handle()
-
-        if (enable) {
-          stepMap[item.key].forEach(option => {
-            if (option.type === 'menu') steps.push(this.getMenuStep(option))
-            if (option.type === 'button') steps.push(this.getButtonStep(option))
-          })
-        }
-      }
-
-      return steps
-    },
-
     setComplete() {
       localStorage[`allStepsComplete-${this.userId}`] = Date.now()
     },
@@ -359,29 +269,6 @@ export default {
 
     hasCompleteAlarm() {
       return !!localStorage[`completeAlarm-${this.userId}`]
-    },
-
-    async initDriver() {
-      this.loadingStep = true
-      const steps = await this.getSteps()
-      this.loadingStep = false
-
-      if (!steps.length) {
-        // 满足所有步骤完成的条件
-        this.setComplete()
-        // await this.initAlarmTour()
-      } else {
-        this.driverObj = driver({
-          allowClose: false,
-          allowKeyboardControl: false,
-          showProgress: true,
-          // onDestroyed: () => {
-          //   this.startingTour = false
-          // },
-          steps
-        })
-        this.driverObj.drive(steps[0].type === 'menu' && this.$route.name === steps[0].route ? 1 : 0)
-      }
     },
 
     async initAlarmTour() {
@@ -483,19 +370,14 @@ export default {
         whiteList.includes(this.$route.name) ||
         this.driverObj ||
         this.showAlarmTour ||
-        this.loadingStep ||
-        this.beTouring
+        this.beTouring ||
+        this.enterReplicationTour
       ) {
         return
       }
       if (this.agentRunningCount) {
         // 有可用的agent
-        // await this.initDriver()
-        // if (this.hasComplete()) {
-        //   await this.initAlarmTour()
-        // } else {
-        //   await this.initDriver()
-        // }
+        this.checkReplicationTour()
       } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
         await this.initAgentTour()
@@ -552,8 +434,8 @@ export default {
 
     checkReplicationTour() {
       const tour = this.replicationTour
-      const hasConnectionConfig = this.$route.query?.hasOwnProperty('connectionConfig') // 跳转授权才会有的内容
-      if (tour.enable && !this.completedTour && !hasConnectionConfig) {
+      if (tour.enable && !this.completedTour) {
+        this.enterReplicationTour = true // 标识进入任务引导的过程，在轮询agent数量时判断
         this.initReplicationTour()
 
         if (!tour.status) {
