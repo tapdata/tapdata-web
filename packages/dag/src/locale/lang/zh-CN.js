@@ -650,5 +650,6 @@ export default {
   packages_dag_materialized_view_field_flatten: '平铺',
   packages_dag_materialized_view_field_document: '内嵌文档',
   packages_dag_materialized_view_field_array: '内嵌数组',
-  packages_dag_add_field: '新增字段'
+  packages_dag_add_field: '新增字段',
+  packages_dag_search_node: '搜索节点'
 }

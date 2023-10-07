@@ -689,5 +689,6 @@ export default {
   packages_dag_materialized_view_field_flatten: 'Flatten',
   packages_dag_materialized_view_field_document: 'Embedded Document',
   packages_dag_materialized_view_field_array: 'Embedded Array',
-  packages_dag_add_field: 'Add Field'
+  packages_dag_add_field: 'Add Field',
+  packages_dag_search_node: 'Search Node'
 }
