@@ -34,18 +34,10 @@
             :closable="false"
           >
             <span slot="title" class="inline-block lh-sm align-middle">
-              请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问，详情请<a
-                :href="docUrl"
-                target="_blank"
-                class="text-decoration-underline text-primary"
-                >查看文档</a
-              >。
-              <!--              请确保您数据库的网络安全策略，允许全托管Agent的访问，详情请<a
-                :href="docUrl"
-                target="_blank"
-                class="text-decoration-underline text-primary"
-                >查看文档</a
-              >-->
+              {{ $t('packages_business_agent_ip_tips_prefix')
+              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
+                $t('packages_business_agent_ip_tips_suffix')
+              }}</a>
             </span>
           </ElAlert>
         </div>
@@ -237,7 +229,7 @@ export default {
     },
     docUrl() {
       return `https://docs.tapdata.${
-        this.$store.getters.isDomesticStation ? 'net' : 'io'
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
       }/cloud/prerequisites/allow-access-network`
     }
   },
