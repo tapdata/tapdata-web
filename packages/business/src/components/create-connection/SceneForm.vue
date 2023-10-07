@@ -2,6 +2,16 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main min-w-0">
+        <div v-if="!isDaas && showAgentIpAlert" class="px-4 py-2">
+          <ElAlert class="alert-primary text-primary" type="info" show-icon :closable="false">
+            <span slot="title" class="inline-block lh-sm align-middle">
+              {{ $t('packages_business_agent_ip_tips_prefix')
+              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
+                $t('packages_business_agent_ip_tips_suffix')
+              }}</a>
+            </span>
+          </ElAlert>
+        </div>
         <div class="form-wrap">
           <div class="form px-4 pt-4">
             <SchemaToForm
@@ -141,7 +151,8 @@ export default {
       schemaScope: null,
       pdkFormModel: {},
       doc: '',
-      pathUrl: ''
+      pathUrl: '',
+      showAgentIpAlert: false
     }
   },
   computed: {
@@ -156,6 +167,11 @@ export default {
       if (!this.status) return i18n.t('packages_business_create_connection_sceneform_qingxianjinxinglian')
       if (this.status === 'invalid') return i18n.t('packages_business_create_connection_sceneform_lianjieceshiwu')
       return ''
+    },
+    docUrl() {
+      return `https://docs.tapdata.${
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
+      }/cloud/prerequisites/allow-access-network`
     }
   },
 
@@ -174,6 +190,24 @@ export default {
           connectionConfig: undefined
         }
       })
+    }
+
+    if (!this.isDaas) {
+      const { items: agentData } = await this.$axios.get(
+        'api/tcm/agent?filter=' +
+          encodeURIComponent(
+            JSON.stringify({
+              where: {
+                agentType: 'Cloud',
+                status: 'Running'
+              }
+            })
+          )
+      )
+
+      if (agentData.length) {
+        this.showAgentIpAlert = true
+      }
     }
   },
 
@@ -1276,6 +1310,9 @@ export default {
       //margin: 0 auto;
       //padding-top: 18px;
     }
+  }
+  .alert-primary {
+    background: #e8f3ff;
   }
 }
 

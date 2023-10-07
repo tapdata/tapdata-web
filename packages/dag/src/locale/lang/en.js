@@ -373,7 +373,7 @@ export default {
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
-  packages_dag_nodes_mergetable_guanlianhouxieru: 'Write path after association',
+  packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
   packages_dag_nodes_mergetable_shujuxierumo: 'Data write mode',
   packages_dag_nodes_rowfilter_tiaojianbiaodashi: 'Conditional expression',
@@ -677,5 +677,17 @@ export default {
   packages_dag_mergeMode: 'Merge Mode',
   packages_dag_main_table_first: 'Snapshot read primary table priority',
   packages_dag_sub_table_first: 'Snaphost read child table priority',
-  packages_dag_model_generation: 'Schema Generating'
+  packages_dag_model_generation: 'Schema Generating',
+  packages_dag_materialized_view: 'Materialized View',
+  packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_select_database_tips: 'Select a Database',
+  packages_dag_select_table_tips: 'Select a Table',
+  packages_dag_join_table: 'Join Table',
+  packages_dag_write_target: 'Write Target',
+  packages_dag_materialized_view_field_type: 'Field Type',
+  packages_dag_materialized_view_main_talbe_tips: 'Please select a main table',
+  packages_dag_materialized_view_field_flatten: 'Flatten',
+  packages_dag_materialized_view_field_document: 'Embedded Document',
+  packages_dag_materialized_view_field_array: 'Embedded Array',
+  packages_dag_add_field: 'Add Field'
 }

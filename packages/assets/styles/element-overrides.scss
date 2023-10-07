@@ -437,8 +437,8 @@ $--button-mini-padding-horizontal: 15px !default;
 
 $--button-default-color: $--color-text-regular !default;
 $--button-default-fill: $--color-white !default;
-$--button-default-border-color: $--border-color-background !default;
-$--button-default-background-color: $--border-color-background !default;
+//$--button-default-border-color: $--border-color-background !default;
+//$--button-default-background-color: $--border-color-background !default;
 
 $--button-disabled-color: $--color-text-placeholder !default;
 $--button-disabled-fill: $--color-white !default;
@@ -711,13 +711,21 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .v-icon {
     vertical-align: -0.125em;
   }
-}
-.el-button--text {
-  min-width: auto;
-  border: none;
-}
-.el-button.is-disabled {
-  cursor: default !important;
+
+  &.--with-icon {
+    > span {
+      display: contents;
+    }
+  }
+
+  &.el-button--text {
+    min-width: auto;
+    border: none;
+  }
+
+  &.is-disabled {
+    cursor: default !important;
+  }
 }
 
 /* Select
@@ -753,12 +761,19 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 /* Link
 --------------------------*/
-.el-link.is-disabled {
-  color: map-get($color, disable) !important;
-  cursor: default !important;
-}
-.el-link.is-underline::after {
-  display: none;
+.el-link {
+  &.is-disabled {
+    color: map-get($color, disable) !important;
+    cursor: default !important;
+  }
+
+  &.is-underline::after {
+    display: none;
+  }
+
+  .v-icon {
+    vertical-align: -0.125em;
+  }
 }
 
 /* Tooltip

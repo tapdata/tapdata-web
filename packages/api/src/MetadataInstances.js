@@ -155,5 +155,9 @@ export default class MetadataInstances extends Http {
   multiTransform(params) {
     return this.axios.post(this.url + `/multi/transform`, params)
   }
+
+  getNodeSchemaMapByIds(params) {
+    return this.axios.get(this.url + `/nodes/schema-map`, { params })
+  }
 }
 export { MetadataInstances }

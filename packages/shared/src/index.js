@@ -18,3 +18,5 @@ export * from './locales'
 export * from './number'
 export * from './shared-cache'
 export * from './time'
+
+export * from './directives'

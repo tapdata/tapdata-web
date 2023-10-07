@@ -74,6 +74,7 @@
                     class="db-item flex align-center px-1 user-select-none rounded-2"
                     :class="{ grabbable: !stateIsReadonly, active: activeConnection.id === db.id }"
                     @click="handleSelectDB(db)"
+                    @dblclick="onDBClick('')"
                   >
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
@@ -189,6 +190,7 @@
                 :key="tb.id"
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
                 :class="{ grabbable: !stateIsReadonly }"
+                @dblclick="onDBClick(tb.name)"
               >
                 <OverflowTooltip :text="tb.name" placement="right" :open-delay="400">
                   <span>
@@ -810,6 +812,12 @@ export default {
         name: 'connectionCreate',
         query: { pdkHash, pdkId }
       })
+    },
+
+    onDBClick(tableName) {
+      if (this.stateIsReadonly) return
+
+      this.$emit('add-node', this.getNodeProps(this.activeConnection, tableName))
     }
   }
 }
