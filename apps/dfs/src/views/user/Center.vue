@@ -12,24 +12,24 @@
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
-        <ElRow :gutter="40" class="section-header mb-6">
-          <ElCol v-if="!isDomesticStation" :span="12" class="user-item">
+        <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               firstName:
             </div>
-            <span>{{ userData.customData.firstName || '-' }}</span>
-            <div
-              class="user-item__label font-color-light ml-3"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <span class="user-item__value">{{ userData.customData.firstName || '-' }}</span>
+            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
+          </ElCol>
+          <ElCol :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               lastName:
             </div>
-            <span>{{ userData.customData.lastName || '-' }}</span>
-            <ElLink type="primary" class="ml-4" @click="dialogObj.firstName = true">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <span class="user-item__value">{{ userData.customData.lastName || '-' }}</span>
+            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
-          <ElCol v-else :span="12" class="user-item">
+        </ElRow>
+        <ElRow v-else :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_Center_yongHuNiCheng') }}
             </div>
@@ -44,15 +44,6 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
-            </div>
-            <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_phone_number') }}
             </div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
@@ -65,6 +56,15 @@
               @click="dialogObj.bindPhone = true"
               >{{ $t('public_button_bind') }}</ElLink
             >
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
+            </div>
+            <div class="user-item__value">******</div>
+            <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
@@ -955,7 +955,7 @@ export default {
       }
     },
     editPassword() {
-      if (!this.userData.telephone) {
+      if (this.isDomesticStation && !this.userData.telephone) {
         this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
           type: 'warning'
         }).then(resFlag => {
