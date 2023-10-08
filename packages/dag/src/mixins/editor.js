@@ -2336,6 +2336,28 @@ export default {
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()
           })
+    },
+
+    handleAddNodeToCenter(item) {
+      const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
+      const node = this.handleAddNodeToPos(position, item)
+      if (position[1] !== y) {
+        this.$refs.paperScroller.centerNode(node)
+      }
+
+      return node
+    },
+
+    handleAddNodeToConnect(item) {
+      if (!this.allNodes.length) {
+        this.handleAddNodeToCenter(item)
+        return
+      }
+
+      const source = this.allNodes.find(n => !n.$outputs.length)
+      const target = this.quickAddNode(source, item)
+      this.$refs.paperScroller.centerNode(target)
     }
   }
 }

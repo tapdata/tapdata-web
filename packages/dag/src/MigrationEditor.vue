@@ -33,7 +33,7 @@
       <LeftSider
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
-        @add-node="handleAddNode"
+        @add-node="handleAddNodeToConnect"
         @toggle-expand="handleToggleExpand"
       />
       <section class="layout-wrap flex-1">

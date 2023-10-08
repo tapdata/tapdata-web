@@ -234,6 +234,7 @@
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
+            @dblclick="onDoubleClickProcessor(n)"
           >
             <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
             <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
@@ -814,10 +815,24 @@ export default {
       })
     },
 
+    /**
+     * 双击数据节点快速添加到画布并连线
+     * @param item
+     */
     onDBClick(tableName) {
       if (this.stateIsReadonly) return
 
       this.$emit('add-node', this.getNodeProps(this.activeConnection, tableName))
+    },
+
+    /**
+     * 双击处理节点快速添加到画布并连线
+     * @param item
+     */
+    onDoubleClickProcessor(item) {
+      if (this.stateIsReadonly) return
+
+      this.$emit('add-node', item)
     }
   }
 }
