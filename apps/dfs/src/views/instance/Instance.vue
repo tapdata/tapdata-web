@@ -890,31 +890,30 @@ export default {
 
             // 获取访问的账号密码，以及完整的uri
             const { connectionString } = item
-            item.visitInfo = item.dbUsers.find(t => t.roles.some(r => r.role === 'readAnyDatabase')) || {}
-            const { username, password } = item.visitInfo
-            const AES_KEY = '5fa25b06ee34581d'
-            const AES_PAD = '5fa25b06ee34581d'
-            const AES_PASSWORD = CryptoJS.AES.decrypt(
-              {
-                ciphertext: CryptoJS.enc.Base64.parse(password)
-              },
-              CryptoJS.enc.Latin1.parse(AES_KEY),
-              {
-                iv: CryptoJS.enc.Latin1.parse(AES_PAD)
+            item.visitInfo = item.dbUsers?.find(t => t.roles.some(r => r.role === 'readAnyDatabase'))
+            if (item.visitInfo) {
+              const { username, password } = visitInfo
+              const AES_KEY = '5fa25b06ee34581d'
+              const AES_PAD = '5fa25b06ee34581d'
+              const AES_PASSWORD = CryptoJS.AES.decrypt(
+                  {
+                    ciphertext: CryptoJS.enc.Base64.parse(password)
+                  },
+                  CryptoJS.enc.Latin1.parse(AES_KEY),
+                  {
+                    iv: CryptoJS.enc.Latin1.parse(AES_PAD)
+                  }
+              ).toString(CryptoJS.enc.Utf8)
+              const splitStr = '://'
+              const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
+              if (splitIndex > -1) {
+                item.visitInfo.showUri =
+                    connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
+                item.visitInfo.copyUri =
+                    connectionString.slice(0, splitIndex) +
+                    `${username}:${AES_PASSWORD}@` +
+                    connectionString.slice(splitIndex)
               }
-            ).toString(CryptoJS.enc.Utf8)
-            const splitStr = '://'
-            const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
-            if (splitIndex > -1) {
-              item.visitInfo.showUri =
-                connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
-              item.visitInfo.copyUri =
-                connectionString.slice(0, splitIndex) +
-                `${username}:${AES_PASSWORD}@` +
-                connectionString.slice(splitIndex)
-            } else {
-              item.visitInfo.showUri = this.$t('public_data_no_data')
-              item.visitInfo.copyUri = this.$t('public_data_no_data')
             }
 
             const { storageSize, storageUnit = 'GB' } = item.spec || {}
@@ -1806,14 +1805,14 @@ export default {
       }
     },
     handleVisitInfo(row = {}) {
-      const { showUri, copyUri } = row.visitInfo
-      this.$confirm(showUri, i18n.t('dfs_instance_instance_access_information'), {
+      const { showUri, copyUri } = row.visitInfo || {}
+      this.$confirm(showUri || this.$t('public_data_no_data'), i18n.t('dfs_instance_instance_access_information'), {
         type: 'warning',
         confirmButtonText: i18n.t('public_button_copy'),
         showCancelButton: false
       }).then(res => {
         if (!res) return
-        onCopy(copyUri)
+        onCopy(copyUri || this.$t('public_data_no_data'))
         this.$message.success(this.$t('public_message_copied'))
       })
     }
