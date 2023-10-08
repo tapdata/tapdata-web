@@ -710,7 +710,7 @@ export default {
           prop: 'providerName'
         },
         {
-          label: '访问信息',
+          label: i18n.t('dfs_instance_instance_access_information'),
           prop: 'visitInfo'
         },
         {
@@ -907,16 +907,15 @@ export default {
             const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
             if (splitIndex > -1) {
               item.visitInfo.showUri =
-                  connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
+                connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
               item.visitInfo.copyUri =
-                  connectionString.slice(0, splitIndex) +
-                  `${username}:${AES_PASSWORD}@` +
-                  connectionString.slice(splitIndex)
+                connectionString.slice(0, splitIndex) +
+                `${username}:${AES_PASSWORD}@` +
+                connectionString.slice(splitIndex)
             } else {
               item.visitInfo.showUri = this.$t('public_data_no_data')
               item.visitInfo.copyUri = this.$t('public_data_no_data')
             }
-
 
             const { storageSize, storageUnit = 'GB' } = item.spec || {}
             let num = Number(item?.dataSize) || 0
@@ -1808,9 +1807,10 @@ export default {
     },
     handleVisitInfo(row = {}) {
       const { showUri, copyUri } = row.visitInfo
-      this.$confirm(showUri, 'Access Information', {
+      this.$confirm(showUri, i18n.t('dfs_instance_instance_access_information'), {
         type: 'warning',
-        confirmButtonText: 'Copy'
+        confirmButtonText: i18n.t('public_button_copy'),
+        showCancelButton: false
       }).then(res => {
         if (!res) return
         onCopy(copyUri)

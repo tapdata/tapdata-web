@@ -1597,6 +1597,7 @@ export default {
   dfs_instance_instance_duxiangshili: 'Private Instance',
   dfs_instance_instance_cunchuziyuan: 'Storage Resource',
   dfs_instance_instance_agent2: 'Agent Resource',
+  dfs_instance_instance_access_information: 'Access Information',
   dfs_order_list_wodedingyue: 'My Subscriptions',
   dfs_order_list_total_space: 'Total Space',
   dfs_order_list_used_space: 'Used',
