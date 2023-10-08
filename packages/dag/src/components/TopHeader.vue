@@ -80,7 +80,7 @@
       <div class="choose-size mx-2">
         <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
           <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
-          <div class="choose-list p-2">
+          <div class="choose-list p-1">
             <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
               <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
@@ -89,7 +89,7 @@
               <span class="title">{{ $t('packages_dag_button_zoom_in') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
             </div>
-            <VDivider class="my-2"></VDivider>
+            <VDivider class="my-1"></VDivider>
             <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
               {{ val * 100 }}%
             </div>
@@ -107,8 +107,47 @@
       <ElTooltip transition="tooltip-fade-in" :content="$t('public_task_log')">
         <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
-        </button>
-      </ElTooltip>
+        </button> </ElTooltip
+      ><VDivider class="mx-3" vertical inset></VDivider>
+      <!--搜索节点-->
+      <ElPopover
+        v-model="showSearchNodePopover"
+        placement="bottom"
+        trigger="click"
+        popper-class="rounded-xl p-0"
+        @after-leave="nodeSearchInput = null"
+      >
+        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('packages_dag_search_node')">
+          <button class="icon-btn mx-2">
+            <VIcon size="20">magnify</VIcon>
+          </button>
+        </ElTooltip>
+
+        <div class="choose-pane-wrap">
+          <ElInput
+            class="input-filled"
+            v-model="nodeSearchInput"
+            clearable
+            :placeholder="$t('packages_business_custom_node_placeholder')"
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+            </template>
+          </ElInput>
+          <ElDivider class="m-0" />
+          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-1">
+            <div
+              v-for="(node, i) in nodeList"
+              :key="i"
+              class="choose-item ellipsis px-4"
+              @click="handleClickNode(node)"
+            >
+              {{ node.name }}
+            </div>
+            <VEmpty v-if="!nodeList.length" small></VEmpty>
+          </ElScrollbar>
+        </div>
+      </ElPopover>
     </div>
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
@@ -198,10 +237,10 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { VIcon, TextEditable, VDivider } from '@tap/component'
+import { Select } from 'element-ui'
+import { VIcon, TextEditable, VDivider, VEmpty } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
-import { dataPermissionApi } from '@tap/api'
 
 export default {
   name: 'TopHeader',
@@ -222,7 +261,7 @@ export default {
     }
   },
 
-  components: { TextEditable, TaskStatus, VDivider, VIcon },
+  components: { TextEditable, TaskStatus, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar, VEmpty },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -252,6 +291,14 @@ export default {
 
     isViewer() {
       return ['DataflowViewer', 'MigrateViewer'].includes(this.$route.name)
+    },
+
+    nodeList() {
+      if (this.nodeSearchInput) {
+        const txt = this.nodeSearchInput.toLocaleLowerCase()
+        return this.allNodes.filter(node => node.name.toLocaleLowerCase().includes(txt))
+      }
+      return this.allNodes
     }
   },
 
@@ -302,6 +349,11 @@ export default {
         }
       }
       backToList()
+    },
+
+    handleClickNode(node) {
+      this.showSearchNodePopover = false
+      this.$emit('locate-node', node)
     }
   }
 }

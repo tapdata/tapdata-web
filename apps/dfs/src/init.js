@@ -208,7 +208,9 @@ export default ({ routes }) => {
       })
   }
   window.axios
-    .get('api/gw/user')
+    .get('api/gw/user', {
+      maxRedirects: 0
+    })
     .then(data => {
       window.__configMock__ = data
     })
