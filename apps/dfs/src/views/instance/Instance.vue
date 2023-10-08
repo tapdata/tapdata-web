@@ -326,12 +326,12 @@
                 ></li>
               </ul>
               <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
-<!--              <div class="upgrade-text upgrade-mb16">-->
-<!--                {{ $t('dfs_instance_instance_ruxuliaojiegeng')-->
-<!--                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">-->
-<!--                  Release Notes</el-link-->
-<!--                >-->
-<!--              </div>-->
+              <!--              <div class="upgrade-text upgrade-mb16">-->
+              <!--                {{ $t('dfs_instance_instance_ruxuliaojiegeng')-->
+              <!--                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">-->
+              <!--                  Release Notes</el-link-->
+              <!--                >-->
+              <!--              </div>-->
             </div>
             <div class="dialog-btn flex justify-content-end mt-6">
               <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
@@ -472,6 +472,13 @@
                   <span v-if="col.prop === 'status'" class="font-color-dark">
                     <StatusTag type="tag" :status="item.status" default-status="Stopped" target="mdb"></StatusTag>
                   </span>
+                  <ElLink
+                    v-else-if="col.prop === 'visitInfo'"
+                    type="primary"
+                    class="text-decoration-underline"
+                    @click="handleVisitInfo(item)"
+                    >{{ $t('public_button_obtain') }}</ElLink
+                  >
                   <span v-else>{{ item[col.prop] }}</span>
                 </div>
               </div>
@@ -517,6 +524,7 @@
 </template>
 
 <script>
+import CryptoJS from 'crypto-js'
 import i18n from '@/i18n'
 import { VIcon, FilterBar } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
@@ -525,6 +533,7 @@ import Time from '@tap/shared/src/time'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
 import transferDialog from '@/views/agent-download/transferDialog'
 
+import { onCopy } from '@tap/shared/src/util'
 import StatusTag from '../../components/StatusTag'
 import InlineInput from '../../components/InlineInput'
 import Unsubscribe from '../../components/Unsubscribe.vue'
@@ -701,6 +710,10 @@ export default {
           prop: 'providerName'
         },
         {
+          label: '访问信息',
+          prop: 'visitInfo'
+        },
+        {
           label: i18n.t('dfs_instance_instance_cunchuleixing'),
           prop: 'scopeLabel'
         },
@@ -874,6 +887,36 @@ export default {
             item.regionName = item.regionName || '-'
             item.serviceProvider = item.serviceProvider || '-'
             item.deploymentTypeLabel = this.agentTypeMap[item.deploymentType]
+
+            // 获取访问的账号密码，以及完整的uri
+            const { connectionString } = item
+            item.visitInfo = item.dbUsers.find(t => t.roles.some(r => r.role === 'readAnyDatabase')) || {}
+            const { username, password } = item.visitInfo
+            const AES_KEY = '5fa25b06ee34581d'
+            const AES_PAD = '5fa25b06ee34581d'
+            const AES_PASSWORD = CryptoJS.AES.decrypt(
+              {
+                ciphertext: CryptoJS.enc.Base64.parse(password)
+              },
+              CryptoJS.enc.Latin1.parse(AES_KEY),
+              {
+                iv: CryptoJS.enc.Latin1.parse(AES_PAD)
+              }
+            ).toString(CryptoJS.enc.Utf8)
+            const splitStr = '://'
+            const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
+            if (splitIndex > -1) {
+              item.visitInfo.showUri =
+                  connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
+              item.visitInfo.copyUri =
+                  connectionString.slice(0, splitIndex) +
+                  `${username}:${AES_PASSWORD}@` +
+                  connectionString.slice(splitIndex)
+            } else {
+              item.visitInfo.showUri = this.$t('public_data_no_data')
+              item.visitInfo.copyUri = this.$t('public_data_no_data')
+            }
+
 
             const { storageSize, storageUnit = 'GB' } = item.spec || {}
             let num = Number(item?.dataSize) || 0
@@ -1762,6 +1805,17 @@ export default {
           this.specRemoteMethod()
         })
       }
+    },
+    handleVisitInfo(row = {}) {
+      const { showUri, copyUri } = row.visitInfo
+      this.$confirm(showUri, 'Access Information', {
+        type: 'warning',
+        confirmButtonText: 'Copy'
+      }).then(res => {
+        if (!res) return
+        onCopy(copyUri)
+        this.$message.success(this.$t('public_message_copied'))
+      })
     }
   }
 }
