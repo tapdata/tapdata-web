@@ -108,14 +108,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Intro',
-  data() {
-    const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
 
-    return {
-      isDomesticStation
-    }
+  computed: {
+    ...mapGetters(['isDomesticStation'])
   },
 
   methods: {

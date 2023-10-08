@@ -157,7 +157,6 @@ export default {
   mixins: [tour],
   data() {
     const $t = this.$t.bind(this)
-    let isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
       activeMenu: '',
       menus: [],
@@ -207,13 +206,13 @@ export default {
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
-      isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
-      isDomesticStation
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
     }
   },
 
   computed: {
-    ...mapState(['upgradeFeeVisible'])
+    ...mapState(['upgradeFeeVisible']),
+    ...mapGetters(['isDomesticStation'])
   },
 
   created() {

@@ -1452,6 +1452,7 @@ export default {
   dfs_instance_instance_duxiangshili: '獨享實例',
   dfs_instance_instance_cunchuziyuan: '存儲資源',
   dfs_instance_instance_agent2: 'Agent資源',
+  dfs_instance_instance_access_information: '访问信息',
   dfs_order_list_wodedingyue: '我的訂閱',
   dfs_order_list_total_space: '總空間',
   dfs_order_list_used_space: '已用',

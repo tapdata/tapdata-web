@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { Chart, VIcon } from '@tap/component'
 import { fromNow } from '@tap/shared'
 import { taskApi, connectionsApi } from '@tap/api'

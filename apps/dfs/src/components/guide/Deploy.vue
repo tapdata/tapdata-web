@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
 import { VIcon } from '@tap/component'
 
@@ -8,10 +9,7 @@ export default {
   components: { VIcon },
   props: ['agentId'],
   data() {
-    let isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
-
     return {
-      isDomesticStation,
       downLoadType: '',
       showTooltip: false,
       showAllCode: true,
@@ -30,6 +28,9 @@ export default {
         windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
       }
     }
+  },
+  computed: {
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.getUrl()

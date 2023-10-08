@@ -107,7 +107,7 @@
   </ElHeader>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
@@ -118,10 +118,7 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover },
   data() {
-    const isDomesticStation = window.__config__?.station === 'domestic'
-
     return {
-      isDomesticStation,
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
@@ -140,6 +137,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['isDomesticStation']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
     }

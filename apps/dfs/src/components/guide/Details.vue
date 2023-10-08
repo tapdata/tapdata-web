@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import { VTable } from '@tap/component'
 import i18n from '@/i18n'
 export default {
@@ -6,9 +7,7 @@ export default {
   components: { VTable },
   props: ['isCard', 'orderInfo', 'email'],
   data() {
-    const isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
-      isDomesticStation,
       order: [],
       priceOff: 0,
       columns: [
@@ -56,6 +55,9 @@ export default {
         ]
       }
     }
+  },
+  computed: {
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.$nextTick(() => {

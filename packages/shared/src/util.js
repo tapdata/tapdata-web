@@ -295,3 +295,21 @@ export function camelToSnake(camelStr) {
 export function snakeToCamel(snakeStr) {
   return snakeStr.replace(/_[a-z]/g, match => match.charAt(1).toUpperCase())
 }
+
+export function onCopy(value) {
+  const input = document.createElement('textarea')
+  input.style.fontSize = '12pt'
+  input.style.border = '0'
+  input.style.padding = '0'
+  input.style.margin = '0'
+  input.style.position = 'absolute'
+  input.style.left = '-9999px'
+  input.style.top = document.documentElement.scrollTop + 'px'
+  input.setAttribute('readonly', '')
+  input.value = value
+
+  document.body.appendChild(input)
+  input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
+  document.execCommand?.('copy')
+  document.body.removeChild(input)
+}
