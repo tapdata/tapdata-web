@@ -1567,13 +1567,14 @@ export default {
       mdbZone: '',
       spec2Zone: null,
       orderStorage: false,
-      isDomesticStation: true,
       loadingCloudMdbSource: false,
       loadingMongoCluster: false
     }
   },
 
   computed: {
+    ...mapGetters(['isDomesticStation']),
+
     memoryMap() {
       if (this.mdbPrices === 0) {
         return [
@@ -1715,9 +1716,7 @@ export default {
     if (disabledAliyunCode) {
       this.disabledAliyunCode = disabledAliyunCode
     }
-    if (window.__config__?.station) {
-      this.isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
-    }
+
     //获取是否有存储实例
     await this.getMdbCount()
 
@@ -2050,7 +2049,9 @@ export default {
         }
         // 如果是单独订购存储，默认调过免费实例，避免后续step受免费实例影响
         this.specification =
-          !this.freeAgentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
+          !this.freeAgentCount && this.orderStorage
+            ? this.specificationItems[1]?.value
+            : this.specificationItems[0]?.value
         // 价格套餐
         this.allPackages = paidPrice.map(t => {
           return Object.assign(t, {

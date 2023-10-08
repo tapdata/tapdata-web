@@ -142,14 +142,7 @@ export default {
   },
 
   data() {
-    let isDomesticStation = true
-
-    if (window.__config__?.station) {
-      isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
-    }
-
     return {
-      isDomesticStation,
       subscribeId: '',
       subscribeAlterId: '',
       isCard: true,
@@ -192,6 +185,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['isDomesticStation']),
+
     payMethods() {
       const payMethods = [
         {

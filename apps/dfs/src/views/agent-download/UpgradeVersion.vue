@@ -178,9 +178,7 @@ export default {
   name: 'UpgradeVersion',
   components: { TheHeader },
   data() {
-    let isDomesticStation = window.__config__?.station === 'domestic' //默认是国内站 国际站是 international
     return {
-      isDomesticStation,
       downLoadType: 'Linux',
       downType: [
         { name: 'Linux (64 bit)', value: 'Linux' },
@@ -197,6 +195,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['isDomesticStation']),
     comUrl() {
       let { token } = this
       let downloadUrl = (this.downloadUrl || '').replace(/\/$/, '') + '/' // 去掉末尾的/

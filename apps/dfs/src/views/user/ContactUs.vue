@@ -85,11 +85,9 @@ import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 export default {
   name: 'Center',
   inject: ['buried'],
-  data() {
-    const isDomesticStation = window.__config__?.station === 'domestic'
-    return {
-      isDomesticStation
-    }
+
+  computed: {
+    ...mapGetters(['isDomesticStation'])
   },
 
   created() {
