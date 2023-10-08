@@ -79,8 +79,8 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
-import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
+import { mapGetters } from 'vuex'
+import { openUrl } from '@tap/shared'
 
 export default {
   name: 'Center',

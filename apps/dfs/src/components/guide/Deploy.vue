@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
 import { VIcon } from '@tap/component'
 

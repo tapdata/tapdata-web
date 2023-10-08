@@ -1410,6 +1410,7 @@
 
 <script>
 import { uniqBy } from 'lodash'
+import { mapGetters } from 'vuex'
 import { isObj } from '@tap/shared'
 import { VTable } from '@tap/component'
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'

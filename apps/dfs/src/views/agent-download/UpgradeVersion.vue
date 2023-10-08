@@ -170,6 +170,7 @@
   </section>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
 
 import TheHeader from '@/components/the-header'

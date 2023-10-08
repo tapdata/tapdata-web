@@ -128,6 +128,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
 import { VTable, IconButton, VEmpty, VIcon } from '@tap/component'
 import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
