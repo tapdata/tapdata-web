@@ -174,17 +174,22 @@ export default {
           } else if (el.type === 'logCollector') {
             // 获取连接信息
             databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
-              const nodeProperties = con.properties.node?.properties
+              const nodeProperties = con.properties?.node?.properties
               if (Object.keys(nodeProperties).length) {
                 this.schemaData = {
                   type: 'object',
                   'x-component': 'FormLayout',
                   'x-decorator': 'FormItem',
                   properties: {
+                    $inputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: []
+                    },
                     $outputs: {
                       type: 'array',
                       'x-display': 'hidden',
-                      default: [{}]
+                      default: []
                     },
                     nodeConfig: {
                       type: 'object',
