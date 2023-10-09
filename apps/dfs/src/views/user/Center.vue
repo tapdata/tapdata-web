@@ -595,10 +595,10 @@
       :visible.sync="dialogObj.firstName"
     >
       <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.native.prevent>
-        <ElFormItem prop="email" label="firstName">
+        <ElFormItem prop="email" label="FirstName">
           <ElInput v-model="nameForm.firstName" maxlength="50"></ElInput>
         </ElFormItem>
-        <ElFormItem prop="email" label="lastName">
+        <ElFormItem prop="email" label="LastName">
           <ElInput v-model="nameForm.lastName" maxlength="50"></ElInput>
         </ElFormItem>
       </ElForm>
