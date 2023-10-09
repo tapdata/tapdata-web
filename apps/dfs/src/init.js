@@ -207,40 +207,7 @@ export default ({ routes }) => {
         }
       })
   }
-  window.axios
-    .get('api/gw/user', {
-      maxRedirects: 0
-    })
-    .then(data => {
-      window.__configMock__ = data
-    })
-    .catch(() => {
-      // let data = {
-      //   _id: '63e5b4b4eca9ebaa09f651a2',
-      //   id: '60d183c1bdc49b963d33a90a',
-      //   birthdate: null,
-      //   email: 'fannie@tapdata.io',
-      //   email_verified: true,
-      //   family_name: null,
-      //   gender: 'U',
-      //   given_name: null,
-      //   locale: null,
-      //   middle_name: null,
-      //   name: null,
-      //   nickname: 'fannie',
-      //   phone_number: '18520893326',
-      //   phone_number_verified: true,
-      //   picture: 'https://files.authing.co/authing-console/default-user-avatar.png',
-      //   preferred_username: null,
-      //   profile: null,
-      //   sub: '60d183c1bdc49b963d33a90a',
-      //   updated_at: '2023-05-12T11:47:52.831Z',
-      //   website: null,
-      //   zoneinfo: null,
-      //   mockUserId: '60d183c1bdc49b963d33a90a'
-      // }
-      // window.__configMock__ = data
-    })
+
   window.axios
     .get('config/config.json', {
       cache: false,
