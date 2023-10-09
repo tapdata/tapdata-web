@@ -126,7 +126,6 @@ export default {
       lang: '',
       languages: langMenu,
       domain: document.domain,
-      configMock: window.__configMock__,
       mockUserId: null,
       openUpgradeFee: false,
       isFeeUser: true,
@@ -145,9 +144,8 @@ export default {
 
   created() {
     this.lang = getCurrentLanguage()
-    if (window.__configMock__) {
-      this.mockUserId = window.__configMock__?.mockUserId || false
-    }
+
+    this.loadUserMock()
     this.getAgentCount()
     //如果没有配置topBarLinks 给默认值
     if (!window.__config__?.topBarLinks) {
@@ -282,6 +280,16 @@ export default {
     },
     goOfflineDeploy() {
       window.open('https://tapdata.net/tapdata-on-prem/demo.html')
+    },
+
+    loadUserMock() {
+      this.$axios
+        .get('api/gw/user', {
+          maxRedirects: 0
+        })
+        .then(data => {
+          this.mockUserId = data?.mockUserId || false
+        })
     }
   }
 }
