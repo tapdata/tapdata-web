@@ -15,14 +15,14 @@
         <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              firstName:
+              FirstName:
             </div>
             <span class="user-item__value">{{ userData.customData.firstName || '-' }}</span>
             <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              lastName:
+              LastName:
             </div>
             <span class="user-item__value">{{ userData.customData.lastName || '-' }}</span>
             <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
