@@ -690,5 +690,11 @@ export default {
   packages_dag_materialized_view_field_document: 'Embedded Document',
   packages_dag_materialized_view_field_array: 'Embedded Array',
   packages_dag_add_field: 'Add Field',
-  packages_dag_search_node: 'Search Node'
+  packages_dag_search_node: 'Search Node',
+  packages_dag_unwind_name: 'Unwinding Arrays',
+  packages_dag_unwind_path: 'Array Field Path',
+  packages_dag_unwind_includeArrayIndex: 'Array Index Field Name',
+  packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
+  packages_dag_unwind_preserveNullAndEmptyArrays_tips:
+    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.'
 }

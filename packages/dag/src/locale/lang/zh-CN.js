@@ -651,5 +651,11 @@ export default {
   packages_dag_materialized_view_field_document: '内嵌文档',
   packages_dag_materialized_view_field_array: '内嵌数组',
   packages_dag_add_field: '新增字段',
-  packages_dag_search_node: '搜索节点'
+  packages_dag_search_node: '搜索节点',
+  packages_dag_unwind_name: '拆分数组',
+  packages_dag_unwind_path: '数组字段路径',
+  packages_dag_unwind_includeArrayIndex: '保存数组索引的新字段名',
+  packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空数组',
+  packages_dag_unwind_preserveNullAndEmptyArrays_tips:
+    '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。'
 }
