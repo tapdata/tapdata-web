@@ -34,6 +34,7 @@
           class="ldp-tree h-100"
           ref="tree"
           :indent="0"
+          :keeps="60"
           node-key="id"
           :props="props"
           draggable
@@ -58,6 +59,7 @@
             empty-text=""
             ref="tree"
             :indent="0"
+            :keeps="60"
             node-key="id"
             :props="props"
             draggable
@@ -115,6 +117,7 @@
           ref="tree"
           node-key="id"
           :props="props"
+          :keeps="60"
           draggable
           height="100%"
           wrapper-class-name="p-2"

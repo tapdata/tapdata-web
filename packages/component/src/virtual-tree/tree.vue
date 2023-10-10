@@ -13,6 +13,7 @@
       v-if="height"
       :class="wrapperClassName"
       :style="{ 'max-height': height, 'overflow-y': 'auto' }"
+      :keeps="keeps"
       :data-key="getNodeKey"
       :data-sources="visibleList"
       :data-component="itemComponent"
@@ -68,7 +69,10 @@ export default {
       type: Number,
       default: 8
     },
-    wrapperClassName: [String, Array]
+    wrapperClassName: [String, Array],
+    keeps: {
+      type: Number
+    }
   },
   computed: {
     visibleList() {
