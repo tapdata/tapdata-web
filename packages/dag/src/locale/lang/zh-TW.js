@@ -637,5 +637,11 @@ export default {
   packages_dag_materialized_view_field_document: '內嵌文檔',
   packages_dag_materialized_view_field_array: '內嵌數組',
   packages_dag_add_field: '新增字段',
-  packages_dag_search_node: '搜索節點'
+  packages_dag_search_node: '搜索節點',
+  packages_dag_unwind_name: '拆分數組',
+  packages_dag_unwind_path: '數組字段路徑',
+  packages_dag_unwind_includeArrayIndex: '保存數組索引的新字段名',
+  packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空數組',
+  packages_dag_unwind_preserveNullAndEmptyArrays_tips:
+    '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。'
 }
