@@ -79,6 +79,31 @@
           </div>
         </div>
         <div v-else-if="sceneDatabases.length" class="connector-list grid gap-4">
+          <template v-if="showDemoConnection">
+            <div
+              v-for="item in demoDatabase"
+              :key="`demo-${item.pdkId}`"
+              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+              :class="{ active: item.pdkId === selected.pdkId }"
+              @click="handleSelect(item, true)"
+            >
+              <div class="flex gap-3">
+                <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
+                <div class="connector-item-content flex-1 overflow-hidden">
+                  <div class="connector-item-title font-color-dark flex align-center">
+                    <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
+                    <ElTag size="mini" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
+                      >DEMO</ElTag
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="font-color-light fs-8 mt-2">
+                {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
+              </div>
+            </div>
+          </template>
+
           <div
             v-for="item in sceneDatabases"
             :key="item.pdkId"
@@ -122,6 +147,7 @@
       ></ServeForm>
       <ConnectionForm
         v-else
+        ref="connectionForm"
         :params="formParams"
         :selector-type="selectorType"
         :hide-connection-type="!!fixedPdkId"
@@ -182,6 +208,7 @@ export default {
       timer: null,
       activeTab: '',
       database: [],
+      demoDatabase: [],
       databaseTypeMap: {},
       loading: false,
       showDialog: this.visible,
@@ -354,6 +381,10 @@ export default {
         return this.$t('packages_business_create_connection_scenedialog_qingxuanzeninde')
       }
       return this.$t('packages_business_create_connection_title_select_type')
+    },
+
+    showDemoConnection() {
+      return this.startingTour && this.currentScene === 'recommend' && !this.search
     }
   },
   watch: {
@@ -415,19 +446,42 @@ export default {
       this.$emit('update:visible', false)
     },
 
-    handleSelect(item) {
+    handleSelect(item, isDemo = false) {
       if (this.selectorType === 'source_and_target') {
         this.$emit('selected', item)
         return
       }
 
-      Object.assign(this.formParams, { name: item.name, icon: null, pdkHash: item.pdkHash, pdkId: item.pdkId })
+      Object.assign(this.formParams, {
+        name: item.name,
+        icon: null,
+        pdkHash: item.pdkHash,
+        pdkId: item.pdkId,
+        pdkOptions: item
+      })
       this.selected = item
       this.showForm = true
+
+      if (isDemo) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            const { demoDatabase } = this.$store.state.config
+            this.$refs.connectionForm.schemaFormInstance.setValues({
+              __TAPDATA: {
+                name: `${item.name}Demo`
+              },
+              ...demoDatabase[item.pdkId]
+            })
+            this.$refs.connectionForm.schemaFormInstance.setFieldState('*(!START.__TAPDATA.name)', {
+              disabled: true
+            })
+          }, 0)
+        })
+      }
     },
 
     handleSelectSpecial(item) {
-      Object.assign(this.formParams, { ...item, pdkHash: null, pdkId: null })
+      Object.assign(this.formParams, { ...item, pdkHash: null, pdkId: null, pdkOptions: null })
       this.showForm = true
     },
 
@@ -470,6 +524,13 @@ export default {
         return o1.name.localeCompare(o2.name)
       })
       this.databaseTypeMap = data.reduce((map, db) => ((map[db.type] = db), map), {})
+
+      if (this.selectorType === 'source') {
+        this.demoDatabase = [data.find(t => t.pdkId === 'mysql')]
+      } else if (this.selectorType === 'target') {
+        this.demoDatabase = [data.find(t => t.pdkId === 'mongodb')]
+      }
+
       this.loading = false
     },
 
