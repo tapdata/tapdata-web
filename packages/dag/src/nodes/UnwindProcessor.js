@@ -64,23 +64,11 @@ export class UnwindProcessor extends NodeType {
                 'x-decorator-props': {
                   tooltip: i18n.t('packages_dag_unwind_preserveNullAndEmptyArrays_tips')
                 }
-              }
-            }
-          },
-          tab2: {
-            type: 'void',
-            'x-component': 'FormTab.TabPane',
-            'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
-            },
-            properties: {
-              schemaPanel: {
+              },
+
+              schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPanel',
-                'x-component-props': {
-                  class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
+                'x-component': 'SchemaPreview'
               }
             }
           }
