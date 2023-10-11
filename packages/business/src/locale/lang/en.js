@@ -978,6 +978,8 @@ export default {
   packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From Table',
+  packages_business_shared_cache_cache_key_message:
+    'The selected cache key is not indexed. To enhance caching performance, we will attempt to create an index automatically.',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
   packages_business_application_delete_shanchuyingyong: 'Delete Application',
   packages_business_application_delete_ninzhengzaishanchu:

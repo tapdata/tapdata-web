@@ -60,7 +60,11 @@
           class="form-field-selector"
           :options="fieldOptions"
           :placeholder="$t('packages_business_shared_cache_placeholder_keys')"
+          @change="handleChangeCacheKeys"
         ></FieldSelector>
+        <div v-if="showCachekeysCheckMsg" class="color-danger">
+          {{ $t('packages_business_shared_cache_cache_key_message') }}
+        </div>
       </ElFormItem>
       <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
         <template slot="label">
@@ -172,7 +176,9 @@ export default {
           }
         ]
       },
-      isEn: i18n.locale === 'en'
+      isEn: i18n.locale === 'en',
+      metadataInstancesId: '',
+      showCachekeysCheckMsg: false
     }
   },
   created() {
@@ -283,11 +289,13 @@ export default {
             'source.id': this.form.connectionId,
             original_name: tableName,
             is_deleted: false,
-            'fields.is_deleted': false
+            'fields.is_deleted': false,
+            sourceType: 'SOURCE'
           },
           fields: {
             'fields.field_name': true,
-            'fields.original_field_name': true
+            'fields.original_field_name': true,
+            indices: true
           }
         })
       }
@@ -297,8 +305,16 @@ export default {
         .then(data => {
           let table = data?.items?.[0]
           if (table) {
+            this.metadataInstancesId = table.id
+            if (this.taskId) {
+              this.handleChangeCacheKeys()
+            }
             let fields = table.fields || []
-            this.fieldOptions = fields.map(opt => opt.field_name)
+            this.fieldOptions = fields.map(opt => {
+              opt.label = opt.field_name
+              opt.value = opt.field_name
+              return opt
+            })
           } else {
             this.$message.error(this.$t('packages_business_shared_cache_messge_no_table'))
           }
@@ -336,6 +352,9 @@ export default {
             externalStorageId
           } = this.form
           let id = this.taskId
+          const needCreateIndex = cacheKeys
+            .split(',')
+            .filter(t => this.fieldOptions.some(field => t === field.value && !field.is_index))
           let params = {
             id,
             name,
@@ -354,7 +373,8 @@ export default {
                 {
                   cacheKeys: cacheKeys,
                   maxMemory: maxMemory,
-                  externalStorageId
+                  externalStorageId,
+                  needCreateIndex
                 }
               ],
               edges: []
@@ -371,6 +391,16 @@ export default {
               this.$emit('update:loading', false)
             })
         }
+      })
+    },
+
+    handleChangeCacheKeys() {
+      const params = {
+        cacheKeys: this.form.cacheKeys,
+        id: this.metadataInstancesId
+      }
+      metadataInstancesApi.checkFiledIndex(params).then(data => {
+        this.showCachekeysCheckMsg = !data
       })
     }
   }
