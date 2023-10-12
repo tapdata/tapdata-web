@@ -64,7 +64,12 @@
                 temp.labelActionTitle
               }}</ElLink>
             </div>
-            <div v-if="['permissions'].includes(temp.key)" class="pt-2">
+            <pre
+                v-if="temp.key === 'databaseLogInfo'"
+                class="box-line__value"
+                v-html="temp.value"
+            ></pre>
+            <div v-else-if="['permissions'].includes(temp.key)" class="pt-2">
               <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
                 per.roleName
               }}</ElTag>
@@ -496,7 +501,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       } else {
         this.list = [
