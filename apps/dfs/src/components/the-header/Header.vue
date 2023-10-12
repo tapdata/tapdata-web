@@ -11,14 +11,14 @@
           <VIcon size="18">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <!--加入slack-->
-<!--        <div-->
-<!--          v-if="!isDomesticStation"-->
-<!--          class="command-item position-relative inline-flex align-items-center rounded-4"-->
-<!--          @click="goSlack"-->
-<!--        >-->
-<!--          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />-->
-<!--          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>-->
-<!--        </div>-->
+        <div
+          v-if="!isDomesticStation"
+          class="command-item position-relative inline-flex align-items-center rounded-4"
+          @click="goSlack"
+        >
+          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
+          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
+        </div>
         <!--有奖问卷-->
         <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
           <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
@@ -275,9 +275,9 @@ export default {
     goQuestionnaire() {
       window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
-    // goSlack() {
-    //   window.open(this.$store.state.config.slackLink, '_blank')
-    // },
+    goSlack() {
+      window.open(this.$store.state.config.slackLink, '_blank')
+    },
     goOfflineDeploy() {
       window.open('https://tapdata.net/tapdata-on-prem/demo.html')
     },
