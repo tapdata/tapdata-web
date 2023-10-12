@@ -1066,9 +1066,10 @@ export default {
       return nodes
     },
 
-    handleDisableNode(node) {
-      this.$set(node, 'disabled', true)
-      this.$set(node.attrs, 'disabled', true)
+    handleDisableNode(node, value = true) {
+      this.$set(node, 'disabled', value)
+      this.$set(node.attrs, 'disabled', value)
+
       const parents = this.findParentNodes(node.id)
       const children = this.findChildNodes(node.id)
       const nodes = parents.concat(children)
@@ -1087,7 +1088,7 @@ export default {
       )
 
       nodes.forEach(node => {
-        this.$set(node.attrs, 'disabled', true)
+        this.$set(node.attrs, 'disabled', value)
         connections.push(
           ...this.jsPlumbIns.getConnections({
             target: NODE_PREFIX + node.id
@@ -1095,48 +1096,9 @@ export default {
         )
       })
 
+      const handler = value ? 'addClass' : 'removeClass'
       connections.forEach(connection => {
-        connection.addClass('connection-disabled')
-      })
-
-      // console.log('connections', connections)
-      // 禁用上游
-      // console.log('上游节点', this.findParentNodes(node.id))
-      // 禁用下游
-      // console.log('下游节点', this.findChildNodes(node.id))
-    },
-
-    handleEnableNode(node) {
-      this.$set(node, 'disabled', false)
-      this.$set(node.attrs, 'disabled', false)
-      const parents = this.findParentNodes(node.id)
-      const children = this.findChildNodes(node.id)
-      const nodes = parents.concat(children)
-      const connections = []
-
-      connections.push(
-        ...this.jsPlumbIns.getConnections({
-          target: NODE_PREFIX + node.id
-        })
-      )
-
-      connections.push(
-        ...this.jsPlumbIns.getConnections({
-          source: NODE_PREFIX + node.id
-        })
-      )
-
-      nodes.forEach(node => {
-        this.$set(node.attrs, 'disabled', false)
-        connections.push(
-          ...this.jsPlumbIns.getConnections({
-            target: NODE_PREFIX + node.id
-          })
-        )
-      })
-
-      connections.forEach(connection => {
-        connection.removeClass('connection-disabled')
+        connection[handler]('connection-disabled')
       })
     },
 
