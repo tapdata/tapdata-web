@@ -74,7 +74,7 @@
           :label="$t('packages_business_data_server_drawer_quanxianfanwei')"
           prop="acl"
         >
-          <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged">
+          <ElSelect v-model="form.acl" multiple @change="aclChanged">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
@@ -86,7 +86,11 @@
           :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
           prop="appValue"
         >
-          <ListSelect :value.sync="form.appValue" :label.sync="form.appLabel" :disabled="!isEdit"></ListSelect>
+          <ListSelect
+            :value.sync="form.appValue"
+            :label.sync="form.appLabel"
+            @change="handleChangePermissionsAndSave"
+          ></ListSelect>
         </ElFormItem>
 
         <!-- 基础信息 -->
@@ -1070,6 +1074,7 @@ export default {
     },
     aclChanged() {
       this.$refs?.form?.clearValidate('acl')
+      this.handleChangePermissionsAndSave()
     },
     fieldsChanged(val) {
       this.form.fields = val
@@ -1205,6 +1210,41 @@ export default {
             comment: ''
           })
         }) || []
+    },
+
+    handleChangePermissionsAndSave() {
+      if (this.isEdit) return
+      this.$refs.form.validate(async valid => {
+        if (!valid) return
+        let { id, apiType, params, where, sort, fields, method, path, acl, appLabel, appValue } = this.form
+
+        const formData = {
+          id,
+          listtags: [
+            {
+              id: appValue,
+              value: appLabel
+            }
+          ],
+          paths: [
+            {
+              name: apiType === 'customerQuery' ? 'customerQuery' : 'findPage',
+              result: 'Page<Document>',
+              type: apiType === 'customerQuery' ? 'customerQuery' : 'preset',
+              acl,
+              method,
+              params,
+              where,
+              sort,
+              fields,
+              path
+            }
+          ]
+        }
+        modulesApi.patch(formData).then(() => {
+          this.$message.success(this.$t('public_message_operation_success'))
+        })
+      })
     }
   }
 }
