@@ -3,7 +3,7 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
-      <ElTooltip placement="top" content="构建物化视图">
+      <ElTooltip placement="top" :content="$t('packages_dag_build_materialized_view')">
         <IconButton :disabled="mdmNotExist" @click="openMaterializedDialog">materialized</IconButton>
       </ElTooltip>
       <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')">folder-plus</IconButton>
@@ -134,7 +134,10 @@
         </ElFormItem>
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
           <ElRadioGroup v-model="taskDialogConfig.task.type">
-            <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+            <ElTooltip
+              :disabled="!taskDialogConfig.notSupportedCDC"
+              :content="$t('packages_ldp_not_support_increments')"
+            >
               <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
                 {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
               </ElRadio>
@@ -218,9 +221,9 @@
     </ElDialog>
 
     <ElDialog :visible.sync="showMaterialized" width="480px" :close-on-click-modal="false">
-      <span slot="title" class="fs-6 fw-sub">构建物化视图</span>
+      <span slot="title" class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
-        <ElFormItem label="物化视图存储表">
+        <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
           <ElInput size="small" v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
           </ElInput>
@@ -277,6 +280,7 @@ export default {
         prefix: 'f_',
         tableName: null,
         newTableName: null,
+        notSupportedCDC: false,
         task: {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
@@ -515,6 +519,7 @@ export default {
       const {
         draggingObjects: [object]
       } = this.dragState
+
       this.taskDialogConfig.from = object.parent.data
       this.taskDialogConfig.tableName = object.data.name
       this.taskDialogConfig.newTableName = object.data.name.replace(/^FDM_/, '')
@@ -523,6 +528,25 @@ export default {
       this.$refs.form?.resetFields()
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
+
+      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce((map, item) => {
+        map[item.id] = true
+        return map
+      }, {})
+
+      if (
+        !(
+          capbilitiesMap['stream_read_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function'] ||
+          capbilitiesMap['raw_data_callback_filter_function_v2'] ||
+          (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+        )
+      ) {
+        this.taskDialogConfig.notSupportedCDC = true
+        this.taskDialogConfig.task.type = 'initial_sync'
+      } else {
+        this.taskDialogConfig.notSupportedCDC = false
+      }
     },
 
     async taskDialogSubmit(start, confirmTable) {
@@ -596,6 +620,8 @@ export default {
             const keys = Object.keys(data)
             const msg = data[keys[0]]?.[0]?.msg
             this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
+          } else {
+            this.$message.error(response.data.message || this.$t('public_message_save_fail'))
           }
         }
         this.creating = false
