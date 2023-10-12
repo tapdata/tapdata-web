@@ -1026,6 +1026,120 @@ export default {
       this.nodeMenu.show = false // 防止节点删除后，popover仍在显示
     },
 
+    findParentNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let parentIds = node.$inputs || []
+
+      parentIds.forEach(id => {
+        let node = this.scope.findNodeById(id)
+
+        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1) return
+
+        nodes.push(node)
+
+        if (node.$inputs?.length) {
+          nodes.push(...this.findParentNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
+    findChildNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let ids = node.$outputs || []
+
+      ids.forEach(id => {
+        let node = this.scope.findNodeById(id)
+
+        if (!node || node.__Ctor.maxInputs !== 1) return
+
+        nodes.push(node)
+
+        if (node.$outputs?.length) {
+          nodes.push(...this.findChildNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
+    handleDisableNode(node) {
+      this.$set(node, 'disabled', true)
+      this.$set(node.attrs, 'disabled', true)
+      const parents = this.findParentNodes(node.id)
+      const children = this.findChildNodes(node.id)
+      const nodes = parents.concat(children)
+      const connections = []
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          target: NODE_PREFIX + node.id
+        })
+      )
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          source: NODE_PREFIX + node.id
+        })
+      )
+
+      nodes.forEach(node => {
+        this.$set(node.attrs, 'disabled', true)
+        connections.push(
+          ...this.jsPlumbIns.getConnections({
+            target: NODE_PREFIX + node.id
+          })
+        )
+      })
+
+      connections.forEach(connection => {
+        connection.addClass('connection-disabled')
+      })
+
+      // console.log('connections', connections)
+      // 禁用上游
+      // console.log('上游节点', this.findParentNodes(node.id))
+      // 禁用下游
+      // console.log('下游节点', this.findChildNodes(node.id))
+    },
+
+    handleEnableNode(node) {
+      this.$set(node, 'disabled', false)
+      this.$set(node.attrs, 'disabled', false)
+      const parents = this.findParentNodes(node.id)
+      const children = this.findChildNodes(node.id)
+      const nodes = parents.concat(children)
+      const connections = []
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          target: NODE_PREFIX + node.id
+        })
+      )
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          source: NODE_PREFIX + node.id
+        })
+      )
+
+      nodes.forEach(node => {
+        this.$set(node.attrs, 'disabled', false)
+        connections.push(
+          ...this.jsPlumbIns.getConnections({
+            target: NODE_PREFIX + node.id
+          })
+        )
+      })
+
+      connections.forEach(connection => {
+        connection.removeClass('connection-disabled')
+      })
+    },
+
     handleZoomIn() {
       this.$refs.paperScroller.zoomIn()
     },

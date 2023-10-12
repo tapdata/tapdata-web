@@ -1058,7 +1058,6 @@ export default {
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
             ...others,
             subscribeIds,
-            subscribeIds,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
