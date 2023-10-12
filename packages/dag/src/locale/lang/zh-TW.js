@@ -636,6 +636,7 @@ export default {
   packages_dag_materialized_view_field_flatten: '平鋪',
   packages_dag_materialized_view_field_document: '內嵌文檔',
   packages_dag_materialized_view_field_array: '內嵌數組',
+  packages_dag_materialized_view_storage_table: '物化視圖存儲表',
   packages_dag_add_field: '新增字段',
   packages_dag_search_node: '搜索節點',
   packages_dag_unwind_name: '拆分數組',
