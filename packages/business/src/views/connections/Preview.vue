@@ -57,8 +57,13 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label }}:</div>
+            <pre
+              v-if="temp.key === 'databaseLogInfo'"
+              class="box-line__value"
+              v-html="temp.value"
+            ></pre>
             <el-tooltip
-              v-if="
+              v-else-if="
                 connection[temp.key] &&
                 !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
                 connection[temp.key].toString()
@@ -478,7 +483,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       } else {
         this.list = [
