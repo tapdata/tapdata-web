@@ -1211,5 +1211,15 @@ export default {
   packages_business_verification_form_zhengzaijiyuren: 'Generating verification conditions based on tasks in progress',
   packages_business_agent_ip_tips_prefix:
     "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
-  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.'
+  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
+  packages_business_use_ssl: 'Use SSL',
+  packages_business_certificate_authority: 'CA File',
+  packages_business_client_certificate: 'Client Certificate File',
+  packages_business_client_key: 'Client Key File',
+  packages_business_client_key_password: 'Client Key Password',
+  packages_business_use_ssh: 'Use SSH Tunnel',
+  packages_business_ssh_host: 'Host',
+  packages_business_ssh_port: 'Port',
+  packages_business_ssh_username: 'Username',
+  packages_business_ssh_password: 'Password'
 }

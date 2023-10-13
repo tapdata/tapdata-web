@@ -1144,5 +1144,15 @@ export default {
   packages_business_setting_alarmsetting_jiancedaoninhai: '檢測到您還未綁定郵箱，無法開啟郵件通知。',
   packages_business_verification_form_zhengzaijiyuren: '正在基於任務產生校驗條件',
   packages_business_agent_ip_tips_prefix: '請確保您數據庫的網絡安全策略，允許全托管Agent所在的IP地址訪問。',
-  packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息'
+  packages_business_agent_ip_tips_suffix: '點擊查看全托管Agent的IP地址信息',
+  packages_business_use_ssl: '使用 SSL',
+  packages_business_certificate_authority: 'CA 文件',
+  packages_business_client_certificate: '客戶端證書文件',
+  packages_business_client_key: '客戶端密鑰文件',
+  packages_business_client_key_password: '客戶端密鑰密碼',
+  packages_business_use_ssh: '使用 SSH 隧道',
+  packages_business_ssh_host: '主機名',
+  packages_business_ssh_port: '端口',
+  packages_business_ssh_username: '用戶名',
+  packages_business_ssh_password: '密碼'
 }
