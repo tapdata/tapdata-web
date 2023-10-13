@@ -822,7 +822,10 @@ export default {
                     title: this.$t('public_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Input'
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      id: 'connection-name-input'
+                    }
                   },
                   connection_type: {
                     type: 'string',
