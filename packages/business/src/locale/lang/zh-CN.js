@@ -938,7 +938,8 @@ export default {
   packages_business_shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
   packages_business_shared_cache_column_connection: '所属连接',
   packages_business_shared_cache_column_table: '所属表',
-  packages_business_shared_cache_cache_key_message: '所选缓存键无索引，为了提升缓存性能，将尝试自动创建索引',
+  packages_business_shared_cache_cache_key_message: '所选缓存键无索引',
+  packages_business_shared_cache_cache_key_auto_create: '自动创建索引',
   packages_business_relation_list_gongxianghuancun: '共享缓存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:

@@ -66,6 +66,9 @@
           {{ $t('packages_business_shared_cache_cache_key_message') }}
         </div>
       </ElFormItem>
+      <ElFormItem prop="autoCreateIndex" :label="$t('packages_business_shared_cache_cache_key_auto_create') + ':'">
+        <ElSwitch v-model="form.autoCreateIndex"></ElSwitch>
+      </ElFormItem>
       <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
         <template slot="label">
           <span>{{ $t('packages_business_shared_cache_fields') }}</span>
@@ -193,6 +196,7 @@ export default {
         databaseType: '',
         tableName: '',
         cacheKeys: '',
+        autoCreateIndex: false,
         fields: '',
         maxMemory: 500,
         externalStorageId: ''
@@ -220,6 +224,7 @@ export default {
             databaseType: data.databaseType,
             tableName: data.tableName,
             cacheKeys: data.cacheKeys,
+            autoCreateIndex: data.autoCreateIndex,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
             externalStorageId
@@ -347,6 +352,7 @@ export default {
             databaseType,
             tableName,
             cacheKeys,
+            autoCreateIndex,
             fields,
             maxMemory,
             externalStorageId
@@ -374,7 +380,8 @@ export default {
                   cacheKeys: cacheKeys,
                   maxMemory: maxMemory,
                   externalStorageId,
-                  needCreateIndex
+                  needCreateIndex,
+                  autoCreateIndex
                 }
               ],
               edges: []

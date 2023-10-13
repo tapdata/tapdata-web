@@ -931,7 +931,8 @@ export default {
   packages_business_shared_cache_code_tooltip: '可在JS節點中輸入這段代碼使用該緩存',
   packages_business_shared_cache_column_connection: '所屬連接',
   packages_business_shared_cache_column_table: '所屬表',
-  packages_business_shared_cache_cache_key_message: '所選緩存鍵無索引，為了提升緩存性能，將嘗試自動建立索引',
+  packages_business_shared_cache_cache_key_message: '所選緩存鍵無索引',
+  packages_business_shared_cache_cache_key_auto_create: '自動建立索引',
   packages_business_relation_list_gongxianghuancun: '共享緩存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:
