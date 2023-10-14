@@ -998,7 +998,7 @@ export default {
                     properties: {
                       enableSSH: {
                         // 使用 SSH 隧道
-                        title: '使用 SSH 隧道',
+                        title: i18n.t('packages_business_use_ssh'),
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
