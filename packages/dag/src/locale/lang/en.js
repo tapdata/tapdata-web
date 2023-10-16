@@ -697,5 +697,6 @@ export default {
   packages_dag_unwind_includeArrayIndex: 'Array Index Field Name',
   packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
-    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.'
+    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
+  packages_dag_btn_disable_node: 'Disable Node'
 }

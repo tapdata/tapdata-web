@@ -194,11 +194,26 @@ $height: 30px;
     }
   }
 
-  &:hover {
+  &:hover/*:not(.node--disabled:not(.node--disabled__main))*/ {
     .df-node-options {
       display: flex;
     }
   }
+
+  &.node--disabled {
+    color: #c9cdd4;
+    background-color: #f1f2f4;
+    border-color: #c9cdd4;
+
+    .df-node-icon,
+    .df-node-text {
+      opacity: 0.75;
+    }
+  }
+
+  /*&.node--disabled:not(.node--disabled__main) {
+    pointer-events: none;
+  }*/
 }
 
 .df-menu-list {

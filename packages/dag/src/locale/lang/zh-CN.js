@@ -658,5 +658,6 @@ export default {
   packages_dag_unwind_includeArrayIndex: '保存数组索引的新字段名',
   packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空数组',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
-    '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。'
+    '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。',
+  packages_dag_btn_disable_node: '禁用节点'
 }

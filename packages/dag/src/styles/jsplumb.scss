@@ -20,6 +20,18 @@
       stroke-dashoffset: 0;
     }
   }
+
+  &.connection-disabled {
+    $color: rgb(201 205 212 / 50%);
+    z-index: 3;
+    path:nth-child(2) {
+      stroke: $color;
+    }
+    path:nth-child(3) {
+      fill: $color;
+      stroke: $color;
+    }
+  }
 }
 
 .jtk-endpoint {
