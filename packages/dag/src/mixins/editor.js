@@ -1026,6 +1026,82 @@ export default {
       this.nodeMenu.show = false // 防止节点删除后，popover仍在显示
     },
 
+    findParentNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let parentIds = node.$inputs || []
+
+      parentIds.forEach(id => {
+        let node = this.scope.findNodeById(id)
+
+        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1) return
+
+        nodes.push(node)
+
+        if (node.$inputs?.length) {
+          nodes.push(...this.findParentNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
+    findChildNodes(id) {
+      let node = this.scope.findNodeById(id)
+      const nodes = []
+      let ids = node.$outputs || []
+
+      ids.forEach(id => {
+        let node = this.scope.findNodeById(id)
+
+        if (!node || node.__Ctor.maxInputs !== 1) return
+
+        nodes.push(node)
+
+        if (node.$outputs?.length) {
+          nodes.push(...this.findChildNodes(id))
+        }
+      })
+
+      return nodes
+    },
+
+    handleDisableNode(node, value = true) {
+      this.$set(node, 'disabled', value)
+      this.$set(node.attrs, 'disabled', value)
+
+      const parents = this.findParentNodes(node.id)
+      const children = this.findChildNodes(node.id)
+      const nodes = parents.concat(children)
+      const connections = []
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          target: NODE_PREFIX + node.id
+        })
+      )
+
+      connections.push(
+        ...this.jsPlumbIns.getConnections({
+          source: NODE_PREFIX + node.id
+        })
+      )
+
+      nodes.forEach(node => {
+        this.$set(node.attrs, 'disabled', value)
+        connections.push(
+          ...this.jsPlumbIns.getConnections({
+            target: NODE_PREFIX + node.id
+          })
+        )
+      })
+
+      const handler = value ? 'addClass' : 'removeClass'
+      connections.forEach(connection => {
+        connection[handler]('connection-disabled')
+      })
+    },
+
     handleZoomIn() {
       this.$refs.paperScroller.zoomIn()
     },

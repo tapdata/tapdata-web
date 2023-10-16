@@ -68,6 +68,8 @@
               @deselectNode="nodeDeselectedById"
               @nodeSelected="nodeSelectedById"
               @delete="handleDeleteById"
+              @disable="handleDisableNode($event, true)"
+              @enable="handleDisableNode($event, false)"
               @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
