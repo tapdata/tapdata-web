@@ -57,8 +57,9 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label }}:</div>
+            <pre v-if="temp.key === 'databaseLogInfo'" class="box-line__value" v-html="temp.value"></pre>
             <el-tooltip
-              v-if="
+              v-else-if="
                 connection[temp.key] &&
                 !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
                 connection[temp.key].toString()
@@ -105,7 +106,7 @@ import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
-import { connectionsApi } from '@tap/api'
+import { connectionsApi, proxyApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'
 
@@ -130,6 +131,7 @@ export default {
       drawer: false,
       visible: false,
       timer: null,
+      databaseLogInfoTimer: null,
       direction: 'rtl',
       loading: false,
       showProgress: false,
@@ -264,7 +266,9 @@ export default {
     clearTimer() {
       // 清除定时器
       clearTimeout(this.timer)
+      clearTimeout(this.databaseLogInfoTimer)
       this.timer = null
+      this.databaseLogInfoTimer = null
     },
     handleClose() {
       this.clearTimer()
@@ -309,13 +313,14 @@ export default {
 
       return row
     },
-    open(row) {
+    async open(row) {
       this.visible = true
       this.showProgress = false
       this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      await this.getDatabaseLogInfo(row)
       this.loadList(row)
     },
     edit() {
@@ -401,7 +406,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearTimer()
+      clearTimeout(this.timer)
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -473,6 +478,18 @@ export default {
                 }
               ]
             }
+          : {},
+        row.databaseLogInfo?.value
+          ? {
+              icon: 'warning-circle',
+              items: [
+                {
+                  label: row.databaseLogInfo.key,
+                  key: 'databaseLogInfo',
+                  value: row.databaseLogInfo.value
+                }
+              ]
+            }
           : {}
       ]
     },
@@ -518,6 +535,24 @@ export default {
 
     handleClick(temp = {}) {
       temp.action?.()
+    },
+
+    async getDatabaseLogInfo(row = {}) {
+      const { id } = row
+      const params = {
+        className: 'PDKConnectionService',
+        method: 'databaseLogInfoService',
+        args: [id]
+      }
+      try {
+        const data = await proxyApi.call(params)
+        row.databaseLogInfo = data || {}
+        this.databaseLogInfoTimer = setTimeout(() => {
+          this.getDatabaseLogInfo()
+        }, 10000)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
