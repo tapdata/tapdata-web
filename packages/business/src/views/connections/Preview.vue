@@ -653,11 +653,11 @@ export default {
     },
 
     async getDatabaseLogInfo(row = {}) {
-      const { connectionId } = row
+      const { id } = row
       const params = {
         className: 'PDKConnectionService',
         method: 'databaseLogInfoService',
-        args: [connectionId]
+        args: [id]
       }
       try {
         const data = await proxyApi.call(params)
