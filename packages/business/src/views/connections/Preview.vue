@@ -452,7 +452,7 @@ export default {
     async loadList(row = {}) {
       const heartbeatTable = await this.loadHeartbeatTable(row)
       this.connection.heartbeatTable = heartbeatTable?.[0]
-
+      console.log('row', row.databaseLogInfo?.value)
       // 有uri
       if (row.uri) {
         this.list = [
@@ -555,7 +555,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       }
 
