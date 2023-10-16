@@ -677,7 +677,7 @@ export default {
         row.databaseLogInfo = data || {}
         this.databaseLogInfoTimer = setTimeout(() => {
           this.getDatabaseLogInfo()
-        }, 10000)
+        }, 60000)
       } catch (e) {
         console.log(e)
       }
