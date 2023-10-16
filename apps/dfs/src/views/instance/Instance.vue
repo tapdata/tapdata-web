@@ -1182,6 +1182,10 @@ export default {
       if (this.stopBtnDisabled(row)) {
         return
       }
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       let flag = false
       if (from === 'details' && this.selectedRow?.id === row.id) {
         row = this.selectedRow
@@ -1526,8 +1530,7 @@ export default {
       return (
         row.agentType === 'Cloud' ||
         row.status !== 'Running' ||
-        row.metric.runningTaskNum > 0 ||
-        row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        row.metric.runningTaskNum > 0
       )
     },
     // 禁用删除
@@ -1573,7 +1576,6 @@ export default {
     restartBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus)
       ) //tapdataAgent 失活了
     },
@@ -1581,7 +1583,6 @@ export default {
     startBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Running'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
@@ -1689,6 +1690,10 @@ export default {
     },
     // 半托管重启
     handleRestart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1701,6 +1706,10 @@ export default {
     },
     // 半托管启动
     handleStart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
