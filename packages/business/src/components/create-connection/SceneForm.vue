@@ -414,16 +414,22 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.params?.pdkHash
-      const data = await databaseTypesApi.pdkHash(pdkHash)
+      // const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.params.id
-      this.params.name = data.name
-      this.pdkOptions = data || {}
+      // this.pdkOptions = data || {}
+
+      if (this.params.pdkOptions) {
+        this.pdkOptions = this.params.pdkOptions
+      } else {
+        this.pdkOptions = await databaseTypesApi.pdkHash(pdkHash)
+        this.params.name = this.pdkOptions.name
+      }
 
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
 
-      const { connectionType } = this.pdkOptions
+      let { connectionType } = this.pdkOptions
       let typeEnum = ['source', 'target'].includes(connectionType)
         ? [
             {
@@ -450,7 +456,13 @@ export default {
             }
           ]
 
-      let hideConnectionType = this.hideConnectionType || ['source', 'target'].includes(this.selectorType)
+      let hideConnectionType = false
+
+      if (this.hideConnectionType || ['source', 'target'].includes(this.selectorType)) {
+        hideConnectionType = true
+        connectionType = this.selectorType || connectionType
+      }
+
       const endProperties = {}
 
       // 是否支持共享挖掘
@@ -760,7 +772,7 @@ export default {
           }
         }
       })
-      const connectionProperties = data?.properties?.connection?.properties || {}
+      const connectionProperties = this.pdkOptions.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
       let result = {
@@ -787,7 +799,7 @@ export default {
                     type: 'string',
                     title: this.$t('public_connection_type'),
                     required: true,
-                    default: this.pdkOptions.connectionType || 'source_and_target',
+                    default: connectionType,
                     enum: typeEnum,
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',

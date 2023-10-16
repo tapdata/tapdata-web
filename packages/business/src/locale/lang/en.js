@@ -1211,5 +1211,7 @@ export default {
   packages_business_verification_form_zhengzaijiyuren: 'Generating verification conditions based on tasks in progress',
   packages_business_agent_ip_tips_prefix:
     "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
-  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.'
+  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
+  packages_business_demo_database_desc:
+    'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.'
 }

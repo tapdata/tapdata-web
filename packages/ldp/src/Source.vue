@@ -363,7 +363,12 @@ export default {
 
       if (this.startingTour && this.newConnectionId) {
         const connection = this.connectionMap[this.newConnectionId]
-        if (connection && connection.loadFieldsStatus !== 'loading' && !connection.children.length) {
+        if (
+          connection &&
+          connection.status !== 'testing' &&
+          connection.loadFieldsStatus !== 'loading' &&
+          !connection.children.length
+        ) {
           const node = this.$refs.tree.getNode(this.newConnectionId)
           this.handleNodeExpand(connection, node)
         }
