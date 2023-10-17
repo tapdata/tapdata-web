@@ -16,7 +16,7 @@ export const SharedMiningTableInfo = observer(
           <SharedMiningTable
             task-id={taskId}
             params={{
-              nodeId: activeNodeId,
+              nodeId: activeNodeId
             }}
             height={props.height}
             show-title={false}
@@ -25,9 +25,7 @@ export const SharedMiningTableInfo = observer(
 
         return (
           <FormItem.BaseItem
-            label={root.$t(
-              'packages_dag_shared_mining_table_info_index_wajuebiaoxinxi'
-            )}
+            label={root.$t('packages_dag_shared_mining_table_info_index_wajuebiaoxinxi')}
             attrs={attrs}
           >
             {con}
@@ -35,6 +33,6 @@ export const SharedMiningTableInfo = observer(
           </FormItem.BaseItem>
         )
       }
-    },
+    }
   })
 )

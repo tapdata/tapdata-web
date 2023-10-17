@@ -6,13 +6,9 @@ let routes = [
   {
     path: '/',
     name: 'aliyunMarketLicense',
-    component: Vue.defineAsyncComponent(
-      Vue.defineAsyncComponent(
-        () => import('../views/aliyun-market/License.vue')
-      )
-    ),
-  },
+    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/aliyun-market/License.vue')))
+  }
 ]
 init({
-  routes,
+  routes
 })

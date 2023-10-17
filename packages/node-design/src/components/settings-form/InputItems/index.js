@@ -11,8 +11,8 @@ export const InputItems = defineComponent({
     vertical: Boolean,
     width: {
       type: String,
-      default: '100%',
-    },
+      default: '100%'
+    }
   },
   setup: (props, { attrs, slots }) => {
     const prefix = usePrefix('input-items')
@@ -23,7 +23,7 @@ export const InputItems = defineComponent({
         </div>
       </InputItemsContext.Provider>
     )
-  },
+  }
 })
 
 InputItems.Item = defineComponent({
@@ -32,8 +32,8 @@ InputItems.Item = defineComponent({
     title: String,
     icon: String,
     width: {
-      type: String,
-    },
+      type: String
+    }
   },
   setup: (props, { slots }) => {
     const prefix = usePrefix('input-items-item')
@@ -45,8 +45,8 @@ InputItems.Item = defineComponent({
           class={[
             prefix,
             {
-              vertical: props.vertical || ctx.vertical,
-            },
+              vertical: props.vertical || ctx.vertical
+            }
           ]}
           style={{ width: props.width || ctx.width }}
         >
@@ -60,5 +60,5 @@ InputItems.Item = defineComponent({
         </div>
       )
     }
-  },
+  }
 })

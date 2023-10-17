@@ -9,11 +9,7 @@
     >
       <template v-slot:search>
         <div class="search-bar">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          ></FilterBar>
+          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
         </div>
       </template>
       <template v-slot:operation>
@@ -44,9 +40,7 @@
             size="mini"
             @click="handleCreate('pipeline')"
           >
-            <span>{{
-              $t('packages_business_verification_list_renwuyizhixing')
-            }}</span>
+            <span>{{ $t('packages_business_verification_list_renwuyizhixing') }}</span>
           </ElButton>
           <ElButton
             v-readonlybtn="'datasource_creation'"
@@ -55,18 +49,12 @@
             size="mini"
             @click="handleCreate('random')"
           >
-            <span>{{
-              $t('packages_business_verification_list_renyibiaoshuju')
-            }}</span>
+            <span>{{ $t('packages_business_verification_list_renyibiaoshuju') }}</span>
           </ElButton>
         </div>
       </template>
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column
-        :label="$t('packages_business_verification_task_name')"
-        min-width="250"
-        show-overflow-tooltip
-      >
+      <el-table-column :label="$t('packages_business_verification_task_name')" min-width="250" show-overflow-tooltip>
         <template v-slot="scope">
           <div class="ellipsis">{{ scope.row.name }}</div>
           <div class="font-color-slight">
@@ -79,9 +67,7 @@
               }}
               )
             </span>
-            <span v-if="!scope.row.enabled" class="font-color-slight"
-              >&nbsp;Disabled</span
-            >
+            <span v-if="!scope.row.enabled" class="font-color-slight">&nbsp;Disabled</span>
           </div>
         </template>
       </el-table-column>
@@ -91,66 +77,35 @@
         align="center"
         :label="$t('packages_business_verification_history_source_total_rows')"
       ></el-table-column>
-      <el-table-column
-        :label="$t('packages_business_verification_result_title')"
-        min-width="180"
-      >
+      <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
         <template v-slot="scope">
           <div class="flex align-center">
-            <template
-              v-if="
-                scope.row.InspectResult &&
-                ['waiting', 'done'].includes(scope.row.status)
-              "
-            >
-              <div
-                v-if="scope.row.result !== 'passed'"
-                class="data-verify__status error"
-              >
-                <i class="data-verify__icon el-icon-error"></i>
+            <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
+              <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
+                <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
 
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('packages_business_verification_inconsistent') }}
                 </span>
                 <span v-else>
-                  {{ $t('packages_business_verification_contConsistent')
-                  }}{{ scope.row.difference_number }}
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
                 </span>
               </div>
               <div v-else class="data-verify__status success">
-                <i class="data-verify__icon el-icon-success"></i>
-                <span>{{
-                  $t('packages_business_verification_consistent')
-                }}</span>
+                <el-icon class="data-verify__icon"><el-icon-success /></el-icon>
+                <span>{{ $t('packages_business_verification_consistent') }}</span>
               </div>
             </template>
-            <div
-              v-else-if="scope.row.status === 'error'"
-              class="data-verify__status"
-            >
-              <i class="data-verify__icon el-icon-error"></i>
+            <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
+              <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
               <span>{{ $t('public_status_error') }}</span>
-              <ElLink
-                type="primary"
-                class="ml-2"
-                @click="handleError(scope.row)"
+              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)"
                 >{{ $t('public_button_check') }}
               </ElLink>
             </div>
-            <div
-              v-else-if="scope.row.status === 'waiting'"
-              class="data-verify__status"
-            >
-              -
-            </div>
-            <div
-              v-else-if="scope.row.status !== 'done'"
-              class="data-verify__status"
-            >
-              <img
-                style="width: 26px; vertical-align: middle"
-                :src="loadingImg"
-              />
+            <div v-else-if="scope.row.status === 'waiting'" class="data-verify__status">-</div>
+            <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
+              <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
@@ -160,16 +115,10 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('packages_business_verification_verifyStatus')"
-        min-width="110"
-        prop="status"
-      >
+      <el-table-column :label="$t('packages_business_verification_verifyStatus')" min-width="110" prop="status">
         <template v-slot="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
-          <span
-            v-if="scope.row.InspectResult && scope.row.status === 'running'"
-          >
+          <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
             {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
           </span>
         </template>
@@ -182,26 +131,15 @@
       ></el-table-column>
       <el-table-column :label="$t('public_operation')" width="260">
         <template v-slot="scope">
-          <ElLink
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id)"
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)"
             >{{ $t('packages_business_verification_result_title') }}
           </ElLink>
-          <ElDivider
-            direction="vertical"
-            v-readonlybtn="'verify_job_edition'"
-          ></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-if="scope.row.status === 'running'"
             v-readonlybtn="'verify_job_edition'"
             type="primary"
-            :disabled="
-              $disabledByPermission(
-                'verify_job_edition_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
             @click="stop(scope.row.id)"
             >{{ $t('public_button_stop') }}
           </ElLink>
@@ -210,10 +148,8 @@
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
-              $disabledByPermission(
-                'verify_job_edition_all_data',
-                scope.row.user_id
-              ) || ['running', 'scheduling'].includes(scope.row.status)
+              $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
+              ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="startTask(scope.row.id)"
             >{{ $t('packages_business_verification_executeVerifyTip') }}
@@ -226,18 +162,13 @@
             @click="history(scope.row.id)"
             >{{ $t('packages_business_verification_historyTip') }}
           </ElLink>
-          <ElDivider
-            direction="vertical"
-            v-readonlybtn="'verify_job_edition'"
-          ></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="
-              $disabledByPermission(
-                'verify_job_edition_all_data',
-                scope.row.user_id
-              ) || ['running', 'scheduling'].includes(scope.row.status)
+              $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
+              ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('packages_business_verification_configurationTip') }}
@@ -246,12 +177,7 @@
           <ElLink
             v-readonlybtn="'verify_job_edition'"
             type="primary"
-            :disabled="
-              $disabledByPermission(
-                'verify_job_delete_all_data',
-                scope.row.user_id
-              )
-            "
+            :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row.id, scope.row)"
             >{{ $t('public_button_delete') }}
           </ElLink>
@@ -262,6 +188,7 @@
 </template>
 
 <script>
+import { Error as ElIconError, Success as ElIconSuccess } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -277,6 +204,8 @@ export default {
     TablePage,
     VIcon,
     FilterBar,
+    ElIconError,
+    ElIconSuccess
   },
   data() {
     return {
@@ -285,7 +214,7 @@ export default {
         inspectMethod: '',
         mode: '',
         enabled: '',
-        result: '',
+        result: ''
       },
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
@@ -294,62 +223,60 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t(
-          'packages_business_verification_details_dongtaijiaoyan'
-        ),
+        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
       },
       statusMap: {
         waiting: this.$t('packages_business_verification_waiting'),
         scheduling: this.$t('packages_business_verification_scheduling'),
         error: this.$t('packages_business_verification_error'),
         done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running'),
+        running: this.$t('packages_business_verification_running')
       },
       validList: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
           label: this.$t('packages_business_verification_check_same'),
-          value: 'passed',
+          value: 'passed'
         },
         {
           label: this.$t('packages_business_verification_count_difference'),
-          value: 'row_count',
+          value: 'row_count'
         },
         {
           label: this.$t('packages_business_verification_content_difference'),
-          value: 'valueDiff',
+          value: 'valueDiff'
         },
-        { label: 'Error', value: 'error' },
+        { label: 'Error', value: 'error' }
       ],
       verifyTypeList: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
           label: this.$t('packages_business_verification_row_verify'),
-          value: 'row_count',
+          value: 'row_count'
         },
         {
           label: this.$t('packages_business_verification_content_verify'),
-          value: 'field',
+          value: 'field'
         },
         {
           label: this.$t('packages_business_verification_joint_verify'),
-          value: 'jointField',
-        },
+          value: 'jointField'
+        }
       ],
       multipleSelection: [],
-      moreAuthority: this.$has('verify_job_delete_all_data'),
+      moreAuthority: this.$has('verify_job_delete_all_data')
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    },
+    }
   },
   created() {
     timeout = setInterval(() => {
@@ -370,11 +297,11 @@ export default {
     },
     // 批量导出
     handleExport() {
-      let ids = this.multipleSelection.map((item) => item.id)
+      let ids = this.multipleSelection.map(item => item.id)
       let where = {
         _id: {
-          in: ids,
-        },
+          in: ids
+        }
       }
       metadataInstancesApi.download(where, 'Inspect')
     },
@@ -383,9 +310,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {
@@ -425,17 +350,17 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return inspectApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map((item) => {
+            data: list.map(item => {
               let result = item.InspectResult
               let sourceTotal = '-'
               let targetTotal = '-'
@@ -443,13 +368,11 @@ export default {
                 sourceTotal = result.source_total
                 targetTotal = result.target_total
               }
-              item.lastStartTime = item.lastStartTime
-                ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-                : '-'
+              item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
               return item
-            }),
+            })
           }
         })
     },
@@ -464,35 +387,33 @@ export default {
       this.$router.push({
         name: 'dataVerifyDetails',
         params: {
-          id,
-        },
+          id
+        }
       })
     },
     history(id) {
       this.$router.push({
         name: 'dataVerifyHistory',
         params: {
-          id,
-        },
+          id
+        }
       })
     },
     startTask(id) {
       inspectApi
         .update(
           {
-            id: id,
+            id: id
           },
           {
             status: 'scheduling',
             ping_time: 0,
             scheduleTimes: 0,
-            byFirstCheckId: '',
+            byFirstCheckId: ''
           }
         )
         .then(() => {
-          this.$message.success(
-            this.$t('packages_business_verification_startVerify')
-          )
+          this.$message.success(this.$t('packages_business_verification_startVerify'))
           this.table.fetch()
         })
     },
@@ -504,9 +425,9 @@ export default {
         {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('public_button_cancel'),
-          type: 'warning',
+          type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -520,8 +441,8 @@ export default {
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
-          id: id,
-        },
+          id: id
+        }
       })
     },
     getFilterItems() {
@@ -531,7 +452,7 @@ export default {
           key: 'inspectMethod',
           type: 'select-inner',
           items: this.verifyTypeList,
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           label: this.$t('packages_business_verification_check_frequency'),
@@ -541,13 +462,13 @@ export default {
             { label: this.$t('public_select_option_all'), value: '' },
             {
               label: this.$t('packages_business_verification_single'),
-              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
+              value: 'MANUALLY_SPECIFIED_BY_THE_USER'
             },
             {
               label: this.$t('packages_business_verification_repeating'),
-              value: 'cron',
-            },
-          ],
+              value: 'cron'
+            }
+          ]
         },
         {
           label: this.$t('packages_business_verification_is_enabled'),
@@ -557,41 +478,37 @@ export default {
             { label: this.$t('public_select_option_all'), value: '' },
             {
               label: this.$t('packages_business_verification_job_enable'),
-              value: 1,
+              value: 1
             },
             {
               label: this.$t('packages_business_verification_job_disable'),
-              value: 2,
-            },
-          ],
+              value: 2
+            }
+          ]
         },
         {
           label: this.$t('packages_business_verification_result_title'),
           key: 'result',
           type: 'select-inner',
-          items: this.validList,
+          items: this.validList
         },
         {
           placeholder: this.$t('packages_business_verification_task_name'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
     },
     handleError(row = {}) {
-      this.$confirm(
-        row.errorMsg,
-        i18n.t('packages_business_milestone_list_cuowuxinxi'),
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-          customClass: 'verify-list-error-msg',
-          width: '600px',
-        }
-      )
+      this.$confirm(row.errorMsg, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
+        type: 'warning',
+        closeOnClickModal: false,
+        customClass: 'verify-list-error-msg',
+        width: '600px'
+      })
     },
     getInspectName(row = {}) {
-      if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
+      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
         return i18n.t('packages_business_verification_list_biaobufenziduan')
       }
       return this.inspectMethod[row.inspectMethod]
@@ -600,7 +517,7 @@ export default {
       inspectApi
         .update(
           {
-            id: id,
+            id: id
           },
           { status: 'stopping' }
         )
@@ -612,10 +529,10 @@ export default {
     handleCreate(type) {
       this.$router.push({
         name: 'dataVerificationCreate',
-        query: { taskMode: type },
+        query: { taskMode: type }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

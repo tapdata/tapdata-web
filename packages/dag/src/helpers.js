@@ -1,11 +1,8 @@
 import { NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 
-export const getLeftmostTopNode = (nodes) => {
+export const getLeftmostTopNode = nodes => {
   return nodes.reduce((leftmostTop, node) => {
-    if (
-      node.position[0] > leftmostTop.position[0] ||
-      node.position[1] > leftmostTop.position[1]
-    ) {
+    if (node.position[0] > leftmostTop.position[0] || node.position[1] > leftmostTop.position[1]) {
       return leftmostTop
     }
 
@@ -45,7 +42,7 @@ export const getDataflowCorners = (nodes, scale, prefix = NODE_PREFIX) => {
       minX: Infinity,
       minY: Infinity,
       maxX: -Infinity,
-      maxY: -Infinity,
+      maxY: -Infinity
     }
   )
 }
@@ -59,7 +56,7 @@ export const scaleSmaller = ({ scale, offset: [xOffset, yOffset] }) => {
 
   return {
     scale,
-    offset: [xOffset, yOffset],
+    offset: [xOffset, yOffset]
   }
 }
 
@@ -72,11 +69,11 @@ export const scaleBigger = ({ scale, offset: [xOffset, yOffset] }) => {
 
   return {
     scale,
-    offset: [xOffset, yOffset],
+    offset: [xOffset, yOffset]
   }
 }
 
-export const scaleReset = (config) => {
+export const scaleReset = config => {
   if (config.scale > 1) {
     // zoomed in
     while (config.scale > 1) {

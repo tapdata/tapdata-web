@@ -3,12 +3,12 @@ import * as Vue from 'vue'
 export default {
   name: 'OverflowTooltip',
   props: {
-    text: String,
+    text: String
   },
 
   data() {
     return {
-      overflow: false,
+      overflow: false
     }
   },
 
@@ -19,13 +19,12 @@ export default {
 
       handler() {
         this.$nextTick(() => {
-          const containerWidth =
-            this.$refs.container?.getBoundingClientRect().width
+          const containerWidth = this.$refs.container?.getBoundingClientRect().width
           const textWidth = this.$refs.text?.getBoundingClientRect().width
           this.overflow = textWidth > containerWidth
         })
-      },
-    },
+      }
+    }
   },
 
   render() {
@@ -36,27 +35,23 @@ export default {
       <el-tooltip
         content={defaultText}
         {...{
-          props: this.$attrs,
+          props: this.$attrs
         }}
       >
         <div ref="container" class="overflow-tip">
           <span ref="text" class="overflow-tip-text">
-            {$slots.default && $slots.default()
-              ? $slots.default && $slots.default()
-              : text}
+            {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
           </span>
         </div>
       </el-tooltip>
     ) : (
       <div ref="container" class="overflow-tip">
         <span ref="text" class="overflow-tip-text">
-          {$slots.default && $slots.default()
-            ? $slots.default && $slots.default()
-            : text}
+          {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
         </span>
       </div>
     )
-  },
+  }
 }
 </script>
 

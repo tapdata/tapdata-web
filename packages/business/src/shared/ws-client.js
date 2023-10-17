@@ -1,7 +1,4 @@
-/**
- * websocket 封装类
- */
-import { Message } from 'element-ui'
+import { ElMessage as Message } from 'element-plus'
 import { merge } from 'lodash'
 import { EventEmitter } from './event'
 import i18n from '@/i18n'
@@ -15,14 +12,14 @@ class WSClient extends EventEmitter {
       protocols: undefined, // 不能为null
       retryTimes: Number.MAX_VALUE, // 无限次尝试重连
       retryInterval: 500, // 断开立即重连
-      query: {},
+      query: {}
     }
     this.options = merge({}, defaultOptions, opts, {
       url,
       protocols,
       query: {
-        id: this.__getId(),
-      },
+        id: this.__getId()
+      }
     })
     this.ws = null
     this.retryCount = 0
@@ -33,14 +30,11 @@ class WSClient extends EventEmitter {
   __getId() {
     let id = this.__id
     if (!id) {
-      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-        /[xy]/g,
-        function (c) {
-          let r = (Math.random() * 16) | 0,
-            v = c === 'x' ? r : (r & 0x3) | 0x8
-          return v.toString(16)
-        }
-      )
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        let r = (Math.random() * 16) | 0,
+          v = c === 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+      })
       this.__id = id
     }
     return id
@@ -61,7 +55,7 @@ class WSClient extends EventEmitter {
       let queryStr = ''
       if (opts.query && Object.keys(opts.query).length > 0) {
         queryStr = Object.keys(opts.query)
-          .map((key) => key + '=' + encodeURIComponent(opts.query[key]))
+          .map(key => key + '=' + encodeURIComponent(opts.query[key]))
           .join('&')
       }
 
@@ -99,9 +93,7 @@ class WSClient extends EventEmitter {
       }, opts.retryInterval)
     } else {
       // eslint-disable-next-line
-      console.log(
-        i18n.t('packages_business_shared_ws_client_webso6') + this.retryTimes
-      )
+      console.log(i18n.t('packages_business_shared_ws_client_webso6') + this.retryTimes)
       this.retryCount = 0
     }
   }
@@ -109,8 +101,7 @@ class WSClient extends EventEmitter {
   disconnect() {
     let ws = this.ws
     if (ws) {
-      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState))
-        ws.close()
+      if ([WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState)) ws.close()
     }
   }
 
@@ -121,7 +112,7 @@ class WSClient extends EventEmitter {
       console.log(i18n.t('packages_business_shared_ws_client_webso5'))
       this.emit('open')
     }
-    ws.onmessage = (e) => {
+    ws.onmessage = e => {
       this.__receiveMessage(e)
     }
     ws.onerror = () => {
@@ -164,10 +155,7 @@ class WSClient extends EventEmitter {
         } else if (message.code === 'fail') {
           console.debug('fail', message) // eslint-disable-line
           if (message.message === 'UserId is blank') {
-            console.debug(
-              i18n.t('packages_business_shared_ws_client_acces'),
-              event
-            ) // eslint-disable-line
+            console.debug(i18n.t('packages_business_shared_ws_client_acces'), event) // eslint-disable-line
             this.emit('401')
             this.connect()
           }
@@ -175,9 +163,7 @@ class WSClient extends EventEmitter {
           this.emit(message.type, message)
         }
       } else {
-        throw new Error(
-          i18n.t('packages_business_shared_ws_client_webso2') + msg
-        )
+        throw new Error(i18n.t('packages_business_shared_ws_client_webso2') + msg)
       }
     } catch (e) {
       // eslint-disable-next-line
@@ -213,7 +199,7 @@ class WSClient extends EventEmitter {
       Object.assign(this.msg, {
         message: i18n.t('public_message_network_connected'),
         type: 'success',
-        duration: 3000,
+        duration: 3000
       })
       this.msg.startTimer()
       this.msg = null
@@ -224,7 +210,7 @@ class WSClient extends EventEmitter {
     this.msg = Message.error({
       duration: 0,
       showClose: true,
-      message: i18n.t('public_message_network_unconnected'),
+      message: i18n.t('public_message_network_unconnected')
     })
   }
 }

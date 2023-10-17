@@ -1,7 +1,5 @@
 <template>
-  <section
-    class="flex flex-column flex-1 overflow-hidden create-storage-container gap-4"
-  >
+  <section class="flex flex-column flex-1 overflow-hidden create-storage-container gap-4">
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
         <IconButton @click="$router.back()">left</IconButton>
@@ -10,10 +8,7 @@
     </div>
 
     <div class="flex flex-column bg-white rounded-lg overflow-hidden px-6">
-      <div
-        v-if="!loading"
-        class="px-4 py-2 mt-6 lh-base color-primary-light-9 rounded-lg"
-      >
+      <div v-if="!loading" class="px-4 py-2 mt-6 lh-base color-primary-light-9 rounded-lg">
         <div class="mb-1 flex align-center">
           <VIcon class="text-primary mr-2" size="18">info</VIcon>
           <div class="font-color-dark fs-6 fw-sub">
@@ -23,27 +18,17 @@
         <div
           class="lh-lg"
           v-html="
-            $t(
-              currentPaid.price > 0
-                ? 'dfs_subscribe_storage_tip_content'
-                : 'dfs_subscribe_free_storage_tip_content'
-            )
+            $t(currentPaid.price > 0 ? 'dfs_subscribe_storage_tip_content' : 'dfs_subscribe_free_storage_tip_content')
           "
         ></div>
         <div class="lh-lg">
           {{ $t('dfs_use_self_atlas') }},
-          <ElLink
-            type="primary"
-            class="text-decoration-underline align-baseline"
-            @click="addAtlasVisible = true"
-            >{{ $t('dfs_use_self_atlas_click_here') }}</ElLink
-          >
+          <ElLink type="primary" class="text-decoration-underline align-baseline" @click="addAtlasVisible = true">{{
+            $t('dfs_use_self_atlas_click_here')
+          }}</ElLink>
         </div>
       </div>
-      <ElForm
-        label-position="top"
-        class="flex-1 overflow-x-hidden overflow-y-auto mt-4"
-      >
+      <ElForm label-position="top" class="flex-1 overflow-x-hidden overflow-y-auto mt-4">
         <!--存储地区-->
         <ElFormItem>
           <template v-slot:label>
@@ -57,30 +42,19 @@
               class="font-color-light inline-block"
               :class="[
                 { 'form-label': this.$i18n.locale === 'zh-CN' },
-                { 'form-label-en': this.$i18n.locale === 'en' },
+                { 'form-label-en': this.$i18n.locale === 'en' }
               ]"
-              >{{
-                $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
-              }}</span
+              >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
             >
 
             <el-skeleton :loading="loading || loadingProvider" animated>
               <template v-slot:template>
                 <div class="flex gap-4">
-                  <el-skeleton-item
-                    v-for="i in 2"
-                    :key="i"
-                    class="rounded-4 h-32"
-                    variant="button"
-                  />
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
               <template>
-                <ElRadioGroup
-                  v-model:value="provider"
-                  @change="changeProvider"
-                  class="flex flex-wrap gap-4"
-                >
+                <ElRadioGroup v-model:value="provider" @change="changeProvider" class="flex flex-wrap gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
                     :key="index"
@@ -102,20 +76,11 @@
             <el-skeleton :loading="loading || loadingProvider" animated>
               <template v-slot:template>
                 <div class="flex gap-4">
-                  <el-skeleton-item
-                    v-for="i in 2"
-                    :key="i"
-                    class="rounded-4 h-32"
-                    variant="button"
-                  />
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
               <template>
-                <ElRadioGroup
-                  v-model:value="region"
-                  class="flex flex-wrap gap-4"
-                  @change="changeRegion"
-                >
+                <ElRadioGroup v-model:value="region" class="flex flex-wrap gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
                     :key="index"
@@ -127,10 +92,7 @@
                       {{ item.regionName }}
                     </span>
 
-                    <sup
-                      v-if="item.hasFreeTrial"
-                      class="el-badge__content is-fixed is-dot bg-color-warning"
-                    ></sup>
+                    <sup v-if="item.hasFreeTrial" class="el-badge__content is-fixed is-dot bg-color-warning"></sup>
                   </ElRadio>
                 </ElRadioGroup>
               </template>
@@ -144,26 +106,14 @@
               {{ $t('dfs_subscribe_storage_specification') }}
             </div>
           </template>
-          <el-skeleton
-            :loading="loadingProvider || loadingMongoCluster"
-            animated
-          >
+          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template v-slot:template>
               <div class="flex gap-4">
-                <el-skeleton-item
-                  v-for="i in 4"
-                  :key="i"
-                  class="rounded-4 h-32"
-                  variant="button"
-                />
+                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
             <template>
-              <ElRadioGroup
-                v-model:value="current.clusterTier"
-                @change="handleChangeTier"
-                class="flex flex-wrap gap-4"
-              >
+              <ElRadioGroup v-model:value="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in tierOptions"
                   :key="index"
@@ -174,14 +124,10 @@
                   <span
                     class="inline-flex align-center"
                     :class="{
-                      'color-warning': freeTierNames.includes(item.value),
+                      'color-warning': freeTierNames.includes(item.value)
                     }"
                   >
-                    {{
-                      freeTierNames.includes(item.value)
-                        ? 'Free Trial'
-                        : item.label
-                    }}
+                    {{ freeTierNames.includes(item.value) ? 'Free Trial' : item.label }}
                   </span>
                 </ElRadio>
               </ElRadioGroup>
@@ -195,26 +141,14 @@
               {{ $t('dfs_instance_createagent_qingxuanzeninxu') }}
             </div>
           </template>
-          <el-skeleton
-            :loading="loadingProvider || loadingMongoCluster"
-            animated
-          >
+          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template v-slot:template>
               <div class="flex gap-4">
-                <el-skeleton-item
-                  v-for="i in 2"
-                  :key="i"
-                  class="rounded-4 h-32"
-                  variant="button"
-                />
+                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
             <template>
-              <ElRadioGroup
-                v-model:value="current.storageSize"
-                @change="handleChangeSize"
-                class="flex flex-wrap gap-4"
-              >
+              <ElRadioGroup v-model:value="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in sizeOptions"
                   :key="index"
@@ -237,18 +171,10 @@
               {{ $t('dfs_instance_instance_dingyuefangshi') }}
             </div>
           </template>
-          <el-skeleton
-            :loading="loadingProvider || loadingMongoCluster"
-            animated
-          >
+          <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
             <template v-slot:template>
               <div class="flex gap-4">
-                <el-skeleton-item
-                  v-for="i in 2"
-                  :key="i"
-                  class="rounded-4 h-32"
-                  variant="button"
-                />
+                <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
             <template>
@@ -327,26 +253,20 @@ export default {
       current: {
         clusterTier: '',
         storageSize: '',
-        priceId: '',
+        priceId: ''
       },
       loadingAtlas: false,
-      addAtlasVisible: false,
+      addAtlasVisible: false
     }
   },
 
   computed: {
     providerMap() {
-      return this.cloudProviderList.reduce(
-        (prev, curr) => ((prev[curr.cloudProvider] = curr), prev),
-        {}
-      )
+      return this.cloudProviderList.reduce((prev, curr) => ((prev[curr.cloudProvider] = curr), prev), {})
     },
 
     priceMap() {
-      return this.paidPrice.reduce(
-        (map, curr) => ((map[curr.priceId] = curr), map),
-        {}
-      )
+      return this.paidPrice.reduce((map, curr) => ((map[curr.priceId] = curr), map), {})
     },
 
     currentPaid() {
@@ -393,9 +313,9 @@ export default {
     tierOptions() {
       return Object.keys(this.clusterTierMap)
         .sort((name1, name2) => name1.localeCompare(name2))
-        .map((name) => ({
+        .map(name => ({
           label: `MongoDB Atlas ${name}`,
-          value: name,
+          value: name
         }))
     },
 
@@ -403,9 +323,9 @@ export default {
       const { clusterTier } = this.current
       const sizeMap = this.clusterTierMap[clusterTier] || {}
 
-      return Object.keys(sizeMap).map((size) => ({
+      return Object.keys(sizeMap).map(size => ({
         label: size,
-        value: size,
+        value: size
       }))
     },
 
@@ -415,19 +335,19 @@ export default {
       const list = sizeMap[storageSize] || []
 
       return list
-        .filter((item) => item.type === 'recurring')
+        .filter(item => item.type === 'recurring')
         .sort(
           (item1, item2) =>
             PERIOD_MAP[`${item1.type}_${item1.periodUnit}`].order -
             PERIOD_MAP[`${item2.type}_${item2.periodUnit}`].order
         )
-        .map((item) => {
+        .map(item => {
           return {
             label: PERIOD_MAP[`${item.type}_${item.periodUnit}`].label,
-            value: item.priceId,
+            value: item.priceId
           }
         })
-    },
+    }
   },
 
   async created() {
@@ -456,9 +376,9 @@ export default {
       const data = await databaseTypesApi.get({
         filter: JSON.stringify({
           where: {
-            pdkId: 'mongodb-atlas',
-          },
-        }),
+            pdkId: 'mongodb-atlas'
+          }
+        })
       })
 
       console.log('loadAtlas', data) // eslint-disable-line no-console
@@ -484,23 +404,19 @@ export default {
       this.loadingProvider = false
       //数据模式（带存储）过滤只带存储的云厂商
       let original = data?.items || []
-      this.cloudProviderList = original.filter((it) => {
+      this.cloudProviderList = original.filter(it => {
         // 暂时过滤掉阿里云
         it.cloudDetail =
           it.cloudDetail
-            .filter((item) => {
+            .filter(item => {
               item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
-              return (
-                item.productList.includes('mongodb') &&
-                it.cloudProvider !== 'AliCloud'
-              )
+              return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
             })
             .sort((item1, item2) => {
               const a = item1.hasFreeTrial ? 1 : 2
               const b = item2.hasFreeTrial ? 1 : 2
 
-              if (a === b)
-                return item1.regionName.localeCompare(item2.regionName)
+              if (a === b) return item1.regionName.localeCompare(item2.regionName)
 
               return a - b
             }) || []
@@ -519,8 +435,8 @@ export default {
         params: {
           productType: 'mongoCluster',
           region: this.region,
-          cloudProvider: this.provider,
-        },
+          cloudProvider: this.provider
+        }
       })
       this.loadingMongoCluster = false
       const { paidPrice = [] } = data?.[0] || {}
@@ -545,14 +461,14 @@ export default {
         ' ' +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+          maximumFractionDigits: 2
         })
       )
     },
 
     //是否有存储agent
     getMdbCount() {
-      return this.$axios.get('api/tcm/mdb/stats').then((data) => {
+      return this.$axios.get('api/tcm/mdb/stats').then(data => {
         this.mdbCount = data?.totalCount > 0
         this.mdbFreeCount = data?.freeCount
       })
@@ -560,8 +476,7 @@ export default {
 
     //提交订单
     async submit(row = {}, paymentType = 'online') {
-      const { type, priceId, currency, periodUnit, productId, spec } =
-        this.priceMap[this.current.priceId]
+      const { type, priceId, currency, periodUnit, productId, spec } = this.priceMap[this.current.priceId]
 
       if (paymentType === 'online') {
         this.submitOnlineLoading = true
@@ -579,7 +494,7 @@ export default {
           location.origin +
           location.pathname +
           this.$router.resolve({
-            name: 'dataConsole',
+            name: 'dataConsole'
           }).href,
         cancelUrl: location.href,
         periodUnit,
@@ -596,39 +511,39 @@ export default {
             name: '', // 实例名称
             memorySpace: spec.storageSize,
             provider: this.provider || '', // 云厂商，全托管必填
-            region: this.region || '', // 地域，全托管必填
-          },
-        ],
+            region: this.region || '' // 地域，全托管必填
+          }
+        ]
       }
 
       this.buried('newStorageStripe', '', {
-        type,
+        type
       })
       this.$axios
         .post('api/tcm/orders/subscribeV2', params)
-        .then((data) => {
+        .then(data => {
           this.buried('newStorageStripe', '', {
             type,
-            result: true,
+            result: true
           })
 
           this.$router.push(
             data.status === 'active'
               ? {
-                  name: 'dataConsole',
+                  name: 'dataConsole'
                 }
               : {
                   name: 'pay',
                   params: {
-                    id: data.subscribe,
-                  },
+                    id: data.subscribe
+                  }
                 }
           )
         })
         .catch(() => {
           this.buried('newStorageStripe', '', {
             type,
-            result: false,
+            result: false
           })
           if (paymentType === 'online') {
             this.submitOnlineLoading = false
@@ -661,16 +576,16 @@ export default {
         fdmStorageCluster: 'self',
         fdmStorageConnectionId: connection.id,
         mdmStorageCluster: 'self',
-        mdmStorageConnectionId: connection.id,
+        mdmStorageConnectionId: connection.id
       })
 
       await liveDataPlatformApi.patch(ldp)
 
       this.$router.push({
-        name: 'dataConsole',
+        name: 'dataConsole'
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

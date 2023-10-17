@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="notice g-panel-container ws-main-container fs-8"
-    v-if="$route.query.id === 7"
-  >
+  <div class="notice g-panel-container ws-main-container fs-8" v-if="$route.query.id === 7">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>{{ $t('workbench_Notice_tAPDA12') }}</span>
@@ -25,7 +22,7 @@
 
 <script>
 export default {
-  name: 'Notice',
+  name: 'Notice'
 }
 </script>
 

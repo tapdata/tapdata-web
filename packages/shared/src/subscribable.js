@@ -4,7 +4,7 @@ const UNSUBSCRIBE_ID_SYMBOL = Symbol('UNSUBSCRIBE_ID_SYMBOL')
 
 export class Subscribable {
   #subscribers = {
-    index: 0,
+    index: 0
   }
 
   dispatch(event, context) {
@@ -37,7 +37,7 @@ export class Subscribable {
     return unsubscribe
   }
 
-  unsubscribe = (id) => {
+  unsubscribe = id => {
     if (id === undefined || id === null) {
       for (const key in this.#subscribers) {
         this.unsubscribe(key)

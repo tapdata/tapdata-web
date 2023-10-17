@@ -11,12 +11,7 @@
       <template v-slot:field_name="scope">
         <span class="flex align-center"
           ><span class="ellipsis">{{ scope.row.field_name }}</span>
-          <VIcon
-            v-if="scope.row.primary_key_position > 0"
-            size="12"
-            class="text-warning ml-1"
-            >key</VIcon
-          >
+          <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
         </span>
       </template>
     </VTable>
@@ -40,14 +35,14 @@ export default {
       default: () => {
         return {
           qualified_name: '',
-          fields: [],
+          fields: []
         }
-      },
+      }
     },
     showDelete: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
 
   data() {
@@ -57,21 +52,21 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          width: '60px',
+          width: '60px'
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
           prop: 'field_name',
           slotName: 'field_name',
           'min-width': '90px',
-          'show-overflow-tooltip': true,
+          'show-overflow-tooltip': true
         },
         {
           label: i18n.t('packages_form_dag_dialog_field_mapping_type'),
           prop: 'data_type',
-          'min-width': '126px',
-        },
-      ],
+          'min-width': '126px'
+        }
+      ]
     }
   },
 
@@ -85,9 +80,9 @@ export default {
     tableList() {
       const { fields } = this.data
       let list = fields || []
-      const result = this.showDelete ? list : list.filter((t) => !t.is_deleted)
+      const result = this.showDelete ? list : list.filter(t => !t.is_deleted)
       return result.sort((a, b) => a.is_deleted - b.is_deleted)
-    },
+    }
   },
 
   methods: {
@@ -97,8 +92,8 @@ export default {
 
     tableRowClassName({ row }) {
       return row.is_deleted ? 'is-deleted' : ''
-    },
-  },
+    }
+  }
 }
 </script>
 

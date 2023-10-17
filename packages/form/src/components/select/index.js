@@ -2,7 +2,7 @@ import { connect, mapProps, h, mapReadPretty } from '@formily/vue'
 import { defineComponent } from '@vue/composition-api'
 import { PreviewText } from '@formily/element'
 import ElSelect from './Select'
-import { Option as ElOption } from 'element-ui'
+import { ElOption } from 'element-plus'
 import { resolveComponent } from '@formily/element/lib/__builtins__'
 
 const SelectOption = defineComponent({
@@ -18,52 +18,50 @@ const SelectOption = defineComponent({
         options.length !== 0
           ? {
               default: () =>
-                options.map((option) => {
+                options.map(option => {
                   if (typeof option === 'string') {
                     return h(
                       ElOption,
                       { props: { value: option, label: option } },
                       {
-                        default: () => [
-                          resolveComponent(slots?.option, { option }),
-                        ],
+                        default: () => [resolveComponent(slots?.option, { option })]
                       }
                     )
                   } else {
                     const optionProps = {
                       value: option[itemValue],
                       label: option[itemLabel],
-                      disabled: option[itemDisabled],
+                      disabled: option[itemDisabled]
                     }
                     return h(
                       ElOption,
                       {
-                        props: optionProps,
+                        props: optionProps
                       },
                       {
                         default: () => [
                           resolveComponent(slots?.option, {
-                            option,
-                          }),
-                        ],
+                            option
+                          })
+                        ]
                       }
                     )
                   }
-                }),
+                })
             }
           : slots
       return h(
         ElSelect,
         {
           attrs: {
-            ...attrs,
+            ...attrs
           },
-          on: listeners,
+          on: listeners
         },
         children
       )
     }
-  },
+  }
 })
 
 export const Select = connect(

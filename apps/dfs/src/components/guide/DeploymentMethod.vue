@@ -1,9 +1,7 @@
 <template>
   <div class="deployMethod">
     <div class="flex justify-content-center align-items-center">
-      <VIcon size="450px" style="width: 450px; height: 235px"
-        >guide-top-header</VIcon
-      >
+      <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
       {{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}
@@ -11,7 +9,7 @@
     <ul class="deployMethod-ul mt-4">
       <li
         :class="{
-          active: platform === 'fullManagement',
+          active: platform === 'fullManagement'
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden mb-4"
         @click="$emit('changePlatform', 'fullManagement')"
@@ -25,10 +23,7 @@
               {{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}
             </div>
           </div>
-          <el-image
-            class="deployMethod-image"
-            :src="require('@/assets/image/fully_managed.png')"
-          />
+          <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />
         </div>
         <div class="is-active position-absolute top-0 end-0">
           <div class="is-active-triangle"></div>
@@ -37,7 +32,7 @@
       </li>
       <li
         :class="{
-          active: platform === 'selfHost',
+          active: platform === 'selfHost'
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden"
         @click="$emit('changePlatform', 'selfHost')"
@@ -51,10 +46,7 @@
               {{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}
             </div>
           </div>
-          <el-image
-            class="deployMethod-image"
-            :src="require('@/assets/image/self_host_managed.png')"
-          />
+          <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
         </div>
         <div class="is-active position-absolute top-0 end-0">
           <div class="is-active-triangle"></div>
@@ -72,7 +64,7 @@ export default {
   name: 'Account',
   props: ['platform'],
   components: { VIcon },
-  emits: ['changePlatform'],
+  emits: ['changePlatform']
 }
 </script>
 

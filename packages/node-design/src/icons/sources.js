@@ -387,131 +387,26 @@ export const DatePickerSource = {
         height="1024"
         rx="10"
       ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="152"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="152"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="152"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="632"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="632"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="632"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="312"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="312"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="312"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="792"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="792"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="792"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#D8D8D8" x="152" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="152" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="152" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="632" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="632" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="632" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="312" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="312" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="312" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="792" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="792" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="792" y="777" width="80" height="80" rx="10"></rect>
       <path
         d="M165.894531,113.494448 C171.417379,113.494448 175.894531,117.9716 175.894531,123.494448 C175.894531,128.923687 171.56786,133.342379 166.174436,133.490606 L165.894531,133.494448 L88.4375,133.494448 C51.0375365,133.494448 20.613907,163.802329 20.0091744,201.462605 L20,202.606052 L20,934.388395 C20,972.194862 50.0496299,1002.88081 87.3063267,1003.49075 L88.4375,1003.5 L935.5625,1003.5 C972.962464,1003.5 1003.38609,973.192119 1003.99083,935.531843 L1004,934.388395 L1004,202.606052 C1004,164.799585 973.95037,134.113639 936.693673,133.503701 L935.5625,133.494448 L859.085938,133.494448 C853.56309,133.494448 849.085938,129.017295 849.085938,123.494448 C849.085938,118.065208 853.412608,113.646516 858.806033,113.494448 L859.085938,113.494448 L935.5625,113.494448 C983.93581,113.494448 1023.20756,152.615815 1023.98816,201.132989 L1024,202.606052 L1024,934.388395 C1024,983.092351 985.211983,1022.70076 937.025542,1023.48806 L935.5625,1023.5 L88.4375,1023.5 C40.0641901,1023.5 0.792440052,984.378633 0.011842382,935.861458 L0,934.388395 L0,202.606052 C0,153.902096 38.788017,114.293689 86.9744583,113.506392 L88.4375,113.494448 L165.894531,113.494448 Z M661.03125,113.494448 C666.554097,113.494448 671.03125,117.9716 671.03125,123.494448 C671.03125,128.923687 666.704579,133.342379 661.311155,133.490606 L661.03125,133.494448 L363.949219,133.494448 C358.426371,133.494448 353.949219,129.017295 353.949219,123.494448 C353.949219,118.065208 358.27589,113.646516 363.669314,113.498289 L363.949219,113.494448 L661.03125,113.494448 Z"
         fill="#999999"
         fillRule="nonzero"
       ></path>
-      <rect
-        fill="#D8D8D8"
-        x="472"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="472"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="472"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#D8D8D8" x="472" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="472" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="472" y="777" width="80" height="80" rx="10"></rect>
     </g>
   ),
   dark: () => (
@@ -543,133 +438,28 @@ export const DatePickerSource = {
         height="1024"
         rx="10"
       ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="152"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="152"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="152"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="632"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="632"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="632"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="312"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="312"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="312"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="792"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="792"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="792"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#4D4D4D" x="152" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="152" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="152" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="632" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="632" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="632" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="312" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="312" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="312" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="792" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="792" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="792" y="777" width="80" height="80" rx="10"></rect>
       <path
         d="M165.894531,113.494448 C171.417379,113.494448 175.894531,117.9716 175.894531,123.494448 C175.894531,128.923687 171.56786,133.342379 166.174436,133.490606 L165.894531,133.494448 L88.4375,133.494448 C51.0375365,133.494448 20.613907,163.802329 20.0091744,201.462605 L20,202.606052 L20,934.388395 C20,972.194862 50.0496299,1002.88081 87.3063267,1003.49075 L88.4375,1003.5 L935.5625,1003.5 C972.962464,1003.5 1003.38609,973.192119 1003.99083,935.531843 L1004,934.388395 L1004,202.606052 C1004,164.799585 973.95037,134.113639 936.693673,133.503701 L935.5625,133.494448 L859.085938,133.494448 C853.56309,133.494448 849.085938,129.017295 849.085938,123.494448 C849.085938,118.065208 853.412608,113.646516 858.806033,113.494448 L859.085938,113.494448 L935.5625,113.494448 C983.93581,113.494448 1023.20756,152.615815 1023.98816,201.132989 L1024,202.606052 L1024,934.388395 C1024,983.092351 985.211983,1022.70076 937.025542,1023.48806 L935.5625,1023.5 L88.4375,1023.5 C40.0641901,1023.5 0.792440052,984.378633 0.011842382,935.861458 L0,934.388395 L0,202.606052 C0,153.902096 38.788017,114.293689 86.9744583,113.506392 L88.4375,113.494448 L165.894531,113.494448 Z M661.03125,113.494448 C666.554097,113.494448 671.03125,117.9716 671.03125,123.494448 C671.03125,128.923687 666.704579,133.342379 661.311155,133.490606 L661.03125,133.494448 L363.949219,133.494448 C358.426371,133.494448 353.949219,129.017295 353.949219,123.494448 C353.949219,118.065208 358.27589,113.646516 363.669314,113.498289 L363.949219,113.494448 L661.03125,113.494448 Z"
         fill="#999999"
         fillRule="nonzero"
       ></path>
-      <rect
-        fill="#4D4D4D"
-        x="472"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="472"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="472"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#4D4D4D" x="472" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="472" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="472" y="777" width="80" height="80" rx="10"></rect>
     </g>
-  ),
+  )
 }
 
 export const DateRangePickerSource = {
@@ -702,126 +492,21 @@ export const DateRangePickerSource = {
         height="1024"
         rx="10"
       ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="152"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="152"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="152"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="632"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="632"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="632"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="312"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="312"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="312"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="792"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="792"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="792"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="472"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="472"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#D8D8D8"
-        x="472"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#D8D8D8" x="152" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="152" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="152" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="632" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="632" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="632" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="312" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="312" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="312" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="792" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="792" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="792" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="472" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="472" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#D8D8D8" x="472" y="777" width="80" height="80" rx="10"></rect>
       <path
         d="M165.894531,113.494448 C171.417379,113.494448 175.894531,117.9716 175.894531,123.494448 C175.894531,128.923687 171.56786,133.342379 166.174436,133.490606 L165.894531,133.494448 L88.4375,133.494448 C51.0375365,133.494448 20.613907,163.802329 20.0091744,201.462605 L20,202.606052 L20,934.388395 C20,972.194862 50.0496299,1002.88081 87.3063267,1003.49075 L88.4375,1003.5 L935.5625,1003.5 C972.962464,1003.5 1003.38609,973.192119 1003.99083,935.531843 L1004,934.388395 L1004,202.606052 C1004,164.799585 973.95037,134.113639 936.693673,133.503701 L935.5625,133.494448 L859.085938,133.494448 C853.56309,133.494448 849.085938,129.017295 849.085938,123.494448 C849.085938,118.065208 853.412608,113.646516 858.806033,113.494448 L859.085938,113.494448 L935.5625,113.494448 C983.93581,113.494448 1023.20756,152.615815 1023.98816,201.132989 L1024,202.606052 L1024,934.388395 C1024,983.092351 985.211983,1022.70076 937.025542,1023.48806 L935.5625,1023.5 L88.4375,1023.5 C40.0641901,1023.5 0.792440052,984.378633 0.011842382,935.861458 L0,934.388395 L0,202.606052 C0,153.902096 38.788017,114.293689 86.9744583,113.506392 L88.4375,113.494448 L165.894531,113.494448 Z M661.03125,113.494448 C666.554097,113.494448 671.03125,117.9716 671.03125,123.494448 C671.03125,128.923687 666.704579,133.342379 661.311155,133.490606 L661.03125,133.494448 L363.949219,133.494448 C358.426371,133.494448 353.949219,129.017295 353.949219,123.494448 C353.949219,118.065208 358.27589,113.646516 363.669314,113.498289 L363.949219,113.494448 L661.03125,113.494448 Z"
         fill="#999999"
@@ -858,133 +543,28 @@ export const DateRangePickerSource = {
         height="1024"
         rx="10"
       ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="152"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="152"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="152"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="632"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="632"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="632"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="312"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="312"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="312"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="792"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="792"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="792"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="472"
-        y="457"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="var(--dn-brand-color)"
-        x="472"
-        y="617"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
-      <rect
-        fill="#4D4D4D"
-        x="472"
-        y="777"
-        width="80"
-        height="80"
-        rx="10"
-      ></rect>
+      <rect fill="#4D4D4D" x="152" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="152" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="152" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="632" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="632" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="632" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="312" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="312" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="312" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="792" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="792" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="792" y="777" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="472" y="457" width="80" height="80" rx="10"></rect>
+      <rect fill="var(--dn-brand-color)" x="472" y="617" width="80" height="80" rx="10"></rect>
+      <rect fill="#4D4D4D" x="472" y="777" width="80" height="80" rx="10"></rect>
       <path
         d="M165.894531,113.494448 C171.417379,113.494448 175.894531,117.9716 175.894531,123.494448 C175.894531,128.923687 171.56786,133.342379 166.174436,133.490606 L165.894531,133.494448 L88.4375,133.494448 C51.0375365,133.494448 20.613907,163.802329 20.0091744,201.462605 L20,202.606052 L20,934.388395 C20,972.194862 50.0496299,1002.88081 87.3063267,1003.49075 L88.4375,1003.5 L935.5625,1003.5 C972.962464,1003.5 1003.38609,973.192119 1003.99083,935.531843 L1004,934.388395 L1004,202.606052 C1004,164.799585 973.95037,134.113639 936.693673,133.503701 L935.5625,133.494448 L859.085938,133.494448 C853.56309,133.494448 849.085938,129.017295 849.085938,123.494448 C849.085938,118.065208 853.412608,113.646516 858.806033,113.494448 L859.085938,113.494448 L935.5625,113.494448 C983.93581,113.494448 1023.20756,152.615815 1023.98816,201.132989 L1024,202.606052 L1024,934.388395 C1024,983.092351 985.211983,1022.70076 937.025542,1023.48806 L935.5625,1023.5 L88.4375,1023.5 C40.0641901,1023.5 0.792440052,984.378633 0.011842382,935.861458 L0,934.388395 L0,202.606052 C0,153.902096 38.788017,114.293689 86.9744583,113.506392 L88.4375,113.494448 L165.894531,113.494448 Z M661.03125,113.494448 C666.554097,113.494448 671.03125,117.9716 671.03125,123.494448 C671.03125,128.923687 666.704579,133.342379 661.311155,133.490606 L661.03125,133.494448 L363.949219,133.494448 C358.426371,133.494448 353.949219,129.017295 353.949219,123.494448 C353.949219,118.065208 358.27589,113.646516 363.669314,113.498289 L363.949219,113.494448 L661.03125,113.494448 Z"
         fill="#999999"
         fillRule="nonzero"
       ></path>
     </g>
-  ),
+  )
 }
 
 export const TimePickerSource = () => (
@@ -1172,7 +752,7 @@ export const PasswordSource = {
         ></path>
       </g>
     </svg>
-  ),
+  )
 }
 
 export const TransferSource = () => (
@@ -1304,20 +884,8 @@ export const SwitchSource = () => (
 export const ObjectSource = () => (
   <svg viewBox="0 0 1424 1024">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-      <rect
-        fill="#FFFFFF"
-        opacity="0"
-        x="0"
-        y="0"
-        width="1423"
-        height="1024"
-      ></rect>
-      <g
-        transform="translate(28.269531, 358.253906)"
-        fillRule="nonzero"
-        stroke="#FFFFFF"
-        strokeWidth="0.5"
-      >
+      <rect fill="#FFFFFF" opacity="0" x="0" y="0" width="1423" height="1024"></rect>
+      <g transform="translate(28.269531, 358.253906)" fillRule="nonzero" stroke="#FFFFFF" strokeWidth="0.5">
         <path
           d="M73.0078125,335.507812 C77.109375,335.507812 80.6640625,334.003906 83.671875,330.996094 C86.953125,328.261719 88.59375,324.84375 88.59375,320.742188 C88.59375,317.734375 85.859375,314.453125 80.390625,310.898438 C72.734375,306.25 67.8125,302.421875 65.625,299.414062 C60.4296875,293.671875 57.8320312,286.289062 57.8320312,277.265625 L57.8320312,277.265625 L57.8320312,208.359375 C57.8320312,192.5 51.2695312,179.238281 38.1445312,168.574219 C51.2695312,156.816406 57.8320312,143.007812 57.8320312,127.148438 L57.8320312,127.148438 L57.8320312,59.0625 C57.8320312,50.3125 60.4296875,42.7929688 65.625,36.5039062 C67.8125,34.0429688 72.734375,30.3515625 80.390625,25.4296875 C85.859375,21.6015625 88.59375,18.3203125 88.59375,15.5859375 C88.59375,5.1953125 83.3984375,0 73.0078125,0 C70.546875,0 66.8554688,1.77734375 61.9335938,5.33203125 C40.6054688,18.7304688 29.9414062,36.640625 29.9414062,59.0625 L29.9414062,59.0625 L29.9414062,127.148438 C29.9414062,133.710938 27.7539062,140.136719 23.3789062,146.425781 C22.5585938,147.792969 18.046875,151.210938 9.84375,156.679688 C3.28125,161.601562 0,165.566406 0,168.574219 C0,171.582031 3.28125,175.136719 9.84375,179.238281 C18.046875,184.160156 22.5585938,187.304688 23.3789062,188.671875 C27.7539062,194.960937 29.9414062,201.523438 29.9414062,208.359375 L29.9414062,208.359375 L29.9414062,277.265625 C29.9414062,298.320312 38.28125,314.453125 54.9609375,325.664062 C64.53125,332.226562 70.546875,335.507812 73.0078125,335.507812 Z"
           fill="var(--dn-brand-color)"
@@ -1415,7 +983,7 @@ export const CardSource = {
         rx="10"
       ></rect>
     </g>
-  ),
+  )
 }
 
 export const GridSource = () => (
@@ -1583,22 +1151,8 @@ export const SpaceSource = () => (
 export const TabSource = {
   light: () => (
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-      <rect
-        stroke="#979797"
-        fill="#D8D8D8"
-        x="325"
-        y="84"
-        width="285"
-        height="140"
-      ></rect>
-      <rect
-        stroke="#979797"
-        fill="#D8D8D8"
-        x="630"
-        y="84"
-        width="285"
-        height="140"
-      ></rect>
+      <rect stroke="#979797" fill="#D8D8D8" x="325" y="84" width="285" height="140"></rect>
+      <rect stroke="#979797" fill="#D8D8D8" x="630" y="84" width="285" height="140"></rect>
       <path
         d="M944,224 C988.18278,224 1024,259.81722 1024,304 L1024,944 C1024,988.18278 988.18278,1024 944,1024 L80,1024 C35.81722,1024 0,988.18278 0,944 L0,224 L944,224 Z M20,944 C20,976.805714 46.328343,1003.46211 79.0077903,1003.99196 L80,1004 L944,1004 C976.805714,1004 1003.46211,977.671657 1004,944.99221 L1004,944 L1004,304 C1004,271.194286 977.671657,244.537886 944.99221,244.008038 L944,244 L20,244 L20,944 Z"
         fill="#999999"
@@ -1650,22 +1204,8 @@ export const TabSource = {
   ),
   dark: () => (
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-      <rect
-        stroke="#979797"
-        fill="#4D4D4D"
-        x="325"
-        y="84"
-        width="285"
-        height="140"
-      ></rect>
-      <rect
-        stroke="#979797"
-        fill="#4D4D4D"
-        x="630"
-        y="84"
-        width="285"
-        height="140"
-      ></rect>
+      <rect stroke="#979797" fill="#4D4D4D" x="325" y="84" width="285" height="140"></rect>
+      <rect stroke="#979797" fill="#4D4D4D" x="630" y="84" width="285" height="140"></rect>
       <path
         d="M944,224 C988.18278,224 1024,259.81722 1024,304 L1024,944 C1024,988.18278 988.18278,1024 944,1024 L80,1024 C35.81722,1024 0,988.18278 0,944 L0,224 L944,224 Z M20,944 C20,976.805714 46.328343,1003.46211 79.0077903,1003.99196 L80,1004 L944,1004 C976.805714,1004 1003.46211,977.671657 1004,944.99221 L1004,944 L1004,304 C1004,271.194286 977.671657,244.537886 944.99221,244.008038 L944,244 L20,244 L20,944 Z"
         fill="#999999"
@@ -1714,7 +1254,7 @@ export const TabSource = {
         rx="10"
       ></rect>
     </g>
-  ),
+  )
 }
 
 export const CollapseSource = {
@@ -1843,7 +1383,7 @@ export const CollapseSource = {
         rx="10"
       ></rect>
     </g>
-  ),
+  )
 }
 
 export const ArrayCardsSource = () => (
@@ -2043,13 +1583,7 @@ export const ArrayTableSource = {
         fill="#979797"
         fillRule="nonzero"
       ></path>
-      <circle
-        fill="#222222"
-        fillRule="nonzero"
-        cx="511.799425"
-        cy="616.799425"
-        r="211"
-      ></circle>
+      <circle fill="#222222" fillRule="nonzero" cx="511.799425" cy="616.799425" r="211"></circle>
       <rect
         fill="var(--dn-brand-color)"
         transform="translate(511.799425, 616.799425) scale(-1, 1) rotate(630.000000) translate(-511.799425, -616.799425) "
@@ -2069,7 +1603,7 @@ export const ArrayTableSource = {
         rx="10"
       ></rect>
     </g>
-  ),
+  )
 }
 
 export const ButtonSource = () => (
@@ -2080,15 +1614,7 @@ export const ButtonSource = () => (
         fill="#999999"
         fillRule="nonzero"
       ></path>
-      <rect
-        stroke="#999999"
-        strokeWidth="20"
-        x="10"
-        y="228"
-        width="1404"
-        height="568"
-        rx="80"
-      ></rect>
+      <rect stroke="#999999" strokeWidth="20" x="10" y="228" width="1404" height="568" rx="80"></rect>
       <rect
         fill="var(--dn-brand-color)"
         transform="translate(712.000000, 686.000000) scale(-1, 1) rotate(90.000000) translate(-712.000000, -686.000000) "
@@ -2385,11 +1911,7 @@ export const OpenPageButtonSource = () => (
       fill="#979797"
       fillRule="nonzero"
     ></path>
-    <g
-      transform="translate(438.500000, 421.000000)"
-      fill="var(--dn-brand-color)"
-      fillRule="nonzero"
-    >
+    <g transform="translate(438.500000, 421.000000)" fill="var(--dn-brand-color)" fillRule="nonzero">
       <path d="M123,33.2132034 C128.522847,33.2132034 133,37.6903559 133,43.2132034 C133,48.6424433 128.673329,53.0611352 123.279905,53.2093616 L123,53.2132034 L40,53.2132034 C23.5971429,53.2132034 10.2689429,66.3773749 10.0040191,82.7170986 L10,83.2132034 L10,181.213203 C10,186.736051 5.5228475,191.213203 0,191.213203 C-5.42923991,191.213203 -9.84793172,186.886533 -9.9961582,181.493108 L-10,181.213203 L-10,83.2132034 C-10,55.8751083 11.9402858,33.6614415 39.1731586,33.219902 L40,33.2132034 L123,33.2132034 Z"></path>
       <path
         d="M133.926407,3.21320344 C139.449254,3.21320344 143.926407,7.69035594 143.926407,13.2132034 C143.926407,18.6424433 139.599736,23.0611352 134.206312,23.2093616 L133.926407,23.2132034 L93.9264069,23.2132034 C88.497167,23.2132034 84.0784752,27.5398742 83.9302487,32.9332986 L83.9264069,33.2132034 L83.9264069,73.2132034 C83.9264069,78.7360509 79.4492544,83.2132034 73.9264069,83.2132034 C68.497167,83.2132034 64.0784752,78.8865326 63.9302487,73.4931083 L63.9264069,73.2132034 L63.9264069,33.2132034 C63.9264069,16.8103464 77.0905784,3.48214629 93.430302,3.21722258 L93.9264069,3.21320344 L133.926407,3.21320344 Z"
@@ -2457,10 +1979,7 @@ export const ConfirmButtonSource = () => (
       fill="var(--dn-brand-color)"
       fillRule="nonzero"
     ></path>
-    <g
-      transform="translate(390.500000, 434.000000)"
-      fill="var(--dn-brand-color)"
-    >
+    <g transform="translate(390.500000, 434.000000)" fill="var(--dn-brand-color)">
       <rect
         transform="translate(57.500000, 99.071068) scale(-1, 1) rotate(45.000000) translate(-57.500000, -99.071068) "
         x="47.5"
@@ -2512,10 +2031,7 @@ export const DetailLinkButtonSource = () => (
       fill="#979797"
       fillRule="nonzero"
     ></path>
-    <g
-      transform="translate(442.000000, 436.000000)"
-      fill="var(--dn-brand-color)"
-    >
+    <g transform="translate(442.000000, 436.000000)" fill="var(--dn-brand-color)">
       <rect
         transform="translate(70.000000, 10.000000) scale(-1, 1) rotate(630.000000) translate(-70.000000, -10.000000) "
         x="60"
@@ -2883,22 +2399,8 @@ export const DataQueryListSource = () => (
       fill="#979797"
       fillRule="nonzero"
     ></path>
-    <rect
-      fill="var(--dn-brand-color)"
-      x="521.5"
-      y="95.5"
-      width="150"
-      height="60"
-      rx="10"
-    ></rect>
-    <rect
-      fill="#999999"
-      x="708"
-      y="95.5"
-      width="150"
-      height="60"
-      rx="10"
-    ></rect>
+    <rect fill="var(--dn-brand-color)" x="521.5" y="95.5" width="150" height="60" rx="10"></rect>
+    <rect fill="#999999" x="708" y="95.5" width="150" height="60" rx="10"></rect>
     <rect
       fill="var(--dn-brand-color)"
       transform="translate(189.000000, 414.666667) scale(-1, 1) rotate(630.000000) translate(-189.000000, -414.666667) "
@@ -3026,14 +2528,7 @@ export const DataFormSource = () => (
       height="150"
       rx="10"
     ></rect>
-    <rect
-      fill="var(--dn-brand-color)"
-      x="113.5"
-      y="754"
-      width="150"
-      height="60"
-      rx="10"
-    ></rect>
+    <rect fill="var(--dn-brand-color)" x="113.5" y="754" width="150" height="60" rx="10"></rect>
     <rect fill="#999999" x="300" y="754" width="150" height="60" rx="10"></rect>
     <g transform="translate(684.639279, 588.000000)">
       <rect
@@ -3180,15 +2675,7 @@ export const DataDetailFormSource = () => (
 
 export const EntitySource = () => (
   <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-    <rect
-      stroke="#999999"
-      strokeWidth="20"
-      x="10"
-      y="10"
-      width="1004"
-      height="1004"
-      rx="80"
-    ></rect>
+    <rect stroke="#999999" strokeWidth="20" x="10" y="10" width="1004" height="1004" rx="80"></rect>
     <rect
       fill="#999999"
       transform="translate(513.500000, 210.000000) scale(-1, 1) rotate(630.000000) translate(-513.500000, -210.000000) "
@@ -3203,10 +2690,7 @@ export const EntitySource = () => (
       fill="#979797"
       fillRule="nonzero"
     ></path>
-    <g
-      transform="translate(457.661479, 470.000000)"
-      fill="var(--dn-brand-color)"
-    >
+    <g transform="translate(457.661479, 470.000000)" fill="var(--dn-brand-color)">
       <rect
         transform="translate(70.000000, 10.000000) scale(-1, 1) rotate(630.000000) translate(-70.000000, -10.000000) "
         x="60"
@@ -3299,15 +2783,7 @@ export const ImageEntitySource = () => (
 
 export const FileEntitySource = () => (
   <g fill="none">
-    <rect
-      stroke="#999999"
-      strokeWidth="20"
-      x="10"
-      y="10"
-      width="1004"
-      height="1004"
-      rx="80"
-    ></rect>
+    <rect stroke="#999999" strokeWidth="20" x="10" y="10" width="1004" height="1004" rx="80"></rect>
     <rect
       fill="#999999"
       transform="translate(513.500000, 210.000000) scale(-1, 1) rotate(630.000000) translate(-513.500000, -210.000000) "

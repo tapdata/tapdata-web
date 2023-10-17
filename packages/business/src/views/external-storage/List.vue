@@ -2,40 +2,18 @@
   <section class="external-storage-wrapper">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton
-            class="btn btn-create"
-            type="primary"
-            size="mini"
-            @click="openDialog()"
-          >
-            <span>{{
-              $t('packages_business_external_storage_list_chuangjianwaicun')
-            }}</span>
+          <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
+            <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
           </ElButton>
         </div>
       </template>
-      <ElTableColumn
-        show-overflow-tooltip
-        min-width="180"
-        :label="$t('public_external_memory_name')"
-        prop="name"
-      >
+      <ElTableColumn show-overflow-tooltip min-width="180" :label="$t('public_external_memory_name')" prop="name">
         <template #default="{ row }">
-          <ElLink
-            style="display: inline"
-            type="primary"
-            @click.stop="checkDetails(row)"
-            >{{ row.name }}</ElLink
-          >
+          <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -44,12 +22,7 @@
         :label="$t('public_external_memory_type')"
         prop="typeFmt"
       ></ElTableColumn>
-      <ElTableColumn
-        show-overflow-tooltip
-        min-width="150"
-        :label="$t('public_status')"
-        prop="typeFmt"
-      >
+      <ElTableColumn show-overflow-tooltip min-width="150" :label="$t('public_status')" prop="typeFmt">
         <template #default="{ row }">
           <div>
             <span :class="['status-connection-' + row.status, 'status-block']">
@@ -72,9 +45,7 @@
       ></ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
         <template #default="{ row }">
-          <span class="mr-2">{{
-            $t('packages_business_external_storage_list_sheweimoren')
-          }}</span>
+          <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
             type="text"
             v-model:value="row.defaultStorage"
@@ -82,26 +53,17 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            :disabled="row.type !== 'mongodb'"
-            type="text"
-            @click="handleTest(row)"
+          <ElButton :disabled="row.type !== 'mongodb'" type="text" @click="handleTest(row)"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            type="text"
-            :disabled="!row.canEdit"
-            @click="handleEdit(row)"
-            >{{ $t('public_button_edit') }}</ElButton
-          >
+          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            type="text"
-            :disabled="!row.canDelete"
-            @click="remove(row)"
-            >{{ $t('public_button_delete') }}</ElButton
-          >
+          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -157,25 +119,17 @@
           :label-width="schemaLabelWidth"
         ></SchemaToForm>
 
-        <ElFormItem
-          :label="$t('packages_business_external_storage_list_sheweimoren')"
-        >
+        <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
           <ElSwitch v-model:value="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton
-            :disabled="form.type !== 'mongodb'"
-            @click="handleEditorTest()"
+          <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
-          <ElButton size="mini" @click="dialogVisible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-          <ElButton type="primary" size="mini" @click="submit">{{
-            $t('public_button_confirm')
-          }}</ElButton>
+          <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>
@@ -198,23 +152,16 @@
         </li>
       </ul>
     </Drawer>
-    <el-dialog
-      v-model:visible="showUsingTaskDialog"
-      :title="$t('public_message_title_prompt')"
-    >
+    <el-dialog v-model="showUsingTaskDialog" :title="$t('public_message_title_prompt')">
       <div>
         {{
           $t('packages_business_external_storage_list_tishi', {
-            val1: usingTasks.length,
+            val1: usingTasks.length
           })
         }}
       </div>
       <el-table class="mt-4" height="250px" :data="usingTasks">
-        <el-table-column
-          min-width="240"
-          :label="$t('public_task_name')"
-          :show-overflow-tooltip="true"
-        >
+        <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
           <template #default="{ row }">
             <span class="dataflow-name link-primary flex">
               <ElLink
@@ -267,7 +214,7 @@ export default {
       order: 'createAt DESC',
       searchParams: {
         type: '',
-        keyword: '',
+        keyword: ''
       },
       dialogVisible: false,
       dialogForm: {},
@@ -276,21 +223,17 @@ export default {
         name: [
           {
             required: true,
-            message: i18n.t(
-              'packages_business_external_storage_list_qingshuruwaicun'
-            ),
-            trigger: 'blur',
-          },
+            message: i18n.t('packages_business_external_storage_list_qingshuruwaicun'),
+            trigger: 'blur'
+          }
         ],
         uri: [
           {
             required: true,
-            message: i18n.t(
-              'packages_business_external_storage_list_qingshurucunchu'
-            ),
-            trigger: 'blur',
-          },
-        ],
+            message: i18n.t('packages_business_external_storage_list_qingshurucunchu'),
+            trigger: 'blur'
+          }
+        ]
       },
       isShowDetails: false,
       details: '',
@@ -301,18 +244,18 @@ export default {
       usingTasks: [],
       schemaData: null,
       dialogTestVisible: false,
-      model: {},
+      model: {}
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    },
+    }
   },
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -331,47 +274,43 @@ export default {
             {
               fulfill: {
                 state: {
-                  visible: '{{$self.value===true}}',
-                },
+                  visible: '{{$self.value===true}}'
+                }
               },
-              target: '*(sslKey,sslPass,sslValidate)',
-            },
+              target: '*(sslKey,sslPass,sslValidate)'
+            }
           ],
           'x-component-props': {
-            optionType: 'button',
+            optionType: 'button'
           },
           type: 'boolean',
           title: i18n.t('packages_business_external_storage_list_shiyongTls'),
-          'x-index': 80,
+          'x-index': 80
         },
         sslCA: {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
           type: 'string',
-          title: i18n.t(
-            'packages_business_external_storage_list_zhengshubanfaji'
-          ),
+          title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
           'x-index': 120,
           fileNameField: 'sslCAFile',
-          required: true,
+          required: true
         },
         sslKey: {
           'x-decorator': 'FormItem',
           'x-component': 'TextFileReader',
           type: 'string',
-          title: i18n.t(
-            'packages_business_external_storage_list_kehuduansiyao'
-          ),
+          title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
           'x-index': 90,
           fileNameField: 'sslKeyFile',
-          required: true,
+          required: true
         },
         sslPass: {
           'x-decorator': 'FormItem',
           'x-component': 'Password',
           type: 'string',
           title: i18n.t('packages_business_external_storage_list_siyaomima'),
-          'x-index': 100,
+          'x-index': 100
         },
         sslValidate: {
           'x-decorator': 'FormItem',
@@ -381,19 +320,17 @@ export default {
             {
               fulfill: {
                 state: {
-                  visible: '{{$self.value===true}}',
-                },
+                  visible: '{{$self.value===true}}'
+                }
               },
-              target: 'sslCA',
-            },
+              target: 'sslCA'
+            }
           ],
           type: 'boolean',
-          title: i18n.t(
-            'packages_business_external_storage_list_yanzhengfuwuduan'
-          ),
-          'x-index': 110,
-        },
-      },
+          title: i18n.t('packages_business_external_storage_list_yanzhengfuwuduan'),
+          'x-index': 110
+        }
+      }
     }
 
     //定时轮询
@@ -406,14 +343,12 @@ export default {
   },
   methods: {
     getFilterItems() {
-      let typeOptions = [
-        { label: i18n.t('public_select_option_all'), value: '' },
-      ]
+      let typeOptions = [{ label: i18n.t('public_select_option_all'), value: '' }]
       for (const key in EXTERNAL_STORAGE_TYPE_MAP) {
         const label = EXTERNAL_STORAGE_TYPE_MAP[key]
         typeOptions.push({
           label,
-          value: key,
+          value: key
         })
       }
       this.filterItems = [
@@ -421,13 +356,13 @@ export default {
           label: this.$t('public_connection_form_database_type'),
           key: 'type', //对象分类
           type: 'select-inner',
-          items: typeOptions,
+          items: typeOptions
         },
         {
           placeholder: i18n.t('public_input_placeholder_name'),
           key: 'keyword', //输入搜索名称
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
     },
     getData({ page }) {
@@ -444,23 +379,22 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return externalStorageApi
         .list({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
-          let list = (data?.items || []).map((item) => {
+        .then(data => {
+          let list = (data?.items || []).map(item => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
-            item.createTimeFmt =
-              dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
+            item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             item.status = item.status || 'ready'
             return item
           })
           return {
             total: data?.total,
-            data: list,
+            data: list
           }
         })
     },
@@ -473,14 +407,14 @@ export default {
             name: '',
             type: 'mongodb',
             uri: '',
-            defaultStorage: false,
+            defaultStorage: false
           }
       this.$nextTick(() => {
         this.$refs?.form?.clearValidate()
       })
     },
     submit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           const main = async () => {
             let formValues = this.$refs.schemaToForm?.getFormValues?.()
@@ -493,7 +427,7 @@ export default {
                 name,
                 type,
                 uri,
-                defaultStorage,
+                defaultStorage
               },
               formValues
             )
@@ -540,14 +474,10 @@ export default {
     async remove(row) {
       //先去请求是否外存已被使用了
       this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
-      const flag = await this.$confirm(
-        i18n.t('packages_business_external_storage_list_querenshanchuwai'),
-        '',
-        {
-          type: 'warning',
-          showClose: false,
-        }
-      )
+      const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
+        type: 'warning',
+        showClose: false
+      })
       if (flag) {
         if (this.usingTasks?.length) {
           this.showUsingTaskDialog = true
@@ -563,25 +493,23 @@ export default {
         {
           label: this.$t('public_external_memory_type'),
           value: row.typeFmt,
-          icon: 'name',
+          icon: 'name'
         },
         {
           label: this.$t('public_create_time'),
           value: row.createTimeFmt,
-          icon: 'cacheTimeAtFmt',
+          icon: 'cacheTimeAtFmt'
         },
         {
-          label: this.$t(
-            'packages_business_external_storage_list_cunchulujing'
-          ),
+          label: this.$t('packages_business_external_storage_list_cunchulujing'),
           value: row.uri,
-          icon: 'database',
+          icon: 'database'
         },
         {
           label: this.$t('packages_business_external_storage_list_sheweimoren'),
           value: row.defaultStorage,
-          icon: 'record',
-        },
+          icon: 'record'
+        }
       ]
       this.isShowDetails = true
     },
@@ -599,13 +527,13 @@ export default {
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
         mem_cache: 'sharedCacheList',
-        connHeartbeat: 'HeartbeatTableList',
+        connHeartbeat: 'HeartbeatTableList'
       }
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
         query: {
-          keyword: item.name,
-        },
+          keyword: item.name
+        }
       })
       openUrl(routeUrl.href)
     },
@@ -620,7 +548,7 @@ export default {
     },
 
     handleEditorTest() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
           schemaFormInstance?.validate().then(async () => {
@@ -634,7 +562,7 @@ export default {
                 name,
                 type,
                 uri,
-                defaultStorage,
+                defaultStorage
               },
               formValues
             )
@@ -665,28 +593,20 @@ export default {
       if (!data.status || data.status === null) return
       let status = data.status
       if (status === 'ready') {
-        this.$message.success(
-          this.$t('public_connection_button_test') +
-            this.$t('public_status_ready'),
-          false
-        )
+        this.$message.success(this.$t('public_connection_button_test') + this.$t('public_status_ready'), false)
       } else {
-        this.$message.error(
-          this.$t('public_connection_button_test') +
-            this.$t('public_status_invalid'),
-          false
-        )
+        this.$message.error(this.$t('public_connection_button_test') + this.$t('public_status_invalid'), false)
       }
       this.buried('externalStorage_connectionTest', '', {
-        result: status === 'ready',
+        result: status === 'ready'
       })
       this.table.fetch()
     },
 
     getStatus(status) {
       return CONNECTION_STATUS_MAP[status]?.text || ''
-    },
-  },
+    }
+  }
 }
 </script>
 

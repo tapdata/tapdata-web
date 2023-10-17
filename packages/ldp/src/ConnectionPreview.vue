@@ -6,21 +6,13 @@
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
           <div class="flex justify-content-end mt-4 mb-4">
             <!--<el-button size="mini" type="primary">加载Schema</el-button>-->
-            <el-button size="mini" @click="edit">{{
-              $t('public_button_edit')
-            }}</el-button>
+            <el-button size="mini" @click="edit">{{ $t('public_button_edit') }}</el-button>
             <!--<el-button size="mini">测试连接</el-button>-->
           </div>
         </div>
         <div class="color-info mb-4">
           {{ getType(viewData.connection_type) }}
-          <span
-            :class="[
-              'status-connection-' + viewData.status,
-              'status-block',
-              'ml-4',
-            ]"
-          >
+          <span :class="['status-connection-' + viewData.status, 'status-block', 'ml-4']">
             {{ getStatus(viewData.status) }}
           </span>
         </div>
@@ -28,38 +20,26 @@
       <section class="basics-info">
         <el-row>
           <el-col :span="8">
-            <span class="table-dec-label"
-              >{{ $t('packages_business_table_count') }} :
-            </span>
+            <span class="table-dec-label">{{ $t('packages_business_table_count') }} : </span>
             <span class="mt-2 ml-2">{{ viewData.tableCount }}</span>
           </el-col>
           <el-col :span="8">
-            <span class="table-dec-label"
-              >{{ $t('packages_business_model_update_time') }} :</span
-            >
+            <span class="table-dec-label">{{ $t('packages_business_model_update_time') }} :</span>
             <span class="mt-2 ml-2">{{ viewData.loadSchemaTime }}</span>
           </el-col>
           <el-col :span="8">
-            <span class="table-dec-label"
-              >{{ $t('public_create_time') }} :
-            </span>
+            <span class="table-dec-label">{{ $t('public_create_time') }} : </span>
             <span class="mt-2 ml-2">{{ viewData.createTime }}</span>
           </el-col>
         </el-row>
         <el-row class="mt-4">
           <el-col :span="8">
-            <span class="table-dec-label"
-              >{{ $t('public_change_time') }} :
-            </span>
+            <span class="table-dec-label">{{ $t('public_change_time') }} : </span>
             <span class="mt-2 ml-2">{{ viewData.last_updated }}</span>
           </el-col>
           <el-col :span="8" class="flex items-center">
-            <span class="table-dec-label"
-              >{{ $t('public_connection_schema_status') }} :
-            </span>
-            <span class="ml-2" v-if="isFileSource(viewData.database_type)"
-              >-</span
-            >
+            <span class="table-dec-label">{{ $t('public_connection_schema_status') }} : </span>
+            <span class="ml-2" v-if="isFileSource(viewData.database_type)">-</span>
             <span class="ml-2" v-else>
               <SchemaProgress :data="viewData"></SchemaProgress>
             </span>
@@ -69,36 +49,28 @@
       <section class="detailed-info" v-if="viewData.config">
         <el-row class="mb-2">
           <el-col :span="12">
-            <span class="table-dec-label inline-block"
-              >{{ $t('public_connection_form_database_address') }}：</span
-            >
+            <span class="table-dec-label inline-block">{{ $t('public_connection_form_database_address') }}：</span>
             <span>{{ viewData.config.host || viewData.config.uri }}</span>
           </el-col>
           <el-col :span="12">
-            <span class="table-dec-label inline-block"
-              >{{ $t('public_connection_form_host') }}：</span
-            >
+            <span class="table-dec-label inline-block">{{ $t('public_connection_form_host') }}：</span>
             <span>{{ viewData.config.port || '-' }}</span>
           </el-col>
         </el-row>
         <el-row class="mb-2">
           <el-col :span="12"
-            ><span class="table-dec-label inline-block"
-              >{{ $t('public_connection_form_database_name') }}：</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_database_name') }}：</span
             ><span>{{ viewData.config.database || '-' }}</span></el-col
           >
           <el-col :span="12"
-            ><span class="table-dec-label inline-block"
-              >{{ $t('public_connection_form_schema') }}：</span
+            ><span class="table-dec-label inline-block">{{ $t('public_connection_form_schema') }}：</span
             ><span>{{ viewData.config.schema || '-' }}</span></el-col
           >
         </el-row>
         <el-row class="mb-2">
           <el-col :span="12"
             ><span class="table-dec-label inline-block"
-              >{{
-                $t('public_connection_form_other_connection_string')
-              }}：</span
+              >{{ $t('public_connection_form_other_connection_string') }}：</span
             ><span>{{ viewData.config.additionalString || '-' }}</span></el-col
           >
           <el-col :span="12"
@@ -113,29 +85,14 @@
           <div class="table-info-name">{{ $t('packages_business_tasks') }}</div>
           <ElDivider class="mx-3" direction="vertical"></ElDivider>
           <ElRadioGroup v-model:value="asTaskType" size="mini">
-            <ElRadioButton label="all">{{
-              $t('public_select_option_all')
-            }}</ElRadioButton>
-            <ElRadioButton label="source">{{
-              $t('packages_business_as_source')
-            }}</ElRadioButton>
-            <ElRadioButton label="target">{{
-              $t('packages_business_as_target')
-            }}</ElRadioButton>
+            <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
+            <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
+            <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
           </ElRadioGroup>
           <!--<el-button type="primary" size="mini">新建</el-button>-->
         </header>
-        <el-table
-          class="discovery-page-table"
-          :data="filterTask"
-          :has-pagination="false"
-        >
-          <el-table-column
-            :label="$t('public_task_name')"
-            prop="name"
-            width="200px"
-            show-overflow-tooltip
-          >
+        <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
+          <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
             <template #default="{ row }">
               <span class="dataflow-name link-primary flex">
                 <ElLink
@@ -191,12 +148,7 @@
 import { cloneDeep } from 'lodash'
 import dayjs from 'dayjs'
 import { Drawer } from '@tap/component'
-import {
-  CONNECTION_STATUS_MAP,
-  CONNECTION_TYPE_MAP,
-  SchemaProgress,
-  TaskStatus,
-} from '@tap/business'
+import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP, SchemaProgress, TaskStatus } from '@tap/business'
 import { taskApi } from '@tap/api'
 
 export default {
@@ -210,9 +162,9 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
       },
-      asTaskType: 'all',
+      asTaskType: 'all'
     }
   },
   computed: {
@@ -223,14 +175,10 @@ export default {
       return this.taskData
     },
     sourceTask() {
-      return this.taskData.filter((task) =>
-        task.sourceConnectionIds.includes(this.viewData.id)
-      )
+      return this.taskData.filter(task => task.sourceConnectionIds.includes(this.viewData.id))
     },
     targetTask() {
-      return this.taskData.filter((task) =>
-        task.targetConnectionIds.includes(this.viewData.id)
-      )
+      return this.taskData.filter(task => task.targetConnectionIds.includes(this.viewData.id))
     },
     databaseName() {
       if (!this.viewData) return
@@ -238,17 +186,16 @@ export default {
       const config = this.viewData.config
 
       if (config.uri && config.isUri !== false) {
-        const regResult =
-          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
-          )
+        const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+          config.uri
+        )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
         }
       }
 
       return config.database || config.sid
-    },
+    }
   },
   methods: {
     open(connection) {
@@ -262,10 +209,9 @@ export default {
       config.additionalString = config.extParams || config.addtionalString
 
       if (config.uri && config.isUri !== false) {
-        const regResult =
-          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
-          )
+        const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+          config.uri
+        )
         if (regResult && regResult.groups) {
           const hostArr = regResult.groups.host.split(':')
           config.host = hostArr[0]
@@ -275,15 +221,9 @@ export default {
           config.additionalString = regResult.groups.query
         }
       }
-      data['last_updated'] = dayjs(connection.last_updated).format(
-        'YYYY-MM-DD HH:mm:ss'
-      )
-      data['createTime'] = dayjs(connection.createTime).format(
-        'YYYY-MM-DD HH:mm:ss'
-      )
-      data['loadSchemaTime'] = dayjs(connection.loadSchemaTime).format(
-        'YYYY-MM-DD HH:mm:ss'
-      )
+      data['last_updated'] = dayjs(connection.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      data['createTime'] = dayjs(connection.createTime).format('YYYY-MM-DD HH:mm:ss')
+      data['loadSchemaTime'] = dayjs(connection.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
       this.viewData = data
       this.reset()
     },
@@ -292,12 +232,12 @@ export default {
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id,
+          id
         },
         query: {
           pdkHash,
-          pdkId,
-        },
+          pdkId
+        }
       })
     },
     isFileSource(database_type) {
@@ -312,10 +252,10 @@ export default {
     getTasks() {
       let params = {
         connectionId: this.viewData.id,
-        tableName: null,
+        tableName: null
       }
-      taskApi.getTaskByTableName(params).then((taskList) => {
-        taskList.forEach((task) => {
+      taskApi.getTaskByTableName(params).then(taskList => {
+        taskList.forEach(task => {
           const { dag } = task
           const sourceConnectionIds = []
           const targetConnectionIds = []
@@ -340,18 +280,10 @@ export default {
               }
             })
 
-            dag.nodes.forEach((node) => {
-              if (
-                !inputsMap[node.id] &&
-                outputsMap[node.id] &&
-                node.connectionId
-              ) {
+            dag.nodes.forEach(node => {
+              if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId) {
                 sourceConnectionIds.push(node.connectionId)
-              } else if (
-                inputsMap[node.id] &&
-                !outputsMap[node.id] &&
-                node.connectionId
-              ) {
+              } else if (inputsMap[node.id] && !outputsMap[node.id] && node.connectionId) {
                 targetConnectionIds.push(node.connectionId)
               }
             })
@@ -377,24 +309,22 @@ export default {
       let routeName
 
       if (!['edit', 'wait_start'].includes(row.status)) {
-        routeName =
-          row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+        routeName = row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
       } else {
-        routeName =
-          row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+        routeName = row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
       }
 
       this.openRoute({
         name: routeName,
         params: {
-          id: row.id,
-        },
+          id: row.id
+        }
       })
     },
     reset() {
       this.asTaskType = 'all'
-    },
-  },
+    }
+  }
 }
 </script>
 

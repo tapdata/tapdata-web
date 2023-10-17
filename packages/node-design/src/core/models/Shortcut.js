@@ -14,7 +14,7 @@ export class Shortcut {
 
   parseCodes(codes) {
     const results = []
-    codes.forEach((code) => {
+    codes.forEach(code => {
       if (Array.isArray(code)) {
         results.push(code)
       } else {
@@ -47,14 +47,13 @@ export class Shortcut {
   }
 
   match(codes, context) {
-    return this.codes.some((sequence) => {
+    return this.codes.some(sequence => {
       const sortedSelf = Shortcut.sortCodes(sequence)
       const sortedTarget = Shortcut.sortCodes(codes)
       if (isFn(this.matcher)) {
         return this.matched(this.matcher(sortedTarget), context)
       }
-      if (sortedTarget.length !== sortedSelf.length)
-        return this.matched(false, context)
+      if (sortedTarget.length !== sortedSelf.length) return this.matched(false, context)
       for (let i = 0; i < sortedSelf.length; i++) {
         if (!Shortcut.matchCode(sortedTarget[i], sortedSelf[i])) {
           return this.matched(false, context)
@@ -68,7 +67,7 @@ export class Shortcut {
     return code1?.toLocaleLowerCase?.() === code2?.toLocaleLowerCase?.()
   }
 
-  static sortCodes = (codes) => {
-    return codes.map((code) => code.toLocaleLowerCase()).sort()
+  static sortCodes = codes => {
+    return codes.map(code => code.toLocaleLowerCase()).sort()
   }
 }

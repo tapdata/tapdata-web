@@ -3,12 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
 import { onMounted, onUnmounted } from '@vue/composition-api'
 
-import {
-  metadataInstancesApi,
-  proxyApi,
-  taskApi,
-  connectionsApi,
-} from '@tap/api'
+import { metadataInstancesApi, proxyApi, taskApi, connectionsApi } from '@tap/api'
 
 import './style.scss'
 
@@ -57,7 +52,7 @@ export const loadSchemaTree = observer(
         }
         metadataInstancesApi
           .nodeSchema(nodeId)
-          .then((data) => {
+          .then(data => {
             fieldList.value = data?.[0]?.fields || []
           })
           .finally(() => {
@@ -74,10 +69,7 @@ export const loadSchemaTree = observer(
           className: 'DiscoverSchemaService',
           method: 'discoverSchema',
           nodeId,
-          args: [
-            connectionId,
-            Object.assign({ file: 'file', nodeId }, nodeConfig),
-          ],
+          args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
         }
         loading.value = true
         isTransformed.value = true
@@ -91,22 +83,22 @@ export const loadSchemaTree = observer(
                   where: {
                     'source.id': connectionId,
                     meta_type: {
-                      in: ['collection', 'table', 'view'],
+                      in: ['collection', 'table', 'view']
                     },
                     is_deleted: false,
                     sourceType: 'SOURCE',
                     original_name: {
-                      neq: '',
-                    },
+                      neq: ''
+                    }
                   },
                   page: 1,
                   size: 20,
                   fields: {
-                    original_name: true,
+                    original_name: true
                   },
-                  order: ['original_name ASC'],
+                  order: ['original_name ASC']
                 }
-                connectionsApi.get(connectionId).then((con) => {
+                connectionsApi.get(connectionId).then(con => {
                   if (con.loadFieldErrMsg) {
                     errorMsg.value = con.loadFieldErrMsg
                     loadStatus.value = true
@@ -114,7 +106,7 @@ export const loadSchemaTree = observer(
                   } else {
                     metadataInstancesApi
                       .get({ filter: JSON.stringify(filter) })
-                      .then((metaData) => {
+                      .then(metaData => {
                         const table = metaData.items?.[0]?.original_name
                         form.setValuesIn(tableNameField || 'tableName', '')
                         setTimeout(() => {
@@ -122,7 +114,7 @@ export const loadSchemaTree = observer(
                           isTransformed.value = false
                           let unwatchSaving = root.$watch(
                             () => root.$store.state.dataflow.taskSaving,
-                            (v) => {
+                            v => {
                               if (!v) {
                                 getSchemaData(true)
                                 unwatchSaving()
@@ -138,7 +130,7 @@ export const loadSchemaTree = observer(
                   }
                 })
               })
-              .catch((err) => {
+              .catch(err => {
                 loadStatus.value = true
                 const msg = err?.data?.message
                 errorMsg.value = msg
@@ -163,23 +155,12 @@ export const loadSchemaTree = observer(
 
       const loadStatusDom = () => {
         return loadStatus.value ? (
-          <el-tooltip
-            disabled={!errorMsg.value}
-            content={errorMsg.value}
-            placement="top"
-            class="ml-2"
-          >
+          <el-tooltip disabled={!errorMsg.value} content={errorMsg.value} placement="top" class="ml-2">
             <span className="inline-flex align-content-center">
-              <VIcon
-                size="16"
-                class="mr-1 color-danger"
-                style="padding-bottom: 2px"
-              >
+              <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">
                 info
               </VIcon>
-              <span class="color-danger">
-                {root.$t('packages_form_load_schema_tree_load_fail')}
-              </span>
+              <span class="color-danger">{root.$t('packages_form_load_schema_tree_load_fail')}</span>
             </span>
           </el-tooltip>
         ) : (
@@ -189,9 +170,7 @@ export const loadSchemaTree = observer(
 
       const formValuesChangeDom = () => {
         return formIsChange.value ? (
-          <span class="ml-2 color-warning">
-            {root.$t('packages_form_load_schema_tree_form_values_change')}
-          </span>
+          <span class="ml-2 color-warning">{root.$t('packages_form_load_schema_tree_form_values_change')}</span>
         ) : (
           ''
         )
@@ -201,12 +180,7 @@ export const loadSchemaTree = observer(
         return (
           <div>
             <div class="mb-2">
-              <el-button
-                type="primary"
-                plain
-                loading={loading.value}
-                onClick={handleLoadSchema}
-              >
+              <el-button type="primary" plain loading={loading.value} onClick={handleLoadSchema}>
                 {title}
               </el-button>
               {loadStatusDom()}
@@ -240,6 +214,6 @@ export const loadSchemaTree = observer(
           </div>
         )
       }
-    },
+    }
   })
 )

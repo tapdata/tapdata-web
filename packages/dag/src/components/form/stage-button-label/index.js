@@ -17,7 +17,7 @@ export const StageButtonLabel = observer(
       const trigger = () => {
         const field = formRef.value.query(props.target).take()
         field?.setComponentProps({
-          reloadTime: Date.now(),
+          reloadTime: Date.now()
         })
       }
 
@@ -40,6 +40,6 @@ export const StageButtonLabel = observer(
           </FormItem.BaseItem>
         )
       }
-    },
+    }
   })
 )

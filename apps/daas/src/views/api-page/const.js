@@ -9,5 +9,5 @@ export const STATUS_MAP = {
   exit: i18n.t('modules_status_exit'),
   stop: i18n.t('modules_status_stop'),
   ready: i18n.t('modules_status_ready'),
-  invalid: i18n.t('modules_status_invalid'),
+  invalid: i18n.t('modules_status_invalid')
 }

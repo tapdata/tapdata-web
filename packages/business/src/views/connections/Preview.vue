@@ -10,25 +10,16 @@
         <div class="ml-4 overflow-hidden">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
           <div>
-            <status-tag
-              type="text"
-              target="connection"
-              :status="connection.status"
-            ></status-tag>
+            <status-tag type="text" target="connection" :status="connection.status"></status-tag>
           </div>
         </div>
       </div>
-      <div
-        v-if="!hideOperation"
-        class="button-line container-item border-item pt-4 pb-5"
-      >
+      <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <template v-slot:operation>
           <div class="flex">
             <el-tooltip
               :disabled="!isFileSource()"
-              :content="
-                $t('packages_business_connections_list_wenjianleixingde')
-              "
+              :content="$t('packages_business_connections_list_wenjianleixingde')"
               placement="top"
               class="load-schema__tooltip"
             >
@@ -48,18 +39,12 @@
               size="mini"
               @click="edit()"
               :disabled="
-                $disabledReadonlyUserBtn() ||
-                connection.agentType === 'Cloud' ||
-                getDisabled(connection, 'Edit')
+                $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
               "
             >
               {{ $t('public_button_edit') }}
             </el-button>
-            <el-button
-              class="flex-fill min-w-0"
-              size="mini"
-              @click="$emit('test', connection)"
-            >
+            <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
               {{ $t('public_connection_button_test') }}
             </el-button>
           </div>
@@ -71,95 +56,54 @@
           :percentage="progress"
         ></el-progress>
       </div>
-      <div
-        v-for="(item, index) in list"
-        :key="index + ''"
-        class="container-item flex"
-      >
+      <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-2">
           <VIcon>{{ item.icon }}</VIcon>
         </div>
         <div class="flex-fill ml-4">
-          <div
-            v-for="(temp, k) in item.items"
-            :key="index + '' + k"
-            class="box-line"
-          >
+          <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label flex justify-content-between">
               <span>{{ temp.label }}:</span>
-              <ElLink
-                v-if="temp.labelAction"
-                type="primary"
-                @click="temp.labelAction"
-                >{{ temp.labelActionTitle }}</ElLink
-              >
+              <ElLink v-if="temp.labelAction" type="primary" @click="temp.labelAction">{{
+                temp.labelActionTitle
+              }}</ElLink>
             </div>
             <div v-if="['permissions'].includes(temp.key)" class="pt-2">
-              <ElTag
-                v-for="per in permissions"
-                :key="per.roleId"
-                type="info"
-                class="mr-2 mb-1"
-                >{{ per.roleName }}</ElTag
-              >
+              <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
+                per.roleName
+              }}</ElTag>
               <span v-if="!permissions.length">-</span>
             </div>
             <el-tooltip
               v-else-if="
                 connection[temp.key] &&
-                ![
-                  'mqType',
-                  'mqQueueSet',
-                  'mqTopicSet',
-                  'shareCdcEnable',
-                  'redoLogParserEnable',
-                ].includes(temp.key) &&
+                !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
                 connection[temp.key].toString()
               "
               effect="dark"
               :content="(temp.value || connection[temp.key]).toString()"
               placement="right-end"
             >
-              <div
-                class="box-line__value ellipsis"
-                :class="[temp.class]"
-                @click="handleClick(temp)"
-              >
+              <div class="box-line__value ellipsis" :class="[temp.class]" @click="handleClick(temp)">
                 {{ temp.value || connection[temp.key] || '-' }}
               </div>
             </el-tooltip>
             <!-- MQ文字转换 start -->
-            <div
-              v-else-if="connection[temp.key] && temp.key === 'mqType'"
-              class="box-line__value ellipsis"
-            >
+            <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
               <span>{{ mqType[connection[temp.key]] || '-' }}</span>
             </div>
             <div
-              v-else-if="
-                connection[temp.key] &&
-                (temp.key === 'mqQueueSet' || temp.key === 'mqTopicSet')
-              "
+              v-else-if="connection[temp.key] && (temp.key === 'mqQueueSet' || temp.key === 'mqTopicSet')"
               class="box-line__value ellipsis"
             >
-              <span>{{
-                connection[temp.key].length > 0 ? connection[temp.key] : '-'
-              }}</span>
+              <span>{{ connection[temp.key].length > 0 ? connection[temp.key] : '-' }}</span>
             </div>
             <!-- 共享挖掘文字转换 /裸日志文字转换  start -->
             <div
-              v-else-if="
-                connection[temp.key] &&
-                (temp.key === 'shareCdcEnable' ||
-                  temp.key === 'redoLogParserEnable')
-              "
+              v-else-if="connection[temp.key] && (temp.key === 'shareCdcEnable' || temp.key === 'redoLogParserEnable')"
               class="box-line__value ellipsis"
             >
-              <span>{{
-                connection[temp.key]
-                  ? $t('packages_business_text_open')
-                  : $t('public_button_close')
-              }}</span>
+              <span>{{ connection[temp.key] ? $t('packages_business_text_open') : $t('public_button_close') }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">
@@ -198,8 +142,8 @@ export default {
   props: {
     hideOperation: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -215,20 +159,20 @@ export default {
         btnLoading: {
           deploy: false,
           stop: false,
-          delete: false,
-        },
+          delete: false
+        }
       },
       kafkaACK: {
         0: this.$t('packages_business_connection_preview_no_sure'),
         '-1': this.$t('packages_business_connection_preview_master_partition'),
         1: this.$t('packages_business_connection_preview_master_partition'),
-        all: this.$t('packages_business_connection_preview_isr_partition'),
+        all: this.$t('packages_business_connection_preview_isr_partition')
       },
       list: [],
       mqType: {
         0: 'ActiveMQ',
         1: 'RabbitMQ',
-        2: 'RocketMQ',
+        2: 'RocketMQ'
       },
       configModel: {
         default: [
@@ -237,75 +181,73 @@ export default {
             items: [
               {
                 label: this.$t('public_connection_table_structure_update_time'),
-                key: 'loadSchemaTime',
-              },
-            ],
+                key: 'loadSchemaTime'
+              }
+            ]
           },
           {
             icon: 'database',
             items: [
               {
                 label: this.$t('public_connection_form_database_address'),
-                key: 'database_host',
-              },
-            ],
+                key: 'database_host'
+              }
+            ]
           },
           {
             icon: 'port',
             items: [
               {
                 label: this.$t('public_connection_form_host'),
-                key: 'database_port',
-              },
-            ],
+                key: 'database_port'
+              }
+            ]
           },
           {
             icon: 'name',
             items: [
               {
                 label: this.$t('public_connection_form_database_name'),
-                key: 'database_name',
-              },
-            ],
+                key: 'database_name'
+              }
+            ]
           },
           {
             icon: 'database-user-name',
             items: [
               {
                 label: this.$t('public_connection_form_account'),
-                key: 'database_username',
-              },
-            ],
+                key: 'database_username'
+              }
+            ]
           },
           {
             icon: 'connect_schema',
             items: [
               {
                 label: this.$t('public_connection_form_schema'),
-                key: 'database_owner',
-              },
-            ],
+                key: 'database_owner'
+              }
+            ]
           },
           {
             icon: 'additional-string',
             items: [
               {
-                label: this.$t(
-                  'public_connection_form_other_connection_string'
-                ),
-                key: 'addtionalString',
-              },
-            ],
+                label: this.$t('public_connection_form_other_connection_string'),
+                key: 'addtionalString'
+              }
+            ]
           },
           {
             icon: 'origin-time',
             items: [
               {
                 label: this.$t('public_connection_form_time_zone_of_time_type'),
-                key: 'database_datetype_without_timezone',
-              },
-            ],
-          },
+                key: 'database_datetype_without_timezone'
+              }
+            ]
+          }
           // {
           //   icon: 'connect_shared_mining',
           //   items: [
@@ -324,10 +266,10 @@ export default {
           //     }
           //   ]
           // }
-        ],
+        ]
       },
       formData: {},
-      permissions: [],
+      permissions: []
     }
   },
   beforeUnmount() {
@@ -338,7 +280,7 @@ export default {
       if (!val) {
         this.clearTimer() //清除定时器
       }
-    },
+    }
   },
   methods: {
     clearTimer() {
@@ -370,9 +312,7 @@ export default {
       row.addtionalString = row.config.extParams || row.config.addtionalString
       row.database_datetype_without_timezone = row.config.timezone
       row.sourceFrom = this.getSourceFrom(row)
-      row.loadSchemaTime = row.loadSchemaTime
-        ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss')
-        : '-'
+      row.loadSchemaTime = row.loadSchemaTime ? dayjs(row.loadSchemaTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       if (row.config.uri && row.config.isUri !== false) {
         row.uri = row.config.uri
       }
@@ -386,21 +326,13 @@ export default {
       this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
-      this.connection['last_updated'] = dayjs(row.last_updated).format(
-        'YYYY-MM-DD HH:mm:ss'
-      )
+      this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
       this.loadList(row)
       this.isDaas && this.loadPermissions(row.id)
     },
     edit() {
       const { connection = {} } = this
-      const {
-        id,
-        pdkHash,
-        definitionPdkId: pdkId,
-        agentType,
-        name,
-      } = connection
+      const { id, pdkHash, definitionPdkId: pdkId, agentType, name } = connection
 
       if (agentType === 'Local') {
         this.$confirm(
@@ -410,9 +342,9 @@ export default {
           '',
           {
             type: 'warning',
-            showClose: false,
+            showClose: false
           }
-        ).then((resFlag) => {
+        ).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -420,24 +352,24 @@ export default {
           this.$router.push({
             name: 'connectionsEdit',
             params: {
-              id: id,
+              id: id
             },
             query: {
               pdkHash,
-              pdkId,
-            },
+              pdkId
+            }
           })
         })
       } else {
         this.$router.push({
           name: 'connectionsEdit',
           params: {
-            id: id,
+            id: id
           },
           query: {
             pdkHash,
-            pdkId,
-          },
+            pdkId
+          }
         })
       }
     },
@@ -446,7 +378,7 @@ export default {
         //先将管理端状态改为testing
         connectionsApi
           .updateById(this.connection.id, {
-            status: 'testing',
+            status: 'testing'
           })
           .then(() => {
             // let testData = JSON.parse(JSON.stringify(this.connection))
@@ -466,10 +398,10 @@ export default {
     testSchema(cb) {
       let parms = {
         loadCount: 0,
-        loadFieldsStatus: 'loading',
+        loadFieldsStatus: 'loading'
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connection.id, parms).then((data) => {
+      connectionsApi.updateById(this.connection.id, parms).then(data => {
         cb?.()
         if (!this?.$refs?.test) {
           return
@@ -483,26 +415,21 @@ export default {
       this.clearTimer()
       connectionsApi
         .getNoSchema(this.connection.id)
-        .then((data) => {
+        .then(data => {
           this.formData = cloneDeep(data)
           this.connection = this.transformData(data)
           //组装数据
-          this.connection['last_updated'] = dayjs(data.last_updated).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
+          this.connection['last_updated'] = dayjs(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100
             setTimeout(() => {
               this.showProgress = false
               this.progress = 0 //加载完成
-              this.$message.success(
-                i18n.t('packages_business_connections_preview_schem')
-              )
+              this.$message.success(i18n.t('packages_business_connections_preview_schem'))
             }, 1000)
           } else {
-            let progress =
-              Math.round((data.loadCount / data.tableCount) * 10000) / 100
+            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
             this.timer = setTimeout(() => {
               this.visible && this.getProgress()
@@ -534,39 +461,32 @@ export default {
                   icon: 'link',
                   items: [
                     {
-                      label: i18n.t(
-                        'public_connection_form_link_plugin_source'
-                      ),
-                      key: 'sourceFrom',
-                    },
-                  ],
-                },
+                      label: i18n.t('public_connection_form_link_plugin_source'),
+                      key: 'sourceFrom'
+                    }
+                  ]
+                }
               ]),
           this.connection.heartbeatTable
             ? {
                 icon: 'link',
                 items: [
                   {
-                    label: i18n.t(
-                      'packages_business_connections_databaseform_kaiqixintiaobiao'
-                    ),
+                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
                     key: 'heartbeatTable',
-                    value: i18n.t(
-                      'packages_business_connections_databaseform_chakanxintiaoren'
-                    ),
-                    class:
-                      'cursor-pointer color-primary text-decoration-underline',
+                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
+                    class: 'cursor-pointer color-primary text-decoration-underline',
                     action: () => {
                       const routeUrl = this.$router.resolve({
                         name: 'HeartbeatMonitor',
                         params: {
-                          id: this.connection.heartbeatTable,
-                        },
+                          id: this.connection.heartbeatTable
+                        }
                       })
                       openUrl(routeUrl.href)
-                    },
-                  },
-                ],
+                    }
+                  }
+                ]
               }
             : {},
           row.uri
@@ -577,11 +497,11 @@ export default {
                     label: 'URI',
                     key: 'uri',
                     value: row.uri,
-                    class: 'text-break text-wrap',
-                  },
-                ],
+                    class: 'text-break text-wrap'
+                  }
+                ]
               }
-            : {},
+            : {}
         ]
       } else {
         this.list = [
@@ -593,41 +513,34 @@ export default {
                   icon: 'link',
                   items: [
                     {
-                      label: i18n.t(
-                        'public_connection_form_link_plugin_source'
-                      ),
-                      key: 'sourceFrom',
-                    },
-                  ],
-                },
+                      label: i18n.t('public_connection_form_link_plugin_source'),
+                      key: 'sourceFrom'
+                    }
+                  ]
+                }
               ]),
           this.connection.heartbeatTable
             ? {
                 icon: 'link',
                 items: [
                   {
-                    label: i18n.t(
-                      'packages_business_connections_databaseform_kaiqixintiaobiao'
-                    ),
+                    label: i18n.t('packages_business_connections_databaseform_kaiqixintiaobiao'),
                     key: 'heartbeatTable',
-                    value: i18n.t(
-                      'packages_business_connections_databaseform_chakanxintiaoren'
-                    ),
-                    class:
-                      'cursor-pointer color-primary text-decoration-underline',
+                    value: i18n.t('packages_business_connections_databaseform_chakanxintiaoren'),
+                    class: 'cursor-pointer color-primary text-decoration-underline',
                     action: () => {
                       const routeUrl = this.$router.resolve({
                         name: 'HeartbeatMonitor',
                         params: {
-                          id: this.connection.heartbeatTable,
-                        },
+                          id: this.connection.heartbeatTable
+                        }
                       })
                       openUrl(routeUrl.href)
-                    },
-                  },
-                ],
+                    }
+                  }
+                ]
               }
-            : {},
+            : {}
         ]
       }
 
@@ -637,18 +550,14 @@ export default {
           icon: 'link',
           items: [
             {
-              label: i18n.t(
-                'packages_business_connections_preview_shujulianjiequan'
-              ),
+              label: i18n.t('packages_business_connections_preview_shujulianjiequan'),
               key: 'permissions',
-              labelActionTitle: i18n.t(
-                'packages_business_connections_preview_quanxianguanli'
-              ),
+              labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
               labelAction: () => {
                 this.$refs.permissionsDialog.open(this.connection)
-              },
-            },
-          ],
+              }
+            }
+          ]
         })
     },
     getConnectionIcon() {
@@ -661,7 +570,7 @@ export default {
 
     sync(list) {
       if (!this.visible) return
-      const result = list.find((item) => item.id === this.connection.id)
+      const result = list.find(item => item.id === this.connection.id)
       if (!result) return
       this.formData = cloneDeep(result)
       this.connection = this.transformData(result)
@@ -670,15 +579,9 @@ export default {
     getSourceFrom(row = {}) {
       const { definitionScope, beta = false } = row
       const MAP = {
-        publicfalse: i18n.t(
-          'packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'
-        ),
-        publictrue: i18n.t(
-          'packages_business_components_connectiontypeselectorsort_betashu'
-        ),
-        customer: i18n.t(
-          'packages_business_components_connectiontypeselectorsort_wodeshujuyuan'
-        ),
+        publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
+        publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
+        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
       }
       return MAP[definitionScope + beta] || MAP['customer']
     },
@@ -689,9 +592,7 @@ export default {
     },
 
     isFileSource() {
-      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(
-        this.connection?.database_type
-      )
+      return ['CSV', 'EXCEL', 'JSON', 'XML'].includes(this.connection?.database_type)
     },
 
     async loadHeartbeatTable(row = {}) {
@@ -706,27 +607,26 @@ export default {
     loadPermissions(id) {
       const filter = {
         dataType: 'Connections',
-        dataId: id,
+        dataId: id
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
         usersApi
           .role({
             filter: JSON.stringify({
-              limit: 1000,
-            }),
+              limit: 1000
+            })
           })
           .then((roleList = []) => {
             this.permissions = data
-              .map((t) => {
-                const role =
-                  roleList.items?.find((r) => r.id === t.typeId) || {}
+              .map(t => {
+                const role = roleList.items?.find(r => r.id === t.typeId) || {}
                 return {
                   checked: t.actions,
                   roleId: t.typeId,
-                  roleName: role.name,
+                  roleName: role.name
                 }
               })
-              .filter((t) => !!t.roleName)
+              .filter(t => !!t.roleName)
           })
       })
     },
@@ -735,9 +635,9 @@ export default {
       if (!this.isDaas) return false
       const data = row.permissionActions || []
       return !data.includes(type)
-    },
+    }
   },
-  emits: ['test', 'close', 'reload-schema'],
+  emits: ['test', 'close', 'reload-schema']
 }
 </script>
 

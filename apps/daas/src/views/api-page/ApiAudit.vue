@@ -1,49 +1,20 @@
 <template>
   <section class="apiaudit-wrap h-100">
     <!-- 服务审计 -->
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="apiaudit-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+    <TablePage ref="table" row-key="id" class="apiaudit-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
         <div class="search-bar">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          ></FilterBar>
+          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
         </div>
       </template>
-      <el-table-column
-        prop="id"
-        label="API ID"
-        :show-overflow-tooltip="true"
-      ></el-table-column>
-      <el-table-column
-        prop="name"
-        :label="$t('apiaudit_name')"
-      ></el-table-column>
-      <el-table-column
-        prop="method"
-        width="100"
-        :label="$t('apiaudit_access_type')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="name" :label="$t('apiaudit_name')"></el-table-column>
+      <el-table-column prop="method" width="100" :label="$t('apiaudit_access_type')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span
-            class="status-block"
-            :style="{ 'background-color': colorMap[row.method] }"
-            >{{ row.method }}</span
-          >
+          <span class="status-block" :style="{ 'background-color': colorMap[row.method] }">{{ row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="clientName"
-        :label="$t('apiaudit_visitor')"
-      ></el-table-column>
+      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')"></el-table-column>
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
@@ -55,44 +26,30 @@
           {{ row.createTimeFmt }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="code"
-        width="80"
-        :label="$t('apiaudit_visit_result')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span v-if="row.code == 200" class="success">
-            <i class="connections-status__icon el-icon-success"></i>
+            <el-icon class="connections-status__icon"><el-icon-success /></el-icon>
             <span>
               {{ $t('apiaudit_success') }}
             </span>
           </span>
           <span v-else class="error">
-            <i class="connections-status__icon el-icon-error"></i>
+            <el-icon class="connections-status__icon"><el-icon-error /></el-icon>
             <span>
               {{ $t('public_status_failed') }}
             </span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="codeMsg"
-        :label="$t('apiaudit_reason_fail')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           {{ row.code == 200 ? '-' : row.codeMsg }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="70" fixed="right">
         <template v-slot="scope">
-          <el-button
-            v-readonlybtn="'API_clients_amangement'"
-            size="mini"
-            type="text"
-            @click="toDetails(scope.row)"
-          >
+          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('public_button_details') }}
           </el-button>
         </template>
@@ -102,6 +59,7 @@
 </template>
 
 <script>
+import { Success as ElIconSuccess, Error as ElIconError } from '@element-plus/icons'
 import { escapeRegExp } from 'lodash'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
@@ -109,11 +67,13 @@ import dayjs from 'dayjs'
 import { apiCallsApi } from '@tap/api'
 
 export default {
-  name: 'ApiAudit',
   components: {
     TablePage,
     FilterBar,
+    ElIconSuccess,
+    ElIconError
   },
+  name: 'ApiAudit',
   data() {
     return {
       searchParams: {
@@ -121,7 +81,7 @@ export default {
         method: '',
         code: '',
         start: '',
-        end: '',
+        end: ''
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -129,14 +89,14 @@ export default {
       createForm: {
         processId: '',
         clientName: '',
-        clientURI: '',
+        clientURI: ''
       },
       colorMap: {
         POST: '#478C6C',
         PATCH: '#F2994B',
         DELETE: '#DB5050',
-        GET: '#09819C',
-      },
+        GET: '#09819C'
+      }
     }
   },
   created() {
@@ -145,19 +105,19 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
     },
-    'searchParams.createTime'() {},
+    'searchParams.createTime'() {}
   },
   methods: {
     toDetails(item) {
       this.$router.push({
         name: 'dataServerAuditDetails',
-        params: { id: item.id },
+        params: { id: item.id }
       })
     },
 
@@ -187,31 +147,27 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return apiCallsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           return {
             total: data?.total || 0,
             data:
-              data?.items.map((item) => {
-                item.createTimeFmt = item.createTime
-                  ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-                  : '-'
+              data?.items.map(item => {
+                item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
                 return item
-              }) || [],
+              }) || []
           }
         })
     },
 
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getFilterItems() {
@@ -223,14 +179,14 @@ export default {
           items: async () => {
             let data = await apiCallsApi.getAllMethod()
             data = data || []
-            return data.map((item) => {
+            return data.map(item => {
               return {
                 label: item,
-                value: item,
+                value: item
               }
             })
           },
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           label: this.$t('apiaudit_visit_result'),
@@ -239,33 +195,30 @@ export default {
           items: async () => {
             let data = await apiCallsApi.getAllResponseCode()
             data = data || []
-            return data.map((item) => {
+            return data.map(item => {
               return {
-                label:
-                  item == 200
-                    ? this.$t('apiaudit_success')
-                    : this.$t('public_status_failed'),
-                value: item,
+                label: item == 200 ? this.$t('apiaudit_success') : this.$t('public_status_failed'),
+                value: item
               }
             })
           },
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           title: this.$t('apiaudit_interview_time'),
           key: 'start,end',
           type: 'datetimerange',
           placeholder: this.$t('public_select_placeholder'),
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('apiaudit_placeholder'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
-    },
-  },
+    }
+  }
 }
 </script>
 

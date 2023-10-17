@@ -1,8 +1,6 @@
 <template>
   <ElDialog
-    :title="
-      $t('packages_business_connections_permissionsdialog_lianjiequanxianshe')
-    "
+    :title="$t('packages_business_connections_permissionsdialog_lianjiequanxianshe')"
     width="700px"
     v-model:visible="visible"
     :close-on-click-modal="false"
@@ -20,12 +18,8 @@
 
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose">{{
-          $t('public_button_cancel')
-        }}</ElButton>
-        <ElButton type="primary" @click="handleSave">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
       </span>
     </template>
   </ElDialog>
@@ -48,15 +42,11 @@ export default {
       visible: false,
       row: {},
       formScope: {
-        useAsyncDataSource: (
-          service,
-          fieldName = 'dataSource',
-          ...serviceParams
-        ) => {
-          return (field) => {
+        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+          return field => {
             field.loading = true
             service({ field }, ...serviceParams).then(
-              action.bound((data) => {
+              action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
@@ -69,25 +59,25 @@ export default {
         async loadRoleList(field, val) {
           try {
             let filter = {
-              limit: 1000,
+              limit: 1000
             }
 
-            const usedId = val?.map((t) => t.roleId) || []
+            const usedId = val?.map(t => t.roleId) || []
 
             const { items = [] } = await usersApi.role({
-              filter: JSON.stringify(filter),
+              filter: JSON.stringify(filter)
             })
-            return items.map((item) => {
+            return items.map(item => {
               return {
                 label: item.name,
                 value: item.id,
-                disabled: usedId.includes(item.id),
+                disabled: usedId.includes(item.id)
               }
             })
           } catch (e) {
             return []
           }
-        },
+        }
       },
       schema: {
         type: 'object',
@@ -109,12 +99,10 @@ export default {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': {
-                    title: i18n.t(
-                      'packages_business_connections_permissionsdialog_shouquanjuese'
-                    ),
+                    title: i18n.t('packages_business_connections_permissionsdialog_shouquanjuese'),
                     align: 'center',
                     asterisk: false,
-                    width: 200,
+                    width: 200
                   },
                   properties: {
                     roleId: {
@@ -123,23 +111,19 @@ export default {
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
                       'x-component-props': {
-                        filterable: true,
+                        filterable: true
                       },
-                      'x-reactions': [
-                        `{{useAsyncDataSource(loadRoleList, 'dataSource', $values.permissions)}}`,
-                      ],
-                    },
-                  },
+                      'x-reactions': [`{{useAsyncDataSource(loadRoleList, 'dataSource', $values.permissions)}}`]
+                    }
+                  }
                 },
                 c2: {
                   type: 'void',
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': {
-                    title: i18n.t(
-                      'packages_business_connections_permissionsdialog_gongnengquanxian'
-                    ),
+                    title: i18n.t('packages_business_connections_permissionsdialog_gongnengquanxian'),
                     align: 'center',
-                    asterisk: false,
+                    asterisk: false
                   },
                   properties: {
                     checked: {
@@ -149,25 +133,25 @@ export default {
                       'x-component': 'Checkbox.Group',
                       'x-component-props': {
                         class: 'inline-flex flex-wrap',
-                        onChange: `{{ () => !!$self.value.length && !$self.value.includes('View') && $self.value.unshift('View') }}`,
+                        onChange: `{{ () => !!$self.value.length && !$self.value.includes('View') && $self.value.unshift('View') }}`
                       },
                       enum: [
                         {
                           label: i18n.t('public_button_check'),
                           value: 'View',
-                          disabled: `{{ $self.value.length > 1 }}`,
+                          disabled: `{{ $self.value.length > 1 }}`
                         },
                         {
                           label: i18n.t('public_button_edit'),
-                          value: 'Edit',
+                          value: 'Edit'
                         },
                         {
                           label: i18n.t('public_button_delete'),
-                          value: 'Delete',
-                        },
-                      ],
-                    },
-                  },
+                          value: 'Delete'
+                        }
+                      ]
+                    }
+                  }
                 },
                 c3: {
                   type: 'void',
@@ -175,29 +159,27 @@ export default {
                   'x-component-props': {
                     width: 80,
                     title: i18n.t('public_operation'),
-                    align: 'center',
+                    align: 'center'
                   },
                   properties: {
                     remove: {
                       type: 'void',
-                      'x-component': 'ArrayTable.Remove',
-                    },
-                  },
-                },
-              },
+                      'x-component': 'ArrayTable.Remove'
+                    }
+                  }
+                }
+              }
             },
             properties: {
               addition: {
                 type: 'void',
-                title: i18n.t(
-                  'packages_business_connections_permissionsdialog_tianjiashouquan'
-                ),
-                'x-component': 'ArrayTable.Addition',
-              },
-            },
-          },
-        },
-      },
+                title: i18n.t('packages_business_connections_permissionsdialog_tianjiashouquan'),
+                'x-component': 'ArrayTable.Addition'
+              }
+            }
+          }
+        }
+      }
     }
   },
 
@@ -206,20 +188,20 @@ export default {
       const roleList = (await this.formScope.loadRoleList()) || []
       const filter = {
         dataType: 'Connections',
-        dataId: this.row.id,
+        dataId: this.row.id
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
         const permissions = data
-          .map((t) => {
+          .map(t => {
             return {
               checked: t.actions,
-              roleId: t.typeId,
+              roleId: t.typeId
             }
           })
-          .filter((t) => roleList.some((role) => role.value === t.roleId))
+          .filter(t => roleList.some(role => role.value === t.roleId))
 
         this.$refs.schemaToForm.getForm()?.setValues({
-          permissions,
+          permissions
         })
       })
     },
@@ -244,19 +226,19 @@ export default {
         dataId: this.row.id,
         dataType: 'Connections',
         actions:
-          getFormValues.permissions?.map((t) => {
+          getFormValues.permissions?.map(t => {
             return {
               type: 'Role',
               typeId: t.roleId,
-              actions: t.checked || [],
+              actions: t.checked || []
             }
-          }) || [],
+          }) || []
       }
       dataPermissionApi.postPermissions(filter).then(() => {
         this.$message.success(this.$t('public_message_save_ok'))
         this.handleClose()
       })
-    },
-  },
+    }
+  }
 }
 </script>

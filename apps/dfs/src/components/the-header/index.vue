@@ -18,7 +18,7 @@ export default {
     },
     getUser() {
       this.$refs.header?.getUser?.()
-    },
-  },
+    }
+  }
 }
 </script>

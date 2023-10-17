@@ -1,54 +1,22 @@
 <template>
   <section class="share-list-wrap h-100">
-    <TablePage
-      ref="table"
-      row-key="id+indexName"
-      class="share-list"
-      :remoteMethod="getData"
-    >
+    <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
       <template v-slot:search>
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="table.fetch(1)"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <el-table-column
-        min-width="250"
-        :label="$t('public_name')"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column min-width="250" :label="$t('public_name')" :show-overflow-tooltip="true">
         <template v-slot="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('public_task_type')"
-        :min-width="colWidth.taskType"
-        prop="taskType"
-      ></el-table-column>
-      <el-table-column
-        min-width="110"
-        prop="status"
-        :label="$t('packages_business_shared_list_status')"
-      >
+      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType" prop="taskType"></el-table-column>
+      <el-table-column min-width="110" prop="status" :label="$t('packages_business_shared_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createTime"
-        min-width="160"
-        :label="$t('public_create_time')"
-        sortable
-      >
-      </el-table-column>
-      <el-table-column
-        width="220"
-        fixed="right"
-        :label="$t('public_operation')"
-      >
+      <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
+      <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink
@@ -80,10 +48,7 @@
                 {{ $t('public_button_stop') }}
               </ElLink>
             </template>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_operation'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -92,10 +57,7 @@
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -104,10 +66,7 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider
-              v-readonlybtn="'SYNC_job_edition'"
-              direction="vertical"
-            ></ElDivider>
+            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -128,12 +87,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import {
-  TablePage,
-  TaskStatus,
-  makeStatusAndDisabled,
-  TASK_TYPE_MAP,
-} from '@tap/business'
+import { TablePage, TaskStatus, makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business'
 
 let timeout = null
 export default {
@@ -141,25 +95,25 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    TaskStatus,
+    TaskStatus
   },
   data() {
     return {
       searchParams: {
-        keyword: '',
+        keyword: ''
       },
       filterItems: [
         {
           placeholder: this.$t('public_task_name'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ],
       order: 'createTime DESC',
       list: null,
       taskBuried: {
-        start: 'heartbeatStart',
-      },
+        start: 'heartbeatStart'
+      }
     }
   },
   mounted() {
@@ -180,19 +134,19 @@ export default {
         ? {
             taskType: 140,
             status: 145,
-            operation: 340,
+            operation: 340
           }
         : {
             taskType: 80,
             status: 110,
-            operation: 280,
+            operation: 280
           }
-    },
+    }
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    },
+    }
   },
   unmounted() {
     clearInterval(timeout)
@@ -202,37 +156,35 @@ export default {
     getData({ page }) {
       let { current, size } = page
       let where = {
-        syncType: 'connHeartbeat',
+        syncType: 'connHeartbeat'
       }
       let { keyword } = this.searchParams
       let filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       if (keyword && keyword.trim()) {
         where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       return taskApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
           return {
             total: data?.total || 0,
-            data: list.map((item) => {
-              item.createTime = dayjs(item.createTime).format(
-                'YYYY-MM-DD HH:mm:ss'
-              )
+            data: list.map(item => {
+              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.taskType = TASK_TYPE_MAP[item.type] || ''
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false
               }
               return item
-            }),
+            })
           }
         })
     },
@@ -241,17 +193,15 @@ export default {
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
-          id: ids[0],
-        },
+          id: ids[0]
+        }
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi
           .batchStart(ids)
-          .then((data) => {
+          .then(data => {
             this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(
-              data?.message || this.$t('public_message_operation_success')
-            )
+            this.$message.success(data?.message || this.$t('public_message_operation_success'))
             this.table.fetch()
           })
           .catch(() => {
@@ -265,15 +215,13 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        taskApi.forceStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
       })
@@ -284,16 +232,14 @@ export default {
         this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
         {
-          type: 'warning',
+          type: 'warning'
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        taskApi.batchStop(ids).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
       })
@@ -311,8 +257,8 @@ export default {
       this.openRoute({
         name: 'HeartbeatMonitor',
         params: {
-          id: task.id,
-        },
+          id: task.id
+        }
       })
     },
 
@@ -328,7 +274,7 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title),
+        title: this.$t('dataFlow_' + title)
       }
     },
 
@@ -337,15 +283,13 @@ export default {
       let msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        dangerouslyUseHTMLString: true,
-      }).then((resFlag) => {
+        dangerouslyUseHTMLString: true
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        taskApi.batchRenew([id]).then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
       })
@@ -354,27 +298,23 @@ export default {
     del(ids, item = {}, canNotList) {
       this.$confirm(
         this.$t('packages_business_shared_mining_list_shanchurenwus', {
-          val1: item.name,
+          val1: item.name
         }),
         '',
         {
           type: 'warning',
-          dangerouslyUseHTMLString: true,
+          dangerouslyUseHTMLString: true
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then((data) => {
+        taskApi.batchDelete(ids).then(data => {
           this.table.fetch()
-          this.responseDelHandler(
-            data,
-            this.$t('public_message_delete_ok'),
-            canNotList
-          )
+          this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
         })
       })
-    },
-  },
+    }
+  }
 }
 </script>

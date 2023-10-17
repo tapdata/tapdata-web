@@ -1,8 +1,6 @@
 <template>
   <div class="monitor-log-wrap flex-column">
-    <div
-      class="filter-row flex justify-content-between align-items-center mb-4"
-    >
+    <div class="filter-row flex justify-content-between align-items-center mb-4">
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
@@ -12,13 +10,7 @@
           size="mini"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup
-          v-model:value="checkList"
-          :min="1"
-          size="mini"
-          class="inline-flex ml-4"
-          @change="searchFnc"
-        >
+        <ElCheckboxGroup v-model:value="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -27,27 +19,17 @@
       </div>
       <slot></slot>
     </div>
-    <div
-      ref="logs"
-      class="log-container flex-fit py-6 overflow-auto"
-      @scroll="loadOld"
-    >
+    <div ref="logs" class="log-container flex-fit py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
-        <i class="el-icon-loading"></i>
+        <el-icon><el-icon-loading /></el-icon>
       </div>
       <div v-show="noMore" class="font-color-light text-center pb-4">
         {{ $t('packages_business_task_info_no_more') }}
       </div>
       <ul v-if="logs.length">
-        <li
-          class="log-item px-6 font-color-light"
-          v-for="log in logs"
-          :key="log.id"
-        >
-          [<span class="fw-bold" :class="log.color" v-html="log.level"></span
-          >]&nbsp; <span>{{ log.time }}</span
-          >&nbsp; [<span v-html="log.threadName"></span>]&nbsp;
-          <span v-html="log.loggerName"></span>&nbsp;
+        <li class="log-item px-6 font-color-light" v-for="log in logs" :key="log.id">
+          [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
+          >&nbsp; [<span v-html="log.threadName"></span>]&nbsp; <span v-html="log.loggerName"></span>&nbsp;
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
@@ -60,14 +42,18 @@
 </template>
 
 <script>
+import { Loading as ElIconLoading } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { logsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 
 export default {
+  components: {
+    ElIconLoading
+  },
   props: {
-    id: String,
+    id: String
   },
   data() {
     return {
@@ -76,7 +62,7 @@ export default {
       keyword: '',
       logs: [],
       isScrollBottom: true,
-      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL'],
+      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL']
     }
   },
   created() {
@@ -85,8 +71,8 @@ export default {
       filter: {
         where: { 'contextMap.dataFlowId': { eq: this.id } },
         order: 'id DESC',
-        limit: 20,
-      },
+        limit: 20
+      }
     }
     this.$ws.on('logs', this.updateLogs)
     this.$ws.send(msg)
@@ -109,7 +95,7 @@ export default {
       let list = data || []
       list = data
         .reverse()
-        .filter((it) => this.checkList.includes(it.level))
+        .filter(it => this.checkList.includes(it.level))
         .map(this.formatLog)
       this.logs.push(...list)
       this.scrollToBottom()
@@ -130,38 +116,33 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            eq: this.id,
-          },
+            eq: this.id
+          }
         },
         order: `id DESC`,
-        limit: 35,
+        limit: 35
       }
       const { keyword, checkList } = this
       const len = checkList.length
       if (len > 0) {
         filter.where.level = {
-          $in: checkList,
+          $in: checkList
         }
       }
       if (keyword) {
         let query = { like: escapeRegExp(keyword), options: 'i' }
-        filter.where.or = [
-          { threadName: query },
-          { loggerName: query },
-          { message: query },
-          { level: query },
-        ]
+        filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
       if (!isSearch && this.logs.length) {
         filter.where.id = {
-          lt: this.logs[0].id,
+          lt: this.logs[0].id
         }
       }
       logsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
           if (isSearch) {
             this.noMore = false
@@ -192,16 +173,13 @@ export default {
       let colorMap = {
         ERROR: 'color-danger',
         WARN: 'color-warning',
-        INFO: 'font-color-dark',
+        INFO: 'font-color-dark'
       }
-      let markKeyword = (text) => {
+      let markKeyword = text => {
         let keyword = this.keyword
         if (keyword) {
           let re = new RegExp(keyword, 'ig')
-          text = text.replace(
-            re,
-            `<span class="px-1 color-danger log-keyword-block">$&</span>`
-          )
+          text = text.replace(re, `<span class="px-1 color-danger log-keyword-block">$&</span>`)
         }
         return text
       }
@@ -212,15 +190,15 @@ export default {
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),
         message: markKeyword(log.message),
-        id: log.id,
+        id: log.id
       }
     },
     searchFnc(debounce) {
       delayTrigger(() => {
         this.getLogs(true)
       }, debounce)
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -15,15 +15,15 @@ export default {
       taskBuried: {
         new: 'taskCreate',
         newFail: 'taskCreateAgentFail',
-        start: 'taskStart',
+        start: 'taskStart'
       },
       route: {
         new: 'DataflowNew',
         editor: 'DataflowEditor',
-        monitor: 'TaskMonitor',
-      },
+        monitor: 'TaskMonitor'
+      }
     }
-  },
+  }
 }
 </script>
 

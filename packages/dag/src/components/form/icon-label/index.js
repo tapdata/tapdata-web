@@ -21,15 +21,11 @@ export const IconLabel = observer(
         )
 
         return (
-          <FormItem.BaseItem
-            class="js-editor-form-item"
-            label={label}
-            attrs={attrs}
-          >
+          <FormItem.BaseItem class="js-editor-form-item" label={label} attrs={attrs}>
             {slots.default?.()}
           </FormItem.BaseItem>
         )
       }
-    },
+    }
   })
 )

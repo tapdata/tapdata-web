@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="picker__item inline-flex align-items-center cursor-pointer"
-    @click="openSelect"
-  >
+  <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
     <div class="select__title">{{ label }}</div>
     <ElSelect
       v-bind="$attrs"
@@ -14,12 +11,7 @@
       ref="select"
       @change="changeFnc"
     >
-      <ElOption
-        v-for="(item, index) in list"
-        :key="index"
-        :label="item.label"
-        :value="item.value"
-      ></ElOption>
+      <ElOption v-for="(item, index) in list" :key="index" :label="item.label" :value="item.value"></ElOption>
     </ElSelect>
   </div>
 </template>
@@ -36,17 +28,17 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_title')
-      },
+      }
     },
     items: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
       period: '',
-      list: [],
+      list: []
     }
   },
   mounted() {
@@ -60,9 +52,9 @@ export default {
 
     openSelect() {
       this.$refs.select?.$el?.click()
-    },
+    }
   },
-  emits: ['change', 'update:value', , , 'update:value'],
+  emits: ['change', 'update:value', , , 'update:value']
 }
 </script>
 

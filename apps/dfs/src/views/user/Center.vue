@@ -6,55 +6,31 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_name') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
-        <ElRow
-          v-if="!isDomesticStation"
-          :gutter="40"
-          class="section-header mb-6"
-        >
+        <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               FirstName:
             </div>
-            <span class="user-item__value">{{
-              userData.customData.firstName || '-'
-            }}</span>
-            <ElLink type="primary" @click="dialogObj.firstName = true">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <span class="user-item__value">{{ userData.customData.firstName || '-' }}</span>
+            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               LastName:
             </div>
-            <span class="user-item__value">{{
-              userData.customData.lastName || '-'
-            }}</span>
-            <ElLink type="primary" @click="dialogObj.firstName = true">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <span class="user-item__value">{{ userData.customData.lastName || '-' }}</span>
+            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow v-else :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_Center_yongHuNiCheng') }}
             </div>
             <InlineInput
@@ -67,21 +43,15 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_phone_number') }}
             </div>
             <div class="user-item__value">
               {{ userData.telephone || $t('user_Center_weiBangDing') }}
             </div>
-            <ElLink
-              v-if="userData.telephone"
-              type="primary"
-              @click="editPhone"
-              >{{ $t('public_button_revise') }}</ElLink
-            >
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
+              $t('public_button_revise')
+            }}</ElLink>
             <ElLink
               v-if="!disabledBindingPhone && !userData.telephone"
               type="primary"
@@ -92,23 +62,14 @@
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              {{ $t('public_connection_form_password')
-              }}{{ $t('symbol_colon') }}
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_avatar') }}
             </div>
             <div class="user-item__value position-relative">
@@ -116,20 +77,11 @@
                 v-if="userData.avatar"
                 :src="userData.avatar"
                 alt=""
-                style="
-                  position: absolute;
-                  top: -24px;
-                  left: 0;
-                  width: 56px;
-                  height: 56px;
-                  border-radius: 50%;
-                "
+                style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
               />
               <span v-else>{{ $t('public_data_no') }}</span>
             </div>
-            <ElLink type="primary" @click="editAvatar">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <ElLink type="primary" @click="editAvatar">{{ $t('public_button_revise') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
@@ -140,21 +92,14 @@
           <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
-            <div
-              class="user-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
               {{ $t('user_Center_youXiang') }}
             </div>
             <div class="user-item__value">
               {{ userData.email || $t('user_Center_weiBangDing') }}
             </div>
-            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{
-              $t('public_button_revise')
-            }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{
-              $t('public_button_bind')
-            }}</ElLink>
+            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
           </ElCol>
         </ElRow>
       </div>
@@ -174,11 +119,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput
-              v-else
-              v-model:value="enForm.companyName"
-              class="enterprise-item__value"
-            ></ElInput>
+            <ElInput v-else v-model:value="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
             <div
@@ -190,11 +131,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput
-              v-else
-              v-model:value="enForm.website"
-              class="enterprise-item__value"
-            ></ElInput>
+            <ElInput v-else v-model:value="enForm.website" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
@@ -208,11 +145,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput
-              v-else
-              v-model:value="enForm.industry"
-              class="enterprise-item__value"
-            ></ElInput>
+            <ElInput v-else v-model:value="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
             <div
@@ -224,23 +157,15 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.city || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput
-              v-else
-              v-model:value="enForm.city"
-              class="enterprise-item__value"
-            ></ElInput>
+            <ElInput v-else v-model:value="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
         <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
           $t('user_Center_qiYeXinXiXiu')
         }}</VButton>
         <template v-else>
-          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{
-            $t('public_button_cancel')
-          }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{
-            $t('public_button_save')
-          }}</VButton>
+          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
         </template>
       </div>
     </div>
@@ -321,26 +246,18 @@
       <div class="text-center">
         <UploadFile :upload="upload" accept="image/*">
           <img v-if="avatar" :src="avatar" class="avatar" />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <el-icon class="avatar-uploader-icon"><el-icon-plus /></el-icon>
           <div class="my-4 font-color-main">
             {{ $t('user_Center_zhiChiJPG') }}
           </div>
-          <VButton type="primary">{{
-            $t('user_Center_shangChuanTouXiang')
-          }}</VButton>
+          <VButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</VButton>
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = false">{{
-          $t('public_button_cancel')
+        <VButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</VButton>
+        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
+          $t('public_button_confirm')
         }}</VButton>
-        <VButton
-          type="primary"
-          :disabled="avatarDisabled()"
-          auto-loading
-          @click="avatarConfirm(arguments[0])"
-          >{{ $t('public_button_confirm') }}</VButton
-        >
       </div>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
@@ -352,17 +269,8 @@
       :close-on-click-modal="false"
       v-model:visible="dialogObj.password"
     >
-      <ElForm
-        :model="passwordForm"
-        label-width="120px"
-        @submit.prevent
-        label-position="top"
-      >
-        <ElFormItem
-          v-if="!isDomesticStation"
-          prop="email"
-          :label="$t('user_Center_youXiang')"
-        >
+      <ElForm :model="passwordForm" label-width="120px" @submit.prevent label-position="top">
+        <ElFormItem v-if="!isDomesticStation" prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
             v-model:value="emailForm.email"
             disabled
@@ -370,11 +278,7 @@
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          v-else
-          prop="current"
-          :label="$t('user_Center_dangQianShouJi')"
-        >
+        <ElFormItem v-else prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
             v-model:value="passwordForm.telephone"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
@@ -382,20 +286,10 @@
             disabled
           >
             <template v-slot:prepend>
-              <el-select
-                v-model:value="passwordForm.countryCode"
-                style="width: 110px"
-                filterable
-              >
-                <el-option
-                  v-for="item in countryCode"
-                  :label="'+ ' + item.dial_code"
-                  :value="item.dial_code"
-                >
+              <el-select v-model="passwordForm.countryCode" style="width: 110px" filterable>
+                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{
-                    item.name
-                  }}</span></el-option
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >
               </el-select>
             </template>
@@ -413,30 +307,21 @@
             maxlength="50"
           ></ElInput>
           <VerificationCode
-            :request-options="
-              getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')
-            "
+            :request-options="getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')"
             :disabled="!emailForm.email"
             :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
             type="text"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem
-          v-else
-          prop="newPassword"
-          :label="$t('user_Center_shouJiYanZhengMa')"
-          class="inline-form-item"
-        >
+        <ElFormItem v-else prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
           <ElInput
             v-model:value="passwordForm.code"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
             maxlength="50"
           ></ElInput>
           <VerificationCode
-            :request-options="
-              getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')
-            "
+            :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
             :disabled="!passwordForm.telephone"
             :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
@@ -452,10 +337,7 @@
             onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newAgainPassword"
-          :label="$t('user_Center_queRenMiMa')"
-        >
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_queRenMiMa')">
           <ElInput
             v-model:value="passwordForm.newAgainPassword"
             :placeholder="$t('user_Center_qingShuRuXinMi')"
@@ -468,15 +350,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.password = false">{{
-            $t('public_button_cancel')
+          <VButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</VButton>
+          <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])">{{
+            $t('public_button_confirm')
           }}</VButton>
-          <VButton
-            type="primary"
-            auto-loading
-            @click="passwordConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
-          >
         </span>
       </template>
     </ElDialog>
@@ -490,36 +367,18 @@
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput
-            v-model:value="phoneForm.current"
-            :placeholder="$t('user_Center_qingShuRuDangQian')"
-            maxlength="50"
-          >
+          <ElInput v-model:value="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
             <template v-slot:prepend>
-              <el-select
-                v-model:value="phoneForm.countryCode"
-                style="width: 110px"
-                filterable
-              >
-                <el-option
-                  v-for="item in countryCode"
-                  :label="'+ ' + item.dial_code"
-                  :value="item.dial_code"
-                >
+              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
+                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{
-                    item.name
-                  }}</span></el-option
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >
               </el-select>
             </template>
           </ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newPassword"
-          :label="$t('user_Center_yanZhengMa')"
-          class="inline-form-item"
-        >
+        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
           <ElInput
             v-model:value="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
@@ -537,16 +396,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.bindPhone = false">{{
-            $t('public_button_cancel')
+          <VButton @click="dialogObj.bindPhone = false">{{ $t('public_button_cancel') }}</VButton>
+          <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
+            $t('public_button_confirm')
           }}</VButton>
-          <VButton
-            type="primary"
-            :disabled="!phoneForm.oldCode"
-            auto-loading
-            @click="bindPhoneConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
-          >
         </span>
       </template>
     </ElDialog>
@@ -558,12 +411,7 @@
       :close-on-click-modal="false"
       v-model:visible="dialogObj.editPhone"
     >
-      <ElForm
-        :model="phoneForm"
-        label-width="120px"
-        @submit.prevent
-        label-position="top"
-      >
+      <ElForm :model="phoneForm" label-width="120px" @submit.prevent label-position="top">
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
             v-model:value="phoneForm.current"
@@ -572,30 +420,16 @@
             disabled
           >
             <template v-slot:prepend>
-              <el-select
-                v-model:value="phoneForm.countryCode"
-                style="width: 110px"
-                filterable
-              >
-                <el-option
-                  v-for="item in countryCode"
-                  :label="'+ ' + item.dial_code"
-                  :value="item.dial_code"
-                >
+              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
+                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{
-                    item.name
-                  }}</span></el-option
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >
               </el-select>
             </template>
           </ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newPassword"
-          :label="$t('user_Center_jiuShouJiYanZheng')"
-          class="inline-form-item"
-        >
+        <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
           <ElInput
             v-model:value="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuJiuShou')"
@@ -609,44 +443,20 @@
             type="primary"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem
-          prop="newAgainPassword"
-          :label="$t('user_Center_xinShouJi')"
-        >
-          <ElInput
-            v-model:value="phoneForm.newPhone"
-            :placeholder="$t('user_Center_qingShuRuXinShou2')"
-            maxlength="50"
-          >
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
+          <ElInput v-model:value="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
             <template v-slot:prepend>
-              <el-select
-                v-model:value="phoneForm.countryCode"
-                style="width: 110px"
-                filterable
-              >
-                <el-option
-                  v-for="item in countryCode"
-                  :label="'+ ' + item.dial_code"
-                  :value="item.dial_code"
-                >
+              <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
+                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{
-                    item.name
-                  }}</span></el-option
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >
               </el-select>
             </template>
           </ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newAgainPassword"
-          :label="$t('user_Center_xinShouJiYanZheng')"
-        >
-          <ElInput
-            v-model:value="phoneForm.newCode"
-            :placeholder="$t('user_Center_qingShuRuXinShou')"
-            maxlength="50"
-          >
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
+          <ElInput v-model:value="phoneForm.newCode" :placeholder="$t('user_Center_qingShuRuXinShou')" maxlength="50">
           </ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
@@ -660,9 +470,7 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.editPhone = false">{{
-            $t('public_button_cancel')
-          }}</VButton>
+          <VButton @click="dialogObj.editPhone = false">{{ $t('public_button_cancel') }}</VButton>
           <VButton
             type="primary"
             :disabled="editPhoneDisabled()"
@@ -682,11 +490,7 @@
       v-model:visible="dialogObj.bindWx"
     >
       <div class="text-center">
-        <img
-          src="../../../public/images/user/bindWx.png"
-          alt=""
-          style="width: 200px"
-        />
+        <img src="../../../public/images/user/bindWx.png" alt="" style="width: 200px" />
         <div class="mt-4 font-color-main">
           {{ $t('user_Center_qingShiYongWeiXin') }}
         </div>
@@ -700,13 +504,7 @@
       :close-on-click-modal="false"
       v-model:visible="dialogObj.bindEmail"
     >
-      <ElForm
-        class="mt-n4"
-        :model="emailForm"
-        label-width="120px"
-        label-position="top"
-        @submit.prevent
-      >
+      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
           <ElInput
             v-model:value="emailForm.email"
@@ -714,11 +512,7 @@
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newPassword"
-          :label="$t('user_Center_yanZhengMa')"
-          class="inline-form-item"
-        >
+        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
               v-model:value="emailForm.code"
@@ -727,9 +521,7 @@
               class="flex-1"
             ></ElInput>
             <VerificationCode
-              :request-options="
-                getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')
-              "
+              :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
               :disabled="!emailForm.email"
               type="text"
             ></VerificationCode>
@@ -739,9 +531,7 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.bindEmail = false">{{
-            $t('public_button_cancel')
-          }}</VButton>
+          <VButton @click="dialogObj.bindEmail = false">{{ $t('public_button_cancel') }}</VButton>
           <VButton
             type="primary"
             :disabled="!emailForm.email || !emailForm.code"
@@ -760,13 +550,7 @@
       :close-on-click-modal="false"
       v-model:visible="dialogObj.editEmail"
     >
-      <ElForm
-        class="mt-n4"
-        :model="emailForm"
-        label-width="120px"
-        label-position="top"
-        @submit.prevent
-      >
+      <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
             v-model:value="emailForm.email"
@@ -775,11 +559,7 @@
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="code"
-          :label="$t('user_Center_dangQianYouXiangYan')"
-          class="inline-form-item"
-        >
+        <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
               v-model:value="emailForm.code"
@@ -788,9 +568,7 @@
               class="flex-1"
             ></ElInput>
             <VerificationCode
-              :request-options="
-                getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')
-              "
+              :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
               :disabled="!emailForm.email"
               type="text"
             ></VerificationCode>
@@ -803,11 +581,7 @@
             maxlength="50"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem
-          prop="newCode"
-          :label="$t('user_Center_xinYouXiangYanZheng')"
-          class="inline-form-item"
-        >
+        <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
               v-model:value="emailForm.newCode"
@@ -815,9 +589,7 @@
               maxlength="50"
             ></ElInput>
             <VerificationCode
-              :request-options="
-                getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')
-              "
+              :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
               :disabled="!emailForm.newEmail"
               type="text"
             ></VerificationCode>
@@ -827,9 +599,7 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.editEmail = false">{{
-            $t('public_button_cancel')
-          }}</VButton>
+          <VButton @click="dialogObj.editEmail = false">{{ $t('public_button_cancel') }}</VButton>
           <VButton
             type="primary"
             :disabled="editEmailDisabled()"
@@ -841,12 +611,7 @@
       </template>
     </ElDialog>
     <!--  订阅记录  -->
-    <ElDialog
-      width="618px"
-      append-to-body
-      :close-on-click-modal="false"
-      v-model:visible="recordData.visible"
-    >
+    <ElDialog width="618px" append-to-body :close-on-click-modal="false" v-model:visible="recordData.visible">
       <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
         <div class="font-color-dark text-center fs-5">
           {{ recordData.content }}
@@ -858,11 +623,7 @@
           {{ recordData.statusLabel }}
         </p>
       </div>
-      <div
-        v-for="(item, index) in recordData.items"
-        :key="index"
-        class="flex justify-content-between mb-2"
-      >
+      <div v-for="(item, index) in recordData.items" :key="index" class="flex justify-content-between mb-2">
         <span class="font-color-light">{{ item.label }}</span>
         <span class="font-color-dark">{{ item.value }}</span>
       </div>
@@ -875,13 +636,7 @@
       :close-on-click-modal="false"
       v-model:visible="dialogObj.firstName"
     >
-      <ElForm
-        class="mt-n4"
-        :model="nameForm"
-        label-width="120px"
-        label-position="top"
-        @submit.prevent
-      >
+      <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" label="FirstName">
           <ElInput v-model:value="nameForm.firstName" maxlength="50"></ElInput>
         </ElFormItem>
@@ -892,15 +647,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.firstName = false">{{
-            $t('public_button_cancel')
+          <VButton @click="dialogObj.firstName = false">{{ $t('public_button_cancel') }}</VButton>
+          <VButton type="primary" auto-loading @click="updateFirstName(arguments[0])">{{
+            $t('public_button_confirm')
           }}</VButton>
-          <VButton
-            type="primary"
-            auto-loading
-            @click="updateFirstName(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
-          >
         </span>
       </template>
     </ElDialog>
@@ -908,6 +658,7 @@
 </template>
 
 <script>
+import { Plus as ElIconPlus } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
@@ -923,9 +674,15 @@ import { openUrl, urlToBase64 } from '@tap/shared'
 import { mapGetters } from 'vuex'
 
 export default {
+  components: {
+    InlineInput,
+    VerificationCode,
+    UploadFile,
+    VTable,
+    ElIconPlus
+  },
   name: 'Center',
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
       agentTypeMap: AGENT_TYPE_MAP,
@@ -940,13 +697,13 @@ export default {
         licenseCodes: [],
         customData: {
           firstName: '',
-          lastName: '',
-        },
+          lastName: ''
+        }
       },
       nameForm: {
         nickname: '',
         firstName: '',
-        lastName: '',
+        lastName: ''
       },
       avatar: '',
       dialogObj: {
@@ -957,7 +714,7 @@ export default {
         bindWx: false,
         bindEmail: false,
         editEmail: false,
-        firstName: false,
+        firstName: false
       },
       passwordForm: {
         telephone: '',
@@ -965,37 +722,37 @@ export default {
         emailCode: '',
         countryCode: '86',
         newPassword: '',
-        newAgainPassword: '',
+        newAgainPassword: ''
       },
       phoneForm: {
         current: '',
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86',
+        countryCode: '86'
       },
       emailForm: {
         email: '',
         code: '',
         newEmail: '',
-        newCode: '',
+        newCode: ''
       },
       enData: {
         companyName: '',
         website: '',
         industry: '',
-        city: '',
+        city: ''
       },
       enForm: {
         companyName: '',
         website: '',
         industry: '',
-        city: '',
+        city: ''
       },
       keyForm: {
         accessKey: '',
         secretKey: '',
-        decodeSecretKey: '',
+        decodeSecretKey: ''
       },
       isEdit: false,
       accessKeyTooltip: false,
@@ -1004,36 +761,34 @@ export default {
       codeColumns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
-          prop: 'licenseCode',
+          prop: 'licenseCode'
         },
         {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
           prop: 'activateTimeLabel',
-          width: 320,
+          width: 320
         },
         {
-          label: i18n.t(
-            'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'
-          ),
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
           prop: 'expiredTimeLabel',
-          width: 320,
+          width: 320
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
-          slotName: 'bindAgent',
+          slotName: 'bindAgent'
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation',
-          width: 100,
-        },
+          width: 100
+        }
       ],
       recordData: {
         visible: false,
@@ -1043,27 +798,27 @@ export default {
         items: [
           {
             label: i18n.t('dfs_user_center_fukuanfangshi'),
-            value: i18n.t('dfs_user_center_weixinzhifu'),
+            value: i18n.t('dfs_user_center_weixinzhifu')
           },
           {
             label: i18n.t('public_create_time'),
-            value: '2023-03-04 17:56:33',
+            value: '2023-03-04 17:56:33'
           },
           {
             label: i18n.t('dfs_user_center_zhifushijian'),
-            value: '2023-03-04 17:56:40',
+            value: '2023-03-04 17:56:40'
           },
           {
             label: i18n.t('dfs_user_center_dingdanhao'),
-            value: '2023030419203919321',
-          },
-        ],
+            value: '2023030419203919321'
+          }
+        ]
       },
-      countryCode: [],
+      countryCode: []
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.init()
@@ -1093,24 +848,20 @@ export default {
       nameForm.lastName = customData.lastName
 
       userData.licenseCodes =
-        userData.licenseCodes?.map((item) => {
-          item.activateTime = item.activateTime
-            ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss')
-            : ''
-          item.expiredTime = item.expiredTime
-            ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss')
-            : ''
+        userData.licenseCodes?.map(item => {
+          item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
+          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
           return item
         }) || []
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then((res) => {
+      this.$axios.get('config/countryCode.json').then(res => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
     },
     getEnterprise() {
-      this.$axios.get('tm/api/Customer').then((data) => {
+      this.$axios.get('tm/api/Customer').then(data => {
         for (let key in this.enData) {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
@@ -1118,23 +869,20 @@ export default {
       })
     },
     getAkAndSk() {
-      this.$axios.get('api/tcm/user/ak').then((data) => {
+      this.$axios.get('api/tcm/user/ak').then(data => {
         const { accessKey, secretKey } = data?.[0] || {}
         const key = '5fa25b06ee34581d'
         this.keyForm.accessKey = accessKey
         this.keyForm.decodeSecretKey = CryptoJS.AES.decrypt(
           {
-            ciphertext: CryptoJS.enc.Base64.parse(secretKey),
+            ciphertext: CryptoJS.enc.Base64.parse(secretKey)
           },
           CryptoJS.enc.Latin1.parse(key),
           {
-            iv: CryptoJS.enc.Latin1.parse(key),
+            iv: CryptoJS.enc.Latin1.parse(key)
           }
         ).toString(CryptoJS.enc.Utf8)
-        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(
-          /(\w{3})\w*(\w{3})/,
-          '$1****$2'
-        )
+        this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
       })
     },
     resetPasswordForm() {
@@ -1175,7 +923,7 @@ export default {
       let nickname = val
       this.$axios
         .patch('api/tcm/user', {
-          nickname,
+          nickname
         })
         .then(() => {
           this.userData.nickname = nickname
@@ -1187,8 +935,8 @@ export default {
       const params = {
         customData: {
           firstName,
-          lastName,
-        },
+          lastName
+        }
       }
       this.$axios
         .patch('api/tcm/user', params)
@@ -1209,7 +957,7 @@ export default {
         this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
         return
       }
-      urlToBase64(URL.createObjectURL(file)).then((res) => {
+      urlToBase64(URL.createObjectURL(file)).then(res => {
         this.avatar = res
       })
     },
@@ -1224,7 +972,7 @@ export default {
       const avatar = encodeURI(this.avatar)
       this.$axios
         .patch('api/tcm/user', {
-          avatar,
+          avatar
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiTouXiangCheng'))
@@ -1239,12 +987,12 @@ export default {
     sendCode(phone, scene) {
       return this.$axios.post('api/tcm/sms/captcha', {
         phone,
-        scene,
+        scene
       })
     },
     getCodeOptions(val, scene, type = 'sms') {
       let params = {
-        scene,
+        scene
       }
       if (type === 'sms') {
         params.phone = val
@@ -1255,18 +1003,14 @@ export default {
       return {
         method: 'post',
         url: `api/tcm/${type}/captcha`,
-        params,
+        params
       }
     },
     editPassword() {
       if (this.isDomesticStation && !this.userData.telephone) {
-        this.$confirm(
-          i18n.t('user_Center_qingXianBangDingShou'),
-          i18n.t('user_Center_bangDingShouJi'),
-          {
-            type: 'warning',
-          }
-        ).then((resFlag) => {
+        this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
+          type: 'warning'
+        }).then(resFlag => {
           if (resFlag) {
             this.dialogObj.bindPhone = true
           }
@@ -1287,14 +1031,9 @@ export default {
       this.$axios
         .patch('api/tcm/user/password', {
           phoneCode: passwordForm.code,
-          countryCode: passwordForm.countryCode
-            ? passwordForm.countryCode.replace('-', '')
-            : '86',
+          countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86',
           emailCode: passwordForm.emailCode, // 邮件验证吗
-          password: CryptoJS.RC4.encrypt(
-            passwordForm.newPassword,
-            'XWFSxfs8wFcs'
-          ).toString(),
+          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
@@ -1314,9 +1053,7 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode
-            ? phoneForm.countryCode.replace('-', '')
-            : '86',
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.userData.telephone = phoneForm.current
@@ -1355,9 +1092,7 @@ export default {
           oldPhoneCode: phoneForm.oldCode,
           phone: phoneForm.newPhone,
           phoneCode: phoneForm.newCode,
-          countryCode: phoneForm.countryCode
-            ? phoneForm.countryCode.replace('-', '')
-            : '86',
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
@@ -1370,13 +1105,9 @@ export default {
         })
     },
     unbindWx() {
-      this.$confirm(
-        i18n.t('user_Center_jieChuHouJiangWu'),
-        i18n.t('user_Center_jieChuWeiXin'),
-        {
-          type: 'warning',
-        }
-      ).then((resFlag) => {
+      this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
+        type: 'warning'
+      }).then(resFlag => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
@@ -1394,7 +1125,7 @@ export default {
       this.$axios
         .post('api/tcm/user/email', {
           email: emailForm.email,
-          code: emailForm.code,
+          code: emailForm.code
         })
         .then(() => {
           this.$store.commit('setUserEmail', emailForm.email)
@@ -1428,7 +1159,7 @@ export default {
           // email: emailForm.email,
           oldEmailCode: emailForm.code,
           email: emailForm.newEmail,
-          emailCode: emailForm.newCode,
+          emailCode: emailForm.newCode
         })
         .then(() => {
           this.userData.email = emailForm.newEmail
@@ -1454,7 +1185,7 @@ export default {
           companyName: enForm.companyName,
           website: enForm.website,
           industry: enForm.industry,
-          city: enForm.city,
+          city: enForm.city
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
@@ -1482,20 +1213,20 @@ export default {
       this.recordData.items = [
         {
           label: i18n.t('dfs_user_center_fukuanfangshi'),
-          value: '-',
+          value: '-'
         },
         {
           label: i18n.t('public_create_time'),
-          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-',
+          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-'
         },
         {
           label: i18n.t('dfs_user_center_zhifushijian'),
-          value: '-',
+          value: '-'
         },
         {
           label: i18n.t('dfs_user_center_dingdanhao'),
-          value: invoiceId || '-',
-        },
+          value: invoiceId || '-'
+        }
       ]
       this.recordData.visible = true
     },
@@ -1503,8 +1234,8 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.agentId,
-        },
+          keyword: row.agentId
+        }
       })
     },
 
@@ -1514,46 +1245,44 @@ export default {
       const label =
         NUMBER_MAP[period] +
         (i18n?.locale === 'en' ? ' ' : '') +
-        (periodUnit === 'year'
-          ? i18n.t('public_time_year')
-          : i18n.t('dfs_instance_utils_geyue'))
+        (periodUnit === 'year' ? i18n.t('public_time_year') : i18n.t('dfs_instance_utils_geyue'))
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangxudingr', {
           val1: row.content,
-          val2: label,
+          val2: label
         }),
         i18n.t('dfs_user_center_xudingfuwu'),
         {
           type: 'warning',
-          dangerouslyUseHTMLString: true,
+          dangerouslyUseHTMLString: true
         }
-      ).then((res) => {
+      ).then(res => {
         if (res) {
           const { agentId } = row
           const params = {
             agentId,
             successUrl: location.href,
-            cancelUrl: location.href,
+            cancelUrl: location.href
           }
           this.buried('renewAgentStripe')
           this.$axios
             .post('api/tcm/orders/renew', params)
-            .then((data) => {
+            .then(data => {
               openUrl(data.paymentUrl)
               this.buried('renewAgentStripe', '', {
-                result: true,
+                result: true
               })
             })
             .catch(() => {
               this.buried('renewAgentStripe', '', {
-                result: false,
+                result: false
               })
             })
         }
       })
-    },
+    }
   },
-  emits: ['get-user'],
+  emits: ['get-user']
 }
 </script>
 

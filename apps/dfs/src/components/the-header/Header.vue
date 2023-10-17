@@ -5,17 +5,10 @@
       <ElLink class="logo" @click="command('workbench')">
         <img src="../../assets/image/logo.svg" alt="" />
       </ElLink>
-      <div
-        class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center"
-      >
+      <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
         <!--付费专业版-->
-        <div
-          class="vip-btn rounded-4 cursor-pointer flex align-center gap-1"
-          @click="setUpgradeFeeVisible(true)"
-        >
-          <VIcon size="18">icon-vip</VIcon>&nbsp;{{
-            $t('packages_component_src_upgradefee_dingyuezhuanyeban')
-          }}
+        <div class="vip-btn rounded-4 cursor-pointer flex align-center gap-1" @click="setUpgradeFeeVisible(true)">
+          <VIcon size="18">icon-vip</VIcon>&nbsp;{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}
         </div>
         <!--加入slack-->
         <div
@@ -23,20 +16,11 @@
           class="command-item position-relative inline-flex align-items-center rounded-4"
           @click="goSlack"
         >
-          <ElImage
-            class="slack-logo"
-            :src="require('@/assets/image/slack.svg')"
-          />
-          <span class="cursor-pointer ml-1">{{
-            $t('dfs_the_header_header_jiaruSla')
-          }}</span>
+          <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
+          <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
         <!--有奖问卷-->
-        <div
-          v-if="showQuestionnaire"
-          class="command-item position-relative rounded-4"
-          @click="goQuestionnaire"
-        >
+        <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
           <span class="cursor-pointer">
             {{ $t('dfs_the_header_header_prize_questionnaire') }}
           </span>
@@ -52,20 +36,12 @@
           <span> {{ $t('dfs_offline_deployment') }} </span>
         </div>
         <!--我的工单-->
-        <div
-          class="command-item flex align-center gap-1 rounded-4"
-          @click="goTicketSystem"
-        >
+        <div class="command-item flex align-center gap-1 rounded-4" @click="goTicketSystem">
           <VIcon size="16">workorder</VIcon>
-          <span class="cursor-pointer">
-            {{ $t('dfs_the_header_header_wodegongdan') }}</span
-          >
+          <span class="cursor-pointer"> {{ $t('dfs_the_header_header_wodegongdan') }}</span>
         </div>
         <!--联系我们-->
-        <div
-          class="command-item flex align-center gap-1 rounded-4"
-          @click="goContactUs"
-        >
+        <div class="command-item flex align-center gap-1 rounded-4" @click="goContactUs">
           <VIcon size="16">consultation</VIcon>
           <span class="cursor-pointer">{{ $t('tap_contact_us') }}</span>
         </div>
@@ -78,10 +54,7 @@
             <span>{{ $t('dfs_data_dashboard_Marquee') }}</span>
           </div>
         </div>
-        <div
-          v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'"
-          class="block"
-        >
+        <div v-if="domain === 'demo.cloud.tapdata.net' && lang === 'en'" class="block">
           <p class="words">{{ $t('dfs_data_dashboard_Marquee') }}</p>
         </div>
 
@@ -95,36 +68,20 @@
           <span class="cursor-pointer">{{ $t(item.text) }}</span>
         </div>
 
-        <NotificationPopover
-          class="command-item flex align-items-center rounded-4"
-        ></NotificationPopover>
-        <ElDropdown
-          placement="bottom"
-          :show-timeout="0"
-          @command="changeLanguage"
-          v-if="!onlyEnglishLanguage"
-        >
+        <NotificationPopover class="command-item flex align-items-center rounded-4"></NotificationPopover>
+        <ElDropdown placement="bottom" :show-timeout="0" @command="changeLanguage" v-if="!onlyEnglishLanguage">
           <span class="cursor-pointer command-item rounded-4 icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem
-                v-for="(value, key) in languages"
-                :key="key"
-                :command="key"
-              >
+              <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
                 {{ value }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDropdown
-          class="command-item menu-user rounded-4"
-          placement="bottom"
-          :show-timeout="0"
-          @command="command"
-        >
+        <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
@@ -134,29 +91,20 @@
               style="width: 30px; height: 30px; border-radius: 50%"
             />
             <VIcon v-else class="mr-2" size="20">account</VIcon>
-            <span>{{
-              user.username || user.nickname || user.phone || user.email
-            }}</span>
+            <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
 
           <template v-slot:dropdown>
             <ElDropdownMenu>
               <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-              <ElDropdownItem
-                command="userCenter"
-                :disabled="$disabledReadonlyUserBtn()"
-                >{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem
-              >
-              <ElDropdownItem command="order">{{
-                $t('dfs_the_header_header_dingyuezhongxin')
+              <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
+                $t('the_header_Header_yongHuZhongXin')
               }}</ElDropdownItem>
+              <ElDropdownItem command="order">{{ $t('dfs_the_header_header_dingyuezhongxin') }}</ElDropdownItem>
               <ElDropdownItem command="home">
                 {{ $t('header_official_website') }}
               </ElDropdownItem>
-              <ElDropdownItem
-                command="signOut"
-                :disabled="$disabledReadonlyUserBtn()"
-              >
+              <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
                 {{ $t('header_sign_out') }}
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -170,11 +118,7 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { VIcon } from '@tap/component'
-import {
-  langMenu,
-  getCurrentLanguage,
-  setCurrentLanguage,
-} from '@tap/i18n/src/shared/util'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
 
 import NotificationPopover from '@/views/workbench/NotificationPopover'
@@ -187,8 +131,7 @@ export default {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
-      officialWebsiteAddress:
-        window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
+      officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
       domain: document.domain,
@@ -197,7 +140,7 @@ export default {
       isFeeUser: true,
       //用户注册时间
       registrationTime: '',
-      showQuestionnaire: false,
+      showQuestionnaire: false
     }
   },
 
@@ -205,7 +148,7 @@ export default {
     ...mapGetters(['isDomesticStation']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
-    },
+    }
   },
 
   created() {
@@ -220,22 +163,21 @@ export default {
           text: 'header_technical_support', //技术支持
           link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
           icon: 'question',
-          type: 'support',
+          type: 'support'
         },
         {
           text: 'header_manual', //使用手册
           link: 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud',
           icon: 'send',
-          type: 'handbook',
-        },
+          type: 'handbook'
+        }
       ]
     }
     //获取用户注册时间
     if (this.user?.id) {
       this.registrationTime = extractTimeFromObjectId(this.user?.id)
       // 国内站 && 注册时间7天大于的用户
-      this.showQuestionnaire =
-        this.isDomesticStation && daysdifference(this.registrationTime) > 7
+      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
   },
   methods: {
@@ -257,10 +199,7 @@ export default {
           window.open(this.officialWebsiteAddress, '_blank')
           break
         case 'v2':
-          window.open(
-            'https://cloud.tapdata.net/console/#/workbench/',
-            '_blank'
-          )
+          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
           break
         case 'op':
           window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
@@ -268,24 +207,20 @@ export default {
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
-            name: 'userCenter',
+            name: 'userCenter'
           })
           break
         case 'order':
           this.$router.push({
-            name: 'order',
+            name: 'order'
           })
           break
         case 'signOut':
-          this.$confirm(
-            this.$t('header_log_out_tip'),
-            this.$t('header_log_out_title'),
-            {
-              type: 'warning',
-              confirmButtonText: this.$t('public_button_confirm'),
-              cancelButtonText: this.$t('public_button_cancel'),
-            }
-          ).then((res) => {
+          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
+            type: 'warning',
+            confirmButtonText: this.$t('public_button_confirm'),
+            cancelButtonText: this.$t('public_button_cancel')
+          }).then(res => {
             if (res) {
               this.clearCookie()
               location.href = './logout'
@@ -296,22 +231,13 @@ export default {
           window.open('https://ask.tapdata.net/', '_blank')
           break
         case 'source-center':
-          window.open(
-            'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme',
-            '_blank'
-          )
+          window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
         case 'handbook':
-          window.open(
-            'https://docs.tapdata.net/cloud/what-is-tapdata-cloud',
-            '_blank'
-          )
+          window.open('https://docs.tapdata.net/cloud/what-is-tapdata-cloud', '_blank')
           break
         case 'support':
-          window.open(
-            'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
-            '_blank'
-          )
+          window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
           break
       }
     },
@@ -325,12 +251,7 @@ export default {
       let keys = document.cookie.match(/[^ =;]+(?==)/g)
       if (keys) {
         for (let i = keys.length; i--; ) {
-          document.cookie =
-            keys[i] +
-            '=0;path=/;domain=' +
-            document.domain +
-            ';expires=' +
-            new Date(0).toUTCString()
+          document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
     },
@@ -342,18 +263,18 @@ export default {
     // 我的工单
     goTicketSystem() {
       this.$router.push({
-        name: 'TicketSystem',
+        name: 'TicketSystem'
       })
     },
     // 联系我们
     goContactUs() {
       this.$router.push({
-        name: 'userContactUs',
+        name: 'userContactUs'
       })
     },
     //判断是否是付费用户
     getAgentCount() {
-      this.$axios.get('api/tcm/agent/agentCount').then((data) => {
+      this.$axios.get('api/tcm/agent/agentCount').then(data => {
         this.isFeeUser = data?.subscriptionAgentCount > 0
       })
     },
@@ -361,10 +282,7 @@ export default {
       this.openUpgradeFee = true
     },
     goQuestionnaire() {
-      window.open(
-        'https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg',
-        '_blank'
-      )
+      window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
     goSlack() {
       window.open(this.$store.state.config.slackLink, '_blank')
@@ -376,13 +294,13 @@ export default {
     loadUserMock() {
       this.$axios
         .get('api/gw/user', {
-          maxRedirects: 0,
+          maxRedirects: 0
         })
-        .then((data) => {
+        .then(data => {
           this.mockUserId = data?.mockUserId || false
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

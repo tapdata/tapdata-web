@@ -3,31 +3,27 @@ import { GlobalRegistry } from '../../core'
 import { isStr } from '@tap/shared'
 import { IconWidget } from '../widgets'
 
-const takeIcon = (message) => {
+const takeIcon = message => {
   if (!isStr(message)) return
   const matched = message.match(/@([^:\s]+)(?:\s*:\s*([\s\S]+))?/)
   if (matched) return [matched[1], matched[2]]
   return
 }
 
-const mapEnum = (dataSource) => (item, index) => {
+const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
   const icon = takeIcon(label)
   return {
     ...item,
     value: item?.value ?? null,
-    label: icon ? (
-      <IconWidget infer={icon[0]} tooltip={icon[1]} />
-    ) : (
-      label?.label ?? label ?? 'Unknow'
-    ),
+    label: icon ? <IconWidget infer={icon[0]} tooltip={icon[1]} /> : label?.label ?? label ?? 'Unknow'
   }
 }
 
-export const useLocales = (node) => {
-  onFieldReact('*', (field) => {
+export const useLocales = node => {
+  onFieldReact('*', field => {
     const path = field.path.toString().replace(/\.[\d+]/g, '')
-    const takeMessage = (prop) => {
+    const takeMessage = prop => {
       const token = `settings.${path}${prop ? `.${prop}` : ''}`
       return node.getMessage(token) || GlobalRegistry.getDesignerMessage(token)
     }

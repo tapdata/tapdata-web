@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="replication-board"
-    class="swim-lane flex flex-column h-100 position-relative"
-  >
+  <div id="replication-board" class="swim-lane flex flex-column h-100 position-relative">
     <div class="list flex flex-fill overflow-hidden bg-white">
       <SourceItem
         ref="source"
@@ -33,22 +30,14 @@
       @success="handleSuccess"
       @saveAndMore="handleSuccess"
     ></SceneDialog>
-    <TablePreview
-      ref="tablePreview"
-      @create-single-task="hanldeCreateSingleTask"
-    />
+    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
     <ConnectionPreview ref="connectionView" />
   </div>
 </template>
 
 <script>
 import { SceneDialog, EventEmitter } from '@tap/business'
-import {
-  connectionsApi,
-  lineageApi,
-  metadataDefinitionsApi,
-  ldpApi,
-} from '@tap/api'
+import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 
 import SourceItem from './Source'
@@ -59,7 +48,7 @@ import ConnectionPreview from './ConnectionPreview'
 import { jsPlumb } from '@tap/dag'
 
 const TYPE2NAME = {
-  target: 'TARGET&SERVICE',
+  target: 'TARGET&SERVICE'
 }
 
 export default {
@@ -70,7 +59,7 @@ export default {
     TargetItem,
     TablePreview,
     ConnectionPreview,
-    SceneDialog,
+    SceneDialog
   },
 
   data() {
@@ -85,7 +74,7 @@ export default {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        form: '',
+        form: ''
       },
       mode: '',
       selectorType: '',
@@ -105,7 +94,7 @@ export default {
       jsPlumbIns: jsPlumb.getInstance(),
       showParentLineage: false,
       nodes: [],
-      edgsLinks: [],
+      edgsLinks: []
     }
   },
 
@@ -119,26 +108,21 @@ export default {
           type: 'source',
           add: true,
           component: 'SourceItem',
-          level: 'base',
+          level: 'base'
         },
         {
           type: 'target',
           add: true,
           component: 'TargetItem',
-          level: 'base',
-        },
+          level: 'base'
+        }
       ]
-      return this.mode === 'service'
-        ? result
-        : result.filter((t) => t.level === 'base')
+      return this.mode === 'service' ? result : result.filter(t => t.level === 'base')
     },
 
     fdmAndMdmId() {
-      return [
-        this.settings?.fdmStorageConnectionId,
-        this.settings?.mdmStorageConnectionId,
-      ]
-    },
+      return [this.settings?.fdmStorageConnectionId, this.settings?.mdmStorageConnectionId]
+    }
   },
 
   watch: {
@@ -157,7 +141,7 @@ export default {
         this.directoryMap = {}
         this.loadDirectory()
       }
-    },
+    }
   },
 
   created() {
@@ -186,7 +170,7 @@ export default {
       this.overViewVisible = !val
       this.setPanelFlag({
         panelFlag: this.overViewVisible,
-        userId: window.__USER_INFO__?.id,
+        userId: window.__USER_INFO__?.id
       })
     },
 
@@ -228,8 +212,8 @@ export default {
     loadDirectory() {
       let filter = {
         where: {
-          item_type: { $nin: ['database', 'dataflow', 'api'] },
-        },
+          item_type: { $nin: ['database', 'dataflow', 'api'] }
+        }
         /*fields: {
           id: 1,
           item_type: 1,
@@ -245,12 +229,12 @@ export default {
       this.loadingDirectory = true
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let items = data?.items || []
           let treeData = this.formatCatalog(items)
-          treeData?.forEach((item) => {
+          treeData?.forEach(item => {
             this.directoryMap[item.item_type[0]] = item
           })
         })
@@ -278,8 +262,8 @@ export default {
       if (items && items.length) {
         const map = {}
         const nodes = []
-        const setChildren = (nodes) => {
-          return nodes.map((it) => {
+        const setChildren = nodes => {
+          return nodes.map(it => {
             let children = map[it.id]
             if (children) {
               it.children = setChildren(children)
@@ -288,7 +272,7 @@ export default {
           })
         }
 
-        items.forEach((it) => {
+        items.forEach(it => {
           this.mapCatalog(it)
           if (it.parent_id) {
             let children = map[it.parent_id] || []
@@ -326,8 +310,8 @@ export default {
             query: {
               addNode: true,
               connectionId: data.connectionId,
-              tableName: data.name,
-            },
+              tableName: data.name
+            }
           })
           break
         case 'fdm':
@@ -336,8 +320,8 @@ export default {
             query: {
               addNode: true,
               connectionId: data.connectionId,
-              tableName: data.name,
-            },
+              tableName: data.name
+            }
           })
           break
         default:
@@ -354,49 +338,45 @@ export default {
     },
 
     handleFindParent(parentNode, tableInfo = {}, ldpType = 'mdm') {
-      lineageApi
-        .findByTable(tableInfo.connectionId, tableInfo.name)
-        .then((data) => {
-          const { edges, nodes } = data.dag || {}
-          this.nodes = nodes
-          const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
-          let edgsLinks = edges.map((t) => {
-            let sourceNode = this.nodes.find((el) => el.id === t.source)
-            let targetNode = this.nodes.find((el) => el.id === t.target)
-            sourceNode.dom = null
-            targetNode.dom = null
-            sourceNode.ldpType =
-              sourceNode.type === 'apiserverLineage'
-                ? 'target'
-                : this.settings.fdmStorageConnectionId ===
-                  sourceNode.connectionId
-                ? otherLdpType
-                : 'source'
-            targetNode.ldpType =
-              targetNode.type === 'apiserverLineage'
-                ? 'target'
-                : this.settings.fdmStorageConnectionId ===
-                  targetNode.connectionId
-                ? otherLdpType
-                : 'source'
-            // 记录事件触发的dom和ldpType
-            if (sourceNode.table === tableInfo.name) {
-              sourceNode.ldpType = ldpType
-              sourceNode.dom = parentNode
-            } else if (targetNode.table === tableInfo.name) {
-              targetNode.ldpType = ldpType
-              targetNode.dom = parentNode
-            }
-            return Object.assign(t, {
-              sourceNode,
-              targetNode,
-            })
+      lineageApi.findByTable(tableInfo.connectionId, tableInfo.name).then(data => {
+        const { edges, nodes } = data.dag || {}
+        this.nodes = nodes
+        const otherLdpType = ldpType === 'mdm' ? 'fdm' : 'mdm'
+        let edgsLinks = edges.map(t => {
+          let sourceNode = this.nodes.find(el => el.id === t.source)
+          let targetNode = this.nodes.find(el => el.id === t.target)
+          sourceNode.dom = null
+          targetNode.dom = null
+          sourceNode.ldpType =
+            sourceNode.type === 'apiserverLineage'
+              ? 'target'
+              : this.settings.fdmStorageConnectionId === sourceNode.connectionId
+              ? otherLdpType
+              : 'source'
+          targetNode.ldpType =
+            targetNode.type === 'apiserverLineage'
+              ? 'target'
+              : this.settings.fdmStorageConnectionId === targetNode.connectionId
+              ? otherLdpType
+              : 'source'
+          // 记录事件触发的dom和ldpType
+          if (sourceNode.table === tableInfo.name) {
+            sourceNode.ldpType = ldpType
+            sourceNode.dom = parentNode
+          } else if (targetNode.table === tableInfo.name) {
+            targetNode.ldpType = ldpType
+            targetNode.dom = parentNode
+          }
+          return Object.assign(t, {
+            sourceNode,
+            targetNode
           })
-          this.edgsLinks = edgsLinks
-
-          this.showParentLineage = true
-          this.handleConnection()
         })
+        this.edgsLinks = edgsLinks
+
+        this.showParentLineage = true
+        this.handleConnection()
+      })
     },
 
     async handleConnection() {
@@ -408,7 +388,7 @@ export default {
         source: this.$refs.source.handleFindTreeDom,
         target: this.$refs.target.handleFindTaskDom,
         mdm: function () {},
-        fdm: this.$refs.fdm[0].handleFindTreeDom,
+        fdm: this.$refs.fdm[0].handleFindTreeDom
       }
 
       // 需要过滤的数据
@@ -416,9 +396,9 @@ export default {
         source: [],
         target: [],
         fdm: [],
-        mdm: [],
+        mdm: []
       }
-      this.nodes.forEach((el) => {
+      this.nodes.forEach(el => {
         if (el.ldpType === 'target') {
           if (el.type === 'apiserverLineage') {
             const { table, modules = {} } = el || {}
@@ -427,31 +407,22 @@ export default {
               table,
               appName,
               serverName: name,
-              type: el.type,
+              type: el.type
             })
           }
         } else {
-          const {
-            connectionId,
-            connectionName,
-            pdkHash,
-            table,
-            metadata = {},
-          } = el || {}
+          const { connectionId, connectionName, pdkHash, table, metadata = {} } = el || {}
           // ldpType为source，且是连线目标节点的ldpType也为source，则过滤不展示
           const flag =
             el.ldpType === 'source' &&
-            this.edgsLinks.some(
-              (t) =>
-                t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source'
-            )
+            this.edgsLinks.some(t => t.sourceNode?.id === el.id && t.targetNode?.ldpType === 'source')
           if (!flag) {
             keywordOptions[el.ldpType]?.push({
               connectionId,
               connectionName,
               pdkHash,
               table,
-              tableId: metadata.id,
+              tableId: metadata.id
             })
           }
         }
@@ -465,7 +436,7 @@ export default {
       }
 
       this.$nextTick(() => {
-        this.edgsLinks.forEach((el) => {
+        this.edgsLinks.forEach(el => {
           const { sourceNode, targetNode } = el || {}
           const sDom = sourceNode.dom || map[sourceNode.ldpType](sourceNode)
           const tDom = targetNode.dom || map[targetNode.ldpType](targetNode)
@@ -491,7 +462,7 @@ export default {
               strokeWidth: 2,
               stroke: '#2C65FF',
               dashstyle: '2 4',
-              gap: 20,
+              gap: 20
             },
             overlays: [
               [
@@ -502,10 +473,10 @@ export default {
                   location: 1,
                   id: 'arrow',
                   foldback: 1,
-                  fill: '#2C65FF',
-                },
-              ],
-            ],
+                  fill: '#2C65FF'
+                }
+              ]
+            ]
           })
         })
       })
@@ -525,8 +496,8 @@ export default {
     handleUpdateVisible(val) {
       this.showSceneDialog = val
       this.$store.commit('setReplicationConnectionDialog', val)
-    },
-  },
+    }
+  }
 }
 </script>
 

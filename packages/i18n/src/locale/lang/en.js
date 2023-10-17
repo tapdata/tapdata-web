@@ -138,10 +138,8 @@ export default {
   public_message_401: 'Login expired, Please login again',
   public_message_404: 'The requested resource does not exist',
   public_message_5xx: 'Server Exception',
-  public_message_network_unconnected:
-    'An abnormal network connection has been detected',
-  public_message_network_connected:
-    'The network has been successfully restored to its normal operating state',
+  public_message_network_unconnected: 'An abnormal network connection has been detected',
+  public_message_network_connected: 'The network has been successfully restored to its normal operating state',
   public_message_request_timeout: 'Request Timeout',
   // drop-down list
   public_select_placeholder: 'Please Select',
@@ -210,8 +208,7 @@ export default {
   public_connection_type_source_and_target: 'Source&Target',
   public_connection_information: 'Address',
   public_connection_schema_status: 'Schema',
-  public_connection_schema_status_tip:
-    'The connection can only be created normally once the Schema has been loaded.',
+  public_connection_schema_status_tip: 'The connection can only be created normally once the Schema has been loaded.',
   public_connection_table_structure_update_time: 'Schema Load Time',
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
@@ -224,8 +221,7 @@ export default {
   public_connection_form_account: 'Account',
   public_connection_form_password: 'Password',
   public_connection_form_schema: 'Schema',
-  public_connection_form_other_connection_string:
-    'Other connection string parameters',
+  public_connection_form_other_connection_string: 'Other connection string parameters',
   public_connection_form_time_zone_of_time_type: 'Time zone of time type',
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   // Task
@@ -274,8 +270,7 @@ export default {
   //milestone
   public_milestone_time_cdcconsuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',
-  public_milestone_time_table_structure:
-    'A total of migration {val} table structure',
+  public_milestone_time_table_structure: 'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
   public_milestone_connection_succeeded: 'Connection succeeded',
   // 外存
@@ -284,5 +279,5 @@ export default {
   public_external_memory_type: 'External memory type',
   public_external_memory_table: 'External storage table name',
   public_external_memory_connection: 'External memory connection',
-  public_external_memory_info: 'External storage information',
+  public_external_memory_info: 'External storage information'
 }

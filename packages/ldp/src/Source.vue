@@ -1,20 +1,10 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title list__title__source flex align-center px-4">
-      <span class="fs-6">{{
-        $t('packages_business_data_console_sources')
-      }}</span>
+      <span class="fs-6">{{ $t('packages_business_data_console_sources') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton
-        :disabled="highlightBoard"
-        id="btn-add-source"
-        @click="handleAdd"
-        >add</IconButton
-      >
-      <IconButton
-        :disabled="highlightBoard"
-        :class="{ active: enableSearch }"
-        @click="toggleEnableSearch"
+      <IconButton :disabled="highlightBoard" id="btn-add-source" @click="handleAdd">add</IconButton>
+      <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
         >search-outline</IconButton
       >
       <!--<IconButton>more</IconButton>-->
@@ -37,11 +27,7 @@
           </template>
         </ElInput>
       </div>
-      <div
-        v-if="!showParentLineage"
-        class="flex-fill min-h-0"
-        v-loading="loading || searchIng"
-      >
+      <div v-if="!showParentLineage" class="flex-fill min-h-0" v-loading="loading || searchIng">
         <VirtualTree
           v-if="showSearch"
           class="ldp-tree h-100"
@@ -57,7 +43,7 @@
           :data="filterTreeData"
           :render-content="renderContent"
           :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
+          :allow-drag="node => node.data.isObject"
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
@@ -84,7 +70,7 @@
             :filter-node-method="filterNode"
             :render-after-expand="false"
             :expand-on-click-node="false"
-            :allow-drag="(node) => node.data.isObject"
+            :allow-drag="node => node.data.isObject"
             :allow-drop="() => false"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"
@@ -97,7 +83,7 @@
                 class="custom-tree-node flex align-items-center position-relative"
                 :class="{
                   grabbable: data.isObject,
-                  'opacity-50': data.disabled,
+                  'opacity-50': data.disabled
                 }"
                 @click="$emit('preview', data, node.parent.data)"
               >
@@ -108,42 +94,22 @@
                   color="rgb(61, 156, 64)"
                   >loading-circle</VIcon
                 >
-                <NodeIcon
-                  v-if="!node.data.isLeaf"
-                  :node="node.data"
-                  :size="18"
-                  class="tree-item-icon mr-2"
-                />
-                <div
-                  v-else-if="node.data.isEmpty"
-                  class="flex align-items-center"
-                >
+                <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+                <div v-else-if="node.data.isEmpty" class="flex align-items-center">
                   <span class="mr-1">{{ $t('public_data_no_data') }}</span>
-                  <StageButton :connection-id="getConnectionId(node)">
-                  </StageButton>
+                  <StageButton :connection-id="getConnectionId(node)"> </StageButton>
                 </div>
-                <VIcon v-else class="tree-item-icon mr-2" size="18"
-                  >table</VIcon
-                >
+                <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
-                  <span v-if="data.comment" class="font-color-sslight">{{
-                    `(${data.comment})`
-                  }}</span>
-                  <ElTag v-if="data.disabled" type="info" size="mini">{{
-                    $t('public_status_invalid')
-                  }}</ElTag>
+                  <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
+                  <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
                 </span>
               </span>
             </template>
           </VirtualTree>
-          <div
-            v-if="!treeData.length"
-            class="h-100 flex align-center justify-center"
-          >
-            <VEmpty
-              :description="$t('packages_ldp_source_empty_text')"
-            ></VEmpty>
+          <div v-if="!treeData.length" class="h-100 flex align-center justify-center">
+            <VEmpty :description="$t('packages_ldp_source_empty_text')"></VEmpty>
           </div>
         </template>
       </div>
@@ -162,7 +128,7 @@
           :data="filterTreeData"
           :render-content="renderContent"
           :expand-on-click-node="false"
-          :allow-drag="(node) => node.data.isObject"
+          :allow-drag="node => node.data.isObject"
           :allow-drop="() => false"
           @node-drag-start="handleDragStart"
           @node-drag-end="handleDragEnd"
@@ -179,12 +145,7 @@
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { debounce } from 'lodash'
 
-import {
-  connectionsApi,
-  metadataInstancesApi,
-  ldpApi,
-  CancelToken,
-} from '@tap/api'
+import { connectionsApi, metadataInstancesApi, ldpApi, CancelToken } from '@tap/api'
 import { VEmpty, VirtualTree, IconButton } from '@tap/component'
 import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { makeDragNodeImage, StageButton, DatabaseIcon } from '@tap/business'
@@ -196,7 +157,7 @@ export default {
     dragState: Object,
     eventDriver: Object,
     fdmAndMdmId: Array,
-    showParentLineage: Boolean,
+    showParentLineage: Boolean
   },
   components: { NodeIcon, VirtualTree, StageButton, IconButton, VEmpty },
   mixins: [commonMix],
@@ -207,33 +168,33 @@ export default {
       expandedKeys: [],
       props: {
         isLeaf: 'isLeaf',
-        disabled: 'disabled',
+        disabled: 'disabled'
       },
       loading: false,
       searchExpandedKeys: [],
       searchIng: false,
       search: '',
       enableSearch: false,
-      filterTreeData: [],
+      filterTreeData: []
     }
   },
   computed: {
     showSearch() {
       return this.search || this.searchIng
-    },
+    }
   },
   created() {
-    this.debouncedSearch = debounce(async (search) => {
+    this.debouncedSearch = debounce(async search => {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       this.searchIng = true
       const result = await ldpApi.searchSources(
         {
           key: search,
-          connectionType: ['source', 'source_and_target'].join(','),
+          connectionType: ['source', 'source_and_target'].join(',')
         },
         {
-          cancelToken: this.cancelSource.token,
+          cancelToken: this.cancelSource.token
         }
       )
       this.searchIng = false
@@ -241,7 +202,7 @@ export default {
       const connectionList = []
       let firstExpand
 
-      result.forEach((item) => {
+      result.forEach(item => {
         const { conId } = item
         let children = tableMap[conId]
 
@@ -256,7 +217,7 @@ export default {
             isLeaf: true,
             isObject: true,
             type: 'table',
-            LDP_TYPE: 'table',
+            LDP_TYPE: 'table'
           })
           tableMap[conId] = children
         } else if (item.type === 'connection') {
@@ -264,7 +225,7 @@ export default {
         }
       })
 
-      Object.keys(tableMap).forEach((conId) => {
+      Object.keys(tableMap).forEach(conId => {
         const connection = this.connectionMap[conId]
         if (connection) {
           let children = tableMap[conId]
@@ -275,7 +236,7 @@ export default {
 
           connectionList.push({
             ...connection,
-            children,
+            children
           })
         }
       })
@@ -311,11 +272,7 @@ export default {
           }}
         >
           <div
-            id={
-              data.isObject
-                ? `ldp_source_table_${data.connectionId}_${data.name}`
-                : `connection_${data.id}`
-            }
+            id={data.isObject ? `ldp_source_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
             class="inline-flex align-items-center overflow-hidden"
           >
             {!data.isObject ? (
@@ -351,9 +308,7 @@ export default {
     renderDefaultContent(h, { node, data }) {
       const schemaLoading = data.loadFieldsStatus === 'loading'
       // 引导时特殊处理，添加的连接等加载完schema后方可展开
-      node.isLeaf =
-        data.LDP_TYPE !== 'connection' ||
-        (this.startingTour && schemaLoading && !data.children?.length)
+      node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)
 
       return (
         <div
@@ -364,11 +319,7 @@ export default {
           }}
         >
           {schemaLoading && (
-            <VIcon
-              class="v-icon animation-rotate"
-              size="14"
-              color="rgb(61, 156, 64)"
-            >
+            <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">
               loading-circle
             </VIcon>
           )}
@@ -377,9 +328,7 @@ export default {
           ) : data.isEmpty ? (
             <div class="flex align-items-center">
               <span class="mr-1">{this.$t('public_data_no_data')}</span>
-              <StageButton connection-id={this.getConnectionId(node)}>
-                {' '}
-              </StageButton>
+              <StageButton connection-id={this.getConnectionId(node)}> </StageButton>
             </div>
           ) : (
             <VIcon class="tree-item-icon mr-2" size="18">
@@ -389,9 +338,7 @@ export default {
 
           <span class="table-label" title={data.name}>
             {data.name}
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
               <ElTag type="info" size="mini" class="ml-2">
                 {this.$t('public_status_invalid')}
@@ -434,15 +381,15 @@ export default {
         order: 'createTime DESC',
         where: {
           connection_type: {
-            in: ['source_and_target', 'source'],
+            in: ['source_and_target', 'source']
           },
           createType: {
-            $ne: 'System',
-          },
-        },
+            $ne: 'System'
+          }
+        }
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter),
+        filter: JSON.stringify(filter)
       })
       // this.connectionMap = {}
       const items = []
@@ -450,7 +397,7 @@ export default {
       const _map = this.connectionMap || {}
 
       this.watchFdmAndMdm()
-      res.items.forEach((t) => {
+      res.items.forEach(t => {
         if (this.fdmAndMdmId.includes(t.id)) return
 
         const { status, loadCount = 0, tableCount = 0 } = t
@@ -471,22 +418,20 @@ export default {
       const disabled = status !== 'ready'
       return {
         ...connection,
-        progress: !tableCount
-          ? 0
-          : Math.round((loadCount / tableCount) * 10000) / 100,
+        progress: !tableCount ? 0 : Math.round((loadCount / tableCount) * 10000) / 100,
         children: [],
         isLeaf: false,
         disabled,
         type: 'connection',
-        LDP_TYPE: 'connection',
+        LDP_TYPE: 'connection'
       }
     },
 
     async getTableList(id) {
       const res = await metadataInstancesApi.getTablesValue({
-        connectionId: id,
+        connectionId: id
       })
-      const data = res.map((t) => {
+      const data = res.map(t => {
         return {
           id: t.tableId,
           name: t.tableName,
@@ -496,7 +441,7 @@ export default {
           isObject: true,
           type: 'table',
           LDP_TYPE: 'table',
-          SWIM_TYPE: 'source',
+          SWIM_TYPE: 'source'
         }
       })
       return data.length
@@ -507,8 +452,8 @@ export default {
               name: '',
               comment: '',
               isLeaf: true,
-              isEmpty: true,
-            },
+              isEmpty: true
+            }
           ]
     },
 
@@ -578,7 +523,7 @@ export default {
     async handleNodeExpand(data, node) {
       this.setExpand(data.id, true)
 
-      if (data.children.some((child) => !child.isEmpty)) return
+      if (data.children.some(child => !child.isEmpty)) return
 
       node.loadTime = Date.now()
       node.loading = true
@@ -590,20 +535,18 @@ export default {
     watchFdmAndMdm() {
       // 用于监听FDM/MDM的设置变化,删除掉已经渲染的连接节点
       this.unwatchFdmAndMdm?.()
-      this.unwatchFdmAndMdm = this.$watch('fdmAndMdmId', (val) => {
+      this.unwatchFdmAndMdm = this.$watch('fdmAndMdmId', val => {
         this.$refs.tree.remove({
-          id: val[0],
+          id: val[0]
         })
         this.$refs.tree.remove({
-          id: val[1],
+          id: val[1]
         })
       })
     },
 
     handleFindTreeDom(val = {}) {
-      const el = document.getElementById(
-        `ldp_source_table_${val.connectionId}_${val.table}`
-      )
+      const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
       return el
     },
 
@@ -613,7 +556,7 @@ export default {
 
     async searchByKeywordList(val = []) {
       let searchExpandedKeys = []
-      this.filterTreeData = val.map((t) => {
+      this.filterTreeData = val.map(t => {
         searchExpandedKeys.push(t.connectionId)
         return {
           LDP_TYPE: 'connection',
@@ -632,15 +575,15 @@ export default {
               isLeaf: true,
               isObject: true,
               type: 'table',
-              LDP_TYPE: 'table',
-            },
-          ],
+              LDP_TYPE: 'table'
+            }
+          ]
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
-    },
+    }
   },
-  emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection'],
+  emits: ['preview', 'create-connection', 'node-drag-end', 'handle-connection']
 }
 </script>
 

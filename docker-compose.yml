@@ -1,4 +1,4 @@
-version: "3.3"
+version: '3.3'
 services:
   user_1:
     image: cloud/console:v1
@@ -7,5 +7,3 @@ services:
     environment:
       SERVER_URI: http://172.31.119.19:30104
       USER_ID: xxxxxx
-
-

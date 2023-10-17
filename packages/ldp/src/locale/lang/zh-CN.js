@@ -7,10 +7,8 @@ export default {
   packages_ldp_table_comment: '表注释',
   packages_ldp_src_dashboard_anEsctui: '按Esc退出溯源场景',
   packages_ldp_src_tablepreview_querenshanchu: '确认删除？',
-  packages_ldp_src_tablepreview_gaibiaojianghuicong:
-    '该表将会从数据库里删除，操作后不可恢复',
-  packages_ldp_src_tablepreview_jiancedaoyouren:
-    '检测到有任务正在使用 {val1}，请删除所有相关任务后重试',
+  packages_ldp_src_tablepreview_gaibiaojianghuicong: '该表将会从数据库里删除，操作后不可恢复',
+  packages_ldp_src_tablepreview_jiancedaoyouren: '检测到有任务正在使用 {val1}，请删除所有相关任务后重试',
   packages_ldp_src_target_muqianzhichide: '目前支持的类型',
   packages_ldp_upgrade_storage: '升级存储',
   packages_ldp_data_hub_intro_title: '什么是实时数据中心?',
@@ -27,11 +25,9 @@ export default {
   packages_ldp_data_hub_intro_scene_api_sub: '数据库到API',
   packages_ldp_data_hub_intro_how_do: '实时数据中心是如何工作的?',
   packages_ldp_data_hub_intro_how_do_step1: '配置数据中心存储',
-  packages_ldp_data_hub_intro_how_do_step1_sub:
-    '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
+  packages_ldp_data_hub_intro_how_do_step1_sub: '首先,配置一个数据存储, 我们建议使用MongoDB or TiDB 集群',
   packages_ldp_data_hub_intro_how_do_step2: '同步数据并合并',
-  packages_ldp_data_hub_intro_how_do_step2_sub:
-    '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
+  packages_ldp_data_hub_intro_how_do_step2_sub: '使用 Tapdata 的复制和转换功能，将数据从您的数据源同步到数据中心。',
   packages_ldp_data_hub_intro_how_do_step3: '发布API或发送到仪表板',
   packages_ldp_data_hub_intro_how_do_step3_sub: '发布API或发送到仪表板',
   packages_ldp_data_hub_subscribe: '订阅存储',
@@ -44,5 +40,5 @@ export default {
   packages_ldp_run_every_10_minutes: '每10分钟运行一次',
   packages_ldp_run_every_hour: '每1小时运行一次',
   packages_ldp_run_every_day: '每天运行一次',
-  packages_ldp_custom_cron_expression: '自定义cron表达式',
+  packages_ldp_custom_cron_expression: '自定义cron表达式'
 }

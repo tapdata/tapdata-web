@@ -31,21 +31,9 @@
           <VIcon class="ml-2 color-info" size="12">close</VIcon>
         </span>
       </div>
-      <div
-        class="result-table mt-4"
-        v-if="inspect && !['running', 'scheduling'].includes(inspect.status)"
-      >
-        <ResultTable
-          ref="singleTable"
-          :type="type"
-          :data="tableData"
-          @row-click="rowClick"
-        ></ResultTable>
-        <ResultView
-          v-if="type !== 'row_count'"
-          ref="resultView"
-          :remoteMethod="getResultData"
-        ></ResultView>
+      <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
+        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
       </div>
     </div>
   </section>
@@ -65,12 +53,12 @@ export default {
       typeMap: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
+        jointField: this.$t('packages_business_verification_jointVerify')
       },
       inspect: {},
       resultInfo: {},
       errorMsg: '',
-      taskId: null,
+      taskId: null
     }
   },
   computed: {
@@ -80,12 +68,12 @@ export default {
     tableData() {
       let list = this.resultInfo.stats || []
       if (this.$route.name === 'VerifyDiffDetails') {
-        list = list.filter((item) => {
+        list = list.filter(item => {
           return item.source_total > 0
         })
       }
       return list
-    },
+    }
   },
   created() {
     this.getData()
@@ -97,24 +85,21 @@ export default {
         .get({
           filter: JSON.stringify({
             where: {
-              id: this.$route.params.id,
-            },
-          }),
+              id: this.$route.params.id
+            }
+          })
         })
-        .then((data) => {
+        .then(data => {
           let result = data?.items?.[0]
           if (result) {
             this.resultInfo = result
             let stats = result.stats
             let inspect = result.inspect
             inspect.status = result.status
-            inspect.lastStartTimeFmt = dayjs(inspect.lastStartTime).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+            inspect.lastStartTimeFmt = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
             this.inspect = inspect
             if (stats.length) {
-              this.errorMsg =
-                result.status === 'error' ? result.errorMsg : undefined
+              this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
               this.$refs.resultView.fetch(1)
               if (this.type !== 'row_count') {
@@ -131,28 +116,26 @@ export default {
     },
     getResultData({ current, size }) {
       let taskId = this.taskId
-      let task = this.inspect.tasks?.find((item) => item.taskId === taskId)
+      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
-        let statsInfo = this.tableData.find(
-          (item) => item.taskId === this.taskId
-        )
+        let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
           inspect_id: this.inspect.id,
-          inspectResultId: this.resultInfo.id,
+          inspectResultId: this.resultInfo.id
         }
         let filter = {
           where,
           order: 'createTime DESC',
           limit: showAdvancedVerification ? 1 : size,
-          skip: (current - 1) * (showAdvancedVerification ? 1 : size),
+          skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
         return inspectDetailsApi
           .get({
-            filter: JSON.stringify(filter),
+            filter: JSON.stringify(filter)
           })
-          .then((data) => {
+          .then(data => {
             let resultList = []
             let items = data?.items || []
             if (showAdvancedVerification) {
@@ -164,7 +147,7 @@ export default {
               showAdvancedVerification, // 是否高级校验
               total: data?.total || 0, // 总条数
               statsInfo, // 结果信息
-              resultList, // 结果详情
+              resultList // 结果详情
             }
           })
       }
@@ -177,7 +160,7 @@ export default {
       if (data.length === 0) {
         return
       }
-      data.map((item) => {
+      data.map(item => {
         let source = item.source || {}
         let target = item.target || {}
         let sourceKeys = Object.keys(source)
@@ -188,33 +171,31 @@ export default {
         if (message.includes('Different fields')) {
           diffFields = message.split(':')[1].split(',')
         }
-        key.forEach((i) => {
+        key.forEach(i => {
           let sourceValue = ''
           let targetValue = ''
-          if (sourceKeys.filter((v) => i === v)) {
+          if (sourceKeys.filter(v => i === v)) {
             sourceValue = source[i]
           } else {
             sourceValue = ''
           }
-          if (targetKeys.filter((v) => i === v)) {
+          if (targetKeys.filter(v => i === v)) {
             targetValue = target[i]
           } else {
             targetValue = ''
           }
-          let isDiff = diffFields.length
-            ? diffFields.includes(i)
-            : sourceValue !== targetValue
+          let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
           let node = {
             type: item.type,
             red: isDiff,
             source: {
               key: i,
-              value: sourceValue,
+              value: sourceValue
             },
             target: {
               key: i,
-              value: targetValue,
-            },
+              value: targetValue
+            }
           }
           item['details'] = item['details'] || []
           item['details'].push(node)
@@ -227,16 +208,16 @@ export default {
       let route = this.$router.resolve({
         name: 'VerifyDiffHistory',
         params: {
-          id: this.resultInfo.firstCheckId,
-        },
+          id: this.resultInfo.firstCheckId
+        }
       })
       url = route.href
       window.open(url, '_blank')
     },
     showErrorMessage() {
       this.$alert(this.errorMsg)
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -2,7 +2,7 @@ import { InputNumber } from '@tap/form'
 import { createPolyInput } from '../PolyInput'
 import './styles.scss'
 
-const takeNumber = (value) => {
+const takeNumber = value => {
   const num = String(value)
     .trim()
     .replace(/[^\d.]+/, '')
@@ -10,7 +10,7 @@ const takeNumber = (value) => {
   return Number(num)
 }
 
-const createUnitType = (type) => {
+const createUnitType = type => {
   return {
     type,
     component: InputNumber,
@@ -22,11 +22,11 @@ const createUnitType = (type) => {
     },
     toChangeValue(value) {
       return `${value || 0}${type}`
-    },
+    }
   }
 }
 
-const createSpecialSizeOption = (type) => ({
+const createSpecialSizeOption = type => ({
   type: type,
   checker(value) {
     if (value === type) return true
@@ -34,7 +34,7 @@ const createSpecialSizeOption = (type) => ({
   },
   toChangeValue() {
     return type
-  },
+  }
 })
 
 const NormalSizeOptions = [
@@ -43,7 +43,7 @@ const NormalSizeOptions = [
   createUnitType('px'),
   createUnitType('%'),
   createUnitType('vh'),
-  createUnitType('em'),
+  createUnitType('em')
 ]
 
 export const SizeInput = createPolyInput(NormalSizeOptions)
@@ -54,5 +54,5 @@ export const BackgroundSizeInput = createPolyInput([
   createUnitType('px'),
   createUnitType('%'),
   createUnitType('vh'),
-  createUnitType('em'),
+  createUnitType('em')
 ])

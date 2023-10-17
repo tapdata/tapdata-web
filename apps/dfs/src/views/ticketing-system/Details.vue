@@ -6,10 +6,7 @@
     v-model:visible="visible"
     @visible="handleVisible"
   >
-    <div
-      v-if="details.id"
-      class="shared-cache-details--header flex pb-3 flex-column"
-    >
+    <div v-if="details.id" class="shared-cache-details--header flex pb-3 flex-column">
       <header class="border-bottom py-2">
         <span class="font-color-dark inline-block fw-bold fs-6">{{
           $t('dfs_ticketing_system_details_gongdanxiangqing')
@@ -17,58 +14,39 @@
       </header>
       <ul class="detail-ul flex flex-column flex-1">
         <li>
-          <span class="label font-color-sslight inline-block">{{
-            $t('dfs_ticketing_system_details_zhuti')
-          }}</span>
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_zhuti') }}</span>
           <span class="font-color-dark fw-normal"> {{ details.subject }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{
-            $t('dfs_ticketing_system_details_shujuyuan')
-          }}</span>
-          <span class="font-color-dark fw-normal">
-            {{ details.connectionName }}</span
-          >
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_shujuyuan') }}</span>
+          <span class="font-color-dark fw-normal"> {{ details.connectionName }}</span>
         </li>
         <li>
-          <span class="label font-color-sslight inline-block">{{
-            $t('dfs_ticketing_system_details_renwu')
-          }}</span>
+          <span class="label font-color-sslight inline-block">{{ $t('dfs_ticketing_system_details_renwu') }}</span>
           <span class="font-color-dark fw-normal"> {{ details.jobName }}</span>
         </li>
         <li>
           <span class="label font-color-sslight inline-block">{{
             $t('dfs_ticketing_system_details_gongdanbianhao')
           }}</span>
-          <span class="font-color-dark fw-normal">
-            {{ details.ticketNumber }}</span
-          >
+          <span class="font-color-dark fw-normal"> {{ details.ticketNumber }}</span>
         </li>
         <li>
           <span class="label font-color-sslight inline-block">{{
             $t('dfs_ticketing_system_details_gongdanzhuangtai')
           }}</span>
           <span class="font-color-dark fw-normal">
-            <StatusTag
-              type="tag"
-              :status="details.status"
-              default-status="Stopped"
-              target="ticket"
-            ></StatusTag
+            <StatusTag type="tag" :status="details.status" default-status="Stopped" target="ticket"></StatusTag
           ></span>
         </li>
         <li>
           <span class="label font-color-sslight inline-block">{{
             $t('dfs_ticketing_system_details_tijiaoshijian')
           }}</span>
-          <span class="font-color-dark fw-normal">
-            {{ details.createdTime }}</span
-          >
+          <span class="font-color-dark fw-normal"> {{ details.createdTime }}</span>
         </li>
         <li class="border-top">
-          <span class="label font-color-sslight inline-block mb-2">{{
-            $t('dfs_ticketing_system_details_wenti')
-          }}</span>
+          <span class="label font-color-sslight inline-block mb-2">{{ $t('dfs_ticketing_system_details_wenti') }}</span>
           <div class="font-color-dark fw-normal lh-base">
             {{ details.description }}
           </div>
@@ -77,9 +55,7 @@
           <span class="label color-primary inline-block mb-2">
             {{ $t('dfs_ticketing_system_details_huifuneirong') }}
           </span>
-          <span v-if="details.comment === 0">{{
-            $t('dfs_ticketing_system_details_zanwupinglun')
-          }}</span>
+          <span v-if="details.comment === 0">{{ $t('dfs_ticketing_system_details_zanwupinglun') }}</span>
           <el-timeline v-else>
             <el-timeline-item
               v-for="(item, index) in details.comments"
@@ -88,12 +64,7 @@
               :type="index === 0 ? 'primary' : ''"
               :timestamp="formatter(item.commentedTime)"
             >
-              <span
-                class="font-color-dark fw-normal lh-base"
-                v-html="item.content"
-              >
-                {{ item.content }}</span
-              >
+              <span class="font-color-dark fw-normal lh-base" v-html="item.content"> {{ item.content }}</span>
             </el-timeline-item>
           </el-timeline>
         </li>
@@ -120,16 +91,16 @@ export default {
         id: '',
         name: '',
         cacheKeysArr: [],
-        fields: [],
+        fields: []
       },
-      info: [],
+      info: []
     }
   },
 
   methods: {
     getData(id) {
       this.visible = true
-      this.$axios.get(`api/ticket/${id}`).then((data) => {
+      this.$axios.get(`api/ticket/${id}`).then(data => {
         this.details = data
         //格式化时间
         this.details.createdTime = this.details.createdTime
@@ -142,8 +113,8 @@ export default {
     },
     handleVisible() {
       this.visible = false
-    },
-  },
+    }
+  }
 }
 </script>
 

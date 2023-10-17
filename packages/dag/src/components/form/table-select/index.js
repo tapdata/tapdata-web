@@ -1,11 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import {
-  defineComponent,
-  computed,
-  ref,
-  onMounted,
-  watch,
-} from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
 
 import i18n from '@tap/i18n'
 import { AsyncSelect } from '@tap/form'
@@ -19,19 +13,19 @@ const useTableExist = (attrs, refs, connectionId) => {
       showNotExistsTip: ref(false),
       leftPosition: ref(''),
       handleCreated: () => {},
-      handleChange: () => {},
+      handleChange: () => {}
     }
   }
 
   // 显示物理表不存在提示
   const showNotExistsTip = ref(false)
   // 检查物理表是否存在
-  const checkTableExist = async (tableName) => {
+  const checkTableExist = async tableName => {
     if (!tableName) return
     try {
       const data = await metadataInstancesApi.checkTableExist({
         connectionId,
-        tableName,
+        tableName
       })
 
       if (!data.exist) {
@@ -45,7 +39,7 @@ const useTableExist = (attrs, refs, connectionId) => {
   }
 
   let timer
-  const handleCreated = (value) => {
+  const handleCreated = value => {
     setTagPosition(value)
     clearTimeout(timer)
     timer = setTimeout(() => {
@@ -55,7 +49,7 @@ const useTableExist = (attrs, refs, connectionId) => {
   const handleChange = () => {
     showNotExistsTip.value = false
   }
-  const setTagPosition = (tableName) => {
+  const setTagPosition = tableName => {
     if (!$input || !tableName) return
 
     const span = document.createElement('span')
@@ -76,13 +70,12 @@ const useTableExist = (attrs, refs, connectionId) => {
 
   onMounted(() => {
     $input = refs.select.$el.querySelector('input')
-    const { fontSize, fontFamily, fontWeight, borderLeftWidth, paddingLeft } =
-      getComputedStyle($input)
+    const { fontSize, fontFamily, fontWeight, borderLeftWidth, paddingLeft } = getComputedStyle($input)
     inputStyle = {
       fontSize,
       fontFamily,
       fontWeight,
-      visibility: 'hidden',
+      visibility: 'hidden'
     }
     baseLeftPosition = parseInt(borderLeftWidth) + parseInt(paddingLeft)
     checkTableExist(attrs.value)
@@ -92,7 +85,7 @@ const useTableExist = (attrs, refs, connectionId) => {
     showNotExistsTip,
     leftPosition,
     handleCreated,
-    handleChange,
+    handleChange
   }
 }
 
@@ -105,13 +98,16 @@ export const TableSelect = observer(
           reloadTime: props.reloadTime,
           where: {
             'source.id': props.connectionId,
-            taskId: root.$store.state.dataflow.taskId,
-          },
+            taskId: root.$store.state.dataflow.taskId
+          }
         }
       })
 
-      const { showNotExistsTip, leftPosition, handleCreated, handleChange } =
-        useTableExist(attrs, refs, props.connectionId)
+      const { showNotExistsTip, leftPosition, handleCreated, handleChange } = useTableExist(
+        attrs,
+        refs,
+        props.connectionId
+      )
 
       return () => {
         const scopedSlots = {
@@ -122,7 +118,7 @@ export const TableSelect = observer(
                 {i18n.t('packages_dag_table_not_exist')}
               </ElTag>
             </span>
-          ),
+          )
         }
 
         if (showNotExistsTip.value) {
@@ -151,7 +147,7 @@ export const TableSelect = observer(
           ></AsyncSelect>
         )
       }
-    },
+    }
   })
 )
 

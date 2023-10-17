@@ -9,29 +9,29 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let arr = []
   arr.push({
     label: i18n.t('public_time_d'),
-    value: Math.floor(time / 60 / 60 / 24),
+    value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
     label: i18n.t('public_time_h'),
-    value: Math.floor(time / 60 / 60) % 24,
+    value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
     label: i18n.t('public_time_m'),
-    value: Math.floor(time / 60) % 60,
+    value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
     label: i18n.t('public_time_s'),
-    value: Math.floor(time) % 60,
+    value: Math.floor(time) % 60
   }) // second
   let result = ''
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map(t => (t.value + '').padStart(2, '0'))
       .join(':')
     return result
   }
-  arr.forEach((el) => {
+  arr.forEach(el => {
     if (el.value) {
       result += el.value + el.label
     }
@@ -65,7 +65,7 @@ export function getPickerOptionsBeforeTime(val = Time.now(), nowTimestamp, cb) {
     date: 'YYYY-MM-DD',
     time: 'HH:mm:ss',
     startTime: '00:00:00',
-    endTime: '23:59:59',
+    endTime: '23:59:59'
   }
 
   const pickDate = dayjs(val).format(formatMap.date)
@@ -75,9 +75,9 @@ export function getPickerOptionsBeforeTime(val = Time.now(), nowTimestamp, cb) {
     cb?.()
   }
   let op = {
-    disabledDate: (time) => {
+    disabledDate: time => {
       return new Date(time).getTime() > now
-    },
+    }
   }
   if (pickDate === nowDate) {
     op.selectableRange = `${formatMap.startTime} - ${nowTime}`
@@ -99,7 +99,7 @@ export function getSpec(item = {}) {
 export function getPaymentMethod(item = {}, chargeProvider = '') {
   const map = {
     Aliyun: i18n.t('dfs_instance_utils_baozhouqi'),
-    FreeTier: i18n.t('dfs_instance_instance_mianfei'),
+    FreeTier: i18n.t('dfs_instance_instance_mianfei')
   }
 
   if (map[chargeProvider]) return map[chargeProvider]
@@ -108,10 +108,9 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   const s = isEn ? ' ' : ''
   const { type, periodUnit } = item
   const labelMap = {
-    recurring_day:
-      i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
+    recurring_day: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
     recurring_month: i18n.t('dfs_instance_utils_baoyue'),
-    recurring_year: i18n.t('dfs_instance_utils_baonian'),
+    recurring_year: i18n.t('dfs_instance_utils_baonian')
   }
   const val = labelMap[`${type}_${periodUnit}`]
   if (val) return val

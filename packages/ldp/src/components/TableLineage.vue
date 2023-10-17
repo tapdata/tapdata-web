@@ -2,12 +2,10 @@
   <div
     class="table-lineage h-100 position-relative"
     :class="{
-      fullscreen: isFullscreen,
+      fullscreen: isFullscreen
     }"
     v-loading="loading"
-    :element-loading-text="`${$t('packages_business_loading')}...\n${$t(
-      'packages_ldp_lineage_loading_tips'
-    )}`"
+    :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
   >
     <PaperScroller ref="paperScroller">
       <TableNode
@@ -19,17 +17,14 @@
         :id="NODE_PREFIX + node.id"
         :js-plumb-ins="jsPlumbIns"
         :class="{
-          active:
-            node.table === tableName && node.connectionId === connectionId,
+          active: node.table === tableName && node.connectionId === connectionId
         }"
         @dblclick="handleNodeDblClick(node)"
         @drag-stop="onNodeDragStop"
       ></TableNode>
     </PaperScroller>
 
-    <div
-      class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm"
-    >
+    <div class="paper-toolbar position-absolute flex gap-1 bg-white p-1 rounded-lg shadow-sm">
       <IconButton clickAndRotate @click="handleRefresh">refresh</IconButton>
       <ElTooltip
         transition="tooltip-fade-in"
@@ -59,16 +54,11 @@
         :disabled="fullscreenDisabled"
         :content="fullscreenTip"
       >
-        <IconButton @click="toggleFullscreen">{{
-          isFullscreen ? 'suoxiao' : 'fangda'
-        }}</IconButton>
+        <IconButton @click="toggleFullscreen">{{ isFullscreen ? 'suoxiao' : 'fangda' }}</IconButton>
       </ElTooltip>
     </div>
 
-    <LinePopover
-      :popover="nodeMenu"
-      @click-task="$emit('click-task', $event)"
-    ></LinePopover>
+    <LinePopover :popover="nodeMenu" @click-task="$emit('click-task', $event)"></LinePopover>
   </div>
 </template>
 
@@ -76,14 +66,7 @@
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters, mapMutations } from 'vuex'
 import dagre from 'dagre'
-import {
-  config,
-  PaperScroller,
-  jsPlumb,
-  NODE_PREFIX,
-  NODE_WIDTH,
-  NODE_HEIGHT,
-} from '@tap/dag'
+import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
 import { CancelToken, lineageApi } from '@tap/api'
 import { IconButton, VIcon } from '@tap/component'
 import { makeStatusAndDisabled } from '@tap/business'
@@ -95,7 +78,7 @@ export default {
   props: {
     connectionId: String,
     tableName: String,
-    isShow: Boolean,
+    isShow: Boolean
   },
   components: { VIcon, PaperScroller, TableNode, IconButton, LinePopover },
   data() {
@@ -112,16 +95,16 @@ export default {
         reference: null,
         data: null,
         connectionData: {},
-        tasks: [],
+        tasks: []
       },
       loading: false,
       isFullscreen: false,
       fullscreenDisabled: false,
-      fullscreenTip: this.$t('packages_form_js_editor_fullscreen'),
+      fullscreenTip: this.$t('packages_form_js_editor_fullscreen')
     }
   },
   computed: {
-    ...mapGetters('dataflow', ['allNodes', 'allEdges', 'nodeById']),
+    ...mapGetters('dataflow', ['allNodes', 'allEdges', 'nodeById'])
   },
   watch: {},
   mounted() {
@@ -179,7 +162,7 @@ export default {
       'addProcessorNode',
       'toggleConsole',
       'setPdkPropertiesMap',
-      'setPdkSchemaFreeMap',
+      'setPdkSchemaFreeMap'
     ]),
 
     initView() {
@@ -242,13 +225,9 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       try {
-        const result = await lineageApi.findByTable(
-          this.connectionId,
-          this.tableName,
-          {
-            cancelToken: this.cancelSource.token,
-          }
-        )
+        const result = await lineageApi.findByTable(this.connectionId, this.tableName, {
+          cancelToken: this.cancelSource.token
+        })
         dag = result.dag || {}
         this.setEdges(dag.edges)
         // await this.$nextTick()
@@ -277,23 +256,21 @@ export default {
         ranksep: 220,
         marginx: 0,
         marginy: 0,
-        rankdir: 'LR' /*, ranker: 'tight-tree' */,
+        rankdir: 'LR' /*, ranker: 'tight-tree' */
       })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach((n) => {
+      nodes.forEach(n => {
         let { width = NODE_WIDTH, height = NODE_HEIGHT } =
-          document
-            .getElementById(NODE_PREFIX + n.id)
-            ?.getBoundingClientRect() || {}
+          document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() || {}
         width /= scale
         height /= scale
         dg.setNode(NODE_PREFIX + n.id, { width, height })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach((edge) => {
+      this.jsPlumbIns.getAllConnections().forEach(edge => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
@@ -301,7 +278,7 @@ export default {
 
       this.jsPlumbIns.setSuspendDrawing(true)
 
-      dg.nodes().forEach((n) => {
+      dg.nodes().forEach(n => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -311,9 +288,9 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top],
-              },
-            },
+                position: [left, top]
+              }
+            }
           })
         }
       })
@@ -347,13 +324,13 @@ export default {
         }
       })
 
-      nodes.forEach((node) => {
+      nodes.forEach(node => {
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []
 
         // 数据兼容
         const defaultAttrs = {
-          position: [0, 0],
+          position: [0, 0]
         }
 
         if (!node.attrs) node.attrs = defaultAttrs
@@ -370,9 +347,7 @@ export default {
 
       // 连线
       edges.forEach(({ source, target, attrs }) => {
-        const tasks = attrs.tasks
-          ? Object.values(attrs.tasks).map(makeStatusAndDisabled)
-          : []
+        const tasks = attrs.tasks ? Object.values(attrs.tasks).map(makeStatusAndDisabled) : []
         let overlays
 
         if (tasks.length) {
@@ -392,16 +367,14 @@ export default {
                   div.innerHTML = `<span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
 
                   if (size > 1) {
-                    const handleClick = (ev) => {
+                    const handleClick = ev => {
                       ev.stopPropagation()
                       this.showNodePopover(ev.target, tasks.slice(1))
                     }
                     const dropdownSlot = document.createElement('span')
                     dropdownSlot.className =
                       'clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4 flex-shrink-0'
-                    dropdownSlot.innerHTML = `+${
-                      size - 1
-                    }<i tabindex="0" class="el-icon-arrow-down"></i>`
+                    dropdownSlot.innerHTML = `+${size - 1}<i tabindex="0" class="el-icon-arrow-down"></i>`
                     dropdownSlot.addEventListener('click', handleClick)
                     div.classList.add('compact-tag')
                     div.appendChild(dropdownSlot)
@@ -416,26 +389,23 @@ export default {
                 events: {
                   click: () => {
                     $emit(this, 'click-task', tasks[0])
-                  },
-                },
-              },
-            ],
+                  }
+                }
+              }
+            ]
           ]
         }
 
         this.jsPlumbIns.connect({
-          uuids: [
-            `${NODE_PREFIX}${source}_source`,
-            `${NODE_PREFIX}${target}_target`,
-          ],
-          overlays,
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
+          overlays
         })
       })
     },
 
     reset() {
       // 解绑overlay事件
-      this.jsPlumbIns.getConnections().forEach((connection) => {
+      this.jsPlumbIns.getConnections().forEach(connection => {
         const taskTag = connection.getOverlay('taskTag')
 
         if (taskTag) {
@@ -451,7 +421,7 @@ export default {
     onNodeDragStop(isNotMove, oldProperties, newProperties) {
       this.$refs.paperScroller.autoResizePaper()
       !isNotMove &&
-        newProperties.forEach((prop) => {
+        newProperties.forEach(prop => {
           this.updateNodeProperties(prop)
         })
     },
@@ -482,12 +452,12 @@ export default {
         id: node.metadata.id,
         name: node.table,
         LDP_TYPE: 'table',
-        isObject: true,
+        isObject: true
       }
       const connection = {
         id: node.connectionId,
         name: node.connectionName,
-        pdkHash: node.pdkHash,
+        pdkHash: node.pdkHash
       }
 
       $emit(this, 'node-dblclick', table)
@@ -504,15 +474,13 @@ export default {
         this.$nextTick(() => {
           this.fullscreenDisabled = false
           this.fullscreenTip = this.$t(
-            this.isFullscreen
-              ? 'packages_form_js_editor_exit_fullscreen'
-              : 'packages_form_js_editor_fullscreen'
+            this.isFullscreen ? 'packages_form_js_editor_exit_fullscreen' : 'packages_form_js_editor_fullscreen'
           )
         })
       }, 15)
-    },
+    }
   },
-  emits: ['click-task', 'node-dblclick'],
+  emits: ['click-task', 'node-dblclick']
 }
 </script>
 

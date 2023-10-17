@@ -10,11 +10,11 @@ export const Field = {
       'x-display': {
         title: '展示状态',
         tooltip: '半隐藏只会隐藏UI，全隐藏会删除数据',
-        dataSource: ['显示', '半隐藏', '全隐藏', '继承'],
+        dataSource: ['显示', '半隐藏', '全隐藏', '继承']
       },
       'x-pattern': {
         title: 'UI形态',
-        dataSource: ['可编辑', '禁用', '只读', '阅读', '继承'],
+        dataSource: ['可编辑', '禁用', '只读', '阅读', '继承']
       },
       'x-validator': '校验规则',
       'x-decorator': '容器组件',
@@ -43,8 +43,8 @@ export const Field = {
           padding: '内边距',
           borderRadius: '圆角',
           border: '边框',
-          opacity: '透明度',
-        },
+          opacity: '透明度'
+        }
       },
       'x-decorator-props': {
         addonAfter: '后缀标签',
@@ -57,11 +57,11 @@ export const Field = {
         colon: '是否有冒号',
         labelAlign: {
           title: '标签对齐',
-          dataSource: ['左对齐', '右对齐', '继承'],
+          dataSource: ['左对齐', '右对齐', '继承']
         },
         wrapperAlign: {
           title: '组件对齐',
-          dataSource: ['左对齐', '右对齐', '继承'],
+          dataSource: ['左对齐', '右对齐', '继承']
         },
         labelWrap: '标签换行',
         wrapperWrap: '组件换行',
@@ -75,11 +75,11 @@ export const Field = {
         layout: { title: '布局', dataSource: ['垂直', '水平', '内联', '继承'] },
         feedbackLayout: {
           title: '反馈布局',
-          dataSource: ['宽松', '紧凑', '弹层', '无', '继承'],
+          dataSource: ['宽松', '紧凑', '弹层', '无', '继承']
         },
         tooltipLayout: {
           title: '提示布局',
-          dataSource: ['图标', '文本', '继承'],
+          dataSource: ['图标', '文本', '继承']
         },
         style: {
           width: '宽度',
@@ -92,10 +92,10 @@ export const Field = {
           padding: '内边距',
           borderRadius: '圆角',
           border: '边框',
-          opacity: '透明度',
-        },
-      },
-    },
+          opacity: '透明度'
+        }
+      }
+    }
   },
   'en-US': {
     settings: {
@@ -109,17 +109,11 @@ export const Field = {
         title: 'Display State',
         tooltip:
           'When the display value is "None", the data will be "Hidden" and deleted. When the display value is hidden, only the UI will be hidden',
-        dataSource: ['Visible', 'Hidden', 'None', 'Inherit'],
+        dataSource: ['Visible', 'Hidden', 'None', 'Inherit']
       },
       'x-pattern': {
         title: 'UI Pattern',
-        dataSource: [
-          'Editable',
-          'Disabled',
-          'ReadOnly',
-          'ReadPretty',
-          'Inherit',
-        ],
+        dataSource: ['Editable', 'Disabled', 'ReadOnly', 'ReadPretty', 'Inherit']
       },
       'x-validator': 'Validator',
       'x-decorator': 'Decorator',
@@ -132,7 +126,7 @@ export const Field = {
       'x-component-props': {
         size: {
           title: 'Size',
-          dataSource: ['Large', 'Small', 'Default', 'Inherit'],
+          dataSource: ['Large', 'Small', 'Default', 'Inherit']
         },
         clearable: 'Clearable',
         autoFocus: 'Auto Focus',
@@ -151,8 +145,8 @@ export const Field = {
           padding: 'Padding',
           borderRadius: 'Radius',
           border: 'Border',
-          opacity: 'Opacity',
-        },
+          opacity: 'Opacity'
+        }
       },
       'x-decorator-props': {
         addonAfter: 'Addon After',
@@ -165,11 +159,11 @@ export const Field = {
         colon: 'Colon',
         labelAlign: {
           title: 'Label Align',
-          dataSource: ['Left', 'Right', 'Inherit'],
+          dataSource: ['Left', 'Right', 'Inherit']
         },
         wrapperAlign: {
           title: 'Wrapper Align',
-          dataSource: ['Left', 'Right', 'Inherit'],
+          dataSource: ['Left', 'Right', 'Inherit']
         },
         labelWrap: 'Label Wrap',
         wrapperWrap: 'Wrapper Wrap',
@@ -181,19 +175,19 @@ export const Field = {
         bordered: 'Bordered',
         size: {
           title: 'Size',
-          dataSource: ['Large', 'Small', 'Default', 'Inherit'],
+          dataSource: ['Large', 'Small', 'Default', 'Inherit']
         },
         layout: {
           title: 'Layout',
-          dataSource: ['Vertical', 'Horizontal', 'Inline', 'Inherit'],
+          dataSource: ['Vertical', 'Horizontal', 'Inline', 'Inherit']
         },
         feedbackLayout: {
           title: 'Feedback Layout',
-          dataSource: ['Loose', 'Terse', 'Popup', 'None', 'Inherit'],
+          dataSource: ['Loose', 'Terse', 'Popup', 'None', 'Inherit']
         },
         tooltipLayout: {
           title: 'Tooltip Layout',
-          dataSource: ['Icon', 'Text', 'Inherit'],
+          dataSource: ['Icon', 'Text', 'Inherit']
         },
         style: {
           width: 'Width',
@@ -206,9 +200,9 @@ export const Field = {
           padding: 'Padding',
           borderRadius: 'Radius',
           border: 'Border',
-          opacity: 'Opacity',
-        },
-      },
-    },
-  },
+          opacity: 'Opacity'
+        }
+      }
+    }
+  }
 }

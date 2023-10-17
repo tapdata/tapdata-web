@@ -20,25 +20,13 @@
           @close="deleteTag($event, selected[0])"
           disable-transitions
         >
-          <span class="el-select__tags-text">{{
-            selected[0].currentLabel
-          }}</span>
+          <span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
         </el-tag>
-        <el-tag
-          v-if="selected.length > 1"
-          :closable="false"
-          :size="collapseTagSize"
-          type="info"
-          disable-transitions
-        >
+        <el-tag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group
-        tag="span"
-        @after-leave="resetInputHeight"
-        v-if="!collapseTags"
-      >
+      <transition-group tag="span" @after-leave="resetInputHeight" v-if="!collapseTags">
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -78,14 +66,14 @@
         :style="{
           'flex-grow': '1',
           width: inputLength / (inputWidth - 32) + '%',
-          'max-width': inputWidth - 42 + 'px',
+          'max-width': inputWidth - 42 + 'px'
         }"
         ref="input"
       />
     </div>
     <el-input
       ref="reference"
-      v-model:value="selectedLabel"
+      v-model="selectedLabel"
       type="text"
       :placeholder="currentPlaceholder"
       :name="name"
@@ -129,52 +117,28 @@
             </svg>
           </span>
           <template v-else>
-            <i
-              v-show="!showClose"
-              :class="[
-                'el-select__caret',
-                'el-input__icon',
-                'el-icon-' + iconClass,
-              ]"
-            ></i>
-            <i
-              v-if="showClose"
-              class="el-select__caret el-input__icon el-icon-circle-close"
-              @click="handleClearClick"
-            ></i>
+            <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
+            <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
           </template>
         </slot>
       </template>
     </el-input>
-    <transition
-      name="el-zoom-in-top"
-      @before-enter="handleMenuEnter"
-      @after-leave="doDestroy"
-    >
-      <el-select-menu
-        ref="popper"
-        :append-to-body="popperAppendToBody"
-        v-show="visible && emptyText !== false"
-      >
+    <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
+      <el-select-menu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
         <el-scrollbar
           tag="ul"
           wrap-class="el-select-dropdown__wrap"
           view-class="el-select-dropdown__list"
           ref="scrollbar"
           :class="{
-            'is-empty': !allowCreate && query && filteredOptionsCount === 0,
+            'is-empty': !allowCreate && query && filteredOptionsCount === 0
           }"
           v-show="options.length > 0 && !loading"
         >
           <el-option :value="query" created v-if="showNewOption"> </el-option>
           <slot></slot>
         </el-scrollbar>
-        <template
-          v-if="
-            emptyText &&
-            (!allowCreate || loading || (allowCreate && options.length === 0))
-          "
-        >
+        <template v-if="emptyText && (!allowCreate || loading || (allowCreate && options.length === 0))">
           <slot name="empty" v-if="$slots.empty"></slot>
           <p class="el-select-dropdown__empty" v-else>
             {{ emptyText }}
@@ -186,10 +150,13 @@
 </template>
 
 <script>
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { Select } from 'element-ui'
-
+import { ElSelect as Select } from 'element-plus'
 export default {
+  components: {
+    ElIconCircleClose
+  },
   name: 'Select',
   extends: Select,
   methods: {
@@ -199,10 +166,7 @@ export default {
         const optionIndex = this.getValueIndex(value, option.value)
         if (optionIndex > -1) {
           value.splice(optionIndex, 1)
-        } else if (
-          this.multipleLimit <= 0 ||
-          value.length < this.multipleLimit
-        ) {
+        } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
           value.push(option.value)
         }
         if (option.created) {
@@ -225,9 +189,9 @@ export default {
       this.$nextTick(() => {
         this.scrollToOption(option)
       })
-    },
+    }
   },
-  emits: ['create', 'update:value'],
+  emits: ['create', 'update:value']
 }
 </script>
 

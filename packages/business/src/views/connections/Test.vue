@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="connection-test-dialog"
-    :visible="visible"
+    :model-value="visible"
     width="770px"
     :show-close="false"
     append-to-body
@@ -11,52 +11,29 @@
   >
     <div class="test-result">
       <div
-        v-if="
-          testData.testLogs &&
-          testData.testLogs.length === 0 &&
-          wsError === 'ERROR'
-        "
+        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
         style="color: #d54e21"
         class="flex align-items-start"
       >
-        <i class="el-icon-warning" style="color: #d54e21"></i>
-        <pre
-          v-if="wsErrorMsg"
-          v-html="wsErrorMsg"
-          class="test-title overflow-auto mt-0 text-prewrap"
-        ></pre>
+        <el-icon style="color: #d54e21"><el-icon-warning /></el-icon>
+        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0 text-prewrap"></pre>
         <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
       </div>
       <div v-else>
-        <div
-          class="test-status flex align-items-center"
-          v-if="['invalid', 'ERROR'].includes(status)"
-        >
+        <div class="test-status flex align-items-center" v-if="['invalid', 'ERROR'].includes(status)">
           <VIcon :style="{ color: colorMap[status] }" size="16">error</VIcon>
-          <span class="test-title">{{
-            $t('packages_business_dataForm_test_testResultFail')
-          }}</span>
+          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
         </div>
-        <div
-          class="test-status flex align-items-center"
-          v-if="['ready'].includes(status)"
-        >
-          <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
-          <span class="test-title">{{
-            $t('packages_business_dataForm_test_testResultSuccess')
-          }}</span>
+        <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
+          <el-icon><el-icon-success /></el-icon>
+          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
         </div>
-        <div
-          class="test-status"
-          v-if="!['ready', 'invalid', 'ERROR'].includes(status)"
-        >
+        <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
           <el-image
             style="width: 20px; height: 20px; vertical-align: bottom"
             :src="require('@tap/assets/images/loading.gif')"
           ></el-image>
-          <span v-if="testData.testLogs.length === 0">{{
-            $t('packages_business_dataForm_primaryTest')
-          }}</span>
+          <span v-if="testData.testLogs.length === 0">{{ $t('packages_business_dataForm_primaryTest') }}</span>
           <span v-else>{{ $t('packages_business_dataForm_testing') }}</span>
         </div>
       </div>
@@ -69,25 +46,16 @@
       :row-style="rowStyleHandler"
       v-show="testData.testLogs && testData.testLogs.length > 0"
     >
-      <el-table-column
-        prop="show_msg"
-        :label="$t('packages_business_dataForm_test_items')"
-      >
+      <el-table-column prop="show_msg" :label="$t('packages_business_dataForm_test_items')">
         <template v-slot="scope">
           <span>{{ scope.row.show_msg }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="status"
-        :label="$t('packages_business_dataForm_test_result')"
-        width="150"
-      >
+      <el-table-column prop="status" :label="$t('packages_business_dataForm_test_result')" width="150">
         <template v-slot="scope">
           <!--当前检查项失败 但是不影响此次测试结果 -->
           <span v-if="scope.row.status === 'failed' && !scope.row.required">
-            <VIcon size="16" :style="{ color: colorMap['warning'] }"
-              >warning</VIcon
-            >
+            <VIcon size="16" :style="{ color: colorMap['warning'] }">warning</VIcon>
             <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
             {{ statusMap[scope.row.status] }}
           </span>
@@ -99,9 +67,7 @@
             {{ statusMap[scope.row.status] }}
           </span>
           <span v-else>
-            <VIcon size="16" :style="{ color: colorMap[scope.row.status] }">{{
-              iconMap[scope.row.status]
-            }}</VIcon>
+            <VIcon size="16" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
@@ -115,33 +81,34 @@
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button v-if="isTimeout" size="mini" @click="start()">{{
-          $t('public_button_retry')
-        }}</el-button>
-        <el-button size="mini" type="primary" @click="handleClose()">{{
-          $t('public_button_close')
-        }}</el-button>
+        <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script>
+import { Warning as ElIconWarning, Success as ElIconSuccess } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
+  components: {
+    VIcon,
+    ElIconWarning,
+    ElIconSuccess
+  },
   name: 'Test',
-  components: { VIcon },
   props: {
     visible: {
-      value: Boolean,
+      value: Boolean
     },
     formData: {
-      value: Object,
+      value: Object
     },
     testType: {
-      value: String,
-    },
+      value: String
+    }
   },
   data() {
     return {
@@ -149,7 +116,7 @@ export default {
       testData: {
         testLogs: [],
         testResult: '',
-        progress: 0,
+        progress: 0
       },
       wsError: '',
       wsErrorMsg: '',
@@ -165,7 +132,7 @@ export default {
         ready: '#70AD47',
         invalid: '#f56c6c',
         testing: '#aaaaaa',
-        unTest: '#aaaaaa',
+        unTest: '#aaaaaa'
       },
       iconMap: {
         ready: 'success',
@@ -174,7 +141,7 @@ export default {
         passed: 'success',
         waiting: 'question-fill',
         failed: 'error',
-        unTest: '',
+        unTest: ''
       },
       statusMap: {
         ready: this.$t('packages_business_dataForm_test_success'),
@@ -183,8 +150,8 @@ export default {
         passed: this.$t('packages_business_dataForm_test_success'),
         waiting: this.$t('packages_business_dataForm_test_testing'),
         failed: this.$t('packages_business_dataForm_test_fail'),
-        unTest: this.$t('packages_business_dataForm_test_unTest'),
-      },
+        unTest: this.$t('packages_business_dataForm_test_unTest')
+      }
     }
   },
   mounted() {
@@ -204,7 +171,7 @@ export default {
     handleWS() {
       this.$ws.ready(() => {
         //接收数据
-        this.$ws.on('testConnectionResult', (data) => {
+        this.$ws.on('testConnectionResult', data => {
           this.isTimeout = false //有回调
           let result = data.result || []
           this.wsError = data.status
@@ -212,16 +179,14 @@ export default {
           clearTimeout(this.timer)
           this.timer = null
           let testData = {
-            wsError: data.status,
+            wsError: data.status
           }
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
-            let details = validate_details.filter(
-              (item) => item.status !== 'waiting'
-            )
+            let details = validate_details.filter(item => item.status !== 'waiting')
             // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
             if (details.length === 0) {
-              validate_details = validate_details.map((item) => {
+              validate_details = validate_details.map(item => {
                 item.status = 'unTest'
                 return item
               })
@@ -234,7 +199,7 @@ export default {
             testData['status'] = result.status
             this.status = result.status
           } else {
-            let logs = this.testData.testLogs.map((item) => {
+            let logs = this.testData.testLogs.map(item => {
               item.status = 'invalid'
               return item
             })
@@ -248,20 +213,20 @@ export default {
           $emit(this, 'returnTestData', testData)
         })
         //长连接失败
-        this.$ws.on('testConnection', (data) => {
+        this.$ws.on('testConnection', data => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
-            wsError: data.status,
+            wsError: data.status
           }
           $emit(this, 'returnTestData', testData)
         })
         //长连接失败
-        this.$ws.on('pipe', (data) => {
+        this.$ws.on('pipe', data => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
-            wsError: data.status,
+            wsError: data.status
           }
           $emit(this, 'returnTestData', testData)
         })
@@ -277,7 +242,7 @@ export default {
     startByConnection(connection, updateSchema, editTest) {
       let msg = {
         type: 'testConnection',
-        data: connection,
+        data: connection
       }
       if (this.testType) {
         msg.type = this.testType
@@ -303,11 +268,9 @@ export default {
         this.timer = setTimeout(() => {
           this.isTimeout = true //重置
           this.wsError = 'ERROR'
-          this.wsErrorMsg = this.wsErrorMsg
-            ? this.wsErrorMsg
-            : this.$t('packages_business_dataForm_test_retryTest')
+          this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('packages_business_dataForm_test_retryTest')
           let testData = {
-            wsError: 'ERROR',
+            wsError: 'ERROR'
           }
           $emit(this, 'returnTestData', testData)
         }, 120000)
@@ -318,9 +281,9 @@ export default {
       this.$ws.off('testConnection')
       this.testData.testLogs = []
       this.status = ''
-    },
+    }
   },
-  emits: ['update:visible', 'returnTestData'],
+  emits: ['update:visible', 'returnTestData']
 }
 </script>
 

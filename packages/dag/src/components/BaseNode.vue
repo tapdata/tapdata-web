@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-bind="data.attrs"
-    v-on="listeners"
-    class="df-node"
-    :class="[data.class, data.staticClass]"
-    :style="data.style"
-  >
+  <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
     <div class="df-node-icon">
       <component :is="$options.components.NodeIcon" :node="props.node" />
       <!--<NodeIcon :node="props.node"></NodeIcon>-->
@@ -24,8 +18,8 @@ export default {
   name: 'BaseNode',
   components: { NodeIcon },
   props: {
-    node: Object,
-  },
+    node: Object
+  }
 }
 </script>
 

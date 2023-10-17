@@ -8,11 +8,11 @@ window.$vueApp.use(VueI18n)
 const i18n = new VueI18n({
   locale: getCurrentLanguage(),
   messages: locale,
-  silentTranslationWarn: true,
+  silentTranslationWarn: true
 })
 
 i18n.merge = (langs = {}) => {
-  Object.keys(langKeyMap).forEach((f) => {
+  Object.keys(langKeyMap).forEach(f => {
     i18n.mergeLocaleMessage(f, langs[f])
   })
 }

@@ -1,18 +1,5 @@
-import {
-  computed,
-  defineComponent,
-  ref,
-  watch,
-  reactive,
-} from '@vue/composition-api'
-import {
-  createForm,
-  observer,
-  Form,
-  SchemaField,
-  HighlightCode,
-  FormItem,
-} from '@tap/form'
+import { computed, defineComponent, ref, watch, reactive } from '@vue/composition-api'
+import { createForm, observer, Form, SchemaField, HighlightCode, FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
 import resize from '@tap/component/src/directives/resize'
 import { VEmpty, VCodeEditor } from '@tap/component'
@@ -26,17 +13,17 @@ export const ConnectionDebug = observer(
       getForm: Function,
       schema: Object,
       visible: Boolean,
-      pdkOptions: Object,
+      pdkOptions: Object
     },
     directives: {
-      resize,
+      resize
     },
     setup(props, { emit, root }) {
       const logList = ref([])
       const logLoading = ref(false)
       const connForm = props.getForm()
       const form = createForm({
-        values: connForm.values,
+        values: connForm.values
       })
       const params = reactive({
         connectType: '',
@@ -47,30 +34,30 @@ export const ConnectionDebug = observer(
               op: 'i',
               table: 'a',
               after: {
-                A: 1,
-              },
+                A: 1
+              }
             },
             {
               op: 'u',
               table: 'a',
               before: {
-                A: 1,
+                A: 1
               },
               after: {
-                A: 2,
-              },
+                A: 2
+              }
             },
             {
               op: 'd',
               table: 'a',
               before: {
-                A: 1,
-              },
-            },
+                A: 1
+              }
+            }
           ],
           null,
           2
-        ),
+        )
       })
       let asSource = ref(false)
       let asTarget = ref(false)
@@ -78,12 +65,12 @@ export const ConnectionDebug = observer(
       const LEVEL2CLS = {
         INFO: 'font-color-dark',
         ERROR: 'color-danger',
-        WARN: 'color-warning',
+        WARN: 'color-warning'
       }
 
       watch(
         () => props.visible,
-        (show) => {
+        show => {
           if (show) {
             connectionType = connForm.values.__TAPDATA.connection_type
             params.connectType = connectionType
@@ -102,7 +89,7 @@ export const ConnectionDebug = observer(
         }
       )
 
-      const filterProperties = (properties) => {
+      const filterProperties = properties => {
         const whiteList = [
           'targetScripTitle',
           'targetScript',
@@ -111,11 +98,11 @@ export const ConnectionDebug = observer(
           'customBeforeScript',
           'customAfterOpr',
           'customAfterScript',
-          'cdcScript',
+          'cdcScript'
         ]
         return whiteList.reduce((prev, current) => {
           let field = (prev[current] = {
-            ...properties[current],
+            ...properties[current]
           })
           field.title = field.title?.trim()
 
@@ -135,11 +122,11 @@ export const ConnectionDebug = observer(
           type: 'object',
           properties: {
             '__TAPDATA.connection_type': {
-              type: 'string',
+              type: 'string'
             },
             syncType: { type: 'string' },
-            ...filterProperties(props.schema.properties),
-          },
+            ...filterProperties(props.schema.properties)
+          }
         }
       })
       const handleRun = async () => {
@@ -149,9 +136,7 @@ export const ConnectionDebug = observer(
             try {
               inputArg = JSON.parse(params.input)
             } catch (e) {
-              root.$message.error(
-                i18n.t('packages_business_connection_debug_input_arg_error')
-              )
+              root.$message.error(i18n.t('packages_business_connection_debug_input_arg_error'))
               return
             }
 
@@ -162,16 +147,16 @@ export const ConnectionDebug = observer(
               pdkHash: props.pdkOptions.pdkHash,
               pdkType: props.pdkOptions.pdkType,
               connectionConfig: {
-                ...connForm.values,
+                ...connForm.values
               },
               nodeConfig: {},
               command: 'testRun',
               action: connForm.values.syncType,
               argMap: {
                 input: inputArg,
-                timeout: params.timeout,
+                timeout: params.timeout
               },
-              time: 0,
+              time: 0
             }
 
             try {
@@ -184,9 +169,7 @@ export const ConnectionDebug = observer(
             logLoading.value = false
           },
           () => {
-            root.$message.error(
-              i18n.t('packages_business_connection_debug_form_error')
-            )
+            root.$message.error(i18n.t('packages_business_connection_debug_form_error'))
           }
         )
       }
@@ -206,20 +189,16 @@ export const ConnectionDebug = observer(
                 >
                   <ElRadioGroup
                     value={params.connectType}
-                    onInput={(val) => {
+                    onInput={val => {
                       params.connectType = val
                       form.values.__TAPDATA.connection_type = val
                     }}
                   >
                     {asSource.value && (
-                      <ElRadioButton label="source">
-                        {i18n.t('public_connection_type_source')}
-                      </ElRadioButton>
+                      <ElRadioButton label="source">{i18n.t('public_connection_type_source')}</ElRadioButton>
                     )}
                     {asTarget.value && (
-                      <ElRadioButton label="target">
-                        {i18n.t('public_connection_type_target')}
-                      </ElRadioButton>
+                      <ElRadioButton label="target">{i18n.t('public_connection_type_target')}</ElRadioButton>
                     )}
                   </ElRadioGroup>
                 </FormItem.BaseItem>
@@ -235,19 +214,13 @@ export const ConnectionDebug = observer(
                     value={params.timeout}
                     min={5}
                     max={60}
-                    onInput={(val) => {
+                    onInput={val => {
                       params.timeout = val
                     }}
                     controls-position="right"
                   ></ElInputNumber>
                 </FormItem.BaseItem>
-                <ElButton
-                  loading={logLoading.value}
-                  class="mx-4"
-                  onClick={handleRun}
-                  type="primary"
-                  size="small"
-                >
+                <ElButton loading={logLoading.value} class="mx-4" onClick={handleRun} type="primary" size="small">
                   {i18n.t('packages_form_js_processor_index_shiyunxing')}
                 </ElButton>
 
@@ -264,18 +237,9 @@ export const ConnectionDebug = observer(
               </div>
               <div class="flex-1 flex w-100 min-h-0">
                 <div class="flex-1 overflow-y-auto p-4 border-end">
-                  <Form
-                    layout="vertical"
-                    feedbackLayout="terse"
-                    class-name="form-wrap"
-                    form={form}
-                  >
+                  <Form layout="vertical" feedbackLayout="terse" class-name="form-wrap" form={form}>
                     {params.connectType === 'target' && (
-                      <FormItem.BaseItem
-                        label={i18n.t(
-                          'packages_business_connection_debug_input_arg'
-                        )}
-                      >
+                      <FormItem.BaseItem label={i18n.t('packages_business_connection_debug_input_arg')}>
                         <VCodeEditor
                           class="border rounded-2 p-0"
                           theme="one_dark"
@@ -283,7 +247,7 @@ export const ConnectionDebug = observer(
                           lang="json"
                           height={200}
                           options={{ printMargin: false, wrap: 'free' }}
-                          onInput={(v) => {
+                          onInput={v => {
                             params.input = v
                           }}
                         />
@@ -298,49 +262,35 @@ export const ConnectionDebug = observer(
                       {
                         name: 'resize',
                         value: {
-                          minWidth: 100,
+                          minWidth: 100
                         },
                         modifiers: {
-                          left: true,
-                        },
-                      },
-                    ],
+                          left: true
+                        }
+                      }
+                    ]
                   }}
                   class="overflow-y-auto"
                   style="width: 40vw;"
                 >
                   <div class="js-log-list">
                     {logList.value.length
-                      ? logList.value.map((item) => {
+                      ? logList.value.map(item => {
                           if (/^[{[].*[\]}]$/.test(item.message)) {
                             let code
                             try {
-                              code = JSON.stringify(
-                                JSON.parse(item.message),
-                                null,
-                                2
-                              )
+                              code = JSON.stringify(JSON.parse(item.message), null, 2)
                             } catch (e) {
-                              const message = item.message
-                                .replace(/^[{[](.*)[\]}]$/, '$1')
-                                .split(', ')
+                              const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
                               code = `${item.message.charAt(0)}\n${message
-                                .map((line) => `  ${line}`)
-                                .join('\n')}\n${item.message.charAt(
-                                item.message.length - 1
-                              )}`
+                                .map(line => `  ${line}`)
+                                .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                             }
 
                             return (
                               <details class="js-log-list-item p-2">
-                                <summary class="text-truncate px-2">
-                                  {item.message}
-                                </summary>
-                                <HighlightCode
-                                  class="m-0"
-                                  language="json"
-                                  code={code}
-                                ></HighlightCode>
+                                <summary class="text-truncate px-2">{item.message}</summary>
+                                <HighlightCode class="m-0" language="json" code={code}></HighlightCode>
                               </details>
                             )
                           }
@@ -348,7 +298,7 @@ export const ConnectionDebug = observer(
                             <div
                               class={[
                                 'js-log-list-item text-prewrap text-break p-2',
-                                LEVEL2CLS[item.level] || 'font-color-dark',
+                                LEVEL2CLS[item.level] || 'font-color-dark'
                               ]}
                             >
                               {item.errorStack || item.message}
@@ -356,24 +306,11 @@ export const ConnectionDebug = observer(
                           )
                         })
                       : !logLoading.value && <VEmpty large></VEmpty>}
-                    <div
-                      class={[
-                        'justify-content-center align-center m-0 p-2',
-                        logLoading.value ? 'flex' : 'none',
-                      ]}
-                    >
+                    <div class={['justify-content-center align-center m-0 p-2', logLoading.value ? 'flex' : 'none']}>
                       <svg viewBox="25 25 50 50" class="circular">
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="20"
-                          fill="none"
-                          class="path"
-                        ></circle>
+                        <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
                       </svg>
-                      <span class="ml-1 font-color-light">
-                        {i18n.t('packages_dag_loading')}
-                      </span>
+                      <span class="ml-1 font-color-light">{i18n.t('packages_dag_loading')}</span>
                     </div>
                   </div>
                 </div>
@@ -382,6 +319,6 @@ export const ConnectionDebug = observer(
           )
         )
       }
-    },
+    }
   })
 )

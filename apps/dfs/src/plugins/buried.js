@@ -9,7 +9,7 @@ export const buried = (code, page, attrs, sid) => {
   let data = {
     user_id: userInfo.userId || '',
     code,
-    page,
+    page
   }
   attrs = Object.assign({}, attrs)
   if (sid) {
@@ -19,16 +19,13 @@ export const buried = (code, page, attrs, sid) => {
   let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
   if (sid) {
     let where = {
-      'attrs.sid': sid,
+      'attrs.sid': sid
     }
     queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
   }
   // eslint-disable-next-line
   process.env.NODE_ENV !== 'production' &&
-    console.log(
-      i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }),
-      attrs
-    )
+    console.log(i18n.t('dfs_plugins_buried_chufamaidianc', { val1: code }), attrs)
 
   window.axios.get('api/tcm/user/behavior' + queryStr)
 }
@@ -52,7 +49,7 @@ export const updateTimeOnSite = () => {
       'timeOnSite',
       '/',
       {
-        times: Math.floor(count / 1000) + 's',
+        times: Math.floor(count / 1000) + 's'
       },
       sessionId
     )
@@ -62,7 +59,7 @@ export const updateTimeOnSite = () => {
   }
 }
 
-export const startTimeOnPage = (router) => {
+export const startTimeOnPage = router => {
   let count = 1
 
   router.beforeEach((to, from, next) => {
@@ -88,12 +85,7 @@ export const startTimeOnPage = (router) => {
     }
 
     // 隐藏客服控件
-    const blackList = [
-      'DataflowNew',
-      'DataflowEditor',
-      'MigrateCreate',
-      'MigrateEditor',
-    ]
+    const blackList = ['DataflowNew', 'DataflowEditor', 'MigrateCreate', 'MigrateEditor']
     if (!blackList.includes(to.name)) {
       document.body.classList.remove('hide-chart')
     } else {
@@ -123,7 +115,7 @@ export const updateTimeOnPage = () => {
         path,
         {
           times: second + 's',
-          pid: sessionId,
+          pid: sessionId
         },
         sessionId
       )

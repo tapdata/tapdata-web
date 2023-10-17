@@ -2,16 +2,11 @@
   <section class="function-details-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
-          {{ $t('function_details') }}
-        </div> -->
+            {{ $t('function_details') }}
+          </div> -->
       <!-- <div class="function-details__body" v-loading="!details.id">
-          <div class="main px-6 py-4"> -->
-      <ElForm
-        label-position="left"
-        label-width="160px"
-        size="small"
-        :model="details"
-      >
+            <div class="main px-6 py-4"> -->
+      <ElForm label-position="left" label-width="160px" size="small" :model="details">
         <ElFormItem :label="$t('function_name_label') + ':'">
           <span class="details-value">{{ details.function_name }}</span>
         </ElFormItem>
@@ -50,22 +45,16 @@
           {{ $t('function_script_label') }}
         </div>
         <div class="script-editor">
-          <JsEditor
-            v-model:value="details.script"
-            height="200"
-            :options="{ readOnly: true }"
-          ></JsEditor>
+          <JsEditor v-model:value="details.script" height="200" :options="{ readOnly: true }"></JsEditor>
         </div>
       </div>
       <div class="footer pt-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{
-          $t('public_button_back')
-        }}</ElButton>
+        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
       </div>
     </div>
 
     <!-- </div>
-      </div> -->
+        </div> -->
   </section>
 </template>
 
@@ -76,7 +65,7 @@ export default {
   components: { JsEditor },
   data() {
     return {
-      details: {},
+      details: {}
     }
   },
   created() {
@@ -87,24 +76,23 @@ export default {
       let typeMap = {
         custom: this.$t('function_type_option_custom'),
         jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system'),
+        system: this.$t('function_type_option_system')
       }
 
-      javascriptFunctionsApi.get([this.$route.params.id]).then((data) => {
+      javascriptFunctionsApi.get([this.$route.params.id]).then(data => {
         let details = data || {}
         // 处理老数据问题
         if (details.type === 'custom' && !details.script) {
           details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
         }
         if (details.type === 'jar') {
-          details.classNameFmt =
-            details.className?.split(details.packageName + '.')?.[1] || ''
+          details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
         }
         details.typeFmt = typeMap[details.type]
         this.details = details
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

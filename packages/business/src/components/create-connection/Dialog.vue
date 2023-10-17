@@ -19,18 +19,10 @@
       <div class="mb-4 font-color-light">
         {{ $t('packages_business_create_connection_dialog_neirongCho') }}
       </div>
-      <ConnectionSelector
-        v-bind="$attrs"
-        v-model:visible="visible"
-        @select="handleSelect"
-      ></ConnectionSelector>
+      <ConnectionSelector v-bind="$attrs" v-model:visible="visible" @select="handleSelect"></ConnectionSelector>
     </div>
     <div v-else class="form__content flex flex-column">
-      <ServeForm
-        v-if="['apiServices'].includes(activeTab)"
-        :params="formParams"
-        class="flex-fill"
-      ></ServeForm>
+      <ServeForm v-if="['apiServices'].includes(activeTab)" :params="formParams" class="flex-fill"></ServeForm>
       <ConnectionForm
         ref="form"
         v-else
@@ -57,21 +49,19 @@ export default {
   components: {
     ConnectionSelector,
     ConnectionForm,
-    ServeForm,
+    ServeForm
   },
   props: {
     title: {
       type: String,
       default: () => {
-        return i18n.t(
-          'packages_business_create_connection_dialog_xuanzeshujuyuan'
-        )
-      },
+        return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
+      }
     },
     visible: {
       required: true,
-      value: Boolean,
-    },
+      value: Boolean
+    }
   },
   data() {
     return {
@@ -79,7 +69,7 @@ export default {
       formParams: {},
       showForm: false,
       timer: null,
-      activeTab: '',
+      activeTab: ''
     }
   },
   watch: {
@@ -88,7 +78,7 @@ export default {
     },
     showDialog(v) {
       $emit(this, 'update:visible', v)
-    },
+    }
   },
   mounted() {
     console.log('ConnectionDialog') // eslint-disable-line
@@ -139,9 +129,9 @@ export default {
     handleSaveAndMore() {
       $emit(this, 'saveAndMore', ...arguments)
       this.init()
-    },
+    }
   },
-  emits: ['update:visible', 'visible', 'success', 'saveAndMore'],
+  emits: ['update:visible', 'visible', 'success', 'saveAndMore']
 }
 </script>
 

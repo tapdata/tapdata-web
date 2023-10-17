@@ -15,15 +15,15 @@ export const ResourceWidget = observer(
       className: String,
       defaultExpand: {
         type: Boolean,
-        default: true,
-      },
+        default: true
+      }
     },
 
     setup(props) {
       // const designer = useDesigner()
       const prefix = 'fd-resource'
       const expand = ref(props.defaultExpand)
-      const renderNode = (source) => {
+      const renderNode = source => {
         const { node, icon, title, thumb, span } = source
         return (
           <div
@@ -33,18 +33,9 @@ export const ResourceWidget = observer(
             data-designer-source-id={node.id}
           >
             {thumb && <img class={prefix + '-item-thumb'} src={thumb} />}
-            <IconWidget
-              class={prefix + '-item-icon'}
-              infer={icon}
-              width={150}
-              height={40}
-            />
+            <IconWidget class={prefix + '-item-icon'} infer={icon} width={150} height={40} />
             <span class={prefix + '-item-text'}>
-              {
-                <TextWidget
-                  token={title || node.children[0]?.getMessage('title')}
-                ></TextWidget>
-              }
+              {<TextWidget token={title || node.children[0]?.getMessage('title')}></TextWidget>}
             </span>
           </div>
         )
@@ -68,13 +59,13 @@ export const ResourceWidget = observer(
             prefix,
             props.className,
             {
-              expand: expand.value,
-            },
+              expand: expand.value
+            }
           ]}
         >
           <div
             class={prefix + '-header'}
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation()
               e.preventDefault()
               expand.value = !expand.value
@@ -91,15 +82,12 @@ export const ResourceWidget = observer(
             <div class={prefix + '-content'}>
               {sources.map(isFn(props.children) ? props.children : renderNode)}
               {remainItems ? (
-                <div
-                  class={prefix + '-item-remain'}
-                  style={{ gridColumnStart: `span ${3 - remainItems}` }}
-                ></div>
+                <div class={prefix + '-item-remain'} style={{ gridColumnStart: `span ${3 - remainItems}` }}></div>
               ) : null}
             </div>
           </div>
         </div>
       )
-    },
+    }
   })
 )

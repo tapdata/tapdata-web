@@ -1,19 +1,10 @@
 <template>
-  <div
-    class="inline-flex align-center gap-2"
-    :class="{ 'flex-row-reverse': reverse }"
-  >
-    <span
-      v-if="show"
-      class="task-status-block"
-      :class="['task-status-' + task.status]"
-    >
+  <div class="inline-flex align-center gap-2" :class="{ 'flex-row-reverse': reverse }">
+    <span v-if="show" class="task-status-block" :class="['task-status-' + task.status]">
       {{ $t(STATUS_MAP[task.status].i18n) }}
     </span>
     <ElTooltip v-if="showCronTip" placement="top">
-      <VIcon size="16" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'"
-        >task-process</VIcon
-      >
+      <VIcon size="16" :color="task.crontabScheduleMsg ? '#F3961A' : '#008b58'">task-process</VIcon>
       <template #content>
         {{ task.crontabScheduleMsg || getNextStartTime() }}
       </template>
@@ -33,25 +24,18 @@
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
-                time: pingTime,
+                time: pingTime
               })
             }}<template v-if="agentStatus"
               >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
-              <ElLink @click="onClickStatus" type="primary">{{
-                agentStatus
-              }}</ElLink></template
+              <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
             >
           </div>
         </template>
       </ElTooltip>
     </template>
     <template v-if="task.shareCdcStop">
-      <ElTooltip
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        :visible-arrow="false"
-        effect="light"
-      >
+      <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="font-color-dark">{{ task.shareCdcStopMessage }}</div>
@@ -60,14 +44,8 @@
     </template>
     <!--错误解读-->
     <template v-if="errorCause && task.status === 'error'">
-      <VIcon @click="showErrorCause = true" size="16" class="color-danger"
-        >question-circle</VIcon
-      >
-      <ElDialog
-        append-to-body
-        :title="$t('public_task_reasons_for_error')"
-        v-model:visible="showErrorCause"
-      >
+      <VIcon @click="showErrorCause = true" size="16" class="color-danger">question-circle</VIcon>
+      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" v-model:visible="showErrorCause">
         <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
           {{ errorCause }}
         </div>
@@ -106,13 +84,13 @@ export default {
     task: Object,
     agentMap: Object,
     errorCause: String,
-    reverse: Boolean,
+    reverse: Boolean
   },
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       STATUS_MAP,
-      showErrorCause: false,
+      showErrorCause: false
     }
   },
   computed: {
@@ -142,10 +120,7 @@ export default {
     showCronTip() {
       const task = this.task
       let ifShow =
-        task.status !== 'edit' &&
-        task.type === 'initial_sync' &&
-        task.crontabExpressionFlag &&
-        task.crontabExpression
+        task.status !== 'edit' && task.type === 'initial_sync' && task.crontabExpressionFlag && task.crontabExpression
       if (!ifShow) return ifShow
       try {
         if (cronParse.parseExpression(this.task.crontabExpression).hasNext()) {
@@ -160,10 +135,8 @@ export default {
 
     showRetrying() {
       const { functionRetryStatus, taskRetryStatus } = this.task
-      return (
-        functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
-      )
-    },
+      return functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
+    }
   },
 
   methods: {
@@ -171,14 +144,14 @@ export default {
       let route
       if (this.isDaas) {
         route = {
-          name: 'clusterManagement',
+          name: 'clusterManagement'
         }
       } else {
         route = {
           name: 'Instance',
           query: {
-            keyword: this.agentInfo?.itemId,
-          },
+            keyword: this.agentInfo?.itemId
+          }
         }
       }
       this.$router.push(route)
@@ -189,13 +162,13 @@ export default {
         if (!this.task.crontabExpression) return
         const interval = cronParse.parseExpression(this.task.crontabExpression)
         return this.$t('packages_business_task_status_next_run_time', {
-          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss'),
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
         })
       } catch (err) {
         console.log('Error: ' + err.message)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -246,7 +219,6 @@ export default {
 <style>
 .agent-tooltip__popper {
   border: none !important;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1),
-    0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -9,8 +9,8 @@ export default {
     value: [Boolean, String, Number],
     config: {
       require: true,
-      type: Object,
-    },
+      type: Object
+    }
   },
   render() {
     let self = this
@@ -23,26 +23,26 @@ export default {
             value: self.value,
             disabled: self.config.disabled,
             activeValue: self.config.activeValue,
-            inactiveValue: self.config.inactiveValue,
+            inactiveValue: self.config.inactiveValue
           },
           style: {
-            'user-select': 'none',
+            'user-select': 'none'
           },
-          on: this.on,
+          on: this.on
         })
-      ),
+      )
     ]
     if (tip) {
       arr.push(
         Vue.h('div', plantRenderPara({ class: 'fb-switch-tip' }), [
           Vue.h('i', plantRenderPara({ class: 'el-icon-info' })),
-          Vue.h('span', plantRenderPara({ class: 'fb-switch-tip__text' }), tip),
+          Vue.h('span', plantRenderPara({ class: 'fb-switch-tip__text' }), tip)
         ])
       )
     }
     return Vue.h('div', plantRenderPara({ class: 'switch-item' }), arr)
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

@@ -35,12 +35,7 @@
             $t('agent_deploy_start_install_windows_first_download')
           }}</ElLink>
           {{ $t('dfs_agent_download_fastdownload_he')
-          }}<ElLink
-            class="mx-2"
-            type="primary"
-            @click="handleDownLoadApplication"
-            >application.yml
-          </ElLink>
+          }}<ElLink class="mx-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
         </li>
         <li class="mt-3">
           {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
@@ -75,18 +70,11 @@
           </el-button>
         </ElTooltip>
       </div>
-      <div
-        class="box rounded-4 title-text my-2 mt-4"
-        :class="{ 'overflow-hidden': showAllCode }"
-      >
-        <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{
-          links[downLoadType]
-        }}</span>
+      <div class="box rounded-4 title-text my-2 mt-4" :class="{ 'overflow-hidden': showAllCode }">
+        <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
       </div>
     </section>
-    <div
-      class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center"
-    >
+    <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
       <div class="dot-pulse mt-2 mb-6"></div>
       <div class="fs-5 font-color-dark mb-2">
         {{ $t('dfs_guide_index_dengdaibushu') }}
@@ -121,37 +109,35 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: 'Windows (64 bit)', value: 'windows' }
       ],
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
         docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
-      },
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+      }
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.getUrl()
   },
   methods: {
     getUrl() {
-      this.$axios
-        .get('api/tcm/productRelease/deploy/' + this.agentId)
-        .then(async (data) => {
-          this.downloadUrl = data.downloadUrl || ''
-          this.token = data.token || ''
-          this.version = data.version || ''
-          let links = data.links || []
-          links.forEach((el) => {
-            this.links[el.os] = el.command
-          })
-          this.$nextTick(() => {
-            this.downLoadType = 'linux'
-          })
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
+        this.downloadUrl = data.downloadUrl || ''
+        this.token = data.token || ''
+        this.version = data.version || ''
+        let links = data.links || []
+        links.forEach(el => {
+          this.links[el.os] = el.command
         })
+        this.$nextTick(() => {
+          this.downLoadType = 'linux'
+        })
+      })
     },
     onCopy() {
       this.showTooltip = true
@@ -162,7 +148,7 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest',
+        AliComputenest: 'copyTokenInAliComputenest'
       }
       this.buried(MAP[this.downLoadType])
     },
@@ -174,16 +160,11 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      window.location =
-        location.origin +
-        location.pathname +
-        'api/tcm/agent/' +
-        this.agentId +
-        '/config'
+      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.agentId + '/config'
       $emit(this, 'behavior', `download_yml`)
-    },
+    }
   },
-  emits: ['behavior'],
+  emits: ['behavior']
 }
 </script>
 

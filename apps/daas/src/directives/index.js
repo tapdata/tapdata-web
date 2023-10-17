@@ -9,7 +9,7 @@ window.$vueApp.directive('readonlybtn', {
       el.remove()
       vnode.child && vnode.child.$destroy()
     }
-  },
+  }
 })
 window.$vueApp.config.globalProperties.$disabledReadonlyUserBtn = function () {
   return false
@@ -18,10 +18,7 @@ window.$vueApp.config.globalProperties.$disabledReadonlyUserBtn = function () {
 window.$vueApp.config.globalProperties.$has = function (code) {
   return hasPermissionByCode(code)
 }
-window.$vueApp.config.globalProperties.$disabledByPermission = function (
-  code,
-  id
-) {
+window.$vueApp.config.globalProperties.$disabledByPermission = function (code, id) {
   return permissionBtnDisable(code, id)
 }
 
@@ -44,9 +41,7 @@ export function hasPermissionByCode(code) {
 
   // 	}
   // }
-  let pList = permissions.filter(
-    (resource) => _codes.indexOf(resource.code) !== -1
-  )
+  let pList = permissions.filter(resource => _codes.indexOf(resource.code) !== -1)
   if (pList && pList.length > 0) {
     return true
   }

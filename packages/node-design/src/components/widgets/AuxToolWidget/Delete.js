@@ -1,11 +1,11 @@
 import { IconWidget } from '../IconWidget'
 import { useOperation, usePrefix } from '../../../hooks'
-import { Button } from 'element-ui'
+import { ElButton as Button } from 'element-plus'
 import { defineComponent } from 'vue-demi'
 
 export const Delete = defineComponent({
   props: ['node'],
-  setup: (props) => {
+  setup: props => {
     const node = props.node
     const operationRef = useOperation()
     const prefix = usePrefix('aux-copy')
@@ -24,5 +24,5 @@ export const Delete = defineComponent({
         </Button>
       )
     }
-  },
+  }
 })

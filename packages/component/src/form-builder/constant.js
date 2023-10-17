@@ -7,5 +7,5 @@ export default {
   field: 'FbSelect',
   array: 'FbArray',
   group: 'FbGroup',
-  nest: 'FbNest',
+  nest: 'FbNest'
 }

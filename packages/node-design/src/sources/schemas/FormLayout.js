@@ -4,28 +4,28 @@ export const FormLayout = {
     labelCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'InputNumber',
+      'x-component': 'InputNumber'
     },
     wrapperCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'InputNumber',
+      'x-component': 'InputNumber'
     },
     labelWidth: {
       'x-decorator': 'FormItem',
-      'x-component': 'SizeInput',
+      'x-component': 'SizeInput'
     },
     wrapperWidth: {
       'x-decorator': 'FormItem',
-      'x-component': 'SizeInput',
+      'x-component': 'SizeInput'
     },
     colon: {
       type: 'boolean',
       'x-decorator': 'FormItem',
       'x-component': 'Switch',
       'x-component-props': {
-        defaultChecked: true,
-      },
+        defaultChecked: true
+      }
     },
     feedbackLayout: {
       type: 'string',
@@ -33,8 +33,8 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'loose',
-      },
+        defaultValue: 'loose'
+      }
     },
     size: {
       type: 'string',
@@ -42,8 +42,8 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'default',
-      },
+        defaultValue: 'default'
+      }
     },
     layout: {
       type: 'string',
@@ -51,8 +51,8 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'horizontal',
-      },
+        defaultValue: 'horizontal'
+      }
     },
     tooltipLayout: {
       type: 'string',
@@ -60,8 +60,8 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'icon',
-      },
+        defaultValue: 'icon'
+      }
     },
     labelAlign: {
       type: 'string',
@@ -69,8 +69,8 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'right',
-      },
+        defaultValue: 'right'
+      }
     },
     wrapperAlign: {
       type: 'string',
@@ -78,45 +78,45 @@ export const FormLayout = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'left',
-      },
+        defaultValue: 'left'
+      }
     },
     labelWrap: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
+      'x-component': 'Switch'
     },
     wrapperWrap: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
+      'x-component': 'Switch'
     },
 
     fullness: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
+      'x-component': 'Switch'
     },
     inset: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch',
+      'x-component': 'Switch'
     },
     shallow: {
       type: 'boolean',
       'x-decorator': 'FormItem',
       'x-component': 'Switch',
       'x-component-props': {
-        defaultChecked: true,
-      },
+        defaultChecked: true
+      }
     },
     bordered: {
       type: 'boolean',
       'x-decorator': 'FormItem',
       'x-component': 'Switch',
       'x-component-props': {
-        defaultChecked: true,
-      },
-    },
-  },
+        defaultChecked: true
+      }
+    }
+  }
 }

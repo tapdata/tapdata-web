@@ -7,18 +7,18 @@
     </div>
     <div class="search-bar px-6">
       <!-- <el-date-picker
-            class="search-item"
-            popper-class="user-notification-data-picker"
-            style="width: 320px"
-            size="mini"
-            v-model="search.range"
-            type="datetimerange"
-            range-separator="-"
-            :start-placeholder="$t('dataFlow_startTime')"
-            :end-placeholder="$t('dataFlow_endTime')"
-            @change="getData(1)"
-          >
-          </el-date-picker> -->
+              class="search-item"
+              popper-class="user-notification-data-picker"
+              style="width: 320px"
+              size="mini"
+              v-model="search.range"
+              type="datetimerange"
+              range-separator="-"
+              :start-placeholder="$t('dataFlow_startTime')"
+              :end-placeholder="$t('dataFlow_endTime')"
+              @change="getData(1)"
+            >
+            </el-date-picker> -->
       <DatetimeRange
         v-model:value="search.range"
         value-format="timestamp"
@@ -41,21 +41,21 @@
         clearable
         class="search-item pl-4"
         size="small"
-        v-model:value="search.keyword"
+        v-model="search.keyword"
         :placeholder="$t('notification_placeholder_keyword')"
         @change="getData(1)"
       ></el-input>
       <!-- <el-select
-            clearable
-            v-if="isAdmin"
-            class="search-item"
-            size="mini"
-            v-model="search.userId"
-            :placeholder="$t('notification_placeholder_user')"
-            @change="getData(1)"
-          >
-            <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
-          </el-select> -->
+              clearable
+              v-if="isAdmin"
+              class="search-item"
+              size="mini"
+              v-model="search.userId"
+              :placeholder="$t('notification_placeholder_user')"
+              @change="getData(1)"
+            >
+              <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
+            </el-select> -->
     </div>
     <ul class="list pl-6">
       <li class="item" v-for="record in list" :key="record._id">
@@ -90,7 +90,7 @@ export default {
   components: {
     UserOperation,
     SelectList,
-    DatetimeRange,
+    DatetimeRange
   },
   data() {
     return {
@@ -99,15 +99,15 @@ export default {
       search: {
         keyword: '',
         range: [],
-        userId: '',
+        userId: ''
       },
       page: {
         index: 1,
         size: 20,
-        total: 0,
+        total: 0
       },
       list: [],
-      userOptions: [],
+      userOptions: []
     }
   },
   created() {
@@ -118,12 +118,12 @@ export default {
   },
   methods: {
     getUsers() {
-      usersApi.get().then((data) => {
+      usersApi.get().then(data => {
         let items = data?.items || []
-        this.userOptions = items.map((item) => {
+        this.userOptions = items.map(item => {
           return {
             label: item.username,
-            value: item.username,
+            value: item.username
           }
         })
       })
@@ -135,7 +135,7 @@ export default {
       let { size, index } = this.page
       let current = pageNum || index
       let where = {
-        type: 'userOperation',
+        type: 'userOperation'
       }
       if (keyword && keyword.trim()) {
         where.parameter1 = { like: escapeRegExp(keyword), options: 'i' }
@@ -153,7 +153,7 @@ export default {
         } else if (startTime && endTime) {
           where.createTime = {
             $gt: { $date: startTime },
-            $lt: { $date: endTime },
+            $lt: { $date: endTime }
           }
         }
       }
@@ -161,29 +161,27 @@ export default {
         order: 'createTime DESC',
         limit: size,
         skip: (current - 1) * size,
-        where: where,
+        where: where
       }
 
       userLogsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           console.log(data)
           this.page.total = data?.total || 0
           this.page.index = current
-          this.list = (data?.items || []).map((item) => {
-            item.createTimeFmt = dayjs(item.createTime).format(
-              'YYYY-MM-DD HH:mm:ss'
-            )
+          this.list = (data?.items || []).map(item => {
+            item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
             return item
           })
         })
         .finally(() => {
           this.loading = false
         })
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -77,39 +77,39 @@ export function calcTimeUnit(val, fix = 2, op) {
     {
       separator: ' ',
       autoHideMs: false,
-      digits: 2,
+      digits: 2
     },
     op || {}
   )
   const units = [
     {
       unit: 'ms',
-      interval: 1000,
+      interval: 1000
     },
     {
       unit: 's',
-      interval: 60,
+      interval: 60
     },
     {
       unit: 'min',
-      interval: 60,
+      interval: 60
     },
     {
       unit: 'h',
-      interval: 24,
+      interval: 24
     },
     {
       unit: 'd',
-      interval: 30,
+      interval: 30
     },
     {
       unit: 'M',
-      interval: 12,
+      interval: 12
     },
     {
       unit: 'Y',
-      interval: 99999,
-    },
+      interval: 99999
+    }
   ]
   let results = []
   if (typeof val !== 'number' || val === 0) {
@@ -123,11 +123,11 @@ export function calcTimeUnit(val, fix = 2, op) {
   for (let i = 0, tmpTs = ts; i < units.length && tmpTs >= 0; i++) {
     results.unshift({
       value: tmpTs % units[i].interval,
-      util: units[i].unit,
+      util: units[i].unit
     })
     tmpTs = parseInt(tmpTs / units[i].interval)
   }
-  const findMsIndex = results.findIndex((t) => t.util === 'ms')
+  const findMsIndex = results.findIndex(t => t.util === 'ms')
   if (findMsIndex >= 1) {
     const s = results[findMsIndex - 1]
     // 如果 >10s 不需要ms
@@ -136,7 +136,7 @@ export function calcTimeUnit(val, fix = 2, op) {
       results.pop()
     }
   }
-  results = results.filter((t) => t.value)
+  results = results.filter(t => t.value)
   if (fix > 0) {
     results = results.slice(0, fix)
   }

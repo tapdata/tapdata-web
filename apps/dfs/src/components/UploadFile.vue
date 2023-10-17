@@ -1,12 +1,6 @@
 <template>
   <div class="upload-file">
-    <input
-      ref="file"
-      type="file"
-      class="visually-hidden opacity-0"
-      @change="upload($event)"
-      :accept="accept"
-    />
+    <input ref="file" type="file" class="visually-hidden opacity-0" @change="upload($event)" :accept="accept" />
     <div @click="clickItem"><slot></slot></div>
   </div>
 </template>
@@ -16,16 +10,16 @@ export default {
   name: 'UploadFile',
   props: {
     accept: {
-      type: String,
+      type: String
     },
     upload: {
-      type: Function,
-    },
+      type: Function
+    }
   },
   methods: {
     clickItem() {
       this.$refs.file.click()
-    },
-  },
+    }
+  }
 }
 </script>

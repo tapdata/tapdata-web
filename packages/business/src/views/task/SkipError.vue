@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    :title="$t('packages_business_dataFlow_skipError_title')"
-    v-model:visible="dialogVisible"
-    width="60%"
-  >
+  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" v-model="dialogVisible" width="60%">
     <div class="skip-tip">
       {{ $t('packages_business_dataFlow_skipError_tip') }}
     </div>
@@ -16,25 +12,15 @@
     </div>
     <ul class="error-list">
       <span class="check-all"
-        ><el-checkbox
-          :indeterminate="isIndeterminate"
-          v-model:value="checkAll"
-          @change="handleCheckAllChange"
-          >{{ $t('packages_business_dataFlow_selectAll') }}</el-checkbox
-        ></span
+        ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
+          $t('packages_business_dataFlow_selectAll')
+        }}</el-checkbox></span
       >
-      <el-checkbox-group
-        v-model:value="checkedData"
-        @change="handleCheckedDataChange"
-        class="list-box"
-      >
+      <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
         <li v-for="(item, index) in errorEvents" :key="item.index">
           <el-checkbox :label="index">
             <div class="error-content">
-              <span class="error-msg"
-                ><span style="color: red">[ERROR]</span>
-                {{ item.message }}</span
-              >
+              <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
             </div>
           </el-checkbox>
         </li>
@@ -46,9 +32,7 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">{{
-          $t('public_button_cancel')
-        }}</el-button>
+        <el-button @click="dialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
         <el-button type="primary" size="mini" @click="skipErrorData">{{
           $t('packages_business_dataFlow_skipError_startJob')
         }}</el-button>
@@ -70,7 +54,7 @@ export default {
       checkAll: false,
       checkedData: [],
       task: {},
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
     }
   },
   methods: {
@@ -79,20 +63,12 @@ export default {
       if (!task.status || task.status === 'error') {
         let data = await dataFlowsApi.get([task.id])
         data = data || {}
-        if (
-          data.status === 'error' &&
-          data.setting.stopOnError &&
-          data.errorEvents &&
-          data.errorEvents.length > 0
-        ) {
+        if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
           this.dialogVisible = true
           this.task = data
           errorEvents = data.errorEvents
           this.errorEvents = errorEvents
-          this.errorTotal = this.errorTotal.replace(
-            'XX',
-            this.errorEvents.length
-          )
+          this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
           return
         }
       }
@@ -110,14 +86,13 @@ export default {
     handleCheckedDataChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
-      this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.errorEvents.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.errorEvents.length
       this.checkedData = value
     },
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
-        this.checkedData.forEach((item) => {
+        this.checkedData.forEach(item => {
           data.push(this.errorEvents[item])
         })
         this.checkedData = data
@@ -126,9 +101,9 @@ export default {
       }
       $emit(this, 'skip', this.task.id, this.checkedData)
       this.dialogVisible = false
-    },
+    }
   },
-  emits: ['skip'],
+  emits: ['skip']
 }
 </script>
 

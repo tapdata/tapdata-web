@@ -10,7 +10,7 @@ export class AbstractViewportEvent {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
       view: window,
-      target: window,
+      target: window
     }
   }
 }

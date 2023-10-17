@@ -9,11 +9,7 @@
       <div class="text-style mt-6">
         {{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}
       </div>
-      <ElRadioGroup
-        v-model:value="downLoadType"
-        @input="chooseDownLoadType"
-        class="flex gap-4 mt-4 mb-4"
-      >
+      <ElRadioGroup v-model:value="downLoadType" @input="chooseDownLoadType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in downType"
           :key="index"
@@ -25,11 +21,8 @@
         </ElRadio>
       </ElRadioGroup>
       <template v-if="downLoadType === 'windows'">
-        <el-collapse v-model:value="activeName">
-          <el-collapse-item
-            :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')"
-            name="1"
-          >
+        <el-collapse v-model="activeName">
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
             <ul class="pt-5 ul-style">
               <li>
                 <div class="my-5 text-style">
@@ -37,18 +30,12 @@
                 </div>
               </li>
               <li class="flex align-items-center">
-                <span class="mr-2">{{
-                  $t('agent_deploy_start_install_windows_first')
-                }}</span>
+                <span class="mr-2">{{ $t('agent_deploy_start_install_windows_first') }}</span>
                 <ElLink type="primary" @click="handleDownLoad">{{
                   $t('agent_deploy_start_install_windows_first_download')
                 }}</ElLink>
-                <span class="mx-2">{{
-                  $t('dfs_agent_download_fastdownload_he')
-                }}</span>
-                <ElLink type="primary" @click="handleDownLoadApplication"
-                  >application.yml
-                </ElLink>
+                <span class="mx-2">{{ $t('dfs_agent_download_fastdownload_he') }}</span>
+                <ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
               </li>
               <li class="mt-3">
                 {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
@@ -58,10 +45,7 @@
               </li>
             </ul>
           </el-collapse-item>
-          <el-collapse-item
-            :title="$t('dfs_agent_download_fastdownload_fuzhiTok')"
-            name="2"
-          >
+          <el-collapse-item :title="$t('dfs_agent_download_fastdownload_fuzhiTok')" name="2">
             <ul class="pt-5 ul-style">
               <!--          <li class="flex">-->
               <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->
@@ -116,15 +100,8 @@
                   </el-button>
                 </ElTooltip>
               </li>
-              <li
-                class="box title-text mt-2"
-                :class="{ 'overflow-hidden': showAllCode }"
-              >
-                <span
-                  class="link-line"
-                  :class="{ 'hidden-all-code': showAllCode }"
-                  >{{ windowsLink }}</span
-                >
+              <li class="box title-text mt-2" :class="{ 'overflow-hidden': showAllCode }">
+                <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ windowsLink }}</span>
               </li>
               <div
                 class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
@@ -132,9 +109,7 @@
                 @click="handleShowAllCode(false)"
               >
                 <VIcon class="mr-2">arrow-down-fill</VIcon
-                ><span>{{
-                  $t('dfs_agent_download_fastdownload_xianshiwanzhengming')
-                }}</span>
+                ><span>{{ $t('dfs_agent_download_fastdownload_xianshiwanzhengming') }}</span>
               </div>
               <div
                 class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
@@ -145,9 +120,7 @@
                 >{{ $t('dfs_agent_download_fastdownload_yincangwanzhengming') }}
               </div>
               <li class="mt-3">
-                <span>{{
-                  $t('agent_deploy_start_install_windows_fifth')
-                }}</span>
+                <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
               </li>
             </ul>
           </el-collapse-item>
@@ -193,15 +166,8 @@
               </el-button>
             </ElTooltip>
           </li>
-          <li
-            class="li-show-code box title-text my-2"
-            :class="{ 'overflow-hidden': showAllCode }"
-          >
-            <span
-              class="link-line"
-              :class="{ 'hidden-all-code': showAllCode }"
-              >{{ linuxLink }}</span
-            >
+          <li class="li-show-code box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ linuxLink }}</span>
           </li>
           <div
             class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
@@ -209,9 +175,7 @@
             @click="handleShowAllCode(false)"
           >
             <VIcon class="mr-2">arrow-down-fill</VIcon
-            ><span>{{
-              $t('dfs_agent_download_fastdownload_xianshiwanzhengming')
-            }}</span>
+            ><span>{{ $t('dfs_agent_download_fastdownload_xianshiwanzhengming') }}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
@@ -227,9 +191,7 @@
           </li>
           <li class="mt-2">
             <span>{{ $t('agent_deploy_start_install_linux_third') }}</span>
-            <ElLink type="primary" @click="linuxToAgent">{{
-              $t('agent_deploy_link_agent_operation')
-            }}</ElLink>
+            <ElLink type="primary" @click="linuxToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
@@ -245,9 +207,7 @@
             <ElLink type="primary" @click="dockerToInstall">{{
               $t('agent_deploy_before_prepare_docker_install_link')
             }}</ElLink>
-            <span>{{
-              $t('agent_deploy_before_prepare_docker_second_install')
-            }}</span>
+            <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
           </li>
           <li>
             <div class="my-5 text-style">
@@ -276,15 +236,8 @@
               </el-button>
             </ElTooltip>
           </li>
-          <li
-            class="box title-text my-2"
-            :class="{ 'overflow-hidden': showAllCode }"
-          >
-            <span
-              class="link-line"
-              :class="{ 'hidden-all-code': showAllCode }"
-              >{{ dockerLink }}</span
-            >
+          <li class="box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ dockerLink }}</span>
           </li>
           <div
             class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
@@ -292,9 +245,7 @@
             @click="handleShowAllCode(false)"
           >
             <VIcon class="mr-2">arrow-down-fill</VIcon
-            ><span>{{
-              $t('dfs_agent_download_fastdownload_xianshiwanzhengming')
-            }}</span>
+            ><span>{{ $t('dfs_agent_download_fastdownload_xianshiwanzhengming') }}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
@@ -310,9 +261,7 @@
           </li>
           <li class="flex">
             <span>{{ $t('agent_deploy_start_install_docker_third') }}</span>
-            <ElLink type="primary" @click="dockerToAgent">{{
-              $t('agent_deploy_link_agent_operation')
-            }}</ElLink>
+            <ElLink type="primary" @click="dockerToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
             <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
           </li>
         </ul>
@@ -320,9 +269,7 @@
       <template v-if="downLoadType === 'AliComputenest'">
         <ul class="ul-style">
           <li>
-            <span>{{
-              $t('dfs_agent_download_fastdownload_jisuanchaoCo')
-            }}</span>
+            <span>{{ $t('dfs_agent_download_fastdownload_jisuanchaoCo') }}</span>
           </li>
           <li>
             <div class="my-5 text-style">
@@ -342,9 +289,7 @@
             <div class="my-4">
               <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
                 ><div>
-                  {{
-                    $t('dfs_agent_download_agentdownloadmodal_santianshiyong')
-                  }}
+                  {{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}
                 </div></el-link
               >
               <el-link :href="url" target="_blank" class="url-btn"
@@ -405,15 +350,8 @@
               </ElTooltip>
             </div>
           </li>
-          <li
-            class="box title-text my-2"
-            :class="{ 'overflow-hidden': showAllCode }"
-          >
-            <span
-              class="link-line"
-              :class="{ 'hidden-all-code': showAllCode }"
-              >{{ token }}</span
-            >
+          <li class="box title-text my-2" :class="{ 'overflow-hidden': showAllCode }">
+            <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ token }}</span>
           </li>
           <div
             class="down-show-code text-center cursor-pointer color-primary bg-white mt-2 pb-2"
@@ -421,9 +359,7 @@
             @click="handleShowAllCode(false)"
           >
             <VIcon class="mr-2">arrow-down-fill</VIcon
-            ><span>{{
-              $t('dfs_agent_download_fastdownload_xianshiwanzhengming')
-            }}</span>
+            ><span>{{ $t('dfs_agent_download_fastdownload_xianshiwanzhengming') }}</span>
           </div>
           <div
             class="down-show-code text-center cursor-pointer bg-white mt-2 pb-2"
@@ -449,9 +385,7 @@
       </template>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">{{
-        $t('public_status_complete')
-      }}</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('public_status_complete') }}</ElButton>
     </footer>
   </section>
 </template>
@@ -473,8 +407,8 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest',
-        },
+          value: 'AliComputenest'
+        }
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -489,7 +423,7 @@ export default {
       agentId: '',
       timer: null,
       activeName: '1',
-      showAllCode: true,
+      showAllCode: true
     }
   },
   created() {
@@ -501,7 +435,7 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' },
+        { name: 'Windows (64 bit)', value: 'windows' }
       ]
     }
     this.getInstance()
@@ -515,7 +449,7 @@ export default {
     getInstance() {
       this.timer = null
       clearTimeout(this.timer)
-      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then((data) => {
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
         if (data?.status !== 'Creating') {
           this.timer = null
           clearTimeout(this.timer)
@@ -530,36 +464,32 @@ export default {
     },
     open(status) {
       this.$confirm(
-        status !== 'Running'
-          ? this.$t('dfs_agent_down_tishi')
-          : this.$t('dfs_agent_down_tishi_running'),
+        status !== 'Running' ? this.$t('dfs_agent_down_tishi') : this.$t('dfs_agent_down_tishi_running'),
         this.$t('task_mapping_dialog_hint'),
         {
           confirmButtonText: this.$t('dfs_agent_down_goback'),
           type: 'warning',
           showClose: false,
-          showCancelButton: false,
+          showCancelButton: false
         }
       ).then(() => {
         this.$router.push('/instance')
       })
     },
     getUrl() {
-      this.$axios
-        .get('api/tcm/productRelease/deploy/' + this.$route.query?.id)
-        .then(async (data) => {
-          this.downloadUrl = data.downloadUrl || ''
-          this.token = data.token || ''
-          this.version = data.version || ''
-          let links = data.links || []
-          links.forEach((el) => {
-            if (el?.os === 'AliComputenest') {
-              this.trialUrl = el?.trialUrl
-              this.url = el?.url
-            }
-            this[el.os + 'Link'] = el.command
-          })
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
+        this.downloadUrl = data.downloadUrl || ''
+        this.token = data.token || ''
+        this.version = data.version || ''
+        let links = data.links || []
+        links.forEach(el => {
+          if (el?.os === 'AliComputenest') {
+            this.trialUrl = el?.trialUrl
+            this.url = el?.url
+          }
+          this[el.os + 'Link'] = el.command
         })
+      })
     },
     // windows下载
     handleDownLoad() {
@@ -568,12 +498,7 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      window.location =
-        location.origin +
-        location.pathname +
-        'api/tcm/agent/' +
-        this.$route.query?.id +
-        '/config'
+      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.$route.query?.id + '/config'
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -614,19 +539,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open(
-        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
-        '_blank'
-      )
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open(
-        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
-        '_blank'
-      )
+      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
     },
     //在线小助手
     hideCustomTip() {
@@ -642,10 +561,9 @@ export default {
     loadChat() {
       let $zoho = $zoho || {}
       $zoho.salesiq = $zoho.salesiq || {
-        widgetcode:
-          '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {},
+        ready: function () {}
       }
       window.$zoho = $zoho
       let d = document
@@ -664,7 +582,7 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email,
+          tapdata_email: user.email
         })
       }
     },
@@ -673,11 +591,11 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest',
+        AliComputenest: 'copyTokenInAliComputenest'
       }
       this.buried(MAP[this.downLoadType])
-    },
-  },
+    }
+  }
 }
 </script>
 

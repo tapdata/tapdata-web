@@ -9,44 +9,22 @@
     :close-on-click-modal="false"
     @close="handleClose"
   >
-    <ElForm
-      ref="form"
-      label-position="left"
-      label-width="150px"
-      :model="form"
-      class="my-n6"
-    >
+    <ElForm ref="form" label-position="left" label-width="150px" :model="form" class="my-n6">
       <ElFormItem
         size="mini"
-        :label="
-          $t(
-            'packages_business_permissionse_settings_create_xuanzeshouquanjiao'
-          )
-        "
+        :label="$t('packages_business_permissionse_settings_create_xuanzeshouquanjiao')"
         prop="roleId"
       >
         <ElSelect v-model:value="form.roleId" size="mini" @change="getData">
-          <ElOption
-            v-for="item in roleList"
-            :label="item.label"
-            :value="item.value"
-            :key="item.value"
-          ></ElOption>
+          <ElOption v-for="item in roleList" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem
         size="mini"
-        :label="
-          $t('packages_business_permissionse_settings_create_shezhiquanxian')
-        "
+        :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')"
         prop="checked"
       >
-        <ElCheckboxGroup
-          v-model:value="form.checked"
-          size="mini"
-          class="inline-flex ml-4"
-          @change="handleChange"
-        >
+        <ElCheckboxGroup v-model:value="form.checked" size="mini" class="inline-flex ml-4" @change="handleChange">
           <ElCheckbox
             v-for="item in items"
             :label="item.value"
@@ -60,17 +38,10 @@
 
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{
-          $t('public_button_cancel')
+        <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :disabled="!form.roleId" size="mini" type="primary" :loading="saveLoading" @click="handleSave">{{
+          $t('public_button_save')
         }}</ElButton>
-        <ElButton
-          :disabled="!form.roleId"
-          size="mini"
-          type="primary"
-          :loading="saveLoading"
-          @click="handleSave"
-          >{{ $t('public_button_save') }}</ElButton
-        >
       </span>
     </template>
   </ElDialog>
@@ -87,11 +58,9 @@ export default {
     title: {
       type: String,
       default: () => {
-        return i18n.t(
-          'packages_business_permissionse_settings_create_quanxianshezhi'
-        )
-      },
-    },
+        return i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
+      }
+    }
   },
 
   data() {
@@ -100,11 +69,11 @@ export default {
       type: 'Connections',
       form: {
         checked: [],
-        roleId: '',
+        roleId: ''
       },
       roleList: [],
       dataList: [],
-      saveLoading: false,
+      saveLoading: false
     }
   },
 
@@ -114,50 +83,50 @@ export default {
         Task: [
           {
             label: i18n.t('public_button_check'),
-            value: 'View',
+            value: 'View'
           },
           {
             label: i18n.t('public_button_edit'),
-            value: 'Edit',
+            value: 'Edit'
           },
           {
             label: i18n.t('public_button_delete'),
-            value: 'Delete',
+            value: 'Delete'
           },
           {
             label: i18n.t('public_button_reset'),
-            value: 'Reset',
+            value: 'Reset'
           },
           {
             label: i18n.t('public_button_start'),
-            value: 'Start',
+            value: 'Start'
           },
           {
             label: i18n.t('public_button_stop'),
-            value: 'Stop',
-          },
-        ],
+            value: 'Stop'
+          }
+        ]
       }
 
       let result = MAP[this.type] || [
         {
           label: i18n.t('public_button_check'),
-          value: 'View',
+          value: 'View'
         },
         {
           label: i18n.t('public_button_edit'),
-          value: 'Edit',
+          value: 'Edit'
         },
         {
           label: i18n.t('public_button_delete'),
-          value: 'Delete',
-        },
+          value: 'Delete'
+        }
       ]
 
       result[0].disabled = this.form.checked.length > 1
 
       return result
-    },
+    }
   },
 
   created() {
@@ -174,9 +143,9 @@ export default {
       let params = {
         typeId: val,
         dataType: this.type,
-        dataIds: this.dataList.map((t) => t.id).join(),
+        dataIds: this.dataList.map(t => t.id).join()
       }
-      dataPermissionApi.roleActions(params).then((data) => {
+      dataPermissionApi.roleActions(params).then(data => {
         this.form.checked = data
       })
     },
@@ -184,23 +153,23 @@ export default {
     getRoleList() {
       let filter = {
         order: 'name',
-        limit: 500,
+        limit: 500
       }
       usersApi
         .role({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           this.roleList =
-            data.items?.map((t) => {
+            data.items?.map(t => {
               return {
                 label: t.name,
-                value: t.id,
+                value: t.id
               }
             }) || []
           return {
             total: data?.total || 0,
-            data: data?.items || [],
+            data: data?.items || []
           }
         })
     },
@@ -225,8 +194,8 @@ export default {
         type: 'Role',
         typeIds: [this.form.roleId],
         dataType: this.type,
-        dataIds: this.dataList.map((t) => t.id),
-        actions: this.form.checked,
+        dataIds: this.dataList.map(t => t.id),
+        actions: this.form.checked
       }
 
       this.saveLoading = true
@@ -239,11 +208,9 @@ export default {
             this.$message.warning({
               dangerouslyUseHTMLString: true,
               message:
-                i18n.t(
-                  'packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan'
-                ) +
+                i18n.t('packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan') +
                 ':<br/>' +
-                this.dataList.map((t) => t.name).join('<br/>'),
+                this.dataList.map(t => t.name).join('<br/>')
             })
             // this.$message.warning('以下数据无权限修改，将跳过保存:' + ' ' + this.dataList.map(t => t.name).join(',\n<br/>'))
           }
@@ -259,7 +226,7 @@ export default {
       if (!checked.includes('View') && checked.length) {
         checked.unshift('View')
       }
-    },
-  },
+    }
+  }
 }
 </script>

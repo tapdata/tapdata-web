@@ -5,19 +5,13 @@
         <ElInput
           v-model:value="searchTable"
           size="mini"
-          :placeholder="
-            $t('packages_form_field_mapping_list_qingshurubiaoming')
-          "
+          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div
-          v-loading="navLoading"
-          ref="navList"
-          class="nav-list flex-fill font-color-normal"
-        >
+        <div v-loading="navLoading" ref="navList" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
               v-for="(item, index) in navList"
@@ -27,18 +21,11 @@
               @click="handleSelect(index)"
             >
               <div class="task-form-text-box pl-4 inline-block">
-                <OverflowTooltip
-                  class="w-100 text-truncate target"
-                  :text="item.name"
-                  placement="right"
-                />
+                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
             </li>
           </ul>
-          <div
-            v-else
-            class="task-form-left__ul flex flex-column align-items-center"
-          >
+          <div v-else class="task-form-left__ul flex flex-column align-items-center">
             <VEmpty></VEmpty>
           </div>
         </div>
@@ -53,13 +40,9 @@
           @current-change="loadData"
         >
           <div class="text-center">
-            <span class="page__current" style="min-width: 22px">{{
-              page.current
-            }}</span>
+            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
             <span class="icon-color" style="min-width: 22px">/</span>
-            <span class="icon-color" style="min-width: 22px">{{
-              page.count
-            }}</span>
+            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
           </div>
         </ElPagination>
       </div>
@@ -67,9 +50,7 @@
         <div class="flex align-items-center p-2">
           <ElInput
             v-model:value="searchField"
-            :placeholder="
-              $t('packages_form_field_mapping_list_qingshuruziduan')
-            "
+            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
             size="mini"
             suffix-icon="el-icon-search"
             clearable
@@ -117,7 +98,7 @@ export default {
   props: {
     form: Object,
     isShow: Boolean,
-    readOnly: Boolean,
+    readOnly: Boolean
   },
 
   data() {
@@ -130,7 +111,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1,
+        count: 1
       },
       searchTable: '',
       searchField: '',
@@ -143,21 +124,21 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0,
+          total: 0
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0,
+          total: 0
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0,
-        },
+          total: 0
+        }
       ],
       transformExNum: 0,
-      updateExNum: 0,
+      updateExNum: 0
     }
   },
 
@@ -166,7 +147,7 @@ export default {
     ...mapGetters('dataflow', ['activeNode', 'stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
+      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
     },
 
     readonly() {
@@ -174,15 +155,14 @@ export default {
     },
 
     isErrorSelect() {
-      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } =
-        this.selected || {}
+      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
     },
 
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    },
+    }
   },
 
   watch: {
@@ -216,7 +196,7 @@ export default {
         this.page.size = Math.max(10, Math.ceil(height / 41))
         this.loadData()
       }
-    },
+    }
   },
 
   methods: {
@@ -224,26 +204,22 @@ export default {
       this.navLoading = true
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
       this.$refs.list.setRules(this.fieldChangeRules)
-      this.updateConditionFieldMap = cloneDeep(
-        this.form.getValuesIn('updateConditionFieldMap') || {}
-      )
+      this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
       const { size, current } = this.page
       const res = await this.getData({
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification,
+        filterType: this.activeClassification
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map((t) => {
+      this.navList = items.map(t => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach((el) => {
-          const { dataTypes = [], lastMatchedDataType = '' } =
-            findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes =
-            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+        fields.forEach(el => {
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
@@ -251,18 +227,16 @@ export default {
             findPossibleDataTypes
           )
         })
-        t.matchedDataTypeLevel = fields.some(
-          (f) => f.matchedDataTypeLevel === 'error'
-        )
+        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
           ? 'error'
-          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
+          : fields.some(f => f.matchedDataTypeLevel === 'warning')
           ? 'warning'
           : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach((el) => {
+      this.tableClassification.forEach(el => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
@@ -287,9 +261,7 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter((t) =>
-          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase())
-        )
+        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
@@ -301,14 +273,10 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(
-        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
-        '',
-        {
-          type: 'warning',
-          closeOnClickModal: false,
-        }
-      ).then((resFlag) => {
+      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -345,17 +313,14 @@ export default {
 
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
-      this.form.setValuesIn(
-        'updateConditionFieldMap',
-        cloneDeep(this.updateConditionFieldMap)
-      )
+      this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
     },
 
     handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
-    },
-  },
+    }
+  }
 }
 </script>
 

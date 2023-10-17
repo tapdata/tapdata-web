@@ -21,11 +21,11 @@ function makeWatcher(property) {
 export default Vue.extend({
   data: () => ({
     attrs$: {},
-    listeners$: {},
+    listeners$: {}
   }),
 
   created() {
     this.$watch('$attrs', makeWatcher('attrs$'), { immediate: true })
     this.$watch('$listeners', makeWatcher('listeners$'), { immediate: true })
-  },
+  }
 })

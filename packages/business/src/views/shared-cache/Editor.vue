@@ -1,10 +1,6 @@
 <template>
   <ElDialog
-    :title="
-      taskId
-        ? $t('packages_business_shared_cache_edit')
-        : $t('packages_business_shared_cache_create')
-    "
+    :title="taskId ? $t('packages_business_shared_cache_edit') : $t('packages_business_shared_cache_create')"
     :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
@@ -13,25 +9,13 @@
     custom-class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
-    <Form
-      ref="form"
-      :task-id="taskId"
-      v-model:loading="loading"
-      class="mt-n6"
-      @success="handleSuccess"
-    ></Form>
+    <Form ref="form" :task-id="taskId" v-model:loading="loading" class="mt-n6" @success="handleSuccess"></Form>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{
-          $t('public_button_cancel')
+        <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :loading="loading" size="mini" type="primary" @click="handleSave">{{
+          $t('public_button_save')
         }}</ElButton>
-        <ElButton
-          :loading="loading"
-          size="mini"
-          type="primary"
-          @click="handleSave"
-          >{{ $t('public_button_save') }}</ElButton
-        >
       </span>
     </template>
   </ElDialog>
@@ -48,7 +32,7 @@ export default {
     return {
       visible: false,
       taskId: '',
-      loading: false,
+      loading: false
     }
   },
   methods: {
@@ -75,8 +59,8 @@ export default {
     handleSuccess() {
       $emit(this, 'success')
       this.handleClose()
-    },
+    }
   },
-  emits: ['success'],
+  emits: ['success']
 }
 </script>

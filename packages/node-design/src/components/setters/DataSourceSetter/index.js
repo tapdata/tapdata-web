@@ -1,4 +1,4 @@
-import { Dialog, Button } from 'element-ui'
+import { ElDialog as Dialog, ElButton as Button } from 'element-plus'
 import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
@@ -15,32 +15,27 @@ export const DataSourceSetter = observer(
     props: {
       value: {
         type: Array,
-        default: () => [],
+        default: () => []
       },
       allowTree: {
         type: Boolean,
-        default: true,
+        default: true
       },
       allowExtendOption: {
         type: Boolean,
-        default: true,
+        default: true
       },
       defaultOptionValue: {},
-      effects: {},
+      effects: {}
     },
     setup: (props, { attrs, emit }) => {
-      const {
-        allowTree = true,
-        allowExtendOption = true,
-        defaultOptionValue,
-        effects = () => {},
-      } = props
+      const { allowTree = true, allowExtendOption = true, defaultOptionValue, effects = () => {} } = props
       const theme = useTheme()
       const prefix = usePrefix('data-source-setter')
       const modalVisible = ref(false)
       const treeDataSource = observable({
         dataSource: transformValueToData(props.value),
-        selectedKey: '',
+        selectedKey: ''
       })
 
       watch(
@@ -79,11 +74,7 @@ export const DataSourceSetter = observer(
             <span slot="title">
               <TextWidget token="SettingComponents.DataSourceSetter.configureDataSource" />
             </span>
-            <div
-              class={`${prefix} ${attrs.class} ${prefix + '-' + theme} ${
-                prefix + '-layout'
-              }`}
-            >
+            <div class={`${prefix} ${attrs.class} ${prefix + '-' + theme} ${prefix + '-layout'}`}>
               <div class={`${prefix + '-layout-item left'}`}>
                 <TreePanel
                   defaultOptionValue={defaultOptionValue}
@@ -105,10 +96,7 @@ export const DataSourceSetter = observer(
               <el-button
                 type="primary"
                 onClick={() => {
-                  emit(
-                    'change',
-                    transformDataToValue(treeDataSource.dataSource)
-                  )
+                  emit('change', transformDataToValue(treeDataSource.dataSource))
                   closeModal()
                 }}
               >
@@ -118,6 +106,6 @@ export const DataSourceSetter = observer(
           </Dialog>
         </FragmentComponent>
       )
-    },
+    }
   })
 )

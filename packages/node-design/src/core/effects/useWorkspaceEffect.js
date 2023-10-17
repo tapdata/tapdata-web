@@ -1,6 +1,6 @@
 import { SelectNodeEvent } from '../events'
 
-export const useWorkspaceEffect = (engine) => {
+export const useWorkspaceEffect = engine => {
   engine.subscribeWith(
     [
       'append:node',
@@ -14,16 +14,16 @@ export const useWorkspaceEffect = (engine) => {
       'select:node',
       'update:children',
       'wrap:node',
-      'update:node:props',
+      'update:node:props'
     ],
-    (event) => {
+    event => {
       if (event.context?.workbench) {
         engine.workbench.setActiveWorkspace(event.context.workspace)
       }
     }
   )
-  engine.subscribeTo(SelectNodeEvent, (event) => {
-    engine.workbench.eachWorkspace((workspace) => {
+  engine.subscribeTo(SelectNodeEvent, event => {
+    engine.workbench.eachWorkspace(workspace => {
       if (workspace !== event.context.workspace) {
         workspace.operation.selection.clear()
       }

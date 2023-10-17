@@ -2,39 +2,22 @@
   <div class="system-notification" v-loading="loading">
     <div v-if="isDaas" class="notification-head pt-8 pb-4 px-6">
       <div class="title font-color-dark fs-7">
-        {{
-          $t(
-            'packages_business_setting_notification_alarm_notification_gaojingtongzhi'
-          )
-        }}
+        {{ $t('packages_business_setting_notification_alarm_notification_gaojingtongzhi') }}
       </div>
     </div>
 
-    <el-tabs v-model:value="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
         <ElButton type="primary" size="mini" @click="handlePageRead()">{{
           $t('packages_business_notify_mask_read')
         }}</ElButton>
-        <ElButton size="mini" @click="handleAllRead()">{{
-          $t('packages_business_notify_mask_read_all')
-        }}</ElButton>
-        <ElButton
-          id="alarm-settings"
-          size="mini"
-          v-readonlybtn="'home_notice_settings'"
-          @click="handleSetting"
-        >
+        <ElButton size="mini" @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
+        <ElButton id="alarm-settings" size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
-      <el-tab-pane
-        :label="$t('packages_business_notify_user_all_notice')"
-        name="first"
-      ></el-tab-pane>
-      <el-tab-pane
-        :label="$t('packages_business_notify_unread_notice')"
-        name="second"
-      ></el-tab-pane>
+      <el-tab-pane :label="$t('packages_business_notify_user_all_notice')" name="first"></el-tab-pane>
+      <el-tab-pane :label="$t('packages_business_notify_unread_notice')" name="second"></el-tab-pane>
     </el-tabs>
     <div class="py-2 pl-4">
       <SelectList
@@ -49,10 +32,7 @@
         @change="getData()"
       ></SelectList>
     </div>
-    <ul
-      class="cuk-list clearfix cuk-list-type-block"
-      v-if="listData && listData.length"
-    >
+    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
       <li
         class="list-item"
         :style="{ cursor: item.read ? 'default' : 'pointer' }"
@@ -63,18 +43,13 @@
         <div class="list-item-content">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
-            <span :class="['level-' + item.levelType]"
-              >【{{ item.levelLabel }}】</span
-            >
+            <span :class="['level-' + item.levelType]">【{{ item.levelLabel }}】</span>
             <span>{{ item.title }}</span>
           </div>
         </div>
       </li>
     </ul>
-    <div
-      v-else
-      class="notification-no-data flex h-100 justify-content-center align-items-center"
-    >
+    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
       <div>
         <VIcon size="140">no-notice</VIcon>
         <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
@@ -126,7 +101,7 @@ export default {
       loading: false,
       searchParams: {
         search: '',
-        msg: '',
+        msg: ''
       },
 
       currentPage: 1,
@@ -135,26 +110,26 @@ export default {
       options: [
         {
           label: this.$t('packages_business_components_alert_huifu'),
-          value: 'RECOVERY',
+          value: 'RECOVERY'
         },
         {
           label: this.$t('packages_business_shared_const_yiban'),
-          value: 'NORMAL',
+          value: 'NORMAL'
         },
         {
           label: this.$t('packages_business_shared_const_jinggao'),
-          value: 'WARNING',
+          value: 'WARNING'
         },
         {
           label: this.$t('packages_business_shared_const_yanzhong'),
-          value: 'CRITICAL',
+          value: 'CRITICAL'
         },
         {
           label: this.$t('packages_business_shared_const_jinji'),
-          value: 'EMERGENCY',
-        },
+          value: 'EMERGENCY'
+        }
       ],
-      dialogVisible: false,
+      dialogVisible: false
     }
   },
   created() {
@@ -166,7 +141,7 @@ export default {
       let where = {
         msgType: 'ALARM',
         page: this.currentPage,
-        size: this.pagesize,
+        size: this.pagesize
       }
       if (this.searchParams.search) {
         where.level = this.searchParams.search
@@ -177,9 +152,9 @@ export default {
       this.loading = true
       notificationApi
         .list(where)
-        .then((data) => {
+        .then(data => {
           let list = data?.items || []
-          this.listData = list.map((item) => {
+          this.listData = list.map(item => {
             item.levelLabel = ALARM_LEVEL_MAP[item.level].text
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             return item
@@ -205,7 +180,7 @@ export default {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
           let msg = {
-            type: 'notification',
+            type: 'notification'
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
@@ -217,16 +192,16 @@ export default {
     // 标记本页已读
     handlePageRead() {
       let ids = []
-      this.listData.map((item) => {
+      this.listData.map(item => {
         ids.push(item.id)
       })
       let id = {
-        inq: ids,
+        inq: ids
       }
 
       let data = {
         read: true,
-        id,
+        id
       }
       let read = this.read
       notificationApi.pageRead(data).then(() => {
@@ -235,7 +210,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification',
+          type: 'notification'
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -257,7 +232,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification',
+          type: 'notification'
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -280,8 +255,8 @@ export default {
           key: 'search',
           type: 'select-inner',
           items: this.options,
-          selectedWidth: '200px',
-        },
+          selectedWidth: '200px'
+        }
       ]
     },
     handleSetting() {
@@ -290,9 +265,9 @@ export default {
       } else {
         this.dialogVisible = true
       }
-    },
+    }
   },
-  emits: ['notificationUpdate'],
+  emits: ['notificationUpdate']
 }
 </script>
 

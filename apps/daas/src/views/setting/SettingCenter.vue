@@ -40,35 +40,34 @@ export default {
           icon: 'bells',
           name: this.$t('notify_setting'),
           key: 'notificationSetting',
-          size: 20,
+          size: 20
         },
         {
           icon: 'warning',
           name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
           key: 'alarmSetting',
-          size: 14,
+          size: 14
         },
         {
           icon: 'account',
           name: this.$t('account_accountSettings'),
           key: 'accountSetting',
-          size: 20,
-        },
+          size: 20
+        }
       ],
       activePanel: '',
-      authoritySetting:
-        this.$has('system_settings') && this.$has('system_settings_menu'),
+      authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu')
     }
   },
   computed: {
     breadcrumbName() {
       return this.$t(this.$route.meta?.title)
-    },
+    }
   },
   watch: {
     $route(route) {
       this.activePanel = route.name
-    },
+    }
   },
   created() {
     this.activePanel = this.$route.name
@@ -78,7 +77,7 @@ export default {
         icon: 'setting',
         name: this.$t('account_systemSetting'),
         key: 'settings',
-        size: 20,
+        size: 20
       }
       this.settingList.unshift(node)
     }
@@ -87,10 +86,10 @@ export default {
     changeName(name) {
       this.activePanel = name
       this.$router.push({
-        name,
+        name
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

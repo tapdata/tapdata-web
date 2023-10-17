@@ -142,9 +142,9 @@ export const KeyCode = {
   GraveAccent: '`',
   OpenBracket: '[',
   ClosedBracket: ']',
-  Quote: "'",
+  Quote: "'"
 }
 
-export const getKeyCodeFromEvent = (event) => {
+export const getKeyCodeFromEvent = event => {
   return event.key
 }

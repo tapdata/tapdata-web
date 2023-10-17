@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :append-to-body="true"
@@ -18,9 +18,7 @@
       </header>
       <ul class="transfer-ul">
         <li>
-          <span>{{
-            $t('dfs_agent_download_transferdialog_kaihumingcheng')
-          }}</span
+          <span>{{ $t('dfs_agent_download_transferdialog_kaihumingcheng') }}</span
           ><span class="font-color-dark fw-normal ml-1">{{
             $t('dfs_agent_download_transferdialog_shenzhentaiboshu')
           }}</span>
@@ -32,9 +30,7 @@
           }}</span>
         </li>
         <li>
-          <span>{{
-            $t('dfs_agent_download_transferdialog_huikuanzhanghao')
-          }}</span
+          <span>{{ $t('dfs_agent_download_transferdialog_huikuanzhanghao') }}</span
           ><span class="font-color-dark fw-normal ml-1">160313199</span>
         </li>
       </ul>
@@ -48,9 +44,7 @@
     <template v-slot:footer>
       <div>
         <el-button @click="close">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="close">{{
-          $t('public_button_confirm')
-        }}</el-button>
+        <el-button type="primary" @click="close">{{ $t('public_button_confirm') }}</el-button>
       </div>
     </template>
   </el-dialog>
@@ -63,18 +57,18 @@ export default {
   inject: ['buried'],
   props: {
     visible: {
-      type: Boolean,
+      type: Boolean
     },
     price: {
-      type: String,
-    },
+      type: String
+    }
   },
   methods: {
     close() {
       $emit(this, 'update:visible', false)
-    },
+    }
   },
-  emits: ['update:visible'],
+  emits: ['update:visible']
 }
 </script>
 

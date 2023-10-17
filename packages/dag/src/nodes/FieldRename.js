@@ -17,7 +17,7 @@ export class FieldRename extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
 
       tabs: {
@@ -25,14 +25,14 @@ export class FieldRename extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}',
+          formTab: '{{formTab}}'
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings'),
+              label: i18n.t('public_basic_settings')
             },
             properties: {
               name: {
@@ -40,7 +40,7 @@ export class FieldRename extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input',
+                'x-component': 'Input'
               },
               operations: {
                 type: 'array',
@@ -48,7 +48,7 @@ export class FieldRename extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'FieldRename',
                 'x-component-props': {
-                  getFields: '{{loadNodeFieldsById}}',
+                  getFields: '{{loadNodeFieldsById}}'
                 },
                 // 'x-reactions': [
                 //   '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}',
@@ -57,18 +57,18 @@ export class FieldRename extends NodeType {
                 fieldsNameTransform: {
                   type: 'string',
                   default: '',
-                  display: 'none',
-                },
+                  display: 'none'
+                }
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview',
-              },
-            },
-          },
-        },
-      },
-    },
+                'x-component': 'SchemaPreview'
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

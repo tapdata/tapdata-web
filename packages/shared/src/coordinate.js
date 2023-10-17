@@ -15,11 +15,11 @@ export const RectQuadrant = {
   Outer1: 'O1', //内部第五象限
   Outer2: 'O2', //内部第六象限
   Outer3: 'O3', //内部第七象限
-  Outer4: 'O4', //内部第八象限
+  Outer4: 'O4' //内部第八象限
 }
 
 export function isPointInRect(point, rect, sensitive = true) {
-  const boundSensor = (value) => {
+  const boundSensor = value => {
     if (!sensitive) return 0
     const sensor = value * 0.1
     if (sensor > 20) return 20
@@ -54,19 +54,11 @@ export function isRectInRect(target, source) {
 }
 
 export function isCrossRectInRect(target, source) {
-  const targetCenterPoint = new Point(
-    target.x + target.width / 2,
-    target.y + target.height / 2
-  )
-  const sourceCenterPoint = new Point(
-    source.x + source.width / 2,
-    source.y + source.height / 2
-  )
+  const targetCenterPoint = new Point(target.x + target.width / 2, target.y + target.height / 2)
+  const sourceCenterPoint = new Point(source.x + source.width / 2, source.y + source.height / 2)
   return (
-    Math.abs(targetCenterPoint.x - sourceCenterPoint.x) <=
-      target.width / 2 + source.width / 2 &&
-    Math.abs(targetCenterPoint.y - sourceCenterPoint.y) <=
-      target.height / 2 + source.height / 2
+    Math.abs(targetCenterPoint.x - sourceCenterPoint.x) <= target.width / 2 + source.width / 2 &&
+    Math.abs(targetCenterPoint.y - sourceCenterPoint.y) <= target.height / 2 + source.height / 2
   )
 }
 
@@ -109,14 +101,8 @@ export function calcQuadrantOfPonitToRect(point, rect) {
 }
 
 export function calcDistanceOfPointToRect(point, rect) {
-  let minX = Math.min(
-    Math.abs(point.x - rect.x),
-    Math.abs(point.x - (rect.x + rect.width))
-  )
-  let minY = Math.min(
-    Math.abs(point.y - rect.y),
-    Math.abs(point.y - (rect.y + rect.height))
-  )
+  let minX = Math.min(Math.abs(point.x - rect.x), Math.abs(point.x - (rect.x + rect.width)))
+  let minY = Math.min(Math.abs(point.y - rect.y), Math.abs(point.y - (rect.y + rect.height)))
   if (point.x >= rect.x && point.x <= rect.x + rect.width) {
     minX = 0
   }
@@ -139,8 +125,7 @@ export function isNearAfter(point, rect, inline = false) {
   if (inline) {
     return (
       Math.abs(point.x - rect.x) + Math.abs(point.y - rect.y) >
-      Math.abs(point.x - (rect.x + rect.width)) +
-        Math.abs(point.y - (rect.y + rect.height))
+      Math.abs(point.x - (rect.x + rect.width)) + Math.abs(point.y - (rect.y + rect.height))
     )
   }
   return Math.abs(point.y - rect.y) > Math.abs(point.y - (rect.y + rect.height))
@@ -156,7 +141,7 @@ export function calcRelativeOfPointToRect(point, rect) {
   const quadrant = calcQuadrantOfPonitToRect(point, rect)
   return {
     quadrant,
-    distance,
+    distance
   }
 }
 
@@ -167,10 +152,8 @@ export function calcBoundingRect(rects) {
   let maxBottom = -Infinity
   let minLeft = Infinity
   let maxRight = -Infinity
-  rects.forEach((item) => {
-    const rect =
-      typeof DOMRect !== 'undefined' &&
-      new DOMRect(item.x, item.y, item.width, item.height)
+  rects.forEach(item => {
+    const rect = typeof DOMRect !== 'undefined' && new DOMRect(item.x, item.y, item.width, item.height)
     if (rect.top <= minTop) {
       minTop = rect.top
     }
@@ -184,24 +167,13 @@ export function calcBoundingRect(rects) {
       maxRight = rect.right
     }
   })
-  return (
-    typeof DOMRect !== 'undefined' &&
-    new DOMRect(minLeft, minTop, maxRight - minLeft, maxBottom - minTop)
-  )
+  return typeof DOMRect !== 'undefined' && new DOMRect(minLeft, minTop, maxRight - minLeft, maxBottom - minTop)
 }
 
-export function calcRectByStartEndPoint(
-  startPoint,
-  endPoint,
-  scrollX = 0,
-  scrollY = 0
-) {
+export function calcRectByStartEndPoint(startPoint, endPoint, scrollX = 0, scrollY = 0) {
   let drawStartX = 0,
     drawStartY = 0
-  if (
-    endPoint.x + scrollX >= startPoint.x &&
-    endPoint.y + scrollY >= startPoint.y
-  ) {
+  if (endPoint.x + scrollX >= startPoint.x && endPoint.y + scrollY >= startPoint.y) {
     //4象限
     drawStartX = startPoint.x
     drawStartY = startPoint.y
@@ -214,10 +186,7 @@ export function calcRectByStartEndPoint(
         Math.abs(endPoint.y - startPoint.y + scrollY)
       )
     )
-  } else if (
-    endPoint.x + scrollX < startPoint.x &&
-    endPoint.y + scrollY < startPoint.y
-  ) {
+  } else if (endPoint.x + scrollX < startPoint.x && endPoint.y + scrollY < startPoint.y) {
     //1象限
     drawStartX = endPoint.x
     drawStartY = endPoint.y
@@ -230,10 +199,7 @@ export function calcRectByStartEndPoint(
         Math.abs(endPoint.y - startPoint.y) - scrollY
       )
     )
-  } else if (
-    endPoint.x + scrollX < startPoint.x &&
-    endPoint.y + scrollY >= startPoint.y
-  ) {
+  } else if (endPoint.x + scrollX < startPoint.x && endPoint.y + scrollY >= startPoint.y) {
     //3象限
     drawStartX = endPoint.x
     drawStartY = startPoint.y

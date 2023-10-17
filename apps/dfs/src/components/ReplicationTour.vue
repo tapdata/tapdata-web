@@ -15,9 +15,7 @@
       </template>
 
       <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">
-          Welcome to Tapdata Cloud.
-        </h1>
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
         <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
 
         <p class="text-primary fw-sub my-2">
@@ -28,9 +26,7 @@
 
       <template v-slot:footer>
         <div class="text-center">
-          <el-button @click="$emit('start')" type="primary">{{
-            $t('dfs_replication_tour_dialog_start')
-          }}</el-button>
+          <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
         </div>
       </template>
     </template>
@@ -48,9 +44,7 @@
 
       <template v-slot:footer>
         <div class="text-center">
-          <el-button @click="$emit('finish')" type="primary">{{
-            $t('dfs_replication_tour_dialog_finish')
-          }}</el-button>
+          <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
         </div>
       </template>
     </template>
@@ -67,11 +61,11 @@ export default {
   name: 'ReplicationTour',
   props: {
     value: Boolean,
-    finish: Boolean,
+    finish: Boolean
   },
   data() {
     return {
-      visible: this.value,
+      visible: this.value
     }
   },
   computed: {
@@ -80,7 +74,7 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
-    },
+    }
   },
   watch: {
     visible(v) {
@@ -89,7 +83,7 @@ export default {
 
     value(v) {
       this.visible = v
-    },
+    }
   },
   methods: {
     cancel() {
@@ -115,8 +109,8 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe'),
-          },
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
+          }
         })
 
         const unwatch = this.$watch('$route', () => {
@@ -131,12 +125,12 @@ export default {
       this.$router.push({
         name: 'userCenter',
         query: {
-          bind: 'email',
-        },
+          bind: 'email'
+        }
       })
-    },
+    }
   },
-  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value'],
+  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value']
 }
 </script>
 

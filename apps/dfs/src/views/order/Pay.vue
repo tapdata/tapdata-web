@@ -71,11 +71,7 @@
                 {{ $t('dfs_agent_download_transferdialog_zhuanzhangxinxi') }}
               </div>
 
-              <el-skeleton
-                style="width: 400px"
-                :loading="accountLoading"
-                animated
-              >
+              <el-skeleton style="width: 400px" :loading="accountLoading" animated>
                 <template #template>
                   <div class="label-grid gap-3">
                     <el-skeleton-item variant="h1" style="width: 100px" />
@@ -92,24 +88,17 @@
                   <div class="label-grid text-label font-color-dark">
                     <!--开户名称-->
                     <div class="font-color-light text-end">
-                      {{
-                        $t('dfs_agent_download_transferdialog_kaihumingcheng')
-                      }}
+                      {{ $t('dfs_agent_download_transferdialog_kaihumingcheng') }}
                     </div>
                     <div>{{ accountInfo.accountName }}</div>
                     <!--开户银行-->
                     <div class="font-color-light text-end">
                       {{ $t('dfs_agent_download_transferdialog_kaihuyinhang') }}
                     </div>
-                    <div>
-                      <VIcon class="align-top mr-1" size="22">bank-cmbc</VIcon
-                      >{{ accountInfo.bankName }}
-                    </div>
+                    <div><VIcon class="align-top mr-1" size="22">bank-cmbc</VIcon>{{ accountInfo.bankName }}</div>
                     <!--专属汇款账号-->
                     <div class="font-color-light text-end">
-                      {{
-                        $t('dfs_agent_download_transferdialog_huikuanzhanghao')
-                      }}
+                      {{ $t('dfs_agent_download_transferdialog_huikuanzhanghao') }}
                     </div>
                     <div>
                       {{ accountInfo.accountNo }}
@@ -136,8 +125,7 @@
         >
 
         <span class="mr-4">
-          <span class="fw-sub font-color-dark mt-2"
-            >{{ $t('dfs_order_total') }}:</span
+          <span class="fw-sub font-color-dark mt-2">{{ $t('dfs_order_total') }}:</span
           ><span class="color-primary fw-sub fs-5 ml-2">{{ price }}</span>
         </span>
 
@@ -159,7 +147,7 @@ export default {
     VTable,
     VEmpty,
     VIcon,
-    IconButton,
+    IconButton
   },
 
   data() {
@@ -176,12 +164,12 @@ export default {
       emailRules: [
         {
           required: true,
-          message: i18n.t('dfs_instance_create_qingshuruninde'),
+          message: i18n.t('dfs_instance_create_qingshuruninde')
         },
         {
           type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque'),
-        },
+          message: i18n.t('dfs_instance_create_qingshuruzhengque')
+        }
       ],
       accountLoading: false,
       bankAccount: '',
@@ -189,19 +177,19 @@ export default {
         accountName: '',
         accountNo: '',
         bankName: '',
-        bankNo: '',
+        bankNo: ''
       },
       agentTypeMap: AGENT_TYPE_MAP,
       payForm: {
         email: this.$store.state.user.email,
         paymentMethod: 'Stripe',
         successUrl: '',
-        cancelUrl: '',
+        cancelUrl: ''
       },
       paymentParams: {},
 
       // 连续订阅
-      isRecurring: true,
+      isRecurring: true
     }
   },
 
@@ -212,18 +200,16 @@ export default {
       const payMethods = [
         {
           icon: 'pay-stripe',
-          label: this.$t(
-            'dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'
-          ),
-          value: 'Stripe',
-        },
+          label: this.$t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
+          value: 'Stripe'
+        }
       ]
 
       if (this.isDomesticStation && !this.isRecurring) {
         payMethods.push({
           icon: 'pay-cmbc',
           label: i18n.t('dfs_order_pay_duigonghuikuan'),
-          value: 'Balance',
+          value: 'Balance'
         })
       }
 
@@ -244,53 +230,49 @@ export default {
             {
               label: i18n.t('dfs_instance_instance_guige'),
               prop: 'specLabel',
-              width: 180,
+              width: 180
             },
             {
               label: i18n.t('dfs_instance_createagent_cunchukongjian'),
               prop: 'storageSizeLabel',
-              width: 180,
+              width: 180
             },
             {
-              label: i18n.t(
-                'dfs_agent_download_subscriptionmodeldialog_yunfuwushang'
-              ),
+              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang'),
               prop: 'provider',
-              width: 180,
+              width: 180
             },
             {
               label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
               prop: 'region',
-              width: 180,
+              width: 180
             },
             {
               label: i18n.t('dfs_user_center_jine'),
-              prop: 'price',
-            },
+              prop: 'price'
+            }
           ]
         : [
             {
               label: i18n.t('dfs_order_list_dingyueleixing'),
-              prop: 'productType',
+              prop: 'productType'
             },
             {
               label: i18n.t('dfs_instance_instance_guige'),
               prop: 'specLabel',
-              width: 180,
+              width: 180
             },
             {
-              label: i18n.t(
-                'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'
-              ),
+              label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
               prop: 'agentTypeLabel',
-              width: 180,
+              width: 180
             },
             {
               label: i18n.t('dfs_user_center_jine'),
-              prop: 'price',
-            },
+              prop: 'price'
+            }
           ]
-    },
+    }
   },
 
   async created() {
@@ -302,8 +284,7 @@ export default {
       this.paymentParams.renew = renew
       await this.loadSubscribe()
     } else if (routeName === 'payForChange') {
-      this.paymentParams.subscribeAlterId = this.subscribeAlterId =
-        this.$route.params.id
+      this.paymentParams.subscribeAlterId = this.subscribeAlterId = this.$route.params.id
       await this.loadAlter()
     }
 
@@ -313,13 +294,13 @@ export default {
   methods: {
     async loadSubscribe() {
       const {
-        items: [subscribe],
+        items: [subscribe]
       } = await this.$axios.get(
         `api/tcm/subscribe?filter=${encodeURIComponent(
           JSON.stringify({
             where: {
-              id: this.subscribeId,
-            },
+              id: this.subscribeId
+            }
           })
         )}`
       )
@@ -329,20 +310,18 @@ export default {
       this.subscriptionMethodLabel =
         getPaymentMethod({
           periodUnit: subscribe.periodUnit,
-          type: subscribe.subscribeType,
+          type: subscribe.subscribeType
         }) || '-'
       this.isRecurring = subscribe.subscribeType === 'recurring'
 
       let subscribeItems = subscribe.subscribeItems || []
-      this.subscribeItems = subscribeItems.map((it) => {
+      this.subscribeItems = subscribeItems.map(it => {
         it.price = this.formatterPrice(currency, it.amount)
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
 
         if (it.productType === 'MongoDB') {
           it.specLabel = `MongoDB Atlas ${it.spec.name}`
-          it.storageSizeLabel = `${it.spec.storageSize} ${
-            it.spec.storageSize || 'GB'
-          }`
+          it.storageSizeLabel = `${it.spec.storageSize} ${it.spec.storageSize || 'GB'}`
         } else {
           it.specLabel = getSpec(it.spec) || '-'
         }
@@ -354,15 +333,15 @@ export default {
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
-          id: subscribeItems[0].resourceId,
-        },
+          id: subscribeItems[0].resourceId
+        }
       })
 
       this.payForm.successUrl = this.isStorage
         ? location.origin +
           location.pathname +
           this.$router.resolve({
-            name: 'dataConsole',
+            name: 'dataConsole'
           }).href
         : subscribe.platform === 'fullManagement'
         ? location.origin + location.pathname + agentUrl.href
@@ -371,16 +350,14 @@ export default {
           this.$router.resolve({
             name: 'installAgent',
             params: {
-              id: subscribeItems[0].resourceId,
-            },
+              id: subscribeItems[0].resourceId
+            }
           }).href
       this.payForm.cancelUrl = location.href
     },
 
     async loadAlter() {
-      const alter = await this.$axios.get(
-        `api/tcm/subscribe/alter/${this.subscribeAlterId}`
-      )
+      const alter = await this.$axios.get(`api/tcm/subscribe/alter/${this.subscribeAlterId}`)
       const { subscribe, subscribeId } = alter
       const currency = subscribe.currency || window.__config__?.currencyType
 
@@ -388,10 +365,10 @@ export default {
       this.subscriptionMethodLabel =
         getPaymentMethod({
           periodUnit: subscribe.periodUnit,
-          type: subscribe.subscribeType,
+          type: subscribe.subscribeType
         }) || '-'
       this.isRecurring = subscribe.subscribeType === 'recurring'
-      this.subscribeItems = alter.subscribeItems.map((it) => {
+      this.subscribeItems = alter.subscribeItems.map(it => {
         it.price = this.price
         it.agentTypeLabel = this.agentTypeMap[it.agentType]
         it.specLabel = getSpec(it.spec) || '-'
@@ -404,15 +381,15 @@ export default {
         this.$router.resolve({
           name: 'changeList',
           query: {
-            id: subscribeId,
-          },
+            id: subscribeId
+          }
         }).href
       this.payForm.cancelUrl = location.href
     },
 
     validateForm(ref) {
-      return new Promise((resolve) => {
-        this.$refs[ref].validate((valid) => {
+      return new Promise(resolve => {
+        this.$refs[ref].validate(valid => {
           resolve(valid)
         })
       })
@@ -436,7 +413,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+          maximumFractionDigits: 2
         })
       )
     },
@@ -447,10 +424,7 @@ export default {
       this.accountLoading = false
       Object.assign(this.accountInfo, info)
 
-      if (
-        this.payForm.paymentMethod === 'Balance' &&
-        !this.accountInfo.accountNo
-      ) {
+      if (this.payForm.paymentMethod === 'Balance' && !this.accountInfo.accountNo) {
         await this.createAccount()
       }
     },
@@ -464,8 +438,8 @@ export default {
         {},
         {
           headers: {
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       )
       this.accountLoading = false
@@ -481,10 +455,10 @@ export default {
     async postPayment() {
       return await this.$axios.post('api/tcm/subscribe/payment', {
         ...this.payForm,
-        ...this.paymentParams,
+        ...this.paymentParams
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -5,7 +5,7 @@
       'el-tree--highlight-current': highlightCurrent,
       'is-dragging': !!dragState.draggingNode,
       'is-drop-not-allow': !dragState.allowDrop,
-      'is-drop-inner': dragState.dropType === 'inner',
+      'is-drop-inner': dragState.dropType === 'inner'
     }"
     role="tree"
   >
@@ -21,7 +21,7 @@
         renderAfterExpand,
         showCheckbox,
         renderContent,
-        onNodeExpand: handleNodeExpand,
+        onNodeExpand: handleNodeExpand
       }"
       @scroll="handleScroll"
     />
@@ -38,17 +38,13 @@
     <div class="el-tree__empty-block" v-if="isEmpty">
       <span class="el-tree__empty-text">{{ emptyText }}</span>
     </div>
-    <div
-      v-show="dragState.showDropIndicator"
-      class="el-tree__drop-indicator"
-      ref="dropIndicator"
-    ></div>
+    <div v-show="dragState.showDropIndicator" class="el-tree__drop-indicator" ref="dropIndicator"></div>
   </div>
 </template>
 
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
-import { Tree } from 'element-ui'
+import { ElTree as Tree } from 'element-plus'
 import VirtualList from 'vue-virtual-scroll-list'
 import ElTreeNode from 'element-ui/packages/tree/src/tree-node.vue'
 import ElVirtualNode from './tree-virtual-node.vue'
@@ -56,32 +52,32 @@ export default {
   name: 'ElTree',
   components: {
     VirtualList,
-    ElTreeNode,
+    ElTreeNode
   },
   extends: Tree,
   data() {
     return {
-      itemComponent: ElVirtualNode,
+      itemComponent: ElVirtualNode
     }
   },
   props: {
     height: {
       type: [String, Number],
-      default: 0,
+      default: 0
     },
     extraLine: {
       type: Number,
-      default: 8,
+      default: 8
     },
     wrapperClassName: [String, Array],
     keeps: {
-      type: Number,
-    },
+      type: Number
+    }
   },
   computed: {
     visibleList() {
       return this.flattenTree(this.root.childNodes)
-    },
+    }
   },
   methods: {
     flattenTree(datas) {
@@ -98,9 +94,9 @@ export default {
 
     handleScroll() {
       $emit(this, 'handle-scroll')
-    },
+    }
   },
-  emits: ['handle-scroll'],
+  emits: ['handle-scroll']
 }
 </script>
 

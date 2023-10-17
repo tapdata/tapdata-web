@@ -6,16 +6,9 @@ export const ClipboardBtn = observer(
   defineComponent({
     setup(props, { attrs, listeners }) {
       return () => {
-        return (
-          <ClipboardDialog
-            attrs={attrs}
-            on={listeners}
-            itemType="string"
-            itemQuery="original_name"
-          />
-        )
+        return <ClipboardDialog attrs={attrs} on={listeners} itemType="string" itemQuery="original_name" />
       }
-    },
+    }
   })
 )
 

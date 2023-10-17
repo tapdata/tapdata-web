@@ -14,6 +14,7 @@
     "analyzer": "vue-cli-service build --report"
   },
   "dependencies": {
+    "@element-plus/icons": "^0.0.11",
     "@formily/core": "^2.0.9",
     "@formily/reactive": "^2.0.9",
     "@tap/api": "workspace:^1.0.0",
@@ -32,7 +33,7 @@
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
     "echarts": "^5.0.2",
-    "element-ui": "2.15.7",
+    "element-plus": "^2.0.2",
     "github-markdown-css": "^4.0.0",
     "highlight.js": "^11.0.1",
     "lodash": "^4.17.15",

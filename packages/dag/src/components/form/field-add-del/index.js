@@ -26,9 +26,7 @@ export const FieldAddDel = connect(
         const loadSchema = async () => {
           loading.value = true
           try {
-            const data = await metadataInstancesApi.nodeSchema(
-              formRef.value.values.id
-            )
+            const data = await metadataInstancesApi.nodeSchema(formRef.value.values.id)
             options.value = data?.[0]?.fields || []
           } catch (e) {
             options.value = []
@@ -47,7 +45,7 @@ export const FieldAddDel = connect(
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
           deleteAllFields: form.values.deleteAllFields || false,
-          form,
+          form
         }
       },
 
@@ -63,7 +61,7 @@ export const FieldAddDel = connect(
           REMOVE_OPS_TPL: {
             id: '',
             op: 'REMOVE',
-            field: '',
+            field: ''
           },
           CREATE_OPS_TPL: {
             op: 'CREATE',
@@ -73,8 +71,8 @@ export const FieldAddDel = connect(
             id: '',
 
             action: '',
-            triggerFieldId: '',
-          },
+            triggerFieldId: ''
+          }
         }
       },
 
@@ -90,7 +88,7 @@ export const FieldAddDel = connect(
         fields = this.checkOps(fields) || []
         this.searchFiledName = this.searchFiledName.trim().toString() //去空格
         if (this.searchFiledName !== '') {
-          fields = fields.filter((v) => {
+          fields = fields.filter(v => {
             let str = v.label.toLowerCase()
             return str.indexOf(this.searchFiledName.toLowerCase()) > -1
           })
@@ -100,15 +98,10 @@ export const FieldAddDel = connect(
         let formValues = { ...this.form.values }
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
         return (
-          <div
-            class="field-processors-tree-warp bg-body pt-2"
-            v-loading={this.loading}
-          >
+          <div class="field-processors-tree-warp bg-body pt-2" v-loading={this.loading}>
             <ElInput
               class="my-2"
-              placeholder={i18n.t(
-                'packages_form_field_mapping_list_qingshuruziduan'
-              )}
+              placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               v-model={this.searchFiledName}
               clearable
               prefix-icon="el-icon-search"
@@ -123,7 +116,7 @@ export const FieldAddDel = connect(
                     class={[
                       this.deleteAllFieldsData ? 'active__delete' : '',
                       this.disabled ? 'disable__btn' : 'clickable',
-                      'ml-5',
+                      'ml-5'
                     ]}
                     size="12"
                     disabled={this.disabled}
@@ -132,10 +125,7 @@ export const FieldAddDel = connect(
                     delete
                   </VIcon>
                   <VIcon
-                    class={[
-                      this.disabled ? 'disable__btn' : 'clickable',
-                      'ml-5',
-                    ]}
+                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                     size="12"
                     disabled={fields.length === 0 || this.disabled}
                     onClick={() => this.handleCreate()}
@@ -143,10 +133,7 @@ export const FieldAddDel = connect(
                     add
                   </VIcon>
                   <VIcon
-                    class={[
-                      this.disabled ? 'disable__btn' : 'clickable',
-                      'ml-5',
-                    ]}
+                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
                     size="12"
                     disabled={this.disabled}
                     onClick={() => this.handleAllReset()}
@@ -177,7 +164,7 @@ export const FieldAddDel = connect(
                           'justify-content-center',
                           'align-items',
                           'flex-row',
-                          'overflow-hidden',
+                          'overflow-hidden'
                         ]}
                         slot-scope="{ node, data }"
                       >
@@ -185,50 +172,37 @@ export const FieldAddDel = connect(
                           <el-dropdown
                             placement="top-start"
                             on={{
-                              command: (val) => this.handleCommand(val, node),
+                              command: val => this.handleCommand(val, node)
                             }}
                           >
                             <span class="el-dropdown-link">
-                              <VIcon class="color-primary mt-n1 mr-2">
-                                drag
-                              </VIcon>
+                              <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
                             </span>
                             <el-dropdown-menu slot="dropdown">
                               <el-dropdown-item command="top">
-                                {i18n.t(
-                                  'packages_dag_field_add_del_index_zhiding'
-                                )}
+                                {i18n.t('packages_dag_field_add_del_index_zhiding')}
                               </el-dropdown-item>
                               <el-dropdown-item command="prev">
-                                {i18n.t(
-                                  'packages_dag_field_add_del_index_shangyi'
-                                )}
+                                {i18n.t('packages_dag_field_add_del_index_shangyi')}
                               </el-dropdown-item>
                               <el-dropdown-item command="next">
-                                {i18n.t(
-                                  'packages_dag_field_add_del_index_xiayi'
-                                )}
+                                {i18n.t('packages_dag_field_add_del_index_xiayi')}
                               </el-dropdown-item>
                               <el-dropdown-item command="bottom">
-                                {i18n.t(
-                                  'packages_dag_field_add_del_index_zhidi'
-                                )}
+                                {i18n.t('packages_dag_field_add_del_index_zhidi')}
                               </el-dropdown-item>
                             </el-dropdown-menu>
                           </el-dropdown>
                         )}
 
-                        <span
-                          class={['inline-block', 'flex-1', 'text-truncate']}
-                        >
+                        <span class={['inline-block', 'flex-1', 'text-truncate']}>
                           {this.isCreate(data.field) ? (
                             <span
                               class={[
-                                (data.is_deleted ||
-                                  this.isRemove(data.previousFieldName)) &&
+                                (data.is_deleted || this.isRemove(data.previousFieldName)) &&
                                 !this.isRest(data.previousFieldName)
                                   ? 'active__delete'
-                                  : '',
+                                  : ''
                               ]}
                             >
                               {data.level === 1 ? (
@@ -238,33 +212,26 @@ export const FieldAddDel = connect(
                                     'tree-field-input',
                                     'text__inner',
                                     {
-                                      'tree-field-input-primary': this.isCreate(
-                                        data.previousFieldName
-                                      ),
-                                    },
+                                      'tree-field-input-primary': this.isCreate(data.previousFieldName)
+                                    }
                                   ]}
                                   v-model={data.field_name}
-                                  onChange={(val) =>
-                                    this.handleRename(node, data)
-                                  }
+                                  onChange={val => this.handleRename(node, data)}
                                   onBlur={() => this.closeInput(node.data)}
                                   onKeydown={() => this.handleKeyDown()}
                                 />
                               ) : (
-                                <span class="text__inner">
-                                  {data.previousFieldName}
-                                </span>
+                                <span class="text__inner">{data.previousFieldName}</span>
                               )}
                             </span>
                           ) : (
                             //不是新建字段
                             <span
                               class={[
-                                (data.is_deleted ||
-                                  this.isRemove(data.previousFieldName)) &&
+                                (data.is_deleted || this.isRemove(data.previousFieldName)) &&
                                 !this.isRest(data.previousFieldName)
                                   ? 'active__delete'
-                                  : '',
+                                  : ''
                               ]}
                             >
                               {data.previousFieldName}
@@ -283,8 +250,7 @@ export const FieldAddDel = connect(
                             type="text"
                             class="ml-5"
                             disabled={
-                              ((this.isRemove(data.previousFieldName) ||
-                                data.is_deleted) &&
+                              ((this.isRemove(data.previousFieldName) || data.is_deleted) &&
                                 !this.isRest(data.previousFieldName)) ||
                               this.disabled
                             }
@@ -296,8 +262,7 @@ export const FieldAddDel = connect(
                             type="text"
                             class="ml-5"
                             disabled={
-                              (!this.isRemove(data.previousFieldName) &&
-                                !data.is_deleted) ||
+                              (!this.isRemove(data.previousFieldName) && !data.is_deleted) ||
                               this.isRest(data.previousFieldName) ||
                               this.disabled
                             }
@@ -307,7 +272,7 @@ export const FieldAddDel = connect(
                           </ElButton>
                         </span>
                       </span>
-                    ),
+                    )
                   }}
                 />
               </div>
@@ -317,22 +282,16 @@ export const FieldAddDel = connect(
       },
       methods: {
         isRemove(field) {
-          let ops = this.operations.filter(
-            (v) => v.field === field && v.op === 'REMOVE' && v.operand
-          )
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && v.operand)
           return ops && ops.length > 0
         },
         isRest(field) {
           //撤回删除
-          let ops = this.operations.filter(
-            (v) => v.field === field && v.op === 'REMOVE' && !v.operand
-          )
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && !v.operand)
           return ops && ops.length > 0
         },
         isCreate(field) {
-          let ops = this.operations.filter(
-            (v) => v.field === field && v.op === 'CREATE'
-          )
+          let ops = this.operations.filter(v => v.field === field && v.op === 'CREATE')
           return ops && ops.length > 0
         },
         checkOps(fields) {
@@ -340,20 +299,15 @@ export const FieldAddDel = connect(
           console.log('checkOps', this.operations?.length) // eslint-disable-line
           if (this.operations?.length > 0) {
             for (let i = 0; i < this.operations.length; i++) {
-              let index = fields.findIndex(
-                (t) => t.previousFieldName === this.operations[i]?.field
-              )
+              let index = fields.findIndex(t => t.previousFieldName === this.operations[i]?.field)
               if (this.operations[i]?.op === 'CREATE' && index === -1) {
                 let newField = {
                   id: this.operations[i].id,
                   level: 1,
                   label: this.operations[i].field,
                   field_name: this.operations[i].field,
-                  table_name:
-                    this.operations[i].tableName ||
-                    this.operations[i].table_name,
-                  original_field_name:
-                    this.operations[i].field || this.operations[i].field_name,
+                  table_name: this.operations[i].tableName || this.operations[i].table_name,
+                  original_field_name: this.operations[i].field || this.operations[i].field_name,
                   data_type: this.operations[i].data_type,
                   // data_type: 'STRING',
                   primary_key_position: 0,
@@ -361,7 +315,7 @@ export const FieldAddDel = connect(
                   is_nullable: true,
                   columnSize: 0,
                   autoincrement: false,
-                  previousFieldName: this.operations[i].field,
+                  previousFieldName: this.operations[i].field
                 }
                 fields.unshift(newField)
               }
@@ -417,9 +371,7 @@ export const FieldAddDel = connect(
             return
           }
 
-          let createOps = this.operations.filter(
-            (v) => v.field === data.previousFieldName && v.op === 'CREATE'
-          )
+          let createOps = this.operations.filter(v => v.field === data.previousFieldName && v.op === 'CREATE')
 
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
@@ -438,9 +390,7 @@ export const FieldAddDel = connect(
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.previousFieldName
           const operations = [...this.operations]
-          let indexId = operations.filter(
-            (v) => v.op === 'REMOVE' && v.field === data.previousFieldName
-          )
+          let indexId = operations.filter(v => v.op === 'REMOVE' && v.field === data.previousFieldName)
           if (parentId && indexId.length !== 0) {
             return
           }
@@ -472,10 +422,7 @@ export const FieldAddDel = connect(
           $emit(this, 'change', this.operations)
         },
         getParentFieldName(node) {
-          let fieldName =
-            node.data && node.data.previousFieldName
-              ? node.data.previousFieldName
-              : ''
+          let fieldName = node.data && node.data.previousFieldName ? node.data.previousFieldName : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -495,19 +442,16 @@ export const FieldAddDel = connect(
           if (existsName) return
           console.log('fieldProcessor.handleCreate') //eslint-disable-line
           let fieldId = uuid()
-          let newFieldOperation = Object.assign(
-            JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)),
-            {
-              field: 'newFieldName',
-              label: 'newFieldName',
-              tableName: this.fields[0]?.tableName || '',
-              data_type: 'String',
-              id: fieldId,
-              action: 'create_sibling',
-              triggerFieldId: '',
-              level: 1,
-            }
-          )
+          let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
+            field: 'newFieldName',
+            label: 'newFieldName',
+            tableName: this.fields[0]?.tableName || '',
+            data_type: 'String',
+            id: fieldId,
+            action: 'create_sibling',
+            triggerFieldId: '',
+            level: 1
+          })
           this.operations.push(newFieldOperation)
           $emit(this, 'change', this.operations)
           let newNodeData = {
@@ -517,7 +461,7 @@ export const FieldAddDel = connect(
             primary_key_position: 0,
             tableName: this.fields[0]?.tableName || '',
             previousFieldName: 'newFieldName',
-            level: 1,
+            level: 1
           }
           this.$refs.tree.insertAfter(newNodeData, node)
         },
@@ -525,14 +469,12 @@ export const FieldAddDel = connect(
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           name = name || 'newFieldName'
           let exist = false
-          let parentNode = this.fields.filter((v) => name === v.field_name)
+          let parentNode = this.fields.filter(v => name === v.field_name)
           if (
             (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
             (parentNode && parentNode.length > 1 && name !== 'newFieldName')
           ) {
-            this.$message.error(
-              name + this.$t('packages_form_message_exists_name')
-            )
+            this.$message.error(name + this.$t('packages_form_message_exists_name'))
             exist = true
           }
           return exist
@@ -540,9 +482,7 @@ export const FieldAddDel = connect(
         handleDelete(node, data, isReset = false) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
           const operations = [...this.operations]
-          let createOpsIndex = this.operations.findIndex(
-            (v) => v.field === data.previousFieldName && v.op === 'CREATE'
-          )
+          let createOpsIndex = this.operations.findIndex(v => v.field === data.previousFieldName && v.op === 'CREATE')
           if (createOpsIndex >= 0) {
             let fieldName = this.operations[createOpsIndex].field + '.'
             operations.splice(createOpsIndex, 1)
@@ -550,10 +490,7 @@ export const FieldAddDel = connect(
             for (let i = 0; i < this.operations.length; i++) {
               let op = this.operations[i]
               let opFieldName = op.field
-              if (
-                opFieldName.indexOf(fieldName) === 0 &&
-                opFieldName.length === fieldName.length
-              ) {
+              if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
                 operations.splice(i, 1)
                 i--
               }
@@ -564,27 +501,19 @@ export const FieldAddDel = connect(
             let originalField = this.getNativeData(data.id)
             let self = this
             let fn = function (field) {
-              let ops = operations.filter(
-                (v) => v.op === 'REMOVE' && v.field === field.field
-              )
-              let op = Object.assign(
-                JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)),
-                {
-                  id: field.id,
-                  field: field.previousFieldName,
-                  operand: !self.deleteAllFieldsData,
-                  table_name: field.table_name,
-                  type: field.data_type,
-                  primary_key_position: field.primary_key_position,
-                  color: field.color,
-                  label: field.field_name,
-                }
-              )
+              let ops = operations.filter(v => v.op === 'REMOVE' && v.field === field.field)
+              let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
+                id: field.id,
+                field: field.previousFieldName,
+                operand: !self.deleteAllFieldsData,
+                table_name: field.table_name,
+                type: field.data_type,
+                primary_key_position: field.primary_key_position,
+                color: field.color,
+                label: field.field_name
+              })
               if (ops.length !== 0) {
-                let index = operations.findIndex(
-                  (v) =>
-                    v.op === 'REMOVE' && v.field === field.previousFieldName
-                )
+                let index = operations.findIndex(v => v.op === 'REMOVE' && v.field === field.previousFieldName)
                 if (index > -1) {
                   operations.splice(index, 1)
                 }
@@ -627,17 +556,13 @@ export const FieldAddDel = connect(
           this.updateFieldsAfter()
         },
         handleCommand(val, node) {
-          const index = this.fields.findIndex(
-            (t) => t.field_name === node.data.field_name
-          )
+          const index = this.fields.findIndex(t => t.field_name === node.data.field_name)
           this.$refs.tree.remove(node)
           if (val === 'top') {
             const getNode = this.$refs.tree.getNode(this.fields[0]?.id)
             this.$refs.tree.insertBefore(node.data, getNode)
           } else if (val === 'bottom') {
-            const getNode = this.$refs.tree.getNode(
-              this.fields.slice(-1)?.[0].id
-            )
+            const getNode = this.$refs.tree.getNode(this.fields.slice(-1)?.[0].id)
             this.$refs.tree.insertAfter(node.data, getNode)
           } else if (val === 'prev') {
             const getNode = this.$refs.tree.getNode(this.fields[index - 1]?.id)
@@ -653,11 +578,11 @@ export const FieldAddDel = connect(
           const fieldsAfter = cloneDeep(this.fields).map((t, i) => {
             return {
               columnPosition: t.columnPosition,
-              field_name: t.field_name,
+              field_name: t.field_name
             }
           })
           this.form.setValuesIn('fieldsAfter', fieldsAfter)
-        },
+        }
         // handleCheckAllChange() {
         //   if (this.checkAll) {
         //     this.$nextTick(() => {
@@ -669,7 +594,7 @@ export const FieldAddDel = connect(
         //     })
         //   }
         // }
-      },
+      }
     })
   ),
   mapProps({ dataSource: 'options', loading: true })

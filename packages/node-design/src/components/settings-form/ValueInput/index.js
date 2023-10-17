@@ -3,34 +3,33 @@
  * Todo: JSON、富文本，公式
  */
 import { createPolyInput } from '../PolyInput'
-import { Button, Popover, Select, Option } from 'element-ui'
+import { ElButton as Button, ElPopover as Popover, ElSelect as Select, ElOption as Option } from 'element-plus'
 import { Input, InputNumber } from '@tap/form'
 import { TextWidget } from '../../widgets'
 import { defineComponent } from 'vue-demi'
 import { VCodeEditor } from '@tap/component'
 
-const STARTTAG_REX =
-  /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/
+const STARTTAG_REX = /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/
 
 const EXPRESSION_REX = /^\{\{([\s\S]*)\}\}$/
 
-const isNumber = (value) => typeof value === 'number'
+const isNumber = value => typeof value === 'number'
 
-const isBoolean = (value) => typeof value === 'boolean'
+const isBoolean = value => typeof value === 'boolean'
 
-const isExpression = (value) => {
+const isExpression = value => {
   return typeof value === 'string' && EXPRESSION_REX.test(value)
 }
 
-const isRichText = (value) => {
+const isRichText = value => {
   return typeof value === 'string' && STARTTAG_REX.test(value)
 }
 
-const isNormalText = (value) => {
+const isNormalText = value => {
   return typeof value === 'string' && !isExpression(value) && !isRichText(value)
 }
 
-const takeNumber = (value) => {
+const takeNumber = value => {
   const num = String(value).replace(/[^\d.]+/, '')
   if (num === '') return
   return Number(num)
@@ -41,7 +40,7 @@ export const ValueInput = createPolyInput([
     type: 'TEXT',
     icon: 'Text',
     component: Input,
-    checker: isNormalText,
+    checker: isNormalText
   },
   {
     type: 'EXPRESSION',
@@ -57,7 +56,7 @@ export const ValueInput = createPolyInput([
                 height: '200px',
                 margin: ' -12px',
                 overflow: 'hidden',
-                borderRadius: '4px',
+                borderRadius: '4px'
               }}
             >
               <VCodeEditor
@@ -66,9 +65,9 @@ export const ValueInput = createPolyInput([
                 options={{
                   enableBasicAutocompletion: true,
                   enableLiveAutocompletion: true,
-                  showPrintMargin: false,
+                  showPrintMargin: false
                 }}
-                onInput={(val) => {
+                onInput={val => {
                   emit('change', val)
                 }}
               />
@@ -78,19 +77,19 @@ export const ValueInput = createPolyInput([
             </Button>
           </Popover>
         )
-      },
+      }
     }),
     checker: isExpression,
-    toInputValue: (value) => {
+    toInputValue: value => {
       if (!value || value === '{{}}') return
       const matched = String(value).match(EXPRESSION_REX)
       return matched?.[1] || value || ''
     },
-    toChangeValue: (value) => {
+    toChangeValue: value => {
       if (!value || value === '{{}}') return
       const matched = String(value).match(EXPRESSION_REX)
       return `{{${matched?.[1] || value || ''}}}`
-    },
+    }
   },
   {
     type: 'BOOLEAN',
@@ -100,7 +99,7 @@ export const ValueInput = createPolyInput([
       setup: (props, { emit }) => {
         return () => (
           <Select
-            onChange={(val) => {
+            onChange={val => {
               emit('change', val)
             }}
             value={props.value}
@@ -109,15 +108,15 @@ export const ValueInput = createPolyInput([
             <Option label="False" value={false} />
           </Select>
         )
-      },
+      }
     }),
     checker: isBoolean,
-    toInputValue: (value) => {
+    toInputValue: value => {
       return !!value
     },
-    toChangeValue: (value) => {
+    toChangeValue: value => {
       return !!value
-    },
+    }
   },
   {
     type: 'NUMBER',
@@ -125,6 +124,6 @@ export const ValueInput = createPolyInput([
     component: InputNumber,
     checker: isNumber,
     toInputValue: takeNumber,
-    toChangeValue: takeNumber,
-  },
+    toChangeValue: takeNumber
+  }
 ])

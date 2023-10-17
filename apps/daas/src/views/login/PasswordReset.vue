@@ -8,13 +8,13 @@
             {{ $t('app_signIn_newPasswordTip') }}
           </div>
           <div class="error-tips" v-show="errorMessage">
-            <i class="el-icon-warning-outline"></i>
+            <el-icon><el-icon-warning-outline /></el-icon>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form" :rules="rules">
             <el-form-item prop="email">
               <el-input
-                v-model:value="form.email"
+                v-model="form.email"
                 autocomplete="username"
                 type="email"
                 :placeholder="$t('app_signIn_email_placeholder')"
@@ -22,7 +22,7 @@
             </el-form-item>
             <el-form-item prop="newPassword">
               <el-input
-                v-model:value="form.newPassword"
+                v-model="form.newPassword"
                 autocomplete="current-password"
                 :type="passwordType"
                 :placeholder="$t('app_signIn_newpassword_placeholder')"
@@ -30,10 +30,7 @@
               >
                 <template v-slot:suffix>
                   <i
-                    :class="[
-                      flag ? 'icon-openeye' : 'icon-closeeye',
-                      'iconfont',
-                    ]"
+                    :class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
                     style="margin-top: 8px; font-size: 18px; cursor: pointer"
                     autocomplete="auto"
                     @click="passwordTypeChange"
@@ -45,34 +42,24 @@
               <el-row :gutter="10">
                 <el-col :span="17">
                   <el-input
-                    v-model:value="form.validateCode"
+                    v-model="form.validateCode"
                     type="text"
                     maxlength="6"
                     :placeholder="$t('signin_verify_code')"
                   ></el-input>
                 </el-col>
                 <el-col :span="7">
-                  <ElButton @click="handleSendCode">{{
-                    $t('signin_code')
-                  }}</ElButton>
+                  <ElButton @click="handleSendCode">{{ $t('signin_code') }}</ElButton>
                 </el-col>
               </el-row>
             </el-form-item>
-            <ElButton
-              class="btn-sign-in"
-              type="primary"
-              size="medium"
-              :loading="loading"
-              @click="submit"
-            >
+            <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
               {{ $t('app_signIn_nextStep') }}
             </ElButton>
           </el-form>
           <div class="back-login">
             {{ $t('app_signIn_rememberPasswords') }}
-            <ElButton type="text" @click="backLogin">{{
-              $t('app_signIn_backLogin')
-            }}</ElButton>
+            <ElButton type="text" @click="backLogin">{{ $t('app_signIn_backLogin') }}</ElButton>
           </div>
         </div>
       </section>
@@ -81,13 +68,17 @@
 </template>
 
 <script>
+import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
+  components: {
+    LoginPage,
+    ElIconWarningOutline
+  },
   name: 'SignIn',
-  components: { LoginPage },
   data() {
     return {
       loading: false,
@@ -95,7 +86,7 @@ export default {
         email: '',
         newPassword: '',
         validateCode: '',
-        location_origin: window.location.origin,
+        location_origin: window.location.origin
       },
       errorMessage: '',
       flag: false,
@@ -109,15 +100,13 @@ export default {
               if (!value) {
                 callback(new Error(this.$t('signin_email_require')))
                 // eslint-disable-next-line
-              } else if (
-                !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
-              ) {
+              } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
                 callback(new Error(this.$t('signin_verify_email_invalid')))
               } else {
                 callback()
               }
-            },
-          },
+            }
+          }
         ],
         newPassword: [
           {
@@ -131,8 +120,8 @@ export default {
               } else {
                 callback()
               }
-            },
-          },
+            }
+          }
         ],
         validateCode: [
           {
@@ -144,20 +133,19 @@ export default {
               } else {
                 callback()
               }
-            },
-          },
-        ],
-      },
+            }
+          }
+        ]
+      }
     }
   },
-
   methods: {
     passwordTypeChange() {
       this.flag = !this.flag
       this.passwordType = this.flag ? 'text' : 'password'
     },
     submit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
 
@@ -166,25 +154,17 @@ export default {
             .then(() => {
               this.$router.push({
                 name: 'verificationEmail',
-                params: { first: 1, data: this.form, type: 'reset' },
+                params: { first: 1, data: this.form, type: 'reset' }
               })
             })
-            .catch((e) => {
+            .catch(e => {
               if (e?.data?.message) {
-                if (
-                  e.data.message ===
-                  i18n.t('daas_login_passwordreset_zhaobudaodianzi')
-                ) {
+                if (e.data.message === i18n.t('daas_login_passwordreset_zhaobudaodianzi')) {
                   this.errorMessage = this.$t('signin_not_mailbox')
-                } else if (
-                  e.data.message ===
-                  i18n.t('daas_login_passwordreset_shangweiyanzhengdian')
-                ) {
+                } else if (e.data.message === i18n.t('daas_login_passwordreset_shangweiyanzhengdian')) {
                   this.errorMessage = this.$t('signin_verify_email_invalid')
                 } else if (e.data.message.includes('Incorect')) {
-                  this.errorMessage = this.$t(
-                    'signin_verify_code_not_incorrect'
-                  )
+                  this.errorMessage = this.$t('signin_verify_code_not_incorrect')
                 } else {
                   this.errorMessage = e.data.message
                 }
@@ -217,7 +197,7 @@ export default {
         return
       }
       let params = {
-        email: this.form.email,
+        email: this.form.email
       }
       usersApi.sendValidateCode(params).then(() => {
         this.$message.success(this.$t('signin_verify_code_success'))
@@ -228,10 +208,10 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.form.email },
+        query: { email: this.form.email }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

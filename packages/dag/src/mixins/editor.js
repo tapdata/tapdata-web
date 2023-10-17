@@ -2,20 +2,10 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
-import {
-  databaseTypesApi,
-  dataPermissionApi,
-  sharedCacheApi,
-  taskApi,
-} from '@tap/api'
+import { databaseTypesApi, dataPermissionApi, sharedCacheApi, taskApi } from '@tap/api'
 import { makeStatusAndDisabled } from '@tap/business'
 import { connectorActiveStyle } from '../style'
-import {
-  DEFAULT_SETTINGS,
-  NODE_HEIGHT,
-  NODE_PREFIX,
-  NODE_WIDTH,
-} from '../constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from '../constants'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -25,7 +15,7 @@ import {
   QuickAddTargetCommand,
   QuickAddSourceCommand,
   RemoveConnectionCommand,
-  RemoveNodeCommand,
+  RemoveNodeCommand
 } from '../command'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dagre from 'dagre'
@@ -37,7 +27,7 @@ import { getSchema } from '../util'
 
 export default {
   directives: {
-    resize,
+    resize
   },
   inject: ['buried'],
   data() {
@@ -45,7 +35,7 @@ export default {
       ...DEFAULT_SETTINGS,
       id: '',
       name: '',
-      status: '',
+      status: ''
     })
 
     return {
@@ -57,16 +47,12 @@ export default {
         Delete: true,
         Reset: true,
         Start: true,
-        Stop: true,
-      },
+        Stop: true
+      }
     }
   },
   computed: {
-    ...mapState('dataflow', [
-      'activeNodeId',
-      'showConsole',
-      'transformLoading',
-    ]),
+    ...mapState('dataflow', ['activeNodeId', 'showConsole', 'transformLoading']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
@@ -76,7 +62,7 @@ export default {
       'stateIsDirty',
       'stateIsReadonly',
       'processorNodeTypes',
-      'hasNodeError',
+      'hasNodeError'
     ]),
 
     selectBoxStyle() {
@@ -86,7 +72,7 @@ export default {
             left: attr.x + 'px',
             top: attr.y + 'px',
             width: attr.w + 'px',
-            height: attr.h + 'px',
+            height: attr.h + 'px'
           }
         : null
     },
@@ -98,13 +84,13 @@ export default {
 
       set(visible) {
         this.setMaterializedViewVisible(visible)
-      },
-    },
+      }
+    }
   },
   watch: {
     $route() {
       this.initView()
-    },
+    }
   },
   beforeUnmount() {
     this.destory = true
@@ -151,7 +137,7 @@ export default {
       'toggleConsole',
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
-      'setMaterializedViewVisible',
+      'setMaterializedViewVisible'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -179,7 +165,7 @@ export default {
         }
       })
 
-      nodes.forEach((node) => {
+      nodes.forEach(node => {
         const { alarmRules = [] } = node
 
         // alarmRules.forEach(rule => {
@@ -192,7 +178,7 @@ export default {
 
         // 数据兼容
         const defaultAttrs = {
-          position: [0, 0],
+          position: [0, 0]
         }
         if (!node.attrs) node.attrs = defaultAttrs
         else if (!node.attrs.position) Object.assign(node.attrs, defaultAttrs)
@@ -200,13 +186,13 @@ export default {
         const ins = getResourceIns(node)
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false,
+          enumerable: false
         })
 
         // 需要隐藏的内容
         node.hiddenMap = {
           setting: this.loadNodeHiddenSetting(node),
-          totalData: this.loadNodeHiddenTotalData(node),
+          totalData: this.loadNodeHiddenTotalData(node)
         }
         this.addNode(node)
       })
@@ -216,10 +202,7 @@ export default {
       // 连线
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({
-          uuids: [
-            `${NODE_PREFIX}${source}_source`,
-            `${NODE_PREFIX}${target}_target`,
-          ],
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`]
         })
       })
     },
@@ -238,10 +221,10 @@ export default {
           limit: 1000,
           where: {
             name: {
-              $in: Object.keys(usedShareCache),
-            },
-          },
-        }),
+              $in: Object.keys(usedShareCache)
+            }
+          }
+        })
       })
       this.sharedCacheMap = sharedCacheRes.items?.reduce((pre, task) => {
         const { id, name, status } = makeStatusAndDisabled(task)
@@ -251,7 +234,7 @@ export default {
     },
 
     setNodeShareCache(usedShareCache) {
-      this.allNodes.forEach((node) => {
+      this.allNodes.forEach(node => {
         const sharedCache = []
 
         for (let key in usedShareCache) {
@@ -261,7 +244,7 @@ export default {
               sharedCache.push({
                 name: key,
                 id: item.id,
-                status: item.status,
+                status: item.status
               })
           }
         }
@@ -277,10 +260,7 @@ export default {
       // 心跳任务、共享缓存
       if (['connHeartbeat', 'shareCache'].includes(syncType)) {
         flag = true
-      } else if (
-        ['logCollector'].includes(syncType) &&
-        type === 'hazelcastIMDG'
-      ) {
+      } else if (['logCollector'].includes(syncType) && type === 'hazelcastIMDG') {
         // 共享挖掘，目标节点
         flag = true
       }
@@ -304,14 +284,11 @@ export default {
       let { allowSource } = target.__Ctor
       allowSource = typeof allowSource === 'boolean' ? allowSource : true
       const connectionType = target.attrs.connectionType
-      if (
-        !allowSource ||
-        (connectionType && !connectionType.includes('target'))
-      ) {
+      if (!allowSource || (connectionType && !connectionType.includes('target'))) {
         showMsg &&
           this.$message.error(
             i18n.t('packages_dag_node_only_as_source', {
-              val1: target.name,
+              val1: target.name
             })
           )
         return false
@@ -323,14 +300,11 @@ export default {
       let { allowTarget } = source.__Ctor
       allowTarget = typeof allowTarget === 'boolean' ? allowTarget : true
       const connectionType = source.attrs.connectionType
-      if (
-        !allowTarget ||
-        (connectionType && !connectionType.includes('source'))
-      ) {
+      if (!allowTarget || (connectionType && !connectionType.includes('source'))) {
         showMsg &&
           this.$message.error(
             i18n.t('packages_dag_node_only_as_target', {
-              val1: source.name,
+              val1: source.name
             })
           )
         return false
@@ -341,14 +315,11 @@ export default {
     checkTargetMaxInputs(target, showMsg) {
       const maxInputs = target.__Ctor.maxInputs ?? -1
       const connections = this.jsPlumbIns.getConnections({
-        target: NODE_PREFIX + target.id,
+        target: NODE_PREFIX + target.id
       })
 
       if (maxInputs !== -1 && connections.length >= maxInputs) {
-        showMsg &&
-          this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianyijing')
-          )
+        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -357,14 +328,11 @@ export default {
     checkSourceMaxOutputs(source, showMsg) {
       const maxOutputs = source.__Ctor.maxOutputs ?? -1
       const connections = this.jsPlumbIns.getConnections({
-        source: NODE_PREFIX + source.id,
+        source: NODE_PREFIX + source.id
       })
 
       if (maxOutputs !== -1 && connections.length >= maxOutputs) {
-        showMsg &&
-          this.$message.error(
-            i18n.t('packages_dag_mixins_editor_gaijiedianyijing')
-          )
+        showMsg && this.$message.error(i18n.t('packages_dag_mixins_editor_gaijiedianyijing'))
         return false
       }
       return true
@@ -379,7 +347,7 @@ export default {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_gaijiedianta', {
               val1: target.name,
-              val2: source.name,
+              val2: source.name
             })
           )
         return false
@@ -389,7 +357,7 @@ export default {
           this.$message.error(
             i18n.t('packages_dag_mixins_editor_sourc', {
               val1: source.name,
-              val2: target.name,
+              val2: target.name
             })
           )
         return false
@@ -406,10 +374,7 @@ export default {
 
       if (!this.checkAsTarget(target, showMsg)) return false
       if (!this.checkTargetMaxInputs(target, showMsg)) return false
-      return (
-        this.allowConnect(sourceId, targetId) &&
-        this.checkAllowTargetOrSource(source, target, showMsg)
-      )
+      return this.allowConnect(sourceId, targetId) && this.checkAllowTargetOrSource(source, target, showMsg)
     },
 
     checkGotoViewer() {
@@ -435,13 +400,13 @@ export default {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
           fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } },
-        }),
+          where: { name: { like: `^${source}\\d+$` } }
+        })
       })
       let def = 1
       if (taskNames?.items.length) {
         let arr = [0]
-        taskNames.items.forEach((item) => {
+        taskNames.items.forEach(item => {
           const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })
@@ -490,7 +455,7 @@ export default {
       let rangeX = 10
       let rangeY = 10
 
-      this.allNodes.forEach((item) => {
+      this.allNodes.forEach(item => {
         if (item.id !== id) {
           let [x, y] = item.attrs.position
           let _x = x - pos[0]
@@ -527,11 +492,11 @@ export default {
         b = pos[1] + nh,
         l = pos[0],
         r = pos[0] + nw
-      verArr.forEach((y) => {
+      verArr.forEach(y => {
         t = Math.min(y + nh, t)
         b = Math.max(y, b)
       })
-      horiArr.forEach((x) => {
+      horiArr.forEach(x => {
         l = Math.min(x + nw, l)
         r = Math.max(x, r)
       })
@@ -545,12 +510,12 @@ export default {
           {
             top,
             left: pos[0] + 'px',
-            height,
+            height
           },
           {
             top,
             left: pos[0] + nw + 'px',
-            height,
+            height
           }
         )
       }
@@ -561,12 +526,12 @@ export default {
           {
             top,
             left: pos[0] + 'px',
-            height,
+            height
           },
           {
             top,
             left: pos[0] + nw + 'px',
-            height,
+            height
           }
         )
       }
@@ -578,12 +543,12 @@ export default {
           {
             top: pos[1] + 'px',
             left,
-            width,
+            width
           },
           {
             top: pos[1] + nh + 'px',
             left,
-            width,
+            width
           }
         )
       }
@@ -595,12 +560,12 @@ export default {
           {
             top: pos[1] + 'px',
             left,
-            width,
+            width
           },
           {
             top: pos[1] + nh + 'px',
             left,
-            width,
+            width
           }
         )
       }
@@ -613,8 +578,7 @@ export default {
 
       this.$refs.paperScroller.autoResizePaper()
 
-      !isNotMove &&
-        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -677,7 +641,7 @@ export default {
       selectedConnections.forEach(({ target, source }) => {
         const conn = jsPlumbIns.select({
           target: NODE_PREFIX + target,
-          source: NODE_PREFIX + source,
+          source: NODE_PREFIX + source
         })
 
         if (conn) {
@@ -705,7 +669,7 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      return this.allNodes.filter((node) => {
+      return this.allNodes.filter(node => {
         const [left, top] = node.attrs.position
         return left + nw > x && left < right && bottom > top && y < top + nh
       })
@@ -743,7 +707,7 @@ export default {
       this.dataflow.attrs = data.attrs
 
       if (!fromWS) {
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           if (!['dag'].includes(key)) {
             // 坑啊...formily响应式observable和vue2搭配需要加个避免属性不更新Field
             this.dataflow[key] = data[key]
@@ -759,19 +723,13 @@ export default {
       // console.log('this.dataflow', this.dataflow) // eslint-disable-line
     },
 
-    async confirmMessage(
-      message,
-      headline,
-      type,
-      confirmButtonText,
-      cancelButtonText
-    ) {
+    async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
         await this.$confirm(message, headline, {
           confirmButtonText,
           cancelButtonText,
           type,
-          dangerouslyUseHTMLString: true,
+          dangerouslyUseHTMLString: true
         })
         return true
       } catch (e) {
@@ -811,21 +769,13 @@ export default {
         this.initNodeView()
       }
       const routeName = this.$route.name
-      if (
-        [
-          'DataflowViewer',
-          'MigrationMonitor',
-          'MigrateViewer',
-          'TaskMonitor',
-        ].includes(routeName)
-      ) {
+      if (['DataflowViewer', 'MigrationMonitor', 'MigrateViewer', 'TaskMonitor'].includes(routeName)) {
         await this.openDataflow(id)
         // await this.startLoop()
         this.setStateReadonly(true)
         if (
           routeName === 'MigrateViewer' ||
-          (routeName === 'DataflowViewer' &&
-            ['renewing', 'renew_failed'].includes(this.dataflow.status))
+          (routeName === 'DataflowViewer' && ['renewing', 'renew_failed'].includes(this.dataflow.status))
         ) {
           this.handleConsoleAutoLoad()
         }
@@ -859,7 +809,7 @@ export default {
           this.handleCenterContent()
         }
       })
-      Mousetrap(this.$refs.layoutContent).bind('mod+z', (e) => {
+      Mousetrap(this.$refs.layoutContent).bind('mod+z', e => {
         e.preventDefault()
         !this.stateIsReadonly && this.command.undo()
       })
@@ -870,22 +820,14 @@ export default {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap(this.$refs.layoutContent).bind(['backspace', 'del'], () => {
-        if (
-          !this.stateIsReadonly &&
-          document
-            .getElementById('dfEditorContent')
-            .contains(document.activeElement)
-        ) {
+        if (!this.stateIsReadonly && document.getElementById('dfEditorContent').contains(document.activeElement)) {
           this.handleDelete()
         }
       })
-      Mousetrap(this.$refs.layoutContent).bind(
-        ['option+command+l', 'ctrl+alt+l'],
-        (e) => {
-          e.preventDefault()
-          this.handleAutoLayout()
-        }
-      )
+      Mousetrap(this.$refs.layoutContent).bind(['option+command+l', 'ctrl+alt+l'], e => {
+        e.preventDefault()
+        this.handleAutoLayout()
+      })
     },
 
     initNodeView() {
@@ -916,7 +858,9 @@ export default {
         })
         info.connection.bind('mouseout', () => {
           if (
-            connectionIns.hasClass('connection-selected') /* ||
+            connectionIns.hasClass(
+              'connection-selected'
+            ) /* ||
           (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
           )
             return
@@ -932,29 +876,20 @@ export default {
             location: 0.35,
             create() {
               const div = document.createElement('div')
-              div.title = i18n.t(
-                'packages_dag_components_dfnode_tianjiajiedian'
-              )
+              div.title = i18n.t('packages_dag_components_dfnode_tianjiajiedian')
               div.classList.add('conn-btn__wrap')
               div.innerHTML = `<div class="conn-btn"><span class="v-icon"> <svg class="v-icon__svg"><use xlink:href="#icon-plus"></use></svg> </span></div>`
               return div
             },
             visible: false,
             events: {
-              click: async (overlay) => {
+              click: async overlay => {
                 const rect = info.connection.canvas.getBoundingClientRect()
-                this.nodeMenu.connectionCenterPos = [
-                  rect.x + rect.width / 2,
-                  rect.y + rect.height / 2,
-                ]
-                await this.showNodePopover(
-                  'connection',
-                  connection,
-                  overlay.canvas
-                )
-              },
-            },
-          },
+                this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+                await this.showNodePopover('connection', connection, overlay.canvas)
+              }
+            }
+          }
         ])
 
         info.connection.addOverlay([
@@ -975,12 +910,12 @@ export default {
                 this.command.exec(
                   new RemoveConnectionCommand({
                     source,
-                    target,
+                    target
                   })
                 )
-              },
-            },
-          },
+              }
+            }
+          }
         ])
 
         // 拖动连接
@@ -991,15 +926,11 @@ export default {
         }
       })
 
-      jsPlumbIns.bind('beforeDrop', (info) => {
+      jsPlumbIns.bind('beforeDrop', info => {
         if (this.stateIsReadonly) return false
         const { sourceId, targetId } = info
 
-        return this.checkCanBeConnected(
-          this.getRealId(sourceId),
-          this.getRealId(targetId),
-          true
-        )
+        return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
       })
 
       jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
@@ -1010,13 +941,11 @@ export default {
       })
 
       // 连线拖动时，可以被连的节点在画布上凸显
-      jsPlumbIns.bind('connectionDrag', (info) => {
+      jsPlumbIns.bind('connectionDrag', info => {
         if (this.stateIsReadonly) return false
         const source = this.nodeById(this.getRealId(info.sourceId))
-        const canBeConnectedNodes = this.allNodes.filter((target) =>
-          this.checkCanBeConnected(source.id, target.id)
-        )
-        this.setCanBeConnectedNodeIds(canBeConnectedNodes.map((n) => n.id))
+        const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
+        this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
       })
 
       jsPlumbIns.bind('connectionDragStop', () => {
@@ -1033,7 +962,7 @@ export default {
         dag,
         editVersion,
         pageVersion,
-        syncType,
+        syncType
       }
     },
 
@@ -1105,11 +1034,10 @@ export default {
       const nodes = []
       let parentIds = node.$inputs || []
 
-      parentIds.forEach((id) => {
+      parentIds.forEach(id => {
         let node = this.scope.findNodeById(id)
 
-        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1)
-          return
+        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1) return
 
         nodes.push(node)
 
@@ -1126,7 +1054,7 @@ export default {
       const nodes = []
       let ids = node.$outputs || []
 
-      ids.forEach((id) => {
+      ids.forEach(id => {
         let node = this.scope.findNodeById(id)
 
         if (!node || node.__Ctor.maxInputs !== 1) return
@@ -1152,27 +1080,27 @@ export default {
 
       connections.push(
         ...this.jsPlumbIns.getConnections({
-          target: NODE_PREFIX + node.id,
+          target: NODE_PREFIX + node.id
         })
       )
 
       connections.push(
         ...this.jsPlumbIns.getConnections({
-          source: NODE_PREFIX + node.id,
+          source: NODE_PREFIX + node.id
         })
       )
 
-      nodes.forEach((node) => {
+      nodes.forEach(node => {
         node.attrs['disabled'] = value
         connections.push(
           ...this.jsPlumbIns.getConnections({
-            target: NODE_PREFIX + node.id,
+            target: NODE_PREFIX + node.id
           })
         )
       })
 
       const handler = value ? 'addClass' : 'removeClass'
-      connections.forEach((connection) => {
+      connections.forEach(connection => {
         connection[handler]('connection-disabled')
       })
     },
@@ -1223,25 +1151,25 @@ export default {
         ranksep: 120,
         marginx: 50,
         marginy: 50,
-        rankdir: 'LR',
+        rankdir: 'LR'
       })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach((n) => {
+      nodes.forEach(n => {
         dg.setNode(NODE_PREFIX + n.id, {
           width: NODE_WIDTH,
-          height: NODE_HEIGHT,
+          height: NODE_HEIGHT
         })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach((edge) => {
+      this.jsPlumbIns.getAllConnections().forEach(edge => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach((n) => {
+      dg.nodes().forEach(n => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -1252,23 +1180,22 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n],
-              },
-            },
+                position: nodePositionMap[n]
+              }
+            }
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top],
-              },
-            },
+                position: [left, top]
+              }
+            }
           })
         }
       })
 
-      hasMove &&
-        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
@@ -1289,9 +1216,7 @@ export default {
       // const connections = this.jsPlumbIns.getConnections('*')
       // eslint-disable-next-line
       // console.log('connections', connections)
-      return this.jsPlumbIns
-        .getConnections('*')
-        .some((c) => `${c.sourceId}` === s && `${c.targetId}` === t)
+      return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
     allowConnect(sourceId, targetId) {
@@ -1327,7 +1252,7 @@ export default {
       Object.assign(this.dataflow, {
         ...DEFAULT_SETTINGS,
         id: '',
-        name: '',
+        name: ''
       })
       /*this.dataflow = merge(
       {
@@ -1346,11 +1271,7 @@ export default {
 
     async validateNode(node) {
       try {
-        const schema = getSchema(
-          node.__Ctor.formSchema,
-          node,
-          this.$store.state.dataflow.pdkPropertiesMap
-        )
+        const schema = getSchema(node.__Ctor.formSchema, node, this.$store.state.dataflow.pdkPropertiesMap)
         await validateBySchema(schema, node, this.formScope || this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
@@ -1360,7 +1281,7 @@ export default {
           // 节点的特殊处理，直接拿表单校验结果设置错误信息
           this.setNodeErrorMsg({
             id: node.id,
-            msg: e[0].messages[0],
+            msg: e[0].messages[0]
           })
         } else {
           this.setNodeError(node.id)
@@ -1370,7 +1291,7 @@ export default {
 
     async validateAllNodes() {
       await Promise.all(
-        this.allNodes.map((node) => {
+        this.allNodes.map(node => {
           if (this.activeNodeId === node.id) {
             return this.$refs.configPanel.validateForm()
           } else {
@@ -1383,21 +1304,17 @@ export default {
     validateDag() {
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some((node) => {
+      this.allNodes.some(node => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
         // 非数据节点至少有一个目标
-        const minOutputs =
-          node.__Ctor.minOutputs ??
-          (node.type !== 'database' && node.type !== 'table')
-            ? 1
-            : 0
+        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
         const inputNum = node.$inputs.length
         const outputNum = node.$outputs.length
 
         if (this.hasNodeError(id)) {
           someErrorMsg = i18n.t('packages_dag_src_migrationmonitor_noden', {
-            val1: node.name,
+            val1: node.name
           })
           this.handleLocateNode(node)
           return true
@@ -1406,7 +1323,7 @@ export default {
         if (inputNum < minInputs) {
           someErrorMsg = i18n.t('packages_dag_node_none_input', {
             val1: node.name,
-            val2: minInputs,
+            val2: minInputs
           })
           return true
         }
@@ -1414,7 +1331,7 @@ export default {
         if (outputNum < minOutputs) {
           someErrorMsg = i18n.t('packages_dag_node_none_output', {
             val1: node.name,
-            val2: minOutputs,
+            val2: minOutputs
           })
           return true
         }
@@ -1422,7 +1339,7 @@ export default {
         if (!inputNum && !outputNum) {
           // 存在没有连线的节点
           someErrorMsg = i18n.t('packages_dag_node_none_connection', {
-            val1: node.name,
+            val1: node.name
           })
           return true
         }
@@ -1436,15 +1353,12 @@ export default {
      */
     validateAgent() {
       let someErrorMsg
-      const nodes = this.allNodes.filter(
-        (node) => node.type === 'database' || node.type === 'table'
-      )
+      const nodes = this.allNodes.filter(node => node.type === 'database' || node.type === 'table')
       const accessNodeProcessIdArr = [
         ...nodes.reduce((set, item) => {
-          item.attrs.accessNodeProcessId &&
-            set.add(item.attrs.accessNodeProcessId)
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
-        }, new Set()),
+        }, new Set())
       ]
 
       if (accessNodeProcessIdArr.length > 1) {
@@ -1457,23 +1371,19 @@ export default {
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
-          nodes.forEach((node) => {
-            if (
-              node.attrs.accessNodeProcessId &&
-              chooseId !== node.attrs.accessNodeProcessId
-            ) {
+          nodes.forEach(node => {
+            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
                 msg: i18n.t('packages_dag_mixins_editor_gaijiedianbuzhi', {
                   val1: agent.hostName,
-                  val2: agent.ip,
-                }),
+                  val2: agent.ip
+                })
               })
               isError = true
             }
           })
-          isError &&
-            (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
+          isError && (someErrorMsg = i18n.t('packages_dag_mixins_editor_suoshuage'))
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
@@ -1496,30 +1406,26 @@ export default {
       const { type } = this.dataflow
       if (type !== 'initial_sync') {
         let hasNoStreamReadFunction = false
-        this.allNodes.forEach((node) => {
+        this.allNodes.forEach(node => {
           if (node.$outputs.length && !node.$inputs.length) {
-            const capbilitiesMap = node.attrs.capabilities.reduce(
-              (map, item) => {
-                map[item.id] = true
-                return map
-              },
-              {}
-            )
+            const capbilitiesMap = node.attrs.capabilities.reduce((map, item) => {
+              map[item.id] = true
+              return map
+            }, {})
 
             if (
               !(
                 capbilitiesMap['stream_read_function'] ||
                 capbilitiesMap['raw_data_callback_filter_function'] ||
                 capbilitiesMap['raw_data_callback_filter_function_v2'] ||
-                (capbilitiesMap['query_by_advance_filter_function'] &&
-                  capbilitiesMap['batch_read_function'])
+                (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
               )
             ) {
               // 源不支持增量
               hasNoStreamReadFunction = true
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc'),
+                msg: i18n.t('packages_dag_mixins_editor_not_support_cdc')
               })
             }
           }
@@ -1534,11 +1440,8 @@ export default {
     loadLeafNode(node) {
       let arr = []
       if (node.$outputs.length) {
-        node.$outputs.forEach((id) => {
-          console.log(
-            'this.loadLeafNode(this.nodeById(id))',
-            this.loadLeafNode(this.nodeById(id))
-          ) // eslint-disable-line
+        node.$outputs.forEach(id => {
+          console.log('this.loadLeafNode(this.nodeById(id))', this.loadLeafNode(this.nodeById(id))) // eslint-disable-line
           arr.push(...this.loadLeafNode(this.nodeById(id)))
         })
       } else {
@@ -1551,7 +1454,7 @@ export default {
       this.eachMap[node.id] = true
       const size = node.$outputs.length
       if (size > 0) {
-        node.$outputs.forEach((id) => {
+        node.$outputs.forEach(id => {
           if (this.eachMap[id]) return
           const output = this.nodeById(id)
           if (output.$inputs.length > 1) {
@@ -1564,7 +1467,7 @@ export default {
 
     eachInputsByFilter(node, filterId) {
       this.eachMap[node.id] = true
-      node.$inputs.forEach((id) => {
+      node.$inputs.forEach(id => {
         if (id !== filterId && !this.eachMap[id]) {
           const input = this.nodeById(id)
           this.eachInputs(input)
@@ -1577,7 +1480,7 @@ export default {
 
     eachOutputsByFilter(node, filterId) {
       this.eachMap[node.id] = true
-      node.$outputs.forEach((id) => {
+      node.$outputs.forEach(id => {
         if (id !== filterId && !this.eachMap[id]) {
           const output = this.nodeById(id)
           this.eachOutputs(output)
@@ -1592,7 +1495,7 @@ export default {
       this.eachMap[node.id] = true
       const size = node.$inputs.length
       if (size > 0) {
-        node.$inputs.forEach((id) => {
+        node.$inputs.forEach(id => {
           if (this.eachMap[id]) return
           const input = this.nodeById(id)
           if (input.$outputs.length > 1) {
@@ -1604,13 +1507,12 @@ export default {
     },
 
     validateLink() {
-      const firstSourceNode = this.allNodes.find((node) => !node.$inputs.length)
-      if (!firstSourceNode)
-        return i18n.t('packages_dag_mixins_editor_renwulianlubu')
+      const firstSourceNode = this.allNodes.find(node => !node.$inputs.length)
+      if (!firstSourceNode) return i18n.t('packages_dag_mixins_editor_renwulianlubu')
       this.eachMap = {}
       this.eachOutputs(firstSourceNode)
 
-      if (this.allNodes.some((node) => !this.eachMap[node.id])) {
+      if (this.allNodes.some(node => !this.eachMap[node.id])) {
         return i18n.t('packages_dag_mixins_editor_buzhichiduotiao')
       }
     },
@@ -1619,20 +1521,15 @@ export default {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
-      let blacklist = [
-        'js_processor',
-        'custom_processor',
-        'migrate_js_processor',
-        'union_processor',
-      ]
-      this.allNodes.forEach((node) => {
+      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
+      this.allNodes.forEach(node => {
         if (node.enableDDL) {
           hasEnableDDL = true
           if (node.increasePoll === 'customizeSql') {
             hasEnableDDLAndIncreasesql = true
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl'),
+              msg: i18n.t('packages_dag_mixins_editor_not_support_ddl')
             })
           }
         }
@@ -1652,17 +1549,13 @@ export default {
       let notAllowTarget
       const schemaFree = this.$store.state.dataflow.pdkSchemaFreeMap
 
-      this.allNodes.some((node) => {
+      this.allNodes.some(node => {
         if (node.enableCustomCommand) {
           enable = true
         }
 
         // 目标是否是弱schema类型
-        if (
-          node.$inputs.length &&
-          !node.$outputs.length &&
-          !schemaFree[node.attrs.pdkHash]
-        ) {
+        if (node.$inputs.length && !node.$outputs.length && !schemaFree[node.attrs.pdkHash]) {
           notAllowTarget = true
         }
 
@@ -1689,10 +1582,8 @@ export default {
     },
 
     async validate() {
-      if (!this.dataflow.name)
-        return this.$t('packages_dag_editor_cell_validate_empty_name')
-      if (!this.allNodes.length)
-        return this.$t('packages_dag_editor_cell_validate_none_data_node')
+      if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
+      if (!this.allNodes.length) return this.$t('packages_dag_editor_cell_validate_none_data_node')
 
       await this.validateAllNodes()
 
@@ -1717,10 +1608,7 @@ export default {
       this.jsPlumbIns.select().removeClass('connection-highlight')
       const $elemBelow = document.elementFromPoint(...position)
 
-      if (
-        $elemBelow?.nodeName === 'path' &&
-        $elemBelow.parentElement._jsPlumb
-      ) {
+      if ($elemBelow?.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
         $elemBelow.parentElement.classList.add('connection-highlight')
       }
 
@@ -1731,20 +1619,17 @@ export default {
         el.style.transform = `scale(${this.scale})`
         let nw = el.offsetWidth
         let nh = el.offsetHeight
-        const pos = this.$refs.paperScroller.getDropPositionWithinPaper(
-          position,
-          {
-            width: nw,
-            height: nh,
-          }
-        )
+        const pos = this.$refs.paperScroller.getDropPositionWithinPaper(position, {
+          width: nw,
+          height: nh
+        })
         let diffPos = { x: 0, y: 0 }
         let horiArr = []
         let verArr = []
         let rangeX = 10
         let rangeY = 10
 
-        this.allNodes.forEach((item) => {
+        this.allNodes.forEach(item => {
           let [x, y] = item.attrs.position
           let _x = x - pos[0]
           let _y = y - pos[1]
@@ -1779,11 +1664,11 @@ export default {
           b = pos[1] + nh,
           l = pos[0],
           r = pos[0] + nw
-        verArr.forEach((y) => {
+        verArr.forEach(y => {
           t = Math.min(y + nh, t)
           b = Math.max(y, b)
         })
-        horiArr.forEach((x) => {
+        horiArr.forEach(x => {
           l = Math.min(x + nw, l)
           r = Math.max(x, r)
         })
@@ -1796,12 +1681,12 @@ export default {
             {
               top,
               left: pos[0] + 'px',
-              height,
+              height
             },
             {
               top,
               left: pos[0] + nw + 'px',
-              height,
+              height
             }
           )
         }
@@ -1812,12 +1697,12 @@ export default {
             {
               top,
               left: pos[0] + 'px',
-              height,
+              height
             },
             {
               top,
               left: pos[0] + nw + 'px',
-              height,
+              height
             }
           )
         }
@@ -1829,12 +1714,12 @@ export default {
             {
               top: pos[1] + 'px',
               left,
-              width,
+              width
             },
             {
               top: pos[1] + nh + 'px',
               left,
-              width,
+              width
             }
           )
         }
@@ -1846,12 +1731,12 @@ export default {
             {
               top: pos[1] + 'px',
               left,
-              width,
+              width
             },
             {
               top: pos[1] + nh + 'px',
               left,
-              width,
+              width
             }
           )
         }
@@ -1901,10 +1786,7 @@ export default {
 
     handleAddNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
-      const position = this.getNewNodePosition(
-        [x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2],
-        [120, 0]
-      )
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [120, 0])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
@@ -1922,7 +1804,7 @@ export default {
         this.setActiveType(null)
       } else if (showSelectBox) {
         const selectedNodes = this.getNodesInSelection(selectBoxAttr)
-        selectedNodes.forEach((node) => this.nodeSelected(node))
+        selectedNodes.forEach(node => this.nodeSelected(node))
       }
     },
 
@@ -1946,10 +1828,7 @@ export default {
       const spaceX = 120
       const spaceY = 120
 
-      const newPosition = [
-        source.attrs.position[0] + NODE_WIDTH + spaceX,
-        source.attrs.position[1],
-      ]
+      const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
       let movePosition = [spaceX, 0]
 
       if (this.isSource(source)) {
@@ -1972,10 +1851,7 @@ export default {
       const spaceX = 120
       const spaceY = 120
 
-      const newPosition = [
-        target.attrs.position[0] - NODE_WIDTH - spaceX,
-        target.attrs.position[1],
-      ]
+      const newPosition = [target.attrs.position[0] - NODE_WIDTH - spaceX, target.attrs.position[1]]
       let movePosition = [-spaceX, 0]
 
       if (target.$inputs.length) {
@@ -2016,7 +1892,7 @@ export default {
         new AddNodeOnConnectionCommand(
           {
             source,
-            target,
+            target
           },
           b
         )
@@ -2025,19 +1901,11 @@ export default {
 
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
-      const position = this.$refs.paperScroller.getDropPositionWithinPaper(
-        nodeMenu.connectionCenterPos,
-        {
-          width: NODE_WIDTH,
-          height: NODE_HEIGHT,
-        }
-      )
-      this.addNodeOnConn(
-        nodeType,
-        position,
-        nodeMenu.data.source,
-        nodeMenu.data.target
-      )
+      const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT
+      })
+      this.addNodeOnConn(nodeType, position, nodeMenu.data.source, nodeMenu.data.target)
       this.$nextTick(() => {
         this.handleAutoLayout()
       })
@@ -2087,13 +1955,13 @@ export default {
         let names = []
         if (error.data?.data) {
           const keys = Object.keys(error.data.data)
-          keys.forEach((key) => {
+          keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: error.data.data[key][0].msg,
+                msg: error.data.data[key][0].msg
               })
             }
           })
@@ -2111,8 +1979,8 @@ export default {
           onlyTitle: true,
           type: 'warning',
           closeOnClickModal: false,
-          confirmButtonText: i18n.t('public_button_refresh'),
-        }).then((resFlag) => {
+          confirmButtonText: i18n.t('public_button_refresh')
+        }).then(resFlag => {
           resFlag && location.reload()
         })
       } else if (code === 'Task.ScheduleLimit') {
@@ -2129,12 +1997,10 @@ export default {
       this.dataflow.name = name
       taskApi.rename(this.dataflow.id, name).then(
         () => {
-          this.$message.success(
-            this.$t('packages_dag_message_task_rename_success')
-          )
+          this.$message.success(this.$t('packages_dag_message_task_rename_success'))
           this.titleSet()
         },
-        (error) => {
+        error => {
           this.dataflow.name = oldName
           this.handleError(error)
         }
@@ -2144,16 +2010,13 @@ export default {
     handleEditFlush(result) {
       console.debug(
         i18n.t('packages_dag_mixins_editor_debug5', {
-          val1: result.data?.status,
+          val1: result.data?.status
         }),
         result.data
       ) // eslint-disable-line
       if (result.data) {
         if (result.data.id !== this.dataflow.id) {
-          console.debug(
-            i18n.t('packages_dag_mixins_editor_wsshoudaole'),
-            result.data
-          )
+          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
           return
         }
         this.reformDataflow(result.data, true)
@@ -2170,12 +2033,7 @@ export default {
 
     async handleStart() {
       const routeName = this.$route.name
-      const isDataflow = [
-        'DataflowNew',
-        'DataflowEditor',
-        'DataflowViewer',
-        'TaskMonitor',
-      ].includes(routeName)
+      const isDataflow = ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
       const buriedCode = isDataflow ? 'taskStart' : 'migrationStart'
       this.buried(buriedCode)
 
@@ -2197,14 +2055,14 @@ export default {
 
       this.$confirm(message, '', {
         type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+        showClose: false
+      }).then(async resFlag => {
         if (!resFlag) {
           return
         }
         this.initWS()
         this.dataflow.disabledData.stop = true
-        await taskApi.stop(this.dataflow.id).catch((e) => {
+        await taskApi.stop(this.dataflow.id).catch(e => {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         })
         this.$message.success(this.$t('public_message_operation_success'))
@@ -2215,8 +2073,8 @@ export default {
       let msg = this.getConfirmMessage('force_stop')
       this.$confirm(msg, '', {
         type: 'warning',
-        showClose: false,
-      }).then(async (resFlag) => {
+        showClose: false
+      }).then(async resFlag => {
         if (!resFlag) {
           return
         }
@@ -2230,8 +2088,8 @@ export default {
     handleReset() {
       let msg = this.getConfirmMessage('initialize')
       this.$confirm(msg, '', {
-        type: 'warning',
-      }).then(async (resFlag) => {
+        type: 'warning'
+      }).then(async resFlag => {
         if (!resFlag) {
           return
         }
@@ -2241,10 +2099,7 @@ export default {
           this.toggleConsole(true)
           this.$refs.console?.startAuto('reset') // 信息输出自动加载
           const data = await taskApi.reset(this.dataflow.id)
-          this.responseHandler(
-            data,
-            this.$t('public_message_operation_success')
-          )
+          this.responseHandler(data, this.$t('public_message_operation_success'))
         } catch (e) {
           this.handleError(e, this.$t('packages_dag_message_operation_error'))
         }
@@ -2261,11 +2116,11 @@ export default {
         h(
           'span',
           {
-            class: 'color-primary',
+            class: 'color-primary'
           },
           this.dataflow.name
         ),
-        strArr[1],
+        strArr[1]
       ])
       return msg
     },
@@ -2277,23 +2132,21 @@ export default {
           5: this.$t('packages_dag_dataFlow_multiError_notFound'),
           6: this.$t('packages_dag_dataFlow_multiError_statusError'),
           7: this.$t('packages_dag_dataFlow_multiError_otherError'),
-          8: this.$t('packages_dag_dataFlow_multiError_statusError'),
+          8: this.$t('packages_dag_dataFlow_multiError_statusError')
         }
         let nameMapping = {}
-        this.table.list.forEach((item) => {
+        this.table.list.forEach(item => {
           nameMapping[item.id] = item.name
         })
         this.$message.warning({
           dangerouslyUseHTMLString: true,
           message: failList
-            .map((item) => {
+            .map(item => {
               return `<div style="line-height: 24px;"><span style="color: #409EFF">${
                 nameMapping[item.id]
-              }</span> : <span style="color: #F56C6C">${
-                msgMapping[item.code]
-              }</span></div>`
+              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
             })
-            .join(''),
+            .join('')
         })
       } else if (msg) {
         this.$message.success(msg)
@@ -2306,9 +2159,7 @@ export default {
         const { parent_task_sign } = this.$route.query || {}
         const data = await taskApi.get(id, params, { parent_task_sign })
         if (!data) {
-          this.$message.error(
-            i18n.t('packages_dag_mixins_editor_renwubucunzai')
-          )
+          this.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           this.handlePageReturn()
           return
         }
@@ -2344,7 +2195,7 @@ export default {
           console.debug(
             i18n.t('packages_dag_mixins_editor_debug3', {
               val1: this.dataflow.status,
-              val2: data.status,
+              val2: data.status
             }),
             data
           ) // eslint-disable-line
@@ -2379,8 +2230,8 @@ export default {
         type: 'editFlush',
         taskId: this.dataflow.id,
         data: {
-          opType: 'subscribe',
-        },
+          opType: 'subscribe'
+        }
       })
     },
 
@@ -2390,8 +2241,8 @@ export default {
         type: 'editFlush',
         taskId: this.dataflow.id,
         data: {
-          opType: 'subscribe',
-        },
+          opType: 'subscribe'
+        }
       })
       console.log('wsAgentLive', this.$ws.ws) // eslint-disable-line
     },
@@ -2403,14 +2254,14 @@ export default {
       selectedConnections.forEach(({ target, source }) => {
         const conn = this.jsPlumbIns.select({
           target: NODE_PREFIX + target,
-          source: NODE_PREFIX + source,
+          source: NODE_PREFIX + source
         })
 
         if (conn) {
           this.command.exec(
             new RemoveConnectionCommand({
               source,
-              target,
+              target
             })
           )
         }
@@ -2451,11 +2302,7 @@ export default {
 
     handleConsoleAutoLoad() {
       this.toggleConsole(true)
-      const logType = ['renewing', 'renew_failed'].includes(
-        this.dataflow.status
-      )
-        ? 'reset'
-        : 'checkDag'
+      const logType = ['renewing', 'renew_failed'].includes(this.dataflow.status) ? 'reset' : 'checkDag'
       this.$refs.console?.startAuto(logType)
     },
 
@@ -2465,7 +2312,7 @@ export default {
     preventNodeOverlap(nodes) {
       if (nodes?.length) {
         const map = {}
-        const ifOverlap = nodes.some((node) => {
+        const ifOverlap = nodes.some(node => {
           const pos = node.attrs.position.join(',')
           if (map[pos]) return true
           map[pos] = true
@@ -2488,9 +2335,9 @@ export default {
             messages: true,
             tags: true,
             pdkHash: true,
-            properties: true,
-          },
-        }),
+            properties: true
+          }
+        })
       })
       let tagsMap = {}
       let propertiesMap = {}
@@ -2513,12 +2360,7 @@ export default {
 
     getIsDataflow() {
       const routeName = this.$route.name
-      return [
-        'DataflowNew',
-        'DataflowEditor',
-        'DataflowViewer',
-        'TaskMonitor',
-      ].includes(routeName)
+      return ['DataflowNew', 'DataflowEditor', 'DataflowViewer', 'TaskMonitor'].includes(routeName)
     },
 
     beforeStartTask() {
@@ -2549,7 +2391,7 @@ export default {
       if (!id) return
       const data = await dataPermissionApi.dataActions({
         dataType: 'Task',
-        dataId: id,
+        dataId: id
       })
       for (let key in this.buttonShowMap) {
         this.buttonShowMap[key] = data.includes(key)
@@ -2574,20 +2416,19 @@ export default {
               encodeURIComponent(
                 JSON.stringify({
                   size: 100,
-                  page: 1,
+                  page: 1
                 })
               )
           )
-          .then(async (data) => {
+          .then(async data => {
             const { items = [] } = data
 
-            if (items.some((t) => t.status === 'Stopped')) {
+            if (items.some(t => t.status === 'Stopped')) {
               this.$message.error(this.$t('public_task_error_schedule_limit'))
               return
             }
 
-            items.length <= 1 &&
-            items.some((t) => t.orderInfo?.chargeProvider === 'FreeTier')
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()
           })
@@ -2595,10 +2436,7 @@ export default {
 
     handleAddNodeToCenter(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
-      const position = this.getNewNodePosition(
-        [x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2],
-        [0, 120]
-      )
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
@@ -2613,10 +2451,10 @@ export default {
         return
       }
 
-      const source = this.allNodes.find((n) => !n.$outputs.length)
+      const source = this.allNodes.find(n => !n.$outputs.length)
       const target = this.quickAddNode(source, item)
       this.$refs.paperScroller.centerNode(target)
-    },
+    }
   },
-  emits: ['loop-task'],
+  emits: ['loop-task']
 }

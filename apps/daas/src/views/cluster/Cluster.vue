@@ -2,74 +2,40 @@
   <section class="clusterManagement-container isCardBox">
     <!--api 集群管理 -->
     <el-row :gutter="40" class="section-header py-6">
-      <el-col :span="18" class="isCard-title">{{
-        $t($route.meta.title)
-      }}</el-col>
+      <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
     </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
-        <FilterBar
-          v-model:value="searchParams"
-          :items="filterItems"
-          @fetch="getDataApi()"
-        >
-        </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
       </div>
       <div class="main">
         <div class="content" v-if="waterfallData.length">
-          <el-row
-            :gutter="20"
-            class="waterfall"
-            v-for="item in waterfallData"
-            :key="item.id"
-          >
+          <el-row :gutter="20" class="waterfall" v-for="item in waterfallData" :key="item.id">
             <el-col class="list" :md="12" :sm="24">
               <div :class="['grid-content', 'list-box']">
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img class="mr-4" src="../../assets/images/serve.svg" />
-                    <i
-                      class="circular mr-2 mt-2"
-                      :class="item.status !== 'running' ? 'bgred' : 'bggreen'"
-                    ></i>
+                    <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                     <div class="list-box-header-main">
                       <h2 class="name fs-6">
-                        {{
-                          item.agentName
-                            ? item.agentName
-                            : item.systemInfo.hostname
-                        }}
+                        {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
                       </h2>
                       <div class="uuid fs-8 my-1">
                         {{ item.systemInfo.uuid }}
                       </div>
-                      <span class="ip">{{
-                        item.custIP ? item.custIP : item.systemInfo.ip
-                      }}</span>
+                      <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                     </div>
                   </div>
-                  <div
-                    class="operation-bar"
-                    v-readonlybtn="'Cluster_operation'"
-                  >
+                  <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
                     <ElButton
                       size="mini"
                       type="danger"
                       v-if="item.canUpdate"
-                      @click="
-                        updateFn(
-                          item,
-                          item.management.status,
-                          'management',
-                          'update'
-                        )
-                      "
+                      @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
-                    <el-tooltip
-                      :content="$t('instance_details_xianchengziyuanxia')"
-                      placement="top"
-                    >
+                    <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
                       <VIcon
                         class="mr-2 link-primary"
                         v-readonlybtn="'Cluster_operation'"
@@ -78,10 +44,7 @@
                         >connectors</VIcon
                       >
                     </el-tooltip>
-                    <el-tooltip
-                      :content="$t('instance_details_shujuyuanziyuan')"
-                      placement="top"
-                    >
+                    <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
                       <VIcon
                         class="mr-2 link-primary"
                         v-readonlybtn="'Cluster_operation'"
@@ -90,26 +53,17 @@
                         >supervisor</VIcon
                       >
                     </el-tooltip>
-                    <VIcon
-                      class="mr-2 link-primary"
-                      v-readonlybtn="'Cluster_operation'"
-                      @click="addServeFn(item)"
+                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
                       >bg-add</VIcon
                     >
-                    <VIcon class="link-primary" @click="editAgent(item)"
-                      >cluster-setting</VIcon
-                    >
+                    <VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>
                     <!-- <i
-                        class="iconfont icon-icon_tianjia"
-                        v-readonlybtn="'Cluster_operation'"
-                        @click="addServeFn(item)"
-                      ></i> -->
+                          class="iconfont icon-icon_tianjia"
+                          v-readonlybtn="'Cluster_operation'"
+                          @click="addServeFn(item)"
+                        ></i> -->
                     <!-- <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i> -->
-                    <i
-                      v-show="item.status !== 'running'"
-                      class="iconfont icon-shanchu"
-                      @click="delConfirm(item)"
-                    ></i>
+                    <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
                   </div>
                 </div>
                 <div class="list-box-main" v-if="item.metricValues">
@@ -137,9 +91,7 @@
                       <span class="txt fw-sub">{{ $t('cluster_status') }}</span>
                     </el-col>
                     <el-col :span="4">
-                      <span class="txt fw-sub">{{
-                        $t('cluster_service_status')
-                      }}</span>
+                      <span class="txt fw-sub">{{ $t('cluster_service_status') }}</span>
                     </el-col>
                     <el-col :span="8">
                       <div class="btn txt fw-sub">
@@ -149,73 +101,39 @@
                   </el-row>
                   <el-row :gutter="16" class="data-list">
                     <el-col :span="8">
-                      <span class="txt fw-normal">{{
-                        $t('cluster_manage_sys')
+                      <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span :class="['status-' + item.management.status, 'status']">{{
+                        getStatus(item.management.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
-                      <span
-                        :class="['status-' + item.management.status, 'status']"
-                        >{{ getStatus(item.management.status) }}</span
-                      >
-                    </el-col>
-                    <el-col :span="4">
-                      <span
-                        :class="[
-                          'status-' + item.management.serviceStatus,
-                          'status',
-                        ]"
-                        >{{ getStatus(item.management.serviceStatus) }}</span
-                      >
+                      <span :class="['status-' + item.management.serviceStatus, 'status']">{{
+                        getStatus(item.management.serviceStatus)
+                      }}</span>
                     </el-col>
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           type="text"
-                          :disabled="
-                            item.management.status == 'stopped' ? false : true
-                          "
-                          @click="
-                            startFn(
-                              item,
-                              item.management.status,
-                              'management',
-                              'start'
-                            )
-                          "
+                          :disabled="item.management.status == 'stopped' ? false : true"
+                          @click="startFn(item, item.management.status, 'management', 'start')"
                           >{{ $t('public_button_start') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
                           type="text"
-                          :disabled="
-                            item.management.status == 'running' ? false : true
-                          "
-                          @click="
-                            closeFn(
-                              item,
-                              item.management.status,
-                              'management',
-                              'stop'
-                            )
-                          "
+                          :disabled="item.management.status == 'running' ? false : true"
+                          @click="closeFn(item, item.management.status, 'management', 'stop')"
                           >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
-                          :disabled="
-                            item.management.status == 'running' ? false : true
-                          "
-                          @click="
-                            restartFn(
-                              item,
-                              item.management.status,
-                              'management',
-                              'restart'
-                            )
-                          "
+                          :disabled="item.management.status == 'running' ? false : true"
+                          @click="restartFn(item, item.management.status, 'management', 'restart')"
                           >{{ $t('public_button_restart') }}
                         </ElButton>
                       </div>
@@ -223,33 +141,24 @@
                   </el-row>
                   <el-row :gutter="16" class="data-list">
                     <el-col :span="8">
-                      <span class="txt fw-normal">{{
-                        $t('cluster_sync_gover')
+                      <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
+                    </el-col>
+                    <el-col :span="4">
+                      <span :class="['status-' + item.engine.status, 'status']">{{
+                        getStatus(item.engine.status)
                       }}</span>
                     </el-col>
                     <el-col :span="4">
-                      <span
-                        :class="['status-' + item.engine.status, 'status']"
-                        >{{ getStatus(item.engine.status) }}</span
-                      >
-                    </el-col>
-                    <el-col :span="4">
-                      <span
-                        :class="[
-                          'status-' + item.engine.serviceStatus,
-                          'status',
-                        ]"
-                        >{{ getStatus(item.engine.serviceStatus) }}</span
-                      >
+                      <span :class="['status-' + item.engine.serviceStatus, 'status']">{{
+                        getStatus(item.engine.serviceStatus)
+                      }}</span>
                     </el-col>
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
                           type="text"
-                          :disabled="
-                            item.engine.status == 'stopped' ? false : true
-                          "
+                          :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_start') }}</ElButton
                         >
@@ -257,18 +166,14 @@
                         <ElButton
                           size="mini"
                           type="text"
-                          :disabled="
-                            item.engine.status == 'running' ? false : true
-                          "
+                          :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
-                          :disabled="
-                            item.engine.status == 'running' ? false : true
-                          "
+                          :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_restart') }}</ElButton
                         >
@@ -280,65 +185,43 @@
                       <span class="txt fw-normal">API server</span>
                     </el-col>
                     <el-col :span="4">
-                      <span
-                        :class="['status-' + item.apiServer.status, 'status']"
-                        >{{ getStatus(item.apiServer.status) }}</span
-                      >
+                      <span :class="['status-' + item.apiServer.status, 'status']">{{
+                        getStatus(item.apiServer.status)
+                      }}</span>
                     </el-col>
                     <el-col :span="4">
-                      <span
-                        :class="[
-                          'status-' + item.apiServer.serviceStatus,
-                          'status',
-                        ]"
-                        >{{ getStatus(item.apiServer.status) }}</span
-                      >
+                      <span :class="['status-' + item.apiServer.serviceStatus, 'status']">{{
+                        getStatus(item.apiServer.status)
+                      }}</span>
                     </el-col>
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
                           type="text"
-                          :disabled="
-                            item.apiServer.status == 'stopped' ? false : true
-                          "
-                          @click="
-                            startFn(item, item.apiServer.status, 'apiServer')
-                          "
+                          :disabled="item.apiServer.status == 'stopped' ? false : true"
+                          @click="startFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
                           type="text"
-                          :disabled="
-                            item.apiServer.status == 'running' ? false : true
-                          "
-                          @click="
-                            closeFn(item, item.apiServer.status, 'apiServer')
-                          "
+                          :disabled="item.apiServer.status == 'running' ? false : true"
+                          @click="closeFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
-                          :disabled="
-                            item.apiServer.status == 'running' ? false : true
-                          "
-                          @click="
-                            restartFn(item, item.apiServer.status, 'apiServer')
-                          "
+                          :disabled="item.apiServer.status == 'running' ? false : true"
+                          @click="restartFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row
-                    :gutter="16"
-                    class="data-list"
-                    v-for="child in item.customMonitorStatus"
-                    :key="child.id"
-                  >
+                  <el-row :gutter="16" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
                     <el-col :span="8">
                       <span class="txt">{{ child.name }}</span>
                     </el-col>
@@ -350,17 +233,13 @@
                     </el-col>
                     <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
-                        <ElButton
-                          type="text"
-                          @click="delServe(child, item.status)"
-                          >{{ $t('public_button_delete') }}</ElButton
-                        >
+                        <ElButton type="text" @click="delServe(child, item.status)">{{
+                          $t('public_button_delete')
+                        }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
-                        <ElButton
-                          type="text"
-                          @click="editServe(child, item.status, item)"
-                          >{{ $t('public_button_edit') }}</ElButton
-                        >
+                        <ElButton type="text" @click="editServe(child, item.status, item)">{{
+                          $t('public_button_edit')
+                        }}</ElButton>
                       </div>
                     </el-col>
                   </el-row>
@@ -369,31 +248,20 @@
             </el-col>
             <el-col class="list" :md="12" :sm="24">
               <div class="list-box">
-                <div
-                  class="list-box-header flex justify-content-between align-items-center"
-                >
+                <div class="list-box-header flex justify-content-between align-items-center">
                   <div class="w-75">
                     <div class="pt-2 mb-2 fs-5">
                       {{ $t('daas_cluster_cluster_yinqingduiwaijian') }}
                     </div>
-                    <span class="ip">{{
-                      item.custIP ? item.custIP : item.systemInfo.ip
-                    }}</span>
+                    <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                   </div>
                   <div class="w-25 fs-5">
-                    <span class="font-color-light">{{
-                      $t('daas_cluster_cluster_lianjiezongshu')
-                    }}</span
+                    <span class="font-color-light">{{ $t('daas_cluster_cluster_lianjiezongshu') }}</span
                     >:
-                    <span class="font-color-dark ml-3">{{
-                      item.engine ? item.engine.netStatTotals || 0 : 0
-                    }}</span>
+                    <span class="font-color-dark ml-3">{{ item.engine ? item.engine.netStatTotals || 0 : 0 }}</span>
                   </div>
                 </div>
-                <div
-                  class="netstat p-4"
-                  v-if="item.engine && item.engine.netStat"
-                >
+                <div class="netstat p-4" v-if="item.engine && item.engine.netStat">
                   <div class="flex mb-4">
                     <div class="w-75 fs-6 fw-bold font-color-dark pl-3">
                       {{ $t('daas_cluster_cluster_mubiaoIPhe') }}
@@ -418,10 +286,7 @@
           </el-row>
         </div>
         <div v-else class="no-text">
-          <i
-            class="iconfont icon iconkongyemian_zanwuwendang"
-            style="font-size: 174px"
-          ></i>
+          <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
         </div>
       </div>
     </div>
@@ -429,36 +294,27 @@
     <el-dialog
       :title="$t('cluster_add_server_mon')"
       custom-class="serverDialog"
-      v-model:visible="dialogForm"
+      v-model="dialogForm"
       :append-to-body="true"
       :lock-scroll="false"
       :close-on-click-modal="false"
       width="600px"
       @close="closeDialogForm()"
     >
-      <AddServe
-        :data="currentData"
-        :editItem="editItem"
-        ref="childRules"
-      ></AddServe>
+      <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="small" @click="closeDialogForm()">{{
-            $t('public_button_cancel')
+          <ElButton size="small" @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{
+            $t('public_button_confirm')
           }}</ElButton>
-          <ElButton
-            size="small"
-            type="primary"
-            @click="submitForm('ruleForm')"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
         </div>
       </template>
     </el-dialog>
     <el-dialog
       :title="$t('cluster_agentSetting')"
       custom-class="serverDialog"
-      v-model:visible="editAgentDialog"
+      v-model="editAgentDialog"
       :lock-scroll="false"
       :close-on-click-modal="false"
       width="600px"
@@ -469,45 +325,27 @@
           <div class="name-box">
             <el-input
               style="width: 85%"
-              v-model:value="agentName"
+              v-model="agentName"
               size="mini"
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <ElButton type="text" class="rest-btn" @click="editNameRest">{{
-              $t('public_button_reduction')
-            }}</ElButton>
+            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
-          <el-select
-            v-model:value="custIP"
-            :placeholder="$t('cluster_ip_display')"
-            size="mini"
-            style="width: 85%"
-          >
-            <el-option
-              v-for="item in ips"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
+            <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
           <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>
         </el-form-item>
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="small" @click="editAgentDialog = false">{{
-            $t('public_button_cancel')
+          <ElButton size="small" @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
+            $t('public_button_confirm')
           }}</ElButton>
-          <ElButton
-            size="small"
-            type="primary"
-            @click="submitEditAgent('editAgentForm')"
-            >{{ $t('public_button_confirm') }}</ElButton
-          >
         </div>
       </template>
     </el-dialog>
@@ -525,7 +363,7 @@ import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 export default {
   components: {
     AddServe,
-    FilterBar,
+    FilterBar
   },
   data() {
     return {
@@ -553,16 +391,16 @@ export default {
       delData: '',
       processIdData: [],
       searchParams: {
-        keyword: '',
+        keyword: ''
       },
       accessToken: '',
       filterItems: [
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input',
-        },
-      ],
+          type: 'input'
+        }
+      ]
     }
   },
   created() {
@@ -573,7 +411,7 @@ export default {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.getDataApi()
-    },
+    }
   },
   methods: {
     // 提交
@@ -587,7 +425,7 @@ export default {
             uuid: this.currentData.uuid,
             name: getFrom.name,
             command: getFrom.command,
-            arguments: getFrom.arguments ? getFrom.arguments : '',
+            arguments: getFrom.arguments ? getFrom.arguments : ''
           }
           if (getFrom.id === '') {
             await clusterApi
@@ -629,13 +467,13 @@ export default {
     delServe(data, status) {
       let params = {
         uuid: data.uuid,
-        id: data.id,
+        id: data.id
       }
 
       if (status === 'running') {
         this.$confirm(this.$t('public_message_delete_confirm') + '?', {
-          type: 'warning',
-        }).then((resFlag) => {
+          type: 'warning'
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -657,20 +495,14 @@ export default {
     },
     //下载
     downServeFn(item) {
-      proxyApi.supervisor(item.systemInfo?.process_id).then((data) => {
-        downloadJson(
-          JSON.stringify(data),
-          `${item.systemInfo?.process_id}_supervisor_summary`
-        )
+      proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_supervisor_summary`)
       })
     },
     //下载
     downConnectorsFn(item) {
-      proxyApi.connectors(item.systemInfo?.process_id).then((data) => {
-        downloadJson(
-          JSON.stringify(data),
-          `${item.systemInfo?.process_id}_connectors_memory`
-        )
+      proxyApi.connectors(item.systemInfo?.process_id).then(data => {
+        downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_connectors_memory`)
       })
     },
     // 启动
@@ -679,18 +511,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'start',
+          operation: 'start'
         }
-        this.$confirm(
-          this.$t('cluster_confirm_text') +
-            name +
-            this.$t('cluster_restart_server') +
-            '?',
-          {
-            type: 'warning',
-            closeOnClickModal: false,
-          }
-        ).then((resFlag) => {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -712,18 +538,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'stop',
+          operation: 'stop'
         }
-        this.$confirm(
-          this.$t('cluster_confirm_text') +
-            name +
-            this.$t('cluster_start_server') +
-            '?',
-          {
-            type: 'warning',
-            closeOnClickModal: false,
-          }
-        ).then((resFlag) => {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -744,18 +564,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'restart',
+          operation: 'restart'
         }
-        this.$confirm(
-          this.$t('cluster_confirm_text') +
-            name +
-            this.$t('cluster_restart_server') +
-            '?',
-          {
-            type: 'warning',
-            closeOnClickModal: false,
-          }
-        ).then((resFlag) => {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
           if (!resFlag) {
             return
           }
@@ -767,7 +581,7 @@ export default {
       let data = {
         uuid: item.uuid,
         server: 'agent',
-        operation: 'update:' + this.toVersion,
+        operation: 'update:' + this.toVersion
       }
       this.operationFn(data)
       this.canUpdate = false
@@ -794,9 +608,9 @@ export default {
     getUsageRate(processId) {
       let where = {
         process_id: {
-          inq: processId,
+          inq: processId
         },
-        worker_type: 'connector',
+        worker_type: 'connector'
       }
       return workerApi.get({ filter: JSON.stringify({ where: where }) })
     },
@@ -809,41 +623,39 @@ export default {
             or: [
               {
                 agentName: {
-                  $exists: false,
+                  $exists: false
                 },
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword,
-                },
+                  like: this.searchParams.keyword
+                }
               },
               {
                 agentName: '',
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword,
-                },
+                  like: this.searchParams.keyword
+                }
               },
               {
                 agentName: {
-                  like: this.searchParams.keyword,
-                },
-              },
-            ],
-          },
+                  like: this.searchParams.keyword
+                }
+              }
+            ]
+          }
         }
       }
       let clusterData = await clusterApi.get(params)
       clusterData = clusterData?.items || []
-      let processId = clusterData.map((it) => it?.systemInfo?.process_id)
+      let processId = clusterData.map(it => it?.systemInfo?.process_id)
       let workerData = await this.getUsageRate(processId)
       //处理worker 数据
       workerData = workerData?.items || []
       let metricValuesData = {}
       if (workerData?.length) {
-        workerData.forEach((item) => {
+        workerData.forEach(item => {
           if (item.metricValues) {
-            item.metricValues.CpuUsage =
-              (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
-            item.metricValues.HeapMemoryUsage =
-              (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
+            item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
+            item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
           }
           metricValuesData[item.process_id] = item.metricValues
         })
@@ -872,21 +684,17 @@ export default {
         }
 
         clusterData[i].canUpdate = false //allCdc && datas[i].curVersion == this.toVersion && datas[i].status != 'down';
-        clusterData[i].metricValues = metricValuesData[
-          clusterData[i].systemInfo?.process_id
-        ]
+        clusterData[i].metricValues = metricValuesData[clusterData[i].systemInfo?.process_id]
           ? metricValuesData[clusterData[i].systemInfo?.process_id]
           : { CpuUsage: '-', HeapMemoryUsage: '-' }
         if (clusterData[i]?.engine?.status !== 'running') {
           clusterData[i]['metricValues'] = {
             CpuUsage: '-',
-            HeapMemoryUsage: '-',
+            HeapMemoryUsage: '-'
           }
         }
         if (clusterData[i]?.engine?.netStat) {
-          clusterData[i].engine['netStatTotals'] = clusterData[
-            i
-          ].engine.netStat.reduce((total, key) => {
+          clusterData[i].engine['netStatTotals'] = clusterData[i].engine.netStat.reduce((total, key) => {
             return total + (key?.numbers || 0)
           }, 0)
         }
@@ -905,12 +713,10 @@ export default {
       // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
       let agentName = item.agentName || item.systemInfo.hostname
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('public_message_delete_confirm') + ' ' + agentName,
-      ])
+      let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
-        type: 'warning',
-      }).then((resFlag) => {
+        type: 'warning'
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -943,14 +749,12 @@ export default {
     submitEditAgent() {
       if (this.agentName === '') {
         this.agentName = this.currentNde.hostname
-        this.$message.error(
-          this.$t('cluster_server_name') + this.$t('public_form_not_empty')
-        )
+        this.$message.error(this.$t('cluster_server_name') + this.$t('public_form_not_empty'))
         return
       }
       let data = {
         custIP: this.custIP,
-        agentName: this.agentName,
+        agentName: this.agentName
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
@@ -965,17 +769,17 @@ export default {
     //运行日志
     goDailyRecord() {
       this.$router.push({
-        name: 'dailyRecord',
+        name: 'dailyRecord'
       })
     },
     getStatus(type) {
       return STATUS_MAP[type] || '-'
-    },
+    }
   },
   unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  },
+  }
 }
 </script>
 

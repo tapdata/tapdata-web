@@ -3,7 +3,7 @@ import { MouseMoveEvent } from '../events'
 export class MouseMoveDriver extends EventDriver {
   request = null
 
-  onMouseMove = (e) => {
+  onMouseMove = e => {
     this.request = requestAnimationFrame(() => {
       cancelAnimationFrame(this.request)
       this.dispatch(
@@ -13,7 +13,7 @@ export class MouseMoveDriver extends EventDriver {
           pageX: e.pageX,
           pageY: e.pageY,
           target: e.target,
-          view: e.view,
+          view: e.view
         })
       )
     })
@@ -21,13 +21,13 @@ export class MouseMoveDriver extends EventDriver {
 
   attach() {
     this.addEventListener('mousemove', this.onMouseMove, {
-      mode: 'onlyOne',
+      mode: 'onlyOne'
     })
   }
 
   detach() {
     this.removeEventListener('mouseover', this.onMouseMove, {
-      mode: 'onlyOne',
+      mode: 'onlyOne'
     })
   }
 }

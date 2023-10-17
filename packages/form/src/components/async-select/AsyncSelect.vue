@@ -20,25 +20,13 @@
           @close="deleteTag($event, selected[0])"
           disable-transitions
         >
-          <span class="el-select__tags-text">{{
-            selected[0].currentLabel
-          }}</span>
+          <span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
         </el-tag>
-        <el-tag
-          v-if="selected.length > 1"
-          :closable="false"
-          :size="collapseTagSize"
-          type="info"
-          disable-transitions
-        >
+        <el-tag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group
-        tag="span"
-        @after-leave="resetInputHeight"
-        v-if="!collapseTags"
-      >
+      <transition-group tag="span" @after-leave="resetInputHeight" v-if="!collapseTags">
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -78,7 +66,7 @@
         :style="{
           'flex-grow': '1',
           width: inputLength / (inputWidth - 32) + '%',
-          'max-width': inputWidth - 42 + 'px',
+          'max-width': inputWidth - 42 + 'px'
         }"
         ref="input"
       />
@@ -132,47 +120,25 @@
             </svg>
           </span>
           <template v-else>
-            <i
-              v-show="!showClose"
-              :class="[
-                'el-select__caret',
-                'el-input__icon',
-                'el-icon-' + iconClass,
-              ]"
-            ></i>
-            <i
-              v-if="showClose"
-              class="el-select__caret el-input__icon el-icon-circle-close"
-              @click="handleClearClick"
-            ></i>
+            <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"></i>
+            <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
           </template>
         </span>
       </template>
     </ElInput>
-    <transition
-      name="el-zoom-in-top"
-      @before-enter="handleMenuEnter"
-      @after-leave="doDestroy"
-    >
-      <ElSelectMenu
-        ref="popper"
-        :append-to-body="popperAppendToBody"
-        v-show="visible && emptyText !== false"
-      >
+    <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
+      <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
         <ElScrollbar
           tag="div"
           wrap-class="el-select-dropdown__wrap"
           view-class="el-select-dropdown__list"
           ref="scrollbar"
           :class="{
-            'is-empty': !allowCreate && query && filteredOptionsCount === 0,
+            'is-empty': !allowCreate && query && filteredOptionsCount === 0
           }"
           v-show="options.length > 0 && !showLoading"
         >
-          <div
-            v-infinite-scroll="loadMore"
-            :infinite-scroll-disabled="scrollDisabled"
-          >
+          <div v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled">
             <ElOption :value="query" created v-if="showNewOption">
               <slot name="created-option" :value="query"></slot>
             </ElOption>
@@ -225,11 +191,7 @@
           </span>
           <span>{{ loadingTxt }}</span>
         </div>
-        <template
-          v-else-if="
-            emptyText && (!allowCreate || (allowCreate && options.length === 0))
-          "
-        >
+        <template v-else-if="emptyText && (!allowCreate || (allowCreate && options.length === 0))">
           <slot name="empty" v-if="$slots.empty"></slot>
           <p class="el-select-dropdown__empty" v-else>
             {{ emptyText }}
@@ -241,76 +203,80 @@
 </template>
 
 <script>
+import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
 import { valueEquals } from 'element-ui/src/utils/util'
 
 export default {
+  components: {
+    ElIconCircleClose
+  },
   name: 'AsyncSelect',
   extends: Select,
   props: {
     method: {
       type: Function,
-      required: true,
+      required: true
     },
     createValidate: Function, // 当allowCreate打开时，验证创建项
     onSetSelected: Function, // 主要是在schema场景下做交互使用
     params: Object,
     itemType: {
       type: String,
-      default: 'object',
+      default: 'object'
     },
     itemLabel: {
       type: String,
-      default: 'label',
+      default: 'label'
     },
     itemValue: {
       type: String,
-      default: 'value',
+      default: 'value'
     },
     itemQuery: String,
     filterable: {
       type: Boolean,
-      default: true,
+      default: true
     },
     defaultFirstOption: {
       type: Boolean,
-      default: true,
+      default: true
     },
     filterMethod: {
       type: Function,
-      default: () => {},
+      default: () => {}
     },
     remote: {
       type: Boolean,
-      default: true,
+      default: true
     },
     lazy: {
       type: Boolean,
-      default: false,
+      default: false
     },
     currentLabel: [String, Array],
     debounceWait: {
       type: Number,
-      default: 200,
+      default: 200
     },
     inputQueryWait: {
       type: Number,
-      default: 100,
+      default: 100
     },
     pageSize: {
       type: Number,
-      default: 20,
-    },
+      default: 20
+    }
   },
   data() {
     return {
       pagination: {
-        page: 1,
+        page: 1
       },
 
       total: 0,
@@ -318,7 +284,7 @@ export default {
       loadingMore: false,
       lastQuery: null,
       loadingData: false,
-      loadingOption: false,
+      loadingOption: false
     }
   },
   computed: {
@@ -328,16 +294,10 @@ export default {
 
     showNewOption() {
       let hasExistingOption = this.options
-        .filter((option) => !option.created)
-        .some((option) => option.currentLabel === this.query)
+        .filter(option => !option.created)
+        .some(option => option.currentLabel === this.query)
       // this.query !== this.value 排除输入值===选项值，而选项值不在列表里面（因为分页的原因未加载到）
-      return (
-        this.filterable &&
-        this.allowCreate &&
-        this.query !== '' &&
-        !hasExistingOption &&
-        this.query !== this.value
-      )
+      return this.filterable && this.allowCreate && this.query !== '' && !hasExistingOption && this.query !== this.value
     },
 
     showLoading() {
@@ -348,14 +308,8 @@ export default {
       if (this.showLoading) {
         return this.loadingTxt
       } else {
-        if (this.remote && this.query === '' && this.items.length === 0)
-          return false
-        if (
-          this.filterable &&
-          this.query &&
-          this.items.length > 0 &&
-          this.filteredOptionsCount === 0
-        ) {
+        if (this.remote && this.query === '' && this.items.length === 0) return false
+        if (this.filterable && this.query && this.items.length > 0 && this.filteredOptionsCount === 0) {
           return this.noMatchText || this.$t('packages_form_el_select_noMatch')
         }
         if (this.total === 0) {
@@ -379,7 +333,7 @@ export default {
 
     debounce() {
       return this.inputQueryWait
-    },
+    }
   },
   watch: {
     params(val, old) {
@@ -394,7 +348,7 @@ export default {
       if (this.lazy && !this.items.length && v) {
         this.loadData()
       }
-    },
+    }
   },
   async created() {
     if (!this.lazy) await this.loadData()
@@ -415,7 +369,7 @@ export default {
       const { itemValue, itemLabel } = this
       let filter = merge({}, this.params, {
         where: { [itemValue]: value },
-        size: 1,
+        size: 1
       })
       const { items } = await this.method(filter)
       const [item] = items
@@ -423,27 +377,21 @@ export default {
         return {
           ...item,
           value,
-          currentLabel: item[itemLabel],
+          currentLabel: item[itemLabel]
         }
       }
     },
 
     async getOption(value, notNew) {
       let option, optionData
-      const isObject =
-        Object.prototype.toString.call(value).toLowerCase() ===
-        '[object object]'
-      const isNull =
-        Object.prototype.toString.call(value).toLowerCase() === '[object null]'
-      const isUndefined =
-        Object.prototype.toString.call(value).toLowerCase() ===
-        '[object undefined]'
+      const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]'
+      const isNull = Object.prototype.toString.call(value).toLowerCase() === '[object null]'
+      const isUndefined = Object.prototype.toString.call(value).toLowerCase() === '[object undefined]'
 
       for (let i = this.cachedOptions.length - 1; i >= 0; i--) {
         const cachedOption = this.cachedOptions[i]
         const isEqual = isObject
-          ? getValueByPath(cachedOption.value, this.valueKey) ===
-            getValueByPath(value, this.valueKey)
+          ? getValueByPath(cachedOption.value, this.valueKey) === getValueByPath(value, this.valueKey)
           : cachedOption.value === value
         if (isEqual) {
           option = cachedOption
@@ -456,14 +404,9 @@ export default {
       const label = !isObject && !isNull && !isUndefined ? String(value) : ''
       let newOption = {
         value: value,
-        currentLabel: label,
+        currentLabel: label
       }
-      if (
-        this.itemType === 'object' &&
-        this.total > 0 &&
-        !!value &&
-        !this.lazy
-      ) {
+      if (this.itemType === 'object' && this.total > 0 && !!value && !this.lazy) {
         this.loadingOption = true
         newOption = (await this.loadOption(value)) || newOption
         this.loadingOption = false
@@ -481,7 +424,7 @@ export default {
         if (this.currentLabel) {
           option = {
             value: this.value,
-            currentLabel: this.currentLabel,
+            currentLabel: this.currentLabel
           }
         } else {
           option = await this.getOption(this.value)
@@ -512,7 +455,7 @@ export default {
           if (this.currentLabel?.length) {
             result.push({
               value,
-              currentLabel: this.currentLabel[i] || '',
+              currentLabel: this.currentLabel[i] || ''
             })
           } else {
             result.push(await this.getOption(value))
@@ -527,7 +470,7 @@ export default {
 
     getFilter() {
       const filter = merge({}, this.params, this.pagination, {
-        size: this.pageSize,
+        size: this.pageSize
       })
       const query = this.query.trim()
 
@@ -536,9 +479,9 @@ export default {
           where: {
             [this.itemQuery || this.itemLabel]: {
               like: escapeRegExp(query),
-              options: 'i',
-            },
-          },
+              options: 'i'
+            }
+          }
         })
         // const cond = { like: query, options: 'i' }
         // filter.where ? (filter.where[this.itemLabel] = cond) : (filter.where = { [this.itemLabel]: cond })
@@ -561,7 +504,7 @@ export default {
 
       try {
         const { items, total } = await this.method(this.getFilter(), {
-          cancelToken: this.cancelSource.token,
+          cancelToken: this.cancelSource.token
         })
         this.total = total
         if (isMore) {
@@ -592,8 +535,7 @@ export default {
       if (this.previousQuery === val || this.isOnComposition) return
       if (
         this.previousQuery === null &&
-        (typeof this.filterMethod === 'function' ||
-          typeof this.remoteMethod === 'function')
+        (typeof this.filterMethod === 'function' || typeof this.remoteMethod === 'function')
       ) {
         this.previousQuery = val
         this.query = ''
@@ -619,18 +561,13 @@ export default {
       this.loadData()
       this.lastQuery = val
       this.broadcast('ElOptionGroup', 'queryChange')
-      if (
-        this.defaultFirstOption &&
-        (this.filterable || this.remote) &&
-        (this.total || this.filteredOptionsCount)
-      ) {
+      if (this.defaultFirstOption && (this.filterable || this.remote) && (this.total || this.filteredOptionsCount)) {
         this.checkDefaultFirstOption()
       }
     }, 200),
 
     async scrollToOption(option) {
-      let target =
-        Array.isArray(option) && option[0] ? option[0].$el : option.$el
+      let target = Array.isArray(option) && option[0] ? option[0].$el : option.$el
       if (!target && !Array.isArray(option)) {
         const option = await this.getOption(this.value, true)
         if (option?.$el) {
@@ -639,9 +576,7 @@ export default {
         }
       }
       if (this.$refs.popper && target) {
-        const menu = this.$refs.popper.$el.querySelector(
-          '.el-select-dropdown__wrap'
-        )
+        const menu = this.$refs.popper.$el.querySelector('.el-select-dropdown__wrap')
         scrollIntoView(menu, target)
       }
       this.$refs.scrollbar && this.$refs.scrollbar.handleScroll()
@@ -654,10 +589,7 @@ export default {
         const optionIndex = this.getValueIndex(value, option.value)
         if (optionIndex > -1) {
           value.splice(optionIndex, 1)
-        } else if (
-          this.multipleLimit <= 0 ||
-          value.length < this.multipleLimit
-        ) {
+        } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
           value.push(option.value)
         }
         $emit(this, 'update:value', value)
@@ -682,14 +614,14 @@ export default {
         this.emitChange(option.value, option)
         !option.created && (this.visible = false)
         /*if (option.created) {
-        // 因为调整了setSelected为异步
-        setTimeout(() => {
-          this.visible = false
-        }, 0)
-        this.$emit('create', option.value)
-      } else {
-        this.visible = false
-      }*/
+// 因为调整了setSelected为异步
+setTimeout(() => {
+  this.visible = false
+}, 0)
+this.$emit('create', option.value)
+} else {
+this.visible = false
+}*/
       }
       this.isSilentBlur = byClick
       this.setSoftFocus()
@@ -701,29 +633,18 @@ export default {
 
     emitChange(val, option) {
       if (!valueEquals(this.value, val)) {
-        $emit(
-          this,
-          'change',
-          val,
-          this.items.find((t) => t.value === val) || {}
-        )
+        $emit(this, 'change', val, this.items.find(t => t.value === val) || {})
         if (this.multiple) {
-          const uniqArr =
-            uniqBy(
-              [...this.selected, ...this.cachedOptions, ...this.options],
-              'value'
-            ) || []
-          const changeLabels = uniqArr
-            .filter((t) => val.includes(t.value))
-            .map((t) => t.currentLabel || t.label)
+          const uniqArr = uniqBy([...this.selected, ...this.cachedOptions, ...this.options], 'value') || []
+          const changeLabels = uniqArr.filter(t => val.includes(t.value)).map(t => t.currentLabel || t.label)
           $emit(this, 'change-label', changeLabels)
         } else {
           $emit(this, 'change-label', option.currentLabel)
         }
       }
-    },
+    }
   },
-  emits: ['option-select', 'update:value', 'create', 'change', 'change-label'],
+  emits: ['option-select', 'update:value', 'create', 'change', 'change-label']
 }
 </script>
 

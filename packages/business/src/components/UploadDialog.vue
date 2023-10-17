@@ -7,38 +7,18 @@
     v-model:visible="dialogVisible"
     :before-close="handleClose"
   >
-    <ElForm
-      ref="form"
-      :model="importForm"
-      class="applications-form"
-      label-width="100px"
-    >
-      <ElFormItem
-        :label="$t('packages_business_modules_dialog_condition') + ':'"
-      >
-        <el-radio v-model:value="importForm.upsert" :label="1">{{
+    <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
+      <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
+        <el-radio v-model="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
-        <el-radio v-model:value="importForm.upsert" :label="0">{{
+        <el-radio v-model="importForm.upsert" :label="0">{{
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>
-      <ElFormItem
-        v-show="showTag"
-        :label="$t('packages_business_modules_dialog_group') + ':'"
-      >
-        <ElSelect
-          v-model:value="importForm.tag"
-          multiple
-          size="mini"
-          class="w-75"
-        >
-          <ElOption
-            v-for="item in classifyList"
-            :label="item.value"
-            :value="item.id"
-            :key="item.id"
-          ></ElOption>
+      <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
+        <ElSelect v-model:value="importForm.tag" multiple size="mini" class="w-75">
+          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
@@ -64,12 +44,8 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{
-          $t('public_button_cancel')
-        }}</ElButton>
-        <ElButton type="primary" @click="submitUpload()" size="mini">{{
-          $t('public_button_confirm')
-        }}</ElButton>
+        <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </template>
   </ElDialog>
@@ -83,17 +59,17 @@ import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
-    VIcon,
+    VIcon
   },
   props: {
     type: {
       required: true,
-      value: String,
+      value: String
     },
     showTag: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     return {
@@ -105,8 +81,8 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz',
-      },
+        accept: '.gz'
+      }
     }
   },
   created() {
@@ -141,50 +117,37 @@ export default {
       const originPath = window.location.origin + window.location.pathname
       const upsert = `upsert=${this.importForm.upsert}`
       const downType = `type=${this.downType}`
-      const listtags = `listtags=${encodeURIComponent(
-        JSON.stringify(this.importForm.tag)
-      )}`
+      const listtags = `listtags=${encodeURIComponent(JSON.stringify(this.importForm.tag))}`
       const accessToken = `access_token=${this.accessToken}`
       const cover = `cover=${!!this.importForm.upsert}`
       const map = {
-        api:
-          originPath +
-          `api/MetadataInstances/upload?${upsert}&${listtags}&${downType}&${accessToken}`,
-        Javascript_functions:
-          originPath +
-          `api/Javascript_functions/batch/import?${listtags}&${accessToken}&${cover}`,
-        Modules:
-          originPath +
-          `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`,
+        api: originPath + `api/MetadataInstances/upload?${upsert}&${listtags}&${downType}&${accessToken}`,
+        Javascript_functions: originPath + `api/Javascript_functions/batch/import?${listtags}&${accessToken}&${cover}`,
+        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`
       }
       this.importForm.action =
-        map[this.type] ||
-        originPath + `api/Task/batch/import?${listtags}&${accessToken}&${cover}`
+        map[this.type] || originPath + `api/Task/batch/import?${listtags}&${accessToken}&${cover}`
     },
 
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] },
+        where: { or: [{ item_type: this.type }] }
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           this.classifyList = data?.items || []
         })
     },
 
     handleSuccess(response) {
       if (response.code !== 'ok') {
-        this.$message.error(
-          response.message || this.$t('packages_business_message_upload_fail')
-        )
+        this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
       } else {
-        this.$message.success(
-          this.$t('packages_business_message_upload_success')
-        )
+        this.$message.success(this.$t('packages_business_message_upload_success'))
         $emit(this, 'success')
       }
       this.$refs.upload.clearFiles()
@@ -207,9 +170,9 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.$refs.upload.clearFiles()
-    },
+    }
   },
-  emits: ['success'],
+  emits: ['success']
 }
 </script>
 

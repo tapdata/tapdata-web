@@ -64,9 +64,9 @@ export default {
         id: '',
         name: '',
         cacheKeysArr: [],
-        fields: [],
+        fields: []
       },
-      info: [],
+      info: []
     }
   },
 
@@ -75,18 +75,16 @@ export default {
       this.loading = true
       sharedCacheApi
         .get(id)
-        .then((data) => {
+        .then(data => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
-          data.cacheTimeAtFmt = data.cacheTimeAt
-            ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
-            : '-'
+          data.cacheTimeAtFmt = data.cacheTimeAt ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
           externalStorageApi
             .get(data.externalStorageId, {
               fields: JSON.stringify({
-                name: true,
-              }),
+                name: true
+              })
             })
-            .then((d) => {
+            .then(d => {
               data.externalStorageName = d.name
               this.getInfo(data)
               this.details = data
@@ -103,40 +101,40 @@ export default {
         {
           label: this.$t('public_creator'),
           value: row.createUser,
-          icon: 'createUser',
+          icon: 'createUser'
         },
         {
           label: this.$t('packages_business_shared_cache_time'),
           value: row.cacheTimeAtFmt,
-          icon: 'cacheTimeAtFmt',
+          icon: 'cacheTimeAtFmt'
         },
         {
           label: this.$t('packages_business_shared_cache_column_connection'),
           value: row.connectionName,
-          icon: 'connectionName',
+          icon: 'connectionName'
         },
         {
           label: this.$t('packages_business_shared_cache_column_table'),
           value: row.tableName,
-          icon: 'table',
+          icon: 'table'
         },
         {
           label: this.$t('public_external_memory_name'),
           value: row.externalStorageName,
-          icon: 'table',
+          icon: 'table'
         },
         {
           label: this.$t('packages_business_shared_cache_max_memory'),
           value: row.maxMemory,
-          icon: 'record',
-        },
+          icon: 'record'
+        }
       ]
     },
 
     handleVisible() {
       this.visible = false
-    },
-  },
+    }
+  }
 }
 </script>
 

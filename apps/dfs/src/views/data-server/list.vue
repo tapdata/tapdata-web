@@ -70,8 +70,8 @@ export default {
     goDemo() {
       this.buried('dataServerTrial')
       window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
-    },
-  },
+    }
+  }
 }
 </script>
 

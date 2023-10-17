@@ -11,23 +11,7 @@ export const getImgByType = function (type) {
 }
 
 export const verify = function (value) {
-  var arr = [
-    '\\',
-    '$',
-    '(',
-    ')',
-    '*',
-    '+',
-    '.',
-    '[',
-    ']',
-    '?',
-    '^',
-    '{',
-    '}',
-    '|',
-    '-',
-  ]
+  var arr = ['\\', '$', '(', ')', '*', '+', '.', '[', ']', '?', '^', '{', '}', '|', '-']
   for (var i = 0; i < arr.length; i++) {
     var str = '\\' + arr[i]
     value = value.replace(new RegExp(str, 'g'), '\\' + arr[i])
@@ -45,7 +29,7 @@ export const desensitization = function (url) {
 
 export const handleProgress = function (data) {
   let count = 0
-  data.forEach((log) => {
+  data.forEach(log => {
     if (log.status === 'passed') {
       count++
     }
@@ -60,15 +44,15 @@ export const defaultModel = {
     id: '',
     name: '',
     connection_type: '',
-    table_filter: '',
-  },
+    table_filter: ''
+  }
 }
 
 // 数据源图标
-export const getConnectionIcon = (pdkHash) => {
+export const getConnectionIcon = pdkHash => {
   if (pdkHash) {
     const params = {
-      pdkHash,
+      pdkHash
     }
     if (process.env.VUE_APP_ACCESS_TOKEN) {
       params.__token = process.env.VUE_APP_ACCESS_TOKEN

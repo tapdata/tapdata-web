@@ -10,12 +10,12 @@ export const getComponentByTag = (tag, transformRules, defaultProps) => {
         ..._context,
         props: _props,
         data: _context.attr,
-        children: _context.slots,
+        children: _context.slots
       }
       const data = context.data
       if (transformRules) {
         const listeners = transformRules
-        Object.keys(listeners).forEach((extract) => {
+        Object.keys(listeners).forEach(extract => {
           if (data.on !== undefined) {
             data.on[listeners[extract]] = context.listeners[extract]
           }
@@ -31,11 +31,11 @@ export const getComponentByTag = (tag, transformRules, defaultProps) => {
       setup(props, { attrs, slots }) {
         return () => {
           let data = {
-            ...attrs,
+            ...attrs
           }
           if (transformRules) {
             const listeners = transformRules
-            Object.keys(listeners).forEach((extract) => {
+            Object.keys(listeners).forEach(extract => {
               const event = listeners[extract]
               data[`on${event[0].toUpperCase()}${event.slice(1)}`] =
                 attrs[`on${extract[0].toUpperCase()}${extract.slice(1)}`]
@@ -46,7 +46,7 @@ export const getComponentByTag = (tag, transformRules, defaultProps) => {
           }
           return h(tag, attrs, slots)
         }
-      },
+      }
     }
   }
 }

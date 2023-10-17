@@ -3,32 +3,17 @@
     <img :src="imgSrc" :data-status="statusObj.text" alt="" />
   </span>
   <span v-else class="td-status-tag">
-    <span
-      v-if="type === 'tag'"
-      :class="['status-tag', statusObj.type ? 'tag--' + statusObj.type : '']"
-      >{{ statusObj.text }}</span
-    >
-    <span
-      :class="[
-        'flex',
-        'align-items-center',
-        'icon-span',
-        `color-${statusObj.type}`,
-        status,
-      ]"
-      v-else
-    >
-      <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{
-        statusObj.icon
-      }}</VIcon>
+    <span v-if="type === 'tag'" :class="['status-tag', statusObj.type ? 'tag--' + statusObj.type : '']">{{
+      statusObj.text
+    }}</span>
+    <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
+      <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
       <span
         v-else
         :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
         :style="{ 'background-color': statusObj.color }"
       ></span>
-      <span class="td-status-tag__text font-color-sub">{{
-        statusObj.text
-      }}</span>
+      <span class="td-status-tag__text font-color-sub">{{ statusObj.text }}</span>
     </span>
   </span>
 </template>
@@ -43,7 +28,7 @@ import {
   CONNECTION_STATUS_MAP_EN,
   MDB_STATUS_MAP,
   TICKET_STATUS_MAP,
-  ORDER_STATUS_MAP,
+  ORDER_STATUS_MAP
 } from '../const'
 export default {
   name: 'StatusTag',
@@ -51,28 +36,28 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'tag',
+      default: 'tag'
     },
     status: {
-      type: String,
+      type: String
     },
     target: {
       type: String,
-      default: 'instance',
+      default: 'instance'
     },
     onlyImg: {
       type: Boolean,
-      default: false,
+      default: false
     },
     statusMap: {
       type: Object,
       default: () => {
         return null
-      },
+      }
     },
     defaultStatus: {
-      type: String,
-    },
+      type: String
+    }
   },
   computed: {
     map() {
@@ -86,7 +71,7 @@ export default {
           milestone: MILESTONE_STATUS_MAP,
           connection_en: CONNECTION_STATUS_MAP_EN,
           ticket: TICKET_STATUS_MAP,
-          order: ORDER_STATUS_MAP,
+          order: ORDER_STATUS_MAP
         }[this.target]
       )
     },
@@ -95,8 +80,8 @@ export default {
     },
     imgSrc() {
       return require(`../../public/images/task/${this.statusObj.icon}.png`)
-    },
-  },
+    }
+  }
 }
 </script>
 

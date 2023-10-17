@@ -8,20 +8,12 @@ import '@formily/element/lib/space/style.scss'
 const spaceSize = {
   small: 8,
   middle: 16,
-  large: 24,
+  large: 24
 }
 
 export const Space = defineComponent({
   name: 'FSpace',
-  props: [
-    'size',
-    'direction',
-    'align',
-    'split',
-    'filterIndex',
-    'colSpan',
-    'inline',
-  ],
+  props: ['size', 'direction', 'align', 'split', 'filterIndex', 'colSpan', 'inline'],
   setup(props, { attrs, slots }) {
     const layout = useFormLayout()
 
@@ -33,7 +25,7 @@ export const Space = defineComponent({
         split,
         filterIndex,
         colSpan = [],
-        inline = true,
+        inline = true
       } = props
 
       const prefixCls = `${stylePrefix}-space`
@@ -65,14 +57,13 @@ export const Space = defineComponent({
         return null
       }
 
-      const mergedAlign =
-        align === undefined && direction === 'horizontal' ? 'center' : align
+      const mergedAlign = align === undefined && direction === 'horizontal' ? 'center' : align
 
       const someSpaceClass = {
         [prefixCls]: true,
         [`${prefixCls}-${direction}`]: true,
         [`${prefixCls}-align-${mergedAlign}`]: mergedAlign,
-        flex: !inline,
+        flex: !inline
       }
 
       const itemClassName = `${prefixCls}-item`
@@ -85,8 +76,8 @@ export const Space = defineComponent({
               class: itemClassName,
               key: `${itemClassName}-${i}`,
               style: {
-                flex: colSpan[i],
-              },
+                flex: colSpan[i]
+              }
             },
             { default: () => [child] }
           ),
@@ -96,7 +87,7 @@ export const Space = defineComponent({
               'span',
               {
                 class: `${itemClassName}-split`,
-                key: `${itemClassName}-split-${i}`,
+                key: `${itemClassName}-split-${i}`
               },
               {
                 default: () => [
@@ -104,14 +95,14 @@ export const Space = defineComponent({
                     VDivider,
                     {
                       props: {
-                        vertical: direction !== 'vertical',
-                      },
+                        vertical: direction !== 'vertical'
+                      }
                     },
                     []
-                  ),
-                ],
+                  )
+                ]
               }
-            ),
+            )
         ]
       })
 
@@ -122,14 +113,13 @@ export const Space = defineComponent({
           class: { ...attrs.class, ...someSpaceClass },
           style: {
             ...attrs.style,
-            gap:
-              typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`,
-          },
+            gap: typeof size === 'string' ? `${spaceSize[size]}px` : `${size}px`
+          }
         },
         { default: () => renderItems }
       )
     }
-  },
+  }
 })
 
 export default Space

@@ -3,29 +3,19 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_mdm') }}</span>
       <div class="flex-grow-1"></div>
-      <ElTooltip
-        placement="top"
-        :content="$t('packages_dag_build_materialized_view')"
-      >
-        <IconButton :disabled="mdmNotExist" @click="openMaterializedDialog"
-          >materialized</IconButton
-        >
+      <ElTooltip placement="top" :content="$t('packages_dag_build_materialized_view')">
+        <IconButton :disabled="mdmNotExist" @click="openMaterializedDialog">materialized</IconButton>
       </ElTooltip>
-      <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')"
-        >folder-plus</IconButton
-      >
-      <IconButton
-        :disabled="mdmNotExist"
-        :class="{ active: enableSearch }"
-        @click="toggleEnableSearch"
+      <IconButton :disabled="mdmNotExist" @click="showDialog(directory, 'add')">folder-plus</IconButton>
+      <IconButton :disabled="mdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch"
         >search-outline</IconButton
       >
       <!--<ElDropdown trigger="click" @command="handleCommand">
-          <IconButton class="ml-3">more</IconButton>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="config"> Configure </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>-->
+            <IconButton class="ml-3">more</IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="config"> Configure </ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -103,10 +93,7 @@
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
           >
-            <span
-              class="text-center lh-base"
-              v-html="$t('packages_business_mdm_empty_text')"
-            ></span>
+            <span class="text-center lh-base" v-html="$t('packages_business_mdm_empty_text')"></span>
           </div>
         </template>
       </div>
@@ -125,23 +112,11 @@
       </div>
     </div>
 
-    <ElDialog
-      v-model:visible="taskDialogConfig.visible"
-      width="600"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <template v-slot:title>
-        <span class="font-color-dark fs-6 fw-sub">{{
-          $t('packages_business_create_sync_task')
-        }}</span>
+        <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
       </template>
-      <ElForm
-        ref="form"
-        :model="taskDialogConfig"
-        label-width="180px"
-        @submit.prevent
-        :rules="formRules"
-      >
+      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           {{ $t('packages_business_mdm_create_task_dialog_desc_prefix') }}
           <ul>
@@ -167,19 +142,13 @@
             <template v-slot:prepend>{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>
-        <ElFormItem
-          :label="$t('packages_dag_task_setting_sync_type')"
-          prop="task.type"
-        >
+        <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
           <ElRadioGroup v-model:value="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
             >
-              <ElRadio
-                label="initial_sync+cdc"
-                :disabled="taskDialogConfig.notSupportedCDC"
-              >
+              <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
                 {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
               </ElRadio>
             </ElTooltip>
@@ -189,24 +158,14 @@
             </ElRadio>
           </ElRadioGroup>
         </ElFormItem>
-        <div
-          class="flex align-center gap-3"
-          v-if="taskDialogConfig.task.type === 'initial_sync'"
-        >
-          <ElFormItem
-            :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
-            prop="task.crontabExpressionType"
-          >
+        <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+          <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
             <ElSelect
               v-model:value="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
-              <ElOption
-                v-bind="opt"
-                v-for="(opt, i) in cronOptions"
-                :key="i"
-              ></ElOption>
+              <ElOption v-bind="opt" v-for="(opt, i) in cronOptions" :key="i"></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem
@@ -214,49 +173,29 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput
-              v-model:value="taskDialogConfig.task.crontabExpression"
-            ></ElInput>
+            <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="taskDialogConfig.visible = false">{{
-            $t('public_button_cancel')
+          <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
+            $t('packages_business_save_only')
           }}</ElButton>
-          <ElButton
-            :loading="creating"
-            size="mini"
-            @click="taskDialogSubmit(false)"
-            >{{ $t('packages_business_save_only') }}</ElButton
-          >
-          <ElButton
-            :loading="creating"
-            size="mini"
-            type="primary"
-            @click="taskDialogSubmit(true)"
-          >
+          <ElButton :loading="creating" size="mini" type="primary" @click="taskDialogSubmit(true)">
             {{ $t('packages_business_save_and_run_now') }}
           </ElButton>
         </span>
       </template>
     </ElDialog>
 
-    <ElDialog
-      v-model:visible="dialogConfig.visible"
-      width="30%"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template v-slot:title>
         <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
-        <ElFormItem
-          :label="
-            $t('packages_component_src_discoveryclassification_mulumingcheng')
-          "
-        >
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
             size="mini"
             v-model:value="dialogConfig.label"
@@ -266,28 +205,22 @@
           ></ElInput>
         </ElFormItem>
         <!--<ElFormItem
-            :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-            v-if="dialogConfig.isParent"
-          >
-            <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-              <el-option
-                :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-                value="resource"
-              ></el-option>
-              &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
-            </ElSelect>
-          </ElFormItem>-->
-        <ElFormItem
-          :label="
-            $t('packages_component_src_discoveryclassification_mulumiaoshu')
-          "
-        >
+              :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+              v-if="dialogConfig.isParent"
+            >
+              <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+                <el-option
+                  :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+                  value="resource"
+                ></el-option>
+                &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
+              </ElSelect>
+            </ElFormItem>-->
+        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
             v-model:value="dialogConfig.desc"
-            :placeholder="
-              $t('packages_component_src_discoveryclassification_qingshurumulu')
-            "
+            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
           ></ElInput>
@@ -295,9 +228,7 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog()">{{
-            $t('public_button_cancel')
-          }}</ElButton>
+          <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
           <ElButton size="mini" type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>
@@ -305,23 +236,11 @@
       </template>
     </ElDialog>
 
-    <ElDialog
-      v-model:visible="showMaterialized"
-      width="480px"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model:visible="showMaterialized" width="480px" :close-on-click-modal="false">
       <template v-slot:title>
-        <span class="fs-6 fw-sub">{{
-          $t('packages_dag_build_materialized_view')
-        }}</span>
+        <span class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       </template>
-      <ElForm
-        ref="form"
-        label-width="90px"
-        label-position="top"
-        class="my-n6"
-        @submit.prevent
-      >
+      <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
           <ElInput size="small" v-model:value="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
@@ -330,9 +249,7 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="showMaterialized = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
+          <ElButton size="mini" @click="showMaterialized = false">{{ $t('public_button_cancel') }}</ElButton>
           <ElButton
             size="mini"
             type="primary"
@@ -353,13 +270,7 @@ import i18n from '@tap/i18n'
 
 import { debounce } from 'lodash'
 import { VirtualTree, IconButton } from '@tap/component'
-import {
-  CancelToken,
-  discoveryApi,
-  ldpApi,
-  metadataDefinitionsApi,
-  userGroupsApi,
-} from '@tap/api'
+import { CancelToken, discoveryApi, ldpApi, metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
 import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon } from '@tap/business'
 import commonMix from './mixins/common'
@@ -376,8 +287,8 @@ export default {
     loadingDirectory: Boolean,
     mapCatalog: {
       type: Function,
-      require: true,
-    },
+      require: true
+    }
   },
   components: { DatabaseIcon, VirtualTree, IconButton },
   mixins: [commonMix],
@@ -396,8 +307,8 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once',
-        },
+          crontabExpressionType: 'once'
+        }
       },
       expandedKeys: [],
       dialogConfig: {
@@ -408,7 +319,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false,
+        visible: false
       },
       searchIng: false,
       search: '',
@@ -416,7 +327,7 @@ export default {
       filterTreeData: [],
       tablePrefix: 'MDM_',
       showMaterialized: false,
-      materializedTableName: '',
+      materializedTableName: ''
     }
   },
   computed: {
@@ -435,14 +346,14 @@ export default {
 
     isDragSelf() {
       return this.dragState.isDragging && this.dragState.from === 'MDM'
-    },
+    }
   },
   watch: {
     loadingDirectory(v) {
       if (!v) {
         this.setNodeExpand()
       }
-    },
+    }
   },
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
@@ -465,7 +376,7 @@ export default {
         actions = [
           <IconButton
             sm
-            onClick={(ev) => {
+            onClick={ev => {
               ev.stopPropagation()
               this.showDialog(data, 'add')
             }}
@@ -476,10 +387,10 @@ export default {
             class="inline-flex"
             placement="bottom"
             trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
+            onCommand={command => this.handleMoreCommand(command, data)}
           >
             <IconButton
-              onClick={(ev) => {
+              onClick={ev => {
                 ev.stopPropagation()
               }}
               sm
@@ -487,14 +398,10 @@ export default {
               more
             </IconButton>
             <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">
-                {this.$t('public_button_edit')}
-              </ElDropdownItem>
-              <ElDropdownItem command="delete">
-                {this.$t('public_button_delete')}
-              </ElDropdownItem>
+              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+              <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
             </ElDropdownMenu>
-          </ElDropdown>,
+          </ElDropdown>
         ]
       }
 
@@ -513,36 +420,34 @@ export default {
             click: () => {
               data.isObject &&
                 $emit(this, 'preview', data, this.mdmConnection, {
-                  onDelete: (tagId) => {
+                  onDelete: tagId => {
                     // this.setNodeExpand(tagId)
                     this.$refs.tree.remove(data.id)
-                  },
+                  }
                 })
             },
-            dragenter: (ev) => {
+            dragenter: ev => {
               ev.stopPropagation()
               this.handleTreeDragEnter(ev, data, node)
             },
-            dragover: (ev) => {
+            dragover: ev => {
               ev.stopPropagation()
               this.handleTreeDragOver(ev, data, node)
             },
-            dragleave: (ev) => {
+            dragleave: ev => {
               ev.stopPropagation()
               this.handleTreeDragLeave(ev, data, node)
             },
-            drop: (ev) => {
+            drop: ev => {
               ev.stopPropagation()
               this.handleTreeDrop(ev, data, node)
-            },
+            }
           }}
         >
           <div class="flex align-center flex-fill mr-2">
             <div class="flex-fill w-0 inline-flex align-items-center">
               <span
-                id={
-                  data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : ''
-                }
+                id={data.isObject ? `ldp_mdm_table_${data.id}_${data.name}` : ''}
                 class="inline-flex align-items-center overflow-hidden"
               >
                 {icon && (
@@ -557,18 +462,13 @@ export default {
             </div>
           </div>
           <div>
-            {data.comment && (
-              <span class="font-color-sslight">{`(${data.comment})`}</span>
-            )}
+            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.isObject ? (
-              <ElTooltip
-                content={i18n.t('packages_ldp_view_lineage')}
-                placement="top"
-              >
+              <ElTooltip content={i18n.t('packages_ldp_view_lineage')} placement="top">
                 <VIcon
                   size="18"
                   class="lineage-icon"
-                  onClick={(ev) => {
+                  onClick={ev => {
                     ev.stopPropagation()
                     this.handleFindLineage(data)
                   }}
@@ -634,7 +534,7 @@ export default {
 
     showTaskDialog(tagId) {
       const {
-        draggingObjects: [object],
+        draggingObjects: [object]
       } = this.dragState
 
       this.taskDialogConfig.from = object.parent.data
@@ -646,21 +546,17 @@ export default {
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
 
-      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce(
-        (map, item) => {
-          map[item.id] = true
-          return map
-        },
-        {}
-      )
+      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce((map, item) => {
+        map[item.id] = true
+        return map
+      }, {})
 
       if (
         !(
           capbilitiesMap['stream_read_function'] ||
           capbilitiesMap['raw_data_callback_filter_function'] ||
           capbilitiesMap['raw_data_callback_filter_function_v2'] ||
-          (capbilitiesMap['query_by_advance_filter_function'] &&
-            capbilitiesMap['batch_read_function'])
+          (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
         )
       ) {
         this.taskDialogConfig.notSupportedCDC = true
@@ -671,25 +567,16 @@ export default {
     },
 
     async taskDialogSubmit(start, confirmTable) {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (!valid) return
-        const {
-          tableName,
-          from,
-          newTableName,
-          tagId,
-          task: settings,
-        } = this.taskDialogConfig
-        let task = Object.assign(
-          this.makeTask(from, tableName, this.tablePrefix + newTableName),
-          settings
-        )
+        const { tableName, from, newTableName, tagId, task: settings } = this.taskDialogConfig
+        let task = Object.assign(this.makeTask(from, tableName, this.tablePrefix + newTableName), settings)
         this.creating = true
         const h = this.$createElement
         try {
           const result = await ldpApi.createMDMTask(task, {
             silenceMessage: true,
-            params: { tagId, confirmTable, start },
+            params: { tagId, confirmTable, start }
           })
           this.taskDialogConfig.visible = false
           this.$message.success({
@@ -700,11 +587,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(result)
-                  },
-                },
+                  }
+                }
               },
               this.$t('packages_business_task_created_success')
-            ),
+            )
           })
           setTimeout(() => {
             this.setNodeExpand(tagId)
@@ -725,26 +612,22 @@ export default {
                   on: {
                     click: () => {
                       this.handleClickName(data)
-                    },
-                  },
+                    }
+                  }
                 },
                 this.$t('packages_business_task_created_fail_no_primary_key')
-              ),
+              )
             })
             setTimeout(() => {
               this.setNodeExpand(tagId)
             }, 1000)
           } else if (code === 'Ldp.RepeatTableName') {
-            this.$confirm(
-              '',
-              i18n.t('packages_business_mdm_table_duplication_confirm'),
-              {
-                onlyTitle: true,
-                type: 'warning',
-                closeOnClickModal: false,
-                zIndex: 999999,
-              }
-            ).then((resFlag) => {
+            this.$confirm('', i18n.t('packages_business_mdm_table_duplication_confirm'), {
+              onlyTitle: true,
+              type: 'warning',
+              closeOnClickModal: false,
+              zIndex: 999999
+            }).then(resFlag => {
               if (!resFlag) {
                 return
               }
@@ -753,15 +636,9 @@ export default {
           } else if (code === 'Task.ListWarnMessage' && data) {
             const keys = Object.keys(data)
             const msg = data[keys[0]]?.[0]?.msg
-            this.$message.error(
-              msg ||
-                response.data.message ||
-                this.$t('public_message_save_fail')
-            )
+            this.$message.error(msg || response.data.message || this.$t('public_message_save_fail'))
           } else {
-            this.$message.error(
-              response.data.message || this.$t('public_message_save_fail')
-            )
+            this.$message.error(response.data.message || this.$t('public_message_save_fail'))
           }
         }
         this.creating = false
@@ -777,8 +654,8 @@ export default {
         name: this.getTaskName(from, tableName, newTableName),
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target],
-        },
+          nodes: [source, target]
+        }
       }
     },
 
@@ -797,25 +674,18 @@ export default {
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
-          hasCreated: false,
-        },
+          hasCreated: false
+        }
       }
     },
 
     getTaskName(from, tableName, newTableName) {
-      return `${
-        from.name
-      }_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
+      return `${from.name}_Sync_${tableName}_To_MDM_${newTableName}_${generateId(6)}`
     },
 
     async handleNodeExpand(data, node, forceLoadTable) {
       // 十秒内加载过资源，不再继续加载
-      if (
-        !forceLoadTable &&
-        node.loadTime &&
-        Date.now() - node.loadTime < 10000
-      )
-        return
+      if (!forceLoadTable && node.loadTime && Date.now() - node.loadTime < 10000) return
 
       node.loadTime = Date.now()
       node.loading = true
@@ -823,10 +693,8 @@ export default {
       node.loading = false
 
       this.$refs.tree.updateKeyChildren(data.id, objects)
-      const childrenMap = data.children
-        ? data.children.reduce((map, item) => ((map[item.id] = true), map), {})
-        : {}
-      objects.forEach((item) => {
+      const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+      objects.forEach(item => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
         item.isObject = true
@@ -837,12 +705,7 @@ export default {
 
     setNodeExpand(tagId, forceLoadTable) {
       if (!tagId || tagId === this.directory?.id) {
-        this.directory?.id &&
-          this.handleNodeExpand(
-            this.directory,
-            this.$refs.tree.root,
-            forceLoadTable
-          )
+        this.directory?.id && this.handleNodeExpand(this.directory, this.$refs.tree.root, forceLoadTable)
       } else {
         const node = this.$refs.tree.getNode(tagId)
         this.handleNodeExpand(node.data, node, forceLoadTable)
@@ -860,10 +723,7 @@ export default {
       if (this.allowDrop && data.isObject) return
       if (!this.allowDrop && !this.isDragSelf) return
 
-      const dropNode = this.findParentNodeByClassName(
-        ev.currentTarget,
-        'el-tree-node'
-      )
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
       dropNode.classList.add('is-drop-inner')
     },
 
@@ -896,20 +756,18 @@ export default {
         metadataDefinitionsApi
           .changeById({
             id: draggingNode.data.id,
-            parent_id: dropNode.data.id || '',
+            parent_id: dropNode.data.id || ''
           })
           .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch((err) => {
+          .catch(err => {
             this.$message.error(err.message)
           })
       } else {
-        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [
-          draggingNode.data,
-        ])
+        this.moveTag(draggingNode.data.parent_id, dropNode.data.id, [draggingNode.data])
       }
     },
 
@@ -930,8 +788,8 @@ export default {
       draggingNode = {
         ...draggingNode,
         parent: {
-          data: this.mdmConnection,
-        },
+          data: this.mdmConnection
+        }
       }
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
@@ -966,9 +824,7 @@ export default {
         isParent: true,
         desc: type === 'edit' ? data?.desc : '',
         title:
-          type === 'add'
-            ? this.$t('packages_component_classification_addChildernNode')
-            : this.$t('public_button_edit'),
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
       }
     },
     hideDialog() {
@@ -982,16 +838,14 @@ export default {
       let method = 'post'
 
       if (!value || value.trim() === '') {
-        this.$message.error(
-          this.$t('packages_component_classification_nodeName')
-        )
+        this.$message.error(this.$t('packages_component_classification_nodeName'))
         return
       }
 
       let params = {
         item_type: itemType,
         desc: config.desc,
-        value,
+        value
       }
 
       if (config.type === 'edit') {
@@ -1024,10 +878,10 @@ export default {
     async moveTag(from, to, objects) {
       if (from === to) return
 
-      const tagBindingParams = objects.map((t) => {
+      const tagBindingParams = objects.map(t => {
         return {
           id: t.id,
-          objCategory: t.category,
+          objCategory: t.category
         }
       })
       /*await discoveryApi.patchTags({
@@ -1037,9 +891,9 @@ export default {
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
-        oldTagIds: [from],
+        oldTagIds: [from]
       })
-      objects.forEach((item) => (item.parent_id = to))
+      objects.forEach(item => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
     },
 
@@ -1062,9 +916,9 @@ export default {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('packages_component_message_cancel'),
           type: 'warning',
-          closeOnClickModal: false,
+          closeOnClickModal: false
         }
-      ).then((resFlag) => {
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1078,9 +932,7 @@ export default {
     },
 
     handleFindLineage(data) {
-      const el = document.getElementById(
-        `ldp_mdm_table_${data.id}_${data.name}`
-      )
+      const el = document.getElementById(`ldp_mdm_table_${data.id}_${data.name}`)
       $emit(this, 'find-parent', el, data)
     },
 
@@ -1103,18 +955,12 @@ export default {
         query: {
           by: 'materialized-view',
           connectionId: this.mdmConnection.id,
-          tableName: this.tablePrefix + tableName,
-        },
+          tableName: this.tablePrefix + tableName
+        }
       })
-    },
+    }
   },
-  emits: [
-    'preview',
-    'find-parent',
-    'show-settings',
-    'node-drag-end',
-    'handle-connection',
-  ],
+  emits: ['preview', 'find-parent', 'show-settings', 'node-drag-end', 'handle-connection']
 }
 </script>
 

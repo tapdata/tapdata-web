@@ -26,11 +26,7 @@
               v-if="item.list.length > 0"
             >
               <div style="height: 80px; width: 80px">
-                <Chart
-                  ref="lineChart"
-                  type="pie"
-                  :extend="getPieOption(index)"
-                ></Chart>
+                <Chart ref="lineChart" type="pie" :extend="getPieOption(index)"></Chart>
               </div>
             </div>
           </li>
@@ -41,21 +37,13 @@
           <div class="aside-title px-4 mb-2 font-color-dark fw-normal fs-6">
             {{ $t('workbench_notice') }}
           </div>
-          <div
-            v-if="notices.length > 0"
-            class="more-btn cursor-pointer px-4 font-color-slight"
-            @click="goNoticeList"
-          >
-            {{ $t('more_workbench_notice')
-            }}<VIcon size="14" class="icon ml-1">arrow-right</VIcon>
+          <div v-if="notices.length > 0" class="more-btn cursor-pointer px-4 font-color-slight" @click="goNoticeList">
+            {{ $t('more_workbench_notice') }}<VIcon size="14" class="icon ml-1">arrow-right</VIcon>
           </div>
         </div>
         <br />
         <div class="aside-main notice-list flex-grow-1 px-4">
-          <ul
-            class="notice-list__list h-100 overflow-y-auto"
-            v-if="notices.length > 0"
-          >
+          <ul class="notice-list__list h-100 overflow-y-auto" v-if="notices.length > 0">
             <li
               v-for="(item, index) in notices.slice(0, 3)"
               :key="index"
@@ -64,11 +52,7 @@
               <div v-if="item.type" class="notice-list__type mr-4 p-1">
                 {{ item.type }}
               </div>
-              <ElLink
-                v-else
-                class="notice-list__name flex-grow-1 ellipsis block pointer"
-                @click="toNotice(item)"
-              >
+              <ElLink v-else class="notice-list__name flex-grow-1 ellipsis block pointer" @click="toNotice(item)">
                 {{ item.name }}
               </ElLink>
               <div class="notice-list__time font-color-slight">
@@ -76,14 +60,8 @@
               </div>
             </li>
           </ul>
-          <ul
-            v-else
-            class="flex flex-column justify-content-center align-center"
-          >
-            <el-image
-              class="product-type-image"
-              :src="require('@tap/assets/images/empty-img-simple.svg')"
-            />
+          <ul v-else class="flex flex-column justify-content-center align-center">
+            <el-image class="product-type-image" :src="require('@tap/assets/images/empty-img-simple.svg')" />
             <div>{{ $t('data_no_data') }}</div>
           </ul>
         </div>
@@ -115,14 +93,14 @@ export default {
             {
               label: this.$t('public_status_running'),
               value: 0,
-              class: 'success',
+              class: 'success'
             },
             {
               label: this.$t('public_agent_status_offline'),
               value: 0,
-              class: 'error',
-            },
-          ],
+              class: 'error'
+            }
+          ]
         },
         {
           name: this.$t('workbench_overview_connection'),
@@ -132,13 +110,13 @@ export default {
           list: [
             {
               label: this.$t('workbench_overview_connection_ready'),
-              value: 0,
+              value: 0
             },
             {
               label: this.$t('workbench_overview_connection_invalid'),
-              value: 0,
-            },
-          ],
+              value: 0
+            }
+          ]
         },
         {
           name: this.$t('workbench_overview_task'),
@@ -148,20 +126,20 @@ export default {
           list: [
             {
               label: this.$t('public_task_type_initial_sync'),
-              value: 0,
+              value: 0
             },
             {
               label: this.$t('public_task_type_cdc'),
-              value: 0,
+              value: 0
             },
             {
               label: this.$t('public_task_type_initial_sync_and_cdc'),
-              value: 0,
-            },
-          ],
-        },
+              value: 0
+            }
+          ]
+        }
       ], // 介绍列表
-      notices: [], // 公告列表
+      notices: [] // 公告列表
     }
   },
   created() {
@@ -177,15 +155,14 @@ export default {
     loadAgent() {
       let agentList = this.agentList
       const loading = this.$loading({
-        target: this.$refs.agent?.[0],
+        target: this.$refs.agent?.[0]
       })
       this.$axios
         .get('api/tcm/agent/agentCount')
-        .then((data) => {
+        .then(data => {
           agentList[0].value = data.agentTotalCount || 0
           agentList[0].list[0].value = data.agentRunningCount || 0
-          agentList[0].list[1].value =
-            agentList[0].value - agentList[0].list[0].value
+          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
         })
         .finally(() => {
           loading.close()
@@ -194,7 +171,7 @@ export default {
     // 获取任务数据
     async getTaskStats() {
       const taskLoading = this.$loading({
-        target: this.$refs.task?.[0],
+        target: this.$refs.task?.[0]
       })
       const data = await taskApi.getStats().finally(() => {
         taskLoading.close()
@@ -211,7 +188,7 @@ export default {
     // 获取连接数据
     async getConnectionStats() {
       const connectionLoading = this.$loading({
-        target: this.$refs.connection?.[0],
+        target: this.$refs.connection?.[0]
       })
       const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
@@ -236,22 +213,22 @@ export default {
           type: '',
           name: 'Tapdata Cloud 3.2.2 Release Notes',
           link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
-          time: '2023-05-4 21:00',
+          time: '2023-05-4 21:00'
         },
         {
           id: 10,
           type: '',
           name: 'Tapdata Cloud 3.2.1 Release Notes',
           link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
-          time: '2023-04-20 21:00',
+          time: '2023-04-20 21:00'
         },
         {
           id: 9,
           type: '',
           name: 'Tapdata Cloud 3.1.9 Release Notes',
           link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
-          time: '2023-03-20 21:00',
-        },
+          time: '2023-03-20 21:00'
+        }
       ]
     },
     //图表数据组装
@@ -259,49 +236,49 @@ export default {
       let data = [
         {
           itemStyle: {
-            color: '#00b42a',
+            color: '#00b42a'
           },
           value: this.agentList[index].list[0].value,
-          name: this.agentList[index].list[0].label,
+          name: this.agentList[index].list[0].label
         },
         {
           itemStyle: {
-            color: '#ff7d00',
+            color: '#ff7d00'
           },
           value: this.agentList[index].list[1].value,
-          name: this.agentList[index].list[1].label,
-        },
+          name: this.agentList[index].list[1].label
+        }
       ]
       if (index === 2) {
         let node = {
           itemStyle: {
-            color: '#2C65FF',
+            color: '#2C65FF'
           },
           value: this.agentList[index].list[2].value,
-          name: this.agentList[index].list[2].label,
+          name: this.agentList[index].list[2].label
         }
         data.push(node)
       }
       return {
         tooltip: {
           trigger: 'item',
-          position: ['80%', '80%'],
+          position: ['80%', '80%']
         },
         series: [
           {
             type: 'pie',
             labelLine: {
-              show: false,
+              show: false
             },
             label: {
               show: false,
-              position: 'center',
+              position: 'center'
             },
             avoidLabelOverlap: false,
             data: data,
-            radius: ['50%', '70%'],
-          },
-        ],
+            radius: ['50%', '70%']
+          }
+        ]
       }
     },
 
@@ -319,12 +296,12 @@ export default {
         this.$router.push({
           name: 'WorkbenchNotice',
           query: {
-            id: item?.id,
-          },
+            id: item?.id
+          }
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

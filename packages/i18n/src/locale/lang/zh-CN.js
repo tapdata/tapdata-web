@@ -251,8 +251,7 @@ export default {
   public_task_copy: '复制任务',
   public_task_import: '导入任务',
   public_task_export: '导出任务',
-  public_task_error_schedule_limit:
-    '您的在线Agent已达最大任务限制，请启动离线的Agent。',
+  public_task_error_schedule_limit: '您的在线Agent已达最大任务限制，请启动离线的Agent。',
   // 节点
   public_node_name: '节点名称',
   public_node_type: '节点类型',
@@ -279,5 +278,5 @@ export default {
   public_external_memory_type: '外存类型',
   public_external_memory_table: '外存表名',
   public_external_memory_connection: '外存连接',
-  public_external_memory_info: '外存信息',
+  public_external_memory_info: '外存信息'
 }

@@ -49,7 +49,7 @@ export default {
       }
 
       if (this.tree.accordion) {
-        $on(this, 'tree-node-expand', (currentNode) => {
+        $on(this, 'tree-node-expand', currentNode => {
           if (node !== currentNode) {
             node.collapse()
           }
@@ -64,10 +64,7 @@ export default {
     handleSelectChange(checked, indeterminate) {
       const node = this.node || this.source
 
-      if (
-        this.oldChecked !== checked &&
-        this.oldIndeterminate !== indeterminate
-      ) {
+      if (this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
         $emit(this.tree, 'check-change', node.data, checked, indeterminate)
       }
       this.oldChecked = checked
@@ -79,19 +76,14 @@ export default {
       const store = this.tree.store
 
       store.setCurrentNode(node)
-      $emit(
-        this.tree,
-        'current-change',
-        store.currentNode ? store.currentNode.data : null,
-        store.currentNode
-      )
+      $emit(this.tree, 'current-change', store.currentNode ? store.currentNode.data : null, store.currentNode)
       this.tree.currentNode = this
       if (this.tree.expandOnClickNode) {
         this.handleExpandIconClick()
       }
       if (this.tree.checkOnClickNode && !node.disabled) {
         this.handleCheckChange(null, {
-          target: { checked: !node.checked },
+          target: { checked: !node.checked }
         })
       }
 
@@ -101,10 +93,7 @@ export default {
     handleContextMenu(event) {
       const node = this.node || this.source
 
-      if (
-        this.tree._events['node-contextmenu'] &&
-        this.tree._events['node-contextmenu'].length > 0
-      ) {
+      if (this.tree._events['node-contextmenu'] && this.tree._events['node-contextmenu'].length > 0) {
         event.stopPropagation()
         event.preventDefault()
       }
@@ -136,7 +125,7 @@ export default {
           checkedNodes: store.getCheckedNodes(),
           checkedKeys: store.getCheckedKeys(),
           halfCheckedNodes: store.getHalfCheckedNodes(),
-          halfCheckedKeys: store.getHalfCheckedKeys(),
+          halfCheckedKeys: store.getHalfCheckedKeys()
         })
       })
     },
@@ -144,7 +133,7 @@ export default {
     handleChildNodeExpand(nodeData, node, instance) {
       this.broadcast('ElTreeNode', 'tree-node-expand', node)
       $emit(this.tree, 'node-expand', nodeData, node, instance)
-    },
+    }
   },
   emits: [
     'tree-node-drag-start',
@@ -156,6 +145,6 @@ export default {
     'node-contextmenu',
     'node-collapse',
     'check',
-    'node-expand',
-  ],
+    'node-expand'
+  ]
 }

@@ -226,8 +226,9 @@ export default class ApiClient {
         this.collections[this.collection.collection]['api'] &&
         this.collections[this.collection.collection]['api'][this.collection.operationName || 'findPage_post']
       ) {
-        url =
-          this.collections[this.collection.collection]['api'][this.collection.operationName || 'findPage_post']['url']
+        url = this.collections[this.collection.collection]['api'][this.collection.operationName || 'findPage_post'][
+          'url'
+        ]
       }
       if (!url) {
         return {

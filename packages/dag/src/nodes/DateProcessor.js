@@ -18,21 +18,21 @@ export class DateProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}',
+          formTab: '{{formTab}}'
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings'),
+              label: i18n.t('public_basic_settings')
             },
             properties: {
               name: {
@@ -40,7 +40,7 @@ export class DateProcessor extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input',
+                'x-component': 'Input'
               },
               dataTypes: {
                 type: 'array',
@@ -49,16 +49,16 @@ export class DateProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-component-props': {
-                  multiple: true,
+                  multiple: true
                 },
-                'x-reactions': [`{{useFieldDateType($values.$inputs[0])}}`],
+                'x-reactions': [`{{useFieldDateType($values.$inputs[0])}}`]
               },
               space: {
                 type: 'void',
                 title: i18n.t('packages_dag_date_processor_method'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  asterisk: true,
+                  asterisk: true
                 },
                 'x-component': 'Space',
                 properties: {
@@ -70,36 +70,36 @@ export class DateProcessor extends NodeType {
                     enum: [
                       {
                         label: i18n.t('packages_dag_date_processor_increase'),
-                        value: true,
+                        value: true
                       },
                       {
                         label: i18n.t('packages_dag_date_processor_decrease'),
-                        value: false,
-                      },
-                    ],
+                        value: false
+                      }
+                    ]
                   },
                   hours: {
                     type: 'number',
                     default: 8,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      addonAfter: i18n.t('public_time_h'),
+                      addonAfter: i18n.t('public_time_h')
                     },
                     'x-component': 'InputNumber',
                     'x-component-props': {
-                      min: 1,
-                    },
-                  },
-                },
+                      min: 1
+                    }
+                  }
+                }
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview',
-              },
-            },
-          },
-        },
-      },
-    },
+                'x-component': 'SchemaPreview'
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -18,8 +18,8 @@ export default {
         throw new Error(this.$t('agent_error_check'))
       }
     },
-    buried,
-  },
+    buried
+  }
 }
 </script>
 

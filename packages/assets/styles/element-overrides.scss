@@ -273,7 +273,7 @@ $--alert-icon-large-size: 28px !default;
 /* Message Box
 -------------------------- */
 $--msgbox-width: 420px !default;
-$--msgbox-border-radius:$--border-radius-base !default;
+$--msgbox-border-radius: $--border-radius-base !default;
 $--msgbox-font-size: $--font-size-large !default;
 $--msgbox-content-font-size: $--font-size-base !default;
 $--msgbox-content-color: $--color-text-regular !default;
@@ -935,8 +935,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .el-input-group__append {
     padding: 0 12px;
 
-    .el-button, .el-select {
-			margin: -10px -12px;
+    .el-button,
+    .el-select {
+      margin: -10px -12px;
     }
   }
 }

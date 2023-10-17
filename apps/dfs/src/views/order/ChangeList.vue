@@ -9,27 +9,15 @@
       class="mt-4 mb-4 ml-4"
     >
       <template #statusLabel="{ row }">
-        <StatusTag
-          type="tag"
-          :status="row.status"
-          default-status="Stopped"
-          target="order"
-        ></StatusTag>
+        <StatusTag type="tag" :status="row.status" default-status="Stopped" target="order"></StatusTag>
       </template>
       <template #operation="{ row }">
-        <ElButton
-          :disabled="row.status !== 'incomplete'"
-          type="text"
-          @click="openPay(row)"
-          >支付</ElButton
-        >
+        <ElButton :disabled="row.status !== 'incomplete'" type="text" @click="openPay(row)">支付</ElButton>
       </template>
       <template v-slot:empty>
         <div class="mt-8">
           <VIcon size="120">no-data-color</VIcon>
-          <div
-            class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub"
-          >
+          <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('public_data_no_data') }}</span>
           </div>
         </div>
@@ -56,31 +44,31 @@ export default {
         {
           label: i18n.t('dfs_change_number'),
           prop: 'id',
-          width: 220,
+          width: 220
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('dfs_change_time'),
           prop: 'createTime',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('task_monitor_status'),
-          slotName: 'statusLabel',
+          slotName: 'statusLabel'
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'priceLabel',
+          prop: 'priceLabel'
         },
         {
           label: i18n.t('public_operation'),
-          slotName: 'operation',
-        },
-      ],
+          slotName: 'operation'
+        }
+      ]
     }
   },
   mounted() {
@@ -89,14 +77,11 @@ export default {
   },
   methods: {
     getChangeList(id) {
-      this.$axios.get('api/tcm/subscribe/' + id + '/change').then((data) => {
-        this.changeList = (data?.items || []).map((it) => {
+      this.$axios.get('api/tcm/subscribe/' + id + '/change').then(data => {
+        this.changeList = (data?.items || []).map(it => {
           it.specLabel = getSpec(it.subscribeItems[0].spec) || '-'
           it.createTime = dayjs(it.createAt).format('YYYY-MM-DD HH:mm:ss')
-          it.priceLabel = this.formatterPrice(
-            it.subscribe.currency,
-            it.subscribeItems[0].amount
-          )
+          it.priceLabel = this.formatterPrice(it.subscribe.currency, it.subscribeItems[0].amount)
           return it
         })
       })
@@ -110,7 +95,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+          maximumFractionDigits: 2
         })
       )
     },
@@ -119,10 +104,10 @@ export default {
       this.$router.push({
         name: 'payForChange',
         params: {
-          id: row.id,
-        },
+          id: row.id
+        }
       })
-    },
-  },
+    }
+  }
 }
 </script>

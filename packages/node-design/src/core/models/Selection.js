@@ -24,7 +24,7 @@ export class Selection {
       add: action,
       remove: action,
       clear: action,
-      crossAddTo: action,
+      crossAddTo: action
     })
   }
 
@@ -34,8 +34,8 @@ export class Selection {
         target: this.operation.tree,
         source: this.operation.getSelectedNodes(),
         extra: {
-          fromUser,
-        },
+          fromUser
+        }
       })
     )
   }
@@ -59,7 +59,7 @@ export class Selection {
   }
 
   mapIds(ids) {
-    return isArr(ids) ? ids.map((node) => (isStr(node) ? node : node?.id)) : []
+    return isArr(ids) ? ids.map(node => (isStr(node) ? node : node?.id)) : []
   }
 
   batchSelect(ids, fromUser) {
@@ -79,8 +79,7 @@ export class Selection {
 
   // eslint-disable-next-line getter-return
   get last() {
-    if (this.selected && this.selected.length)
-      return this.selected[this.selected.length - 1]
+    if (this.selected && this.selected.length) return this.selected[this.selected.length - 1]
   }
 
   get length() {
@@ -88,7 +87,7 @@ export class Selection {
   }
 
   add(...ids) {
-    this.mapIds(ids).forEach((id) => {
+    this.mapIds(ids).forEach(id => {
       if (isStr(id)) {
         if (!this.selected.includes(id)) {
           this.selected.push(id)
@@ -106,17 +105,12 @@ export class Selection {
       if (this.has(node)) {
         this.remove(node)
       } else {
-        const minDistanceNode = selectedNodes.reduce(
-          (minDistanceNode, item) => {
-            return item.distanceTo(node) < minDistanceNode.distanceTo(node)
-              ? item
-              : minDistanceNode
-          },
-          selectedNodes[0]
-        )
+        const minDistanceNode = selectedNodes.reduce((minDistanceNode, item) => {
+          return item.distanceTo(node) < minDistanceNode.distanceTo(node) ? item : minDistanceNode
+        }, selectedNodes[0])
         if (minDistanceNode) {
           const crossNodes = node.crossSiblings(minDistanceNode)
-          crossNodes.forEach((node) => {
+          crossNodes.forEach(node => {
             if (!this.selected.includes(node.id)) {
               this.selected.push(node.id)
             }
@@ -130,9 +124,9 @@ export class Selection {
   }
 
   remove(...ids) {
-    this.mapIds(ids).forEach((id) => {
+    this.mapIds(ids).forEach(id => {
       if (isStr(id)) {
-        this.selected = this.selected.filter((item) => item !== id)
+        this.selected = this.selected.filter(item => item !== id)
       } else {
         this.remove(id?.id)
       }
@@ -141,7 +135,7 @@ export class Selection {
   }
 
   has(...ids) {
-    return this.mapIds(ids).some((id) => {
+    return this.mapIds(ids).some(id => {
       if (isStr(id)) {
         return this.selected.includes(id)
       } else {

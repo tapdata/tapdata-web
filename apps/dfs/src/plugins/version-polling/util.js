@@ -27,13 +27,12 @@ export function createWorkerFunc() {
   self.onmessage = function (event) {
     let code = event.data['code']
     options = Object.assign({}, options, event.data['data'])
-    const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } =
-      options
+    const { htmlFileUrl, lastEtag, appETagKey, immediate, pollingInterval } = options
 
     const runReq = function () {
       fetch(htmlFileUrl, {
         method: 'HEAD',
-        cache: 'no-cache',
+        cache: 'no-cache'
       }).then(function (response) {
         const etag = response.headers.get('etag')
 
@@ -41,7 +40,7 @@ export function createWorkerFunc() {
           self.postMessage({
             appETagKey,
             lastEtag,
-            etag,
+            etag
           })
         }
       })

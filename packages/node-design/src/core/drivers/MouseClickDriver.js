@@ -2,11 +2,9 @@ import { EventDriver } from '@tap/shared'
 import { MouseClickEvent, MouseDoubleClickEvent } from '../events'
 
 export class MouseClickDriver extends EventDriver {
-  onMouseClick = (e) => {
+  onMouseClick = e => {
     const target = e.target
-    if (
-      target?.closest(`*[${this.engine.props.clickStopPropagationAttrName}]`)
-    ) {
+    if (target?.closest(`*[${this.engine.props.clickStopPropagationAttrName}]`)) {
       return
     }
     this.dispatch(
@@ -16,16 +14,14 @@ export class MouseClickDriver extends EventDriver {
         pageX: e.pageX,
         pageY: e.pageY,
         target: e.target,
-        view: e.view,
+        view: e.view
       })
     )
   }
 
-  onMouseDoubleClick = (e) => {
+  onMouseDoubleClick = e => {
     const target = e.target
-    if (
-      target?.closest(`*[${this.engine.props.clickStopPropagationAttrName}]`)
-    ) {
+    if (target?.closest(`*[${this.engine.props.clickStopPropagationAttrName}]`)) {
       return
     }
     this.dispatch(
@@ -35,26 +31,26 @@ export class MouseClickDriver extends EventDriver {
         pageX: e.pageX,
         pageY: e.pageY,
         target: e.target,
-        view: e.view,
+        view: e.view
       })
     )
   }
 
   attach() {
     this.addEventListener('click', this.onMouseClick, {
-      mode: 'onlyChild',
+      mode: 'onlyChild'
     })
     this.addEventListener('dblclick', this.onMouseDoubleClick, {
-      mode: 'onlyChild',
+      mode: 'onlyChild'
     })
   }
 
   detach() {
     this.removeEventListener('click', this.onMouseClick, {
-      mode: 'onlyChild',
+      mode: 'onlyChild'
     })
     this.removeEventListener('dblclick', this.onMouseDoubleClick, {
-      mode: 'onlyChild',
+      mode: 'onlyChild'
     })
   }
 }

@@ -45,7 +45,7 @@ export {
   SharedCacheForm,
   ApiApplicationList,
   ExternalStorageList,
-  NoticeList,
+  NoticeList
 }
 
 export * from './connections/util'

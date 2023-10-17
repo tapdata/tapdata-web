@@ -9,16 +9,14 @@ function recursiveField(form, schema, scope, basePath, name) {
     if (isStr(reactions) && /use\w+\(.+\)/.test(reactions)) {
       delete schema['x-reactions']
     } else if (Array.isArray(reactions)) {
-      schema['x-reactions'] = reactions.filter(
-        (item) => !(isStr(item) && /use\w+\(.+\)/.test(item))
-      )
+      schema['x-reactions'] = reactions.filter(item => !(isStr(item) && /use\w+\(.+\)/.test(item)))
     }
   }
   delete schema.default
 
   const fieldSchema = new Schema(schema)
   const fieldProps = fieldSchema.toFieldProps({
-    scope,
+    scope
   })
 
   function recursiveProperties(propBasePath) {
@@ -36,7 +34,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createObjectField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     recursiveProperties(field.address.toString())
@@ -44,7 +42,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createArrayField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     const fieldAddress = field.address.toString()
@@ -52,9 +50,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const fieldValues = field.value
     fieldValues?.forEach((value, index) => {
       if (schema.items) {
-        const itemsSchema = Array.isArray(schema.items)
-          ? schema.items[index] || schema.items[0]
-          : schema.items
+        const itemsSchema = Array.isArray(schema.items) ? schema.items[index] || schema.items[0] : schema.items
 
         recursiveField(form, itemsSchema, scope, fieldAddress, index)
       }
@@ -63,7 +59,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     const field = form.createVoidField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     recursiveProperties(field.address.toString())
@@ -71,14 +67,14 @@ function recursiveField(form, schema, scope, basePath, name) {
     form.createField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
   }
 }
 function makeField(form, schema, scope, basePath, name) {
   const fieldSchema = new Schema(schema)
   const fieldProps = fieldSchema.toFieldProps({
-    scope,
+    scope
   })
 
   function recursiveProperties(propBasePath) {
@@ -96,7 +92,7 @@ function makeField(form, schema, scope, basePath, name) {
     const field = form.createObjectField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     recursiveProperties(field.address.toString())
@@ -104,7 +100,7 @@ function makeField(form, schema, scope, basePath, name) {
     const field = form.createArrayField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     const fieldAddress = field.address.toString()
@@ -112,9 +108,7 @@ function makeField(form, schema, scope, basePath, name) {
     const fieldValues = field.value
     fieldValues?.forEach((value, index) => {
       if (schema.items) {
-        const itemsSchema = Array.isArray(schema.items)
-          ? schema.items[index] || schema.items[0]
-          : schema.items
+        const itemsSchema = Array.isArray(schema.items) ? schema.items[index] || schema.items[0] : schema.items
 
         recursiveField(form, itemsSchema, scope, fieldAddress, index)
       }
@@ -123,7 +117,7 @@ function makeField(form, schema, scope, basePath, name) {
     const field = form.createVoidField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
 
     recursiveProperties(field.address.toString())
@@ -131,7 +125,7 @@ function makeField(form, schema, scope, basePath, name) {
     form.createField({
       ...fieldProps,
       name,
-      basePath,
+      basePath
     })
   }
 }
@@ -161,7 +155,7 @@ function makeField(form, schema, scope, basePath, name) {
  */
 export const validateBySchema = (schema, values, scope, basePath) => {
   const form = createForm({
-    values,
+    values
   })
 
   recursiveField(form, JSON.parse(JSON.stringify(schema)), scope, basePath)

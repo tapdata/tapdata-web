@@ -20,27 +20,27 @@ export default {
   components: { AsyncSelect },
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number]
     },
     label: {
-      type: [String, Number],
+      type: [String, Number]
     },
     params: {
       type: Object,
       default: () => {
         return {}
-      },
+      }
     },
     format: {
-      type: Function,
-    },
+      type: Function
+    }
   },
   data() {
     return {
       form: {
         label: '',
-        value: '',
-      },
+        value: ''
+      }
     }
   },
   watch: {
@@ -49,7 +49,7 @@ export default {
         this.form.value = v
         this.form.label = this.label
       }
-    },
+    }
   },
   mounted() {
     this.form.value = this.value
@@ -59,15 +59,7 @@ export default {
     handleChange(val, opt) {
       const { label } = opt
       this.form.label = label
-      $emit(
-        this.$emit('update:value', this.form.value).$emit(
-          'update:label',
-          this.form.label
-        ),
-        'change',
-        val,
-        opt
-      )
+      $emit(this.$emit('update:value', this.form.value).$emit('update:label', this.form.label), 'change', val, opt)
     },
 
     async getData(filter = {}) {
@@ -77,25 +69,25 @@ export default {
         limit: size,
         noSchema: 1,
         skip: (page - 1) * size,
-        where: {},
+        where: {}
       }
 
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          name: label,
+          name: label
         })
       }
 
       let res = await connectionsApi.get({
-        filter: JSON.stringify(merge(params, this.params)),
+        filter: JSON.stringify(merge(params, this.params))
       })
 
-      res.items = res.items.map((t) => {
+      res.items = res.items.map(t => {
         return {
           label: t.name,
           value: t.id,
-          data: t,
+          data: t
         }
       })
 
@@ -104,8 +96,8 @@ export default {
       }
 
       return res
-    },
+    }
   },
-  emits: ['change', 'update:label', 'update:value'],
+  emits: ['change', 'update:label', 'update:value']
 }
 </script>

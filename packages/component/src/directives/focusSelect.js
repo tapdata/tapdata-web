@@ -6,7 +6,7 @@ export default {
     }
     if (!target) return
 
-    const onFocus = (event) => {
+    const onFocus = event => {
       event.target.select()
     }
 
@@ -22,5 +22,5 @@ export default {
     el._focusTarget.removeEventListener('focus', el._focusSelect, true)
     delete el._focusTarget
     delete el._focusSelect
-  },
+  }
 }

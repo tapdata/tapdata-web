@@ -7,12 +7,8 @@ import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 
 import Lang from '../views/Lang.vue'
 
-const UserCenter = Vue.defineAsyncComponent(
-  Vue.defineAsyncComponent(() => import('../views/user/Center.vue'))
-)
-const UserContactUs = Vue.defineAsyncComponent(
-  Vue.defineAsyncComponent(() => import('../views/user/ContactUs.vue'))
-)
+const UserCenter = Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/user/Center.vue')))
+const UserContactUs = Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/user/ContactUs.vue')))
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
@@ -67,9 +63,7 @@ const CustomNodeList = async () => {
 }
 
 const NodeEditor = async () => {
-  const { Editor } = await import(
-    /* webpackChunkName: "node-design" */ '@tap/node-design'
-  )
+  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
 }
 
@@ -102,80 +96,64 @@ const VerificationResult = async () => {
 const routes = [
   {
     path: '/',
-    component: Vue.defineAsyncComponent(
-      Vue.defineAsyncComponent(() => import('../views/Layout.vue'))
-    ),
+    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/Layout.vue'))),
     meta: {},
     children: [
       {
         path: '/',
         name: 'Home',
         meta: {
-          title: 'tap_home',
+          title: 'tap_home'
         },
         redirect: { name: 'Dashboard' },
-        hidden: true,
+        hidden: true
       },
       {
         path: '/workbench',
         name: 'Workbench',
         redirect: { name: 'Dashboard' },
-        hidden: true,
+        hidden: true
       },
       {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/workbench/Workbench.vue')
-          )
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/workbench/Workbench.vue'))),
         meta: {
           title: 'tap_workbench',
           icon: 'workbench',
-          hideTitle: true,
-        },
+          hideTitle: true
+        }
       },
       {
         path: '/systemNotice',
         name: 'SystemNotice',
         component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/workbench/SystemNotice.vue')
-          )
+          Vue.defineAsyncComponent(() => import('../views/workbench/SystemNotice.vue'))
         ),
         meta: {
-          title: 'tap_system_notification',
-        },
+          title: 'tap_system_notification'
+        }
       },
       {
         path: '/instance',
         name: 'Instance',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/instance/Instance.vue')
-          )
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/Instance.vue'))),
         meta: {
           title: 'tap_agent_management',
           icon: 'agent',
-          hideTitle: true,
+          hideTitle: true
         },
         children: [
           {
             path: 'create',
             name: 'createAgent',
             component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(
-                () => import('../views/instance/CreateAgent')
-              )
+              Vue.defineAsyncComponent(() => import('../views/instance/CreateAgent'))
             ),
             meta: {
-              title: i18n.t(
-                'dfs_agent_download_subscriptionmodeldialog_peizhishishishu'
-              ),
-              hideTitle: true,
-            },
+              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              hideTitle: true
+            }
           },
           {
             path: '/instanceDetails',
@@ -184,39 +162,31 @@ const routes = [
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(
-                () => import('../views/instance/Details.vue')
-              )
+              Vue.defineAsyncComponent(() => import('../views/instance/Details.vue'))
             ),
             meta: {
-              title: 'tap_instance_details',
-            },
+              title: 'tap_instance_details'
+            }
           },
           {
             path: 'install/:id',
             name: 'installAgent',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(
-                () => import('../views/instance/Install')
-              )
-            ),
+            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/Install'))),
             meta: {
               title: '部署计算引擎',
-              hideTitle: true,
-            },
-          },
-        ],
+              hideTitle: true
+            }
+          }
+        ]
       },
       {
         path: '/connections',
         name: 'connections',
         // component: Iframe,
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('@/views/connection/List.tsx'))
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('@/views/connection/List.tsx'))),
         meta: {
           title: 'tap_connection_management',
-          icon: 'connection',
+          icon: 'connection'
         },
         children: [
           {
@@ -225,8 +195,8 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: 'tap_create_connection',
-            },
+              title: 'tap_create_connection'
+            }
           },
           {
             path: ':id',
@@ -234,10 +204,10 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: 'tap_edit_connection',
-            },
-          },
-        ],
+              title: 'tap_edit_connection'
+            }
+          }
+        ]
       },
       /* ---------- 数据复制  ----------*/
       {
@@ -247,7 +217,7 @@ const routes = [
         component: Parent,
         meta: {
           title: 'task_manage_migrate',
-          icon: 'task',
+          icon: 'task'
         },
         children: [
           {
@@ -258,10 +228,10 @@ const routes = [
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
               code: 'v2_data_replication',
-              hideTitle: true,
-            },
-          },
-        ],
+              hideTitle: true
+            }
+          }
+        ]
       },
       /* ---------- 数据开发  ----------*/
       {
@@ -271,7 +241,7 @@ const routes = [
         redirect: 'dataflow/',
         meta: {
           title: 'task_manage_etl',
-          icon: 'task',
+          icon: 'task'
         },
         children: [
           {
@@ -281,10 +251,10 @@ const routes = [
             meta: {
               title: 'task_manage_etl',
               desc: 'task_manage_desc',
-              code: 'v2_data_flow',
-            },
-          },
-        ],
+              code: 'v2_data_flow'
+            }
+          }
+        ]
       },
       /* ---------- 数据校验  ----------*/
       {
@@ -293,7 +263,7 @@ const routes = [
         component: Parent,
         redirect: 'dataVerification/',
         meta: {
-          title: 'page_title_data_verify',
+          title: 'page_title_data_verify'
         },
         children: [
           {
@@ -302,8 +272,8 @@ const routes = [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'v2_data_check',
-            },
+              code: 'v2_data_check'
+            }
           },
           {
             path: 'create',
@@ -311,8 +281,8 @@ const routes = [
             component: VerificationForm,
             meta: {
               title: 'page_title_verification_create',
-              code: 'v2_data_check_create',
-            },
+              code: 'v2_data_check_create'
+            }
           },
           {
             path: ':id/edit',
@@ -320,8 +290,8 @@ const routes = [
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
-              code: 'v2_data_check_edit',
-            },
+              code: 'v2_data_check_edit'
+            }
           },
           {
             path: ':id/details',
@@ -329,8 +299,8 @@ const routes = [
             component: VerificationDetails,
             meta: {
               title: 'page_title_task_details',
-              code: 'v2_data_check_details',
-            },
+              code: 'v2_data_check_details'
+            }
           },
           {
             path: ':id/history',
@@ -338,8 +308,8 @@ const routes = [
             component: VerificationHistory,
             meta: {
               title: 'page_title_verification_history',
-              code: 'v2_data_check_history',
-            },
+              code: 'v2_data_check_history'
+            }
           },
           {
             path: '/dataVerifyResult/:id/history',
@@ -347,8 +317,8 @@ const routes = [
             component: VerificationHistory,
             meta: {
               title: 'page_title_diff_verification_history',
-              code: 'v2_data_check_result_history',
-            },
+              code: 'v2_data_check_result_history'
+            }
           },
           {
             path: '/dataVerifyResult/:id/details',
@@ -356,8 +326,8 @@ const routes = [
             component: VerificationResult,
             meta: {
               title: 'page_title_diff_verification_details',
-              code: 'v2_data_check_result_details',
-            },
+              code: 'v2_data_check_result_details'
+            }
           },
           {
             path: '/dataVerifyResult/:id',
@@ -365,9 +335,9 @@ const routes = [
             component: VerificationResult,
             meta: {
               title: 'page_title_data_verification_result',
-              code: 'v2_data_check_result',
-            },
-          },
+              code: 'v2_data_check_result'
+            }
+          }
           // {
           //   path: ':id/verifyDetails',
           //   name: 'VerifyDetails',
@@ -378,95 +348,81 @@ const routes = [
           //     isNotAside: true
           //   }
           // }
-        ],
+        ]
       },
       {
         path: '/operationLog',
         name: 'OperationLog',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/operation-log/List.vue')
-          )
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/operation-log/List.vue'))),
         meta: {
           title: 'tap_operation_log',
-          icon: 'operation-log',
-        },
+          icon: 'operation-log'
+        }
       },
       {
         path: '/user/center',
         name: 'userCenter',
         component: UserCenter,
         meta: {
-          title: 'tap_user_center',
-        },
+          title: 'tap_user_center'
+        }
       },
       {
         path: '/user/contact-us',
         name: 'userContactUs',
         component: UserContactUs,
         meta: {
-          title: 'tap_contact_us',
-        },
+          title: 'tap_contact_us'
+        }
       },
       {
         path: '/user/order',
         name: 'order',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('../views/order/List.vue'))
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/List.vue'))),
         meta: {
           title: i18n.t('dfs_router_index_dingyuezhongxin'),
-          hideTitle: true,
+          hideTitle: true
         },
         children: [
           {
             path: 'pay/:id',
             name: 'pay',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/order/Pay'))
-            ),
+            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan'),
-            },
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
           },
           {
             path: 'change/pay/:id',
             name: 'payForChange',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/order/Pay'))
-            ),
+            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan'),
-            },
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
           },
           {
             path: 'renew/pay/:id',
             name: 'payForRenew',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/order/Pay'))
-            ),
+            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan'),
-            },
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
           },
           {
             path: '/user/order/changeList',
             name: 'changeList',
             component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(
-                () => import('../views/order/ChangeList.vue')
-              )
+              Vue.defineAsyncComponent(() => import('../views/order/ChangeList.vue'))
             ),
             meta: {
               title: i18n.t('dfs_change_record'),
-              code: '',
-            },
-          },
-        ],
+              code: ''
+            }
+          }
+        ]
       },
       {
         path: '/verify',
@@ -474,7 +430,7 @@ const routes = [
         redirect: 'verify/',
         meta: {
           title: 'page_title_data_verify',
-          doNotJump: true,
+          doNotJump: true
         },
         component: Parent,
         children: [
@@ -485,49 +441,41 @@ const routes = [
             meta: {
               title: 'page_title_data_difference_details',
               code: 'Data_verify',
-              isNotAside: true,
-            },
-          },
-        ],
+              isNotAside: true
+            }
+          }
+        ]
       },
       {
         path: '/data-server',
         name: 'dataServerList',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('../views/data-server/list'))
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/data-server/list'))),
         meta: {
           title: 'dfs_data_server',
           hideTitle: true,
-          icon: 'data-server',
-        },
+          icon: 'data-server'
+        }
       },
       {
         path: '/data-hub',
         name: 'dataConsole',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('../views/data-hub'))
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/data-hub'))),
         meta: {
           title: 'page_title_data_hub',
           hideTitle: true,
-          icon: 'data-server',
-        },
+          icon: 'data-server'
+        }
       },
       {
         path: '/create-storage',
         name: 'CreateStorage',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/instance/CreateStorage')
-          )
-        ),
+        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/CreateStorage'))),
         meta: {
           title: 'page_title_subscribe_storage',
           hideTitle: true,
           icon: 'data-server',
-          activeMenu: '/data-hub',
-        },
+          activeMenu: '/data-hub'
+        }
       },
       {
         path: '/data-console',
@@ -536,8 +484,8 @@ const routes = [
         meta: {
           title: 'page_title_data_console',
           hideTitle: true,
-          icon: 'data-server',
-        },
+          icon: 'data-server'
+        }
       },
       {
         path: '/notice',
@@ -545,22 +493,20 @@ const routes = [
         component: NoticeList,
         meta: {
           title: i18n.t('dfs_router_index_gonggaoliebiao'),
-          hideTitle: false,
+          hideTitle: false
         },
         children: [
           {
             path: 'notice',
             name: 'WorkbenchNotice',
             component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(
-                () => import('../views/workbench/Notice.vue')
-              )
+              Vue.defineAsyncComponent(() => import('../views/workbench/Notice.vue'))
             ),
             meta: {
-              title: 'tap_announcement_notice',
-            },
-          },
-        ],
+              title: 'tap_announcement_notice'
+            }
+          }
+        ]
       },
       /* ---------- 自定义节点  ----------*/
       {
@@ -568,36 +514,34 @@ const routes = [
         name: 'customNodeList',
         component: CustomNodeList,
         meta: {
-          title: 'page_title_custom_node',
-        },
+          title: 'page_title_custom_node'
+        }
       },
       {
         path: '/lang',
         name: 'lang',
-        component: Lang,
+        component: Lang
       },
       /* ---------- 工单系统  ----------*/
       {
         path: '/ticketSystem',
         name: 'TicketSystem',
         component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(
-            () => import('../views/ticketing-system/List.vue')
-          )
+          Vue.defineAsyncComponent(() => import('../views/ticketing-system/List.vue'))
         ),
         meta: {
-          title: 'dfs_router_index_gongdanliebiao',
-        },
-      },
-    ],
+          title: 'dfs_router_index_gongdanliebiao'
+        }
+      }
+    ]
   },
   {
     path: '/migrate/monitor/:id',
     name: 'MigrationMonitor',
     component: MigrationMonitor,
     meta: {
-      title: 'page_title_run_monitor',
-    },
+      title: 'page_title_run_monitor'
+    }
   },
   {
     path: '/dataflow/monitor/:id',
@@ -605,16 +549,16 @@ const routes = [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'Data_SYNC_menu',
-    },
+      code: 'Data_SYNC_menu'
+    }
   },
   {
     path: '/fastDownload',
     name: 'FastDownload',
     component: FastDownload,
     meta: {
-      title: 'tap_agent_download_now',
-    },
+      title: 'tap_agent_download_now'
+    }
   },
   // {
   //   path: '/pay',
@@ -629,8 +573,8 @@ const routes = [
     name: 'UpgradeVersion',
     component: UpgradeVersion,
     meta: {
-      title: 'tap_upgrade',
-    },
+      title: 'tap_upgrade'
+    }
   },
   //付费升级
   {
@@ -638,53 +582,53 @@ const routes = [
     name: 'PaidUpgrade',
     component: PaidUpgrade,
     meta: {
-      title: 'tap_upgrade',
-    },
+      title: 'tap_upgrade'
+    }
   },
   {
     path: '/dataflow/editor',
     name: 'DataflowNew',
-    component: DagEditor,
+    component: DagEditor
   },
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
     component: DagEditor,
     meta: {
-      title: 'task_manage_etl',
-    },
+      title: 'task_manage_etl'
+    }
   },
   {
     path: '/dataflow/viewer/:id',
     name: 'DataflowViewer',
     component: DagEditor,
     meta: {
-      title: 'task_manage_etl',
-    },
+      title: 'task_manage_etl'
+    }
   },
   {
     path: '/migrate/editor',
     name: 'MigrateCreate',
     component: MigrationEditor,
     meta: {
-      title: 'task_manage_migrate',
-    },
+      title: 'task_manage_migrate'
+    }
   },
   {
     path: '/migrate/editor/:id',
     name: 'MigrateEditor',
     component: MigrationEditor,
     meta: {
-      title: 'task_manage_migrate',
-    },
+      title: 'task_manage_migrate'
+    }
   },
   {
     path: '/migrate/viewer/:id',
     name: 'MigrateViewer',
     component: MigrationEditor,
     meta: {
-      title: 'task_manage_migrate',
-    },
+      title: 'task_manage_migrate'
+    }
   },
   {
     path: '/migrate/monitor-record/:id',
@@ -692,8 +636,8 @@ const routes = [
     component: MigrationMonitorViewer,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'Data_SYNC_menu',
-    },
+      code: 'Data_SYNC_menu'
+    }
   },
   {
     path: '/sharedMining/monitor/:id',
@@ -701,8 +645,8 @@ const routes = [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor',
-    },
+      code: 'v2_data_replication_monitor'
+    }
   },
   {
     path: '/heartbeat/monitor/:id',
@@ -710,37 +654,31 @@ const routes = [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor',
-    },
+      code: 'v2_data_replication_monitor'
+    }
   },
   {
     path: '/node/editor',
     name: 'NodeNew',
-    component: NodeEditor,
+    component: NodeEditor
   },
   {
     path: '/node/editor/:id',
     name: 'NodeEditor',
-    component: NodeEditor,
+    component: NodeEditor
   },
   //云市场对接
   {
     path: '/aliyun-market/license',
     name: 'aliyunMarketLicense',
-    component: Vue.defineAsyncComponent(
-      Vue.defineAsyncComponent(
-        () => import('../views/aliyun-market/License.vue')
-      )
-    ),
+    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/aliyun-market/License.vue')))
   },
   //产品引导
   {
     path: '/product',
     name: 'productDemo',
-    component: Vue.defineAsyncComponent(
-      Vue.defineAsyncComponent(() => import('../views/productDemo'))
-    ),
-  },
+    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/productDemo')))
+  }
 ]
 
 export default routes

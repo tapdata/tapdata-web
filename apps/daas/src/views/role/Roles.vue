@@ -1,20 +1,9 @@
 <template>
   <section class="roles-list-wrap h-100">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="roles-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+    <TablePage ref="table" row-key="id" class="roles-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
         <div class="search-bar">
-          <FilterBar
-            v-model:value="searchParams"
-            :items="filterItems"
-            @fetch="table.fetch(1)"
-          >
-          </FilterBar>
+          <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </template>
       <template v-slot:operation>
@@ -30,18 +19,12 @@
           </ElButton>
         </div>
       </template>
-      <ElTableColumn
-        :label="$t('role_list_role_name')"
-        :show-overflow-tooltip="true"
-      >
+      <ElTableColumn :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
         <template v-slot="scope">
           <div>{{ scope.row.name }}</div>
         </template>
       </ElTableColumn>
-      <ElTableColumn
-        :label="$t('role_list_description')"
-        :show-overflow-tooltip="true"
-      >
+      <ElTableColumn :label="$t('role_list_description')" :show-overflow-tooltip="true">
         <template v-slot="scope">
           <div>{{ scope.row.description }}</div>
         </template>
@@ -73,9 +56,7 @@
           <ElButton
             type="text"
             v-readonlybtn="'role_edition'"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
             {{ $t('role_list_setting_permissions') }}
@@ -84,12 +65,7 @@
           <ElButton
             type="text"
             @click="handleAssociatUsers(scope.row.id)"
-            :disabled="
-              $disabledByPermission(
-                'role_edition_all_data',
-                scope.row.user_id
-              ) || scope.row.name === 'admin'
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_edition'"
           >
             {{ $t('role_list_associat_users') }}
@@ -98,9 +74,7 @@
           <ElButton
             type="text"
             v-readonlybtn="'role_edition'"
-            :disabled="
-              $disabledByPermission('role_edition_all_data', scope.row.user_id)
-            "
+            :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
             {{ $t('public_button_edit') }}
@@ -109,12 +83,7 @@
           <ElButton
             type="text"
             @click="handleDelete(scope.row)"
-            :disabled="
-              $disabledByPermission(
-                'role_delete_all_data',
-                scope.row.user_id
-              ) || scope.row.name === 'admin'
-            "
+            :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_delete'"
           >
             {{ $t('public_button_delete') }}
@@ -134,15 +103,9 @@
         <ElFormItem
           :label="$t('role_list_role_name')"
           prop="name"
-          :rules="[
-            { required: true, message: $t('role_null'), trigger: 'blur' },
-          ]"
+          :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <ElInput
-            v-model:value="form.name"
-            :placeholder="$t('role_list_select_role_name')"
-            size="small"
-          ></ElInput>
+          <ElInput v-model:value="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></ElInput>
         </ElFormItem>
         <ElFormItem
           :label="$t('role_list_description')"
@@ -151,8 +114,8 @@
             {
               required: true,
               message: $t('role_form_description'),
-              trigger: 'blur',
-            },
+              trigger: 'blur'
+            }
           ]"
         >
           <ElInput
@@ -167,23 +130,15 @@
           <ElSwitch
             v-model:value="form.register_user_default"
             inactive-color="#dcdfe6"
-            :active-text="
-              form.register_user_default
-                ? $t('role_form_yes')
-                : $t('role_form_no')
-            "
+            :active-text="form.register_user_default ? $t('role_form_yes') : $t('role_form_no')"
             style="margin-right: 20px"
           ></ElSwitch>
         </ElFormItem>
       </ElForm>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="mini" @click="dialogFormVisible = false"
-            >{{ $t('public_button_cancel') }}
-          </ElButton>
-          <ElButton size="mini" type="primary" @click="createSave"
-            >{{ $t('public_button_confirm') }}
-          </ElButton>
+          <ElButton size="mini" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
+          <ElButton size="mini" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
         </div>
       </template>
     </ElDialog>
@@ -196,32 +151,15 @@
       width="600px"
     >
       <div class="userBox">
-        <ElSelect
-          v-model:value="roleusers"
-          filterable
-          multiple
-          :placeholder="$t('role_form_selectUser')"
-        >
-          <ElOption
-            v-for="item in userGroup"
-            :key="item.id"
-            :label="item.email"
-            :value="item.id"
-          >
-          </ElOption>
+        <ElSelect v-model:value="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
+          <ElOption v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </ElOption>
         </ElSelect>
-        <div class="num fs-8">
-          {{ $t('role_form_connected') }}: {{ roleusers.length }}
-        </div>
+        <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="dialogUserVisible = false">{{
-            $t('public_button_cancel')
-          }}</ElButton>
-          <ElButton size="mini" type="primary" @click="saveUser">{{
-            $t('public_button_confirm')
-          }}</ElButton>
+          <ElButton size="mini" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>
@@ -237,12 +175,12 @@ import { TablePage } from '@tap/business'
 export default {
   components: {
     TablePage,
-    FilterBar,
+    FilterBar
   },
   data() {
     return {
       searchParams: {
-        keyword: '',
+        keyword: ''
         // time: ''
       },
       order: 'last_updated DESC',
@@ -260,10 +198,10 @@ export default {
       form: {
         name: '',
         description: '',
-        register_user_default: false,
+        register_user_default: false
       },
       roleId: '',
-      filterItems: [],
+      filterItems: []
     }
   },
   created() {
@@ -273,12 +211,12 @@ export default {
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    },
+    }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   methods: {
     // 获取数据
@@ -294,23 +232,21 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where,
+        where
       }
       return usersApi
         .role({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           return {
             total: data?.total || 0,
-            data: data?.items || [],
+            data: data?.items || []
           }
         })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${
-        order === 'ascending' ? 'ASC' : 'DESC'
-      }`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     // 新建角色(弹窗开关)
@@ -321,16 +257,16 @@ export default {
         this.form = {
           name: item.name,
           description: item.description,
-          register_user_default: item.register_user_default,
+          register_user_default: item.register_user_default
         }
       } else {
         this.roleId = ''
         this.form = {
           name: '',
           description: '',
-          register_user_default: false,
+          register_user_default: false
         }
-        permissionsApi.get({}).then((data) => {
+        permissionsApi.get({}).then(data => {
           if (data && data?.length) {
             this.permissions = data
           }
@@ -346,8 +282,8 @@ export default {
     // 确认删除角色
     handleDelete(item) {
       this.$confirm(this.$t('role_list_delete_remind', [item.name]), '', {
-        type: 'warning',
-      }).then((flag) => {
+        type: 'warning'
+      }).then(flag => {
         if (flag) {
           roleApi.delete(item.id, item.name).then(() => {
             this.table.fetch()
@@ -364,19 +300,19 @@ export default {
     // 创建保存
     createSave() {
       let self = this
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           const record = {
             name: this.form.name,
             description: this.form.description,
-            register_user_default: this.form.register_user_default,
+            register_user_default: this.form.register_user_default
           }
           const method = this.roleId ? 'patch' : 'post'
           if (this.roleId) {
             record.id = this.roleId
           }
           roleApi[method](record)
-            .then((data) => {
+            .then(data => {
               if (data) {
                 this.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
@@ -401,17 +337,17 @@ export default {
       let filter = {
         where: {
           roleId: id,
-          principalType: 'USER',
+          principalType: 'USER'
         },
-        limit: 999,
+        limit: 999
       }
       await roleMappingsApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           if (data?.length) {
-            _this.roleusers = data.map((item) => item.principalId)
+            _this.roleusers = data.map(item => item.principalId)
             _this.oldUser = data
           }
         })
@@ -422,12 +358,12 @@ export default {
       await usersApi
         .get({
           filter: JSON.stringify({
-            limit: 999,
-          }),
+            limit: 999
+          })
         })
-        .then((data) => {
+        .then(data => {
           if (data?.items) {
-            data?.items.forEach((item) => {
+            data?.items.forEach(item => {
               if (!item.role) {
                 this.userGroup.push(item)
               }
@@ -439,23 +375,23 @@ export default {
     // 保存关联用户
     saveUser() {
       let newRoleMappings = []
-      this.oldUser.forEach((delRolemapping) => {
+      this.oldUser.forEach(delRolemapping => {
         roleMappingsApi.delete(delRolemapping.id)
       })
       // _this.oldUser
-      this.roleusers.forEach((roleuser) => {
+      this.roleusers.forEach(roleuser => {
         if (roleuser) {
           newRoleMappings.push({
             principalType: 'USER',
             principalId: roleuser,
-            roleId: this.roleId,
+            roleId: this.roleId
           })
         }
       })
-      roleMappingsApi.saveAll(newRoleMappings).then((data) => {
+      roleMappingsApi.saveAll(newRoleMappings).then(data => {
         if (data) {
           this.roleusers = []
-          data.forEach((item) => {
+          data.forEach(item => {
             this.roleusers.push(item.principalId)
           })
 
@@ -480,7 +416,7 @@ export default {
         id: data.id,
         name: data.name,
         description: data.description,
-        register_user_default: data.register_user_default,
+        register_user_default: data.register_user_default
       }
 
       roleApi.patch(record).then(() => {
@@ -493,11 +429,11 @@ export default {
         {
           placeholder: this.$t('role_list_select_role_name'),
           key: 'keyword',
-          type: 'input',
-        },
+          type: 'input'
+        }
       ]
-    },
-  },
+    }
+  }
 }
 </script>
 

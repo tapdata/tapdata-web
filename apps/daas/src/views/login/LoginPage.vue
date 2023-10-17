@@ -5,12 +5,7 @@
     <div class="page-main">
       <div class="page-main-box">
         <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
-          <span
-            v-for="(value, key) in languages"
-            :key="key"
-            :class="{ bold: key === lang }"
-            @click="langChange(key)"
-          >
+          <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
             {{ value }}
             <ElDivider direction="vertical" v-if="key !== 'tc'"></ElDivider>
           </span>
@@ -22,18 +17,14 @@
 </template>
 
 <script>
-import {
-  langMenu,
-  getCurrentLanguage,
-  setCurrentLanguage,
-} from '@tap/i18n/src/shared/util'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'LoginHeader',
   data() {
     return {
       languages: langMenu,
-      lang: getCurrentLanguage(),
+      lang: getCurrentLanguage()
     }
   },
 
@@ -41,17 +32,17 @@ export default {
     loginImageStyle() {
       return {
         background: `url('${window._TAPDATA_OPTIONS_.loginUrl}') left 0 no-repeat`,
-        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover',
+        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover'
       }
-    },
+    }
   },
 
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -3,106 +3,103 @@ import i18n from '@tap/i18n'
 export const INSTANCE_STATUS_MAP = {
   Creating: {
     text: i18n.t('public_agent_status_to_be_deployed'),
-    type: 'warning',
+    type: 'warning'
   },
   Running: { text: i18n.t('public_status_running'), type: 'success' },
   Stopping: { text: i18n.t('public_status_stopping'), type: 'danger' },
   Stopped: { text: i18n.t('public_agent_status_offline'), type: 'disable' },
   WaitingRestart: {
     text: i18n.t('public_status_to_be_restart'),
-    type: 'disable',
+    type: 'disable'
   },
   Restarting: { text: i18n.t('public_status_restarting'), type: 'disable' },
-  Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' },
+  Deploying: { text: i18n.t('public_status_deploying'), type: 'disable' }
 }
 export const CONNECTION_STATUS_MAP = {
   ready: { text: i18n.t('public_status_ready'), type: 'success' },
   invalid: { text: i18n.t('public_status_invalid'), type: 'danger' },
-  testing: { text: i18n.t('public_status_testing'), type: 'warning' },
+  testing: { text: i18n.t('public_status_testing'), type: 'warning' }
 }
 
 export const CONNECTION_TYPE_MAP = {
   source: { text: i18n.t('public_connection_type_source') },
   target: { text: i18n.t('public_connection_type_target') },
   source_and_target: {
-    text: i18n.t('public_connection_type_source_and_target'),
-  },
+    text: i18n.t('public_connection_type_source_and_target')
+  }
 }
 
 export const TASK_STATUS_MAP = {
   running: {
     text: i18n.t('public_status_running'),
     icon: 'yunxingzhong',
-    type: 'success',
+    type: 'success'
   },
   paused: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong' },
   error: {
     text: i18n.t('public_status_error'),
     icon: 'cuowu',
-    type: 'warning',
+    type: 'warning'
   },
   draft: { text: i18n.t('public_status_wait_run'), icon: 'daiqidong' },
   scheduled: {
     text: i18n.t('public_status_starting'),
     icon: 'qidongzhong',
-    type: 'success',
+    type: 'success'
   },
   stopping: {
     text: i18n.t('public_status_stopping'),
     icon: 'tingzhizhong',
-    type: 'success',
+    type: 'success'
   },
   'force stopping': {
     text: i18n.t('public_status_force_stopping'),
     icon: 'qiangzhitingzhi',
-    type: 'success',
+    type: 'success'
   },
   finished: {
     text: i18n.t('public_status_finished'),
     icon: 'yiwancheng',
-    type: 'success',
-  },
+    type: 'success'
+  }
 }
 
 export const TASK_TYPE_MAP = {
   initial_sync: i18n.t('public_task_type_initial_sync'),
   cdc: i18n.t('public_task_type_cdc'),
-  'initial_sync+cdc':
-    i18n.t('public_task_type_initial_sync') +
-    '+' +
-    i18n.t('public_task_type_cdc'),
+  'initial_sync+cdc': i18n.t('public_task_type_initial_sync') + '+' + i18n.t('public_task_type_cdc')
 }
 
 export const TASK_SYNC_TYPE_MAP = {
   logCollector: i18n.t('packages_business_task_monitor_mining_task'),
   mem_cache: i18n.t('packages_business_relation_list_huancunrenwu'),
-  inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu'),
+  inspect: i18n.t('packages_business_relation_list_jiaoyanrenwu')
 }
 
 export const MILESTONE_STATUS_MAP = {
   waiting: {
     text: i18n.t('packages_business_milestone_list_status_waiting'),
-    icon: 'daizhixing',
+    icon: 'daizhixing'
   },
   running: {
     text: i18n.t('packages_business_milestone_list_status_progressing'),
-    icon: 'jinxingzhong',
+    icon: 'jinxingzhong'
   },
   error: { text: i18n.t('public_status_error'), icon: 'cuowu' },
   finish: { text: i18n.t('public_status_finished'), icon: 'yiwancheng' },
-  paused: { text: i18n.t('public_status_stopping'), icon: 'yizanting' },
+  paused: { text: i18n.t('public_status_stopping'), icon: 'yizanting' }
 }
 
 export const ETL_STATUS_MAP = {
   running: {
     text: i18n.t('packages_business_task_status_running'),
-    type: 'success',
+    type: 'success'
   },
   not_running: {
     text: i18n.t('packages_business_task_status_not_running'),
-    type: 'disable',
+    type: 'disable'
   },
-  error: { text: i18n.t('public_status_error'), type: 'danger' },
+  error: { text: i18n.t('public_status_error'), type: 'danger' }
 }
 
 export const ETL_SUB_STATUS_MAP = {
@@ -111,86 +108,80 @@ export const ETL_SUB_STATUS_MAP = {
   scheduling: { text: i18n.t('public_status_starting'), type: 'scheduling' },
   schedule_failed: {
     text: i18n.t('public_status_error'),
-    type: 'schedule_failed',
+    type: 'schedule_failed'
   },
   wait_run: { text: i18n.t('public_status_starting'), type: 'wait_run' },
   running: { text: i18n.t('public_status_running'), type: 'running' },
   stopping: { text: i18n.t('public_status_stopping'), type: 'stopping' },
   stop: { text: i18n.t('public_status_stop'), type: 'stop' },
   complete: { text: i18n.t('public_status_finished'), type: 'complete' },
-  error: { text: i18n.t('public_status_error'), type: 'error' },
+  error: { text: i18n.t('public_status_error'), type: 'error' }
 }
 
 export const SHARECDC_MAP = {
   running: {
     text: i18n.t('public_status_running'),
     icon: 'running',
-    type: 'success',
+    type: 'success'
   },
   stop: { text: i18n.t('public_status_stop'), icon: 'stop' },
   error: {
     text: i18n.t('public_status_error'),
     icon: 'error',
-    type: 'warning',
+    type: 'warning'
   },
   edit: { text: i18n.t('public_status_edit'), icon: 'edit' },
   scheduling: {
     text: i18n.t('public_status_starting'),
     icon: 'scheduling',
-    type: 'success',
+    type: 'success'
   },
   stopping: {
     text: i18n.t('public_status_stopping'),
     icon: 'stopping',
-    type: 'warning',
-  },
+    type: 'warning'
+  }
 }
 
 export const ALARM_STATUS_MAP = {
   ING: {
     text: i18n.t('packages_business_shared_const_gaojingzhong'),
-    type: 'waiting',
+    type: 'waiting'
   },
   RECOVER: {
     text: i18n.t('packages_business_shared_const_yihuifu'),
-    type: 'finish',
+    type: 'finish'
   },
   CLOESE: {
     text: i18n.t('packages_business_components_alert_yiguanbi'),
-    type: 'success',
-  },
+    type: 'success'
+  }
 }
 
 export const ALARM_LEVEL_MAP = {
   RECOVERY: {
     text: i18n.t('packages_business_components_alert_huifu'),
-    type: 'finish',
+    type: 'finish'
   },
   NORMAL: {
     text: i18n.t('packages_business_shared_const_yiban'),
-    type: 'edit',
+    type: 'edit'
   },
   WARNING: {
     text: i18n.t('packages_business_shared_const_jinggao'),
-    type: 'waiting',
+    type: 'waiting'
   },
   CRITICAL: {
     text: i18n.t('packages_business_shared_const_yanzhong'),
-    type: 'stop',
+    type: 'stop'
   },
   EMERGENCY: {
     text: i18n.t('packages_business_shared_const_jinji'),
-    type: 'error',
-  },
+    type: 'error'
+  }
 }
 
-export const ALARM_LEVEL_SORT = [
-  'EMERGENCY',
-  'CRITICAL',
-  'WARNING',
-  'NORMAL',
-  'RECOVERY',
-]
+export const ALARM_LEVEL_SORT = ['EMERGENCY', 'CRITICAL', 'WARNING', 'NORMAL', 'RECOVERY']
 
 export const ORDER_STATUS_MAP = {
   unPay: i18n.t('packages_business_shared_const_weizhifu'),
@@ -200,18 +191,18 @@ export const ORDER_STATUS_MAP = {
   refundFail: i18n.t('packages_business_shared_const_tuikuanshibai'),
   refunding: i18n.t('packages_business_shared_const_tuikuanzhong'),
   expire: i18n.t('packages_business_shared_const_shixiao'),
-  cancelSubscribe: i18n.t('packages_business_shared_const_yiquxiao'),
+  cancelSubscribe: i18n.t('packages_business_shared_const_yiquxiao')
 }
 
 export const CURRENCY_SYMBOL_MAP = {
   usd: '$',
   hkd: 'HK$',
-  cny: '¥',
+  cny: '¥'
 }
 export const CURRENCY_MAP = {
   usd: i18n.t('dfs_agent_download_subscriptionmodeldialog_usd'),
   hkd: i18n.t('dfs_agent_download_subscriptionmodeldialog_hkd'),
-  cny: i18n.t('dfs_agent_download_subscriptionmodeldialog_cny'),
+  cny: i18n.t('dfs_agent_download_subscriptionmodeldialog_cny')
 }
 
 export const NUMBER_MAP = {
@@ -227,7 +218,7 @@ export const NUMBER_MAP = {
   9: i18n.t('packages_business_shared_const_jiu'),
   10: i18n.t('packages_business_shared_const_shi'),
   11: i18n.t('packages_business_shared_const_shiyi'),
-  12: i18n.t('packages_business_shared_const_shier'),
+  12: i18n.t('packages_business_shared_const_shier')
 }
 
 export const AGENT_SPEC_MAP = {
@@ -237,7 +228,7 @@ export const AGENT_SPEC_MAP = {
   '8C16G': 'Large',
   '12C24G': 'XLarge',
   '16C32G': '2Large',
-  '32C64G': '4Large',
+  '32C64G': '4Large'
 }
 
 export const AGENT_TYPE_MAP = {
@@ -246,19 +237,19 @@ export const AGENT_TYPE_MAP = {
   selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
   fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
   Local: i18n.t('dfs_instance_utils_bantuoguan'),
-  Cloud: i18n.t('dfs_instance_utils_quantuoguan'),
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
 }
 
 export const TIME_MAP = {
   year: i18n.t('public_time_year'),
   month: i18n.t('public_time_month'),
-  day: i18n.t('public_time_d'),
+  day: i18n.t('public_time_d')
 }
 
 export const EXTERNAL_STORAGE_TYPE_MAP = {
   mongodb: 'MongoDB',
   rocksdb: 'RocksDB',
-  memory: 'MEM',
+  memory: 'MEM'
 }
 
 export const PERIOD_MAP = {
@@ -266,10 +257,10 @@ export const PERIOD_MAP = {
   recurring_year: { order: 2, label: i18n.t('dfs_instance_utils_baonian') },
   one_time_month: {
     order: 3,
-    label: i18n.t('dfs_instance_utils_one_month_only'),
+    label: i18n.t('dfs_instance_utils_one_month_only')
   },
   one_time_year: {
     order: 4,
-    label: i18n.t('dfs_instance_utils_one_year_only'),
-  },
+    label: i18n.t('dfs_instance_utils_one_year_only')
+  }
 }

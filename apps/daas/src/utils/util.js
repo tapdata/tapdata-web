@@ -10,9 +10,9 @@ export function configUser(user = {}) {
   let permissions = []
   let list = user?.permissions || []
   if (list.length) {
-    list.forEach((permission) => {
+    list.forEach(permission => {
       if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach((res) => {
+        permission.resources.forEach(res => {
           permissions.push(res)
         })
       }
@@ -64,29 +64,29 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let arr = []
   arr.push({
     label: i18n.t('public_time_d'),
-    value: Math.floor(time / 60 / 60 / 24),
+    value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
     label: i18n.t('public_time_h'),
-    value: Math.floor(time / 60 / 60) % 24,
+    value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
     label: i18n.t('public_time_m'),
-    value: Math.floor(time / 60) % 60,
+    value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
     label: i18n.t('public_time_s'),
-    value: Math.floor(time) % 60,
+    value: Math.floor(time) % 60
   }) // second
   let result = ''
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map(t => (t.value + '').padStart(2, '0'))
       .join(':')
     return result
   }
-  arr.forEach((el) => {
+  arr.forEach(el => {
     if (el.value) {
       result += el.value + el.label
     }

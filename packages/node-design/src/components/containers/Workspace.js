@@ -17,16 +17,12 @@ export const Workspace = defineComponent({
       const workspace = {
         id: id.value || 'index',
         title,
-        description,
+        description
       }
       designer.value.workbench.ensureWorkspace(workspace)
       oldId.value = workspace.id
       return workspace
     })
-    return () => (
-      <WorkspaceContext.Provider value={workspace.value}>
-        {slots.default?.()}
-      </WorkspaceContext.Provider>
-    )
-  },
+    return () => <WorkspaceContext.Provider value={workspace.value}>{slots.default?.()}</WorkspaceContext.Provider>
+  }
 })

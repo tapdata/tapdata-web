@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@formily/core": "^2.0.9",
-    "@formily/element": "^2.0.9",
+    "@formily/element-plus": "^2.0.9",
     "@formily/json-schema": "^2.0.9",
     "@formily/reactive": "^2.0.9",
     "@formily/reactive-vue": "^2.0.9",

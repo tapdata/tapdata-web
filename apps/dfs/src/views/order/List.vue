@@ -1,84 +1,43 @@
 <template>
-  <section
-    class="operation-logs-wrapper g-panel-container"
-    v-if="$route.name === 'order'"
-  >
-    <el-tabs
-      class="flex flex-column overflow-hidden flex-1"
-      v-model:value="activeName"
-    >
-      <el-tab-pane
-        class="order-flex overflow-hidden h-100"
-        :label="$t('dfs_order_list_wodedingyue')"
-        name="first"
-      >
+  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
+    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
+      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
         <div class="main" v-loading="loadingSubscribe">
           <div class="list-operation">
             <div class="list-operation-left flex justify-content-between">
-              <FilterBar
-                v-model:value="searchParams"
-                :items="filterItems"
-                @fetch="remoteMethod"
-              >
-              </FilterBar>
-              <ElButton
-                type="primary"
-                @click="handleCreateAgent"
-                :disabled="$disabledReadonlyUserBtn()"
-              >
+              <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="remoteMethod"> </FilterBar>
+              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
                 <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
               </ElButton>
             </div>
           </div>
           <ul class="mt-4 overflow-auto flex-1">
-            <li
-              class="sub-li mb-4 rounded-lg overflow-hidden"
-              v-for="item in subscribeList"
-              :key="item.id"
-            >
-              <div
-                class="sub-li-header flex justify-content-between align-center"
-              >
+            <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
+              <div class="sub-li-header flex justify-content-between align-center">
                 <div class="felx align-center">
                   <span class="font-color-dark fw-sub mr-2"
-                    >{{ $t('dfs_components_renew_dingyuebianhao') }}:
-                    {{ item.id }}</span
+                    >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light"
-                      >{{ $t('dfs_order_list_zongjine') }}:
-                    </span>
-                    {{
-                      formatterPrice(item.currency, item.totalAmount) || 0
-                    }}</span
+                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}: </span>
+                    {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-light fw-sub mr-2"
-                    ><span
-                      >{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}:
-                    </span>
+                    ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
                     {{ formatterTime(item.startAt, 'YYYY-MM-DD') }} ~
                     {{ formatterTime(item.endAt, 'YYYY-MM-DD') }}</span
                   >
                   <el-divider direction="vertical"></el-divider>
                   <span class="font-color-dark fw-sub mr-2">
-                    <StatusTag
-                      type="tag"
-                      :status="item.status"
-                      default-status="Stopped"
-                      target="order"
-                    ></StatusTag
+                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
                   ></span>
                 </div>
-                <div
-                  class="flex justify-content-center align-items-center subscribe-header-action"
-                >
+                <div class="flex justify-content-center align-items-center subscribe-header-action">
                   <ElButton
                     :disabled="
-                      !['active'].includes(item.status) ||
-                      item.totalAmount === 0 ||
-                      item.subscribeType === 'recurring'
+                      !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
                     "
                     class="mr-2"
                     type="text"
@@ -86,18 +45,12 @@
                     >{{ $t('public_button_renew') }}</ElButton
                   >
                   <el-divider direction="vertical"></el-divider>
-                  <ElButton
-                    v-if="['incomplete'].includes(item.status)"
-                    type="text"
-                    @click="handlePay(item)"
-                    >{{ $t('public_button_pay') }}</ElButton
-                  >
-                  <ElButton
-                    v-if="['active'].includes(item.status)"
-                    type="text"
-                    @click="goOpenChange(item)"
-                    >{{ $t('dfs_change_record') }}</ElButton
-                  >
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
+                    $t('public_button_pay')
+                  }}</ElButton>
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                    $t('dfs_change_record')
+                  }}</ElButton>
 
                   <!--                  <el-divider direction="vertical"></el-divider>-->
                   <!--                  <ElButton-->
@@ -123,9 +76,7 @@
                   header-cell-class-name="bg-white"
                 >
                   <template #subscriptionMethodLabel="{ row }">
-                    <span :class="{ 'color-success': row.amount === 0 }">{{
-                      row.subscriptionMethodLabel
-                    }}</span>
+                    <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
                   </template>
                   <template #agentType="{ row }">
                     <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
@@ -135,9 +86,7 @@
                   </template>
                   <template #statusLabel="{ row }">
                     <StatusTag
-                      v-if="
-                        row.agentType === 'Cloud' && row.status === 'Creating'
-                      "
+                      v-if="row.agentType === 'Cloud' && row.status === 'Creating'"
                       type="tag"
                       status="Deploying"
                       default-status="Stopped"
@@ -148,26 +97,19 @@
                       type="tag"
                       :status="row.status"
                       default-status="Stopped"
-                      :target="
-                        row.productType === 'Engine' ? 'instance' : 'mdb'
-                      "
+                      :target="row.productType === 'Engine' ? 'instance' : 'mdb'"
                     ></StatusTag>
                   </template>
                   <template #operation="{ row }">
                     <ElButton
-                      :disabled="
-                        disableUnsubscribe(row) ||
-                        ['incomplete'].includes(item.status)
-                      "
+                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
                       type="text"
                       @click="openUnsubscribe(item, row.productType)"
                       >{{ $t('public_button_unsubscribe') }}</ElButton
                     >
                     <ElButton
                       v-if="
-                        !disableUnsubscribe(row) &&
-                        ['active'].includes(item.status) &&
-                        row.productType === 'Engine'
+                        !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
                       "
                       :disabled="!row.amount && row.agentType === 'Cloud'"
                       type="text"
@@ -199,9 +141,7 @@
       >
         <section class="flex flex-column overflow-hidden flex-1">
           <div class="mt-2 flex justify-content-end">
-            <el-button class="mr-2" @click="goReceipt">{{
-              $t('dfs_user_center_kaifapiao')
-            }}</el-button>
+            <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
             <!--            <el-button type="primary" @click="goLicense">{{-->
             <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
             <!--            }}-->
@@ -210,7 +150,7 @@
             :columns="codeColumns"
             :remoteMethod="codeRemoteMethod"
             :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper',
+              layout: 'total, ->, prev, pager, next, sizes, jumper'
             }"
             ref="tableCode"
             class="mt-4"
@@ -219,24 +159,13 @@
               <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
             </template>
             <template #bindAgent="{ row }">
-              <ElLink
-                v-if="row.agentId"
-                type="primary"
-                @click="handleAgent(row)"
-                >{{
-                  $t('dfs_instance_selectlist_yibangding') +
-                  ' ' +
-                  $t('public_agent') +
-                  ' : ' +
-                  row.agentId
-                }}</ElLink
-              >
+              <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+                $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
+              }}</ElLink>
               <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
             </template>
             <template #operation="{ row }">
-              <ElButton type="text" @click="handleRenewal(row)">{{
-                $t('public_button_renewal')
-              }}</ElButton>
+              <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
             </template>
           </VTable>
         </section>
@@ -244,22 +173,13 @@
     </el-tabs>
 
     <!--转账{{$t('public_button_pay')}}-->
-    <transferDialog
-      v-model:visible="showTransferDialogVisible"
-      :price="pricePay"
-    ></transferDialog>
+    <transferDialog v-model:visible="showTransferDialogVisible" :price="pricePay"></transferDialog>
     <!--退订-->
-    <Unsubscribe
-      ref="UnsubscribeDetailDialog"
-      @closeVisible="remoteMethod"
-    ></Unsubscribe>
+    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
     <!--续订-->
     <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
     <!--变更-->
-    <Change
-      ref="ChangeSubscribeDetailDialog"
-      @closeVisible="remoteMethod"
-    ></Change>
+    <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -287,7 +207,7 @@ export default {
     VTable,
     transferDialog,
     Renew,
-    Change,
+    Change
   },
   inject: ['buried'],
   data() {
@@ -306,7 +226,7 @@ export default {
       searchParams: {
         agentDeploy: '',
         productType: '',
-        status: '',
+        status: ''
       },
       search: '',
       filterItems: [],
@@ -315,90 +235,86 @@ export default {
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
           prop: 'licenseCode',
-          width: 320,
+          width: 320
         },
         {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
-          prop: 'activateTimeLabel',
+          prop: 'activateTimeLabel'
         },
         {
-          label: i18n.t(
-            'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'
-          ),
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
-          prop: 'expiredTimeLabel',
+          prop: 'expiredTimeLabel'
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
-          slotName: 'bindAgent',
+          slotName: 'bindAgent'
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation',
-          width: 100,
-        },
+          width: 100
+        }
       ],
       columns: [
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType',
+          prop: 'productType'
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           slotName: 'subscriptionMethodLabel',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageSize',
+          prop: 'storageSize'
         },
         {
           label: i18n.t('dfs_user_center_jine'),
           prop: 'price',
-          slotName: 'price',
+          slotName: 'price'
         },
         {
-          label: i18n.t(
-            'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'
-          ),
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType',
+          slotName: 'agentType'
         },
         {
           label: i18n.t('task_monitor_status'),
-          slotName: 'statusLabel',
+          slotName: 'statusLabel'
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
-          slotName: 'operation',
-        },
+          slotName: 'operation'
+        }
       ],
       //订阅列表
       subscribeList: [],
       page: {
         current: 1,
-        size: 10,
+        size: 10
       },
       loadingRenewSubmit: false,
-      currentPrice: 0,
+      currentPrice: 0
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
+    }
   },
   created() {
     this.getFilterItems()
@@ -417,7 +333,7 @@ export default {
         this.page.current = 1
         this.remoteMethod()
       }
-    },
+    }
   },
   methods: {
     getFilterItems() {
@@ -429,63 +345,61 @@ export default {
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: '',
+              value: ''
             },
             {
               label: this.$t('packages_business_shared_const_weizhifu'),
-              value: 'incomplete',
+              value: 'incomplete'
             },
             {
               label: this.$t('packages_business_shared_const_yizhifu'),
-              value: 'active',
+              value: 'active'
             },
             {
               label: this.$t('packages_business_shared_const_zhifushibai'),
-              value: 'payFail',
+              value: 'payFail'
             },
             {
               label: this.$t('packages_business_shared_const_yituikuan'),
-              value: 'refund',
+              value: 'refund'
             },
             {
               label: this.$t('packages_business_payment_timeout'),
-              value: 'past_due',
+              value: 'past_due'
             },
             {
               label: this.$t('packages_business_shared_const_tuikuanzhong'),
-              value: 'refunding',
+              value: 'refunding'
             },
             {
               label: this.$t('packages_business_shared_const_shixiao'),
-              value: 'incomplete_expired',
+              value: 'incomplete_expired'
             },
             {
               label: this.$t('packages_business_shared_const_yiquxiao'),
-              value: 'canceled',
-            },
+              value: 'canceled'
+            }
           ],
-          selectedWidth: '200px',
+          selectedWidth: '200px'
         },
         {
-          label: i18n.t(
-            'dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'
-          ),
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           key: 'agentType',
           type: 'select-inner',
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: '',
+              value: ''
             },
             {
               label: this.$t('dfs_instance_utils_quantuoguan'),
-              value: 'Cloud',
+              value: 'Cloud'
             },
             {
               label: this.$t('dfs_instance_utils_bantuoguan'),
-              value: 'Local',
-            },
-          ],
+              value: 'Local'
+            }
+          ]
         },
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
@@ -494,18 +408,18 @@ export default {
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: '',
+              value: ''
             },
             {
               label: 'Engine',
-              value: 'Engine',
+              value: 'Engine'
             },
             {
               label: 'MongoDB',
-              value: 'MongoDB',
-            },
-          ],
-        },
+              value: 'MongoDB'
+            }
+          ]
+        }
       ]
     },
     //我的订阅
@@ -514,8 +428,8 @@ export default {
       let { agentType, status, productType } = this.searchParams
       let where = {
         status: {
-          $ne: 'invalid', //过滤 invild
-        },
+          $ne: 'invalid' //过滤 invild
+        }
       }
       agentType && (where['subscribeItems.agentType'] = agentType)
       productType && (where['subscribeItems.productType'] = productType)
@@ -524,50 +438,38 @@ export default {
         limit: size,
         skip: size * (current - 1),
         sort: ['createAt desc'],
-        where: where,
+        where: where
       }
       this.loadingSubscribe = true
 
-      return this.$axios
-        .get(
-          `api/tcm/subscribe?filter=${encodeURIComponent(
-            JSON.stringify(filter)
-          )}`
-        )
-        .then((data) => {
-          this.loadingSubscribe = false
-          let items = data.items || []
-          this.page.total = data.total
-          this.subscribeList = items.map((item) => {
-            if (item.totalAmount !== 0) {
-              item.subscriptionMethodLabel =
-                getPaymentMethod(
-                  { periodUnit: item.periodUnit, type: item.subscribeType },
-                  item.paymentMethod || 'Stripe'
-                ) || '-'
-            } else {
-              item.subscriptionMethodLabel = i18n.t(
-                'dfs_instance_instance_mianfei'
-              )
-            }
+      return this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+        this.loadingSubscribe = false
+        let items = data.items || []
+        this.page.total = data.total
+        this.subscribeList = items.map(item => {
+          if (item.totalAmount !== 0) {
+            item.subscriptionMethodLabel =
+              getPaymentMethod(
+                { periodUnit: item.periodUnit, type: item.subscribeType },
+                item.paymentMethod || 'Stripe'
+              ) || '-'
+          } else {
+            item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
+          }
 
-            if (item.subscribeItems && item.subscribeItems.length > 0) {
-              item.subscribeItems = item.subscribeItems.map((it) => {
-                it.specLabel = getSpec(it.spec) || '-'
-                it.storageSize = it.spec?.storageSize
-                  ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}`
-                  : '-'
-                it.subscriptionMethodLabel =
-                  it.amount === 0
-                    ? i18n.t('dfs_instance_instance_mianfei')
-                    : item.subscriptionMethodLabel
-                it.status = it.resource?.status || ''
-                return it
-              })
-            }
-            return item
-          })
+          if (item.subscribeItems && item.subscribeItems.length > 0) {
+            item.subscribeItems = item.subscribeItems.map(it => {
+              it.specLabel = getSpec(it.spec) || '-'
+              it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
+              it.subscriptionMethodLabel =
+                it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
+              it.status = it.resource?.status || ''
+              return it
+            })
+          }
+          return item
         })
+      })
     },
     formatterTime(time, template = 'YYYY-MM-DD') {
       return time ? dayjs(time).format(template) : '-'
@@ -580,7 +482,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+          maximumFractionDigits: 2
         })
       )
     },
@@ -588,13 +490,9 @@ export default {
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
         if (row.agentType === 'Cloud') {
-          return !['Running', 'Approving', 'Stopped', 'Error'].includes(
-            row.status
-          )
+          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.status)
         } else {
-          return !['Running', 'Creating', 'Stopped', 'Error'].includes(
-            row.status
-          )
+          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
         }
       } else {
         if (row?.resource?.scope === 'Private') {
@@ -617,8 +515,8 @@ export default {
       this.$router.push({
         name: 'changeList',
         query: {
-          id: item.id,
-        },
+          id: item.id
+        }
       })
     },
     //续订
@@ -631,7 +529,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
+          maximumFractionDigits: 2
         })
       )
     },
@@ -641,8 +539,8 @@ export default {
       this.$router.push({
         name: 'pay',
         params: {
-          id: row.id,
-        },
+          id: row.id
+        }
       })
       /*if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
@@ -663,7 +561,7 @@ export default {
     },
     handleCreateAgent() {
       this.$router.push({
-        name: 'createAgent',
+        name: 'createAgent'
       })
       this.buried('newAgentStripeDialog')
     },
@@ -671,42 +569,32 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.agentId,
-        },
+          keyword: row.agentId
+        }
       })
     },
     codeRemoteMethod() {
-      return this.$axios
-        .get('api/tcm/aliyun/market/license/list')
-        .then((data) => {
-          const items = data.items || []
-          return {
-            total: data.total,
-            data:
-              items.map((t) => {
-                let activateTime = new Date(
-                  t.activateTime.replace('Z', '+08:00')
-                ).toLocaleString()
-                let expiredTime = new Date(
-                  t.expiredTime.replace('Z', '+08:00')
-                ).toLocaleString()
-                t.activateTimeLabel = t.activateTime
-                  ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss')
-                  : '-'
-                t.expiredTimeLabel = t.expiredTime
-                  ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss')
-                  : '-'
-                t.bindAgent = t.agentId
-                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                  : i18n.t('user_Center_weiBangDing')
-                return t
-              }) || [],
-          }
-        })
+      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
+        const items = data.items || []
+        return {
+          total: data.total,
+          data:
+            items.map(t => {
+              let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
+              let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
+              t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.expiredTimeLabel = t.expiredTime ? dayjs(expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              t.bindAgent = t.agentId
+                ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+                : i18n.t('user_Center_weiBangDing')
+              return t
+            }) || []
+        }
+      })
     },
     goLicense() {
       this.$router.push({
-        name: 'aliyunMarketLicense',
+        name: 'aliyunMarketLicense'
       })
     },
     goReceipt() {
@@ -720,11 +608,9 @@ export default {
     },
     //变更记录
     getChangeList() {
-      this.$axios
-        .get(`api/tcm/subscribe/{subscribeId}/change`)
-        .then((data) => {})
-    },
-  },
+      this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then(data => {})
+    }
+  }
 }
 </script>
 

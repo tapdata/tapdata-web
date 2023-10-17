@@ -8,15 +8,8 @@
       @action="$emit('action', arguments[0])"
     ></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs
-        v-model:value="currentTab"
-        class="setting-tabs h-100 flex-1 flex flex-column"
-        key="bottomPanel"
-      >
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_renwujindu')"
-          name="milestone"
-        >
+      <ElTabs v-model:value="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
             v-bind="$attrs"
             v-if="currentTab === 'milestone'"
@@ -35,21 +28,10 @@
             @action="$emit('action', arguments[0])"
           ></NodeLog>
         </ElTabPane>
-        <ElTabPane
-          :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')"
-          name="record"
-        >
-          <Record
-            v-bind="$attrs"
-            v-if="currentTab === 'record'"
-            :currentTab="currentTab"
-          ></Record>
+        <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
+          <Record v-bind="$attrs" v-if="currentTab === 'record'" :currentTab="currentTab"></Record>
         </ElTabPane>
-        <ElTabPane
-          v-if="showAlert"
-          :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')"
-          name="alert"
-        >
+        <ElTabPane v-if="showAlert" :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
           <Alert
             v-bind="$attrs"
             v-if="currentTab === 'alert'"
@@ -58,11 +40,7 @@
             @load-data="$emit('load-data')"
           ></Alert>
         </ElTabPane>
-        <ElTabPane
-          v-if="relationCount"
-          :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')"
-          name="relation"
-        >
+        <ElTabPane v-if="relationCount" :label="$t('packages_dag_monitor_bottompanel_guanlianrenwu')" name="relation">
           <RelationList
             v-bind="$attrs"
             :currentTab="currentTab"
@@ -73,9 +51,7 @@
         </ElTabPane>
       </ElTabs>
 
-      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')"
-        >close</VIcon
-      >
+      <VIcon class="close-icon" size="16" @click="$emit('showBottomPanel')">close</VIcon>
     </div>
   </section>
 </template>
@@ -99,38 +75,33 @@ export default {
   components: { Record, Alert, RelationList, NodeLog, MilestoneList },
   directives: {
     resize,
-    focusSelect,
+    focusSelect
   },
   props: {
     onlyLog: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,
-      nodeId: '',
+      nodeId: ''
     }
   },
   computed: {
-    ...mapGetters('dataflow', [
-      'activeType',
-      'activeNode',
-      'nodeById',
-      'stateIsReadonly',
-    ]),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     showAlert() {
       return !['SharedCacheMonitor'].includes(this.$route.name)
-    },
+    }
   },
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    },
+    }
   },
   mounted() {
     if (['MigrationMonitorViewer'].includes(this.$route.name)) {
@@ -138,18 +109,13 @@ export default {
       const { start, end } = this.$route.query
       this.changeTab(this.currentTab, {
         start: start * 1,
-        end: end * 1,
+        end: end * 1
       })
     }
     this.getRelationData()
   },
   methods: {
-    ...mapMutations('dataflow', [
-      'updateNodeProperties',
-      'setNodeError',
-      'clearNodeError',
-      'setActiveType',
-    ]),
+    ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),
 
     handleChangeName(name) {
@@ -157,8 +123,8 @@ export default {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name,
-          },
+            name
+          }
         })
         this.updateDag({ vm: this })
       } else {
@@ -186,8 +152,7 @@ export default {
           const len = 10 * 1000
           let start = t - len
           const end = data.end ? data.end + len : t + len
-          data.start &&
-            this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
+          data.start && this.getLogRef()?.$refs.timeSelect.changeTime([start, end])
         }
       })
     },
@@ -197,25 +162,19 @@ export default {
       const { taskRecordId } = this.$route.query || {}
       let filter = {
         taskId: this.$route.params.id || id,
-        taskRecordId,
+        taskRecordId
       }
       if (['logCollector'].includes(syncType)) {
         filter.type = 'task_by_collector'
       } else if (['sync'].includes(syncType)) {
         // filter.type = 'task_by_collector'
       }
-      taskApi.taskConsoleRelations(filter).then((data) => {
+      taskApi.taskConsoleRelations(filter).then(data => {
         this.relationCount = data?.length || 0
       })
-    },
+    }
   },
-  emits: [
-    'action',
-    'load-data',
-    'showBottomPanel',
-    'load-data',
-    'showBottomPanel',
-  ],
+  emits: ['action', 'load-data', 'showBottomPanel', 'load-data', 'showBottomPanel']
 }
 </script>
 

@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="df-node-wrap position-absolute"
-    :class="wrapClass"
-    :style="nodeStyle"
-    tabindex="1"
-  >
+  <div class="df-node-wrap position-absolute" :class="wrapClass" :style="nodeStyle" tabindex="1">
     <BaseNode :node="data" :class="nodeClass" @click="mouseClick">
       <template #text="{ text }">
         <OverflowTooltip
@@ -21,17 +16,11 @@
           :disabled="data.disabled"
           class="cursor-pointer"
           :class="{
-            'opacity-50 cursor-not-allowed': data.disabled,
+            'opacity-50 cursor-not-allowed': data.disabled
           }"
           :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
           @click.stop="
-            !data.disabled &&
-              $emit(
-                'show-node-popover',
-                'node',
-                data,
-                $event.currentTarget || $event.target
-              )
+            !data.disabled && $emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)
           "
         >
           <VIcon size="20">action-add</VIcon>
@@ -41,7 +30,7 @@
           name="action-delete"
           class="cursor-pointer"
           :class="{
-            'opacity-50 cursor-not-allowed': data.disabled,
+            'opacity-50 cursor-not-allowed': data.disabled
           }"
           @click.stop="!data.disabled && $emit('delete', data.id)"
           :title="$t('packages_dag_components_dfnode_shanchujiedian')"
@@ -67,16 +56,10 @@
           <VIcon size="20">action-disable</VIcon>
         </div>
       </div>
-      <ElTooltip
-        v-if="hasNodeError(data.id)"
-        :content="nodeErrorMsg"
-        placement="top"
-      >
+      <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
         <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
       </ElTooltip>
-      <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16"
-        >disable</VIcon
-      >
+      <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16">disable</VIcon>
       <div class="node-anchor input"></div>
       <div v-show="allowTarget" class="node-anchor output"></div>
     </BaseNode>
@@ -101,19 +84,19 @@ export default {
   components: {
     OverflowTooltip,
     VIcon,
-    BaseNode,
+    BaseNode
   },
   props: {
     nodeId: {
       type: String,
-      required: true,
+      required: true
     },
-    jsPlumbIns: Object,
+    jsPlumbIns: Object
   },
   mixins: [deviceSupportHelpers],
   data() {
     return {
-      id: this.$attrs.id,
+      id: this.$attrs.id
     }
   },
   computed: {
@@ -127,7 +110,7 @@ export default {
       'processorNodeTypes',
       'hasNodeError',
       'stateIsReadonly',
-      'activeType',
+      'activeType'
     ]),
 
     data() {
@@ -146,16 +129,14 @@ export default {
     },
 
     wrapClass() {
-      if (this.canBeConnectedNodeIds.includes(this.nodeId))
-        return 'can-be-connected'
+      if (this.canBeConnectedNodeIds.includes(this.nodeId)) return 'can-be-connected'
       return ''
     },
 
     nodeClass() {
       const list = []
 
-      if (this.isNodeActive(this.nodeId) && this.activeType === 'node')
-        list.push('active')
+      if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.data.attrs.disabled) list.push('node--disabled')
       if (this.data.disabled) list.push('node--disabled__main')
@@ -168,19 +149,17 @@ export default {
       const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
         left: left + 'px',
-        top: top + 'px',
+        top: top + 'px'
       }
     },
 
     nodeErrorMsg() {
       const res = this.hasNodeError(this.data.id)
       if (res) {
-        return typeof res === 'string'
-          ? res
-          : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
+        return typeof res === 'string' ? res : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
       }
       return null
-    },
+    }
   },
   mounted() {
     if (this.data && this.ins) {
@@ -195,14 +174,14 @@ export default {
       '<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>NodeProperties',
       'resetSelectedNodes',
       'setNodeError',
-      'clearNodeError',
+      'clearNodeError'
     ]),
 
     __init() {
       const { id, nodeId } = this
 
       const targetParams = {
-        ...targetEndpoint,
+        ...targetEndpoint
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -211,7 +190,7 @@ export default {
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
-        start: (params) => {
+        start: params => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
@@ -226,7 +205,7 @@ export default {
           $emit(this, 'drag-start', params)
           return true
         },
-        drag: (params) => {
+        drag: params => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
@@ -241,9 +220,7 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            const moveNodes = [
-              ...this.$store.getters['dataflow/getSelectedNodes'],
-            ]
+            const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
 
             if (!this.isNodeSelected(this.nodeId)) {
               moveNodes.push(this.data)
@@ -257,9 +234,7 @@ export default {
             let x = parseFloat(this.$el.style.left)
             let y = parseFloat(this.$el.style.top)
 
-            const distance = Math.sqrt(
-              Math.pow(x - position[0], 2) + Math.pow(y - position[1], 2)
-            )
+            const distance = Math.sqrt(Math.pow(x - position[0], 2) + Math.pow(y - position[1], 2))
 
             if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
@@ -277,30 +252,27 @@ export default {
               this.removeActiveAction('dragActive')
             }
 
-            moveNodes.forEach((node) => {
+            moveNodes.forEach(node => {
               const nodeElement = NODE_PREFIX + node.id
               const element = document.getElementById(nodeElement)
               if (element === null) {
                 return
               }
 
-              let newNodePosition = [
-                parseFloat(element.style.left),
-                parseFloat(element.style.top),
-              ]
+              let newNodePosition = [parseFloat(element.style.left), parseFloat(element.style.top)]
 
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  attrs: { position: newNodePosition },
-                },
+                  attrs: { position: newNodePosition }
+                }
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  attrs: { position },
-                },
+                  attrs: { position }
+                }
               })
               newProperties.push(updateInformation)
             })
@@ -308,11 +280,11 @@ export default {
 
           this.onMouseDownAt = undefined
           $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
-        },
+        }
       })
 
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target',
+        uuid: id + '_target'
       })
 
       // if (this.data.type !== 'table') {
@@ -334,21 +306,18 @@ export default {
               beforeStart: ({ el }) => {
                 if (this.stateIsReadonly) return false
                 // 源point没有onMaxConnections事件回调，故用次事件内提示
-                if (
-                  maxOutputs !== -1 &&
-                  el._jsPlumb.connections.length >= maxOutputs
-                ) {
+                if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
                   this.$message.error(
                     i18n.t('packages_dag_components_dfnode_gaijiedianth', {
-                      val1: this.data.name,
+                      val1: this.data.name
                     })
                   )
                 }
-              },
-            },
+              }
+            }
           },
           {
-            uuid: id + '_source',
+            uuid: id + '_source'
           }
         )
     },
@@ -370,7 +339,7 @@ export default {
           $emit(this, 'nodeSelected', this.nodeId, true)
         }
       }
-    },
+    }
   },
   emits: [
     'show-node-popover',
@@ -387,8 +356,8 @@ export default {
     'show-node-popover',
     'delete',
     'enable',
-    'disable',
-  ],
+    'disable'
+  ]
 }
 </script>
 

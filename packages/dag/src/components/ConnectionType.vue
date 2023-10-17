@@ -6,8 +6,8 @@ export default defineComponent({
   props: {
     type: {
       required: true,
-      type: String,
-    },
+      type: String
+    }
   },
   setup(props) {
     return () => {
@@ -28,7 +28,7 @@ export default defineComponent({
         </div>
       )
     }
-  },
+  }
 })
 </script>
 

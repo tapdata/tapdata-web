@@ -28,11 +28,11 @@ export const TYPEMAP = {
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
-  clickhouse: 'ClickHouse',
+  clickhouse: 'ClickHouse'
 }
 
 // 500错误弹窗
-export const errorConfirmFnc = (error) => {
+export const errorConfirmFnc = error => {
   let msg = `<div>${i18n.t('RequestErrorMessage_error_title')}</div>`
   let title = i18n.t('confirm_error_tip')
   error = typeof error === 'object' ? error : {}
@@ -67,8 +67,8 @@ export const errorConfirmFnc = (error) => {
     iconSize: 18,
     dangerouslyUseHTMLString: true,
     confirmButtonText: i18n.t('confirm_reload_label'),
-    cancelButtonText: i18n.t('public_button_close'),
-  }).then((flag) => {
+    cancelButtonText: i18n.t('public_button_close')
+  }).then(flag => {
     if (flag) {
       location.reload()
     }
@@ -81,29 +81,29 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let arr = []
   arr.push({
     label: i18n.t('public_time_d'),
-    value: Math.floor(time / 60 / 60 / 24),
+    value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
     label: i18n.t('public_time_h'),
-    value: Math.floor(time / 60 / 60) % 24,
+    value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
     label: i18n.t('public_time_m'),
-    value: Math.floor(time / 60) % 60,
+    value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
     label: i18n.t('public_time_s'),
-    value: Math.floor(time) % 60,
+    value: Math.floor(time) % 60
   }) // second
   let result = ''
   if (type === 'time') {
     result = arr
       .slice(1)
-      .map((t) => (t.value + '').padStart(2, '0'))
+      .map(t => (t.value + '').padStart(2, '0'))
       .join(':')
     return result
   }
-  arr.forEach((el) => {
+  arr.forEach(el => {
     if (el.value) {
       result += el.value + el.label
     }
@@ -114,7 +114,7 @@ export const formatMs = (msTime = 0, type = 'time') => {
   return result
 }
 
-export const extractTimeFromObjectId = (objectId) => {
+export const extractTimeFromObjectId = objectId => {
   // 将 ObjectId 转换为 24 位的十六进制字符串
   const hexString = objectId.toString()
 
@@ -128,7 +128,7 @@ export const extractTimeFromObjectId = (objectId) => {
   return new Date(timestampInt * 1000) // 乘以 1000 转换为毫秒
 }
 
-export const daysdifference = (time) => {
+export const daysdifference = time => {
   let currentDate = new Date().getTime()
   let endTime = new Date(time).getTime()
   let dateTime = 1000 * 60 * 60 * 24 //每一天的毫秒数

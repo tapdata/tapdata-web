@@ -6,24 +6,19 @@
         <li v-for="item in infoList" :key="item.key">
           <span class="label">{{ item.label }}</span>
           <span class="text"> {{ item.value }} </span>
-          <ElButton
-            type="text"
-            v-if="item.key !== 'email'"
-            @click="handleChange(item.key)"
-            >{{ item.icon }}</ElButton
-          >
+          <ElButton type="text" v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
           <!-- <i
-              :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
-              v-if="item.key !== 'email'"
-              @click="handleChange(item.key)"
-            ></i> -->
+                :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
+                v-if="item.key !== 'email'"
+                @click="handleChange(item.key)"
+              ></i> -->
         </li>
       </ul>
     </div>
     <!-- 修改密码 -->
     <el-dialog
       :title="$t('account_changePassword')"
-      v-model:visible="passwordDialogFalg"
+      v-model="passwordDialogFalg"
       :close-on-click-modal="false"
       width="600px"
     >
@@ -31,16 +26,13 @@
         <el-form-item prop="oldPassword">
           <el-input
             :type="oldPasswordType"
-            v-model:value="pwd.oldPassword"
+            v-model="pwd.oldPassword"
             :placeholder="$t('account_currentPassword')"
             autocomplete="off"
           >
             <template v-slot:suffix>
               <i
-                :class="[
-                  'iconfont',
-                  oldFlag ? 'icon-openeye' : 'icon-closeeye',
-                ]"
+                :class="['iconfont', oldFlag ? 'icon-openeye' : 'icon-closeeye']"
                 autocomplete="auto"
                 class="eye"
                 @click="changeEye('old')"
@@ -50,17 +42,14 @@
         </el-form-item>
         <el-form-item prop="newPassword">
           <el-input
-            v-model:value="pwd.newPassword"
+            v-model="pwd.newPassword"
             :type="newPasswordType"
             :placeholder="$t('account_newPassword')"
             autocomplete="off"
           >
             <template v-slot:suffix>
               <i
-                :class="[
-                  'iconfont',
-                  newFlag ? 'icon-openeye' : 'icon-closeeye',
-                ]"
+                :class="['iconfont', newFlag ? 'icon-openeye' : 'icon-closeeye']"
                 autocomplete="auto"
                 class="eye"
                 @click="changeEye('new')"
@@ -70,17 +59,14 @@
         </el-form-item>
         <el-form-item prop="comfirmPassword">
           <el-input
-            v-model:value="pwd.comfirmPassword"
+            v-model="pwd.comfirmPassword"
             :type="comfirmPasswordType"
             :placeholder="$t('account_confirmPassword')"
             autocomplete="off"
           >
             <template v-slot:suffix>
               <i
-                :class="[
-                  'iconfont',
-                  comfirFlag ? 'icon-openeye' : 'icon-closeeye',
-                ]"
+                :class="['iconfont', comfirFlag ? 'icon-openeye' : 'icon-closeeye']"
                 autocomplete="auto"
                 class="eye"
                 @click="changeEye()"
@@ -91,55 +77,37 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="save">{{
-            $t('public_button_save')
-          }}</el-button>
+          <el-button type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 修改邮箱 -->
-    <el-dialog
-      :title="$t('account_changeEmail')"
-      v-model:visible="emailDialogFalg"
-      :close-on-click-modal="false"
-      width="600px"
-    >
+    <el-dialog :title="$t('account_changeEmail')" v-model="emailDialogFalg" :close-on-click-modal="false" width="600px">
       <el-form :model="form" class="form">
         <el-form-item>
-          <el-input
-            v-model:value="form.newEmail"
-            :placeholder="$t('account_enterMailbox')"
-            autocomplete="off"
-            min
-          ></el-input>
+          <el-input v-model="form.newEmail" :placeholder="$t('account_enterMailbox')" autocomplete="off" min></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model:value="form.password"
-            :placeholder="$t('account_enterNewMailbox')"
-            autocomplete="off"
-          ></el-input>
+          <el-input v-model="form.password" :placeholder="$t('account_enterNewMailbox')" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="send">{{
-            $t('account_sendEmail')
-          }}</el-button>
+          <el-button type="primary" size="mini" @click="send">{{ $t('account_sendEmail') }}</el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 用户名称 -->
     <el-dialog
       :title="$t('account_changeUsername')"
-      v-model:visible="usernameDialogFalg"
+      v-model="usernameDialogFalg"
       :close-on-click-modal="false"
       width="600px"
     >
       <el-form class="form">
         <el-form-item>
           <el-input
-            v-model:value="userName"
+            v-model="userName"
             :placeholder="$t('account_newUsername')"
             maxlength="100"
             show-word-limit
@@ -149,9 +117,7 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="confirm">{{
-            $t('dialog_downAgent_ok')
-          }}</el-button>
+          <el-button type="primary" size="mini" @click="confirm">{{ $t('dialog_downAgent_ok') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -195,12 +161,12 @@ export default {
       loading: false,
       form: {
         newEmail: '',
-        password: '',
+        password: ''
       },
       pwd: {
         oldPassword: '',
         newPassword: '',
-        comfirmPassword: '',
+        comfirmPassword: ''
       },
       userName: '',
       infoList: [
@@ -208,26 +174,26 @@ export default {
           label: this.$t('account_email'),
           value: '',
           key: 'email',
-          icon: this.$t('public_button_revise'),
+          icon: this.$t('public_button_revise')
         },
         {
           label: this.$t('account_userName'),
           value: '',
           key: 'username',
-          icon: this.$t('public_button_revise'),
+          icon: this.$t('public_button_revise')
         },
         {
           label: this.$t('public_connection_form_password'),
           value: '******',
           key: 'password',
-          icon: this.$t('public_button_revise'),
+          icon: this.$t('public_button_revise')
         },
         {
           label: this.$t('account_accessCode'),
           value: '',
           key: 'accessCode',
-          icon: this.$t('public_button_refresh'),
-        },
+          icon: this.$t('public_button_refresh')
+        }
       ],
       emailDialogFalg: false,
       passwordDialogFalg: false,
@@ -245,50 +211,50 @@ export default {
           {
             required: true,
             message: this.$t('account_currentPassword'),
-            trigger: 'blur',
+            trigger: 'blur'
           },
           {
             min: 5,
             message: this.$t('app_signIn_password_invalid'),
-            trigger: 'blur',
+            trigger: 'blur'
           },
           {
             validator: validateisCN,
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         newPassword: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('account_newPassword'),
+            message: this.$t('account_newPassword')
           },
           {
             validator: validateNewPassword,
-            trigger: 'blur',
+            trigger: 'blur'
           },
           {
             min: 5,
             message: this.$t('app_signIn_password_invalid'),
-            trigger: 'blur',
+            trigger: 'blur'
           },
           {
             validator: validateisCN,
-            trigger: 'blur',
-          },
+            trigger: 'blur'
+          }
         ],
         comfirmPassword: [
           {
             required: true,
             message: this.$t('account_confirmPassword'),
-            trigger: 'blur',
+            trigger: 'blur'
           },
           {
             validator: validateNewPassword2,
-            trigger: 'blur',
-          },
-        ],
-      },
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   created() {
@@ -300,8 +266,8 @@ export default {
       this.loading = true
       let data = await usersApi.get([Cookie.get('user_id')])
       if (data) {
-        this.infoList.forEach((item) => {
-          Object.keys(data).forEach((key) => {
+        this.infoList.forEach(item => {
+          Object.keys(data).forEach(key => {
             if (item.key === key) {
               item.value = data[key]
             }
@@ -334,7 +300,7 @@ export default {
     confirm() {
       let parmas = {
         id: Cookie.get('user_id'),
-        username: this.userName,
+        username: this.userName
       }
       if (this.userName) {
         usersApi.patch(parmas).then(() => {
@@ -360,9 +326,9 @@ export default {
     save() {
       let parmas = {
         oldPassword: this.pwd.oldPassword,
-        newPassword: this.pwd.newPassword,
+        newPassword: this.pwd.newPassword
       }
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           usersApi.changePassword(parmas).then(() => {
             this.$message.success(this.$t('account_pawSaveSuccess'))
@@ -401,8 +367,8 @@ export default {
           this.comfirmPasswordType = this.comfirFlag ? 'text' : 'password'
           break
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

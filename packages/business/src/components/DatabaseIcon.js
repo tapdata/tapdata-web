@@ -4,7 +4,7 @@ import { getConnectionIcon } from '../views/connections/util'
 export const DatabaseIcon = defineComponent({
   props: {
     item: Object,
-    size: Number,
+    size: Number
   },
   setup(props, { attrs }) {
     const _attrs = { ...attrs, src: getConnectionIcon(props.item.pdkHash) }
@@ -13,10 +13,10 @@ export const DatabaseIcon = defineComponent({
     if (props.size) {
       style = {
         width: props.size + 'px',
-        height: props.size + 'px',
+        height: props.size + 'px'
       }
     }
 
     return () => <ElImage style={style} attrs={{ ..._attrs }} />
-  },
+  }
 })

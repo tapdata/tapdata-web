@@ -3,7 +3,7 @@ import { action, define, observable } from '@formily/reactive'
 export const ScreenType = {
   PC: 'PC',
   Responsive: 'Responsive',
-  Mobile: 'Mobile',
+  Mobile: 'Mobile'
 }
 
 export class Screen {
@@ -33,7 +33,7 @@ export class Screen {
       setSize: action,
       resetSize: action,
       setBackground: action,
-      setFlip: action,
+      setFlip: action
     })
   }
 

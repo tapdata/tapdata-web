@@ -1,10 +1,5 @@
 <template>
-  <el-dialog
-    v-model:visible="visible"
-    :close-on-click-modal="false"
-    :show-close="false"
-    width="550px"
-  >
+  <el-dialog v-model="visible" :close-on-click-modal="false" :show-close="false" width="550px">
     <section v-if="user">
       <main v-if="user.licenseType === 'checkCode'">
         <header class="header flex">
@@ -40,12 +35,9 @@
     <template v-slot:footer>
       <span v-if="user">
         <div v-if="user.licenseType === 'checkCode'">
-          <el-button
-            class="mt-4"
-            v-if="user.showNextProcessing"
-            @click="$emit('update:visible', false)"
-            >{{ $t('dfs_aliyun_market_checklicnese_xiayiciyanqi') }}</el-button
-          >
+          <el-button class="mt-4" v-if="user.showNextProcessing" @click="$emit('update:visible', false)">{{
+            $t('dfs_aliyun_market_checklicnese_xiayiciyanqi')
+          }}</el-button>
           <el-button class="mt-4" type="primary" @click="goAliyun()">{{
             $t('dfs_aliyun_market_checklicnese_yanchangshouquanma')
           }}</el-button>
@@ -71,20 +63,18 @@ export default {
   data() {
     return {
       licenseCode: '',
-      current: [],
+      current: []
     }
   },
   watch: {
     visible(v) {
       if (v) {
-        this.user.data = this.user?.data.map((item) => {
-          item.expiredTime = item.expiredTime
-            ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss')
-            : ''
+        this.user.data = this.user?.data.map(item => {
+          item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
           return item
         })
       }
-    },
+    }
   },
   methods: {
     goAliyun() {
@@ -92,11 +82,11 @@ export default {
     },
     goLicense() {
       this.$router.push({
-        name: 'aliyunMarketLicense',
+        name: 'aliyunMarketLicense'
       })
-    },
+    }
   },
-  emits: ['update:visible'],
+  emits: ['update:visible']
 }
 </script>
 

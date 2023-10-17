@@ -8,15 +8,12 @@ export function getNodeIconSrc(node) {
   if (pdkHash) {
     return getConnectionIcon(pdkHash)
   }
-  let icon =
-    node.type === 'table' || node.type === 'database' || node.databaseType
-      ? node.databaseType
-      : node.type
+  let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
   if (node.type === 'hazelcastIMDG') {
     const map = {
       memory: 'memory',
       mongodb: 'mongodb',
-      rocksdb: 'rocksdb',
+      rocksdb: 'rocksdb'
     }
     icon = map[node.externaltype]
   }
@@ -43,17 +40,12 @@ export function getSchema(schema, values, pdkPropertiesMap) {
   let newSchema = JSON.parse(JSON.stringify(schema))
   const blacklist = ['CSV', 'EXCEL', 'JSON', 'XML']
 
-  if (
-    values.attrs.pdkHash &&
-    (values.type != 'database' || !blacklist.includes(values.databaseType))
-  ) {
+  if (values.attrs.pdkHash && (values.type != 'database' || !blacklist.includes(values.databaseType))) {
     const pdkProperties = pdkPropertiesMap[values.attrs.pdkHash]
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        pdkSchemaList.forEach((pdkSchema) =>
-          Object.assign(pdkSchema, pdkProperties)
-        )
+        pdkSchemaList.forEach(pdkSchema => Object.assign(pdkSchema, pdkProperties))
       }
     }
   }
@@ -71,11 +63,7 @@ export function getMatchedDataTypeLevel(
   fieldChangeRules = [],
   findPossibleDataTypes = {}
 ) {
-  if (
-    isEmpty(findPossibleDataTypes) ||
-    !findPossibleDataTypes[field.field_name]
-  )
-    return ''
+  if (isEmpty(findPossibleDataTypes) || !findPossibleDataTypes[field.field_name]) return ''
   const tapType = JSON.parse(field.tapType || '{}')
   if (tapType.type === 7) {
     field.data_type = ''
@@ -95,24 +83,14 @@ export function errorFiledType(field) {
  * @param {Object} map 表数据映射
  * @returns {Array} 符合条件的表
  * */
-export function getPrimaryKeyTablesByType(
-  data = [],
-  filterType = 'All',
-  map = {}
-) {
+export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {}) {
   if (filterType === 'All') {
     return data
   }
-  const result = data.map((t) => {
-    return Object.assign(
-      {},
-      { tableName: t, tableComment: '', primaryKeyCounts: 0 },
-      map[t]
-    )
+  const result = data.map(t => {
+    return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0 }, map[t])
   })
   const list =
-    filterType === 'HasKeys'
-      ? result.filter((t) => !!t.primaryKeyCounts)
-      : result.filter((t) => !t.primaryKeyCounts)
-  return list.map((t) => t.tableName)
+    filterType === 'HasKeys' ? result.filter(t => !!t.primaryKeyCounts) : result.filter(t => !t.primaryKeyCounts)
+  return list.map(t => t.tableName)
 }

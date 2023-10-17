@@ -1,21 +1,12 @@
 <template>
   <div class="account">
     <div class="flex justify-content-center align-items-center">
-      <VIcon size="450px" style="width: 450px; height: 235px"
-        >guide-top-header</VIcon
-      >
+      <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
     </div>
     <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
       {{ $t('dfs_components_taskalarmtour_account_zhuanghao') }}
     </div>
-    <ElForm
-      class="mt-4"
-      :model="phoneForm"
-      label-position="top"
-      :label-width="'120px'"
-      @submit.prevent
-      size="default"
-    >
+    <ElForm class="mt-4" :model="phoneForm" label-position="top" :label-width="'120px'" @submit.prevent size="default">
       <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
         <ElInput
           v-model:value="phoneForm.current"
@@ -23,30 +14,16 @@
           maxlength="50"
         >
           <template v-slot:prepend>
-            <el-select
-              v-model:value="phoneForm.countryCode"
-              filterable
-              style="width: 100px"
-            >
-              <el-option
-                v-for="item in countryCode"
-                :label="'+ ' + item.dial_code"
-                :value="item.dial_code"
-              >
+            <el-select v-model="phoneForm.countryCode" filterable style="width: 100px">
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.name
-                }}</span></el-option
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
               >
             </el-select>
           </template>
         </ElInput>
       </ElFormItem>
-      <ElFormItem
-        prop="newPassword"
-        :label="$t('user_Center_yanZhengMa')"
-        class="inline-form-item"
-      >
+      <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
         <ElInput
           v-model:value="phoneForm.oldCode"
           :placeholder="$t('user_Center_qingShuRuShouJi')"
@@ -82,8 +59,8 @@ export default {
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86',
-      },
+        countryCode: '86'
+      }
     }
   },
   mounted() {
@@ -98,9 +75,7 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode
-            ? phoneForm.countryCode.replace('-', '')
-            : '86',
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
@@ -115,13 +90,13 @@ export default {
         })
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then((res) => {
+      this.$axios.get('config/countryCode.json').then(res => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
-    },
+    }
   },
-  emits: ['next', 'error'],
+  emits: ['next', 'error']
 }
 </script>
 

@@ -11,16 +11,16 @@ export const Designer = defineComponent({
     // engine: Object,
     prefixCls: {
       type: String,
-      default: 'fd-',
+      default: 'fd-'
     },
     theme: {
       type: String,
-      default: 'light',
-    },
+      default: 'light'
+    }
   },
   setup(props, { slots }) {
     const engine = createDesigner({
-      rootComponentName: 'Form',
+      rootComponentName: 'Form'
     })
 
     engine.props.customNode = new CustomNode(engine)
@@ -39,5 +39,5 @@ export const Designer = defineComponent({
         </DesignerEngineContext.Provider>
       </Layout>
     )
-  },
+  }
 })

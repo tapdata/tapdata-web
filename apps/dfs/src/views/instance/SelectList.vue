@@ -16,25 +16,19 @@
       :columns="options.columns"
       :remoteMethod="options.remoteMethod"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper',
+        layout: 'total, ->, prev, pager, next, sizes, jumper'
       }"
       :has-pagination="false"
       ref="table"
       class="mt-4 v-table"
     >
       <template #operation="{ row }">
-        <ElTooltip
-          v-if="type === 'code'"
-          placement="top"
-          :content="getContent(row)"
-        >
+        <ElTooltip v-if="type === 'code'" placement="top" :content="getContent(row)">
           <ElButton type="text" @click="submit(row)">{{
             $t('public_button_create') + ' ' + $t('public_agent')
           }}</ElButton>
         </ElTooltip>
-        <ElButton v-else type="text" @click="submit(row)">{{
-          $t('public_button_create')
-        }}</ElButton>
+        <ElButton v-else type="text" @click="submit(row)">{{ $t('public_button_create') }}</ElButton>
       </template>
     </VTable>
 
@@ -72,12 +66,12 @@ export default {
   props: {
     value: {
       type: Boolean,
-      default: false,
+      default: false
     },
     type: {
       type: String,
-      default: 'code',
-    },
+      default: 'code'
+    }
   },
   data() {
     return {
@@ -88,76 +82,75 @@ export default {
           desc: i18n.t('dfs_instance_selectlist_shouquanmashizai'),
           columns: [
             {
-              type: 'index',
+              type: 'index'
             },
             {
               label: i18n.t('dfs_instance_selectlist_shouquanma'),
-              prop: 'licenseCode',
+              prop: 'licenseCode'
             },
             {
               label: i18n.t('dfs_instance_selectlist_youxiaoqi'),
-              prop: 'expiredTimeLabel',
+              prop: 'expiredTimeLabel'
             },
             {
               label: i18n.t('dfs_instance_selectlist_shiliguige'),
-              prop: 'specLabel',
+              prop: 'specLabel'
             },
             {
               label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-              prop: 'bindAgent',
+              prop: 'bindAgent'
             },
             {
               label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
-              width: 120,
-            },
-          ],
+              width: 120
+            }
+          ]
         },
         order: {
           title: i18n.t('dfs_instance_selectlist_xuanzedingyue'),
           desc: i18n.t('dfs_instance_selectlist_keyixuanzeyi'),
           columns: [
             {
-              type: 'index',
+              type: 'index'
             },
             {
               label: i18n.t('dfs_instance_selectlist_dingyueneirong'),
-              prop: 'content',
+              prop: 'content'
             },
             {
               label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
               prop: 'periodLabel',
-              width: 340,
+              width: 340
             },
             {
               label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
-              prop: 'bindAgent',
+              prop: 'bindAgent'
             },
             {
               label: i18n.t('public_operation'),
               prop: 'operation',
               slotName: 'operation',
-              width: 100,
-            },
-          ],
-        },
-      },
+              width: 100
+            }
+          ]
+        }
+      }
     }
   },
   computed: {
     options() {
       return Object.assign(this.map[this.type], {
-        remoteMethod:
-          this.type === 'code' ? this.codeRemoteMethod : this.orderRemoteMethod,
+        remoteMethod: this.type === 'code' ? this.codeRemoteMethod : this.orderRemoteMethod
       })
-    },
+    }
   },
   watch: {
     value(v) {
       this.visible = v
       v && this.init()
-    },
+    }
   },
   methods: {
     init() {
@@ -165,50 +158,40 @@ export default {
     },
 
     codeRemoteMethod() {
-      return this.$axios
-        .get('api/tcm/aliyun/market/license/available')
-        .then((data) => {
-          return {
-            total: data.length,
-            data:
-              data.map((t = {}) => {
-                t.bindAgent = t.agentId
-                  ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
-                  : i18n.t('user_Center_weiBangDing')
-                t.specLabel = getSpec(t.spec)
-                t.expiredTimeLabel = t.expiredTime
-                  ? dayjs(t.expiredTime).format('YYYY-MM-DD')
-                  : '-'
-                return t
-              }) || [],
-          }
-        })
-    },
-
-    orderRemoteMethod() {
-      return this.$axios
-        .get('api/tcm/paid/plan/queryAvailableSubscribe')
-        .then((data) => {
-          const items =
+      return this.$axios.get('api/tcm/aliyun/market/license/available').then(data => {
+        return {
+          total: data.length,
+          data:
             data.map((t = {}) => {
-              t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} ${i18n.t(
-                'public_agent'
-              )}`
-              const { periodStart, periodEnd } = t
-              t.periodLabel =
-                dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') +
-                ' - ' +
-                dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
+              t.specLabel = getSpec(t.spec)
+              t.expiredTimeLabel = t.expiredTime ? dayjs(t.expiredTime).format('YYYY-MM-DD') : '-'
               return t
             }) || []
-          return {
-            total: data.length,
-            data: items,
-          }
-        })
+        }
+      })
+    },
+
+    orderRemoteMethod() {
+      return this.$axios.get('api/tcm/paid/plan/queryAvailableSubscribe').then(data => {
+        const items =
+          data.map((t = {}) => {
+            t.content = `${getPaymentMethod(t)} ${getSpec(t.spec)} ${i18n.t('public_agent')}`
+            const { periodStart, periodEnd } = t
+            t.periodLabel =
+              dayjs(periodStart).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(periodEnd).format('YYYY-MM-DD HH:mm:ss')
+            t.bindAgent = t.agentId
+              ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
+              : i18n.t('user_Center_weiBangDing')
+            return t
+          }) || []
+        return {
+          total: data.length,
+          data: items
+        }
+      })
     },
 
     handleCancel() {
@@ -234,17 +217,17 @@ export default {
         code: {
           agentType: 'Local',
           chargeProvider: 'Aliyun',
-          licenseId: row.id,
+          licenseId: row.id
         },
         order: {
           agentType: 'Local',
           chargeProvider: 'Stripe',
-          subscriptionId: row.id,
-        },
+          subscriptionId: row.id
+        }
       }
       const buriedMap = {
         code: 'selectAgentAliyun',
-        order: 'selectAgentStripe',
+        order: 'selectAgentStripe'
       }
       this.buried(buriedMap[this.type])
       $emit(this, 'new-agent', map[this.type])
@@ -253,16 +236,16 @@ export default {
     goLicense() {
       this.buried('goActivateAliyunCode')
       this.$router.push({
-        name: 'aliyunMarketLicense',
+        name: 'aliyunMarketLicense'
       })
     },
     getContent(row = {}) {
       return i18n.t('dfs_instance_selectlist_shiyongzhegeding', {
-        val1: row.specLabel,
+        val1: row.specLabel
       })
-    },
+    }
   },
-  emits: ['update:value', 'new-agent', 'create'],
+  emits: ['update:value', 'new-agent', 'create']
 }
 </script>
 

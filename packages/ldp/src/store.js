@@ -2,7 +2,7 @@ const getState = function () {
   let state = JSON.parse(sessionStorage.getItem('overViewState'))
   return {
     panelFlag: state?.panelFlag || false,
-    userId: state?.userId || [],
+    userId: state?.userId || []
   }
 }
 
@@ -11,12 +11,12 @@ const state = getState()
 
 // getters
 const getters = {
-  stateFlag: (state) => {
+  stateFlag: state => {
     return state.panelFlag
   },
-  stateUserId: (state) => {
+  stateUserId: state => {
     return state.userId
-  },
+  }
 }
 
 // actions
@@ -33,7 +33,7 @@ const mutations = {
     state.panelFlag = data.panelFlag
     state.userId = data.userId
     sessionStorage.setItem('overViewState', JSON.stringify(state))
-  },
+  }
 }
 
 export default {
@@ -42,5 +42,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
+  mutations
 }

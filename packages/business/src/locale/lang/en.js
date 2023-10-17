@@ -13,10 +13,8 @@ export default {
   packages_business_task_status_not_running: 'Not Running',
   packages_business_task_info_w: 'Week',
   packages_business_connection_form_data_source: 'Data source',
-  packages_business_connection_selector_desc1:
-    'The trial version is not currently supported',
-  packages_business_connection_selector_desc2:
-    'For more data sources, please use the official version',
+  packages_business_connection_selector_desc1: 'The trial version is not currently supported',
+  packages_business_connection_selector_desc2: 'For more data sources, please use the official version',
   packages_business_task_info_log_placeholder: 'Please enter the log content',
   packages_business_task_info_no_more: 'No more',
   packages_business_customer_logs_to_solutions: 'View Solutions',
@@ -32,8 +30,7 @@ export default {
   packages_business_dataFlow_dataLoading: 'Data Loading ...',
   packages_business_message_upload_success: 'Upload Successful',
   packages_business_message_upload_fail: 'Upload Failed',
-  packages_business_message_upload_msg:
-    'Kindly upload the task file that needs to be imported',
+  packages_business_message_upload_msg: 'Kindly upload the task file that needs to be imported',
   packages_business_modules_dialog_import_title: 'Task Import',
   packages_business_modules_dialog_condition: 'Condition',
   packages_business_modules_dialog_overwrite_data: 'Overwrite existing data',
@@ -64,8 +61,7 @@ export default {
   packages_business_message_saveFail: 'Save Failed',
   packages_business_connection_rename: 'Rename',
   packages_business_dataForm_saveFail: 'Save Failed.',
-  packages_business_dataForm_error_connectionNameExist:
-    'Connection name already existed.',
+  packages_business_dataForm_error_connectionNameExist: 'Connection name already existed.',
   packages_business_connection_list_form_database_type: 'Database Type',
   packages_business_connection_list_name: 'Connection Name',
   packages_business_connection_list_status: 'Status',
@@ -73,8 +69,7 @@ export default {
     'Various types of data sources, including databases, structured files, application RESTful APIs, and custom interfaces, must be created before a migration or synchronization task can be initiated. For more detailed configuration instructions, please click',
   packages_business_connection_list_help_doc: 'Help Documentation',
   packages_business_connection_dataBaseStatus: 'Status',
-  packages_business_connection_deteleDatabaseMsg:
-    'After deleting connection xxx, this connection cannot be restored. ',
+  packages_business_connection_deteleDatabaseMsg: 'After deleting connection xxx, this connection cannot be restored. ',
   packages_business_connection_checkMsg:
     'Please note that this data source is utilized by a transmission job or API and therefore cannot be deleted.',
   packages_business_connection_copyFailedMsg:
@@ -82,10 +77,8 @@ export default {
   packages_business_text_open: 'Open',
   packages_business_connection_form_oracle_redoLog_parser: 'Bare Log',
   packages_business_connection_preview_no_sure: 'Do not confirm',
-  packages_business_connection_preview_master_partition:
-    'Write to master partition only',
-  packages_business_connection_preview_isr_partition:
-    'Write all ISR partitions',
+  packages_business_connection_preview_master_partition: 'Write to master partition only',
+  packages_business_connection_preview_isr_partition: 'Write all ISR partitions',
   packages_business_message_cancel: 'Cancel',
   packages_business_message_confirm: 'Confirm',
   packages_business_connection_reloadTittle: 'Reload Schema',
@@ -95,8 +88,7 @@ export default {
     'The connection test service is being initiated. Please wait a moment for the process to complete',
   packages_business_dataForm_testing: 'Testing, please wait for a while ...',
   packages_business_dataForm_test_testResultFail: 'Connection test failed',
-  packages_business_dataForm_test_testResultSuccess:
-    'Connection test successful',
+  packages_business_dataForm_test_testResultSuccess: 'Connection test successful',
   packages_business_dataForm_test_success: 'Pass',
   packages_business_dataForm_test_fail: 'Failed',
   packages_business_dataForm_test_testing: 'Not Tested',
@@ -104,8 +96,7 @@ export default {
   packages_business_dataForm_test_result: 'Result',
   packages_business_dataForm_test_unTest: 'Waiting ... ',
   packages_business_dataForm_test_information: 'Information',
-  packages_business_dataForm_test_error:
-    'The test service request timed out, please close and try again.',
+  packages_business_dataForm_test_error: 'The test service request timed out, please close and try again.',
   packages_business_dataForm_test_retryBtn: 'Retry',
   packages_business_dataForm_test_retryTest:
     "Failed to start the connection test service. Please click on the 'Retry' button to try again.",
@@ -118,16 +109,13 @@ export default {
     'When creating a task in Tapdata, each designated target node will be established as a subtask. You can access the details of each respective subtask below.',
   packages_business_task_details_sub_task: 'Subtask',
   packages_business_dataFlow_importantReminder: 'Important notice',
-  packages_business_dataFlow_modifyEditText:
-    'If the task is modified after editing',
+  packages_business_dataFlow_modifyEditText: 'If the task is modified after editing',
   packages_business_dataFlow_nodeLayoutProcess: 'Node arrangement',
   packages_business_dataFlow_nodeAttributes: 'Node Attribute',
   packages_business_dataFlow_matchingRelationship: 'or matching attribute',
   packages_business_dataFlow_afterSubmission: 'Must be submitted',
-  packages_business_dataFlow_runNomally:
-    'To ensure that the job is running correctly',
-  packages_business_dataFlow_editLayerTip:
-    'otherwise the job will be abnormal, continue？',
+  packages_business_dataFlow_runNomally: 'To ensure that the job is running correctly',
+  packages_business_dataFlow_editLayerTip: 'otherwise the job will be abnormal, continue？',
   packages_business_dataFlow_continueEditing: 'Continue Editing',
   packages_business_task_monitor_progress: 'Task Progress',
   packages_business_task_monitor_run_log: 'Run Log',
@@ -136,8 +124,7 @@ export default {
   packages_business_dataFlow_dataScreening: 'Event Statistics',
   packages_business_dataFlow_throughputpop:
     'Throughput:The read speed from source node and the write speed to the target node, larger number is better',
-  packages_business_task_monitor_full_completion_time:
-    'It is estimated that full completion will take time',
+  packages_business_task_monitor_full_completion_time: 'It is estimated that full completion will take time',
   packages_business_task_monitor_total_insert: 'Total Insert',
   packages_business_task_monitor_total_update: 'Total Update',
   packages_business_task_monitor_total_delete: 'Total Delete',
@@ -152,17 +139,12 @@ export default {
   packages_business_task_info_one_min: '1 minute',
   packages_business_task_info_full_progress: 'Inintal Sync progress',
   packages_business_task_info_calculating: 'Calculating',
-  packages_business_task_info_increment_time_point:
-    'The time point of the increment',
-  packages_business_migrate_no_progress_statistics_yet:
-    'No progress statistics yet',
-  packages_business_migrate_no_latency_statistics_yet:
-    'No latency statistics yet',
+  packages_business_task_info_increment_time_point: 'The time point of the increment',
+  packages_business_migrate_no_progress_statistics_yet: 'No progress statistics yet',
+  packages_business_migrate_no_latency_statistics_yet: 'No latency statistics yet',
   packages_business_task_monitor_full_sync: 'Full synchronization overview',
-  packages_business_task_info_table_number:
-    'Plan full synchronization data volume',
-  packages_business_task_info_completed:
-    'Complete the full amount of synchronization data',
+  packages_business_task_info_table_number: 'Plan full synchronization data volume',
+  packages_business_task_info_completed: 'Complete the full amount of synchronization data',
   packages_business_task_info_fully_completed: 'Fully Completed',
   packages_business_task_info_overView_status: 'Calculating',
   packages_business_button_clear: 'Clear',
@@ -182,16 +164,14 @@ export default {
   packages_business_task_info_source_database: 'Source Database',
   packages_business_task_info_data_row: 'Data volume (row)',
   packages_business_task_info_target_table: 'Target data table',
-  packages_business_task_info_amount_sync_data:
-    'Completed synchronization data amount (rows)',
+  packages_business_task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
   packages_business_task_info_schedule: 'Progress',
   packages_business_task_info_table_name: 'Table Name',
   packages_business_task_info_overView_error_msg: 'Calculation Error',
   packages_business_share_task_table_name: 'Mining task name',
   packages_business_share_task_table_time: 'Mining Time',
   packages_business_share_task_table_status: 'Mining Status',
-  packages_business_connection_list_schema_load_progress:
-    'Schema loading progress',
+  packages_business_connection_list_schema_load_progress: 'Schema loading progress',
   packages_business_connection_list_test_failed: 'Test connection failed',
   packages_business_task_info_connection_test: 'Test',
   packages_business_task_start_task: 'Start Task',
@@ -240,10 +220,8 @@ export default {
   packages_business_task_preview_failCount: 'Total number of failures',
   packages_business_message_resetOk: 'Reset Success',
   packages_business_dataFlow_multiError_notFound: 'This job does not existed.',
-  packages_business_dataFlow_multiError_statusError:
-    'Job status does not allow to do this operation.',
-  packages_business_dataFlow_multiError_otherError:
-    'Operation failed, please try it again.',
+  packages_business_dataFlow_multiError_statusError: 'Job status does not allow to do this operation.',
+  packages_business_dataFlow_multiError_otherError: 'Operation failed, please try it again.',
   packages_business_dataFlow_batchDelete: 'Batch Delete',
   packages_business_dataFlow_batchRest: 'Batch Reset',
   packages_business_dataFlow_bulkExport: 'Batch Export',
@@ -258,8 +236,7 @@ export default {
     'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
   packages_business_dataFlow_skipError_attention:
     'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
-  packages_business_dataFlow_skipError_startJob:
-    'Skip errors, continue to start',
+  packages_business_dataFlow_skipError_startJob: 'Skip errors, continue to start',
   packages_business_dataFlow_skipError_taskName: 'Task Name',
   packages_business_dataFlow_skipError_errorTotal: 'Total XX, selected',
   packages_business_dataFlow_skipError_strip: 'row',
@@ -280,8 +257,7 @@ export default {
   packages_business_logs_index_xiangxi: 'Detailed',
   packages_business_logs_index_putong: 'normal',
   packages_business_shared_task_yijingzhiweie: 'Already set to [error]',
-  packages_business_shared_task_weishibiederen:
-    'Unidentified task status: {val1}',
+  packages_business_shared_task_weishibiederen: 'Unidentified task status: {val1}',
   packages_business_connections_databaseform_cicaozuohuidiu:
     'The current connection being established will be lost as a result of this operation.',
   packages_business_connections_databaseform_mingchengguizezhong:
@@ -292,8 +268,7 @@ export default {
   packages_business_connections_list_gailianjieyibei:
     'The connection has been invoked by the task listed below. Please either remove the task or adjust the settings and attempt to connect again.',
   packages_business_connections_preview_schem: 'Schema loading completed',
-  packages_business_etl_details_caozuoshibaiqing:
-    'The operation failed, please try again',
+  packages_business_etl_details_caozuoshibaiqing: 'The operation failed, please try again',
   packages_business_etl_details_shifouzhongzhigai: 'Reset this task? ',
   packages_business_etl_details_zhongzhirenwux:
     'Resetting task xxx will result in the clearing of all task synchronization progress, and the task will be re-executed from the beginning.',
@@ -301,16 +276,12 @@ export default {
     'Forcibly stop task xxx. Since the agent is offline, we will only reset the status of the task, but we cannot stop the task. Please ensure that you have manually stopped or deleted the agent locally, or stop the task after the agent is connected.',
   packages_business_etl_details_qiangzhitingzhiren:
     'Forcefully stopping task xxx will immediately interrupt the data transmission, bring the task to an abrupt halt, and initiate a reset of the task.',
-  packages_business_etl_details_shifouqiangzhiting:
-    'Are you sure you want to forcibly stop this task?',
+  packages_business_etl_details_shifouqiangzhiting: 'Are you sure you want to forcibly stop this task?',
   packages_business_etl_details_zantingrenwux:
     'If task xxx is suspended, any table within the task that has not yet completed full synchronization will re-execute full synchronization when the task is resumed.',
-  packages_business_etl_details_shifouzantinggai:
-    'Do you want to suspend this task? ',
-  packages_business_etl_details_shanchurenwux:
-    'After deleting task xxx, this task cannot be restored',
-  packages_business_etl_details_shifoushanchugai:
-    'Are you sure you want to delete this task?',
+  packages_business_etl_details_shifouzantinggai: 'Do you want to suspend this task? ',
+  packages_business_etl_details_shanchurenwux: 'After deleting task xxx, this task cannot be restored',
+  packages_business_etl_details_shifoushanchugai: 'Are you sure you want to delete this task?',
   packages_business_etl_details_renwuXxx:
     'Task XXX includes aggregation processing nodes. If you stop and restart the task, it will first reset before resuming. Are you sure you want to proceed with stopping the task?',
   packages_business_etl_details_chushihualeixing:
@@ -320,65 +291,49 @@ export default {
   packages_business_statistics_index_qianyirenwu: 'Migration Tasks',
   packages_business_statistics_schedule_cike: 'At the moment',
   packages_business_statistics_schedule_shujukushiqu: 'Database time zone',
-  packages_business_statistics_schedule_yonghuliulanqi:
-    'User browser time zone',
+  packages_business_statistics_schedule_yonghuliulanqi: 'User browser time zone',
   packages_business_statistics_schedule_shijian: 'Time:',
   packages_business_statistics_schedule_leixing: 'Type:',
   packages_business_dataFlow_delete_confirm_Title: 'Delete the task? ',
-  packages_business_dataFlow_delete_confirm_Message:
-    'After deleting task XXX, this task cannot be restored',
-  packages_business_dataFlow_bulk_delete_confirm_Title:
-    'Delete tasks in batch? ',
-  packages_business_dataFlow_bulk_delete_confirm_Message:
-    'After deleting tasks in batch, tasks cannot be restored',
-  packages_business_dataFlow_stop_confirm_title:
-    'Would you like to suspend this task?',
+  packages_business_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
+  packages_business_dataFlow_bulk_delete_confirm_Title: 'Delete tasks in batch? ',
+  packages_business_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
+  packages_business_dataFlow_stop_confirm_title: 'Would you like to suspend this task?',
   packages_business_dataFlow_stop_confirm_message:
     'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
-  packages_business_dataFlow_bulk_stop_confirm_title:
-    'Do you want to pause tasks in bulk? ',
+  packages_business_dataFlow_bulk_stop_confirm_title: 'Do you want to pause tasks in bulk? ',
   packages_business_dataFlow_bulk_stop_confirm_message:
     'After the task is paused in batch, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
-  packages_business_dataFlow_force_stop_confirm_title:
-    'Do you want to force stop this task? ',
+  packages_business_dataFlow_force_stop_confirm_title: 'Do you want to force stop this task? ',
   packages_business_dataFlow_force_stop_confirm_message:
     'Stopping task xxx forcefully will immediately halt data transmission, forcibly terminate the task, and reset it to its initial state.',
-  packages_business_dataFlow_bulk_force_stop_confirm_title:
-    'Do you want to force stop tasks in batches? ',
+  packages_business_dataFlow_bulk_force_stop_confirm_title: 'Do you want to force stop tasks in batches? ',
   packages_business_dataFlow_bulk_force_stop_confirm_message:
     'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
-  packages_business_dataFlow_initialize_confirm_title:
-    'Do you want to reset this task? ',
+  packages_business_dataFlow_initialize_confirm_title: 'Do you want to reset this task? ',
   packages_business_dataFlow_initialize_confirm_message:
     "Resetting task xxx will clear the task's synchronization progress and trigger a fresh execution of the task.",
-  packages_business_dataFlow_bulk_initialize_confirm_title:
-    'Do you want to reset tasks in bulk? ',
+  packages_business_dataFlow_bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
   packages_business_dataFlow_bulk_initialize_confirm_message:
     "Resetting the task in batches will clear the task's synchronization progress and trigger a fresh execution of the task.",
   packages_business_connections_databaseform_zidingyi: 'Custom',
-  packages_business_connections_databaseform_duixiangshouji:
-    'Object Collection',
+  packages_business_connections_databaseform_duixiangshouji: 'Object Collection',
   packages_business_verification_details_yichangshuju: 'Abnormal Data',
   packages_business_verification_details_mubiaobiaoming: 'Target table name',
   packages_business_verification_details_yuanbiaoming: 'Source table name',
   packages_business_verification_details_gongxijiaoyanjie:
     'Congratulations~ The content of the source table of the verification result is exactly the same as that of the target table, and there is no error record',
-  packages_business_verification_details_mubiaobiaoziduan:
-    'Target table field: value',
-  packages_business_verification_details_yuanbiaoziduanzhi:
-    'Source table field: value',
+  packages_business_verification_details_mubiaobiaoziduan: 'Target table field: value',
+  packages_business_verification_details_yuanbiaoziduanzhi: 'Source table field: value',
   packages_business_verification_details_xianshiwanzhengzi: 'Show full fields',
-  packages_business_verification_details_jinxianshichayi:
-    'Display only fields with differences.',
-  packages_business_verification_details_yichangshujuhang:
-    'Exception data (row):',
+  packages_business_verification_details_jinxianshichayi: 'Display only fields with differences.',
+  packages_business_verification_details_yichangshujuhang: 'Exception data (row):',
   packages_business_verification_details_mubiaobiao: 'Target table:',
   packages_business_verification_details_yuanbiao: 'Source table:',
   packages_business_verification_details_jiaoyanjieguo: 'Result',
   packages_business_verification_details_jiaoyanzhong: 'Verifying',
   packages_business_verification_details_jiaoyan: 'Verify',
-  packages_business_verification_details_qingshurubiaoming:
-    'Please enter the table name...',
+  packages_business_verification_details_qingshurubiaoming: 'Please enter the table name...',
   packages_business_shared_const_gaojingzhong: 'Alerting',
   packages_business_shared_const_yihuifu: 'Recovered',
   packages_business_components_alert_yiguanbi: 'Closed',
@@ -389,20 +344,16 @@ export default {
   packages_business_shared_const_jinji: 'Emergency',
   packages_business_external_storage: 'External Storage',
   packages_business_relation_details_chakanrenwu: 'View Tasks',
-  packages_business_relation_details_shiyonggaiguanlian:
-    'Use the task list for this {val}',
+  packages_business_relation_details_shiyonggaiguanlian: 'Use the task list for this {val}',
   packages_business_relation_list_jiaoyanrenwu: 'Validation Tasks',
   packages_business_relation_list_huancunrenwu: 'Cached tasks',
-  packages_business_relation_list_qingshururenwu:
-    'Please enter the task name...',
+  packages_business_relation_list_qingshururenwu: 'Please enter the task name...',
   packages_business_relation_details_huancun: 'Cache',
   packages_business_relation_details_wajue: 'Mining',
   packages_business_relation_details_renwu: 'Tasks',
   packages_business_agent_select_placeholder: 'Please select an agent',
-  packages_business_agent_select_not_found:
-    'This agent does not exist. Select another agent',
-  packages_business_components_connectiontypeselectorsort_wodeshujuyuan:
-    'My Data Source',
+  packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
+  packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
@@ -411,16 +362,12 @@ export default {
     "Note: Beta data sources have not passed Tapdata's certification testing process, and Tapdata does not guarantee the stable operation of these data sources for the time being",
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     'Stay tuned for the following data sources to open',
-  packages_business_components_connectiontypeselectorsort_betashu:
-    'Beta data source',
-  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan:
-    'GA data source',
+  packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
+  packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'GA data source',
   packages_business_connections_list_lianjiefenlei: 'Connection Category',
   packages_business_task_migratelist_renwufenlei: 'Task Classification',
-  packages_business_components_connectiontypeselectorsort_jijiangshangxian:
-    'Alpha data source',
-  packages_business_task_list_renwubuzhichi:
-    'The task does not support this operation',
+  packages_business_components_connectiontypeselectorsort_jijiangshangxian: 'Alpha data source',
+  packages_business_task_list_renwubuzhichi: 'The task does not support this operation',
   packages_business_connections_databaseform_keyicongbaohan:
     'You can exclude the specified table from the tables matched by the inclusion table rule.',
   packages_business_connections_databaseform_paichubiao: 'Exclude Table',
@@ -431,8 +378,7 @@ export default {
   packages_business_verification_task_name: 'Verify Task Name',
   packages_business_verification_type: 'Type',
   packages_business_verification_check_frequency: 'Frequency',
-  packages_business_verification_single_repeating_verify:
-    'Single/Repeat Validation',
+  packages_business_verification_single_repeating_verify: 'Single/Repeat Validation',
   packages_business_verification_is_enabled: 'Enabled',
   packages_business_verification_single: 'Single',
   packages_business_verification_repeating: 'Repeat',
@@ -450,39 +396,31 @@ export default {
   packages_business_verification_configurationTip: 'Edit',
   packages_business_verification_details_title: 'Task validation details',
   packages_business_verification_history_title: 'Task validation history',
-  packages_business_verification_diff_history_title:
-    'Validation difference history',
-  packages_business_verification_diff_details_title:
-    'Validation difference details',
+  packages_business_verification_diff_history_title: 'Validation difference history',
+  packages_business_verification_diff_details_title: 'Validation difference details',
   packages_business_verification_result_title: 'Result',
   packages_business_verification_button_diff_verify: 'Validation Difference',
-  packages_business_verification_button_diff_verify_running:
-    'Validation in progress',
+  packages_business_verification_button_diff_verify_running: 'Validation in progress',
   packages_business_verification_button_diff_verify_tips:
     'Cannot verify the difference in the number of rows in the re-validation of the differential data result from the full validation',
   packages_business_verification_last_start_time: 'Last validation time',
   packages_business_verification_button_diff_task_history: 'Verify History',
-  packages_business_verification_message_old_data_not_support:
-    'Old data does not support secondary validation',
+  packages_business_verification_message_old_data_not_support: 'Old data does not support secondary validation',
   packages_business_verification_message_out_of_limit:
     'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, making it temporarily impossible to perform a second validation.',
   packages_business_verification_result_count_more: 'Target count more: {0}',
   packages_business_verification_result_count_less: 'Target count less: {0}',
-  packages_business_verification_result_content_diff:
-    'Table data difference: {0}',
+  packages_business_verification_result_content_diff: 'Table data difference: {0}',
   packages_business_verification_result_count_inconsistent: 'Inconsistent',
   packages_business_verification_result_count_consistent: 'Consistent',
   packages_business_verification_result_field_name: 'Field Name',
   packages_business_verification_result_source_info: 'Source Information',
   packages_business_verification_result_target_info: 'Target Information',
   packages_business_verification_create_window_duration: 'Window Duration',
-  packages_business_verification_form_source_filter:
-    'Source table data filtering',
-  packages_business_verification_form_target_filter:
-    'Target table data filtering',
+  packages_business_verification_form_source_filter: 'Source table data filtering',
+  packages_business_verification_form_target_filter: 'Target table data filtering',
   packages_business_verification_checking: 'Checking...',
-  packages_business_verification_message_error_joint_table_not_set:
-    'Please add validation conditions',
+  packages_business_verification_message_error_joint_table_not_set: 'Please add validation conditions',
   packages_business_verification_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the validation condition {val}',
   packages_business_verification_message_error_joint_table_target_or_source_filter_not_set:
@@ -497,16 +435,11 @@ export default {
     'This operation will lose the validation task currently being created (edited)',
   packages_business_verification_message_title_confirm_back:
     'Do you want to abandon creating (editing) the validation task?',
-  packages_business_taskprogress_plan_sync_table_num:
-    'Number of plan synchronization tables',
-  packages_business_taskprogress_completed_sync_table_num:
-    'Number of completed synchronization tables',
-  packages_business_taskprogress_plan_sync_data:
-    'Planned synchronization data volume (rows)',
-  packages_business_taskprogress_completed_sync_data:
-    'Completed synchronization data volume (rows)',
-  packages_business_taskprogress_current_sync:
-    'Current synchronization status of each library',
+  packages_business_taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
+  packages_business_taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
+  packages_business_taskprogress_plan_sync_data: 'Planned synchronization data volume (rows)',
+  packages_business_taskprogress_completed_sync_data: 'Completed synchronization data volume (rows)',
+  packages_business_taskprogress_current_sync: 'Current synchronization status of each library',
   packages_business_taskprogress_full_sync_progress: 'Full sync progress',
   packages_business_verification_verifyDetail: 'Verify Detail',
   packages_business_verification_sourceTable: 'Source Table',
@@ -547,10 +480,8 @@ export default {
   packages_business_verification_batchVerify: 'Batch Verify',
   packages_business_verification_verifyType: 'Verify Type',
   packages_business_verification_verifytype: 'Verify Type',
-  packages_business_verification_singleRepeatingVerify:
-    'Single/Repeat Validation',
-  packages_business_verification_rowAndContConsistent:
-    'Row-and-Cont-consistent',
+  packages_business_verification_singleRepeatingVerify: 'Single/Repeat Validation',
+  packages_business_verification_rowAndContConsistent: 'Row-and-Cont-consistent',
   packages_business_verification_sourceFieldName: 'Source Field Name',
   packages_business_verification_targetFieldName: 'Target Field Name',
   packages_business_verification_Value: 'Value',
@@ -563,8 +494,7 @@ export default {
   packages_business_verification_LastTime: 'Stop Time',
   packages_business_verification_startAndStopTime: 'Start and stop time',
   packages_business_verification_verifyInterval: 'Verify Interval',
-  packages_business_verification_inconsistentCount:
-    'Inconsistent data to be saved',
+  packages_business_verification_inconsistentCount: 'Inconsistent data to be saved',
   packages_business_verification_table: 'Table',
   packages_business_verification_addTable: 'Add Table',
   packages_business_verification_automaticallyAdd: 'Automatically Add',
@@ -573,8 +503,7 @@ export default {
   packages_business_verification_isEnabled: 'Is Enabled',
   packages_business_verification_newVerify: 'New Verify',
   packages_business_verification_edit: 'Edit',
-  packages_business_verification_clickVerified:
-    'Click the bottons below to add tables to be verified',
+  packages_business_verification_clickVerified: 'Click the bottons below to add tables to be verified',
   packages_business_verification_ChoosePKField: 'Choose index /PK field',
   packages_business_verification_indexField: 'Associated Fields',
   packages_business_verification_BasicSettings: 'Basic Settings',
@@ -595,10 +524,8 @@ export default {
   packages_business_verification_tasksTime: 'Please set start and stop time',
   packages_business_verification_tasksDataFlow: 'Please choose data flow job',
   packages_business_verification_tasksJobName: 'Please enter verify job name',
-  packages_business_verification_tasksVerifyCondition:
-    'Please set verify condition',
-  packages_business_verification_tasksVerifyInterval:
-    'Please enter the calibration interval',
+  packages_business_verification_tasksVerifyCondition: 'Please set verify condition',
+  packages_business_verification_tasksVerifyInterval: 'Please enter the calibration interval',
   packages_business_verification_lackSource:
     'The validation condition does not specify the selection of either the source table or the target table.',
   packages_business_verification_lackIndex:
@@ -612,37 +539,28 @@ export default {
   packages_business_verification_deleteMessage:
     'Please be advised that deleting the validation task is an irreversible action and cannot be restored. Kindly confirm the deletion before proceeding.',
   packages_business_verification_checkStatusPre: 'The job status is ',
-  packages_business_verification_checkStatusSuffix:
-    'Status, Unable to configure validation settings',
+  packages_business_verification_checkStatusSuffix: 'Status, Unable to configure validation settings',
   packages_business_verification_backConfirmMessage:
     'The current validation task being created will be lost as a result of this operation (edited).',
   packages_business_verification_backConfirmTitle:
     'Are you sure you want to abandon the process of creating (editing) validation tasks?',
   packages_business_verification_history_source_total_rows: 'Source Rows',
-  packages_business_verification_form_label_error_save_count:
-    'Number of saved errors',
-  packages_business_verification_button_auto_add_table:
-    'Automatically add table',
-  packages_business_components_conditionbox_suoxuanrenwuque:
-    'The selected task is missing node connection information',
+  packages_business_verification_form_label_error_save_count: 'Number of saved errors',
+  packages_business_verification_button_auto_add_table: 'Automatically add table',
+  packages_business_components_conditionbox_suoxuanrenwuque: 'The selected task is missing node connection information',
   packages_business_components_conditionbox_cunzaichulijiedian_wufazidong:
     'Due to the presence of a processing node, the table cannot be added automatically',
-  packages_business_components_conditionbox_shifouqingkongsuo:
-    'Are you sure you want to clear all conditions?',
+  packages_business_components_conditionbox_shifouqingkongsuo: 'Are you sure you want to clear all conditions?',
   packages_business_components_conditionbox_mubiaobiao: 'Target Table',
   packages_business_components_conditionbox_laiyuanbiao: 'Source Table',
-  packages_business_components_conditionbox_daijiaoyanlianjie:
-    'Connection to be verified',
-  packages_business_components_conditionbox_jianyantiaojian:
-    'Check Table Config',
+  packages_business_components_conditionbox_daijiaoyanlianjie: 'Connection to be verified',
+  packages_business_components_conditionbox_jianyantiaojian: 'Check Table Config',
   packages_business_components_conditionbox_zhankaibianji: 'Expand Edit',
   packages_business_components_fieldbox_tianjiahang: 'Add Row',
   packages_business_components_fieldbox_ziduan: 'Field',
-  packages_business_components_fieldbox_qingshuruziduan:
-    'Please enter the field name',
+  packages_business_components_fieldbox_qingshuruziduan: 'Please enter the field name',
   packages_business_components_fieldbox_quanziduan: 'Full Field',
-  packages_business_components_fieldbox_daijiaoyanmoxing:
-    'Model to be verified',
+  packages_business_components_fieldbox_daijiaoyanmoxing: 'Model to be verified',
   packages_business_verification_details_dongtaijiaoyan: 'Dynamic Validation',
   packages_business_verification_details_zhankai: 'Expand',
   packages_business_verification_details_shouqi: 'Close',
@@ -650,42 +568,32 @@ export default {
     'The verification condition{val1}, the model to be verified cannot be empty',
   packages_business_verification_form_zhaobudaojiedian:
     'We were unable to locate the table information corresponding to the node.',
-  packages_business_verification_form_qingshurukaishi:
-    'Please input a start time.',
+  packages_business_verification_form_qingshurukaishi: 'Please input a start time.',
   packages_business_verification_form_jiaoyanjieshushi: 'Verify end time',
   packages_business_verification_form_jiaoyankaishishi: 'Verify start time',
   packages_business_verification_form_zhishuchulaiyuan:
     'Retrieve only the inconsistent data from the source table as output.',
-  packages_business_verification_form_shuchusuoyoubu:
-    'Output all inconsistent data',
+  packages_business_verification_form_shuchusuoyoubu: 'Output all inconsistent data',
   packages_business_verification_form_jieguoshuchu: 'Result Output',
-  packages_business_verification_form_zhidingrenyibiao:
-    'Specify the validation task of any table',
-  packages_business_verification_form_weitedingdeP:
-    'Validation task created for a specific task',
+  packages_business_verification_form_zhidingrenyibiao: 'Specify the validation task of any table',
+  packages_business_verification_form_weitedingdeP: 'Validation task created for a specific task',
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
-  packages_business_task_status_agent_tooltip_time:
-    'It has been {time} since the previous status report was issued.',
-  packages_business_task_status_agent_tooltip_agent:
-    'The Agent where the task is located is',
+  packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
+  packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',
   packages_business_task_status_retrying_tooltip: 'The task is retrying',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
-  packages_business_verification_form_jiaoyanjieguobu:
-    'Warning for inconsistent validation results',
+  packages_business_verification_form_jiaoyanjieguobu: 'Warning for inconsistent validation results',
   packages_business_verification_form_jianyanrenwuyun:
     'Warning: there was an error encountered during the validation task run.',
   packages_business_verification_form_jiaoyangaojing: 'Validation Warning',
-  packages_business_verification_form_zanbuzhichi_doris:
-    'Doris is not supported yet.',
+  packages_business_verification_form_zanbuzhichi_doris: 'Doris is not supported yet.',
   packages_business_verification_form_task_alarm: 'Verification task alert',
-  packages_business_verification_form_task_alarm_when_error:
-    'Alert when the verification task fails',
+  packages_business_verification_form_task_alarm_when_error: 'Alert when the verification task fails',
   packages_business_verification_form_task_alarm_when_diff_result_over_count1:
     'When the number of difference rows of the count verification result is greater than',
-  packages_business_verification_form_task_alarm_when_diff_result_over_count2:
-    'start alert',
+  packages_business_verification_form_task_alarm_when_diff_result_over_count2: 'start alert',
   packages_business_verification_form_task_alarm_when_result_table_over_count1:
     'When the difference between the table data of the value verification result is greater than',
   packages_business_task_status_error_tip:
@@ -698,20 +606,16 @@ export default {
     'When the number of models in the data source is less than 10,000, the model will be refreshed once an hour; when the number of models in the data source is greater than 10,000, the model will be refreshed at the specified time every day.',
   packages_business_connections_databaseform_moxingjiazaipin: 'Model load time',
   packages_business_task_list_lianjieming: 'Connection name: ',
-  packages_business_task_list_dierbushanchu:
-    '// The second step delete slot_name',
-  packages_business_task_list_diyibuchaxun:
-    '//The first step is to query slot_name',
+  packages_business_task_list_dierbushanchu: '// The second step delete slot_name',
+  packages_business_task_list_diyibuchaxun: '//The first step is to query slot_name',
   packages_business_notify_sms_notification: 'SMS Notification',
   packages_business_notify_email_notification: 'Email Notification',
   packages_business_notify_webchat_notification: 'WeChat Notification',
   packages_business_notify_system_notice: 'System Notification',
   packages_business_notify_alarm_title: 'Agent Alert Setting',
-  packages_business_setting_alarm_notification_notify_noticeInterval:
-    'Sending Interval',
+  packages_business_setting_alarm_notification_notify_noticeInterval: 'Sending Interval',
   packages_business_notify_notice_level: 'Notice Level',
-  packages_business_setting_notification_alarm_notification_gaojingtongzhi:
-    'Alert Notification',
+  packages_business_setting_notification_alarm_notification_gaojingtongzhi: 'Alert Notification',
   packages_business_setting_alarmnotification_gaojingzhibiao: 'Alert Indicator',
   packages_business_setting_alarmnotification_dangjiediandeping:
     'When the average processing time of the node exceeds the threshold',
@@ -719,30 +623,21 @@ export default {
     'When the average processing time of the data source node exceeds the threshold',
   packages_business_setting_alarmnotification_dangshujuyuanxie:
     'When the data source protocol connection time exceeds the threshold',
-  packages_business_setting_alarmnotification_dangshujuyuanwang:
-    'When the data source network connection takes time',
+  packages_business_setting_alarmnotification_dangshujuyuanwang: 'When the data source network connection takes time',
   packages_business_setting_alarmnotification_dangshujuwufa:
     'It takes time when the data cannot be connected to the network',
   packages_business_setting_alarmnotification_dangrenwudezeng:
     'When the replication delay of the task exceeds the threshold',
-  packages_business_setting_alarmnotification_dangrenwutingzhi:
-    'When the task stops',
-  packages_business_setting_alarmnotification_dangrenwuzengliang:
-    'When the task increment start',
-  packages_business_setting_alarmnotification_dangrenwuquanliang:
-    'When the task is fully completed',
-  packages_business_setting_alarmnotification_dangrenwujiaoyan:
-    'When task validation fails',
-  packages_business_setting_alarmnotification_dangrenwuyudao:
-    'When the task encounters an error',
-  packages_business_setting_alarmnotification_dangrenwustop:
-    'When the Agent service stops',
-  packages_business_setting_alarmnotification_dangrenwuuP:
-    'When the Agent service start',
+  packages_business_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
+  packages_business_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
+  packages_business_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
+  packages_business_setting_alarmnotification_dangrenwujiaoyan: 'When task validation fails',
+  packages_business_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
+  packages_business_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
+  packages_business_setting_alarmnotification_dangrenwuuP: 'When the Agent service start',
   packages_business_setting_alarmnotification_msshigaojing: 's',
   packages_business_setting_alarmnotification_lianxu: 'Continuous',
-  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu:
-    'When the verification task encounters an error',
+  packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: 'When the verification task encounters an error',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu:
     'When the number of different lines in the count verification result is greater than the threshold',
   packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu:
@@ -754,40 +649,31 @@ export default {
   packages_business_notify_no_notice: 'No notice yet',
   packages_business_setting_alarmnotification_cichugaojinggui:
     'The alert rule setting here is the system global alert rule setting, and the priority of the alert rule setting on the task running monitoring page is higher than the system global setting',
-  packages_business_setting_alarmnotification_renwumorengao:
-    'Task default alert rule setting',
-  packages_business_setting_alarmnotification_morengaojinggui:
-    'Default Alert Rule',
-  packages_business_setting_alarmnotification_renwugaojingshe:
-    'Task Alert Setting',
+  packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
+  packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
+  packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
-  packages_business_custom_node_placeholder:
-    'Please enter the node name to search',
+  packages_business_custom_node_placeholder: 'Please enter the node name to search',
   packages_business_custom_node_edit_confirm:
     'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',
   packages_business_task_list_sqLyuju: 'SQL statement:',
-  packages_business_relation_details_waicunxinxi:
-    'External storage information used',
+  packages_business_relation_details_waicunxinxi: 'External storage information used',
   packages_business_milestone_list_cuowuxinxi: 'Error information',
   packages_business_milestone_list_progr: '({val1}%, remaining {val2})',
   packages_business_milestone_list_chucuo: 'Error',
   packages_business_milestone_list_shujuchuli: 'Data Processing',
   packages_business_milestone_list_mubiaoshujuxie: 'Write target data',
   packages_business_milestone_list_chuangjianmubiaobiao: 'Create target table',
-  packages_business_milestone_list_lianjiebingyanzheng:
-    'Connect and verify account permissions',
+  packages_business_milestone_list_lianjiebingyanzheng: 'Connect and verify account permissions',
   packages_business_milestone_list_duquzengliangshu: 'Read incremental data',
   packages_business_milestone_list_kaiqizengliang: 'Open incremental',
   packages_business_milestone_list_duququanliangshu: 'Read full data',
-  packages_business_milestone_list_finish:
-    '{val1}/{val2} completed, {val3} ...',
+  packages_business_milestone_list_finish: '{val1}/{val2} completed, {val3} ...',
   packages_business_milestone_list_zhengtijindu: 'Overall Progress',
-  packages_business_milestone_list_jinhangzhongpr:
-    'In progress, {val1}% completed, estimated remaining time {val2}',
-  packages_business_milestone_list_zengliangshujuqian:
-    'Incremental data migration',
+  packages_business_milestone_list_jinhangzhongpr: 'In progress, {val1}% completed, estimated remaining time {val2}',
+  packages_business_milestone_list_zengliangshujuqian: 'Incremental data migration',
   packages_business_milestone_list_quanliangshujuqian: 'Full data replication',
   packages_business_milestone_list_biaojiegouqianyi: 'Table structure copy',
   packages_business_milestone_list_shujujiedianchu: 'Connect data sources',
@@ -834,32 +720,23 @@ export default {
   meta_table_not_null: 'Not Null',
   page_title_overview: 'Overview',
   metadata_meta_type_table: 'Data Table',
-  packages_business_create_connection_dialog_xuanzeshujuyuan:
-    'Choose Data Source Type',
-  packages_business_create_connection_dialog_neirongSho:
-    'Show Connectors in ALPHA State',
-  packages_business_create_connection_dialog_neirongSho2:
-    'Show Connectors in BETA State',
+  packages_business_create_connection_dialog_xuanzeshujuyuan: 'Choose Data Source Type',
+  packages_business_create_connection_dialog_neirongSho: 'Show Connectors in ALPHA State',
+  packages_business_create_connection_dialog_neirongSho2: 'Show Connectors in BETA State',
   packages_business_create_connection_dialog_neirongCho:
     'Choose a data source connector from below and configure the connection & credentials.',
   // 共享挖掘
-  packages_business_shared_cdc_placeholder_task_name:
-    'Please enter the mining task name to search',
-  packages_business_shared_cdc_placeholder_connection_name:
-    'Please enter the connection name to search',
+  packages_business_shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
+  packages_business_shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',
   packages_business_shared_cdc_name: 'Please enter the task name ',
   packages_business_shared_cdc_setting_select_mode: 'Storage mode',
-  packages_business_shared_cdc_setting_select_mongodb_tip:
-    'Please enter mongodb connection',
-  packages_business_shared_cdc_setting_select_table_tip:
-    'Please enter the table name',
-  packages_business_shared_cdc_setting_select_time_tip:
-    'Please select the log saving time',
+  packages_business_shared_cdc_setting_select_mongodb_tip: 'Please enter mongodb connection',
+  packages_business_shared_cdc_setting_select_table_tip: 'Please enter the table name',
+  packages_business_shared_cdc_setting_select_time_tip: 'Please select the log saving time',
   packages_business_shared_cdc_setting_message_edit_save:
     'Save successfully, it will take effect after restarting the task',
   packages_business_shared_list_name: 'Mining name',
-  packages_business_shared_list_time_excavation:
-    'Excavation time point(Database Time)',
+  packages_business_shared_list_time_excavation: 'Excavation time point(Database Time)',
   packages_business_shared_list_setting: 'Mining settings',
   packages_business_shared_list_status: 'Status',
   packages_business_shared_list_time: 'Mining Delay',
@@ -868,10 +745,8 @@ export default {
   packages_business_shared_form_setting_table_name: 'Store MongoDB table name',
   packages_business_shared_form_setting_log_time: 'Log save time',
   packages_business_shared_form_edit_name: 'Mining name',
-  packages_business_shared_form_edit_title:
-    'Whether to give up editing this mining task',
-  packages_business_shared_form_edit_text:
-    'This operation will not save the modified content',
+  packages_business_shared_form_edit_title: 'Whether to give up editing this mining task',
+  packages_business_shared_form_edit_text: 'This operation will not save the modified content',
   packages_business_shared_detail_mining_info: 'Mining information',
   packages_business_shared_detail_name: 'Mining name',
   packages_business_shared_detail_log_mining_time: 'Log mining time',
@@ -883,56 +758,43 @@ export default {
   packages_business_shared_detail_button_table_info: 'Table details',
   packages_business_shared_detail_statistics_time: 'Statistics time',
   packages_business_shared_detail_incremental_time: 'The time point',
-  packages_business_shared_mining_detail_wajuexiangqingx:
-    'Mining details x-axis:',
+  packages_business_shared_mining_detail_wajuexiangqingx: 'Mining details x-axis:',
   packages_business_stop_confirm_message:
     'Pausing job while it is in the full sync stage may cause it to run from the beginning, are you sure you want to pause?',
   packages_business_important_reminder: 'Important reminder',
   packages_business_tablename: 'Table name',
-  packages_business_shared_cdc_persistence_rocksdb_path:
-    'The local path to the RocksDB store',
+  packages_business_shared_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   packages_business_shared_mining_table_jinriwajue: 'Mining Today',
   packages_business_shared_mining_table_leijiwajue: 'Cumulative Mining',
   packages_business_shared_mining_table_zuixinrizhishi: 'Latest log time',
-  packages_business_shared_mining_table_shoutiaorizhishi:
-    'Time of the first log',
+  packages_business_shared_mining_table_shoutiaorizhishi: 'Time of the first log',
   packages_business_shared_mining_table_jiaruwajueshi: 'Add mining time',
   packages_business_shared_mining_table_biaoming: 'Table Name',
-  packages_business_shared_mining_table_wajuebiaoxinxi:
-    'Mining table information',
+  packages_business_shared_mining_table_wajuebiaoxinxi: 'Mining table information',
   packages_business_relation_sharedlist_shiyongdewajue: 'The mining table used',
   packages_business_milestone_list_zengliangshujuxie: 'Incremental data write',
   packages_business_milestone_list_quanliangshujuxie: 'Full data write',
-  packages_business_milestone_list_jinruzengliangshu:
-    'Incremental data replication',
+  packages_business_milestone_list_jinruzengliangshu: 'Incremental data replication',
   packages_business_logs_nodelog_cuowuduizhan: 'Error Stack',
   packages_business_logs_nodelog_yuanyinfenxi: 'Cause Analysis',
   packages_business_logs_nodelog_xianshishijianchuo: 'Display Time',
-  packages_business_connections_databaseform_chakanxintiaoren:
-    'View heartbeat tasks',
+  packages_business_connections_databaseform_chakanxintiaoren: 'View heartbeat tasks',
   packages_business_connections_databaseform_dakaixintiaobiao:
     'After enabling this function, the platform will create a new table in the source database, and update this table in the source database at a frequency of once per second. With the help of this table, the platform can realize accurate data delay detection, And it can effectively monitor the health status of tasks. This function needs to have write permission on the source library to take effect.',
-  packages_business_connections_databaseform_kaiqixintiaobiao:
-    'Enable heartbeat table',
+  packages_business_connections_databaseform_kaiqixintiaobiao: 'Enable heartbeat table',
   packages_business_connections_databaseform_jiaobentiaoshi: 'Script Debugging',
   // api服务管理
-  packages_business_data_server_drawer_qingshurucanshu:
-    'Please enter parameter name',
+  packages_business_data_server_drawer_qingshurucanshu: 'Please enter parameter name',
   packages_business_data_server_drawer_paixu: 'Sort',
-  packages_business_data_server_drawer_meigefenyefan:
-    'Number of records returned per page',
+  packages_business_data_server_drawer_meigefenyefan: 'Number of records returned per page',
   packages_business_data_server_drawer_fenyebianhao: 'Pagination number',
   packages_business_data_server_drawer_zidingyichaxun: 'Custom query',
   packages_business_data_server_drawer_morenchaxun: 'Default query',
-  packages_business_data_server_drawer_qingxuanzeduixiang:
-    'Please select the object name',
-  packages_business_data_server_drawer_qingxuanzelianjie:
-    'Please Select connection type',
-  packages_business_data_server_drawer_qingshurufuwu:
-    'Please enter service name',
+  packages_business_data_server_drawer_qingxuanzeduixiang: 'Please select the object name',
+  packages_business_data_server_drawer_qingxuanzelianjie: 'Please Select connection type',
+  packages_business_data_server_drawer_qingshurufuwu: 'Please enter service name',
   packages_business_data_server_drawer_quanxianfanwei: 'Authority Range',
-  packages_business_data_server_drawer_selectPermissions:
-    'Please select the scope of authority',
+  packages_business_data_server_drawer_selectPermissions: 'Please select the scope of authority',
   packages_business_data_server_drawer_shilidaima: 'Sample Code',
   packages_business_data_server_drawer_shilidaima2: 'Sample Code',
   packages_business_data_server_drawer_fanhuijieguo: 'Return Result',
@@ -952,14 +814,10 @@ export default {
   packages_business_data_server_drawer_peizhi: 'Configuration',
   packages_business_data_server_drawer_chuangjianfuwu: 'Create API',
   packages_business_data_server_drawer_fuwuxiangqing: 'Service Details',
-  packages_business_data_server_list_quedingchexiaogai:
-    'Are you sure you want to revoke this service?',
-  packages_business_data_server_list_quedingfabugai:
-    'Are you sure you want to publish the service?',
-  packages_business_data_server_list_querenshanchufu:
-    'Are you sure you want to delete the service?',
-  packages_business_data_server_list_huoqufuwuyu:
-    'Get the service domain name Failed.',
+  packages_business_data_server_list_quedingchexiaogai: 'Are you sure you want to revoke this service?',
+  packages_business_data_server_list_quedingfabugai: 'Are you sure you want to publish the service?',
+  packages_business_data_server_list_querenshanchufu: 'Are you sure you want to delete the service?',
+  packages_business_data_server_list_huoqufuwuyu: 'Get the service domain name Failed.',
   packages_business_data_server_list_fuwuzhuangtai: 'Service Status',
   packages_business_data_server_list_guanlianduixiang: 'Associated Object',
   packages_business_data_server_list_fuwumingcheng: 'Service Name',
@@ -972,16 +830,12 @@ export default {
   packages_business_data_server_drawer_prefix: 'Prefix',
   packages_business_data_server_drawer_base_path: 'Base Path',
   packages_business_data_server_drawer_path: 'Path',
-  packages_business_data_server_drawer_confirm_tip:
-    'This will re-generate the API path, do you wish to continue?',
+  packages_business_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
   packages_business_connection_debug_input_arg: 'Simulation Parameter',
-  packages_business_connection_debug_input_arg_error:
-    'Simulation parameter error',
+  packages_business_connection_debug_input_arg_error: 'Simulation parameter error',
   packages_business_more_than: 'More than',
-  packages_business_more_than_after:
-    'seconds, automatically terminate the trial run when no result is returned.',
-  packages_business_connection_debug_form_error:
-    'Please check the required fields on the form.',
+  packages_business_more_than_after: 'seconds, automatically terminate the trial run when no result is returned.',
+  packages_business_connection_debug_form_error: 'Please check the required fields on the form.',
   packages_business_connection_debug_as: 'As the',
 
   // LDP
@@ -1000,8 +854,7 @@ export default {
   packages_business_columns_preview: 'Columns Preview',
   packages_business_sample_data: 'Sample Data',
   packages_business_table_preview_task: 'This task of source/target model',
-  packages_business_table_preview_connection_task:
-    'Task with this connection as source/target',
+  packages_business_table_preview_connection_task: 'Task with this connection as source/target',
   packages_business_table_count: 'Table Count',
   packages_business_overview: 'Overview',
   packages_business_tasks: 'Tasks',
@@ -1010,10 +863,8 @@ export default {
   packages_business_table_status_error: 'Error',
   packages_business_table_status_draft: 'Draft',
   packages_business_table_status_normal: 'Normal',
-  packages_business_data_console_target_no_task:
-    'No tasks configured for this target.',
-  packages_business_data_console_target_no_api:
-    'No API configured for this application.',
+  packages_business_data_console_target_no_task: 'No tasks configured for this target.',
+  packages_business_data_console_target_no_api: 'No API configured for this application.',
   packages_business_data_console_target_connection_desc: 'Sync data to {val}',
   packages_business_view_more: 'View More',
   packages_business_view_collapse: 'Collapse',
@@ -1040,24 +891,19 @@ export default {
   packages_business_payment_timeout: 'Payment Timeout',
   packages_business_shared_const_yizhifu: 'Paid',
   packages_business_shared_const_weizhifu: 'Unpaid',
-  packages_business_shared_ws_client_webso:
-    'Websocket message parsing failed: ',
-  packages_business_shared_ws_client_webso2:
-    'Websocket received message format error: ',
+  packages_business_shared_ws_client_webso: 'Websocket message parsing failed: ',
+  packages_business_shared_ws_client_webso2: 'Websocket received message format error: ',
   packages_business_shared_ws_client_acces: 'Access_token Expired',
   packages_business_shared_ws_client_webso3: 'Websocket is closed',
   packages_business_shared_ws_client_webso4: 'Websocket Disconnected',
   packages_business_shared_ws_client_webso5: 'Websocket Connected',
-  packages_business_shared_ws_client_webso6:
-    'Websocket exceeds the maximum number of reconnections',
+  packages_business_shared_ws_client_webso6: 'Websocket exceeds the maximum number of reconnections',
   packages_business_shared_ws_client_cizhonglian: 'Reconnection',
   packages_business_shared_ws_client_webso7: 'Websocket attempt first',
-  packages_business_shared_ws_client_webso8:
-    'The websocket connection failed, trying to reconnect',
+  packages_business_shared_ws_client_webso8: 'The websocket connection failed, trying to reconnect',
   packages_business_switch_directory_view: 'Switch to the catalog view',
   packages_business_switch_data_console_view: 'Switch to the data console view',
-  packages_business_task_created_success:
-    'Task created successfully, click to view',
+  packages_business_task_created_success: 'Task created successfully, click to view',
   packages_business_task_created_fail_no_primary_key:
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
   packages_business_fdm_create_task_dialog_desc_prefix:
@@ -1078,10 +924,8 @@ export default {
     'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
   packages_business_save_and_run_now: 'Save and Run',
   packages_business_save_only: 'Only Save',
-  packages_business_target_create_task_dialog_desc_prefix_clone:
-    'Tapdata will create a cloning pipeline task to sync',
-  packages_business_target_create_task_dialog_desc_prefix_sync:
-    'Tapdata will create a sync pipeline task to sync',
+  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata will create a cloning pipeline task to sync',
+  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
     'Please click button below to continue. You can also change the task name',
@@ -1096,34 +940,24 @@ export default {
   packages_business_data_console_mode: 'Select Product Capability Mode',
   packages_business_data_console_mode_integration: 'Data Integration',
   packages_business_data_console_mode_service: 'Data Service Platform',
-  packages_business_data_console_mode_integration_tooltip_1:
-    'RealTime Data Sync Between Databases',
-  packages_business_data_console_mode_integration_tooltip_2:
-    'ETL Data Processing',
-  packages_business_data_console_mode_integration_tooltip_3:
-    '100+ Connectors, Including DB, MQ, File, API',
-  packages_business_data_console_mode_service_tooltip_1:
-    'All Features Of Data Integration',
-  packages_business_data_console_mode_service_tooltip_2:
-    'Data Cache Layer In Platform',
-  packages_business_data_console_mode_service_tooltip_3:
-    'Support Multiple Service Publish',
+  packages_business_data_console_mode_integration_tooltip_1: 'RealTime Data Sync Between Databases',
+  packages_business_data_console_mode_integration_tooltip_2: 'ETL Data Processing',
+  packages_business_data_console_mode_integration_tooltip_3: '100+ Connectors, Including DB, MQ, File, API',
+  packages_business_data_console_mode_service_tooltip_1: 'All Features Of Data Integration',
+  packages_business_data_console_mode_service_tooltip_2: 'Data Cache Layer In Platform',
+  packages_business_data_console_mode_service_tooltip_3: 'Support Multiple Service Publish',
   packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
   packages_business_data_console_fdm_mdm_storage_tooltip:
     'Specify the database connection that will be used for additional data layer storage',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
   packages_business_mongodb_self_hosted_cluster: 'Self Hosted MongoDB Cluster',
-  packages_business_mongodb_full_management_cluster:
-    'Fully Managed MongoDB Cluster',
-  packages_business_data_console_setting_saved_tooltip:
-    'The Settings cannot be modified after being saved.',
+  packages_business_mongodb_full_management_cluster: 'Fully Managed MongoDB Cluster',
+  packages_business_data_console_setting_saved_tooltip: 'The Settings cannot be modified after being saved.',
   // 共享緩存
   packages_business_shared_cache_create: 'Create Cache',
   packages_business_shared_cache_edit: 'Edit Cache',
-  packages_business_shared_cache_placeholder_task_name:
-    'Please enter the cache task name to search',
-  packages_business_shared_cache_placeholder_connection_name:
-    'Please enter the connection name to search',
+  packages_business_shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
+  packages_business_shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
   packages_business_shared_cache_button_create: 'New Cache',
   packages_business_shared_cache_name: 'Cache Name',
   packages_business_shared_cache_status: 'Cache Status',
@@ -1131,23 +965,17 @@ export default {
   packages_business_shared_cache_keys: 'Cache Keys',
   packages_business_shared_cache_fields: 'Cache Fields',
   packages_business_shared_cache_code: 'Application Code',
-  packages_business_shared_cache_placeholder_name:
-    'Please enter the cache name',
-  packages_business_shared_cache_placeholder_connection:
-    'Please select a connection',
+  packages_business_shared_cache_placeholder_name: 'Please enter the cache name',
+  packages_business_shared_cache_placeholder_connection: 'Please select a connection',
   packages_business_shared_cache_placeholder_table: 'Please select a table',
   packages_business_shared_cache_placeholder_keys: 'Please select a cache key',
-  packages_business_shared_cache_placeholder_fields:
-    'Please select a cache field',
+  packages_business_shared_cache_placeholder_fields: 'Please select a cache field',
   packages_business_shared_cache_max_memory: 'Maximum Memory',
-  packages_business_shared_cache_keys_tooltip:
-    'Use this field as the primary key to identify data for caching',
-  packages_business_shared_cache_fields_tooltip:
-    'Common fields that need to be cached',
+  packages_business_shared_cache_keys_tooltip: 'Use this field as the primary key to identify data for caching',
+  packages_business_shared_cache_fields_tooltip: 'Common fields that need to be cached',
   packages_business_shared_cache_max_memory_tooltip:
     'The maximum amount of memory the system will save, if it exceeds, the least commonly used data will be deleted according to the calling time',
-  packages_business_shared_cache_code_tooltip:
-    'You can enter this code in the JS node to use the cache',
+  packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From Table',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
@@ -1156,52 +984,34 @@ export default {
     'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, are you sure to delete',
   packages_business_application_delete_ninzhengzaishanchu2:
     'You are deleting the application <span class="fw-bolder font-color-dark">{val1}</span>, the API under this application will be moved to',
-  packages_business_application_delete_yingyongmiaoshubu:
-    'Application description cannot be empty',
-  packages_business_application_delete_yingyongmingchengbu:
-    'The application name cannot be empty',
-  packages_business_application_delete_shifouquerenshan:
-    'Are you sure to delete',
-  packages_business_application_editor_yingyongmiaoshu:
-    'Application Description',
-  packages_business_application_list_qingshuruyingyong:
-    'Please enter the application name',
+  packages_business_application_delete_yingyongmiaoshubu: 'Application description cannot be empty',
+  packages_business_application_delete_yingyongmingchengbu: 'The application name cannot be empty',
+  packages_business_application_delete_shifouquerenshan: 'Are you sure to delete',
+  packages_business_application_editor_yingyongmiaoshu: 'Application Description',
+  packages_business_application_list_qingshuruyingyong: 'Please enter the application name',
   packages_business_application_list_yifabuAp: 'Number of published APIs',
   packages_business_application_list_zongApIshu: 'Total number of APIs',
   packages_business_application_list_yingyongmingcheng: 'Application Name',
   packages_business_application_list_chuangjianyingyong: 'Create Application',
-  packages_business_data_server_drawer_qingxuanzesuoshu:
-    'Please select the application',
+  packages_business_data_server_drawer_qingxuanzesuoshu: 'Please select the application',
   packages_business_data_server_drawer_suoshuyingyong: 'Owner Application',
   packages_business_create_connection_scenedialog_gongzuoliu: 'Workflow',
   packages_business_create_connection_scenedialog_duiliegongshu: 'Queue Supply',
-  packages_business_create_connection_scenedialog_guochantidai:
-    'Domestic Alternative',
-  packages_business_create_connection_scenedialog_shujukutongbu:
-    'Database Synchronization',
-  packages_business_create_connection_scenedialog_chaxunjiasu:
-    'Query Acceleration',
-  packages_business_create_connection_scenedialog_rushucang:
-    'Into the warehouse',
-  packages_business_create_connection_scenedialog_tuijianchangjing:
-    'Recommended Target',
-  packages_business_create_connection_scenedialog_qingxuanzeninde:
-    'Please select your usage scenario',
-  packages_business_create_connection_serveform_fenleimingcheng:
-    'Category Name',
-  packages_business_components_tableview_yizhegemoxing:
-    'Tasks with this model source/target',
+  packages_business_create_connection_scenedialog_guochantidai: 'Domestic Alternative',
+  packages_business_create_connection_scenedialog_shujukutongbu: 'Database Synchronization',
+  packages_business_create_connection_scenedialog_chaxunjiasu: 'Query Acceleration',
+  packages_business_create_connection_scenedialog_rushucang: 'Into the warehouse',
+  packages_business_create_connection_scenedialog_tuijianchangjing: 'Recommended Target',
+  packages_business_create_connection_scenedialog_qingxuanzeninde: 'Please select your usage scenario',
+  packages_business_create_connection_serveform_fenleimingcheng: 'Category Name',
+  packages_business_components_tableview_yizhegemoxing: 'Tasks with this model source/target',
   packages_business_components_tableview_xinzenglebiaoqian: 'New label 603',
-  packages_business_components_tableview_zengliangshujuyan:
-    'Incremental data delay:',
-  packages_business_components_tableview_shujuzuihougeng:
-    'Data last update time:',
+  packages_business_components_tableview_zengliangshujuyan: 'Incremental data delay:',
+  packages_business_components_tableview_shujuzuihougeng: 'Data last update time:',
   packages_business_swimlane_fdm_biaobianji: 'Table Edit',
   packages_business_swimlane_tablepreview_zuihoufangwenshi: 'Last visit time',
-  packages_business_swimlane_tablepreview_apIchuanshu:
-    'The total amount of API transfer',
-  packages_business_swimlane_tablepreview_apIfangwen:
-    'The number of API access rows',
+  packages_business_swimlane_tablepreview_apIchuanshu: 'The total amount of API transfer',
+  packages_business_swimlane_tablepreview_apIfangwen: 'The number of API access rows',
   packages_business_swimlane_tablepreview_fangwencishu: 'Number of visits',
   packages_business_swimlane_tablepreview_apifuwu: 'Api service name',
   packages_business_swimlane_target_yejibao: 'Yejibao',
@@ -1209,21 +1019,15 @@ export default {
     "I didn't find that you have recently reported task errors, if you have other questions, please consult our manual customer service",
   packages_business_api_application_list_xitongmorenchuang:
     'Applications created by the system by default, cannot be edited or deleted.',
-  packages_business_create_connection_title_select_type:
-    'Choose Data Source Type',
+  packages_business_create_connection_title_select_type: 'Choose Data Source Type',
   // 外存管理
-  packages_business_external_storage_list_querenshanchuwai:
-    'Are you sure to delete the external storage?',
-  packages_business_external_storage_list_qingshurucunchu:
-    'Please enter the storage path',
-  packages_business_external_storage_list_qingshuruwaicun:
-    'Please enter the external storage name',
-  packages_business_external_storage_list_qingshuruwaicun2:
-    'Please enter the external storage table name',
+  packages_business_external_storage_list_querenshanchuwai: 'Are you sure to delete the external storage?',
+  packages_business_external_storage_list_qingshurucunchu: 'Please enter the storage path',
+  packages_business_external_storage_list_qingshuruwaicun: 'Please enter the external storage name',
+  packages_business_external_storage_list_qingshuruwaicun2: 'Please enter the external storage table name',
   packages_business_external_storage_list_sheweimoren: 'Set as default',
   packages_business_external_storage_list_cunchulujing: 'Storage path',
-  packages_business_external_storage_list_chuangjianwaicun:
-    'Create External Storage',
+  packages_business_external_storage_list_chuangjianwaicun: 'Create External Storage',
   packages_business_external_storage_list_bianjiwaicun: 'Edit External Storage',
   packages_business_external_storage_list_tishi:
     'This external storage has been called by {val1} tasks, please delete or modify the configuration and try again.',
@@ -1265,16 +1069,14 @@ export default {
   packages_business_chuangjianfuwu: 'Create API',
   packages_business_fuwuxiangqing: 'Service Details',
   packages_business_geshicuowu: 'Format error',
-  packages_business_validate:
-    'Only alphanumeric letters and underscores are allowed and must start with a letter.',
+  packages_business_validate: 'Only alphanumeric letters and underscores are allowed and must start with a letter.',
   packages_business_aPI_path_Settings: 'API Path Settings',
   packages_business_default_path: 'Default Path',
   packages_business_custom_path: 'Custom Path',
   packages_business_prefix: 'Prefix',
   packages_business_base_path: 'Base Path',
   packages_business_path: 'Path',
-  packages_business_confirm_tip:
-    'This will re-generate the API path, do you wish to continue?',
+  packages_business_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
   packages_business_create_connection_scenedialog_table:
     'Tablestore is a distributed NoSQL data storage service with high reliability, high performance, flexibility and scalability, suitable for application scenarios such as real-time data query and analysis. ',
   packages_business_create_connection_scenedialog_select:
@@ -1319,8 +1121,7 @@ export default {
   packages_business_connections_databaseform_dangqianlianjiezheng:
     'The current connection is using the original external storage, switching will result in data loss, please operate with caution. ',
   packages_business_swimlane_target_shouye: 'Homepage',
-  packages_business_connections_databaseform_chakanwajueren:
-    'View mining tasks',
+  packages_business_connections_databaseform_chakanwajueren: 'View mining tasks',
   packages_business_connections_databaseform_dangqianlianjiede:
     'The currently connected mining task is using this external storage, and modification is not allowed for now. If you need to modify it, please reset or delete the corresponding mining task first.',
   packages_business_shared_mining_table_yitingzhiwajue: 'Mining has stopped',
@@ -1332,8 +1133,7 @@ export default {
   packages_business_shared_mining_table_shengyuyigelian:
     'In the mining task, at least one table must be mining, and all tables cannot be stopped.',
   packages_business_logs_nodelog_yijianfuzhi: 'Copy',
-  packages_business_connections_jsdebug_shiyongHtt:
-    'Use the latest data received by HttpReceiver for debugging',
+  packages_business_connections_jsdebug_shiyongHtt: 'Use the latest data received by HttpReceiver for debugging',
   packages_business_connections_jsdebug_huoqutiaoshishu: 'Get debug data',
   packages_business_shared_mining_list_shanchurenwus:
     'After deleting the task <span class="color-primary">{val1}</span>, this task will not be restored',
@@ -1343,29 +1143,23 @@ export default {
     'The external storage does not exist, please modify the external storage configuration before starting.',
   packages_business_components_conditionbox_shifouquerenqing:
     'Are you sure to clear the check condition that the index field is empty? ',
-  packages_business_components_conditionbox_suoyinziduanwei:
-    'The index field is empty',
+  packages_business_components_conditionbox_suoyinziduanwei: 'The index field is empty',
   packages_business_components_conditionbox_yijianqingchusuo:
     'One key to clear the condition that the index field is empty',
-  packages_business_external_storage_list_yanzhengfuwuduan:
-    'Verify server certificate',
+  packages_business_external_storage_list_yanzhengfuwuduan: 'Verify server certificate',
   packages_business_external_storage_list_siyaomima: 'Private key password',
   packages_business_external_storage_list_kehuduansiyao: 'Client private key',
-  packages_business_external_storage_list_zhengshubanfaji:
-    'Certificate Authority',
+  packages_business_external_storage_list_zhengshubanfaji: 'Certificate Authority',
   packages_business_external_storage_list_shiyongTls: 'Connect using TLS/SSL',
   packages_business_connections_list_dangqianlianjiex:
     'The current connection xxx is being used as FDM and MDM storage, deletion will result in the loss of existing storage data, whether to confirm to continue deletion. ',
   packages_business_connections_list_zhengzaizuoweiF:
     'It is being used as FDM and MDM storage, the modification will cause the loss of existing stored data, are you sure you want to continue the modification',
   packages_business_connections_list_dangqianlianjie: 'Current Connections',
-  packages_business_components_conditionbox_chakanzidingyi:
-    'View custom fields',
-  packages_business_components_fielddialog_ziduanbuyunxu:
-    'The field is not allowed to be empty',
+  packages_business_components_conditionbox_chakanzidingyi: 'View custom fields',
+  packages_business_components_fielddialog_ziduanbuyunxu: 'The field is not allowed to be empty',
   packages_business_components_fielddialog_zidingyiziduan: 'Custom Field',
-  packages_business_verification_list_biaobufenziduan:
-    'Verification of some fields in the table',
+  packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
   packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
   packages_business_data_server_list_apIwendang: 'API Document Export',
@@ -1380,49 +1174,31 @@ export default {
     'Because the index field cannot be found, the following source tables will automatically skip verification:',
   packages_business_verification_form_index_field_count_is_not_equal:
     'Because the number of index fields in the source table and the target table is not equal, the following source tables will automatically skip validation:',
-  packages_business_verification_list_renyibiaoshuju:
-    'Any table data verification',
-  packages_business_verification_list_renwuyizhixing:
-    'Task Consistency Verification',
+  packages_business_verification_list_renyibiaoshuju: 'Any table data verification',
+  packages_business_verification_list_renwuyizhixing: 'Task Consistency Verification',
   packages_business_connections_preview_quanxianguanli: 'Permission Management',
-  packages_business_permissionse_settings_create_quanxianshezhi:
-    'Permission Settings',
-  packages_business_permissionse_settings_create_shezhiquanxian:
-    'Set Permissions',
-  packages_business_permissionse_settings_create_xuanzeshouquanjiao:
-    'Select authorization role',
+  packages_business_permissionse_settings_create_quanxianshezhi: 'Permission Settings',
+  packages_business_permissionse_settings_create_shezhiquanxian: 'Set Permissions',
+  packages_business_permissionse_settings_create_xuanzeshouquanjiao: 'Select authorization role',
   packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan:
     'Unable to authorize the following data, saving will be skipped',
-  packages_business_connections_permissionsdialog_tianjiashouquan:
-    'Add Permissions',
-  packages_business_connections_permissionsdialog_gongnengquanxian:
-    'Function Permissions',
-  packages_business_connections_permissionsdialog_shouquanjuese:
-    'Authorization Role',
-  packages_business_connections_permissionsdialog_lianjiequanxianshe:
-    'Connection permission settings',
+  packages_business_connections_permissionsdialog_tianjiashouquan: 'Add Permissions',
+  packages_business_connections_permissionsdialog_gongnengquanxian: 'Function Permissions',
+  packages_business_connections_permissionsdialog_shouquanjuese: 'Authorization Role',
+  packages_business_connections_permissionsdialog_lianjiequanxianshe: 'Connection permission settings',
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
-  packages_business_connections_preview_shujulianjiequan:
-    'Data connection permissions',
+  packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
   packages_business_notice_list_gonggaobiaoti: 'Notice Title',
-  packages_business_connections_list_wuquanxiandecao:
-    'Operations without permission have been hidden',
-  packages_business_components_upgradecharges_dingyuexinyinqing:
-    'Subscribe to new engines',
-  packages_business_components_upgradecharges_shengjiguige:
-    'Upgrade Specifications',
-  packages_business_components_upgradecharges_dingyuefangshi:
-    'Subscription Method',
-  packages_business_components_upgradecharges_keyongrenwushu:
-    'Remaining available tasks',
-  packages_business_components_upgradecharges_dangqianguige:
-    'Current Specifications',
-  packages_business_components_upgradecharges_dingyueshengji:
-    'Subscription Upgrade',
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
+  packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
+  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',
+  packages_business_components_upgradecharges_keyongrenwushu: 'Remaining available tasks',
+  packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
+  packages_business_components_upgradecharges_dingyueshengji: 'Subscription Upgrade',
   packages_business_create_connection_sceneform_lianjieceshiwu:
     'The connection test is invalid, please check your connection configuration',
-  packages_business_create_connection_sceneform_qingxianjinxinglian:
-    'Please perform a connection test first',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
   packages_business_logs_nodelog_qingshengjidingyue:
     'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide',
   packages_business_logs_nodelog_yinqingkeyibei:
@@ -1432,12 +1208,10 @@ export default {
   packages_business_setting_alarmsetting_qubangding: 'to bind',
   packages_business_setting_alarmsetting_jiancedaoninhai:
     'It has been detected that you have not bound your email address, so email notification cannot be enabled.',
-  packages_business_verification_form_zhengzaijiyuren:
-    'Generating verification conditions based on tasks in progress',
+  packages_business_verification_form_zhengzaijiyuren: 'Generating verification conditions based on tasks in progress',
   packages_business_agent_ip_tips_prefix:
     "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
-  packages_business_agent_ip_tips_suffix:
-    'Click to view the IP address information for the fully managed agent.',
+  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
     'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
   packages_business_use_ssl: 'Use SSL',
@@ -1449,5 +1223,5 @@ export default {
   packages_business_ssh_host: 'Host',
   packages_business_ssh_port: 'Port',
   packages_business_ssh_username: 'Username',
-  packages_business_ssh_password: 'Password',
+  packages_business_ssh_password: 'Password'
 }

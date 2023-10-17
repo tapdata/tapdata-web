@@ -10,68 +10,57 @@
       :placeholder="placeholder"
       @input="inputHandler"
     >
-      <ElOption
-        v-for="opt in options"
-        :key="opt"
-        :label="opt"
-        :value="opt"
-      ></ElOption>
+      <ElOption v-for="opt in options" :key="opt" :label="opt" :value="opt"></ElOption>
     </ElSelect>
     <template v-if="values.length">
       <div class="fields-selector--display flex p-2 mt-2">
-        <div
-          class="fields-selector--item mr-2"
-          v-for="(field, index) in values"
-          :key="field"
-        >
+        <div class="fields-selector--item mr-2" v-for="(field, index) in values" :key="field">
           <span>{{ field }}</span>
-          <ElLink @click="remove(index)"><i class="el-icon-close"></i></ElLink>
+          <ElLink @click="remove(index)"
+            ><el-icon><el-icon-close /></el-icon
+          ></ElLink>
         </div>
       </div>
-      <ClipboardButton
-        class="fields-selector--clip"
-        :content="value"
-        icon
-      ></ClipboardButton>
+      <ClipboardButton class="fields-selector--clip" :content="value" icon></ClipboardButton>
     </template>
   </span>
 </template>
 
 <script>
+import { Close as ElIconClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { ClipboardButton } from '@tap/form'
 
 export default {
-  components: { ClipboardButton },
+  components: {
+    ClipboardButton,
+    ElIconClose
+  },
   props: {
     value: {
       type: [String],
-      required: true,
+      required: true
     },
     placeholder: String,
-    options: Array,
+    options: Array
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    },
+    }
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(
-        this,
-        'update:value',
-        Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
-      )
+      $emit(this, 'update:value', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     },
     remove(index) {
       this.values.splice(index, 1)
       this.inputHandler(this.values)
-    },
+    }
   },
-  emits: ['update:value'],
+  emits: ['update:value']
 }
 </script>
 

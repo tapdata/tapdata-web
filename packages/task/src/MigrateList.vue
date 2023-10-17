@@ -3,15 +3,11 @@
     <div class="bg-white rounded-lg mb-4 flex align-center px-4">
       <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
       <template v-if="$route.meta.desc">
-        <ElDivider
-          v-if="$route.meta.desc"
-          class="mx-4"
-          direction="vertical"
-        ></ElDivider>
+        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
         <span class="fs-7 font-color-sslight">{{ $t($route.meta.desc) }}</span>
       </template>
       <div class="flex-grow-1"></div>
-      <el-radio-group v-model:value="viewType" class="view-radio-group">
+      <el-radio-group v-model="viewType" class="view-radio-group">
         <el-radio-button label="board">
           <VIcon class="align-top">swimlane</VIcon>
           {{ $t('public_board_view') }}
@@ -23,10 +19,7 @@
       </el-radio-group>
     </div>
 
-    <ReplicationBoard
-      v-if="viewType === 'board'"
-      class="bg-white rounded-lg overflow-hidden"
-    ></ReplicationBoard>
+    <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
       v-else
       class="overflow-hidden bg-white rounded-lg pr-4 pb-4"
@@ -53,13 +46,13 @@ export default {
       taskBuried: {
         new: 'migrationCreate',
         newFail: 'migrationCreateAgentFail',
-        start: 'migrationStart',
+        start: 'migrationStart'
       },
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor',
-      },
+        monitor: 'MigrationMonitor'
+      }
     }
   },
 
@@ -73,19 +66,19 @@ export default {
       },
       set(value) {
         this.$store.commit('setReplicationView', value)
-      },
-    },
+      }
+    }
   },
 
   watch: {
     viewType() {
       if (!this.startingTour) {
         this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour,
+          tour: this.$store.state.replicationTour
         })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

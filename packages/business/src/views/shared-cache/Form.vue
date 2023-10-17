@@ -8,40 +8,29 @@
       :model="form"
       :rules="rules"
     >
-      <ElFormItem
-        prop="name"
-        :label="$t('packages_business_shared_cache_name') + ':'"
-      >
+      <ElFormItem prop="name" :label="$t('packages_business_shared_cache_name') + ':'">
         <ElInput
           v-model.trim="form.name"
           class="form-input"
           :placeholder="$t('packages_business_shared_cache_placeholder_name')"
         ></ElInput>
       </ElFormItem>
-      <ElFormItem
-        prop="connectionId"
-        :label="$t('packages_business_shared_cache_column_connection') + ':'"
-      >
+      <ElFormItem prop="connectionId" :label="$t('packages_business_shared_cache_column_connection') + ':'">
         <ConnectionListSelect
           v-model:value="form.connectionId"
           v-model:label="form.connectionName"
-          :placeholder="
-            $t('packages_business_shared_cache_placeholder_connection')
-          "
+          :placeholder="$t('packages_business_shared_cache_placeholder_connection')"
           filterable
           :params="{
             where: {
-              connection_type: { in: ['source', 'source_and_target'] },
-            },
+              connection_type: { in: ['source', 'source_and_target'] }
+            }
           }"
           class="form-input"
           @change="connectionInputHandler"
         ></ConnectionListSelect>
       </ElFormItem>
-      <ElFormItem
-        prop="tableName"
-        :label="$t('packages_business_shared_cache_column_table') + ':'"
-      >
+      <ElFormItem prop="tableName" :label="$t('packages_business_shared_cache_column_table') + ':'">
         <VirtualSelect
           v-model:value="form.tableName"
           filterable
@@ -54,23 +43,15 @@
         >
           <template #option="{ item }">
             <span>{{ item.label }}</span>
-            <span v-if="item.comment" class="font-color-sslight">{{
-              `(${item.comment})`
-            }}</span>
+            <span v-if="item.comment" class="font-color-sslight">{{ `(${item.comment})` }}</span>
           </template>
         </VirtualSelect>
       </ElFormItem>
-      <ElFormItem
-        prop="cacheKeys"
-        :label="$t('packages_business_shared_cache_keys') + ':'"
-      >
+      <ElFormItem prop="cacheKeys" :label="$t('packages_business_shared_cache_keys') + ':'">
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_keys') }}</span>
-          <el-tooltip
-            placement="top"
-            :content="$t('packages_business_shared_cache_keys_tooltip')"
-          >
-            <i class="el-icon-info color-primary ml-1"></i>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_keys_tooltip')">
+            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -81,17 +62,11 @@
           :placeholder="$t('packages_business_shared_cache_placeholder_keys')"
         ></FieldSelector>
       </ElFormItem>
-      <ElFormItem
-        prop="fields"
-        :label="$t('packages_business_shared_cache_fields') + ':'"
-      >
+      <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_fields') }}</span>
-          <el-tooltip
-            placement="top"
-            :content="$t('packages_business_shared_cache_fields_tooltip')"
-          >
-            <i class="el-icon-info color-primary ml-1"></i>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_fields_tooltip')">
+            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -105,11 +80,8 @@
       <ElFormItem prop="maxMemory">
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_max_memory') }}</span>
-          <el-tooltip
-            placement="top"
-            :content="$t('packages_business_shared_cache_max_memory_tooltip')"
-          >
-            <i class="el-icon-info color-primary ml-1"></i>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_max_memory_tooltip')">
+            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -122,15 +94,8 @@
         ></ElInputNumber>
         <span class="ml-1">M</span>
       </ElFormItem>
-      <ElFormItem
-        prop="externalStorageId"
-        :label="$t('public_external_memory_configuration')"
-      >
-        <ElSelect
-          v-model:value="form.externalStorageId"
-          filterable
-          :loading="!externalStorageOptions"
-        >
+      <ElFormItem prop="externalStorageId" :label="$t('public_external_memory_configuration')">
+        <ElSelect v-model:value="form.externalStorageId" filterable :loading="!externalStorageOptions">
           <ElOption
             v-for="opt in externalStorageOptions"
             :key="opt.value"
@@ -142,11 +107,8 @@
       <ElFormItem>
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_code') }}</span>
-          <el-tooltip
-            placement="top"
-            :content="$t('packages_business_shared_cache_code_tooltip')"
-          >
-            <i class="el-icon-info color-primary ml-1"></i>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_code_tooltip')">
+            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -157,24 +119,27 @@
 </template>
 
 <script>
+import { Info as ElIconInfo } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
-import {
-  sharedCacheApi,
-  metadataInstancesApi,
-  externalStorageApi,
-} from '@tap/api'
+import { sharedCacheApi, metadataInstancesApi, externalStorageApi } from '@tap/api'
 import i18n from '@tap/i18n'
 import ConnectionListSelect from '@tap/business/src/views/connections/ListSelect'
 
 export default {
-  components: { VirtualSelect, FieldSelector, CodeView, ConnectionListSelect },
+  components: {
+    VirtualSelect,
+    FieldSelector,
+    CodeView,
+    ConnectionListSelect,
+    ElIconInfo
+  },
   props: {
     taskId: {
-      type: String,
-    },
+      type: String
+    }
   },
   data() {
     return {
@@ -193,63 +158,53 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_name'),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_name')
+          }
         ],
         connectionId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'packages_business_shared_cache_placeholder_connection'
-            ),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_connection')
+          }
         ],
         tableName: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'packages_business_shared_cache_placeholder_table'
-            ),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_table')
+          }
         ],
         cacheKeys: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_keys'),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_keys')
+          }
         ],
         fields: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'packages_business_shared_cache_placeholder_fields'
-            ),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_fields')
+          }
         ],
         maxMemory: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'packages_business_shared_cache_placeholder_max_memory'
-            ),
-          },
+            message: this.$t('packages_business_shared_cache_placeholder_max_memory')
+          }
         ],
         externalStorageId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t(
-              'packages_business_shared_cache_placeholder_external_storage'
-            ),
-          },
-        ],
+            message: this.$t('packages_business_shared_cache_placeholder_external_storage')
+          }
+        ]
       },
-      isEn: i18n.locale === 'en',
+      isEn: i18n.locale === 'en'
     }
   },
   created() {
@@ -266,7 +221,7 @@ export default {
         cacheKeys: '',
         fields: '',
         maxMemory: 500,
-        externalStorageId: '',
+        externalStorageId: ''
       }
       if (this.taskId) {
         await this.getData(this.taskId)
@@ -277,12 +232,10 @@ export default {
       this.loading = true
       await sharedCacheApi
         .findOne(id)
-        .then(async (data) => {
+        .then(async data => {
           data = data || {}
           let externalStorageId = data.externalStorageId
-          const externalStorage = await externalStorageApi.get(
-            externalStorageId
-          )
+          const externalStorage = await externalStorageApi.get(externalStorageId)
           if (!externalStorage?.id) {
             externalStorageId = ''
           }
@@ -295,7 +248,7 @@ export default {
             cacheKeys: data.cacheKeys,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
-            externalStorageId,
+            externalStorageId
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -306,7 +259,7 @@ export default {
     },
     async getExternalStorageOptions() {
       let filter = {
-        where: {},
+        where: {}
       }
 
       const { externalStorageId } = this.form
@@ -316,14 +269,14 @@ export default {
       }
       const data = await externalStorageApi
         .get({
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
         .catch(() => {
           this.externalStorageOptions = []
         })
       let defaultStorageId = ''
       this.externalStorageOptions =
-        data?.items?.map((it) => {
+        data?.items?.map(it => {
           if (it.defaultStorage) {
             defaultStorageId = it.id
           }
@@ -337,15 +290,15 @@ export default {
       this.tableOptionsLoading = true
       metadataInstancesApi
         .getTablesValue({ connectionId })
-        .then((data) => {
+        .then(data => {
           let options = []
           let list = data || []
-          list.forEach((opt) => {
+          list.forEach(opt => {
             if (opt) {
               options.push({
                 label: opt.tableName,
                 value: opt.tableName,
-                comment: opt.tableComment,
+                comment: opt.tableComment
               })
             }
           })
@@ -362,26 +315,24 @@ export default {
             'source.id': this.form.connectionId,
             original_name: tableName,
             is_deleted: false,
-            'fields.is_deleted': false,
+            'fields.is_deleted': false
           },
           fields: {
             'fields.field_name': true,
-            'fields.original_field_name': true,
-          },
-        }),
+            'fields.original_field_name': true
+          }
+        })
       }
       this.fieldOptionsLoading = true
       metadataInstancesApi
         .get(params)
-        .then((data) => {
+        .then(data => {
           let table = data?.items?.[0]
           if (table) {
             let fields = table.fields || []
-            this.fieldOptions = fields.map((opt) => opt.field_name)
+            this.fieldOptions = fields.map(opt => opt.field_name)
           } else {
-            this.$message.error(
-              this.$t('packages_business_shared_cache_messge_no_table')
-            )
+            this.$message.error(this.$t('packages_business_shared_cache_messge_no_table'))
           }
         })
         .finally(() => {
@@ -403,7 +354,7 @@ export default {
       this.getTableSchema(tableName)
     },
     submit() {
-      this.$refs.form.validate((flag) => {
+      this.$refs.form.validate(flag => {
         if (flag) {
           let {
             name,
@@ -414,7 +365,7 @@ export default {
             cacheKeys,
             fields,
             maxMemory,
-            externalStorageId,
+            externalStorageId
           } = this.form
           let id = this.taskId
           let params = {
@@ -425,21 +376,21 @@ export default {
                 {
                   type: 'table',
                   attrs: {
-                    fields: fields.split(','),
+                    fields: fields.split(',')
                   },
                   tableName,
                   databaseType,
                   connectionId,
-                  connectionName,
+                  connectionName
                 },
                 {
                   cacheKeys: cacheKeys,
                   maxMemory: maxMemory,
-                  externalStorageId,
-                },
+                  externalStorageId
+                }
               ],
-              edges: [],
-            },
+              edges: []
+            }
           }
           let method = id ? 'patch' : 'post'
           $emit(this, 'update:loading', true)
@@ -453,9 +404,9 @@ export default {
             })
         }
       })
-    },
+    }
   },
-  emits: ['update:loading', 'success'],
+  emits: ['update:loading', 'success']
 }
 </script>
 

@@ -8,7 +8,7 @@ function getRegistry(instance) {
 }
 export function $on(instance, event, fn) {
   if (Array.isArray(event)) {
-    event.forEach((e) => $on(instance, e, fn))
+    event.forEach(e => $on(instance, e, fn))
   } else {
     const events = getRegistry(instance)
     ;(events[event] || (events[event] = [])).push(fn)
@@ -33,7 +33,7 @@ export function $off(instance, event, fn) {
   }
   // array of events
   if (Array.isArray(event)) {
-    event.forEach((e) => $off(instance, e, fn))
+    event.forEach(e => $off(instance, e, fn))
     return vm
   }
   // specific event
@@ -46,14 +46,14 @@ export function $off(instance, event, fn) {
     events[event] = undefined
     return vm
   }
-  events[event] = cbs.filter((cb) => !(cb === fn || cb.fn === fn))
+  events[event] = cbs.filter(cb => !(cb === fn || cb.fn === fn))
   return vm
 }
 export function $emit(instance, event, ...args) {
   instance && instance.$emit && instance.$emit(event, ...args)
   const cbs = getRegistry(instance)[event]
   if (cbs) {
-    cbs.map((cb) => cb.apply(instance, args))
+    cbs.map(cb => cb.apply(instance, args))
   }
   return instance
 }

@@ -5,7 +5,7 @@
       :remoteMethod="remoteMethod"
       :columns="columns"
       :page-options="{
-        'hide-on-single-page': true,
+        'hide-on-single-page': true
       }"
       max-height="100%"
       ref="VTable"
@@ -18,10 +18,7 @@
       <template v-slot:schemaHeader>
         <div>
           {{ $t('public_connection_schema_status') }}
-          <ElTooltip
-            placement="top"
-            :content="$t('public_connection_schema_status_tip')"
-          >
+          <ElTooltip placement="top" :content="$t('public_connection_schema_status_tip')">
             <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
@@ -58,13 +55,9 @@
             {{ $t('public_button_reset') }}
           </VButton>
           <ElDivider direction="vertical"></ElDivider>
-          <VButton
-            auto-loading
-            inner-loading
-            type="text"
-            @click="toStatistics(scope.row)"
-            >{{ $t('packages_business_page_title_task_stat') }}</VButton
-          >
+          <VButton auto-loading inner-loading type="text" @click="toStatistics(scope.row)">{{
+            $t('packages_business_page_title_task_stat')
+          }}</VButton>
         </div>
       </template>
     </VTable>
@@ -85,8 +78,8 @@ export default {
     task: {
       type: Object,
       required: true,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -96,18 +89,18 @@ export default {
       columns: [
         {
           label: this.$t('packages_business_task_info_subtasks_name'),
-          prop: 'name',
+          prop: 'name'
         },
         {
           label: this.$t('packages_business_task_info_subtasks_status'),
           prop: 'status',
-          slotName: 'status',
+          slotName: 'status'
         },
         {
           label: this.$t('public_operation'),
           prop: 'operation',
-          slotName: 'operation',
-        },
+          slotName: 'operation'
+        }
       ],
       statusBtMap: {
         start: {
@@ -116,21 +109,21 @@ export default {
           stop: true,
           error: true,
           complete: true,
-          schedule_failed: true,
+          schedule_failed: true
         },
         stop: {
           scheduling: true,
           preparing: true,
           running: true,
-          wait_run: true,
+          wait_run: true
         },
         reset: {
           stop: true,
           error: true,
           complete: true,
-          schedule_failed: true,
-        },
-      },
+          schedule_failed: true
+        }
+      }
     }
   },
   computed: {
@@ -139,7 +132,7 @@ export default {
     },
     table() {
       return this.$refs.VTable
-    },
+    }
   },
   mounted() {
     //定时轮询
@@ -156,31 +149,29 @@ export default {
       let { current, size } = page
       let filter = {
         limit: size,
-        skip: size * (current - 1),
+        skip: size * (current - 1)
       }
       return subtaskApi
         .byTaskId(taskId, {
-          filter: JSON.stringify(filter),
+          filter: JSON.stringify(filter)
         })
-        .then((data) => {
+        .then(data => {
           let items = data || []
-          let list = items.map((item) => {
+          let list = items.map(item => {
             item.status = item.status === 'edit' ? 'ready' : item.status
             return cloneDeep(item)
           })
           return {
             total: list.length,
-            data: list,
+            data: list
           }
         })
     },
     start(row = {}, resetLoading) {
       subtaskApi
         .start(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -188,10 +179,8 @@ export default {
     stop(row, resetLoading) {
       subtaskApi
         .stop(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -199,10 +188,8 @@ export default {
     renew(row, resetLoading) {
       subtaskApi
         .renew(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -210,10 +197,8 @@ export default {
     pause(row = {}, resetLoading) {
       subtaskApi
         .pause(row.id)
-        .then((data) => {
-          this.$message.success(
-            data?.message || this.$t('public_message_operation_success')
-          )
+        .then(data => {
+          this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
         .finally(resetLoading)
@@ -223,10 +208,10 @@ export default {
         name: 'dataflowStatistics',
         params: {
           id: this.task.id,
-          subId: row.id,
-        },
+          subId: row.id
+        }
       })
-    },
-  },
+    }
+  }
 }
 </script>

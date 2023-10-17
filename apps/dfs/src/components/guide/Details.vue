@@ -4,21 +4,13 @@
       <div class="font-color-dark fw-sub fs-5 mb-4">
         {{ $t('dfs_instance_create_spec_summary') }}
       </div>
-      <VTable
-        :columns="columns"
-        :data="subscribeItems"
-        ref="table"
-        :has-pagination="false"
-      ></VTable>
+      <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
       <ElForm ref="from" :mode="orderInfo" :rules="formRules">
         <ElFormItem prop="email">
-          <ElInput
-            v-model:value="orderInfo.email"
-            :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
-          ></ElInput>
+          <ElInput v-model:value="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
         </ElFormItem>
       </ElForm>
     </div>
@@ -42,19 +34,15 @@
         <span class="price-detail-label text-end inline-block mr-2"
           >{{
             $t('dfs_agent_subscription_discount', {
-              val: orderInfo.priceDiscount,
+              val: orderInfo.priceDiscount
             })
           }}:
         </span>
         <span class="ml-2"> {{ priceOff }}</span>
       </li>
       <li v-if="orderInfo.price">
-        <span class="fw-sub font-color-dark mt-2 mr-4">{{
-          $t('dfs_instance_instance_shifujine')
-        }}</span
-        >:<span class="color-primary fw-sub fs-5 ml-2">{{
-          orderInfo.price
-        }}</span>
+        <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_instance_instance_shifujine') }}</span
+        >:<span class="color-primary fw-sub fs-5 ml-2">{{ orderInfo.price }}</span>
       </li>
     </ul>
   </section>
@@ -76,27 +64,25 @@ export default {
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
-          width: 180,
+          width: 180
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price',
-        },
+          prop: 'price'
+        }
       ],
       payType: 'Stripe',
       subscribeItems: [],
       types: [
         {
-          label: i18n.t(
-            'dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'
-          ),
-          value: 'Stripe',
-        },
+          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
+          value: 'Stripe'
+        }
       ],
 
       formRules: {
@@ -106,36 +92,29 @@ export default {
               let { email } = this.orderInfo
               email = email.trim()
               if (!email) {
-                callback(
-                  new Error(i18n.t('dfs_instance_create_qingshuruninde'))
-                )
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruninde')))
                 return
               }
-              if (
-                !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)
-              ) {
-                callback(
-                  new Error(i18n.t('dfs_instance_create_qingshuruzhengque'))
-                )
+              if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+                callback(new Error(i18n.t('dfs_instance_create_qingshuruzhengque')))
                 return
               }
               callback()
-            },
-          },
-        ],
-      },
+            }
+          }
+        ]
+      }
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    ...mapGetters(['isDomesticStation'])
   },
   mounted() {
     this.$nextTick(() => {
       //格式化items
       let subscribeItems = this.orderInfo?.subscribeItems || []
-      const { subscriptionMethodLabel, originalPrice, priceOff } =
-        this.orderInfo
-      this.subscribeItems = subscribeItems.map((it) => {
+      const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
+      this.subscribeItems = subscribeItems.map(it => {
         it.subscriptionMethodLabel = subscriptionMethodLabel
         it.price = originalPrice
         return it
@@ -145,13 +124,13 @@ export default {
   },
   methods: {
     validateForm(ref) {
-      return new Promise((resolve) => {
-        this.$refs[ref].validate((valid) => {
+      return new Promise(resolve => {
+        this.$refs[ref].validate(valid => {
           resolve(valid)
         })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

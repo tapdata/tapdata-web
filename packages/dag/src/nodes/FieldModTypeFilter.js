@@ -17,21 +17,21 @@ export class FieldModTypeFilter extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none',
+        display: 'none'
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}',
+          formTab: '{{formTab}}'
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings'),
+              label: i18n.t('public_basic_settings')
             },
             properties: {
               name: {
@@ -39,20 +39,18 @@ export class FieldModTypeFilter extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input',
+                'x-component': 'Input'
               },
               filterTypes: {
                 type: 'array',
-                title: i18n.t(
-                  'packages_dag_nodes_database_xuanzeyaoguolvdiaode'
-                ),
+                title: i18n.t('packages_dag_nodes_database_xuanzeyaoguolvdiaode'),
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-component-props': {
-                  multiple: true,
+                  multiple: true
                 },
                 'x-reactions':
-                  '{{useAsyncDataSourceByConfig({service: loadNodeFieldTypesById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}',
+                  '{{useAsyncDataSourceByConfig({service: loadNodeFieldTypesById, withoutField: true}, $self.value.length ? $values.id : $values.$inputs[0])}}'
               },
               fieldList: {
                 type: 'void',
@@ -61,17 +59,17 @@ export class FieldModTypeFilter extends NodeType {
                 'x-component': 'fieldList',
                 'x-component-props': {
                   nodeId: '{{$values.id}}',
-                  hideNav: true,
-                },
+                  hideNav: true
+                }
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview',
-              },
-            },
-          },
-        },
-      },
-    },
+                'x-component': 'SchemaPreview'
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

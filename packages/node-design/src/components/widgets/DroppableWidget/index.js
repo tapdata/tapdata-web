@@ -13,8 +13,8 @@ export const DroppableWidget = observer(
       height: Number,
       showPlaceholder: {
         type: Boolean,
-        default: true,
-      },
+        default: true
+      }
     },
     setup: (props, { slots }) => {
       const { node, actions, height, showPlaceholder } = toRefs(props)
@@ -27,10 +27,7 @@ export const DroppableWidget = observer(
           {hasChildren ? (
             slots.default?.()
           ) : showPlaceholder ? (
-            <div
-              style={{ height: height + 'px' }}
-              class="dn-droppable-placeholder"
-            >
+            <div style={{ height: height + 'px' }} class="dn-droppable-placeholder">
               <NodeTitleWidget node={target} />
             </div>
           ) : (
@@ -45,6 +42,6 @@ export const DroppableWidget = observer(
           ) : null}
         </div>
       )
-    },
+    }
   })
 )

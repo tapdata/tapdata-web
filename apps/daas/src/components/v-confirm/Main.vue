@@ -9,21 +9,10 @@
       aria-modal="true"
       :aria-label="title || 'dialog'"
     >
-      <div
-        class="el-message-box"
-        :class="[customClass, center && 'el-message-box--center']"
-        :style="{ width }"
-      >
+      <div class="el-message-box" :class="[customClass, center && 'el-message-box--center']" :style="{ width }">
         <div class="el-message-box__header" v-if="title">
           <div class="el-message-box__title flex align-center">
-            <VIcon
-              v-if="icon"
-              class="mr-3"
-              :size="iconSize"
-              :color="iconColor"
-              :class="statusClass"
-              >{{ icon }}</VIcon
-            >
+            <VIcon v-if="icon" class="mr-3" :size="iconSize" :color="iconColor" :class="statusClass">{{ icon }}</VIcon>
             <span>{{ title }}</span>
           </div>
           <button
@@ -31,14 +20,10 @@
             class="el-message-box__headerbtn"
             aria-label="Close"
             v-if="showClose"
-            @click="
-              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
-            "
-            @keydown.enter="
-              handleAction(distinguishCancelAndClose ? 'close' : 'cancel')
-            "
+            @click="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
+            @keydown.enter="handleAction(distinguishCancelAndClose ? 'close' : 'cancel')"
           >
-            <i class="el-message-box__close el-icon-close"></i>
+            <el-icon class="el-message-box__close"><el-icon-close /></el-icon>
           </button>
         </div>
         <div class="el-message-box__content" :class="{ 'mt-3': !title }">
@@ -60,7 +45,7 @@
           </div>
           <div class="el-message-box__input" v-show="showInput">
             <el-input
-              v-model:value="inputValue"
+              v-model="inputValue"
               :type="inputType"
               @keydown.enter="handleInputEnter"
               :placeholder="inputPlaceholder"
@@ -69,7 +54,7 @@
             <div
               class="el-message-box__errormsg"
               :style="{
-                visibility: !!editorErrorMessage ? 'visible' : 'hidden',
+                visibility: !!editorErrorMessage ? 'visible' : 'hidden'
               }"
             >
               {{ editorErrorMessage }}
@@ -107,23 +92,24 @@
 </template>
 
 <script>
+import { Close as ElIconClose } from '@element-plus/icons'
 import { VIcon } from '@tap/component'
 import MsgBox from 'element-ui/packages/message-box/src/main.vue'
 import i18n from '@/i18n'
 
 export default {
+  components: {
+    VIcon,
+    ElIconClose
+  },
   extends: MsgBox,
-
-  components: { VIcon },
-
   data() {
     return {
       width: null,
       cancelButtonTextDefault: i18n.t('public_button_cancel'),
-      confirmButtonTextDefault: i18n.t('public_button_confirm'),
+      confirmButtonTextDefault: i18n.t('public_button_confirm')
     }
   },
-
   computed: {
     icon() {
       const { type } = this
@@ -139,8 +125,8 @@ export default {
     showContentIcon() {
       let { title, message } = this
       return !title && message
-    },
-  },
+    }
+  }
 }
 </script>
 

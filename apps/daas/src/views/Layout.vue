@@ -8,34 +8,17 @@
         <span class="expire-msg" v-if="licenseExpireVisible">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
-        <ElButton
-          v-if="creatAuthority"
-          type="primary"
-          size="mini"
-          @click="command('newDataFlow')"
-        >
+        <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow_createNew') }}
         </ElButton>
-        <NotificationPopover
-          v-if="$getSettingByKey('SHOW_NOTIFICATION')"
-          class="ml-4"
-        ></NotificationPopover>
-        <ElDropdown
-          v-if="showHelp"
-          class="btn"
-          placement="bottom"
-          @command="command"
-          command="help"
-          :show-timeout="0"
-        >
+        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
+        <ElDropdown v-if="showHelp" class="btn" placement="bottom" @command="command" command="help" :show-timeout="0">
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">wenda</VIcon>
           </div>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem command="help">{{
-                $t('app_document')
-              }}</ElDropdownItem>
+              <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -52,16 +35,12 @@
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem
-                command="settings"
-                v-if="settingCode && email === 'admin@admin.com'"
-                >{{ $t('page_title_setting') }}</ElDropdownItem
-              >
-              <ElDropdownItem
-                command="setting"
-                v-readonlybtn="'home_notice_settings'"
-                >{{ $t('notify_setting') }}</ElDropdownItem
-              >
+              <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
+                $t('page_title_setting')
+              }}</ElDropdownItem>
+              <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
+                $t('notify_setting')
+              }}</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -77,61 +56,37 @@
           </div>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem
-                v-for="(value, key) in languages"
-                :key="key"
-                :command="key"
-              >
-                <span v-if="lang === key" class="color-primary">{{
-                  value
-                }}</span>
+              <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
+                <span v-if="lang === key" class="color-primary">{{ value }}</span>
                 <span v-else>{{ value }}</span>
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown
-          class="menu-user btn"
-          placement="bottom"
-          @command="command"
-          :show-timeout="0"
-        >
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command" :show-timeout="0">
           <div class="flex align-center icon-btn p-2">
             <span class="user-initials mr-2">{{ initials }}</span>
-            <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
+            <span
+              >{{ userName }}<el-icon class="ml-2"><el-icon-arrow-down /></el-icon
+            ></span>
           </div>
           <template v-slot:dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem command="account">{{
-                $t('app_account')
-              }}</ElDropdownItem>
-              <ElDropdownItem command="version">{{
-                $t('app_version')
-              }}</ElDropdownItem>
-              <ElDropdownItem command="license">{{
-                $t('page_title_license')
-              }}</ElDropdownItem>
-              <ElDropdownItem
-                v-if="$getSettingByKey('SHOW_HOME_BUTTON')"
-                command="home"
-              >
+              <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
+              <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
+              <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
+              <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
                 {{ $t('app_home') }}
               </ElDropdownItem>
-              <ElDropdownItem command="signOut">{{
-                $t('app_signOut')
-              }}</ElDropdownItem>
+              <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
       </div>
     </ElHeader>
     <ElContainer style="width: 100%; flex: 1; overflow: hidden">
-      <ElAside
-        v-if="!isNotAside && !IS_IFRAME"
-        class="layout-aside"
-        width="auto"
-      >
+      <ElAside v-if="!isNotAside && !IS_IFRAME" class="layout-aside" width="auto">
         <ElMenu
           unique-opened
           class="menu"
@@ -163,20 +118,13 @@
           </template>
         </ElMenu>
         <div class="menu-footer" @click="isCollapse = !isCollapse">
-          <i
-            class="el-icon-d-arrow-left btn-collapse"
-            :class="{ 'is-collapse': isCollapse }"
-          ></i>
+          <el-icon class="btn-collapse"><el-icon-d-arrow-left /></el-icon>
         </div>
       </ElAside>
       <ElMain class="layout-main">
         <div class="layout-main-body">
           <PageHeader
-            v-if="
-              !['dashboard', 'clusterManagement', 'apiMonitor'].includes(
-                $route.name
-              )
-            "
+            v-if="!['dashboard', 'clusterManagement', 'apiMonitor'].includes($route.name)"
             class="border-bottom"
           ></PageHeader>
           <div
@@ -200,8 +148,8 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult',
-                ].includes($route.name),
+                  'dataVerifyResult'
+                ].includes($route.name)
               },
               {
                 'pb-5': ![
@@ -221,9 +169,9 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult',
-                ].includes($route.name),
-              },
+                  'dataVerifyResult'
+                ].includes($route.name)
+              }
             ]"
           >
             <RouterView />
@@ -237,24 +185,15 @@
 </template>
 
 <script>
+import { ArrowDown as ElIconArrowDown, DArrowLeft as ElIconDArrowLeft } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import dayjs from 'dayjs'
 
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import { VIcon } from '@tap/component'
-import {
-  langMenu,
-  getCurrentLanguage,
-  setCurrentLanguage,
-} from '@tap/i18n/src/shared/util'
-import {
-  usersApi,
-  timeStampApi,
-  licensesApi,
-  taskApi,
-  logcollectorApi,
-} from '@tap/api'
+import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { usersApi, timeStampApi, licensesApi, taskApi, logcollectorApi } from '@tap/api'
 import { PageHeader } from '@tap/business'
 
 import CustomerService from '@/components/CustomerService'
@@ -267,13 +206,13 @@ let menuSetting = [
   {
     name: 'dataConsole',
     icon: 'process-platform',
-    code: 'v2_data-console',
+    code: 'v2_data-console'
   },
   {
     name: 'connectionsList',
     icon: 'agent',
     code: 'v2_datasource_menu',
-    parent: 'connections',
+    parent: 'connections'
   },
   {
     name: 'dataPipeline',
@@ -286,9 +225,9 @@ let menuSetting = [
       {
         name: 'dataVerificationList',
         code: 'v2_data_check',
-        parent: 'dataVerification',
-      },
-    ],
+        parent: 'dataVerification'
+      }
+    ]
   },
   {
     name: 'advancedFeatures',
@@ -299,21 +238,21 @@ let menuSetting = [
       {
         name: 'sharedCacheList',
         code: 'v2_shared_cache',
-        parent: 'sharedCache',
+        parent: 'sharedCache'
       }, // PDK暂时不支持共享缓存，暂时屏蔽
       {
         name: 'functionList',
         code: 'v2_function_management',
-        parent: 'function',
+        parent: 'function'
       },
       { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
       {
         name: 'sharedMiningList',
         code: 'v2_log_collector',
-        parent: 'sharedMining',
+        parent: 'sharedMining'
       },
-      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
-    ],
+      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' }
+    ]
   },
   {
     name: 'discovery',
@@ -322,9 +261,9 @@ let menuSetting = [
     code: 'v2_data_discovery',
     hidden: true, // 放开了数据面板，隐藏数据发现
     children: [
-      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' },
+      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
       // { name: 'objectList', code: 'v2_data_object', parent: 'object' },
-    ],
+    ]
   },
   {
     name: 'dataService',
@@ -335,18 +274,18 @@ let menuSetting = [
       {
         name: 'apiApplication',
         code: 'v2_api-application',
-        parent: 'apiApplication',
+        parent: 'apiApplication'
       },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {
         name: 'dataServerAuditList',
         code: 'v2_data_server_audit',
-        parent: 'dataServerAudit',
+        parent: 'dataServerAudit'
       },
       { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
       { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
-      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
-    ],
+      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' }
+    ]
   },
   {
     name: 'system',
@@ -357,9 +296,9 @@ let menuSetting = [
       { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
       { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
-      { name: 'externalStorage', code: 'v2_external-storage_menu' },
-    ],
-  },
+      { name: 'externalStorage', code: 'v2_external-storage_menu' }
+    ]
+  }
 ]
 export default {
   components: {
@@ -368,6 +307,8 @@ export default {
     NotificationPopover,
     PageHeader,
     VIcon,
+    ElIconArrowDown,
+    ElIconDArrowLeft
   },
   data() {
     return {
@@ -377,10 +318,8 @@ export default {
       languages: langMenu,
       lang: getCurrentLanguage(),
       settingVisibility:
-        this.$has('home_notice_settings') ||
-        (this.$has('system_settings') && this.$has('system_settings_menu')),
-      settingCode:
-        this.$has('system_settings') && this.$has('system_settings_menu'),
+        this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
+      settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
       creatAuthority:
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
@@ -396,9 +335,7 @@ export default {
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
       activeMenu: '',
-      showHelp:
-        !process.env.VUE_APP_HIDE_QA_AND_HELP &&
-        this.$getSettingByKey('SHOW_QA_AND_HELP'),
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
     }
   },
   computed: {
@@ -411,26 +348,25 @@ export default {
       const height = window._TAPDATA_OPTIONS_.logoHeight
       return {
         width: width && (!isNaN(width) ? `${width}px` : width),
-        height: height && (!isNaN(height) ? `${height}px` : height),
+        height: height && (!isNaN(height) ? `${height}px` : height)
       }
-    },
+    }
   },
   watch: {
     $route(data) {
       this.isNotAside = data?.meta?.isNotAside || false
       this.getActiveMenu()
-    },
+    }
   },
   async created() {
     const hideMenuMap = await this.getHideMenuItem()
     this.getMenus(hideMenuMap)
     this.getActiveMenu()
 
-    this.userName =
-      Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
+    this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
     this.email = Cookie.get('email')
 
-    window.iframeRouterChange = (route) => {
+    window.iframeRouterChange = route => {
       this.$router.push(route)
     }
     let self = this
@@ -438,7 +374,7 @@ export default {
       self.$store.commit(key, data)
     }
 
-    window.getFormLocal = (data) => {
+    window.getFormLocal = data => {
       return self.$store.state[data]
     }
 
@@ -453,8 +389,8 @@ export default {
     getActiveMenu() {
       let route = this.$route
       let activeMap = {}
-      const getMap = (menus) => {
-        menus.forEach((item) => {
+      const getMap = menus => {
+        menus.forEach(item => {
           if (item?.children?.length) {
             getMap(item?.children)
           } else {
@@ -466,7 +402,7 @@ export default {
       }
       getMap(menuSetting)
       let matched = route.matched || []
-      let activeRoute = matched.find((r) => activeMap[r.name])
+      let activeRoute = matched.find(r => activeMap[r.name])
       this.activeMenu = activeMap[activeRoute?.name] || ''
     },
     getMenus(hideMenuMap = {}) {
@@ -474,11 +410,9 @@ export default {
 
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
-      let routes = this.$router.options.routes.find(
-        (r) => r.name === 'layout'
-      ).children
-      let getRoutesMap = (routes) => {
-        routes.forEach((r) => {
+      let routes = this.$router.options.routes.find(r => r.name === 'layout').children
+      let getRoutesMap = routes => {
+        routes.forEach(r => {
           routerMap[r.name] = r
           if (r.children) {
             getRoutesMap(r.children)
@@ -487,8 +421,8 @@ export default {
       }
       getRoutesMap(routes)
 
-      let formatMenu = (items) => {
-        return items.map((item) => {
+      let formatMenu = items => {
+        return items.map(item => {
           let route = routerMap[item.name]
           let menu = item
           let label = menu.alias ? menu.alias : menu.label
@@ -501,12 +435,10 @@ export default {
           }
 
           menu.hidden =
-            menu.hidden ||
-            hideMenuMap[menu.name] ||
-            (menu.code && !permissions.some((p) => p.code === menu.code))
+            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some(p => p.code === menu.code))
           if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
-            if (menu.children.every((m) => m.hidden)) {
+            if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
           }
@@ -521,12 +453,12 @@ export default {
       switch (command) {
         case 'account':
           this.$router.push({
-            name: 'settingCenter',
+            name: 'settingCenter'
           })
           break
         case 'setting':
           this.$router.push({
-            name: 'notificationSetting',
+            name: 'notificationSetting'
           })
           break
         case 'newDataFlow':
@@ -542,7 +474,7 @@ export default {
           if (window.getSettingByKey('SHOW_DK_VERSION')) {
             this.$message.info({
               dangerouslyUseHTMLString: true,
-              message: 'DK_VERSION_1</br>DK_VERSION_2',
+              message: 'DK_VERSION_1</br>DK_VERSION_2'
             })
           } else {
             this.$message.info(window._TAPDATA_OPTIONS_.version)
@@ -550,7 +482,7 @@ export default {
           break
         case 'license':
           this.$router.push({
-            name: 'License',
+            name: 'License'
           })
           break
         case 'home':
@@ -558,8 +490,8 @@ export default {
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
-            type: 'warning',
-          }).then((resFlag) => {
+            type: 'warning'
+          }).then(resFlag => {
             if (!resFlag) {
               return
             }
@@ -568,7 +500,7 @@ export default {
           break
         case 'settings':
           this.$router.push({
-            name: 'settings',
+            name: 'settings'
           })
           break
         default:
@@ -585,7 +517,7 @@ export default {
         return
       }
       this.$router.push({
-        name,
+        name
       })
     },
     changeLanguage(lang) {
@@ -596,10 +528,10 @@ export default {
 
     async getLicense() {
       let stime = ''
-      await timeStampApi.get().then((data) => {
+      await timeStampApi.get().then(data => {
         stime = data || Time.now()
       })
-      licensesApi.expires({}).then((data) => {
+      licensesApi.expires({}).then(data => {
         let expires_on = data?.expires_on || ''
         if (Cookie.get('isAdmin') == 1) {
           let endTime = expires_on - stime
@@ -614,19 +546,17 @@ export default {
 
     async getHideMenuItem() {
       const map = {
-        sharedMiningList:
-          (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total ||
-          0,
+        sharedMiningList: (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total || 0,
         HeartbeatTableList:
           (
             await taskApi.get({
               filter: JSON.stringify({
                 where: {
-                  syncType: 'connHeartbeat',
-                },
-              }),
+                  syncType: 'connHeartbeat'
+                }
+              })
             })
-          )?.total || 0,
+          )?.total || 0
       }
       return Object.keys(map).reduce((result, key) => {
         if (!map[key]) {
@@ -634,8 +564,8 @@ export default {
         }
         return result
       }, {})
-    },
-  },
+    }
+  }
 }
 </script>
 
