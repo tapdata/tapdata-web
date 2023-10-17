@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch } from 'vue'
 
 import i18n from '@tap/i18n'
 import { AsyncSelect } from '@tap/form'

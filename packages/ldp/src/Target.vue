@@ -231,7 +231,7 @@
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
@@ -620,7 +620,7 @@ export default {
           args: [connectionId]
         })
         .then(data => {
-          data?.url && this.connectionWebsiteMap[connectionId] = data.url
+          data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
           return data?.url
         })
     },
@@ -634,7 +634,7 @@ export default {
           _: generateId(4)
         })
         .then(data => {
-          data?.url && task['website'] = data.url
+          data?.url && (task['website'] = data.url)
           return data?.url
         })
     },
@@ -949,7 +949,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrap__item{border:1px solid #e1e3e9;&:hover {
+.wrap__item {
+  border: 1px solid #e1e3e9;
+  &:hover {
     //background-color: #f2f3f5;
   }
 
@@ -984,5 +986,9 @@ export default {
         display: inline-flex;
       }
     }
-  }}.item__header{border-bottom:1px solid #e1e3e9}.item__icon{//border:1px solid #4e5969}
+  }
+}
+.item__header {
+  border-bottom: 1px solid #e1e3e9;
+}
 </style>

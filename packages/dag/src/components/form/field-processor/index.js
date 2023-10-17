@@ -1,7 +1,7 @@
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import { debounce, cloneDeep } from 'lodash'
-import { defineComponent, ref, reactive, onMounted, watch, computed } from '@vue/composition-api'
+import { defineComponent, ref, reactive, onMounted, watch, computed } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi, taskApi } from '@tap/api'

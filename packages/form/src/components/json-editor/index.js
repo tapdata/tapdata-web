@@ -1,4 +1,4 @@
-import { defineComponent, ref, watch } from '@vue/composition-api'
+import { defineComponent, ref, watch } from 'vue'
 import { VCodeEditor } from '@tap/component'
 import { useField } from '@formily/vue'
 

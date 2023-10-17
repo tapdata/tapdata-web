@@ -1,6 +1,6 @@
 import ClipboardDialog from '../clipboard-dialog'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 
 export const ClipboardBtn = observer(
   defineComponent({

@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref } from '@vue/composition-api'
+import { defineComponent, reactive, ref } from 'vue'
 import i18n from '@tap/i18n'
 import { useField } from '../../index'
 export const BatchAddField = defineComponent({

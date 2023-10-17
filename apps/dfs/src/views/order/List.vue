@@ -615,7 +615,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.order-flex{display:flex}.operation-logs-wrapper{display:flex;width:100%;height:100%;flex-direction:column;overflow:hidden;box-sizing:border-box;.pointer {
+.order-flex {
+  display: flex;
+}
+.operation-logs-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  .pointer {
     cursor: pointer;
   }
   .btn-refresh {
@@ -635,9 +645,27 @@ export default {
     flex: 1;
     overflow: auto;
     border-bottom: none;
-  }}.sub-li{border:1px solid #ebeef5;//border-bottom:none}.color-subscribe{color:map-get($color, warning)}.sub-li-header{padding:10px;border-bottom:1px solid #ebeef5;background:#f7f8fa}.subscribe-header-action{.el-divider:last-child {
+  }
+}
+.sub-li {
+  border: 1px solid #ebeef5;
+  //border-bottom: none;
+}
+.color-subscribe {
+  color: map-get($color, warning);
+}
+.sub-li-header {
+  padding: 10px;
+  border-bottom: 1px solid #ebeef5;
+  background: #f7f8fa;
+}
+.subscribe-header-action {
+  .el-divider:last-child {
     display: none;
-  }}::v-deep{.el-dropdown-menu__item.dropdown-item--disabled {
+  }
+}
+::v-deep {
+  .el-dropdown-menu__item.dropdown-item--disabled {
     color: map-get($color, disable);
     cursor: default;
     &:hover {
@@ -649,5 +677,6 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: column;
-  }}
+  }
+}
 </style>

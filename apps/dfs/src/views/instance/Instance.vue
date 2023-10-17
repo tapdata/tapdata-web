@@ -1833,8 +1833,42 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.order-flex{display:flex}/*// agent列表*/
-.agent-ul{gap:16px;//height:100%;overflow:auto}.agent-item{width:48%;border-radius:8px;border:1px solid var(--unnamed, #e5e6eb);background:#fff;box-shadow:0px 1px 2px 0px rgba(0,0,0,0.06)}.mdb-ul{gap:16px;overflow:auto}.mdb-item{width:99%;min-height:205px;border-radius:8px;border:1px solid var(--unnamed, #e5e6eb);background:#fff;box-shadow:0px 1px 2px 0px rgba(0,0,0,0.06)}.instance-wrapper{display:flex;width:100%;height:100%;flex-direction:column;overflow:hidden;box-sizing:border-box;.btn-refresh {
+.order-flex {
+  display: flex;
+}
+// agent列表
+.agent-ul {
+  gap: 16px;
+  //height: 100%;
+  overflow: auto;
+}
+.agent-item {
+  width: 48%;
+  border-radius: 8px;
+  border: 1px solid var(--unnamed, #e5e6eb);
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+}
+.mdb-ul {
+  gap: 16px;
+  overflow: auto;
+}
+.mdb-item {
+  width: 99%;
+  min-height: 205px;
+  border-radius: 8px;
+  border: 1px solid var(--unnamed, #e5e6eb);
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+}
+.instance-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  .btn-refresh {
     padding: 0;
     height: 32px;
     line-height: 32px;
@@ -1917,7 +1951,13 @@ export default {
   }
   .upgrade-mb24 {
     margin-bottom: 24px;
-  }}.upgrading-box{width:20px;height:20px;position:relative;::v-deep {
+  }
+}
+.upgrading-box {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  ::v-deep {
     .v-icon {
       position: absolute;
       top: 50%;
@@ -1926,12 +1966,18 @@ export default {
       margin-top: -7px;
       margin-left: -7px;
     }
-  }}.upgrading-progress{::v-deep {
+  }
+}
+.upgrading-progress {
+  ::v-deep {
     .el-progress-circle {
       width: 20px !important;
       height: 20px !important;
     }
-  }}.inline-input{::v-deep {
+  }
+}
+.inline-input {
+  ::v-deep {
     .input {
       flex: 1;
       min-width: 0;
@@ -1944,7 +1990,10 @@ export default {
       width: 20px;
       height: 20px;
     }
-  }}::v-deep{.el-dropdown-menu__item.dropdown-item--disabled {
+  }
+}
+::v-deep {
+  .el-dropdown-menu__item.dropdown-item--disabled {
     color: map-get($color, disable);
     cursor: default;
     &:hover {
@@ -1965,7 +2014,14 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: column;
-  }}.subscription-ul{background:#e9e9eb;border:1px solid #e9e9eb;border-radius:4px;padding:8px 12px}
+  }
+}
+.subscription-ul {
+  background: #e9e9eb;
+  border: 1px solid #e9e9eb;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
 </style>
 
 <style lang="scss">

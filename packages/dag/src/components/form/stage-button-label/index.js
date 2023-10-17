@@ -1,4 +1,4 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { observer } from '@formily/reactive-vue'
 
 import StageButton from '@tap/business/src/components/StageButton'

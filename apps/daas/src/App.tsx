@@ -1,4 +1,4 @@
-import { defineComponent, provide } from '@vue/composition-api'
+import { defineComponent, provide } from 'vue'
 import { workerApi } from '@tap/api'
 import { provideI18n, useMessage, I18n } from './hooks'
 

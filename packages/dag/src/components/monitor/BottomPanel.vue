@@ -178,12 +178,23 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 
-.bottom-panel{position:relative;height:328px;//min-height:328px;//height:100%;overflow:visible;background-color:#fff;//transition:height 0.24s;will-change:width;box-sizing:border-box;z-index:11;&.show-record {
+.bottom-panel {
+  position: relative;
+  height: 328px;
+  //min-height: 328px;
+  //height: 100%;
+  overflow: visible;
+  background-color: #fff;
+  //transition: height 0.24s;
+  will-change: width;
+  box-sizing: border-box;
+  z-index: 11;
+  &.show-record {
     width: 320px;
   }
 
@@ -273,9 +284,18 @@ $headerHeight: 40px;
         }
       }
     }
-  }}.close-icon{position:absolute;right:16px;top:10px}.tabs-header__hidden{::v-deep {
+  }
+}
+.close-icon {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+}
+.tabs-header__hidden {
+  ::v-deep {
     .el-tabs__header {
       display: none;
     }
-  }}
+  }
+}
 </style>

@@ -1,5 +1,4 @@
-import * as Vue from 'vue'
-import './plugins/element'
+import { installAllPlugins } from '@/plugins'
 import './plugins/axios'
 import './directive'
 import App from './App.vue'
@@ -21,6 +20,7 @@ import WSClient from '@tap/business/src/shared/ws-client'
 import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
+import * as Vue from 'vue'
 
 window.$vueApp.use(VueClipboard)
 
@@ -67,7 +67,6 @@ export default ({ routes }) => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
       routes: routes,
-      history: VueRouter.createWebHashHistory()
     })
     startTimeOnPage(router)
 
@@ -89,7 +88,18 @@ export default ({ routes }) => {
 
     store.commit('setUser', window.__USER_INFO__)
 
-    window.App = {
+    const app = window.App = window.$vueApp = Vue.createApp(App, {
+      wsOptions: {
+        url: wsUrl
+      },
+    })
+
+    window.$vueApp.use(store)
+    window.$vueApp.use(router)
+
+    app.mount('#app')
+
+    /*window.App = {
       router,
       store,
       i18n,
@@ -97,7 +107,7 @@ export default ({ routes }) => {
         url: wsUrl
       },
       render: h => h(App)
-    }.$mount('#app')
+    }.$mount('#app')*/
 
     // 版本升级检测
     createVersionPolling({

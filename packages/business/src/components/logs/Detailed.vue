@@ -203,22 +203,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.monitor-log-wrap{display:flex;//max-height:450px;font-size:14px;.search-input {
-    width: 343px;
-  }
-  .log-container {
-    background: rgba(229, 236, 255, 0.22);
-    box-sizing: border-box;
-  }
-  .log-item {
-    word-break: break-word;
-  }
-  .log-message {
-    box-sizing: border-box;
-  }
-  .log-keyword-block {
-    background: map-get($color, warning);
-  }}.filter-row{.el-checkbox {
-    margin-right: 16px;
-  }}
+.monitor-log-wrap {
+	display: flex;
+	//max-height: 450px;
+	font-size: 14px;
+	.search-input {
+		width: 343px;
+	}
+	.log-container {
+		background: rgba(229, 236, 255, 0.22);
+		box-sizing: border-box;
+	}
+	.log-item {
+		word-break: break-word;
+	}
+	.log-message {
+		box-sizing: border-box;
+	}
+	.log-keyword-block {
+		background: map-get($color, warning);
+	}
+}
+.filter-row {
+	.el-checkbox {
+		margin-right: 16px;
+	}
+}
 </style>

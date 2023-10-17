@@ -375,8 +375,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.paper-empty{position:absolute;left:0;right:0;top:0;bottom:0;//background:#fff;.hotkey-list {
+<style scoped lang="scss">
+.paper-empty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  //background: #fff;
+
+  .hotkey-list {
     font-size: 16px;
     text-align: center;
     line-height: 40px;
@@ -395,5 +403,6 @@ export default {
       border: 1px solid rgba(100, 100, 100, 0.1);
       border-radius: 3px;
     }
-  }}
+  }
+}
 </style>

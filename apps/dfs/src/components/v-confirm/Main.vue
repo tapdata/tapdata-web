@@ -190,13 +190,88 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.message-box__wrapper{position:fixed;top:0;bottom:0;left:0;right:0;text-align:center;background-color:rgba(0,0,0,0.6);z-index:3200;&::after {
+.message-box__wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 3200;
+  &::after {
     content: '';
     display: inline-block;
     height: 100%;
     width: 0;
     vertical-align: middle;
-  }}.message-box{display:inline-flex;flex-direction:column;max-height:100%;vertical-align:middle;background-color:#fff;border-radius:4px;border:1px solid #ebeef5;font-size:18px;box-shadow:0 2px 12px 0 rgb(0 0 0 / 10%);text-align:left;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden;box-sizing:border-box}.message-box__header{display:inline-block;padding:24px 24px 0;//padding-right:16px;font-size:16px;color:rgba(0,0,0,0.75);font-weight:700}.v-icon{margin-right:12px}.el-button{padding:8px 16px;& + .el-button {
+  }
+}
+.message-box {
+  display: inline-flex;
+  flex-direction: column;
+  max-height: 100%;
+  vertical-align: middle;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #ebeef5;
+  font-size: 18px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  text-align: left;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  box-sizing: border-box;
+}
+.message-box__header {
+  display: inline-block;
+  padding: 24px 24px 0;
+  //padding-right: 16px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.75);
+  font-weight: 700;
+}
+.v-icon {
+  margin-right: 12px;
+}
+.el-button {
+  padding: 8px 16px;
+  & + .el-button {
     margin-left: 16px;
-  }}.message-box__headerbtn{position:absolute;top:15px;right:15px;padding:0;border:none;outline:0;background:0 0;font-size:16px;cursor:pointer}.message-box__body{margin:8px 0 24px;padding:0 24px;flex:1;overflow:auto;font-size:14px;line-height:22px;color:rgba(0,0,0,0.65)}.message-box__content{padding:4px 24px 0 0;flex:1;width:0;box-sizing:border-box;word-break:break-word}.message-box__btns{padding:0 24px 24px;text-align:right}.message-button-cancel{padding:7px 16px}
+  }
+}
+.message-box__headerbtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 0;
+  border: none;
+  outline: 0;
+  background: 0 0;
+  font-size: 16px;
+  cursor: pointer;
+}
+.message-box__body {
+  margin: 8px 0 24px;
+  padding: 0 24px;
+  flex: 1;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 22px;
+  color: rgba(0, 0, 0, 0.65);
+}
+.message-box__content {
+  padding: 4px 24px 0 0;
+  flex: 1;
+  width: 0;
+  box-sizing: border-box;
+  word-break: break-word;
+}
+.message-box__btns {
+  padding: 0 24px 24px;
+  text-align: right;
+}
+.message-button-cancel {
+  padding: 7px 16px;
+}
 </style>

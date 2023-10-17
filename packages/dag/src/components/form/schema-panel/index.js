@@ -1,4 +1,4 @@
-import { defineComponent, onBeforeUnmount, watch } from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount, watch } from 'vue'
 import { useForm } from '@tap/form'
 import MigrateMetaPane from '../../migration/MigrateMetaPane'
 import { observe } from '@formily/reactive'

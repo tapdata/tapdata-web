@@ -305,10 +305,34 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.agent-list__list{background:map-get($color, white)}.agent-list__item{width:220px;border:1px solid #e1e3e9;border-radius:8px;margin-right:24px;padding:12px 12px 8px 12px;color:map-get($fontColor, dark)}.agent-list__item:last-child{margin-right:0}.agent-list__name{.vicon {
+<style scoped lang="scss">
+.agent-list__list {
+  background: map-get($color, white);
+}
+.agent-list__item {
+  width: 220px;
+  border: 1px solid #e1e3e9;
+  border-radius: 8px;
+  margin-right: 24px;
+  padding: 12px 12px 8px 12px;
+  color: map-get($fontColor, dark);
+}
+.agent-list__item:last-child {
+  margin-right: 0;
+}
+.agent-list__name {
+  .vicon {
     color: map-get($fontColor, dark);
-  }}.font-color-title{color:#2c65ff}.agent-list__detail{width:232px;background-color:#fafafb;color:map-get($fontColor, light);.agent-list__status {
+  }
+}
+.font-color-title {
+  color: #2c65ff;
+}
+.agent-list__detail {
+  width: 232px;
+  background-color: #fafafb;
+  color: map-get($fontColor, light);
+  .agent-list__status {
     white-space: nowrap;
     margin-right: 8px;
     &:last-child {
@@ -320,8 +344,33 @@ export default {
   }
   .error {
     color: #f7a237;
-  }}/*// 通知公告*/
-.notice-list__type{background:#f7f8f9}.notice-list__time{white-space:nowrap;//width:80px;text-align:right}.notice-list__list{line-height:1.5}.item_name{padding:5px}.item_number{margin-top:10px;margin-left:5px}.item_circle{margin-right:0px!important}.more-btn{&:hover {
+  }
+}
+// 通知公告
+.notice-list__type {
+  background: #f7f8f9;
+}
+.notice-list__time {
+  white-space: nowrap;
+  //width: 80px;
+  text-align: right;
+}
+.notice-list__list {
+  line-height: 1.5;
+}
+.item_name {
+  padding: 5px;
+}
+.item_number {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+.item_circle {
+  margin-right: 0px !important;
+}
+.more-btn {
+  &:hover {
     color: map-get($color, primary);
-  }}
+  }
+}
 </style>

@@ -1,4 +1,4 @@
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
 import { FormItem, HighlightCode, JsEditor } from '@tap/form'
 import './style.scss'

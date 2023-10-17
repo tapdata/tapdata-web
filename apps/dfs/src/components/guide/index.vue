@@ -506,8 +506,38 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.nav-wrap{width:348px;height:640px;gap:20px;flex-shrink:0;background:url('../../assets/image/guide-bg.png')}.box-card{display:flex;padding:24px;flex-direction:column;justify-content:center;align-items:center;width:100%;border-radius:4px;background:var(--color-blur-gary-light-9, #f4f5f7)}.guide-steps{height:200px}.guide-main{height:680px}.guide-desc{margin-bottom:60px}.guide-footer{//height:30px}.guide-dialog{::v-deep {
+<style scoped lang="scss">
+.nav-wrap {
+  width: 348px;
+  height: 640px;
+  gap: 20px;
+  flex-shrink: 0;
+  background: url('../../assets/image/guide-bg.png');
+}
+.box-card {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  background: var(--color-blur-gary-light-9, #f4f5f7);
+}
+.guide-steps {
+  height: 200px;
+}
+.guide-main {
+  height: 680px;
+}
+.guide-desc {
+  margin-bottom: 60px;
+}
+.guide-footer {
+  //height: 30px;
+}
+.guide-dialog {
+  ::v-deep {
     .el-dialog__body,
     .el-dialog__header {
       padding: 0;
@@ -520,5 +550,6 @@ export default {
       color: #c9cdd4;
       border-color: #c9cdd4;
     }
-  }}
+  }
+}
 </style>

@@ -16,32 +16,14 @@ import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import FormBuilder from '@tap/component/src/form-builder'
 
-import '@/plugins/element'
+import { installAllPlugins } from '@/plugins'
+// import '@/plugins/element'
 import '@/plugins/icon'
 import '@/directives'
 import LoadMore from '@/utils/loadMore'
 
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
-
-window.$vueApp.use(VueClipboard)
-window.$vueApp.use(LoadMore)
-window.$vueApp.use(FormBuilder)
-
-window.$vueApp.mixin({
-  created() {
-    // 创建实例时传入wsOptions，即可默认开启websocket
-    let wsOptions = this.$options.wsOptions
-    // 根实例才有ws
-    if (wsOptions) {
-      window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
-    }
-  }
-})
-
-// Vue.prototype.$api = factory
-
-window.$vueApp.component(VIcon.name, VIcon)
 
 window._TAPDATA_OPTIONS_ = {
   version: process.env.VUE_APP_VERSION,
@@ -53,7 +35,6 @@ window._TAPDATA_OPTIONS_ = {
   loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
   homeUrl: process.env.VUE_APP_HOME_URL
 }
-
 window.getSettingByKey = key => {
   let value = ''
 
@@ -61,31 +42,31 @@ window.getSettingByKey = key => {
   value = setting.isArray ? setting.value.split(',') : setting.value
   return value
 }
-window.$vueApp.config.globalProperties.$getSettingByKey = window.getSettingByKey
 
-window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
-  return new Promise((resolve, reject) => {
-    VConfirm.confirm(
-      message,
-      title,
-      Object.assign(
-        {
-          cancelButtonText: window.App.$t('public_button_cancel'),
-          confirmButtonText: window.App.$t('public_button_confirm')
-        },
-        options
-      )
-    )
-      .then(() => {
-        resolve(true)
-      })
-      .catch(() => {
-        reject(false)
-      })
-  }).catch(() => {
-    return false
-  })
-}
+// TODO 可能需要重写适配
+// window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
+//   return new Promise((resolve, reject) => {
+//     VConfirm.confirm(
+//       message,
+//       title,
+//       Object.assign(
+//         {
+//           cancelButtonText: window.App.$t('public_button_cancel'),
+//           confirmButtonText: window.App.$t('public_button_confirm')
+//         },
+//         options
+//       )
+//     )
+//       .then(() => {
+//         resolve(true)
+//       })
+//       .catch(() => {
+//         reject(false)
+//       })
+//   }).catch(() => {
+//     return false
+//   })
+// }
 
 const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
 if (IS_IFRAME) {
@@ -119,10 +100,31 @@ let init = settings => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  window.App = window.$vueApp = Vue.createApp(App)
+  const app = window.App = window.$vueApp = Vue.createApp(App)
+
+  installAllPlugins(app)
+
+  window.$vueApp.use(VueClipboard)
+  window.$vueApp.use(LoadMore)
+  window.$vueApp.use(FormBuilder)
+  window.$vueApp.mixin({
+    created() {
+      // 创建实例时传入wsOptions，即可默认开启websocket
+      let wsOptions = this.$options.wsOptions
+      // 根实例才有ws
+      if (wsOptions) {
+        window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+      }
+    }
+  })
+
+// Vue.prototype.$api = factory
+
+  window.$vueApp.component(VIcon.name, VIcon)
   window.$vueApp.config.globalProperties.routerAppend = (path, pathToAppend) => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
+  window.$vueApp.config.globalProperties.$getSettingByKey = window.getSettingByKey
   window.$vueApp.use(store)
   window.$vueApp.use(undefined)
   window.$vueApp.mount('#app')

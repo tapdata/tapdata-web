@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
 import i18n from '@tap/i18n'
 import { VIcon, ProTable } from '@tap/component'
 import { DatabaseIcon, DataServerDrawer as ApiPreview, makeDragNodeImage } from '@tap/business'

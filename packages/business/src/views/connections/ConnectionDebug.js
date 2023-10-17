@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref, watch, reactive } from '@vue/composition-api'
+import { computed, defineComponent, ref, watch, reactive } from 'vue'
 import { createForm, observer, Form, SchemaField, HighlightCode, FormItem } from '@tap/form'
 import i18n from '@tap/i18n'
 import resize from '@tap/component/src/directives/resize'

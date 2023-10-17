@@ -1,6 +1,7 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const crypto = require('crypto')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 const serveUrlMap = {
   mock: 'http://localhost:3000',
@@ -121,6 +122,14 @@ module.exports = {
   ],
   configureWebpack: config => {
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+    config.plugins.push(
+      require('unplugin-vue-components/webpack')({
+        resolvers: [ElementPlusResolver()]
+      }),
+      require('unplugin-auto-import/webpack')({
+        resolvers: [ElementPlusResolver()]
+      })
+    )
 
     if (process.env.NODE_ENV === 'production') {
       // gzip

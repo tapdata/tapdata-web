@@ -1,6 +1,6 @@
 import FiledMapping from '../field-mapping'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, onBeforeUnmount } from '@vue/composition-api'
+import { defineComponent, onBeforeUnmount } from 'vue'
 import { observe } from '@formily/reactive'
 import { useForm } from '@tap/form'
 

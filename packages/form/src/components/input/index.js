@@ -1,5 +1,5 @@
-import { Input as _Input } from '@formily/element'
-import { defineComponent } from '@vue/composition-api'
+import { Input as _Input } from '@formily/element-plus'
+import { defineComponent } from 'vue'
 
 export const Input = defineComponent({
   props: {

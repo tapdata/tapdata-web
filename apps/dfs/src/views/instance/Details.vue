@@ -583,12 +583,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.details-container{padding:16px 12px 16px 20px;overflow-y:auto}.container-item{&.border-item {
+.details-container {
+  padding: 16px 12px 16px 20px;
+  overflow-y: auto;
+}
+.container-item {
+  &.border-item {
     border-bottom: 1px solid #f2f2f2;
   }
   &.button-line {
     margin-bottom: -1px;
-  }}.el-button+.el-button{margin-left:0}.box-line{padding:8px 0;border-top:1px solid #f2f2f2;/*//  border-top: 0;*//*//*/}}.box-line__label{color:rgba(0,0,0,0.6)}.box-line__value{margin-top:8px;color:#000}.status-block{display:inline-block;min-width:60px;padding:3px 10px;text-align:center;font-weight:500;border-radius:4px;box-sizing:border-box}.status-1{color:#178061;background-color:#c4f3cb}.status-2{color:#d44d4d;background-color:#ffecec}.status-3{color:#d44d4d;background-color:#ffecec}::v-deep{.download-dialog {
+  }
+}
+.el-button + .el-button {
+  margin-left: 0;
+}
+.box-line {
+  padding: 8px 0;
+  border-top: 1px solid #f2f2f2;
+  //&:first-child {
+  //  border-top: 0;
+  //}
+}
+.box-line__label {
+  color: rgba(0, 0, 0, 0.6);
+}
+.box-line__value {
+  margin-top: 8px;
+  color: #000;
+}
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.status-1 {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-2 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-3 {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+::v-deep {
+  .download-dialog {
     .el-dialog__body {
       padding: 0 20px 40px 20px;
       height: 470px;
@@ -596,5 +642,6 @@ export default {
     .el-pager li.active {
       color: map-get($color, primary);
     }
-  }}
+  }
+}
 </style>

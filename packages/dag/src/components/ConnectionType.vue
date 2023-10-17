@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import i18n from '@tap/i18n'
 
 export default defineComponent({

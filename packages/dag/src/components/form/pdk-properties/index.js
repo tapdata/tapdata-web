@@ -1,4 +1,4 @@
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { RecursionField, useField, useForm } from '@tap/form'
 

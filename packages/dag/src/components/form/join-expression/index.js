@@ -3,7 +3,7 @@ import { h as createElement, useForm, useField, useFieldSchema, RecursionField }
 import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'
 import { FormBaseItem as FormItem } from '@tap/form'
-import { watch } from '@vue/composition-api'
+import { watch } from 'vue'
 import './style.scss'
 import { action } from '@formily/reactive'
 

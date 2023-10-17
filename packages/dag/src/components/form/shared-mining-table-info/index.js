@@ -1,4 +1,4 @@
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { observer } from '@formily/reactive-vue'
 
 import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'

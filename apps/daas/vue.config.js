@@ -1,6 +1,7 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -152,6 +153,14 @@ module.exports = {
   configureWebpack: config => {
     // 尽量保证项目中文件后缀的精确
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+    config.plugins.push(
+      require('unplugin-vue-components/webpack')({
+        resolvers: [ElementPlusResolver()]
+      }),
+      require('unplugin-auto-import/webpack')({
+        resolvers: [ElementPlusResolver()]
+      })
+    )
 
     if (process.env.NODE_ENV === 'production') {
       // gzip

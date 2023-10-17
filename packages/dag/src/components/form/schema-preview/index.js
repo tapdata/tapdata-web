@@ -1,4 +1,4 @@
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
 import { useForm } from '@tap/form'
 import { IconButton } from '@tap/component'

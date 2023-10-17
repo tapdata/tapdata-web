@@ -21,4 +21,4 @@ export * from './batch-add-field'
 export * from './json-editor'
 export * from './form-collapse'
 
-export * from '@formily/element'
+export * from '@formily/element-plus'

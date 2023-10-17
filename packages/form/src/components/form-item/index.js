@@ -1,9 +1,9 @@
-import { ref, defineComponent, onMounted, onBeforeUnmount, watch, provide } from '@vue/composition-api'
+import { ref, defineComponent, onMounted, onBeforeUnmount, watch, provide } from 'vue'
 import { isVoidField } from '@formily/core'
 import { connect, mapProps, h } from '@formily/vue'
-import { useFormLayout, FormLayoutShallowContext } from '@formily/element'
-import { composeExport, resolveComponent } from '@formily/element/lib/__builtins__/shared'
-import { stylePrefix } from '@formily/element/lib/__builtins__/configs'
+import { useFormLayout, FormLayoutShallowContext } from '@formily/element-plus'
+import { composeExport, resolveComponent } from '@formily/element-plus/lib/__builtins__/shared'
+import { stylePrefix } from '@formily/element-plus/lib/__builtins__/configs'
 import { ElTooltip as Tooltip } from 'element-plus'
 import ResizeObserver from 'resize-observer-polyfill'
 

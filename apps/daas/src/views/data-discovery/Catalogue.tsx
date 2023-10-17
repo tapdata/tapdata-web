@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'

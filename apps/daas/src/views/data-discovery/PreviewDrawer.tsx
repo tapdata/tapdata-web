@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
+import { defineComponent, reactive, ref, computed } from 'vue'
 import { VTable, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import { NodeViewer } from '@tap/dag'

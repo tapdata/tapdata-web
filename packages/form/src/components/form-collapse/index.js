@@ -2,9 +2,9 @@ import { ElCollapse as Collapse, ElCollapseItem as CollapseItem, ElBadge as Badg
 import { model } from '@formily/reactive'
 import { useField, useFieldSchema, RecursionField, h, Fragment } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { composeExport, stylePrefix } from '@formily/element/lib/__builtins__'
+import { composeExport, stylePrefix } from '@formily/element-plus/lib/__builtins__'
 import { toArr } from '@formily/shared'
-import { computed, defineComponent } from '@vue/composition-api'
+import { computed, defineComponent } from 'vue'
 
 const usePanels = (collapseField, schema) => {
   const panels = []
