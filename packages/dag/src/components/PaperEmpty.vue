@@ -13,7 +13,14 @@
       >
         <g id="e0adfdab">
           <g clip-path="url(#7196809a)">
-            <rect x="20" y="16" width="600" height="400" rx="8" fill="#F1F2F4"></rect>
+            <rect
+              x="20"
+              y="16"
+              width="600"
+              height="400"
+              rx="8"
+              fill="#F1F2F4"
+            ></rect>
             <g id="23d09c1a">
               <path d="M20 16H620V50H20V16Z" fill="white"></path>
               <path d="M20 50H166V416H20V50Z" fill="white"></path>
@@ -28,7 +35,16 @@
               fill="white"
               stroke="#2C65FF"
             ></rect>
-            <rect id="bf39a331" x="32.5" y="88.5" width="121" height="27" rx="7.5" fill="white" stroke="#2C65FF"></rect>
+            <rect
+              id="bf39a331"
+              x="32.5"
+              y="88.5"
+              width="121"
+              height="27"
+              rx="7.5"
+              fill="white"
+              stroke="#2C65FF"
+            ></rect>
             <rect
               id="2da55362"
               x="32.5"
@@ -61,7 +77,15 @@
               anim:delay="0"
               anim:duration="0.8"
             ></rect>
-            <rect id="5e942723" x="49" y="26" width="87" height="16" rx="8" fill="#F1F2F4"></rect>
+            <rect
+              id="5e942723"
+              x="49"
+              y="26"
+              width="87"
+              height="16"
+              rx="8"
+              fill="#F1F2F4"
+            ></rect>
             <g
               id="1c901ad0"
               anim=""
@@ -202,9 +226,21 @@
             <feOffset dy="4"></feOffset>
             <feGaussianBlur stdDeviation="10"></feGaussianBlur>
             <feComposite in2="hardAlpha" operator="out"></feComposite>
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"></feColorMatrix>
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_8510_74651"></feBlend>
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_8510_74651" result="shape"></feBlend>
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
+            ></feColorMatrix>
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_8510_74651"
+            ></feBlend>
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_8510_74651"
+              result="shape"
+            ></feBlend>
           </filter>
           <filter
             id="9f807c3c"
@@ -224,9 +260,21 @@
             ></feColorMatrix>
             <feOffset dy="1"></feOffset>
             <feGaussianBlur stdDeviation="0.4"></feGaussianBlur>
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_8510_74651"></feBlend>
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_8510_74651" result="shape"></feBlend>
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"
+            ></feColorMatrix>
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_8510_74651"
+            ></feBlend>
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_8510_74651"
+              result="shape"
+            ></feBlend>
           </filter>
           <filter
             id="80b9519f"
@@ -246,71 +294,90 @@
             ></feColorMatrix>
             <feOffset dy="1"></feOffset>
             <feGaussianBlur stdDeviation="0.4"></feGaussianBlur>
-            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_8510_74651"></feBlend>
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_8510_74651" result="shape"></feBlend>
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"
+            ></feColorMatrix>
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_8510_74651"
+            ></feBlend>
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_8510_74651"
+              result="shape"
+            ></feBlend>
           </filter>
           <clipPath id="7196809a">
-            <rect x="20" y="16" width="600" height="400" rx="8" fill="white"></rect>
+            <rect
+              x="20"
+              y="16"
+              width="600"
+              height="400"
+              rx="8"
+              fill="white"
+            ></rect>
           </clipPath>
         </defs>
       </svg>
     </svg-animate>
     <!--    <ShadowSvg></ShadowSvg>-->
     <!--    <div class="hotkey-list user-select-none">
-      <div>
-        <span class="mr-2">{{ $t('public_button_copy') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>C</kbd>
-        <span class="mx-2">/</span>
-        <span class="mr-2">{{ $t('packages_dag_components_paperempty_zhantie') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>V</kbd>
-      </div>
+          <div>
+            <span class="mr-2">{{ $t('public_button_copy') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>C</kbd>
+            <span class="mx-2">/</span>
+            <span class="mr-2">{{ $t('packages_dag_components_paperempty_zhantie') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>V</kbd>
+          </div>
 
-      <div>
-        <span class="mr-2">{{ $t('public_button_revoke') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>Z</kbd>
-        <span class="mx-2">/</span>
-        <span class="mr-2">{{ $t('packages_dag_button_redo') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd><span class="mx-1">+</span><kbd>Z</kbd>
-      </div>
+          <div>
+            <span class="mr-2">{{ $t('public_button_revoke') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>Z</kbd>
+            <span class="mx-2">/</span>
+            <span class="mr-2">{{ $t('packages_dag_button_redo') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd><span class="mx-1">+</span><kbd>Z</kbd>
+          </div>
 
-      <div>
-        <span class="mr-2">{{ $t('packages_dag_button_zoom_in') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
-        <span class="mx-2">/</span>
-        <span class="mr-2">{{ $t('packages_dag_button_zoom_out') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
-      </div>
+          <div>
+            <span class="mr-2">{{ $t('packages_dag_button_zoom_in') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
+            <span class="mx-2">/</span>
+            <span class="mr-2">{{ $t('packages_dag_button_zoom_out') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
+          </div>
 
-      <div>
-        <span class="mr-2">{{ $t('packages_dag_components_paperempty_huabushijichi') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>0</kbd>
-        <span class="mx-2">/</span>
-        <span class="mr-2">{{ $t('packages_dag_components_paperempty_shiyinghuabu') }}</span>
-        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>1</kbd>
-      </div>
+          <div>
+            <span class="mr-2">{{ $t('packages_dag_components_paperempty_huabushijichi') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>0</kbd>
+            <span class="mx-2">/</span>
+            <span class="mr-2">{{ $t('packages_dag_components_paperempty_shiyinghuabu') }}</span>
+            <kbd>⌘</kbd><span class="mx-1">+</span><kbd>1</kbd>
+          </div>
 
-      <div>
-        <span class="mr-2">{{ $t('packages_dag_button_auto_layout') }}</span>
-        <kbd>⌘</kbd>
-        <span class="mx-1">+</span>
-        <kbd>⌥</kbd>
-        <span class="mx-1">+</span>
-        <kbd>L</kbd>
-      </div>
+          <div>
+            <span class="mr-2">{{ $t('packages_dag_button_auto_layout') }}</span>
+            <kbd>⌘</kbd>
+            <span class="mx-1">+</span>
+            <kbd>⌥</kbd>
+            <span class="mx-1">+</span>
+            <kbd>L</kbd>
+          </div>
 
-      <div>
-        <span class="mr-2">{{ $t('public_button_delete') }}</span
-        ><kbd>⌫</kbd>
-      </div>
-    </div>-->
+          <div>
+            <span class="mr-2">{{ $t('public_button_delete') }}</span
+            ><kbd>⌫</kbd>
+          </div>
+        </div>-->
   </div>
 </template>
 
 <script>
 import '@figmania/webcomponent'
 export default {
-  name: 'PaperEmpty'
+  name: 'PaperEmpty',
 
   /*components: {
     ShadowSvg: {
@@ -375,16 +442,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.paper-empty {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  //background: #fff;
-
-  .hotkey-list {
+<style lang="scss" scoped>
+.paper-empty{position:absolute;left:0;right:0;top:0;bottom:0;//background:#fff;.hotkey-list {
     font-size: 16px;
     text-align: center;
     line-height: 40px;
@@ -403,6 +462,5 @@ export default {
       border: 1px solid rgba(100, 100, 100, 0.1);
       border-radius: 3px;
     }
-  }
-}
+  }}
 </style>

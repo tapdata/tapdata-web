@@ -6,8 +6,8 @@ export default defineComponent({
   props: {
     type: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
   setup(props) {
     return () => {
@@ -28,11 +28,11 @@ export default defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .connection-type-tag-wrap {
   .el-tag {
     transform: scale(0.8333);

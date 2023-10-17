@@ -1,7 +1,12 @@
 <template>
   <div class="h-100">
-    <GitBook v-if="!showIframe" class="bg-white border-0" :value="doc"></GitBook>
-    <iframe v-else ref="docsIframe" :src="src" class="w-100 h-100 block"> </iframe>
+    <GitBook
+      v-if="!showIframe"
+      class="bg-white border-0"
+      :value="doc"
+    ></GitBook>
+    <iframe v-else ref="docsIframe" :src="src" class="w-100 h-100 block">
+    </iframe>
   </div>
 </template>
 
@@ -42,21 +47,31 @@ const pdkDocMap = {
   tdengine: 'cloud/prerequisites/on-prem-databases/tdengine',
   tidb: 'cloud/prerequisites/on-prem-databases/tidb',
   'aliyun-adb-mysql': 'cloud/prerequisites/cloud-databases/aliyun-adb-mysql',
-  'aliyun-adb-postgresql': 'cloud/prerequisites/cloud-databases/aliyun-adb-postgresql',
+  'aliyun-adb-postgresql':
+    'cloud/prerequisites/cloud-databases/aliyun-adb-postgresql',
   'aliyun-mongodb': 'cloud/prerequisites/cloud-databases/aliyun-mongodb',
-  'aliyun-rds-for-mariadb': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mariadb',
-  'aliyun-rds-for-mongodb': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mongodb',
-  'aliyun-rds-for-mysql': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-mysql',
+  'aliyun-rds-for-mariadb':
+    'cloud/prerequisites/cloud-databases/aliyun-rds-for-mariadb',
+  'aliyun-rds-for-mongodb':
+    'cloud/prerequisites/cloud-databases/aliyun-rds-for-mongodb',
+  'aliyun-rds-for-mysql':
+    'cloud/prerequisites/cloud-databases/aliyun-rds-for-mysql',
   'aliyun-rds-for-pg': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-pg',
-  'aliyun-rds-for-sql-server': 'cloud/prerequisites/cloud-databases/aliyun-rds-for-sql-server',
+  'aliyun-rds-for-sql-server':
+    'cloud/prerequisites/cloud-databases/aliyun-rds-for-sql-server',
   'amazon-rds-mysql': 'cloud/prerequisites/cloud-databases/amazon-rds-mysql',
   'polardb-mysql': 'cloud/prerequisites/cloud-databases/polardb-mysql',
-  'polardb-postgresql': 'cloud/prerequisites/cloud-databases/polardb-postgresql',
-  'tencentdb-for-mariadb': 'cloud/prerequisites/cloud-databases/tencentdb-for-mariadb',
-  'tencentdb-for-mongodb': 'cloud/prerequisites/cloud-databases/tencentdb-for-mongodb',
-  'tencentdb-for-mysql': 'cloud/prerequisites/cloud-databases/tencentdb-for-mysql',
+  'polardb-postgresql':
+    'cloud/prerequisites/cloud-databases/polardb-postgresql',
+  'tencentdb-for-mariadb':
+    'cloud/prerequisites/cloud-databases/tencentdb-for-mariadb',
+  'tencentdb-for-mongodb':
+    'cloud/prerequisites/cloud-databases/tencentdb-for-mongodb',
+  'tencentdb-for-mysql':
+    'cloud/prerequisites/cloud-databases/tencentdb-for-mysql',
   'tencentdb-for-pg': 'cloud/prerequisites/cloud-databases/tencentdb-for-pg',
-  'tencentdb-for-sql-server': 'cloud/prerequisites/cloud-databases/tencentdb-for-sql-server',
+  'tencentdb-for-sql-server':
+    'cloud/prerequisites/cloud-databases/tencentdb-for-sql-server',
   activemq: 'cloud/prerequisites/mq-and-middleware/activemq',
   'ai-chat': 'cloud/prerequisites/mq-and-middleware/ai-chat',
   'bes-channels': 'cloud/prerequisites/mq-and-middleware/bes-channels',
@@ -86,7 +101,7 @@ const pdkDocMap = {
   'custom-connection': 'cloud/prerequisites/others/custom-connection',
   dummy: 'cloud/prerequisites/others/dummy',
   'http-receiver': 'cloud/prerequisites/others/http-receiver',
-  greenplum: 'cloud/prerequisites/warehouses-and-lake/greenplum'
+  greenplum: 'cloud/prerequisites/warehouses-and-lake/greenplum',
 }
 const pdkNameDictionary = {
   ali1688: 'alibaba-1688',
@@ -114,7 +129,7 @@ const pdkNameDictionary = {
   'tencent-db-mongodb': 'tencentdb-for-mongodb',
   'tencent-db-mysql': 'tencentdb-for-mysql',
   'tencent-db-postgres': 'tencentdb-for-pg',
-  'tencent-db-sqlserver': 'tencentdb-for-sql-server'
+  'tencent-db-sqlserver': 'tencentdb-for-sql-server',
 }
 
 export default {
@@ -122,17 +137,17 @@ export default {
 
   props: {
     pdkId: String,
-    pdkHash: String
+    pdkHash: String,
   },
 
   components: {
-    GitBook
+    GitBook,
   },
 
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      doc: ''
+      doc: '',
     }
   },
 
@@ -150,7 +165,7 @@ export default {
     },
     showIframe() {
       return !this.isDaas && this.docUrl
-    }
+    },
   },
 
   created() {
@@ -161,12 +176,10 @@ export default {
 
   methods: {
     getPdkDoc() {
-      pdkApi.doc(this.pdkHash).then(res => {
+      pdkApi.doc(this.pdkHash).then((res) => {
         this.doc = res?.data
       })
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped lang="scss"></style>

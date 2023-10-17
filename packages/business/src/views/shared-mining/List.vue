@@ -1,21 +1,38 @@
 <template>
   <section class="share-list-wrap h-100">
-    <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+    <TablePage
+      ref="table"
+      row-key="id+indexName"
+      class="share-list"
+      :remoteMethod="getData"
+    >
+      <template v-slot:search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        >
+        </FilterBar>
       </template>
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
       <!--      <div slot="operation">-->
       <!--        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">-->
       <!--        </el-button>-->
       <!--      </div>-->
-      <el-table-column min-width="250" :label="$t('packages_business_shared_list_name')" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
+      <el-table-column
+        min-width="250"
+        :label="$t('packages_business_shared_list_name')"
+        :show-overflow-tooltip="true"
+      >
+        <template v-slot="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column min-width="160" :label="$t('packages_business_shared_list_time_excavation')">
-        <template slot-scope="scope">
+      <el-table-column
+        min-width="160"
+        :label="$t('packages_business_shared_list_time_excavation')"
+      >
+        <template v-slot="scope">
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
@@ -25,13 +42,27 @@
         :label="$t('packages_business_shared_list_time')"
         prop="delayTime"
       ></el-table-column>
-      <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
-      <el-table-column min-width="110" prop="status" :label="$t('packages_business_shared_list_status')">
+      <el-table-column
+        prop="createTime"
+        min-width="160"
+        :label="$t('public_create_time')"
+        sortable
+      >
+      </el-table-column>
+      <el-table-column
+        min-width="110"
+        prop="status"
+        :label="$t('packages_business_shared_list_status')"
+      >
         <template #default="{ row }">
           <TaskStatus :task="row" />
         </template>
       </el-table-column>
-      <el-table-column width="260" fixed="right" :label="$t('public_operation')">
+      <el-table-column
+        width="260"
+        fixed="right"
+        :label="$t('public_operation')"
+      >
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink
@@ -63,7 +94,10 @@
                 {{ $t('public_button_stop') }}
               </ElLink>
             </template>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_operation'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -72,7 +106,10 @@
             >
               {{ $t('public_button_edit') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -81,7 +118,10 @@
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -90,7 +130,10 @@
             >
               {{ $t('public_button_reset') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -109,7 +152,7 @@
       custom-class="setting-dialog"
       :title="$t('packages_business_shared_list_setting')"
       :close-on-click-modal="false"
-      :visible.sync="settingDialogVisible"
+      v-model:visible="settingDialogVisible"
     >
       <el-form
         ref="digSettingForm"
@@ -124,8 +167,13 @@
           size="mini"
           :label="$t('packages_business_shared_cdc_setting_select_mode')"
         >
-          <el-select v-model="digSettingForm.persistenceMode">
-            <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
+          <el-select v-model:value="digSettingForm.persistenceMode">
+            <el-option
+              v-for="item in enumsItems"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
           </el-select>
         </el-form-item>
 
@@ -135,7 +183,10 @@
           size="mini"
           label="MongoDB URI"
         >
-          <el-input type="textarea" v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
+          <el-input
+            type="textarea"
+            v-model:value="digSettingForm.persistenceMongodb_uri_db"
+          ></el-input>
         </el-form-item>
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
@@ -143,7 +194,10 @@
           size="mini"
           :label="$t('packages_business_shared_form_setting_table_name')"
         >
-          <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
+          <el-input
+            v-model:value="digSettingForm.persistenceMongodb_collection"
+          >
+          </el-input>
         </el-form-item>
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'RocksDB'"
@@ -151,7 +205,10 @@
           size="mini"
           :label="$t('packages_business_shared_cdc_persistence_rocksdb_path')"
         >
-          <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
+          <el-input
+            type="textarea"
+            v-model:value="digSettingForm.persistenceRocksdb_path"
+          ></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
@@ -161,19 +218,35 @@
           <el-select
             allow-create
             filterable
-            v-model="digSettingForm.share_cdc_ttl_day"
-            :placeholder="$t('packages_business_shared_cdc_setting_select_time_tip')"
+            v-model:value="digSettingForm.share_cdc_ttl_day"
+            :placeholder="
+              $t('packages_business_shared_cdc_setting_select_time_tip')
+            "
           >
-            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('public_time_d')" :value="op"> </el-option>
+            <el-option
+              v-for="op in logSaveList"
+              :key="op"
+              :label="op + $t('public_time_d')"
+              :value="op"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
-          $t('public_button_confirm')
-        }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button size="mini" @click="settingDialogVisible = false">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            :disabled="!showEditSettingBtn"
+            @click="saveSetting()"
+            >{{ $t('public_button_confirm') }}</el-button
+          >
+        </span>
+      </template>
     </el-dialog>
 
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
@@ -182,28 +255,40 @@
     <ElDialog
       :title="$t('public_message_title_prompt')"
       :close-on-click-modal="false"
-      :visible.sync="showUsingTaskDialog.visible"
+      v-model:visible="showUsingTaskDialog.visible"
       custom-class="create-role"
       width="600px"
     >
       <div>
-        {{ $t('packages_business_shared_mining_list_gaiwajuerenwu', { val: showUsingTaskDialog.list.length }) }}
+        {{
+          $t('packages_business_shared_mining_list_gaiwajuerenwu', {
+            val: showUsingTaskDialog.list.length,
+          })
+        }}
       </div>
-      <VTable :columns="taskColumns" :data="showUsingTaskDialog.list" :has-pagination="false">
+      <VTable
+        :columns="taskColumns"
+        :data="showUsingTaskDialog.list"
+        :has-pagination="false"
+      >
         <template #name="{ row }">
-          <ElLink type="primary" @click="handleName(row)">{{ row.name }}</ElLink>
+          <ElLink type="primary" @click="handleName(row)">{{
+            row.name
+          }}</ElLink>
         </template>
       </VTable>
-      <div slot="footer" class="dialog-footer">
-        <ElButton
-          size="mini"
-          @click="
-            showUsingTaskDialog.list = []
-            showUsingTaskDialog.visible = false
-          "
-          >{{ $t('public_button_cancel') }}
-        </ElButton>
-      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <ElButton
+            size="mini"
+            @click="
+              showUsingTaskDialog.list = []
+              showUsingTaskDialog.visible = false
+            "
+            >{{ $t('public_button_cancel') }}
+          </ElButton>
+        </div>
+      </template>
     </ElDialog>
   </section>
 </template>
@@ -226,25 +311,29 @@ export default {
     FilterBar,
     TaskStatus,
     Editor,
-    VTable
+    VTable,
   },
   data() {
     return {
       searchParams: {
         taskName: '',
-        connectionName: ''
+        connectionName: '',
       },
       filterItems: [
         {
-          placeholder: this.$t('packages_business_shared_cdc_placeholder_task_name'),
+          placeholder: this.$t(
+            'packages_business_shared_cdc_placeholder_task_name'
+          ),
           key: 'taskName',
-          type: 'input'
+          type: 'input',
         },
         {
-          placeholder: this.$t('packages_business_shared_cdc_placeholder_connection_name'),
+          placeholder: this.$t(
+            'packages_business_shared_cdc_placeholder_connection_name'
+          ),
           key: 'connectionName',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       order: 'createTime DESC',
       list: null,
@@ -255,7 +344,7 @@ export default {
         persistenceMongodb_uri_db: '', // mongodb uri
         persistenceMongodb_collection: '', // mongodb tablename
         persistenceRocksdb_path: '', // rocksdb路径
-        share_cdc_ttl_day: 3
+        share_cdc_ttl_day: 3,
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
@@ -264,28 +353,36 @@ export default {
         persistenceMongodb_uri_db: [
           {
             required: true,
-            message: this.$t('packages_business_shared_cdc_setting_select_mongodb_tip'),
-            trigger: 'blur'
-          }
+            message: this.$t(
+              'packages_business_shared_cdc_setting_select_mongodb_tip'
+            ),
+            trigger: 'blur',
+          },
         ],
         persistenceMongodb_collection: [
-          { required: true, message: this.$t('packages_business_shared_cdc_setting_select_table_tip'), trigger: 'blur' }
-        ]
+          {
+            required: true,
+            message: this.$t(
+              'packages_business_shared_cdc_setting_select_table_tip'
+            ),
+            trigger: 'blur',
+          },
+        ],
       },
       taskBuried: {
-        start: 'sharedMiningStart'
+        start: 'sharedMiningStart',
       },
       showUsingTaskDialog: {
         visible: false,
-        list: []
+        list: [],
       },
       taskColumns: [
         {
           label: i18n.t('public_task_name'),
           prop: 'name',
-          slotName: 'name'
-        }
-      ]
+          slotName: 'name',
+        },
+      ],
     }
   },
   mounted() {
@@ -293,7 +390,9 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
-    this.searchParams = Object.assign(this.searchParams, { taskName: this.$route.query?.keyword || '' })
+    this.searchParams = Object.assign(this.searchParams, {
+      taskName: this.$route.query?.keyword || '',
+    })
   },
   computed: {
     table() {
@@ -309,14 +408,14 @@ export default {
         systemTimeZone = '+' + -timeZone
       }
       return systemTimeZone
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
@@ -331,33 +430,37 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return logcollectorApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           let pointTime = new Date()
           return {
             total: data?.total || 0,
-            data: list.map(item => {
-              this.$set(item, 'pointTime', pointTime)
+            data: list.map((item) => {
+              item['pointTime'] = pointTime
               if (item.syncTimePoint === 'current') {
                 item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
               } else {
                 item.pointTime = item.syncTimeZone
               }
-              item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+              item.createTime = dayjs(item.createTime).format(
+                'YYYY-MM-DD HH:mm:ss'
+              )
+              item.logTime = item.logTime
+                ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
               item.delayTime = item.delayTime < 0 ? '-' : item.delayTime
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false
               }
               return item
-            })
+            }),
           }
         })
     },
@@ -367,12 +470,12 @@ export default {
       this.loadingConfig = true
       logcollectorApi
         .check()
-        .then(data => {
+        .then((data) => {
           this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
           logcollectorApi
             .getSystemConfig()
-            .then(data => {
+            .then((data) => {
               if (data) {
                 this.digSettingForm = data
               }
@@ -387,7 +490,7 @@ export default {
     },
     //保存全局挖掘设置
     saveSetting() {
-      this.$refs.digSettingForm.validate(valid => {
+      this.$refs.digSettingForm.validate((valid) => {
         if (valid) {
           if (this.digSettingForm?.persistenceMode === 'Mem') {
             this.digSettingForm.persistenceMongodb_uri_db = ''
@@ -411,15 +514,17 @@ export default {
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
-          id: ids[0]
-        }
+          id: ids[0],
+        },
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi
           .batchStart(ids)
-          .then(data => {
+          .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
-            this.$message.success(data?.message || this.$t('public_message_operation_success'))
+            this.$message.success(
+              data?.message || this.$t('public_message_operation_success')
+            )
             this.table.fetch()
           })
           .catch(() => {
@@ -433,13 +538,15 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+        taskApi.forceStop(ids).then((data) => {
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success')
+          )
           this.table.fetch()
         })
       })
@@ -450,14 +557,16 @@ export default {
         this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
         {
-          type: 'warning'
+          type: 'warning',
         }
-      ).then(resFlag => {
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+        taskApi.batchStop(ids).then((data) => {
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success')
+          )
           this.table.fetch()
         })
       })
@@ -479,8 +588,8 @@ export default {
       this.openRoute({
         name: 'SharedMiningMonitor',
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -496,7 +605,7 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title)
+        title: this.$t('dataFlow_' + title),
       }
     },
 
@@ -505,13 +614,15 @@ export default {
       let msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then(data => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+        taskApi.batchRenew([id]).then((data) => {
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success')
+          )
           this.table.fetch()
         })
       })
@@ -520,14 +631,20 @@ export default {
     async handleDelete(row) {
       const filter = {
         type: 'task_by_collector',
-        taskId: row.id
+        taskId: row.id,
       }
       this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
 
-      this.$confirm(this.$t('packages_business_shared_mining_list_shanchurenwus', { val1: row.name }), '', {
-        type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(flag => {
+      this.$confirm(
+        this.$t('packages_business_shared_mining_list_shanchurenwus', {
+          val1: row.name,
+        }),
+        '',
+        {
+          type: 'warning',
+          dangerouslyUseHTMLString: true,
+        }
+      ).then((flag) => {
         if (!flag) {
           return
         }
@@ -535,8 +652,10 @@ export default {
           this.showUsingTaskDialog.visible = true
           return
         }
-        taskApi.batchDelete([row.id]).then(data => {
-          this.$message.success(data?.message || this.$t('public_message_operation_success'))
+        taskApi.batchDelete([row.id]).then((data) => {
+          this.$message.success(
+            data?.message || this.$t('public_message_operation_success')
+          )
           this.table.fetch()
         })
       })
@@ -548,19 +667,20 @@ export default {
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
         mem_cache: 'sharedCacheList',
-        connHeartbeat: 'HeartbeatTableList'
+        connHeartbeat: 'HeartbeatTableList',
       }
       const routeUrl = this.$router.resolve({
         name: MAP[type] || MAP[syncType],
         query: {
-          keyword: name
-        }
+          keyword: name,
+        },
       })
       openUrl(routeUrl.href)
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .share-list-wrap {
   height: 100%;
@@ -631,6 +751,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .hide-current__dateTime {
   .el-picker-panel__footer {

@@ -17,14 +17,14 @@ export class Union extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -32,17 +32,17 @@ export class Union extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

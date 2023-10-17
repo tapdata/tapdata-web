@@ -13,11 +13,11 @@ export const FreeSelection = observer(
       const createSelectionStyle = () => {
         const startDragPoint = viewportRef.value.getOffsetPoint({
           x: cursor.dragStartPosition.topClientX,
-          y: cursor.dragStartPosition.topClientY
+          y: cursor.dragStartPosition.topClientY,
         })
         const currentPoint = viewportRef.value.getOffsetPoint({
           x: cursor.position.topClientX,
-          y: cursor.position.topClientY
+          y: cursor.position.topClientY,
         })
         const rect = calcRectByStartEndPoint(
           startDragPoint,
@@ -37,15 +37,19 @@ export const FreeSelection = observer(
           width: rect.width,
           pointerEvents: 'none',
           boxSizing: 'border-box',
-          zIndex: 1
+          zIndex: 1,
         }
         return baseStyle
       }
 
       return () => {
-        if (cursor.status !== CursorStatus.Dragging || cursor.type !== CursorType.Selection) return null
+        if (
+          cursor.status !== CursorStatus.Dragging ||
+          cursor.type !== CursorType.Selection
+        )
+          return null
         return <div class={prefix} style={createSelectionStyle()}></div>
       }
-    }
+    },
   })
 )

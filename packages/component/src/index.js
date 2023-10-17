@@ -60,7 +60,7 @@ export {
   InlineInput,
   OverflowTooltip,
   DarkSelect,
-  TimeSelect
+  TimeSelect,
 }
 
 export * from './base'

@@ -7,27 +7,45 @@
           <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
         </div>
         <div>
-          <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
-          <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
+          <el-button size="mini" @click="back"
+            >{{ $t('public_button_back') }}
+          </el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            :loading="saveloading"
+            @click="save('ruleForm')"
             >{{ $t('public_button_save') }}
           </el-button>
         </div>
       </head>
 
       <div class="role-tableBox">
-        <div class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2">
+        <div
+          class="alert-tip flex align-items-center mb-4 bg-warning-light rounded-2 px-4 py-2"
+        >
           <VIcon class="color-warning mr-3" size="20">warning</VIcon>
           <span>{{ $t('daas_role_role_gouxuanxiangyingmo') }}</span>
         </div>
         <ul class="role-table page-table">
           <li class="role-head">
             <el-row class="e-row">
-              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_gongnengmokuai') }}</el-col>
-              <el-col class="e-col borderRight" :span="4">{{ $t('daas_role_role_yemianquanxian') }}</el-col>
-              <el-col class="e-col borderRight" :span="14">{{ $t('daas_role_role_gongnengquanxian') }}</el-col>
+              <el-col class="e-col borderRight" :span="4">{{
+                $t('daas_role_role_gongnengmokuai')
+              }}</el-col>
+              <el-col class="e-col borderRight" :span="4">{{
+                $t('daas_role_role_yemianquanxian')
+              }}</el-col>
+              <el-col class="e-col borderRight" :span="14">{{
+                $t('daas_role_role_gongnengquanxian')
+              }}</el-col>
               <el-col class="e-col flex align-items-center" :span="2">
                 <span>{{ $t('daas_role_role_chakanquanbushu') }}</span>
-                <ElTooltip transition="tooltip-fade-in" placement="top" :content="$t('daas_role_role_chakanquanbushu')">
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  placement="top"
+                  :content="$t('daas_role_role_chakanquanbushu')"
+                >
                   <VIcon size="16" class="color-info ml-2">info</VIcon>
                 </ElTooltip>
               </el-col>
@@ -35,7 +53,10 @@
           </li>
           <li v-for="item in dataList" :key="item.id">
             <el-row class="e-row flex">
-              <el-col class="e-col flex justify-content-center align-items-center" :span="4">
+              <el-col
+                class="e-col flex justify-content-center align-items-center"
+                :span="4"
+              >
                 <span>{{ item.description }}</span>
               </el-col>
               <el-col class="e-col border-start" :span="4">
@@ -45,8 +66,7 @@
                   :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
                 >
                   <el-checkbox
-                    :key="second.name"
-                    v-model="second.checked"
+                    v-model:value="second.checked"
                     v-if="second.id"
                     @change="handleCheckChange(second, item, 'page')"
                     v-cloak
@@ -64,7 +84,6 @@
                   :class="['pl-3', secondIndex !== 0 ? 'border-top' : '']"
                 >
                   <el-checkbox
-                    :key="second.name"
                     :value="true"
                     disabled
                     v-if="!second.buttons || !second.buttons.length"
@@ -75,8 +94,7 @@
                   <el-checkbox
                     v-else
                     v-for="(sItem, sIndex) in second.buttons"
-                    :key="sIndex"
-                    v-model="sItem.checked"
+                    v-model:value="sItem.checked"
                     @change="handleCheckChange(sItem, second, 'button')"
                     v-cloak
                     class="mr-10"
@@ -89,14 +107,18 @@
                 <div
                   v-for="(second, secondIndex) in item.children"
                   :key="secondIndex"
-                  :class="['pl-3', secondIndex !== 0 && second.filterData ? 'border-top border-bottom' : '']"
+                  :class="[
+                    'pl-3',
+                    secondIndex !== 0 && second.filterData
+                      ? 'border-top border-bottom'
+                      : '',
+                  ]"
                 >
                   <span v-if="!second.filterData" class="invisible">-</span>
                   <el-switch
                     v-else
                     v-for="(sItem, sIndex) in second.filterData"
-                    v-model="sItem.checked"
-                    :key="sIndex"
+                    v-model:value="sItem.checked"
                     @change="handleCheckChange(sItem, second, 'data')"
                   ></el-switch>
                 </div>
@@ -110,6 +132,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { roleMappingsApi, permissionsApi, usersApi } from '@tap/api'
@@ -124,20 +147,20 @@ let pageSort = [
         buttons: [
           {
             label: i18n.t('public_connection_button_create'),
-            name: 'v2_datasource_creation'
+            name: 'v2_datasource_creation',
           },
           {
             label: i18n.t('public_connection_button_copy'),
-            name: 'v2_datasource_copy'
-          }
+            name: 'v2_datasource_copy',
+          },
         ],
         filterData: [
           {
-            name: 'v2_datasource_all_data'
-          }
-        ]
-      }
-    ]
+            name: 'v2_datasource_all_data',
+          },
+        ],
+      },
+    ],
   },
   {
     name: 'v2_data_pipeline',
@@ -148,29 +171,29 @@ let pageSort = [
           {
             label: i18n.t('public_task_create'),
             name: 'v2_data_replication_creation',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_copy'),
             name: 'v2_data_replication_copy',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_import'),
             name: 'v2_data_replication_import',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_export'),
             name: 'v2_data_replication_export',
-            checked: false
-          }
+            checked: false,
+          },
         ],
         filterData: [
           {
-            name: 'v2_data_replication_all_data'
-          }
-        ]
+            name: 'v2_data_replication_all_data',
+          },
+        ],
       },
       {
         name: 'v2_data_flow',
@@ -178,32 +201,32 @@ let pageSort = [
           {
             label: i18n.t('public_task_create'),
             name: 'v2_data_flow_creation',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_copy'),
             name: 'v2_data_flow_copy',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_import'),
             name: 'v2_data_flow_import',
-            checked: false
+            checked: false,
           },
           {
             label: i18n.t('public_task_export'),
             name: 'v2_data_flow_export',
-            checked: false
-          }
+            checked: false,
+          },
         ],
         filterData: [
           {
-            name: 'v2_data_flow_all_data'
-          }
-        ]
+            name: 'v2_data_flow_all_data',
+          },
+        ],
       },
-      { name: 'v2_data_check' }
-    ]
+      { name: 'v2_data_check' },
+    ],
   },
   {
     name: 'v2_advanced_features',
@@ -211,12 +234,12 @@ let pageSort = [
       { name: 'v2_log_collector' },
       { name: 'v2_function_management' },
       { name: 'v2_custom_node' },
-      { name: 'v2_shared_cache' }
-    ]
+      { name: 'v2_shared_cache' },
+    ],
   },
   {
     name: 'v2_data_discovery',
-    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }]
+    children: [{ name: 'v2_data_object' }, { name: 'v2_data_catalogue' }],
   },
   {
     name: 'v2_data-server',
@@ -226,8 +249,8 @@ let pageSort = [
       { name: 'v2_api-client' },
       { name: 'v2_api-servers' },
       { name: 'v2_data_server_audit' },
-      { name: 'v2_api_monitor' }
-    ]
+      { name: 'v2_api_monitor' },
+    ],
   },
   {
     name: 'v2_system-management',
@@ -235,9 +258,9 @@ let pageSort = [
       { name: 'v2_cluster-management_menu' },
       { name: 'v2_external-storage_menu' },
       { name: 'v2_user_management_menu' },
-      { name: 'v2_role_management' }
-    ]
-  }
+      { name: 'v2_role_management' },
+    ],
+  },
 ]
 
 export default {
@@ -249,7 +272,7 @@ export default {
       form: {
         name: '',
         description: '',
-        register_user_default: false
+        register_user_default: false,
       },
       dataList: [],
       rolemappings: [],
@@ -260,36 +283,36 @@ export default {
       radio: 1,
       moduleList: [],
       adds: [],
-      deletes: []
+      deletes: [],
     }
   },
-
   created() {
     this.roleName = this.$route.query.name ? this.$route.query.name : ''
     this.getPermission()
   },
-
   methods: {
     // 获取用户权限数据
     getMappingData(pageData) {
       this.loading = true
       let filter = {
         where: {
-          roleId: this.$route.query.id
-        }
+          roleId: this.$route.query.id,
+        },
       }
       roleMappingsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data?.length) {
-            data.forEach(item => {
+            data.forEach((item) => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
               if (item.principalType === 'PERMISSION') {
-                let selected = this.permissionList.filter(v => v.name === item.principalId)
+                let selected = this.permissionList.filter(
+                  (v) => v.name === item.principalId
+                )
                 if (selected && selected.length > 0) {
                   selected[0].self_only = item.self_only
                   this.selectRole.push(selected[0].name)
@@ -298,22 +321,24 @@ export default {
             })
             this.rolemappings = data?.items
 
-            pageData?.forEach(item => {
+            pageData?.forEach((item) => {
               // 页面权限
-              item.children?.forEach(childItem => {
-                this.$set(childItem, 'checked', this.selectRole.includes(childItem.name))
-                this.$set(childItem, 'checkOrigin', this.selectRole.includes(childItem.name))
+              item.children?.forEach((childItem) => {
+                childItem['checked'] = this.selectRole.includes(childItem.name)
+                childItem['checkOrigin'] = this.selectRole.includes(
+                  childItem.name
+                )
 
                 // 按钮权限
-                childItem.buttons?.forEach(el => {
-                  this.$set(el, 'checked', this.selectRole.includes(el.name))
-                  this.$set(el, 'checkOrigin', this.selectRole.includes(el.name))
+                childItem.buttons?.forEach((el) => {
+                  el['checked'] = this.selectRole.includes(el.name)
+                  el['checkOrigin'] = this.selectRole.includes(el.name)
                 })
 
                 // 显示数据
-                childItem.filterData?.forEach(el => {
-                  this.$set(el, 'checked', this.selectRole.includes(el.name))
-                  this.$set(el, 'checkOrigin', this.selectRole.includes(el.name))
+                childItem.filterData?.forEach((el) => {
+                  el['checked'] = this.selectRole.includes(el.name)
+                  el['checkOrigin'] = this.selectRole.includes(el.name)
                 })
               })
             })
@@ -332,20 +357,20 @@ export default {
 
       permissionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data && data.length) {
             self.permissionList = data
 
             // 页面排序  ---- 开始
             let pageMap = {}
-            self.permissionList.forEach(item => {
+            self.permissionList.forEach((item) => {
               pageMap[item.name] = item
             })
 
-            let pageMenu = items => {
-              return items.map(item => {
+            let pageMenu = (items) => {
+              return items.map((item) => {
                 let page = pageMap[item.name]
                 let menu = Object.assign({}, item, page)
                 if (menu.children) {
@@ -374,7 +399,7 @@ export default {
       if (type === 'page' && !data.checked) {
         // 如果父元素的页面权限全部不勾选，则父元素也隐藏
         if (
-          !!parentData.children?.every(t => !t.checked) &&
+          !!parentData.children?.every((t) => !t.checked) &&
           !this.checkPrincipalId(this.deletes, parentData.name)?.length
         ) {
           parentData.checked = false
@@ -382,7 +407,7 @@ export default {
         }
 
         // 按钮权限全部关闭
-        data.buttons?.forEach(el => {
+        data.buttons?.forEach((el) => {
           el.checked = false
           this.updateData(el.checked, el)
         })
@@ -406,12 +431,14 @@ export default {
             this.adds.push({
               principalType: 'PERMISSION',
               principalId: data.name,
-              roleId: roleId
+              roleId: roleId,
             })
           }
         }
         //同时清掉 deletes
-        let index = this.deletes?.findIndex(del => del.principalId === data.name)
+        let index = this.deletes?.findIndex(
+          (del) => del.principalId === data.name
+        )
         if (index > -1) {
           this.deletes.splice(index, 1)
         }
@@ -422,13 +449,13 @@ export default {
             this.deletes.push({
               principalType: 'PERMISSION',
               principalId: data.name,
-              roleId: roleId
+              roleId: roleId,
             })
           }
         }
 
         //同时清掉 adds
-        let index = this.adds?.findIndex(add => add.principalId === data.name)
+        let index = this.adds?.findIndex((add) => add.principalId === data.name)
         if (index > -1) {
           this.adds.splice(index, 1)
         }
@@ -436,7 +463,7 @@ export default {
     },
     //查找是否存在某个字段
     checkPrincipalId(data, principalId) {
-      return data.filter(item => item.principalId === principalId) || []
+      return data.filter((item) => item.principalId === principalId) || []
     },
     //新的保存方法
     save() {
@@ -445,17 +472,17 @@ export default {
       this.saveloading = true
       let data = {
         adds: this.adds,
-        deletes: this.deletes
+        deletes: this.deletes,
       }
       usersApi
         .updatePermissionRoleMapping(roleId, data)
         .then(() => {
-          this.$emit('saveBack')
+          $emit(this, 'saveBack')
           this.$message.success(this.$t('public_message_save_ok'))
           this.adds = []
           this.deletes = []
           this.$router.push({
-            name: 'roleList'
+            name: 'roleList',
           })
         })
         .finally(() => {
@@ -470,14 +497,19 @@ export default {
         return
       }
 
-      this.$confirm(i18n.t('daas_role_role_ninhaiweibaocun'), this.$t('public_message_title_prompt'), {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(flag => {
+      this.$confirm(
+        i18n.t('daas_role_role_ninhaiweibaocun'),
+        this.$t('public_message_title_prompt'),
+        {
+          type: 'warning',
+          closeOnClickModal: false,
+        }
+      ).then((flag) => {
         flag && this.save()
       })
-    }
-  }
+    },
+  },
+  emits: ['saveBack'],
 }
 </script>
 
@@ -654,11 +686,9 @@ export default {
     }
   }
 }
-
 [v-cloak] {
   display: none;
 }
-
 .alert-tip {
   border-left: 4px solid #ffcf8b;
 }

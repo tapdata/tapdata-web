@@ -9,4 +9,12 @@ import PaperScroller from './components/PaperScroller'
 export * from './components'
 export * from './constants'
 export * from './instance'
-export { Editor, MigrationEditor, MigrationMonitor, MigrationMonitorViewer, langs, NodeViewer, PaperScroller }
+export {
+  Editor,
+  MigrationEditor,
+  MigrationMonitor,
+  MigrationMonitorViewer,
+  langs,
+  NodeViewer,
+  PaperScroller,
+}

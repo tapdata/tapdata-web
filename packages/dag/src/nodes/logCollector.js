@@ -22,25 +22,25 @@ export class LogCollector extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       $outputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       databaseType: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       connectionId: {
         type: 'string',
         'x-display': 'hidden',
-        'x-reactions': '{{useSyncConnection}}'
+        'x-reactions': '{{useSyncConnection}}',
       },
 
       type: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       tabs: {
@@ -48,14 +48,14 @@ export class LogCollector extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -63,7 +63,7 @@ export class LogCollector extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
 
               sourceConfig: {
@@ -72,9 +72,9 @@ export class LogCollector extends NodeType {
                   dependencies: ['$outputs'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
-                    }
-                  }
+                      display: '{{$deps[0].length > 0 ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   SharedMiningTableInfo: {
@@ -82,24 +82,24 @@ export class LogCollector extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-component': 'SharedMiningTableInfo',
                     'x-component-props': {
-                      height: '280px'
-                    }
+                      height: '280px',
+                    },
                   },
 
                   nodeConfig: {
-                    type: 'object'
-                  }
-                }
-              }
-            }
-          }
-        }
+                    type: 'object',
+                  },
+                },
+              },
+            },
+          },
+        },
       },
 
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden'
-      }
-    }
+        'x-display': 'hidden',
+      },
+    },
   }
 }

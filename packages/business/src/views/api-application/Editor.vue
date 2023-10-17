@@ -17,29 +17,50 @@
       :rules="rulesEdit"
       class="my-n6"
     >
-      <ElFormItem size="mini" :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model="editForm.value" type="text" maxlength="50" clearable></ElInput>
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_application_list_yingyongmingcheng')"
+        prop="value"
+      >
+        <ElInput
+          v-model:value="editForm.value"
+          type="text"
+          maxlength="50"
+          clearable
+        ></ElInput>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
-        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_application_editor_yingyongmiaoshu')"
+        prop="desc"
+      >
+        <ElInput v-model:value="editForm.desc" type="textarea"></ElInput>
       </ElFormItem>
     </ElForm>
-    <span class="dialog-footer" slot="footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton size="mini" type="primary" :loading="saveLoading" @click="handleSave">{{
-        $t('public_button_save')
-      }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose" size="mini">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton
+          size="mini"
+          type="primary"
+          :loading="saveLoading"
+          @click="handleSave"
+          >{{ $t('public_button_save') }}</ElButton
+        >
+      </span>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { appApi } from '@tap/api'
 
 export default {
   name: 'Editor',
-
   data() {
     return {
       visible: false,
@@ -51,20 +72,21 @@ export default {
         value: [
           {
             required: true,
-            message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
-            trigger: 'blur'
-          }
-        ]
-      }
+            message: i18n.t(
+              'packages_business_application_delete_yingyongmingchengbu'
+            ),
+            trigger: 'blur',
+          },
+        ],
+      },
     }
   },
-
   methods: {
     init() {
       this.editForm = {
         id: '',
         value: '',
-        desc: ''
+        desc: '',
       }
       this.taskId && this.loadData(this.taskId)
     },
@@ -78,7 +100,7 @@ export default {
           this.editForm = {
             id,
             value,
-            desc
+            desc,
           }
         })
         .finally(() => {
@@ -97,12 +119,15 @@ export default {
     },
 
     handleSave() {
-      this.$refs.form?.validate(valid => {
+      this.$refs.form?.validate((valid) => {
         if (valid) {
           this.saveLoading = true
-          ;(this.taskId ? appApi.updateById(this.taskId, this.editForm) : appApi.post(this.editForm))
+          ;(this.taskId
+            ? appApi.updateById(this.taskId, this.editForm)
+            : appApi.post(this.editForm)
+          )
             .then(() => {
-              this.$emit('success', ...arguments)
+              $emit(this, 'success', ...arguments)
               this.$message.success(this.$t('public_message_save_ok'))
               this.init()
               this.handleClose()
@@ -112,7 +137,8 @@ export default {
             })
         }
       })
-    }
-  }
+    },
+  },
+  emits: ['success'],
 }
 </script>

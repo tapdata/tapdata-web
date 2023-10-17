@@ -6,7 +6,7 @@ const GlobalState = {
   dragging: false,
   onMouseDownAt: 0,
   startEvent: null,
-  moveEvent: null
+  moveEvent: null,
 }
 
 export class DragDropDriver extends EventDriver {
@@ -14,11 +14,14 @@ export class DragDropDriver extends EventDriver {
 
   startEvent
 
-  onMouseDown = e => {
+  onMouseDown = (e) => {
     if (e.button !== 0 || e.ctrlKey || e.metaKey) {
       return
     }
-    if (e.target['isContentEditable'] || e.target['contentEditable'] === 'true') {
+    if (
+      e.target['isContentEditable'] ||
+      e.target['contentEditable'] === 'true'
+    ) {
       return true
     }
     if (e.target?.['closest']?.('.monaco-editor')) return
@@ -31,7 +34,7 @@ export class DragDropDriver extends EventDriver {
     this.batchAddEventListener('mousemove', this.onDistanceChange)
   }
 
-  onMouseUp = e => {
+  onMouseUp = (e) => {
     if (GlobalState.dragging) {
       this.dispatch(
         new DragStopEvent({
@@ -40,11 +43,15 @@ export class DragDropDriver extends EventDriver {
           pageX: e.pageX,
           pageY: e.pageY,
           target: e.target,
-          view: e.view
+          view: e.view,
         })
       )
     }
-    this.batchRemoveEventListener('contextmenu', this.onContextMenuWhileDragging, true)
+    this.batchRemoveEventListener(
+      'contextmenu',
+      this.onContextMenuWhileDragging,
+      true
+    )
     this.batchRemoveEventListener('mouseup', this.onMouseUp)
     this.batchRemoveEventListener('mousedown', this.onMouseDown)
     this.batchRemoveEventListener('dragover', this.onMouseMove)
@@ -53,8 +60,12 @@ export class DragDropDriver extends EventDriver {
     GlobalState.dragging = false
   }
 
-  onMouseMove = e => {
-    if (e.clientX === GlobalState.moveEvent?.clientX && e.clientY === GlobalState.moveEvent?.clientY) return
+  onMouseMove = (e) => {
+    if (
+      e.clientX === GlobalState.moveEvent?.clientX &&
+      e.clientY === GlobalState.moveEvent?.clientY
+    )
+      return
     this.dispatch(
       new DragMoveEvent({
         clientX: e.clientX,
@@ -62,22 +73,26 @@ export class DragDropDriver extends EventDriver {
         pageX: e.pageX,
         pageY: e.pageY,
         target: e.target,
-        view: e.view
+        view: e.view,
       })
     )
     GlobalState.moveEvent = e
   }
 
-  onContextMenuWhileDragging = e => {
+  onContextMenuWhileDragging = (e) => {
     e.preventDefault()
   }
 
-  onStartDrag = e => {
+  onStartDrag = (e) => {
     if (GlobalState.dragging) return
     GlobalState.startEvent = GlobalState.startEvent || e
     this.batchAddEventListener('dragover', this.onMouseMove)
     this.batchAddEventListener('mousemove', this.onMouseMove)
-    this.batchAddEventListener('contextmenu', this.onContextMenuWhileDragging, true)
+    this.batchAddEventListener(
+      'contextmenu',
+      this.onContextMenuWhileDragging,
+      true
+    )
     this.dispatch(
       new DragStartEvent({
         clientX: GlobalState.startEvent.clientX,
@@ -85,15 +100,16 @@ export class DragDropDriver extends EventDriver {
         pageX: GlobalState.startEvent.pageX,
         pageY: GlobalState.startEvent.pageY,
         target: GlobalState.startEvent.target,
-        view: GlobalState.startEvent.view
+        view: GlobalState.startEvent.view,
       })
     )
     GlobalState.dragging = true
   }
 
-  onDistanceChange = e => {
+  onDistanceChange = (e) => {
     const distance = Math.sqrt(
-      Math.pow(e.pageX - GlobalState.startEvent.pageX, 2) + Math.pow(e.pageY - GlobalState.startEvent.pageY, 2)
+      Math.pow(e.pageX - GlobalState.startEvent.pageX, 2) +
+        Math.pow(e.pageY - GlobalState.startEvent.pageY, 2)
     )
     const timeDelta = Time.now() - GlobalState.onMouseDownAt
     if (timeDelta > 10 && e !== GlobalState.startEvent && distance > 4) {
@@ -118,6 +134,10 @@ export class DragDropDriver extends EventDriver {
     this.batchRemoveEventListener('mouseup', this.onMouseUp)
     this.batchRemoveEventListener('mousemove', this.onMouseMove)
     this.batchRemoveEventListener('mousemove', this.onDistanceChange)
-    this.batchRemoveEventListener('contextmenu', this.onContextMenuWhileDragging, true)
+    this.batchRemoveEventListener(
+      'contextmenu',
+      this.onContextMenuWhileDragging,
+      true
+    )
   }
 }

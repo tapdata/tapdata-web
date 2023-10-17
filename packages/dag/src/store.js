@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import Vue from 'vue'
+import * as Vue from 'vue'
 import { debounce } from 'lodash'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
@@ -25,7 +25,7 @@ const find = (obj, nameParts, conditions) => {
 }
 
 const findByCod = (arr, cond) => {
-  return arr.find(item => {
+  return arr.find((item) => {
     if (isObject(item)) {
       let flag = true
       for (let k of Object.keys(cond)) {
@@ -64,7 +64,7 @@ const getState = () => ({
   transformLoading: false,
   dag: {
     nodes: [], // 节点数据
-    edges: [] // 连线数据
+    edges: [], // 连线数据
   },
 
   NodeMap: {},
@@ -81,7 +81,7 @@ const getState = () => ({
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
   taskSaving: false,
-  materializedViewVisible: false
+  materializedViewVisible: false,
 })
 
 // 初始化 state
@@ -89,33 +89,33 @@ const state = getState()
 
 // getters
 const getters = {
-  stateIsDirty: state => {
+  stateIsDirty: (state) => {
     return state.stateIsDirty
   },
 
-  stateIsReadonly: state => {
+  stateIsReadonly: (state) => {
     return state.stateIsReadonly
   },
 
-  transformLoading: state => {
+  transformLoading: (state) => {
     return state.transformLoading
   },
 
   // 判断action是否被标记
-  isActionActive: state => action => {
+  isActionActive: (state) => (action) => {
     return state.activeActions.includes(action)
   },
 
   // 获取所有节点类型
-  allNodeTypes: state => {
+  allNodeTypes: (state) => {
     return [...state.nodeTypes, ...state.processorNodeTypes]
   },
 
-  processorNodeTypes: state => {
+  processorNodeTypes: (state) => {
     return state.processorNodeTypes
   },
 
-  nodeType: state => node => {
+  nodeType: (state) => (node) => {
     const nodeType = node.type
     let foundType
     const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
@@ -123,9 +123,11 @@ const getters = {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else*/ if (nodeType === 'custom_processor') {
-      foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
+      foundType = state.processorNodeTypes.find(
+        (typeData) => typeData.attr?.customNodeId === node.customNodeId
+      )
     } else {
-      foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
+      foundType = allNodeTypes.find((typeData) => typeData.type === nodeType)
     }
 
     if (foundType === undefined) return null
@@ -134,21 +136,21 @@ const getters = {
   },
 
   // 节点资源实例
-  getResourceIns: state => node => {
-    return state.allResourceIns.find(ins => ins.selector(node))
+  getResourceIns: (state) => (node) => {
+    return state.allResourceIns.find((ins) => ins.selector(node))
   },
 
-  dag: state => state.dag,
+  dag: (state) => state.dag,
 
   // 获取画布所有节点
-  allNodes: state => state.dag.nodes,
+  allNodes: (state) => state.dag.nodes,
 
   // 所有连线
-  allEdges: state => state.dag.edges,
+  allEdges: (state) => state.dag.edges,
 
   // 根据id获取节点
-  nodeById: state => id => {
-    const foundNode = state.dag.nodes.find(node => node.id === id)
+  nodeById: (state) => (id) => {
+    const foundNode = state.dag.nodes.find((node) => node.id === id)
 
     if (foundNode === undefined) {
       return null
@@ -162,47 +164,47 @@ const getters = {
   },
 
   // 获取激活的线
-  activeConnection: state => {
+  activeConnection: (state) => {
     return state.activeConnection
   },
 
   // 判断节点是否激活
-  isNodeActive: state => nodeId => {
+  isNodeActive: (state) => (nodeId) => {
     return state.activeNodeId === nodeId
   },
 
   // 判断节点是否选中
-  isNodeSelected: state => nodeId => {
-    return !!state.selectedNodes.find(n => n.id === nodeId)
+  isNodeSelected: (state) => (nodeId) => {
+    return !!state.selectedNodes.find((n) => n.id === nodeId)
   },
 
   // 获取选中的节点
-  getSelectedNodes: state => {
+  getSelectedNodes: (state) => {
     return state.selectedNodes
   },
 
-  isMultiSelect: state => {
+  isMultiSelect: (state) => {
     return state.selectedNodes.length > 1
   },
 
   // 获取节点构造类
-  getCtor: state => type => state.ctorTypes[type],
+  getCtor: (state) => (type) => state.ctorTypes[type],
 
-  getNodeViewOffsetPosition: state => {
+  getNodeViewOffsetPosition: (state) => {
     return state.nodeViewOffsetPosition
   },
 
-  isPaperMoveInProgress: state => {
+  isPaperMoveInProgress: (state) => {
     return state.paperMoveInProgress
   },
 
-  activeType: state => {
+  activeType: (state) => {
     return state.activeType
   },
 
-  formSchema: state => state.formSchema,
+  formSchema: (state) => state.formSchema,
 
-  hasNodeError: state => id => state.nodeErrorState[id],
+  hasNodeError: (state) => (id) => state.nodeErrorState[id],
 
   language: () => {
     return getCurrentLanguage()
@@ -213,14 +215,17 @@ const getters = {
     const locale = locales ? locales[lang] : state.LOCALES_STORE.value[lang]
     if (!locale) {
       for (let key in state.LOCALES_STORE.value) {
-        const message = Path.getIn(state.LOCALES_STORE.value[key], lowerSnake(token))
+        const message = Path.getIn(
+          state.LOCALES_STORE.value[key],
+          lowerSnake(token)
+        )
         if (message) return message
       }
       return
     }
     // return Path.getIn(locale, lowerSnake(token))
     return Path.getIn(locale, token)
-  }
+  },
 }
 
 // actions
@@ -233,10 +238,10 @@ const actions = {
           id: state.taskId,
           editVersion: state.editVersion,
           pageVersion: state.pageVersion,
-          dag: state.dag
+          dag: state.dag,
         },
         {
-          silenceMessage: true
+          silenceMessage: true,
         }
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
@@ -247,8 +252,8 @@ const actions = {
           onlyTitle: true,
           type: 'warning',
           closeOnClickModal: false,
-          confirmButtonText: i18n.t('public_button_refresh')
-        }).then(resFlag => {
+          confirmButtonText: i18n.t('public_button_refresh'),
+        }).then((resFlag) => {
           resFlag && location.reload()
         })
       } else if (e?.data?.message) {
@@ -266,10 +271,10 @@ const actions = {
           id: state.taskId,
           editVersion: state.editVersion,
           pageVersion: state.pageVersion,
-          dag: state.dag
+          dag: state.dag,
         },
         {
-          silenceMessage: true
+          silenceMessage: true,
         }
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
@@ -280,8 +285,8 @@ const actions = {
           onlyTitle: true,
           type: 'warning',
           closeOnClickModal: false,
-          confirmButtonText: i18n.t('public_button_refresh')
-        }).then(resFlag => {
+          confirmButtonText: i18n.t('public_button_refresh'),
+        }).then((resFlag) => {
           resFlag && location.reload()
         })
       } else if (e?.data?.message) {
@@ -315,16 +320,16 @@ const actions = {
 
     commit(
       'addProcessorNode',
-      items.map(item => {
+      items.map((item) => {
         const node = {
           name: item.name,
           type: 'custom_processor',
-          customNodeId: item.id
+          customNodeId: item.id,
         }
 
         const ins = new CustomProcessor({
           customNodeId: item.id,
-          formSchema: item.formSchema
+          formSchema: item.formSchema,
         })
 
         insArr.push(ins)
@@ -332,14 +337,14 @@ const actions = {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
 
         return node
       })
     )
     commit('addResourceIns', insArr)
-  }
+  },
 }
 
 // mutations
@@ -411,7 +416,7 @@ const mutations = {
 
   // 设置激活连接
   setActiveConnection(state, connection) {
-    Vue.set(state, 'activeConnection', connection)
+    state['activeConnection'] = connection
     state.activeType = connection ? 'connection' : null
   },
 
@@ -426,29 +431,31 @@ const mutations = {
     if (!nodeData.$inputs) nodeData.$inputs = []
     if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)
-    Vue.set(state.NodeMap, nodeData.id, nodeData)
+    state.NodeMap[nodeData.id] = nodeData
   },
 
   addNodes(state, nodes) {
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (!node.$inputs) node.$inputs = []
       if (!node.$outputs) node.$outputs = []
       state.dag.nodes.push(node)
-      Vue.set(state.NodeMap, node.id, node)
+      state.NodeMap[node.id] = node
     })
   },
 
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
-    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id
+    )
 
     const updateObjVal = (target, obj) => {
       Object.entries(obj).forEach(([key, value]) => {
         if (isObject(value) && target[key]) {
           updateObjVal(target[key], value)
         } else {
-          Vue.set(target, key, value)
+          target[key] = value
         }
       })
     }
@@ -475,7 +482,7 @@ const mutations = {
   // 将节点从选中移除
   removeNodeFromSelection(state, node) {
     const { selectedNodes } = state
-    const index = selectedNodes.findIndex(n => n.id === node.id)
+    const index = selectedNodes.findIndex((n) => n.id === node.id)
     ~index && selectedNodes.splice(index, 1)
   },
 
@@ -502,7 +509,9 @@ const mutations = {
 
   // 针对数组，修改某个项的值
   setNodeValueByConditions(state, updateInformation) {
-    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id
+    )
     const nameParts = updateInformation.key.split('.')
     const key = nameParts[nameParts.length - 1]
     const { conditions } = updateInformation
@@ -514,12 +523,14 @@ const mutations = {
     let target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
-    target && Vue.set(target, key, updateInformation.value)
+    if (target) target[key] = updateInformation.value
   },
 
   // 通过Path[k1.k2]更新节点
   setNodeValueByPath(state, updateInformation) {
-    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id
+    )
     const nameParts = updateInformation.path.split('.')
     const key = nameParts.pop()
     const { conditions = [] } = updateInformation
@@ -531,25 +542,29 @@ const mutations = {
     let target = find(node, nameParts, conditions)
 
     state.stateIsDirty = true
-    target && Vue.set(target, key, updateInformation.value)
+    if (target) target[key] = updateInformation.value
   },
 
   // 更新节点value
   setNodeValue(state, updateInformation) {
-    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find(
+      (node) => node.id === updateInformation.id
+    )
 
     if (node === undefined || node === null) {
       throw new Error(i18n.t('packages_dag_src_store_weizhaodaojiedian'))
     }
 
     state.stateIsDirty = true
-    Vue.set(node, updateInformation.key, updateInformation.value)
+    node[updateInformation.key] = updateInformation.value
   },
 
   // 添加连接，设置input、output
   addConnection(state, connection) {
     const { source, target } = connection
-    const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
+    const index = state.dag.edges.findIndex(
+      (item) => item.source === source && item.target === target
+    )
     const sourceNode = state.NodeMap[source]
     const targetNode = state.NodeMap[target]
     const { $outputs = [] } = sourceNode
@@ -559,19 +574,21 @@ const mutations = {
 
     if (!$outputs.includes(target)) {
       $outputs.push(target)
-      Vue.set(sourceNode, '$outputs', $outputs)
+      sourceNode['$outputs'] = $outputs
     }
 
     if (!$inputs.includes(source)) {
       $inputs.push(source)
-      Vue.set(targetNode, '$inputs', $inputs)
+      targetNode['$inputs'] = $inputs
     }
   },
 
   // 删除连接，清空input中的sourceId、output中的targetId
   removeConnection(state, connection) {
     const { source, target } = connection
-    const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
+    const index = state.dag.edges.findIndex(
+      (item) => item.source === source && item.target === target
+    )
 
     if (~index) state.dag.edges.splice(index, 1)
 
@@ -595,7 +612,7 @@ const mutations = {
   removeNode(state, node) {
     const { nodes, edges } = state.dag
     const nodeId = node.id
-    const index = nodes.findIndex(n => n.id === nodeId)
+    const index = nodes.findIndex((n) => n.id === nodeId)
 
     if (!~index) return
 
@@ -605,12 +622,14 @@ const mutations = {
     }
 
     nodes.splice(index, 1)
-    Vue.delete(state.NodeMap, nodeId)
+    delete state.NodeMap
 
-    state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
+    state.dag.edges = edges.filter(
+      ({ source, target }) => nodeId !== source && nodeId !== target
+    )
 
     if (node.$outputs?.length) {
-      node.$outputs.forEach(id => {
+      node.$outputs.forEach((id) => {
         const { $inputs = [] } = state.NodeMap[id]
         const i = $inputs.indexOf(nodeId)
         if (~i) $inputs.splice(i, 1)
@@ -618,7 +637,7 @@ const mutations = {
     }
 
     if (node.$inputs?.length) {
-      node.$inputs.forEach(id => {
+      node.$inputs.forEach((id) => {
         const { $outputs = [] } = state.NodeMap[id]
         const i = $outputs.indexOf(nodeId)
         if (~i) $outputs.splice(i, 1)
@@ -634,13 +653,13 @@ const mutations = {
    * @param nodeIds
    */
   batchRemoveNode(state, nodeIds) {
-    nodeIds.forEach(nodeId => {
+    nodeIds.forEach((nodeId) => {
       const node = state.NodeMap[nodeId]
 
-      Vue.delete(state.NodeMap, nodeId)
+      delete state.NodeMap
 
       if (node.$outputs?.length) {
-        node.$outputs.forEach(id => {
+        node.$outputs.forEach((id) => {
           const outputNode = state.NodeMap[id]
           if (outputNode) {
             const { $inputs = [] } = outputNode
@@ -651,7 +670,7 @@ const mutations = {
       }
 
       if (node.$inputs?.length) {
-        node.$inputs.forEach(id => {
+        node.$inputs.forEach((id) => {
           const inputNode = state.NodeMap[id]
           if (inputNode) {
             const { $outputs = [] } = inputNode
@@ -663,15 +682,21 @@ const mutations = {
     })
 
     // 如果是删除当前激活的节点
-    if (nodeIds.includes(state.activeNodeId) && state.activeType !== 'settings') {
+    if (
+      nodeIds.includes(state.activeNodeId) &&
+      state.activeType !== 'settings'
+    ) {
       state.activeType = null
       state.activeNodeId = null
     }
 
-    state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))
+    state.dag.nodes = state.dag.nodes.filter(
+      (node) => !nodeIds.includes(node.id)
+    )
 
     state.dag.edges = state.dag.edges.filter(
-      ({ source, target }) => !nodeIds.includes(source) && !nodeIds.includes(target)
+      ({ source, target }) =>
+        !nodeIds.includes(source) && !nodeIds.includes(target)
     )
 
     state.stateIsDirty = true
@@ -687,7 +712,7 @@ const mutations = {
   },
 
   setFormSchema(state, schema) {
-    Vue.set(state, 'formSchema', schema)
+    state['formSchema'] = schema
     console.log('state', state) // eslint-disable-line
   },
 
@@ -697,11 +722,11 @@ const mutations = {
    * @param id
    */
   setNodeError(state, id) {
-    Vue.set(state.nodeErrorState, id, true)
+    state.nodeErrorState[id] = true
   },
 
   setNodeErrorMsg(state, { id, msg }) {
-    Vue.set(state.nodeErrorState, id, msg)
+    state.nodeErrorState[id] = msg
   },
 
   /**
@@ -710,7 +735,7 @@ const mutations = {
    * @param id
    */
   clearNodeError(state, id) {
-    Vue.delete(state.nodeErrorState, id)
+    delete state.nodeErrorState
   },
 
   /**
@@ -769,19 +794,24 @@ const mutations = {
    * 复制节点，如果节点直接有连线，也会一并复制
    * @param state
    */
-  copyNodes: state => {
+  copyNodes: (state) => {
     const nodes = state.selectedNodes
     const edges = state.dag.edges
     let copyEdges = []
 
     if (nodes.length) {
-      const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
-      copyEdges = edges.filter(item => nodeMap[item.source] && nodeMap[item.target])
+      const nodeMap = nodes.reduce(
+        (map, node) => ((map[node.id] = true), map),
+        {}
+      )
+      copyEdges = edges.filter(
+        (item) => nodeMap[item.source] && nodeMap[item.target]
+      )
     }
 
     localStorage['DAG_CLIPBOARD'] = JSON.stringify({
       nodes,
-      edges: copyEdges
+      edges: copyEdges,
     })
   },
 
@@ -803,7 +833,7 @@ const mutations = {
       const sourceMap = {},
         targetMap = {}
 
-      edges.forEach(item => {
+      edges.forEach((item) => {
         let _source = sourceMap[item.source]
         let _target = targetMap[item.target]
 
@@ -820,7 +850,7 @@ const mutations = {
         }
       })
 
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         const oldId = node.id
         node.id = uuid() // 生成新的ID
         node.attrs.position[0] += 20
@@ -831,17 +861,17 @@ const mutations = {
 
         // 替换连线里绑定的ID
         if (sourceMap[oldId]) {
-          sourceMap[oldId].forEach(item => (item.source = node.id))
+          sourceMap[oldId].forEach((item) => (item.source = node.id))
         }
         // 替换连线里绑定的ID
         if (targetMap[oldId]) {
-          targetMap[oldId].forEach(item => (item.target = node.id))
+          targetMap[oldId].forEach((item) => (item.target = node.id))
         }
 
-        const ins = state.allResourceIns.find(ins => ins.selector(node))
+        const ins = state.allResourceIns.find((ins) => ins.selector(node))
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       })
 
@@ -866,7 +896,7 @@ const mutations = {
           }
         })
 
-        nodes.forEach(node => {
+        nodes.forEach((node) => {
           node.$inputs = inputsMap[node.id] || []
           node.$outputs = outputsMap[node.id] || []
         })
@@ -878,7 +908,7 @@ const mutations = {
       // 选中粘贴的节点
       const jsPlumbIns = command.state.instance
       jsPlumbIns.clearDragSelection()
-      nodes.forEach(node => jsPlumbIns.addToDragSelection(`node-${node.id}`))
+      nodes.forEach((node) => jsPlumbIns.addToDragSelection(`node-${node.id}`))
       state.selectedNodes = nodes
 
       // 存储
@@ -899,7 +929,7 @@ const mutations = {
   },
 
   registerLocales: (state, packages) => {
-    packages.forEach(locales => {
+    packages.forEach((locales) => {
       mergeLocales(state.LOCALES_STORE.value, locales)
     })
   },
@@ -921,11 +951,11 @@ const mutations = {
   },
 
   setPdkPropertiesMap(state, map) {
-    Vue.set(state, 'pdkPropertiesMap', map)
+    state['pdkPropertiesMap'] = map
   },
 
   setPdkSchemaFreeMap(state, map) {
-    Vue.set(state, 'pdkSchemaFreeMap', map)
+    state['pdkSchemaFreeMap'] = map
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
@@ -934,7 +964,7 @@ const mutations = {
 
   setMaterializedViewVisible(state, visible) {
     state.materializedViewVisible = visible
-  }
+  },
 }
 
 export default {
@@ -943,5 +973,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

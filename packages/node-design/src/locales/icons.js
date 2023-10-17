@@ -61,8 +61,8 @@ export default {
       TextAlignLeft: '左对齐',
       TextAlignCenter: '居中',
       TextAlignRight: '右对齐',
-      TextAlignJustify: '自适应'
-    }
+      TextAlignJustify: '自适应',
+    },
   },
   'en-US': {
     icons: {
@@ -126,7 +126,7 @@ export default {
       TextAlignLeft: 'Left',
       TextAlignCenter: 'Center',
       TextAlignRight: 'Right',
-      TextAlignJustify: 'Justify'
-    }
-  }
+      TextAlignJustify: 'Justify',
+    },
+  },
 }

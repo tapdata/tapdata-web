@@ -2,19 +2,23 @@ import { isFn } from './types'
 import { instOf } from './instanceof'
 
 const NATIVE_KEYS = [
-  ['Map', map => new Map(map)],
-  ['WeakMap', map => new WeakMap(map)],
-  ['WeakSet', set => new WeakSet(set)],
-  ['Set', set => new Set(set)],
-  ['Date', date => new Date(date)],
+  ['Map', (map) => new Map(map)],
+  ['WeakMap', (map) => new WeakMap(map)],
+  ['WeakSet', (set) => new WeakSet(set)],
+  ['Set', (set) => new Set(set)],
+  ['Date', (date) => new Date(date)],
   'FileList',
   'File',
   'URL',
   'RegExp',
-  ['Promise', promise => new Promise((resolve, reject) => promise.then(resolve, reject))]
+  [
+    'Promise',
+    (promise) =>
+      new Promise((resolve, reject) => promise.then(resolve, reject)),
+  ],
 ]
 
-const isNativeObject = values => {
+const isNativeObject = (values) => {
   for (let i = 0; i < NATIVE_KEYS.length; i++) {
     const item = NATIVE_KEYS[i]
     if (Array.isArray(item) && item[0]) {
@@ -29,7 +33,7 @@ const isNativeObject = values => {
   }
 }
 
-export const shallowClone = values => {
+export const shallowClone = (values) => {
   let nativeClone
   if (Array.isArray(values)) {
     return values.slice(0)
@@ -38,7 +42,7 @@ export const shallowClone = values => {
     return isFn(nativeClone) ? nativeClone(values) : values
   } else if (typeof values === 'object' && !!values) {
     return {
-      ...values
+      ...values,
     }
   }
 }
@@ -46,7 +50,7 @@ export const shallowClone = values => {
 export const clone = (values, filter) => {
   let nativeClone
   if (Array.isArray(values)) {
-    return values.map(item => clone(item, filter))
+    return values.map((item) => clone(item, filter))
   } else if (isNativeObject(values)) {
     nativeClone = isNativeObject(values)
     return isFn(nativeClone) ? nativeClone(values) : values

@@ -10,9 +10,9 @@ export default defineComponent({
       type: Object,
       default: () => ({
         alert: 0,
-        error: 0
-      })
-    }
+        error: 0,
+      }),
+    },
   },
 
   setup(props, { emit }) {
@@ -54,11 +54,11 @@ export default defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .alarm-statistics {
   position: absolute;
   top: 16px;
@@ -72,7 +72,8 @@ export default defineComponent({
     font-size: 14px;
     border-radius: 4px;
     background: #fff;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+      0px 4px 10px 0px rgba(0, 0, 0, 0.1);
   }
 }
 </style>

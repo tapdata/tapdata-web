@@ -1,9 +1,9 @@
 <template>
   <Drawer
+    v-bind="$attrs"
     v-loading="loading"
     class="shared-cache-details"
-    :visible.sync="visible"
-    v-bind="$attrs"
+    v-model:visible="visible"
     @visible="handleVisible"
   >
     <div v-if="details.id" class="shared-cache-details--header flex pb-3">
@@ -33,7 +33,9 @@
     <div class="shared-cache--keys">
       <div class="title">{{ $t('packages_business_shared_cache_fields') }}</div>
       <div class="content">
-        <div v-for="key in details.fields" :key="key" class="mt-2">{{ key }}</div>
+        <div v-for="key in details.fields" :key="key" class="mt-2">
+          {{ key }}
+        </div>
       </div>
     </div>
     <div class="mt-4">{{ $t('packages_business_shared_cache_code') }}</div>
@@ -62,9 +64,9 @@ export default {
         id: '',
         name: '',
         cacheKeysArr: [],
-        fields: []
+        fields: [],
       },
-      info: []
+      info: [],
     }
   },
 
@@ -73,16 +75,18 @@ export default {
       this.loading = true
       sharedCacheApi
         .get(id)
-        .then(data => {
+        .then((data) => {
           data.cacheKeysArr = data.cacheKeys?.split(',') || []
-          data.cacheTimeAtFmt = data.cacheTimeAt ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+          data.cacheTimeAtFmt = data.cacheTimeAt
+            ? dayjs(data.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
           externalStorageApi
             .get(data.externalStorageId, {
               fields: JSON.stringify({
-                name: true
-              })
+                name: true,
+              }),
             })
-            .then(d => {
+            .then((d) => {
               data.externalStorageName = d.name
               this.getInfo(data)
               this.details = data
@@ -96,23 +100,43 @@ export default {
 
     getInfo(row = {}) {
       this.info = [
-        { label: this.$t('public_creator'), value: row.createUser, icon: 'createUser' },
-        { label: this.$t('packages_business_shared_cache_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
+        {
+          label: this.$t('public_creator'),
+          value: row.createUser,
+          icon: 'createUser',
+        },
+        {
+          label: this.$t('packages_business_shared_cache_time'),
+          value: row.cacheTimeAtFmt,
+          icon: 'cacheTimeAtFmt',
+        },
         {
           label: this.$t('packages_business_shared_cache_column_connection'),
           value: row.connectionName,
-          icon: 'connectionName'
+          icon: 'connectionName',
         },
-        { label: this.$t('packages_business_shared_cache_column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('public_external_memory_name'), value: row.externalStorageName, icon: 'table' },
-        { label: this.$t('packages_business_shared_cache_max_memory'), value: row.maxMemory, icon: 'record' }
+        {
+          label: this.$t('packages_business_shared_cache_column_table'),
+          value: row.tableName,
+          icon: 'table',
+        },
+        {
+          label: this.$t('public_external_memory_name'),
+          value: row.externalStorageName,
+          icon: 'table',
+        },
+        {
+          label: this.$t('packages_business_shared_cache_max_memory'),
+          value: row.maxMemory,
+          icon: 'record',
+        },
       ]
     },
 
     handleVisible() {
       this.visible = false
-    }
-  }
+    },
+  },
 }
 </script>
 

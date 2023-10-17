@@ -18,7 +18,7 @@ export class StandardJs extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       tabs: {
@@ -26,14 +26,14 @@ export class StandardJs extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -41,13 +41,14 @@ export class StandardJs extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               script: {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
                 type: 'string',
                 required: true,
-                default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
+                default:
+                  'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
                 'x-component': 'JsProcessor',
                 'x-component-props': {
                   isStandard: true,
@@ -59,19 +60,19 @@ export class StandardJs extends NodeType {
                   afterRegexp: '}[^}]*$',
                   after: '}',
                   param: 'tapTable',
-                  handleAddCompleter: '{{addDeclaredCompleterForSync}}'
-                }
+                  handleAddCompleter: '{{addDeclaredCompleterForSync}}',
+                },
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 
   locales = AllLocales.JavaScript

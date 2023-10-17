@@ -8,81 +8,119 @@
       @sort-change="handleSortTable"
       @selection-change="handleSelectionChange"
     >
-      <ul class="search-bar" slot="search">
-        <li class="item">
-          <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
-            <ElRadioButton label="">{{ $t('public_select_option_all') }}</ElRadioButton>
-            <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value"
-              >{{ label }}
-            </ElRadioButton>
-          </ElRadioGroup>
-        </li>
-        <li class="item">
-          <ElButton plain class="btn-refresh" size="mini" @click="table.fetch()">
-            <i class="el-icon-refresh"></i>
+      <template v-slot:search>
+        <ul class="search-bar">
+          <li class="item">
+            <ElRadioGroup
+              v-model:value="searchParams.type"
+              size="small"
+              @input="table.fetch(1)"
+            >
+              <ElRadioButton label="">{{
+                $t('public_select_option_all')
+              }}</ElRadioButton>
+              <ElRadioButton
+                v-for="(label, value) in typeMapping"
+                :key="value"
+                :label="value"
+                >{{ label }}
+              </ElRadioButton>
+            </ElRadioGroup>
+          </li>
+          <li class="item">
+            <ElButton
+              plain
+              class="btn-refresh"
+              size="mini"
+              @click="table.fetch()"
+            >
+              <i class="el-icon-refresh"></i>
+            </ElButton>
+          </li>
+        </ul>
+      </template>
+      <template v-slot:operation>
+        <div>
+          <ElButton
+            v-if="searchParams.type !== 'custom'"
+            class="ml-4 btn-create"
+            size="mini"
+            @click="
+              $router.push({
+                name: 'FunctionImport',
+              })
+            "
+          >
+            <span>{{ $t('function_button_import_jar') }}</span>
           </ElButton>
-        </li>
-      </ul>
-      <div slot="operation">
-        <ElButton
-          v-if="searchParams.type !== 'custom'"
-          class="ml-4 btn-create"
-          size="mini"
-          @click="
-            $router.push({
-              name: 'FunctionImport'
-            })
-          "
-        >
-          <span>{{ $t('function_button_import_jar') }}</span>
-        </ElButton>
-        <template v-else>
-          <el-button
-            v-show="multipleSelection.length > 0"
-            :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
+          <template v-else>
+            <el-button
+              v-show="multipleSelection.length > 0"
+              :disabled="$disabledReadonlyUserBtn()"
+              v-readonlybtn="'SYNC_job_export'"
+              size="mini"
+              class="btn message-button-cancel"
+              @click="handleExport"
+            >
+              <span> {{ $t('public_button_export') }}</span>
+            </el-button>
+            <el-button
+              v-readonlybtn="'SYNC_job_import'"
+              size="mini"
+              class="btn"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="handleImport"
+            >
+              <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            </el-button>
+          </template>
+          <ElButton
+            class="btn-create"
+            type="primary"
             size="mini"
-            class="btn message-button-cancel"
-            @click="handleExport"
+            @click="
+              $router.push({
+                name: 'FunctionCreate',
+              })
+            "
           >
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
-          >
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
-          </el-button>
-        </template>
-        <ElButton
-          class="btn-create"
-          type="primary"
-          size="mini"
-          @click="
-            $router.push({
-              name: 'FunctionCreate'
-            })
-          "
-        >
-          <span>{{ $t('public_button_create') }}</span>
-        </ElButton>
-      </div>
+            <span>{{ $t('public_button_create') }}</span>
+          </ElButton>
+        </div>
+      </template>
       <el-table-column
         reserve-selection
         type="selection"
         width="45"
         align="center"
-        :selectable="row => !row.hasChildren"
+        :selectable="(row) => !row.hasChildren"
       >
       </el-table-column>
-      <ElTableColumn :label="$t('function_name_label')" prop="function_name" min-width="300"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="160"> </ElTableColumn>
-      <ElTableColumn :label="$t('public_description')" prop="describe" min-width="300"> </ElTableColumn>
-      <ElTableColumn :label="$t('public_update_time')" prop="last_updated" sortable="last_updated" min-width="180">
-        <template slot-scope="scope">
+      <ElTableColumn
+        :label="$t('function_name_label')"
+        prop="function_name"
+        min-width="300"
+      >
+      </ElTableColumn>
+      <ElTableColumn
+        :label="$t('function_type_label')"
+        prop="typeFmt"
+        width="160"
+      >
+      </ElTableColumn>
+      <ElTableColumn
+        :label="$t('public_description')"
+        prop="describe"
+        min-width="300"
+      >
+      </ElTableColumn>
+      <ElTableColumn
+        :label="$t('public_update_time')"
+        prop="last_updated"
+        sortable="last_updated"
+        min-width="180"
+      >
+        <template v-slot="scope">
           {{ scope.row.lastUpdatedFmt }}
         </template>
       </ElTableColumn>
@@ -92,20 +130,31 @@
           <ElLink
             size="mini"
             type="primary"
-            @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })"
+            @click="
+              $router.push({ name: 'FunctionDetails', params: { id: row.id } })
+            "
             >{{ $t('public_button_check') }}</ElLink
           >
           <template v-if="row.type !== 'system'">
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="toEdit(row)">{{
+              $t('public_button_edit')
+            }}</ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
+            <ElLink type="primary" size="mini" @click="remove(row)">{{
+              $t('public_button_delete')
+            }}</ElLink>
           </template>
         </template>
       </ElTableColumn>
     </TablePage>
     <!-- 导入 -->
-    <Upload type="Javascript_functions" :show-tag="false" ref="upload" @success="table.fetch(1)"></Upload>
+    <Upload
+      type="Javascript_functions"
+      :show-tag="false"
+      ref="upload"
+      @success="table.fetch(1)"
+    ></Upload>
   </section>
 </template>
 
@@ -120,21 +169,21 @@ export default {
   data() {
     return {
       searchParams: {
-        type: ''
+        type: '',
       },
       typeMapping: {
         custom: this.$t('function_type_option_custom'),
         jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system')
+        system: this.$t('function_type_option_system'),
       },
       order: 'last_updated DESC',
-      multipleSelection: []
+      multipleSelection: [],
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   methods: {
     // 获取列表数据
@@ -142,35 +191,41 @@ export default {
       let { type } = this.searchParams
       let { current, size } = page
       let where = {
-        category: null
+        category: null,
       }
       type && (where.type = type)
       let filter = {
         where,
         order: this.order,
         limit: size,
-        skip: (current - 1) * size
+        skip: (current - 1) * size,
       }
       return javascriptFunctionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
+            data: list.map((item) => {
               item.typeFmt = this.typeMapping[item.type]
-              item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = dayjs(item.last_updated).format(
+                'YYYY-MM-DD HH:mm:ss'
+              )
               return item
-            })
+            }),
           }
         })
     },
     remove(item) {
-      this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {
-        type: 'warning'
-      }).then(resFlag => {
+      this.$confirm(
+        this.$t('function_message_delete_content'),
+        this.$t('function_message_delete_title'),
+        {
+          type: 'warning',
+        }
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -183,34 +238,36 @@ export default {
       this.$router.push({
         name: 'FunctionEdit',
         params: {
-          id: row.id
-        }
+          id: row.id,
+        },
       })
     },
     toCreate() {
       this.$router.push({
-        name: 'FunctionCreate'
+        name: 'FunctionCreate',
       })
     },
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${
+        order === 'ascending' ? 'ASC' : 'DESC'
+      }`
       this.table.fetch(1)
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
     handleExport() {
-      const ids = this.multipleSelection.map(t => t.id)
+      const ids = this.multipleSelection.map((t) => t.id)
       javascriptFunctionsApi.export(ids)
     },
     handleImport() {
       this.$refs.upload.show()
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .function-list-wrapper {
   .search-bar {
     display: flex;

@@ -20,18 +20,18 @@ export class JointCache extends NodeType {
         enum: [
           {
             label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
-            value: 'retain'
+            value: 'retain',
           },
           {
             label: i18n.t('packages_dag_nodes_jointcache_chuangjianpipeishu'),
-            value: 'discard'
-          }
+            value: 'discard',
+          },
         ],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
-          wrapperWidth: 240
-        }
+          wrapperWidth: 240,
+        },
         // 'x-component': 'ComboSelect'
       },
       joinSettings: {
@@ -48,22 +48,26 @@ export class JointCache extends NodeType {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_huancunbiaozhujian'),
-                align: 'center'
+                title: i18n.t(
+                  'packages_dag_nodes_jointcache_huancunbiaozhujian'
+                ),
+                align: 'center',
               },
               properties: {
                 cacheKey: {
                   type: 'string',
-                  'x-component': 'PreviewText.Input'
-                }
-              }
+                  'x-component': 'PreviewText.Input',
+                },
+              },
             },
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
               'x-component-props': {
-                title: i18n.t('packages_dag_nodes_jointcache_yuanbiaoguanlianjian'),
-                align: 'center'
+                title: i18n.t(
+                  'packages_dag_nodes_jointcache_yuanbiaoguanlianjian'
+                ),
+                align: 'center',
               },
               properties: {
                 sourceKey: {
@@ -74,33 +78,33 @@ export class JointCache extends NodeType {
                       enum: [
                         {
                           label: 'AVG',
-                          value: 'AVG'
+                          value: 'AVG',
                         },
                         {
                           label: 'SUM',
-                          value: 'SUM'
+                          value: 'SUM',
                         },
                         {
                           label: 'MAX',
-                          value: 'MAX'
+                          value: 'MAX',
                         },
                         {
                           label: 'MIN',
-                          value: 'MIN'
+                          value: 'MIN',
                         },
                         {
                           label: 'COUNT',
-                          value: 'COUNT'
-                        }
+                          value: 'COUNT',
+                        },
                       ],
-                      'x-component': 'Select'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      'x-component': 'Select',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       joinKey: {
         title: i18n.t('packages_dag_nodes_jointcache_xierulujing'),
@@ -108,12 +112,16 @@ export class JointCache extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
-          config: { placeholder: i18n.t('packages_dag_nodes_jointcache_qingxuanzehuochuang') }
-        }
+          config: {
+            placeholder: i18n.t(
+              'packages_dag_nodes_jointcache_qingxuanzehuochuang'
+            ),
+          },
+        },
       },
       script: {
-        type: 'string'
-      }
-    }
+        type: 'string',
+      },
+    },
   }
 }

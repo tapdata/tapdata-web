@@ -1,23 +1,17 @@
-<script>
-import { VIcon } from '@tap/component'
-
-export default {
-  name: 'Account',
-  props: ['platform'],
-  components: { VIcon }
-}
-</script>
-
 <template>
   <div class="deployMethod">
     <div class="flex justify-content-center align-items-center">
-      <VIcon size="450px" style="width: 450px; height: 235px">guide-top-header</VIcon>
+      <VIcon size="450px" style="width: 450px; height: 235px"
+        >guide-top-header</VIcon
+      >
     </div>
-    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">{{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}</div>
+    <div class="fs-6 font-color-dark fw-sub mb-4 mt-4">
+      {{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}
+    </div>
     <ul class="deployMethod-ul mt-4">
       <li
         :class="{
-          active: platform === 'fullManagement'
+          active: platform === 'fullManagement',
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden mb-4"
         @click="$emit('changePlatform', 'fullManagement')"
@@ -27,9 +21,14 @@ export default {
             <div class="fs-6 fw-bold mb-2 font-color-dark">
               {{ $t('dfs_components_taskalarmtour_deployment_keyi') }}
             </div>
-            <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}</div>
+            <div class="font-color-light">
+              {{ $t('dfs_components_taskalarmtour_deployment_yunshujuku') }}
+            </div>
           </div>
-          <el-image class="deployMethod-image" :src="require('@/assets/image/fully_managed.png')" />
+          <el-image
+            class="deployMethod-image"
+            :src="require('@/assets/image/fully_managed.png')"
+          />
         </div>
         <div class="is-active position-absolute top-0 end-0">
           <div class="is-active-triangle"></div>
@@ -38,7 +37,7 @@ export default {
       </li>
       <li
         :class="{
-          active: platform === 'selfHost'
+          active: platform === 'selfHost',
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden"
         @click="$emit('changePlatform', 'selfHost')"
@@ -48,9 +47,14 @@ export default {
             <div class="fs-6 fw-bold mb-2 font-color-dark">
               {{ $t('dfs_components_taskalarmtour_deployment_bukeyi') }}
             </div>
-            <div class="font-color-light">{{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}</div>
+            <div class="font-color-light">
+              {{ $t('dfs_components_taskalarmtour_deployment_wodeshujuku') }}
+            </div>
           </div>
-          <el-image class="deployMethod-image" :src="require('@/assets/image/self_host_managed.png')" />
+          <el-image
+            class="deployMethod-image"
+            :src="require('@/assets/image/self_host_managed.png')"
+          />
         </div>
         <div class="is-active position-absolute top-0 end-0">
           <div class="is-active-triangle"></div>
@@ -61,7 +65,18 @@ export default {
   </div>
 </template>
 
-<style scoped lang="scss">
+<script>
+import { VIcon } from '@tap/component'
+
+export default {
+  name: 'Account',
+  props: ['platform'],
+  components: { VIcon },
+  emits: ['changePlatform'],
+}
+</script>
+
+<style lang="scss" scoped>
 .deployMethod-ul li {
   border-radius: 8px;
   border: 1px solid var(--unnamed, #e5e6eb);

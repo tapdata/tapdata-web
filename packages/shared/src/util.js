@@ -5,9 +5,9 @@ import dayjs from 'dayjs'
 export function setPermission(list) {
   let permissions = []
   if (list) {
-    list.forEach(permission => {
+    list.forEach((permission) => {
       if (permission.resources && permission.resources.length > 0) {
-        permission.resources.forEach(res => {
+        permission.resources.forEach((res) => {
           // if (res.type === 'page')
           permissions.push(res)
         })
@@ -38,7 +38,7 @@ export function signOut() {
     top.window.location.href = '/login'
   } else {
     window.App.$router.push({
-      name: 'login'
+      name: 'login',
     })
   }
 }
@@ -86,13 +86,18 @@ const CLASSTYPES = [
   'Date',
   'RegExp',
   'Object',
-  'Error'
+  'Error',
 ]
 
-const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
+const CLASS2TYPE = CLASSTYPES.reduce(
+  (obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj),
+  {}
+)
 
 export function getClassType(obj) {
-  return obj == null ? String(obj) : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+  return obj == null
+    ? String(obj)
+    : CLASS2TYPE[{}.toString.call(obj)] || 'object'
 }
 
 export function isObject(obj) {
@@ -152,7 +157,10 @@ export const os = (function () {
     isAndroid = /Android/.test(ua),
     isFireFox = /Firefox/.test(ua),
     isChrome = /Chrome|CriOS/.test(ua),
-    isTablet = /iPad|PlayBook/.test(ua) || (isAndroid && !/Mobile/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua)),
+    isTablet =
+      /iPad|PlayBook/.test(ua) ||
+      (isAndroid && !/Mobile/.test(ua)) ||
+      (isFireFox && /(?:Tablet)/.test(ua)),
     isIPhone = /iPhone/.test(ua) && !isTablet,
     isWeixin = /MicroMessenger/.test(ua),
     isPc = !isIPhone && !isAndroid && !isSymbian
@@ -162,12 +170,14 @@ export const os = (function () {
     isIPhone,
     isAndroid,
     isWeixin,
-    isPc
+    isPc,
   }
 })()
 
 export function checkConnectionName(name) {
-  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
+  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(
+    name
+  )
 }
 
 export function openUrl(url, target = '_blank', name = '') {
@@ -191,7 +201,8 @@ export function submitForm(url, obj = {}, method = 'post') {
     const dom = document.createElement('input')
     dom.setAttribute('type', 'hidden')
     dom.setAttribute('name', key)
-    dom.value = typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
+    dom.value =
+      typeof obj[key] === 'object' ? JSON.stringify(obj[key]) : obj[key]
     form.appendChild(dom)
   }
   document.body.appendChild(form)
@@ -205,7 +216,9 @@ export function downloadBlob(res, name = '') {
     return
   }
   const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
+  const fileName =
+    name ||
+    headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
@@ -247,7 +260,7 @@ export function generateId(len = 8) {
 }
 
 // 转base64
-export const urlToBase64 = url => {
+export const urlToBase64 = (url) => {
   return new Promise((resolve, reject) => {
     let image = new Image()
     image.onload = function () {
@@ -287,13 +300,15 @@ export function toLowerCase(str = '') {
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function camelToSnake(camelStr) {
-  return camelStr.replace(/[A-Z]/g, match => '_' + match.toLowerCase()).toLowerCase()
+  return camelStr
+    .replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+    .toLowerCase()
 }
 
 // 驼峰命名转蛇形命名
 // 处理逻辑：将源字段名中非首字母的大写字母前增加下划线_进行连接，并将所有字母转换为小写
 export function snakeToCamel(snakeStr) {
-  return snakeStr.replace(/_[a-z]/g, match => match.charAt(1).toUpperCase())
+  return snakeStr.replace(/_[a-z]/g, (match) => match.charAt(1).toUpperCase())
 }
 
 export function onCopy(value) {

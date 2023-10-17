@@ -14,14 +14,17 @@
         <el-button type="primary" :loading="submitBtnLoading" @click="submit()">
           {{ $t('public_button_save') }}
         </el-button>
-        <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
-          $t('packages_business_save_and_more')
-        }}</el-button>
+        <el-button
+          type="primary"
+          :loading="saveAndMoreLoading"
+          @click="saveAndMore"
+          >{{ $t('packages_business_save_and_more') }}</el-button
+        >
       </div>
     </div>
     <GitBook
       v-resize.left="{
-        minWidth: 350
+        minWidth: 350,
       }"
       :value="params.md"
       class="git-book overflow-auto"
@@ -30,6 +33,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 // import MarkdownIt from 'markdown-it'
 import i18n from '@tap/i18n'
 
@@ -40,39 +44,34 @@ import resize from '@tap/component/src/directives/resize'
 
 export default {
   name: 'ServeForm',
-
   components: { GitBook, SchemaToForm },
   directives: {
-    resize
+    resize,
   },
   props: {
     params: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
-
   data() {
     return {
       schemaData: null,
       submitBtnLoading: false,
-      saveAndMoreLoading: false
+      saveAndMoreLoading: false,
     }
   },
-
   computed: {
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
-    }
+    },
   },
-
   mounted() {
     this.getForm()
     // this.initMarkdown()
   },
-
   methods: {
     getForm() {
       let result = {
@@ -83,7 +82,7 @@ export default {
             title: i18n.t('public_name'),
             required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Input'
+            'x-component': 'Input',
           },
           desc: {
             type: 'string',
@@ -92,11 +91,11 @@ export default {
             'x-component': 'Input.TextArea',
             'x-component-props': {
               autosize: {
-                minRows: 2
-              }
-            }
-          }
-        }
+                minRows: 2,
+              },
+            },
+          },
+        },
       }
       this.schemaData = result
     },
@@ -108,9 +107,9 @@ export default {
         console.log('this.schemaFormInstance', values, this.schemaFormInstance) // eslint-disable-line
         appApi
           .post(values)
-          .then(data => {
+          .then((data) => {
             data.LDP_TYPE = 'app'
-            this.$emit(addNext ? 'saveAndMore' : 'success', data)
+            $emit(this, addNext ? 'saveAndMore' : 'success', data)
           })
           .finally(() => {
             this.submitBtnLoading = false
@@ -126,8 +125,9 @@ export default {
       const md = new MarkdownIt({ html: true })
       // a标签，新窗口打开
       this.html = md.render(`### API 应用`)
-    }
-  }
+    },
+  },
+  emits: [],
 }
 </script>
 

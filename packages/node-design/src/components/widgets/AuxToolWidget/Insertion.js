@@ -13,24 +13,31 @@ export const Insertion = observer(
       const createInsertionStyle = () => {
         const closestDirection = viewportDragonRef.value.closestDirection
         const closestRect = viewportDragonRef.value.closestOffsetRect
-        const isInlineLayout = viewportDragonRef.value.getClosestLayout() === 'horizontal'
+        const isInlineLayout =
+          viewportDragonRef.value.getClosestLayout() === 'horizontal'
         const baseStyle = {
           position: 'absolute',
           transform: 'perspective(1px) translate3d(0,0,0)',
           top: 0,
-          left: 0
+          left: 0,
         }
         if (!closestRect) return baseStyle
-        if (closestDirection === ClosestPosition.Before || closestDirection === ClosestPosition.ForbidBefore) {
+        if (
+          closestDirection === ClosestPosition.Before ||
+          closestDirection === ClosestPosition.ForbidBefore
+        ) {
           baseStyle.width = 2
           baseStyle.height = closestRect.height
           baseStyle.transform = `perspective(1px) translate3d(${closestRect.x}px,${closestRect.y}px,0)`
-        } else if (closestDirection === ClosestPosition.After || closestDirection === ClosestPosition.ForbidAfter) {
+        } else if (
+          closestDirection === ClosestPosition.After ||
+          closestDirection === ClosestPosition.ForbidAfter
+        ) {
           baseStyle.width = 2
           baseStyle.height = closestRect.height
-          baseStyle.transform = `perspective(1px) translate3d(${closestRect.x + closestRect.width - 2}px,${
-            closestRect.y
-          }px,0)`
+          baseStyle.transform = `perspective(1px) translate3d(${
+            closestRect.x + closestRect.width - 2
+          }px,${closestRect.y}px,0)`
         } else if (
           closestDirection === ClosestPosition.InnerAfter ||
           closestDirection === ClosestPosition.Under ||
@@ -40,15 +47,15 @@ export const Insertion = observer(
           if (isInlineLayout) {
             baseStyle.width = 2
             baseStyle.height = closestRect.height
-            baseStyle.transform = `perspective(1px) translate3d(${closestRect.x + closestRect.width - 2}px,${
-              closestRect.y
-            }px,0)`
+            baseStyle.transform = `perspective(1px) translate3d(${
+              closestRect.x + closestRect.width - 2
+            }px,${closestRect.y}px,0)`
           } else {
             baseStyle.width = closestRect.width
             baseStyle.height = 2
-            baseStyle.transform = `perspective(1px) translate3d(${closestRect.x}px,${
-              closestRect.y + closestRect.height - 2
-            }px,0)`
+            baseStyle.transform = `perspective(1px) translate3d(${
+              closestRect.x
+            }px,${closestRect.y + closestRect.height - 2}px,0)`
           }
         } else if (
           closestDirection === ClosestPosition.InnerBefore ||
@@ -76,6 +83,6 @@ export const Insertion = observer(
       }
 
       return () => <div class={prefix} style={createInsertionStyle()}></div>
-    }
+    },
   })
 )

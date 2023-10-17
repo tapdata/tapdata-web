@@ -1,6 +1,6 @@
 import msgboxVue from './Main.vue'
-import Vue from 'vue'
-const MessageBoxConstructor = Vue.extend(msgboxVue)
+import * as Vue from 'vue'
+const MessageBoxConstructor = msgboxVue
 
 let currentMsg, instance
 
@@ -29,7 +29,7 @@ const defaults = {
   dangerouslyUseHTMLString: false,
   distinguishCancelAndClose: false,
   width: '416px', // 需要完整的像素字符串
-  beforeClose: null
+  beforeClose: null,
 }
 
 const hasOwnProperty = Object.prototype.hasOwnProperty
@@ -37,10 +37,14 @@ export function hasOwn(obj, key) {
   return hasOwnProperty.call(obj, key)
 }
 function isVNode(node) {
-  return node !== null && typeof node === 'object' && hasOwn(node, 'componentOptions')
+  return (
+    node !== null &&
+    typeof node === 'object' &&
+    hasOwn(node, 'componentOptions')
+  )
 }
 
-const defaultCallback = action => {
+const defaultCallback = (action) => {
   if (currentMsg) {
     let callback = currentMsg.callback
     if (typeof callback === 'function') {
@@ -58,7 +62,7 @@ const defaultCallback = action => {
 const MessageBox = function (options, callback) {
   if (typeof options === 'string' || isVNode(options)) {
     options = {
-      message: options
+      message: options,
     }
     if (typeof arguments[1] === 'string') {
       options.title = arguments[1]
@@ -72,14 +76,14 @@ const MessageBox = function (options, callback) {
         options: Object.assign({}, defaults, options),
         callback: callback,
         resolve: resolve,
-        reject: reject
+        reject: reject,
       }
       showNextMsg()
     })
   } else {
     currentMsg = {
       options: Object.assign({}, defaults, options),
-      callback: callback
+      callback: callback,
     }
     showNextMsg()
   }
@@ -87,7 +91,7 @@ const MessageBox = function (options, callback) {
 const showNextMsg = () => {
   if (!instance) {
     instance = new MessageBoxConstructor({
-      el: document.createElement('div')
+      el: document.createElement('div'),
     })
   }
   instance.action = ''
@@ -126,7 +130,7 @@ MessageBox.confirm = (message, title, options) => {
         title: title,
         message: message,
         $type: 'confirm',
-        showCancelButton: true
+        showCancelButton: true,
       },
       options
     )

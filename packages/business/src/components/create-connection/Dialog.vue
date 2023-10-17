@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    :visible.sync="showDialog"
+    v-model:visible="showDialog"
     :append-to-body="true"
     width="80%"
     top="10vh"
@@ -10,15 +10,27 @@
     @open="handleOpen"
     @close="handleClose"
   >
-    <div slot="title" class="text-center font-color-dark fs-2 fw-bold">
-      {{ showForm ? 'Configure Source' : title }}
-    </div>
+    <template v-slot:title>
+      <div class="text-center font-color-dark fs-2 fw-bold">
+        {{ showForm ? 'Configure Source' : title }}
+      </div>
+    </template>
     <div v-if="!showForm" class="px-7 text-center">
-      <div class="mb-4 font-color-light">{{ $t('packages_business_create_connection_dialog_neirongCho') }}</div>
-      <ConnectionSelector v-bind="$attrs" :visible.sync="visible" @select="handleSelect"></ConnectionSelector>
+      <div class="mb-4 font-color-light">
+        {{ $t('packages_business_create_connection_dialog_neirongCho') }}
+      </div>
+      <ConnectionSelector
+        v-bind="$attrs"
+        v-model:visible="visible"
+        @select="handleSelect"
+      ></ConnectionSelector>
     </div>
     <div v-else class="form__content flex flex-column">
-      <ServeForm v-if="['apiServices'].includes(activeTab)" :params="formParams" class="flex-fill"></ServeForm>
+      <ServeForm
+        v-if="['apiServices'].includes(activeTab)"
+        :params="formParams"
+        class="flex-fill"
+      ></ServeForm>
       <ConnectionForm
         ref="form"
         v-else
@@ -33,6 +45,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import ConnectionSelector from './Selector'
@@ -44,19 +57,21 @@ export default {
   components: {
     ConnectionSelector,
     ConnectionForm,
-    ServeForm
+    ServeForm,
   },
   props: {
     title: {
       type: String,
       default: () => {
-        return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
-      }
+        return i18n.t(
+          'packages_business_create_connection_dialog_xuanzeshujuyuan'
+        )
+      },
     },
     visible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -64,7 +79,7 @@ export default {
       formParams: {},
       showForm: false,
       timer: null,
-      activeTab: ''
+      activeTab: '',
     }
   },
   watch: {
@@ -72,8 +87,8 @@ export default {
       this.showDialog = v
     },
     showDialog(v) {
-      this.$emit('update:visible', v)
-    }
+      $emit(this, 'update:visible', v)
+    },
   },
   mounted() {
     console.log('ConnectionDialog') // eslint-disable-line
@@ -98,8 +113,8 @@ export default {
     },
 
     handleClose() {
-      this.$emit('visible', false)
-      this.$emit('update:visible', false)
+      $emit(this, 'visible', false)
+      $emit(this, 'update:visible', false)
     },
 
     handleSelect(item) {
@@ -116,20 +131,21 @@ export default {
     },
 
     handleSuccess() {
-      this.$emit('success', ...arguments)
+      $emit(this, 'success', ...arguments)
       this.init()
       this.handleClose()
     },
 
     handleSaveAndMore() {
-      this.$emit('saveAndMore', ...arguments)
+      $emit(this, 'saveAndMore', ...arguments)
       this.init()
-    }
-  }
+    },
+  },
+  emits: ['update:visible', 'visible', 'success', 'saveAndMore'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 ::v-deep {
   .ldp-conection-dialog {
     border-radius: 4px;

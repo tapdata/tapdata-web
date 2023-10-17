@@ -4,22 +4,31 @@ import { mergeLocales } from './internals'
 import { untracked } from '@formily/reactive'
 import { DEFAULT_DRIVERS, DEFAULT_EFFECTS } from './presets'
 
-export const isBehaviorHost = val => val?.Behavior && isBehaviorList(val.Behavior)
+export const isBehaviorHost = (val) =>
+  val?.Behavior && isBehaviorList(val.Behavior)
 
-export const isBehaviorList = val => Array.isArray(val) && val.every(isBehavior)
+export const isBehaviorList = (val) =>
+  Array.isArray(val) && val.every(isBehavior)
 
-export const isBehavior = val =>
-  val?.name || val?.selector || val?.extends || val?.designerProps || val?.designerLocales
+export const isBehavior = (val) =>
+  val?.name ||
+  val?.selector ||
+  val?.extends ||
+  val?.designerProps ||
+  val?.designerLocales
 
-export const isResourceHost = val => val?.Resource && isResourceList(val.Resource)
+export const isResourceHost = (val) =>
+  val?.Resource && isResourceList(val.Resource)
 
-export const isResourceList = val => Array.isArray(val) && val.every(isResource)
+export const isResourceList = (val) =>
+  Array.isArray(val) && val.every(isResource)
 
-export const isResource = val => val?.node && !!val.node.isSourceNode && val.node instanceof TreeNode
+export const isResource = (val) =>
+  val?.node && !!val.node.isSourceNode && val.node instanceof TreeNode
 
 export const createLocales = (...packages) => {
   const results = {}
-  packages.forEach(locales => {
+  packages.forEach((locales) => {
     mergeLocales(results, locales)
   })
   return results
@@ -31,7 +40,7 @@ export const createBehavior = (...behaviors) => {
     const { selector } = behavior || {}
     if (!selector) return buf
     if (typeof selector === 'string') {
-      behavior.selector = node => node.componentName === selector
+      behavior.selector = (node) => node.componentName === selector
     }
     return buf.concat(behavior)
   }, [])
@@ -44,8 +53,8 @@ export const createResource = (...sources) => {
       node: new TreeNode({
         componentName: '$$ResourceNode$$',
         isSourceNode: true,
-        children: source.elements || []
-      })
+        children: source.elements || [],
+      }),
     })
   }, [])
 }
@@ -60,7 +69,7 @@ export const createDesigner = (props = {}) => {
         ...props,
         effects: [...effects, ...DEFAULT_EFFECTS],
         drivers: [...drivers, ...DEFAULT_DRIVERS],
-        shortcuts: [...shortcuts]
+        shortcuts: [...shortcuts],
       })
   )
 }

@@ -2,36 +2,61 @@
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="220px">
-      <ElMenu class="layout-menu" :default-active="activeMenu" @select="menuTrigger">
+      <ElMenu
+        class="layout-menu"
+        :default-active="activeMenu"
+        @select="menuTrigger"
+      >
         <div class="flex-1">
           <template v-for="menu in menus">
-            <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
-              <template slot="title">
+            <ElSubmenu v-if="menu.children" :index="menu.name">
+              <template v-slot:title>
                 <span class="mr-4" slot v-if="menu.icon"
                   ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
                 >
-                <span slot="title">{{ menu.title }}</span>
+                <template v-slot:title>
+                  <span>{{ menu.title }}</span>
+                </template>
               </template>
-              <template v-for="cMenu in menu.children">
-                <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+              <template v-for="cMenu in menu.children" :key="cMenu.title">
+                <ElMenuItem :index="cMenu.path">
                   <div class="submenu-item">{{ cMenu.title }}</div>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
+            <ElMenuItem
+              v-else
+              :index="menu.path"
+              class="flex align-center"
+              :id="`menu-${menu.name}`"
+            >
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
               <span class="flex-fill">
                 {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px"
+                  >beta</VIcon
+                >
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
-                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                <ElTooltip
+                  placement="top"
+                  popper-class="agent-tooltip__popper"
+                  :visible-arrow="false"
+                  effect="light"
+                >
+                  <VIcon size="14" class="agent-warning-icon color-warning"
+                    >warning
+                  </VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                      <VIcon
+                        size="14"
+                        class="mr-2 color-warning"
+                        style="vertical-align: -0.125em"
+                      >
+                        warning </VIcon
                       >{{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
@@ -43,33 +68,54 @@
         <!--菜单栏分为两部分-->
         <div class="border-top sub-menu pt-3">
           <template v-for="menu in subMenu">
-            <ElSubmenu v-if="menu.children" :key="menu.title" :index="menu.name">
-              <template slot="title">
+            <ElSubmenu v-if="menu.children" :index="menu.name">
+              <template v-slot:title>
                 <span class="mr-4" slot v-if="menu.icon"
                   ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
                 >
-                <span slot="title">{{ menu.title }}</span>
+                <template v-slot:title>
+                  <span>{{ menu.title }}</span>
+                </template>
               </template>
-              <template v-for="cMenu in menu.children">
-                <ElMenuItem :key="cMenu.title" :index="cMenu.path">
+              <template v-for="cMenu in menu.children" :key="cMenu.title">
+                <ElMenuItem :index="cMenu.path">
                   <div class="submenu-item">{{ cMenu.title }}</div>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem v-else :key="menu.title" :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
+            <ElMenuItem
+              v-else
+              :index="menu.path"
+              class="flex align-center"
+              :id="`menu-${menu.name}`"
+            >
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >
               <span class="flex-fill">
                 {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px"
+                  >beta</VIcon
+                >
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
-                <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                <ElTooltip
+                  placement="top"
+                  popper-class="agent-tooltip__popper"
+                  :visible-arrow="false"
+                  effect="light"
+                >
+                  <VIcon size="14" class="agent-warning-icon color-warning"
+                    >warning
+                  </VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                      <VIcon
+                        size="14"
+                        class="mr-2 color-warning"
+                        style="vertical-align: -0.125em"
+                      >
+                        warning </VIcon
                       >{{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
@@ -77,8 +123,14 @@
               </template>
             </ElMenuItem>
           </template>
-          <ElMenuItem v-if="!isDemoEnv && isDomesticStation" key="goDemo" index="goDemo" class="flex align-center">
-            <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+          <ElMenuItem
+            v-if="!isDemoEnv && isDomesticStation"
+            index="goDemo"
+            class="flex align-center"
+          >
+            <span class="mr-4"
+              ><VIcon class="v-icon" size="17">open-in-new</VIcon></span
+            >
             <span class="text-decoration-underline">{{
               $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
             }}</span>
@@ -98,14 +150,17 @@
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog
-      :visible.sync="dialogVisible"
+      v-model:visible="dialogVisible"
       selector-type="source_and_target"
       @selected="createConnection"
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
-    <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
+    <AgentDownloadModal
+      v-model:visible="agentDownload.visible"
+      :source="agentDownload.data"
+    ></AgentDownloadModal>
     <AgentGuide
-      :visible.sync="subscriptionModelVisible"
+      v-model:visible="subscriptionModelVisible"
       :step="step"
       :agent="agent"
       :subscribes="subscribes"
@@ -114,23 +169,31 @@
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
-    <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
+    <TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>
     <ReplicationTour
-      v-model="showReplicationTour"
+      v-model:value="showReplicationTour"
       :finish="replicationTourFinish"
       @start="handleStartTour"
       @finish="handleFinishTour"
     ></ReplicationTour>
     <!--付费-->
-    <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
+    <UpgradeFee
+      :visible="upgradeFeeVisible"
+      @update:visible="setUpgradeFeeVisible"
+    ></UpgradeFee>
   </ElContainer>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import TheHeader from '@/components/the-header'
 import { VIcon } from '@tap/component'
-import { PageHeader, SceneDialog as ConnectionTypeDialog, UpgradeFee } from '@tap/business'
+import {
+  PageHeader,
+  SceneDialog as ConnectionTypeDialog,
+  UpgradeFee,
+} from '@tap/business'
 
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 // import AgentGuideDialog from '@/views/agent-download/AgentGuideDialog'
@@ -152,7 +215,7 @@ export default {
     AgentGuide,
     PageHeader,
     TaskAlarmTour,
-    ReplicationTour
+    ReplicationTour,
   },
   mixins: [tour],
   data() {
@@ -164,28 +227,28 @@ export default {
         {
           name: 'Dashboard',
           title: 'Dashboard',
-          icon: 'workbench'
+          icon: 'workbench',
         },
         {
           name: 'migrate',
           title: $t('task_manage_migrate'),
-          icon: 'migrate'
+          icon: 'migrate',
         },
         {
           name: 'dataflow',
           title: $t('task_manage_etl'),
-          icon: 'task'
+          icon: 'task',
         },
         {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
-          icon: 'data-validation'
+          icon: 'data-validation',
         },
         {
           name: 'dataConsole',
           title: this.$t('page_title_data_hub'),
-          icon: 'datastore'
-        }
+          icon: 'datastore',
+        },
         // {
         //   name: 'customNodeList',
         //   title: $t('page_title_custom_node'),
@@ -197,7 +260,7 @@ export default {
       dialogVisible: false,
       agentDownload: {
         visible: false,
-        data: {}
+        data: {},
       },
       bindPhoneVisible: false,
       agentGuideDialog: false,
@@ -206,13 +269,13 @@ export default {
       subscriptionModelVisible: false,
       userInfo: '',
       // aliyunMaketVisible: false,
-      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net',
     }
   },
 
   computed: {
     ...mapState(['upgradeFeeVisible']),
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
 
   created() {
@@ -221,18 +284,23 @@ export default {
     }
     if (window.__config__?.disabledDataService) {
       //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+      this.sortMenus = this.sortMenus.filter(
+        (item) => item.name !== 'dataServerList'
+      )
     }
     if (window.__config__?.disabledDataVerify) {
       //生产环境隐藏数据校验
-      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
+      this.sortMenus = this.sortMenus.filter(
+        (item) => item.name !== 'dataVerification'
+      )
     }
 
-    let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
-    const findRoute = name => {
-      return children.find(item => item.name === name)
+    let children =
+      this.$router.options.routes.find((r) => r.path === '/')?.children || []
+    const findRoute = (name) => {
+      return children.find((item) => item.name === name)
     }
-    this.menus = this.sortMenus.map(el => {
+    this.menus = this.sortMenus.map((el) => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
           el.children[idx].path = findRoute(cMenu.name).path
@@ -247,25 +315,25 @@ export default {
       {
         name: 'connections',
         title: this.$t('connection_manage'),
-        icon: 'connection'
+        icon: 'connection',
       },
       {
         name: 'Instance',
         title: this.$t('tap_agent_management'),
-        icon: 'agent'
+        icon: 'agent',
       },
       {
         name: 'order',
         title: this.$t('dfs_the_header_header_dingyuezhongxin'),
-        icon: 'icon_subscription'
+        icon: 'icon_subscription',
       },
       {
         name: 'OperationLog',
         title: this.$t('operation_log_manage'),
-        icon: 'operation-log'
-      }
+        icon: 'operation-log',
+      },
     ]
-    this.subMenu = subMenu.map(el => {
+    this.subMenu = subMenu.map((el) => {
       if (el.children?.length) {
         el.children.forEach((cMenu, idx) => {
           el.children[idx].path = findRoute(cMenu.name).path
@@ -276,9 +344,9 @@ export default {
       }
       return el
     })
-    this.$root.$on('select-connection-type', this.selectConnectionType)
-    this.$root.$on('show-guide', this.showGuide)
-    this.$root.$on('get-user', this.getUser)
+    $on(this.$root, 'select-connection-type', this.selectConnectionType)
+    $on(this.$root, 'show-guide', this.showGuide)
+    $on(this.$root, 'get-user', this.getUser)
 
     this.setActiveMenu()
   },
@@ -293,13 +361,13 @@ export default {
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.loopLoadAgentCountTimer)
   },
   watch: {
     $route() {
       this.setActiveMenu()
-    }
+    },
   },
   methods: {
     ...mapMutations(['setUpgradeFeeVisible']),
@@ -314,7 +382,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
     showGuide() {
@@ -351,7 +419,9 @@ export default {
         return
       }
       this.bindPhoneVisible =
-        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(
+          user?.registerSource
+        ) && !user?.telephone
       return this.bindPhoneVisible
     },
     hideCustomTip() {
@@ -373,7 +443,7 @@ export default {
           ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
           : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
         values: {},
-        ready: function () {}
+        ready: function () {},
       }
       window.$zoho = $zoho
       let d = document
@@ -381,7 +451,9 @@ export default {
       s.type = 'text/javascript'
       s.id = 'zsiqscript'
       s.defer = true
-      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
+      s.src = isDomesticStation
+        ? 'https://salesiq.zoho.com.cn/widget'
+        : 'https://salesiq.zohopublic.com/widget'
       let t = d.getElementsByTagName('script')[0]
       t.parentNode.insertBefore(s, t)
       this.hideCustomTip()
@@ -392,7 +464,7 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email
+          tapdata_email: user.email,
         })
 
         $zoho.salesiq.onload = function () {
@@ -402,7 +474,10 @@ export default {
             let style = document.createElement('style')
             style.type = 'text/css'
             style.innerHTML = `.botactions em { white-space: nowrap; }`
-            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+            siqiframe.contentWindow.document
+              .getElementsByTagName('head')
+              .item(0)
+              .appendChild(style)
           }
         }
       }
@@ -422,18 +497,18 @@ export default {
         this.userInfo = {
           showNextProcessing: false,
           licenseType: 'license',
-          nearExpiration: []
+          nearExpiration: [],
         }
       }
       //已过期
-      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
+      let expired = licenseCodes.filter((it) => it.licenseStatus === 'EXPIRED')
       if (!user?.licenseValid && expired?.length > 0) {
         //授权码不可用 存在有临近授权码
         this.aliyunMaketVisible = true
         this.userInfo = {
           showNextProcessing: false,
           licenseType: 'checkCode',
-          data: expired
+          data: expired,
         }
       }
     },
@@ -445,14 +520,16 @@ export default {
     goGuide() {
       this.buried('agentGuideDemo')
       this.$router.push({
-        name: 'productDemo'
+        name: 'productDemo',
       })
     },
 
     setActiveMenu() {
-      this.activeMenu = this.$route.meta.activeMenu || this.$route.matched.find(item => !!item.path).path
-    }
-  }
+      this.activeMenu =
+        this.$route.meta.activeMenu ||
+        this.$route.matched.find((item) => !!item.path).path
+    },
+  },
 }
 </script>
 

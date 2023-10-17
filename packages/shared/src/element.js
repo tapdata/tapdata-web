@@ -52,7 +52,7 @@ const InlineLayoutTagNames = new Set([
   'VIDEO',
   'WBR',
   'INPUT',
-  'SPAN'
+  'SPAN',
 ])
 
 export const calcElementOuterWidth = (innerWidth, style) => {
@@ -67,7 +67,7 @@ export const calcElementOuterWidth = (innerWidth, style) => {
   )
 }
 
-export const calcElementLayout = element => {
+export const calcElementLayout = (element) => {
   if (!element) return 'vertical'
   const parent = element.parentElement
   const tagName = element.tagName
@@ -84,7 +84,8 @@ export const calcElementLayout = element => {
   if (tagName === 'TH' || tagName === 'TD') {
     if (parentTagName === 'TR') return 'horizontal'
   }
-  if (parentStyle.display === 'flex' && parentStyle.flexDirection === 'row') return 'horizontal'
+  if (parentStyle.display === 'flex' && parentStyle.flexDirection === 'row')
+    return 'horizontal'
   if (parentStyle.display === 'grid') {
     if (isNotFullWidth()) {
       return 'horizontal'

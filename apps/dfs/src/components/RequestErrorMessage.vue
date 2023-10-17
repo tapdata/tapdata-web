@@ -7,7 +7,9 @@
     </div>
     <div v-show="reqId" class="error-item">
       <span class="error-item__label">{{ reqIdLabel }}</span>
-      <span class="error-item__value cursor-pointer" @click="onCopy">{{ reqId }}</span>
+      <span class="error-item__value cursor-pointer" @click="onCopy">{{
+        reqId
+      }}</span>
       <ElTooltip
         placement="top"
         manual
@@ -16,15 +18,30 @@
         :tabindex="10086"
         :value="showTooltip"
       >
-        <span class="operaKey" v-clipboard:copy="reqId" v-clipboard:success="onCopy" @mouseleave="showTooltip = false">
-          <VIcon size="14" :class="[{ 'copied-icon': copied }, 'cursor-pointer', 'ml-2']">copy</VIcon>
+        <span
+          class="operaKey"
+          v-clipboard:copy="reqId"
+          v-clipboard:success="onCopy"
+          @mouseleave="showTooltip = false"
+        >
+          <VIcon
+            size="14"
+            :class="[{ 'copied-icon': copied }, 'cursor-pointer', 'ml-2']"
+            >copy</VIcon
+          >
         </span>
       </ElTooltip>
     </div>
     <div v-show="message">
-      <div class="inline-flex align-items-center expand-operation cursor-pointer" @click="expand = !expand">
+      <div
+        class="inline-flex align-items-center expand-operation cursor-pointer"
+        @click="expand = !expand"
+      >
         <span class="error-item__label">{{ errorDetailLabel }}</span>
-        <VIcon size="14" :class="[{ expand: expand }, 'v-icon', 'ml-1']" @click.prevent.stop="expand = !expand"
+        <VIcon
+          size="14"
+          :class="[{ expand: expand }, 'v-icon', 'ml-1']"
+          @click.prevent.stop="expand = !expand"
           >arrow-down</VIcon
         >
       </div>
@@ -45,8 +62,8 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -58,7 +75,7 @@ export default {
       errorTitle: i18n.t('RequestErrorMessage_error_title'),
       codeLabel: i18n.t('RequestErrorMessage_code_label'),
       reqIdLabel: i18n.t('RequestErrorMessage_req_id_label'),
-      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label')
+      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label'),
     }
   },
   computed: {
@@ -70,7 +87,7 @@ export default {
     },
     message() {
       return this.errData.message
-    }
+    },
   },
   methods: {
     onCopy() {
@@ -79,8 +96,8 @@ export default {
     },
     clickItem() {
       this.expand = !this.expand
-    }
-  }
+    },
+  },
 }
 </script>
 

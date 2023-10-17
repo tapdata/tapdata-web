@@ -34,7 +34,7 @@
         v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
-          maxWidth: 400
+          maxWidth: 400,
         }"
         ref="leftSidebar"
         @move-node="handleDragMoveNode"
@@ -44,7 +44,11 @@
       />
       <section class="layout-wrap flex-1">
         <!--内容体-->
-        <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
+        <main
+          id="dfEditorContent"
+          ref="layoutContent"
+          class="layout-content flex-1 overflow-hidden"
+        >
           <PaperScroller
             ref="paperScroller"
             :nav-lines="navLines"
@@ -59,7 +63,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -73,7 +77,10 @@
               @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
-          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+          <div
+            v-if="!allNodes.length && stateIsReadonly"
+            class="absolute-fill flex justify-center align-center"
+          >
             <VEmpty large />
           </div>
           <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
@@ -98,7 +105,7 @@
 
       <MaterializedView
         ref="materializedView"
-        :visible.sync="materializedViewVisible"
+        v-model:visible="materializedViewVisible"
         @add-node="onAddMaterializedViewNode"
         @add-target-node="onAddMaterializedViewTargetNode()"
         @delete-node="handleDeleteById"
@@ -152,7 +159,7 @@ export default {
     LeftSidebar,
     TransformLoading,
     ConsolePanel,
-    PaperEmpty
+    PaperEmpty,
   },
 
   inject: ['buried'],
@@ -176,11 +183,11 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      scale: 1
+      scale: 1,
     }
   },
 
@@ -196,13 +203,16 @@ export default {
         this.gotoViewer()
       }
 
-      if (['DataflowViewer'].includes(this.$route.name) && ['renewing'].includes(v)) {
+      if (
+        ['DataflowViewer'].includes(this.$route.name) &&
+        ['renewing'].includes(v)
+      ) {
         this.handleConsoleAutoLoad()
       }
     },
     'dataflow.id'() {
       this.getTaskPermissions()
-    }
+    },
   },
 
   // created 换成 mounted，等上一个实例destroy走完
@@ -233,7 +243,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.command = null
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
@@ -245,29 +255,29 @@ export default {
       let nodes = [
         {
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
+          type: 'merge_table_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
-          type: 'union_processor'
+          type: 'union_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_js_processor'
+          type: 'standard_js_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
-          beta: true
+          beta: true,
         },
         {
           name: 'Python',
           type: 'python_processor',
-          beta: true
+          beta: true,
         },
         {
           name: 'Row Filter',
-          type: 'row_filter_processor'
+          type: 'row_filter_processor',
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -275,41 +285,41 @@ export default {
         // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
-          type: 'field_calc_processor'
+          type: 'field_calc_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingxiugai'),
-          type: 'field_mod_type_processor'
+          type: 'field_mod_type_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_ziduangaiming'),
-          type: 'field_rename_processor'
+          type: 'field_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
-          type: 'field_add_del_processor'
+          type: 'field_add_del_processor',
         },
         {
           name: i18n.t('packages_dag_date_processor'),
-          type: 'date_processor'
+          type: 'date_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'field_mod_type_filter_processor'
+          type: 'field_mod_type_filter_processor',
         },
         {
           // name: i18n.t('packages_dag_unwind_name'),
           name: 'Unwind',
-          type: 'unwind_processor'
-        }
+          type: 'unwind_processor',
+        },
       ]
       //仅企业版有的节点
       if (this.isDaas) {
         let isDaasNode = [
           {
             name: i18n.t('packages_dag_src_editor_join'),
-            type: 'join_processor' //join 节点
-          }
+            type: 'join_processor', //join 节点
+          },
         ]
         nodes = [...isDaasNode, ...nodes]
       }
@@ -324,7 +334,11 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
-        this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
+        this.setStateReadonly(
+          this.$route.name === 'DataflowViewer'
+            ? true
+            : this.dataflow.disabledData.edit
+        )
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)
@@ -346,8 +360,8 @@ export default {
         .push({
           name: 'TaskMonitor',
           params: {
-            id: this.dataflow.id
-          }
+            id: this.dataflow.id,
+          },
         })
         .catch(() => {
           console.log('Current route: DataflowViewer') // eslint-disable-line
@@ -391,7 +405,7 @@ export default {
         this.initWS()
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data, {
-          silenceMessage: true
+          silenceMessage: true,
         })
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
@@ -422,7 +436,7 @@ export default {
         this.setTaskInfo(this.dataflow)
         await this.$router.replace({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' }
+          params: { id: dataflow.id, action: 'dataflowEdit' },
         })
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
@@ -436,7 +450,7 @@ export default {
           await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'dataflowList'
+            name: 'dataflowList',
           })
         } else {
           this.handleError(e)
@@ -458,21 +472,30 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 60, ranksep: 120, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({
+        nodesep: 60,
+        ranksep: 120,
+        marginx: 50,
+        marginy: 50,
+        rankdir: 'LR',
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
-        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+      nodes.forEach((n) => {
+        dg.setNode(NODE_PREFIX + n.id, {
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+        })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs.position
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -483,22 +506,23 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n]
-              }
-            }
+                position: nodePositionMap[n],
+              },
+            },
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
 
-      hasMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
+      hasMove &&
+        this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
       this.$refs.paperScroller.autoResizePaper()
       this.$refs.paperScroller.centerContent()
     },
@@ -508,7 +532,7 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position }
+          attrs: { position },
         },
         item
       )
@@ -516,7 +540,7 @@ export default {
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
 
       return node
@@ -535,27 +559,35 @@ export default {
     },*/
 
     handlePageReturn() {
-      if (!this.allNodes.length && !this.nameHasUpdated && this.$store.state.dataflow.taskId) {
+      if (
+        !this.allNodes.length &&
+        !this.nameHasUpdated &&
+        this.$store.state.dataflow.taskId
+      ) {
         this.$confirm(
           this.$t('packages_dag_page_return_confirm_content'),
           this.$t('packages_dag_page_return_confirm_title'),
           {
             type: 'warning',
             closeOnClickModal: false,
-            confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
+            confirmButtonText: this.$t(
+              'packages_dag_page_return_confirm_ok_text'
+            ),
+            cancelButtonText: this.$t(
+              'packages_dag_page_return_confirm_cancel_text'
+            ),
           }
-        ).then(res => {
+        ).then((res) => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'dataflowList'
+            name: 'dataflowList',
           })
         })
       } else {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
     },
@@ -563,7 +595,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'DataflowEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' }
+        params: { id: this.dataflow.id, action: 'dataflowEdit' },
       })
     },
 
@@ -571,16 +603,20 @@ export default {
       this.$router.push({
         name: 'TaskMonitor',
         params: {
-          id: this.dataflow.id
-        }
+          id: this.dataflow.id,
+        },
       })
     },
 
     async handleStart() {
       this.buried('taskStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', v => {
-        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
+        if (
+          ['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(
+            v
+          )
+        ) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
             this.$refs.console?.stopAuto()
@@ -620,7 +656,10 @@ export default {
 
       try {
         const con = await connectionsApi.get(connectionId)
-        this.handleAddNodeToPos([-300, 300], this.$refs.leftSidebar.getNodeProps(con, tableName))
+        this.handleAddNodeToPos(
+          [-300, 300],
+          this.$refs.leftSidebar.getNodeProps(con, tableName)
+        )
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
@@ -635,8 +674,8 @@ export default {
         connectionId: '',
         tableName: '',
         attrs: {
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       })
       const viewNode = {
         ...props,
@@ -645,7 +684,7 @@ export default {
         tableName: newNode.name,
         tableNode: newNode,
         // joinKeys: [],
-        children: []
+        children: [],
       }
 
       parentNode.children.push(viewNode)
@@ -662,8 +701,8 @@ export default {
         tableName: '',
         attrs: {
           capabilities: [{ id: 'master_slave_merge' }], // 允许作为主从合并的目标
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
     ) {
       const newNode = this.quickAddNode(activeNode, nodeType)
@@ -679,14 +718,14 @@ export default {
 
       await this.$router.replace({
         params: {
-          action: 'dataflowEdit'
+          action: 'dataflowEdit',
         },
         query: {
           ...query,
           by: undefined,
           connectionId: undefined,
-          tableName: undefined
-        }
+          tableName: undefined,
+        },
       })
 
       if (connectionId) {
@@ -702,17 +741,20 @@ export default {
         connectionId: '',
         tableName: '',
         attrs: {
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       })
       // 添加主从合并节点
       const mergeTableNode = this.quickAddNode(sourceNode, {
         name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-        type: 'merge_table_processor'
+        type: 'merge_table_processor',
       })
       // 添加目标节点
       if (connection) {
-        this.quickAddNode(mergeTableNode, this.$refs.leftSidebar.getNodeProps(connection, tableName))
+        this.quickAddNode(
+          mergeTableNode,
+          this.$refs.leftSidebar.getNodeProps(connection, tableName)
+        )
       }
 
       // 因为有节流，等一个$nextTick
@@ -728,8 +770,8 @@ export default {
         // 显示物化视图
         this.setMaterializedViewVisible(true)
       }, 50)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -747,12 +789,10 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
-
   &.--right {
     width: 726px;
   }
 }
-
 .layout-wrap {
   display: flex;
   flex: auto;
@@ -763,13 +803,9 @@ $sidebarBg: #fff;
     flex-direction: row;
   }
 }
-
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-  background-color: #f5f8fe;*/
-
   ::v-deep {
     .connection-highlight,
     .connection-selected {
@@ -839,7 +875,6 @@ $sidebarBg: #fff;
     }
   }
 }
-
 .nav-line {
   position: absolute;
   width: 0;
@@ -849,20 +884,17 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
-
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
-
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
-
 .node-view-background {
   position: absolute;
   width: 10000px;

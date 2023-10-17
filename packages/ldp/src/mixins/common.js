@@ -1,3 +1,4 @@
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { CancelToken, discoveryApi, taskApi } from '@tap/api'
 import { validateCron } from '@tap/form'
@@ -8,14 +9,18 @@ export default {
     const validateTaskName = async (rule, value, callback) => {
       value = value.trim()
       if (!value) {
-        callback(new Error(this.$t('packages_business_relation_list_qingshururenwu')))
+        callback(
+          new Error(this.$t('packages_business_relation_list_qingshururenwu'))
+        )
       } else {
         try {
           const isExist = await taskApi.checkName({
-            name: value
+            name: value,
           })
           if (isExist) {
-            callback(new Error(this.$t('packages_dag_task_form_error_name_duplicate')))
+            callback(
+              new Error(this.$t('packages_dag_task_form_error_name_duplicate'))
+            )
           } else {
             callback()
           }
@@ -29,7 +34,9 @@ export default {
       if (!value) {
         callback(new Error(this.$t('public_form_not_empty')))
       } else if (!/\w+/.test(value)) {
-        callback(new Error(this.$t('packages_business_data_server_drawer_geshicuowu')))
+        callback(
+          new Error(this.$t('packages_business_data_server_drawer_geshicuowu'))
+        )
       } else {
         callback()
       }
@@ -48,24 +55,24 @@ export default {
     const cronOptions = [
       {
         label: i18n.t('packages_ldp_run_only_once'),
-        value: 'once'
+        value: 'once',
       },
       {
         label: i18n.t('packages_ldp_run_every_10_minutes'),
-        value: '0 */10 * * * ?'
+        value: '0 */10 * * * ?',
       },
       {
         label: i18n.t('packages_ldp_run_every_hour'),
-        value: '0 0 * * * ?'
+        value: '0 0 * * * ?',
       },
       {
         label: i18n.t('packages_ldp_run_every_day'),
-        value: '0 0 0 * * ?'
+        value: '0 0 0 * * ?',
       },
       {
         label: i18n.t('packages_ldp_custom_cron_expression'),
-        value: 'custom'
-      }
+        value: 'custom',
+      },
     ]
     return {
       cronOptions,
@@ -74,23 +81,24 @@ export default {
         newTableName: [{ required: true }],
         prefix: [{ validator: validatePrefix, trigger: 'blur' }],
         'task.crontabExpression': [
-          { required: true, message: this.$t('public_form_not_empty'), trigger: ['blur', 'change'] },
-          { validator: validateCrontabExpression, trigger: ['blur', 'change'] }
-        ]
-      }
+          {
+            required: true,
+            message: this.$t('public_form_not_empty'),
+            trigger: ['blur', 'change'],
+          },
+          { validator: validateCrontabExpression, trigger: ['blur', 'change'] },
+        ],
+      },
     }
   },
-
   computed: {
     ...mapGetters(['startingTour']),
-    ...mapState(['highlightBoard'])
+    ...mapState(['highlightBoard']),
   },
-
   unmounted() {
     this.debouncedSearch?.cancel()
     this.cancelSource?.cancel()
   },
-
   methods: {
     toggleEnableSearch() {
       if (this.enableSearch) {
@@ -128,16 +136,18 @@ export default {
       let routeName
 
       if (!['edit', 'wait_start'].includes(task.status)) {
-        routeName = task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
+        routeName =
+          task.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor'
       } else {
-        routeName = task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
+        routeName =
+          task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor'
       }
 
       this.openRoute({
         name: routeName,
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -151,22 +161,22 @@ export default {
         queryKey,
         regUnion: false,
         fields: {
-          allTags: 1
-        }
+          allTags: 1,
+        },
       }
       return discoveryApi
         .discoveryList(where, {
-          cancelToken
+          cancelToken,
         })
-        .then(res => {
-          return res.items.map(item =>
+        .then((res) => {
+          return res.items.map((item) =>
             Object.assign(item, {
               isLeaf: true,
               isObject: true,
               connectionId: item.sourceConId,
               LDP_TYPE: 'table',
               parent_id: node.id,
-              isVirtual: item.status === 'noRunning'
+              isVirtual: item.status === 'noRunning',
             })
           )
         })
@@ -176,7 +186,12 @@ export default {
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       this.searchIng = true
-      const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
+      const result = await this.loadObjects(
+        this.directory,
+        false,
+        search,
+        this.cancelSource.token
+      )
       const map = result.reduce((obj, item) => {
         let id = item.listtags[0].id
         let children = obj[id] || []
@@ -185,13 +200,16 @@ export default {
         return obj
       }, {})
 
-      const filterTree = node => {
+      const filterTree = (node) => {
         const { children } = node
 
         if (children?.length) {
-          node.children = children.filter(child => {
+          node.children = children.filter((child) => {
             filterTree(child)
-            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
+            return (
+              child.LDP_TYPE === 'folder' &&
+              (child.name.includes(search) || child.children.length)
+            )
           })
         }
 
@@ -208,7 +226,7 @@ export default {
 
     handleFindParent(event) {
       const parentNode = event.target?.parentElement
-      this.$emit('find-parent', parentNode)
+      $emit(this, 'find-parent', parentNode)
     },
 
     handleChangeCronType(val) {
@@ -239,13 +257,13 @@ export default {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
           fields: { name: 1 },
-          where: { name: { like: `^${source}\\d+$` } }
-        })
+          where: { name: { like: `^${source}\\d+$` } },
+        }),
       })
       let def = 1
       if (taskNames?.items.length) {
         let arr = [0]
-        taskNames.items.forEach(item => {
+        taskNames.items.forEach((item) => {
           const res = item.name.match(new RegExp(`^${source}(\\d+)$`))
           if (res && res[1]) arr.push(+res[1])
         })
@@ -253,6 +271,7 @@ export default {
         def = arr.pop() + 1
       }
       return `${source}${def}`
-    }
-  }
+    },
+  },
+  emits: ['find-parent'],
 }

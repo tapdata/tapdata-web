@@ -1,7 +1,7 @@
 // 初始化 state
 const state = () => ({
   designer: {},
-  components: []
+  components: [],
 })
 
 // getters
@@ -19,5 +19,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

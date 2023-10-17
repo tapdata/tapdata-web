@@ -3,7 +3,7 @@
     <span class="inline-input-body" v-show="!editing">
       <span
         :style="{
-          width: inputStyle && inputStyle.width
+          width: inputStyle && inputStyle.width,
         }"
         :class="[wordBreak ? 'word-break' : 'ellipsis']"
         :title="value"
@@ -26,22 +26,32 @@
         :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
-        <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
+        <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
       </ElLink>
     </span>
     <span class="inline-input-body gap-2" v-show="editing">
-      <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
+      <ElTooltip
+        manual
+        effect="dark"
+        :content="tooltip"
+        placement="top-start"
+        :value="disabled"
+      >
         <ElInput
+          v-bind="inputProps"
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
           size="mini"
           :style="inputStyle"
-          v-model="inputValue"
-          v-bind="inputProps"
+          v-model:value="inputValue"
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
-        <ElButton class="icon-button min-w-0" size="medium" :disabled="disabled" @click="save"
+        <ElButton
+          class="icon-button min-w-0"
+          size="medium"
+          :disabled="disabled"
+          @click="save"
           ><VIcon size="12">check</VIcon></ElButton
         >
         <ElButton class="icon-button min-w-0 m-0" size="medium" @click="cancel"
@@ -49,13 +59,31 @@
         >
       </template>
       <template v-else-if="type === 'text'">
-        <ElButton type="text" class="min-w-0" size="medium" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
-        <ElButton type="text" class="m-0 min-w-0" size="medium" @click="cancel">{{ cancelText }}</ElButton>
+        <ElButton
+          type="text"
+          class="min-w-0"
+          size="medium"
+          :disabled="disabled"
+          @click="save"
+          >{{ saveText }}</ElButton
+        >
+        <ElButton
+          type="text"
+          class="m-0 min-w-0"
+          size="medium"
+          @click="cancel"
+          >{{ cancelText }}</ElButton
+        >
       </template>
       <template v-else>
-        <ElButton class="inline-input-button" type="primary" size="mini" :disabled="disabled" @click="save">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton
+          class="inline-input-button"
+          type="primary"
+          size="mini"
+          :disabled="disabled"
+          @click="save"
+          >{{ $t('public_button_save') }}</ElButton
+        >
         <ElButton class="inline-input-button m-0" size="mini" @click="cancel">{{
           $t('public_button_cancel')
         }}</ElButton>
@@ -65,6 +93,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
@@ -80,35 +109,35 @@ export default {
     inputProps: Object,
     min: {
       type: Number,
-      default: 1
+      default: 1,
     },
     max: {
       type: Number,
-      default: 32
+      default: 32,
     },
     editText: {
       type: String,
       default: () => {
         return i18n.t('public_button_edit')
-      }
+      },
     },
     saveText: {
       type: String,
       default: () => {
         return i18n.t('public_button_save')
-      }
+      },
     },
     cancelText: {
       type: String,
       default: () => {
         return i18n.t('public_button_cancel')
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       editing: false,
-      inputValue: ''
+      inputValue: '',
     }
   },
   computed: {
@@ -123,15 +152,18 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return i18n.t('components_InlineInput_ziFuChangDuXian', { val1: min, val2: max })
-    }
+      return i18n.t('components_InlineInput_ziFuChangDuXian', {
+        val1: min,
+        val2: max,
+      })
+    },
   },
   watch: {
     editing(val) {
       if (val) {
         this.inputValue = this.value
       }
-    }
+    },
   },
   methods: {
     save() {
@@ -139,12 +171,13 @@ export default {
       if (this.inputValue === this.value) {
         return
       }
-      this.$emit('save', this.inputValue)
+      $emit(this, 'save', this.inputValue)
     },
     cancel() {
       this.editing = false
-    }
-  }
+    },
+  },
+  emits: ['click-text', 'save', 'update:value', , 'update:value'],
 }
 </script>
 

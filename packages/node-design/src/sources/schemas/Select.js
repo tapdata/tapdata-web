@@ -4,17 +4,17 @@ export const Select = {
     multiple: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
+      'x-component': 'Switch',
     },
     allowCreate: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
+      'x-component': 'Switch',
     },
     clearable: {
       type: 'boolean',
       'x-decorator': 'FormItem',
-      'x-component': 'Switch'
+      'x-component': 'Switch',
     },
     // autoClearSearchValue: {
     //   type: 'boolean',
@@ -131,7 +131,7 @@ export const Select = {
     placeholder: {
       type: 'string',
       'x-decorator': 'FormItem',
-      'x-component': 'Input'
+      'x-component': 'Input',
     },
 
     size: {
@@ -140,8 +140,8 @@ export const Select = {
       'x-decorator': 'FormItem',
       'x-component': 'Select',
       'x-component-props': {
-        defaultValue: 'middle'
-      }
-    }
-  }
+        defaultValue: 'middle',
+      },
+    },
+  },
 }

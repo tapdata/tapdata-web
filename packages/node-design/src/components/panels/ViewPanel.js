@@ -8,7 +8,7 @@ export const ViewPanel = observer(
     props: {
       type: String,
       scrollable: { type: Boolean, default: true },
-      dragTipsDirection: { type: String }
+      dragTipsDirection: { type: String },
     },
     setup: (props, { slots }) => {
       const workbenchRef = useWorkbench()
@@ -22,13 +22,17 @@ export const ViewPanel = observer(
           return slots.default({
             tree,
             customNode: workbench.engine.props.customNode,
-            onChange: payload => {
+            onChange: (payload) => {
               tree.from(payload)
-            }
+            },
           })
         }
         if (workbench.type === 'DESIGNABLE')
-          return <Viewport dragTipsDirection={props.dragTipsDirection}>{render()}</Viewport>
+          return (
+            <Viewport dragTipsDirection={props.dragTipsDirection}>
+              {render()}
+            </Viewport>
+          )
 
         return (
           <div
@@ -36,13 +40,13 @@ export const ViewPanel = observer(
               overflow: props.scrollable ? 'overlay' : 'hidden',
               height: '100%',
               cursor: 'auto',
-              userSelect: 'text'
+              userSelect: 'text',
             }}
           >
             {render()}
           </div>
         )
       }
-    }
+    },
   })
 )

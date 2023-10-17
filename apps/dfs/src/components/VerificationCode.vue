@@ -19,24 +19,24 @@ export default {
   props: {
     type: {
       type: String,
-      default: ''
+      default: '',
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     buttonText: {
       type: String,
       default: () => {
         return i18n.t('components_VerificationCode_faSongYanZhengMa')
-      }
+      },
     },
     remoteMethod: {
-      type: Function
+      type: Function,
     },
     buttonStyle: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     requestOptions: {
       type: Object,
@@ -44,24 +44,24 @@ export default {
         return {
           method: 'get',
           url: '',
-          params: {}
+          params: {},
         }
-      }
+      },
     },
     spacing: {
       type: Number,
-      default: 1000
-    }
+      default: 1000,
+    },
   },
   data() {
     return {
       timer: null,
       loading: false,
       btnDisabled: false,
-      num: ''
+      num: '',
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.clearTimer()
   },
   methods: {
@@ -111,9 +111,7 @@ export default {
       this.btnDisabled = false
       this.loading = false
       this.timer && clearInterval(this.timer)
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped></style>

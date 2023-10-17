@@ -7,7 +7,7 @@ import {
   useCursor,
   useDragon,
   usePrefix,
-  useDesigner
+  useDesigner,
 } from '../../../hooks'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
@@ -28,7 +28,7 @@ export const SelectionBox = defineComponent({
           position: 'absolute',
           top: 0,
           left: 0,
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
         }
         if (nodeRect) {
           baseStyle.transform = `perspective(1px) translate3d(${nodeRect.x}px,${nodeRect.y}px,0)`
@@ -43,7 +43,7 @@ export const SelectionBox = defineComponent({
       if (!nodeRect.width || !nodeRect.height) return null
 
       const selectionId = {
-        [designer.value.props?.nodeSelectionIdAttrName]: props.node.id
+        [designer.value.props?.nodeSelectionIdAttrName]: props.node.id,
       }
 
       return (
@@ -51,11 +51,13 @@ export const SelectionBox = defineComponent({
           <div class={innerPrefix}></div>
           <ResizeHandler node={props.node} />
           <TranslateHandler node={props.node} />
-          {props.showHelpers && <Helpers props={props} node={props.node} nodeRect={nodeRect} />}
+          {props.showHelpers && (
+            <Helpers props={props} node={props.node} nodeRect={nodeRect} />
+          )}
         </div>
       )
     }
-  }
+  },
 })
 
 export const Selection = observer(
@@ -66,19 +68,29 @@ export const Selection = observer(
       const cursor = useCursor()
       const viewportDragonRef = useDragon()
       return () => {
-        if (cursor.value.status !== 'NORMAL' && viewportDragonRef.value.touchNode) return null
+        if (
+          cursor.value.status !== 'NORMAL' &&
+          viewportDragonRef.value.touchNode
+        )
+          return null
         const selection = selectionRef.value
         return (
           <FragmentComponent>
-            {selection.selected.map(id => {
+            {selection.selected.map((id) => {
               const node = treeRef.value.findById(id)
               if (!node) return
               if (node.hidden) return
-              return <SelectionBox key={id} node={node} showHelpers={selection.selected.length === 1} />
+              return (
+                <SelectionBox
+                  key={id}
+                  node={node}
+                  showHelpers={selection.selected.length === 1}
+                />
+              )
             })}
           </FragmentComponent>
         )
       }
-    }
+    },
   })
 )

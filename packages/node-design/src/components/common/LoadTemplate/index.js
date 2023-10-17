@@ -3,7 +3,7 @@ import { defineComponent } from 'vue-demi'
 
 export const LoadTemplate = defineComponent({
   props: ['actions'],
-  setup: props => {
+  setup: (props) => {
     return () => (
       <NodeActionsWidget>
         {props.actions?.map((action, key) => {
@@ -11,5 +11,5 @@ export const LoadTemplate = defineComponent({
         })}
       </NodeActionsWidget>
     )
-  }
+  },
 })

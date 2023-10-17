@@ -1,17 +1,37 @@
 <template>
   <div class="event-chart">
-    <ElRadioGroup v-if="showAll" v-model="dataType" size="mini" class="event-chart__radio" @change="loadBarData">
-      <ElRadioButton :label="0">{{ $t('packages_dag_components_eventchart_renwuyunxinglei') }}</ElRadioButton>
-      <ElRadioButton :label="1">{{ $t('packages_dag_components_eventchart_suoxuanzhouqilei') }}</ElRadioButton>
+    <ElRadioGroup
+      v-if="showAll"
+      v-model:value="dataType"
+      size="mini"
+      class="event-chart__radio"
+      @change="loadBarData"
+    >
+      <ElRadioButton :label="0">{{
+        $t('packages_dag_components_eventchart_renwuyunxinglei')
+      }}</ElRadioButton>
+      <ElRadioButton :label="1">{{
+        $t('packages_dag_components_eventchart_suoxuanzhouqilei')
+      }}</ElRadioButton>
     </ElRadioGroup>
     <div v-if="total" class="total-line flex align-items-center">
-      <ElTooltip transition="tooltip-fade-in" :content="total.input.toLocaleString()">
-        <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.input) }}</span>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="total.input.toLocaleString()"
+      >
+        <span class="font-color-normal fw-bold fs-3 din-font">{{
+          calcUnit(total.input)
+        }}</span>
       </ElTooltip>
       <span class="ml-2">{{ $t('public_event_total_input') }}</span>
       <ElDivider direction="vertical" class="divider mx-4"></ElDivider>
-      <ElTooltip transition="tooltip-fade-in" :content="total.output.toLocaleString()">
-        <span class="font-color-normal fw-bold fs-3 din-font">{{ calcUnit(total.output) }}</span>
+      <ElTooltip
+        transition="tooltip-fade-in"
+        :content="total.output.toLocaleString()"
+      >
+        <span class="font-color-normal fw-bold fs-3 din-font">{{
+          calcUnit(total.output)
+        }}</span>
       </ElTooltip>
       <span class="ml-2">{{ $t('public_event_total_output') }}</span>
     </div>
@@ -31,34 +51,37 @@ export default {
   props: {
     samples: {
       type: Array,
-      required: true
+      required: true,
     },
     yData: {
       type: Array,
-      default: () => [i18n.t('public_event_total_input'), i18n.t('public_event_total_output')]
+      default: () => [
+        i18n.t('public_event_total_input'),
+        i18n.t('public_event_total_output'),
+      ],
     },
     height: {
       type: String,
-      default: '140px'
+      default: '140px',
     },
     showAll: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       dataType: 0,
       total: {
         input: 0,
-        output: 0
+        output: 0,
       },
       options: {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
-          }
+            type: 'shadow', // 'shadow' as default; can also be 'line' or 'shadow'
+          },
         },
         legend: {
           right: 0,
@@ -67,15 +90,15 @@ export default {
           itemHeight: 6,
           itemGap: 16,
           textStyle: {
-            color: '#535F72'
-          }
+            color: '#535F72',
+          },
         },
         grid: {
           top: 0,
           left: 0,
           right: 0,
           bottom: '24px',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           type: 'value',
@@ -83,39 +106,39 @@ export default {
             color: '#535F72',
             showMaxLabel: false,
             showMinLabel: false,
-            formatter: val => {
+            formatter: (val) => {
               return calcUnit(val)
-            }
+            },
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#E9E9E9'
-            }
+              color: '#E9E9E9',
+            },
           },
           splitLine: {
             lineStyle: {
-              type: 'dashed'
-            }
-          }
+              type: 'dashed',
+            },
+          },
         },
         yAxis: {
           type: 'category',
           axisLine: {
             lineStyle: {
-              color: '#E9E9E9'
-            }
+              color: '#E9E9E9',
+            },
           },
           axisTick: {
-            show: false
+            show: false,
           },
           axisLabel: {
-            color: '#535F72'
+            color: '#535F72',
           },
-          data: this.yData
+          data: this.yData,
         },
-        series: []
-      }
+        series: [],
+      },
     }
   },
   watch: {
@@ -123,8 +146,8 @@ export default {
       deep: true,
       handler() {
         this.init()
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
@@ -151,30 +174,30 @@ export default {
         {
           label: i18n.t('public_event_insert'),
           key: 'InsertTotal',
-          color: '#88DBDA'
+          color: '#88DBDA',
         },
         {
           label: i18n.t('public_event_update'),
           key: 'UpdateTotal',
-          color: '#6ACA26'
+          color: '#6ACA26',
         },
         {
           label: i18n.t('public_button_delete'),
           key: 'DeleteTotal',
-          color: '#FDD746'
+          color: '#FDD746',
         },
         {
           label: 'DDL',
           key: 'DdlTotal',
-          color: '#B682CE'
+          color: '#B682CE',
         },
         {
           label: i18n.t('packages_dag_components_eventchart_qita'),
           key: 'OthersTotal',
-          color: '#00A1F1'
-        }
+          color: '#00A1F1',
+        },
       ]
-      let series = arr.map(t => {
+      let series = arr.map((t) => {
         const k = t.key.toLowerCase()
         return {
           type: 'bar',
@@ -182,7 +205,7 @@ export default {
           barWidth: 12,
           name: t.label,
           color: t.color,
-          data: [inData[k], outData[k]]
+          data: [inData[k], outData[k]],
         }
       })
       this.options.series = series
@@ -190,8 +213,8 @@ export default {
 
     calcUnit() {
       return calcUnit(...arguments)
-    }
-  }
+    },
+  },
 }
 </script>
 

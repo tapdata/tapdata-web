@@ -3,15 +3,18 @@
     <div class="list__title flex align-center px-4">
       <span class="fs-6">{{ $t('packages_business_data_console_fdm') }}</span>
       <div class="flex-grow-1"></div>
-      <IconButton :disabled="fdmNotExist" :class="{ active: enableSearch }" @click="toggleEnableSearch"
+      <IconButton
+        :disabled="fdmNotExist"
+        :class="{ active: enableSearch }"
+        @click="toggleEnableSearch"
         >search-outline</IconButton
       >
       <!--<ElDropdown trigger="click" @command="handleCommand">
-        <IconButton class="ml-3">more</IconButton>
-        <ElDropdownMenu slot="dropdown">
-          <ElDropdownItem command="config"> Configure </ElDropdownItem>
-        </ElDropdownMenu>
-      </ElDropdown>-->
+          <IconButton class="ml-3">more</IconButton>
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="config"> Configure </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -24,12 +27,12 @@
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model="search"
+          v-model:value="search"
           size="mini"
           clearable
-          @keydown.native.stop
-          @keyup.native.stop
-          @click.native.stop
+          @keydown.stop
+          @keyup.stop
+          @click.stop
           @input="handleSearch"
         >
           <template #prefix>
@@ -87,12 +90,17 @@
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
           >
-            <span class="text-center lh-base" v-html="$t('packages_business_fdm_empty_text')"></span>
+            <span
+              class="text-center lh-base"
+              v-html="$t('packages_business_fdm_empty_text')"
+            ></span>
           </div>
         </template>
       </div>
       <div v-else class="flex-1 min-h-0 position-relative">
-        <div class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white">
+        <div
+          class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
+        >
           <VirtualTree
             class="ldp-tree h-100"
             ref="tree"
@@ -127,29 +135,59 @@
         {{ $t('packages_ldp_connection_expired') }}
       </div>
     </div>
-    <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
-      <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+    <ElDialog
+      v-model:visible="taskDialogConfig.visible"
+      width="600"
+      :close-on-click-modal="false"
+    >
+      <template v-slot:title>
+        <span class="font-color-dark fs-6 fw-sub">{{
+          $t('packages_business_create_clone_task')
+        }}</span>
+      </template>
+      <ElForm
+        ref="form"
+        :model="taskDialogConfig"
+        label-width="180px"
+        @submit.prevent
+        :rules="formRules"
+      >
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
-          <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
-          ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
-            ><DatabaseIcon :item="taskDialogConfig.from" :key="taskDialogConfig.from.pdkHash" :size="20" class="mr-1" />
+          <span>{{
+            $t('packages_business_fdm_create_task_dialog_desc_prefix')
+          }}</span
+          ><span
+            v-if="taskDialogConfig.from"
+            class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+            ><DatabaseIcon
+              :item="taskDialogConfig.from"
+              :key="taskDialogConfig.from.pdkHash"
+              :size="20"
+              class="mr-1"
+            />
             <span>{{ taskDialogConfig.from.name }}</span> </span
-          ><span v-if="taskDialogConfig.tableName" class="inline-flex font-color-dark fw-sub"
+          ><span
+            v-if="taskDialogConfig.tableName"
+            class="inline-flex font-color-dark fw-sub"
             >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
-          ><span>{{ $t('packages_business_fdm_create_task_dialog_desc_suffix') }}</span>
+          ><span>{{
+            $t('packages_business_fdm_create_task_dialog_desc_suffix')
+          }}</span>
         </div>
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
           <ElInput
             size="small"
-            v-model="taskDialogConfig.prefix"
+            v-model:value="taskDialogConfig.prefix"
             :maxlength="maxPrefixLength"
             class="inline-flex inline-flex-input"
           >
-            <template slot="prepend">{{ fixedPrefix }}</template>
-            <template slot="append">
-              <span v-if="taskDialogConfig.tableName" :title="taskDialogConfig.tableName">
+            <template v-slot:prepend>{{ fixedPrefix }}</template>
+            <template v-slot:append>
+              <span
+                v-if="taskDialogConfig.tableName"
+                :title="taskDialogConfig.tableName"
+              >
                 _{{ taskDialogConfig.tableName }}
               </span>
               <span v-else> _&lt;original_table_name&gt; </span>
@@ -157,13 +195,19 @@
           </ElInput>
         </ElFormItem>
 
-        <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model="taskDialogConfig.task.type">
+        <ElFormItem
+          :label="$t('packages_dag_task_setting_sync_type')"
+          prop="task.type"
+        >
+          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
             >
-              <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+              <ElRadio
+                label="initial_sync+cdc"
+                :disabled="taskDialogConfig.notSupportedCDC"
+              >
                 {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
               </ElRadio>
             </ElTooltip>
@@ -173,14 +217,24 @@
             </ElRadio>
           </ElRadioGroup>
         </ElFormItem>
-        <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
-          <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
+        <div
+          class="flex align-center gap-3"
+          v-if="taskDialogConfig.task.type === 'initial_sync'"
+        >
+          <ElFormItem
+            :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
+            prop="task.crontabExpressionType"
+          >
             <ElSelect
-              v-model="taskDialogConfig.task.crontabExpressionType"
+              v-model:value="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
-              <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+              <ElOption
+                v-bind="opt"
+                v-for="(opt, i) in cronOptions"
+                :key="i"
+              ></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem
@@ -188,71 +242,101 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+            <ElInput
+              v-model:value="taskDialogConfig.task.crontabExpression"
+            ></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
-          $t('packages_business_save_only')
-        }}</ElButton>
-        <ElButton
-          :loading="creating || checkCanStartIng"
-          :disabled="!taskDialogConfig.canStart"
-          size="mini"
-          type="primary"
-          @click="taskDialogSubmit(true)"
-        >
-          {{ $t('packages_business_save_and_run_now') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="taskDialogConfig.visible = false">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            :loading="creating"
+            size="mini"
+            @click="taskDialogSubmit(false)"
+            >{{ $t('packages_business_save_only') }}</ElButton
+          >
+          <ElButton
+            :loading="creating || checkCanStartIng"
+            :disabled="!taskDialogConfig.canStart"
+            size="mini"
+            type="primary"
+            @click="taskDialogSubmit(true)"
+          >
+            {{ $t('packages_business_save_and_run_now') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
-    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
+    <ElDialog
+      v-model:visible="dialogConfig.visible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <template v-slot:title>
+        <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
+      </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumingcheng')
+          "
+        >
           <ElInput
             size="mini"
-            v-model="dialogConfig.label"
+            v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
         <!--<ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-          v-if="dialogConfig.isParent"
+            :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+            v-if="dialogConfig.isParent"
+          >
+            <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+              <el-option
+                :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+                value="resource"
+              ></el-option>
+              &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
+            </ElSelect>
+          </ElFormItem>-->
+        <ElFormItem
+          :label="
+            $t('packages_component_src_discoveryclassification_mulumiaoshu')
+          "
         >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-              value="resource"
-            ></el-option>
-            &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
-          </ElSelect>
-        </ElFormItem>-->
-        <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model="dialogConfig.desc"
-            :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
+            v-model:value="dialogConfig.desc"
+            :placeholder="
+              $t('packages_component_src_discoveryclassification_qingshurumulu')
+            "
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('public_button_confirm') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="hideDialog()">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton size="mini" type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { merge, debounce, cloneDeep } from 'lodash'
@@ -260,12 +344,16 @@ import { connectionsApi, ldpApi, metadataDefinitionsApi } from '@tap/api'
 import { VirtualTree, IconButton, VExpandXTransition } from '@tap/component'
 import { uuid, generateId } from '@tap/shared'
 import { validateCron } from '@tap/form'
-import { makeDragNodeImage, TASK_SETTINGS, DatabaseIcon, makeStatusAndDisabled } from '@tap/business'
+import {
+  makeDragNodeImage,
+  TASK_SETTINGS,
+  DatabaseIcon,
+  makeStatusAndDisabled,
+} from '@tap/business'
 import commonMix from './mixins/common'
 
 export default {
   name: 'FDM',
-
   props: {
     dragState: Object,
     settings: Object,
@@ -274,13 +362,10 @@ export default {
     directory: Object,
     eventDriver: Object,
     mapCatalog: Function,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
-
   components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
-
   mixins: [commonMix],
-
   data() {
     return {
       fixedPrefix: 'FDM_',
@@ -299,8 +384,8 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       creating: false,
       expandedKeys: [],
@@ -316,14 +401,13 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
       checkCanStartIng: false,
       startedTags: [],
-      prefixMap: {}
+      prefixMap: {},
     }
   },
-
   computed: {
     showSearch() {
       return this.search || this.searchIng
@@ -340,22 +424,22 @@ export default {
       return this.directory?.children || []
     },
     treeMap() {
-      return this.treeData.reduce((obj, item) => ((obj[item.id] = item), obj), {})
-    }
+      return this.treeData.reduce(
+        (obj, item) => ((obj[item.id] = item), obj),
+        {}
+      )
+    },
   },
-
   watch: {
     loadingDirectory(v) {
       if (!v) {
         this.loadTask()
       }
-    }
+    },
   },
-
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
   },
-
   mounted() {
     if (!this.loadingDirectory) {
       this.$nextTick(() => {
@@ -364,17 +448,15 @@ export default {
     }
     this.autoUpdateObjects()
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.eventDriver.off('source-drag-end')
     clearInterval(this.autoUpdateObjectsTimer)
   },
-
   methods: {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
         if (this.showSearch) return
-        this.expandedKeys.forEach(id => {
+        this.expandedKeys.forEach((id) => {
           this.updateObject(id)
         })
         this.loadTask()
@@ -401,7 +483,12 @@ export default {
 
     renderContent(h, { node, data }) {
       let icon
-      let className = ['custom-tree-node', 'overflow-visible', 'position-relative', 'min-width-0']
+      let className = [
+        'custom-tree-node',
+        'overflow-visible',
+        'position-relative',
+        'min-width-0',
+      ]
 
       if (data.isObject) {
         className.push('grabbable')
@@ -418,7 +505,7 @@ export default {
       let actions = []
 
       if (!data.isObject) {
-        if (data.children.some(child => child.isVirtual)) {
+        if (data.children.some((child) => child.isVirtual)) {
           actions.push(
             <IconButton
               sm
@@ -436,10 +523,10 @@ export default {
             class="inline-flex"
             placement="bottom"
             trigger="click"
-            onCommand={command => this.handleMoreCommand(command, data)}
+            onCommand={(command) => this.handleMoreCommand(command, data)}
           >
             <IconButton
-              onClick={ev => {
+              onClick={(ev) => {
                 ev.stopPropagation()
               }}
               sm
@@ -447,7 +534,9 @@ export default {
               more
             </IconButton>
             <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+              <ElDropdownItem command="edit">
+                {this.$t('public_button_edit')}
+              </ElDropdownItem>
             </ElDropdownMenu>
           </ElDropdown>
         )
@@ -459,17 +548,19 @@ export default {
         <div
           class={className}
           onClick={() => {
-            data.isObject && this.$emit('preview', data, this.fdmConnection)
+            data.isObject && $emit(this, 'preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
         >
-          {data.isObject && data.isVirtual && <div class="table-status-dot rounded-circle position-absolute"></div>}
+          {data.isObject && data.isVirtual && (
+            <div class="table-status-dot rounded-circle position-absolute"></div>
+          )}
           <div
             class={[
               'w-0 flex-1 overflow-hidden flex align-center',
               {
-                'opacity-50': data.isObject && data.isVirtual
-              }
+                'opacity-50': data.isObject && data.isVirtual,
+              },
             ]}
           >
             {!data.isObject && (
@@ -488,7 +579,11 @@ export default {
               </VExpandXTransition>
             )}
             <span
-              id={data.isObject ? `fdm_table_${data.connectionId}_${data.name}` : `connection_${data.id}`}
+              id={
+                data.isObject
+                  ? `fdm_table_${data.connectionId}_${data.name}`
+                  : `connection_${data.id}`
+              }
               class="inline-flex align-items-center overflow-hidden"
             >
               {icon && (
@@ -500,7 +595,9 @@ export default {
                 {data.name}
               </span>
             </span>
-            {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
+            {data.comment && (
+              <span class="font-color-sslight">{`(${data.comment})`}</span>
+            )}
             {!data.isObject && <div class="btn-menu ml-auto">{actions}</div>}
           </div>
         </div>
@@ -515,8 +612,8 @@ export default {
             database_type: 'MongoDB',
             connection_type: 'source_and_target',
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -529,15 +626,15 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
             id: item.id,
             name: item.name,
@@ -545,7 +642,7 @@ export default {
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            accessNodeProcessId: item.accessNodeProcessId,
           }
         })
 
@@ -559,7 +656,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case 'config':
-          this.$emit('show-settings')
+          $emit(this, 'show-settings')
           break
       }
     },
@@ -567,7 +664,9 @@ export default {
     showTaskDialog() {
       const connectionId = this.taskDialogConfig.from?.id
 
-      this.taskDialogConfig.prefix = this.getSmartPrefix(this.taskDialogConfig.from.name)
+      this.taskDialogConfig.prefix = this.getSmartPrefix(
+        this.taskDialogConfig.from.name
+      )
       this.taskDialogConfig.visible = true
       this.$refs.form?.resetFields()
 
@@ -579,17 +678,21 @@ export default {
       this.taskDialogConfig.task.crontabExpressionFlag = false
       this.taskDialogConfig.task.crontabExpression = ''
 
-      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce((map, item) => {
-        map[item.id] = true
-        return map
-      }, {})
+      const capbilitiesMap = this.taskDialogConfig.from.capabilities.reduce(
+        (map, item) => {
+          map[item.id] = true
+          return map
+        },
+        {}
+      )
 
       if (
         !(
           capbilitiesMap['stream_read_function'] ||
           capbilitiesMap['raw_data_callback_filter_function'] ||
           capbilitiesMap['raw_data_callback_filter_function_v2'] ||
-          (capbilitiesMap['query_by_advance_filter_function'] && capbilitiesMap['batch_read_function'])
+          (capbilitiesMap['query_by_advance_filter_function'] &&
+            capbilitiesMap['batch_read_function'])
         )
       ) {
         this.taskDialogConfig.notSupportedCDC = true
@@ -605,12 +708,15 @@ export default {
     async checkCanStart() {
       this.taskDialogConfig.canStart = false
       this.checkCanStartIng = true
-      const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const tag = this.treeData.find(
+        (item) => item.linkId === this.taskDialogConfig.from.id
+      )
 
       if (tag) {
         const task = this.tag2Task[tag.id]
         this.taskDialogConfig.task.type = task.type
-        this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
+        this.taskDialogConfig.task.crontabExpressionFlag =
+          task.crontabExpressionFlag
         this.taskDialogConfig.task.crontabExpression = task.crontabExpression
         this.taskDialogConfig.canStart = await ldpApi.checkCanStartByTag(tag.id)
         // TODO: 这里不能点击保存，可以加个消息提示，或者常驻的 alert， 解释下原因
@@ -622,11 +728,19 @@ export default {
     },
 
     async taskDialogSubmit(start) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) return
 
-        const { tableName, from = {}, task: settings, prefix } = this.taskDialogConfig
-        let task = Object.assign(this.makeMigrateTask(from, tableName), settings)
+        const {
+          tableName,
+          from = {},
+          task: settings,
+          prefix,
+        } = this.taskDialogConfig
+        let task = Object.assign(
+          this.makeMigrateTask(from, tableName),
+          settings
+        )
         // 缓存表名前缀
         this.prefixMap[from.id] = prefix
 
@@ -634,7 +748,7 @@ export default {
         try {
           const result = await ldpApi.createFDMTask(task, {
             silenceMessage: true,
-            params: { start }
+            params: { start },
           })
           this.taskDialogConfig.visible = false
           const h = this.$createElement
@@ -646,11 +760,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(result)
-                  }
-                }
+                  },
+                },
               },
               this.$t('packages_business_task_created_success')
-            )
+            ),
           })
         } catch (error) {
           console.log(error) // eslint-disable-line
@@ -661,7 +775,9 @@ export default {
             msg = error.data.data[keys[0]]?.[0]?.msg
           }
 
-          this.$message.error(msg || error?.data?.message || this.$t('public_message_save_fail'))
+          this.$message.error(
+            msg || error?.data?.message || this.$t('public_message_save_fail')
+          )
         }
 
         await this.loadFDMDirectory()
@@ -676,22 +792,22 @@ export default {
         filter: JSON.stringify({
           where: {
             item_type: { $nin: ['database', 'dataflow', 'api'] },
-            parent_id: this.directory.id
-          }
-        })
+            parent_id: this.directory.id,
+          },
+        }),
       })
 
       /*items.forEach(item => {
-        item = this.mapCatalog(item)
-        const children = this.treeMap[item.id]?.children
-        if (children.length) {
-          this.$refs.tree.remove()
-          item.children = children
-        }
-        return item
-      })*/
+      item = this.mapCatalog(item)
+      const children = this.treeMap[item.id]?.children
+      if (children.length) {
+        this.$refs.tree.remove()
+        item.children = children
+      }
+      return item
+    })*/
 
-      this.directory.children = items.map(item => {
+      this.directory.children = items.map((item) => {
         item = this.mapCatalog(item)
         const children = this.treeMap[item.id]?.children
 
@@ -777,10 +893,10 @@ export default {
         dag: {
           edges: [
             { source: source.id, target: tableReNameNode.id },
-            { source: tableReNameNode.id, target: target.id }
+            { source: tableReNameNode.id, target: target.id },
           ],
-          nodes: [source, tableReNameNode, target]
-        }
+          nodes: [source, tableReNameNode, target],
+        },
       }
     },
 
@@ -792,11 +908,11 @@ export default {
         tableName
           ? {
               migrateTableSelectType: 'custom',
-              tableNames: [tableName]
+              tableNames: [tableName],
             }
           : {
               migrateTableSelectType: 'expression',
-              tableExpression: '.*'
+              tableExpression: '.*',
             }
       )
 
@@ -820,8 +936,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -830,14 +946,15 @@ export default {
         id: uuid(),
         type: 'table_rename_processor',
         name: i18n.t('packages_business_swimlane_fdm_biaobianji'),
-        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
+        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`,
       }
     },
 
     async handleNodeExpand(data, node, forceLoad) {
       this.setExpand(data.id, true)
       // 十秒内加载过资源，不再继续加载
-      if (!forceLoad && node.loadTime && Date.now() - node.loadTime < 10000) return
+      if (!forceLoad && node.loadTime && Date.now() - node.loadTime < 10000)
+        return
 
       node.loadTime = Date.now()
       node.loading = true
@@ -859,8 +976,8 @@ export default {
       draggingNode = {
         ...draggingNode,
         parent: {
-          data: this.fdmConnection
-        }
+          data: this.fdmConnection,
+        },
       }
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
@@ -875,18 +992,20 @@ export default {
     },
 
     handleDragEnd() {
-      this.$emit('node-drag-end')
+      $emit(this, 'node-drag-end')
     },
 
     setNodeExpand() {
-      const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const target = this.treeData.find(
+        (item) => item.linkId === this.taskDialogConfig.from.id
+      )
       if (target) {
         const node = this.$refs.tree.getNode(target.id)
         node && (node.loading = true)
         setTimeout(async () => {
           this.setExpand(target.id, true)
           let objects = await this.loadObjects(target)
-          objects = objects.map(item => {
+          objects = objects.map((item) => {
             item.parent_id = target.id
             item.isObject = true
             item.connectionId = item.sourceConId
@@ -896,7 +1015,7 @@ export default {
           node && (node.loading = false)
         }, 1000)
       } else {
-        this.$emit('load-directory')
+        $emit(this, 'load-directory')
       }
       // this.taskDialogConfig.from
     },
@@ -911,7 +1030,9 @@ export default {
     },
 
     getSmartPrefix(connectionName) {
-      connectionName = connectionName.replace(/[\u4E00-\u9FA5\s]+/g, '').replace(/^[-_]+/, '')
+      connectionName = connectionName
+        .replace(/[\u4E00-\u9FA5\s]+/g, '')
+        .replace(/^[-_]+/, '')
       let planA = connectionName.split('_').shift()
       let planB = connectionName.split('-').shift()
 
@@ -946,7 +1067,9 @@ export default {
         isParent: true,
         desc: type === 'edit' ? data?.desc : '',
         title:
-          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+          type === 'add'
+            ? this.$t('packages_component_classification_addChildernNode')
+            : this.$t('public_button_edit'),
       }
     },
 
@@ -962,9 +1085,9 @@ export default {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('packages_component_message_cancel'),
           type: 'warning',
-          closeOnClickModal: false
+          closeOnClickModal: false,
         }
-      ).then(resFlag => {
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -982,14 +1105,16 @@ export default {
       let method = 'post'
 
       if (!value || value.trim() === '') {
-        this.$message.error(this.$t('packages_component_classification_nodeName'))
+        this.$message.error(
+          this.$t('packages_component_classification_nodeName')
+        )
         return
       }
 
       let params = {
         item_type: itemType,
         desc: config.desc,
-        value
+        value,
       }
 
       if (config.type === 'edit') {
@@ -1018,11 +1143,16 @@ export default {
     async loadTask() {
       if (!this.treeData.length) return
 
-      const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
+      const map = await ldpApi.getTaskByTag(
+        this.treeData.map((item) => item.id).join(',')
+      )
       const newMap = {}
       for (let tagId in map) {
         let task = map[tagId].find(
-          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+          (task) =>
+            !['deleting', 'delete_failed'].includes(task.status) &&
+            !task.is_deleted &&
+            task.fdmMain
         )
         if (task) {
           task = makeStatusAndDisabled(task)
@@ -1033,7 +1163,7 @@ export default {
             crontabExpressionFlag: task.crontabExpressionFlag,
             crontabExpression: task.crontabExpression,
             status: task.status,
-            disabledData: task.disabledData
+            disabledData: task.disabledData,
           }
         }
       }
@@ -1042,10 +1172,14 @@ export default {
     },
 
     checkStartedTag() {
-      this.startedTags = this.startedTags.filter(tagId => {
+      this.startedTags = this.startedTags.filter((tagId) => {
         const task = this.tag2Task[tagId]
         const node = this.$refs.tree.getNode(tagId)
-        if (node && task && ['running', 'complete', 'stop', 'error'].includes(task.status)) {
+        if (
+          node &&
+          task &&
+          ['running', 'complete', 'stop', 'error'].includes(task.status)
+        ) {
           this.handleNodeExpand(node.data, node, true)
           return false
         }
@@ -1064,13 +1198,15 @@ export default {
     },
 
     handleFindTreeDom(val = {}, getParent = false) {
-      const el = document.getElementById(`fdm_table_${val.connectionId}_${val.table}`) // this.$refs[`table_${val.connectionId}_${val.table}`]
+      const el = document.getElementById(
+        `fdm_table_${val.connectionId}_${val.table}`
+      ) // this.$refs[`table_${val.connectionId}_${val.table}`]
       return getParent ? el?.parentNode : el
     },
 
     async searchByKeywordList(val = []) {
       let searchExpandedKeys = []
-      this.filterTreeData = val.map(t => {
+      this.filterTreeData = val.map((t) => {
         searchExpandedKeys.push(t.connectionId)
         return {
           LDP_TYPE: 'connection',
@@ -1088,9 +1224,9 @@ export default {
               isLeaf: true,
               isObject: true,
               type: 'table',
-              LDP_TYPE: 'table'
-            }
-          ]
+              LDP_TYPE: 'table',
+            },
+          ],
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
@@ -1105,8 +1241,9 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
-    }
-  }
+    },
+  },
+  emits: ['preview', 'show-settings', 'node-drag-end', 'load-directory'],
 }
 </script>
 
@@ -1124,7 +1261,6 @@ export default {
     list-style-type: circle;
   }
 }
-
 .inline-flex-input {
   .el-input-group__prepend {
     flex-shrink: 0;

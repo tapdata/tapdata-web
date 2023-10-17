@@ -7,9 +7,10 @@
 
 <script>
 export default {
-  name: 'productDemo'
+  name: 'productDemo',
 }
 </script>
+
 <style lang="scss" scoped>
 .iframe {
   width: 100vw;

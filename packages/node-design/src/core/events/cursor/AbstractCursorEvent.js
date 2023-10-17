@@ -10,7 +10,7 @@ export class AbstractCursorEvent {
       pageX: 0,
       pageY: 0,
       target: null,
-      view: window
+      view: window,
     }
     this.transformCoordinates()
   }
@@ -22,9 +22,14 @@ export class AbstractCursorEvent {
       const scale = frameRect.width / frameElement['offsetWidth']
       this.data.topClientX = this.data.clientX * scale + frameRect.x
       this.data.topClientY = this.data.clientY * scale + frameRect.y
-      this.data.topPageX = this.data.pageX + frameRect.x - this.data.view.scrollX
-      this.data.topPageY = this.data.pageY + frameRect.y - this.data.view.scrollY
-      const topElement = document.elementFromPoint(this.data.topPageX, this.data.topClientY)
+      this.data.topPageX =
+        this.data.pageX + frameRect.x - this.data.view.scrollX
+      this.data.topPageY =
+        this.data.pageY + frameRect.y - this.data.view.scrollY
+      const topElement = document.elementFromPoint(
+        this.data.topPageX,
+        this.data.topClientY
+      )
       if (topElement !== frameElement) {
         this.data.target = topElement
       }

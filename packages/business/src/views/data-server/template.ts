@@ -108,6 +108,6 @@ print(result2.text)`
   return {
     java: javaTemplate,
     javascript: jsTemplate,
-    python: pythonTemplate
+    python: pythonTemplate,
   }
 }

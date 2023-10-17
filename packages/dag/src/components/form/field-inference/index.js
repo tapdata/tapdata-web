@@ -11,9 +11,11 @@ export const fieldInference = observer(
       const form = formRef.value
 
       return () => {
-        return <Main ref="fieldMapping" form={form} attrs={attrs} on={listeners} />
+        return (
+          <Main ref="fieldMapping" form={form} attrs={attrs} on={listeners} />
+        )
       }
-    }
+    },
   })
 )
 

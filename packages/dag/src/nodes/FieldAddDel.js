@@ -17,21 +17,21 @@ export class FieldAddDel extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -39,27 +39,27 @@ export class FieldAddDel extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               operations: {
                 type: 'array',
                 title: '',
                 'x-decorator': 'FormItem',
-                'x-component': 'FieldAddDel'
+                'x-component': 'FieldAddDel',
               },
               deleteAllFields: {
                 type: 'boolean',
                 default: false,
-                display: 'none'
+                display: 'none',
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

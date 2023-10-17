@@ -2,13 +2,19 @@
   <section class="agent-install flex flex-column gap-4 overflow-hidden">
     <div class="bg-white rounded-lg p-4">
       <div class="flex align-center">
-        <IconButton @click="$router.push({ name: 'Instance' })">left</IconButton>
-        <span class="fs-5 ml-2">{{ $t('dfs_guide_index_bushujisuanyin') }}</span>
+        <IconButton @click="$router.push({ name: 'Instance' })"
+          >left</IconButton
+        >
+        <span class="fs-5 ml-2">{{
+          $t('dfs_guide_index_bushujisuanyin')
+        }}</span>
       </div>
     </div>
     <main class="bg-white rounded-lg px-6 py-4 flex-1 overflow-auto">
       <div class="fs-6 font-color-dark fw-sub mb-4">
-        <span> {{ $t('dfs_components_taskalarmtour_deployment_zhunbei') }}</span>
+        <span>
+          {{ $t('dfs_components_taskalarmtour_deployment_zhunbei') }}</span
+        >
         <el-link
           type="primary"
           class="fs-6 align-top ml-2"
@@ -18,8 +24,15 @@
       </div>
 
       <div class="mb-4">
-        <div class="fw-sub mb-2 text-label font-color-dark">{{ $t('dfs_agent_download_type') }}</div>
-        <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
+        <div class="fw-sub mb-2 text-label font-color-dark">
+          {{ $t('dfs_agent_download_type') }}
+        </div>
+        <ElRadioGroup
+          v-model:value="downLoadType"
+          @input="chooseDownLoadType"
+          size="default"
+          class="flex gap-4 mb-4"
+        >
           <ElRadio
             v-for="(item, index) in downType"
             :key="index"
@@ -35,7 +48,9 @@
         </ElRadioGroup>
       </div>
 
-      <div class="text-label fw-sub font-color-dark mb-2">{{ $t('agent_deploy_start_install') }}</div>
+      <div class="text-label fw-sub font-color-dark mb-2">
+        {{ $t('agent_deploy_start_install') }}
+      </div>
       <ul v-if="downLoadType === 'windows'" class="ul-style">
         <li class="flex justify-content-start align-items-center">
           {{ $t('agent_deploy_start_install_windows_first') }}
@@ -43,13 +58,24 @@
             $t('agent_deploy_start_install_windows_first_download')
           }}</ElLink>
           {{ $t('dfs_agent_download_fastdownload_he')
-          }}<ElLink class="mx-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
+          }}<ElLink
+            class="mx-2"
+            type="primary"
+            @click="handleDownLoadApplication"
+            >application.yml
+          </ElLink>
         </li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
+        </li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}
+        </li>
       </ul>
       <section v-else>
-        <div class="font-color-light fw-normal mb-4">{{ textMap[downLoadType] }}</div>
+        <div class="font-color-light fw-normal mb-4">
+          {{ textMap[downLoadType] }}
+        </div>
         <ElTooltip
           placement="top"
           manual
@@ -62,7 +88,7 @@
             class="operaKey mb-4"
             v-clipboard:copy="links[downLoadType]"
             v-clipboard:success="onCopy"
-            @mouseleave.native="showTooltip = false"
+            @mouseleave="showTooltip = false"
             @click="handleCopy"
           >
             <VIcon class="mr-2">copy</VIcon>
@@ -73,20 +99,29 @@
           {{ links[downLoadType] }}
         </div>
       </section>
-      <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
+      <div
+        class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center"
+      >
         <template v-if="success">
           <VIcon size="64" class="text-primary">check-circle-fill</VIcon>
-          <div class="fs-5 font-color-dark mt-4 mb-2">{{ $t('dfs_agent_deploy_success') }}</div>
-          <div class="text-label font-color-light mb-2">{{ $t('dfs_agent_deploy_success_subtitle') }}</div>
+          <div class="fs-5 font-color-dark mt-4 mb-2">
+            {{ $t('dfs_agent_deploy_success') }}
+          </div>
+          <div class="text-label font-color-light mb-2">
+            {{ $t('dfs_agent_deploy_success_subtitle') }}
+          </div>
         </template>
         <template v-else>
           <div class="dot-pulse mt-2 mb-6"></div>
-          <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+          <div class="fs-5 font-color-dark mb-2">
+            {{ $t('dfs_guide_index_dengdaibushu') }}
+          </div>
         </template>
       </div>
     </main>
   </section>
 </template>
+
 <script>
 import i18n from '@/i18n'
 
@@ -99,13 +134,13 @@ export default {
     return {
       links: {
         linux: '',
-        docker: ''
+        docker: '',
       },
       downLoadType: 'linux',
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -123,9 +158,9 @@ export default {
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
         docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
       },
-      success: false
+      success: false,
     }
   },
 
@@ -134,7 +169,7 @@ export default {
     this.getUrl()
     this.getInstance()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.isDestroyed = true
     clearTimeout(this.timer)
   },
@@ -145,7 +180,7 @@ export default {
 
       if (this.isDestroyed) return
 
-      this.$axios.get('api/tcm/agent/' + this.agentId).then(data => {
+      this.$axios.get('api/tcm/agent/' + this.agentId).then((data) => {
         if (data?.status !== 'Creating') {
           clearTimeout(this.timer)
           this.open(data?.status)
@@ -164,15 +199,17 @@ export default {
       }, 5000)
     },
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
-        this.downloadUrl = data.downloadUrl || ''
-        this.token = data.token || ''
-        this.version = data.version || ''
-        let links = data.links || []
-        links.forEach(el => {
-          this.links[el.os] = el.command
+      this.$axios
+        .get('api/tcm/productRelease/deploy/' + this.agentId)
+        .then(async (data) => {
+          this.downloadUrl = data.downloadUrl || ''
+          this.token = data.token || ''
+          this.version = data.version || ''
+          let links = data.links || []
+          links.forEach((el) => {
+            this.links[el.os] = el.command
+          })
         })
-      })
     },
     // windows下载
     handleDownLoad() {
@@ -181,7 +218,12 @@ export default {
     },
     //windows 下载
     handleDownLoadApplication() {
-      window.location = location.origin + location.pathname + 'api/tcm/agent/' + this.agentId + '/config'
+      window.location =
+        location.origin +
+        location.pathname +
+        'api/tcm/agent/' +
+        this.agentId +
+        '/config'
     },
     // 选择下载安装类型
     chooseDownLoadType(val) {
@@ -222,13 +264,19 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
+      window.open(
+        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
+        '_blank'
+      )
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
+      window.open(
+        'https://docs.tapdata.io/cloud/user-guide/manage-agent/',
+        '_blank'
+      )
     },
     //在线小助手
     hideCustomTip() {
@@ -245,13 +293,14 @@ export default {
       const MAP = {
         linux: 'copyTokenInLinux',
         docker: 'copyTokenInDocker',
-        windows: 'copyTokenInWindows'
+        windows: 'copyTokenInWindows',
       }
       this.buried(MAP[this.downLoadType])
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .text-label {
   font-size: 0.875rem;

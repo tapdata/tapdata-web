@@ -1,7 +1,7 @@
 import { each, isPlainObj, Cookie } from '@tap/shared'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
-export const lowerSnake = str => {
+export const lowerSnake = (str) => {
   return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
 }
 

@@ -9,13 +9,15 @@ import { defineComponent } from 'vue-demi'
 export const Title = observer(
   defineComponent({
     props: ['treeDataSource', 'map'],
-    setup: props => {
+    setup: (props) => {
       const prefix = usePrefix('data-source-setter-node-title')
-      const getTitleValue = dataSource => {
+      const getTitleValue = (dataSource) => {
         const optionalKeys = ['label', 'title', 'header']
         let nodeTitle
-        optionalKeys.some(key => {
-          const title = toArr(dataSource).find(item => item.label === key)?.value
+        optionalKeys.some((key) => {
+          const title = toArr(dataSource).find(
+            (item) => item.label === key
+          )?.value
           if (title !== undefined) {
             nodeTitle = title
             return true
@@ -23,7 +25,7 @@ export const Title = observer(
           return false
         })
         if (nodeTitle === undefined) {
-          toArr(dataSource || []).some(item => {
+          toArr(dataSource || []).some((item) => {
             if (item.value && typeof item.value === 'string') {
               nodeTitle = item.value
               return true
@@ -34,15 +36,20 @@ export const Title = observer(
         return nodeTitle
       }
 
-      const renderTitle = dataSource => {
+      const renderTitle = (dataSource) => {
         const nodeTitle = getTitleValue(dataSource)
-        if (nodeTitle === undefined) return <TextWidget token="SettingComponents.DataSourceSetter.defaultTitle" />
+        if (nodeTitle === undefined)
+          return (
+            <TextWidget token="SettingComponents.DataSourceSetter.defaultTitle" />
+          )
         else return nodeTitle + ''
       }
 
       return () => (
         <div class={prefix}>
-          <span style={{ marginRight: '5px' }}>{renderTitle(props?.map || [])}</span>
+          <span style={{ marginRight: '5px' }}>
+            {renderTitle(props?.map || [])}
+          </span>
           <IconWidget
             class={prefix + '-icon'}
             infer="Remove"
@@ -56,6 +63,6 @@ export const Title = observer(
           />
         </div>
       )
-    }
+    },
   })
 )

@@ -27,7 +27,7 @@ export class Hover {
       return this.operation.dispatch(
         new HoverNodeEvent({
           target: this.operation.tree,
-          source: this.node
+          source: this.node,
         })
       )
     }
@@ -37,7 +37,7 @@ export class Hover {
     define(this, {
       node: observable.ref,
       setHover: action,
-      clear: action
+      clear: action,
     })
   }
 }

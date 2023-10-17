@@ -1,23 +1,37 @@
 <template>
   <div class="field-inference">
     <div class="field-inference__header flex justify-content-end">
-      <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
+      <div
+        v-if="batchRuleCounts"
+        class="flex align-items-center cursor-pointer color-primary"
+        @click="visible = true"
+      >
         <VIcon>info</VIcon>
         <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
-        <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
+        <span class="color-warning px-1 fs-6 fw-bold din-font">{{
+          batchRuleCounts
+        }}</span>
         <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
-        <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
+        <span>{{
+          $t('packages_form_field_inference_main_gepiliangxiugai')
+        }}</span>
       </div>
-      <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
-        $t('packages_form_field_inference_main_quanbuhuifumo')
-      }}</ElButton>
+      <ElButton
+        v-if="!readonly"
+        type="text"
+        class="ml-3"
+        @click="rollbackAll"
+        >{{ $t('packages_form_field_inference_main_quanbuhuifumo') }}</ElButton
+      >
     </div>
     <div class="field-inference__main flex">
       <div class="field-inference__nav flex flex-column">
         <ElInput
-          v-model="searchTable"
+          v-model:value="searchTable"
           size="mini"
-          :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
+          :placeholder="
+            $t('packages_form_field_mapping_list_qingshurubiaoming')
+          "
           suffix-icon="el-icon-search"
           clearable
           class="p-2"
@@ -28,14 +42,23 @@
             v-for="(item, index) in tableClassification"
             :key="index"
             class="nav-filter__item flex-fill py-1 cursor-pointer"
-            :class="[{ active: activeClassification === item.type }, { none: index && !item.total }]"
+            :class="[
+              { active: activeClassification === item.type },
+              { none: index && !item.total },
+            ]"
             @click="handleTableClass(item.type)"
           >
             <div class="mb-2 text-center">{{ item.title }}</div>
-            <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
+            <span
+              :class="[item.total && item.type ? 'color-danger' : 'color-info']"
+              >({{ item.total }})</span
+            >
           </div>
         </div>
-        <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
+        <div
+          v-loading="navLoading"
+          class="nav-list flex-fill font-color-normal"
+        >
           <ul v-if="navList.length">
             <li
               v-for="(item, index) in navList"
@@ -45,21 +68,30 @@
               @click="handleSelect(index)"
             >
               <div class="task-form-text-box pl-2 inline-block flex-1 min-w-0">
-                <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
+                <OverflowTooltip
+                  class="w-100 text-truncate target"
+                  :text="item.name"
+                  placement="right"
+                />
               </div>
               <!--<ElTooltip
-                v-if="item.matchedDataTypeLevel === 'error'"
-                placement="top"
-                transition="tooltip-fade-in"
-                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
-                class="mr-1"
-              >
-                <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>-->
+                    v-if="item.matchedDataTypeLevel === 'error'"
+                    placement="top"
+                    transition="tooltip-fade-in"
+                    :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
+                    class="mr-1"
+                  >
+                    <VIcon size="16" class="color-warning">warning</VIcon>
+                  </ElTooltip>-->
             </li>
           </ul>
-          <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+          <div
+            v-else
+            class="task-form-left__ul flex flex-column align-items-center"
+          >
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
             <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
@@ -67,20 +99,27 @@
           small
           class="flex mt-3 p-0 din-font mx-auto"
           layout="total, prev, slot, next"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
           :total="page.total"
           :pager-count="5"
           @current-change="loadData"
         >
           <div class="text-center">
-            <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
+            <span class="page__current" style="min-width: 22px">{{
+              page.current
+            }}</span>
             <span class="icon-color" style="min-width: 22px">/</span>
-            <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
+            <span class="icon-color" style="min-width: 22px">{{
+              page.count
+            }}</span>
           </div>
         </ElPagination>
       </div>
-      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column">
+      <div
+        v-loading="fieldsLoading"
+        class="field-inference__content flex-fill flex flex-column"
+      >
         <div class="px-2">
           <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
           <ElTooltip
@@ -91,7 +130,7 @@
             <VIcon size="16" class="color-primary">info</VIcon>
           </ElTooltip>
           <ElSelect
-            v-model="updateList"
+            v-model:value="updateList"
             :disabled="navLoading"
             size="mini"
             allowCreate
@@ -102,18 +141,30 @@
             @visible-change="handleVisibleChange"
             @remove-tag="handleRemoveTag"
           >
-            <ElOption v-for="(fItem, fIndex) in selected.fields" :key="fIndex" :value="fItem.field_name">
+            <ElOption
+              v-for="(fItem, fIndex) in selected.fields"
+              :key="fIndex"
+              :value="fItem.field_name"
+            >
               <div class="flex align-center">
                 {{ fItem.field_name }}
-                <VIcon v-if="fItem.primary_key_position > 0" size="12" class="text-warning ml-1"> key </VIcon>
+                <VIcon
+                  v-if="fItem.primary_key_position > 0"
+                  size="12"
+                  class="text-warning ml-1"
+                >
+                  key
+                </VIcon>
               </div>
             </ElOption>
           </ElSelect>
         </div>
         <div class="flex align-items-center p-2">
           <ElInput
-            v-model="searchField"
-            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+            v-model:value="searchField"
+            :placeholder="
+              $t('packages_form_field_mapping_list_qingshuruziduan')
+            "
             size="mini"
             suffix-icon="el-icon-search"
             clearable
@@ -127,7 +178,7 @@
           ref="list"
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
-          :fieldChangeRules.sync="fieldChangeRules"
+          v-model:fieldChangeRules="fieldChangeRules"
           :readonly="readonly"
           ignore-error
           class="content__list flex-fill"
@@ -136,9 +187,9 @@
       </div>
     </div>
     <Dialog
-      :visible.sync="visible"
+      v-model:visible="visible"
       :form="form"
-      :fieldChangeRules.sync="fieldChangeRules"
+      v-model:fieldChangeRules="fieldChangeRules"
       :readonly="readonly"
     ></Dialog>
   </div>
@@ -168,7 +219,7 @@ export default {
 
   props: {
     form: Object,
-    readOnly: Boolean
+    readOnly: Boolean,
   },
 
   data() {
@@ -182,7 +233,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
@@ -196,21 +247,21 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0
+          total: 0,
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0
+          total: 0,
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0
-        }
+          total: 0,
+        },
       ],
       transformExNum: 0,
-      updateExNum: 0
+      updateExNum: 0,
     }
   },
 
@@ -218,7 +269,7 @@ export default {
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
     },
 
     readonly() {
@@ -226,9 +277,10 @@ export default {
     },
 
     isErrorSelect() {
-      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
+      const { hasPrimaryKey, hasUnionIndex, hasUpdateField } =
+        this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
-    }
+    },
   },
 
   mounted() {
@@ -242,7 +294,7 @@ export default {
         this.activeClassification = ''
         this.loadData()
       }
-    }
+    },
   },
 
   methods: {
@@ -253,11 +305,11 @@ export default {
       let rules = this.form.getValuesIn('fieldChangeRules') || []
       if (rules.length) {
         let allTableFields = []
-        this.navList.forEach(el => {
-          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        this.navList.forEach((el) => {
+          allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
         })
-        rules.forEach(el => {
-          const f = allTableFields.find(t => t.changeRuleId === el.id)
+        rules.forEach((el) => {
+          const f = allTableFields.find((t) => t.changeRuleId === el.id)
           if (f && el.accept !== f.dataTypeTemp) {
             el.accept = f.dataTypeTemp
           }
@@ -265,22 +317,26 @@ export default {
       }
       this.fieldChangeRules = rules
       this.$refs.list.setRules(this.fieldChangeRules)
-      this.updateConditionFieldMap = cloneDeep(this.form.getValuesIn('updateConditionFieldMap') || {})
+      this.updateConditionFieldMap = cloneDeep(
+        this.form.getValuesIn('updateConditionFieldMap') || {}
+      )
       const { size, current } = this.page
       const res = await this.getData({
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map(t => {
+      this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach(el => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+        fields.forEach((el) => {
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
@@ -288,16 +344,18 @@ export default {
             findPossibleDataTypes
           )
         })
-        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some(
+          (f) => f.matchedDataTypeLevel === 'error'
+        )
           ? 'error'
-          : fields.some(f => f.matchedDataTypeLevel === 'warning')
+          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
           ? 'warning'
           : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach(el => {
+      this.tableClassification.forEach((el) => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
@@ -323,7 +381,9 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) =>
+          t.field_name.toLowerCase().includes(this.searchField?.toLowerCase())
+        )
       }
       fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
@@ -337,10 +397,14 @@ export default {
     },
 
     rollbackAll() {
-      this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+      this.$confirm(
+        i18n.t('packages_form_field_inference_main_ninquerenyaoquan'),
+        '',
+        {
+          type: 'warning',
+          closeOnClickModal: false,
+        }
+      ).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -377,18 +441,23 @@ export default {
 
     handleUpdateList() {
       this.updateConditionFieldMap[this.selected.name] = this.updateList
-      this.form.setValuesIn('updateConditionFieldMap', cloneDeep(this.updateConditionFieldMap))
+      this.form.setValuesIn(
+        'updateConditionFieldMap',
+        cloneDeep(this.updateConditionFieldMap)
+      )
     },
 
     async handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
-      this.updateSelectedAllFields(await this.getCurrentTableFields(this.selected, val))
+      this.updateSelectedAllFields(
+        await this.getCurrentTableFields(this.selected, val)
+      )
     },
 
     updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach(t => {
-        const f = fields.find(el => el.field_name === t.field_name)
+      this.selected.fields.forEach((t) => {
+        const f = fields.find((el) => el.field_name === t.field_name)
         if (f) {
           t.data_type = f.data_type
           t.changeRuleId = f.changeRuleId
@@ -400,16 +469,21 @@ export default {
       const { qualified_name, nodeId, source = {}, fields = [] } = item
       const { database_type } = source
       const params = {
-        rules: rules.filter(t => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        rules: rules.filter(
+          (t) =>
+            t.namespace.length === 1 || t.namespace.includes(qualified_name)
+        ),
         qualifiedName: qualified_name,
         nodeId,
         databaseType: database_type,
-        fields
+        fields,
       }
-      const data = (await metadataInstancesApi.multiTransform(params)) || { fields: [] }
+      const data = (await metadataInstancesApi.multiTransform(params)) || {
+        fields: [],
+      }
       return data.fields.length ? data.fields : fields
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -496,7 +570,6 @@ export default {
     background: map-get($bgColor, disactive);
   }
 }
-
 .update-list-select {
   &.error {
     ::v-deep {

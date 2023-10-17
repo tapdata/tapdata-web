@@ -13,7 +13,14 @@ import './style.scss'
 
 export const TableListCard = observer(
   defineComponent({
-    props: ['connectionId', 'value', 'title', 'params', 'reloadTime', 'filterType'],
+    props: [
+      'connectionId',
+      'value',
+      'title',
+      'params',
+      'reloadTime',
+      'filterType',
+    ],
     setup(props, { emit }) {
       const loading = ref(false)
       const list = ref([])
@@ -22,20 +29,27 @@ export const TableListCard = observer(
 
       const loadData = () => {
         loading.value = true
-        const params = { ...{ connectionId: props.connectionId }, ...props.params }
+        const params = {
+          ...{ connectionId: props.connectionId },
+          ...props.params,
+        }
         metadataInstancesApi
           .pageTables(params)
-          .then(data => {
+          .then((data) => {
             let map = {}
             let items = data?.items || []
-            items.forEach(t => {
+            items.forEach((t) => {
               if (t.tableComment || t.primaryKeyCounts) {
                 map[t.tableName] = t
               }
             })
             tableMap.value = map
             list.value = Object.freeze(
-              getPrimaryKeyTablesByType(items.map(t => t.tableName) || [], props.filterType, tableMap.value)
+              getPrimaryKeyTablesByType(
+                items.map((t) => t.tableName) || [],
+                props.filterType,
+                tableMap.value
+              )
             )
             total.value = data?.total || 0
           })
@@ -47,7 +61,13 @@ export const TableListCard = observer(
       watch(
         () => props.filterType,
         () => {
-          list.value = Object.freeze(getPrimaryKeyTablesByType(list.value, props.filterType, tableMap.value))
+          list.value = Object.freeze(
+            getPrimaryKeyTablesByType(
+              list.value,
+              props.filterType,
+              tableMap.value
+            )
+          )
         }
       )
 
@@ -82,7 +102,7 @@ export const TableListCard = observer(
                       )}
                     </span>
                   </OverflowTooltip>
-                )
+                ),
               }}
             />
           )
@@ -92,7 +112,9 @@ export const TableListCard = observer(
               <ElEmpty
                 image-size={111}
                 image={require('@tap/assets/images/img_empty.png')}
-                description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
+                description={i18n.t(
+                  'packages_dag_table_list_card_index_zanshimeiyoupi'
+                )}
               ></ElEmpty>
             </div>
           )
@@ -101,13 +123,20 @@ export const TableListCard = observer(
         return (
           <ElCard class="table-list-card" shadow="never">
             <div slot="header" class="clearfix">
-              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
+              <span>
+                {props.title ||
+                  i18n.t('packages_form_field_mapping_list_biaoming')}
+              </span>
+              {!loading.value && (
+                <span class="font-color-light float-end">
+                  {list.value.length}
+                </span>
+              )}
             </div>
             {listDom}
           </ElCard>
         )
       }
-    }
+    },
   })
 )

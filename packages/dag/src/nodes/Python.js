@@ -20,7 +20,7 @@ export class JavaScript extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       tabs: {
@@ -28,14 +28,14 @@ export class JavaScript extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -43,7 +43,7 @@ export class JavaScript extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               script: {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
@@ -65,21 +65,22 @@ context = {
                   options: { showPrintMargin: false, wrap: false },
                   includeBeforeAndAfter: true,
                   before: `import json, random, time, datetime, uuid, types, yaml\nimport urllib, urllib2, requests\nimport math, hashlib, base64\ndef process(record, context):`,
-                  beforeRegexp: '^[^]*def\\s+process\\s*\\(record\\,\\s+context\\)\\:',
+                  beforeRegexp:
+                    '^[^]*def\\s+process\\s*\\(record\\,\\s+context\\)\\:',
                   param: 'tapTable',
-                  handleAddCompleter: '{{addDeclaredCompleterForSync}}'
-                }
+                  handleAddCompleter: '{{addDeclaredCompleterForSync}}',
+                },
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 
   locales = AllLocales.JavaScript

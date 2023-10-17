@@ -21,13 +21,14 @@ const limitTreeDrag = ({ dropPosition }) => {
 export const TreePanel = observer(
   defineComponent({
     props: ['defaultOptionValue', 'allowTree', 'treeDataSource'],
-    setup: props => {
+    setup: (props) => {
       const prefix = usePrefix('data-source-setter')
-      const dropHandler = info => {
+      const dropHandler = (info) => {
         const dropKey = info.node?.key
         const dragKey = info.dragNode?.key
         const dropPos = info.node.pos.split('-')
-        const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1])
+        const dropPosition =
+          info.dropPosition - Number(dropPos[dropPos.length - 1])
         const data = [...props.treeDataSource.dataSource]
         // Find dragObject
         let dragObj
@@ -38,14 +39,18 @@ export const TreePanel = observer(
           }
         })
         if (!info.dropToGap) {
-          traverseTree(data, item => {
+          traverseTree(data, (item) => {
             if (item.key === dropKey) {
               item.children = item.children || []
               item.children.unshift(dragObj)
             }
           })
-        } else if ((info.node.children || []).length > 0 && info.node.expanded && dropPosition === 1) {
-          traverseTree(data, item => {
+        } else if (
+          (info.node.children || []).length > 0 &&
+          info.node.expanded &&
+          dropPosition === 1
+        ) {
+          traverseTree(data, (item) => {
             if (item.key === dropKey) {
               item.children = item.children || []
               item.children.unshift(dragObj)
@@ -71,27 +76,32 @@ export const TreePanel = observer(
       return () => (
         <FragmentComponent>
           <Header>
-            <TextWidget slot="title" token="SettingComponents.DataSourceSetter.dataSourceTree" />
+            <TextWidget
+              slot="title"
+              token="SettingComponents.DataSourceSetter.dataSourceTree"
+            />
             <Button
               slot="extra"
               type="text"
               onClick={() => {
                 const uuid = uid()
                 const dataSource = props.treeDataSource.dataSource
-                const initialKeyValuePairs = props.defaultOptionValue?.map(item => ({ ...item })) || [
+                const initialKeyValuePairs = props.defaultOptionValue?.map(
+                  (item) => ({ ...item })
+                ) || [
                   {
                     label: 'label',
-                    value: `${GlobalRegistry.getDesignerMessage(`SettingComponents.DataSourceSetter.item`)} ${
-                      dataSource.length + 1
-                    }`
+                    value: `${GlobalRegistry.getDesignerMessage(
+                      `SettingComponents.DataSourceSetter.item`
+                    )} ${dataSource.length + 1}`,
                   },
-                  { label: 'value', value: uuid }
+                  { label: 'value', value: uuid },
                 ]
                 props.treeDataSource.dataSource = dataSource.concat({
                   key: uuid,
                   duplicateKey: uuid,
                   map: initialKeyValuePairs,
-                  children: []
+                  children: [],
                 })
                 // eslint-disable-next-line
                 console.log('dataSource', dataSource)
@@ -116,7 +126,12 @@ export const TreePanel = observer(
               renderContent={(_h, { node, data, store }) => {
                 // eslint-disable-next-line
                 console.log('renderContent', node, data, store)
-                return <Title props={{ ...data }} treeDataSource={props.treeDataSource}></Title>
+                return (
+                  <Title
+                    props={{ ...data }}
+                    treeDataSource={props.treeDataSource}
+                  ></Title>
+                )
               }}
               vOn:node-click={(data, node) => {
                 // eslint-disable-next-line
@@ -129,6 +144,6 @@ export const TreePanel = observer(
           </div>
         </FragmentComponent>
       )
-    }
+    },
   })
 )

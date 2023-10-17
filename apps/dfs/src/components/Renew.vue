@@ -1,5 +1,9 @@
 <template>
-  <ElDialog :visible.sync="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
+  <ElDialog
+    v-model:visible="showRenewDetailVisible"
+    :title="$t('dfs_user_center_xudingfuwu')"
+    width="60%"
+  >
     <section>
       <div v-if="renewList.length > 0">
         <VTable
@@ -18,38 +22,57 @@
       </div>
       <el-form label-position="top" ref="ruleForm">
         <el-form-item :label="$t('dfs_components_renew_xudingshichang')">
-          <el-input-number disabled v-model="quantity" :min="1"></el-input-number>
+          <el-input-number
+            disabled
+            v-model:value="quantity"
+            :min="1"
+          ></el-input-number>
           <span class="ml-2">{{
-            currentRenewRow.periodUnit === 'month' ? $t('public_time_month') : $t('public_time_year')
+            currentRenewRow.periodUnit === 'month'
+              ? $t('public_time_month')
+              : $t('public_time_year')
           }}</span>
           <div class="mt-2">
             {{ $t('dfs_components_renew_xudinghoudaoqi')
             }}<span class="color-warning">{{
-              formatterRenewTime(currentRenewRow.periodUnit, currentRenewRow.endAt)
+              formatterRenewTime(
+                currentRenewRow.periodUnit,
+                currentRenewRow.endAt
+              )
             }}</span>
           </div>
         </el-form-item>
       </el-form>
     </section>
-    <span slot="footer" class="dialog-footer">
-      <span class="mr-4"
-        ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_components_renew_xudingjine') }}</span
-        ><span class="color-primary fs-4">
-          {{ formatterPrice(currentRenewRow.currency, currentPrice * quantity) }}</span
-        ></span
-      >
-      <el-button @click="showRenewDetailVisible = false">{{ $t('public_button_cancel') }}</el-button>
-      <el-button
-        :disabled="currentPrice * quantity < 0"
-        type="primary"
-        :loading="loadingRenewSubmit"
-        @click="handleRenew"
-        >{{ $t('public_button_renew') }}</el-button
-      >
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <span class="mr-4"
+          ><span class="fs-6 font-color-dark font-weight-light">{{
+            $t('dfs_components_renew_xudingjine')
+          }}</span
+          ><span class="color-primary fs-4">
+            {{
+              formatterPrice(currentRenewRow.currency, currentPrice * quantity)
+            }}</span
+          ></span
+        >
+        <el-button @click="showRenewDetailVisible = false">{{
+          $t('public_button_cancel')
+        }}</el-button>
+        <el-button
+          :disabled="currentPrice * quantity < 0"
+          type="primary"
+          :loading="loadingRenewSubmit"
+          @click="handleRenew"
+          >{{ $t('public_button_renew') }}</el-button
+        >
+      </span>
+    </template>
   </ElDialog>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { VTable } from '@tap/component'
@@ -74,15 +97,15 @@ export default {
       renewColumns: [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
+          prop: 'id',
         },
         {
           label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
           width: 180,
-          slotName: 'endAt'
-        }
-      ]
+          slotName: 'endAt',
+        },
+      ],
     }
   },
   methods: {
@@ -91,23 +114,27 @@ export default {
       //组装续订列表
       let renew = {
         id: item.id,
-        endAt: item.endAt
+        endAt: item.endAt,
       }
       this.renewColumns = [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
-        }
+          prop: 'id',
+        },
       ]
-      let agent = item?.subscribeItems.find(it => it.productType === 'Engine')?.spec
+      let agent = item?.subscribeItems.find(
+        (it) => it.productType === 'Engine'
+      )?.spec
       let specLabel = getSpec(agent)
-      let mdb = item?.subscribeItems.find(it => it.productType === 'MongoDB')?.spec
+      let mdb = item?.subscribeItems.find(
+        (it) => it.productType === 'MongoDB'
+      )?.spec
       let specMdbLabel = getSpec(mdb)
       if (specLabel) {
         this.renewColumns.push({
           label: i18n.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         })
         renew.specLabel = specLabel
       }
@@ -115,7 +142,7 @@ export default {
         this.renewColumns.push({
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specMdbLabel',
-          width: 180
+          width: 180,
         })
         renew.specMdbLabel = specMdbLabel
       }
@@ -123,26 +150,37 @@ export default {
         label: i18n.t('dfs_instance_instance_daoqishijian'),
         prop: 'endAt',
         width: 180,
-        slotName: 'endAt'
+        slotName: 'endAt',
       })
       this.renewList = [renew]
       this.showRenewDetailVisible = true
       this.currentRenewRow = item
-      let url = 'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId
+      let url =
+        'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId
       if (item?.subscribeItems?.length > 1) {
         url =
-          'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId + ',' + item?.subscribeItems[1].priceId
+          'api/tcm/orders/paid/prices?prices=' +
+          item?.subscribeItems[0].priceId +
+          ',' +
+          item?.subscribeItems[1].priceId
       }
-      this.$axios.get(url).then(data => {
+      this.$axios.get(url).then((data) => {
         this.currentRenewRow.currency = item?.currency
         //根据当前币种过滤出价格
         if (data?.[0]) {
-          this.currentPrice = data?.[0].currencyOption.find(it => it.currency === item?.currency).amount || 0
+          this.currentPrice =
+            data?.[0].currencyOption.find(
+              (it) => it.currency === item?.currency
+            ).amount || 0
         }
         if (data?.length > 1) {
           this.currentPrice =
-            data?.[0].currencyOption.find(it => it.currency === item?.currency).amount +
-            data?.[1].currencyOption.find(it => it.currency === item?.currency).amount
+            data?.[0].currencyOption.find(
+              (it) => it.currency === item?.currency
+            ).amount +
+            data?.[1].currencyOption.find(
+              (it) => it.currency === item?.currency
+            ).amount
         }
       })
     },
@@ -152,32 +190,32 @@ export default {
         subscribeId: id,
         quantity: this.quantity,
         successUrl: location.href,
-        cancelUrl: location.href
+        cancelUrl: location.href,
       }
       this.loadingRenewSubmit = true
       this.buried('renewAgentStripe')
       this.$axios
         .post('api/tcm/subscribe/renew', params)
-        .then(data => {
+        .then((data) => {
           this.showRenewDetailVisible = false
           this.loadingRenewSubmit = false
           //刷新页面
-          this.$emit('closeVisible')
+          $emit(this, 'closeVisible')
           // openUrl(data.payUrl)
           this.buried('renewAgentStripe', '', {
-            result: true
+            result: true,
           })
 
           this.$router.push({
             name: 'payForRenew',
             params: {
-              id: data.subscribe
-            }
+              id: data.subscribe,
+            },
           })
         })
         .catch(() => {
           this.buried('renewAgentStripe', '', {
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -196,7 +234,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -207,9 +245,8 @@ export default {
         expiredTime = date.setFullYear(date.getFullYear() + this.quantity)
       }
       return dayjs(expiredTime).format('YYYY-MM-DD')
-    }
-  }
+    },
+  },
+  emits: ['closeVisible'],
 }
 </script>
-
-<style scoped lang="scss"></style>

@@ -4,24 +4,33 @@ const EVENT = {
   mouse: {
     start: 'mousedown',
     move: 'mousemove',
-    stop: 'mouseup'
+    stop: 'mouseup',
   },
   touch: {
     start: 'touchstart',
     move: 'touchmove',
-    stop: 'touchend'
-  }
+    stop: 'touchend',
+  },
 }
 
 export default {
-  inserted(el, binding) {
+  mounted(el, binding) {
     // 事件名
     let eventsFor = EVENT.mouse
     let $drag
-    const { item, onStart, onMove, onStop, onDrop, box = [], domHtml, container } = binding.value
+    const {
+      item,
+      onStart,
+      onMove,
+      onStop,
+      onDrop,
+      box = [],
+      domHtml,
+      container,
+    } = binding.value
     const [t = 0, r = 0, b = 0, l = 0] = box
 
-    const handleStart = (el._handleStart = event => {
+    const handleStart = (el._handleStart = (event) => {
       if (event.type === 'touchstart') {
         eventsFor = EVENT.touch
       } else {
@@ -35,7 +44,7 @@ export default {
       }
     })
 
-    const handleMove = (el._handleMove = event => {
+    const handleMove = (el._handleMove = (event) => {
       event.preventDefault()
       if (!$drag) {
         $drag = appendHtml(document.body, domHtml.replace(/\n/g, '').trim())
@@ -44,8 +53,10 @@ export default {
 
       const { width, height } = $drag.getBoundingClientRect()
 
-      let posX = (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
-      let posY = (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
+      let posX =
+        (event.touches ? event.touches[0].pageX : event.pageX) - width / 2
+      let posY =
+        (event.touches ? event.touches[0].pageY : event.pageY) - height / 2
 
       posX = Math.max(posX, l)
       posX = Math.min(posX, document.documentElement.clientWidth - width - r)
@@ -58,7 +69,7 @@ export default {
       onMove?.(item, $drag)
     })
 
-    const handleStop = (el._handleStop = event => {
+    const handleStop = (el._handleStop = (event) => {
       let posX = event.touches ? event.touches[0].pageX : event.pageX
       let posY = event.touches ? event.touches[0].pageY : event.pageY
 
@@ -74,8 +85,16 @@ export default {
           const $con = document.querySelector(container)
           if ($con) {
             const bound = $con.getBoundingClientRect()
-            if (posX > bound.left && posX < bound.right && posY > bound.top && posY < bound.bottom) {
-              onDrop?.(item, [posX - width / 2, posY - height / 2], { width, height })
+            if (
+              posX > bound.left &&
+              posX < bound.right &&
+              posY > bound.top &&
+              posY < bound.bottom
+            ) {
+              onDrop?.(item, [posX - width / 2, posY - height / 2], {
+                width,
+                height,
+              })
             }
           }
         }
@@ -89,7 +108,7 @@ export default {
     on(el, 'touchstart', handleStart)
   },
 
-  unbind(el) {
+  unMounted(el) {
     const { _eventsFor } = el
     off(el, 'mousedown', el._handleStart)
     off(el, 'touchstart', el._handleStart)
@@ -101,5 +120,5 @@ export default {
     delete el._handleStart
     delete el._handleMove
     delete el._handleStop
-  }
+  },
 }

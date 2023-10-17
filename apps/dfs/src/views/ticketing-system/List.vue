@@ -1,11 +1,21 @@
 <template>
-  <section class="ticket-system-wrapper g-panel-container" v-if="$route.name === 'TicketSystem'">
+  <section
+    class="ticket-system-wrapper g-panel-container"
+    v-if="$route.name === 'TicketSystem'"
+  >
     <div class="main">
       <div class="list-operation">
         <div class="list-operation-left flex justify-content-between">
-          <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+          <FilterBar
+            v-model:value="searchParams"
+            :items="filterItems"
+            @fetch="table.fetch(1)"
+          >
+          </FilterBar>
           <ElButton type="primary">
-            <span @click="createDialog = true">{{ $t('dfs_ticketing_system_list_xinjiangongdan') }}</span>
+            <span @click="createDialog = true">{{
+              $t('dfs_ticketing_system_list_xinjiangongdan')
+            }}</span>
           </ElButton>
         </div>
       </div>
@@ -13,79 +23,118 @@
         :columns="columns"
         :remoteMethod="remoteMethod"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
         }"
         ref="table"
         class="mt-4"
       >
         <template #name="{ row }">
-          <span class="cursor-pointer ticket-name ellipsis inline-block color-primary" @click="handleDetails(row)">{{
-            row.subject
-          }}</span>
+          <span
+            class="cursor-pointer ticket-name ellipsis inline-block color-primary"
+            @click="handleDetails(row)"
+            >{{ row.subject }}</span
+          >
         </template>
         <template #status="{ row }">
-          <StatusTag type="tag" :status="row.status" default-status="Stopped" target="ticket"></StatusTag>
+          <StatusTag
+            type="tag"
+            :status="row.status"
+            default-status="Stopped"
+            target="ticket"
+          ></StatusTag>
         </template>
         <template #operation="{ row }">
-          <ElButton type="text" @click="handleDetails(row)">{{ $t('public_button_details') }}</ElButton>
-          <ElButton type="text" @click="close(row.id)" :disabled="row.status === 'Closed'">{{
-            $t('public_button_close')
+          <ElButton type="text" @click="handleDetails(row)">{{
+            $t('public_button_details')
           }}</ElButton>
+          <ElButton
+            type="text"
+            @click="close(row.id)"
+            :disabled="row.status === 'Closed'"
+            >{{ $t('public_button_close') }}</ElButton
+          >
         </template>
-        <div class="instance-table__empty" slot="empty">
-          <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('data_no_data') }}</span>
+        <template v-slot:empty>
+          <div class="instance-table__empty">
+            <VIcon size="120">no-data-color</VIcon>
+            <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+              <span>{{ $t('data_no_data') }}</span>
+            </div>
           </div>
-        </div>
+        </template>
       </VTable>
     </div>
     <!--{{$t('dfs_ticketing_system_list_xinjiangongdan')}}-->
     <ElDialog
       :before-close="closeDialog"
       :title="$t('dfs_ticketing_system_list_xinjiangongdan')"
-      :visible.sync="createDialog"
+      v-model:visible="createDialog"
       width="620px"
     >
       <span>
-        <el-form label-position="top" :model="createForm" :rules="rules" ref="createForm">
-          <el-form-item :label="$t('dfs_ticketing_system_list_zhuti')" prop="subject">
+        <el-form
+          label-position="top"
+          :model="createForm"
+          :rules="rules"
+          ref="createForm"
+        >
+          <el-form-item
+            :label="$t('dfs_ticketing_system_list_zhuti')"
+            prop="subject"
+          >
             <el-input
-              v-model="createForm.subject"
+              v-model:value="createForm.subject"
               @change="createForm.subject = createForm.subject.trim()"
               :placeholder="$t('dfs_ticketing_system_list_qingshuruzhuti')"
               required
             ></el-input>
           </el-form-item>
-          <el-form-item :label="$t('dfs_ticketing_system_list_xuanzerenwu')" prop="task">
+          <el-form-item
+            :label="$t('dfs_ticketing_system_list_xuanzerenwu')"
+            prop="task"
+          >
             <el-select
-              v-model="createForm.jobId"
+              v-model:value="createForm.jobId"
               :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze')"
               class="w-100"
               popper-class="ticket-select"
               required
             >
-              <el-option v-for="item in taskList" :key="item.id" :label="item.name" :value="item.id">{{
-                item.name
-              }}</el-option>
+              <el-option
+                v-for="item in taskList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                >{{ item.name }}</el-option
+              >
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('dfs_ticketing_system_list_xuanzeshujuyuan')" prop="connection">
+          <el-form-item
+            :label="$t('dfs_ticketing_system_list_xuanzeshujuyuan')"
+            prop="connection"
+          >
             <el-select
-              v-model="createForm.connectionId"
+              v-model:value="createForm.connectionId"
               :placeholder="$t('dfs_ticketing_system_list_qingxuanzexuanze2')"
               class="w-100"
               popper-class="ticket-select"
               required
             >
-              <el-option v-for="item in connectionList" :key="item.id" :label="item.name" :value="item.id">{{
-                item.name
-              }}</el-option>
+              <el-option
+                v-for="item in connectionList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                >{{ item.name }}</el-option
+              >
             </el-select>
           </el-form-item>
-          <el-form-item :label="$t('dfs_ticketing_system_list_wenti')" prop="description">
+          <el-form-item
+            :label="$t('dfs_ticketing_system_list_wenti')"
+            prop="description"
+          >
             <el-input
-              v-model="createForm.description"
+              v-model:value="createForm.description"
               @change="createForm.description = createForm.description.trim()"
               type="textarea"
               :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
@@ -94,10 +143,16 @@
           </el-form-item>
         </el-form>
       </span>
-      <span slot="footer">
-        <el-button @click="closeDialog()">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="create">{{ $t('public_button_create') }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span>
+          <el-button @click="closeDialog()">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button type="primary" :loading="submitLoading" @click="create">{{
+            $t('public_button_create')
+          }}</el-button>
+        </span>
+      </template>
     </ElDialog>
     <Details ref="details" width="380px"></Details>
   </section>
@@ -127,7 +182,7 @@ export default {
       pricePay: '',
       agentTypeMap: AGENT_TYPE_MAP,
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       search: '',
       filterItems: [],
@@ -135,56 +190,66 @@ export default {
         jobId: '',
         connectionId: '',
         subject: '',
-        description: ''
+        description: '',
       },
       columns: [
         {
           label: i18n.t('dfs_ticketing_system_list_zhuti'),
           prop: 'subject',
-          slotName: 'name'
+          slotName: 'name',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_wenti'),
           prop: 'description',
           width: '200px',
-          showOverflowTooltip: true
+          showOverflowTooltip: true,
         },
         {
           label: i18n.t('dfs_ticketing_system_list_gongdanbianhao'),
-          prop: 'ticketNumber'
+          prop: 'ticketNumber',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_gongdanzhuangtai'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_tijiaoshijian'),
           prop: 'createdTime',
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('public_operation'),
           prop: 'operation',
           slotName: 'operation',
-          width: 140
-        }
+          width: 140,
+        },
       ],
       rules: {
-        subject: [{ required: true, message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'), trigger: 'change' }],
+        subject: [
+          {
+            required: true,
+            message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'),
+            trigger: 'change',
+          },
+        ],
         description: [
-          { required: true, message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'), trigger: 'change' }
-        ]
+          {
+            required: true,
+            message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'),
+            trigger: 'change',
+          },
+        ],
       },
       taskList: [],
       connectionList: [],
-      submitLoading: false
+      submitLoading: false,
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   created() {
     this.getFilterItems()
@@ -199,7 +264,7 @@ export default {
         let pageNum = query === '{}' ? undefined : 1
         this.table.fetch(pageNum)
       }
-    }
+    },
   },
   methods: {
     getFilterItems() {
@@ -208,8 +273,8 @@ export default {
           placeholder: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
           label: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     remoteMethod({ page }) {
@@ -220,40 +285,43 @@ export default {
       if (keyword) {
         url = `api/ticket?userId=${userId}&page=${current}&limit=${size}&subject=${keyword}`
       }
-      return this.$axios.get(url).then(data => {
+      return this.$axios.get(url).then((data) => {
         let items = data.items || []
         return {
           total: data.total,
           data:
-            items.map(t => {
+            items.map((t) => {
               t.statusLabel = ORDER_STATUS_MAP[t.status]
               const { spec, type, periodUnit, period } = t || {}
               t.subscriptionMethodLabel = getPaymentMethod({
                 type,
                 periodUnit,
-                period
+                period,
               })
               t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
-              t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
+              t.content = `${t.subscriptionMethodLabel} ${getSpec(
+                spec
+              )} ${i18n.t('public_agent')}`
               t.periodLabel =
                 t.status === 'unPay'
                   ? '-'
                   : dayjs(t.periodStart).format('YYYY-MM-DD HH:mm:ss') +
                     ' - ' +
                     dayjs(t.periodEnd).format('YYYY-MM-DD HH:mm:ss')
-              t.priceSuffix = t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
+              t.priceSuffix =
+                t.type === 'recurring' ? '/' + TIME_MAP[t.periodUnit] : ''
               t.formatPrice =
                 CURRENCY_SYMBOL_MAP[t.currency] +
                 (t.price / 100).toLocaleString('zh', {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })
               t.priceLabel = t.formatPrice + t.priceSuffix
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
               return t
-            }) || []
+            }) || [],
         }
       })
     },
@@ -265,19 +333,19 @@ export default {
       let fields = {
         id: true,
         name: true,
-        last_updated: true
+        last_updated: true,
       }
       let filter = {
         order: 'last_updated DESC',
         limit: 1000,
         fields: fields,
-        skip: 0
+        skip: 0,
       }
       taskApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.taskList = data?.items || []
         })
     },
@@ -287,32 +355,40 @@ export default {
         order: 'last_updated DESC',
         limit: 1000,
         noSchema: 1,
-        skip: 0
+        skip: 0,
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.connectionList = data?.items || []
         })
     },
     //关闭工单
     close(id) {
       this.$axios.patch('api/ticket/' + id).then(() => {
-        this.$message.success(i18n.t('dfs_ticketing_system_list_gongdanyiguanbi'))
+        this.$message.success(
+          i18n.t('dfs_ticketing_system_list_gongdanyiguanbi')
+        )
         this.table.fetch(1)
       })
     },
     //提交工单
     create() {
-      this.$refs.createForm.validate(valid => {
+      this.$refs.createForm.validate((valid) => {
         if (valid) {
           this.submitLoading = true
           let { userId, email, telephone, nickname } = window.__USER_INFO__
-          let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
-          let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
-          const country = this.$store.getters.isDomesticStation ? 'China' : 'Abroad'
+          let taskName = this.taskList.find(
+            (task) => task.id === this.createForm?.jobId
+          )?.name
+          let connectionName = this.connectionList.find(
+            (conn) => conn.id === this.createForm?.connectionId
+          )?.name
+          const country = this.$store.getters.isDomesticStation
+            ? 'China'
+            : 'Abroad'
           let params = Object.assign(this.createForm, {
             connectionName: connectionName,
             jobName: taskName,
@@ -320,7 +396,7 @@ export default {
             phone: telephone,
             email: email,
             nickname: nickname,
-            country
+            country,
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.closeDialog()
@@ -336,8 +412,8 @@ export default {
       this.createForm = {}
       this.$refs?.createForm?.resetFields()
       this.createDialog = false
-    }
-  }
+    },
+  },
 }
 </script>
 

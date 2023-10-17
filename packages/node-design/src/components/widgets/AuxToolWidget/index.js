@@ -15,8 +15,8 @@ export const AuxToolWidget = defineComponent({
 
     engine.value.subscribeWith('viewport:scroll', () => {
       if (viewportRef.value.isIframe && refs.root) {
-        refs.root.style.transform = `perspective(1px) translate3d(${-viewportRef.value.scrollX}px,${-viewportRef.value
-          .scrollY}px,0)`
+        refs.root.style.transform = `perspective(1px) translate3d(${-viewportRef
+          .value.scrollX}px,${-viewportRef.value.scrollY}px,0)`
       }
     })
 
@@ -32,5 +32,5 @@ export const AuxToolWidget = defineComponent({
         </div>
       )
     }
-  }
+  },
 })

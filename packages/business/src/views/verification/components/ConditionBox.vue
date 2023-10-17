@@ -10,12 +10,17 @@
       </div>
       <div>
         <ElLink
-          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+          v-if="
+            inspectMethod !== 'row_count' &&
+            list.some((t) => !t.source.sortColumn || !t.target.sortColumn)
+          "
           type="primary"
           :disabled="!list.length"
           class="mr-4"
           @click="handleClearIndexEmpty"
-          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
+          >{{
+            $t('packages_business_components_conditionbox_yijianqingchusuo')
+          }}</ElLink
         >
         <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
           $t('packages_business_verification_clear')
@@ -37,25 +42,37 @@
           :data-index="index"
           :size-dependencies="[item.id, item.source, item.target]"
         >
-          <div class="joint-table-item" :class="['joint-table-item']" :key="item.id + index">
+          <div
+            class="joint-table-item"
+            :class="['joint-table-item']"
+            :key="item.id + index"
+          >
             <div class="joint-table-setting overflow-hidden">
               <div class="flex justify-content-between">
                 <div class="cond-item__title flex align-items-center">
                   <span class="font-color-main fs-7">{{
-                    $t('packages_business_components_conditionbox_jianyantiaojian')
+                    $t(
+                      'packages_business_components_conditionbox_jianyantiaojian'
+                    )
                   }}</span>
                   <span class="ml-1">{{ index + 1 }}</span>
                 </div>
                 <div class="flex align-items-center">
-                  <ElButton type="text" @click.stop="removeItem(index)">{{ $t('public_button_delete') }}</ElButton>
+                  <ElButton type="text" @click.stop="removeItem(index)">{{
+                    $t('public_button_delete')
+                  }}</ElButton>
                 </div>
               </div>
               <div class="setting-item mt-4" :key="'connection' + item.id">
                 <label class="item-label"
-                  >{{ $t('packages_business_components_conditionbox_daijiaoyanlianjie') }}:</label
+                  >{{
+                    $t(
+                      'packages_business_components_conditionbox_daijiaoyanlianjie'
+                    )
+                  }}:</label
                 >
                 <AsyncSelect
-                  v-model="item.source.connectionId"
+                  v-model:value="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.source.currentLabel"
                   itemQuery="name"
@@ -63,14 +80,20 @@
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
+                  @change="
+                    handleChangeConnection(
+                      arguments[0],
+                      item.source,
+                      arguments[1]
+                    )
+                  "
                 >
                 </AsyncSelect>
                 <span class="item-icon fs-6">
                   <i class="el-icon-arrow-right"></i>
                 </span>
                 <AsyncSelect
-                  v-model="item.target.connectionId"
+                  v-model:value="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   :currentLabel="item.target.currentLabel"
                   itemQuery="name"
@@ -78,18 +101,28 @@
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
+                  @change="
+                    handleChangeConnection(
+                      arguments[0],
+                      item.target,
+                      arguments[1]
+                    )
+                  "
                 >
                 </AsyncSelect>
               </div>
               <div class="setting-item mt-4" :key="'table' + item.id">
-                <label class="item-label">{{ $t('packages_business_components_conditionbox_laiyuanbiao') }}:</label>
+                <label class="item-label"
+                  >{{
+                    $t('packages_business_components_conditionbox_laiyuanbiao')
+                  }}:</label
+                >
                 <AsyncSelect
-                  v-model="item.source.table"
+                  v-model:value="item.source.table"
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.source.connectionId,
-                    nodeId: item.source.nodeId
+                    nodeId: item.source.nodeId,
                   }"
                   itemQuery="name"
                   itemType="string"
@@ -97,16 +130,22 @@
                   filterable
                   class="item-select"
                   :key="'sourceTable' + item.id"
-                  @change="handleChangeTable(arguments[0], item, index, 'source')"
+                  @change="
+                    handleChangeTable(arguments[0], item, index, 'source')
+                  "
                 >
                 </AsyncSelect>
-                <span class="item-icon">{{ $t('packages_business_components_conditionbox_mubiaobiao') }}:</span>
+                <span class="item-icon"
+                  >{{
+                    $t('packages_business_components_conditionbox_mubiaobiao')
+                  }}:</span
+                >
                 <AsyncSelect
-                  v-model="item.target.table"
+                  v-model:value="item.target.table"
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.target.connectionId,
-                    nodeId: item.target.nodeId
+                    nodeId: item.target.nodeId,
                   }"
                   itemQuery="name"
                   itemType="string"
@@ -114,14 +153,16 @@
                   filterable
                   class="item-select"
                   :key="'targetTable' + item.id"
-                  @change="handleChangeTable(arguments[0], item, index, 'target')"
+                  @change="
+                    handleChangeTable(arguments[0], item, index, 'target')
+                  "
                 >
                 </AsyncSelect>
               </div>
               <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
-                  :value.sync="item"
+                  v-model:value="item"
                   :schema="formSchema"
                   :scope="schemaScope"
                   :colon="true"
@@ -129,10 +170,15 @@
                   label-width="120"
                 />
               </div>
-              <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
-                <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
+              <div
+                v-if="inspectMethod !== 'row_count'"
+                class="setting-item mt-4"
+              >
+                <label class="item-label"
+                  >{{ $t('packages_business_verification_indexField') }}:
+                </label>
                 <MultiSelection
-                  v-model="item.source.sortColumn"
+                  v-model:value="item.source.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.source.sortColumn }"
                   :options="item.source.fields"
@@ -142,7 +188,7 @@
                 ></MultiSelection>
                 <span class="item-icon"></span>
                 <MultiSelection
-                  v-model="item.target.sortColumn"
+                  v-model:value="item.target.sortColumn"
                   class="item-select"
                   :class="{ 'empty-data': !item.target.sortColumn }"
                   :options="item.target.fields"
@@ -150,15 +196,28 @@
                   @focus="handleFocus(item.target)"
                 ></MultiSelection>
               </div>
-              <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
-                <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
+              <div
+                v-if="inspectMethod === 'field'"
+                class="setting-item align-items-center mt-4"
+              >
+                <label class="item-label"
+                  >{{
+                    $t(
+                      'packages_business_components_fieldbox_daijiaoyanmoxing'
+                    )
+                  }}:</label
+                >
                 <ElRadioGroup
-                  v-model="item.modeType"
+                  v-model:value="item.modeType"
                   :disabled="getModeTypeDisabled(item)"
                   @change="handleChangeModeType(arguments[0], item, index)"
                 >
-                  <ElRadio label="all">{{ $t('packages_business_components_fieldbox_quanziduan') }}</ElRadio>
-                  <ElRadio label="custom">{{ $t('packages_business_connections_databaseform_zidingyi') }}</ElRadio>
+                  <ElRadio label="all">{{
+                    $t('packages_business_components_fieldbox_quanziduan')
+                  }}</ElRadio>
+                  <ElRadio label="custom">{{
+                    $t('packages_business_connections_databaseform_zidingyi')
+                  }}</ElRadio>
                 </ElRadioGroup>
                 <ElLink
                   v-if="item.modeType === 'custom'"
@@ -166,33 +225,62 @@
                   class="ml-4"
                   @click="handleCustomFields(item, index)"
                 >
-                  {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
-                  ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
+                  {{
+                    $t(
+                      'packages_business_components_conditionbox_chakanzidingyi'
+                    )
+                  }}
+                  ({{
+                    item.source.columns ? item.source.columns.length : 0
+                  }})</ElLink
                 >
               </div>
               <div class="setting-item mt-4">
                 <ElCheckbox
-                  v-model="item.showAdvancedVerification"
+                  v-model:value="item.showAdvancedVerification"
                   v-show="inspectMethod === 'field'"
                   @input="handleChangeAdvanced(item)"
-                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
+                  >{{
+                    $t('packages_business_verification_advanceVerify')
+                  }}</ElCheckbox
                 >
               </div>
-              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
-                <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('packages_business_verification_addJS')
-                }}</ElButton>
+              <div
+                class="setting-item mt-4"
+                v-if="
+                  item.showAdvancedVerification && inspectMethod === 'field'
+                "
+              >
+                <label class="item-label"
+                  >{{ $t('packages_business_verification_JSVerifyLogic') }}:
+                </label>
+                <ElButton
+                  v-if="!item.webScript || item.webScript === ''"
+                  @click="addScript(index)"
+                  >{{ $t('packages_business_verification_addJS') }}</ElButton
+                >
                 <template v-else>
-                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{
-                    $t('public_button_delete')
-                  }}</ElLink>
+                  <ElLink
+                    type="primary"
+                    class="ml-4"
+                    @click="editScript(index)"
+                    >{{ $t('public_button_edit') }}</ElLink
+                  >
+                  <ElLink
+                    type="primary"
+                    class="ml-4"
+                    @click="removeScript(index)"
+                    >{{ $t('public_button_delete') }}</ElLink
+                  >
                 </template>
               </div>
               <div
                 class="setting-item mt-4"
-                v-if="inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+                v-if="
+                  inspectMethod === 'field' &&
+                  item.showAdvancedVerification &&
+                  item.webScript
+                "
               >
                 <pre class="item-script">{{ item.webScript }}</pre>
               </div>
@@ -202,7 +290,9 @@
       </template>
     </DynamicScroller>
     <div class="joint-table-footer">
-      <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
+      <ElButton size="mini" @click="addItem">{{
+        $t('packages_business_verification_addTable')
+      }}</ElButton>
       <ElButton
         v-if="taskId"
         type="primary"
@@ -210,40 +300,56 @@
         :disabled="!!list.length"
         :loading="autoAddTableLoading"
         @click="autoAddTable"
-        >{{ $t('packages_business_verification_button_auto_add_table') }}</ElButton
+        >{{
+          $t('packages_business_verification_button_auto_add_table')
+        }}</ElButton
       >
     </div>
     <ElDialog
       width="60%"
       :title="$t('packages_business_verification_JSVerifyLogic')"
-      :visible.sync="dialogAddScriptVisible"
+      v-model:visible="dialogAddScriptVisible"
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">
         <div class="jsBox">
-          <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <VCodeEditor v-model="webScript" height="500" class="js-editor"></VCodeEditor>
+          <div class="js-fixText">
+            <span style="color: #0000ff">function </span
+            ><span> validate(sourceRow){</span>
+          </div>
+          <VCodeEditor
+            v-model:value="webScript"
+            height="500"
+            class="js-editor"
+          ></VCodeEditor>
           <div class="js-fixText">}</div>
         </div>
         <GitBook
           v-resize.left="{
             minWidth: 350,
-            maxWidth: 500
+            maxWidth: 500,
           }"
           :value="doc"
           class="example ml-4 color-primary"
         ></GitBook>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="handleAddScriptClose">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton type="primary" size="mini" @click="submitScript">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
 import { action } from '@formily/reactive'
@@ -262,11 +368,9 @@ import FieldDialog from './FieldDialog'
 
 export default {
   name: 'ConditionBox',
-
   directives: {
-    resize
+    resize,
   },
-
   components: {
     AsyncSelect,
     DynamicScroller,
@@ -275,27 +379,25 @@ export default {
     GitBook,
     MultiSelection,
     FieldDialog,
-    SchemaToForm
+    SchemaToForm,
   },
-
   props: {
     taskId: String,
     isDB: Boolean,
     inspectMethod: String,
     data: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     allStages: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     edges: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
-
   data() {
     return {
       list: [],
@@ -315,11 +417,15 @@ export default {
           this.inspectMethod === 'row_count'
             ? 'count_by_partition_filter_function'
             : 'query_by_advance_filter_function',
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-          return field => {
+        useAsyncDataSource: (
+          service,
+          fieldName = 'dataSource',
+          ...serviceParams
+        ) => {
+          return (field) => {
             field.loading = true
             service({ field }, ...serviceParams).then(
-              action.bound(data => {
+              action.bound((data) => {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
@@ -338,16 +444,16 @@ export default {
                   meta_type: 'table',
                   sourceType: 'SOURCE',
                   original_name: item.table,
-                  'source._id': item.connectionId
+                  'source._id': item.connectionId,
                 },
-                limit: 1
+                limit: 1,
               }
               const data = await metadataInstancesApi.tapTables({
-                filter: JSON.stringify(params)
+                filter: JSON.stringify(params),
               })
               fields = Object.values(data.items[0]?.nameFieldMap || {})
             }
-            const result = fields.map(t => {
+            const result = fields.map((t) => {
               return {
                 id: t.id,
                 label: t.fieldName || t.field_name,
@@ -356,7 +462,7 @@ export default {
                 primary_key_position: t.primaryKey,
                 data_type: t.dataType || t.data_type,
                 primaryKey: t.primaryKey,
-                unique: t.unique
+                unique: t.unique,
               }
             })
             if (result.length) {
@@ -366,7 +472,7 @@ export default {
           } catch (e) {
             return []
           }
-        }
+        },
       },
       formSchema: {
         type: 'object',
@@ -377,7 +483,7 @@ export default {
             'x-component-props': {
               minColumns: 2,
               maxColumns: 2,
-              columnGap: 16
+              columnGap: 16,
             },
             properties: {
               source: {
@@ -394,15 +500,17 @@ export default {
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
-                            dataSource: '{{$self.value}}'
-                          }
-                        }
-                      }
-                    ]
+                            dataSource: '{{$self.value}}',
+                          },
+                        },
+                      },
+                    ],
                   },
                   isFilter: {
                     type: 'boolean',
-                    title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
+                    title: i18n.t(
+                      'packages_business_components_conditionbox_laiyuanbiaoshuju'
+                    ),
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     default: false,
@@ -410,11 +518,11 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`
-                          }
-                        }
-                      }
-                    ]
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`,
+                          },
+                        },
+                      },
+                    ],
                   },
                   conditions: {
                     type: 'array',
@@ -422,7 +530,7 @@ export default {
                     default: [{ key: '', value: '', operator: 5 }],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      colon: false
+                      colon: false,
                     },
                     'x-component': 'ArrayItems',
                     items: {
@@ -438,9 +546,9 @@ export default {
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                filterable: true
+                                filterable: true,
                               },
-                              enum: []
+                              enum: [],
                             },
                             operator: {
                               type: 'number',
@@ -448,30 +556,30 @@ export default {
                               enum: [
                                 {
                                   label: '>',
-                                  value: 1
+                                  value: 1,
                                 },
                                 {
                                   label: '>=',
-                                  value: 2
+                                  value: 2,
                                 },
                                 {
                                   label: '<',
-                                  value: 3
+                                  value: 3,
                                 },
                                 {
                                   label: '<=',
-                                  value: 4
+                                  value: 4,
                                 },
                                 {
                                   label: '=',
-                                  value: 5
-                                }
+                                  value: 5,
+                                },
                               ],
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
-                                wrapperWidth: 100
+                                wrapperWidth: 100,
                               },
-                              'x-component': 'Select'
+                              'x-component': 'Select',
                             },
                             value: {
                               type: 'string',
@@ -481,28 +589,29 @@ export default {
                               'x-component-props': {
                                 type: 'datetime',
                                 align: 'right',
-                                format: 'yyyy-MM-dd HH:mm:ss'
+                                format: 'yyyy-MM-dd HH:mm:ss',
                               },
                               'x-reactions': {
                                 dependencies: ['.key', '.key#dataSource'],
                                 fulfill: {
                                   schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
-                                  }
-                                }
-                              }
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`,
+                                  },
+                                },
+                              },
                             },
                             remove: {
                               type: 'void',
                               'x-decorator': 'FormItem',
                               'x-component': 'ArrayItems.Remove',
                               'x-component-props': {
-                                disabled: '{{$values.source.conditions.length<2}}'
-                              }
-                            }
-                          }
-                        }
-                      }
+                                disabled:
+                                  '{{$values.source.conditions.length<2}}',
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                     properties: {
                       add: {
@@ -510,22 +619,22 @@ export default {
                         title: i18n.t('packages_dag_nodes_table_tianjia'),
                         'x-component': 'ArrayItems.Addition',
                         'x-component-props': {
-                          defaultValue: { key: '', value: '', operator: 5 }
-                        }
-                      }
+                          defaultValue: { key: '', value: '', operator: 5 },
+                        },
+                      },
                     },
                     'x-reactions': [
                       {
                         dependencies: ['.isFilter'],
                         fulfill: {
                           state: {
-                            visible: '{{!!$deps[0]}}'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
+                            visible: '{{!!$deps[0]}}',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
               },
               target: {
                 type: 'object',
@@ -541,15 +650,17 @@ export default {
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
-                            dataSource: '{{$self.value}}'
-                          }
-                        }
-                      }
-                    ]
+                            dataSource: '{{$self.value}}',
+                          },
+                        },
+                      },
+                    ],
                   },
                   isFilter: {
                     type: 'boolean',
-                    title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
+                    title: i18n.t(
+                      'packages_business_components_conditionbox_mubiaobiaoshuju'
+                    ),
                     'x-decorator': 'FormItem',
                     'x-component': 'Switch',
                     default: false,
@@ -557,11 +668,11 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`
-                          }
-                        }
-                      }
-                    ]
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`,
+                          },
+                        },
+                      },
+                    ],
                   },
                   conditions: {
                     type: 'array',
@@ -569,7 +680,7 @@ export default {
                     default: [{ key: '', value: '', operator: 5 }],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      colon: false
+                      colon: false,
                     },
                     'x-component': 'ArrayItems',
                     items: {
@@ -585,9 +696,9 @@ export default {
                               'x-decorator': 'FormItem',
                               'x-component': 'Select',
                               'x-component-props': {
-                                filterable: true
+                                filterable: true,
                               },
-                              enum: []
+                              enum: [],
                             },
                             operator: {
                               type: 'number',
@@ -595,30 +706,30 @@ export default {
                               enum: [
                                 {
                                   label: '>',
-                                  value: 1
+                                  value: 1,
                                 },
                                 {
                                   label: '>=',
-                                  value: 2
+                                  value: 2,
                                 },
                                 {
                                   label: '<',
-                                  value: 3
+                                  value: 3,
                                 },
                                 {
                                   label: '<=',
-                                  value: 4
+                                  value: 4,
                                 },
                                 {
                                   label: '=',
-                                  value: 5
-                                }
+                                  value: 5,
+                                },
                               ],
                               'x-decorator': 'FormItem',
                               'x-decorator-props': {
-                                wrapperWidth: 100
+                                wrapperWidth: 100,
                               },
-                              'x-component': 'Select'
+                              'x-component': 'Select',
                             },
                             value: {
                               type: 'string',
@@ -628,28 +739,29 @@ export default {
                               'x-component-props': {
                                 type: 'datetime',
                                 align: 'right',
-                                format: 'yyyy-MM-dd HH:mm:ss'
+                                format: 'yyyy-MM-dd HH:mm:ss',
                               },
                               'x-reactions': {
                                 dependencies: ['.key', '.key#dataSource'],
                                 fulfill: {
                                   schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
-                                  }
-                                }
-                              }
+                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`,
+                                  },
+                                },
+                              },
                             },
                             remove: {
                               type: 'void',
                               'x-decorator': 'FormItem',
                               'x-component': 'ArrayItems.Remove',
                               'x-component-props': {
-                                disabled: '{{$values.target.conditions.length<2}}'
-                              }
-                            }
-                          }
-                        }
-                      }
+                                disabled:
+                                  '{{$values.target.conditions.length<2}}',
+                              },
+                            },
+                          },
+                        },
+                      },
                     },
                     properties: {
                       add: {
@@ -657,37 +769,35 @@ export default {
                         title: i18n.t('packages_dag_nodes_table_tianjia'),
                         'x-component': 'ArrayItems.Addition',
                         'x-component-props': {
-                          defaultValue: { key: '', value: '', operator: 5 }
-                        }
-                      }
+                          defaultValue: { key: '', value: '', operator: 5 },
+                        },
+                      },
                     },
                     'x-reactions': [
                       {
                         dependencies: ['.isFilter'],
                         fulfill: {
                           state: {
-                            visible: '{{!!$deps[0]}}'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                            visible: '{{!!$deps[0]}}',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     }
   },
-
   computed: {
     flowStages() {
       let types = this.isDB ? ['database'] : ['table']
-      return this.allStages.filter(stg => types.includes(stg.type))
-    }
+      return this.allStages.filter((stg) => types.includes(stg.type))
+    },
   },
-
   watch: {
     taskId(v1, v2) {
       if (v1 !== v2) {
@@ -699,21 +809,19 @@ export default {
       deep: true,
       handler() {
         this.loadList()
-      }
+      },
     },
 
     list: {
       deep: true,
       handler() {
         this.debounceValidate()
-      }
-    }
+      },
+    },
   },
-
   created() {
     this.loadDoc()
   },
-
   methods: {
     async getConnectionsListMethod(filter) {
       if (this.taskId) {
@@ -723,8 +831,8 @@ export default {
         const _filter = {
           where: {
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -737,16 +845,18 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
-          const findDynamicSchema = item.capabilities.find(t => t.id === 'dynamic_schema')
+        result.items = result.items.map((item) => {
+          const findDynamicSchema = item.capabilities.find(
+            (t) => t.id === 'dynamic_schema'
+          )
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
@@ -757,11 +867,13 @@ export default {
             id: connectionId,
             name: connectionName,
             label: `${connectionName} ${
-              item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''
+              item.status
+                ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})`
+                : ''
             }`,
             value: connectionId,
             databaseType: databaseType,
-            attrs: { connectionId, connectionName, databaseType }
+            attrs: { connectionId, connectionName, databaseType },
           }
         })
 
@@ -787,28 +899,36 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             is_deleted: false,
-            'source.id': connectionId
+            'source.id': connectionId,
           },
           skip: (page - 1) * size,
           limit: size,
-          order: 'createTime DESC'
+          order: 'createTime DESC',
         }
         const keyword = filter.where?.name?.like
         if (keyword) {
           params.where.name = filter.where.name
         }
         const res = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify(params)
+          filter: JSON.stringify(params),
         })
         let result = {}
-        result.items = res.items.map(t => t.name)
+        result.items = res.items.map((t) => t.name)
         result.total = res.total
-        res.items.forEach(el => {
+        res.items.forEach((el) => {
           // 缓存起来
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
-            Object.values(el.nameFieldMap || {}).map(t => {
-              const { id, fieldName, primaryKeyPosition, fieldType, data_type, primaryKey, unique } = t
+            Object.values(el.nameFieldMap || {}).map((t) => {
+              const {
+                id,
+                fieldName,
+                primaryKeyPosition,
+                fieldType,
+                data_type,
+                primaryKey,
+                unique,
+              } = t
               return {
                 id,
                 field_name: fieldName,
@@ -816,7 +936,7 @@ export default {
                 fieldType,
                 data_type,
                 primaryKey,
-                unique
+                unique,
               }
             })
           )
@@ -831,27 +951,37 @@ export default {
       const keyword = filter.where?.name?.like
       let arr
       if (keyword) {
-        arr = this.flowStages.filter(t => t.attrs?.connectionName.includes(filter.where?.name?.like))
+        arr = this.flowStages.filter((t) =>
+          t.attrs?.connectionName.includes(filter.where?.name?.like)
+        )
       } else {
         arr = this.flowStages
       }
       const result = uniqBy(
-        arr.map(t => {
+        arr.map((t) => {
           const nodeId = t.id
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
           const databaseType = t.databaseType
-          const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
+          const findDynamicSchema = t.attrs?.capabilities.find(
+            (t) => t.id === 'dynamic_schema'
+          )
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
           return {
-            attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
+            attrs: {
+              nodeId,
+              nodeName,
+              connectionId,
+              connectionName,
+              databaseType,
+            },
             name: `${nodeName} / ${connectionName}`,
             value: connectionId,
             label: `${nodeName} / ${connectionName}`,
-            databaseType: databaseType
+            databaseType: databaseType,
           }
         }),
         'value'
@@ -866,7 +996,7 @@ export default {
       }
       const { isDB } = this
 
-      const findNode = this.flowStages.find(t => t.id === nodeId)
+      const findNode = this.flowStages.find((t) => t.id === nodeId)
       if (!findNode) {
         return { items: [], total: 0 }
       }
@@ -875,7 +1005,7 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
-        pageSize: filter?.size || 20
+        pageSize: filter?.size || 20,
       }
       const keyword = filter.where?.name?.like
       if (keyword) {
@@ -884,14 +1014,28 @@ export default {
 
       let res = await metadataInstancesApi.nodeSchemaPage(params)
 
-      const tableList = res.items?.map(t => t.name) || []
+      const tableList = res.items?.map((t) => t.name) || []
       const total = res.total
-      res.items.forEach(el => {
+      res.items.forEach((el) => {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
-          el.fields.map(t => {
-            const { id, field_name, primary_key_position, data_type, primaryKey, unique } = t
-            return { id, field_name, primary_key_position, data_type, primaryKey, unique }
+          el.fields.map((t) => {
+            const {
+              id,
+              field_name,
+              primary_key_position,
+              data_type,
+              primaryKey,
+              unique,
+            } = t
+            return {
+              id,
+              field_name,
+              primary_key_position,
+              data_type,
+              primaryKey,
+              unique,
+            }
           })
         )
       })
@@ -899,7 +1043,7 @@ export default {
       if (isDB) {
         if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableNames = tableNames.map(t => {
+          tableNames = tableNames.map((t) => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
@@ -907,7 +1051,9 @@ export default {
         return { items: tableNames, total: total }
       }
       if (keyword) {
-        tableNames = tableNames.filter(t => t.toLowerCase().includes(keyword.toLowerCase()))
+        tableNames = tableNames.filter((t) =>
+          t.toLowerCase().includes(keyword.toLowerCase())
+        )
       }
       return { items: tableNames, total: tableNames.length }
     },
@@ -919,30 +1065,32 @@ export default {
      * @param3 flag true连线下游、false连线上游
      * */
     getLinkData(value, data = [], flag = false) {
-      const f = data.find(t => t[flag ? 'source' : 'target'] === value)
-      return f ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag) : value
+      const f = data.find((t) => t[flag ? 'source' : 'target'] === value)
+      return f
+        ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag)
+        : value
     },
 
     // 获取一条线上的源节点和目标节点
     getMatchNodeList() {
       const edgesList = cloneDeep(this.edges)
       let result = uniqBy(
-        edgesList.map(t => {
+        edgesList.map((t) => {
           const source = this.getLinkData(t.source, edgesList)
           const target = this.getLinkData(t.target, edgesList, true)
           const key = source + '_' + target
           return {
             source,
             target,
-            key
+            key,
           }
         }),
         'key'
       )
 
-      return result.map(re => {
-        const el = this.flowStages.find(t => t.id === re.source)
-        const targetNode = this.flowStages.find(t => t.id === re.target)
+      return result.map((re) => {
+        const el = this.flowStages.find((t) => t.id === re.source)
+        const targetNode = this.flowStages.find((t) => t.id === re.target)
         let updateConditionFieldMap = {}
         let tableNames = []
         let tableNameRelation = {}
@@ -950,11 +1098,13 @@ export default {
         if (targetNode.type === 'database') {
           tableNames = el.tableNames
           updateConditionFieldMap = targetNode.updateConditionFieldMap || {}
-          tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
+          tableNameRelation =
+            targetNode.syncObjects?.[0]?.tableNameRelation || []
           objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
           tableNames = [targetNode.tableName]
-          updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
+          updateConditionFieldMap[targetNode.tableName] =
+            targetNode.updateConditionFields || []
           tableNameRelation[el.tableName] = targetNode.tableName
         }
 
@@ -973,7 +1123,7 @@ export default {
           tableNames,
           objectNames,
           tableName: targetNode.tableName,
-          tableNameRelation
+          tableNameRelation,
         }
       })
     },
@@ -983,9 +1133,9 @@ export default {
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
         i18n.t('public_message_title_prompt'),
         {
-          type: 'warning'
+          type: 'warning',
         }
-      ).then(res => {
+      ).then((res) => {
         if (!res) {
           return
         }
@@ -998,13 +1148,15 @@ export default {
         i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
         i18n.t('public_message_title_prompt'),
         {
-          type: 'warning'
+          type: 'warning',
         }
-      ).then(res => {
+      ).then((res) => {
         if (!res) {
           return
         }
-        this.list = this.list.filter(t => t.source.sortColumn && t.target.sortColumn)
+        this.list = this.list.filter(
+          (t) => t.source.sortColumn && t.target.sortColumn
+        )
       })
     },
 
@@ -1022,7 +1174,7 @@ export default {
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        modeType: 'all' // 待校验模型的类型
+        modeType: 'all', // 待校验模型的类型
       }
     },
 
@@ -1041,7 +1193,7 @@ export default {
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
-      matchNodeList.forEach(m => {
+      matchNodeList.forEach((m) => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
@@ -1053,30 +1205,36 @@ export default {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
         if (this.allStages.length > this.flowStages.length)
-          return this.$message.error(i18n.t('packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'))
-        return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+          return this.$message.error(
+            i18n.t(
+              'packages_business_components_conditionbox_cunzaichulijiedian_wufazidong'
+            )
+          )
+        return this.$message.error(
+          i18n.t('packages_business_components_conditionbox_suoxuanrenwuque')
+        )
       }
       let where = {
         meta_type: {
-          inq: DATA_NODE_TYPES
+          inq: DATA_NODE_TYPES,
         },
         'source.id': {
-          inq: Array.from(new Set(connectionIds))
+          inq: Array.from(new Set(connectionIds)),
         },
         original_name: {
-          inq: Array.from(new Set(tableNames))
-        }
+          inq: Array.from(new Set(tableNames)),
+        },
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
       metadataInstancesApi
         .findInspect({
           where,
-          fields: META_INSTANCE_FIELDS
+          fields: META_INSTANCE_FIELDS,
         })
-        .then(data => {
+        .then((data) => {
           let list = []
-          matchNodeList.forEach(m => {
+          matchNodeList.forEach((m) => {
             const {
               source,
               target,
@@ -1089,11 +1247,11 @@ export default {
               sourceDatabaseType,
               targetDatabaseType,
               updateConditionFieldMap,
-              tableNameRelation
+              tableNameRelation,
             } = m
 
             const sourceTableList = Object.keys(tableNameRelation)
-            sourceTableList.forEach(ge => {
+            sourceTableList.forEach((ge) => {
               let item = this.getItemOptions()
               // 填充source
               item.source.nodeId = source
@@ -1114,10 +1272,17 @@ export default {
               item.target.table = tableNameRelation[ge] // findTargetTable.original_name
               item.target.capabilities = capabilitiesMap[targetConnectionId]
 
-              const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
-              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
+              const updateList = cloneDeep(
+                updateConditionFieldMap[tableNameRelation[ge]] || []
+              )
+              let findTable = data.find(
+                (t) =>
+                  t.source.id === sourceConnectionId && t.original_name === ge
+              )
               let findTargetTable = data.find(
-                t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
+                (t) =>
+                  t.source.id === targetConnectionId &&
+                  t.original_name === tableNameRelation[ge]
               )
 
               if (findTable) {
@@ -1126,13 +1291,17 @@ export default {
                   : this.getPrimaryKeyFieldStr(findTable.fields)
                 if (updateList.length && findTargetTable?.fields) {
                   sourceSortColumn = findTargetTable.fields
-                    .filter(t => updateList.includes(t.field_name))
-                    .map(t => t.original_field_name)
+                    .filter((t) => updateList.includes(t.field_name))
+                    .map((t) => t.original_field_name)
                     .join(',')
                 }
                 item.source.fields = findTable.fields
                 item.source.sortColumn = sourceSortColumn
-                const key = [source || '', sourceConnectionId, item.source.table].join()
+                const key = [
+                  source || '',
+                  sourceConnectionId,
+                  item.source.table,
+                ].join()
                 this.fieldsMap[key] = item.source.fields
               }
 
@@ -1142,7 +1311,11 @@ export default {
                   : this.getPrimaryKeyFieldStr(findTargetTable.fields)
                 item.target.fields = findTargetTable.fields
                 item.target.sortColumn = targetSortColumn
-                const key = [target || '', targetConnectionId, item.target.table].join()
+                const key = [
+                  target || '',
+                  targetConnectionId,
+                  item.target.table,
+                ].join()
                 this.fieldsMap[key] = item.target.fields
               }
 
@@ -1150,7 +1323,11 @@ export default {
             })
           })
           if (!list.length) {
-            return this.$message.error(i18n.t('packages_business_components_conditionbox_suoxuanrenwuque'))
+            return this.$message.error(
+              i18n.t(
+                'packages_business_components_conditionbox_suoxuanrenwuque'
+              )
+            )
           }
           this.list = list
 
@@ -1169,7 +1346,7 @@ export default {
 
     loadList() {
       let data = cloneDeep(this.data)
-      data.forEach(el => {
+      data.forEach((el) => {
         el.modeType = el.source.columns ? 'custom' : 'all'
       })
       this.list = data
@@ -1178,7 +1355,7 @@ export default {
     getList() {
       let list = cloneDeep(this.list)
       if (this.taskId) {
-        list.forEach(el => {
+        list.forEach((el) => {
           if (el.modeType === 'all') {
             el.source.columns = null
             el.target.columns = null
@@ -1193,7 +1370,9 @@ export default {
       item.table = '' // 重选连接，清空表
       item.sortColumn = '' // 重选连接，清空表
       item.databaseType = opt.databaseType
-      item.capabilities = await this.getConnectionCapabilities(opt.attrs?.connectionId)
+      item.capabilities = await this.getConnectionCapabilities(
+        opt.attrs?.connectionId
+      )
       if (!this.taskId) {
         item.connectionName = opt.attrs?.connectionName
         item.currentLabel = item.connectionName
@@ -1220,7 +1399,7 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        tableName
+        tableName,
       } = data
       return {
         source: target,
@@ -1235,7 +1414,7 @@ export default {
         targetDatabaseType: sourceDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        tableName
+        tableName,
       }
     },
 
@@ -1256,7 +1435,9 @@ export default {
 
       // 获取连线信息
       const matchNodeList = this.getMatchNodeList()
-      let matchNode = matchNodeList.find(t => [t.source, t.target].includes(item[type].nodeId))
+      let matchNode = matchNodeList.find((t) =>
+        [t.source, t.target].includes(item[type].nodeId)
+      )
       if (!matchNode) {
         return
       }
@@ -1273,12 +1454,14 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableName,
-        tableNameRelation = {}
+        tableNameRelation = {},
       } = matchNode
 
       // 自动填充索引字段
       let updateList = updateConditionFieldMap[val] || {}
-      item[type].sortColumn = updateList.length ? updateList.join(',') : this.getPrimaryKeyFieldStr(fields)
+      item[type].sortColumn = updateList.length
+        ? updateList.join(',')
+        : this.getPrimaryKeyFieldStr(fields)
 
       if (type === 'target') {
         item.target.databaseType = targetDatabaseType
@@ -1309,12 +1492,13 @@ export default {
         nodeId: target,
         tableFilter: item.target.table,
         page: 1,
-        pageSize: 1
+        pageSize: 1,
       }
-      metadataInstancesApi.nodeSchemaPage(params).then(data => {
+      metadataInstancesApi.nodeSchemaPage(params).then((data) => {
         item.target.fields =
-          data.items?.[0]?.fields.map(t => {
-            const { id, field_name, primary_key_position, primaryKey, unique } = t
+          data.items?.[0]?.fields.map((t) => {
+            const { id, field_name, primary_key_position, primaryKey, unique } =
+              t
             return { id, field_name, primary_key_position, primaryKey, unique }
           }) || []
         // 设置主键
@@ -1360,7 +1544,9 @@ export default {
       this.formIndex = index
       let task = this.list
       let script = JSON.parse(JSON.stringify(task[this.formIndex].webScript))
-      this.jsEngineName = JSON.parse(JSON.stringify(task[this.formIndex].jsEngineName || 'nashorn'))
+      this.jsEngineName = JSON.parse(
+        JSON.stringify(task[this.formIndex].jsEngineName || 'nashorn')
+      )
       this.webScript = script
       this.dialogAddScriptVisible = true
     },
@@ -1370,9 +1556,9 @@ export default {
         this.$t('packages_business_verification_message_confirm_delete_script'),
         this.$t('public_button_delete'),
         {
-          type: 'warning'
+          type: 'warning',
         }
-      ).then(resFlag => {
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1381,17 +1567,21 @@ export default {
     },
 
     setFieldsByItem(item = [], data = []) {
-      const key = item.filter(t => t).join()
+      const key = item.filter((t) => t).join()
       this.fieldsMap[key] = data
     },
 
     getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
-      return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
+      return (
+        this.fieldsMap[
+          [nodeId || '', connectionId, table].filter((t) => t).join()
+        ] || []
+      )
     },
 
     getPrimaryKeyFieldStr(data = []) {
-      let sortField = list => {
+      let sortField = (list) => {
         return (
           list?.sort((a, b) => {
             return a.field_name > b.field_name ? -1 : 1
@@ -1399,8 +1589,8 @@ export default {
         )
       }
       return sortField(data)
-        .filter(f => !!f.primaryKey)
-        .map(t => t.field_name)
+        .filter((f) => !!f.primaryKey)
+        .map((t) => t.field_name)
         .join(',')
     },
 
@@ -1421,17 +1611,21 @@ export default {
       // const formDom = document.getElementById('data-verification-form')
 
       // 检查是否选择表
-      const haveTableArr = tasks.filter(c => c.source.table && c.target.table)
-      const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
+      const haveTableArr = tasks.filter((c) => c.source.table && c.target.table)
+      const noTableArr = tasks.filter((c) => !c.source.table || !c.target.table)
 
       if (!haveTableArr.length) {
-        message = this.$t('packages_business_verification_form_validate_table_is_empty')
+        message = this.$t(
+          'packages_business_verification_form_validate_table_is_empty'
+        )
         this.updateErrorMsg(message, 'error')
         return message
       }
 
       if (noTableArr.length) {
-        message = this.$t('packages_business_verification_form_validate_table_is_empty1')
+        message = this.$t(
+          'packages_business_verification_form_validate_table_is_empty1'
+        )
         noTableArr.forEach((el, elIndex) => {
           if (elIndex <= SHOW_COUNT) {
             message += (elIndex > 0 ? ', ' : '') + `${el.source.connectionName}`
@@ -1449,17 +1643,25 @@ export default {
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
         // 索引字段为空
-        const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
-        const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
+        const haveIndexFieldArr = tasks.filter(
+          (c) => c.source.sortColumn && c.target.sortColumn
+        )
+        const noIndexFieldArr = tasks.filter(
+          (c) => !c.source.sortColumn || !c.target.sortColumn
+        )
 
         if (!haveIndexFieldArr.length) {
-          message = this.$t('packages_business_verification_form_condition_is_empty')
+          message = this.$t(
+            'packages_business_verification_form_condition_is_empty'
+          )
           this.updateErrorMsg(message, 'error')
           return message
         }
 
         if (noIndexFieldArr.length) {
-          message = this.$t('packages_business_verification_form_index_field_is_empty')
+          message = this.$t(
+            'packages_business_verification_form_index_field_is_empty'
+          )
           noIndexFieldArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += (elIndex > 0 ? ', ' : '') + `${el.source.table}`
@@ -1475,7 +1677,9 @@ export default {
 
         // 判断表字段校验时，索引字段是否个数一致
         const countNotArr = tasks.filter(
-          c => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
+          (c) =>
+            c.source.sortColumn.split(',').length !==
+            c.target.sortColumn.split(',').length
         )
         if (countNotArr.length) {
           //校验条件{val}中源表与目标表的索引字段个数不相等
@@ -1483,7 +1687,9 @@ export default {
           //   let item = document.getElementById('item-source-' + (index - 1))
           //   item.querySelector('input').focus()
           // })
-          message = this.$t('packages_business_verification_form_index_field_count_is_not_equal')
+          message = this.$t(
+            'packages_business_verification_form_index_field_count_is_not_equal'
+          )
           countNotArr.forEach((el, elIndex) => {
             if (elIndex <= SHOW_COUNT) {
               message += `${el.source.table} `
@@ -1501,16 +1707,18 @@ export default {
         // 判断过滤设置是否填写完整
         let schemaToFormFlag = false
         for (let i = 0; i < tasks.length; i++) {
-          await this.$refs[`schemaToForm_${tasks[i].id}`]?.validate().catch(() => {
-            index = i + 1
-            schemaToFormFlag = true
-          })
+          await this.$refs[`schemaToForm_${tasks[i].id}`]
+            ?.validate()
+            .catch(() => {
+              index = i + 1
+              schemaToFormFlag = true
+            })
         }
         if (schemaToFormFlag) {
           message = this.$t(
             'packages_business_verification_message_error_joint_table_target_or_source_filter_not_set',
             {
-              val: index
+              val: index,
             }
           )
           this.updateErrorMsg(message, 'error')
@@ -1525,7 +1733,9 @@ export default {
             return c.showAdvancedVerification && !c.webScript
           })
         ) {
-          message = this.$t('packages_business_verification_message_error_script_no_enter')
+          message = this.$t(
+            'packages_business_verification_message_error_script_no_enter'
+          )
           this.updateErrorMsg(message, 'error')
           return message
         }
@@ -1549,15 +1759,15 @@ export default {
 Full Example: This is an example MongoDB query
 \`\`\`\`javascript
 function validate(sourceRow){
-    // step 1
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // step 2
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // step 3
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed', message: "Inconsistent records", data: targetRow}
-    }
+  // step 1
+  var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+  // step 2
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){
+      // step 3
+      return {result: 'passed',message: "",data: ""}
+  }else{
+      return {result: 'failed', message: "Inconsistent records", data: targetRow}
+  }
 }
 \`\`\`\``
       } else if (this.$i18n.locale === 'zh-TW') {
@@ -1574,15 +1784,15 @@ function validate(sourceRow){
 完整示例：此為MongoDB查詢示例
 \`\`\`javascript
 function validate(sourceRow){
-    // 第1步
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // 第2步
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // 第3步
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed',message: "記錄不一致",data: targetRow}
-    }
+  // 第1步
+  var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){
+      // 第3步
+      return {result: 'passed',message: "",data: ""}
+  }else{
+      return {result: 'failed',message: "記錄不一致",data: targetRow}
+  }
 }
 \`\`\``
       } else {
@@ -1599,15 +1809,15 @@ function validate(sourceRow){
 完整示例：此为MongoDB查询示例
 \`\`\`javascript
 function validate(sourceRow){
-    // 第1步
-    var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
-    // 第2步
-    if(sourceRow.USER_ID === targetRow[0].USER_ID){
-        // 第3步
-        return {result: 'passed',message: "",data: ""}
-    }else{
-        return {result: 'failed',message: "记录不一致",data: targetRow}
-    }
+  // 第1步
+  var targetRow = target.executeQuery({database: "target",collection: "USER",filter: {USER_ID: sourceRow.USER_ID}});
+  // 第2步
+  if(sourceRow.USER_ID === targetRow[0].USER_ID){
+      // 第3步
+      return {result: 'passed',message: "",data: ""}
+  }else{
+      return {result: 'failed',message: "记录不一致",data: targetRow}
+  }
 }
 \`\`\`
 `
@@ -1615,13 +1825,18 @@ function validate(sourceRow){
     },
 
     getModeTypeDisabled(item) {
-      return !(item.source.connectionId && item.source.table && item.target.connectionId && item.target.table)
+      return !(
+        item.source.connectionId &&
+        item.source.table &&
+        item.target.connectionId &&
+        item.target.table
+      )
     },
 
     handleCustomFields(item, index) {
       this.$refs.fieldDialog.open(item, index, {
         source: this.dynamicSchemaMap[item.source.connectionId],
-        target: this.dynamicSchemaMap[item.target.connectionId]
+        target: this.dynamicSchemaMap[item.target.connectionId],
       })
     },
 
@@ -1636,10 +1851,13 @@ function validate(sourceRow){
 
     handleChangeFields(data = [], index) {
       let item = this.list[index]
-      item.source.columns = data.map(t => t.source)
-      item.target.columns = data.map(t => t.target)
+      item.source.columns = data.map((t) => t.source)
+      item.target.columns = data.map((t) => t.target)
       // 设置modeType
-      this.$refs[`schemaToForm_${item.id}`].form.setValuesIn('modeType', 'custom')
+      this.$refs[`schemaToForm_${item.id}`].form.setValuesIn(
+        'modeType',
+        'custom'
+      )
     },
 
     handleFocus(opt = {}) {
@@ -1652,40 +1870,42 @@ function validate(sourceRow){
           meta_type: 'table',
           sourceType: 'SOURCE',
           original_name: opt.table,
-          'source._id': connectionId
+          'source._id': connectionId,
         },
-        limit: 1
+        limit: 1,
       }
       metadataInstancesApi
         .tapTables({
-          filter: JSON.stringify(params)
+          filter: JSON.stringify(params),
         })
         .then((data = {}) => {
           if (isEmpty(data.items[0]?.nameFieldMap)) {
             return
           }
-          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
-            return {
-              id: t.id,
-              label: t.fieldName,
-              value: t.fieldName,
-              field_name: t.fieldName,
-              primary_key_position: t.primaryKey,
-              data_type: t.dataType,
-              primaryKey: t.primaryKey,
-              unique: t.unique
+          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(
+            (t) => {
+              return {
+                id: t.id,
+                label: t.fieldName,
+                value: t.fieldName,
+                field_name: t.fieldName,
+                primary_key_position: t.primaryKey,
+                data_type: t.dataType,
+                primaryKey: t.primaryKey,
+                unique: t.unique,
+              }
             }
-          })
+          )
         })
     },
 
     async getCapabilities(connectionIds = []) {
       if (!connectionIds.length) return
       const data = await Promise.all(
-        connectionIds.map(async id => {
+        connectionIds.map(async (id) => {
           return {
             id,
-            capabilities: await this.getConnectionCapabilities(id)
+            capabilities: await this.getConnectionCapabilities(id),
           }
         })
       )
@@ -1702,14 +1922,19 @@ function validate(sourceRow){
     },
 
     updateErrorMsg(msg, level = '') {
-      this.$emit('update:jointErrorMessage', msg)
-      this.$emit('update:errorMessageLevel', level)
+      $emit(this, 'update:jointErrorMessage', msg)
+      $emit(this, 'update:errorMessageLevel', level)
     },
 
     updateAutoAddTableLoading() {
-      this.$emit('update:autoAddTableLoading', this.autoAddTableLoading)
-    }
-  }
+      $emit(this, 'update:autoAddTableLoading', this.autoAddTableLoading)
+    },
+  },
+  emits: [
+    'update:jointErrorMessage',
+    'update:errorMessageLevel',
+    'update:autoAddTableLoading',
+  ],
 }
 </script>
 
@@ -1814,11 +2039,9 @@ function validate(sourceRow){
     }
   }
 }
-
 .FieldList {
   height: 280px;
 }
-
 .empty-data {
   ::v-deep {
     .el-select {
@@ -1828,10 +2051,11 @@ function validate(sourceRow){
     }
   }
 }
-
 .scheme-to-form {
   ::v-deep {
-    .formily-element-form-item-layout-horizontal .formily-element-form-item-control-content-component > .el-switch {
+    .formily-element-form-item-layout-horizontal
+      .formily-element-form-item-control-content-component
+      > .el-switch {
       height: 32px;
       line-height: 32px;
     }

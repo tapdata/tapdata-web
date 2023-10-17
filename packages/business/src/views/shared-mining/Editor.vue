@@ -17,21 +17,44 @@
       :rules="rulesEdit"
       class="my-n6"
     >
-      <ElFormItem size="mini" :label="$t('packages_business_shared_form_edit_name')" prop="name">
-        <ElInput clearable v-model="editForm.name"></ElInput>
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_shared_form_edit_name')"
+        prop="name"
+      >
+        <ElInput clearable v-model:value="editForm.name"></ElInput>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('packages_business_shared_form_setting_log_time')">
-        <ElInputNumber v-model="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_shared_form_setting_log_time')"
+      >
+        <ElInputNumber
+          v-model:value="editForm.storageTime"
+          :precision="0"
+          :step="1"
+          :min="1"
+        ></ElInputNumber>
         <span class="ml-2">{{ $t('public_time_d') }}</span>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('packages_business_shared_list_edit_title_start_time')">
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_business_shared_list_edit_title_start_time')"
+      >
         <div v-for="(item, index) in editForm.syncPoints" :key="index">
-          <ElSelect v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
-            <ElOption v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></ElOption>
+          <ElSelect
+            v-model:value="item.pointType"
+            :placeholder="$t('public_select_placeholder')"
+          >
+            <ElOption
+              v-for="op in pointTypeOptions"
+              :key="op.value"
+              :label="op.label"
+              :value="op.value"
+            ></ElOption>
           </ElSelect>
           <ElDatePicker
             v-if="item.pointType !== 'current'"
-            v-model="item.dateTime"
+            v-model:value="item.dateTime"
             :picker-options="getPickerOptions(item.dateTime, item)"
             popperClass="hide-current__dateTime"
             type="datetime"
@@ -41,16 +64,21 @@
           ></ElDatePicker>
         </div>
       </ElFormItem>
-      <ElFormItem size="mini" :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
-        <ElSwitch v-model="dagForm.cdcConcurrent"></ElSwitch>
+      <ElFormItem
+        size="mini"
+        :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')"
+      >
+        <ElSwitch v-model:value="dagForm.cdcConcurrent"></ElSwitch>
         <ElInputNumber
           v-if="dagForm.cdcConcurrent"
-          v-model="dagForm.cdcConcurrentWriteNum"
+          v-model:value="dagForm.cdcConcurrentWriteNum"
           class="ml-4"
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
-      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">{{ $t('packages_dag_config_datasource') }}</div>
+      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">
+        {{ $t('packages_dag_config_datasource') }}
+      </div>
       <SchemaToForm
         ref="schemaToForm"
         :schema="schemaData"
@@ -60,23 +88,28 @@
         class="scheme-to-form"
       ></SchemaToForm>
     </ElForm>
-    <span class="dialog-footer" slot="footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton size="mini" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose" size="mini">{{
+          $t('public_button_cancel')
+        }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleSave">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </span>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, databaseTypesApi } from '@tap/api'
 import { SchemaToForm } from '@tap/form'
 
 export default {
   name: 'Editor',
-
   components: { SchemaToForm },
-
   data() {
     return {
       visible: false,
@@ -86,38 +119,43 @@ export default {
         id: '',
         name: '',
         storageTime: 3,
-        syncPoints: []
+        syncPoints: [],
       },
       rulesEdit: {
-        name: [{ required: true, message: this.$t('packages_business_shared_cdc_name'), trigger: 'blur' }]
+        name: [
+          {
+            required: true,
+            message: this.$t('packages_business_shared_cdc_name'),
+            trigger: 'blur',
+          },
+        ],
       },
       pointTypeOptions: [
         {
           label: this.$t('public_time_user_specified_time'),
-          value: 'localTZ'
+          value: 'localTZ',
         },
         {
           label: this.$t('public_time_current'),
-          value: 'current'
-        }
+          value: 'current',
+        },
       ],
       dag: null,
       dagForm: {
         cdcConcurrent: false,
-        cdcConcurrentWriteNum: 4
+        cdcConcurrentWriteNum: 4,
       },
       schemaData: null,
-      schemaScope: null
+      schemaScope: null,
     }
   },
-
   methods: {
     init() {
       this.editForm = {
         id: '',
         name: '',
         storageTime: 3,
-        syncPoints: []
+        syncPoints: [],
       }
       this.schemaData = null
       this.loadDag()
@@ -128,29 +166,31 @@ export default {
       this.loading = true
       logcollectorApi
         .getDetail(this.taskId)
-        .then(task => {
+        .then((task) => {
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
           let syncPoints = task.syncPoints
           if (syncPoints) {
             this.editForm.syncPoints = syncPoints
           } else {
-            const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-            const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
+            const [connectionId, connectionName] = Object.entries(
+              task.connections[0]
+            )[0]
+            const sourceNodeIds = (task.dag?.edges || []).map((t) => t.source)
             const sourceNodes = (task.dag?.nodes || [])
-              .filter(node => sourceNodeIds.includes(node.id))
-              .map(node => ({
+              .filter((node) => sourceNodeIds.includes(node.id))
+              .map((node) => ({
                 nodeId: node.id,
                 nodeName: node.name,
                 connectionId: connectionId,
-                connectionName: connectionName
+                connectionName: connectionName,
               }))
-            const result = sourceNodes.map(item => {
+            const result = sourceNodes.map((item) => {
               const point = {
                 ...item,
                 timeZone: this.systemTimeZone,
                 pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: ''
+                dateTime: '',
               }
               return point
             })
@@ -164,7 +204,7 @@ export default {
 
     // 获取任务的dag
     loadDag() {
-      taskApi.get(this.taskId).then(data => {
+      taskApi.get(this.taskId).then((data) => {
         this.dag = data.dag
 
         this.dag.nodes.forEach((el = {}) => {
@@ -173,7 +213,7 @@ export default {
             this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
           } else if (el.type === 'logCollector') {
             // 获取连接信息
-            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
+            databaseTypesApi.pdkHash(el.attrs.pdkHash).then((con) => {
               const nodeProperties = con.properties?.node?.properties
               if (Object.keys(nodeProperties).length) {
                 this.schemaData = {
@@ -184,25 +224,25 @@ export default {
                     $inputs: {
                       type: 'array',
                       'x-display': 'hidden',
-                      default: []
+                      default: [],
                     },
                     $outputs: {
                       type: 'array',
                       'x-display': 'hidden',
-                      default: []
+                      default: [],
                     },
                     nodeConfig: {
                       type: 'object',
-                      properties: nodeProperties
-                    }
-                  }
+                      properties: nodeProperties,
+                    },
+                  },
                 }
               }
 
               const { nodeConfig } = el
               if (nodeConfig) {
                 this.$refs.schemaToForm.getForm()?.setValues({
-                  nodeConfig
+                  nodeConfig,
                 })
               }
             })
@@ -222,11 +262,13 @@ export default {
     },
 
     handleSave() {
-      this.$refs.form?.validate(valid => {
+      this.$refs.form?.validate((valid) => {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
-            this.$emit('success', ...arguments)
-            this.$message.success(this.$t('packages_business_shared_cdc_setting_message_edit_save'))
+            $emit(this, 'success', ...arguments)
+            this.$message.success(
+              this.$t('packages_business_shared_cdc_setting_message_edit_save')
+            )
             this.init()
             this.handleClose()
           })
@@ -241,14 +283,14 @@ export default {
       if (item.pointType === 'connTZ')
         return {
           disabledDate: null,
-          selectableRange: null
+          selectableRange: null,
         }
       const now = Date.now()
       const formatMap = {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
         startTime: '00:00:00',
-        endTime: '23:59:59'
+        endTime: '23:59:59',
       }
 
       const pickDate = dayjs(val).format(formatMap.date)
@@ -258,9 +300,9 @@ export default {
         item.dateTime = now
       }
       let op = {
-        disabledDate: time => {
+        disabledDate: (time) => {
           return new Date(time).getTime() > now
-        }
+        },
       }
       if (pickDate === nowDate) {
         op.selectableRange = `${formatMap.startTime} - ${nowTime}`
@@ -275,25 +317,26 @@ export default {
       const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
-      dag.nodes.forEach(el => {
+      dag.nodes.forEach((el) => {
         if (el.type === 'hazelcastIMDG') {
           Object.assign(el, {
             cdcConcurrent,
-            cdcConcurrentWriteNum
+            cdcConcurrentWriteNum,
           })
         } else if (el.type === 'logCollector') {
           const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
-            nodeConfig: formVal.nodeConfig
+            nodeConfig: formVal.nodeConfig,
           })
         }
       })
       taskApi.patch({
         id: this.taskId,
-        dag
+        dag,
       })
-    }
-  }
+    },
+  },
+  emits: ['success'],
 }
 </script>
 

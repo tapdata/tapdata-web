@@ -1,8 +1,11 @@
 <template>
-  <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
+  <div
+    class="log-container flex justify-content-between"
+    :class="{ fullscreen: fullscreen }"
+  >
     <NodeList
       v-show="!hideFilter"
-      v-model="activeNodeId"
+      v-model:value="activeNodeId"
       :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
       class="node-list border-end"
       @change="changeItem"
@@ -18,7 +21,7 @@
           ></TimeSelect>
           <ElInput
             class="search-input ml-4"
-            v-model="keyword"
+            v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
             size="mini"
@@ -26,24 +29,37 @@
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
-            $t('public_button_download')
-          }}</ElButton>
-          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
-          <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
+          <ElButton
+            :loading="downloadLoading"
+            type="text"
+            size="mini"
+            class="ml-4"
+            @click="handleDownload"
+            >{{ $t('public_button_download') }}</ElButton
+          >
+          <ElSwitch
+            v-model:value="switchData.timestamp"
+            class="ml-3 mr-1"
+            @change="command('timestamp')"
+          ></ElSwitch>
+          <span>{{
+            $t('packages_business_logs_nodelog_xianshishijianchuo')
+          }}</span>
         </div>
         <div>
           <span class="color-primary cursor-pointer" @click="handleFullScreen">
             <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
             <span>{{
-              fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
+              fullscreen
+                ? $t('packages_form_js_editor_exit_fullscreen')
+                : $t('packages_form_js_editor_fullscreen')
             }}</span>
           </span>
         </div>
       </div>
       <div class="level-line mb-2">
         <ElCheckboxGroup
-          v-model="checkList"
+          v-model:value="checkList"
           :disabled="loading"
           :min="1"
           size="mini"
@@ -59,14 +75,18 @@
           >
         </ElCheckboxGroup>
       </div>
-      <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
+      <div
+        v-loading="loading"
+        class="log-list flex-1 rounded-2"
+        style="height: 0"
+      >
         <DynamicScroller
           ref="virtualScroller"
           :items="list"
           key-field="id"
           :min-item-size="30"
           class="scroller px-2 py-1 h-100"
-          @scroll.native="scrollFnc"
+          @scroll="scrollFnc"
         >
           <template #before>
             <div
@@ -84,7 +104,11 @@
               ></ElAlert>
               <VEmpty
                 v-if="!list.length"
-                :description="keyword ? $t('packages_dag_customer_logs_no_search_data') : $t('public_data_no_data')"
+                :description="
+                  keyword
+                    ? $t('packages_dag_customer_logs_no_search_data')
+                    : $t('public_data_no_data')
+                "
               />
             </div>
           </template>
@@ -93,17 +117,33 @@
               :item="item"
               :active="active"
               :data-index="index"
-              :size-dependencies="[item.id, item.message, item.errorStack, item.dataText]"
+              :size-dependencies="[
+                item.id,
+                item.message,
+                item.errorStack,
+                item.dataText,
+              ]"
             >
               <div class="log-line pr-6 font-color-light">
                 <div
                   class="log-item"
-                  :class="{ 'hide-content cursor-pointer': handleHideContent(arguments[0], item) }"
+                  :class="{
+                    'hide-content cursor-pointer': handleHideContent(
+                      arguments[0],
+                      item
+                    ),
+                  }"
                   :ref="'icon' + item.id"
                   @click="handleLog(item)"
                 >
-                  <VIcon class="expand-icon mr-1" :class="{ 'rotate-90': item.expand }">arrow-right</VIcon>
-                  <span v-if="showCols.includes('timestamp')" class="font-color-slight"
+                  <VIcon
+                    class="expand-icon mr-1"
+                    :class="{ 'rotate-90': item.expand }"
+                    >arrow-right</VIcon
+                  >
+                  <span
+                    v-if="showCols.includes('timestamp')"
+                    class="font-color-slight"
                     >[{{ item.timestampLabel }}]</span
                   >
                   <span
@@ -112,21 +152,46 @@
                     @click.stop.prevent="handleCode(item)"
                     >{{ item.fullErrorCode || item.errorCode }}</span
                   >
-                  <span :class="colorMap[item.level.toUpperCase()]" v-html="item.message"></span>
+                  <span
+                    :class="colorMap[item.level.toUpperCase()]"
+                    v-html="item.message"
+                  ></span>
                   <ElLink
-                    v-if="item.level === 'ERROR' && item.fullErrorCode === 'Task.ScheduleLimit'"
+                    v-if="
+                      item.level === 'ERROR' &&
+                      item.fullErrorCode === 'Task.ScheduleLimit'
+                    "
                     type="primary"
                     class="text-decoration-underline"
-                    @click="$emit('action', { ...item, ...{ type: 'ScheduleLimit' } })"
+                    @click="
+                      $emit('action', { ...item, ...{ type: 'ScheduleLimit' } })
+                    "
                   >
-                    {{ $t('packages_business_logs_nodelog_qingshengjidingyue') }}
+                    {{
+                      $t('packages_business_logs_nodelog_qingshengjidingyue')
+                    }}
                   </ElLink>
                 </div>
                 <div v-if="item.expand" class="log-detail bg-color-normal p-3">
-                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">message:</p>
-                  <div v-if="item.message" v-html="item.message" class="mb-4 text-break"></div>
-                  <p v-if="item.errorStack" class="mb-2 fw-bold font-color-dark">errorStack:</p>
-                  <div v-if="item.errorStack" v-html="item.errorStack" class="text-break"></div>
+                  <p v-if="item.message" class="mb-2 fw-bold font-color-dark">
+                    message:
+                  </p>
+                  <div
+                    v-if="item.message"
+                    v-html="item.message"
+                    class="mb-4 text-break"
+                  ></div>
+                  <p
+                    v-if="item.errorStack"
+                    class="mb-2 fw-bold font-color-dark"
+                  >
+                    errorStack:
+                  </p>
+                  <div
+                    v-if="item.errorStack"
+                    v-html="item.errorStack"
+                    class="text-break"
+                  ></div>
                 </div>
               </div>
             </DynamicScrollerItem>
@@ -138,44 +203,82 @@
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="437px"
-      :visible.sync="dialog"
+      v-model:visible="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ElForm label-width="120px">
-        <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
-          <ElSelect v-model="form.level" style="width: 275px">
-            <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
+        <ElFormItem
+          :label="$t('packages_dag_components_log_rizhijibie')"
+          prop="level"
+        >
+          <ElSelect v-model:value="form.level" style="width: 275px">
+            <ElOption
+              v-for="item in checkItems"
+              :label="item.text"
+              :value="item.label"
+              :key="item.label"
+            ></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
-          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_debug')"
+            prop="param"
+          >
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
-            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_kaiqishichangmiao')"
+            prop="start"
+          >
+            <ElInput
+              v-model:value="form.intervalCeiling"
+              type="number"
+              style="width: 275px"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('packages_dag_components_log_zuidashijianshu')"
+            prop="max"
+          >
+            <ElInput
+              v-model:value="form.recordCeiling"
+              type="number"
+              style="width: 275px"
+            ></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton size="mini" @click="handleClose">{{
+            $t('public_button_cancel')
+          }}</ElButton>
+          <ElButton
+            :disabled="saveLoading"
+            size="mini"
+            type="primary"
+            @click="handleSave"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
+        </span>
+      </template>
     </ElDialog>
 
     <ElDialog
       width="1200px"
-      :visible.sync="codeDialog.visible"
+      v-model:visible="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
       custom-class="error-code-dialog"
     >
-      <div slot="title">
-        <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
-      </div>
+      <template v-slot:title>
+        <div>
+          <span class="ml-4 fw-bold fs-5">{{
+            codeDialog.data.fullErrorCode || codeDialog.data.errorCode
+          }}</span>
+        </div>
+      </template>
 
       <div
         v-if="codeDialog.data.describe"
@@ -183,8 +286,13 @@
         class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
       ></div>
 
-      <div v-if="codeDialog.data.errorStack" class="mb-2 ml-4 flex justify-content-between">
-        <span class="fw-bold font-color-dark fs-6">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+      <div
+        v-if="codeDialog.data.errorStack"
+        class="mb-2 ml-4 flex justify-content-between"
+      >
+        <span class="fw-bold font-color-dark fs-6">{{
+          $t('packages_business_logs_nodelog_cuowuduizhan')
+        }}</span>
         <ElTooltip
           placement="top"
           manual
@@ -197,7 +305,9 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+            <ElButton type="primary" size="mini">{{
+              $t('packages_business_logs_nodelog_yijianfuzhi')
+            }}</ElButton>
           </span>
         </ElTooltip>
       </div>
@@ -219,7 +329,12 @@
           class="flex align-items-center mb-2 ml-4 font-color-normal"
         >
           <span>{{ index + 1 }}.</span>
-          <ElLink type="primary" class="text-decoration-underline" @click="handleLink(item)">{{ item }}</ElLink>
+          <ElLink
+            type="primary"
+            class="text-decoration-underline"
+            @click="handleLink(item)"
+            >{{ item }}</ElLink
+          >
         </p>
       </template>
     </ElDialog>
@@ -227,6 +342,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -244,34 +360,38 @@ import NodeList from '../nodes/List'
 
 export default {
   name: 'NodeLog',
-
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
-
+  components: {
+    VIcon,
+    TimeSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    NodeList,
+  },
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     hideFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     logTotals: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    nodeId: String
+    nodeId: String,
   },
-
   data() {
     return {
       activeNodeId: this.nodeId,
@@ -280,20 +400,20 @@ export default {
       checkItems: [
         {
           label: 'DEBUG',
-          text: 'DEBUG'
+          text: 'DEBUG',
         },
         {
           label: 'INFO',
-          text: 'INFO'
+          text: 'INFO',
         },
         {
           label: 'WARN',
-          text: 'WARN'
+          text: 'WARN',
         },
         {
           label: 'ERROR',
-          text: 'ERROR'
-        }
+          text: 'ERROR',
+        },
       ],
       timer: null,
       downloadLoading: false,
@@ -307,54 +427,54 @@ export default {
         WARN: 'warning',
         ERROR: 'error',
         FATAL: 'error',
-        DEBUG: 'debug'
+        DEBUG: 'debug',
       },
       colorMap: {
         INFO: 'color-info',
         WARN: 'color-warning',
         ERROR: 'color-danger',
         FATAL: 'color-danger',
-        DEBUG: 'color-disable'
+        DEBUG: 'color-disable',
       },
       newPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       oldPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       isScrollBottom: false,
       form: {
         level: 'INFO',
         intervalCeiling: 500,
-        recordCeiling: 500
+        recordCeiling: 500,
       },
       dialog: false,
       timeOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: 'full'
+          value: 'full',
         },
         {
           label: i18n.t('public_time_Last_six_hours'),
-          value: '6h'
+          value: '6h',
         },
         {
           label: i18n.t('public_time_last_day'),
-          value: '1d'
+          value: '1d',
         },
         {
           label: i18n.t('public_time_last_three_days'),
-          value: '3d'
+          value: '3d',
         },
         {
           label: i18n.t('public_time_custom_time'),
           type: 'custom',
-          value: 'custom'
-        }
+          value: 'custom',
+        },
       ],
       quotaTimeType: 'full',
       quotaTime: [],
@@ -363,24 +483,23 @@ export default {
       extraEnterCount: 0,
       codeDialog: {
         visible: false,
-        data: {}
+        data: {},
       },
       showCols: [],
       switchData: {
-        timestamp: false
+        timestamp: false,
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS'
+      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     nodeLogCountMap() {
       return this.logTotals
-        .filter(t => t.nodeId)
+        .filter((t) => t.nodeId)
         .reduce((cur, next) => {
           const count = cur[next.nodeId] || 0
           return { ...cur, [next.nodeId]: count + next.count }
@@ -388,7 +507,7 @@ export default {
     },
 
     items() {
-      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
+      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -416,14 +535,15 @@ export default {
     },
 
     isEnterTimer() {
-      return this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      return (
+        this.quotaTimeType !== 'custom' && this.dataflow?.status === 'running'
+      )
     },
 
     logSetting() {
       return this.dataflow?.logSetting || {}
-    }
+    },
   },
-
   watch: {
     dataflow: {
       deep: true,
@@ -432,38 +552,36 @@ export default {
         if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
           this.init()
         }
-      }
+      },
     },
     nodeId(v) {
       this.activeNodeId = v
-    }
+    },
   },
-
   created() {
-    this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
+    this.checkList = ['error'].includes(this.dataflow.status)
+      ? ['WARN', 'ERROR']
+      : ['INFO', 'WARN', 'ERROR']
   },
-
   mounted() {
     this.init()
   },
-
-  destroyed() {
+  unmounted() {
     this.clearTimer()
   },
-
   methods: {
     init: debounce(function () {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
             label: i18n.t('public_select_option_all'),
-            value: 'full'
+            value: 'full',
           },
           {
             label: i18n.t('public_time_custom_time'),
             type: 'custom',
-            value: 'custom'
-          }
+            value: 'custom',
+          },
         ]
       }
       this.extraEnterCount = 0
@@ -484,7 +602,7 @@ export default {
       this.oldPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -492,7 +610,7 @@ export default {
       this.newPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -507,7 +625,8 @@ export default {
         // 不满足轮询条件，则多请求几次结束
         if (
           this.isEnterTimer ||
-          (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 5)
+          (['error', 'schedule_failed'].includes(this.dataflow.status) &&
+            ++this.extraEnterCount < 5)
         ) {
           this.loadNew()
         }
@@ -516,13 +635,15 @@ export default {
     },
 
     changeItem(val) {
-      this.$emit('update:nodeId', val)
+      $emit(this, 'update:nodeId', val)
       this.init()
     },
 
     changeTime(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime
+        ? val?.split(',')?.map((t) => Number(t))
+        : this.getTimeRange(val)
       this.init()
     },
 
@@ -536,7 +657,8 @@ export default {
       if (this.list.length && target.scrollTop <= 0) {
         this.loadOld()
       }
-      this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
+      this.isScrollBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight
     },
 
     loadOld(callback) {
@@ -590,7 +712,7 @@ export default {
       } else {
         this.newFilter.page++
         filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page
+          page: this.newFilter.page,
         })
       }
       if (!filter.start || !filter.end) {
@@ -618,7 +740,7 @@ export default {
 
     getFormatRow(rowData = []) {
       let result = cloneDeep(rowData)
-      result.forEach(row => {
+      result.forEach((row) => {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
@@ -639,7 +761,9 @@ export default {
     },
 
     getOldFilter() {
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -656,13 +780,16 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       return params
     },
 
     getNewFilter() {
-      const [start, end] = [this.list.at(-1)?.timestamp || this.resetDataTime, Time.now()]
+      const [start, end] = [
+        this.list.at(-1)?.timestamp || this.resetDataTime,
+        Time.now(),
+      ]
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -679,7 +806,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       this.newFilter = params
       return params
@@ -703,7 +830,9 @@ export default {
     },
 
     handleDownload() {
-      const [start, end] = this.quotaTime.length ? this.quotaTime : this.getTimeRange(this.quotaTimeType)
+      const [start, end] = this.quotaTime.length
+        ? this.quotaTime
+        : this.getTimeRange(this.quotaTimeType)
       let { id: taskId, taskRecordId } = this.dataflow || {}
       const { query } = this.$route
       if (query?.taskRecordId) {
@@ -714,16 +843,18 @@ export default {
         start,
         end,
         taskId,
-        taskRecordId
+        taskRecordId,
       }
       this.downloadLoading = true
       monitoringLogsApi
         .export(filter)
-        .then(data => {
+        .then((data) => {
           downloadBlob(data)
         })
         .catch(() => {
-          this.$message.error(i18n.t('packages_dag_components_log_xiazaishibai'))
+          this.$message.error(
+            i18n.t('packages_dag_components_log_xiazaishibai')
+          )
         })
         .finally(() => {
           this.downloadLoading = false
@@ -737,14 +868,14 @@ export default {
         this.form = {
           level,
           intervalCeiling,
-          recordCeiling
+          recordCeiling,
         }
       }
       this.dialog = true
     },
 
     handleClose() {
-      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      const index = this.checkList.findIndex((t) => t === 'DEBUG')
       this.checkList.splice(index, 1)
       this.searchFnc()
       this.dialog = false
@@ -753,7 +884,7 @@ export default {
     handleSave() {
       const { form } = this
       let params = {
-        level: form.level
+        level: form.level,
       }
       if (form.level === 'DEBUG') {
         params.intervalCeiling = form.intervalCeiling
@@ -822,7 +953,7 @@ export default {
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCode',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn'],
       }
 
       this.codeDialog.data.errorStack = item.errorStack
@@ -830,7 +961,7 @@ export default {
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
       proxyApi
         .call(params)
-        .then(data => {
+        .then((data) => {
           this.codeDialog.data.describe = data.describe
           this.codeDialog.data.hasDescribe = data.hasDescribe
           this.codeDialog.data.seeAlso = data.seeAlso || []
@@ -846,7 +977,7 @@ export default {
     },
 
     command(command) {
-      const index = this.showCols.findIndex(t => t === command)
+      const index = this.showCols.findIndex((t) => t === command)
       index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
     },
 
@@ -874,8 +1005,9 @@ export default {
 
     onCopy() {
       this.showTooltip = true
-    }
-  }
+    },
+  },
+  emits: ['action', 'update:nodeId'],
 }
 </script>
 
@@ -925,7 +1057,6 @@ export default {
     }
   }
 }
-
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
   ::v-deep {
@@ -934,7 +1065,8 @@ export default {
       background-color: #fff;
       border-bottom: 1px solid #ebeef5;
       width: 100%;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
+        monospace;
       .log-item {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -970,7 +1102,8 @@ export default {
     .empty-wrap {
       margin: 24px 0;
     }
-    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
+    .vue-recycle-scroller.direction-vertical
+      .vue-recycle-scroller__item-wrapper {
       overflow: visible;
     }
     .log__label {
@@ -994,26 +1127,22 @@ export default {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
-
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
   }
 }
-
 .icon-btn {
   &:hover {
     background-color: map-get($bgColor, hover);
   }
 }
-
 .error-stack-wrap {
   height: 465px;
   &.has-describe {
     height: 280px;
   }
 }
-
 .clipboard-button {
   right: 18px;
   top: 30px;

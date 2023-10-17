@@ -18,21 +18,21 @@ export class FieldProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -40,15 +40,15 @@ export class FieldProcessor extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               fieldsOperation: {
                 type: 'object',
                 default: {
                   prefix: '',
                   suffix: '',
-                  capitalized: ''
-                }
+                  capitalized: '',
+                },
               },
               fieldsMapping: {
                 type: 'array',
@@ -56,16 +56,16 @@ export class FieldProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'FieldRenameProcessor',
                 'x-component-props': {
-                  nodeId: '{{$values.id}}'
-                }
-              }
-            }
+                  nodeId: '{{$values.id}}',
+                },
+              },
+            },
           },
           tab2: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
+              label: i18n.t('packages_dag_data_schema'),
             },
             properties: {
               schemaPanel: {
@@ -73,13 +73,13 @@ export class FieldProcessor extends NodeType {
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
                   class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  formTab: '{{formTab}}',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

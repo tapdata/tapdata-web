@@ -1,7 +1,7 @@
 import { isStr } from '@tap/shared'
 import { getCurrentInstance } from 'vue-demi'
 
-const css2obj = css => {
+const css2obj = (css) => {
   const r = /(?<=^|;)\s*([^:]+)\s*:\s*([^;]+)\s*/g,
     o = {}
   css.replace(r, (m, p, v) => (o[p] = v))
@@ -11,8 +11,8 @@ const css2obj = css => {
 export function useStyle() {
   let {
     vnode: {
-      data: { style }
-    }
+      data: { style },
+    },
   } = getCurrentInstance()
   if (isStr(style)) {
     style = css2obj(style)

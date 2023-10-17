@@ -1,28 +1,35 @@
 <template>
   <div class="composite-panel flex">
     <!--<div class="composite-panel-tabs border-end">
-      <div
-        v-for="(item, i) in tabItems"
-        :key="i"
-        class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
-        :class="{ active: activeTab === i }"
-        tabindex="0"
-        aria-selected="true"
-        role="tab"
-        @click="handleActiveTab(i)"
-      >
-        <ElTooltip placement="right" :content="item.title" :open-delay="300">
-          <VIcon size="20">{{ item.name }}</VIcon>
-        </ElTooltip>
-      </div>
-    </div>-->
+        <div
+          v-for="(item, i) in tabItems"
+          :key="i"
+          class="composite-panel-tab p-3 flex justify-center align-center cursor-pointer"
+          :class="{ active: activeTab === i }"
+          tabindex="0"
+          aria-selected="true"
+          role="tab"
+          @click="handleActiveTab(i)"
+        >
+          <ElTooltip placement="right" :content="item.title" :open-delay="300">
+            <VIcon size="20">{{ item.name }}</VIcon>
+          </ElTooltip>
+        </div>
+      </div>-->
     <div class="composite-panel-tabs-content h-100 border-end">
-      <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
-        <div class="composite-panel-tabs-header-title">{{ tabItems[activeTab].title }}</div>
+      <div
+        class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom"
+      >
+        <div class="composite-panel-tabs-header-title">
+          {{ tabItems[activeTab].title }}
+        </div>
         <div class="composite-panel-tabs-header-actions"></div>
       </div>
       <div class="composite-panel-tabs-body">
-        <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
+        <ResourceWidget
+          title="sources.Inputs"
+          :sources="sources"
+        ></ResourceWidget>
       </div>
     </div>
   </div>
@@ -46,34 +53,31 @@ export default {
       tabItems: [
         {
           name: 'component',
-          title: '组件'
+          title: '组件',
         },
         {
           name: 'outline',
-          title: '大纲'
+          title: '大纲',
         },
         {
           name: 'history',
-          title: '历史记录'
-        }
+          title: '历史记录',
+        },
       ],
-      activeTab: 0
+      activeTab: 0,
     }
   },
 
   methods: {
     handleActiveTab(index) {
       this.activeTab = index
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
-.composite-panel {
-  //width: 350px;
-
-  &-tabs-content {
+<style lang="scss" scoped>
+.composite-panel{//width:350px;&-tabs-content {
     width: 300px;
   }
 
@@ -107,6 +111,5 @@ export default {
         background-color: map-get($color, primary);
       }
     }
-  }
-}
+  }}
 </style>

@@ -13,7 +13,7 @@ export const Text = defineComponent({
         {
           lineHeight: '22px',
           'white-space': 'pre-wrap',
-          color: '#535f72'
+          color: '#535f72',
         },
         props.contentStyle || {}
       )
@@ -24,7 +24,7 @@ export const Text = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 export default Text

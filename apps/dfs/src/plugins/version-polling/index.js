@@ -7,7 +7,7 @@ const defaultOptions = {
   pollingInterval: 5 * 60 * 1000, // 默认单位为毫秒
   immediate: true,
   htmlFileUrl: `${location.origin}${location.pathname}`,
-  silent: false
+  silent: false,
 }
 
 /**
@@ -16,11 +16,11 @@ const defaultOptions = {
 function handleVisibilityChange() {
   if (document.visibilityState === 'hidden') {
     myWorker.postMessage({
-      code: 'pause'
+      code: 'pause',
     })
   } else {
     myWorker.postMessage({
-      code: 'resume'
+      code: 'resume',
     })
   }
 }
@@ -39,7 +39,7 @@ export class VersionPolling {
 
     const response = await fetch(htmlFileUrl, {
       method: 'HEAD',
-      cache: 'no-cache'
+      cache: 'no-cache',
     })
 
     const etag = response.headers.get('etag')
@@ -50,7 +50,8 @@ export class VersionPolling {
   }
 
   start() {
-    const { appETagKey, pollingInterval, immediate, htmlFileUrl, silent } = this.options
+    const { appETagKey, pollingInterval, immediate, htmlFileUrl, silent } =
+      this.options
 
     // 安静模式
     if (silent) {
@@ -68,11 +69,11 @@ export class VersionPolling {
         htmlFileUrl,
         pollingInterval,
         immediate,
-        lastEtag: localStorage.getItem(`${appETagKey}`)
-      }
+        lastEtag: localStorage.getItem(`${appETagKey}`),
+      },
     })
 
-    myWorker.onmessage = event => {
+    myWorker.onmessage = (event) => {
       const { lastEtag, etag } = event.data
       this.appEtag = etag
 

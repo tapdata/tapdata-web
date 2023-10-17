@@ -4,19 +4,31 @@
     <!--费用清单-->
     <section v-if="orderInfo" class="pay-main" ref="details">
       <div class="mb-4" :class="{ card: isCard, 'mt-6 ': !isCard }">
-        <div class="font-color-dark fw-sub fs-5 mb-4">{{ $t('dfs_instance_create_spec_summary') }}</div>
-        <VTable :columns="columns" :data="subscribeItems" ref="table" :has-pagination="false"></VTable>
+        <div class="font-color-dark fw-sub fs-5 mb-4">
+          {{ $t('dfs_instance_create_spec_summary') }}
+        </div>
+        <VTable
+          :columns="columns"
+          :data="subscribeItems"
+          ref="table"
+          :has-pagination="false"
+        ></VTable>
       </div>
       <div :class="{ card: isCard }">
         <ElForm ref="form" :model="orderInfo">
-          <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
+          <p class="mt-4 mb-2">
+            {{ $t('dfs_instance_create_jieshouzhangdande') }}
+          </p>
 
           <ElFormItem prop="email" :rules="getEmailRules()">
-            <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
+            <ElInput
+              v-model:value="orderInfo.email"
+              :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
+            ></ElInput>
           </ElFormItem>
 
           <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
-          <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
+          <ElRadioGroup v-model:value="payType" class="flex gap-4 mt-4 mb-4">
             <ElRadio
               v-for="(item, index) in types"
               :key="index"
@@ -32,17 +44,25 @@
       <ul class="mt-4" :class="{ card: isCard }" v-if="orderInfo">
         <li v-if="orderInfo.priceOff && orderInfo.price !== 0">
           <span class="price-detail-label text-end inline-block mr-2"
-            >{{ $t('dfs_agent_subscription_discount', { val: orderInfo.priceDiscount }) }}:
+            >{{
+              $t('dfs_agent_subscription_discount', {
+                val: orderInfo.priceDiscount,
+              })
+            }}:
           </span>
           <span class="ml-2"> {{ priceOff }}</span>
         </li>
         <li v-if="orderInfo.price">
-          <span class="fw-sub font-color-dark mt-2 mr-4">{{ $t('dfs_order_pay_old_shifujine') }}</span
+          <span class="fw-sub font-color-dark mt-2 mr-4">{{
+            $t('dfs_order_pay_old_shifujine')
+          }}</span
           ><span class="color-primary fw-sub fs-5">{{ orderInfo.price }}</span>
         </li>
 
         <div class="mt-4">
-          <ElButton type="primary" size="large" @click="handlePay">{{ $t('dfs_pay_now') }}</ElButton>
+          <ElButton type="primary" size="large" @click="handlePay">{{
+            $t('dfs_pay_now')
+          }}</ElButton>
         </div>
       </ul>
     </section>
@@ -58,7 +78,7 @@ import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 export default {
   components: {
     TheHeader,
-    VTable
+    VTable,
   },
 
   data() {
@@ -69,32 +89,34 @@ export default {
       columns: [
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType'
+          prop: 'productType',
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price'
-        }
+          prop: 'price',
+        },
       ],
       payType: 'Stripe',
       subscribeItems: [],
       types: [
         {
-          label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
-          value: 'Stripe'
-        }
+          label: i18n.t(
+            'dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'
+          ),
+          value: 'Stripe',
+        },
       ],
-      orderInfo: null
+      orderInfo: null,
     }
   },
 
@@ -104,8 +126,9 @@ export default {
     this.$nextTick(() => {
       //格式化items
       let subscribeItems = this.orderInfo?.subscribeItems || []
-      const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
-      this.subscribeItems = subscribeItems.map(it => {
+      const { subscriptionMethodLabel, originalPrice, priceOff } =
+        this.orderInfo
+      this.subscribeItems = subscribeItems.map((it) => {
         it.subscriptionMethodLabel = subscriptionMethodLabel
         it.price = originalPrice
         return it
@@ -119,17 +142,17 @@ export default {
       return [
         {
           required: true,
-          message: i18n.t('dfs_instance_create_qingshuruninde')
+          message: i18n.t('dfs_instance_create_qingshuruninde'),
         },
         {
           type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque')
-        }
+          message: i18n.t('dfs_instance_create_qingshuruzhengque'),
+        },
       ]
     },
     validateForm(ref) {
-      return new Promise(resolve => {
-        this.$refs[ref].validate(valid => {
+      return new Promise((resolve) => {
+        this.$refs[ref].validate((valid) => {
           resolve(valid)
         })
       })
@@ -142,7 +165,7 @@ export default {
       this.submitLoading = true
       this.$axios
         .post('api/tcm/subscribe/payment', this.orderInfo)
-        .then(data => {
+        .then((data) => {
           const payUrl = data?.payUrl || data.paymentUrl
           if (payUrl) {
             window.open(payUrl, '_self')
@@ -150,8 +173,8 @@ export default {
             this.$router.push({
               name: 'changeList',
               query: {
-                id: data.subscribeId
-              }
+                id: data.subscribeId,
+              },
             })
           }
         })
@@ -167,7 +190,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -178,10 +201,13 @@ export default {
       const route = this.$router.resolve({
         name: 'changeList',
         query: {
-          id: alter.subscribeId
-        }
+          id: alter.subscribeId,
+        },
       })
-      const price = this.formatterPrice(subscribe.currency, alter.subscribeItems[0].amount)
+      const price = this.formatterPrice(
+        subscribe.currency,
+        alter.subscribeItems[0].amount
+      )
       const orderInfo = {
         email: this.$store.state.user.email,
         price,
@@ -195,22 +221,22 @@ export default {
         cancelUrl: location.origin + location.pathname + route.href,
         subscribeAlterId: alter.id,
         subscribeType: alter.subscribeType,
-        subscribeItems: alter.subscribeItems.map(it => {
+        subscribeItems: alter.subscribeItems.map((it) => {
           it.specLabel = getSpec(it.spec) || '-'
           return it
         }),
         paymentMethod: alter.paymentMethod,
         periodUnit: alter.periodUnit,
-        currency: alter.currency || window.__config__?.currencyType
+        currency: alter.currency || window.__config__?.currencyType,
       }
 
       this.orderInfo = orderInfo
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .pay-wrap {
   background-color: map-get($color, submenu);
 }

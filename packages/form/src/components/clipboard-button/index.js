@@ -10,18 +10,18 @@ export const ClipboardButton = defineComponent({
       type: String,
       default: () => {
         return i18n.t('public_button_copy')
-      }
+      },
     },
     finishTooltip: {
       type: String,
       default: () => {
         return i18n.t('public_message_copied')
-      }
+      },
     },
     icon: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { attrs, refs }) {
     const contentRef = ref(props.tooltip)
@@ -60,7 +60,12 @@ export const ClipboardButton = defineComponent({
 
     return () => {
       return (
-        <ElTooltip ref="tooltip" transition="tooltip-fade-in" placement="top" content={contentRef.value}>
+        <ElTooltip
+          ref="tooltip"
+          transition="tooltip-fade-in"
+          placement="top"
+          content={contentRef.value}
+        >
           {props.icon ? (
             <i
               ref="icon"
@@ -86,6 +91,6 @@ export const ClipboardButton = defineComponent({
         </ElTooltip>
       )
     }
-  }
+  },
 })
 export default ClipboardButton

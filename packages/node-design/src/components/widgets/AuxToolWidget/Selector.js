@@ -3,12 +3,18 @@ import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { Button } from 'element-ui'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue-demi'
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+} from 'vue-demi'
 
 const useMouseHover = (elRef, enter, leave) => {
   let timer = null
   let unmounted = ref(false)
-  const onMouseOver = e => {
+  const onMouseOver = (e) => {
     const target = e.target
     clearTimeout(timer)
     timer = setTimeout(() => {
@@ -41,7 +47,7 @@ export const Selector = observer(
       const elRef = computed(() => refs.ref)
       const selectionRef = useSelection()
       const prefix = usePrefix('aux-selector')
-      const renderIcon = node => {
+      const renderIcon = (node) => {
         const icon = node.designerProps.icon
         if (icon) {
           return <IconWidget infer={icon} />
@@ -63,10 +69,10 @@ export const Selector = observer(
             style={{
               position: 'absolute',
               top: '100%',
-              left: 0
+              left: 0,
             }}
           >
-            {parents.slice(0, 4).map(parent => {
+            {parents.slice(0, 4).map((parent) => {
               return (
                 <Button
                   key={parent.id}
@@ -119,6 +125,6 @@ export const Selector = observer(
           </div>
         )
       }
-    }
+    },
   })
 )

@@ -1,7 +1,11 @@
 <template>
-  <section class="license-warp flex justify-content-center align-items-center flex-column">
+  <section
+    class="license-warp flex justify-content-center align-items-center flex-column"
+  >
     <main class="main">
-      <header class="header header-wrap pl-4">{{ $t('dfs_aliyun_market_license_jihuoaliyun') }}</header>
+      <header class="header header-wrap pl-4">
+        {{ $t('dfs_aliyun_market_license_jihuoaliyun') }}
+      </header>
       <main style="padding: 24px">
         <div class="flex justify-content-center align-items-center">
           <img class="text-center" :src="getImg('aliyun-license-code')" />
@@ -20,17 +24,30 @@
           <li>{{ $t('dfs_aliyun_market_license_niantiedaoxiafang') }}</li>
         </ul>
         <div class="flex mt-4">
-          <span class="label mb-2">{{ $t('dfs_aliyun_market_license_shouquanma') }}</span>
-          <el-input v-model="licenseCode" type="textarea" rows="2" autofocus></el-input>
+          <span class="label mb-2">{{
+            $t('dfs_aliyun_market_license_shouquanma')
+          }}</span>
+          <el-input
+            v-model:value="licenseCode"
+            type="textarea"
+            rows="2"
+            autofocus
+          ></el-input>
         </div>
         <div class="mt-8 pt-4 text-end">
-          <el-button class="mr-4" @click="$router.go(-1)">{{ $t('public_button_back') }}</el-button>
+          <el-button class="mr-4" @click="$router.go(-1)">{{
+            $t('public_button_back')
+          }}</el-button>
           <a v-if="showGoDashboard" type="primary" href="./">{{
             $t('dfs_aliyun_market_license_qianwanggongzuotai')
           }}</a>
-          <el-button v-else :loading="saveLoading" type="primary" @click="save">{{
-            $t('dfs_aliyun_market_license_jihuo')
-          }}</el-button>
+          <el-button
+            v-else
+            :loading="saveLoading"
+            type="primary"
+            @click="save"
+            >{{ $t('dfs_aliyun_market_license_jihuo') }}</el-button
+          >
         </div>
       </main>
     </main>
@@ -47,7 +64,7 @@ export default {
     return {
       licenseCode: '',
       showGoDashboard: false,
-      saveLoading: false
+      saveLoading: false,
     }
   },
   mounted() {
@@ -59,29 +76,33 @@ export default {
       this.saveLoading = true
       this.buried('activateAliyunCode')
       this.$axios
-        .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
-        .then(data => {
+        .post('api/tcm/aliyun/market/license/activate', {
+          licenseCode: this.licenseCode,
+        })
+        .then((data) => {
           if (data.licenseStatus === 'ACTIVATED') {
-            this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
+            this.$message.success(
+              i18n.t('dfs_aliyun_market_license_jihuochenggongS')
+            )
             this.showGoDashboard = true
-            this.$axios.get('api/tcm/user').then(data => {
+            this.$axios.get('api/tcm/user').then((data) => {
               window.__USER_INFO__ = data
             })
             this.buried('activateAliyunCode', '', {
-              result: true
+              result: true,
             })
             setTimeout(() => {
               window.location.href = 'index.html'
             }, 30000)
           } else {
             this.buried('activateAliyunCode', '', {
-              result: false
+              result: false,
             })
           }
         })
         .catch(() => {
           this.buried('activateAliyunCode', '', {
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -90,12 +111,12 @@ export default {
     },
     getImg(name) {
       return require(`../../../public/images/dashboard/${name}.svg`)
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .license-warp {
   height: 100%;
 }

@@ -76,7 +76,8 @@ export default {
   // app
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
   // Agent
-  agent_check_error: "Agent's current state is abnormal and cannot create a connection, please check",
+  agent_check_error:
+    "Agent's current state is abnormal and cannot create a connection, please check",
   // console
   dashboard_status_paused: 'Paused',
   dashboard_status_wait_run: 'Scheduled',
@@ -168,8 +169,10 @@ export default {
   modules_status_invalid: 'invalid',
   modules_allacancel: 'Batch cancel',
   modules_allarelease: 'Batch release',
-  modules_releasefb: 'Are you sure you want to release the following APIs in batches?',
-  modules_releasecancel: 'Are you sure you want to cancel the following APIs in batches?',
+  modules_releasefb:
+    'Are you sure you want to release the following APIs in batches?',
+  modules_releasecancel:
+    'Are you sure you want to cancel the following APIs in batches?',
   modules_api_server_status: 'API Service Status',
   modules_sure: 'Are you sure you want',
   modules_cancel_failed: 'Unpublished API failed',
@@ -271,11 +274,14 @@ export default {
   dataExplorer_show_column: 'Show column',
   dataExplorer_new_document: 'New record',
   dataExplorer_timeout: 'Timeout time',
-  dataExplorer_unauthenticated: 'You do not have permission to access the API. ',
+  dataExplorer_unauthenticated:
+    'You do not have permission to access the API. ',
   dataExplorer_message_timeout:
     'The connection to the API server has timed out, please check whether the API server has been started. ',
-  dataExplorer_publish: 'The API of {id} was not found on the API server. Please check if it has been published. ',
-  dataExplorer_no_permissions: 'Your token has expired, please refresh the page and try again. ',
+  dataExplorer_publish:
+    'The API of {id} was not found on the API server. Please check if it has been published. ',
+  dataExplorer_no_permissions:
+    'Your token has expired, please refresh the page and try again. ',
   dataExplorer_datetype_without_timezone: 'Time zone of time type (optional)',
   dataExplorer_mysql_datetype_without_timezone: 'Type of impact: DATETIME',
   dataExplorer_export: 'Export file',
@@ -304,7 +310,8 @@ export default {
   // 连接
   connection_list_form_database_type: 'Database type',
   connection_list_name: 'Connection name',
-  connection_form_agent_msg: "Agent's current state is abnormal and cannot create a connection, please check",
+  connection_form_agent_msg:
+    "Agent's current state is abnormal and cannot create a connection, please check",
   connection_reload_schema_confirm_title: 'Reload schema',
   connection_reload_schema_confirm_msg:
     'If there are too many schemas in this library, it may take a long time. Make sure to refresh the schema of the data source',
@@ -361,7 +368,8 @@ export default {
   function_button_load_function: 'Load function',
   function_message_load_function_fail: 'Load function fail',
   function_dialog_setting_title: 'Function setting',
-  function_message_function_empty: 'Please upload the jar file and load the function',
+  function_message_function_empty:
+    'Please upload the jar file and load the function',
   function_message_delete_title: 'Delete function',
   function_message_delete_content:
     'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
@@ -373,14 +381,17 @@ export default {
   solution_search_result: 'Result',
   solution_search_solutions: 'Solution',
   // 共享挖掘
-  shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
-  shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',
+  shared_cdc_placeholder_task_name:
+    'Please enter the mining task name to search',
+  shared_cdc_placeholder_connection_name:
+    'Please enter the connection name to search',
   shared_cdc_name: 'Please enter the task name ',
   shared_cdc_setting_select_mode: 'Storage mode',
   shared_cdc_setting_select_mongodb_tip: 'Please enter mongodb connection',
   shared_cdc_setting_select_table_tip: 'Please enter the table name',
   shared_cdc_setting_select_time_tip: 'Please select the log saving time',
-  shared_cdc_setting_message_edit_save: 'Save successfully, it will take effect after restarting the task',
+  shared_cdc_setting_message_edit_save:
+    'Save successfully, it will take effect after restarting the task',
   share_list_name: 'Mining name',
   share_list_time_excavation: 'Excavation time point',
   share_list_setting: 'Mining settings',
@@ -447,30 +458,39 @@ export default {
   setting_Max_Limit: 'Maximum number of rows returned by the query',
   setting_Send_batch_size: 'Number of packed data',
   setting_hint_Send_batch_size: 'Number of packed data',
-  setting_Mongodb_target_create_date: 'Whether to add the creation time to the target data set',
-  setting_Mongodb_target_create_date_docs: 'Whether to add the creation time to the target data set',
+  setting_Mongodb_target_create_date:
+    'Whether to add the creation time to the target data set',
+  setting_Mongodb_target_create_date_docs:
+    'Whether to add the creation time to the target data set',
   setting_System: 'System Resource Monitoring',
-  setting_Collect_system_info_interval: 'System resource monitoring collection frequency (seconds)',
+  setting_Collect_system_info_interval:
+    'System resource monitoring collection frequency (seconds)',
   setting_Interval_to_collect_system_info:
     'System resource information (CPU, memory, hard disk usage) monitoring collection frequency',
   setting_Job_Sync_Mode: 'Task synchronization mode',
   setting_Worker_Threshold: 'Process Threshold',
   setting_Worker_Heartbeat_Expire: 'Process heartbeat period time (seconds)',
   setting_License_Key: 'Certificate Key',
-  setting_Enter_jobs_log_level__error_warn_info_debug_trace: 'Enter task log level: error/warn/info/debug/trace',
+  setting_Enter_jobs_log_level__error_warn_info_debug_trace:
+    'Enter task log level: error/warn/info/debug/trace',
   setting_Email_Receivers_Multiple_separated_by_semicolons:
     'Mail recipients, you can enter multiple, separated by commas',
-  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: 'Keep the last n hours news',
+  setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_:
+    'Keep the last n hours news',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
     'Cache a copy of the current overall data and merge it into the target data set',
   setting_Store_before_field_as_embedded_document_in_target_collection_before_update_operation:
     'Cache a copy of the overall data before modification and merge it into the target data set',
-  setting_Store_job_script_processor_log_to_cloud: 'Whether to transfer task logs to the cloud',
-  setting_Validator_to_validate_data__s_sample_rate: 'Validation data sampling rate',
+  setting_Store_job_script_processor_log_to_cloud:
+    'Whether to transfer task logs to the cloud',
+  setting_Validator_to_validate_data__s_sample_rate:
+    'Validation data sampling rate',
   setting_retry_interval_second: 'Retry Interval(Second)',
   setting_max_retry_time_minute: 'Maximum Retry Time(Minute)',
-  setting_Process_message_mode__consistency_fast: 'Message processing mode consistency/fast',
-  setting_Worker_can_execute_the_nums_of_Jobs: 'The process can perform multiple tasks',
+  setting_Process_message_mode__consistency_fast:
+    'Message processing mode consistency/fast',
+  setting_Worker_can_execute_the_nums_of_Jobs:
+    'The process can perform multiple tasks',
   setting_Worker_heartbeat_expire_time: 'Process heartbeat period time',
   setting_Users: 'User',
   setting_Show_Page: 'Show download page',
@@ -486,11 +506,14 @@ export default {
   setting_hint_SSH_User: 'SSH username, used to connect to the host of Mongod',
   setting_hint_SSH_Port: 'SSH port, used to connect to the host of Mongod',
   setting_Enable_DR_Rehearsal: 'Allow disaster recovery exercises',
-  setting_hint_Enable_DR_Rehearsal: 'Disaster recovery rehearsal switch, true means on, false means off',
+  setting_hint_Enable_DR_Rehearsal:
+    'Disaster recovery rehearsal switch, true means on, false means off',
   setting_Download_Agent_Page: 'Agent Download Page',
   setting_Background_Analytics: 'Background analysis',
-  setting_Data_quality_analysis_frequency: 'Data quality analysis interval (seconds)',
-  setting_Dashboard_data_analysis_frequency: 'Panel data analysis interval (seconds)',
+  setting_Data_quality_analysis_frequency:
+    'Data quality analysis interval (seconds)',
+  setting_Dashboard_data_analysis_frequency:
+    'Panel data analysis interval (seconds)',
   setting_dashboard_Analysis_Interval: 'Panel data analysis interval (seconds)',
   setting_quality_Analysis_Interval: 'Data quality analysis interval (seconds)',
   setting_Log_filter_interval: 'Log filtering interval (seconds)',
@@ -502,16 +525,19 @@ export default {
     'Log settings allow the average number of events per second',
   setting_Log_Filter_Rate: 'Log output frequency (line/sec)',
   setting_Connections: 'Connection Settings',
-  setting_Mongodb_Load_Schema_Sample_Size: 'Mongodb load model sample records (rows)',
+  setting_Mongodb_Load_Schema_Sample_Size:
+    'Mongodb load model sample records (rows)',
   setting_hint_Mongodb_Load_Schema_Sample_Size:
     'When MongoDB connects to load the model, this configuration will be used for sampling and loading',
   setting_Enable_API_Stats_Batch_Report: 'Enable API Statistics',
   setting_Header: 'UDP header information',
   setting_hint_Header: 'UDP header information',
-  setting_Size_Of_Trigger_API_Stats_Report: 'Maximum number of API request cache',
+  setting_Size_Of_Trigger_API_Stats_Report:
+    'Maximum number of API request cache',
   setting_hint_Size_Of_Trigger_API_Stats_Report:
     'When the number of API request records reaches the specified number, batches are sent to the management end',
-  setting_Time_Span_Of_Trigger_API_Stats_Report: 'API request report frequency (seconds)',
+  setting_Time_Span_Of_Trigger_API_Stats_Report:
+    'API request report frequency (seconds)',
   setting_hint_Time_Span_Of_Trigger_API_Stats_Report:
     'The API request is cached and sent to the management end at the specified time',
   setting_save: 'Save successfully, take effect in one minute',
@@ -526,9 +552,11 @@ export default {
   setting_doc_base_url: 'Help document URL',
   setting_help: 'Help document',
   setting_Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
-  setting_hint_Ip_addresses: 'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
+  setting_hint_Ip_addresses:
+    'The ipv4 address of the device to be detected, for example: 127.0.0.1, 192.168.0.1',
   setting_PingTimeout: 'Detection timeout (milliseconds)',
-  setting_hint_PingTimeout: 'When this setting is exceeded, it is considered that the device cannot be connected',
+  setting_hint_PingTimeout:
+    'When this setting is exceeded, it is considered that the device cannot be connected',
   setting_Job_field_replacement: 'Illegal characters replaced with',
   setting_A_replacement_for_the_invalid_field_name:
     'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
@@ -538,15 +566,18 @@ export default {
     'When a document may be frequently updated in a very short time (for example, several updates within a second), the change stream event received by the downstream processor may return "fullDocument" that is inconsistent with the actual version ( Inconsistent with the actual version) the file. To avoid this inconsistency, please enable this option to store the complete document with the update operation. This will be at the expense of increased storage space and reduced performance. ',
   setting_the_before_field_contains_a_field_for_each_table_column_and_the_value_that_was_in_that_column_before_the_update_operation_:
     'the before field contains a field for each table column and the value that was in that column before the update operation.',
-  setting_Job_heart_timeout: 'Synchronization task heartbeat timeout (milliseconds)',
+  setting_Job_heart_timeout:
+    'Synchronization task heartbeat timeout (milliseconds)',
   setting_job_cdc_share_mode: 'Incremental synchronization task sharing mode',
   setting_job_cdc_share_mode_doc:
     'In the incremental synchronization phase, the sharing mode will be automatically adopted according to whether the log collection task is available. Affected database: Oracle',
   setting_job_cdc_share_only: 'Incremental tasks are forced to use shared mode',
   setting_job_cdc_share_only_doc:
     'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
-  setting_test_email_success: 'The test email has been sent, please log in to the receiving mailbox to check it',
-  setting_test_email_countdown: 'The operation is too frequent, please try again later',
+  setting_test_email_success:
+    'The test email has been sent, please log in to the receiving mailbox to check it',
+  setting_test_email_countdown:
+    'The operation is too frequent, please try again later',
   setting_email_template_from: 'From',
   setting_email_template_to: 'Recipient',
   setting_email_template_subject: 'Subject',
@@ -556,25 +587,32 @@ export default {
   setting_job_cdc_record_ttl_doc: 'Incremental event save time (days)',
   setting_lagTime: 'incremental lag decision time (seconds)',
   setting_connection_schema_update_hour: 'Data source schema update time',
-  setting_connection_schema_update_interval: 'Data source schema update interval (days)',
+  setting_connection_schema_update_interval:
+    'Data source schema update interval (days)',
   setting_creatDuplicateSource: 'Allow the creation of duplicate data sources',
   setting_requestFailed: 'Request processing failed',
   setting_Mongodb_will_use_this_sample_size_when_load_schema:
     'Mongodb will use this sample size when load schema When MongoDB connects to load the model, this configuration will be used for sample loading',
-  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_: 'Switch to batch insert mode interval in cdc. ',
+  setting_Switch_to_batch_insert_mode_interval__s__in_cdc_:
+    'Switch to batch insert mode interval in cdc. ',
   setting_share_cdc: 'Share cdc',
   setting_share_cdc_persistence_mode: 'Share cdc persistence mode',
-  setting_share_cdc_persistence_memory_size: 'Shared incremental memory cache line count',
+  setting_share_cdc_persistence_memory_size:
+    'Shared incremental memory cache line count',
   setting_share_cdc_persistence_memory_size_doc:
     'This configuration controls the number of lines in the memory cache for shared incremental events',
-  setting_share_cdc_persistence_mode_doc: 'Share cdc persistence mode.Options: InMemory, MongoDB, RocksDB',
-  setting_share_cdc_persistence_mongodb_uri_db: 'Stores the connection name of the MongoDB',
+  setting_share_cdc_persistence_mode_doc:
+    'Share cdc persistence mode.Options: InMemory, MongoDB, RocksDB',
+  setting_share_cdc_persistence_mongodb_uri_db:
+    'Stores the connection name of the MongoDB',
   setting_share_cdc_persistence_mongodb_uri_db_doc:
     'This configuration takes effect only when MongoDB is selected as the mode. Enter the created MongoDB connection name.',
-  setting_share_cdc_persistence_mongodb_collection: 'The name of the collection where MongoDB is stored',
+  setting_share_cdc_persistence_mongodb_collection:
+    'The name of the collection where MongoDB is stored',
   setting_share_cdc_persistence_mongodb_collection_doc:
     'This configuration takes effect only when MongoDB is selected as the mode, enter the stored collection name',
-  setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
+  setting_share_cdc_persistence_rocksdb_path:
+    'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
   user_list_user_name_email: 'Please enter username/email',
@@ -592,9 +630,12 @@ export default {
   user_list_bulk_freeze: 'Bulk freeze',
   user_list_bulk_check: 'Bulk check',
   user_list_del_user: 'After deleting user {0}, this user cannot be recovered',
-  user_list_activetion_user: 'After activating user {0}, this user will be able to use the TAPDATA system',
-  user_list_freeze_user: 'After freezing user {0}, this user will not be able to use the TAPDATA system',
-  user_list_check_user: 'After checking the mailbox of user {0}, this user can be activated',
+  user_list_activetion_user:
+    'After activating user {0}, this user will be able to use the TAPDATA system',
+  user_list_freeze_user:
+    'After freezing user {0}, this user will not be able to use the TAPDATA system',
+  user_list_check_user:
+    'After checking the mailbox of user {0}, this user can be activated',
   user_list_activetion_success: 'Activation successful',
   user_list_freeze_success: 'Freeze successful',
   user_list_freeze_error: 'Freeze failed',
@@ -607,9 +648,12 @@ export default {
   user_form_role: 'Associated role',
   user_form_email: 'email',
   user_form_email_must_valid: 'Please enter a valid email address',
-  user_form_password_null: 'Please enter a password, the length is 5 ~ 32 characters',
-  user_form_pass_hint: 'The length of the password cannot be less than 5 and greater than 32',
-  user_form_password_not_cn: 'Password only allows English, numbers and English punctuation',
+  user_form_password_null:
+    'Please enter a password, the length is 5 ~ 32 characters',
+  user_form_pass_hint:
+    'The length of the password cannot be less than 5 and greater than 32',
+  user_form_password_not_cn:
+    'Password only allows English, numbers and English punctuation',
   user_form_activation_code: 'Access code',
   user_form_status: 'Status',
   cluster_name: 'Monitoring name',
@@ -689,26 +733,38 @@ export default {
   notify_cdc_lag: 'CDC lag timeout',
   notify_manage_sever_restart_failed: 'Management server restart failed',
   notify_api_sever_restart_failed: 'API service restart failed',
-  notify_sync_sever_restart_failed: 'The synchronization management service failed to restart',
+  notify_sync_sever_restart_failed:
+    'The synchronization management service failed to restart',
   notify_connection_interrupted: 'Disconnected',
-  notify_manage_sever_start_failed: 'The management server service failed to start',
+  notify_manage_sever_start_failed:
+    'The management server service failed to start',
   notify_api_sever_start_failed: 'The API service failed to start',
-  notify_sync_sever_start_failed: 'The synchronization management service failed to start',
+  notify_sync_sever_start_failed:
+    'The synchronization management service failed to start',
   notify_manage_sever_stop_failed: 'The management server failed to stop',
   notify_api_sever_stop_failed: 'The API service failed to stop',
-  notify_sync_sever_stop_failed: 'The synchronization management service failed to stop',
+  notify_sync_sever_stop_failed:
+    'The synchronization management service failed to stop',
   notify_api_sever_abnormally_stopped: 'The API service stopped unexpectedly',
-  notify_sync_sever_abnormally_stopped: 'The sync governance service stopped unexpectedly',
-  notify_manage_sever_abnormally_Stopped: 'The service on the management side stopped unexpectedly',
-  notify_manage_sever_started_successfully: 'The management service has been started',
+  notify_sync_sever_abnormally_stopped:
+    'The sync governance service stopped unexpectedly',
+  notify_manage_sever_abnormally_Stopped:
+    'The service on the management side stopped unexpectedly',
+  notify_manage_sever_started_successfully:
+    'The management service has been started',
   notify_api_sever_started_successfully: 'API service has been started',
-  notify_sync_sever_started_successfully: 'The synchronization management service has been started',
-  notify_manage_sever_Stopped_successfully: 'The management service has been stopped',
+  notify_sync_sever_started_successfully:
+    'The synchronization management service has been started',
+  notify_manage_sever_Stopped_successfully:
+    'The management service has been stopped',
   notify_api_sever_stopped_successfully: 'API service has been stopped',
-  notify_sync_sever_stopped_successfully: 'The synchronization management service has been stopped',
-  notify_manage_sever_restarted_successfully: 'The management service has been restarted',
+  notify_sync_sever_stopped_successfully:
+    'The synchronization management service has been stopped',
+  notify_manage_sever_restarted_successfully:
+    'The management service has been restarted',
   notify_api_sever_restarted_successfully: 'The API service has been restarted',
-  notify_sync_sever_restarted_successfully: 'The synchronization management service has been restarted',
+  notify_sync_sever_restarted_successfully:
+    'The synchronization management service has been restarted',
   notify_new_sever_created_successfully: 'New service monitoring was created',
   notify_new_sever_deleted_Successfully: 'New service monitoring was deleted',
   notify_database_ddl_changed: 'Monitored database DDL changes',
@@ -807,8 +863,10 @@ export default {
   role_name_notice_settings: 'Message notification settings',
   role_name_account_operation_history: 'operation history',
   role_name_datasource: 'Browse connection management',
-  role_name_datasource_category_management: 'Connection management category management',
-  role_name_datasource_category_application: 'Connection management category application',
+  role_name_datasource_category_management:
+    'Connection management category management',
+  role_name_datasource_category_application:
+    'Connection management category application',
   role_name_datasource_creation: 'Connection management creation',
   role_name_datasource_delete: 'Connection management delete',
   role_name_datasource_edition: 'Connection management editor',
@@ -833,8 +891,10 @@ export default {
   role_name_data_search: 'Browse data search',
   role_name_data_government: 'Data governance',
   role_name_data_catalog: 'Browse data catalog',
-  role_name_data_catalog_category_management: 'Data catalog classification management',
-  role_name_data_catalog_category_application: 'Data catalog classification application',
+  role_name_data_catalog_category_management:
+    'Data catalog classification management',
+  role_name_data_catalog_category_application:
+    'Data catalog classification application',
   role_name_data_catalog_edition: 'Edit metadata',
   role_name_new_model_creation: 'Create model',
   role_name_meta_data_deleting: 'Metadata deletion',
@@ -901,7 +961,8 @@ export default {
   signin_verify_code_not_empty: 'Verification code must be filled',
   signin_verify_code_not_incorrect: 'Verification code error',
   signin_verify_password_invalid: 'Verification code at least 5 characters',
-  signin_verify_password_notCN: 'Password only allows English, numbers and English punctuation',
+  signin_verify_password_notCN:
+    'Password only allows English, numbers and English punctuation',
   signin_not_mailbox: 'oops~This mailbox has not been registered yet',
   meta_table_default: 'Default',
   meta_table_not_null: 'Not null',
@@ -956,7 +1017,8 @@ export default {
     'The account and password of Support Forum is same as cloud.tapdata.net.We will response you as soon as possible.',
   app_customerService_userSupport: 'Support Forum',
   app_customerService_otherDmands: 'Other Requirements',
-  app_customerService_otherDmandsText: 'Any requirement, please contact us by scanning WeChat QR below.',
+  app_customerService_otherDmandsText:
+    'Any requirement, please contact us by scanning WeChat QR below.',
   app_signIn_slogan: 'Use your data, as easy as water from tap',
   app_signIn_signIn: 'Sign in',
   app_signIn_keepSignIn: 'Keep signed in',
@@ -985,17 +1047,21 @@ export default {
   app_signIn_rememberPasswords: 'Remember passwords?',
   app_signIn_Registration: 'Register an account',
   app_signIn_forgetPassword: 'Forget password?',
-  app_signIn_confirmationEmail: 'Registration confirmation email has been sent to',
-  app_signIn_mailbox: 'Please log in to the mailbox and click the link to confirm~',
+  app_signIn_confirmationEmail:
+    'Registration confirmation email has been sent to',
+  app_signIn_mailbox:
+    'Please log in to the mailbox and click the link to confirm~',
   app_signIn_receiveEmail: "Didn't receive email? Click",
   app_signIn_resend: 'Resend',
   app_signIn_orClick: 'or click',
   app_signIn_accountSuccess: 'has been successfully registered~',
-  app_signIn_clickBtn: 'Click the button below to enjoy the journey of data transmission',
+  app_signIn_clickBtn:
+    'Click the button below to enjoy the journey of data transmission',
   app_signIn_resetClickBtn: 'Click the button below to log in',
   app_signIn_goLogin: 'Go login',
   app_signIn_connectionFailed: 'registration confirmation link is invalid',
-  app_signIn_resetConnectionFailed: 'reset password confirmation link is invalid',
+  app_signIn_resetConnectionFailed:
+    'reset password confirmation link is invalid',
   app_signIn_confirmEmail: 'Please re',
   app_signIn_registered: ' Registered',
   app_signIn_resetAccountSuccess: 'The password has been reset successfully~',
@@ -1065,7 +1131,8 @@ export default {
     'This jobhas not been saved yet, If you leave this page, the job configuration will be lost. Are you sure to leave ?',
   dataFlow_saveFail:
     'Failed to save the task, please check the configuration and ensure that the data source status is valid.',
-  dataFlow_aggregateNotDataNode: 'The first target data node of aggregation node can only be COLLECTION',
+  dataFlow_aggregateNotDataNode:
+    'The first target data node of aggregation node can only be COLLECTION',
   dataFlow_batchSortOperation: 'Batch sort operation',
   dataFlow_selectRowdata: 'Please select row data',
   dataFlow_clusterClone: 'Database Migration',
@@ -1078,7 +1145,8 @@ export default {
   dataFlow_dataMigrationHead: 'Data Sync',
   dataFlow_databseFreedomHead: 'Custom Data Sync',
   dataFlow_createNew: 'Create New',
-  dataFlow_DissedNoAction: 'oops~ The banned node/Connecting line can not be deleted and connected',
+  dataFlow_DissedNoAction:
+    'oops~ The banned node/Connecting line can not be deleted and connected',
   dataFlow_notCopy: 'The banned node cannot be copied ',
   dataFlow_guidingMode: 'Guiding mode',
   dataFlow_advancedMode: 'Standard mode',
@@ -1112,16 +1180,19 @@ export default {
     'API, aka data publication API, you can create a new API which includes the paths of Post, Get, Patch, Delete.',
   dataFlow_datavaliDescription:
     'Data verification has the function of count verify, content verify, and joint field value verify which can verify the consistency of source and target.',
-  dataFlow_multiError_allSelectionError: 'The status of selected job does not allow this operation.',
+  dataFlow_multiError_allSelectionError:
+    'The status of selected job does not allow this operation.',
   dataFlow_multiError_notFound: 'This job does not existed.',
-  dataFlow_multiError_statusError: 'Job status does not allow to do this operation.',
+  dataFlow_multiError_statusError:
+    'Job status does not allow to do this operation.',
   dataFlow_multiError_otherError: 'Operation failed, please try it again.',
   dataFlow_changeName: 'Rename',
   dataFlow_Enable: 'Enable',
   dataFlow_Disable: 'Disable',
   dataFlow_draftNotStart: 'Configuration is not complete,  cannot be started',
   dataFlow_systemHint: 'System prompt',
-  dataFlow_systemText: 'The system detected that the following tasks were not saved， keep editing?',
+  dataFlow_systemText:
+    'The system detected that the following tasks were not saved， keep editing?',
   dataFlow_stystemOpen: 'Open',
   dataFlow_stystemOpenAll: 'Open all',
   dataFlow_stystemDeleteAll: 'Delete all',
@@ -1136,9 +1207,11 @@ export default {
   dataFlow_cdcLabel: 'Data source:',
   dataFlow_syncType: ' Type',
   dataFlow_belongAgent: 'Agent',
-  dataFlow_SyncInfo_localTZ: 'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
+  dataFlow_SyncInfo_localTZ:
+    'Local Timezone CDC Time: custom a point of  CDC time，in local time zone',
   dataFlow_SyncInfo_current: 'Current Time：Current DB Time',
-  dataFlow_SyncInfo_connTZ: 'DB Timezone CDC Time: custom a point of  CDC time，in the time zone of a specific server',
+  dataFlow_SyncInfo_connTZ:
+    'DB Timezone CDC Time: custom a point of  CDC time，in the time zone of a specific server',
   dataFlow_SyncInfo_localTZType: 'Local Timezone CDC Time',
   dataFlow_SyncInfo_currentType: 'Current Time',
   dataFlow_SyncInfo_connTZType: 'DB Timezone CDC Time',
@@ -1165,7 +1238,8 @@ export default {
   dataFlow_skipData: 'Skip existing data',
   dataFlow_loadingError: 'Loading failed, please',
   dataFlow_dataLoading: 'Data Loding ...',
-  dataFlow_loadLogTip: 'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
+  dataFlow_loadLogTip:
+    'Run log is trying to load, it may take 5 ~ 10 seconds, please wait ...',
   dataFlow_noLogTip: 'No data',
   dataFlow_clickLoadTxt: 'Click to load',
   dataFlow_average: 'Average',
@@ -1268,7 +1342,8 @@ export default {
   dataFlow_sharecdcmode: 'shared incremental read mode',
   dataFlow_streaming: 'streaming read',
   dataFlow_polling: 'polling read',
-  dataFlow_drop_target_before_start: 'Whether the target table is deleted before starting the task',
+  dataFlow_drop_target_before_start:
+    'Whether the target table is deleted before starting the task',
   dataFlow_run_custom_sql: 'Repeat custom SQL',
   dataFlow_stop_on_error: 'Stop when error',
   dataFlow_need_to_create_Index: 'Auto-create index',
@@ -1279,7 +1354,8 @@ export default {
   dataFlow_data_quality_tag: 'Add data quality tag',
   dataFlow_notification_lag: 'Notification',
   dataFlow_isOpenAutoDDL: 'Auto-DDL operation',
-  dataFlow_ddlTip: 'Warn: Automatic DDL does not support JS processor and field processor',
+  dataFlow_ddlTip:
+    'Warn: Automatic DDL does not support JS processor and field processor',
   dataFlow_transformerConcurrency: 'Transformer Concurrency',
   dataFlow_processorConcurrency: 'Processor Concurrency',
   dataFlow_cdcEngineFilter: 'Enable Engine Filtering',
@@ -1290,7 +1366,8 @@ export default {
   dataFlow_cdcFetchSizeTip2:
     'The more the number entered means the lower the real-time performance, and the overall processing speed will be faster. ',
   dataFlow_send_email_when_replication: 'Resend in a few seconds',
-  dataFlow_send_email_at_most_one_replication: 'Cancel sending in more than seconds',
+  dataFlow_send_email_at_most_one_replication:
+    'Cancel sending in more than seconds',
   dataFlow_read_cdc_interval: ' CDC interval',
   dataFlow_cdc_concurrency: ' CDC concurrency',
   dataFlow_cdcShareFilterOnServer: 'Filter CDC shared log',
@@ -1319,7 +1396,8 @@ export default {
   dataFlow_lagTime: 'incremental lag time setting',
   dataFlow_lagTimeTip:
     'when the incremental task delay is greater than this value, the incremental task delay is considered, and the default value is 0',
-  dataFlow_aggregatePrompt: 'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
+  dataFlow_aggregatePrompt:
+    'Warn：Using the aggregation processor node, the job will be reset when excutes restart',
   dataFlow_nameTip:
     'Script editing of subsequent nodes needs to refer to the name of this sub-process for the specified data processing, so different sub-process names cannot be repeated. ',
   dataFlow_button_submit: 'Submit',
@@ -1353,9 +1431,11 @@ export default {
   dataFlow_file_preview_fields_file_create_time_ondisk: 'File Create Time',
   dataFlow_file_preview_fields_file_path: 'File Path',
   dataFlow_delete_confirm_Title: 'Delete the task? ',
-  dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
+  dataFlow_delete_confirm_Message:
+    'After deleting task XXX, this task cannot be restored',
   dataFlow_bulk_delete_confirm_Title: 'Delete tasks in batch? ',
-  dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
+  dataFlow_bulk_delete_confirm_Message:
+    'After deleting tasks in batch, tasks cannot be restored',
   dataFlow_stop_confirm_title: 'Do you want to suspend this task? ',
   dataFlow_stop_confirm_message:
     'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
@@ -1365,13 +1445,15 @@ export default {
   dataFlow_force_stop_confirm_title: 'Do you want to force stop this task? ',
   dataFlow_force_stop_confirm_message:
     'Forcibly stop the task xxx will immediately interrupt the data transmission, force the task to stop quickly, and reset the task',
-  dataFlow_bulk_force_stop_confirm_title: 'Do you want to force stop tasks in batches? ',
+  dataFlow_bulk_force_stop_confirm_title:
+    'Do you want to force stop tasks in batches? ',
   dataFlow_bulk_force_stop_confirm_message:
     'The batch forced stop task will immediately interrupt the data transmission to force the task to stop quickly and reset the task',
   dataFlow_initialize_confirm_title: 'Do you want to reset this task? ',
   dataFlow_initialize_confirm_message:
     'Resetting task xxx will clear the task synchronization progress and the task will be executed again',
-  dataFlow_bulk_initialize_confirm_title: 'Do you want to reset tasks in bulk? ',
+  dataFlow_bulk_initialize_confirm_title:
+    'Do you want to reset tasks in bulk? ',
   dataFlow_bulk_initialize_confirm_message:
     'Resetting the task in batches will clear the task synchronization progress, and the task will be executed again',
   dataFlow_importantReminder: 'Important notice',
@@ -1391,15 +1473,18 @@ export default {
     "Intelligent deduplication: intelligent detection of the target's existing data, deduplication can greatly improve transmission performance",
   dataFlow_setting_compelTip:
     "Forced deduplication: Perform mandatory deduplication detection on the target's existing data, strictly guarantee accuracy but low transmission performance",
-  dataFlow_setting_batchTip: 'Batch:  Batch processing and transmission of CDC data with high performance.',
-  dataFlow_setting_onebyoneTip: 'Row by row: Processing and transmission of CDC data row by row',
+  dataFlow_setting_batchTip:
+    'Batch:  Batch processing and transmission of CDC data with high performance.',
+  dataFlow_setting_onebyoneTip:
+    'Row by row: Processing and transmission of CDC data row by row',
   dataFlow_setting_sync_type_tip:
     'Transmission type can be changed after disable aggregation settings of collection node: ',
   dataFlow_skipError_title: 'Skip Error Settings',
   dataFlow_skipError_skipErrorSettings: 'Data Processing Error Handling',
   dataFlow_skipError_tip:
     'There were data processing errors detected in the job, please make sure these errors have been addressed. If you would like to skip these errors, please check them and click the "Skip errors, continue to start" button.  ',
-  dataFlow_skipError_attention: 'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
+  dataFlow_skipError_attention:
+    'WARNING: If you chose to skip the errors, the relevant data may be discarded. ',
   dataFlow_skipError_startJob: 'Skip errors, continue to start',
   dataFlow_skipError_cancel: 'Cancel',
   dataFlow_skipError_taskName: 'Task name',
@@ -1408,11 +1493,16 @@ export default {
   dataFlow_flowEngineVersion: 'Flow Engine Version',
   dataFlow_flowEngineV1: 'Flow Engine V1',
   dataFlow_jetFlowEngineV2: 'Jet Flow Engine V2',
-  editor_cell_data_node_collection_form_collection_placeholder: 'Please select collection',
-  editor_cell_data_node_collection_form_fieldFilterType_retainedField: 'Retained field',
-  editor_cell_data_node_collection_form_fieldFilterType_deleteField: 'Delete field',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep: ' Select the fields to keep',
-  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete: ' Select the fields to delete',
+  editor_cell_data_node_collection_form_collection_placeholder:
+    'Please select collection',
+  editor_cell_data_node_collection_form_fieldFilterType_retainedField:
+    'Retained field',
+  editor_cell_data_node_collection_form_fieldFilterType_deleteField:
+    'Delete field',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderKeep:
+    ' Select the fields to keep',
+  editor_cell_data_node_collection_form_fieldFilter_placeholderDelete:
+    ' Select the fields to delete',
   editor_cell_data_node_collection_form_filter_fieldFilter: 'Visual Mode',
   editor_cell_data_node_collection_form_filter_sqlFilter: 'SQL Filter',
   editor_cell_data_node_collection_form_filter_mqlFilter: 'MQL Filter',
@@ -1421,10 +1511,13 @@ export default {
   editor_cell_data_node_collection_form_filter_allRows: 'All rows',
   editor_cell_data_node_collection_form_filter_oneThousandRows: '1000 rows',
   editor_cell_data_node_collection_form_filter_tenThousandRows: '10000 rows',
-  editor_cell_data_node_table_form_custom_sql_placeholder: 'Please input you custom sql',
-  editor_cell_data_node_table_form_custom_sql_mplaceholder: 'Please input you custom mql',
+  editor_cell_data_node_table_form_custom_sql_placeholder:
+    'Please input you custom sql',
+  editor_cell_data_node_table_form_custom_sql_mplaceholder:
+    'Please input you custom mql',
   editor_cell_data_node_table_form_initial_offset_label: 'Custom SQL Offset',
-  editor_cell_data_node_table_form_initial_offset_placeholder: 'Please input you custom sql offset',
+  editor_cell_data_node_table_form_initial_offset_placeholder:
+    'Please input you custom sql offset',
   editor_ui_sidebar_setting: 'Data Flow Settings',
   metadata_createModel: 'Create a model',
   metadata_header_name: 'Table name/owned database',
@@ -1512,11 +1605,13 @@ export default {
   metadata_details_Boolean: 'Boolean value',
   metadata_details_Date: 'Date',
   metadata_details_Integer: 'Integer',
-  metadata_details_dictionary_typeNo: 'This field type cannot add a dictionary template',
+  metadata_details_dictionary_typeNo:
+    'This field type cannot add a dictionary template',
   metadata_details_fieldNameNo: 'The field name is empty',
   metadata_details_moreAttributes: 'More Properties',
   metadata_details_msgFiledName: 'Please enter the field name',
-  metadata_details_success_Release: 'Save successfully, please republish manually',
+  metadata_details_success_Release:
+    'Save successfully, please republish manually',
   metadata_details_filedName_repeat: 'Field name cannot be the same name',
   metadata_details_filedDictionary: 'Field Dictionary',
   metadata_details_foreignKeyAssociation: 'Foreign key',
@@ -1533,7 +1628,8 @@ export default {
   metadata_details_uniquelyIdentifies: 'Qualified Name',
   metadata_details_query: 'Query',
   metadata_details_version_version_control: 'Version Control Mode',
-  metadata_details_version_version_control_required: 'Version Control Mode is required',
+  metadata_details_version_version_control_required:
+    'Version Control Mode is required',
   metadata_details_version_lastVersion:
     'This metadata is already the latest version, the historical version records saved in the past will be saved in the list below',
   metadata_details_version_versionNum: 'Version number',
@@ -1600,7 +1696,8 @@ export default {
   metadata_metadataSearch_column: 'Search field',
   metadata_metadataSearch_search: 'Search',
   metadata_metadataSearch_noSearch: 'Please press "Enter" to initiate a search',
-  metadata_metadataSearch_noResult: 'No search results, please confirm the search keywords',
+  metadata_metadataSearch_noResult:
+    'No search results, please confirm the search keywords',
   metadata_metadataSearch_noMore: 'No more search results',
   metadata_metadataSearch_more: 'Click to load more',
   metadata_metadataSearch_placeholder: 'please enter keyword to search',
@@ -1666,12 +1763,15 @@ export default {
   account_changeUsername: 'Change User name',
   account_newUsername: 'Please enter a new username',
   account_sendEmail: 'Sent verify email',
-  account_samePawTip: 'The new password cannot be the same as the original password.',
+  account_samePawTip:
+    'The new password cannot be the same as the original password.',
   account_newPawInconsistent: 'Inconsistent with the new password.',
   account_pawSaveSuccess: 'Password saved successfully',
-  account_currerPawErrorTip: 'The current password is incorrect, please enter the correct password',
+  account_currerPawErrorTip:
+    'The current password is incorrect, please enter the correct password',
   account_nameModifySuccess: 'Name modified successfully',
-  account_passwordNotCN: 'Only alphanumeric characters and hyphens are allowed in password',
+  account_passwordNotCN:
+    'Only alphanumeric characters and hyphens are allowed in password',
   account_user_null: "That username's been taken",
   account_has_username: 'Username already exists',
   account_editFail: 'User name modification failed',
@@ -1734,29 +1834,43 @@ export default {
   daas_notification_systemalarm_gaojingduixiang: 'Alert object',
   daas_notification_systemalarm_quanbugaojing: 'All alerts',
   daas_setting_alarmnotification_gaojingzhibiao: 'Alert indicator',
-  daas_setting_alarmnotification_dangjiediandeping: 'When the average processing time of the node',
-  daas_setting_alarmnotification_dangshujuyuanjie: 'When the average processing time of the data source node',
-  daas_setting_alarmnotification_dangshujuyuanxie: 'When the data source protocol connection takes time',
-  daas_setting_alarmnotification_dangshujuyuanwang: 'When the data source network connection takes time',
-  daas_setting_alarmnotification_dangshujuwufa: 'It takes time when the data cannot be connected to the network',
-  daas_setting_alarmnotification_dangrenwudezeng: 'When the replication delay of the task',
+  daas_setting_alarmnotification_dangjiediandeping:
+    'When the average processing time of the node',
+  daas_setting_alarmnotification_dangshujuyuanjie:
+    'When the average processing time of the data source node',
+  daas_setting_alarmnotification_dangshujuyuanxie:
+    'When the data source protocol connection takes time',
+  daas_setting_alarmnotification_dangshujuyuanwang:
+    'When the data source network connection takes time',
+  daas_setting_alarmnotification_dangshujuwufa:
+    'It takes time when the data cannot be connected to the network',
+  daas_setting_alarmnotification_dangrenwudezeng:
+    'When the replication delay of the task',
   daas_setting_alarmnotification_dangrenwutingzhi: 'When the task stops',
-  daas_setting_alarmnotification_dangrenwuzengliang: 'When the task increment start',
-  daas_setting_alarmnotification_dangrenwuquanliang: 'When the task is fully completed',
-  daas_setting_alarmnotification_dangrenwujiaoyan: 'When the task verification error occurs',
-  daas_setting_alarmnotification_dangrenwuyudao: 'When the task encounters an error',
+  daas_setting_alarmnotification_dangrenwuzengliang:
+    'When the task increment start',
+  daas_setting_alarmnotification_dangrenwuquanliang:
+    'When the task is fully completed',
+  daas_setting_alarmnotification_dangrenwujiaoyan:
+    'When the task verification error occurs',
+  daas_setting_alarmnotification_dangrenwuyudao:
+    'When the task encounters an error',
   daas_setting_alarmnotification_dangrenwustop: 'When the Agent service stops',
   daas_setting_alarmnotification_msshigaojing: 'Alert when ms',
   daas_setting_alarmnotification_gedian: 'points',
   daas_setting_alarmnotification_lianxu: 'Continuous',
   daas_setting_alarmnotification_cichugaojinggui:
     'The alert rule setting here is the system global alert rule setting, and the priority of the alert rule setting on the task running monitoring page is higher than the system global setting',
-  daas_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
+  daas_setting_alarmnotification_renwumorengao:
+    'Task default alert rule setting',
   daas_setting_alarmnotification_morengaojinggui: 'Default alert rule',
   daas_setting_alarmnotification_renwugaojingshe: 'Task alert setting',
-  daas_setting_setting_chulijiediande: 'The average processing time of processing nodes',
-  daas_setting_setting_shujuyuanjiedian: 'The average processing time of data source nodes',
-  daas_setting_setting_shujuyuanxieyi: 'Data source protocol connection takes time',
+  daas_setting_setting_chulijiediande:
+    'The average processing time of processing nodes',
+  daas_setting_setting_shujuyuanjiedian:
+    'The average processing time of data source nodes',
+  daas_setting_setting_shujuyuanxieyi:
+    'Data source protocol connection takes time',
   daas_setting_setting_shujuyuanwanglu: 'Data source network connection time',
   daas_setting_setting_renwudezengliang: 'Replication delay for tasks',
   daas_setting_settingcenter_gaojingshezhi: 'Alert settings',
@@ -1765,7 +1879,8 @@ export default {
   share_detail_title: 'Mining table details',
   shared_cache_messge_no_table: 'The selected table model is not found',
   shared_cache_placeholder_max_memory: 'Please enter the maximum cache memory',
-  shared_cache_placeholder_external_storage: 'Please select the external memory configuration',
+  shared_cache_placeholder_external_storage:
+    'Please select the external memory configuration',
   setting_newMongodbChangeStream: '111111',
   user_list_activetion_error: 'Activation failed',
   notify_schema_name: 'Model name',
@@ -1774,9 +1889,11 @@ export default {
   dataFlow_atabseProcessingHead: 'Data processing synchronization',
   dataFlow_shareCdcMode: 'Shared incremental read mode',
   dataFlow_delete_confirm_title: 'Do you want to delete this task?',
-  dataFlow_delete_confirm_message: 'After deleting task xxx, this task will not be able to Restore',
+  dataFlow_delete_confirm_message:
+    'After deleting task xxx, this task will not be able to Restore',
   dataFlow_bulk_delete_confirm_title: 'Do you want to delete tasks in batches?',
-  dataFlow_bulk_delete_confirm_message: 'After deleting tasks in batches, the tasks cannot be restored',
+  dataFlow_bulk_delete_confirm_message:
+    'After deleting tasks in batches, the tasks cannot be restored',
   modules_apiServerStatus: 'API service status',
   modules_describtion: 'Description',
   modules_set_mode: 'Setting method',
@@ -1787,7 +1904,8 @@ export default {
   dataFlow_button_milestone: 'task milestones',
   daas_deletefile_emptyitem_zanwushuju: 'No data',
   daas_components_querycond_xuanzeriqishi: 'Select date and time',
-  daas_src_main_qingqiuquanjupei: 'Request global configuration (settings) failed: ',
+  daas_src_main_qingqiuquanjupei:
+    'Request global configuration (settings) failed: ',
   daas_src_main_baocuntok: 'Save token to cookie:',
   daas_api_page_apidocandtest_shouquanjiekou: 'Authorization interface',
   daas_api_page_apidocandtest_daochudaopo: 'Export to postman',
@@ -1802,7 +1920,8 @@ export default {
   daas_data_server_drawer_qingxuanzelianjie: 'Please Select connection type',
   daas_data_server_drawer_qingshurufuwu: 'Please enter service name',
   daas_data_server_drawer_quanxianfanwei: 'Authority Range',
-  daas_data_server_drawer_selectPermissions: 'Please select the scope of authority',
+  daas_data_server_drawer_selectPermissions:
+    'Please select the scope of authority',
   daas_data_server_drawer_shilidaima: 'Sample Code',
   daas_data_server_drawer_shilidaima2: 'Sample Code',
   daas_data_server_drawer_fanhuijieguo: 'Return Result',
@@ -1822,14 +1941,18 @@ export default {
   daas_data_server_drawer_peizhi: 'Configuration',
   daas_data_server_drawer_chuangjianfuwu: 'Create API',
   daas_data_server_drawer_fuwuxiangqing: 'Service Details',
-  daas_data_server_list_quedingchexiaogai: 'Are you sure you want to revoke this service?',
-  daas_data_server_list_quedingfabugai: 'Are you sure you want to publish the service?',
-  daas_data_server_list_querenshanchufu: 'Are you sure you want to delete the service?',
+  daas_data_server_list_quedingchexiaogai:
+    'Are you sure you want to revoke this service?',
+  daas_data_server_list_quedingfabugai:
+    'Are you sure you want to publish the service?',
+  daas_data_server_list_querenshanchufu:
+    'Are you sure you want to delete the service?',
   daas_data_server_list_huoqufuwuyu: 'Get the service domain name Failed.',
   daas_data_server_list_fuwuzhuangtai: 'Service Status',
   daas_data_server_list_guanlianduixiang: 'Associated Object',
   daas_data_server_list_fuwumingcheng: 'Service Name',
-  daas_function_importform_shangchuanwenjianda: 'Upload file size cannot exceed {val1}M',
+  daas_function_importform_shangchuanwenjianda:
+    'Upload file size cannot exceed {val1}M',
   daas_login_login_dengluchenggong: 'Login successful:',
   daas_login_passwordreset_shangweiyanzhengdian: 'Email not verified',
   daas_login_passwordreset_zhaobudaodianzi: 'Email not found',
@@ -1855,12 +1978,14 @@ export default {
   daas_data_server_drawer_prefix: 'Prefix',
   daas_data_server_drawer_base_path: 'Base Path',
   daas_data_server_drawer_path: 'Path',
-  daas_data_server_drawer_confirm_tip: 'This will re-generate the API path, do you wish to continue?',
+  daas_data_server_drawer_confirm_tip:
+    'This will re-generate the API path, do you wish to continue?',
   daas_notification_center_yonghucaozuo: 'User Action',
   daas_cluster_cluster_lianjieshuliang: 'Number of connections',
   daas_cluster_cluster_mubiaoIPhe: 'Target IP and port',
   daas_cluster_cluster_lianjiezongshu: 'Total number of connections',
-  daas_cluster_cluster_yinqingduiwaijian: 'The number of external connections established by the engine',
+  daas_cluster_cluster_yinqingduiwaijian:
+    'The number of external connections established by the engine',
   daas_role_role_ninhaiweibaocun:
     'You have not saved the permission settings, do you want to save the permission settings? ',
   daas_role_role_quanbugongneng: 'All Functions',
@@ -1869,5 +1994,5 @@ export default {
   daas_role_role_yemianquanxian: 'Page Permission',
   daas_role_role_gongnengmokuai: 'Function Module',
   daas_role_role_gouxuanxiangyingmo:
-    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. '
+    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. ',
 }

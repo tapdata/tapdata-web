@@ -4,7 +4,11 @@ import { useForm } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
-import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
+import {
+  getCanUseDataTypes,
+  getMatchedDataTypeLevel,
+  errorFiledType,
+} from '../../../util'
 import FieldList from '../field-inference/List'
 import './style.scss'
 
@@ -16,12 +20,15 @@ export const SchemaPreview = defineComponent({
     const treeData = ref([])
     const loading = ref(false)
     const isTreeView = ref(true)
-    const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
+    const isTarget =
+      form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
-    const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
+    const readonly = ref(
+      props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget
+    )
     let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
-    const createTree = data => {
+    const createTree = (data) => {
       const root = { children: [] }
 
       for (const item of data) {
@@ -35,7 +42,7 @@ export const SchemaPreview = defineComponent({
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
-          let child = parent.children.find(c => c.field_name === field)
+          let child = parent.children.find((c) => c.field_name === field)
 
           if (!child) {
             child = { field_name: field, children: [] }
@@ -46,7 +53,7 @@ export const SchemaPreview = defineComponent({
 
           if (i === fields.length - 1) {
             Object.assign(parent, item, {
-              field_name: field
+              field_name: field,
             })
           }
         }
@@ -62,11 +69,11 @@ export const SchemaPreview = defineComponent({
         nodeId: form.values.id,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: 1,
-        pageSize: 20
+        pageSize: 20,
       }
       const {
         // items: [{ fields = [], indices = [] } = {}]
-        items: [schema = {}]
+        items: [schema = {}],
       } = await metadataInstancesApi.nodeSchemaPage(params)
       const { fields = [], indices = [] } = schema
 
@@ -75,17 +82,21 @@ export const SchemaPreview = defineComponent({
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
-      treeData.value = createTree(fields.sort((a, b) => a.columnPosition - b.columnPosition))
+      treeData.value = createTree(
+        fields.sort((a, b) => a.columnPosition - b.columnPosition)
+      )
       loading.value = false
     }
 
-    const mapSchema = schema => {
+    const mapSchema = (schema) => {
       const { fields = [], findPossibleDataTypes = {} } = schema
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
-        fields.forEach(el => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+        fields.forEach((el) => {
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
@@ -95,9 +106,11 @@ export const SchemaPreview = defineComponent({
         })
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
-        fields.forEach(el => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+        fields.forEach((el) => {
+          const { dataTypes = [], lastMatchedDataType = '' } =
+            findPossibleDataTypes[el.field_name] || {}
+          el.canUseDataTypes =
+            getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = errorFiledType(el)
         })
       }
@@ -134,7 +147,7 @@ export const SchemaPreview = defineComponent({
 
     loadSchema()
 
-    const handleUpdate = rules => {
+    const handleUpdate = (rules) => {
       form.setValuesIn('fieldChangeRules', rules)
       fieldChangeRules = rules
     }
@@ -165,18 +178,22 @@ export const SchemaPreview = defineComponent({
                   directives: [
                     {
                       name: 'loading',
-                      value: loading.value
-                    }
-                  ]
+                      value: loading.value,
+                    },
+                  ],
                 }}
                 directives={[
                   {
                     name: 'loading',
-                    value: loading.value
-                  }
+                    value: loading.value,
+                  },
                 ]}
               >
-                <ElTree indent={8} data={treeData.value} render-content={renderContent}></ElTree>
+                <ElTree
+                  indent={8}
+                  data={treeData.value}
+                  render-content={renderContent}
+                ></ElTree>
               </div>
             </div>
           ) : (
@@ -190,12 +207,12 @@ export const SchemaPreview = defineComponent({
               single-table
               ignore-error={!isTarget}
               on={{
-                'update-rules': handleUpdate
+                'update-rules': handleUpdate,
               }}
             ></FieldList>
           )}
         </div>
       </div>
     )
-  }
+  },
 })

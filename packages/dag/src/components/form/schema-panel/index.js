@@ -30,5 +30,5 @@ export const SchemaPanel = defineComponent({
     return () => {
       return <MigrateMetaPane ref="pane" form={formRef.value}></MigrateMetaPane>
     }
-  }
+  },
 })

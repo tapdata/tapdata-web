@@ -5,7 +5,7 @@ import { defineComponent } from 'vue-demi'
 
 export const Copy = defineComponent({
   props: ['node'],
-  setup: props => {
+  setup: (props) => {
     const node = props.node
     const operationRef = useOperation()
     const prefix = usePrefix('aux-copy')
@@ -23,5 +23,5 @@ export const Copy = defineComponent({
         </Button>
       )
     }
-  }
+  },
 })

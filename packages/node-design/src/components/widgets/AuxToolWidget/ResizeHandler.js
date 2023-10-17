@@ -4,14 +4,14 @@ import { defineComponent } from 'vue-demi'
 
 export const ResizeHandler = defineComponent({
   props: ['node'],
-  setup: props => {
+  setup: (props) => {
     const designerRef = useDesigner()
     const designer = designerRef.value
     const prefix = usePrefix('aux-node-resize-handler')
-    const createHandler = value => {
+    const createHandler = (value) => {
       return {
         attrs: { [designer.props.nodeResizeHandlerAttrName]: value },
-        class: [prefix, value]
+        class: [prefix, value],
       }
     }
     const allowResize = props.node.allowResize()
@@ -28,5 +28,5 @@ export const ResizeHandler = defineComponent({
         </FragmentComponent>
       )
     }
-  }
+  },
 })

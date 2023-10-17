@@ -1,17 +1,28 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill h-100" accordion>
+      <ElCollapse
+        v-model:value="collapseMode"
+        ref="dbCollapse"
+        class="collapse-fill h-100"
+        accordion
+      >
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
               <template>
-                <span class="flex-1 user-select-none text-truncate flex align-center">
+                <span
+                  class="flex-1 user-select-none text-truncate flex align-center"
+                >
                   <!--连接-->
                   {{ $t('packages_dag_dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
-                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                <VIcon
+                  size="18"
+                  class="click-btn mr-1"
+                  :class="{ active: showDBInput }"
+                  @click.stop="handleShowDBInput"
                   >search-outline</VIcon
                 >
                 <VIcon
@@ -28,14 +39,16 @@
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-model="dbSearchTxt"
+                v-model:value="dbSearchTxt"
                 ref="dbInput"
-                :placeholder="$t('packages_dag_connection_name_search_placeholder')"
+                :placeholder="
+                  $t('packages_dag_connection_name_search_placeholder')
+                "
                 size="mini"
                 clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
+                @keydown.stop
+                @keyup.stop
+                @click.stop
                 @input="handleDBInput"
               >
                 <template #prefix>
@@ -44,8 +57,18 @@
               </ElInput>
             </div>
 
-            <ElScrollbar ref="dbList" class="flex-1" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
-              <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
+            <ElScrollbar
+              ref="dbList"
+              class="flex-1"
+              tag="div"
+              wrap-class="db-list"
+              :wrap-style="scrollbarWrapStyle"
+            >
+              <ElSkeleton
+                :loading="dbLoading"
+                animated
+                :throttle="skeletonThrottle"
+              >
                 <template #template>
                   <div v-for="i in 5" :key="i" class="flex p-4 align-center">
                     <ElSkeletonItem
@@ -56,7 +79,11 @@
                     <ElSkeletonItem variant="text"></ElSkeletonItem>
                   </div>
                 </template>
-                <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pb-2">
+                <div
+                  v-infinite-scroll="loadMoreDB"
+                  :infinite-scroll-disabled="disabledDBMore"
+                  class="px-2 pb-2"
+                >
                   <div
                     v-for="db in dbList"
                     v-mouse-drag="{
@@ -66,7 +93,7 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
@@ -76,7 +103,9 @@
                     <div class="flex-shrink-0 mr-2 db-item-icon">
                       <NodeIcon :node="db" />
                     </div>
-                    <div class="flex flex-column justify-center db-item-content">
+                    <div
+                      class="flex flex-column justify-center db-item-content"
+                    >
                       <div class="flex align-center">
                         <OverflowTooltip
                           class="text-truncate mr-1"
@@ -97,8 +126,12 @@
                     </div>
                   </div>
                   <VEmpty v-if="!dbList.length" />
-                  <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                    {{ $t('packages_dag_loading') }}<span class="dotting"></span>
+                  <div
+                    v-if="dbLoadingMore"
+                    class="text-center text-black-50 fs-8 p-2"
+                  >
+                    {{ $t('packages_dag_loading')
+                    }}<span class="dotting"></span>
                   </div>
                 </div>
               </ElSkeleton>
@@ -108,7 +141,11 @@
       </ElCollapse>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
+    <ElCollapse
+      ref="processorCollapse"
+      class="collapse-fill processor-collapse border-top"
+      value="process"
+    >
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -118,7 +155,12 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3 pb-3" :wrap-style="scrollbarWrapStyle">
+        <ElScrollbar
+          ref="processorList"
+          tag="div"
+          wrap-class="px-3 pb-3"
+          :wrap-style="scrollbarWrapStyle"
+        >
           <div
             v-for="(n, ni) in processorNodeTypes"
             :key="ni"
@@ -129,7 +171,7 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
@@ -161,7 +203,7 @@
 
     <!--创建连接-->
     <SceneDialog
-      :visible.sync="connectionDialog"
+      v-model:visible="connectionDialog"
       selector-type="source_and_target"
       @selected="handleDatabaseType"
     ></SceneDialog>
@@ -169,6 +211,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import '@tap/assets/icons/svg/magnify.svg'
 import '@tap/assets/icons/svg/table.svg'
 import '@tap/assets/icons/svg/javascript.svg'
@@ -211,9 +254,8 @@ export default {
     VIcon,
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar,
-    ConnectionType
+    ConnectionType,
   },
-
   data() {
     return {
       collapseMode: 'db',
@@ -241,17 +283,19 @@ export default {
       comingAllowDatabase: [], // 即将上线
       otherType: [],
       automationType: '', //插件化数据源
-      connectionType: 'source'
+      connectionType: 'source',
     }
   },
-
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
-
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'processorNodeTypes',
+      'getCtor',
+      'stateIsReadonly',
+    ]),
 
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
@@ -265,30 +309,26 @@ export default {
     scrollbarWrapStyle() {
       let gutter = scrollbarWidth()
       return `height: calc(100% + ${gutter}px);`
-    }
+    },
   },
-
   async created() {
     await this.getDatabaseType()
 
     this.init()
   },
-
   mounted() {
     // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
-
   methods: {
     // 创建连接
     creat() {
       this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
-      await databaseTypesApi.get().then(res => {
+      await databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -303,7 +343,9 @@ export default {
 
     getDbFilter() {
       const databaseTypeList =
-        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
+        this.database
+          ?.map((t) => t.type)
+          .filter((t) => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -331,17 +373,17 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
         where: {
           database_type: {
-            in: databaseTypeList
+            in: databaseTypeList,
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
@@ -366,7 +408,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -380,7 +422,9 @@ export default {
           } else {
             const { host, port, database, schema } = item.config
             connectionUrl = host
-              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              ? `${host}${port ? `:${port}` : ''}${
+                  database ? `/${database}` : ''
+                }${schema ? `/${schema}` : ''}`
               : ''
           }
         }
@@ -391,7 +435,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -403,7 +447,10 @@ export default {
         this.dbList = dbList
         this.dbLoading = false
         // 缓存所有dbId
-        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
+        this.dbIdMap = dbList.reduce(
+          (map, item) => ((map[item.id] = true), map),
+          {}
+        )
       }
       return this.dbList
     },
@@ -436,7 +483,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -452,7 +499,7 @@ export default {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       }
       this.dragNode = node
@@ -462,11 +509,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      this.$emit('move-node', ...arguments)
+      $emit(this, 'move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
+      $emit(this, 'drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -492,7 +539,8 @@ export default {
 
     getNodeProps(item) {
       // 设置pdk节点配置默认值
-      const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
+      const pdkProperties =
+        this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
       let nodeConfig
       if (pdkProperties) {
         nodeConfig = getInitialValuesInBySchema(
@@ -500,17 +548,17 @@ export default {
             properties: {
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
           {}
         )
@@ -531,8 +579,8 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities || []
-        }
+          capabilities: item.capabilities || [],
+        },
       }
     },
 
@@ -556,7 +604,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -567,7 +615,7 @@ export default {
     onDoubleClickDB(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', this.getNodeProps(item))
+      $emit(this, 'add-node', this.getNodeProps(item))
     },
 
     /**
@@ -577,13 +625,14 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', item)
-    }
-  }
+      $emit(this, 'add-node', item)
+    },
+  },
+  emits: ['move-node', 'drop-node', 'add-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $hoverBg: #eef3ff;
 
 .drag-node {
@@ -593,12 +642,10 @@ $hoverBg: #eef3ff;
   opacity: 0;
   transform-origin: center center;
 }
-
 .layout-sidebar.--left {
   overflow: visible;
   will-change: width;
   $headerH: 34px;
-
   .connection-tabs {
     position: relative;
     font-size: 0.875rem;
@@ -834,7 +881,6 @@ $hoverBg: #eef3ff;
     }
   }
 }
-
 .node-list {
   .node-item {
     border-radius: 4px;

@@ -4,10 +4,15 @@
       v-if="hasMDB && !hasActive"
       class="text-center h-100 bg-white rounded-lg flex justify-center align-center flex-column"
     >
-      <ElImage style="width: 200px; height: 200px" :src="require('@tap/assets/images/empty_waiting.png')"></ElImage>
+      <ElImage
+        style="width: 200px; height: 200px"
+        :src="require('@tap/assets/images/empty_waiting.png')"
+      ></ElImage>
       <div class="my-6">{{ $t('dfs_wait_storage_init') }}</div>
       <div>
-        <ElButton @click="handleRefresh" type="primary" plain>{{ $t('public_button_refresh') }}</ElButton>
+        <ElButton @click="handleRefresh" type="primary" plain>{{
+          $t('public_button_refresh')
+        }}</ElButton>
       </div>
     </div>
     <Dashboard v-else-if="hasMDB"></Dashboard>
@@ -30,7 +35,7 @@ export default {
       hasMDB: false,
       hasActive: false,
       loading: true,
-      paying: true
+      paying: true,
     }
   },
 
@@ -44,7 +49,10 @@ export default {
 
     const setting = await liveDataPlatformApi.findOne()
 
-    if (setting?.fdmStorageCluster === 'self' && setting?.fdmStorageConnectionId) {
+    if (
+      setting?.fdmStorageCluster === 'self' &&
+      setting?.fdmStorageConnectionId
+    ) {
       this.hasMDB = true
       this.hasActive = true
     } else {
@@ -60,7 +68,7 @@ export default {
     this.loading = false
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.timer)
   },
 
@@ -81,10 +89,10 @@ export default {
           JSON.stringify({
             where: {
               status: {
-                $in: ['incomplete', 'active']
+                $in: ['incomplete', 'active'],
               },
-              'subscribeItems.productType': 'MongoDB'
-            }
+              'subscribeItems.productType': 'MongoDB',
+            },
           })
         )}`
       )
@@ -97,7 +105,7 @@ export default {
     async loadMDBStatus() {
       clearTimeout(this.timer)
       const { items } = await this.$axios.get('api/tcm/mdb')
-      this.hasActive = items.some(item => item.status === 'Activated')
+      this.hasActive = items.some((item) => item.status === 'Activated')
 
       if (!this.hasActive) {
         this.timer = setTimeout(() => {
@@ -109,8 +117,8 @@ export default {
     async handleRefresh() {
       this.$message.success(this.$t('public_message_operation_success'))
       await this.loadMDBStatus()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -119,7 +127,6 @@ export default {
   width: 48px;
   height: 48px;
 }
-
 .step-icon {
   width: 32px;
   height: 32px;

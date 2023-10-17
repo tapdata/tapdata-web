@@ -11,7 +11,7 @@ export function getSpec(item = {}) {
 export function getPaymentMethod(item = {}, chargeProvider = '') {
   const map = {
     Aliyun: i18n.t('dfs_instance_utils_baozhouqi'),
-    FreeTier: i18n.t('dfs_instance_instance_mianfei')
+    FreeTier: i18n.t('dfs_instance_instance_mianfei'),
   }
 
   if (map[chargeProvider]) return map[chargeProvider]
@@ -20,9 +20,10 @@ export function getPaymentMethod(item = {}, chargeProvider = '') {
   const s = isEn ? ' ' : ''
   const { type, periodUnit } = item
   const labelMap = {
-    recurring_day: i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
+    recurring_day:
+      i18n.t('dfs_instance_utils_lianxu') + s + i18n.t('public_time_every_day'),
     recurring_month: i18n.t('dfs_instance_utils_baoyue'),
-    recurring_year: i18n.t('dfs_instance_utils_baonian')
+    recurring_year: i18n.t('dfs_instance_utils_baonian'),
   }
   const val = labelMap[`${type}_${periodUnit}`]
   if (val) return val
@@ -35,5 +36,5 @@ export const AGENT_TYPE_MAP = {
   selfHost: i18n.t('dfs_instance_utils_bantuoguan'),
   fullManagement: i18n.t('dfs_instance_utils_quantuoguan'),
   Local: i18n.t('dfs_instance_utils_bantuoguan'),
-  Cloud: i18n.t('dfs_instance_utils_quantuoguan')
+  Cloud: i18n.t('dfs_instance_utils_quantuoguan'),
 }

@@ -27,7 +27,7 @@ export {
   DiscoveryClassification,
   StageButton,
   UpgradeFee,
-  UpgradeCharges
+  UpgradeCharges,
 }
 
 export * from './DatabaseIcon'

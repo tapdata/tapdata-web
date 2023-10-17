@@ -6,7 +6,7 @@ const Modifiers = [
   ['metaKey', KeyCode.Meta],
   ['shiftKey', KeyCode.Shift],
   ['ctrlKey', KeyCode.Control],
-  ['altKey', KeyCode.Alt]
+  ['altKey', KeyCode.Alt],
 ]
 
 export class Keyboard {
@@ -34,17 +34,19 @@ export class Keyboard {
   }
 
   preventCodes() {
-    return this.shortcuts.some(shortcut => {
+    return this.shortcuts.some((shortcut) => {
       return shortcut.preventCodes(this.sequence)
     })
   }
 
   includes(key) {
-    return this.sequence.some(code => Shortcut.matchCode(code, key))
+    return this.sequence.some((code) => Shortcut.matchCode(code, key))
   }
 
   excludes(key) {
-    this.sequence = this.sequence.filter(code => !Shortcut.matchCode(key, code))
+    this.sequence = this.sequence.filter(
+      (code) => !Shortcut.matchCode(key, code)
+    )
   }
 
   addKeyCode(key) {
@@ -60,7 +62,7 @@ export class Keyboard {
   }
 
   isModifier(code) {
-    return Modifiers.some(modifier => Shortcut.matchCode(modifier[1], code))
+    return Modifiers.some((modifier) => Shortcut.matchCode(modifier[1], code))
   }
 
   handleModifiers(event) {
@@ -108,7 +110,7 @@ export class Keyboard {
     define(this, {
       sequence: observable.shallow,
       keyDown: observable.ref,
-      handleKeyboard: action
+      handleKeyboard: action,
     })
   }
 }

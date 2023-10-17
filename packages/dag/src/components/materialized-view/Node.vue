@@ -3,18 +3,27 @@
     tabindex="1"
     class="materialized-view-node position-absolute rounded-lg bg-white"
     :class="{
-      '--main-table': isMainTable
+      '--main-table': isMainTable,
     }"
     :style="nodeStyle"
   >
     <div class="node-header overflow-hidden">
       <div class="node-title text-white lh-base flex align-center p-1">
-        <VIcon class="mr-1">drag</VIcon><span class="ellipsis">{{ dagNode.name }} </span>
-        <span v-if="tableComment" class="ml-1 flex-shrink-0 ellipsis" style="color: rgba(255, 255, 255, 0.8)"
+        <VIcon class="mr-1">drag</VIcon
+        ><span class="ellipsis">{{ dagNode.name }} </span>
+        <span
+          v-if="tableComment"
+          class="ml-1 flex-shrink-0 ellipsis"
+          style="color: rgba(255, 255, 255, 0.8)"
           >({{ tableComment }})</span
         >
         <ElButton
-          v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
+          v-if="
+            !hasTargetNode &&
+            isMainTable &&
+            dagNode.connectionId &&
+            dagNode.tableName
+          "
           class="ml-auto"
           size="mini"
           @click="$emit('add-target-node')"
@@ -25,7 +34,7 @@
       </div>
       <div class="flex gap-1 p-1">
         <AsyncSelect
-          v-model="dagNode.connectionId"
+          v-model:value="dagNode.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
           :params="{ isSource: true }"
@@ -44,7 +53,7 @@
         </AsyncSelect>
         <TableSelect
           class="table-select"
-          v-model="dagNode.tableName"
+          v-model:value="dagNode.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!dagNode.connectionId"
           collapse-tags
@@ -60,18 +69,35 @@
       <ElForm class="node-form px-1" label-position="top" @submit.prevent>
         <template v-if="!isMainTable">
           <ElFormItem :label="$t('packages_dag_join_table')">
-            <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
-              <ElOption v-for="option in newTableOptions" :key="option.value" v-bind="option"></ElOption>
+            <ElSelect
+              :value="node.parentId"
+              class="w-100"
+              @change="$emit('change-parent', node, $event)"
+            >
+              <ElOption
+                v-bind="option"
+                v-for="option in newTableOptions"
+                :key="option.value"
+              ></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem>
-            <div slot="label" class="flex align-center justify-content-between">
-              <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
-              <ElLink class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
-                <VIcon>add</VIcon>
-                {{ $t('public_button_add') }}</ElLink
-              >
-            </div>
+            <template v-slot:label>
+              <div class="flex align-center justify-content-between">
+                <span>{{
+                  $t('packages_dag_nodes_mergetable_guanliantiaojian')
+                }}</span>
+                <ElLink
+                  class="fs-8"
+                  type="primary"
+                  size="mini"
+                  @click="handleAddJoinKey"
+                >
+                  <VIcon>add</VIcon>
+                  {{ $t('public_button_add') }}</ElLink
+                >
+              </div>
+            </template>
             <ElButton
               v-if="!node.joinKeys || !node.joinKeys.length"
               type="ghost"
@@ -82,22 +108,28 @@
               {{ $t('public_button_add') }}
             </ElButton>
             <div v-else class="flex flex-column gap-2">
-              <div class="flex align-center gap-1" v-for="(keys, i) in node.joinKeys" :key="i">
+              <div
+                class="flex align-center gap-1"
+                v-for="(keys, i) in node.joinKeys"
+                :key="i"
+              >
                 <!--<div class="flex flex-column">-->
                 <FieldSelect
-                  v-model="keys.source"
+                  v-model:value="keys.source"
                   itemLabel="field_name"
                   itemValue="field_name"
                   :options="schema"
                 ></FieldSelect>
                 <span>=</span>
                 <FieldSelect
-                  v-model="keys.target"
+                  v-model:value="keys.target"
                   :options="targetFields"
                   @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
                 <!--</div>-->
-                <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
+                <IconButton @click="node.joinKeys.splice(i, 1)"
+                  >delete</IconButton
+                >
               </div>
             </div>
           </ElFormItem>
@@ -105,12 +137,25 @@
 
         <template v-if="node.parentId || hasTargetNode">
           <ElFormItem :label="$t('packages_dag_materialized_view_field_type')">
-            <ElSelect v-model="fieldType" class="w-100" @change="onChangeType">
-              <ElOption v-for="(option, i) in fieldTypeOptions" :key="i" v-bind="option"></ElOption>
+            <ElSelect
+              v-model:value="fieldType"
+              class="w-100"
+              @change="onChangeType"
+            >
+              <ElOption
+                v-bind="option"
+                v-for="(option, i) in fieldTypeOptions"
+                :key="i"
+              ></ElOption>
             </ElSelect>
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
-            <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
+          <ElFormItem
+            :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')"
+          >
+            <ElInput
+              v-model:value="targetPath"
+              @change="$emit('change-path', node, $event)"
+            ></ElInput>
           </ElFormItem>
         </template>
 
@@ -120,7 +165,7 @@
         >
           <FieldSelect
             class="w-100"
-            v-model="node.arrayKeys"
+            v-model:value="node.arrayKeys"
             itemLabel="field_name"
             itemValue="field_name"
             :options="schema"
@@ -133,18 +178,29 @@
     <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover v-if="displaySchema" placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+        <ElPopover
+          v-if="displaySchema"
+          placement="top"
+          width="240"
+          v-model:value="fieldNameVisible"
+          trigger="manual"
+        >
           <div ref="fieldPopover">
             <ElInput
-              v-model="fieldName"
+              v-model:value="fieldName"
               autofocus
-              :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
-              @keydown.native.enter="onSaveFieldName"
+              :placeholder="
+                $t('packages_business_components_fieldbox_qingshuruziduan')
+              "
+              @keydown.enter="onSaveFieldName"
             ></ElInput>
             <div class="mt-2 text-end">
-              <el-button size="mini" type="text" @click="fieldNameVisible = false">{{
-                $t('public_button_cancel')
-              }}</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                @click="fieldNameVisible = false"
+                >{{ $t('public_button_cancel') }}</el-button
+              >
               <el-button type="primary" size="mini" @click="onSaveFieldName">{{
                 $t('public_button_confirm')
               }}</el-button>
@@ -156,17 +212,22 @@
                 size="mini"
                 v-click-outside="{
                   handler: onClickOutside,
-                  include
+                  include,
                 }"
               >
                 <VIcon>add</VIcon>
                 {{ $t('packages_dag_add_field') }}
               </ElButton>
-              <ElDropdownMenu ref="dropDownMenu" slot="dropdown">
-                <ElDropdownItem v-for="(option, i) in fieldTypeOptions" :key="i" :command="option.value">{{
-                  option.label
-                }}</ElDropdownItem>
-              </ElDropdownMenu>
+              <template v-slot:dropdown>
+                <ElDropdownMenu ref="dropDownMenu">
+                  <ElDropdownItem
+                    v-for="(option, i) in fieldTypeOptions"
+                    :key="i"
+                    :command="option.value"
+                    >{{ option.label }}</ElDropdownItem
+                  >
+                </ElDropdownMenu>
+              </template>
             </ElDropdown>
           </template>
         </ElPopover>
@@ -184,6 +245,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { unionBy, orderBy, merge } from 'lodash'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { Path } from '@formily/path'
@@ -197,7 +259,6 @@ import { sourceEndpoint, targetEndpoint } from '../../style'
 import NodeIcon from '../NodeIcon.vue'
 export default {
   name: 'Node',
-
   props: {
     position: Array,
     inputs: Array,
@@ -205,12 +266,12 @@ export default {
     parentSchema: Array,
     node: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     data: Object,
     nodeId: {
       type: String,
-      required: true
+      required: true,
     },
     jsPlumbIns: Object,
     getInputs: Function,
@@ -222,19 +283,16 @@ export default {
     nodeMap: Object,
     inputsMap: Object,
     hasTargetNode: Boolean,
-    schemaLoading: Boolean
+    schemaLoading: Boolean,
   },
-
   components: {
     NodeIcon,
     AsyncSelect,
     TableSelect,
     FieldSelect,
-    IconButton
+    IconButton,
   },
-
   directives: { ClickOutside },
-
   data() {
     let fieldType = 'Flatten'
 
@@ -247,7 +305,7 @@ export default {
     return {
       loading: false,
       params: {
-        where: { database_type: 'MongoDB' }
+        where: { database_type: 'MongoDB' },
       },
       targetFields: [],
       targetPath: this.node.targetPath,
@@ -257,20 +315,19 @@ export default {
       fieldTypeOptions: [
         {
           label: this.$t('packages_dag_materialized_view_field_flatten'),
-          value: 'Flatten'
+          value: 'Flatten',
         },
         {
           label: this.$t('packages_dag_materialized_view_field_document'),
-          value: 'Document'
+          value: 'Document',
         },
         {
           label: this.$t('packages_dag_materialized_view_field_array'),
-          value: 'Array'
-        }
-      ]
+          value: 'Array',
+        },
+      ],
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['nodeById', 'isActionActive', 'isNodeSelected']),
 
@@ -292,7 +349,7 @@ export default {
       const [left = 0, top = 0] = this.position || []
       return {
         left: left + 'px',
-        top: top + 'px'
+        top: top + 'px',
       }
     },
 
@@ -315,26 +372,34 @@ export default {
 
           let nodeTargetPath = inputNode.targetPath
           if (nodeTargetPath && targetPath) {
-            nodeTargetPath = nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
+            nodeTargetPath = nodeTargetPath.replace(
+              new RegExp(`${targetPath}?.`),
+              ''
+            )
           }
 
           if (this.inputsMap[input]?.length) {
-            arr = unionBy(arr, fields, richFields(this.inputsMap[input], nodeTargetPath), 'field_name')
+            arr = unionBy(
+              arr,
+              fields,
+              richFields(this.inputsMap[input], nodeTargetPath),
+              'field_name'
+            )
           } else {
             // if (nodeTargetPath && targetPath) {
             //   nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
             // }
 
             if (nodeTargetPath) {
-              fields = fields.map(field => {
+              fields = fields.map((field) => {
                 return {
                   ...field,
-                  field_name: `${nodeTargetPath}.${field.field_name}`
+                  field_name: `${nodeTargetPath}.${field.field_name}`,
                 }
               })
               fields.unshift({
                 field_name: nodeTargetPath,
-                dataType: 'DOCUMENT'
+                dataType: 'DOCUMENT',
               })
             }
             arr = unionBy(arr, fields)
@@ -345,7 +410,10 @@ export default {
       const inputs = this.inputsMap?.[this.node.id]
 
       if (inputs?.length) {
-        const mergedFields = richFields(this.inputsMap[this.node.id], this.node.targetPath)
+        const mergedFields = richFields(
+          this.inputsMap[this.node.id],
+          this.node.targetPath
+        )
         schema = unionBy(schema, mergedFields, 'field_name')
         schema.sort((a, b) => {
           let aVal, bVal
@@ -391,26 +459,28 @@ export default {
     treeEmptyText() {
       if (!this.dagNode.connectionId) {
         return this.$t(
-          this.isMainTable ? 'packages_dag_materialized_view_main_talbe_tips' : 'packages_dag_select_database_tips'
+          this.isMainTable
+            ? 'packages_dag_materialized_view_main_talbe_tips'
+            : 'packages_dag_select_database_tips'
         )
       }
 
       if (!this.dagNode.tableName) {
         return this.$t(
-          this.isMainTable ? 'packages_dag_materialized_view_main_talbe_tips' : 'packages_dag_select_table_tips'
+          this.isMainTable
+            ? 'packages_dag_materialized_view_main_talbe_tips'
+            : 'packages_dag_select_table_tips'
         )
       }
 
       return this.$t('public_data_no_data')
-    }
+    },
   },
-
   mounted() {
     if (this.node && this.ins) {
       this.__init()
     }
   },
-
   methods: {
     ...mapActions('dataflow', ['updateDag']),
     ...mapMutations('dataflow', [
@@ -420,7 +490,7 @@ export default {
       'updateNodeProperties',
       'resetSelectedNodes',
       'setNodeError',
-      'clearNodeError'
+      'clearNodeError',
     ]),
 
     findParentNodes(id, ifMyself) {
@@ -430,11 +500,11 @@ export default {
 
       if (ifMyself && !parentIds.length) return [node]
 
-      parentIds.forEach(pid => {
+      parentIds.forEach((pid) => {
         let parent = this.nodeById(pid)
         if (parent) {
           if (parent.$inputs?.length) {
-            parent.$inputs.forEach(ppid => {
+            parent.$inputs.forEach((ppid) => {
               parents.push(...this.findParentNodes(ppid, true))
             })
           } else {
@@ -452,7 +522,7 @@ export default {
       const nodeId = id
 
       const targetParams = {
-        ...targetEndpoint
+        ...targetEndpoint,
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -462,7 +532,7 @@ export default {
       this.jsPlumbIns.draggable(this.$el, {
         handle: '.node-title, .node-title *',
         // containment: 'parent',
-        start: params => {
+        start: (params) => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
@@ -474,14 +544,14 @@ export default {
 
           this.addActiveAction('dragActive')
 
-          this.$emit('drag-start', params)
+          $emit(this, 'drag-start', params)
           return true
         },
-        drag: params => {
+        drag: (params) => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
-          this.$emit('drag-move', params)
+          $emit(this, 'drag-move', params)
         },
         stop: () => {
           // console.log('node-drag-stop', params)
@@ -492,16 +562,21 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            this.position.splice(0, 2, parseFloat(this.$el.style.left), parseFloat(this.$el.style.top))
+            this.position.splice(
+              0,
+              2,
+              parseFloat(this.$el.style.left),
+              parseFloat(this.$el.style.top)
+            )
           }
 
           this.onMouseDownAt = undefined
-          this.$emit('drag-stop', this.isNotMove, oldProperties, newProperties)
-        }
+          $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
+        },
       })
 
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target'
+        uuid: id + '_target',
       })
 
       this.jsPlumbIns.addEndpoint(
@@ -513,11 +588,11 @@ export default {
             strokeWidth: 1,
             stroke: '#9f9f9f',
             outlineStroke: 'transparent',
-            outlineWidth: 20
-          }
+            outlineWidth: 20,
+          },
         },
         {
-          uuid: id + '_source'
+          uuid: id + '_source',
         }
       )
     },
@@ -528,15 +603,15 @@ export default {
       } else {
         if (!this.ins) return
         /*if (this.isCtrlKeyPressed(e) === false) {
-          // 如果不是多选模式则取消所有节点选中
-          this.$emit('deselectAllNodes')
-        }*/
+        // 如果不是多选模式则取消所有节点选中
+        this.$emit('deselectAllNodes')
+      }*/
 
         if (this.isNodeSelected(this.nodeId)) {
-          this.$emit('deselectNode', this.nodeId)
+          $emit(this, 'deselectNode', this.nodeId)
         } else {
           // 选中节点并且active
-          this.$emit('nodeSelected', this.nodeId, true)
+          $emit(this, 'nodeSelected', this.nodeId, true)
         }
       }
     },
@@ -547,8 +622,8 @@ export default {
         const _filter = {
           where: {
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -561,9 +636,9 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         // 过滤连接类型
         if (isSource && isTarget) {
@@ -571,25 +646,29 @@ export default {
         } else if (isSource) {
           _filter.where.connection_type = {
             like: 'source',
-            options: 'i'
+            options: 'i',
           }
         } else if (isTarget) {
           _filter.where.connection_type = {
             like: 'target',
-            options: 'i'
+            options: 'i',
           }
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
-            label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
+            label: `${item.name} ${
+              item.status
+                ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})`
+                : ''
+            }`,
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            ...item
+            ...item,
           }
         })
 
@@ -604,16 +683,16 @@ export default {
       filter.where &&
         Object.assign(filter.where, {
           meta_type: {
-            in: ['collection', 'table', 'view'] //,
+            in: ['collection', 'table', 'view'], //,
           },
           is_deleted: false,
-          sourceType: 'SOURCE'
+          sourceType: 'SOURCE',
         })
       Object.assign(filter, {
         fields: {
-          original_name: true
+          original_name: true,
         },
-        order: ['original_name ASC']
+        order: ['original_name ASC'],
       })
       if (filter.where?.value) {
         filter.where.original_name = filter.where?.value
@@ -621,27 +700,30 @@ export default {
       } else {
         filter.where.original_name = {
           // regexp: '^[^\\s]+$'
-          neq: ''
+          neq: '',
         }
       }
-      const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
-      data.items = data.items.map(item => {
+      const data = await metadataInstancesApi.get(
+        { filter: JSON.stringify(filter) },
+        config
+      )
+      data.items = data.items.map((item) => {
         return {
           label: item.original_name + (item.comment ? `(${item.comment})` : ''),
           value: item.original_name,
-          comment: item.comment
+          comment: item.comment,
         }
       })
       const table = filter.where.original_name?.like
-      if (table && !data.items.some(t => t.value.includes(table))) {
+      if (table && !data.items.some((t) => t.value.includes(table))) {
         const res = await metadataInstancesApi.checkTableExist({
           connectionId: filter.where['source.id'],
-          tableName: table
+          tableName: table,
         })
         if (res?.exist) {
           data.items.unshift({
             label: table,
-            value: table
+            value: table,
           })
         }
       }
@@ -660,7 +742,7 @@ export default {
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
-          let child = parent.children.find(c => c.field_name === field)
+          let child = parent.children.find((c) => c.field_name === field)
 
           if (!child) {
             child = { field_name: field, children: [] }
@@ -671,7 +753,7 @@ export default {
 
           if (i === fields.length - 1) {
             Object.assign(parent, item, {
-              field_name: field
+              field_name: field,
             })
           }
         }
@@ -708,17 +790,17 @@ export default {
 
     handleAddJoinKey() {
       if (!this.node.joinKeys) {
-        this.$set(this.node, 'joinKeys', [
+        this.node['joinKeys'] = [
           {
             source: '',
-            target: ''
-          }
-        ])
+            target: '',
+          },
+        ]
         return
       }
       this.node.joinKeys.push({
         source: '',
-        target: ''
+        target: '',
       })
     },
 
@@ -727,9 +809,12 @@ export default {
     },
 
     async loadTargetField() {
-      const fields = await metadataInstancesApi.getMergerNodeParentFields(this.$route.params.id, this.node.id)
+      const fields = await metadataInstancesApi.getMergerNodeParentFields(
+        this.$route.params.id,
+        this.node.id
+      )
 
-      this.targetFields = fields.map(item => {
+      this.targetFields = fields.map((item) => {
         let label = item.field_name
         const arr = label.split('.')
 
@@ -742,7 +827,7 @@ export default {
         return {
           label,
           value: item.field_name,
-          isPrimaryKey: item.primary_key_position > 0
+          isPrimaryKey: item.primary_key_position > 0,
         }
       })
     },
@@ -773,15 +858,18 @@ export default {
         connectionId: '',
         tableName: '',
         attrs: {
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
 
-      this.$emit('add-node', {
-        mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite', // 非主表非内嵌数组默认是更新写入
+      $emit(this, 'add-node', {
+        mergeType:
+          this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite', // 非主表非内嵌数组默认是更新写入
         targetPath: this.fieldName
-          ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
-          : this.node.targetPath || ''
+          ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${
+              this.fieldName
+            }`
+          : this.node.targetPath || '',
       })
     },
 
@@ -805,11 +893,11 @@ export default {
         accessNodeProcessId: connection.accessNodeProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
-        capabilities: connection.capabilities || []
+        capabilities: connection.capabilities || [],
       }
       this.dagNode.databaseType = connection.databaseType
-      Object.keys(nodeAttrs).forEach(key => {
-        this.$set(this.dagNode.attrs, key, nodeAttrs[key])
+      Object.keys(nodeAttrs).forEach((key) => {
+        this.dagNode.attrs[key] = nodeAttrs[key]
       })
     },
 
@@ -824,11 +912,11 @@ export default {
       this.dagNode.name = table
       let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })
-      this.$emit('load-schema')
+      $emit(this, 'load-schema')
     },
 
     onTableSelect(table) {
-      this.$set(this.dagNode.attrs, 'tableComment', table.comment)
+      this.dagNode.attrs['tableComment'] = table.comment
     },
 
     onChangeType(type) {
@@ -838,14 +926,30 @@ export default {
         this.node.mergeType = 'updateWrite'
         if (type === 'Flatten') {
           this.targetPath = ''
-          this.$emit('change-path', this.node, '')
+          $emit(this, 'change-path', this.node, '')
         }
       }
-    }
-  }
+    },
+  },
+  emits: [
+    'add-target-node',
+    'change-parent',
+    'change-path',
+    'drag-start',
+    'drag-move',
+    'drag-stop',
+    'deselectNode',
+    'nodeSelected',
+    'add-node',
+    'load-schema',
+    ,
+    'add-target-node',
+    'change-parent',
+    'change-path',
+  ],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import 'style';
 </style>

@@ -20,14 +20,14 @@ export class RowFilter extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -35,7 +35,7 @@ export class RowFilter extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               action: {
                 title: i18n.t('packages_dag_nodes_rowfilter_zhixingdongzuo'),
@@ -44,19 +44,21 @@ export class RowFilter extends NodeType {
                 default: 'retain',
                 enum: [
                   {
-                    label: i18n.t('packages_dag_nodes_jointcache_baoliupipeishu'),
-                    value: 'retain'
+                    label: i18n.t(
+                      'packages_dag_nodes_jointcache_baoliupipeishu'
+                    ),
+                    value: 'retain',
                   },
                   {
                     label: i18n.t('packages_dag_nodes_rowfilter_diuqipipeishu'),
-                    value: 'discard'
-                  }
+                    value: 'discard',
+                  },
                 ],
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 'x-decorator-props': {
-                  wrapperWidth: 240
-                }
+                  wrapperWidth: 240,
+                },
               },
               expression: {
                 title: i18n.t('packages_dag_nodes_rowfilter_tiaojianbiaodashi'),
@@ -66,21 +68,22 @@ export class RowFilter extends NodeType {
                 'x-component': 'JsEditor',
                 'x-component-props': {
                   options: { showPrintMargin: false, useWrapMode: true },
-                  onInit: '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}'
-                }
+                  onInit:
+                    '{{editor => addEditorFieldCompletion(editor, $values.id, $values.$inputs)}}',
+                },
               },
               example: {
                 type: 'void',
-                'x-component': 'ExpressionExample'
+                'x-component': 'ExpressionExample',
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

@@ -12,7 +12,9 @@ export const SettingsPanel = observer(
       const workbenchRef = useWorkbench()
       const innerVisible = ref(true)
       const visible = ref(true)
-      const currentWorkspace = workbenchRef.value?.activeWorkspace || workbenchRef.value?.currentWorkspace
+      const currentWorkspace =
+        workbenchRef.value?.activeWorkspace ||
+        workbenchRef.value?.currentWorkspace
       const currentWorkspaceId = currentWorkspace?.id
       const nodeRef = useCurrentNode(currentWorkspaceId)
 
@@ -44,10 +46,12 @@ export const SettingsPanel = observer(
                 <div class={prefix + '-header-extra'}>{slots.extra?.()}</div>
               </div>
             </div>
-            <div class={prefix + '-body'}>{innerVisible.value && slots.default?.()}</div>
+            <div class={prefix + '-body'}>
+              {innerVisible.value && slots.default?.()}
+            </div>
           </div>
         )
       }
-    }
+    },
   })
 )

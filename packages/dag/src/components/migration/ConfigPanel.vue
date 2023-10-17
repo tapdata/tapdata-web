@@ -26,28 +26,26 @@
     </div>
 
     <FormPanel
+      v-bind="$attrs"
       v-if="!materializedViewVisible"
       class="config-form-panel"
       v-show="activeType !== 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
       ref="formPanel"
       :formProps="{
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
+        feedbackLayout: 'terse',
       }"
       @update:InputsOrOutputs="handleLoadMeta"
       @setSchema="handleSetSchema"
     />
     <SettingPanel
+      v-bind="$attrs"
       v-if="settings.id"
       class="config-form-panel"
       :settings="settings"
       v-show="activeType === 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
       ref="setting"
     ></SettingPanel>
   </section>
@@ -69,7 +67,7 @@ export default {
 
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
 
   props: {
@@ -78,9 +76,9 @@ export default {
     showSchemaPanel: Boolean,
     includesType: {
       type: Array,
-      default: () => ['node', 'settings']
+      default: () => ['node', 'settings'],
     },
-    syncType: String
+    syncType: String,
   },
 
   data() {
@@ -89,29 +87,36 @@ export default {
       currentTab: 'settings',
       titleCurrentTab: 'settings',
       name: this.activeNode?.name,
-      form: null
+      form: null,
     }
   },
 
   components: { SettingPanel, NodeIcon, FormPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
+    ...mapGetters('dataflow', [
+      'activeType',
+      'activeNode',
+      'nodeById',
+      'stateIsReadonly',
+    ]),
     ...mapState('dataflow', ['editVersion', 'materializedViewVisible']),
 
     showPanel() {
-      return this.onlySetting ? this.activeType === 'settings' : this.includesType.includes(this.activeType)
+      return this.onlySetting
+        ? this.activeType === 'settings'
+        : this.includesType.includes(this.activeType)
     },
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
-    }
+    },
   },
 
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
 
   mounted() {
@@ -124,7 +129,7 @@ export default {
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'setMaterializedViewVisible'
+      'setMaterializedViewVisible',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
@@ -166,8 +171,8 @@ export default {
 
     handleSetSchema() {
       this.form = cloneDeep(this.$refs.formPanel?.form)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -183,7 +188,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;

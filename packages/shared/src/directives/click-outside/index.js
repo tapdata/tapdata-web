@@ -13,7 +13,8 @@ export function attachedRoot(node) {
   const root = node.getRootNode()
 
   // The composed root node is the document if the node is attached to the DOM
-  if (root !== document && root.getRootNode({ composed: true }) !== document) return null
+  if (root !== document && root.getRootNode({ composed: true }) !== document)
+    return null
 
   return root
 }
@@ -33,11 +34,19 @@ function checkEvent(e, el, binding) {
   // level of introspection as to _what_ we're clicking. We want to check to see if
   // our target is the shadowroot parent container, and if it is, ignore.
   const root = attachedRoot(el)
-  if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot && root.host === e.target) return false
+  if (
+    typeof ShadowRoot !== 'undefined' &&
+    root instanceof ShadowRoot &&
+    root.host === e.target
+  )
+    return false
 
   // Check if additional elements were passed to be included in check
   // (click must be outside all included elements, if any)
-  const elements = ((typeof binding.value === 'object' && binding.value.include) || (() => []))()
+  const elements = (
+    (typeof binding.value === 'object' && binding.value.include) ||
+    (() => [])
+  )()
   // Add the root element for the component this directive was defined on
   elements.push(el)
 
@@ -46,17 +55,20 @@ function checkEvent(e, el, binding) {
   // Toggleable can return true if it wants to deactivate.
   // Note that, because we're in the capture phase, this callback will occur before
   // the bubbling click event on any outside elements.
-  return !elements.some(el => el.contains(e.target))
+  return !elements.some((el) => el.contains(e.target))
 }
 
 function checkIsActive(e, binding) {
-  const isActive = (typeof binding.value === 'object' && binding.value.closeConditional) || defaultConditional
+  const isActive =
+    (typeof binding.value === 'object' && binding.value.closeConditional) ||
+    defaultConditional
 
   return isActive(e)
 }
 
 function directive(e, el, binding) {
-  const handler = typeof binding.value === 'function' ? binding.value : binding.value?.handler
+  const handler =
+    typeof binding.value === 'function' ? binding.value : binding.value?.handler
 
   el._clickOutside?.lastMousedownWasOutside &&
     checkEvent(e, el, binding) &&
@@ -81,33 +93,33 @@ export const ClickOutside = {
   // sure that the root element is
   // available, iOS does not support
   // clicks on body
-  inserted(el, binding, vnode) {
-    const onClick = e => directive(e, el, binding)
-    const onMousedown = e => {
+  mounted(el, binding, vnode) {
+    const onClick = (e) => directive(e, el, binding)
+    const onMousedown = (e) => {
       el._clickOutside.lastMousedownWasOutside = checkEvent(e, el, binding)
     }
 
-    handleShadow(el, app => {
+    handleShadow(el, (app) => {
       app.addEventListener('click', onClick, true)
       app.addEventListener('mousedown', onMousedown, true)
     })
 
     if (!el._clickOutside) {
       el._clickOutside = {
-        lastMousedownWasOutside: true
+        lastMousedownWasOutside: true,
       }
     }
 
     el._clickOutside[vnode.context?._uid] = {
       onClick,
-      onMousedown
+      onMousedown,
     }
   },
 
-  unbind(el, binding, vnode) {
+  unMounted(el, binding, vnode) {
     if (!el._clickOutside) return
 
-    handleShadow(el, app => {
+    handleShadow(el, (app) => {
       if (!app || !el._clickOutside?.[vnode.context?._uid]) return
 
       const { onClick, onMousedown } = el._clickOutside[vnode.context?._uid]
@@ -117,7 +129,7 @@ export const ClickOutside = {
     })
 
     delete el._clickOutside[vnode.context?._uid]
-  }
+  },
 }
 
 export default ClickOutside

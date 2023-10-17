@@ -37,7 +37,8 @@ export default class EventEmitter {
     self._events = new Set()
     self._callbacks = {}
     self._console = localConsole
-    self._maxListeners = maxListeners === null ? null : parseInt(maxListeners, 10)
+    self._maxListeners =
+      maxListeners === null ? null : parseInt(maxListeners, 10)
 
     return this
   }
@@ -56,7 +57,7 @@ export default class EventEmitter {
     this._getCallbacks(eventName).push({
       callback,
       context,
-      weight
+      weight,
     })
 
     // @todo instead of sorting insert to right place in Array.
@@ -90,7 +91,11 @@ export default class EventEmitter {
    * @return {number|null}
    */
   _getCallbackIndex(eventName, callback) {
-    return this._has(eventName) ? this._getCallbacks(eventName).findIndex(element => element.callback === callback) : -1
+    return this._has(eventName)
+      ? this._getCallbacks(eventName).findIndex(
+          (element) => element.callback === callback
+        )
+      : -1
   }
 
   /**
@@ -101,7 +106,10 @@ export default class EventEmitter {
    * @return {bool}
    */
   _achieveMaxListener(eventName) {
-    return internal(this)._maxListeners !== null && internal(this)._maxListeners <= this.listenersNumber(eventName)
+    return (
+      internal(this)._maxListeners !== null &&
+      internal(this)._maxListeners <= this.listenersNumber(eventName)
+    )
   }
 
   /**
@@ -115,9 +123,12 @@ export default class EventEmitter {
    */
   _callbackIsExists(eventName, callback, context) {
     const callbackInd = this._getCallbackIndex(eventName, callback)
-    const activeCallback = callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0
+    const activeCallback =
+      callbackInd !== -1 ? this._getCallbacks(eventName)[callbackInd] : void 0
 
-    return callbackInd !== -1 && activeCallback && activeCallback.context === context
+    return (
+      callbackInd !== -1 && activeCallback && activeCallback.context === context
+    )
   }
 
   /**
@@ -157,12 +168,17 @@ export default class EventEmitter {
     } else {
       // Check if we reached maximum number of listeners.
       if (this._achieveMaxListener(eventName)) {
-        self._console.warn(`Max listeners (${self._maxListeners})` + ` for event "${eventName}" is reached!`)
+        self._console.warn(
+          `Max listeners (${self._maxListeners})` +
+            ` for event "${eventName}" is reached!`
+        )
       }
 
       // Check if the same callback has already added.
       if (this._callbackIsExists(...arguments)) {
-        self._console.warn(`Event "${eventName}"` + ` already has the callback ${callback}.`)
+        self._console.warn(
+          `Event "${eventName}"` + ` already has the callback ${callback}.`
+        )
       }
     }
 
@@ -299,6 +315,8 @@ export default class EventEmitter {
    *                         or null if event isn't exists.
    */
   listenersNumber(eventName) {
-    return this._has(eventName) ? internal(this)._callbacks[eventName].length : null
+    return this._has(eventName)
+      ? internal(this)._callbacks[eventName].length
+      : null
   }
 }

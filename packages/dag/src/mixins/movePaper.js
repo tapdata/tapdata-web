@@ -3,20 +3,28 @@ import { on, off } from '@tap/shared'
 export default {
   data() {
     return {
-      moveLastPosition: [0, 0]
+      moveLastPosition: [0, 0],
     }
   },
 
   methods: {
     getMousePosition(e) {
       const x =
-        e.pageX !== undefined ? e.pageX : e.touches && e.touches[0] && e.touches[0].pageX ? e.touches[0].pageX : 0
+        e.pageX !== undefined
+          ? e.pageX
+          : e.touches && e.touches[0] && e.touches[0].pageX
+          ? e.touches[0].pageX
+          : 0
       const y =
-        e.pageY !== undefined ? e.pageY : e.touches && e.touches[0] && e.touches[0].pageY ? e.touches[0].pageY : 0
+        e.pageY !== undefined
+          ? e.pageY
+          : e.touches && e.touches[0] && e.touches[0].pageY
+          ? e.touches[0].pageY
+          : 0
 
       return {
         x,
-        y
+        y,
       }
     },
 
@@ -46,12 +54,13 @@ export default {
 
       on(document, 'mousemove', this.mouseMovePaper, {
         capture: false,
-        passive: false
+        passive: false,
       })
     },
 
     mouseUpMovePaper() {
-      if (this.$store.getters['dataflow/isPaperMoveInProgress'] === false) return
+      if (this.$store.getters['dataflow/isPaperMoveInProgress'] === false)
+        return
 
       off(document, 'mousemove', this.mouseMovePaper)
 
@@ -69,6 +78,6 @@ export default {
       }
 
       this.movePaper(e)
-    }
-  }
+    },
+  },
 }

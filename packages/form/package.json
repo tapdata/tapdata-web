@@ -26,7 +26,14 @@
     "cron-parser": "^4.6.0",
     "highlight.js": "^11.0.1",
     "resize-observer-polyfill": "^1.5.1",
-    "vue": "^2.6.14",
-    "vue-demi": "^0.12.1"
+    "vue": "^3.0.0",
+    "vue-demi": "^0.12.1",
+    "tiny-emitter": "^2.1.0",
+    "core-js": "^3.8.3"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.1",
+    "@vue/cli-plugin-babel": "^5.0.1",
+    "@babel/core": "^7.12.16"
   }
 }

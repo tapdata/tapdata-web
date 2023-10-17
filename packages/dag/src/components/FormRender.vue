@@ -1,7 +1,7 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto pt-1">
-      <Form class-name="form-wrap" :form="form" v-bind="formProps">
+      <Form v-bind="formProps" class-name="form-wrap" :form="form">
         <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
@@ -15,8 +15,8 @@ import * as _components from '../components/form'
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
-  }
+    ..._components,
+  },
 })
 
 export default {
@@ -32,12 +32,12 @@ export default {
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
-      })
-    }
+        feedbackLayout: 'terse',
+      }),
+    },
   },
 
-  components: { Form, SchemaField }
+  components: { Form, SchemaField },
 }
 </script>
 
@@ -55,7 +55,6 @@ $headerBg: #fff;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-
   &-header {
     display: flex;
     align-items: center;

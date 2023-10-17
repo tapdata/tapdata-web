@@ -8,126 +8,156 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei')
+        title: $t('packages_business_task_migratelist_renwufenlei'),
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
-        val => {
+        (val) => {
           multipleSelection = val
         }
       "
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
+      <template v-slot:search>
+        <FilterBar
+          v-model:value="searchParams"
+          :items="filterItems"
+          @fetch="table.fetch(1)"
+        />
       </template>
-      <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
-          >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
-        </ElButton>
-        <el-button
-          v-readonlybtn="'SYNC_category_application'"
-          :disabled="$disabledReadonlyUserBtn()"
-          size="mini"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
-          <span> {{ $t('public_button_bulk_tag') }}</span>
-        </el-button>
-        <el-dropdown
-          class="btn"
-          @command="handleCommand($event)"
-          v-show="multipleSelection.length > 0 && bulkOperation"
-        >
-          <el-button class="btn-dropdowm" size="mini">
-            <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              command="start"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkScheuled') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkStopping') }}
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="initialize"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchRest') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchDelete') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <template>
+      <template v-slot:operation>
+        <div class="buttons">
+          <ElButton
+            v-if="isDaas && multipleSelection.length"
+            @click="handlePermissionsSettings"
+            >{{
+              $t(
+                'packages_business_permissionse_settings_create_quanxianshezhi'
+              )
+            }}
+          </ElButton>
           <el-button
-            v-if="buttonShowMap.export"
-            v-show="multipleSelection.length > 0 && isDaas"
+            v-readonlybtn="'SYNC_category_application'"
             :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            size="mini"
-            class="btn message-button-cancel"
-            @click="handleCommand('export')"
-          >
-            <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-if="isDaas && buttonShowMap.import"
-            v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
+            v-show="multipleSelection.length > 0"
+            @click="$refs.table.showClassify(handleSelectTag())"
           >
-            <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
+            <span> {{ $t('public_button_bulk_tag') }}</span>
           </el-button>
-        </template>
-        <ElButton
-          v-if="$route.name === 'dataflowList'"
-          class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-          size="mini"
-          :loading="createBtnLoading"
-          @click="handleCreateMaterializedView"
-        >
-          <VIcon size="28">beta</VIcon>
-          {{ $t('packages_dag_build_materialized_view') }}</ElButton
-        >
-        <el-button
-          v-if="buttonShowMap.create"
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          id="task-list-create"
-          :disabled="$disabledReadonlyUserBtn()"
-          :loading="createBtnLoading"
-          @click="create()"
-        >
-          {{ $t('public_button_create') }}
-        </el-button>
-      </div>
+          <el-dropdown
+            class="btn"
+            @command="handleCommand($event)"
+            v-show="multipleSelection.length > 0 && bulkOperation"
+          >
+            <el-button class="btn-dropdowm" size="mini">
+              <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
+              <span>
+                {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span
+              >
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <template v-slot:dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  command="start"
+                  v-readonlybtn="'SYNC_job_operation'"
+                  :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="stop"
+                  v-readonlybtn="'SYNC_job_operation'"
+                  :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_bulkStopping') }}
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="initialize"
+                  v-readonlybtn="'SYNC_job_operation'"
+                  :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_batchRest') }}
+                </el-dropdown-item>
+                <el-dropdown-item
+                  command="del"
+                  v-readonlybtn="'SYNC_job_delete'"
+                  :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_batchDelete') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <template>
+            <el-button
+              v-if="buttonShowMap.export"
+              v-show="multipleSelection.length > 0 && isDaas"
+              :disabled="$disabledReadonlyUserBtn()"
+              v-readonlybtn="'SYNC_job_export'"
+              size="mini"
+              class="btn message-button-cancel"
+              @click="handleCommand('export')"
+            >
+              <!--<i class="iconfont icon-export back-btn-icon"></i>-->
+              <span> {{ $t('public_button_export') }}</span>
+            </el-button>
+            <el-button
+              v-if="isDaas && buttonShowMap.import"
+              v-readonlybtn="'SYNC_job_import'"
+              size="mini"
+              class="btn"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="handleImport"
+            >
+              <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
+              <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            </el-button>
+          </template>
+          <ElButton
+            v-if="$route.name === 'dataflowList'"
+            class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+            size="mini"
+            :loading="createBtnLoading"
+            @click="handleCreateMaterializedView"
+          >
+            <VIcon size="28">beta</VIcon>
+            {{ $t('packages_dag_build_materialized_view') }}</ElButton
+          >
+          <el-button
+            v-if="buttonShowMap.create"
+            v-readonlybtn="'SYNC_job_creation'"
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            id="task-list-create"
+            :disabled="$disabledReadonlyUserBtn()"
+            :loading="createBtnLoading"
+            @click="create()"
+          >
+            {{ $t('public_button_create') }}
+          </el-button>
+        </div>
+      </template>
 
       <el-table-column
         reserve-selection
         type="selection"
         width="45"
         align="center"
-        :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+        :selectable="
+          (row) =>
+            !row.hasChildren &&
+            !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)
+        "
       >
       </el-table-column>
-      <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
+      <el-table-column
+        min-width="240"
+        :label="$t('public_task_name')"
+        :show-overflow-tooltip="true"
+      >
         <template #default="{ row }">
           <span class="dataflow-name flex">
             <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
@@ -140,45 +170,89 @@
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
+            <span
+              v-if="row.listtags"
+              class="justify-content-start ellipsis block"
+            >
+              <span
+                class="tag inline-block"
+                v-for="item in row.listtags"
+                :key="item.id"
+                >{{ item.value }}</span
+              >
             </span>
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType">
+      <el-table-column
+        :label="$t('public_task_type')"
+        :min-width="colWidth.taskType"
+      >
         <template #default="{ row }">
           <span>
             {{ row.type ? taskType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
+      <el-table-column
+        prop="status"
+        :label="$t('public_task_status')"
+        :min-width="colWidth.status"
+      >
         <template #default="{ row }">
-          <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
+          <TaskStatus
+            :task="row"
+            :agentMap="agentMap"
+            :error-cause="taskErrorCause[row.id]"
+          />
         </template>
       </el-table-column>
-      <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
+      <el-table-column
+        sortable
+        prop="currentEventTimestamp"
+        :label="$t('public_task_cdc_time_point')"
+        min-width="168"
+      >
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
         </template>
       </el-table-column>
-      <el-table-column prop="lastStartDate" :label="$t('public_task_last_run_time')" min-width="168" sortable="custom">
+      <el-table-column
+        prop="lastStartDate"
+        :label="$t('public_task_last_run_time')"
+        min-width="168"
+        sortable="custom"
+      >
         <template #default="{ row }">
           {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
-        <div v-if="isDaas" slot="header" class="flex align-center">
-          <span>{{ $t('public_operation_available') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
+      <el-table-column
+        :label="$t('public_operation')"
+        :width="colWidth.operation"
+      >
+        <template v-slot:header>
+          <div v-if="isDaas" class="flex align-center">
+            <span>{{ $t('public_operation_available') }}</span>
+            <ElTooltip
+              class="ml-2"
+              placement="top"
+              :content="
+                $t('packages_business_connections_list_wuquanxiandecao')
+              "
+            >
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
-              v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
+              v-if="
+                row.btnDisabled.stop &&
+                row.btnDisabled.forceStop &&
+                havePermission(row, 'Start')
+              "
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
@@ -191,7 +265,9 @@
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
-                :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
+                :disabled="
+                  row.btnDisabled.forceStop || $disabledReadonlyUserBtn()
+                "
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
@@ -233,7 +309,10 @@
             >
               {{ $t('packages_business_task_list_button_monitor') }}
             </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElDivider
+              v-readonlybtn="'SYNC_job_edition'"
+              direction="vertical"
+            ></ElDivider>
             <ElLink
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
@@ -277,18 +356,25 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload
+      v-if="isDaas"
+      :type="'dataflow'"
+      ref="upload"
+      @success="table.fetch()"
+    ></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
-      :visible.sync="dialogDelMsgVisible"
+      v-model:visible="dialogDelMsgVisible"
       width="52%"
       custom-class="dialogDelMsgDialog"
     >
       <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
         <div class="mb-4">{{ $t('packages_business_task_list_sqLyuju') }}</div>
-        <div class="mt-2">{{ $t('packages_business_task_list_diyibuchaxun') }}</div>
+        <div class="mt-2">
+          {{ $t('packages_business_task_list_diyibuchaxun') }}
+        </div>
         <div class="mb-4">
           {{ copySelectSql }}
           <ElTooltip
@@ -308,7 +394,9 @@
             </span>
           </ElTooltip>
         </div>
-        <div class="mt-2">{{ $t('packages_business_task_list_dierbushanchu') }}</div>
+        <div class="mt-2">
+          {{ $t('packages_business_task_list_dierbushanchu') }}
+        </div>
         <div>
           {{ copyDelSql }}
           <ElTooltip
@@ -332,20 +420,26 @@
       <div class="mt-2" v-for="item in failList" :key="item.id">
         {{ $t('packages_business_task_list_lianjieming') }}{{ item.message }}
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="dialogDelMsgVisible = false">{{
+            $t('public_button_close')
+          }}</el-button>
+        </span>
+      </template>
     </el-dialog>
-    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
+    <PermissionseSettingsCreate
+      ref="permissionseSettingsCreate"
+    ></PermissionseSettingsCreate>
 
     <UpgradeFee
-      :visible.sync="upgradeFeeVisible"
+      v-model:visible="upgradeFeeVisible"
       :tooltip="$t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeFee>
 
     <UpgradeCharges
-      :visible.sync="upgradeChargesVisible"
+      v-model:visible="upgradeChargesVisible"
       :tooltip="$t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeCharges>
@@ -408,7 +502,7 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
+        "initial_sync+cdc": this.$t('public_task_type_initial_sync_and_cdc')
       },
       typeOptions: [
         { label: this.$t('public_select_option_all'), value: '' },
@@ -440,7 +534,7 @@ export default {
       taskErrorCause: {},
       upgradeFeeVisible: false,
       upgradeChargesVisible: false
-    }
+    };
   },
 
   computed: {
@@ -453,7 +547,7 @@ export default {
         return {
           label: this.$t(item.i18n),
           value: item.in ? item.in.join(',') : status
-        }
+        };
       })
       options.unshift({ label: this.$t('packages_business_task_list_status_all'), value: '' })
       return options
@@ -471,7 +565,7 @@ export default {
             taskType: 80,
             status: 110,
             operation: 280
-          }
+          };
     },
 
     buttonShowMap() {
@@ -481,7 +575,7 @@ export default {
           copy: this.$has('v2_data_flow_copy'),
           import: this.$has('v2_data_flow_import'),
           export: this.$has('v2_data_flow_export')
-        }
+        };
       }
 
       return {
@@ -489,7 +583,7 @@ export default {
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
-      }
+      };
     }
   },
 
@@ -511,7 +605,7 @@ export default {
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timeout)
   },
 
@@ -589,7 +683,7 @@ export default {
             if (item.status === 'error') {
               errorTaskIds.push(item.id)
             } else if (this.taskErrorCause[item.id]) {
-              this.$delete(this.taskErrorCause, item.id)
+              delete this.taskErrorCause
             }
             return item
           })
@@ -615,8 +709,8 @@ export default {
           return {
             total: data.total,
             data: list
-          }
-        })
+          };
+        });
     },
 
     formatTime(time) {
@@ -663,8 +757,8 @@ export default {
               return {
                 label: item.name,
                 value: item.tmInfo.agentId
-              }
-            })
+              };
+            });
           }
         })
       }
@@ -1001,7 +1095,7 @@ export default {
           code: 'error',
           id: t?.id,
           message: i18n.t('packages_business_task_list_renwubuzhichi')
-        }
+        };
       })
       if (!canList.length) {
         this.responseHandler(canList, '', canNotResult)
@@ -1040,7 +1134,7 @@ export default {
       return {
         msg,
         title: this.$t('packages_business_dataFlow_' + title)
-      }
+      };
     },
 
     handleImport() {
@@ -1082,8 +1176,7 @@ export default {
       }
 
       cause &&
-        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
-        this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
+        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') && this.taskErrorCause[task_id] = cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, '')
     },
 
     // 显示权限设置
@@ -1148,7 +1241,6 @@ export default {
   height: 100%;
   padding: 0 24px 24px 0;
   background: #fff;
-
   .btn-refresh {
     padding: 0;
     height: 32px;

@@ -3,23 +3,36 @@
     width="980px"
     append-to-body
     custom-class="batch-field-type-maping-table-dialog"
-    :visible.sync="visible"
+    v-model:visible="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     @close="handleCancel"
   >
-    <div slot="title" class="mb-6 font-color-dark fs-3 fw-bold">
-      {{ showResult ? $t('dfs_user_center_zhifufuwu') : $t('dfs_instance_create_xuyaogengduode') }}
-    </div>
+    <template v-slot:title>
+      <div class="mb-6 font-color-dark fs-3 fw-bold">
+        {{
+          showResult
+            ? $t('dfs_user_center_zhifufuwu')
+            : $t('dfs_instance_create_xuyaogengduode')
+        }}
+      </div>
+    </template>
     <template v-if="!showResult">
-      <p class="mt-n10 mb-4 font-color-sslight">{{ $t('dfs_instance_create_qinggenjushuju') }}</p>
-      <p class="font-color-light mb-2">{{ $t('dfs_instance_create_xuanzeshiligui') }}</p>
+      <p class="mt-n10 mb-4 font-color-sslight">
+        {{ $t('dfs_instance_create_qinggenjushuju') }}
+      </p>
+      <p class="font-color-light mb-2">
+        {{ $t('dfs_instance_create_xuanzeshiligui') }}
+      </p>
       <ul class="flex justify-content-start">
         <li
           v-for="(item, index) in specificationItems"
           :key="index"
           class="specification-item cursor-pointer py-2 px-4"
-          :class="{ active: form.specification === item.value, 'mr-4': index !== specificationItems.length - 1 }"
+          :class="{
+            active: form.specification === item.value,
+            'mr-4': index !== specificationItems.length - 1,
+          }"
           @click="handleChange(item)"
         >
           {{ item.label }}
@@ -28,7 +41,10 @@
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
       <ElForm :model="form" ref="from">
         <ElFormItem prop="email" :rules="getEmailRules()">
-          <ElInput v-model="form.email" :placeholder="getPlaceholder()"></ElInput>
+          <ElInput
+            v-model:value="form.email"
+            :placeholder="getPlaceholder()"
+          ></ElInput>
         </ElFormItem>
       </ElForm>
       <ul v-loading="loading" class="mt-6 flex">
@@ -36,41 +52,63 @@
           v-for="(item, index) in packageItems"
           :key="item.value"
           class="packages-item position-relative text-center mb-4 p-4 cursor-pointer"
-          :class="{ active: selected.value === item.value, 'mr-6': index !== packageItems.length - 1, 'is-en': isEn }"
+          :class="{
+            active: selected.value === item.value,
+            'mr-6': index !== packageItems.length - 1,
+            'is-en': isEn,
+          }"
           @click="handlePackage(item)"
         >
-          <span v-if="item.recommend" class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6">{{
-            $t('dfs_instance_create_tuijian')
-          }}</span>
+          <span
+            v-if="item.recommend"
+            class="recommend-item position-absolute top-0 bg-primary color-white py-1 px-6"
+            >{{ $t('dfs_instance_create_tuijian') }}</span
+          >
           <p class="mb-4 pt-2 fs-6 font-color-normal">{{ item.label }}</p>
           <p class="mb-4 color-primary">
             <span class="fs-5">{{ item.price }}</span>
-            <span v-if="item.priceSuffix" class="fs-5">/{{ item.priceSuffix }}</span>
+            <span v-if="item.priceSuffix" class="fs-5"
+              >/{{ item.priceSuffix }}</span
+            >
           </p>
           <p class="font-color-sslight fs-8">{{ item.desc }}</p>
         </li>
       </ul>
       <!--      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>-->
 
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">{{
-          $t('public_button_subscription')
-        }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton
+            size="mini"
+            type="primary"
+            :loading="submitLoading"
+            @click="submit"
+            >{{ $t('public_button_subscription') }}</ElButton
+          >
+        </span>
+      </template>
     </template>
     <div v-else class="text-center">
       <div>
-        <img style="height: 80px" :src="require('@tap/assets/images/passed.png')" />
+        <img
+          style="height: 80px"
+          :src="require('@tap/assets/images/passed.png')"
+        />
       </div>
-      <p class="my-6 mb-4 fs-6 font-color-light">{{ $t('dfs_instance_create_zhifuwanchenghou') }}</p>
+      <p class="my-6 mb-4 fs-6 font-color-light">
+        {{ $t('dfs_instance_create_zhifuwanchenghou') }}
+      </p>
       <div class="inline-block">
-        <ElButton type="primary" class="finish-button" @click="finish">{{ $t('public_status_finished') }}</ElButton>
+        <ElButton type="primary" class="finish-button" @click="finish">{{
+          $t('public_status_finished')
+        }}</ElButton>
       </div>
     </div>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { uniqBy } from 'lodash'
 import i18n from '@/i18n'
 import { openUrl } from '@tap/shared'
@@ -79,16 +117,13 @@ import { getSpec, getPaymentMethod } from './utils'
 
 export default {
   name: 'Create',
-
   inject: ['buried'],
-
   props: {
     value: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-
   data() {
     return {
       visible: false,
@@ -100,10 +135,10 @@ export default {
       selected: {},
       form: {
         specification: '',
-        email: ''
+        email: '',
       },
       showResult: false,
-      isEn: i18n.locale === 'en'
+      isEn: i18n.locale === 'en',
       // emailRules: [
       //   {
       //     required: true,
@@ -116,14 +151,12 @@ export default {
       // ]
     }
   },
-
   watch: {
     value(v) {
       this.visible = v
       v && this.init()
-    }
+    },
   },
-
   methods: {
     init() {
       this.showResult = false
@@ -133,23 +166,23 @@ export default {
 
     loadData() {
       const params = {
-        productType: 'selfHost'
+        productType: 'selfHost',
       }
       this.loading = true
       this.$axios
         .get('api/tcm/paid/plan/getPaidPlan', { params })
-        .then(data => {
+        .then((data) => {
           const { paidPrice = [] } = data?.[0] || {}
 
           // 规格
           this.specificationItems = uniqBy(
-            paidPrice.map(t => {
+            paidPrice.map((t) => {
               const { cpu = 0, memory = 0 } = t.spec || {}
               return {
                 label: getSpec(t.spec),
                 value: getSpec(t.spec),
                 cpu,
-                memory
+                memory,
               }
             }),
             'value'
@@ -159,7 +192,7 @@ export default {
           this.handleSpecification(this.specificationItems[0])
 
           // 价格套餐
-          this.allPackages = paidPrice.map(t => {
+          this.allPackages = paidPrice.map((t) => {
             return Object.assign(t, {
               label: getPaymentMethod(t),
               value: t.priceId,
@@ -167,11 +200,11 @@ export default {
                 CURRENCY_SYMBOL_MAP[t.currency] +
                 (t.price / 100).toLocaleString('zh', {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 }),
               priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
               desc: '',
-              specification: getSpec(t.spec)
+              specification: getSpec(t.spec),
             })
           })
           this.loadPackageItems()
@@ -183,14 +216,16 @@ export default {
     },
 
     loadPackageItems() {
-      const specificationLabel = this.specificationItems.find(t => t.value === this.form.specification)?.label
+      const specificationLabel = this.specificationItems.find(
+        (t) => t.value === this.form.specification
+      )?.label
       this.packageItems = this.allPackages
-        .filter(t => this.form.specification === t.specification)
-        .map(t => {
+        .filter((t) => this.form.specification === t.specification)
+        .map((t) => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
-              val1: specificationLabel
-            })
+              val1: specificationLabel,
+            }),
           })
         })
         .sort((a, b) => {
@@ -206,7 +241,7 @@ export default {
 
     handleCancel() {
       this.visible = false
-      this.$emit('input', this.visible)
+      $emit(this, 'update:value', this.visible)
     },
 
     handleSpecification(item = {}) {
@@ -224,8 +259,8 @@ export default {
       const fastDownloadUrl = window.App.$router.resolve({
         name: 'FastDownload',
         query: {
-          id: ''
-        }
+          id: '',
+        },
       })
 
       const params = {
@@ -236,30 +271,30 @@ export default {
         successUrl: location.origin + '/' + fastDownloadUrl.href,
         cancelUrl: location.href,
         email,
-        type
+        type,
       }
 
       this.submitLoading = true
       this.submitLoading = true
       this.buried('newAgentStripe', '', {
-        type
+        type,
       })
       this.$axios
         .post('api/tcm/orders', params)
-        .then(data => {
+        .then((data) => {
           openUrl(data?.paymentUrl)
           // this.submitLoading = false
           // this.showResult = true
           this.finish()
           this.buried('newAgentStripe', '', {
             type,
-            result: true
+            result: true,
           })
         })
         .catch(() => {
           this.buried('newAgentStripe', '', {
             type,
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -273,7 +308,7 @@ export default {
 
     finish() {
       this.$message.success(this.$t('public_message_operation_success'))
-      this.$emit('finish')
+      $emit(this, 'finish')
       this.handleCancel()
     },
 
@@ -281,12 +316,12 @@ export default {
       return [
         {
           required: this.selected.type === 'recurring',
-          message: i18n.t('dfs_instance_create_qingshuruninde')
+          message: i18n.t('dfs_instance_create_qingshuruninde'),
         },
         {
           type: 'email',
-          message: i18n.t('dfs_instance_create_qingshuruzhengque')
-        }
+          message: i18n.t('dfs_instance_create_qingshuruzhengque'),
+        },
       ]
     },
 
@@ -294,8 +329,9 @@ export default {
       return this.selected.type === 'recurring'
         ? i18n.t('dfs_instance_create_yongyujieshoumei')
         : i18n.t('dfs_instance_create_kexuan')
-    }
-  }
+    },
+  },
+  emits: ['update:value', 'finish'],
 }
 </script>
 
@@ -305,7 +341,6 @@ export default {
   transform: translateY(-50%);
   left: -1px;
 }
-
 .packages-item {
   box-shadow: 0px 4px 4px rgba(29, 33, 41, 0.05);
   border-radius: 8px;
@@ -319,12 +354,10 @@ export default {
     height: 190px;
   }
 }
-
 .el-select,
 .el-input {
   width: 494px;
 }
-
 .specification-item {
   border: 1px solid map-get($borderColor, normal);
   border-radius: 8px;
@@ -332,7 +365,6 @@ export default {
     border-color: map-get($color, primary);
   }
 }
-
 .finish-button {
   width: 250px;
   height: 42px;

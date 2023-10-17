@@ -3,7 +3,7 @@ import { createSchemaField } from '@formily/vue'
 import * as components from '../components'
 
 const { SchemaField } = createSchemaField({
-  components
+  components,
 })
 
 export { createForm, SchemaField }

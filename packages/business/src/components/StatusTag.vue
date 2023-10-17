@@ -3,15 +3,24 @@
     <img :src="imgSrc" :data-status="statusObj.text" alt="" />
   </span>
   <span v-else class="td-status-tag">
-    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
+    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{
+      statusObj.text
+    }}</ElTag>
     <span :class="['flex', 'align-items-center', 'icon-span', status]" v-else>
-      <VIcon v-if="statusObj.icon" :class="['v-icon', `color-${statusObj.type}`]" size="16">{{ statusObj.icon }}</VIcon>
+      <VIcon
+        v-if="statusObj.icon"
+        :class="['v-icon', `color-${statusObj.type}`]"
+        size="16"
+        >{{ statusObj.icon }}</VIcon
+      >
       <span
         v-else
         :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
         :style="{ 'background-color': statusObj.color }"
       ></span>
-      <span class="td-status-tag__text font-color-light">{{ statusObj.text }}</span>
+      <span class="td-status-tag__text font-color-light">{{
+        statusObj.text
+      }}</span>
     </span>
   </span>
 </template>
@@ -24,7 +33,7 @@ import {
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
   ETL_SUB_STATUS_MAP,
-  SHARECDC_MAP
+  SHARECDC_MAP,
 } from '../shared/const'
 export default {
   name: 'StatusTag',
@@ -32,28 +41,28 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'tag'
+      default: 'tag',
     },
     status: {
-      type: String
+      type: String,
     },
     target: {
       type: String,
-      default: 'instance'
+      default: 'instance',
     },
     onlyImg: {
       type: Boolean,
-      default: false
+      default: false,
     },
     statusMap: {
       type: Object,
       default: () => {
         return null
-      }
+      },
     },
     defaultStatus: {
-      type: String
-    }
+      type: String,
+    },
   },
   computed: {
     map() {
@@ -65,7 +74,7 @@ export default {
           connection: CONNECTION_STATUS_MAP,
           milestone: MILESTONE_STATUS_MAP,
           etl: ETL_STATUS_MAP,
-          etlSub: ETL_SUB_STATUS_MAP
+          etlSub: ETL_SUB_STATUS_MAP,
         }[this.target]
       )
     },
@@ -74,8 +83,8 @@ export default {
     },
     imgSrc() {
       return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
-    }
-  }
+    },
+  },
 }
 </script>
 

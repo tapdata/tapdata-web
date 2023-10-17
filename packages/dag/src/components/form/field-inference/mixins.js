@@ -12,7 +12,7 @@ export default {
 
     showLoading() {
       return this.loading
-    }
+    },
   },
 
   methods: {
@@ -21,7 +21,7 @@ export default {
       if (!nodeId) return
       let data = {
         items: [],
-        total: 0
+        total: 0,
       }
       try {
         const params = Object.assign(
@@ -29,7 +29,7 @@ export default {
             nodeId,
             fields: ['original_name', 'fields', 'qualified_name'],
             page: 1,
-            pageSize: 20
+            pageSize: 20,
           },
           op
         )
@@ -38,6 +38,6 @@ export default {
         // catch
       }
       return data
-    }
-  }
+    },
+  },
 }

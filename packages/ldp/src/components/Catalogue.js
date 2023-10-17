@@ -1,7 +1,18 @@
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import {
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+  nextTick,
+  onMounted,
+} from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { VIcon, ProTable } from '@tap/component'
-import { DatabaseIcon, DataServerDrawer as ApiPreview, makeDragNodeImage } from '@tap/business'
+import {
+  DatabaseIcon,
+  DataServerDrawer as ApiPreview,
+  makeDragNodeImage,
+} from '@tap/business'
 import TablePreview from '../TablePreview'
 import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
@@ -13,11 +24,11 @@ const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
 const ICON = {
   folder: 'folder-o',
   table: 'table',
-  api: 'apiServer_navbar'
+  api: 'apiServer_navbar',
 }
 export default defineComponent({
   directives: {
-    resize
+    resize,
   },
   setup(props, { refs, root, listeners }) {
     const list = ref([])
@@ -30,22 +41,22 @@ export default defineComponent({
       tableLoading: false,
       searchParams: {
         sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        queryKey: queryKey || '',
       },
       page: {
         size: 20,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentNode: '',
-      filterItems: []
+      filterItems: [],
     })
     const currentNode = ref({})
     const pathMatch = ref([])
     const apiServerHost = ref('')
 
-    const matchParent = node => {
+    const matchParent = (node) => {
       let arr = [node]
       node = node.parent
 
@@ -82,7 +93,9 @@ export default defineComponent({
 
     const getApiServerHost = async () => {
       const showError = () => {
-        root.$message.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+        root.$message.error(
+          this.$t('packages_business_data_server_list_huoqufuwuyu')
+        )
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -95,7 +108,7 @@ export default defineComponent({
 
     isDaas && getApiServerHost()
 
-    const renderIcon = data => {
+    const renderIcon = (data) => {
       if (data.LDP_TYPE === 'connection') {
         return <DatabaseIcon item={data} size={20} />
       } else {
@@ -107,7 +120,7 @@ export default defineComponent({
       isDragging: false,
       draggingObjects: [],
       dropNode: null,
-      allowDrop: true
+      allowDrop: true,
     })
 
     let draggingNodeImage
@@ -141,14 +154,14 @@ export default defineComponent({
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = val => {
+    const handleSelectionChange = (val) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj
       }, {})
     }
 
-    const setTreeCurrent = data => {
+    const setTreeCurrent = (data) => {
       refs.tree.setCurrent(data)
     }
 
@@ -162,13 +175,13 @@ export default defineComponent({
                   name: 'resize',
                   value: {
                     minWidth: 300,
-                    maxWidth: 600
+                    maxWidth: 600,
                   },
                   modifiers: {
-                    right: true
-                  }
-                }
-              ]
+                    right: true,
+                  },
+                },
+              ],
             }}
             class="page-left border-right pt-3 pr-3 overflow-auto"
           >
@@ -195,7 +208,10 @@ export default defineComponent({
                         {node.data.name}
                       </div>
                       {notLast && (
-                        <VIcon size={24} class="path-breadcrumb-item__separator ml-1">
+                        <VIcon
+                          size={24}
+                          class="path-breadcrumb-item__separator ml-1"
+                        >
                           arrow-right
                         </VIcon>
                       )}
@@ -217,21 +233,35 @@ export default defineComponent({
                   'row-click': setTreeCurrent,
                   'row-dragstart': handleDragStart,
                   'row-dragend': handleDragEnd,
-                  'selection-change': handleSelectionChange
+                  'selection-change': handleSelectionChange,
                 }}
               >
-                <el-table-column type="selection" width="24" class-name="ck-cell-wrap"></el-table-column>
-                <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
+                <el-table-column
+                  type="selection"
+                  width="24"
+                  class-name="ck-cell-wrap"
+                ></el-table-column>
+                <el-table-column
+                  label={i18n.t('public_name')}
+                  prop="name"
+                  show-overflow-tooltip
+                  width="350px"
+                >
                   {({ row }) => {
                     return (
                       <div class="cursor-pointer flex align-center">
-                        <div class="tree-item-icon flex align-center mr-2">{renderIcon(row)}</div>
+                        <div class="tree-item-icon flex align-center mr-2">
+                          {renderIcon(row)}
+                        </div>
                         <span>{row.name}</span>
                       </div>
                     )
                   }}
                 </el-table-column>
-                <el-table-column label={i18n.t('public_change_time')} prop="changeTime"></el-table-column>
+                <el-table-column
+                  label={i18n.t('public_change_time')}
+                  prop="changeTime"
+                ></el-table-column>
               </ProTable>
 
               {options.isShowDetails && (
@@ -258,5 +288,5 @@ export default defineComponent({
         </section>
       )
     }
-  }
+  },
 })

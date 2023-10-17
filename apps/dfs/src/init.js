@@ -1,9 +1,9 @@
-import Vue from 'vue'
+import * as Vue from 'vue'
 import './plugins/element'
 import './plugins/axios'
 import './directive'
 import App from './App.vue'
-import VueRouter from 'vue-router'
+import * as VueRouter from 'vue-router'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
 import VueClipboard from 'vue-clipboard2'
@@ -22,35 +22,37 @@ import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
 
-Vue.config.productionTip = false
-Vue.use(VueClipboard)
+window.$vueApp.use(VueClipboard)
 
 const originalPush = VueRouter.prototype.push
 const originalReplace = VueRouter.prototype.replace
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
+  return originalPush.call(this, location).catch((err) => err)
 }
 VueRouter.prototype.replace = function replace(location) {
-  return originalReplace.call(this, location).catch(err => err)
+  return originalReplace.call(this, location).catch((err) => err)
 }
-Vue.use(VueRouter)
-Vue.use(FormBuilder)
+window.$vueApp.use(FormBuilder)
 
-Vue.component(VIcon.name, VIcon)
-Vue.component(VButton.name, VButton)
+window.$vueApp.component(VIcon.name, VIcon)
+window.$vueApp.component(VButton.name, VButton)
 
-Vue.mixin({
+window.$vueApp.mixin({
   created() {
     // 创建实例时传入wsOptions，即可默认开启websocket
     let wsOptions = this.$options.wsOptions
     // 根实例才有ws
     if (wsOptions) {
-      Vue.prototype.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+      window.$vueApp.config.globalProperties.$ws = new WSClient(
+        wsOptions.url,
+        wsOptions.protocols,
+        wsOptions
+      )
     }
-  }
+  },
 })
 
-Vue.prototype.$confirm = (message, title, options) => {
+window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {
     VConfirm.confirm(message, title, options)
       .then(() => {
@@ -66,8 +68,10 @@ export default ({ routes }) => {
   let loading = null
 
   const init = () => {
-    const router = new VueRouter({
-      routes
+    const router = VueRouter.createRouter({
+      history: VueRouter.createWebHashHistory(),
+      routes: routes,
+      history: VueRouter.createWebHashHistory(),
     })
     startTimeOnPage(router)
 
@@ -89,22 +93,22 @@ export default ({ routes }) => {
 
     store.commit('setUser', window.__USER_INFO__)
 
-    window.App = new Vue({
+    window.App = {
       router,
       store,
       i18n,
       wsOptions: {
-        url: wsUrl
+        url: wsUrl,
       },
-      render: h => h(App)
-    }).$mount('#app')
+      render: (h) => h(App),
+    }.$mount('#app')
 
     // 版本升级检测
     createVersionPolling({
       appETagKey: '__APP_ETAG__',
       pollingInterval: 5 * 1000, // 单位为毫秒
       silent: process.env.NODE_ENV === 'development', // 开发环境下不检测
-      onUpdate: self => {
+      onUpdate: (self) => {
         const h = window.App.$createElement
         Notification({
           customClass: 'version-upgrade-notification',
@@ -112,29 +116,42 @@ export default ({ routes }) => {
           message: h(
             'div',
             {
-              class: 'flex align-items-start gap-2 ml-n3 mr-n2'
+              class: 'flex align-items-start gap-2 ml-n3 mr-n2',
             },
             [
-              h('ElImage', { class: 'flex-shrink-0', attrs: { src: require('@/assets/image/version-rocket.svg') } }),
-              h('div', { class: 'flex flex-column align-items-start gap-2 text-start' }, [
-                h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
-                h('span', { class: '' }, i18n.t('dfs_system_description')),
-                h(
-                  'el-button',
-                  {
-                    class: 'ml-auto',
-                    props: { type: 'primary', size: 'mini' },
-                    on: { click: () => self.onRefresh() }
-                  },
-                  i18n.t('public_button_refresh')
-                )
-              ])
+              h('ElImage', {
+                class: 'flex-shrink-0',
+                attrs: { src: require('@/assets/image/version-rocket.svg') },
+              }),
+              h(
+                'div',
+                {
+                  class: 'flex flex-column align-items-start gap-2 text-start',
+                },
+                [
+                  h(
+                    'span',
+                    { class: 'text-primary fs-6 fw-sub' },
+                    i18n.t('dfs_system_update')
+                  ),
+                  h('span', { class: '' }, i18n.t('dfs_system_description')),
+                  h(
+                    'el-button',
+                    {
+                      class: 'ml-auto',
+                      props: { type: 'primary', size: 'mini' },
+                      on: { click: () => self.onRefresh() },
+                    },
+                    i18n.t('public_button_refresh')
+                  ),
+                ]
+              ),
             ]
           ),
           duration: 0,
-          position: 'bottom-right'
+          position: 'bottom-right',
         })
-      }
+      },
     })
 
     // 路由守卫
@@ -149,7 +166,7 @@ export default ({ routes }) => {
           'DataflowEditor',
           'MigrateCreate',
           'MigrateEditor',
-          'MigrateEditor'
+          'MigrateEditor',
         ].includes(to.name) &&
         domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
@@ -159,7 +176,7 @@ export default ({ routes }) => {
         next()
       }
     })
-    router.onError(error => {
+    router.onError((error) => {
       const pattern = /Loading chunk (\d)+ failed/g
       const isChunkLoadFailed = error.message.match(pattern)
       if (isChunkLoadFailed) {
@@ -175,7 +192,7 @@ export default ({ routes }) => {
   let getData = () => {
     window.axios
       .get('api/tcm/user')
-      .then(data => {
+      .then((data) => {
         let userInfo = data
         window.__USER_INFO__ = userInfo
 
@@ -183,11 +200,11 @@ export default ({ routes }) => {
         init()
 
         // 设置服务器时间
-        timeStampApi.get().then(t => {
+        timeStampApi.get().then((t) => {
           Time.setTime(t)
         })
       })
-      .catch(err => {
+      .catch((err) => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
@@ -213,10 +230,10 @@ export default ({ routes }) => {
       cache: false,
       responseType: 'json',
       headers: {
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     })
-    .then(res => {
+    .then((res) => {
       store.commit('setConfig', res.data)
       window.__config__ = res.data
 

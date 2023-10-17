@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :visible.sync="visible"
+    v-model:visible="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="showClose"
@@ -26,13 +26,14 @@ export default {
   components: { CreateAgent },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     showClose: {
       type: Boolean,
-      default: true
-    }
-  }
+      default: true,
+    },
+  },
+  emits: ['update:visible'],
 }
 </script>
 

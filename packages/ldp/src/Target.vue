@@ -1,21 +1,25 @@
 <template>
   <div class="list__item flex flex-column flex-1 overflow-hidden">
     <div class="list__title list__title__target flex align-center px-4">
-      <span class="fs-6">{{ $t('packages_business_data_console_targets') }}</span>
+      <span class="fs-6">{{
+        $t('packages_business_data_console_targets')
+      }}</span>
       <div class="flex-grow-1"></div>
       <IconButton @click="handleAdd">add</IconButton>
-      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch">search-outline</IconButton>
+      <IconButton :class="{ active: enableSearch }" @click="toggleEnableSearch"
+        >search-outline</IconButton
+      >
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model="search"
+          v-model:value="search"
           size="mini"
           clearable
-          @keydown.native.stop
-          @keyup.native.stop
-          @click.native.stop
+          @keydown.stop
+          @keyup.stop
+          @click.stop
         >
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
@@ -23,7 +27,10 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
+      <div
+        class="flex-fill min-h-0 overflow-auto p-2 position-relative"
+        @scroll="handleScroll"
+      >
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
@@ -40,17 +47,30 @@
             <div class="item__header p-3">
               <div class="flex align-center gap-2 overflow-hidden">
                 <VIcon size="20">mini-app</VIcon>
-                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
+                <span
+                  class="font-color-normal fw-sub fs-6 ellipsis lh-base"
+                  :title="item.value"
+                  >{{ item.value }}</span
+                >
                 <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
               </div>
-              <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
+              <div v-if="item.desc" class="mt-2 font-color-light">
+                {{ item.desc }}
+              </div>
             </div>
             <div class="item__content position-relative p-2">
               <div class="task-list">
                 <div class="task-list-content">
                   <template v-if="item.modules && item.modules.length">
-                    <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
-                      <div :ref="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
+                    <div
+                      v-for="(m, i) in item.modules"
+                      :key="i"
+                      class="task-list-item flex align-center"
+                    >
+                      <div
+                        :ref="`ldp_target_api_${m.id}`"
+                        class="p-1 ellipsis flex-1 align-center position-relative"
+                      >
                         <a
                           class="el-link el-link--primary w-100 justify-content-start"
                           :title="m.name"
@@ -60,7 +80,11 @@
                         </a>
                       </div>
                       <div class="p-1">
-                        <span class="status-block" :class="'status-' + m.status">{{ m.statusText }}</span>
+                        <span
+                          class="status-block"
+                          :class="'status-' + m.status"
+                          >{{ m.statusText }}</span
+                        >
                       </div>
                     </div>
                   </template>
@@ -76,25 +100,45 @@
             >
               <ElTooltip
                 placement="top"
-                :content="$t('packages_ldp_src_target_muqianzhichide') + ':' + apiSupportTypes.join(',')"
+                :content="
+                  $t('packages_ldp_src_target_muqianzhichide') +
+                  ':' +
+                  apiSupportTypes.join(',')
+                "
               >
-                <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
+                <span>
+                  {{
+                    `${$t(
+                      'packages_dag_components_node_zanbuzhichi'
+                    )} ${dragDatabaseType}`
+                  }}</span
+                >
               </ElTooltip>
             </div>
           </template>
           <template v-else>
             <div class="item__header p-3">
               <div class="flex align-center overflow-hidden">
-                <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
+                <DatabaseIcon
+                  :item="item"
+                  :size="20"
+                  class="item__icon flex-shrink-0"
+                />
                 <span
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
-                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
-                    $t('public_status_invalid')
-                  }}</ElTag>
                   <ElTag
-                    v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                    v-if="item.disabled"
+                    class="ml-1"
+                    type="info"
+                    size="small"
+                    >{{ $t('public_status_invalid') }}</ElTag
+                  >
+                  <ElTag
+                    v-if="
+                      item.showConnectorWebsite && connectionWebsiteMap[item.id]
+                    "
                     size="small"
                     class="ml-1 px-1 flex align-center clickable"
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
@@ -102,15 +146,21 @@
                     >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
                   >
                 </span>
-                <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
+                <IconButton class="ml-1" @click="$emit('preview', item)"
+                  >view-details</IconButton
+                >
                 <!--                <IconButton
-                  v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                  @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                  >open-in-new</IconButton
-                >-->
+                    v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                    @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                    >open-in-new</IconButton
+                  >-->
               </div>
               <div class="mt-2 font-color-light">
-                {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                {{
+                  $t('packages_business_data_console_target_connection_desc', {
+                    val: item.database_type,
+                  })
+                }}
               </div>
             </div>
             <TaskList
@@ -123,14 +173,30 @@
           </template>
         </div>
         <div v-if="!filterList.length" class="el-tree__empty-block">
-          <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
+          <span class="el-tree__empty-text">{{
+            $t('public_data_no_data')
+          }}</span>
         </div>
         <!--</draggable>-->
       </div>
 
-      <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-        <span slot="title" class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
-        <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
+      <ElDialog
+        v-model:visible="taskDialogConfig.visible"
+        width="600"
+        :close-on-click-modal="false"
+      >
+        <template v-slot:title>
+          <span class="font-color-dark fs-6 fw-sub">{{
+            taskDialogConfig.title
+          }}</span>
+        </template>
+        <ElForm
+          ref="form"
+          :model="taskDialogConfig"
+          label-width="180px"
+          @submit.prevent
+          :rules="formRules"
+        >
           <!--          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">{{ taskDialogConfig.desc }}</div>-->
           <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
             <span>{{
@@ -140,7 +206,9 @@
                   : 'packages_business_target_create_task_dialog_desc_prefix_clone'
               )
             }}</span
-            ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+            ><span
+              v-if="taskDialogConfig.from"
+              class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
               ><DatabaseIcon
                 :item="taskDialogConfig.from"
                 :key="taskDialogConfig.from.database_type"
@@ -148,11 +216,17 @@
                 class="mr-1"
               />
               <span>{{ taskDialogConfig.from.name }}</span> </span
-            ><span v-if="taskDialogConfig.tableName" class="font-color-dark fw-sub"
-              >/<span class="px-1">{{ taskDialogConfig.tableName }}</span> </span
+            ><span
+              v-if="taskDialogConfig.tableName"
+              class="font-color-dark fw-sub"
+              >/<span class="px-1">{{
+                taskDialogConfig.tableName
+              }}</span> </span
             ><span>
               {{ $t('packages_business_target_create_task_dialog_desc_to') }}
-              <span v-if="taskDialogConfig.to" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
+              <span
+                v-if="taskDialogConfig.to"
+                class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
                 ><DatabaseIcon
                   :item="taskDialogConfig.to"
                   :key="taskDialogConfig.to.database_type"
@@ -162,15 +236,33 @@
                 <span>{{ taskDialogConfig.to.name }}</span>
               </span></span
             >
-            <div>{{ $t('packages_business_target_create_task_dialog_desc_suffix') }}</div>
+            <div>
+              {{
+                $t('packages_business_target_create_task_dialog_desc_suffix')
+              }}
+            </div>
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
-            <ElInput size="small" v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput
+              size="small"
+              v-model:value="taskDialogConfig.taskName"
+              maxlength="50"
+              show-word-limit
+            ></ElInput>
           </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-            <ElRadioGroup v-model="taskDialogConfig.task.type">
-              <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
-                <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
+          <ElFormItem
+            :label="$t('packages_dag_task_setting_sync_type')"
+            prop="task.type"
+          >
+            <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+              <ElTooltip
+                :disabled="!taskDialogConfig.notSupportedCDC"
+                content="当前源数据不支持增量"
+              >
+                <ElRadio
+                  label="initial_sync+cdc"
+                  :disabled="taskDialogConfig.notSupportedCDC"
+                >
                   {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
                 </ElRadio>
               </ElTooltip>
@@ -180,17 +272,24 @@
               </ElRadio>
             </ElRadioGroup>
           </ElFormItem>
-          <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
+          <div
+            class="flex align-center gap-3"
+            v-if="taskDialogConfig.task.type === 'initial_sync'"
+          >
             <ElFormItem
               :label="$t('packages_dag_task_setting_crontabExpressionFlag')"
               prop="task.crontabExpressionType"
             >
               <ElSelect
-                v-model="taskDialogConfig.task.crontabExpressionType"
+                v-model:value="taskDialogConfig.task.crontabExpressionType"
                 @change="handleChangeCronType"
                 class="flex-1"
               >
-                <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+                <ElOption
+                  v-bind="opt"
+                  v-for="(opt, i) in cronOptions"
+                  :key="i"
+                ></ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem
@@ -198,32 +297,51 @@
               prop="task.crontabExpression"
               label-width="0"
             >
-              <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+              <ElInput
+                v-model:value="taskDialogConfig.task.crontabExpression"
+              ></ElInput>
             </ElFormItem>
           </div>
         </ElForm>
-        <span slot="footer" class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :loading="creating" size="mini" @click="dialogSubmit(false)">{{
-            $t('packages_business_save_only')
-          }}</ElButton>
-          <ElButton :loading="creating" size="mini" type="primary" @click="dialogSubmit(true)">
-            {{ $t('packages_business_save_and_run_now') }}
-          </ElButton>
-        </span>
+        <template v-slot:footer>
+          <span class="dialog-footer">
+            <ElButton size="mini" @click="hideDialog">{{
+              $t('public_button_cancel')
+            }}</ElButton>
+            <ElButton
+              :loading="creating"
+              size="mini"
+              @click="dialogSubmit(false)"
+              >{{ $t('packages_business_save_only') }}</ElButton
+            >
+            <ElButton
+              :loading="creating"
+              size="mini"
+              type="primary"
+              @click="dialogSubmit(true)"
+            >
+              {{ $t('packages_business_save_and_run_now') }}
+            </ElButton>
+          </span>
+        </template>
       </ElDialog>
       <CreateRestApi
-        v-model="apiDialog.visible"
+        v-model:value="apiDialog.visible"
         :params="apiDialog"
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost"></ApiPreview>
+      <ApiPreview
+        v-if="isDaas"
+        ref="apiPreview"
+        :host="apiServerHost"
+      ></ApiPreview>
     </div>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer';
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref } from '@vue/composition-api'
@@ -250,7 +368,7 @@ const TaskList = defineComponent({
     return () => {
       const list = isLimit.value ? props.list.slice(0, limit) : props.list
       return (
-        <div staticClass="item__content position-relative p-2" class={{ 'has-more': props.list.length > limit }}>
+        <div staticClass="item__content position-relative p-2" class={{ "has-more": props.list.length > limit }}>
           {props.list.length ? (
             <div class="task-list">
               <div class="task-list-content">
@@ -304,14 +422,14 @@ const TaskList = defineComponent({
             size="mini"
             round
             staticClass="task-list-item-more position-absolute fs-8"
-            class={{ 'is-reverse': !isLimit.value }}
+            class={{ "is-reverse": !isLimit.value }}
           >
             {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
-      )
-    }
+      );
+    };
   }
 })
 
@@ -367,7 +485,7 @@ export default {
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
       searchKeywordList: []
-    }
+    };
   },
 
   computed: {
@@ -430,7 +548,7 @@ export default {
     this.isDaas && this.getApiServerHost()
   },
 
-  destroyed() {
+  unmounted() {
     this.destroyed = true
     clearTimeout(this.loadTaskTimer)
   },
@@ -444,7 +562,7 @@ export default {
         appList = await this.getApiAppList()
         Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
           appList.forEach((app, i) => {
-            this.$set(app, 'modules', list[i])
+            app['modules'] = list[i];
           })
         })
       }
@@ -458,7 +576,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-connection', 'target')
+      $emit(this, "create-connection","target")
     },
 
     async getData() {
@@ -493,14 +611,10 @@ export default {
       })
 
       Object.keys(data).forEach(key => {
-        this.$set(
-          this.connectionTaskMap,
-          key,
-          data[key]
-            .filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
-            .reverse()
-            .map(this.mapTask)
-        )
+        this.connectionTaskMap[key] = data[key]
+          .filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+          .reverse()
+          .map(this.mapTask);
       })
 
       if (spec.length) {
@@ -529,7 +643,7 @@ export default {
         })
 
         Object.keys(data).forEach(key => {
-          this.$set(this.connectionTaskMap, key, data[key].reverse().map(this.mapTask))
+          this.connectionTaskMap[key] = data[key].reverse().map(this.mapTask);
         })
 
         this.autoLoadTaskById()
@@ -585,7 +699,7 @@ export default {
             item.LDP_TYPE = 'app'
             return item
           })
-        })
+        });
     },
 
     loadApiModule(appId) {
@@ -593,7 +707,7 @@ export default {
         limit: 999,
         order: 'createAt DESC',
         where: {
-          'listtags.id': appId
+          "listtags.id": appId
         }
       }
 
@@ -603,7 +717,7 @@ export default {
         })
         .then(({ items }) => {
           return items.map(this.mapApi)
-        })
+        });
     },
 
     mapApi(item) {
@@ -619,9 +733,9 @@ export default {
           args: [connectionId]
         })
         .then(data => {
-          data?.url && this.$set(this.connectionWebsiteMap, connectionId, data.url)
+          data?.url && this.connectionWebsiteMap[connectionId] = data.url
           return data?.url
-        })
+        });
     },
 
     getTableWebsite(connectionId, table, task) {
@@ -633,9 +747,9 @@ export default {
           _: generateId(4)
         })
         .then(data => {
-          data?.url && this.$set(task, 'website', data.url)
+          data?.url && task['website'] = data.url
           return data?.url
-        })
+        });
     },
 
     findParentByClassName(parent, cls) {
@@ -734,7 +848,7 @@ export default {
           edges: [{ source: source.id, target: target.id }],
           nodes: [source, target]
         }
-      }
+      };
     },
 
     getDatabaseNode(db) {
@@ -752,7 +866,7 @@ export default {
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || []
         }
-      }
+      };
     },
 
     getTableNode(db = {}, tableName) {
@@ -772,7 +886,7 @@ export default {
           capabilities: db.capabilities || [],
           hasCreated: false
         }
-      }
+      };
     },
 
     makeSyncTask(fromConnection, tableName, to) {
@@ -785,7 +899,7 @@ export default {
           edges: [{ source: source.id, target: target.id }],
           nodes: [source, target]
         }
-      }
+      };
     },
 
     async showDialog() {
@@ -827,7 +941,7 @@ export default {
           if (this.connectionTaskMap[to.id]) {
             this.connectionTaskMap[to.id].unshift(mapTask)
           } else {
-            this.$set(this.connectionTaskMap, to.id, [mapTask])
+            this.connectionTaskMap[to.id] = [mapTask];
           }
 
           const h = this.$createElement
@@ -865,7 +979,7 @@ export default {
     mapTask(task) {
       makeStatusAndDisabled(task)
       const { id, name, status, syncType } = task
-      return { id, name, status, syncType }
+      return { id, name, status, syncType };
     },
 
     mapConnection(item) {
@@ -921,7 +1035,7 @@ export default {
     handleAddApi(data, app) {
       data = this.mapApi(data)
 
-      if (!app.modules) this.$set(app, 'modules', [data])
+      if (!app.modules) app['modules'] = [data];
       else app.modules.unshift(data)
     },
 
@@ -937,7 +1051,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      $emit(this, "handle-connection")
     }, 200),
 
     searchByKeywordList(val = []) {
@@ -948,10 +1062,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrap__item {
-  border: 1px solid #e1e3e9;
-
-  &:hover {
+.wrap__item{border:1px solid #e1e3e9;&:hover {
     //background-color: #f2f3f5;
   }
 
@@ -986,12 +1097,5 @@ export default {
         display: inline-flex;
       }
     }
-  }
-}
-.item__header {
-  border-bottom: 1px solid #e1e3e9;
-}
-.item__icon {
-  //border: 1px solid #4e5969;
-}
+  }}.item__header{border-bottom:1px solid #e1e3e9}.item__icon{//border:1px solid #4e5969}
 </style>

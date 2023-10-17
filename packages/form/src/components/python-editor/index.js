@@ -1,3 +1,5 @@
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 import { PythonEditor as _PythonEditor, VIcon } from '@tap/component'
 import { connect, mapProps } from '@formily/vue'
 import { HighlightCode } from '../highlight-code'
@@ -9,36 +11,36 @@ export const PythonEditor = connect(
       value: String,
       before: {
         type: String,
-        default: ''
+        default: '',
       },
       beforeRegexp: String,
       after: {
         type: String,
-        default: ''
+        default: '',
       },
       afterRegexp: String,
       height: {
         type: [String, Number],
-        default: 200
+        default: 200,
       },
       options: {
         type: Object,
-        default: () => ({})
+        default: () => ({}),
       },
       disabled: Boolean,
       includeBeforeAndAfter: Boolean,
       handleAddCompleter: Function,
       theme: {
         type: String,
-        default: 'chrome'
+        default: 'chrome',
       },
       showFullscreen: Boolean,
-      addTabInLine: Boolean
+      addTabInLine: Boolean,
     },
 
     data() {
       return {
-        fullscreen: false
+        fullscreen: false,
       }
     },
 
@@ -50,7 +52,7 @@ export const PythonEditor = connect(
             .replace(new RegExp(this.afterRegexp || this.before), '')
         }
         return this.value
-      }
+      },
     },
 
     methods: {
@@ -62,16 +64,19 @@ export const PythonEditor = connect(
           if (this.includeBeforeAndAfter) {
             val = `${this.before}${val}${this.after}`
           }
-          this.$emit('change', val)
+          $emit(this, 'change', val)
         }
         this.unbindEvent()
       },
 
       onInit(editor, tools) {
-        if (this.handleAddCompleter && typeof this.handleAddCompleter === 'function') {
+        if (
+          this.handleAddCompleter &&
+          typeof this.handleAddCompleter === 'function'
+        ) {
           this.handleAddCompleter(editor, tools)
         }
-        this.$emit('init', editor)
+        $emit(this, 'init', editor)
       },
 
       // 防止写代码时，不小心返回或者关闭页面
@@ -85,7 +90,7 @@ export const PythonEditor = connect(
 
       unbindEvent() {
         window.removeEventListener('beforeunload', this.handleBeforeunload)
-      }
+      },
     },
 
     render() {
@@ -93,7 +98,7 @@ export const PythonEditor = connect(
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         ...this.options,
-        readOnly: this.disabled
+        readOnly: this.disabled,
       }
       return this.before || this.after ? (
         <div
@@ -103,7 +108,9 @@ export const PythonEditor = connect(
         >
           {this.showFullscreen && (
             <div class="js-editor-toolbar flex align-center px-4">
-              <div class="js-editor-toolbar-title flex-1">{this.$t('packages_form_js_processor_index_jiaoben')}</div>
+              <div class="js-editor-toolbar-title flex-1">
+                {this.$t('packages_form_js_processor_index_jiaoben')}
+              </div>
               <ElLink
                 onClick={() => {
                   this.fullscreen = !this.fullscreen
@@ -115,8 +122,14 @@ export const PythonEditor = connect(
                 type="primary"
               >
                 {this.fullscreen
-                  ? [<VIcon class="mr-1">suoxiao</VIcon>, this.$t('packages_form_js_editor_exit_fullscreen')]
-                  : [<VIcon class="mr-1">fangda</VIcon>, this.$t('packages_form_js_editor_fullscreen')]}
+                  ? [
+                      <VIcon class="mr-1">suoxiao</VIcon>,
+                      this.$t('packages_form_js_editor_exit_fullscreen'),
+                    ]
+                  : [
+                      <VIcon class="mr-1">fangda</VIcon>,
+                      this.$t('packages_form_js_editor_fullscreen'),
+                    ]}
               </ElLink>
             </div>
           )}
@@ -143,7 +156,7 @@ export const PythonEditor = connect(
           ref="pythonEditor"
           class="border rounded-2 py-0"
           style={{
-            background: '#fff'
+            background: '#fff',
           }}
           theme={this.theme}
           value={this.code}
@@ -154,7 +167,7 @@ export const PythonEditor = connect(
           options={options}
         />
       )
-    }
+    },
   },
   mapProps({ disabled: true })
 )

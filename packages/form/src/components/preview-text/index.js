@@ -4,7 +4,7 @@ import {
   resolveComponent,
   useContext,
   composeExport,
-  stylePrefix
+  stylePrefix,
 } from '@formily/element/lib/__builtins__'
 import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
@@ -16,10 +16,12 @@ import { formatDate } from 'element-ui/src/utils/date-util'
 const prefixCls = `${stylePrefix}-preview-text`
 const PlaceholderContext = createContext('N/A')
 
-export const usePlaceholder = value => {
+export const usePlaceholder = (value) => {
   const placeholderCtx = useContext(PlaceholderContext)
   const placeholder = computed(() => {
-    return isValid(value?.value) && value.value !== '' ? value.value : resolveComponent(placeholderCtx.value) || 'N/A'
+    return isValid(value?.value) && value.value !== ''
+      ? value.value
+      : resolveComponent(placeholderCtx.value) || 'N/A'
   })
   return placeholder
 }
@@ -35,7 +37,7 @@ const Input = defineComponent({
         Space,
         {
           class: [prefixCls],
-          style: attrs.style
+          style: attrs.style,
         },
         {
           default: () => [
@@ -43,12 +45,12 @@ const Input = defineComponent({
             slots?.prefix?.(),
             placeholder.value,
             slots?.suffix?.(),
-            slots?.append?.()
-          ]
+            slots?.append?.(),
+          ],
         }
       )
     }
-  }
+  },
 })
 
 const Select = observer(
@@ -59,12 +61,18 @@ const Select = observer(
       const fieldRef = useField()
       const field = fieldRef.value
       const props = attrs
-      const dataSource = field?.dataSource?.length ? field.dataSource : props?.options?.length ? props.options : []
+      const dataSource = field?.dataSource?.length
+        ? field.dataSource
+        : props?.options?.length
+        ? props.options
+        : []
       const placeholder = usePlaceholder()
       const getSelected = () => {
         const value = props.value
         if (props.multiple) {
-          return isArr(value) ? value.map(val => ({ label: val, value: val })) : []
+          return isArr(value)
+            ? value.map((val) => ({ label: val, value: val }))
+            : []
         } else {
           return isValid(value) ? [{ label: value, value }] : []
         }
@@ -77,23 +85,24 @@ const Select = observer(
             Tag,
             {},
             {
-              default: () => placeholder.value
+              default: () => placeholder.value,
             }
           )
         }
         return selected.map(({ value, label }, key) => {
-          const text = dataSource?.find(item => item.value == value)?.label || label
+          const text =
+            dataSource?.find((item) => item.value == value)?.label || label
           return h(
             Tag,
             {
               key,
               props: {
                 type: 'info',
-                effect: 'light'
-              }
+                effect: 'light',
+              },
             },
             {
-              default: () => text || placeholder.value
+              default: () => text || placeholder.value,
             }
           )
         })
@@ -104,14 +113,14 @@ const Select = observer(
           Space,
           {
             class: [prefixCls],
-            style: attrs.style
+            style: attrs.style,
           },
           {
-            default: () => getLabels()
+            default: () => getLabels(),
           }
         )
       }
-    }
+    },
   })
 )
 
@@ -123,7 +132,11 @@ const Cascader = observer(
       const fieldRef = useField()
       const field = fieldRef.value
       const props = attrs
-      const dataSource = field?.dataSource?.length ? field.dataSource : props?.options?.length ? props.options : []
+      const dataSource = field?.dataSource?.length
+        ? field.dataSource
+        : props?.options?.length
+        ? props.options
+        : []
       const placeholder = usePlaceholder()
       const valueKey = props.props?.value || 'value'
       const labelKey = props.props?.label || 'label'
@@ -150,7 +163,7 @@ const Cascader = observer(
             Tag,
             {},
             {
-              default: () => placeholder.value
+              default: () => placeholder.value,
             }
           )
         }
@@ -162,11 +175,11 @@ const Cascader = observer(
               key,
               props: {
                 type: 'info',
-                effect: 'light'
-              }
+                effect: 'light',
+              },
             },
             {
-              default: () => text || placeholder.value
+              default: () => text || placeholder.value,
             }
           )
         })
@@ -177,14 +190,14 @@ const Cascader = observer(
           Space,
           {
             class: [prefixCls],
-            style: attrs.style
+            style: attrs.style,
           },
           {
-            default: () => getLabels()
+            default: () => getLabels(),
           }
         )
       }
-    }
+    },
   })
 )
 
@@ -196,7 +209,9 @@ const DatePicker = defineComponent({
     const placeholder = usePlaceholder()
     const getLabels = () => {
       if (isArr(props.value)) {
-        const labels = props.value.map(value => formatDate(value, props.format) || placeholder.value)
+        const labels = props.value.map(
+          (value) => formatDate(value, props.format) || placeholder.value
+        )
 
         return labels.join('~')
       } else {
@@ -209,14 +224,14 @@ const DatePicker = defineComponent({
         'div',
         {
           class: [prefixCls],
-          style: attrs.style
+          style: attrs.style,
         },
         {
-          default: () => getLabels()
+          default: () => getLabels(),
         }
       )
     }
-  }
+  },
 })
 
 const TimePicker = defineComponent({
@@ -228,7 +243,9 @@ const TimePicker = defineComponent({
     const placeholder = usePlaceholder()
     const getLabels = () => {
       if (isArr(props.value)) {
-        const labels = props.value.map(value => formatDate(value, format) || placeholder.value)
+        const labels = props.value.map(
+          (value) => formatDate(value, format) || placeholder.value
+        )
 
         return labels.join('~')
       } else {
@@ -241,14 +258,14 @@ const TimePicker = defineComponent({
         'div',
         {
           class: [prefixCls],
-          style: attrs.style
+          style: attrs.style,
         },
         {
-          default: () => getLabels()
+          default: () => getLabels(),
         }
       )
     }
-  }
+  },
 })
 
 const Text = defineComponent({
@@ -261,14 +278,14 @@ const Text = defineComponent({
         'div',
         {
           class: [prefixCls],
-          style: attrs.style
+          style: attrs.style,
         },
         {
-          default: () => placeholder.value
+          default: () => placeholder.value,
         }
       )
     }
-  }
+  },
 })
 
 export const PreviewText = composeExport(Text, {
@@ -278,7 +295,7 @@ export const PreviewText = composeExport(Text, {
   DatePicker,
   TimePicker,
   Placeholder: PlaceholderContext.Provider,
-  usePlaceholder
+  usePlaceholder,
 })
 
 export default PreviewText

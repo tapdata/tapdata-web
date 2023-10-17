@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :visible.sync="visible"
+    v-model:visible="visible"
     width="812px"
     :show-close="false"
     :close-on-click-modal="false"
@@ -8,38 +8,57 @@
     custom-class="tour-dialog"
   >
     <template v-if="!finish">
-      <div class="text-center title-cover" slot="title">
-        <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
-      </div>
+      <template v-slot:title>
+        <div class="text-center title-cover">
+          <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
+        </div>
+      </template>
 
       <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">
+          Welcome to Tapdata Cloud.
+        </h1>
         <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
 
-        <p class="text-primary fw-sub my-2">{{ $t('dfs_replication_tour_dialog_steps') }}</p>
+        <p class="text-primary fw-sub my-2">
+          {{ $t('dfs_replication_tour_dialog_steps') }}
+        </p>
         <p>{{ $t('dfs_replication_tour_dialog_lets_go') }}</p>
       </div>
 
-      <div slot="footer" class="text-center">
-        <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
-      </div>
+      <template v-slot:footer>
+        <div class="text-center">
+          <el-button @click="$emit('start')" type="primary">{{
+            $t('dfs_replication_tour_dialog_start')
+          }}</el-button>
+        </div>
+      </template>
     </template>
 
     <template v-else>
-      <div class="text-center title-cover pt-4" slot="title">🎉</div>
+      <template v-slot:title>
+        <div class="text-center title-cover pt-4">🎉</div>
+      </template>
 
       <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">{{ $t('dfs_replication_tour_dialog_success_title') }}</h1>
+        <h1 class="fs-5 fw-sub font-color-dark mb-2">
+          {{ $t('dfs_replication_tour_dialog_success_title') }}
+        </h1>
       </div>
 
-      <div slot="footer" class="text-center">
-        <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
-      </div>
+      <template v-slot:footer>
+        <div class="text-center">
+          <el-button @click="$emit('finish')" type="primary">{{
+            $t('dfs_replication_tour_dialog_finish')
+          }}</el-button>
+        </div>
+      </template>
     </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { driver } from 'driver.js'
@@ -48,34 +67,30 @@ export default {
   name: 'ReplicationTour',
   props: {
     value: Boolean,
-    finish: Boolean
+    finish: Boolean,
   },
-
   data() {
     return {
-      visible: this.value
+      visible: this.value,
     }
   },
-
   computed: {
     userId() {
       return this.$store.state.user.id
     },
     noEmail() {
       return !this.$store.state.user.email
-    }
+    },
   },
-
   watch: {
     visible(v) {
-      this.$emit('input', v)
+      $emit(this, 'update:value', v)
     },
 
     value(v) {
       this.visible = v
-    }
+    },
   },
-
   methods: {
     cancel() {
       localStorage[`completeAlarm-${this.userId}`] = Date.now()
@@ -100,8 +115,8 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
-          }
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe'),
+          },
         })
 
         const unwatch = this.$watch('$route', () => {
@@ -116,15 +131,16 @@ export default {
       this.$router.push({
         name: 'userCenter',
         query: {
-          bind: 'email'
-        }
+          bind: 'email',
+        },
       })
-    }
-  }
+    },
+  },
+  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .title-cover {
   font-size: 104px;
 }

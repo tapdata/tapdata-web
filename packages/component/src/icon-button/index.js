@@ -11,7 +11,7 @@ export const IconButton = defineComponent({
     lg: Boolean,
     xl: Boolean,
     clickAndRotate: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
   },
   setup(props, { attrs, listeners, slots }) {
     return () => {
@@ -22,10 +22,11 @@ export const IconButton = defineComponent({
           class={{
             't-button--icon-xs': props.xs,
             't-button--icon-sm': props.sm,
-            't-button--icon-md': props.md || (!props.xs && !props.sm && !props.lg && !props.xl),
+            't-button--icon-md':
+              props.md || (!props.xs && !props.sm && !props.lg && !props.xl),
             't-button--icon-lg': props.lg,
             't-button--icon-xl': props.xl,
-            't-button__rotating': props.clickAndRotate
+            't-button__rotating': props.clickAndRotate,
           }}
           type="button"
           {...{ props: attrs, on: listeners }}
@@ -34,5 +35,5 @@ export const IconButton = defineComponent({
         </button>
       )
     }
-  }
+  },
 })

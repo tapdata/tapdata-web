@@ -1,11 +1,11 @@
 <template>
   <div v-loading="loading" class="metadata-list-wrap">
     <List
-      ref="table"
       v-bind="$attrs"
+      ref="table"
       :data="selected"
       :readonly="stateIsReadonly || !isTarget"
-      :fieldChangeRules.sync="fieldChangeRules"
+      v-model:fieldChangeRules="fieldChangeRules"
       :type="isTarget ? 'target' : isSource ? 'source' : ''"
       single-table
       :ignore-error="!isTarget"
@@ -19,7 +19,11 @@ import { mapState, mapGetters } from 'vuex'
 
 import List from './form/field-inference/List'
 import mixins from './form/field-inference/mixins.js'
-import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '@tap/dag/src/util'
+import {
+  getCanUseDataTypes,
+  getMatchedDataTypeLevel,
+  errorFiledType,
+} from '@tap/dag/src/util'
 
 export default {
   name: 'MetaPane',
@@ -30,7 +34,7 @@ export default {
 
   props: {
     isShow: Boolean,
-    form: Object
+    form: Object,
   },
 
   data() {
@@ -39,7 +43,7 @@ export default {
       tableData: [],
       loading: false,
       data: '',
-      fieldChangeRules: []
+      fieldChangeRules: [],
     }
   },
 
@@ -59,7 +63,7 @@ export default {
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    }
+    },
   },
 
   watch: {
@@ -89,7 +93,7 @@ export default {
       if (v) {
         this.loadFields()
       }
-    }
+    },
   },
 
   methods: {
@@ -100,13 +104,15 @@ export default {
       try {
         const { items } = await this.getData()
         this.selected =
-          items.map(t => {
+          items.map((t) => {
             const { fields = [], findPossibleDataTypes = {} } = t
             //如果findPossibleDataTypes = {}，不做类型校验
             if (this.isTarget) {
-              fields.forEach(el => {
-                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+              fields.forEach((el) => {
+                const { dataTypes = [], lastMatchedDataType = '' } =
+                  findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes =
+                  getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = getMatchedDataTypeLevel(
                   el,
                   el.canUseDataTypes,
@@ -116,9 +122,11 @@ export default {
               })
             } else {
               // 源节点 JSON.parse('{\"type\":7}').type==7
-              fields.forEach(el => {
-                const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-                el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+              fields.forEach((el) => {
+                const { dataTypes = [], lastMatchedDataType = '' } =
+                  findPossibleDataTypes[el.field_name] || {}
+                el.canUseDataTypes =
+                  getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = errorFiledType(el)
               })
             }
@@ -139,8 +147,8 @@ export default {
     handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.form?.setValuesIn?.('fieldChangeRules', this.fieldChangeRules)
-    }
-  }
+    },
+  },
 }
 </script>
 

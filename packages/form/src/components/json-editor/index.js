@@ -6,27 +6,29 @@ export const JsonEditor = defineComponent({
   props: {
     type: {
       type: String,
-      default: 'string' // object
+      default: 'string', // object
     },
     value: [String, Object, Array],
     height: {
       type: [String, Number],
-      default: 200
+      default: 200,
     },
     options: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     disabled: Boolean,
-    needFormat: Boolean
+    needFormat: Boolean,
   },
 
   setup(props, { emit }) {
     const fieldRef = useField()
     const editorVal = ref(
-      props.type === 'object' ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0) : props.value
+      props.type === 'object'
+        ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0)
+        : props.value
     )
-    const onBlur = val => {
+    const onBlur = (val) => {
       if (val !== editorVal.value) {
         try {
           if (val && props.type === 'object') val = JSON.parse(val)
@@ -42,7 +44,7 @@ export const JsonEditor = defineComponent({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         ...props.options,
-        readOnly: props.disabled
+        readOnly: props.disabled,
       }
       return (
         <VCodeEditor
@@ -56,7 +58,7 @@ export const JsonEditor = defineComponent({
         />
       )
     }
-  }
+  },
 })
 
 export default JsonEditor

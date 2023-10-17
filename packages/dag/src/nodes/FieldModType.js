@@ -17,21 +17,21 @@ export class FieldModType extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               name: {
@@ -39,7 +39,7 @@ export class FieldModType extends NodeType {
                 title: i18n.t('public_node_name'),
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               operations: {
                 type: 'array',
@@ -47,17 +47,17 @@ export class FieldModType extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'FieldModType',
                 'x-component-props': {
-                  getFields: '{{loadNodeFieldsById}}'
-                }
+                  getFields: '{{loadNodeFieldsById}}',
+                },
               },
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }
