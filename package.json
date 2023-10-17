@@ -52,10 +52,7 @@
       "@formily/reactive": "2.2.13",
       "@formily/reactive-vue": "2.2.13",
       "@formily/shared": "2.2.13",
-      "@formily/vue": "2.2.13",
-      "vue-demi": "^0.12.1",
-      "vue": "~2.6.14",
-      "vue-template-compiler": "~2.6.11"
+      "@formily/vue": "2.2.13"
     }
   }
 }
