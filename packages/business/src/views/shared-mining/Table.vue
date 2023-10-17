@@ -56,6 +56,18 @@
       hide-on-single-page
       @selection-change="handleSelectionChange"
     >
+      <template #name="{ row }">
+        <ElTooltip
+          popper-class="user-select-all"
+          v-if="row.externalStorageTableName"
+          :transition="''"
+          placement="top"
+          :content="row.externalStorageTableName"
+        >
+          <span style="border-bottom: 1px dashed">{{ row.name }}</span>
+        </ElTooltip>
+        <span v-else>{{ row.name }}</span>
+      </template>
       <div slot="empty">{{ $t('public_data_no_data') }}</div>
     </VTable>
 
@@ -146,8 +158,8 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
-          prop: 'name',
-          minWidth: 120
+          slotName: 'name',
+          minWidth: 140
         },
         {
           label: i18n.t('public_connection_name'),
