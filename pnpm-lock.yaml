@@ -722,6 +722,9 @@ importers:
       '@tap/i18n':
         specifier: workspace:^1.0.0
         version: link:../i18n
+      '@tap/shared':
+        specifier: workspace:^
+        version: link:../shared
       ace-builds:
         specifier: ^1.4.13
         version: registry.npmmirror.com/ace-builds@1.4.13
@@ -3723,7 +3726,7 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0 || ^5.0.0-0
       eslint: '>=7.5.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service@5.0.1(lodash@4.17.21)(prettier@2.2.1)(sass-loader@10.2.0)(vue@3.3.4)
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service@5.0.1(lodash@4.17.15)(prettier@2.2.1)(sass-loader@10.2.0)(vue@3.3.4)
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils@5.0.8
       eslint: registry.npmmirror.com/eslint@7.32.0
       eslint-webpack-plugin: registry.npmmirror.com/eslint-webpack-plugin@3.2.0(eslint@7.32.0)(webpack@5.89.0)
@@ -5202,7 +5205,7 @@ packages:
     name: async
     version: 2.6.4
     dependencies:
-      lodash: registry.npmmirror.com/lodash@4.17.15
+      lodash: registry.npmmirror.com/lodash@4.17.21
     dev: true
 
   registry.npmmirror.com/at-least-node@1.0.0:
