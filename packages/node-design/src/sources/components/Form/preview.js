@@ -5,7 +5,7 @@ import { Form as BaseForm } from '@tap/form'
 import { usePrefix } from '../../../hooks'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
-import { defineComponent, computed } from 'vue-demi'
+import { defineComponent, computed } from 'vue'
 import './styles.scss'
 
 export const Form = observer(

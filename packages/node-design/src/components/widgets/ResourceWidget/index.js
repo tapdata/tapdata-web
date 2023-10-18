@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref } from 'vue'
 import { isFn } from '@tap/shared'
 import { isResourceHost, isResourceList } from '../../../core'
 import './index.scss'

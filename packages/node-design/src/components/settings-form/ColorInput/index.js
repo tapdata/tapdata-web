@@ -1,7 +1,7 @@
 import { ElInput as Input, ElColorPicker as ColorPicker } from 'element-plus'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const ColorInput = defineComponent({
   props: ['value'],

@@ -4,7 +4,7 @@ import { Selector } from './Selector'
 import { Copy } from './Copy'
 import { Delete } from './Delete'
 import { DragHandler } from './DragHandler'
-import { defineComponent, ref, nextTick } from 'vue-demi'
+import { defineComponent, ref, nextTick } from 'vue'
 
 const HELPER_DEBOUNCE_TIMEOUT = 100
 

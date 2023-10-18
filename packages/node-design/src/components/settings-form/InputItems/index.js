@@ -2,7 +2,7 @@ import { useContext, createContext } from '@tap/shared'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 const InputItemsContext = createContext(null)
 

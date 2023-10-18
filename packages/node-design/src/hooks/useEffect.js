@@ -1,4 +1,4 @@
-import { onBeforeUnmount, watch } from 'vue-demi'
+import { onBeforeUnmount, watch } from 'vue'
 
 export function useEffect(func, dependency) {
   const disposes = []

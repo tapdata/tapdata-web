@@ -61,7 +61,7 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import { cloneDeep } from 'lodash'

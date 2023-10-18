@@ -3,7 +3,7 @@ import langs from './locale'
 // base
 import VirtualTransfer from './base/virtual-transfer'
 import VirtualTransferPanel from './base/virtual-transfer/VirtualTransferPanel'
-import VirtualSelect from './base/virtual-select'
+// import VirtualSelect from './base/virtual-select'
 import VirtualList from './base/virtual-list'
 import VTable from './base/v-table'
 import VCodeEditor from './base/VCodeEditor.vue'
@@ -18,12 +18,13 @@ import VCollapse from './base/VCollapse'
 import Classification from './Classification.vue'
 import FilterBar from './filter-bar'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
-import SelectList from './SelectList.vue'
+// import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
 import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
 import DarkSelect from './DarkSelect'
 import TimeSelect from './TimeSelect'
+import { ElTreeV2 as VirtualTree, ElSelectV2 as VirtualSelect } from 'element-plus'
 
 // business
 import Chart from './chart'
@@ -43,6 +44,7 @@ export {
   VirtualTransfer,
   VirtualTransferPanel,
   VirtualSelect,
+  VirtualSelect as SelectList,
   VirtualList,
   VTable,
   VCollapse,
@@ -54,18 +56,18 @@ export {
   Classification,
   FilterBar,
   DatetimeRange,
-  SelectList,
   GitBook,
   Drawer,
   InlineInput,
   OverflowTooltip,
   DarkSelect,
-  TimeSelect
+  TimeSelect,
+  VirtualTree
 }
 
 export * from './base'
 
-export * from './virtual-tree'
+// export * from './virtual-tree'
 
 export * from './pro-table'
 

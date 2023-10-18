@@ -1,6 +1,6 @@
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const PCSimulator = defineComponent({
   setup: (props, { slots }) => {

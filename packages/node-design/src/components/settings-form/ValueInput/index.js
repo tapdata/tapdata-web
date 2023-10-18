@@ -6,7 +6,7 @@ import { createPolyInput } from '../PolyInput'
 import { ElButton as Button, ElPopover as Popover, ElSelect as Select, ElOption as Option } from 'element-plus'
 import { Input, InputNumber } from '@tap/form'
 import { TextWidget } from '../../widgets'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { VCodeEditor } from '@tap/component'
 
 const STARTTAG_REX = /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/

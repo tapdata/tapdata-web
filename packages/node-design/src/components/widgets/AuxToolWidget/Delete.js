@@ -1,7 +1,7 @@
 import { IconWidget } from '../IconWidget'
 import { useOperation, usePrefix } from '../../../hooks'
 import { ElButton as Button } from 'element-plus'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const Delete = defineComponent({
   props: ['node'],

@@ -5,7 +5,7 @@ import { autorun } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import './styles.scss'
-import { defineComponent, ref, unref, onBeforeUnmount } from 'vue-demi'
+import { defineComponent, ref, unref, onBeforeUnmount } from 'vue'
 
 export const GhostWidget = observer(
   defineComponent({

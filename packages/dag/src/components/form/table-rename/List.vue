@@ -30,7 +30,7 @@
   </RecycleScroller>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import { RecycleScroller } from 'vue-virtual-scroller'

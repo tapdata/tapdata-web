@@ -1,7 +1,7 @@
 import { requestIdle } from '@tap/shared'
 import { observer } from '@formily/reactive-vue'
 import { PCSimulator } from '../simulators'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const Simulator = observer(
   defineComponent({

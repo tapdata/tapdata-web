@@ -1,5 +1,5 @@
 import { usePrefix } from '../../hooks'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { composeExport } from '@tap/form'
 
 const WorkspacePanelComponent = defineComponent({

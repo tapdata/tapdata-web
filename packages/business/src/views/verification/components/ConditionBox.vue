@@ -121,12 +121,13 @@
               <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
-                  v-model:value="item"
+                  :value="item"
                   :schema="formSchema"
                   :scope="schemaScope"
                   :colon="true"
                   class="w-100"
                   label-width="120"
+                  @input="value => (item = value)"
                 />
               </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">

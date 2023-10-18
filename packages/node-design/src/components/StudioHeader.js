@@ -1,5 +1,5 @@
 import { useCustomNode, useDesigner, useWorkbench } from '../hooks'
-import { defineComponent, watch, ref } from 'vue-demi'
+import { defineComponent, watch, ref } from 'vue'
 import { VIcon } from '@tap/component'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { transformToTreeNode } from '../core'

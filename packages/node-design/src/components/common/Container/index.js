@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { DroppableWidget } from '../../widgets'
 import './styles.scss'
-import { defineComponent, toRefs } from 'vue-demi'
+import { defineComponent, toRefs } from 'vue'
 
 export const Container = observer(
   defineComponent({

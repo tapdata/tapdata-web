@@ -7,7 +7,7 @@ import { usePrefix, useSelected, useCurrentNode, useWorkbench } from '../../hook
 import { useLocales } from './useLocales'
 import { ElEmpty as Empty } from 'element-plus'
 import './styles.scss'
-import { defineComponent, nextTick, reactive, ref, watch } from 'vue-demi'
+import { defineComponent, nextTick, reactive, ref, watch } from 'vue'
 import { requestIdle, cancelIdle, uid } from '@tap/shared'
 
 export const SettingsForm = defineComponent({

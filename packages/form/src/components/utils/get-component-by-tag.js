@@ -1,7 +1,7 @@
 import * as Vue from 'vue'
 import { merge } from '@formily/shared'
 import { h } from '@formily/vue'
-import { isVue2 } from 'vue-demi'
+import { isVue2 } from 'vue'
 
 export const getComponentByTag = (tag, transformRules, defaultProps) => {
   if (isVue2) {

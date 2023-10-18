@@ -15,40 +15,38 @@
         </div>
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
-        <template v-slot:operation>
-          <div class="flex">
-            <el-tooltip
-              :disabled="!isFileSource()"
-              :content="$t('packages_business_connections_list_wenjianleixingde')"
-              placement="top"
-              class="load-schema__tooltip"
-            >
-              <span>
-                <el-button
-                  :disabled="isFileSource()"
-                  type="primary"
-                  size="mini"
-                  class="flex-fill min-w-0"
-                  @click="reload()"
-                  >{{ $t('public_connection_button_load_schema') }}
-                </el-button>
-              </span>
-            </el-tooltip>
-            <el-button
-              class="flex-fill min-w-0"
-              size="mini"
-              @click="edit()"
-              :disabled="
-                $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
-              "
-            >
-              {{ $t('public_button_edit') }}
-            </el-button>
-            <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
-              {{ $t('public_connection_button_test') }}
-            </el-button>
-          </div>
-        </template>
+        <div class="flex">
+          <el-tooltip
+            :disabled="!isFileSource()"
+            :content="$t('packages_business_connections_list_wenjianleixingde')"
+            placement="top"
+            class="load-schema__tooltip"
+          >
+            <span>
+              <el-button
+                :disabled="isFileSource()"
+                type="primary"
+                size="mini"
+                class="flex-fill min-w-0"
+                @click="reload()"
+                >{{ $t('public_connection_button_load_schema') }}
+              </el-button>
+            </span>
+          </el-tooltip>
+          <el-button
+            class="flex-fill min-w-0"
+            size="mini"
+            @click="edit()"
+            :disabled="
+              $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
+            "
+          >
+            {{ $t('public_button_edit') }}
+          </el-button>
+          <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
+            {{ $t('public_connection_button_test') }}
+          </el-button>
+        </div>
         <el-progress
           v-if="showProgress"
           class="details-progress mt-2"

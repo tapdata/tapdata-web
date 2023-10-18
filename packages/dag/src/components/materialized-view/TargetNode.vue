@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { merge } from 'lodash'
 import { mapActions, mapGetters, mapMutations } from 'vuex'

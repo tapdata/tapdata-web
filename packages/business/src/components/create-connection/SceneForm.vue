@@ -26,24 +26,22 @@
             ></SchemaToForm>
           </div>
         </div>
-        <template v-slot:footer>
-          <footer class="footer">
-            <div class="footer-btn text-center p-4">
-              <el-button class="test mr-4" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-              <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
-                <div class="inline-block">
-                  <el-button :disabled="disableSave" type="primary" :loading="submitBtnLoading" @click="submit()">
-                    {{ $t('public_button_save') }}
-                  </el-button>
-                </div>
-              </ElTooltip>
+        <footer class="footer">
+          <div class="footer-btn text-center p-4">
+            <el-button class="test mr-4" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+            <ElTooltip :disabled="!disableSave" :content="saveBtnTip">
+              <div class="inline-block">
+                <el-button :disabled="disableSave" type="primary" :loading="submitBtnLoading" @click="submit()">
+                  {{ $t('public_button_save') }}
+                </el-button>
+              </div>
+            </ElTooltip>
 
-              <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
-                  $t('packages_business_save_and_more')
-                }}</el-button>-->
-            </div>
-          </footer>
-        </template>
+            <!--            <el-button type="primary" :loading="saveAndMoreLoading" @click="saveAndMore">{{
+								$t('packages_business_save_and_more')
+							}}</el-button>-->
+          </div>
+        </footer>
       </main>
       <div class="flex-1 overflow-x-hidden bg-white border-start">
         <ConnectorDoc v-if="params.pdkHash" :pdk-hash="params.pdkHash" :pdk-id="params.pdkId"></ConnectorDoc>

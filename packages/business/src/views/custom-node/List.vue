@@ -28,7 +28,7 @@
   </section>
 </template>
 
-<script>
+<script lang="jsx">
 import dayjs from 'dayjs'
 import { customNodeApi } from '@tap/api'
 import { FilterBar } from '@tap/component'

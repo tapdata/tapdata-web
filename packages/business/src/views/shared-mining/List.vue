@@ -202,12 +202,7 @@
       </VTable>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton
-            size="mini"
-            @click="
-              showUsingTaskDialog.list = []
-              showUsingTaskDialog.visible = false
-            "
+          <ElButton size="mini" @click=";(showUsingTaskDialog.list = []), (showUsingTaskDialog.visible = false)"
             >{{ $t('public_button_cancel') }}
           </ElButton>
         </div>

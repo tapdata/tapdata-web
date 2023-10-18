@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 

@@ -1,6 +1,6 @@
 import { FragmentComponent } from '@formily/vue'
 import { useDesigner, usePrefix } from '../../../hooks'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const ResizeHandler = defineComponent({
   props: ['node'],

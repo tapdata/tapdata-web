@@ -1,4 +1,4 @@
-import { defineComponent, watch } from 'vue-demi'
+import { defineComponent, watch } from 'vue'
 import { each, useContext } from '@tap/shared'
 import { DesignerLayoutContext } from '../../context'
 

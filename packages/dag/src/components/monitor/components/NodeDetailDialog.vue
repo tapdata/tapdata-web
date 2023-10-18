@@ -145,8 +145,8 @@
             <span class="mr-2">{{ delayLineTitle }}</span>
             <ElTooltip transition="tooltip-fade-in" placement="top" class="inline-flex align-items-center">
               <VIcon class="color-primary">info</VIcon>
-              <template v-slot:content>
-                <div v-if="isSource">
+              <template v-if="isSource" v-slot:content>
+                <div>
                   <div>
                     {{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}
                   </div>
@@ -158,8 +158,8 @@
                   </div>
                 </div>
               </template>
-              <template v-slot:content>
-                <div v-else-if="isTarget">
+              <template v-else-if="isTarget" v-slot:content>
+                <div>
                   <div>
                     {{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}
                   </div>
@@ -168,8 +168,8 @@
                   </div>
                 </div>
               </template>
-              <template v-slot:content>
-                <div v-else>
+              <template v-else v-slot:content>
+                <div>
                   <div>
                     {{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}
                   </div>

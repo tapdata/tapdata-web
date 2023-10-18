@@ -7,23 +7,22 @@
       :label="showItemLabel(item)"
       :class="[item.class, item.type]"
     >
-      <template v-if="item.slotName" v-slot="scope">
+      <template v-if="item.slotName" #default="scope">
         <slot :name="item.slotName" :row="scope.row"></slot>
       </template>
-      <component
-        v-bind="getOptions(item)"
-        v-else
-        v-model:value="item.value"
-        :is="getComponent(item.type)"
-        :style="getStyle(item)"
-        @input="search(item, 'input')"
-        @change="search(item, 'change')"
-        @clear="fetch()"
-      >
-        <template v-slot:suffix>
-          <VIcon size="14" class="inline-block">{{ item.icon }}</VIcon>
-        </template>
-      </component>
+      <template v-else #default>
+        <component
+          v-bind="getOptions(item)"
+          v-model="item.value"
+          :is="getComponent(item.type)"
+          :style="getStyle(item)"
+          @input="search(item, 'input')"
+          @change="search(item, 'change')"
+          @clear="fetch()"
+        >
+          <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
+        </component>
+      </template>
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
@@ -38,7 +37,7 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
-import SelectList from '../SelectList'
+import { ElSelectV2 as SelectList } from 'element-plus'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'

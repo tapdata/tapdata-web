@@ -1097,8 +1097,8 @@ export default {
       }
 
       cause &&
-      cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
-      this.taskErrorCause[task_id] = cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, '')
+        cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
+        (this.taskErrorCause[task_id] = cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
 
     // 显示权限设置

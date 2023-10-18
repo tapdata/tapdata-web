@@ -121,7 +121,7 @@ module.exports = {
     /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/
   ],
   configureWebpack: config => {
-    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx', '.mjs']
     config.plugins.push(
       require('unplugin-vue-components/webpack')({
         resolvers: [ElementPlusResolver()]

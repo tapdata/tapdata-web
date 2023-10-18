@@ -116,9 +116,7 @@
         </template>
         <template v-slot="scope">
           <div v-if="isFileSource(scope.row)">-</div>
-        </template>
-        <template v-else v-slot="scope">
-          <SchemaProgress :data="scope.row"></SchemaProgress>
+          <SchemaProgress v-else :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -464,9 +462,10 @@ export default {
               item.connectionUrl = item.connectionString
             } else {
               if (item.config?.uri) {
-                const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                  item.config.uri
-                )
+                const regResult =
+                  /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                    item.config.uri
+                  )
                 if (regResult && regResult.groups && regResult.groups.password) {
                   const { username, host, database, query } = regResult.groups
                   item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`

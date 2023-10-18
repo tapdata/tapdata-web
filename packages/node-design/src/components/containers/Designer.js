@@ -1,4 +1,4 @@
-import { defineComponent, onMounted } from 'vue-demi'
+import { defineComponent, onMounted } from 'vue'
 import { createDesigner, CustomNode } from '../../core'
 import { DesignerEngineContext } from '../../context'
 import { Layout } from './Layout'

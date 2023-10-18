@@ -1,4 +1,4 @@
-import { defineComponent, ref, nextTick } from 'vue-demi'
+import { defineComponent, ref, nextTick } from 'vue'
 
 import i18n from '@tap/i18n'
 

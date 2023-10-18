@@ -67,7 +67,16 @@
               </div>
             </div>
             <div
-              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
+              class="
+                drop-mask
+                position-absolute
+                absolute-fill
+                p-2
+                flex-column
+                justify-content-center
+                align-center
+                gap-2
+              "
               :class="{ flex: nonSupportApi }"
             >
               <ElTooltip
@@ -233,7 +242,7 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'

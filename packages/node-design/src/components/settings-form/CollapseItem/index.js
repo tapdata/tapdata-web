@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent, ref } from 'vue-demi'
+import { defineComponent, ref } from 'vue'
 
 export const CollapseItem = observer(
   defineComponent({

@@ -2,7 +2,7 @@ import { useViewport, useDragon, useCursor, useValidNodeOffsetRect, usePrefix } 
 import { FragmentComponent } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { CursorStatus, ClosestPosition } from '../../../core'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 // 组件拖拽中或者其他组件准备拖进来的Cover背景提示
 

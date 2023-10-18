@@ -1,7 +1,7 @@
 import { observer } from '@formily/reactive-vue'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 
 export const Header = observer(
   defineComponent({

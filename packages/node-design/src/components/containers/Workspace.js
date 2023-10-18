@@ -1,4 +1,4 @@
-import { defineComponent, ref, computed, toRefs } from 'vue-demi'
+import { defineComponent, ref, computed, toRefs } from 'vue'
 import { useDesigner } from '../../hooks'
 import { WorkspaceContext } from '../../context'
 

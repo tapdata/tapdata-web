@@ -1,6 +1,6 @@
 import { usePrefix, usePosition } from '../../hooks'
 import { Layout } from '../containers'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { StudioHeader } from '../StudioHeader'
 
 export const StudioPanel = defineComponent({

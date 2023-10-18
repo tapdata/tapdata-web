@@ -1,8 +1,8 @@
 import { connect, mapProps, h, mapReadPretty } from '@formily/vue'
 import { defineComponent } from 'vue'
 import { PreviewText } from '@formily/element-plus'
-import ElSelect from './Select'
-import { ElOption } from 'element-plus'
+// import ElSelect from './Select'
+// import { ElOption } from 'element-plus'
 import { resolveComponent } from '@formily/element-plus/lib/__builtins__'
 
 const SelectOption = defineComponent({

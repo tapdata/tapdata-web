@@ -76,18 +76,16 @@
             </span>
           </div>
         </div>
-        <template v-slot:footer>
-          <footer class="footer text-center border-top py-4">
-            <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
-            <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-            <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
-              $t('packages_business_connections_databaseform_jiaobentiaoshi')
-            }}</el-button>
-            <el-button type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('public_button_save') }}
-            </el-button>
-          </footer>
-        </template>
+        <footer class="footer text-center border-top py-4">
+          <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
+          <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
+          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
+            $t('packages_business_connections_databaseform_jiaobentiaoshi')
+          }}</el-button>
+          <el-button type="primary" :loading="submitBtnLoading" @click="submit">
+            {{ $t('public_button_save') }}
+          </el-button>
+        </footer>
       </main>
       <div class="flex-1 overflow-x-hidden bg-white rounded-lg">
         <ConnectorDoc :pdk-hash="$route.query.pdkHash" :pdk-id="$route.query.pdkId"></ConnectorDoc>

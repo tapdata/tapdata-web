@@ -176,10 +176,7 @@
           <div
             v-show="!isFocus"
             class="selector-clipboard__view"
-            @click="
-              isFocus = true
-              clipboardValue = clipboardTables.concat().join(', ')
-            "
+            @click=";(isFocus = true), (clipboardValue = clipboardTables.concat().join(', '))"
           >
             <template v-if="clipboardTables.length">
               <ElTooltip

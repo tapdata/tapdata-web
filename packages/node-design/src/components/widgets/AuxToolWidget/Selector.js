@@ -3,7 +3,7 @@ import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { ElButton as Button } from 'element-plus'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue-demi'
+import { defineComponent, computed, onMounted, onBeforeUnmount, ref } from 'vue'
 
 const useMouseHover = (elRef, enter, leave) => {
   let timer = null

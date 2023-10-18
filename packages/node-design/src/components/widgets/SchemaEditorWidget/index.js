@@ -1,5 +1,5 @@
 import { transformToSchema, transformToTreeNode } from '../../../core'
-import { defineComponent } from 'vue-demi'
+import { defineComponent } from 'vue'
 import { VCodeEditor } from '@tap/component'
 
 export const SchemaEditorWidget = defineComponent({

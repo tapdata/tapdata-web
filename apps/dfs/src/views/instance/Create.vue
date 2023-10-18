@@ -65,13 +65,11 @@
       </ul>
       <!--      <p class="font-color-sslight">本次订购只适用4C8G规格的实例</p>-->
 
-      <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">{{
-            $t('public_button_subscription')
-          }}</ElButton>
-        </span>
-      </template>
+      <span class="dialog-footer">
+        <ElButton size="mini" type="primary" :loading="submitLoading" @click="submit">{{
+          $t('public_button_subscription')
+        }}</ElButton>
+      </span>
     </template>
     <div v-else class="text-center">
       <div>
