@@ -320,7 +320,7 @@ export default {
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      await this.getDatabaseLogInfo(row)
+      this.getDatabaseLogInfo(row)
       this.loadList(row)
     },
     edit() {
@@ -478,18 +478,6 @@ export default {
                 }
               ]
             }
-          : {},
-        row.databaseLogInfo?.value
-          ? {
-              icon: 'warning-circle',
-              items: [
-                {
-                  label: row.databaseLogInfo.key,
-                  key: 'databaseLogInfo',
-                  value: row.databaseLogInfo.value
-                }
-              ]
-            }
           : {}
       ]
     },
@@ -547,6 +535,23 @@ export default {
       try {
         const data = await proxyApi.call(params)
         row.databaseLogInfo = data || {}
+        // list 添加findDatabaseLogInfo
+        let findDatabaseLogInfo = this.list.find(t => t.key === 'databaseLogInfo')
+        if (findDatabaseLogInfo) {
+          findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
+          findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
+        } else {
+          this.list.push({
+            icon: 'warning-circle',
+            items: [
+              {
+                label: row.databaseLogInfo.key,
+                key: 'databaseLogInfo',
+                value: row.databaseLogInfo.value
+              }
+            ]
+          })
+        }
         this.databaseLogInfoTimer = setTimeout(() => {
           this.getDatabaseLogInfo()
         }, 60000)
