@@ -11,7 +11,7 @@ import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
 import { Space } from '../space'
 import { ElTag as Tag } from 'element-plus'
-import { formatDate } from 'element-ui/src/utils/date-util'
+import { formatDate } from '@tap/shared/src/element-ui/date-util'
 
 const prefixCls = `${stylePrefix}-preview-text`
 const PlaceholderContext = createContext('N/A')

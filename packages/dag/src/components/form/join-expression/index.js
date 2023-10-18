@@ -1,9 +1,8 @@
 import { VIcon, OverflowTooltip } from '@tap/component'
 import { h as createElement, useForm, useField, useFieldSchema, RecursionField } from '@tap/form'
-import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'
 import { FormBaseItem as FormItem } from '@tap/form'
-import { watch } from 'vue'
+import { watch, defineComponent } from 'vue'
 import './style.scss'
 import { action } from '@formily/reactive'
 

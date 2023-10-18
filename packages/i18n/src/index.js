@@ -18,3 +18,5 @@ i18n.merge = (langs = {}) => {
 }
 
 export default i18n
+
+export const { t } = i18n.global
