@@ -120,7 +120,7 @@ import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
-import { connectionsApi, dataPermissionApi, usersApi } from '@tap/api'
+import { connectionsApi, dataPermissionApi, usersApi, proxyApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'
 
@@ -146,6 +146,7 @@ export default {
       drawer: false,
       visible: false,
       timer: null,
+      databaseLogInfoTimer: null,
       direction: 'rtl',
       loading: false,
       showProgress: false,
@@ -281,7 +282,9 @@ export default {
     clearTimer() {
       // 清除定时器
       clearTimeout(this.timer)
+      clearTimeout(this.databaseLogInfoTimer)
       this.timer = null
+      this.databaseLogInfoTimer = null
     },
     handleClose() {
       this.clearTimer()
@@ -322,6 +325,7 @@ export default {
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.getDatabaseLogInfo(row)
       this.loadList(row)
       this.isDaas && this.loadPermissions(row.id)
     },
@@ -407,7 +411,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearTimer()
+      clearTimeout(this.timer)
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -606,23 +610,23 @@ export default {
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
         usersApi
-          .role({
-            filter: JSON.stringify({
-              limit: 1000
-            })
-          })
-          .then((roleList = []) => {
-            this.permissions = data
-              .map(t => {
-                const role = roleList.items?.find(r => r.id === t.typeId) || {}
-                return {
-                  checked: t.actions,
-                  roleId: t.typeId,
-                  roleName: role.name
-                }
+            .role({
+              filter: JSON.stringify({
+                limit: 1000
               })
-              .filter(t => !!t.roleName)
-          })
+            })
+            .then((roleList = []) => {
+              this.permissions = data
+                  .map(t => {
+                    const role = roleList.items?.find(r => r.id === t.typeId) || {}
+                    return {
+                      checked: t.actions,
+                      roleId: t.typeId,
+                      roleName: role.name
+                    }
+                  })
+                  .filter(t => !!t.roleName)
+            })
       })
     },
 
@@ -630,6 +634,41 @@ export default {
       if (!this.isDaas) return false
       const data = row.permissionActions || []
       return !data.includes(type)
+    },
+
+    async getDatabaseLogInfo(row = {}) {
+      const { id } = row
+      const params = {
+        className: 'PDKConnectionService',
+        method: 'databaseLogInfoService',
+        args: [id]
+      }
+      try {
+        const data = await proxyApi.call(params)
+        row.databaseLogInfo = data || {}
+        // list 添加findDatabaseLogInfo
+        let findDatabaseLogInfo = this.list.find(t => t.key === 'databaseLogInfo')
+        if (findDatabaseLogInfo) {
+          findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
+          findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
+        } else {
+          this.list.push({
+            icon: 'warning-circle',
+            items: [
+              {
+                label: row.databaseLogInfo.key,
+                key: 'databaseLogInfo',
+                value: row.databaseLogInfo.value
+              }
+            ]
+          })
+        }
+        this.databaseLogInfoTimer = setTimeout(() => {
+          this.getDatabaseLogInfo()
+        }, 60000)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
