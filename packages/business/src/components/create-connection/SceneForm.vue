@@ -414,16 +414,22 @@ export default {
     },
     async getPdkForm() {
       const pdkHash = this.params?.pdkHash
-      const data = await databaseTypesApi.pdkHash(pdkHash)
+      // const data = await databaseTypesApi.pdkHash(pdkHash)
       let id = this.id || this.params.id
-      this.params.name = data.name
-      this.pdkOptions = data || {}
+      // this.pdkOptions = data || {}
+
+      if (this.params.pdkOptions) {
+        this.pdkOptions = this.params.pdkOptions
+      } else {
+        this.pdkOptions = await databaseTypesApi.pdkHash(pdkHash)
+        this.params.name = this.pdkOptions.name
+      }
 
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
 
-      const { connectionType } = this.pdkOptions
+      let { connectionType } = this.pdkOptions
       let typeEnum = ['source', 'target'].includes(connectionType)
         ? [
             {
@@ -450,7 +456,13 @@ export default {
             }
           ]
 
-      let hideConnectionType = this.hideConnectionType || ['source', 'target'].includes(this.selectorType)
+      let hideConnectionType = false
+
+      if (this.hideConnectionType || ['source', 'target'].includes(this.selectorType)) {
+        hideConnectionType = true
+        connectionType = this.selectorType || connectionType
+      }
+
       const endProperties = {}
 
       // 是否支持共享挖掘
@@ -760,7 +772,7 @@ export default {
           }
         }
       })
-      const connectionProperties = data?.properties?.connection?.properties || {}
+      const connectionProperties = this.pdkOptions.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
       let result = {
@@ -787,7 +799,7 @@ export default {
                     type: 'string',
                     title: this.$t('public_connection_type'),
                     required: true,
-                    default: this.pdkOptions.connectionType || 'source_and_target',
+                    default: connectionType,
                     enum: typeEnum,
                     'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
@@ -886,7 +898,115 @@ export default {
                     properties: endProperties
                   }
                 }
-              }
+              },
+              ssl: this.pdkOptions.tags.includes('ssl')
+                ? {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: i18n.t('public_ssl_settings')
+                    },
+                    properties: {
+                      __TAPDATA: {
+                        type: 'object',
+                        properties: {
+                          enableSSL: {
+                            // 使用 SSL
+                            title: i18n.t('packages_business_use_ssl'),
+                            type: 'boolean',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'item-control-horizontal',
+                              layout: 'horizontal'
+                            },
+                            'x-component': 'Switch'
+                          },
+                          sslCA: {
+                            // CA 文件
+                            title: i18n.t('packages_business_certificate_authority'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'TextFileReader',
+                            fileNameField: 'sslCAFile'
+                          },
+                          sslCert: {
+                            // 客户端证书文件
+                            title: i18n.t('packages_business_client_certificate'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'TextFileReader',
+                            fileNameField: 'sslCertFile'
+                          },
+                          sslKey: {
+                            // 客户端密钥文件
+                            title: i18n.t('packages_business_client_key'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'TextFileReader',
+                            fileNameField: 'sslKeyFile'
+                          },
+                          sslKeyPassword: {
+                            // 客户端密钥密码
+                            title: i18n.t('packages_business_client_key_password'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Password'
+                          }
+                        }
+                      }
+                    }
+                  }
+                : undefined,
+              ssh: this.pdkOptions.tags.includes('ssh')
+                ? {
+                    type: 'void',
+                    'x-component': 'FormCollapse.Item',
+                    'x-component-props': {
+                      title: i18n.t('public_ssh_settings')
+                    },
+                    properties: {
+                      enableSSH: {
+                        // 使用 SSH 隧道
+                        title: i18n.t('packages_business_use_ssh'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal',
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch'
+                      },
+                      sshHost: {
+                        // 主机名
+                        title: i18n.t('packages_business_ssh_host'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input'
+                      },
+                      sshPort: {
+                        // 端口
+                        title: i18n.t('packages_business_ssh_port'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber'
+                      },
+                      sshUsername: {
+                        // 用户名
+                        title: i18n.t('packages_business_ssh_username'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input'
+                      },
+                      sshPassword: {
+                        // 密码
+                        title: i18n.t('packages_business_ssh_password'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Password'
+                      }
+                    }
+                  }
+                : undefined
             }
           }
         }

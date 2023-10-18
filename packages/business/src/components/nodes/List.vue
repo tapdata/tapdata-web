@@ -76,6 +76,9 @@ export default {
 
     items() {
       return this.allNodes
+        .filter(node => {
+          return !node.disabled && !node.attrs.disabled
+        })
         .map(t => {
           const { type, $inputs, $outputs } = t
           const isSource = (type === 'database' || type === 'table') && !$inputs.length

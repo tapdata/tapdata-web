@@ -654,7 +654,7 @@ export default {
     'Adjustment by coefficient refers to multiplying the original deduced length by the set coefficient as the adjusted field length',
   packages_dag_field_rename_index_yixiacaozuoyi: 'The following operations cannot match the source field',
   packages_dag_nodes_database_jinwuzhujianbiao: 'No primary key table only',
-  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table',
+  packages_dag_nodes_database_jinyouzhujianbiao: 'Only the primary key table (including unique index)',
   packages_dag_nodes_database_biaoxianshi: 'Selectable table range',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: 'Select the field type to filter out',
   packages_dag_data_schema: 'Data Schema',
@@ -689,6 +689,7 @@ export default {
   packages_dag_materialized_view_field_flatten: 'Flatten',
   packages_dag_materialized_view_field_document: 'Embedded Document',
   packages_dag_materialized_view_field_array: 'Embedded Array',
+  packages_dag_materialized_view_storage_table: 'Materialized View Storage Table',
   packages_dag_add_field: 'Add Field',
   packages_dag_search_node: 'Search Node',
   packages_dag_unwind_name: 'Unwinding Arrays',
@@ -696,5 +697,6 @@ export default {
   packages_dag_unwind_includeArrayIndex: 'Array Index Field Name',
   packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
-    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.'
+    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
+  packages_dag_btn_disable_node: 'Disable Node'
 }

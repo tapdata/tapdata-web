@@ -609,7 +609,7 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu_tip: '按係數調整是指將原推演出的長度乘以設置的係數作為調整後的字段長度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
   packages_dag_nodes_database_jinwuzhujianbiao: '僅無主鍵表',
-  packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表',
+  packages_dag_nodes_database_jinyouzhujianbiao: '僅有主鍵表（含唯一索引）',
   packages_dag_nodes_database_biaoxianshi: '可選擇的表範圍',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '選擇要過濾掉的字段類型',
   packages_dag_field_add_del_index_zhidi: '置底',
@@ -636,6 +636,7 @@ export default {
   packages_dag_materialized_view_field_flatten: '平鋪',
   packages_dag_materialized_view_field_document: '內嵌文檔',
   packages_dag_materialized_view_field_array: '內嵌數組',
+  packages_dag_materialized_view_storage_table: '物化視圖存儲表',
   packages_dag_add_field: '新增字段',
   packages_dag_search_node: '搜索節點',
   packages_dag_unwind_name: '拆分數組',
@@ -643,5 +644,6 @@ export default {
   packages_dag_unwind_includeArrayIndex: '保存數組索引的新字段名',
   packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空數組',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
-    '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。'
+    '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。',
+  packages_dag_btn_disable_node: '禁用節點'
 }

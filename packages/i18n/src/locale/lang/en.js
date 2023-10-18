@@ -25,6 +25,8 @@ export default {
   public_schema: 'Schema',
   public_basic_settings: 'Basic Settings',
   public_advanced_settings: 'Advanced Settings',
+  public_ssl_settings: 'SSL Settings',
+  public_ssh_settings: 'SSH Settings',
   public_recommend: 'Recommend',
   public_board_view: 'Board',
   public_list_view: 'List',

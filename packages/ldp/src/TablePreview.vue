@@ -13,6 +13,9 @@
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
         }}</span>
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
+          ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
+        >
       </div>
       <div class="flex align-center gap-8">
         <span class="inline-flex align-center text-uppercase text-nowrap">
@@ -32,9 +35,6 @@
             ><span class="table-dec-txt text-nowrap">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
-          ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
-        >
       </div>
     </header>
     <section class="flex-1 min-h-0 mt-1">

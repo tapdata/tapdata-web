@@ -159,7 +159,10 @@
 
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
           <ElRadioGroup v-model="taskDialogConfig.task.type">
-            <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
+            <ElTooltip
+              :disabled="!taskDialogConfig.notSupportedCDC"
+              :content="$t('packages_ldp_not_support_increments')"
+            >
               <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
                 {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
               </ElRadio>
