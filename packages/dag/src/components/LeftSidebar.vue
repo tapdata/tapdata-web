@@ -273,8 +273,8 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
 import { ElSelect as Select } from 'element-plus'
-import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { addResizeListener, removeResizeListener } from 'element-plus/lib/utils/dom/resize-event'
+import { getScrollBarWidth } from 'element-plus/lib/utils/dom/scroll'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { SceneDialog } from '@tap/business'
@@ -298,7 +298,6 @@ export default {
     BaseNode,
     VIcon,
     ConnectionType,
-    ElScrollbar: Select.components.ElScrollbar,
     StageButton
   },
   data() {
@@ -374,7 +373,7 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollBarWidth()
       return `position:relative;height: calc(100% + ${gutter}px);`
     }
   },

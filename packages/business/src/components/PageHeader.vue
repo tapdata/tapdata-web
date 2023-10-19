@@ -6,9 +6,12 @@
       </ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="flex align-items-center px-4" v-else>
-      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title || '') }}</span>
       <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-      <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$t($route.meta.desc)"></Desciption>
+      <Desciption
+        class="flex align-items-center fs-7 font-color-sslight"
+        :desc="$t($route.meta.desc || '')"
+      ></Desciption>
     </div>
   </div>
 </template>
@@ -73,7 +76,7 @@ export default {
             to = null
           }
           data.push({
-            name: this.$t(route.meta?.title),
+            name: this.$t(route.meta?.title || ''),
             to
           })
         })

@@ -7,8 +7,8 @@ import PaidUpgrade from '@/views/agent-download/PaidUpgrade.vue'
 
 import Lang from '../views/Lang.vue'
 
-const UserCenter = Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/user/Center.vue')))
-const UserContactUs = Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/user/ContactUs.vue')))
+const UserCenter = () => import('../views/user/Center.vue')
+const UserContactUs = () => import('../views/user/ContactUs.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
@@ -96,7 +96,7 @@ const VerificationResult = async () => {
 const routes = [
   {
     path: '/',
-    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/Layout.vue'))),
+    component: () => import('../views/Layout.vue'),
     meta: {},
     children: [
       {
@@ -117,7 +117,7 @@ const routes = [
       {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/workbench/Workbench.vue'))),
+        component: () => import('../views/workbench/Workbench.vue'),
         meta: {
           title: 'tap_workbench',
           icon: 'workbench',
@@ -127,9 +127,7 @@ const routes = [
       {
         path: '/systemNotice',
         name: 'SystemNotice',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('../views/workbench/SystemNotice.vue'))
-        ),
+        component: () => import('../views/workbench/SystemNotice.vue'),
         meta: {
           title: 'tap_system_notification'
         }
@@ -137,7 +135,7 @@ const routes = [
       {
         path: '/instance',
         name: 'Instance',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/Instance.vue'))),
+        component: () => import('../views/instance/Instance.vue'),
         meta: {
           title: 'tap_agent_management',
           icon: 'agent',
@@ -147,11 +145,9 @@ const routes = [
           {
             path: 'create',
             name: 'createAgent',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/instance/CreateAgent'))
-            ),
+            component: () => import('../views/instance/CreateAgent'),
             meta: {
-              title: i18n.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
+              title: i18n.global.t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu'),
               hideTitle: true
             }
           },
@@ -161,9 +157,7 @@ const routes = [
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/instance/Details.vue'))
-            ),
+            component: () => import('../views/instance/Details.vue'),
             meta: {
               title: 'tap_instance_details'
             }
@@ -171,7 +165,7 @@ const routes = [
           {
             path: 'install/:id',
             name: 'installAgent',
-            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/Install'))),
+            component: () => import('../views/instance/Install'),
             meta: {
               title: '部署计算引擎',
               hideTitle: true
@@ -183,7 +177,7 @@ const routes = [
         path: '/connections',
         name: 'connections',
         // component: Iframe,
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('@/views/connection/List.tsx'))),
+        component: () => import('@/views/connection/List.tsx'),
         meta: {
           title: 'tap_connection_management',
           icon: 'connection'
@@ -353,7 +347,7 @@ const routes = [
       {
         path: '/operationLog',
         name: 'OperationLog',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/operation-log/List.vue'))),
+        component: () => import('../views/operation-log/List.vue'),
         meta: {
           title: 'tap_operation_log',
           icon: 'operation-log'
@@ -378,47 +372,45 @@ const routes = [
       {
         path: '/user/order',
         name: 'order',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/List.vue'))),
+        component: () => import('../views/order/List.vue'),
         meta: {
-          title: i18n.t('dfs_router_index_dingyuezhongxin'),
+          title: i18n.global.t('dfs_router_index_dingyuezhongxin'),
           hideTitle: true
         },
         children: [
           {
             path: 'pay/:id',
             name: 'pay',
-            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
+            component: () => import('../views/order/Pay'),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan')
+              title: i18n.global.t('dfs_router_index_zhifuqingdan')
             }
           },
           {
             path: 'change/pay/:id',
             name: 'payForChange',
-            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
+            component: () => import('../views/order/Pay'),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan')
+              title: i18n.global.t('dfs_router_index_zhifuqingdan')
             }
           },
           {
             path: 'renew/pay/:id',
             name: 'payForRenew',
-            component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/order/Pay'))),
+            component: () => import('../views/order/Pay'),
             meta: {
               hideTitle: true,
-              title: i18n.t('dfs_router_index_zhifuqingdan')
+              title: i18n.global.t('dfs_router_index_zhifuqingdan')
             }
           },
           {
             path: '/user/order/changeList',
             name: 'changeList',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/order/ChangeList.vue'))
-            ),
+            component: () => import('../views/order/ChangeList.vue'),
             meta: {
-              title: i18n.t('dfs_change_record'),
+              title: i18n.global.t('dfs_change_record'),
               code: ''
             }
           }
@@ -449,7 +441,7 @@ const routes = [
       {
         path: '/data-server',
         name: 'dataServerList',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/data-server/list'))),
+        component: () => import('../views/data-server/list'),
         meta: {
           title: 'dfs_data_server',
           hideTitle: true,
@@ -459,7 +451,7 @@ const routes = [
       {
         path: '/data-hub',
         name: 'dataConsole',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/data-hub'))),
+        component: () => import('../views/data-hub'),
         meta: {
           title: 'page_title_data_hub',
           hideTitle: true,
@@ -469,7 +461,7 @@ const routes = [
       {
         path: '/create-storage',
         name: 'CreateStorage',
-        component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/instance/CreateStorage'))),
+        component: () => import('../views/instance/CreateStorage'),
         meta: {
           title: 'page_title_subscribe_storage',
           hideTitle: true,
@@ -492,16 +484,14 @@ const routes = [
         name: 'noticeList',
         component: NoticeList,
         meta: {
-          title: i18n.t('dfs_router_index_gonggaoliebiao'),
+          title: i18n.global.t('dfs_router_index_gonggaoliebiao'),
           hideTitle: false
         },
         children: [
           {
             path: 'notice',
             name: 'WorkbenchNotice',
-            component: Vue.defineAsyncComponent(
-              Vue.defineAsyncComponent(() => import('../views/workbench/Notice.vue'))
-            ),
+            component: () => import('../views/workbench/Notice.vue'),
             meta: {
               title: 'tap_announcement_notice'
             }
@@ -526,9 +516,7 @@ const routes = [
       {
         path: '/ticketSystem',
         name: 'TicketSystem',
-        component: Vue.defineAsyncComponent(
-          Vue.defineAsyncComponent(() => import('../views/ticketing-system/List.vue'))
-        ),
+        component: () => import('../views/ticketing-system/List.vue'),
         meta: {
           title: 'dfs_router_index_gongdanliebiao'
         }
@@ -565,7 +553,7 @@ const routes = [
   //   name: 'pay',
   //   component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
   //   meta: {
-  //     title: i18n.t('dfs_router_index_zhifuqingdan')
+  //     title: i18n.global.t('dfs_router_index_zhifuqingdan')
   //   }
   // },
   {
@@ -671,13 +659,13 @@ const routes = [
   {
     path: '/aliyun-market/license',
     name: 'aliyunMarketLicense',
-    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/aliyun-market/License.vue')))
+    component: () => import('../views/aliyun-market/License.vue')
   },
   //产品引导
   {
     path: '/product',
     name: 'productDemo',
-    component: Vue.defineAsyncComponent(Vue.defineAsyncComponent(() => import('../views/productDemo')))
+    component: () => import('../views/productDemo')
   }
 ]
 

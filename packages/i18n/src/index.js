@@ -1,4 +1,4 @@
-import { createI18n } from 'vue-i18n'
+import VueI18n, { createI18n } from 'vue-i18n'
 
 import { langKeyMap, getCurrentLanguage } from './shared/util'
 import locale from './locale'
@@ -9,13 +9,16 @@ const i18n = createI18n({
   silentTranslationWarn: true
 })
 
-window.$vueApp.use(i18n)
+// window.$vueApp.use(i18n)
 
 i18n.merge = (langs = {}) => {
   Object.keys(langKeyMap).forEach(f => {
-    i18n.mergeLocaleMessage(f, langs[f])
+    i18n.global.mergeLocaleMessage(f, langs[f])
   })
 }
+
+// FIXME 这里只是临时处理，需要优化
+i18n.t = i18n.global.t
 
 export default i18n
 

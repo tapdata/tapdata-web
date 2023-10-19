@@ -1,7 +1,8 @@
 <template>
   <el-dialog
     :title="$t('dfs_subscribe_to_professional_plan')"
-    v-model="visible"
+    :value="visible"
+    @input="$emit('update:visible', $event)"
     :append-to-body="true"
     width="880px"
     custom-class="paid-upgrade-dialog"
@@ -43,7 +44,15 @@
         </div>
       </li>
       <li
-        class="paid-upgrade-right copilot-pricing-card-container ml-6 flex flex-column bg cursor-pointer position-relative"
+        class="
+          paid-upgrade-right
+          copilot-pricing-card-container
+          ml-6
+          flex flex-column
+          bg
+          cursor-pointer
+          position-relative
+        "
         @click="goPaidUpgrade"
       >
         <img

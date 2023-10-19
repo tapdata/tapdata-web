@@ -7,46 +7,35 @@
     :close-on-press-escape="false"
     custom-class="tour-dialog"
   >
-    <template v-if="!finish">
-      <template v-slot:title>
-        <div class="text-center title-cover">
-          <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
-        </div>
-      </template>
-
-      <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
-        <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
-
-        <p class="text-primary fw-sub my-2">
-          {{ $t('dfs_replication_tour_dialog_steps') }}
-        </p>
-        <p>{{ $t('dfs_replication_tour_dialog_lets_go') }}</p>
+    <template #title>
+      <div v-if="!finish" class="text-center title-cover">
+        <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
       </div>
-
-      <template v-slot:footer>
-        <div class="text-center">
-          <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
-        </div>
-      </template>
+      <div v-else class="text-center title-cover pt-4">🎉</div>
     </template>
 
-    <template v-else>
-      <template v-slot:title>
-        <div class="text-center title-cover pt-4">🎉</div>
-      </template>
+    <div v-if="!finish" class="lh-base font-color-dark text-center mt-n4">
+      <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
+      <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
 
-      <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">
-          {{ $t('dfs_replication_tour_dialog_success_title') }}
-        </h1>
+      <p class="text-primary fw-sub my-2">
+        {{ $t('dfs_replication_tour_dialog_steps') }}
+      </p>
+      <p>{{ $t('dfs_replication_tour_dialog_lets_go') }}</p>
+    </div>
+    <div v-else class="lh-base font-color-dark text-center mt-n4">
+      <h1 class="fs-5 fw-sub font-color-dark mb-2">
+        {{ $t('dfs_replication_tour_dialog_success_title') }}
+      </h1>
+    </div>
+
+    <template #footer>
+      <div v-if="!finish" class="text-center">
+        <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
       </div>
-
-      <template v-slot:footer>
-        <div class="text-center">
-          <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
-        </div>
-      </template>
+      <div v-else class="text-center">
+        <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
+      </div>
     </template>
   </ElDialog>
 </template>

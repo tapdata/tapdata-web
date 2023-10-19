@@ -158,21 +158,21 @@ export default {
       selected: {},
       paidDetailColumns: [
         {
-          label: i18n.t('dfs_components_renew_dingyuebianhao'),
+          label: i18n.global.t('dfs_components_renew_dingyuebianhao'),
           prop: 'id'
         },
         {
-          label: i18n.t('dfs_components_renew_shiliguige'),
+          label: i18n.global.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
           width: 180
         },
         {
-          label: i18n.t('dfs_instance_instance_dingyuefangshi'),
+          label: i18n.global.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
           width: 180
         },
         {
-          label: i18n.t('dfs_instance_instance_daoqishijian'),
+          label: i18n.global.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
           width: 180
         }
@@ -231,11 +231,11 @@ export default {
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+            let desc = i18n.global.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
               val: this.getSuggestPipelineNumber(cpu, memory)
             })
             if (t.chargeProvider === 'FreeTier') {
-              desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
+              desc = i18n.global.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
             }
             return {
               label: getSpec(t.spec),
@@ -298,15 +298,15 @@ export default {
         .filter(t => this.specification === t.specification)
         .map(t => {
           return Object.assign(t, {
-            desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
+            desc: i18n.global.t('dfs_instance_create_bencidinggouzhi', {
               val1: specificationLabel
             }),
             label:
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
                 : this.platform !== 'selfHost'
-                ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.t('dfs_instance_utils_baoyue')
+                ? i18n.global.t('dfs_instance_createagent_mianfeishiyonggui')
+                : i18n.global.t('dfs_instance_utils_baoyue')
           })
         })
         .sort((a, b) => {
@@ -507,8 +507,50 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.spec-price{position:absolute;bottom:18px;right:135px}.form-label{width:90px}.form-label-en{width:170px}.discount-tag{padding:0 6px;color:#ff7d00;background:rgba(255,125,0,0.1)}.discount-hot-icon{color:#ff7d00;right:-12px;top:-12px;font-size:24px;background:#fff}.vip-btn{color:map-get($color, primary);border-radius:4px;border:1px solid map-get($color, primary)!important}.subscription-radio.el-radio{padding:0 12px;line-height:30px}.maxHeight{max-height:220px}.spec-li:hover{border:1px solid map-get($color, primary)}.spec-li{//width:580px;border:1px solid #dedede;border-radius:4px;.is-active {
+<style scoped lang="scss">
+.spec-price {
+  position: absolute;
+  bottom: 18px;
+  right: 135px;
+}
+.form-label {
+  width: 90px;
+}
+.form-label-en {
+  width: 170px;
+}
+.discount-tag {
+  padding: 0 6px;
+  color: #ff7d00;
+  background: rgba(255, 125, 0, 0.1);
+}
+.discount-hot-icon {
+  color: #ff7d00;
+  right: -12px;
+  top: -12px;
+  font-size: 24px;
+  background: #fff;
+}
+.vip-btn {
+  color: map-get($color, primary);
+  border-radius: 4px;
+  border: 1px solid map-get($color, primary) !important;
+}
+.subscription-radio.el-radio {
+  padding: 0 12px;
+  line-height: 30px;
+}
+.maxHeight {
+  max-height: 220px;
+}
+.spec-li:hover {
+  border: 1px solid map-get($color, primary);
+}
+.spec-li {
+  //width: 580px;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  .is-active {
     display: none;
   }
   &.active {
@@ -539,9 +581,19 @@ export default {
     .spec-li-title {
       color: #86909c !important;
     }
-  }}.form-item-flex{::v-deep {
+  }
+}
+.form-item-flex {
+  ::v-deep {
     .el-form-item__content {
       display: contents;
     }
-  }}.cloud-region-grid{display:grid;grid-template-columns:auto 1fr;grid-gap:16px}
+  }
+}
+
+.cloud-region-grid {
+  display: grid;
+  grid-template-columns: auto 1fr; /* 两列 */
+  grid-gap: 16px;
+}
 </style>

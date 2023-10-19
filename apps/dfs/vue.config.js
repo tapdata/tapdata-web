@@ -1,3 +1,5 @@
+const { defineConfig } = require('@vue/cli-service')
+
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const crypto = require('crypto')
@@ -86,13 +88,20 @@ let localTmProxy = {
   }
 }
 
-module.exports = {
+module.exports = defineConfig({
   pages,
   lintOnSave: process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath: './',
   productionSourceMap: false,
 
   devServer: {
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+        runtimeErrors: false
+      }
+    },
     proxy:
       SERVE_ENV === 'PROD'
         ? prodProxyConfig
@@ -261,13 +270,13 @@ module.exports = {
     config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch-index')
 
-    // ============ ts处理 ============
+    /*// ============ ts处理 ============
     config.module
       .rule('compile')
       .test(/\.(jsx|tsx|ts)$/)
       .use('babel')
       .loader('babel-loader')
-      .end()
+      .end()*/
   },
   css: {
     loaderOptions: {
@@ -276,24 +285,28 @@ module.exports = {
       }
     }
   }
-}
+})
 // 设置本地环境的token
 const getToken = userId => {
   const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
+
   function __encrypt(string) {
     return crypto
       .createHmac('sha256', secret)
       .update(string + secret)
       .digest('hex')
   }
+
   function encodeBase64(string) {
     if (typeof string !== 'string') return null
     return Buffer.from(string || '').toString('base64')
   }
+
   function encodeStaticTokenByUserId(userId) {
     let token = __encrypt(userId)
     return encodeBase64(userId) + '.' + encodeBase64(token)
   }
+
   const token = encodeStaticTokenByUserId(userId)
   return token
 }

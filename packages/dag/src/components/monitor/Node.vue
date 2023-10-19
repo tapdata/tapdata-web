@@ -1,4 +1,4 @@
-<script>
+<script lang="jsx">
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'

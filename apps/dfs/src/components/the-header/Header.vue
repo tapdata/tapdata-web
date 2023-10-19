@@ -292,13 +292,9 @@ export default {
     },
 
     loadUserMock() {
-      this.$axios
-        .get('api/gw/user', {
-          maxRedirects: 0
-        })
-        .then(data => {
-          this.mockUserId = data?.mockUserId || false
-        })
+      this.$axios.get('api/gw/user').then(data => {
+        this.mockUserId = data?.mockUserId || false
+      })
     }
   }
 }

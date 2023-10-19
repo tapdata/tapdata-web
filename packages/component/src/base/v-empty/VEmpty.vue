@@ -2,8 +2,8 @@
   <div
     class="v-empty-wrap"
     :class="{
-      'empty-small': props.small,
-      'empty-large': props.large
+      'empty-small': small,
+      'empty-large': large
     }"
   >
     <div class="empty-image">
@@ -11,7 +11,7 @@
         <ElImage :src="require('./empty.svg')"></ElImage>
       </slot>
     </div>
-    <p class="empty-desc">{{ props.description }}</p>
+    <p class="empty-desc">{{ description }}</p>
   </div>
 </template>
 

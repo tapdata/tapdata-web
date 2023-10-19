@@ -39,7 +39,7 @@ export const Message = new MessageConstructor()*/
 
 export const install = app => {
   app.use(ElementPlus, { size: 'small', i18n: i18n.global.t })
-  // app.use(ElLoading)
+  app.use(ElLoading)
 }
 
 // TODO 可能需要重写适配

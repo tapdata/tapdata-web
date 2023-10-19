@@ -36,8 +36,6 @@
               <span>{{ $t('public_data_no_data') }}</span>
             </div>
           </div>
-        </template>
-        <template v-slot:empty>
           <div v-else class="migration-table__empty">
             <VIcon size="120">search-no-data-color</VIcon>
             <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">

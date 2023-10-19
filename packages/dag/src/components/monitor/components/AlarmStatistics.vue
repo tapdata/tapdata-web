@@ -1,4 +1,4 @@
-<script>
+<script lang="jsx">
 import { defineComponent } from 'vue'
 import { VIcon } from '@tap/component'
 

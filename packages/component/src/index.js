@@ -1,8 +1,8 @@
 import langs from './locale'
 
 // base
-import VirtualTransfer from './base/virtual-transfer'
-import VirtualTransferPanel from './base/virtual-transfer/VirtualTransferPanel'
+// import VirtualTransfer from './base/virtual-transfer'
+// import VirtualTransferPanel from './base/virtual-transfer/VirtualTransferPanel'
 // import VirtualSelect from './base/virtual-select'
 import VirtualList from './base/virtual-list'
 import VTable from './base/v-table'
@@ -41,8 +41,8 @@ export {
   EmptyItem,
   VButton,
   Highlight,
-  VirtualTransfer,
-  VirtualTransferPanel,
+  // VirtualTransfer,
+  // VirtualTransferPanel,
   VirtualSelect,
   VirtualSelect as SelectList,
   VirtualList,

@@ -2,7 +2,8 @@
   <section>
     <el-dialog
       :title="$t('packages_business_components_upgradecharges_dingyueshengji')"
-      v-model="visible"
+      :value="visible"
+      @input="$emit('update:visible', $event)"
       :append-to-body="true"
       width="880px"
       custom-class="paid-upgrade-dialog"

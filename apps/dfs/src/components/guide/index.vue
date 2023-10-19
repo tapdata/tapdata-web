@@ -1,7 +1,8 @@
 <template>
   <ElDialog
     class="guide-dialog"
-    v-model:visible="visible"
+    :value="visible"
+    @input="$emit('update:visible', $event)"
     width="1000px"
     :top="'10vh'"
     :show-close="false"
@@ -102,7 +103,7 @@
   </ElDialog>
 </template>
 
-<script>
+<script lang="jsx">
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import i18n from '@/i18n'

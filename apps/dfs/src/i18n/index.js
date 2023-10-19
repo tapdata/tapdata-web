@@ -1,4 +1,4 @@
-import i18n from '@tap/i18n'
+import i18n, { t } from '@tap/i18n'
 import dayjs from '../plugins/dayjs'
 
 // element-plus
@@ -52,3 +52,4 @@ i18n.merge(localLangs)
 i18n.merge(localStorageLangs)
 
 export default i18n
+export { t }

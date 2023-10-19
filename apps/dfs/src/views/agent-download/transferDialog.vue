@@ -1,6 +1,7 @@
 <template>
   <el-dialog
-    v-model="visible"
+    :value="visible"
+    @input="$emit('update:visible', $event)"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :append-to-body="true"

@@ -1,15 +1,5 @@
-<script>
-import * as Vue from 'vue'
-import bindsAttrs from '../mixins/bindsAttrs'
-
-const SIZE_MAP = {
-  xSmall: '12px',
-  small: '16px',
-  default: '24px',
-  medium: '28px',
-  large: '36px',
-  xLarge: '40px'
-}
+<script lang="jsx">
+import { defineComponent, Fragment, ref } from 'vue'
 
 function convertToUnit(str, unit = 'px') {
   if (str == null || str === '') {
@@ -21,43 +11,94 @@ function convertToUnit(str, unit = 'px') {
   }
 }
 
-const VIcon = function render(_props, _context) {
-  const context = {
-    ..._context,
-    props: _props,
-    data: _context.attr,
-    children: _context.slots
-  }
-  const icon = this.getIcon()
-  if (this.tag === 'svg') {
-    return this.renderSvgIcon(icon, Vue.h)
-  }
-  const data = this.getDefaultData()
-  data.class[icon] = true
-  const fontSize = this.getSize()
-  if (fontSize) data.style = { fontSize, color: this.color }
-  return Vue.h(this.tag, data)
+function flattenFragments(nodes) {
+  return nodes
+    .map(node => {
+      if (node.type === Fragment) {
+        return flattenFragments(node.children)
+      } else {
+        return node
+      }
+    })
+    .flat()
 }
 
-export default function render(_props, _context) {
-  const context = {
-    ..._context,
-    props: _props,
-    data: _context.attr,
-    children: _context.slots
-  }
-  const { data, children } = context
-  let iconName = ''
+export default defineComponent({
+  name: 'VIcon',
 
-  // 支持 v-text 和 v-html
-  if (data.domProps) {
-    iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
-    delete data.domProps.textContent
-    delete data.domProps.innerHTML
-  }
+  props: {
+    disabled: Boolean,
+    size: [Number, String],
+    color: String,
+    large: Boolean,
+    small: Boolean,
+    xLarge: Boolean,
+    xSmall: Boolean,
+    tag: {
+      type: String,
+      required: false,
+      default: 'svg'
+    }
+  },
 
-  return Vue.h(VIcon, data, iconName ? [iconName] : children)
-}
+  setup(props, { attrs, slots }) {
+    const slotIcon = ref()
+
+    return () => {
+      const slotValue = slots.default?.()
+      const size = convertToUnit(props.size)
+      if (slotValue) {
+        slotIcon.value = flattenFragments(slotValue).filter(
+          node => node.type === Text && node.children && typeof node.children === 'string'
+        )[0]?.children
+      }
+
+      const sizeData = size
+        ? {
+            fontSize: size,
+            height: size,
+            width: size
+          }
+        : {}
+
+      return (
+        <span
+          {...{
+            staticClass: 'v-icon',
+            class: {
+              'v-icon--disabled': props.disabled,
+              'v-icon--link': !!attrs.onClick,
+              'v-icon--dense': props.dense
+            },
+            style: {
+              ...sizeData,
+              color: props.color,
+              'caret-color': props.color
+            }
+          }}
+          disabled={!!attrs.onClick && props.disabled}
+          role={attrs.onClick ? 'button' : undefined}
+          aria-hidden={!attrs.onClick}
+        >
+          <svg
+            {...{
+              class: 'v-icon__svg',
+              style: { ...sizeData },
+              attrs: {
+                xmlns: 'http://www.w3.org/2000/svg',
+                viewBox: '0 0 24 24',
+                role: 'img',
+                'aria-hidden': true
+              }
+            }}
+          >
+            <use xlink:href={`#icon-${slotIcon.value}`}></use>
+          </svg>
+        </span>
+      )
+    }
+  }
+})
 </script>
 
 <style lang="scss">

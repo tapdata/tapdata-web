@@ -1,4 +1,4 @@
-<script>
+<script lang="jsx">
 import * as Vue from 'vue'
 export default {
   name: 'OverflowTooltip',

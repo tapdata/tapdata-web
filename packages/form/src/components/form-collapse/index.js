@@ -118,7 +118,7 @@ const FormCollapse = observer(
               value: activeKey
             },
             on: {
-              change: (key: string | string[]) => {
+              change: key => {
                 emit('input', key)
                 _formCollapse.value.setActiveKeys(key)
               }

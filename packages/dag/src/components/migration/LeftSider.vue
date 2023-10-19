@@ -195,7 +195,7 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { ElSelect as Select } from 'element-plus'
 import { OverflowTooltip } from '@tap/component'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { getScrollBarWidth } from 'element-plus/lib/utils/dom/scroll'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
@@ -211,7 +211,6 @@ export default {
     BaseNode,
     VIcon,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar,
     ConnectionType
   },
   data() {
@@ -261,7 +260,7 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollBarWidth()
       return `height: calc(100% + ${gutter}px);`
     }
   },

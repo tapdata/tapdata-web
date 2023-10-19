@@ -193,7 +193,7 @@ _axios.interceptors.request.use(requestInterceptor, errorCallback)
 // 请求返回拦截器
 _axios.interceptors.response.use(responseInterceptor, errorCallback)
 
-const Plugin = {}
+/*const Plugin = {}
 Plugin.install = function (Vue) {
   Vue.axios = _axios
   window.axios = _axios
@@ -213,4 +213,22 @@ Plugin.install = function (Vue) {
 
 window.$vueApp.use(Plugin)
 
-export default Plugin
+export default Plugin*/
+
+export default _axios
+
+export const install = app => {
+  window.axios = _axios
+  Object.defineProperties(window.$vueApp.config.globalProperties, {
+    axios: {
+      get() {
+        return _axios
+      }
+    },
+    $axios: {
+      get() {
+        return _axios
+      }
+    }
+  })
+}

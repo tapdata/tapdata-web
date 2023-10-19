@@ -5,21 +5,19 @@
       <ElMenu class="layout-menu" :default-active="activeMenu" @select="menuTrigger">
         <div class="flex-1">
           <template v-for="menu in menus">
-            <ElSubmenu v-if="menu.children" :index="menu.name">
-              <template v-slot:title>
+            <ElSubMenu v-if="menu.children" :index="menu.name">
+              <template #title>
                 <span class="mr-4" slot v-if="menu.icon"
                   ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
                 >
-                <template v-slot:title>
-                  <span>{{ menu.title }}</span>
-                </template>
+                <span>{{ menu.title }}</span>
               </template>
-              <template v-for="cMenu in menu.children" :key="cMenu.title">
+              <template #default v-for="cMenu in menu.children" :key="cMenu.title">
                 <ElMenuItem :index="cMenu.path">
                   <div class="submenu-item">{{ cMenu.title }}</div>
                 </ElMenuItem>
               </template>
-            </ElSubmenu>
+            </ElSubMenu>
             <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
@@ -45,21 +43,19 @@
         <!--菜单栏分为两部分-->
         <div class="border-top sub-menu pt-3">
           <template v-for="menu in subMenu">
-            <ElSubmenu v-if="menu.children" :index="menu.name">
-              <template v-slot:title>
+            <ElSubMenu v-if="menu.children" :index="menu.name">
+              <template #title>
                 <span class="mr-4" slot v-if="menu.icon"
                   ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
                 >
-                <template v-slot:title>
-                  <span>{{ menu.title }}</span>
-                </template>
+                <span>{{ menu.title }}</span>
               </template>
               <template v-for="cMenu in menu.children" :key="cMenu.title">
                 <ElMenuItem :index="cMenu.path">
                   <div class="submenu-item">{{ cMenu.title }}</div>
                 </ElMenuItem>
               </template>
-            </ElSubmenu>
+            </ElSubMenu>
             <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
               <span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span

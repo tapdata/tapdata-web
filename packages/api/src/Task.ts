@@ -7,6 +7,7 @@ export default class Task extends Http {
     super('/api/Task')
   }
 
+  // @ts-ignore
   get(params: unknown, filter: unknown, headers: unknown) {
     if (Array.isArray(params)) {
       let queryStr = ''

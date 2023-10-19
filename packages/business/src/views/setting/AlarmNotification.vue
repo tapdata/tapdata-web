@@ -20,7 +20,7 @@
       <el-tab-pane :label="$t('packages_business_notify_unread_notice')" name="second"></el-tab-pane>
     </el-tabs>
     <div class="py-2 pl-4">
-      <SelectList
+      <ElSelectV2
         v-if="options.length"
         v-model:value="searchParams.search"
         :items="options"
@@ -30,7 +30,7 @@
         clearable
         menu-min-width="240px"
         @change="getData()"
-      ></SelectList>
+      ></ElSelectV2>
     </div>
     <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
       <li
@@ -84,13 +84,13 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { SelectList } from '@tap/component'
+import { ElSelectV2 } from 'element-plus'
 import { ALARM_LEVEL_MAP } from '../../shared/const'
 import AlarmSetting from './AlarmSetting'
 import { notificationApi } from '@tap/api'
 
 export default {
-  components: { SelectList, AlarmSetting },
+  components: { ElSelectV2, AlarmSetting },
   data() {
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',

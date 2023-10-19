@@ -1,11 +1,11 @@
 import { installAllPlugins } from '@/plugins'
-import './plugins/axios'
-import './directive'
+import { installDirectives } from './directive'
 import App from './App.vue'
 import * as VueRouter from 'vue-router'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
-import VueClipboard from 'vue-clipboard2'
+import axios from '@/plugins/axios'
+// import VueClipboard from 'vue-clipboard2'
 
 import i18n from './i18n'
 import store from '@/store'
@@ -21,44 +21,19 @@ import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
 import * as Vue from 'vue'
+import { ElLoadingService } from 'element-plus'
 
-window.$vueApp.use(VueClipboard)
+// window.$vueApp.use(VueClipboard)
 
-const originalPush = VueRouter.prototype.push
-const originalReplace = VueRouter.prototype.replace
-VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
-}
-VueRouter.prototype.replace = function replace(location) {
-  return originalReplace.call(this, location).catch(err => err)
-}
-window.$vueApp.use(FormBuilder)
-
-window.$vueApp.component(VIcon.name, VIcon)
-window.$vueApp.component(VButton.name, VButton)
-
-window.$vueApp.mixin({
-  created() {
-    // 创建实例时传入wsOptions，即可默认开启websocket
-    let wsOptions = this.$options.wsOptions
-    // 根实例才有ws
-    if (wsOptions) {
-      window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
-    }
-  }
-})
-
-window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
-  return new Promise((resolve, reject) => {
-    VConfirm.confirm(message, title, options)
-      .then(() => {
-        resolve(true)
-      })
-      .catch(() => {
-        reject(false)
-      })
-  }).catch(() => {})
-}
+// const originalPush = VueRouter.prototype.push
+// const originalReplace = VueRouter.prototype.replace
+// VueRouter.prototype.push = function push(location) {
+//   return originalPush.call(this, location).catch(err => err)
+// }
+// VueRouter.prototype.replace = function replace(location) {
+//   return originalReplace.call(this, location).catch(err => err)
+// }
+// window.$vueApp.use(FormBuilder)
 
 export default ({ routes }) => {
   let loading = null
@@ -66,7 +41,7 @@ export default ({ routes }) => {
   const init = () => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
-      routes: routes,
+      routes
     })
     startTimeOnPage(router)
 
@@ -88,14 +63,47 @@ export default ({ routes }) => {
 
     store.commit('setUser', window.__USER_INFO__)
 
-    const app = window.App = window.$vueApp = Vue.createApp(App, {
-      wsOptions: {
-        url: wsUrl
-      },
-    })
+    const app =
+      (window.App =
+      window.$vueApp =
+        Vue.createApp(App, {
+          wsOptions: {
+            url: wsUrl
+          }
+        }))
 
+    installAllPlugins(app)
+    installDirectives(app)
+
+    window.$vueApp.use(i18n)
     window.$vueApp.use(store)
     window.$vueApp.use(router)
+
+    window.$vueApp.component(VIcon.name, VIcon)
+    window.$vueApp.component(VButton.name, VButton)
+
+    window.$vueApp.mixin({
+      created() {
+        // 创建实例时传入wsOptions，即可默认开启websocket
+        let wsOptions = this.$options.wsOptions
+        // 根实例才有ws
+        if (wsOptions) {
+          window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
+        }
+      }
+    })
+
+    window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
+      return new Promise((resolve, reject) => {
+        VConfirm.confirm(message, title, options)
+          .then(() => {
+            resolve(true)
+          })
+          .catch(() => {
+            reject(false)
+          })
+      }).catch(() => {})
+    }
 
     app.mount('#app')
 
@@ -188,11 +196,14 @@ export default ({ routes }) => {
     })
     return router
   }
-  loading = window.loading({ fullscreen: true })
+
+  console.log('app', app)
+
+  loading = ElLoadingService({ fullscreen: true })
   let count = 0
 
   let getData = () => {
-    window.axios
+    axios
       .get('api/tcm/user')
       .then(data => {
         let userInfo = data
@@ -227,7 +238,7 @@ export default ({ routes }) => {
       })
   }
 
-  window.axios
+  axios
     .get('config/config.json', {
       cache: false,
       responseType: 'json',

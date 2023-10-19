@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="visible" :close-on-click-modal="false" :show-close="false" width="550px">
+  <el-dialog
+    :value="visible"
+    @input="$emit('update:visible', $event)"
+    :close-on-click-modal="false"
+    :show-close="false"
+    width="550px"
+  >
     <section v-if="user">
       <main v-if="user.licenseType === 'checkCode'">
         <header class="header flex">

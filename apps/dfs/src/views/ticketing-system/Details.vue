@@ -64,7 +64,7 @@
               :type="index === 0 ? 'primary' : ''"
               :timestamp="formatter(item.commentedTime)"
             >
-              <span class="font-color-dark fw-normal lh-base" v-html="item.content"> {{ item.content }}</span>
+              <span class="font-color-dark fw-normal lh-base" v-html="item.content"></span>
             </el-timeline-item>
           </el-timeline>
         </li>

@@ -60,26 +60,24 @@
       custom-class="download-dialog"
       append-to-body
     >
-      <template v-slot:default>
-        <div class="flex justify-content-between">
-          <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
-          <div>
-            <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
-            <el-select class="mr-4" v-model="uploadDays">
-              <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
-            </el-select>
-            <el-button
-              class="mb-4 mr-4"
-              type="primary"
-              :loading="loadingUpload"
-              :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stopped'"
-              @click="handleUpload(currentAgentId)"
-              >{{ btnTxt }}</el-button
-            >
-            <VIcon @click="handleClose">close</VIcon>
-          </div>
+      <div class="flex justify-content-between">
+        <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
+        <div>
+          <label class="mr-4">{{ $t('dfs_instance_instance_upload_days_label') }}</label>
+          <el-select class="mr-4" v-model="uploadDays">
+            <el-option v-for="item in days" :label="item.label" :value="item.value" :key="item.value"></el-option>
+          </el-select>
+          <el-button
+            class="mb-4 mr-4"
+            type="primary"
+            :loading="loadingUpload"
+            :disabled="agent.status !== 'Running' || disabledUploadDialog || tapdataAgentStatus === 'stopped'"
+            @click="handleUpload(currentAgentId)"
+            >{{ btnTxt }}</el-button
+          >
+          <VIcon @click="handleClose">close</VIcon>
         </div>
-      </template>
+      </div>
 
       <VTable
         :data="downloadList"
@@ -88,16 +86,16 @@
         ref="tableName"
         :has-pagination="false"
       >
-        <template v-slot:status="scope">
+        <template #status="scope">
           <span class="status-block" :class="['status-' + scope.row.status]"
             >{{ statusMaps[scope.row.status].text }}
             <span v-if="scope.row.uploadRatio && scope.row.uploadRatio !== 100">（{{ scope.row.uploadRatio }}%） </span>
           </span>
         </template>
-        <template v-slot:fileSize="scope">
+        <template #fileSize="scope">
           <span>{{ calcUnit(scope.row.fileSize, 'b') }}</span>
         </template>
-        <template v-slot:operation="scope">
+        <template #operation="scope">
           <ElButton
             size="mini"
             type="text"
