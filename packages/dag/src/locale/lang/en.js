@@ -631,8 +631,9 @@ export default {
   packages_dag_date_processor_method: 'Please select the calculation method',
   packages_dag_date_processor_increase: 'Increase',
   packages_dag_date_processor_decrease: 'Decrease',
-  packages_dag_nodes_table_shiligro: 'Example: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: { "_id": "apples", "qty": 5 }',
+  packages_dag_nodes_table_shiligro:
+    'Example: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+  packages_dag_nodes_table_jinzhichiqu: 'Only support query, for example: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: 'When the task reports an error, stop',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: 'When the number of skip events exceeds',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2:
