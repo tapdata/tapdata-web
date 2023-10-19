@@ -665,7 +665,7 @@ export default {
             })
         }
         this.databaseLogInfoTimer = setTimeout(() => {
-          this.getDatabaseLogInfo()
+          this.getDatabaseLogInfo(row)
         }, 60000)
       } catch (e) {
         console.log(e)
