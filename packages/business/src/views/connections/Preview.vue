@@ -313,7 +313,7 @@ export default {
 
       return row
     },
-    async open(row) {
+    open(row) {
       this.visible = true
       this.showProgress = false
       this.formData = cloneDeep(row)
@@ -541,16 +541,17 @@ export default {
           findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
           findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
         } else {
-          this.list.push({
-            icon: 'warning-circle',
-            items: [
-              {
-                label: row.databaseLogInfo.key,
-                key: 'databaseLogInfo',
-                value: row.databaseLogInfo.value
-              }
-            ]
-          })
+          row.databaseLogInfo.value &&
+            this.list.push({
+              icon: 'warning-circle',
+              items: [
+                {
+                  label: row.databaseLogInfo.key,
+                  key: 'databaseLogInfo',
+                  value: row.databaseLogInfo.value
+                }
+              ]
+            })
         }
         this.databaseLogInfoTimer = setTimeout(() => {
           this.getDatabaseLogInfo()
