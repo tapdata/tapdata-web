@@ -37,7 +37,7 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
-import { ElSelectV2 as SelectList } from 'element-plus'
+// import { ElSelectV2 as SelectList } from 'element-plus'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'
@@ -47,7 +47,7 @@ export default {
   name: 'FilterBar',
   components: {
     VIcon,
-    SelectList,
+    // SelectList,
     PopInput,
     DatetimeRange,
     Datetime,

@@ -1,5 +1,5 @@
 <script lang="jsx">
-import { defineComponent, Fragment, ref } from 'vue'
+import { defineComponent, Fragment, Text, ref } from 'vue'
 
 function convertToUnit(str, unit = 'px') {
   if (str == null || str === '') {
@@ -47,6 +47,7 @@ export default defineComponent({
     return () => {
       const slotValue = slots.default?.()
       const size = convertToUnit(props.size)
+      console.log('slotValue', slotValue)
       if (slotValue) {
         slotIcon.value = flattenFragments(slotValue).filter(
           node => node.type === Text && node.children && typeof node.children === 'string'
