@@ -610,23 +610,23 @@ export default {
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
         usersApi
-            .role({
-              filter: JSON.stringify({
-                limit: 1000
+          .role({
+            filter: JSON.stringify({
+              limit: 1000
+            })
+          })
+          .then((roleList = []) => {
+            this.permissions = data
+              .map(t => {
+                const role = roleList.items?.find(r => r.id === t.typeId) || {}
+                return {
+                  checked: t.actions,
+                  roleId: t.typeId,
+                  roleName: role.name
+                }
               })
-            })
-            .then((roleList = []) => {
-              this.permissions = data
-                  .map(t => {
-                    const role = roleList.items?.find(r => r.id === t.typeId) || {}
-                    return {
-                      checked: t.actions,
-                      roleId: t.typeId,
-                      roleName: role.name
-                    }
-                  })
-                  .filter(t => !!t.roleName)
-            })
+              .filter(t => !!t.roleName)
+          })
       })
     },
 
@@ -652,16 +652,17 @@ export default {
           findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
           findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
         } else {
-          this.list.push({
-            icon: 'warning-circle',
-            items: [
-              {
-                label: row.databaseLogInfo.key,
-                key: 'databaseLogInfo',
-                value: row.databaseLogInfo.value
-              }
-            ]
-          })
+          row.databaseLogInfo.value &&
+            this.list.push({
+              icon: 'warning-circle',
+              items: [
+                {
+                  label: row.databaseLogInfo.key,
+                  key: 'databaseLogInfo',
+                  value: row.databaseLogInfo.value
+                }
+              ]
+            })
         }
         this.databaseLogInfoTimer = setTimeout(() => {
           this.getDatabaseLogInfo()
