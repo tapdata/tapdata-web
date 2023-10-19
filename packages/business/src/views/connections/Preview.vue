@@ -309,7 +309,7 @@ export default {
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      await this.getDatabaseLogInfo(row)
+      // await this.getDatabaseLogInfo(row)
       this.loadList(row)
     },
     edit() {
