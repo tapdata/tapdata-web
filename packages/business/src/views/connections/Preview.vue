@@ -64,7 +64,8 @@
                 temp.labelActionTitle
               }}</ElLink>
             </div>
-            <div v-if="['permissions'].includes(temp.key)" class="pt-2">
+            <pre v-if="temp.key === 'databaseLogInfo'" class="box-line__value" v-html="temp.value"></pre>
+            <div v-else-if="['permissions'].includes(temp.key)" class="pt-2">
               <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
                 per.roleName
               }}</ElTag>
