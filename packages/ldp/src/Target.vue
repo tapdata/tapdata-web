@@ -815,7 +815,18 @@ export default {
           }
 
           Object.assign(task, settings)
-          let taskInfo = await taskApi[ifStart ? 'saveAndStart' : 'post'](task)
+
+          let taskInfo = await taskApi.save(task)
+
+          if (ifStart) {
+            // 保存并运行
+            taskInfo = await taskApi.saveAndStart(taskInfo, {
+              params: {
+                confirm: true
+              }
+            })
+          }
+
           const table = this.getTableByTask(taskInfo)
           const mapTask = this.mapTask(taskInfo)
 

@@ -319,13 +319,14 @@ export default {
 
       return row
     },
-    open(row) {
+    async open(row) {
       this.visible = true
       this.showProgress = false
       this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      // await this.getDatabaseLogInfo(row)
       this.loadList(row)
       this.isDaas && this.loadPermissions(row.id)
     },
@@ -448,7 +449,7 @@ export default {
       const heartbeatTable = await this.loadHeartbeatTable(row)
 
       this.connection.heartbeatTable = heartbeatTable?.[0]
-
+      console.log('row', row.databaseLogInfo?.value)
       // 有uri
       if (row.uri) {
         this.list = [
@@ -500,7 +501,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       } else {
         this.list = [
@@ -539,7 +552,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       }
 
