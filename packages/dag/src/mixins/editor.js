@@ -398,6 +398,7 @@ export default {
     async makeTaskName(source) {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
+          limit: 9999,
           fields: { name: 1 },
           where: { name: { like: `^${source}\\d+$` } }
         })
