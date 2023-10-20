@@ -9,17 +9,17 @@
                 ? this.$t('packages_business_connection_form_edit_connection')
                 : this.$t('public_connection_button_create')
             }}</span>
-            <div class="flex align-center">
-              <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
+            <div class="flex align-center overflow-hidden gap-2">
+              <DatabaseIcon class="flex-shrink-0" :item="$route.query" :size="20"></DatabaseIcon>
               <template v-if="!$route.params.id">
-                <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
-                <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+                <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ pdkOptions.name }}</span>
+                <el-button v-if="!$route.params.id" type="text" @click="dialogDatabaseTypeVisible = true">
                   {{ $t('packages_business_connection_form_change') }}
                 </el-button>
               </template>
               <template v-else>
-                <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
-                <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+                <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ model.name }}</span>
+                <el-button type="text" @click="dialogEditNameVisible = true">
                   {{ $t('packages_business_connection_form_rename') }}
                 </el-button>
               </template>
@@ -933,52 +933,56 @@ export default {
                       title: i18n.t('public_ssl_settings')
                     },
                     properties: {
-                      __TAPDATA: {
-                        type: 'object',
-                        properties: {
-                          enableSSL: {
-                            // 使用 SSL
-                            title: i18n.t('packages_business_use_ssl'),
-                            type: 'boolean',
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              className: 'item-control-horizontal',
-                              layout: 'horizontal'
-                            },
-                            'x-component': 'Switch'
-                          },
-                          sslCA: {
-                            // CA 文件
-                            title: i18n.t('packages_business_certificate_authority'),
-                            type: 'string',
-                            'x-decorator': 'FormItem',
-                            'x-component': 'TextFileReader',
-                            fileNameField: 'sslCAFile'
-                          },
-                          sslCert: {
-                            // 客户端证书文件
-                            title: i18n.t('packages_business_client_certificate'),
-                            type: 'string',
-                            'x-decorator': 'FormItem',
-                            'x-component': 'TextFileReader',
-                            fileNameField: 'sslCertFile'
-                          },
-                          sslKey: {
-                            // 客户端密钥文件
-                            title: i18n.t('packages_business_client_key'),
-                            type: 'string',
-                            'x-decorator': 'FormItem',
-                            'x-component': 'TextFileReader',
-                            fileNameField: 'sslKeyFile'
-                          },
-                          sslKeyPassword: {
-                            // 客户端密钥密码
-                            title: i18n.t('packages_business_client_key_password'),
-                            type: 'string',
-                            'x-decorator': 'FormItem',
-                            'x-component': 'Password'
-                          }
-                        }
+                      enableSSL: {
+                        // 使用 SSL
+                        title: i18n.t('packages_business_use_ssl'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'item-control-horizontal',
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch'
+                      },
+                      sslCA: {
+                        // CA 文件
+                        title: i18n.t('packages_business_certificate_authority'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
+                        fileNameField: 'sslCAFile'
+                      },
+                      sslCert: {
+                        // 客户端证书文件
+                        title: i18n.t('packages_business_client_certificate'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
+                        fileNameField: 'sslCertFile'
+                      },
+                      sslKey: {
+                        // 客户端密钥文件
+                        title: i18n.t('packages_business_client_key'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
+                        fileNameField: 'sslKeyFile'
+                      },
+                      sslKeyPassword: {
+                        // 客户端密钥密码
+                        title: i18n.t('packages_business_client_key_password'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Password'
                       }
                     }
                   }
@@ -991,44 +995,49 @@ export default {
                       title: i18n.t('public_ssh_settings')
                     },
                     properties: {
-                      enableSSH: {
-                        // 使用 SSH 隧道
-                        title: i18n.t('packages_business_use_ssh'),
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          className: 'item-control-horizontal',
-                          layout: 'horizontal'
-                        },
-                        'x-component': 'Switch'
-                      },
-                      sshHost: {
-                        // 主机名
-                        title: i18n.t('packages_business_ssh_host'),
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input'
-                      },
-                      sshPort: {
-                        // 端口
-                        title: i18n.t('packages_business_ssh_port'),
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber'
-                      },
-                      sshUsername: {
-                        // 用户名
-                        title: i18n.t('packages_business_ssh_username'),
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input'
-                      },
-                      sshPassword: {
-                        // 密码
-                        title: i18n.t('packages_business_ssh_password'),
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Password'
+                      __TAPDATA: {
+                        type: 'object',
+                        properties: {
+                          enableSSH: {
+                            // 使用 SSH 隧道
+                            title: i18n.t('packages_business_use_ssh'),
+                            type: 'boolean',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              className: 'item-control-horizontal',
+                              layout: 'horizontal'
+                            },
+                            'x-component': 'Switch'
+                          },
+                          sshHost: {
+                            // 主机名
+                            title: i18n.t('packages_business_ssh_host'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Input'
+                          },
+                          sshPort: {
+                            // 端口
+                            title: i18n.t('packages_business_ssh_port'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber'
+                          },
+                          sshUsername: {
+                            // 用户名
+                            title: i18n.t('packages_business_ssh_username'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Input'
+                          },
+                          sshPassword: {
+                            // 密码
+                            title: i18n.t('packages_business_ssh_password'),
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'Password'
+                          }
+                        }
                       }
                     }
                   }
