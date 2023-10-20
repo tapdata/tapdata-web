@@ -9,17 +9,17 @@
                 ? this.$t('packages_business_connection_form_edit_connection')
                 : this.$t('public_connection_button_create')
             }}</span>
-            <div class="flex align-center">
-              <DatabaseIcon :item="$route.query" :size="20"></DatabaseIcon>
+            <div class="flex align-center overflow-hidden gap-2">
+              <DatabaseIcon class="flex-shrink-0" :item="$route.query" :size="20"></DatabaseIcon>
               <template v-if="!$route.params.id">
-                <span class="ml-1 font-color-light fw-normal fs-7">{{ pdkOptions.name }}</span>
-                <el-button v-if="!$route.params.id" class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+                <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ pdkOptions.name }}</span>
+                <el-button v-if="!$route.params.id" type="text" @click="dialogDatabaseTypeVisible = true">
                   {{ $t('packages_business_connection_form_change') }}
                 </el-button>
               </template>
               <template v-else>
-                <span class="ml-1 font-color-light fw-normal fs-7">{{ model.name }}</span>
-                <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+                <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ model.name }}</span>
+                <el-button type="text" @click="dialogEditNameVisible = true">
                   {{ $t('packages_business_connection_form_rename') }}
                 </el-button>
               </template>
