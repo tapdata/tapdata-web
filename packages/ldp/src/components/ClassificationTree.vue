@@ -93,7 +93,7 @@ export default {
   components: { VirtualTree },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
 
       searchFalg: false,
       isExpand: true,

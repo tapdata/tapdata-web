@@ -46,7 +46,7 @@
 <script>
 import { sharedCacheApi, externalStorageApi } from '@tap/api'
 import { Drawer } from '@tap/component'
-import { TaskStatus } from '@tap/business'
+import { TaskStatus } from '../../components'
 
 import CodeView from './CodeView'
 import dayjs from 'dayjs'

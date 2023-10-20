@@ -192,7 +192,7 @@ export default {
     fixedPdkId: String
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
     return {
       isDaas,
       search: '',

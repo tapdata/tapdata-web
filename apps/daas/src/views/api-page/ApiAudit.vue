@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { Success as ElIconSuccess, Error as ElIconError } from '@element-plus/icons'
+import { SuccessFilled as ElIconSuccess, CircleCloseFilled as ElIconError } from '@element-plus/icons'
 import { escapeRegExp } from 'lodash'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'

@@ -1,5 +1,5 @@
-import fecha from './date'
-import { t } from '@tap/i18n/src/index'
+import { format } from 'fecha'
+import { t } from '@tap/i18n'
 
 const weeks = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
 const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']

@@ -335,7 +335,7 @@ export default {
           value: 'EMAIL'
         })
       }
-      if (process.env.VUE_APP_PLATFORM !== 'DAAS') {
+      if (import.meta.env.VITE_PLATFORM !== 'DAAS') {
         let isOpenid = window.__USER_INFO__?.openid
         if (this.channels.includes('wechat')) {
           enums.push({

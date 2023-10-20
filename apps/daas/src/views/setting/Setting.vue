@@ -210,7 +210,7 @@ export default {
   components: { VIcon },
   data() {
     return {
-      title: process.env.VUE_APP_PAGE_TITLE,
+      title: import.meta.env.VITE_PAGE_TITLE,
       liceseItems: [],
       emailTemplateDialog: false,
       formData: {

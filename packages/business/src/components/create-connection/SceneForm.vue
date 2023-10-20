@@ -89,13 +89,12 @@ import {
   externalStorageApi,
   proxyApi
 } from '@tap/api'
-import { VIcon } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
-import Test from '@tap/business/src/views/connections/Test'
-import { getConnectionIcon } from '@tap/business/src/views/connections/util'
+import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
+import Test from '../../views/connections/Test'
+import { getConnectionIcon } from '../../views/connections/util'
 import resize from '@tap/component/src/directives/resize'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import ConnectorDoc from '../ConnectorDoc'
 
 export default {
@@ -127,7 +126,7 @@ export default {
       }
     }
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -1123,7 +1122,7 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {

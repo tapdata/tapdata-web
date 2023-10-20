@@ -17,6 +17,7 @@
     </div>
     <VIcon
       v-if="!readonly"
+      ,
       v-show="!hiddenIcon"
       @click="handleFocusInput"
       class="text-editable-icon ml-2 flex-shrink-0"
@@ -30,7 +31,7 @@
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
-import { VIcon } from '@tap/component'
+import VIcon from '../../base/VIcon.vue'
 
 export default {
   name: 'TextEditable',

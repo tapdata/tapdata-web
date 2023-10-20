@@ -26,7 +26,7 @@ export default observer({
   },
 
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
     let values = this.settings
     const { id } = values
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')

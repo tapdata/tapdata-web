@@ -1,4 +1,4 @@
-module.exports = function (url, token) {
+export default function (url, token) {
   let javaTemplate = `public static void main(String[] args) {
   String url = "{{url}}";
   String access_token = "{{access_token}}";

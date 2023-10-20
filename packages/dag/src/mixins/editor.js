@@ -40,7 +40,7 @@ export default {
 
     return {
       dataflow,
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       buttonShowMap: {
         View: true,
         Edit: true,
@@ -858,9 +858,7 @@ export default {
         })
         info.connection.bind('mouseout', () => {
           if (
-            connectionIns.hasClass(
-              'connection-selected'
-            ) /* ||
+            connectionIns.hasClass('connection-selected') /* ||
           (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
           )
             return

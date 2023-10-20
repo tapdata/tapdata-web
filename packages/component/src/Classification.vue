@@ -108,7 +108,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
-import { VIcon } from '@tap/component'
+import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 

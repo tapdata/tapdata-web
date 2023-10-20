@@ -26,14 +26,14 @@ import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
 
 window._TAPDATA_OPTIONS_ = {
-  version: process.env.VUE_APP_VERSION,
-  logoUrl: require(`@/assets/images/${process.env.VUE_APP_LOGO_IMG}`),
-  loginUrl: require(`@/assets/images/${process.env.VUE_APP_LOGIN_IMG}`),
-  loadingImg: require(`@/assets/icons/${process.env.VUE_APP_LOADING_IMG}`),
-  logoWidth: process.env.VUE_APP_LOGO_WIDTH,
-  logoHeight: process.env.VUE_APP_LOGO_HEIGHT,
-  loginSize: process.env.VUE_APP_LOGIN_IMG_SIZE,
-  homeUrl: process.env.VUE_APP_HOME_URL
+  version: import.meta.env.VITE_VERSION,
+  logoUrl: require(`@/assets/images/${import.meta.env.VITE_LOGO_IMG}`),
+  loginUrl: require(`@/assets/images/${import.meta.env.VITE_LOGIN_IMG}`),
+  loadingImg: require(`@/assets/icons/${import.meta.env.VITE_LOADING_IMG}`),
+  logoWidth: import.meta.env.VITE_LOGO_WIDTH,
+  logoHeight: import.meta.env.VITE_LOGO_HEIGHT,
+  loginSize: import.meta.env.VITE_LOGIN_IMG_SIZE,
+  homeUrl: import.meta.env.VITE_HOME_URL
 }
 window.getSettingByKey = key => {
   let value = ''
@@ -91,7 +91,7 @@ let init = settings => {
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
+  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env.VITE_PAGE_TITLE || 'Tapdata'
 
   var loc = window.location,
     wsUrl = 'ws:'
@@ -100,7 +100,7 @@ let init = settings => {
   }
   wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent`
 
-  const app = window.App = window.$vueApp = Vue.createApp(App)
+  const app = (window.App = window.$vueApp = Vue.createApp(App))
 
   installAllPlugins(app)
 
@@ -118,7 +118,7 @@ let init = settings => {
     }
   })
 
-// Vue.prototype.$api = factory
+  // Vue.prototype.$api = factory
 
   window.$vueApp.component(VIcon.name, VIcon)
   window.$vueApp.config.globalProperties.routerAppend = (path, pathToAppend) => {

@@ -224,13 +224,13 @@ import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-
-import { TablePage, SchemaProgress } from '../../components'
+import TablePage from '../../components/TablePage'
+import SchemaProgress from '../../components/SchemaProgress'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
-import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
 
 let timeout = null
@@ -250,7 +250,7 @@ export default {
   inject: ['checkAgent', 'buried'],
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
 
       filterItems: [],
       user_id: Cookie.get('user_id'),

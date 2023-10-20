@@ -54,8 +54,8 @@
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
-import { getSpec, getPaymentMethod } from '@tap/business/src/shared/util'
-import OrderChange from '@tap/business/src/views/order/Change'
+import { getSpec, getPaymentMethod } from '../shared'
+import OrderChange from '../views/order/Change'
 
 export default {
   name: 'UpgradeCharges',

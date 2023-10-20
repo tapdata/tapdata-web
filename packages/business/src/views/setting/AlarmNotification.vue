@@ -93,7 +93,7 @@ export default {
   components: { ElSelectV2, AlarmSetting },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       filterItems: [],
       activeName: 'first',
       listData: [],
@@ -260,7 +260,7 @@ export default {
       ]
     },
     handleSetting() {
-      if (process.env.VUE_APP_PLATFORM === 'DAAS') {
+      if (import.meta.env.VITE_PLATFORM === 'DAAS') {
         this.$router.push({ name: 'alarmSetting' })
       } else {
         this.dialogVisible = true

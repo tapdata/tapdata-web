@@ -69,9 +69,10 @@ export default {
     let lang = this.lang || 'text'
     let theme = this.theme
     let editor = (this.editor = ace.edit(this.$el.firstElementChild))
-    let tools = ace.require('ace/ext/language_tools')
-    var beautify = ace.require('ace/ext/beautify') // get reference to extension
-    ace.require('ace/ext/searchbox')
+    const reqHandler = ace.require
+    let tools = reqHandler('ace/ext/language_tools')
+    var beautify = reqHandler('ace/ext/beautify') // get reference to extension
+    reqHandler('ace/ext/searchbox')
     $emit(this, 'init', editor, tools, beautify)
 
     editor.$blockScrolling = Infinity

@@ -188,14 +188,14 @@
 </template>
 
 <script>
-import { Error as ElIconError, Success as ElIconSuccess } from '@element-plus/icons'
+import { CircleCloseFilled as ElIconError, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { FilterBar } from '@tap/component'
 import { VIcon } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage } from '../../components'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
 
 let timeout = null

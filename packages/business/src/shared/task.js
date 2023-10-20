@@ -93,7 +93,7 @@ export function getTaskBtnDisabled(row, or) {
   return result
 }
 
-const BASE_URL = process.env.BASE_URL || '/'
+const BASE_URL = import.meta.env.BASE_URL || '/'
 
 export function getNodeIconSrc(node) {
   if (!node) return

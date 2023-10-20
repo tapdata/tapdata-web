@@ -85,7 +85,7 @@ import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { logcollectorApi, taskApi, appApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage } from '@tap/business'
+import { TablePage } from '../../components'
 
 import Editor from './Editor'
 import Details from './Details'

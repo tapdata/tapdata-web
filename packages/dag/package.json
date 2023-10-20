@@ -23,14 +23,14 @@
     "@tap/form": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
+    "core-js": "^3.8.3",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "resize-observer-polyfill": "^1.5.1",
-    "vue-virtual-scroller": "^1.1.2",
-    "vuex": "^4.0.2",
     "tiny-emitter": "^2.1.0",
-    "core-js": "^3.8.3"
+    "vue-virtual-scroller": "2.0.0-beta.8",
+    "vuex": "^4.0.2"
   }
 }

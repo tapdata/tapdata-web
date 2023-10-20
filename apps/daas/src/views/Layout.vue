@@ -333,7 +333,7 @@ export default {
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
       activeMenu: '',
-      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
+      showHelp: !import.meta.env.VITE_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
     }
   },
   computed: {

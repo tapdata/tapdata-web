@@ -12,7 +12,15 @@
               <div class="position-relative">
                 <ElImage class="scene-img" :src="item.img" />
                 <div
-                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
+                  class="
+                    position-absolute position-text
+                    flex
+                    justify-content-center
+                    align-items-center
+                    flex-column
+                    fs-8
+                    py-2
+                  "
                   style="min-height: 40px"
                 >
                   <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">
@@ -168,6 +176,18 @@ import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { mapMutations } from 'vuex'
 
+import scene1 from '@/assets/image/dashboard/scene1.png'
+import scene2 from '@/assets/image/dashboard/scene2.png'
+import scene3 from '@/assets/image/dashboard/scene3.png'
+import scene4 from '@/assets/image/dashboard/scene4.png'
+import scene5 from '@/assets/image/dashboard/scene5.png'
+import io_scene1 from '@/assets/image/dashboard/io_scene1.png'
+import io_scene2 from '@/assets/image/dashboard/io_scene2.png'
+import io_scene3 from '@/assets/image/dashboard/io_scene3.png'
+import io_scene4 from '@/assets/image/dashboard/io_scene4.png'
+import plan_banner from '@/assets/image/plan_banner.png'
+import plan_banner_cn from '@/assets/image/plan_banner_cn.png'
+
 export default {
   name: 'Workbench',
   components: { VIcon, Chart },
@@ -183,35 +203,35 @@ export default {
             type: 'all',
             title: i18n.t('_workbench_workbench_jiangshujudaoru'),
             subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
-            img: require('@/assets/image/dashboard/scene1.png'),
+            img: scene1,
             url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujuruhucang'),
             subTitle: 'MySQL → Doris',
-            img: require('@/assets/image/dashboard/scene2.png'),
+            img: scene2,
             url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_yigoushishitong'),
             subTitle: 'Oracle → MySQL ',
-            img: require('@/assets/image/dashboard/scene3.png'),
+            img: scene3,
             url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujurucang'),
             subTitle: 'SQL Server → BigQuery ',
-            img: require('@/assets/image/dashboard/scene4.png'),
+            img: scene4,
             url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujurucang'),
             subTitle: 'MySQL → ClickHouse',
-            img: require('@/assets/image/dashboard/scene5.png'),
+            img: scene5,
             url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
           }
         ]
@@ -220,38 +240,35 @@ export default {
             type: 'all',
             title: 'Tapdata',
             subTitle: 'Cloud Version Intro',
-            img: require('@/assets/image/dashboard/io_scene1.png'),
+            img: io_scene1,
             url: 'https://youtu.be/WpV5mAOPNL0?t=280'
           },
           {
             type: 'all',
             title: 'Data Replication Feature',
             subTitle: '',
-            img: require('@/assets/image/dashboard/io_scene2.png'),
+            img: io_scene2,
             url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
           },
           {
             type: 'all',
             title: 'Data Transformation',
             subTitle: '',
-            img: require('@/assets/image/dashboard/io_scene3.png'),
+            img: io_scene3,
             url: 'https://youtu.be/xQsaEaPxaXo?t=4'
           },
           {
             type: 'all',
             title: 'Install Agent Locally',
             subTitle: '',
-            img: require('@/assets/image/dashboard/io_scene4.png'),
+            img: io_scene4,
             url: 'https://youtu.be/e-HTtN7JKJU'
           }
         ]
 
     return {
       isDomesticStation,
-      bannerImg:
-        this.$i18n.locale === 'en'
-          ? require('@/assets/image/plan_banner.png')
-          : require('@/assets/image/plan_banner_cn.png'),
+      bannerImg: this.$i18n.locale === 'en' ? plan_banner : plan_banner_cn,
       userInfo: '',
       //云市场
       aliyunMaketVisible: false,
@@ -614,7 +631,8 @@ export default {
 
     //获取探索示例-背景图
     getImg(name) {
-      return require(`../../../public/images/dashboard/${name}.svg`)
+      return new URL(`../../../public/images/dashboard/${name}.svg`, import.meta.url).href
+      // return require(`../../../public/images/dashboard/${name}.svg`)
     },
     goScenes(url) {
       window.open(url)
@@ -769,175 +787,175 @@ export default {
 
 <style lang="scss" scoped>
 .workbench-container {
-	height: 100%;
-	min-width: 1100px;
-	box-sizing: border-box;
-	.pointer {
-		cursor: pointer;
-	}
+  height: 100%;
+  min-width: 1100px;
+  box-sizing: border-box;
+  .pointer {
+    cursor: pointer;
+  }
 }
 .main-title,
 .aside-title {
-	font-size: 18px;
-	line-height: 24px;
-	font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
 }
 // 快速开始
 .create-list__item {
-	width: 276px;
-	height: 70px;
-	margin-right: 24px;
-	background-color: #fff;
-	box-sizing: border-box;
-	border: 1px solid #e1e3e9;
-	border-radius: 8px;
+  width: 276px;
+  height: 70px;
+  margin-right: 24px;
+  background-color: #fff;
+  box-sizing: border-box;
+  border: 1px solid #e1e3e9;
+  border-radius: 8px;
 }
 .create-list__index {
-	width: 22px;
-	height: 22px;
-	color: map-get($color, primary);
-	border: 1px solid map-get($color, primary);
-	border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  color: map-get($color, primary);
+  border: 1px solid map-get($color, primary);
+  border-radius: 50%;
 }
 .create-list__main {
-	flex: 1;
-	overflow: hidden;
+  flex: 1;
+  overflow: hidden;
 }
 .create-list__name {
-	color: #000;
-	white-space: nowrap;
+  color: #000;
+  white-space: nowrap;
 }
 
 .agent-list__list {
-	background: map-get($color, white);
+  background: map-get($color, white);
 }
 .agent-list__item {
-	width: 33%;
-	border-radius: 8px;
-	margin-right: 16px;
-	padding: 16px;
-	background-color: #f5f7fa;
-	color: map-get($fontColor, dark);
+  width: 33%;
+  border-radius: 8px;
+  margin-right: 16px;
+  padding: 16px;
+  background-color: #f5f7fa;
+  color: map-get($fontColor, dark);
 }
 .agent-list__item:last-child {
-	margin-right: 0;
+  margin-right: 0;
 }
 .agent-list__name {
-	.vicon {
-		color: map-get($fontColor, dark);
-	}
+  .vicon {
+    color: map-get($fontColor, dark);
+  }
 }
 .agent-list__detail {
-	width: 232px;
-	background-color: #fafafb;
-	color: map-get($fontColor, light);
-	.agent-list__status {
-		white-space: nowrap;
-		margin-right: 8px;
-		&:last-child {
-			margin-right: 0;
-		}
-	}
-	.success {
-		color: #599f3f;
-	}
-	.error {
-		color: #f7a237;
-	}
+  width: 232px;
+  background-color: #fafafb;
+  color: map-get($fontColor, light);
+  .agent-list__status {
+    white-space: nowrap;
+    margin-right: 8px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .success {
+    color: #599f3f;
+  }
+  .error {
+    color: #f7a237;
+  }
 }
 // 通知公告
 .notice-list__type {
-	background: #f7f8f9;
+  background: #f7f8f9;
 }
 .notice-list__time {
-	white-space: nowrap;
-	text-align: right;
+  white-space: nowrap;
+  text-align: right;
 }
 .guide-list {
-	height: 190px;
+  height: 190px;
 }
 .dialog-upgrade__text {
-	font-size: 12px;
-	color: map-get($fontColor, light);
+  font-size: 12px;
+  color: map-get($fontColor, light);
 }
 .dialog-upgrade__text__header {
-	font-size: 14px;
-	color: map-get($fontColor, normal);
+  font-size: 14px;
+  color: map-get($fontColor, normal);
 }
 .dialog-upgrade {
-	::v-deep {
-		.el-dialog__body {
-			padding: 0 20px;
-		}
-	}
+  ::v-deep {
+    .el-dialog__body {
+      padding: 0 20px;
+    }
+  }
 }
 .notice-list {
-	//height: 190px;
-	border-radius: 8px;
+  //height: 190px;
+  border-radius: 8px;
 
-	.notice-list__list {
-		.notice-list__item:last-child {
-			margin-bottom: 0 !important;
-		}
-	}
+  .notice-list__list {
+    .notice-list__item:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
 }
 .common-card {
-	border: 1px solid #e1e3e9;
-	border-radius: 8px;
+  border: 1px solid #e1e3e9;
+  border-radius: 8px;
 }
 .quick-start-video {
-	background: linear-gradient(
-			89.97deg,
-			rgba(128, 61, 217, 0.8) 0.03%,
-			rgba(131, 132, 255, 0.8) 50.06%,
-			rgba(104, 142, 247, 0.8) 76.93%,
-			rgba(93, 153, 248, 0.8) 99.98%
-	);
+  background: linear-gradient(
+    89.97deg,
+    rgba(128, 61, 217, 0.8) 0.03%,
+    rgba(131, 132, 255, 0.8) 50.06%,
+    rgba(104, 142, 247, 0.8) 76.93%,
+    rgba(93, 153, 248, 0.8) 99.98%
+  );
 }
 .explore-examples {
-	background: #f4f6fc;
-	border-radius: 10px;
-	padding: 20px;
+  background: #f4f6fc;
+  border-radius: 10px;
+  padding: 20px;
 }
 .explore-examples-wrap {
-	margin-top: 24px;
+  margin-top: 24px;
 }
 .position-text {
-	top: 0;
-	left: 0;
-	color: map-get($color, white);
-	width: 100%;
-	line-height: 14px;
+  top: 0;
+  left: 0;
+  color: map-get($color, white);
+  width: 100%;
+  line-height: 14px;
 }
 .explore-examples-ellipsis {
-	/* white-space: nowrap; */
-	overflow: hidden;
-	text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .position-sub-text {
-	top: 33px;
-	left: 52px;
-	color: map-get($color, white);
+  top: 33px;
+  left: 52px;
+  color: map-get($color, white);
 }
 .quick-start-button {
-	padding: 4px 15px;
-	border-radius: 5px;
+  padding: 4px 15px;
+  border-radius: 5px;
 }
 .scene-img {
-	width: 161px;
-	height: 92px;
+  width: 161px;
+  height: 92px;
 }
 .welcome-banner {
-	height: 76px;
-	background: linear-gradient(
-			90deg,
-			rgba(22, 73, 255, 0.8) 0%,
-			rgba(50, 102, 244, 0.8) 39.58%,
-			rgba(79, 50, 255, 0.8) 100%
-	);
+  height: 76px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 73, 255, 0.8) 0%,
+    rgba(50, 102, 244, 0.8) 39.58%,
+    rgba(79, 50, 255, 0.8) 100%
+  );
 
-	.el-image {
-		height: 50px;
-	}
+  .el-image {
+    height: 50px;
+  }
 }
 </style>

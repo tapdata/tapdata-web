@@ -4,7 +4,7 @@ export default {
   data() {
     const $t = this.$t.bind(this)
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       agentMap: null,
       agentStatusLabel: {
         // daas 引擎

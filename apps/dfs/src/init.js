@@ -52,7 +52,7 @@ export default ({ routes }) => {
     }
     let queryString = ``
     if (process.env.NODE_ENV === 'development') {
-      queryString = `__token=${process.env.VUE_APP_ACCESS_TOKEN}`
+      queryString = `__token=${process.env.VITE_ACCESS_TOKEN}`
     }
     let index = loc.pathname.lastIndexOf('.html')
     let path = loc.pathname

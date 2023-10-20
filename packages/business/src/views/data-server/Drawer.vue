@@ -467,7 +467,7 @@ import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
 
-import i18n from '@/i18n'
+import i18n from '@tap/i18n'
 import {
   databaseTypesApi,
   connectionsApi,

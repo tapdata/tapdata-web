@@ -408,7 +408,7 @@ export default {
   data() {
     return {
       STATUS_MAP,
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,

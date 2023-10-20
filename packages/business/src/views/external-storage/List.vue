@@ -195,12 +195,12 @@ import dayjs from 'dayjs'
 import { cloneDeep, escapeRegExp } from 'lodash'
 
 import { databaseTypesApi, externalStorageApi } from '@tap/api'
-import { TablePage, EXTERNAL_STORAGE_TYPE_MAP } from '@tap/business'
-import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { TablePage } from '../../components'
+import { CONNECTION_STATUS_MAP, EXTERNAL_STORAGE_TYPE_MAP } from '../../shared'
 import { FilterBar, Drawer } from '@tap/component'
 import { openUrl } from '@tap/shared'
 import { SchemaToForm } from '@tap/form'
-import Test from '@tap/business/src/views/connections/Test'
+import Test from '../connections/Test'
 
 let timeout = null
 

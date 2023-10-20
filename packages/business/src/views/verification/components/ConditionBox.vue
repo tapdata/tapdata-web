@@ -257,7 +257,7 @@ import i18n from '@tap/i18n'
 import { AsyncSelect, SchemaToForm } from '@tap/form'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
-import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
+import { CONNECTION_STATUS_MAP } from '../../../shared'
 import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 

@@ -367,7 +367,7 @@ export default {
     },
 
     loadChat() {
-      let $zoho = $zoho || {}
+      let $zoho = window.$zoho || {}
       const { isDomesticStation } = this
       $zoho.salesiq = $zoho.salesiq || {
         widgetcode: isDomesticStation

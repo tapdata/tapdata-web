@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { Success as ElIconSuccess, Error as ElIconError } from '@element-plus/icons'
+import { SuccessFilled as ElIconSuccess, CircleCloseFilled as ElIconError } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 

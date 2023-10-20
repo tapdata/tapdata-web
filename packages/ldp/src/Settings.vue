@@ -258,7 +258,7 @@ export default {
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       mode: '',
       connectionsList: [],
       modeItems: [

@@ -28,7 +28,7 @@ import { ElTreeV2 as VirtualTree, ElSelectV2 as VirtualSelect } from 'element-pl
 
 // business
 import Chart from './chart'
-import MqTransfer from './mq-transfer'
+// import MqTransfer from './mq-transfer'
 import JsEditor from './JsEditor.vue'
 import PythonEditor from './PythonEditor'
 import OverflowTooltip from './overflow-tooltip'
@@ -49,7 +49,7 @@ export {
   VTable,
   VCollapse,
   Chart,
-  MqTransfer,
+  // MqTransfer,
   VCodeEditor,
   JsEditor,
   PythonEditor,

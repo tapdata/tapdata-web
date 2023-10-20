@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "submodule": "node ./init_submodule.js",
-    "serve": "vue-cli-service serve --open",
-    "start:dev": "cross-env SERVE_ENV=dev vue-cli-service serve --open",
-    "start:test": "cross-env SERVE_ENV=test vue-cli-service serve --open",
-    "start:local": "cross-env SERVE_ENV=local vue-cli-service serve --open",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --fix",
+    "dev": "vite",
+    "serve": "vite preview",
+    "start:dev": "cross-env SERVE_ENV=dev vite --open",
+    "start:test": "cross-env SERVE_ENV=test vite --open",
+    "start:local": "cross-env SERVE_ENV=local vite --open",
+    "build": "vite build",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
     "mock": "nodemon ./mock/mock.js"
   },
   "dependencies": {
@@ -33,7 +34,6 @@
     "@tap/task": "workspace:^1.0.0",
     "ali-oss": "^6.17.1",
     "axios": "^0.21.1",
-    "core-js": "^3.8.3",
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
@@ -54,17 +54,15 @@
     "vue-echarts": "^6.0.0",
     "vue-json-viewer": "^2.2.15",
     "vue-router": "^4.0.8",
-    "vue-virtual-scroller": "^1.1.2",
+    "vue-virtual-scroller": "2.0.0-beta.8",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-plugin-eslint": "^5.0.8",
-    "@vue/cli-plugin-typescript": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "@vue/eslint-config-typescript": "^9.1.0",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "@vitejs/plugin-vue-jsx": "^3.0.2",
     "ace-builds": "^1.4.13",
     "compression-webpack-plugin": "^5.0.1",
     "cross-env": "^7.0.3",
@@ -83,7 +81,7 @@
     "svgo-loader": "^3.0.0",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
-    "vue-cli-plugin-element": "^1.0.1",
+    "vite": "^4.5.0",
     "vue-clipboard2": "^0.3.1"
   },
   "gitHooks": {

@@ -86,11 +86,11 @@
 
 <script>
 import { escapeRegExp } from 'lodash'
-import i18n from '@/i18n'
+import i18n from '@tap/i18n'
 
 import { databaseTypesApi, modulesApi, metadataInstancesApi, apiServerApi, appApi } from '@tap/api'
 import { FilterBar, VTable, VEmpty } from '@tap/component'
-import Upload from '@tap/business/src/components/UploadDialog'
+import Upload from '../../components/UploadDialog'
 
 import Drawer from './Drawer'
 

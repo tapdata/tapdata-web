@@ -2,7 +2,7 @@ import i18n from '@/i18n'
 import * as Vue from 'vue'
 import axios from 'axios'
 import Qs from 'qs'
-import { Message } from '@/plugins/element'
+import { ElMessage as Message } from 'element-plus'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -95,7 +95,7 @@ const requestInterceptor = config => {
     })
   }
   // 本地开发使用header中加__token的方式绕过网关登录
-  const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
+  const ACCESS_TOKEN = process.env.VITE_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)

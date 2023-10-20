@@ -384,7 +384,7 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS'
+      isIKAS: import.meta.env.VITE_PAGE_TITLE === 'IKAS'
     }
   },
   computed: {

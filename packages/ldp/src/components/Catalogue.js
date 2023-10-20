@@ -8,7 +8,7 @@ import resize from '@tap/component/src/directives/resize'
 import { apiServerApi, modulesApi } from '@tap/api'
 import './index.scss'
 
-const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
 
 const ICON = {
   folder: 'folder-o',

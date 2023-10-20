@@ -67,7 +67,7 @@ export default {
       keyword: '',
       visible: false,
       overViewVisible: true,
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {

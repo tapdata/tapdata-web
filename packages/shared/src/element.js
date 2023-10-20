@@ -104,7 +104,7 @@ export const calcElementLayout = element => {
 }
 
 export function makePageTitle(title) {
-  const base = process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
+  const base = import.meta.env.VITE_PAGE_TITLE || 'Tapdata'
   return title ? `${title} - ${base}` : base
 }
 

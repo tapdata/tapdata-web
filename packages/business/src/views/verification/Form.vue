@@ -369,7 +369,7 @@
 </template>
 
 <script>
-import { Info as ElIconInfo } from '@element-plus/icons'
+import { InfoFilled as ElIconInfo } from '@element-plus/icons'
 import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
@@ -831,66 +831,66 @@ export default {
 
 <style lang="scss" scoped>
 .verify-form-wrap {
-	height: 100%;
-	//padding: 0 24px 24px 24px;
-	overflow: hidden;
-	.section-wrap-box {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		padding: 20px;
-		border-radius: 4px;
-		background-color: #fff;
-		box-sizing: border-box;
-		height: 100%;
-		overflow: auto;
-	}
+  height: 100%;
+  //padding: 0 24px 24px 24px;
+  overflow: hidden;
+  .section-wrap-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto;
+  }
 }
 .verify-form-title {
-	margin-bottom: 24px;
-	line-height: 22px;
-	font-size: 14px;
-	color: map-get($fontColor, dark);
+  margin-bottom: 24px;
+  line-height: 22px;
+  font-size: 14px;
+  color: map-get($fontColor, dark);
 }
 .form-item {
-	margin-bottom: 32px;
+  margin-bottom: 32px;
 }
 .form-select {
-	width: 276px;
+  width: 276px;
 }
 .form-input {
-	width: 505px;
+  width: 505px;
 }
 ::v-deep {
-	.js-wrap {
-		display: flex;
-		flex-wrap: nowrap;
-		flex-direction: row;
-		.jsBox {
-			display: flex;
-			flex-direction: column;
-			flex: 1;
-			.js-fixText {
-				line-height: 25px;
-			}
-			.js-fixContent {
-				margin-left: 60px;
-			}
-		}
-		.example {
-			width: 300px;
-		}
-		.js-editor {
-			border: 1px solid map-get($borderColor, light);
-		}
-	}
+  .js-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    .jsBox {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      .js-fixText {
+        line-height: 25px;
+      }
+      .js-fixContent {
+        margin-left: 60px;
+      }
+    }
+    .example {
+      width: 300px;
+    }
+    .js-editor {
+      border: 1px solid map-get($borderColor, light);
+    }
+  }
 }
 
 .el-form {
-	::v-deep {
-		.el-form-item__error {
-			margin-top: 8px;
-		}
-	}
+  ::v-deep {
+    .el-form-item__error {
+      margin-top: 8px;
+    }
+  }
 }
 </style>

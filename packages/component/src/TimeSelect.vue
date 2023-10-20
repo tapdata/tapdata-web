@@ -39,7 +39,7 @@ import dayjs from 'dayjs'
 
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { VIcon } from '@tap/component'
+import VIcon from './base/VIcon.vue'
 
 export default {
   name: 'TimeSelect',
@@ -299,49 +299,49 @@ export default {
 
 <style lang="scss" scoped>
 .time-select__picker {
-	position: relative;
-	::v-deep {
-		.time-select__popper {
-			width: 270px;
-			min-width: 270px !important;
-			transform: translateX(-40px);
-		}
-		// 灰色风格下拉框
-		.el-select {
-			&.dark {
-				.el-input__inner {
-					border: none;
-					background-color: inherit;
-				}
-				.el-icon-arrow-up:before {
-					content: '\e78f';
-				}
-			}
-		}
-		.el-date-picker {
-			height: 0;
-			border: 0;
-			bottom: 0;
-			left: 0;
-		}
-	}
+  position: relative;
+  ::v-deep {
+    .time-select__popper {
+      width: 270px;
+      min-width: 270px !important;
+      transform: translateX(-40px);
+    }
+    // 灰色风格下拉框
+    .el-select {
+      &.dark {
+        .el-input__inner {
+          border: none;
+          background-color: inherit;
+        }
+        .el-icon-arrow-up:before {
+          content: '\e78f';
+        }
+      }
+    }
+    .el-date-picker {
+      height: 0;
+      border: 0;
+      bottom: 0;
+      left: 0;
+    }
+  }
 }
 .time-select__title {
-	white-space: nowrap;
-	line-height: 1.5;
+  white-space: nowrap;
+  line-height: 1.5;
 }
 .datetime {
-	position: absolute;
+  position: absolute;
 }
 .is-time {
-	//flex: 1;
-	//width: 260px;
+  //flex: 1;
+  //width: 260px;
 }
 .picker__item {
-	padding: 0 4px;
-	border-radius: 2px;
-	&:hover {
-		background: #eef3ff;
-	}
+  padding: 0 4px;
+  border-radius: 2px;
+  &:hover {
+    background: #eef3ff;
+  }
 }
 </style>

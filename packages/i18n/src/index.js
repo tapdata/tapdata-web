@@ -1,4 +1,4 @@
-import VueI18n, { createI18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 
 import { langKeyMap, getCurrentLanguage } from './shared/util'
 import locale from './locale'

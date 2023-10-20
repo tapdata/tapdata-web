@@ -87,7 +87,8 @@ import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled, TASK_TYPE_MAP } from '@tap/business'
+import { TablePage, TaskStatus } from '../../components'
+import { makeStatusAndDisabled, TASK_TYPE_MAP } from '../../shared'
 
 let timeout = null
 export default {

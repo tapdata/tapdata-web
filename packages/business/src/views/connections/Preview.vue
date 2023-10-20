@@ -127,7 +127,7 @@ import { connectionsApi, dataPermissionApi, usersApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'
 
-import { StatusTag } from '../../components'
+import StatusTag from '../../components/StatusTag'
 import Test from '../connections/Test.vue'
 import PermissionsDialog from './PermissionsDialog'
 import { getConnectionIcon } from './util'
@@ -145,7 +145,7 @@ export default {
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       drawer: false,
       visible: false,
       timer: null,

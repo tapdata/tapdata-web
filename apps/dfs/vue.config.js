@@ -312,9 +312,9 @@ const getToken = userId => {
 }
 if (process.env.NODE_ENV === 'development') {
   let _userId = process.env.USER_ID || userId
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
+  process.env.VITE_ACCESS_TOKEN = getToken(_userId)
 
   console.log('本地用户调试ID: ' + _userId)
-  console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
+  console.log('本地用户调试Token: ' + process.env.VITE_ACCESS_TOKEN)
   console.log('Proxy server: ' + proxy.target)
 }

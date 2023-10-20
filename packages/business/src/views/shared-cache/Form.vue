@@ -119,14 +119,14 @@
 </template>
 
 <script>
-import { Info as ElIconInfo } from '@element-plus/icons'
+import { InfoFilled as ElIconInfo } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, externalStorageApi } from '@tap/api'
 import i18n from '@tap/i18n'
-import ConnectionListSelect from '@tap/business/src/views/connections/ListSelect'
+import ConnectionListSelect from '../connections/ListSelect'
 
 export default {
   components: {

@@ -215,7 +215,8 @@
 import dayjs from 'dayjs'
 import { logcollectorApi, taskApi, workerApi } from '@tap/api'
 import { FilterBar, VTable } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import { TablePage, TaskStatus } from '../../components'
+import { makeStatusAndDisabled } from '../../shared'
 
 import Editor from './Editor'
 import i18n from '@tap/i18n'

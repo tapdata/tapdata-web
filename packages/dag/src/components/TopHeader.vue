@@ -270,7 +270,7 @@ export default {
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',

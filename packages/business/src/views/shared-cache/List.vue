@@ -165,7 +165,8 @@ import { escapeRegExp } from 'lodash'
 import i18n from '@tap/i18n'
 import { externalStorageApi, sharedCacheApi, taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
-import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
+import { TablePage, TaskStatus } from '../../components'
+import { makeStatusAndDisabled } from '../../shared'
 
 import Editor from './Editor'
 import Details from './Details'
@@ -177,7 +178,7 @@ export default {
   components: { TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
         connectionName: ''

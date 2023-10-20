@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { Success as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
+import { SuccessFilled as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { isEmpty } from 'lodash'
 import { action } from '@formily/reactive'
@@ -169,7 +169,7 @@ export default {
       }
     }
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -905,7 +905,7 @@ export default {
             expireSeconds: 100000000
           }
           proxyApi.subscribe(filter).then(data => {
-            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {

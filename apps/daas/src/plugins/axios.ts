@@ -13,7 +13,7 @@ const pending = [] //声明一个数组用于存储每个ajax请求的取消函�
 
 const CancelToken = axios.CancelToken
 
-axios.defaults.baseURL = process.env.BASE_URL || './'
+axios.defaults.baseURL = import.meta.env.BASE_URL || './'
 
 const getPendingKey = (config: AxiosRequestConfig): string => {
   const { url, method, data, params } = config
