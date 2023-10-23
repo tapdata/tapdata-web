@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { getConnectionIcon } from '../views/connections/util'
+import { getNodeIconSrc } from '../shared'
 
 export const DatabaseIcon = defineComponent({
   props: {
@@ -7,7 +7,7 @@ export const DatabaseIcon = defineComponent({
     size: Number
   },
   setup(props, { attrs }) {
-    const _attrs = { ...attrs, src: getConnectionIcon(props.item.pdkHash) }
+    const _attrs = { ...attrs, src: getNodeIconSrc(props.item) }
     let style
 
     if (props.size) {
@@ -20,3 +20,5 @@ export const DatabaseIcon = defineComponent({
     return () => <ElImage style={style} attrs={{ ..._attrs }} />
   }
 })
+
+export const NodeIcon = DatabaseIcon

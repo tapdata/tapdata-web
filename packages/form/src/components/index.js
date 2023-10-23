@@ -1,6 +1,9 @@
 // export * from './select'
+import { Space } from './space'
+
+export { Space }
 export * from './preview-text'
-export * from './space'
+// export * from './space'
 export * from './js-editor'
 export * from './python-editor'
 export * from './sql-editor'

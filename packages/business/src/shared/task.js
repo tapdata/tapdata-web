@@ -3,6 +3,7 @@ import { Cookie } from '@tap/shared'
 import { getIcon } from '@tap/assets/icons'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
+import { getConnectionIcon } from '../views'
 
 export const TASK_SETTINGS = {
   name: '', // 任务名称
@@ -99,10 +100,17 @@ export function getNodeIconSrc(node) {
   if (!node) return
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
-    const accessToken = Cookie.get('access_token')
-    return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
+    return getConnectionIcon(pdkHash)
   }
   let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  if (node.type === 'hazelcastIMDG') {
+    const map = {
+      memory: 'memory',
+      mongodb: 'mongodb',
+      rocksdb: 'rocksdb'
+    }
+    icon = map[node.externaltype]
+  }
   return icon ? getIcon(icon) : null
 }
 

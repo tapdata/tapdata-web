@@ -62,13 +62,13 @@
 </template>
 
 <script>
-import { VTable, FilterBar } from '@tap/component'
-import { TaskStatus } from '@tap/business'
 import { taskApi } from '@tap/api'
 import { openUrl } from '@tap/shared'
 import i18n from '@tap/i18n'
-import { TASK_TYPE_MAP } from '@tap/business'
-import SharedMiningTable from '@tap/business/src/views/shared-mining/Table'
+import { VTable, FilterBar } from '@tap/component'
+import { TaskStatus } from '../../../components'
+import { TASK_TYPE_MAP } from '../../../shared'
+import SharedMiningTable from '../../shared-mining/Table.vue'
 
 export default {
   name: 'RelationSharedList',

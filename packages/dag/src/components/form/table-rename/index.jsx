@@ -1,6 +1,6 @@
 import * as Vue from 'vue'
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from 'vue'
+import { defineComponent, ref, reactive, computed } from 'vue'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
@@ -72,7 +72,8 @@ export const TableRename = observer(
 
                 // TM会主动修改表编辑节点,节点不会自动刷新,在这里同步最新的表推演
                 if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
-                  set(nameMap, item.previousTableName, item.sinkObjectName)
+                  nameMap[item.previousTableName] = item.sinkObjectName
+                  // set(nameMap, item.previousTableName, item.sinkObjectName)
                 }
 
                 return item.previousTableName
@@ -119,9 +120,11 @@ export const TableRename = observer(
 
       const updateName = (val, name) => {
         if (val !== name) {
-          set(nameMap, name, val)
+          nameMap[name] = val
+          // set(nameMap, name, val)
         } else {
-          del(nameMap, name)
+          delete nameMap[name]
+          // del(nameMap, name)
         }
       }
 
@@ -149,10 +152,12 @@ export const TableRename = observer(
           }
           if (n !== after) {
             if (nameMap[n] === after) return
-            set(nameMap, n, after)
+            nameMap[n] = after
+            // set(nameMap, n, after)
             flag = true
           } else if (n in nameMap) {
-            del(nameMap, n)
+            delete nameMap[n]
+            // del(nameMap, n)
             flag = true
           }
         })
@@ -180,7 +185,9 @@ export const TableRename = observer(
         doReset()
         const keys = Object.keys(nameMap)
         if (keys.length) {
-          keys.forEach(key => del(nameMap, key))
+          keys.forEach(key => {
+            delete nameMap[key]
+          })
           emitChange()
         }
       }

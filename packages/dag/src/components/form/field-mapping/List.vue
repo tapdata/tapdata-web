@@ -121,7 +121,7 @@
                   <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
                     <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
                   </ElTooltip>
-                  <el-icon class="field-mapping__icon"><el-icon-edit-outline /></el-icon>
+                  <el-icon class="field-mapping__icon"><Edit /></el-icon>
                 </div>
                 <div v-else>{{ row.defaultValue }}</div>
               </template>
@@ -191,7 +191,6 @@
 </template>
 
 <script>
-import { EditOutline as ElIconEditOutline } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 import { VIcon } from '@tap/component'
@@ -207,8 +206,7 @@ import { mapState } from 'vuex'
 export default {
   components: {
     VIcon,
-    OverflowTooltip,
-    ElIconEditOutline
+    OverflowTooltip
   },
   name: 'List',
   props: ['isMetaData', 'readOnly', 'updateList'],

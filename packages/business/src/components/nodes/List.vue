@@ -23,12 +23,11 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
-
-import i18n from '@tap/i18n'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { OverflowTooltip } from '@tap/component'
+import i18n from '@tap/i18n'
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { NodeIcon } from '../DatabaseIcon'
 
 export default {
   name: 'List',

@@ -147,16 +147,15 @@
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapGetters, mapState } from 'vuex'
 import { debounce, cloneDeep } from 'lodash'
 
+import i18n from '@tap/i18n'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
 import { metadataInstancesApi } from '@tap/api'
 
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import mixins from './mixins'
 import List from './List'
 import Dialog from './Dialog'
