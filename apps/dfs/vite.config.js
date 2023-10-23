@@ -112,7 +112,27 @@ export default defineConfig({
         path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
       ],
       // Specify symbolId format
-      symbolId: 'icon-[name]'
+      symbolId: 'icon-[name]',
+      svgoOptions: {
+        plugins: [
+          { name: 'removeTitle', active: true },
+          { name: 'removeStyleElement', active: true },
+          {
+            name: 'removeAttributesBySelector',
+            params: {
+              selector: ":not(path[fill='none'])",
+              attributes: ['fill']
+            }
+          },
+          {
+            name: 'removeAttrs',
+            active: true,
+            params: {
+              attrs: ['class', 'p-id']
+            }
+          }
+        ]
+      }
 
       /**
        * custom insert position
