@@ -933,7 +933,7 @@ export default {
                       title: i18n.t('public_ssl_settings')
                     },
                     properties: {
-                      enableSSL: {
+                      useSSL: {
                         // 使用 SSL
                         title: i18n.t('packages_business_use_ssl'),
                         type: 'boolean',
@@ -944,7 +944,7 @@ export default {
                         },
                         'x-component': 'Switch'
                       },
-                      sslCA: {
+                      sslCa: {
                         // CA 文件
                         title: i18n.t('packages_business_certificate_authority'),
                         type: 'string',
@@ -998,7 +998,7 @@ export default {
                       __TAPDATA: {
                         type: 'object',
                         properties: {
-                          enableSSH: {
+                          useSSH: {
                             // 使用 SSH 隧道
                             title: i18n.t('packages_business_use_ssh'),
                             type: 'boolean',
