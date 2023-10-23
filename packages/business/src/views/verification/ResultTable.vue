@@ -53,18 +53,18 @@
         <div class="inspect-result-status">
           <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
             <span class="error">
-              <el-icon class="verify-icon color-danger"><el-icon-error /></el-icon>
+              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
           <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
             <span class="error">
-              <el-icon class="verify-icon color-danger"><el-icon-error /></el-icon>
+              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ scope.row.contentResultText }}</span>
             </span>
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
-            <el-icon class="verify-icon color-success"><el-icon-success /></el-icon>
+            <el-icon class="verify-icon color-success"><SuccessFilled /></el-icon>
             <span>{{ $t('packages_business_verification_consistent') }}</span>
           </span>
         </div>

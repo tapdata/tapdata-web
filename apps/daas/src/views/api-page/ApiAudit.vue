@@ -29,13 +29,13 @@
       <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span v-if="row.code == 200" class="success">
-            <el-icon class="connections-status__icon"><el-icon-success /></el-icon>
+            <el-icon class="connections-status__icon"><SuccessFilled /></el-icon>
             <span>
               {{ $t('apiaudit_success') }}
             </span>
           </span>
           <span v-else class="error">
-            <el-icon class="connections-status__icon"><el-icon-error /></el-icon>
+            <el-icon class="connections-status__icon"><CircleCloseFilled /></el-icon>
             <span>
               {{ $t('public_status_failed') }}
             </span>

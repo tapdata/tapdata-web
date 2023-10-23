@@ -25,7 +25,7 @@
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
         </div>
         <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
-          <el-icon><el-icon-success /></el-icon>
+          <el-icon><SuccessFilled /></el-icon>
           <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
         </div>
         <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
@@ -89,14 +89,14 @@
 </template>
 
 <script>
-import { Warning as ElIconWarning, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
+// import { Warning as ElIconWarning, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
   components: {
-    VIcon,
-    ElIconWarning,
-    ElIconSuccess
+    VIcon
+    // ElIconWarning,
+    // ElIconSuccess
   },
   name: 'Test',
   props: {

@@ -82,7 +82,7 @@
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
-                <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
+                <el-icon class="data-verify__icon"><CircleCloseFilled /></el-icon>
 
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('packages_business_verification_inconsistent') }}
@@ -92,12 +92,12 @@
                 </span>
               </div>
               <div v-else class="data-verify__status success">
-                <el-icon class="data-verify__icon"><el-icon-success /></el-icon>
+                <el-icon class="data-verify__icon"><SuccessFilled /></el-icon>
                 <span>{{ $t('packages_business_verification_consistent') }}</span>
               </div>
             </template>
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
-              <el-icon class="data-verify__icon"><el-icon-error /></el-icon>
+              <el-icon class="data-verify__icon"><CircleCloseFilled /></el-icon>
               <span>{{ $t('public_status_error') }}</span>
               <ElLink type="primary" class="ml-2" @click="handleError(scope.row)"
                 >{{ $t('public_button_check') }}
@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import { CircleCloseFilled as ElIconError, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
+// import { CircleCloseFilled as ElIconError, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -203,9 +203,9 @@ export default {
   components: {
     TablePage,
     VIcon,
-    FilterBar,
-    ElIconError,
-    ElIconSuccess
+    FilterBar
+    // ElIconError,
+    // ElIconSuccess
   },
   data() {
     return {

@@ -2,6 +2,12 @@ import { defineConfig, transformWithEsbuild } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import path from 'path'
 import crypto from 'crypto'
 
@@ -34,38 +40,33 @@ const proxy = {
   secure: false
 }
 
-// 设置本地环境的token
-const getToken = userId => {
-  const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
-
-  function __encrypt(string) {
-    return crypto
-      .createHmac('sha256', secret)
-      .update(string + secret)
-      .digest('hex')
-  }
-
-  function encodeBase64(string) {
-    if (typeof string !== 'string') return null
-    return Buffer.from(string || '').toString('base64')
-  }
-
-  function encodeStaticTokenByUserId(userId) {
-    let token = __encrypt(userId)
-    return encodeBase64(userId) + '.' + encodeBase64(token)
-  }
-
-  const token = encodeStaticTokenByUserId(userId)
-  return token
-}
-
 if (process.env.NODE_ENV === 'development') {
-  let _userId = process.env.USER_ID || userId
-  process.env.VITE_ACCESS_TOKEN = getToken(_userId)
+  // 设置本地环境的token
+  const getToken = userId => {
+    const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
 
-  console.log('本地用户调试ID: ' + _userId)
-  console.log('本地用户调试Token: ' + process.env.VITE_ACCESS_TOKEN)
-  console.log('Proxy server: ' + proxy.target)
+    function __encrypt(string) {
+      return crypto
+        .createHmac('sha256', secret)
+        .update(string + secret)
+        .digest('hex')
+    }
+
+    function encodeBase64(string) {
+      if (typeof string !== 'string') return null
+      return Buffer.from(string || '').toString('base64')
+    }
+
+    function encodeStaticTokenByUserId(userId) {
+      let token = __encrypt(userId)
+      return encodeBase64(userId) + '.' + encodeBase64(token)
+    }
+
+    const token = encodeStaticTokenByUserId(userId)
+    return token
+  }
+
+  process.env.VITE_ACCESS_TOKEN = getToken(process.env.USER_ID || userId)
 }
 
 export default defineConfig({
@@ -73,7 +74,59 @@ export default defineConfig({
     'process.env': process.env
   },
 
-  plugins: [vue(), vueJsx(), viteCommonjs()],
+  plugins: [
+    vue(),
+    vueJsx(),
+    viteCommonjs(),
+
+    AutoImport({
+      resolvers: [
+        ElementPlusResolver(),
+        // 自动导入图标组件
+        IconsResolver({
+          prefix: 'Icon'
+        })
+      ]
+    }),
+
+    Components({
+      resolvers: [
+        // 自动注册图标组件
+        IconsResolver({
+          enabledCollections: ['ep']
+        }),
+        ElementPlusResolver()
+      ]
+    }),
+
+    Icons({
+      autoInstall: true
+    }),
+
+    createSvgIconsPlugin({
+      // Specify the icon folder to be cached
+      iconDirs: [
+        path.resolve(process.cwd(), 'src/assets/icons/svg'),
+        path.resolve(process.cwd(), 'src/assets/icons/colorSvg'),
+        path.resolve(process.cwd(), '../../packages/assets/icons/svg'),
+        path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
+      ],
+      // Specify symbolId format
+      symbolId: 'icon-[name]'
+
+      /**
+       * custom insert position
+       * @default: body-last
+       */
+      // inject?: 'body-last' | 'body-first'
+
+      /**
+       * custom dom id
+       * @default: __svg__icons__dom__
+       */
+      // customDomId: '__svg__icons__dom__',
+    })
+  ],
 
   resolve: {
     alias: {

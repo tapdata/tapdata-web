@@ -72,7 +72,7 @@
                 </ElRadioButton> -->
             </ElRadioGroup>
             <div>
-              <el-icon class="color-primary mr-1"><el-icon-info /></el-icon>
+              <el-icon class="color-primary mr-1"><InfoFilled /></el-icon>
               <span style="font-size: 12px">{{
                 {
                   row_count:
@@ -369,7 +369,6 @@
 </template>
 
 <script>
-import { InfoFilled as ElIconInfo } from '@element-plus/icons'
 import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
@@ -383,8 +382,7 @@ const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
   components: {
-    ConditionBox,
-    ElIconInfo
+    ConditionBox
   },
   data() {
     let self = this

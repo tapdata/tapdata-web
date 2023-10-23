@@ -47,7 +47,7 @@
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <el-icon><el-icon-success /></el-icon>
+                <el-icon><SuccessFilled /></el-icon>
                 <span>
                   {{ $t('public_status_ready') }}
                 </span>

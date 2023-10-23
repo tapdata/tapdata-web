@@ -62,7 +62,7 @@
                 </span>
               </span>
               <span class="success" v-if="['ready'].includes(status)">
-                <el-icon><el-icon-success /></el-icon>
+                <el-icon><SuccessFilled /></el-icon>
                 <span>
                   {{ $t('public_status_ready') }}
                 </span>
@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { SuccessFilled as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
+// import { SuccessFilled as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
 import { action } from '@formily/reactive'
 import { cloneDeep, isEmpty } from 'lodash'
 
@@ -166,9 +166,7 @@ export default {
     SchemaToForm,
     ConnectionDebug,
     UsedTaskDialog,
-    JsDebug,
-    ElIconSuccess,
-    ElIconWarning
+    JsDebug
   },
   name: 'DatabaseForm',
   inject: ['checkAgent', 'buried'],

@@ -51,7 +51,7 @@
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_keys') }}</span>
           <el-tooltip placement="top" :content="$t('packages_business_shared_cache_keys_tooltip')">
-            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
+            <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -66,7 +66,7 @@
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_fields') }}</span>
           <el-tooltip placement="top" :content="$t('packages_business_shared_cache_fields_tooltip')">
-            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
+            <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -81,7 +81,7 @@
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_max_memory') }}</span>
           <el-tooltip placement="top" :content="$t('packages_business_shared_cache_max_memory_tooltip')">
-            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
+            <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
@@ -108,7 +108,7 @@
         <template v-slot:label>
           <span>{{ $t('packages_business_shared_cache_code') }}</span>
           <el-tooltip placement="top" :content="$t('packages_business_shared_cache_code_tooltip')">
-            <el-icon class="color-primary ml-1"><el-icon-info /></el-icon>
+            <el-icon class="color-primary ml-1"><InfoFilled /></el-icon>
           </el-tooltip>
           <span>:</span>
         </template>
