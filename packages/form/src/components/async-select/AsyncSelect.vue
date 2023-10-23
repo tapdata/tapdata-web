@@ -420,8 +420,10 @@ export default {
 
     async setSelected() {
       if (!this.multiple) {
-        let option
-        if (this.currentLabel) {
+        let option = await this.getOption(this.value)
+        // 不添加!this.lazy 会导致 onSetSelected 的参数为 { value: this.value, currentLabel: this.currentLabel}
+        // 防止开启了lazy 同时设置了currentLabel，进入这个判断
+        if (this.currentLabel && !this.lazy) {
           option = {
             value: this.value,
             currentLabel: this.currentLabel
