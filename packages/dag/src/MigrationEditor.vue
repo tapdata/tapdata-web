@@ -55,6 +55,7 @@
               :class="{
                 'options-active': nodeMenu.typeId === n.id
               }"
+              hide-disable-action
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
