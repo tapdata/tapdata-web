@@ -25,6 +25,8 @@ export default {
   public_schema: '模型',
   public_basic_settings: '基礎設置',
   public_advanced_settings: '高級設置',
+  public_ssl_settings: 'SSL 設置',
+  public_ssh_settings: 'SSH 設置',
   public_recommend: '推薦',
   public_board_view: '面板',
   public_list_view: '列表',

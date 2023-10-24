@@ -135,8 +135,9 @@ export default {
 
     .formily-element-form-item-layout-horizontal {
       .formily-element-form-item-control-content-component > .el-switch {
-        height: 40px;
-        line-height: 40px;
+        height: 32px;
+        line-height: 32px;
+        vertical-align: top;
       }
       .formily-element-space-horizontal {
         .el-switch {

@@ -11,25 +11,58 @@
         />
         <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
-      <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
+      <div v-if="!stateIsReadonly" class="df-node-options gap-2" @click.stop>
         <div
-          class="node-option"
+          :disabled="data.disabled"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled
+          }"
           :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
-          @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
+          @click.stop="
+            !data.disabled && $emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)
+          "
         >
-          <VIcon>plus</VIcon>
+          <VIcon size="20">action-add</VIcon>
         </div>
         <div
-          @click.stop="$emit('delete', data.id)"
-          class="node-option"
+          :disabled="data.disabled"
+          name="action-delete"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled
+          }"
+          @click.stop="!data.disabled && $emit('delete', data.id)"
           :title="$t('packages_dag_components_dfnode_shanchujiedian')"
         >
-          <VIcon>close</VIcon>
+          <VIcon size="20">action-delete</VIcon>
         </div>
+
+        <template v-if="!hideDisableAction">
+          <div
+            name="action-enable"
+            class="cursor-pointer"
+            v-if="data.disabled"
+            @click.stop="$emit('enable', data)"
+            :title="$t('packages_dag_btn_disable_node')"
+          >
+            <VIcon size="20">action-enable</VIcon>
+          </div>
+          <div
+            name="action-disable"
+            class="cursor-pointer"
+            v-else
+            @click.stop="$emit('disable', data)"
+            :title="$t('packages_dag_btn_disable_node')"
+          >
+            <VIcon size="20">action-disable</VIcon>
+          </div>
+        </template>
       </div>
       <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
         <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
       </ElTooltip>
+      <VIcon v-if="data.disabled" class="mr-2 color-warning" size="16">disable</VIcon>
       <div class="node-anchor input"></div>
       <div v-show="allowTarget" class="node-anchor output"></div>
     </BaseNode>
@@ -60,7 +93,8 @@ export default {
       type: String,
       required: true
     },
-    jsPlumbIns: Object
+    jsPlumbIns: Object,
+    hideDisableAction: Boolean
   },
 
   mixins: [deviceSupportHelpers],
@@ -107,8 +141,12 @@ export default {
 
     nodeClass() {
       const list = []
+
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
+      if (this.data.attrs.disabled) list.push('node--disabled')
+      if (this.data.disabled) list.push('node--disabled__main')
+
       this.ins && list.push(`node--${this.ins.group}`)
       return list
     },
@@ -141,7 +179,7 @@ export default {
       'setActiveNode',
       'addActiveAction',
       'removeActiveAction',
-      'updateNodeProperties',
+      '<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>NodeProperties',
       'resetSelectedNodes',
       'setNodeError',
       'clearNodeError'

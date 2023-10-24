@@ -938,6 +938,8 @@ export default {
   packages_business_shared_cache_code_tooltip: '可在JS节点中输入这段代码使用该缓存',
   packages_business_shared_cache_column_connection: '所属连接',
   packages_business_shared_cache_column_table: '所属表',
+  packages_business_shared_cache_cache_key_message: '所选缓存键无索引',
+  packages_business_shared_cache_cache_key_auto_create: '自动创建索引',
   packages_business_relation_list_gongxianghuancun: '共享缓存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1153,5 +1155,15 @@ export default {
   packages_business_verification_form_zhengzaijiyuren: '正在基于任务生成校验条件',
   packages_business_agent_ip_tips_prefix: '请确保您数据库的网络安全策略，允许全托管Agent所在的IP地址访问。',
   packages_business_agent_ip_tips_suffix: '点击查看全托管Agent的IP地址信息',
-  packages_business_demo_database_desc: 'Demo 数据源，可快速创建数据源信息，无需准备数据库信息即可体验。'
+  packages_business_demo_database_desc: 'Demo 数据源，可快速创建数据源信息，无需准备数据库信息即可体验。',
+  packages_business_use_ssl: '使用 SSL',
+  packages_business_certificate_authority: 'CA 文件',
+  packages_business_client_certificate: '客户端证书文件',
+  packages_business_client_key: '客户端密钥文件',
+  packages_business_client_key_password: '客户端密钥密码',
+  packages_business_use_ssh: '使用 SSH 隧道',
+  packages_business_ssh_host: '主机名',
+  packages_business_ssh_port: '端口',
+  packages_business_ssh_username: '用户名',
+  packages_business_ssh_password: '密码'
 }

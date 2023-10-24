@@ -177,6 +177,8 @@
         :data="treeData"
         :render-content="renderContent"
         :empty-text="treeEmptyText"
+        @node-expand="onNodeExpandAndCollapse"
+        @node-collapse="onNodeExpandAndCollapse"
       ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
@@ -841,6 +843,29 @@ export default {
           this.$emit('change-path', this.node, '')
         }
       }
+    },
+
+    onNodeExpandAndCollapse() {
+      let animationStartTime
+      let animationId
+
+      const revalidate = timestamp => {
+        if (!animationStartTime) {
+          animationStartTime = timestamp
+        }
+
+        const elapsedTime = timestamp - animationStartTime
+
+        this.jsPlumbIns.revalidate(this.node.id)
+
+        if (elapsedTime < 350) {
+          animationId = requestAnimationFrame(revalidate)
+        } else {
+          cancelAnimationFrame(animationId)
+        }
+      }
+
+      animationId = requestAnimationFrame(revalidate)
     }
   }
 }

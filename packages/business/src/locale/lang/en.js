@@ -978,6 +978,8 @@ export default {
   packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From Table',
+  packages_business_shared_cache_cache_key_message: 'The selected cache key is not indexed.',
+  packages_business_shared_cache_cache_key_auto_create: 'Automatic Index Creation',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
   packages_business_application_delete_shanchuyingyong: 'Delete Application',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1213,5 +1215,15 @@ export default {
     "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
   packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
-    'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.'
+    'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
+  packages_business_use_ssl: 'Use SSL',
+  packages_business_certificate_authority: 'CA File',
+  packages_business_client_certificate: 'Client Certificate File',
+  packages_business_client_key: 'Client Key File',
+  packages_business_client_key_password: 'Client Key Password',
+  packages_business_use_ssh: 'Use SSH Tunnel',
+  packages_business_ssh_host: 'Host',
+  packages_business_ssh_port: 'Port',
+  packages_business_ssh_username: 'Username',
+  packages_business_ssh_password: 'Password'
 }

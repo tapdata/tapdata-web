@@ -1,5 +1,5 @@
 <template>
-  <div class="record-wrap py-4 pl-4 h-100">
+  <div class="record-wrap py-4 pl-4 h-100 w-100">
     <VTable
       :remoteMethod="remoteMethod"
       :columns="columns"
@@ -71,22 +71,26 @@ export default {
         },
         {
           label: i18n.t('packages_dag_components_record_caozuoren'),
-          prop: 'operator'
+          prop: 'operator',
+          minWidth: 120
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
+          minWidth: 140
         },
         {
           label: i18n.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
-          dataType: 'number'
+          dataType: 'number',
+          minWidth: 120
         },
         {
           label: i18n.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
-          dataType: 'number'
+          dataType: 'number',
+          minWidth: 120
         },
         {
           label: i18n.t('public_operation'),

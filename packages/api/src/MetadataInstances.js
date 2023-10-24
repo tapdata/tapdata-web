@@ -159,5 +159,9 @@ export default class MetadataInstances extends Http {
   getNodeSchemaMapByIds(params) {
     return this.axios.get(this.url + `/nodes/schema-map`, { params })
   }
+
+  checkFiledIndex(params) {
+    return this.axios.get(this.url + `/check/filedIndex`, { params })
+  }
 }
 export { MetadataInstances }

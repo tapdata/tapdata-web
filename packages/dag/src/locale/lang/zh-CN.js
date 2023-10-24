@@ -615,7 +615,7 @@ export default {
   packages_dag_field_inference_list_anzhaoxishu_tip: '按系数调整是指将原推演出的长度乘以设置的系数作为调整后的字段长度',
   packages_dag_field_rename_index_yixiacaozuoyi: '以下操作已匹配不到源字段',
   packages_dag_nodes_database_jinwuzhujianbiao: '仅无主键表',
-  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表',
+  packages_dag_nodes_database_jinyouzhujianbiao: '仅有主键表（含唯一索引）',
   packages_dag_nodes_database_biaoxianshi: '可选择的表范围',
   packages_dag_nodes_database_xuanzeyaoguolvdiaode: '选择要过滤掉的字段类型',
   packages_dag_data_schema: '数据模型',
@@ -658,5 +658,6 @@ export default {
   packages_dag_unwind_includeArrayIndex: '保存数组索引的新字段名',
   packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空数组',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
-    '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。'
+    '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。',
+  packages_dag_btn_disable_node: '禁用节点'
 }

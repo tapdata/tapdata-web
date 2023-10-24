@@ -3,7 +3,7 @@
     <NodeList
       v-model="activeNodeId"
       :label="$t('packages_business_milestone_list_zhengtijindu')"
-      class="node-list border-end mr-4"
+      class="node-list border-end mr-4 flex-shrink-0"
       :customClass="handleCustomClass"
       @change="handleChange"
     >
@@ -21,7 +21,7 @@
         </template>
       </VTable>
     </div>
-    <div v-else class="flex-fill overflow-auto py-4">
+    <div v-else class="milestone-main flex-fill overflow-auto py-4">
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex">
         <div class="position-relative">
           <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>

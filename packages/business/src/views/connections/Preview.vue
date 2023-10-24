@@ -64,11 +64,7 @@
                 temp.labelActionTitle
               }}</ElLink>
             </div>
-            <pre
-                v-if="temp.key === 'databaseLogInfo'"
-                class="box-line__value"
-                v-html="temp.value"
-            ></pre>
+            <pre v-if="temp.key === 'databaseLogInfo'" class="box-line__value" v-html="temp.value"></pre>
             <div v-else-if="['permissions'].includes(temp.key)" class="pt-2">
               <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
                 per.roleName
@@ -330,7 +326,7 @@ export default {
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      await this.getDatabaseLogInfo(row)
+      // await this.getDatabaseLogInfo(row)
       this.loadList(row)
       this.isDaas && this.loadPermissions(row.id)
     },
@@ -587,6 +583,9 @@ export default {
             }
           ]
         })
+
+      // DatabaseLogInfo
+      this.getDatabaseLogInfo(row)
     },
     getConnectionIcon() {
       const { connection } = this
@@ -675,8 +674,26 @@ export default {
       try {
         const data = await proxyApi.call(params)
         row.databaseLogInfo = data || {}
+        // list 添加findDatabaseLogInfo
+        let findDatabaseLogInfo = this.list.find(t => t.items?.[0]?.key === 'databaseLogInfo')
+        if (findDatabaseLogInfo) {
+          findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
+          findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
+        } else {
+          row.databaseLogInfo.value &&
+            this.list.push({
+              icon: 'warning-circle',
+              items: [
+                {
+                  label: row.databaseLogInfo.key,
+                  key: 'databaseLogInfo',
+                  value: row.databaseLogInfo.value
+                }
+              ]
+            })
+        }
         this.databaseLogInfoTimer = setTimeout(() => {
-          this.getDatabaseLogInfo()
+          this.getDatabaseLogInfo(row)
         }, 60000)
       } catch (e) {
         console.log(e)
