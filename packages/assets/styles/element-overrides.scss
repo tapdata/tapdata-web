@@ -1,4 +1,4 @@
-@import 'var';
+//@import 'var';
 
 // 改变主题色变量
 
@@ -699,9 +699,6 @@ $--transfer-item-height: 30px !default;
 $--transfer-item-hover-background: $--color-text-secondary !default;
 $--transfer-filter-height: 32px !default;
 
-//$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
-//@import '~element-ui/packages/theme-chalk/src/index';
 
 /* Button
 --------------------------*/
@@ -911,6 +908,7 @@ $--transfer-filter-height: 32px !default;
 .el-icon-error {
   color: map-get($color, danger);
 }
+
 .el-menu {
   border-right: none;
   list-style: none;
@@ -918,7 +916,13 @@ $--transfer-filter-height: 32px !default;
   margin: 0;
   padding-left: 0;
   background-color: map-get($bgColor, disable);
+
+  .el-menu-item * {
+    vertical-align: middle;
+  }
 }
+
+
 
 /* Input
 --------------------------*/

@@ -2,9 +2,9 @@ import i18n, { t } from '@tap/i18n'
 import dayjs from '../plugins/dayjs'
 
 // element-plus
-import elementEnLocale from 'element-plus/lib/locale/lang/en'
-import elementZhLocale from 'element-plus/lib/locale/lang/zh-cn'
-import elementTwLocale from 'element-plus/lib/locale/lang/zh-tw'
+import elementEnLocale from 'element-plus/dist/locale/en.mjs'
+import elementZhLocale from 'element-plus/dist/locale/zh-cn.mjs'
+import elementTwLocale from 'element-plus/dist/locale/zh-tw.mjs'
 
 // 公共模块
 import formLangs from '@tap/form/src/locale'

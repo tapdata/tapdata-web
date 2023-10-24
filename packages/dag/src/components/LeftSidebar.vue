@@ -272,9 +272,8 @@
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
-import { ElSelect as Select } from 'element-plus'
-import { addResizeListener, removeResizeListener } from 'element-plus/lib/utils/dom/resize-event'
-import { getScrollBarWidth } from 'element-plus/lib/utils/dom/scroll'
+import { useResizeObserver } from '@vueuse/core'
+import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import { metadataInstancesApi, databaseTypesApi, CancelToken, connectionsApi } from '@tap/api'
 import { VIcon, VEmpty, OverflowTooltip } from '@tap/component'
 import { SceneDialog } from '@tap/business'
@@ -383,14 +382,21 @@ export default {
     this.init()
   },
   mounted() {
-    addResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
-    addResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    const { stop: stopDbResizeObserver } = useResizeObserver(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
+    const { stop: stopTbResizeObserver } = useResizeObserver(this.$refs.tbList.$el, this.updateTBScrollbar)
+    const { stop: stopProcessorResizeObserver } = useResizeObserver(
+      this.$refs.processorCollapse.$el,
+      this.updateProcessorScrollbar
+    )
+
+    this.stopDbResizeObserver = stopDbResizeObserver
+    this.stopTbResizeObserver = stopTbResizeObserver
+    this.stopProcessorResizeObserver = stopProcessorResizeObserver
   },
   beforeUnmount() {
-    removeResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
-    removeResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
-    removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    this.stopDbResizeObserver?.()
+    this.stopTbResizeObserver?.()
+    this.stopProcessorResizeObserver?.()
   },
   methods: {
     // 创建连接

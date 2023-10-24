@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "submodule": "node ./init_submodule.js",
+    "build": "vite build",
     "dev": "vite",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "mock": "nodemon ./mock/mock.js",
     "serve": "vite preview",
     "start:dev": "cross-env SERVE_ENV=dev vite --open",
-    "start:test": "cross-env SERVE_ENV=test vite --open",
     "start:local": "cross-env SERVE_ENV=local vite --open",
-    "build": "vite build",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
-    "mock": "nodemon ./mock/mock.js"
+    "start:test": "cross-env SERVE_ENV=test vite --open",
+    "submodule": "node ./init_submodule.js"
   },
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
@@ -37,13 +37,11 @@
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.2",
-    "default-passive-events": "^2.0.0",
     "driver.js": "^1.2.1",
     "echarts": "^5.0.2",
-    "element-plus": "^2.0.2",
+    "element-plus": "^2.4.1",
     "github-markdown-css": "^4.0.0",
     "highlight.js": "^11.0.1",
-    "jsonwebtoken": "^8.5.1",
     "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "qs": "^6.10.3",
@@ -64,34 +62,19 @@
     "@vitejs/plugin-vue": "^4.4.0",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "ace-builds": "^1.4.13",
-    "compression-webpack-plugin": "^5.0.1",
     "cross-env": "^7.0.3",
-    "css-unicode-loader": "^1.0.3",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.0.3",
     "express-ws": "^5.0.2",
-    "html-loader": "^1.3.2",
-    "lint-staged": "^10.5.3",
-    "markdown-loader": "^6.0.0",
     "mockjs": "^1.1.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.4.1",
+    "sass": "^1.69.4",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-icons": "^0.17.1",
     "unplugin-vue-components": "^0.25.2",
     "vite": "^4.5.0",
-    "vite-plugin-svg-icons": "^2.0.1",
-    "vue-clipboard2": "^0.3.1"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged",
-    "post-merge": "git submodule update",
-    "post-checkout": "git submodule update"
-  },
-  "lint-staged": {
-    "*.{js,vue,jsx}": [
-      "vue-cli-service lint"
-    ]
+    "vite-plugin-svg-icons": "^2.0.1"
   }
 }

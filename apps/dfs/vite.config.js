@@ -81,7 +81,7 @@ export default defineConfig({
 
     AutoImport({
       resolvers: [
-        ElementPlusResolver(),
+        ElementPlusResolver({ importStyle: 'sass' }),
         // 自动导入图标组件
         IconsResolver({
           prefix: 'Icon'
@@ -114,6 +114,10 @@ export default defineConfig({
       // Specify symbolId format
       symbolId: 'icon-[name]',
       svgoOptions: {
+        exclude: [
+          path.resolve(process.cwd(), 'src/assets/icons/colorSvg'),
+          path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
+        ],
         plugins: [
           { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },

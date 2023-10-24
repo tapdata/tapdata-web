@@ -195,7 +195,7 @@ import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { ElSelect as Select } from 'element-plus'
 import { OverflowTooltip } from '@tap/component'
-import { getScrollBarWidth } from 'element-plus/lib/utils/dom/scroll'
+import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
@@ -269,12 +269,7 @@ export default {
 
     this.init()
   },
-  mounted() {
-    // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
-  beforeUnmount() {
-    // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
+
   methods: {
     // 创建连接
     creat() {

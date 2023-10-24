@@ -12,7 +12,6 @@ $fontSubtitle: 16px;
 $fontBaseTitle: 14px;
 
 $color: (
-  // primary: #337dff,
   primary: #2c65ff,
   dprimary: #0e42d2,
   lprimary: #4080ff,
@@ -67,4 +66,12 @@ $borderColor: (
 
 $iconFillColor: (
   normal: #4e5969
+);
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': map-get($color, primary)
+    ),
+  ),
 );

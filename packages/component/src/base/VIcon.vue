@@ -65,12 +65,14 @@ export default defineComponent({
       return (
         <span
           {...{
-            staticClass: 'v-icon',
-            class: {
-              'v-icon--disabled': props.disabled,
-              'v-icon--link': !!attrs.onClick,
-              'v-icon--dense': props.dense
-            },
+            class: [
+              'v-icon',
+              {
+                'v-icon--disabled': props.disabled,
+                'v-icon--link': !!attrs.onClick,
+                'v-icon--dense': props.dense
+              }
+            ],
             style: {
               ...sizeData,
               color: props.color,

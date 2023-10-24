@@ -7,9 +7,10 @@
           <template v-for="menu in menus">
             <ElSubMenu v-if="menu.children" :index="menu.name">
               <template #title>
-                <span class="mr-4" slot v-if="menu.icon"
+                <!--<span class="mr-4" slot v-if="menu.icon"
                   ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-                >
+                >-->
+                <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
                 <span>{{ menu.title }}</span>
               </template>
               <template #default v-for="cMenu in menu.children" :key="cMenu.title">
@@ -19,9 +20,10 @@
               </template>
             </ElSubMenu>
             <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
-              <span class="mr-4" v-if="menu.icon"
+              <!--<span class="mr-4" v-if="menu.icon"
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-              >
+              >-->
+              <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
               <span class="flex-fill">
                 {{ menu.title }}
                 <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
