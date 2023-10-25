@@ -384,6 +384,10 @@ export default {
                 type: 'object',
                 'x-component': 'FormGrid.GridColumn',
                 properties: {
+                  databaseType: {
+                    type: 'string',
+                    'x-display': 'hidden'
+                  },
                   nodeSchema: {
                     type: 'array',
                     'x-display': 'hidden',
@@ -400,126 +404,146 @@ export default {
                       }
                     ]
                   },
-                  isFilter: {
-                    type: 'boolean',
+                  enableCustomCommand: {
                     title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
+                    type: 'boolean',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      className: 'item-control-horizontal',
+                      layout: 'horizontal',
+                      tooltip: ''
+                    },
                     'x-component': 'Switch',
                     default: false,
                     'x-reactions': [
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`
                           }
                         }
                       }
                     ]
                   },
-                  conditions: {
-                    type: 'array',
-                    title: ' ',
-                    default: [{ key: '', value: '', operator: 5 }],
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      colon: false
-                    },
-                    'x-component': 'ArrayItems',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        space: {
-                          type: 'void',
-                          'x-component': 'Space',
-                          properties: {
-                            key: {
-                              type: 'string',
-                              required: 'true',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'Select',
-                              'x-component-props': {
-                                filterable: true
-                              },
-                              enum: []
-                            },
-                            operator: {
-                              type: 'number',
-                              required: 'true',
-                              enum: [
-                                {
-                                  label: '>',
-                                  value: 1
-                                },
-                                {
-                                  label: '>=',
-                                  value: 2
-                                },
-                                {
-                                  label: '<',
-                                  value: 3
-                                },
-                                {
-                                  label: '<=',
-                                  value: 4
-                                },
-                                {
-                                  label: '=',
-                                  value: 5
-                                }
-                              ],
-                              'x-decorator': 'FormItem',
-                              'x-decorator-props': {
-                                wrapperWidth: 100
-                              },
-                              'x-component': 'Select'
-                            },
-                            value: {
-                              type: 'string',
-                              required: 'true',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'Input',
-                              'x-component-props': {
-                                type: 'datetime',
-                                align: 'right',
-                                format: 'yyyy-MM-dd HH:mm:ss'
-                              },
-                              'x-reactions': {
-                                dependencies: ['.key', '.key#dataSource'],
-                                fulfill: {
-                                  schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
-                                  }
+                  customCommand: {
+                    type: 'object',
+                    properties: {
+                      command: {
+                        type: 'string',
+                        default: 'executeQuery',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Radio.Group',
+                        enum: [
+                          { label: i18n.t('public_query'), value: 'executeQuery' },
+                          { label: i18n.t('public_aggregate'), value: 'aggregate' }
+                        ],
+                        'x-reactions': {
+                          dependencies: ['source.databaseType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      params: {
+                        type: 'object',
+                        properties: {
+                          mongoQuery: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['source.customCommand.command', 'source.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}'
                                 }
                               }
                             },
-                            remove: {
-                              type: 'void',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'ArrayItems.Remove',
-                              'x-component-props': {
-                                disabled: '{{$values.source.conditions.length<2}}'
+                            properties: {
+                              op: {
+                                type: 'string',
+                                default: 'find'
+                              },
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
+                              },
+                              filter: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          mongoAgg: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['source.customCommand.command', 'source.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}'
+                                }
+                              }
+                            },
+                            properties: {
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  dependencies: ['source.tableName'],
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$deps[0]}}'
+                                    }
+                                  }
+                                }
+                              },
+                              pipeline: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                description: i18n.t('packages_dag_nodes_table_shiligro'),
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          sql: {
+                            type: 'string',
+                            required: true,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'SqlEditor',
+                            'x-component-props': {
+                              options: { showPrintMargin: false, useWrapMode: true }
+                            },
+                            'x-reactions': {
+                              dependencies: ['source.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{!$deps[0].toLowerCase().includes("mongo")}}'
+                                }
                               }
                             }
                           }
                         }
                       }
                     },
-                    properties: {
-                      add: {
-                        type: 'void',
-                        title: i18n.t('packages_dag_nodes_table_tianjia'),
-                        'x-component': 'ArrayItems.Addition',
-                        'x-component-props': {
-                          defaultValue: { key: '', value: '', operator: 5 }
-                        }
-                      }
-                    },
                     'x-reactions': [
                       {
-                        dependencies: ['.isFilter'],
+                        dependencies: ['source.enableCustomCommand'],
                         fulfill: {
                           state: {
-                            visible: '{{!!$deps[0]}}'
+                            visible: `{{$deps[0]}}`
                           }
                         }
                       }
@@ -531,6 +555,10 @@ export default {
                 type: 'object',
                 'x-component': 'FormGrid.GridColumn',
                 properties: {
+                  databaseType: {
+                    type: 'string',
+                    'x-display': 'hidden'
+                  },
                   nodeSchema: {
                     type: 'array',
                     'x-display': 'hidden',
@@ -547,126 +575,146 @@ export default {
                       }
                     ]
                   },
-                  isFilter: {
-                    type: 'boolean',
+                  enableCustomCommand: {
                     title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
+                    type: 'boolean',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      className: 'item-control-horizontal',
+                      layout: 'horizontal',
+                      tooltip: ''
+                    },
                     'x-component': 'Switch',
                     default: false,
                     'x-reactions': [
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`
                           }
                         }
                       }
                     ]
                   },
-                  conditions: {
-                    type: 'array',
-                    title: ' ',
-                    default: [{ key: '', value: '', operator: 5 }],
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      colon: false
-                    },
-                    'x-component': 'ArrayItems',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        space: {
-                          type: 'void',
-                          'x-component': 'Space',
-                          properties: {
-                            key: {
-                              type: 'string',
-                              required: 'true',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'Select',
-                              'x-component-props': {
-                                filterable: true
-                              },
-                              enum: []
-                            },
-                            operator: {
-                              type: 'number',
-                              required: 'true',
-                              enum: [
-                                {
-                                  label: '>',
-                                  value: 1
-                                },
-                                {
-                                  label: '>=',
-                                  value: 2
-                                },
-                                {
-                                  label: '<',
-                                  value: 3
-                                },
-                                {
-                                  label: '<=',
-                                  value: 4
-                                },
-                                {
-                                  label: '=',
-                                  value: 5
-                                }
-                              ],
-                              'x-decorator': 'FormItem',
-                              'x-decorator-props': {
-                                wrapperWidth: 100
-                              },
-                              'x-component': 'Select'
-                            },
-                            value: {
-                              type: 'string',
-                              required: 'true',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'Input',
-                              'x-component-props': {
-                                type: 'datetime',
-                                align: 'right',
-                                format: 'yyyy-MM-dd HH:mm:ss'
-                              },
-                              'x-reactions': {
-                                dependencies: ['.key', '.key#dataSource'],
-                                fulfill: {
-                                  schema: {
-                                    'x-component': `{{field=$deps[1] && $deps[1].find(item=>item.value===$deps[0]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.data_type)?"DatePicker":"Input"}}`
-                                  }
+                  customCommand: {
+                    type: 'object',
+                    properties: {
+                      command: {
+                        type: 'string',
+                        default: 'executeQuery',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Radio.Group',
+                        enum: [
+                          { label: i18n.t('public_query'), value: 'executeQuery' },
+                          { label: i18n.t('public_aggregate'), value: 'aggregate' }
+                        ],
+                        'x-reactions': {
+                          dependencies: ['target.databaseType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      params: {
+                        type: 'object',
+                        properties: {
+                          mongoQuery: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['target.customCommand.command', 'target.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}'
                                 }
                               }
                             },
-                            remove: {
-                              type: 'void',
-                              'x-decorator': 'FormItem',
-                              'x-component': 'ArrayItems.Remove',
-                              'x-component-props': {
-                                disabled: '{{$values.target.conditions.length<2}}'
+                            properties: {
+                              op: {
+                                type: 'string',
+                                default: 'find'
+                              },
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
+                              },
+                              filter: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          mongoAgg: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['target.customCommand.command', 'target.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}'
+                                }
+                              }
+                            },
+                            properties: {
+                              collection: {
+                                type: 'string',
+                                'x-reactions': {
+                                  dependencies: ['target.tableName'],
+                                  fulfill: {
+                                    state: {
+                                      value: '{{$deps[0]}}'
+                                    }
+                                  }
+                                }
+                              },
+                              pipeline: {
+                                type: 'string',
+                                'x-decorator': 'FormItem',
+                                description: i18n.t('packages_dag_nodes_table_shiligro'),
+                                'x-component': 'JsonEditor',
+                                'x-component-props': {
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
+                          },
+                          sql: {
+                            type: 'string',
+                            required: true,
+                            'x-decorator': 'FormItem',
+                            'x-component': 'SqlEditor',
+                            'x-component-props': {
+                              options: { showPrintMargin: false, useWrapMode: true }
+                            },
+                            'x-reactions': {
+                              dependencies: ['target.databaseType'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{!$deps[0].toLowerCase().includes("mongo")}}'
+                                }
                               }
                             }
                           }
                         }
                       }
                     },
-                    properties: {
-                      add: {
-                        type: 'void',
-                        title: i18n.t('packages_dag_nodes_table_tianjia'),
-                        'x-component': 'ArrayItems.Addition',
-                        'x-component-props': {
-                          defaultValue: { key: '', value: '', operator: 5 }
-                        }
-                      }
-                    },
                     'x-reactions': [
                       {
-                        dependencies: ['.isFilter'],
+                        dependencies: ['target.enableCustomCommand'],
                         fulfill: {
                           state: {
-                            visible: '{{!!$deps[0]}}'
+                            visible: `{{$deps[0]}}`
                           }
                         }
                       }
