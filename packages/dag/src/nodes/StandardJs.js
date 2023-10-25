@@ -1,6 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-import { AllLocales } from './locales'
 
 export class StandardJs extends NodeType {
   constructor() {
@@ -73,6 +72,4 @@ export class StandardJs extends NodeType {
       }
     }
   }
-
-  locales = AllLocales.JavaScript
 }

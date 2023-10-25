@@ -1,5 +1,4 @@
 import { NodeType } from './extends/NodeType'
-import { AllLocales } from './locales'
 import i18n from '@tap/i18n'
 
 export class Table extends NodeType {
@@ -289,8 +288,7 @@ export class Table extends NodeType {
                     'x-component': 'Select',
                     'x-reactions': {
                       fulfill: {
-                        run:
-                          '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
+                        run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc'
@@ -1639,8 +1637,6 @@ export class Table extends NodeType {
       }
     }
   }
-
-  locales = AllLocales.Table
 
   allowTarget(target, source) {
     // 不再支持既是源又是目标的节点

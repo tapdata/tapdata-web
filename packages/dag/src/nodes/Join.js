@@ -1,6 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-import { AllLocales } from './locales'
 
 export class Join extends NodeType {
   constructor() {
@@ -193,6 +192,4 @@ export class Join extends NodeType {
       }
     }
   }
-
-  locales = AllLocales.Join
 }
