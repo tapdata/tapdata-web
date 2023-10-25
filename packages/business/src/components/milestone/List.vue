@@ -484,14 +484,13 @@ export default {
 }
 .node-list {
   width: 224px;
-  ::v-deep {
+  :deep(.error-icon) {
+    display: none;
+  }
+
+  :deep(.error-node) {
     .error-icon {
-      display: none;
-    }
-    .error-node {
-      .error-icon {
-        display: inline-flex;
-      }
+      display: inline-flex;
     }
   }
 }

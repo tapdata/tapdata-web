@@ -460,18 +460,16 @@ export default {
     font-size: 12px;
   }
 }
-::v-deep {
-  .agent-guide-dialog {
-    margin-top: 9vh !important;
-    .el-button {
-      font-size: 16px;
-    }
-    .el-dialog__header {
-      padding: 0;
-    }
-    .el-dialog__body {
-      padding: 0;
-    }
+:deep(.agent-guide-dialog) {
+  margin-top: 9vh !important;
+  .el-button {
+    font-size: 16px;
+  }
+  .el-dialog__header {
+    padding: 0;
+  }
+  .el-dialog__body {
+    padding: 0;
   }
 }
 </style>

@@ -69,16 +69,14 @@ export default {
   &:hover {
     background: #eef3ff;
   }
-  ::v-deep {
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
   }

@@ -239,14 +239,14 @@ export default {
   background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
-  ::v-deep {
-    .el-form-item__label {
-      font-size: 12px;
-    }
-    .el-form-item--mini.el-form-item,
-    .el-form-item--small.el-form-item {
-      margin-bottom: 30px;
-    }
+
+  :deep(.el-form-item__label) {
+    font-size: 12px;
+  }
+
+  :deep(.el-form-item--mini.el-form-item),
+  :deep(.el-form-item--small.el-form-item) {
+    margin-bottom: 30px;
   }
   .script-editor {
     width: 940px;

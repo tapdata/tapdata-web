@@ -137,11 +137,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog__body {
-    padding: 0 20px 30px 20px;
-  }
+:deep(.el-dialog__body) {
+  padding: 0 20px 30px 20px;
 }
+
 .dialog__ul {
   max-height: 400px;
   overflow-y: auto;

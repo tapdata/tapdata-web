@@ -88,44 +88,40 @@ export default {
   }
   .el-date-editor {
     max-width: 150px;
-    ::v-deep {
-      input {
-        color: map-get($fontColor, dark);
-      }
-      input::placeholder {
-        color: map-get($fontColor, dark);
-      }
+    :deep(input) {
+      color: map-get($fontColor, dark);
     }
+
+    :deep(input::placeholder) {
+      color: map-get($fontColor, dark);
+    }
+
     &.empty-time {
       width: 90px !important;
-      ::v-deep {
-        .el-input__inner {
-          width: 80px;
-          text-align: center;
-          font-weight: 400;
-        }
+      :deep(.el-input__inner) {
+        width: 80px;
+        text-align: center;
+        font-weight: 400;
       }
     }
   }
   &.none-boder {
-    ::v-deep {
-      .el-input__inner {
-        padding: 0;
-        border-color: transparent;
-      }
-      .el-input__prefix {
-        display: none;
-      }
+    :deep(.el-input__inner) {
+      padding: 0;
+      border-color: transparent;
+    }
+
+    :deep(.el-input__prefix) {
+      display: none;
     }
   }
   &:hover {
     background-color: #eff1f4;
-    ::v-deep {
-      .el-input__inner {
-        background-color: #eff1f4;
-        cursor: pointer;
-      }
+    :deep(.el-input__inner) {
+      background-color: #eff1f4;
+      cursor: pointer;
     }
+
     .icon-btn {
       color: map-get($fontColor, dark);
     }

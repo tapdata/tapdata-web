@@ -1239,10 +1239,8 @@ export default {
     }
 
     .el-table {
-      ::v-deep {
-        .el-table__cell {
-          padding: 10px 0;
-        }
+      :deep(.el-table__cell) {
+        padding: 10px 0;
       }
     }
   }

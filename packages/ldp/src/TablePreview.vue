@@ -529,9 +529,10 @@ export default {
       const config = this.connection.config
 
       if (config.uri && config.isUri !== false) {
-        const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-          config.uri
-        )
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
         }
@@ -969,25 +970,23 @@ export default {
 
 <style lang="scss" scoped>
 .sw-table-drawer {
-  ::v-deep {
-    .el-tabs__nav-wrap {
-      padding: 0 24px;
-    }
+  :deep(.el-tabs__nav-wrap) {
+    padding: 0 24px;
+  }
 
-    .tabs-as-card {
-      .el-tabs__item {
-        height: 44px;
-        line-height: 44px;
-      }
+  :deep(.tabs-as-card) {
+    .el-tabs__item {
+      height: 44px;
+      line-height: 44px;
     }
+  }
 
-    .table-preview-tabs > .el-tabs__content > .el-tab-pane {
-      background-color: rgb(245, 248, 254);
-    }
+  :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
+    background-color: rgb(245, 248, 254);
+  }
 
-    th .cell {
-      white-space: nowrap;
-    }
+  :deep(th .cell) {
+    white-space: nowrap;
   }
 
   .table-name {

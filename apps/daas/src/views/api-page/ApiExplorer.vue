@@ -1375,8 +1375,8 @@ export default {
   .create-dialog-box {
     // padding: 15px;
     // background-color: #3a3d4c;
-    ::v-deep {
-      .el-textarea .el-textarea__inner {
+    :deep(.el-textarea) {
+      .el-textarea__inner {
         min-height: 200px !important;
         color: #82b290;
         // background-color: #262838;

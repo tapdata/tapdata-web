@@ -920,67 +920,68 @@ export default {
 }
 .node-list {
   width: 224px;
-  ::v-deep {
+  :deep(.error-icon) {
+    display: none;
+  }
+
+  :deep(.error-node) {
     .error-icon {
-      display: none;
-    }
-    .error-node {
-      .error-icon {
-        display: inline-flex;
-      }
+      display: inline-flex;
     }
   }
 }
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
-  ::v-deep {
-    .log-line {
-      padding: 8px 16px;
-      background-color: #fff;
-      border-bottom: 1px solid #ebeef5;
-      width: 100%;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-      .log-item {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+  :deep(.log-line) {
+    padding: 8px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #ebeef5;
+    width: 100%;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    .log-item {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      .expand-icon {
+        display: none;
+      }
+      &.hide-content {
         .expand-icon {
-          display: none;
-        }
-        &.hide-content {
-          .expand-icon {
-            display: inline-flex;
-          }
+          display: inline-flex;
         }
       }
-      .info-level {
-        color: #c9cdd4;
-      }
-      .warn-level {
-        color: #d5760e;
-      }
-      .error-level,
-      .fatal-level {
-        color: #d44d4d;
-      }
-      .debug-level {
-        color: #178061;
-      }
     }
-    .highlight-bg-color {
-      background-color: #ff0;
+    .info-level {
+      color: #c9cdd4;
     }
-    .empty-wrap {
-      margin: 24px 0;
+    .warn-level {
+      color: #d5760e;
     }
-    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
-      overflow: visible;
+    .error-level,
+    .fatal-level {
+      color: #d44d4d;
     }
-    .log__label {
-      white-space: nowrap;
+    .debug-level {
+      color: #178061;
     }
+  }
+
+  :deep(.highlight-bg-color) {
+    background-color: #ff0;
+  }
+
+  :deep(.empty-wrap) {
+    margin: 24px 0;
+  }
+
+  :deep(.vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper) {
+    overflow: visible;
+  }
+
+  :deep(.log__label) {
+    white-space: nowrap;
   }
 }
 .no-more__alert {
@@ -989,10 +990,9 @@ export default {
   left: 50%;
   width: 140px;
   z-index: 2;
-  ::v-deep {
-    .el-alert__closebtn {
-      top: 7px;
-    }
+
+  :deep(.el-alert__closebtn) {
+    top: 7px;
   }
 }
 .node-list-item {

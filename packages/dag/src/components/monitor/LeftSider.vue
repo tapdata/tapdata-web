@@ -658,9 +658,10 @@ export default {
         const { externalStorage = {}, logTime, name } = data
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
-          const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            externalStorage.uri
-          )
+          const regResult =
+            /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+              externalStorage.uri
+            )
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
         }
@@ -750,61 +751,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
+
 .layout-sidebar.--left {
   z-index: unset;
   overflow: visible;
   will-change: width;
   $headerH: 34px;
-  ::v-deep {
-    .el-collapse {
-      border-top: 0;
+  :deep(.el-collapse) {
+    border-top: 0;
 
-      &-item {
-        &.is-active [role='tab'] {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
+    &-item {
+      &.is-active [role='tab'] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
 
-        &__header {
-          position: relative;
-          padding-left: 16px;
-          padding-right: 16px;
-          height: $headerH;
-          font-size: 14px;
+      &__header {
+        position: relative;
+        padding-left: 16px;
+        padding-right: 16px;
+        height: $headerH;
+        font-size: 14px;
 
-          &:hover {
-            background-color: rgba(47, 46, 63, 0.05);
-          }
-        }
-
-        &__wrap {
-          padding-top: 16px;
-        }
-
-        &__arrow {
-          order: -1;
-          &:before {
-            content: '\e791';
-          }
-        }
-
-        &__content {
-          padding-bottom: 0;
+        &:hover {
+          background-color: rgba(47, 46, 63, 0.05);
         }
       }
-    }
 
-    .el-scrollbar {
-      height: 100%;
+      &__wrap {
+        padding-top: 16px;
+      }
+
+      &__arrow {
+        order: -1;
+        &:before {
+          content: '\e791';
+        }
+      }
+
+      &__content {
+        padding-bottom: 0;
+      }
     }
+  }
+
+  :deep(.el-scrollbar) {
+    height: 100%;
   }
 }
 .info-box {

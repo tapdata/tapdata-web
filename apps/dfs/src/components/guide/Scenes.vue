@@ -69,17 +69,16 @@ export default {
 
 <style lang="scss" scoped>
 .scenes-wrap {
-  ::v-deep {
-    .el-checkbox {
-      margin-right: 0;
-    }
-    .el-checkbox.is-bordered + .el-checkbox.is-bordered {
-      margin-left: 0;
-    }
+  :deep(.el-checkbox) {
+    margin-right: 0;
+  }
 
-    .el-checkbox.is-bordered.el-checkbox--small .el-checkbox__label {
-      line-height: 20px;
-    }
+  :deep(.el-checkbox.is-bordered + .el-checkbox.is-bordered) {
+    margin-left: 0;
+  }
+
+  :deep(.el-checkbox.is-bordered.el-checkbox--small .el-checkbox__label) {
+    line-height: 20px;
   }
 }
 </style>

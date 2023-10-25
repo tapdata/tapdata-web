@@ -162,46 +162,49 @@ export default {
   background-color: map-get($color, disable);
 }
 .el-steps {
-  ::v-deep {
-    .el-step__head .el-step__icon {
-      border: 0;
-    }
-    .el-step__head.is-finish {
-      color: map-get($color, disable);
-      border-color: map-get($color, disable);
-    }
+  :deep(.el-step__head .el-step__icon) {
+    border: 0;
+  }
+
+  :deep(.el-step__head.is-finish) {
+    color: map-get($color, disable);
+    border-color: map-get($color, disable);
+  }
+
+  :deep(.el-step__line) {
+    height: 1px;
+    top: 11px;
+    left: 50%;
+    right: -50%;
+    background-color: map-get($color, disable);
+  }
+
+  :deep(.is-finish) {
     .el-step__line {
-      height: 1px;
-      top: 11px;
-      left: 50%;
-      right: -50%;
       background-color: map-get($color, disable);
     }
-    .is-finish {
-      .el-step__line {
-        background-color: map-get($color, disable);
-      }
-      .el-step__line-inner {
-        transition-delay: -150ms !important;
-        border-width: 0px !important;
-        width: 0% !important;
-      }
+    .el-step__line-inner {
+      transition-delay: -150ms !important;
+      border-width: 0px !important;
+      width: 0% !important;
     }
+  }
+
+  :deep(.el-step__title),
+  :deep(.el-step__description),
+  :deep(.el-step__description) {
+    font-size: 14px;
+    color: map-get($fontColor, slight);
+  }
+
+  :deep(.is-active) {
     .el-step__title,
-    .el-step__description,
     .el-step__description {
-      font-size: 14px;
-      color: map-get($fontColor, slight);
+      color: map-get($fontColor, normal);
     }
-    .is-active {
-      .el-step__title,
-      .el-step__description {
-        color: map-get($fontColor, normal);
-      }
-      .is-finish {
-        .circle-icon {
-          background-color: map-get($color, primary);
-        }
+    .is-finish {
+      .circle-icon {
+        background-color: map-get($color, primary);
       }
     }
   }

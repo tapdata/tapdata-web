@@ -203,16 +203,15 @@ export default {
     text-align: left;
     font-size: $fontBaseTitle;
     line-height: 32px;
-    ::v-deep {
-      .filter-datetime:first-child {
-        padding-left: 0;
-        .el-date-editor.empty-time .el-input__inner {
-          text-align: left;
-        }
+    :deep(.filter-datetime:first-child) {
+      padding-left: 0;
+      .el-date-editor.empty-time .el-input__inner {
+        text-align: left;
       }
-      .el-input {
-        font-size: $fontBaseTitle;
-      }
+    }
+
+    :deep(.el-input) {
+      font-size: $fontBaseTitle;
     }
   }
   .header {

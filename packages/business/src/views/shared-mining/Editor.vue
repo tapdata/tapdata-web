@@ -308,10 +308,8 @@ export default {
 
 <style lang="scss" scoped>
 .scheme-to-form {
-  ::v-deep {
-    .formily-element-form-item {
-      margin-bottom: 10px;
-    }
+  :deep(.formily-element-form-item) {
+    margin-bottom: 10px;
   }
 }
 </style>

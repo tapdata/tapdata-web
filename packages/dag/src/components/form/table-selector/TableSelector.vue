@@ -659,10 +659,8 @@ export default {
   &:hover {
     background-color: map-get($bgColor, disable);
   }
-  > ::v-deep {
-    .el-checkbox__label {
-      overflow: hidden;
-    }
+  > :deep(.el-checkbox__label) {
+    overflow: hidden;
   }
 }
 .selector-center {
@@ -731,14 +729,12 @@ export default {
 }
 .selector-clipboard__textarea {
   flex: 1;
-  ::v-deep {
-    .el-textarea__inner {
-      height: 100%;
-      border: none;
-      padding: 0;
-      font-size: 12px;
-      line-height: 20px;
-    }
+  :deep(.el-textarea__inner) {
+    height: 100%;
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    line-height: 20px;
   }
 }
 </style>

@@ -129,18 +129,16 @@ export default {
             padding-left: 20px;
             cursor: pointer;
             color: map-get($fontColor, light);
-            ::v-deep {
-              .iconfont {
-                color: map-get($fontColor, light);
-              }
+
+            :deep(.iconfont) {
+              color: map-get($fontColor, light);
             }
           }
           .active {
             background: rgba(44, 101, 255, 0.05);
-            ::v-deep {
-              .iconfont {
-                color: map-get($color, primary);
-              }
+
+            :deep(.iconfont) {
+              color: map-get($color, primary);
             }
           }
           // &:hover {

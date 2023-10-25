@@ -72,17 +72,16 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  ::v-deep {
-    .log-container {
-      max-height: 400px;
-    }
-    .vue-recycle-scroller {
-      padding: 12px 24px;
-      height: 400px;
-      max-height: 600px;
-      font-size: 14px;
-      color: map-get($fontColor, dark);
-    }
+  :deep(.log-container) {
+    max-height: 400px;
+  }
+
+  :deep(.vue-recycle-scroller) {
+    padding: 12px 24px;
+    height: 400px;
+    max-height: 600px;
+    font-size: 14px;
+    color: map-get($fontColor, dark);
   }
 }
 </style>

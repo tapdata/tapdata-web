@@ -109,10 +109,9 @@ export default {
   color: map-get($fontColor, light);
   margin-bottom: 8px;
 }
-::v-deep {
-  .el-dialog__header {
-    padding: 0;
-    padding-bottom: 0;
-  }
+
+:deep(.el-dialog__header) {
+  padding: 0;
+  padding-bottom: 0;
 }
 </style>

@@ -225,11 +225,10 @@ export default {
     padding-left: 24px;
     border-bottom: 1px solid #e1e3e9;
   }
-  ::v-deep {
-    .el-form-item--small .el-form-item__content,
-    .el-form-item--small .el-form-item__label {
-      line-height: 28px;
-    }
+
+  :deep(.el-form-item--small .el-form-item__content),
+  :deep(.el-form-item--small .el-form-item__label) {
+    line-height: 28px;
   }
 }
 </style>

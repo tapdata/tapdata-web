@@ -202,16 +202,16 @@ $headerHeight: 40px;
   }
 
   .el-tabs {
-    ::v-deep {
-      .el-tabs__header {
-        margin: 0;
-      }
-      .el-tabs__content {
-        flex: 1;
-      }
-      .el-tab-pane {
-        height: 100%;
-      }
+    :deep(.el-tabs__header) {
+      margin: 0;
+    }
+
+    :deep(.el-tabs__content) {
+      flex: 1;
+    }
+
+    :deep(.el-tab-pane) {
+      height: 100%;
     }
   }
 
@@ -249,39 +249,37 @@ $headerHeight: 40px;
     background: #fff;
   }
 
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
+  :deep(.config-tabs.el-tabs) {
+    height: 100%;
 
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: $tabsHeaderWidth + 32px;
-          padding-right: 16px;
+    > .el-tabs__header {
+      margin: 0;
+      .el-tabs__nav-wrap {
+        padding-left: $tabsHeaderWidth + 32px;
+        padding-right: 16px;
 
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
+        &::after {
+          height: 1px;
         }
       }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
 
-      > .el-tabs__content {
-        height: calc(100% - 40px);
-        .el-tab-pane {
-          height: 100%;
+      .el-tabs__item {
+        font-weight: 400;
+
+        &.is-active,
+        &:hover {
+          color: $color;
         }
+      }
+    }
+
+    > .el-tabs__content {
+      height: calc(100% - 40px);
+      .el-tab-pane {
+        height: 100%;
       }
     }
   }
@@ -292,10 +290,8 @@ $headerHeight: 40px;
   top: 10px;
 }
 .tabs-header__hidden {
-  ::v-deep {
-    .el-tabs__header {
-      display: none;
-    }
+  :deep(.el-tabs__header) {
+    display: none;
   }
 }
 </style>

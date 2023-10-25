@@ -981,139 +981,139 @@ export default {
           }
         }
 
-        ::v-deep {
-          .el-tabs {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            height: 100%;
-            .el-tabs__header {
-              margin: 0;
-              .el-tabs__nav-wrap,
-              .el-tabs__nav-scroll,
-              .el-tabs__nav {
-                height: 60px;
-                line-height: 6px;
-              }
-              .el-tabs__item {
-                height: 60px;
-                line-height: 60px;
-                padding-left: 20px;
-              }
-              .el-tabs__nav-prev,
-              .el-tabs__nav-next {
-                line-height: 60px;
-              }
+        :deep(.el-tabs) {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          height: 100%;
+          .el-tabs__header {
+            margin: 0;
+            .el-tabs__nav-wrap,
+            .el-tabs__nav-scroll,
+            .el-tabs__nav {
+              height: 60px;
+              line-height: 6px;
             }
+            .el-tabs__item {
+              height: 60px;
+              line-height: 60px;
+              padding-left: 20px;
+            }
+            .el-tabs__nav-prev,
+            .el-tabs__nav-next {
+              line-height: 60px;
+            }
+          }
 
-            .el-tabs__content {
+          .el-tabs__content {
+            flex: 1;
+            .el-tab-pane {
+              height: 100%;
               flex: 1;
-              .el-tab-pane {
+              .table-box {
+                display: flex;
+                flex-direction: column;
                 height: 100%;
-                flex: 1;
-                .table-box {
+                padding: 20px;
+                background-color: map-get($bgColor, white);
+                // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+                box-sizing: border-box;
+                .table-page-topbar {
                   display: flex;
-                  flex-direction: column;
-                  height: 100%;
-                  padding: 20px;
-                  background-color: map-get($bgColor, white);
-                  // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
-                  box-sizing: border-box;
-                  .table-page-topbar {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-end;
-                    flex-wrap: wrap-reverse;
-                    // padding: 0 10px;
+                  justify-content: space-between;
+                  align-items: flex-end;
+                  flex-wrap: wrap-reverse;
+                  // padding: 0 10px;
 
-                    .table-page-search-bar {
-                      margin-right: 5px;
-                      margin-bottom: 10px;
-                      .search-bar {
-                        display: flex;
-                        flex-direction: row;
-                      }
+                  .table-page-search-bar {
+                    margin-right: 5px;
+                    margin-bottom: 10px;
+                    .search-bar {
+                      display: flex;
+                      flex-direction: row;
                     }
-                    .table-page-operation-bar {
-                      margin-bottom: 10px;
-                      text-align: right;
-                      .operation {
-                        .iconfont {
+                  }
+                  .table-page-operation-bar {
+                    margin-bottom: 10px;
+                    text-align: right;
+                    .operation {
+                      .iconfont {
+                        font-size: 12px;
+                      }
+                      .btn {
+                        padding: 7px;
+                        background: map-get($bgColor, main);
+                        i.iconfont {
                           font-size: 12px;
                         }
-                        .btn {
-                          padding: 7px;
-                          background: map-get($bgColor, main);
-                          i.iconfont {
-                            font-size: 12px;
-                          }
-                          &.btn-create {
-                            margin-left: 5px;
-                          }
+                        &.btn-create {
+                          margin-left: 5px;
                         }
                       }
                     }
                   }
-                  .attributes {
-                    li {
-                      width: 100%;
-                      margin: 5px 0;
-                      font-size: 12px;
-                      span {
-                        display: inline-block;
-                        padding: 3px 10px;
-                        margin: 3px 5px;
-                        color: map-get($fontColor, light);
-                        border-radius: 10px;
-                        background-color: #f7edee;
-                      }
-                      .label {
-                        display: inline-block;
-                        padding: 5px 0;
-                        color: #aaa;
-                        border-radius: 0;
-                        background-color: transparent;
-                      }
-                      .dropInfo {
-                        display: inline-block;
-                        width: calc(100% - 60px);
-                        white-space: break-spaces;
-                        overflow: hidden;
-                      }
+                }
+                .attributes {
+                  li {
+                    width: 100%;
+                    margin: 5px 0;
+                    font-size: 12px;
+                    span {
+                      display: inline-block;
+                      padding: 3px 10px;
+                      margin: 3px 5px;
+                      color: map-get($fontColor, light);
+                      border-radius: 10px;
+                      background-color: #f7edee;
                     }
-                    li.more {
-                      span {
-                        background-color: #e2f1f9;
-                      }
+                    .label {
+                      display: inline-block;
+                      padding: 5px 0;
+                      color: #aaa;
+                      border-radius: 0;
+                      background-color: transparent;
+                    }
+                    .dropInfo {
+                      display: inline-block;
+                      width: calc(100% - 60px);
+                      white-space: break-spaces;
+                      overflow: hidden;
+                    }
+                  }
+                  li.more {
+                    span {
+                      background-color: #e2f1f9;
                     }
                   }
                 }
               }
             }
           }
+        }
 
-          .table-page-table {
-            .el-table__header-wrapper {
-              height: 40px;
-              th {
-                padding: 0;
-                line-height: 40px !important;
-                // background-color: map-get($bgColor, normal);
-              }
-            }
-          }
-          .table-page-pagination {
-            padding-top: 20px;
-          }
-
-          flex-wrap: wrap;
-          li {
-            margin-right: 10px;
-            &:last-child {
-              margin-right: 0;
+        :deep(.table-page-table) {
+          .el-table__header-wrapper {
+            height: 40px;
+            th {
+              padding: 0;
+              line-height: 40px !important;
+              // background-color: map-get($bgColor, normal);
             }
           }
         }
+
+        :deep(.table-page-pagination) {
+          padding-top: 20px;
+        }
+
+        :deep(li) {
+          margin-right: 10px;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+
+        flex-wrap: wrap;
       }
       .boxWidth {
         width: calc(100% - 30px);

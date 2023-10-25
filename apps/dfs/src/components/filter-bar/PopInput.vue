@@ -127,10 +127,9 @@ export default {
       text-overflow: ellipsis;
     }
   }
-  ::v-deep {
-    .el-popover__reference-wrapper {
-      display: inline-block;
-    }
+
+  :deep(.el-popover__reference-wrapper) {
+    display: inline-block;
   }
 }
 .btn-row {

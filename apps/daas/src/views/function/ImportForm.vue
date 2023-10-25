@@ -412,21 +412,23 @@ export default {
   background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
-  ::v-deep {
-    .el-form-item__label {
-      font-size: 12px;
-    }
-    .el-form-item--mini.el-form-item,
-    .el-form-item--small.el-form-item {
-      margin-bottom: 24px;
-    }
-    .el-upload-list__item:first-child {
-      margin-top: 0;
-    }
-    .el-upload-list__item-name {
-      width: 250px;
-    }
+  :deep(.el-form-item__label) {
+    font-size: 12px;
   }
+
+  :deep(.el-form-item--mini.el-form-item),
+  :deep(.el-form-item--small.el-form-item) {
+    margin-bottom: 24px;
+  }
+
+  :deep(.el-upload-list__item:first-child) {
+    margin-top: 0;
+  }
+
+  :deep(.el-upload-list__item-name) {
+    width: 250px;
+  }
+
   .form-input {
     max-width: 384px;
   }

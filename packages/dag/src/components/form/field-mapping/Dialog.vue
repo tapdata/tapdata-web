@@ -52,29 +52,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .field-mapping-table-dialog {
-    .table-box {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .table-form {
-        width: 56%;
-        .el-form-item {
-          margin-bottom: 12px;
-        }
-        .tip {
-          padding-left: 40px;
-        }
+:deep(.field-mapping-table-dialog) {
+  .table-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .table-form {
+      width: 56%;
+      .el-form-item {
+        margin-bottom: 12px;
       }
-      .table-example {
-        width: 36%;
-        h3 {
-          padding-bottom: 20px;
-        }
-        p {
-          padding-bottom: 10px;
-        }
+      .tip {
+        padding-left: 40px;
+      }
+    }
+    .table-example {
+      width: 36%;
+      h3 {
+        padding-bottom: 20px;
+      }
+      p {
+        padding-bottom: 10px;
       }
     }
   }

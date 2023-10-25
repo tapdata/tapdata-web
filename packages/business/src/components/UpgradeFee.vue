@@ -328,9 +328,8 @@ export default {
   background: -webkit-linear-gradient(135deg, #a3e4d7, #a77bf3);
   background: linear-gradient(135deg, #a3e4d7, #a77bf3);
 }
-::v-deep {
-  .el-dialog__body {
-    padding: 0 20px 30px 20px;
-  }
+
+:deep(.el-dialog__body) {
+  padding: 0 20px 30px 20px;
 }
 </style>

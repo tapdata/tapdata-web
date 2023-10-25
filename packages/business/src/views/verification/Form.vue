@@ -859,36 +859,32 @@ export default {
 .form-input {
   width: 505px;
 }
-::v-deep {
-  .js-wrap {
+:deep(.js-wrap) {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  .jsBox {
     display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    .jsBox {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      .js-fixText {
-        line-height: 25px;
-      }
-      .js-fixContent {
-        margin-left: 60px;
-      }
+    flex-direction: column;
+    flex: 1;
+    .js-fixText {
+      line-height: 25px;
     }
-    .example {
-      width: 300px;
+    .js-fixContent {
+      margin-left: 60px;
     }
-    .js-editor {
-      border: 1px solid map-get($borderColor, light);
-    }
+  }
+  .example {
+    width: 300px;
+  }
+  .js-editor {
+    border: 1px solid map-get($borderColor, light);
   }
 }
 
 .el-form {
-  ::v-deep {
-    .el-form-item__error {
-      margin-top: 8px;
-    }
+  :deep(.el-form-item__error) {
+    margin-top: 8px;
   }
 }
 </style>

@@ -328,16 +328,17 @@ export default {
 .log-list {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
-  ::v-deep {
-    .log-line {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    }
-    .highlight-bg-color {
-      background-color: #ff0;
-    }
-    .empty-wrap {
-      margin: 24px 0;
-    }
+
+  :deep(.log-line) {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  }
+
+  :deep(.highlight-bg-color) {
+    background-color: #ff0;
+  }
+
+  :deep(.empty-wrap) {
+    margin: 24px 0;
   }
 }
 .no-more__alert {
@@ -345,10 +346,9 @@ export default {
   top: 4px;
   left: 50%;
   width: 140px;
-  ::v-deep {
-    .el-alert__closebtn {
-      top: 7px;
-    }
+
+  :deep(.el-alert__closebtn) {
+    top: 7px;
   }
 }
 </style>

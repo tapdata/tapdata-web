@@ -136,16 +136,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .ldp-conection-dialog {
-    border-radius: 4px;
-    .el-dialog__body {
-      flex: 1;
-      height: 0;
-    }
-    .el-dialog__body {
-      padding: 0;
-    }
+:deep(.ldp-conection-dialog) {
+  border-radius: 4px;
+  .el-dialog__body {
+    flex: 1;
+    height: 0;
+  }
+  .el-dialog__body {
+    padding: 0;
   }
 }
 .form__content {

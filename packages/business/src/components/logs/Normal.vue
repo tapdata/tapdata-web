@@ -364,13 +364,12 @@ export default {
 <style lang="scss" scoped>
 .customer-logs {
   font-size: 12px;
-  ::v-deep {
-    .tap-span {
-      padding-left: 16px;
-    }
-    .color-red {
-      color: red;
-    }
+  :deep(.tap-span) {
+    padding-left: 16px;
+  }
+
+  :deep(.color-red) {
+    color: red;
   }
 }
 .e-debug-log {
@@ -395,19 +394,16 @@ export default {
     font-size: 12px;
     color: map-get($fontColor, dark);
   }
-  ::v-deep {
-    .keyword {
-      color: map-get($color, danger);
-    }
+  :deep(.keyword) {
+    color: map-get($color, danger);
   }
 }
 .el-checkbox {
   margin-left: 4px;
   margin-right: 8px;
-  ::v-deep {
-    .el-checkbox__label {
-      font-size: 12px;
-    }
+
+  :deep(.el-checkbox__label) {
+    font-size: 12px;
   }
 }
 .white-space-nowrap {

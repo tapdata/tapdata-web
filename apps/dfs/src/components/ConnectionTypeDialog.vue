@@ -156,11 +156,9 @@ export default {
     *zoom: 1;
   }
 }
-::v-deep {
-  .connection-dialog {
-    .el-dialog__body {
-      padding: 0 20px 30px 20px;
-    }
+:deep(.connection-dialog) {
+  .el-dialog__body {
+    padding: 0 20px 30px 20px;
   }
 }
 </style>

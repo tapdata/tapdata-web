@@ -968,32 +968,30 @@ export default {
     background-color: #d0deff;
   }
 
-  ::v-deep {
-    .task-list-item-more {
-      display: none;
-      left: 50%;
-      bottom: 12px;
-      transform: translateX(-50%);
+  :deep(.task-list-item-more) {
+    display: none;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
 
-      .v-icon {
-        vertical-align: -0.125em;
-        transition: transform 0.3s;
-        transform: rotate(0deg);
-      }
-
-      &.is-reverse .v-icon {
-        transform: rotate(180deg);
-      }
+    .v-icon {
+      vertical-align: -0.125em;
+      transition: transform 0.3s;
+      transform: rotate(0deg);
     }
 
-    .has-more {
-      .task-list {
-        padding-bottom: 36px;
-      }
+    &.is-reverse .v-icon {
+      transform: rotate(180deg);
+    }
+  }
 
-      .task-list-item-more {
-        display: inline-flex;
-      }
+  :deep(.has-more) {
+    .task-list {
+      padding-bottom: 36px;
+    }
+
+    .task-list-item-more {
+      display: inline-flex;
     }
   }
 }

@@ -1150,61 +1150,58 @@ export default {
           //}
           .form-builder {
             width: 396px;
-            ::v-deep {
-              .e-form-builder-item {
-                &.large-item {
-                  width: 610px;
-                  .el-form-item__content {
-                    padding-right: 20px;
-                  }
+            :deep(.e-form-builder-item) {
+              &.large-item {
+                width: 610px;
+                .el-form-item__content {
+                  padding-right: 20px;
                 }
-                &.small-item {
-                  width: 320px;
-                }
-                &.mongodb-item {
-                  width: 680px;
-                }
-                &.mongodb-tip-item .el-form-item__content {
-                  width: 680px;
-                }
-                .url-tip {
+              }
+              &.small-item {
+                width: 320px;
+              }
+              &.mongodb-item {
+                width: 680px;
+              }
+              &.mongodb-tip-item .el-form-item__content {
+                width: 680px;
+              }
+              .url-tip {
+                font-size: 12px;
+                color: map-get($fontColor, light);
+                b {
                   font-size: 12px;
+                  font-weight: 400;
                   color: map-get($fontColor, light);
-                  b {
-                    font-size: 12px;
-                    font-weight: 400;
-                    color: map-get($fontColor, light);
-                  }
-                }
-                .fb-radio-group {
-                  .el-radio--mini.is-bordered {
-                    padding-top: 0;
-                  }
-                }
-                .el-input .el-input__inner,
-                .el-textarea__inner {
-                  background-color: rgba(239, 241, 244, 0.2);
-                }
-                .el-textarea__inner {
-                  min-height: 70px !important;
                 }
               }
-              .el-input-group__append button.el-button {
-                background-color: inherit;
-                border-color: azure;
+              .fb-radio-group {
+                .el-radio--mini.is-bordered {
+                  padding-top: 0;
+                }
               }
+              .el-input .el-input__inner,
+              .el-textarea__inner {
+                background-color: rgba(239, 241, 244, 0.2);
+              }
+              .el-textarea__inner {
+                min-height: 70px !important;
+              }
+            }
+
+            :deep(.el-input-group__append button.el-button) {
+              background-color: inherit;
+              border-color: azure;
             }
           }
         }
 
-        ::v-deep {
-          .formily-element-form-item {
-            .el-input-number {
-              width: 180px;
-            }
-            .el-input-number--small {
-              width: 130px;
-            }
+        :deep(.formily-element-form-item) {
+          .el-input-number {
+            width: 180px;
+          }
+          .el-input-number--small {
+            width: 130px;
           }
         }
       }

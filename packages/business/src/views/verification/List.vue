@@ -581,13 +581,11 @@ export default {
     font-size: 14px;
   }
 }
-::v-deep {
-  .verify-list-error-msg {
-    .el-message-box__message {
-      max-height: 450px;
-      overflow-y: auto;
-      word-break: break-word;
-    }
+:deep(.verify-list-error-msg) {
+  .el-message-box__message {
+    max-height: 450px;
+    overflow-y: auto;
+    word-break: break-word;
   }
 }
 </style>

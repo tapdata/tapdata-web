@@ -482,7 +482,7 @@ export default {
     .el-menu-item {
       height: 50px;
       line-height: 50px;
-      ::v-deep .v-icon {
+      :deep(.v-icon) {
         color: map-get($iconFillColor, normal);
       }
       &.is-active,
@@ -493,17 +493,16 @@ export default {
       }
       &.is-active,
       &:hover {
-        ::v-deep .v-icon {
+        :deep(.v-icon) {
           color: map-get($color, primary);
         }
       }
     }
     .el-submenu {
-      ::v-deep {
-        .el-submenu__title {
-          font-size: 12px;
-        }
+      :deep(.el-submenu__title) {
+        font-size: 12px;
       }
+
       .submenu-item {
         padding-left: 8px;
       }
@@ -535,16 +534,13 @@ export default {
     box-sizing: border-box;
     &.one-breadcrumb {
       font-size: 18px;
-      ::v-deep {
-        .el-breadcrumb__inner {
-          color: #000;
-        }
+
+      :deep(.el-breadcrumb__inner) {
+        color: #000;
       }
     }
-    ::v-deep {
-      .el-breadcrumb__separator {
-        color: map-get($fontColor, sub);
-      }
+    :deep(.el-breadcrumb__separator) {
+      color: map-get($fontColor, sub);
     }
   }
   .btn-back {

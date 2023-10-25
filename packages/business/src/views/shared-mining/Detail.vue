@@ -519,13 +519,13 @@ export default {
         width: 70px;
         line-height: 32px;
       }
-      ::v-deep {
-        .el-date-editor {
-          width: 300px;
-        }
-        .el-range-input {
-          width: 120px;
-        }
+
+      :deep(.el-date-editor) {
+        width: 300px;
+      }
+
+      :deep(.el-range-input) {
+        width: 120px;
       }
     }
     .share-detail-head-right {
@@ -543,11 +543,9 @@ export default {
     .filter-datetime-range {
       font-size: 12px;
       line-height: 32px;
-      ::v-deep {
+
+      :deep(.el-input) {
         font-size: 12px;
-        .el-input {
-          font-size: 12px;
-        }
       }
     }
   }
@@ -557,15 +555,14 @@ export default {
   }
   .card-box {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-    ::v-deep {
-      .el-tab-pane {
-        min-height: 400px;
-      }
-      .field-mapping {
-        min-height: 400px;
-        .task-form-body {
-          max-height: 350px;
-        }
+    :deep(.el-tab-pane) {
+      min-height: 400px;
+    }
+
+    :deep(.field-mapping) {
+      min-height: 400px;
+      .task-form-body {
+        max-height: 350px;
       }
     }
   }
@@ -575,20 +572,15 @@ export default {
   .card-box__content {
     padding-left: 24px;
     //height: 0;
-    ::v-deep {
-      .el-tabs__content {
-        overflow-y: auto;
-      }
+    :deep(.el-tabs__content) {
+      overflow-y: auto;
     }
   }
   .filter-datetime-range {
     font-size: 12px;
     line-height: 32px;
-    ::v-deep {
+    :deep(.el-input) {
       font-size: 12px;
-      .el-input {
-        font-size: 12px;
-      }
     }
   }
 }

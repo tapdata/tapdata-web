@@ -664,19 +664,19 @@ export default {
     display: none;
   }
 }
-::v-deep {
-  .el-dropdown-menu__item.dropdown-item--disabled {
+
+:deep(.el-dropdown-menu__item.dropdown-item--disabled) {
+  color: map-get($color, disable);
+  cursor: default;
+  &:hover {
+    background: unset;
     color: map-get($color, disable);
-    cursor: default;
-    &:hover {
-      background: unset;
-      color: map-get($color, disable);
-    }
   }
-  .el-tabs__content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
+}
+
+:deep(.el-tabs__content) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 </style>

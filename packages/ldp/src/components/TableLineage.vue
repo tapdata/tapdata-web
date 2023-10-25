@@ -499,31 +499,29 @@ export default {
     z-index: 10;
   }
 
-  ::v-deep {
-    .table-lineage-connection-label {
-      max-width: 180px;
-      z-index: 1001;
-      .el-tag {
-        background-color: inherit;
-        color: inherit;
-        border-color: currentColor;
+  :deep(.table-lineage-connection-label) {
+    max-width: 180px;
+    z-index: 1001;
+    .el-tag {
+      background-color: inherit;
+      color: inherit;
+      border-color: currentColor;
+    }
+    &.compact-tag {
+      .el-tag:first-child {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
       }
-      &.compact-tag {
-        .el-tag:first-child {
-          border-top-right-radius: 0 !important;
-          border-bottom-right-radius: 0 !important;
-        }
-        .el-tag:last-child {
-          margin-left: -1px;
-          border-top-left-radius: 0 !important;
-          border-bottom-left-radius: 0 !important;
-        }
+      .el-tag:last-child {
+        margin-left: -1px;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
       }
     }
+  }
 
-    .el-loading-text {
-      white-space: pre-wrap;
-    }
+  :deep(.el-loading-text) {
+    white-space: pre-wrap;
   }
 }
 </style>

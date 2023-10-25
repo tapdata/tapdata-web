@@ -189,10 +189,8 @@ $headerHeight: 40px;
 $tabHeight: 44px;
 
 .el-button.--with-icon {
-  ::v-deep {
-    > span {
-      display: contents;
-    }
+  > :deep(span) {
+    display: contents;
   }
 }
 
@@ -234,20 +232,18 @@ $tabHeight: 44px;
   }
 
   .config-form-panel {
-    ::v-deep {
-      .attr-panel-body {
-        padding: 0 !important;
+    :deep(.attr-panel-body) {
+      padding: 0 !important;
 
-        .form-wrap {
-          min-height: 0;
+      .form-wrap {
+        min-height: 0;
 
-          .config-tabs-decorator {
+        .config-tabs-decorator {
+          height: 100%;
+          > .formily-element-form-item-control {
             height: 100%;
-            > .formily-element-form-item-control {
+            > .formily-element-form-item-control-content {
               height: 100%;
-              > .formily-element-form-item-control-content {
-                height: 100%;
-              }
             }
           }
         }
@@ -255,55 +251,53 @@ $tabHeight: 44px;
     }
   }
 
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
+  :deep(.config-tabs.el-tabs) {
+    height: 100%;
 
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: 52px;
-          padding-right: 16px;
+    > .el-tabs__header {
+      margin: 0;
+      .el-tabs__nav-wrap {
+        padding-left: 52px;
+        padding-right: 16px;
 
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          //padding: 0 12px;
-          line-height: $tabHeight;
-          height: $tabHeight;
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
+        &::after {
+          height: 1px;
         }
       }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
 
-      > .el-tabs__content {
-        height: calc(100% - $tabHeight);
-        padding: 4px 16px;
-        overflow: auto;
-        .el-tab-pane {
-          height: 100%;
+      .el-tabs__item {
+        //padding: 0 12px;
+        line-height: $tabHeight;
+        height: $tabHeight;
+        font-weight: 400;
+
+        &.is-active,
+        &:hover {
+          color: $color;
         }
       }
     }
 
-    .setting-tabs.el-tabs {
-      height: 100%;
-      > .el-tabs__header {
-        .el-tabs__nav-wrap {
-          padding-left: 0;
-          &::after {
-            height: 0;
-          }
+    > .el-tabs__content {
+      height: calc(100% - $tabHeight);
+      padding: 4px 16px;
+      overflow: auto;
+      .el-tab-pane {
+        height: 100%;
+      }
+    }
+  }
+
+  :deep(.setting-tabs.el-tabs) {
+    height: 100%;
+    > .el-tabs__header {
+      .el-tabs__nav-wrap {
+        padding-left: 0;
+        &::after {
+          height: 0;
         }
       }
     }

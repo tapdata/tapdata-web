@@ -247,67 +247,66 @@ export default {
 .table-node {
   width: 200px;
   z-index: 5;
-  ::v-deep {
-    .df-node {
-      position: static;
 
-      .df-node-text {
-        font-size: $fontBaseTitle;
-      }
+  :deep(.df-node) {
+    position: static;
 
-      .df-node-text-tooltip {
-        transform: translateY(-6px);
-      }
+    .df-node-text {
+      font-size: $fontBaseTitle;
+    }
 
-      &.jtk-drag {
-        &:after {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          right: 0;
-          bottom: 0;
-        }
-      }
+    .df-node-text-tooltip {
+      transform: translateY(-6px);
+    }
 
-      .node-anchor {
-        display: none;
-        width: 16px;
-        height: 16px;
-        border-color: inherit;
+    &.jtk-drag {
+      &:after {
+        content: '';
         position: absolute;
-        cursor: crosshair;
-        left: 100%;
-        transform: translateX(-50%);
-        place-content: center;
-        place-items: center;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
 
-        &:before {
-          content: '';
-          position: absolute;
-          border-width: 1px;
-          border-style: solid;
-          border-color: inherit;
-          border-radius: 50%;
-          background: #fff;
-          width: 12px;
-          height: 12px;
-        }
+    .node-anchor {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border-color: inherit;
+      position: absolute;
+      cursor: crosshair;
+      left: 100%;
+      transform: translateX(-50%);
+      place-content: center;
+      place-items: center;
 
-        &.input {
-          left: 0;
-        }
-
-        //&:hover:before {
-        //  border-width: 2px;
-        //  width: 16px;
-        //  height: 16px;
-        //}
+      &:before {
+        content: '';
+        position: absolute;
+        border-width: 1px;
+        border-style: solid;
+        border-color: inherit;
+        border-radius: 50%;
+        background: #fff;
+        width: 12px;
+        height: 12px;
       }
 
-      &:hover .node-anchor.output {
-        display: flex;
+      &.input {
+        left: 0;
       }
+
+      //&:hover:before {
+      //  border-width: 2px;
+      //  width: 16px;
+      //  height: 16px;
+      //}
+    }
+
+    &:hover .node-anchor.output {
+      display: flex;
     }
   }
 

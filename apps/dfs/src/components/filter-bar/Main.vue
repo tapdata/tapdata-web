@@ -246,25 +246,21 @@ export default {
 }
 .filter-form {
   font-size: 14px;
-  ::v-deep {
-    .el-form-item__content {
+  :deep(.el-form-item__content) {
+    font-size: 14px;
+    .el-input {
       font-size: 14px;
-      .el-input {
-        font-size: 14px;
-      }
     }
   }
 }
 .filter-el-input {
-  ::v-deep {
-    .el-input__inner {
-      &:hover {
-        border-color: #d9d9d9;
-      }
-      &:focus,
-      &:target {
-        border-color: map-get($color, primary);
-      }
+  :deep(.el-input__inner) {
+    &:hover {
+      border-color: #d9d9d9;
+    }
+    &:focus,
+    &:target {
+      border-color: map-get($color, primary);
     }
   }
 }

@@ -169,20 +169,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
+
 .table-list {
   height: 560px;
   .el-progress {
-    ::v-deep {
-      .el-progress__text {
-        font-size: 12px !important;
-      }
+    :deep(.el-progress__text) {
+      font-size: 12px !important;
     }
   }
 }

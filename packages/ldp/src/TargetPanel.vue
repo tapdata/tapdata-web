@@ -1189,22 +1189,21 @@ export default {
     background-color: #d0deff;
   }
 
-  ::v-deep {
-    .task-list-content {
-      .task-list-item:not(:last-child) {
-        border-bottom: 1px solid #ececec;
-      }
+  :deep(.task-list-content) {
+    .task-list-item:not(:last-child) {
+      border-bottom: 1px solid #ececec;
     }
-    .task-list-item-more {
-      .v-icon {
-        vertical-align: -0.125em;
-        transition: transform 0.3s;
-        transform: rotate(0deg);
-      }
+  }
 
-      &.is-reverse .v-icon {
-        transform: rotate(180deg);
-      }
+  :deep(.task-list-item-more) {
+    .v-icon {
+      vertical-align: -0.125em;
+      transition: transform 0.3s;
+      transform: rotate(0deg);
+    }
+
+    &.is-reverse .v-icon {
+      transform: rotate(180deg);
     }
   }
 }

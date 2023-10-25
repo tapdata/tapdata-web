@@ -844,11 +844,9 @@ export default {
   overflow: hidden;
   background: #fff;
   padding: 0 24px 24px 24px;
-  ::v-deep {
-    .el-select-dropdown__item {
-      span {
-        font-size: $fontBaseTitle;
-      }
+  :deep(.el-select-dropdown__item) {
+    span {
+      font-size: $fontBaseTitle;
     }
   }
 

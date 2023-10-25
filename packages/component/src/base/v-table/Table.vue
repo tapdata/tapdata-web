@@ -232,10 +232,8 @@ export default {
 }
 .el-pagination {
   line-height: 28px;
-  ::v-deep {
-    * {
-      line-height: inherit;
-    }
+  :deep(*) {
+    line-height: inherit;
   }
 }
 </style>

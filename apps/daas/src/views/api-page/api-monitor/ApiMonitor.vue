@@ -66,7 +66,16 @@
           </div>
         </div>
         <div
-          class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5"
+          class="
+            flex flex-column flex-1
+            bg-white
+            api-monitor-table api-monitor-card
+            overflow-hidden
+            ml-5
+            mr-5
+            pl-5
+            pt-5
+          "
         >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
@@ -556,14 +565,6 @@ export default {
   .api-monitor-list__min__height {
     min-height: 300px;
   }
-  // ::v-deep {
-  //   .el-table__header th {
-  //     font-weight: 500;
-  //   }
-  //   .el-table--scrollable-y .el-table__body-wrapper {
-  //     overflow: hidden;
-  //   }
-  // }
 
   .api-monitor-main {
     width: 100%;

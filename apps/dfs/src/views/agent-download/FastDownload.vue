@@ -757,10 +757,9 @@ export default {
     border: 1px solid #f3f3f3;
     border-top: none;
   }
-  ::v-deep {
-    .el-collapse-item__header {
-      font-size: $fontSubtitle;
-    }
+
+  :deep(.el-collapse-item__header) {
+    font-size: $fontSubtitle;
   }
 }
 </style>

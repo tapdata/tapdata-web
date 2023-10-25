@@ -538,19 +538,19 @@ export default {
   //height: 30px;
 }
 .guide-dialog {
-  ::v-deep {
-    .el-dialog__body,
-    .el-dialog__header {
-      padding: 0;
-    }
-    .el-step__title.is-process {
-      color: #c9cdd4;
-      font-weight: normal;
-    }
-    .el-step__head.is-process {
-      color: #c9cdd4;
-      border-color: #c9cdd4;
-    }
+  :deep(.el-dialog__body),
+  :deep(.el-dialog__header) {
+    padding: 0;
+  }
+
+  :deep(.el-step__title.is-process) {
+    color: #c9cdd4;
+    font-weight: normal;
+  }
+
+  :deep(.el-step__head.is-process) {
+    color: #c9cdd4;
+    border-color: #c9cdd4;
   }
 }
 </style>

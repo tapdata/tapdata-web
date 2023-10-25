@@ -966,15 +966,13 @@ export default {
 
 <style lang="scss" scoped>
 .ldp-tree {
-  ::v-deep {
-    .el-tree-node__content {
+  :deep(.el-tree-node__content) {
+    .lineage-icon {
+      color: map-get($color, info);
+    }
+    &:hover {
       .lineage-icon {
-        color: map-get($color, info);
-      }
-      &:hover {
-        .lineage-icon {
-          color: map-get($color, primary);
-        }
+        color: map-get($color, primary);
       }
     }
   }

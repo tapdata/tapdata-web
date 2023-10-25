@@ -773,71 +773,71 @@ $sidebarBg: #fff;
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  ::v-deep {
-    .connection-highlight,
-    .connection-selected {
-      path:nth-child(2) {
-        stroke: #2c65ff;
-      }
-      path:nth-child(3) {
-        fill: #2c65ff;
-        stroke: #2c65ff;
-      }
+
+  :deep(.connection-highlight),
+  :deep(.connection-selected) {
+    path:nth-child(2) {
+      stroke: #2c65ff;
+    }
+    path:nth-child(3) {
+      fill: #2c65ff;
+      stroke: #2c65ff;
+    }
+  }
+
+  :deep(.remove-connection-label) {
+    z-index: 1001;
+    position: relative;
+    padding: 4px;
+    border-radius: 100%;
+    background-color: #fa6303;
+    box-sizing: border-box;
+
+    .remove-connection-btn {
+      width: 1em;
+      height: 1em;
+      font-size: 6px;
+      background: transparent
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
+        center/1em auto no-repeat;
+      transition: font-size 0.15s ease-in-out;
     }
 
-    .remove-connection-label {
-      z-index: 1001;
-      position: relative;
-      padding: 4px;
-      border-radius: 100%;
-      background-color: #fa6303;
-      box-sizing: border-box;
-
+    &:hover {
       .remove-connection-btn {
+        font-size: 10px;
+      }
+    }
+  }
+
+  :deep(.conn-btn__wrap) {
+    z-index: 1002;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.2) !important;
+    }
+  }
+
+  :deep(.conn-btn) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: #9bb6ff;
+    border-radius: 100%;
+    pointer-events: none;
+    .v-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 12px;
+      background-color: #2c65ff;
+      color: #fff;
+      border-radius: 100%;
+      &__svg {
         width: 1em;
         height: 1em;
-        font-size: 6px;
-        background: transparent
-          url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
-          center/1em auto no-repeat;
-        transition: font-size 0.15s ease-in-out;
-      }
-
-      &:hover {
-        .remove-connection-btn {
-          font-size: 10px;
-        }
-      }
-    }
-
-    .conn-btn__wrap {
-      z-index: 1002;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      &:hover {
-        transform: translate(-50%, -50%) scale(1.2) !important;
-      }
-    }
-    .conn-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 20px;
-      height: 20px;
-      background-color: #9bb6ff;
-      border-radius: 100%;
-      pointer-events: none;
-      .v-icon {
-        width: 16px;
-        height: 16px;
-        font-size: 12px;
-        background-color: #2c65ff;
-        color: #fff;
-        border-radius: 100%;
-        &__svg {
-          width: 1em;
-          height: 1em;
-        }
       }
     }
   }

@@ -262,11 +262,9 @@ export default {
   }
   .input-with {
     width: 605px;
-    ::v-deep {
-      .el-input-group__prepend {
-        .el-input__inner {
-          color: map-get($color, primary);
-        }
+    :deep(.el-input-group__prepend) {
+      .el-input__inner {
+        color: map-get($color, primary);
       }
     }
   }

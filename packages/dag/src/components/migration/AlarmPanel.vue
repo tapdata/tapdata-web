@@ -459,17 +459,17 @@ export default {
 
 <style lang="scss" scoped>
 .attr-panel {
-  ::v-deep {
-    .attr-panel-body {
-      padding-top: 0;
-    }
-    .formily-element-form-item-label label {
-      font-size: 12px;
-    }
-    .el-collapse-item__header {
-      font-size: 14px;
-      font-weight: 500;
-    }
+  :deep(.attr-panel-body) {
+    padding-top: 0;
+  }
+
+  :deep(.formily-element-form-item-label label) {
+    font-size: 12px;
+  }
+
+  :deep(.el-collapse-item__header) {
+    font-size: 14px;
+    font-weight: 500;
   }
 }
 </style>

@@ -1292,24 +1292,22 @@ export default observer({
 
 <style lang="scss" scoped>
 .setting-panel {
-  ::v-deep {
-    .config-tabs.el-tabs > .el-tabs__header .el-tabs__nav-wrap {
-      padding-left: 16px !important;
-    }
+  :deep(.config-tabs.el-tabs > .el-tabs__header .el-tabs__nav-wrap) {
+    padding-left: 16px !important;
   }
 }
 .attr-panel {
-  ::v-deep {
-    .attr-panel-body {
-      padding-top: 0;
-    }
-    .formily-element-form-item-label label {
-      font-size: $fontBaseTitle;
-    }
-    .el-collapse-item__header {
-      font-size: $fontBaseTitle;
-      font-weight: 500;
-    }
+  :deep(.attr-panel-body) {
+    padding-top: 0;
+  }
+
+  :deep(.formily-element-form-item-label label) {
+    font-size: $fontBaseTitle;
+  }
+
+  :deep(.el-collapse-item__header) {
+    font-size: $fontBaseTitle;
+    font-weight: 500;
   }
 }
 </style>

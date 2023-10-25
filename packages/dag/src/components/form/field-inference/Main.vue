@@ -501,10 +501,8 @@ export default {
 }
 .update-list-select {
   &.error {
-    ::v-deep {
-      .el-input__inner {
-        border-color: map-get($color, danger);
-      }
+    :deep(.el-input__inner) {
+      border-color: map-get($color, danger);
     }
   }
 }

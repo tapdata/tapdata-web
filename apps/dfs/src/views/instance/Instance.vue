@@ -1897,7 +1897,7 @@ export default {
       .el-input {
         display: block;
         height: 32px;
-        ::v-deep .el-input__inner {
+        :deep(.el-input__inner) {
           display: block;
         }
       }
@@ -1957,64 +1957,62 @@ export default {
   width: 20px;
   height: 20px;
   position: relative;
-  ::v-deep {
-    .v-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      z-index: 1;
-      margin-top: -7px;
-      margin-left: -7px;
-    }
+
+  :deep(.v-icon) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    margin-top: -7px;
+    margin-left: -7px;
   }
 }
 .upgrading-progress {
-  ::v-deep {
-    .el-progress-circle {
-      width: 20px !important;
-      height: 20px !important;
-    }
+  :deep(.el-progress-circle) {
+    width: 20px !important;
+    height: 20px !important;
   }
 }
 .inline-input {
-  ::v-deep {
-    .input {
-      flex: 1;
-      min-width: 0;
-      width: auto;
-    }
-    .el-input--mini .el-input__inner {
-      padding: 0 4px;
-    }
-    .icon-button {
-      width: 20px;
-      height: 20px;
-    }
+  :deep(.input) {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+
+  :deep(.el-input--mini .el-input__inner) {
+    padding: 0 4px;
+  }
+
+  :deep(.icon-button) {
+    width: 20px;
+    height: 20px;
   }
 }
-::v-deep {
-  .el-dropdown-menu__item.dropdown-item--disabled {
+:deep(.el-dropdown-menu__item.dropdown-item--disabled) {
+  color: map-get($color, disable);
+  cursor: default;
+  &:hover {
+    background: unset;
     color: map-get($color, disable);
-    cursor: default;
-    &:hover {
-      background: unset;
-      color: map-get($color, disable);
-    }
   }
-  .tooltip--notenter {
-    pointer-events: none;
+}
+
+:deep(.tooltip--notenter) {
+  pointer-events: none;
+}
+
+:deep(.download-dialog) {
+  .el-dialog__body {
+    height: 475px;
+    padding: 0 20px 40px 20px;
   }
-  .download-dialog {
-    .el-dialog__body {
-      height: 475px;
-      padding: 0 20px 40px 20px;
-    }
-  }
-  .el-tabs__content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
+}
+
+:deep(.el-tabs__content) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 .subscription-ul {
   background: #e9e9eb;

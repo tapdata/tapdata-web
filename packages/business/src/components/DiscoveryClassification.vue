@@ -804,58 +804,56 @@ $nodeH: 28px;
     cursor: pointer;
   }
 
-  ::v-deep {
-    .classification-tree {
-      padding-bottom: 50px;
-      .el-tree-node {
-        &__content {
-          height: $nodeH;
-          margin-bottom: 1px;
-          overflow: hidden;
-          border-radius: 4px;
-        }
-
-        &.is-current > .el-tree-node__content {
-          background-color: #eef3ff;
-        }
-
-        &.is-drop-inner > .el-tree-node__content {
-          background-color: #d0deff;
-        }
+  :deep(.classification-tree) {
+    padding-bottom: 50px;
+    .el-tree-node {
+      &__content {
+        height: $nodeH;
+        margin-bottom: 1px;
+        overflow: hidden;
+        border-radius: 4px;
       }
 
-      .custom-tree-node {
+      &.is-current > .el-tree-node__content {
+        background-color: #eef3ff;
+      }
+
+      &.is-drop-inner > .el-tree-node__content {
+        background-color: #d0deff;
+      }
+    }
+
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      padding-right: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: $nodeH;
+      .icon-folder {
+        margin-right: 5px;
+        font-size: 12px;
+        color: map-get($color, primary);
+        // color: map-get($color, lprimary);
+      }
+      .table-label {
         flex: 1;
-        display: flex;
-        align-items: center;
-        font-size: 14px;
-        padding-right: 8px;
+        vertical-align: middle;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: $nodeH;
-        .icon-folder {
-          margin-right: 5px;
-          font-size: 12px;
-          color: map-get($color, primary);
-          // color: map-get($color, lprimary);
-        }
-        .table-label {
-          flex: 1;
-          vertical-align: middle;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-weight: 400;
-          color: map-get($fontColor, normal);
-        }
-        .count-label {
-          color: map-get($fontColor, sslight);
-        }
-        .btn-menu {
-          display: none;
-        }
-        &:hover .btn-menu {
-          display: flex;
-        }
+        font-weight: 400;
+        color: map-get($fontColor, normal);
+      }
+      .count-label {
+        color: map-get($fontColor, sslight);
+      }
+      .btn-menu {
+        display: none;
+      }
+      &:hover .btn-menu {
+        display: flex;
       }
     }
   }

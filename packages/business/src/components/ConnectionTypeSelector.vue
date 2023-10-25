@@ -205,9 +205,7 @@ export default {
 .my-database__desc {
   background: #f2f2f2;
 }
-::v-deep {
-  .el-tabs__nav-wrap.is-top {
-    padding: 0;
-  }
+:deep(.el-tabs__nav-wrap.is-top) {
+  padding: 0;
 }
 </style>

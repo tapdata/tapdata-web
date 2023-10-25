@@ -1362,61 +1362,62 @@ export default {
           //}
           .form-builder {
             width: 396px;
-            ::v-deep {
-              .e-form-builder-item {
-                &.large-item {
-                  width: 610px;
-                  .el-form-item__content {
-                    padding-right: 20px;
-                  }
-                }
-                &.small-item {
-                  width: 320px;
-                }
-                &.mongodb-item {
-                  width: 680px;
-                }
-                &.mongodb-tip-item .el-form-item__content {
-                  width: 680px;
-                }
-                .url-tip {
+            :deep(.e-form-builder-item.large-item) {
+              width: 610px;
+              .el-form-item__content {
+                padding-right: 20px;
+              }
+            }
+
+            :deep(.e-form-builder-item.small-item) {
+              width: 320px;
+            }
+
+            :deep(.e-form-builder-item.mongodb-item) {
+              width: 680px;
+            }
+
+            :deep(.e-form-builder-item.mongodb-tip-item .el-form-item__content) {
+              width: 680px;
+            }
+
+            :deep(.e-form-builder-item) {
+              .url-tip {
+                font-size: 12px;
+                color: map-get($fontColor, light);
+                b {
                   font-size: 12px;
+                  font-weight: 400;
                   color: map-get($fontColor, light);
-                  b {
-                    font-size: 12px;
-                    font-weight: 400;
-                    color: map-get($fontColor, light);
-                  }
-                }
-                .fb-radio-group {
-                  .el-radio--mini.is-bordered {
-                    padding-top: 0;
-                  }
-                }
-                .el-input .el-input__inner,
-                .el-textarea__inner {
-                  background-color: rgba(239, 241, 244, 0.2);
-                }
-                .el-textarea__inner {
-                  min-height: 70px !important;
                 }
               }
-              .el-input-group__append button.el-button {
-                background-color: inherit;
-                border-color: azure;
+              .fb-radio-group {
+                .el-radio--mini.is-bordered {
+                  padding-top: 0;
+                }
               }
+              .el-input .el-input__inner,
+              .el-textarea__inner {
+                background-color: rgba(239, 241, 244, 0.2);
+              }
+              .el-textarea__inner {
+                min-height: 70px !important;
+              }
+            }
+
+            :deep(.el-input-group__append button.el-button) {
+              background-color: inherit;
+              border-color: azure;
             }
           }
         }
 
-        ::v-deep {
-          .formily-element-form-item {
-            .el-input-number {
-              width: 180px;
-            }
-            .el-input-number--small {
-              width: 130px;
-            }
+        :deep(.formily-element-form-item) {
+          .el-input-number {
+            width: 180px;
+          }
+          .el-input-number--small {
+            width: 130px;
           }
         }
       }
@@ -1458,39 +1459,36 @@ export default {
   width: 500px;
 }
 .pdk-schema-form {
-  ::v-deep {
-    .formily-element-form-item-feedback-layout-loose {
-      margin-bottom: 20px;
-    }
-    .formily-element-form-item-layout-vertical {
-      > .formily-element-form-item-label {
-        margin-bottom: 8px;
+  :deep(.formily-element-form-item-feedback-layout-loose) {
+    margin-bottom: 20px;
+  }
 
-        .formily-element-form-item-label-content {
-          min-height: unset;
-          height: unset;
-        }
-        .formily-element-form-item-label-tooltip {
-          margin-left: 4px;
-          height: unset;
-        }
-        * {
-          line-height: 22px;
-        }
+  :deep(.formily-element-form-item-layout-vertical) {
+    > .formily-element-form-item-label {
+      margin-bottom: 8px;
+
+      .formily-element-form-item-label-content {
+        min-height: unset;
+        height: unset;
+      }
+      .formily-element-form-item-label-tooltip {
+        margin-left: 4px;
+        height: unset;
+      }
+      * {
+        line-height: 22px;
       }
     }
+  }
 
-    .formily-element-form-collapse {
-      &.border-bottom-0 {
-        .el-collapse-item__header {
-          border-bottom: none;
-        }
-      }
-
-      .el-collapse-item__content {
-        padding-bottom: 0;
-      }
+  :deep(.formily-element-form-collapse.border-bottom-0) {
+    .el-collapse-item__header {
+      border-bottom: none;
     }
+  }
+
+  :deep(.el-collapse-item__content) {
+    padding-bottom: 0;
   }
 }
 </style>

@@ -603,36 +603,34 @@ export default {
         // border-right: 1px solid #e7e7e7;
       }
 
-      ::v-deep {
-        .e-row {
-          .allSelectBox {
-            line-height: 20px;
-          }
-          .el-checkbox {
-            margin: 0 10px;
-            line-height: 20px;
-            box-sizing: border-box;
-          }
-          .checkbox-position {
-            line-height: 1px;
+      :deep(.e-row) {
+        .allSelectBox {
+          line-height: 20px;
+        }
+        .el-checkbox {
+          margin: 0 10px;
+          line-height: 20px;
+          box-sizing: border-box;
+        }
+        .checkbox-position {
+          line-height: 1px;
+          vertical-align: top;
+          .el-checkbox__input {
+            padding-top: 0;
             vertical-align: top;
-            .el-checkbox__input {
-              padding-top: 0;
-              vertical-align: top;
-            }
           }
-          .checkbox-radio {
-            .el-checkbox__input {
-              padding-top: 3px;
-              vertical-align: top;
-            }
+        }
+        .checkbox-radio {
+          .el-checkbox__input {
+            padding-top: 3px;
+            vertical-align: top;
+          }
 
-            .e-checkbox {
-              padding: 5px 0;
-              margin: 0;
-              font-size: 12px;
-              color: map-get($fontColor, light);
-            }
+          .e-checkbox {
+            padding: 5px 0;
+            margin: 0;
+            font-size: 12px;
+            color: map-get($fontColor, light);
           }
         }
       }

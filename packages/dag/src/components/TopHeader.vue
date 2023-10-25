@@ -570,30 +570,29 @@ $sidebarBg: #fff;
     }
   }
 
-  ::v-deep {
-    .el-button {
-      line-height: 1;
+  :deep(.el-button) {
+    line-height: 1;
 
-      &.btn--text {
-        min-width: auto;
-        background: unset;
-        border: none;
-        padding: 7px 8px;
-        &:hover {
-          background: $hoverBg;
-        }
-        > span {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
+    &.btn--text {
+      min-width: auto;
+      background: unset;
+      border: none;
+      padding: 7px 8px;
+      &:hover {
+        background: $hoverBg;
+      }
+      > span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
       }
     }
-    .el-link--inner {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+  }
+
+  :deep(.el-link--inner) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .operation-center {

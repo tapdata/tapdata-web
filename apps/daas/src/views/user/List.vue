@@ -837,10 +837,9 @@ export default {
 .user-list-wrap {
   .tapNav {
     height: 28px;
-    ::v-deep {
-      .el-tabs__nav-scroll {
-        padding-left: 20px;
-      }
+
+    :deep(.el-tabs__nav-scroll) {
+      padding-left: 20px;
     }
     // background-color: rgba(239, 241, 244, 100);
     // .mune {

@@ -100,10 +100,8 @@ export default {
 <style lang="scss" scoped>
 .field-inference__list {
   height: 100%;
-  ::v-deep {
-    .is-deleted {
-      color: map-get($color, disable);
-    }
+  :deep(.is-deleted) {
+    color: map-get($color, disable);
   }
 }
 </style>

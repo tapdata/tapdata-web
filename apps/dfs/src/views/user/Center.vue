@@ -1330,20 +1330,21 @@ export default {
   height: 100px;
   border-radius: 50%;
 }
-::v-deep {
-  .el-divider--horizontal {
-    margin: 8px 0 16px 0;
-  }
-  .el-form-item__label {
-    text-align: left;
-  }
-  .el-form-item__content {
-    display: flex;
-  }
-  .inline-input {
-    .inline-input-body {
-      justify-content: space-between;
-    }
+:deep(.el-divider--horizontal) {
+  margin: 8px 0 16px 0;
+}
+
+:deep(.el-form-item__label) {
+  text-align: left;
+}
+
+:deep(.el-form-item__content) {
+  display: flex;
+}
+
+:deep(.inline-input) {
+  .inline-input-body {
+    justify-content: space-between;
   }
 }
 .click-style {

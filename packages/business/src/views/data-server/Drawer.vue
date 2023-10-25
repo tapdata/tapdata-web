@@ -1320,23 +1320,21 @@ export default {
   line-height: 22px;
 }
 .data-server__tabs {
-  ::v-deep {
-    .el-tabs__nav-wrap.is-top {
-      padding-left: 112px;
-    }
-    .el-tabs__header.is-top {
-      margin: 0;
-    }
+  :deep(.el-tabs__nav-wrap.is-top) {
+    padding-left: 112px;
+  }
+
+  :deep(.el-tabs__header.is-top) {
+    margin: 0;
   }
 }
 .data-server__form {
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 0;
-    }
-    .el-form-item__label {
-      line-height: 30px;
-    }
+  :deep(.el-form-item) {
+    margin-bottom: 0;
+  }
+
+  :deep(.el-form-item__label) {
+    line-height: 30px;
   }
 }
 .data-server-form-base__item {
@@ -1391,20 +1389,16 @@ export default {
   font-family: PingFangSC-Regular, PingFang SC;
 }
 .data-server__form {
-  ::v-deep {
-    .form-item-name {
-      .el-form-item__content {
-        margin-left: 0 !important;
-      }
+  :deep(.form-item-name) {
+    .el-form-item__content {
+      margin-left: 0 !important;
     }
   }
 }
 .data-server-debug__method {
-  ::v-deep {
-    .el-input__inner {
-      border: none;
-      background: transparent;
-    }
+  :deep(.el-input__inner) {
+    border: none;
+    background: transparent;
   }
 }
 </style>

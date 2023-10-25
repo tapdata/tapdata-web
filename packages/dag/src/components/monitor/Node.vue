@@ -579,28 +579,29 @@ export default defineComponent({
 .span-2 {
   grid-column: span 2 / auto;
 }
-.alarm-warn::v-deep {
-  .df-node {
+.alarm-warn {
+  :deep(.df-node) {
     border-color: #ff932c;
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(255, 147, 44, 0.3);
     }
   }
-  .statistic-value {
+  :deep(.statistic-value) {
     color: #ff932c;
   }
 }
 
-.alarm-error::v-deep {
-  .df-node {
+.alarm-error {
+  :deep(.df-node) {
     border-color: #d44d4d;
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(212, 77, 77, 0.3);
     }
   }
-  .statistic-value {
+
+  :deep(.statistic-value) {
     color: #d44d4d;
   }
 }

@@ -669,10 +669,8 @@ export default {
   }
 }
 .scheme-to-form {
-  ::v-deep {
-    .formily-element-form-item {
-      margin-bottom: 18px;
-    }
+  :deep(.formily-element-form-item) {
+    margin-bottom: 18px;
   }
 }
 </style>

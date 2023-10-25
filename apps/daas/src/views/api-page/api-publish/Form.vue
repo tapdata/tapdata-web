@@ -755,24 +755,22 @@ export default {
       margin: 0 auto;
       box-sizing: border-box;
       // overflow: hidden;
-      ::v-deep {
-        .el-form-item {
-          width: 640px;
-          .el-form-item__label {
-            width: 140px !important;
-            text-align: left;
+      :deep(.el-form-item) {
+        width: 640px;
+        .el-form-item__label {
+          width: 140px !important;
+          text-align: left;
+        }
+        .el-form-item__content {
+          margin-left: 140px !important;
+          .el-select,
+          .el-input__inner,
+          .el-textarea__inner {
+            width: 500px;
+            background-color: rgba(239, 241, 244, 0.2);
           }
-          .el-form-item__content {
-            margin-left: 140px !important;
-            .el-select,
-            .el-input__inner,
-            .el-textarea__inner {
-              width: 500px;
-              background-color: rgba(239, 241, 244, 0.2);
-            }
-            .el-radio--mini.is-bordered {
-              padding: 0 15px 0 10px;
-            }
+          .el-radio--mini.is-bordered {
+            padding: 0 15px 0 10px;
           }
         }
       }
@@ -864,12 +862,10 @@ export default {
                 width: 60px;
                 line-height: 28px;
               }
-              ::v-deep {
-                .el-select {
-                  width: 100%;
-                  .el-select__tags {
-                    max-width: 100%;
-                  }
+              :deep(.el-select) {
+                width: 100%;
+                .el-select__tags {
+                  max-width: 100%;
                 }
               }
             }

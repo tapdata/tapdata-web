@@ -634,14 +634,12 @@ export default {
     border-bottom: none;
   }
 }
-::v-deep {
-  .el-dropdown-menu__item.dropdown-item--disabled {
+:deep(.el-dropdown-menu__item.dropdown-item--disabled) {
+  color: map-get($color, disable);
+  cursor: default;
+  &:hover {
+    background: unset;
     color: map-get($color, disable);
-    cursor: default;
-    &:hover {
-      background: unset;
-      color: map-get($color, disable);
-    }
   }
 }
 </style>

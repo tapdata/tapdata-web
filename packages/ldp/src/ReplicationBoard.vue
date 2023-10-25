@@ -512,87 +512,87 @@ export default {
   border-top-left-radius: 8px;
 }
 .list {
-  ::v-deep {
-    .list__title {
-      height: 40px;
-      min-height: 40px;
-      background: #f3f7fa;
+  :deep(.list__title) {
+    height: 40px;
+    min-height: 40px;
+    background: #f3f7fa;
+  }
+
+  :deep(.list__title__source) {
+    color: map-get($color, primary);
+    background: #e8f3ff;
+  }
+
+  :deep(.list__title__target) {
+    color: #009a29;
+    background: #e8ffea;
+  }
+
+  :deep(.list__item) {
+    border-left: 1px solid #e1e3e9;
+    &:first-child {
+      border-left: none;
     }
-    .list__title__source {
-      color: map-get($color, primary);
-      background: #e8f3ff;
-    }
-    .list__title__target {
-      color: #009a29;
-      background: #e8ffea;
-    }
-    .list__item {
-      border-left: 1px solid #e1e3e9;
-      &:first-child {
-        border-left: none;
-      }
-    }
-    .icon-color {
-      &:hover {
-        background-color: map-get($bgColor, hover);
-      }
+  }
+
+  :deep(.icon-color) {
+    &:hover {
+      background-color: map-get($bgColor, hover);
     }
   }
 }
 .swim-lane {
-  ::v-deep {
-    .drop-mask {
-      display: none;
-      pointer-events: none;
-      backdrop-filter: blur(4px);
-      background-color: rgba(255, 255, 255, 0.4);
-    }
+  :deep(.drop-mask) {
+    display: none;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.4);
+  }
 
-    .ldp-tree.is-drop,
-    .is-drop .ldp-tree {
-      box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
-      & + .drop-mask {
-        display: none !important;
-      }
-    }
-
-    .is-drop .drop-mask {
+  :deep(.ldp-tree.is-drop),
+  :deep(.is-drop .ldp-tree) {
+    box-shadow: 0px 0px 0px 2px map-get($color, primary) inset;
+    & + .drop-mask {
       display: none !important;
     }
+  }
 
-    .pipeline-desc {
-      background-color: #f8f8fa;
-      border-left: 4px solid map-get($color, primary);
-      line-height: 22px;
-      li {
-        margin-left: 20px;
-        padding-left: 4px;
-        list-style-type: circle;
-      }
+  :deep(.is-drop .drop-mask) {
+    display: none !important;
+  }
+
+  :deep(.pipeline-desc) {
+    background-color: #f8f8fa;
+    border-left: 4px solid map-get($color, primary);
+    line-height: 22px;
+    li {
+      margin-left: 20px;
+      padding-left: 4px;
+      list-style-type: circle;
+    }
+  }
+
+  :deep(.table-status-dot) {
+    left: -16px;
+    width: 8px;
+    height: 8px;
+    background-color: #d9d9d9;
+  }
+
+  :deep(.inline-flex-input) {
+    .el-input-group__prepend {
+      flex-shrink: 0;
+    }
+    .el-input-group__append,
+    .el-input-group__prepend {
+      width: auto;
+      line-height: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .table-status-dot {
-      left: -16px;
-      width: 8px;
-      height: 8px;
-      background-color: #d9d9d9;
-    }
-
-    .inline-flex-input {
-      .el-input-group__prepend {
-        flex-shrink: 0;
-      }
-      .el-input-group__append,
-      .el-input-group__prepend {
-        width: auto;
-        line-height: 30px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      input {
-        width: auto;
-      }
+    input {
+      width: auto;
     }
   }
 }

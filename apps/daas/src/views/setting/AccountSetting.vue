@@ -400,11 +400,11 @@ $unreadColor: #ee5353;
       .text {
         width: 400px;
       }
-      ::v-deep {
-        .el-button.el-button--text {
-          padding: 0;
-        }
+
+      :deep(.el-button.el-button--text) {
+	      padding: 0;
       }
+
       i {
         cursor: pointer;
       }

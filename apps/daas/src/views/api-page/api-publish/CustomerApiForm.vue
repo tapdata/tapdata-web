@@ -227,15 +227,13 @@ export default {
   margin: 50px auto 0 !important;
   overflow: hidden;
   .api-field-table {
-    ::v-deep {
-      .el-table__header {
-        .el-table__cell {
-          padding: 3px 0;
-          .cell {
-            padding-left: 14px;
-            // color: map-get($fontColor, light);
-            font-weight: 500;
-          }
+    :deep(.el-table__header) {
+      .el-table__cell {
+        padding: 3px 0;
+        .cell {
+          padding-left: 14px;
+          // color: map-get($fontColor, light);
+          font-weight: 500;
         }
       }
     }

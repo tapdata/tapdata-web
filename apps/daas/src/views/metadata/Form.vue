@@ -611,11 +611,9 @@ export default {
       padding-top: 10px;
     }
 
-    ::v-deep {
-      .el-table {
-        .el-table__body-wrapper {
-          border: 1px solid #ebeef5;
-        }
+    :deep(.el-table) {
+      .el-table__body-wrapper {
+        border: 1px solid #ebeef5;
       }
     }
   }

@@ -499,10 +499,8 @@ export default {
   }
 }
 .mode-setting-form.el-form--label-top {
-  ::v-deep {
-    .el-form-item__label {
-      padding-bottom: 0;
-    }
+  :deep(.el-form-item__label) {
+    padding-bottom: 0;
   }
 }
 .mode-desc {

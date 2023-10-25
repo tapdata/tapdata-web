@@ -109,42 +109,41 @@ export default {
 
 <style lang="scss" scoped>
 .scheme-to-form {
-  ::v-deep {
-    .formily-element-form-item-label-tooltip {
-      margin-left: 0;
-    }
-    .formily-element-form-item {
-      font-size: $fontBaseTitle;
-      &-label {
-        label {
-          color: map-get($fontColor, light);
-          text-transform: capitalize;
-        }
-      }
-      .el-input-number {
-        width: 180px;
-      }
-      .el-input-number--small {
-        width: 130px;
-      }
+  :deep(.formily-element-form-item-label-tooltip) {
+    margin-left: 0;
+  }
 
-      &-help,
-      &-extra {
-        white-space: pre-wrap;
+  :deep(.formily-element-form-item) {
+    font-size: $fontBaseTitle;
+    .formily-element-form-item-label {
+      label {
+        color: map-get($fontColor, light);
+        text-transform: capitalize;
       }
     }
+    .el-input-number {
+      width: 180px;
+    }
+    .el-input-number--small {
+      width: 130px;
+    }
 
-    .formily-element-form-item-layout-horizontal {
-      .formily-element-form-item-control-content-component > .el-switch {
+    .formily-element-form-item-help,
+    .formily-element-form-item-extra {
+      white-space: pre-wrap;
+    }
+  }
+
+  :deep(.formily-element-form-item-layout-horizontal) {
+    .formily-element-form-item-control-content-component > .el-switch {
+      height: 32px;
+      line-height: 32px;
+      vertical-align: top;
+    }
+    .formily-element-space-horizontal {
+      .el-switch {
         height: 32px;
         line-height: 32px;
-        vertical-align: top;
-      }
-      .formily-element-space-horizontal {
-        .el-switch {
-          height: 32px;
-          line-height: 32px;
-        }
       }
     }
   }

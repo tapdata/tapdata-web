@@ -96,7 +96,8 @@ export default defineConfig({
         //   enabledCollections: ['ep']
         // }),
         ElementPlusResolver()
-      ]
+      ],
+      directoryAsNamespace: true
     }),
 
     // Icons({

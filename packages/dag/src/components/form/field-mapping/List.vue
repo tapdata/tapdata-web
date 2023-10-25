@@ -631,38 +631,40 @@ export default {
     }
   }
   .field-mapping-table {
-    ::v-deep {
-      .el-table {
-        border: none;
-      }
-      .el-table__empty-block {
-        height: 100% !important;
-      }
-      .el-table__header {
-        .el-table__cell {
-          border-right: 0;
-          &.is-leaf {
-            border-bottom: 0;
-          }
-          &:hover {
-            border-right: 1px solid map-get($borderColor, light);
-          }
+    :deep(.el-table) {
+      border: none;
+    }
+
+    :deep(.el-table__empty-block) {
+      height: 100% !important;
+    }
+
+    :deep(.el-table__header) {
+      .el-table__cell {
+        border-right: 0;
+        &.is-leaf {
+          border-bottom: 0;
         }
-        th {
-          color: map-get($fontColor, normal);
-          font-weight: 500;
-          white-space: nowrap;
-          background-color: map-get($bgColor, normal);
+        &:hover {
+          border-right: 1px solid map-get($borderColor, light);
         }
       }
-      .el-table__body {
-        td {
-          color: map-get($fontColor, light);
-        }
+      th {
+        color: map-get($fontColor, normal);
+        font-weight: 500;
+        white-space: nowrap;
+        background-color: map-get($bgColor, normal);
       }
-      &:after {
-        width: 0;
+    }
+
+    :deep(.el-table__body) {
+      td {
+        color: map-get($fontColor, light);
       }
+    }
+
+    &:after {
+      width: 0;
     }
   }
 }

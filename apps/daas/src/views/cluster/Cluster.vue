@@ -959,11 +959,9 @@ export default {
 
               .btn {
                 display: inline;
-                ::v-deep {
-                  .el-button {
-                    span {
-                      font-weight: 400;
-                    }
+                :deep(.el-button) {
+                  span {
+                    font-weight: 400;
                   }
                 }
               }

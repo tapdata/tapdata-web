@@ -883,10 +883,8 @@ export default {
   color: map-get($fontColor, normal);
 }
 .dialog-upgrade {
-  ::v-deep {
-    .el-dialog__body {
-      padding: 0 20px;
-    }
+  :deep(.el-dialog__body) {
+    padding: 0 20px;
   }
 }
 .notice-list {

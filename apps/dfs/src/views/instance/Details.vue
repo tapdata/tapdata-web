@@ -631,15 +631,13 @@ export default {
   color: #d44d4d;
   background-color: #ffecec;
 }
-::v-deep {
-  .download-dialog {
-    .el-dialog__body {
-      padding: 0 20px 40px 20px;
-      height: 470px;
-    }
-    .el-pager li.active {
-      color: map-get($color, primary);
-    }
+:deep(.download-dialog) {
+  .el-dialog__body {
+    padding: 0 20px 40px 20px;
+    height: 470px;
+  }
+  .el-pager li.active {
+    color: map-get($color, primary);
   }
 }
 </style>

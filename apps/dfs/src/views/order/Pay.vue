@@ -464,24 +464,22 @@ export default {
 
 <style lang="scss" scoped>
 .pay-container {
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 20px;
-      &:last-child {
-        margin-bottom: 16px;
-      }
-      .el-form-item__label {
-        line-height: 22px;
-        padding-bottom: 8px;
-      }
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 16px;
     }
+    .el-form-item__label {
+      line-height: 22px;
+      padding-bottom: 8px;
+    }
+  }
 
-    .label-grid {
-      display: grid;
-      grid-template-columns: auto 1fr; /* 两列 */
-      grid-gap: 8px;
-      grid-column-gap: 4px;
-    }
+  :deep(.label-grid) {
+    display: grid;
+    grid-template-columns: auto 1fr; /* 两列 */
+    grid-gap: 8px;
+    grid-column-gap: 4px;
   }
 }
 .pay-wrap {
@@ -504,10 +502,8 @@ export default {
   line-height: 22px;
 }
 .payment-radio {
-  ::v-deep {
-    .el-radio__inner {
-      vertical-align: top;
-    }
+  :deep(.el-radio__inner) {
+    vertical-align: top;
   }
 }
 </style>

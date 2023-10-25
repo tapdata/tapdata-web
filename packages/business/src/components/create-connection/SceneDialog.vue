@@ -560,104 +560,102 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .ldp-connection-dialog {
-    margin-top: 32px !important;
-    margin-bottom: 32px !important;
-    height: calc(100% - 64px);
-    overflow: hidden;
+:deep(.ldp-connection-dialog) {
+  margin-top: 32px !important;
+  margin-bottom: 32px !important;
+  height: calc(100% - 64px);
+  overflow: hidden;
 
-    .el-dialog__header {
-      height: 64px;
-      min-height: 64px;
+  .el-dialog__header {
+    height: 64px;
+    min-height: 64px;
+  }
+
+  .ldp-connection-search-input {
+    width: 340px;
+  }
+
+  .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0;
+    height: 0;
+
+    .img-box {
+      width: 65px;
+      height: 65px;
+      border: 1px solid rgba(221, 221, 221, 0.4);
+      background-color: #fff;
     }
 
-    .ldp-connection-search-input {
-      width: 340px;
-    }
-
-    .el-dialog__body {
-      display: flex;
-      flex-direction: column;
+    .database-item {
+      width: 80px;
       flex: 1;
-      padding: 0;
-      height: 0;
-
-      .img-box {
-        width: 65px;
-        height: 65px;
-        border: 1px solid rgba(221, 221, 221, 0.4);
-        background-color: #fff;
-      }
-
-      .database-item {
-        width: 80px;
-        flex: 1;
-        margin-right: 53px;
-        margin-bottom: 48px;
-        &.active,
-        &:hover {
-          .img-box {
-            background: rgba(201, 205, 212, 0.3);
-          }
+      margin-right: 53px;
+      margin-bottom: 48px;
+      &.active,
+      &:hover {
+        .img-box {
+          background: rgba(201, 205, 212, 0.3);
         }
-        &.disable {
-          .img-box {
-            background-color: rgba(242, 242, 242, 0.2);
-          }
+      }
+      &.disable {
+        .img-box {
+          background-color: rgba(242, 242, 242, 0.2);
         }
       }
     }
+  }
 
-    .scene-name-list-wrap {
-      width: 196px;
+  .scene-name-list-wrap {
+    width: 196px;
 
-      &.is-en {
-        width: 218px;
-      }
+    &.is-en {
+      width: 218px;
+    }
+  }
+
+  .scene-name-list {
+  }
+
+  .scene-name-item {
+    margin: 0 8px 1px;
+    height: 36px;
+    line-height: 36px;
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: rgba(31, 35, 41, 0.08);
     }
 
-    .scene-name-list {
+    &.active {
+      color: map-get($color, primary);
+      background-color: #f0f4ff;
+    }
+  }
+
+  .connector-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .connector-item {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s;
+
+    &-title {
+      font-size: 15px;
+      line-height: 38px;
     }
 
-    .scene-name-item {
-      margin: 0 8px 1px;
-      height: 36px;
-      line-height: 36px;
-      transition: background 0.2s;
-
-      &:hover {
-        background-color: rgba(31, 35, 41, 0.08);
-      }
-
-      &.active {
-        color: map-get($color, primary);
-        background-color: #f0f4ff;
-      }
+    &-tag {
+      height: 18px;
+      line-height: 16px;
     }
 
-    .connector-list {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .connector-item {
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-      transition: box-shadow 0.2s;
-
-      &-title {
-        font-size: 15px;
-        line-height: 38px;
-      }
-
-      &-tag {
-        height: 18px;
-        line-height: 16px;
-      }
-
-      &:hover {
-        box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12),
-          0 5px 12px 4px rgba(0, 0, 0, 0.09);
-      }
+    &:hover {
+      box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12),
+        0 5px 12px 4px rgba(0, 0, 0, 0.09);
     }
   }
 }

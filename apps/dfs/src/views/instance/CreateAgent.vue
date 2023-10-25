@@ -27,7 +27,15 @@
               :class="{
                 active: platform === item.name
               }"
-              class="flex flex-column flex-1 position-relative cursor-pointer overflow-hidden rounded-lg border active-group"
+              class="
+                flex flex-column flex-1
+                position-relative
+                cursor-pointer
+                overflow-hidden
+                rounded-lg
+                border
+                active-group
+              "
               @click="handleChangePlatform(item.name)"
             >
               <div class="flex p-4">
@@ -694,16 +702,14 @@ export default {
     grid-gap: 16px;
   }
 
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 20px;
-      &:last-child {
-        margin-bottom: 16px;
-      }
-      .el-form-item__label {
-        line-height: 22px;
-        padding-bottom: 8px;
-      }
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 16px;
+    }
+    .el-form-item__label {
+      line-height: 22px;
+      padding-bottom: 8px;
     }
   }
 }

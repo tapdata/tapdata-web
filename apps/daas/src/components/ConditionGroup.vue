@@ -218,14 +218,12 @@ export default {
         display: inline-block;
         color: map-get($fontColor, light);
       }
-      ::v-deep {
-        .el-radio {
-          .el-radio__label {
-            color: map-get($fontColor, dark);
-          }
-          &.is-checked .el-radio__label {
-            color: rgba(0, 0, 0, 0.65);
-          }
+      :deep(.el-radio) {
+        .el-radio__label {
+          color: map-get($fontColor, dark);
+        }
+        &.is-checked .el-radio__label {
+          color: rgba(0, 0, 0, 0.65);
         }
       }
 
@@ -234,11 +232,9 @@ export default {
       }
     }
     .query-build-header-right {
-      ::v-deep {
-        .el-button--text {
-          font-size: 12px;
-          background-color: map-get($bgColor, main);
-        }
+      :deep(.el-button--text) {
+        font-size: 12px;
+        background-color: map-get($bgColor, main);
       }
     }
   }

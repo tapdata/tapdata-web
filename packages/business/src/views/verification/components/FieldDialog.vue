@@ -315,10 +315,8 @@ export default {
 <style lang="scss" scoped>
 .el-select {
   &.empty-data {
-    ::v-deep {
-      .el-input__inner {
-        border-color: #d44d4d;
-      }
+    :deep(.el-input__inner) {
+      border-color: #d44d4d;
     }
   }
 }

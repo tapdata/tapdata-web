@@ -229,11 +229,6 @@ $unreadColor: #ee5353;
         line-height: 32px;
         margin-bottom: 20px;
       }
-      // ::v-deep {
-      //   .el-checkbox__label {
-      //     color: #86909c;
-      //   }
-      // }
       .notice,
       .email {
         color: map-get($fontColor, light);
@@ -256,12 +251,11 @@ $unreadColor: #ee5353;
         .item-input {
           width: 200px;
         }
-        ::v-deep {
-          .el-checkbox {
-            .el-checkbox__label {
-              color: map-get($fontColor, light);
-            }
-          }
+
+        :deep(.el-checkbox) {
+	        .el-checkbox__label {
+		        color: map-get($fontColor, light);
+	        }
         }
       }
       .input-with-select {

@@ -584,10 +584,8 @@ export default {
   }
 }
 .form-item-flex {
-  ::v-deep {
-    .el-form-item__content {
-      display: contents;
-    }
+  :deep(.el-form-item__content) {
+    display: contents;
   }
 }
 

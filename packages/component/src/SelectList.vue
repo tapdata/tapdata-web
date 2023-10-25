@@ -586,15 +586,14 @@ export default {
         color: map-get($fontColor, dark);
       }
     }
-    ::v-deep {
-      .inner-select {
-        border-color: transparent;
-      }
-      .inner-select__selected {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    :deep(.inner-select) {
+      border-color: transparent;
+    }
+
+    :deep(.inner-select__selected) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

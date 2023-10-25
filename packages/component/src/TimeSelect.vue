@@ -300,30 +300,29 @@ export default {
 <style lang="scss" scoped>
 .time-select__picker {
   position: relative;
-  ::v-deep {
-    .time-select__popper {
-      width: 270px;
-      min-width: 270px !important;
-      transform: translateX(-40px);
-    }
-    // 灰色风格下拉框
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+  :deep(.time-select__popper) {
+    width: 270px;
+    min-width: 270px !important;
+    transform: translateX(-40px);
+  }
+
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
-    .el-date-picker {
-      height: 0;
-      border: 0;
-      bottom: 0;
-      left: 0;
-    }
+  }
+
+  :deep(.el-date-picker) {
+    height: 0;
+    border: 0;
+    bottom: 0;
+    left: 0;
   }
 }
 .time-select__title {

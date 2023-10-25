@@ -243,36 +243,37 @@ export default {
     pre {
       line-height: 20px;
     }
-    ::v-deep {
-      .el-collapse {
-        border: 0;
-        .el-collapse-item:last-child {
-          margin-bottom: 0;
-        }
+
+    :deep(.el-collapse) {
+      border: 0;
+      .el-collapse-item:last-child {
+        margin-bottom: 0;
       }
-      .el-collapse-item__header {
-        padding-bottom: 5px;
-        border-bottom: 0;
-        color: map-get($color, primary);
-        font-size: 12px;
-        .el-collapse-item__arrow {
-          margin-left: 6px;
-          transform: rotate(90deg);
-        }
-        .el-collapse-item__arrow.is-active {
-          transform: rotate(270deg);
-        }
+    }
+
+    :deep(.el-collapse-item__header) {
+      padding-bottom: 5px;
+      border-bottom: 0;
+      color: map-get($color, primary);
+      font-size: 12px;
+      .el-collapse-item__arrow {
+        margin-left: 6px;
+        transform: rotate(90deg);
       }
-      .el-collapse-item__wrap {
-        margin-bottom: 30px;
+      .el-collapse-item__arrow.is-active {
+        transform: rotate(270deg);
+      }
+    }
+
+    :deep(.el-collapse-item__wrap) {
+      margin-bottom: 30px;
+      padding: 15px;
+      border-bottom: 0;
+      background-color: #3a3d4c;
+      .el-collapse-item__content {
         padding: 15px;
-        border-bottom: 0;
-        background-color: #3a3d4c;
-        .el-collapse-item__content {
-          padding: 15px;
-          color: #82b290;
-          background: #262838;
-        }
+        color: #82b290;
+        background: #262838;
       }
     }
   }

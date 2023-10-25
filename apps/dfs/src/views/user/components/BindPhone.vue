@@ -133,17 +133,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-form-item__label {
-    text-align: left;
-  }
-  .el-form-item__content {
-    display: flex;
-  }
-  .inline-input {
-    .inline-input-body {
-      justify-content: space-between;
-    }
+:deep(.el-form-item__label) {
+  text-align: left;
+}
+:deep(.el-form-item__content) {
+  display: flex;
+}
+:deep(.inline-input) {
+  .inline-input-body {
+    justify-content: space-between;
   }
 }
 </style>

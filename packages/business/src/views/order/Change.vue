@@ -546,16 +546,14 @@ export default {
   background: #e8f3ff;
 }
 .change-container {
-  ::v-deep {
-    .el-form-item {
-      margin-bottom: 20px;
-      &:last-child {
-        margin-bottom: 16px;
-      }
-      .el-form-item__label {
-        line-height: 22px;
-        padding-bottom: 8px;
-      }
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 16px;
+    }
+    .el-form-item__label {
+      line-height: 22px;
+      padding-bottom: 8px;
     }
   }
 }

@@ -740,13 +740,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
+
 .chart-box {
   width: 48%;
   height: 286px;
@@ -766,16 +765,15 @@ export default {
   height: 200px;
 }
 .event-chart {
-  ::v-deep {
-    .event-chart__radio {
-      //position: absolute;
-      //top: 4px;
-      //right: 0;
-      //margin-top: 0;
-    }
-    .total-line {
-      margin-bottom: 20px !important;
-    }
+  :deep(.event-chart__radio) {
+    //position: absolute;
+    //top: 4px;
+    //right: 0;
+    //margin-top: 0;
+  }
+
+  :deep(.total-line) {
+    margin-bottom: 20px !important;
   }
 }
 .pie-chart {
@@ -791,16 +789,15 @@ export default {
   &:hover {
     background: #eef3ff;
   }
-  ::v-deep {
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
   }

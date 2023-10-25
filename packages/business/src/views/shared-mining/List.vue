@@ -630,18 +630,16 @@ export default {
       }
     }
   }
-  ::v-deep {
-    .el-dialog__body {
-      padding: 10px 20px;
-      .el-form {
-        .el-form-item {
-          .el-form-item__label {
-            font-size: 12px;
-          }
-          .el-select,
-          .el-date-editor {
-            width: 100%;
-          }
+  :deep(.el-dialog__body) {
+    padding: 10px 20px;
+    .el-form {
+      .el-form-item {
+        .el-form-item__label {
+          font-size: 12px;
+        }
+        .el-select,
+        .el-date-editor {
+          width: 100%;
         }
       }
     }

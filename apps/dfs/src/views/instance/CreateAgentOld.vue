@@ -248,7 +248,16 @@
       <div class="subscription-steps-content mt-4">
         <div v-if="activeStep === 1" class="flex gap-6 px-5 justify-content-center align-items-center">
           <div
-            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
+            class="
+              platform-wrap
+              product-type-card
+              rounded-xl
+              border
+              flex flex-column
+              position-relative
+              clickable
+              overflow-auto
+            "
             :class="{
               active: platform === 'integration'
             }"
@@ -286,7 +295,16 @@
             </div>
           </div>
           <div
-            class="platform-wrap product-type-card rounded-xl border flex flex-column position-relative clickable overflow-auto"
+            class="
+              platform-wrap
+              product-type-card
+              rounded-xl
+              border
+              flex flex-column
+              position-relative
+              clickable
+              overflow-auto
+            "
             :class="{
               active: platform === 'realTime'
             }"
@@ -2613,59 +2631,53 @@ export default {
   min-height: 300px;
 }
 .subscript-table {
-  ::v-deep {
-    .subscript-table thead .el-table-column--selection .cell {
-      display: none;
-    }
+  :deep(.subscript-table thead .el-table-column--selection .cell) {
+    display: none;
   }
 }
 .subscription-steps {
-  ::v-deep {
-    .el-step {
-      &.is-simple:not(:last-of-type) .el-step__title {
-        max-width: unset;
-      }
+  :deep(.el-step) {
+    &.is-simple:not(:last-of-type) .el-step__title {
+      max-width: unset;
+    }
 
+    .el-step__icon {
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+    }
+
+    .el-step__head.is-finish {
       .el-step__icon {
-        width: 24px;
-        height: 24px;
-        font-size: 14px;
+        color: #fff;
+        background-color: map-get($color, primary);
       }
+    }
 
-      .el-step__head.is-finish {
-        .el-step__icon {
-          color: #fff;
-          background-color: map-get($color, primary);
-        }
-      }
-
-      .el-step__head.is-process {
-        color: #86909c;
-        border-color: #86909c;
-      }
-      .el-step__title.is-process {
-        color: #86909c;
-        font-weight: 400;
-      }
+    .el-step__head.is-process {
+      color: #86909c;
+      border-color: #86909c;
+    }
+    .el-step__title.is-process {
+      color: #86909c;
+      font-weight: 400;
     }
   }
 }
 .subscription-steps-content {
-  ::v-deep {
-    .el-input__inner,
-    .el-textarea__inner {
-      border-radius: 6px;
-    }
+  :deep(.el-input__inner),
+  :deep(.el-textarea__inner) {
+    border-radius: 6px;
+  }
 
-    .subscription-radio.el-radio {
-      padding: 0 12px;
-      line-height: 30px;
-    }
+  :deep(.subscription-radio.el-radio) {
+    padding: 0 12px;
+    line-height: 30px;
+  }
 
-    .el-skeleton__button {
-      height: 32px;
-      width: 120px;
-    }
+  :deep(.el-skeleton__button) {
+    height: 32px;
+    width: 120px;
   }
 
   .discount-tag {
@@ -2794,17 +2806,13 @@ export default {
   border: 1px solid map-get($color, primary) !important;
 }
 .subscription-steps {
-  ::v-deep {
-    .el-step.is-simple .el-step__title {
-      font-size: 14px;
-    }
+  :deep(.el-step.is-simple .el-step__title) {
+    font-size: 14px;
   }
 }
 .subscription-steps-wrap {
-  ::v-deep {
-    .el-steps--simple {
-      padding: 13px 0;
-    }
+  :deep(.el-steps--simple) {
+    padding: 13px 0;
   }
 }
 .el-form-item__label {

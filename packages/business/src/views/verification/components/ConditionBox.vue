@@ -1829,20 +1829,18 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
   height: 280px;
 }
 .empty-data {
-  ::v-deep {
-    .el-select {
-      .el-input__inner {
-        border-color: #d44d4d;
-      }
+  :deep(.el-select) {
+    .el-input__inner {
+      border-color: #d44d4d;
     }
   }
 }
 .scheme-to-form {
-  ::v-deep {
-    .formily-element-form-item-layout-horizontal .formily-element-form-item-control-content-component > .el-switch {
-      height: 32px;
-      line-height: 32px;
-    }
+  :deep(.formily-element-form-item-layout-horizontal
+      .formily-element-form-item-control-content-component
+      > .el-switch) {
+    height: 32px;
+    line-height: 32px;
   }
 }
 </style>

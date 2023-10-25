@@ -538,17 +538,16 @@ export default {
   margin: 0 auto;
   width: 200px;
 }
-::v-deep {
-  .agent-download-dialog {
-    .el-dialog__header {
-      display: none;
-    }
-    .el-dialog__footer {
-      padding: 10px 0;
-    }
-    .el-dialog__body {
-      padding: 30px 20px 0 30px;
-    }
+
+:deep(.agent-download-dialog) {
+  .el-dialog__header {
+    display: none;
+  }
+  .el-dialog__footer {
+    padding: 10px 0;
+  }
+  .el-dialog__body {
+    padding: 30px 20px 0 30px;
   }
 }
 </style>

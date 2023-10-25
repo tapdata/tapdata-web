@@ -2,10 +2,10 @@
   <section class="function-details-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
-            {{ $t('function_details') }}
-          </div> -->
+						{{ $t('function_details') }}
+					</div> -->
       <!-- <div class="function-details__body" v-loading="!details.id">
-            <div class="main px-6 py-4"> -->
+						<div class="main px-6 py-4"> -->
       <ElForm label-position="left" label-width="160px" size="small" :model="details">
         <ElFormItem :label="$t('function_name_label') + ':'">
           <span class="details-value">{{ details.function_name }}</span>
@@ -54,13 +54,14 @@
     </div>
 
     <!-- </div>
-        </div> -->
+				</div> -->
   </section>
 </template>
 
 <script>
 import { JsEditor } from '@tap/component'
 import { javascriptFunctionsApi } from '@tap/api'
+
 export default {
   components: { JsEditor },
   data() {
@@ -97,47 +98,52 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.function-details-wrapper{/*// display: flex;*//*// flex-direction: column;*//*// height: 100%;*//*// background: map-get($bgColor, normal);*//*// .function-details__body {*/
-  //   margin: 30px 24px 0 24px;
-  //   flex: 1;
-  //   display: flex;
-  //   flex-direction: column;
-  //   background-color: map-get($bgColor, white);
-  //   box-shadow: 0px 0px 3px 0px #cccccc;
-  //   overflow: hidden;
-  .details-value {
-    color: map-get($fontColor, dark);
-    font-size: 12px;
-  }
-  ::v-deep {
-    .el-form {
-      flex: 1;
-      overflow-y: auto;
-    }
-    .el-form-item__label {
-      font-size: 12px;
-    }
-    .el-form-item--mini.el-form-item,
-    .el-form-item--small.el-form-item {
-      margin-bottom: 24px;
-    }
-  }
-  .details-panel-title {
-    font-size: 14px;
-  }
-  .script-editor {
-    max-width: 940px;
-  }
-  .main {
-    flex: 1;
-    overflow: auto;
-  }
-  .footer {
-    border-top: 1px solid #f0f0f0;
-    // box-shadow: 0px -1px 2px 0px #f6f6f6;
-    .btn {
-      width: 80px;
-    }
-  }
-  // }}
+.function-details-wrapper { /*// display: flex;*//*// flex-direction: column;*//*// height: 100%;*//*// background: map-get($bgColor, normal);*//*// .function-details__body {*/
+	//   margin: 30px 24px 0 24px;
+	//   flex: 1;
+	//   display: flex;
+	//   flex-direction: column;
+	//   background-color: map-get($bgColor, white);
+	//   box-shadow: 0px 0px 3px 0px #cccccc;
+	//   overflow: hidden;
+	.details-value {
+		color: map-get($fontColor, dark);
+		font-size: 12px;
+	}
+
+	:deep(.el-form) {
+		flex: 1;
+		overflow-y: auto;
+	}
+
+	:deep(.el-form-item__label) {
+		font-size: 12px;
+	}
+
+	:deep(.el-form-item--mini.el-form-item), :deep(.el-form-item--small.el-form-item) {
+		margin-bottom: 24px;
+	}
+
+	.details-panel-title {
+		font-size: 14px;
+	}
+
+	.script-editor {
+		max-width: 940px;
+	}
+
+	.main {
+		flex: 1;
+		overflow: auto;
+	}
+
+	.footer {
+		border-top: 1px solid #f0f0f0;
+		// box-shadow: 0px -1px 2px 0px #f6f6f6;
+		.btn {
+			width: 80px;
+		}
+	}
+
+// }}
 </style>

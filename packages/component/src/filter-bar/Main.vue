@@ -271,29 +271,26 @@ export default {
 }
 .filter-form {
   font-size: 12px;
-  ::v-deep {
-    .el-form-item__content {
+  :deep(.el-form-item__content) {
+    font-size: 12px;
+    .el-input {
       font-size: 12px;
-      .el-input {
-        font-size: 12px;
-      }
     }
   }
+
   .el-form-item {
     margin-bottom: 0;
     margin-right: 8px;
   }
 }
 .filter-el-input {
-  ::v-deep {
-    .el-input__inner {
-      &:hover {
-        border-color: map-get($borderColor, disable);
-      }
-      &:focus,
-      &:target {
-        border-color: map-get($color, primary);
-      }
+  :deep(.el-input__inner) {
+    &:hover {
+      border-color: map-get($borderColor, disable);
+    }
+    &:focus,
+    &:target {
+      border-color: map-get($color, primary);
     }
   }
 }

@@ -216,11 +216,11 @@ export default {
       width: 100%;
       margin-top: 50px;
     }
-    ::v-deep {
-      .el-checkbox__label {
-        color: map-get($fontColor, light);
-      }
+
+    :deep(.el-checkbox__label) {
+      color: map-get($fontColor, light);
     }
+
     .remember {
       padding-top: 16px;
       font-size: 12px;
