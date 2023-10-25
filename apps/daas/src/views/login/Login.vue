@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import cryptoJS from 'crypto-js'
@@ -56,8 +55,7 @@ import { configUser } from '@/utils/util'
 
 export default {
   components: {
-    LoginPage,
-    ElIconWarningOutline
+    LoginPage
   },
   name: 'SignIn',
   data() {

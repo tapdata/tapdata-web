@@ -76,7 +76,6 @@
 </template>
 
 <script>
-import { Close as ElIconClose } from '@element-plus/icons'
 import { VIcon } from '@tap/component'
 import error from '@tap/assets/icons/svg/error.svg'
 import info from '@tap/assets/icons/svg/info.svg'
@@ -86,8 +85,7 @@ import i18n from '@/i18n'
 
 export default {
   components: {
-    VIcon,
-    ElIconClose
+    VIcon
   },
   props: {
     value: Boolean

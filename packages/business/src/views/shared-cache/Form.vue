@@ -119,7 +119,6 @@
 </template>
 
 <script>
-import { InfoFilled as ElIconInfo } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
@@ -133,8 +132,7 @@ export default {
     VirtualSelect,
     FieldSelector,
     CodeView,
-    ConnectionListSelect,
-    ElIconInfo
+    ConnectionListSelect
   },
   props: {
     taskId: {

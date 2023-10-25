@@ -150,13 +150,9 @@
 </template>
 
 <script>
-import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { ElSelect as Select } from 'element-plus'
 export default {
-  components: {
-    ElIconCircleClose
-  },
   name: 'Select',
   extends: Select,
   methods: {

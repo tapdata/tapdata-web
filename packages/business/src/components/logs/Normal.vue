@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import { Loading as ElIconLoading } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -90,8 +89,7 @@ import { delayTrigger } from '@tap/shared'
 export default {
   components: {
     DynamicScroller,
-    DynamicScrollerItem,
-    ElIconLoading
+    DynamicScrollerItem
   },
   name: 'Normal',
   props: {

@@ -42,16 +42,13 @@
 </template>
 
 <script>
-import { Loading as ElIconLoading } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { logsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 
 export default {
-  components: {
-    ElIconLoading
-  },
+  components: {},
   props: {
     id: String
   },
@@ -204,29 +201,29 @@ export default {
 
 <style lang="scss" scoped>
 .monitor-log-wrap {
-	display: flex;
-	//max-height: 450px;
-	font-size: 14px;
-	.search-input {
-		width: 343px;
-	}
-	.log-container {
-		background: rgba(229, 236, 255, 0.22);
-		box-sizing: border-box;
-	}
-	.log-item {
-		word-break: break-word;
-	}
-	.log-message {
-		box-sizing: border-box;
-	}
-	.log-keyword-block {
-		background: map-get($color, warning);
-	}
+  display: flex;
+  //max-height: 450px;
+  font-size: 14px;
+  .search-input {
+    width: 343px;
+  }
+  .log-container {
+    background: rgba(229, 236, 255, 0.22);
+    box-sizing: border-box;
+  }
+  .log-item {
+    word-break: break-word;
+  }
+  .log-message {
+    box-sizing: border-box;
+  }
+  .log-keyword-block {
+    background: map-get($color, warning);
+  }
 }
 .filter-row {
-	.el-checkbox {
-		margin-right: 16px;
-	}
+  .el-checkbox {
+    margin-right: 16px;
+  }
 }
 </style>

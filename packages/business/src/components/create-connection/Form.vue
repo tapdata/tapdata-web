@@ -112,7 +112,6 @@
 </template>
 
 <script>
-import { SuccessFilled as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { isEmpty } from 'lodash'
 import { action } from '@formily/reactive'
@@ -141,9 +140,7 @@ export default {
     Test,
     VIcon,
     SchemaToForm,
-    GitBook,
-    ElIconSuccess,
-    ElIconWarning
+    GitBook
   },
   name: 'DatabaseForm',
   inject: ['checkAgent', 'buried'],

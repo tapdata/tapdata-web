@@ -114,7 +114,6 @@
 </template>
 
 <script>
-import { Refresh as ElIconRefresh } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 import { TablePage } from '@tap/business'

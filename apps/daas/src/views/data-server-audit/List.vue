@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import { SuccessFilled as ElIconSuccess, CircleCloseFilled as ElIconError } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 
@@ -71,9 +70,7 @@ import { TablePage } from '@tap/business'
 export default {
   components: {
     TablePage,
-    FilterBar,
-    ElIconSuccess,
-    ElIconError
+    FilterBar
   },
   data() {
     return {

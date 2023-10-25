@@ -92,15 +92,13 @@
 </template>
 
 <script>
-import { Close as ElIconClose } from '@element-plus/icons'
 import { VIcon } from '@tap/component'
 import MsgBox from 'element-ui/packages/message-box/src/main.vue'
 import i18n from '@/i18n'
 
 export default {
   components: {
-    VIcon,
-    ElIconClose
+    VIcon
   },
   extends: MsgBox,
   data() {

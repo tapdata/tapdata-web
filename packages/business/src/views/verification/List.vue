@@ -188,7 +188,6 @@
 </template>
 
 <script>
-// import { CircleCloseFilled as ElIconError, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'

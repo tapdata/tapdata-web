@@ -72,15 +72,13 @@
 </template>
 
 <script>
-import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import Header from './Header'
 import Cookie from '@tap/shared/src/cookie'
 import { usersApi } from '@tap/api'
 
 export default {
   components: {
-    Header,
-    ElIconWarningOutline
+    Header
   },
   name: 'SignIn',
   data() {

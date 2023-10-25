@@ -658,7 +658,6 @@
 </template>
 
 <script>
-import { Plus as ElIconPlus } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
@@ -678,8 +677,7 @@ export default {
     InlineInput,
     VerificationCode,
     UploadFile,
-    VTable,
-    ElIconPlus
+    VTable
   },
   name: 'Center',
   inject: ['buried'],

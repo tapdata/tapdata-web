@@ -203,7 +203,6 @@
 </template>
 
 <script>
-import { CircleClose as ElIconCircleClose, Loading as ElIconLoading } from '@element-plus/icons'
 import { cloneDeep, uniqBy, debounce } from 'lodash'
 import { ElSelect as Select } from 'element-plus'
 import i18n from '@tap/i18n'
@@ -214,9 +213,7 @@ import VIcon from './base/VIcon.vue'
 export default {
   components: {
     RecycleScroller,
-    VIcon,
-    ElIconCircleClose,
-    ElIconLoading
+    VIcon
   },
   name: 'SelectList',
   extends: Select,

@@ -74,13 +74,8 @@
 </template>
 
 <script>
-import { CircleCloseFilled as ElIconError, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 export default {
-  components: {
-    ElIconError,
-    ElIconSuccess
-  },
   props: {
     type: String,
     data: {

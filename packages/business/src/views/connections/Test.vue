@@ -89,7 +89,6 @@
 </template>
 
 <script>
-// import { Warning as ElIconWarning, SuccessFilled as ElIconSuccess } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {

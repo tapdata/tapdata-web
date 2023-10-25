@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import { ArrowLeft as ElIconArrowLeft, ArrowRight as ElIconArrowRight } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { ElTransfer as Transfer } from 'element-plus'
 import { VirtualTransferPanel } from '@tap/component'
@@ -102,7 +101,6 @@ import { VirtualTransferPanel } from '@tap/component'
 export default {
   components: {
     VirtualTransferPanel,
-    ElIconArrowLeft,
     ElIconArrowRight
   },
   name: 'MqTransfer',

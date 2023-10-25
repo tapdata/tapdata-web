@@ -68,15 +68,13 @@
 </template>
 
 <script>
-import { WarningOutline as ElIconWarningOutline } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
   components: {
-    LoginPage,
-    ElIconWarningOutline
+    LoginPage
   },
   name: 'SignIn',
   data() {

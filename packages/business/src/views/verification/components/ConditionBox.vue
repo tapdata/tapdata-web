@@ -247,7 +247,6 @@
 </template>
 
 <script>
-import { ArrowRight as ElIconArrowRight } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'

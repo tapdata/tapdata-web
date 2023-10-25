@@ -59,9 +59,7 @@
               </template>
             </ElSubMenu>
             <ElMenuItem v-else :index="menu.path" class="flex align-center" :id="`menu-${menu.name}`">
-              <span class="mr-4" v-if="menu.icon"
-                ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-              >
+              <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
               <span class="flex-fill">
                 {{ menu.title }}
                 <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
@@ -80,7 +78,7 @@
             </ElMenuItem>
           </template>
           <ElMenuItem v-if="!isDemoEnv && isDomesticStation" index="goDemo" class="flex align-center">
-            <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
+            <VIcon class="mr-4" size="17">open-in-new</VIcon>
             <span class="text-decoration-underline">{{
               $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
             }}</span>

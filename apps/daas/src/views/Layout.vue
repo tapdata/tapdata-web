@@ -183,7 +183,6 @@
 </template>
 
 <script>
-import { ArrowDown as ElIconArrowDown, DArrowLeft as ElIconDArrowLeft } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import dayjs from 'dayjs'
 
@@ -304,9 +303,7 @@ export default {
     newDataFlow,
     NotificationPopover,
     PageHeader,
-    VIcon,
-    ElIconArrowDown,
-    ElIconDArrowLeft
+    VIcon
   },
   data() {
     return {

@@ -203,7 +203,6 @@
 </template>
 
 <script>
-import { CircleClose as ElIconCircleClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { merge, escapeRegExp, uniqBy, debounce } from 'lodash'
 import { ElSelect as Select } from 'element-plus'
@@ -213,9 +212,6 @@ import { CancelToken } from '@tap/api'
 import { valueEquals } from 'element-ui/src/utils/util'
 
 export default {
-  components: {
-    ElIconCircleClose
-  },
   name: 'AsyncSelect',
   extends: Select,
   props: {

@@ -462,7 +462,6 @@
 </template>
 
 <script>
-import { CirclePlus as ElIconCirclePlus, Remove as ElIconRemove } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import axios from 'axios'
 import { cloneDeep } from 'lodash'
@@ -487,9 +486,7 @@ export default {
   components: {
     Drawer,
     VCodeEditor,
-    ListSelect,
-    ElIconCirclePlus,
-    ElIconRemove
+    ListSelect
   },
   props: {
     host: String,

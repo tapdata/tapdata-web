@@ -27,14 +27,12 @@
 </template>
 
 <script>
-import { Close as ElIconClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { ClipboardButton } from '@tap/form'
 
 export default {
   components: {
-    ClipboardButton,
-    ElIconClose
+    ClipboardButton
   },
   props: {
     value: {

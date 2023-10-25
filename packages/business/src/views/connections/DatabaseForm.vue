@@ -136,7 +136,6 @@
 </template>
 
 <script>
-// import { SuccessFilled as ElIconSuccess, Warning as ElIconWarning } from '@element-plus/icons'
 import { action } from '@formily/reactive'
 import { cloneDeep, isEmpty } from 'lodash'
 

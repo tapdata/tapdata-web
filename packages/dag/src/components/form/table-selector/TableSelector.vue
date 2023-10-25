@@ -226,11 +226,6 @@
 </template>
 
 <script>
-import {
-  Loading as ElIconLoading,
-  ArrowRight as ElIconArrowRight,
-  ArrowLeft as ElIconArrowLeft
-} from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -247,10 +242,7 @@ export default {
     RecycleScroller,
     OverflowTooltip,
     ConnectionTest,
-    VIcon,
-    ElIconLoading,
-    ElIconArrowRight,
-    ElIconArrowLeft
+    VIcon
   },
   props: {
     connectionId: {

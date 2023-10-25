@@ -233,7 +233,6 @@
 </template>
 
 <script>
-import { Loading as ElIconLoading } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
@@ -257,8 +256,7 @@ export default {
     DynamicScroller,
     DynamicScrollerItem,
     VEmpty,
-    NodeList,
-    ElIconLoading
+    NodeList
   },
   name: 'NodeLog',
   props: {

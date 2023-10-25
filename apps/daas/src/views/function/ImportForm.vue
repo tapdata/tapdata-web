@@ -148,7 +148,6 @@
 </template>
 
 <script>
-import { Warning as ElIconWarning } from '@element-plus/icons'
 import i18n from '@/i18n'
 
 import Cookie from '@tap/shared/src/cookie'
@@ -156,9 +155,6 @@ import { javascriptFunctionsApi, fileApi } from '@tap/api'
 
 let timer = null
 export default {
-  components: {
-    ElIconWarning
-  },
   data() {
     return {
       loading: false,

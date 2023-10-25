@@ -1,13 +1,13 @@
-import { defineConfig, transformWithEsbuild } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+// import Icons from 'unplugin-icons/vite'
+// import IconsResolver from 'unplugin-icons/resolver'
+import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import path from 'path'
 import crypto from 'crypto'
 
@@ -81,27 +81,27 @@ export default defineConfig({
 
     AutoImport({
       resolvers: [
-        ElementPlusResolver({ importStyle: 'sass' }),
+        ElementPlusResolver({ importStyle: 'sass' })
         // 自动导入图标组件
-        IconsResolver({
-          prefix: 'Icon'
-        })
+        // IconsResolver({
+        //   prefix: 'Icon'
+        // })
       ]
     }),
 
     Components({
       resolvers: [
         // 自动注册图标组件
-        IconsResolver({
-          enabledCollections: ['ep']
-        }),
+        // IconsResolver({
+        //   enabledCollections: ['ep']
+        // }),
         ElementPlusResolver()
       ]
     }),
 
-    Icons({
-      autoInstall: true
-    }),
+    // Icons({
+    //   autoInstall: true
+    // }),
 
     createSvgIconsPlugin({
       // Specify the icon folder to be cached

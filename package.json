@@ -2,16 +2,19 @@
   "name": "daas-monorepo",
   "private": true,
   "scripts": {
-    "start:daas": "pnpm --filter daas start:test",
-    "start:dfs": "pnpm --filter dfs start:test",
-    "start:local": "pnpm --filter dfs start:local",
-    "dev:daas": "pnpm --filter daas start:dev",
-    "dev:dfs": "pnpm --filter dfs start:dev",
     "build:daas": "pnpm --filter daas build",
     "build:dfs": "pnpm --filter dfs build",
+    "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules",
     "daas": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:test",
+    "dev:daas": "pnpm --filter daas start:dev",
+    "dev:dfs": "pnpm --filter dfs start:dev",
     "dfs": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter dfs start:test",
-    "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules"
+    "start:daas": "pnpm --filter daas start:test",
+    "start:dfs": "pnpm --filter dfs start:test",
+    "start:local": "pnpm --filter dfs start:local"
+  },
+  "dependencies": {
+    "element-plus": "^2.4.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",

@@ -401,7 +401,6 @@
 </template>
 
 <script>
-import { CirclePlus as ElIconCirclePlus, Remove as ElIconRemove } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { cloneDeep } from 'lodash'
 import axios from 'axios'
@@ -413,9 +412,7 @@ import { generateId } from '@tap/shared'
 
 export default {
   components: {
-    VCodeEditor,
-    ElIconCirclePlus,
-    ElIconRemove
+    VCodeEditor
   },
   name: 'CreateRestApi',
   props: {

@@ -96,7 +96,6 @@
 </template>
 
 <script>
-import { Loading as ElIconLoading } from '@element-plus/icons'
 import { cloneDeep } from 'lodash'
 import i18n from '@tap/i18n'
 
@@ -115,8 +114,7 @@ export default {
     Chart,
     DynamicScroller,
     DynamicScrollerItem,
-    VEmpty,
-    ElIconLoading
+    VEmpty
   },
   name: 'VerifyPanel',
   props: {

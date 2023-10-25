@@ -30,12 +30,8 @@
 </template>
 
 <script>
-import { Close as ElIconClose } from '@element-plus/icons'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 export default {
-  components: {
-    ElIconClose
-  },
   name: 'CustomerService',
   props: {
     value: Boolean

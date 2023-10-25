@@ -192,7 +192,6 @@
 </template>
 
 <script>
-import { More as ElIconMore } from '@element-plus/icons'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 
@@ -205,8 +204,7 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    Upload: UploadDialog,
-    ElIconMore
+    Upload: UploadDialog
   },
   name: 'ApiPublish',
   data() {
