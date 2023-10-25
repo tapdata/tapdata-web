@@ -1165,7 +1165,7 @@ export default {
 
   :deep(.el-form-item) {
     margin-bottom: 16px;
-    &__content {
+    .el-form-item__content {
       .el-select {
         width: 100%;
       }

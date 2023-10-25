@@ -93,7 +93,7 @@ export default {
         })
     },
     getImg(name) {
-      return require(`../../../public/images/dashboard/${name}.svg`)
+      return require(`/images/dashboard/${name}.svg`)
     }
   }
 }

@@ -631,8 +631,7 @@ export default {
 
     //获取探索示例-背景图
     getImg(name) {
-      return new URL(`../../../public/images/dashboard/${name}.svg`, import.meta.url).href
-      // return require(`../../../public/images/dashboard/${name}.svg`)
+      return new URL(`/images/dashboard/${name}.svg`, import.meta.url).href
     },
     goScenes(url) {
       window.open(url)

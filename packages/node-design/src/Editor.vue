@@ -39,10 +39,6 @@
 </template>
 
 <script>
-import '@tap/assets/icons/svg/component.svg'
-import '@tap/assets/icons/svg/outline.svg'
-import '@tap/assets/icons/svg/history.svg'
-
 import {
   Designer,
   StudioPanel,

@@ -866,26 +866,31 @@ $hoverBg: #eef3ff;
     }
   }
 
-  :deep(.click-btn) {
-    width: 24px !important;
-    height: 24px !important;
-    z-index: 2;
-    border-radius: 4px;
-    &.refresh {
-      color: map-get($iconFillColor, normal);
-    }
-    &:hover,
-    &.active {
-      color: map-get($color, primary);
-      background: $hoverBg;
-    }
+  :deep(*) {
+    .click-btn {
+      width: 24px !important;
+      height: 24px !important;
+      z-index: 2;
+      border-radius: 4px;
 
-    &-disabled {
-      color: currentColor;
-      cursor: not-allowed;
-      &:hover {
+      &.refresh {
+        color: map-get($iconFillColor, normal);
+      }
+
+      &:hover,
+      &.active {
+        color: map-get($color, primary);
+        background: $hoverBg;
+      }
+
+      &-disabled {
         color: currentColor;
-        background: rgba(242, 243, 245);
+        cursor: not-allowed;
+
+        &:hover {
+          color: currentColor;
+          background: rgba(242, 243, 245);
+        }
       }
     }
   }
@@ -909,58 +914,60 @@ $hoverBg: #eef3ff;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid transparent;
-    &-icon {
+    .tb-header-icon {
       flex-shrink: 0;
       width: 20px;
       height: 20px;
     }
   }
 
-  :deep(.db-item),
-  :deep(.tb-item),
-  :deep(.node-item) {
-    height: 28px;
-    font-size: $fontBaseTitle;
-    &.active {
-      background-color: #eef3ff;
-    }
-
-    &:not(.active):hover {
-      background-color: rgba(47, 46, 63, 0.05);
-    }
-
-    .el-image {
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
-    }
-  }
-
-  :deep(.db-item) {
-    margin-bottom: 4px;
-    height: 42px;
-    line-height: normal;
-
-    &-icon {
-      padding: 4px;
-      border: 1px solid #f2f2f2;
-      border-radius: 50%;
-    }
-
-    &-content {
-      overflow: hidden;
-      > :not(:last-child) {
-        margin-bottom: 4px;
-        font-size: 13px;
+  :deep(*) {
+    .db-item,
+    .tb-item,
+    .node-item {
+      height: 28px;
+      font-size: $fontBaseTitle;
+      &.active {
+        background-color: #eef3ff;
       }
 
-      > :last-child {
-        color: rgb(83 95 114 / 70%);
+      &:not(.active):hover {
+        background-color: rgba(47, 46, 63, 0.05);
+      }
+
+      .el-image {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
       }
     }
 
-    &:last-child {
-      margin-bottom: 0;
+    .db-item {
+      margin-bottom: 4px;
+      height: 42px;
+      line-height: normal;
+
+      &-icon {
+        padding: 4px;
+        border: 1px solid #f2f2f2;
+        border-radius: 50%;
+      }
+
+      &-content {
+        overflow: hidden;
+        > :not(:last-child) {
+          margin-bottom: 4px;
+          font-size: 13px;
+        }
+
+        > :last-child {
+          color: rgb(83 95 114 / 70%);
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -972,24 +979,29 @@ $hoverBg: #eef3ff;
     border-radius: 100%;
   }
 
-  :deep(.el-collapse) {
-    border-top: 0;
-    &.processor-collapse {
-      max-height: 30%;
-    }
-    &.collapse-fill {
-      .el-collapse-item:first-child:last-child {
+  :deep(.el-collapse.processor-collapse) {
+    max-height: 30%;
+  }
+
+  :deep(.el-collapse.processor-collapse) {
+    max-height: 30%;
+  }
+
+  :deep(.el-collapse.collapse-fill) {
+    .el-collapse-item:first-child:last-child {
+      height: 100%;
+      .el-collapse-item__wrap {
+        height: calc(100% - $headerH);
+      }
+      .el-collapse-item__content {
         height: 100%;
-        .el-collapse-item__wrap {
-          height: calc(100% - $headerH);
-        }
-        .el-collapse-item__content {
-          height: 100%;
-        }
       }
     }
+  }
 
-    &-item {
+  :deep(.el-collapse) {
+    border-top: 0;
+    .el-collapse-item {
       &.is-active [role='tab'] {
         position: sticky;
         top: 0;

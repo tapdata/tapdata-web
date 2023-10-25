@@ -637,12 +637,7 @@ $hoverBg: #eef3ff;
     z-index: 2;
     border-radius: 4px;
 
-    &:hover {
-      color: map-get($color, primary);
-      background: $hoverBg;
-    }
-
-    &-disabled {
+    .click-btn-disabled {
       color: currentColor;
       cursor: not-allowed;
       &:hover {
@@ -650,6 +645,11 @@ $hoverBg: #eef3ff;
         background: rgba(242, 243, 245);
       }
     }
+  }
+
+  :deep(.click-btn:hover) {
+    color: map-get($color, primary);
+    background: $hoverBg;
   }
 
   :deep(.badge) {
@@ -671,53 +671,55 @@ $hoverBg: #eef3ff;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid transparent;
-    &-icon {
+    .tb-header-icon {
       flex-shrink: 0;
       width: 20px;
       height: 20px;
     }
   }
 
-  :deep(.db-item),
-  :deep(.node-item) {
-    height: 42px;
-    margin-bottom: 4px;
-    font-size: $fontBaseTitle;
-    line-height: normal;
-    &.active {
-      background-color: #eef3ff;
-    }
-
-    &:not(.active):hover {
-      background-color: #edf1f9;
-    }
-
-    .el-image {
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
-    }
-
-    &-icon {
-      padding: 4px;
-      border: 1px solid #f2f2f2;
-      border-radius: 50%;
-    }
-
-    &-content {
-      overflow: hidden;
-      > :not(:last-child) {
-        margin-bottom: 4px;
-        font-size: $fontBaseTitle;
+  :deep(*) {
+    .db-item,
+    .node-item {
+      height: 42px;
+      margin-bottom: 4px;
+      font-size: $fontBaseTitle;
+      line-height: normal;
+      &.active {
+        background-color: #eef3ff;
       }
 
-      > :last-child {
-        color: rgb(83 95 114 / 70%);
+      &:not(.active):hover {
+        background-color: #edf1f9;
       }
-    }
 
-    &:last-child {
-      margin-bottom: 0;
+      .el-image {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
+
+      &-icon {
+        padding: 4px;
+        border: 1px solid #f2f2f2;
+        border-radius: 50%;
+      }
+
+      &-content {
+        overflow: hidden;
+        > :not(:last-child) {
+          margin-bottom: 4px;
+          font-size: $fontBaseTitle;
+        }
+
+        > :last-child {
+          color: rgb(83 95 114 / 70%);
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -738,51 +740,53 @@ $hoverBg: #eef3ff;
     border-radius: 100%;
   }
 
-  :deep(.el-collapse) {
-    border-top: 0;
-    &.processor-collapse {
-      max-height: 30%;
-    }
-    &.collapse-fill {
-      .el-collapse-item:first-child:last-child {
-        height: 100%;
-        .el-collapse-item__wrap {
-          height: calc(100% - #{$headerH - 1});
-        }
-        .el-collapse-item__content {
+  :deep(*) {
+    .el-collapse {
+      border-top: 0;
+      &.processor-collapse {
+        max-height: 30%;
+      }
+      &.collapse-fill {
+        .el-collapse-item:first-child:last-child {
           height: 100%;
-        }
-      }
-    }
-
-    &-item {
-      &.is-active [role='tab'] {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-      }
-
-      &__header {
-        position: relative;
-        padding-left: 16px;
-        padding-right: 16px;
-        height: $headerH;
-        font-size: 14px;
-
-        &:hover {
-          background-color: rgba(47, 46, 63, 0.05);
+          .el-collapse-item__wrap {
+            height: calc(100% - #{$headerH - 1});
+          }
+          .el-collapse-item__content {
+            height: 100%;
+          }
         }
       }
 
-      &__arrow {
-        order: -1;
-        &:before {
-          content: '\e791';
+      &-item {
+        &.is-active [role='tab'] {
+          position: sticky;
+          top: 0;
+          z-index: 1;
         }
-      }
 
-      &__content {
-        padding-bottom: 0;
+        &__header {
+          position: relative;
+          padding-left: 16px;
+          padding-right: 16px;
+          height: $headerH;
+          font-size: 14px;
+
+          &:hover {
+            background-color: rgba(47, 46, 63, 0.05);
+          }
+        }
+
+        &__arrow {
+          order: -1;
+          &:before {
+            content: '\e791';
+          }
+        }
+
+        &__content {
+          padding-bottom: 0;
+        }
       }
     }
   }

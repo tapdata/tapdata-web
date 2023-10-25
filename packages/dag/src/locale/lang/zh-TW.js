@@ -319,7 +319,7 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: '目標存在時更新',
   packages_dag_nodes_database_charushijian: '插入事件',
   packages_dag_nodes_database_shujuxieruce: '數據寫入策略',
-  packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構，清除數據',
+  packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構和數據',
   packages_dag_nodes_database_qingchumubiaoduan: '清除目標端原有表結構及數據',
   packages_dag_nodes_database_chongfuchulice: '如果目標表存在',
   packages_dag_nodes_database_tuiyanjieguo: '推演結果',

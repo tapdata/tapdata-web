@@ -5,9 +5,10 @@ import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
+import requireTransform from 'vite-plugin-require-transform'
 // import Icons from 'unplugin-icons/vite'
 // import IconsResolver from 'unplugin-icons/resolver'
-import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
 import path from 'path'
 import crypto from 'crypto'
 
@@ -77,7 +78,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    viteCommonjs(),
+    viteCommonjs({ exclude: ['ali-oss'] }),
 
     AutoImport({
       resolvers: [
@@ -105,14 +106,12 @@ export default defineConfig({
     // }),
 
     createSvgIconsPlugin({
-      // Specify the icon folder to be cached
       iconDirs: [
         path.resolve(process.cwd(), 'src/assets/icons/svg'),
         path.resolve(process.cwd(), 'src/assets/icons/colorSvg'),
         path.resolve(process.cwd(), '../../packages/assets/icons/svg'),
         path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
       ],
-      // Specify symbolId format
       symbolId: 'icon-[name]',
       svgoOptions: {
         exclude: [
@@ -138,18 +137,6 @@ export default defineConfig({
           }
         ]
       }
-
-      /**
-       * custom insert position
-       * @default: body-last
-       */
-      // inject?: 'body-last' | 'body-first'
-
-      /**
-       * custom dom id
-       * @default: __svg__icons__dom__
-       */
-      // customDomId: '__svg__icons__dom__',
     })
   ],
 
@@ -186,4 +173,10 @@ export default defineConfig({
       }
     }
   }
+
+  // optimizeDeps: {
+  //   esbuildOptions: {
+  //     plugins: [esbuildCommonjs(['ali-oss'])]
+  //   }
+  // }
 })

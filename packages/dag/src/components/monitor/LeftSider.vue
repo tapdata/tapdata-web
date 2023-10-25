@@ -765,7 +765,7 @@ export default {
   :deep(.el-collapse) {
     border-top: 0;
 
-    &-item {
+    .el-collapse-item {
       &.is-active [role='tab'] {
         position: sticky;
         top: 0;
