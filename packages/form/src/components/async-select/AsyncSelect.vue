@@ -137,6 +137,7 @@
           v-show="options.length > 0 && !showLoading"
         >
           <div v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled">
+            <slot name="prepend-item"></slot>
             <ElOption :value="query" created v-if="showNewOption">
               <slot name="created-option" :value="query"></slot>
             </ElOption>
