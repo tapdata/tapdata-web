@@ -57,9 +57,8 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.source.currentLabel"
+                  :lazy="!taskId"
                   itemQuery="name"
-                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
@@ -72,9 +71,8 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.target.currentLabel"
                   itemQuery="name"
-                  lazy
+                  :lazy="!taskId"
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
@@ -429,6 +427,10 @@ export default {
                     type: 'object',
                     properties: {
                       command: {
+                        title: ' ',
+                        'x-decorator-props': {
+                          colon: false
+                        },
                         type: 'string',
                         default: 'executeQuery',
                         'x-decorator': 'FormItem',
@@ -450,6 +452,10 @@ export default {
                         type: 'object',
                         properties: {
                           mongoQuery: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['source.customCommand.command', 'source.databaseType'],
@@ -475,6 +481,10 @@ export default {
                                 }
                               },
                               filter: {
+                                title: ' ',
+                                'x-decorator-props': {
+                                  colon: false
+                                },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
@@ -486,6 +496,10 @@ export default {
                             }
                           },
                           mongoAgg: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['source.customCommand.command', 'source.databaseType'],
@@ -509,6 +523,10 @@ export default {
                               },
                               pipeline: {
                                 type: 'string',
+                                title: ' ',
+                                'x-decorator-props': {
+                                  colon: false
+                                },
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
@@ -519,18 +537,21 @@ export default {
                             }
                           },
                           sql: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'string',
-                            required: true,
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
                               options: { showPrintMargin: false, useWrapMode: true }
                             },
                             'x-reactions': {
-                              dependencies: ['source.databaseType'],
+                              dependencies: ['source.enableCustomCommand', 'source.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{!$deps[0].toLowerCase().includes("mongo")}}'
+                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}'
                                 }
                               }
                             }
@@ -590,7 +611,7 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === 'execute_command_function')}}`
                           }
                         }
                       }
@@ -600,6 +621,10 @@ export default {
                     type: 'object',
                     properties: {
                       command: {
+                        title: ' ',
+                        'x-decorator-props': {
+                          colon: false
+                        },
                         type: 'string',
                         default: 'executeQuery',
                         'x-decorator': 'FormItem',
@@ -621,6 +646,10 @@ export default {
                         type: 'object',
                         properties: {
                           mongoQuery: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['target.customCommand.command', 'target.databaseType'],
@@ -646,6 +675,10 @@ export default {
                                 }
                               },
                               filter: {
+                                title: ' ',
+                                'x-decorator-props': {
+                                  colon: false
+                                },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
@@ -657,6 +690,10 @@ export default {
                             }
                           },
                           mongoAgg: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['target.customCommand.command', 'target.databaseType'],
@@ -679,6 +716,10 @@ export default {
                                 }
                               },
                               pipeline: {
+                                title: ' ',
+                                'x-decorator-props': {
+                                  colon: false
+                                },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_shiligro'),
@@ -690,18 +731,21 @@ export default {
                             }
                           },
                           sql: {
+                            title: ' ',
+                            'x-decorator-props': {
+                              colon: false
+                            },
                             type: 'string',
-                            required: true,
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
                               options: { showPrintMargin: false, useWrapMode: true }
                             },
                             'x-reactions': {
-                              dependencies: ['target.databaseType'],
+                              dependencies: ['target.enableCustomCommand', 'target.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{!$deps[0].toLowerCase().includes("mongo")}}'
+                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}'
                                 }
                               }
                             }
