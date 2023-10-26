@@ -25,6 +25,7 @@
       </div>
       <div class="flex gap-1 p-1">
         <AsyncSelect
+          :disabled="disabled"
           v-model="dagNode.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
@@ -46,7 +47,7 @@
           class="table-select"
           v-model="dagNode.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
-          :disabled="!dagNode.connectionId"
+          :disabled="!dagNode.connectionId || disabled"
           collapse-tags
           :method="loadTable"
           :connectionId="dagNode.connectionId"
@@ -57,7 +58,7 @@
           @change="onChangeTable"
         ></TableSelect>
       </div>
-      <ElForm class="node-form px-1" label-position="top" @submit.prevent>
+      <ElForm class="node-form px-1" label-position="top" @submit.prevent :disabled="disabled">
         <template v-if="!isMainTable">
           <ElFormItem :label="$t('packages_dag_join_table')">
             <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
@@ -67,7 +68,7 @@
           <ElFormItem>
             <div slot="label" class="flex align-center justify-content-between">
               <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
-              <ElLink class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
+              <ElLink :disabled="disabled" class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
                 <VIcon>add</VIcon>
                 {{ $t('public_button_add') }}</ElLink
               >
@@ -76,6 +77,7 @@
               v-if="!node.joinKeys || !node.joinKeys.length"
               type="ghost"
               class="w-100 fs-8"
+              :disabled="disabled"
               @click="handleAddJoinKey"
             >
               <VIcon>add</VIcon>
@@ -97,7 +99,7 @@
                   @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
                 <!--</div>-->
-                <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
+                <IconButton :disabled="disabled" @click="node.joinKeys.splice(i, 1)">delete</IconButton>
               </div>
             </div>
           </ElFormItem>
@@ -133,7 +135,13 @@
     <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover v-if="displaySchema" placement="top" width="240" v-model="fieldNameVisible" trigger="manual">
+        <ElPopover
+          v-if="displaySchema && !disabled"
+          placement="top"
+          width="240"
+          v-model="fieldNameVisible"
+          trigger="manual"
+        >
           <div ref="fieldPopover">
             <ElInput
               v-model="fieldName"
@@ -224,7 +232,8 @@ export default {
     nodeMap: Object,
     inputsMap: Object,
     hasTargetNode: Boolean,
-    schemaLoading: Boolean
+    schemaLoading: Boolean,
+    disabled: Boolean
   },
 
   components: {

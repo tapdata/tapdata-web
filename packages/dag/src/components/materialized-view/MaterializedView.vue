@@ -12,7 +12,7 @@
         <div class="fs-6 font-color-dark ml-1">{{ $t('packages_dag_materialized_view') }}</div>
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
-          <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
+          <ElTooltip v-if="!disabled" transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
             <button @click="handleDelete" class="icon-btn">
               <VIcon size="20">delete</VIcon>
             </button>
@@ -74,6 +74,7 @@
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
         <Node
+          :disabled="disabled"
           v-for="node in nodes"
           :key="node.id"
           :class="{
@@ -106,6 +107,7 @@
           @load-schema="onLoadSchema(node.id)"
         ></Node>
         <TargetNode
+          :disabled="disabled"
           v-if="targetNode"
           :id="targetNode.id"
           :node="targetNode"
@@ -136,7 +138,8 @@ export default {
   name: 'MaterializedView',
 
   props: {
-    visible: Boolean
+    visible: Boolean,
+    disabled: Boolean
   },
 
   components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
@@ -231,7 +234,7 @@ export default {
 
   mounted() {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
-      this.visible && this.handleDelete()
+      this.visible && !this.disabled && this.handleDelete()
     })
     Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
       e.preventDefault()
