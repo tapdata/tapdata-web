@@ -347,15 +347,16 @@ export default {
     })
   },
   mounted() {
-    const { step, action, keyword } = this.$route.query || {}
-    if (step) {
-      this.handleGuide()
-    }
+    const { action } = this.$route.query || {}
+
     if (action === 'create') {
       this.checkTestConnectionAvailable()
     }
-    if (keyword) {
-      this.searchParams.keyword = keyword
+
+    for (const key in this.searchParams) {
+      if (key in this.$route.query) {
+        this.searchParams[key] = this.$route.query[key]
+      }
     }
   },
   destroyed() {

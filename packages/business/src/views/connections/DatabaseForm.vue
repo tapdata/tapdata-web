@@ -281,9 +281,7 @@ export default {
             name: 'connections'
           })
         } else {
-          this.$router.push({
-            path: this.pathUrl
-          })
+          this.$router.back()
         }
       })
     },
@@ -334,18 +332,7 @@ export default {
               result: true
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            if (this.$route.query.step) {
-              this.$router.push({
-                name: 'connections',
-                query: {
-                  step: this.$route.query.step
-                }
-              })
-            } else {
-              this.$router.push({
-                name: 'connections'
-              })
-            }
+            this.$router.back()
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
