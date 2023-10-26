@@ -303,51 +303,29 @@ export default {
     },
 
     treeData() {
-      // console.log('computed:treeData')
-      let { schema } = this
+      let schema = this.schema ? [...this.schema] : []
 
       if (!schema) return []
 
-      const richFields = (inputs, targetPath) => {
-        let arr = []
-        for (const input of inputs) {
-          const inputNode = this.nodeMap[input]
-          let fields = this.nodeSchemaMap[input]
-          if (!fields) continue
-
-          let nodeTargetPath = inputNode.targetPath
-          if (nodeTargetPath && targetPath) {
-            nodeTargetPath = nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
-          }
-
-          if (this.inputsMap[input]?.length) {
-            arr = unionBy(arr, fields, richFields(this.inputsMap[input], nodeTargetPath), 'field_name')
-          } else {
-            // if (nodeTargetPath && targetPath) {
-            //   nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
-            // }
-
-            if (nodeTargetPath) {
-              fields = fields.map(field => {
-                return {
-                  ...field,
-                  field_name: `${nodeTargetPath}.${field.field_name}`
-                }
-              })
-              fields.unshift({
-                field_name: nodeTargetPath,
-                dataType: 'DOCUMENT'
-              })
-            }
-            arr = unionBy(arr, fields)
-          }
-        }
-        return arr
-      }
       const inputs = this.inputsMap?.[this.node.id]
 
       if (inputs?.length) {
-        const mergedFields = richFields(this.inputsMap[this.node.id], this.node.targetPath)
+        const { targetPath } = this.node
+        let mergedFields = this.richFields(this.inputsMap[this.node.id], this.node.targetPath)
+
+        if (targetPath) {
+          mergedFields = mergedFields
+            .map(field => {
+              return {
+                ...field,
+                field_name: field.field_name.replace(new RegExp(`^${targetPath}\\.|^${targetPath}$`), '')
+              }
+            })
+            .filter(field => !!field.field_name)
+
+          console.log('mergedFields', mergedFields)
+        }
+
         schema = unionBy(schema, mergedFields, 'field_name')
         schema.sort((a, b) => {
           let aVal, bVal
@@ -366,12 +344,9 @@ export default {
 
           return aVal - bVal
         })
-        console.log('schema', schema)
       }
 
-      const treeData = this.createTree(schema)
-
-      return treeData
+      return this.createTree(schema)
     },
 
     sourceNodes() {
@@ -813,6 +788,8 @@ export default {
       Object.keys(nodeAttrs).forEach(key => {
         this.$set(this.dagNode.attrs, key, nodeAttrs[key])
       })
+
+      console.log('this.dagNode.attrs', this.dagNode.attrs.connectionName, connection)
     },
 
     async onChangeConnection() {
@@ -866,6 +843,70 @@ export default {
       }
 
       animationId = requestAnimationFrame(revalidate)
+    },
+
+    /**
+     * 根据写入路径，收集上游字段
+     * @param inputs
+     * @param targetPath
+     * @returns {*[]}
+     */
+    richFields(inputs, targetPath) {
+      let arr = []
+
+      for (const input of inputs) {
+        const inputNode = this.nodeMap[input]
+        let fields = this.nodeSchemaMap[input]
+
+        if (!fields) continue
+
+        let nodeTargetPath = inputNode.targetPath
+
+        /*if (nodeTargetPath && targetPath) {
+          nodeTargetPath = nodeTargetPath.replace(new RegExp(`^${targetPath}\\.|^${targetPath}$`), '')
+        }*/
+
+        if (this.isMainTable) {
+          console.log('path', targetPath, nodeTargetPath, inputNode.targetPath)
+        }
+
+        if (this.inputsMap[input]?.length) {
+          if (nodeTargetPath /* && inputNode.targetPath === nodeTargetPath*/) {
+            fields = fields.map(field => {
+              return {
+                ...field,
+                field_name: `${nodeTargetPath}.${field.field_name}`
+              }
+            })
+
+            fields.unshift({
+              field_name: nodeTargetPath,
+              dataType: 'DOCUMENT'
+            })
+          }
+
+          const newFields = this.richFields(this.inputsMap[input], nodeTargetPath)
+
+          arr = unionBy(arr, fields, newFields, 'field_name')
+        } else {
+          if (nodeTargetPath) {
+            fields = fields.map(field => {
+              return {
+                ...field,
+                field_name: `${nodeTargetPath}.${field.field_name}`
+              }
+            })
+
+            fields.unshift({
+              field_name: nodeTargetPath,
+              dataType: 'DOCUMENT'
+            })
+          }
+          arr = unionBy(arr, fields)
+        }
+      }
+
+      return arr
     }
   }
 }
