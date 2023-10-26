@@ -71,6 +71,17 @@
             </button>
           </ElTooltip>
         </div>
+        <ElButton
+          v-if="buttonShowMap.Start"
+          :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
+          :loading="isSaving"
+          class="ml-auto"
+          size="medium"
+          type="primary"
+          @click="$emit('start')"
+        >
+          {{ $t('public_button_start') }}
+        </ElButton>
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
         <Node
@@ -139,7 +150,15 @@ export default {
 
   props: {
     visible: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    isSaving: Boolean,
+    dataflow: Object,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
@@ -167,7 +186,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
     scaleTxt() {
