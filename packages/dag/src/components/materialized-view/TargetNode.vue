@@ -25,6 +25,9 @@
               <NodeIcon :node="node" :size="20" />
             </div>
           </template>
+          <template #prepend-item>
+            <div class="px-5 py-2 fs-7 font-color-sslight">{{ $t('packages_dag_only_mongodb') }}</div>
+          </template>
         </AsyncSelect>
         <TableSelect
           v-model="node.tableName"
