@@ -39,6 +39,8 @@ export default class Http {
     return this.axios.post(this.url + '/update?where=' + encodeURIComponent(queryStr), attributes)
   }
 
+  get(params: unknown, filter: unknown, headers: unknown)
+
   get(params: unknown, filter: unknown) {
     if (Array.isArray(params)) {
       let queryStr = ''
