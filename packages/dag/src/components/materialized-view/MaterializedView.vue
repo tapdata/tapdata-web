@@ -294,6 +294,10 @@ export default {
         const indexOfParent = parentNode.children.findIndex(n => n.id === id)
         ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
         parentNode.children.push(...childrenNodes)
+
+        // 从父节点的输入上删除
+        const oldIndex = this.inputsMap[parentNode.id].indexOf(id)
+        this.inputsMap[parentNode.id].splice(oldIndex, 1)
       } else {
         const { mergeProperties } = this.activeNode
         const index = mergeProperties.findIndex(n => n.id === id)
@@ -647,7 +651,7 @@ export default {
       if (this.targetNode?.id) {
         // 更新目标节点schema
         await this.afterTaskSaved()
-        await this.loadNodeSchema(this.targetNode.id)
+        await this.onLoadTargetSchema(this.targetNode.id)
       }
     },
 
