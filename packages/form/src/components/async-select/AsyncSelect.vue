@@ -421,16 +421,7 @@ export default {
     async setSelected() {
       if (!this.multiple) {
         let option = await this.getOption(this.value)
-        // 不添加!this.lazy 会导致 onSetSelected 的参数为 { value: this.value, currentLabel: this.currentLabel}
-        // 防止开启了lazy 同时设置了currentLabel，进入这个判断
-        if (this.currentLabel && !this.lazy) {
-          option = {
-            value: this.value,
-            currentLabel: this.currentLabel
-          }
-        } else {
-          option = await this.getOption(this.value)
-        }
+
         if (this.onSetSelected && ~this.hoverIndex) {
           if (!option.$el) {
             this.onSetSelected(option)
@@ -448,6 +439,10 @@ export default {
         this.selectedLabel = option.currentLabel
         this.selected = option
         if (this.filterable) this.query = this.selectedLabel
+
+        if (option.currentLabel === option.value && this.itemType === 'object' && this.currentLabel) {
+          this.selectedLabel = this.currentLabel
+        }
         return
       }
       let result = []
