@@ -274,7 +274,7 @@ export default {
       this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
     },
 
-    handleDelete() {
+    async handleDelete() {
       if (!this.selectedNodeId || this.nodes.length === 1) return
 
       const { selectedNodeId: id } = this
@@ -327,6 +327,9 @@ export default {
       }
 
       this.$emit('delete-node', id)
+
+      await this.afterTaskSaved()
+      await this.onLoadTargetSchema(this.targetNode.id)
     },
 
     handleZoomIn() {
@@ -758,7 +761,6 @@ export default {
     afterTaskSaved() {
       return new Promise(resolve => {
         setTimeout(() => {
-          console.log('afterTaskSaved', this.taskSaving)
           if (this.taskSaving) {
             let unwatch = this.$watch('taskSaving', () => {
               unwatch()

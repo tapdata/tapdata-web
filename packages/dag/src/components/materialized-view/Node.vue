@@ -331,8 +331,6 @@ export default {
               }
             })
             .filter(field => !!field.field_name)
-
-          console.log('mergedFields', mergedFields)
         }
 
         schema = unionBy(schema, mergedFields, 'field_name')
@@ -871,46 +869,24 @@ export default {
 
         let nodeTargetPath = inputNode.targetPath
 
-        /*if (nodeTargetPath && targetPath) {
-          nodeTargetPath = nodeTargetPath.replace(new RegExp(`^${targetPath}\\.|^${targetPath}$`), '')
-        }*/
+        if (nodeTargetPath) {
+          fields = fields.map(field => {
+            return {
+              ...field,
+              field_name: `${nodeTargetPath}.${field.field_name}`
+            }
+          })
 
-        if (this.isMainTable) {
-          console.log('path', targetPath, nodeTargetPath, inputNode.targetPath)
+          fields.unshift({
+            field_name: nodeTargetPath,
+            dataType: inputNode.mergeType === 'updateIntoArray' ? 'ARRAY' : 'DOCUMENT'
+          })
         }
 
         if (this.inputsMap[input]?.length) {
-          if (nodeTargetPath /* && inputNode.targetPath === nodeTargetPath*/) {
-            fields = fields.map(field => {
-              return {
-                ...field,
-                field_name: `${nodeTargetPath}.${field.field_name}`
-              }
-            })
-
-            fields.unshift({
-              field_name: nodeTargetPath,
-              dataType: 'DOCUMENT'
-            })
-          }
-
           const newFields = this.richFields(this.inputsMap[input], nodeTargetPath)
-
           arr = unionBy(arr, fields, newFields, 'field_name')
         } else {
-          if (nodeTargetPath) {
-            fields = fields.map(field => {
-              return {
-                ...field,
-                field_name: `${nodeTargetPath}.${field.field_name}`
-              }
-            })
-
-            fields.unshift({
-              field_name: nodeTargetPath,
-              dataType: 'DOCUMENT'
-            })
-          }
           arr = unionBy(arr, fields)
         }
       }
