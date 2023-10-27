@@ -6,7 +6,7 @@ import { observable } from '@formily/reactive'
 import { setValidateLanguage } from '@formily/core'
 
 import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
-import { taskApi, customNodeApi } from '@tap/api'
+import { taskApi, customNodeApi, isCancel } from '@tap/api'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 import { AddDagCommand } from './command'
@@ -240,8 +240,14 @@ const actions = {
         }
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
+      commit('toggleTaskSaving', false)
     } catch (e) {
       console.error(e) // eslint-disable-line
+
+      if (isCancel(e)) return
+
+      commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
+
       if (e?.data?.code === 'Task.OldVersion') {
         vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
           onlyTitle: true,
@@ -255,7 +261,6 @@ const actions = {
         vm.$message.error(e.data.message)
       }
     }
-    commit('toggleTaskSaving', false)
   }, 50),
 
   async patchTaskNow({ state, commit }, { vm }) {
@@ -273,8 +278,14 @@ const actions = {
         }
       )
       data?.editVersion && commit('setEditVersion', data.editVersion)
+      commit('toggleTaskSaving', false)
     } catch (e) {
       console.error(e) // eslint-disable-line
+
+      if (isCancel(e)) return
+
+      commit('toggleTaskSaving', false) // 任务保存请求被cancel不希望设置为false
+
       if (e?.data?.code === 'Task.OldVersion') {
         vm.$confirm('', i18n.t('packages_dag_task_old_version_confirm'), {
           onlyTitle: true,
@@ -288,7 +299,6 @@ const actions = {
         vm.$message.error(e.data.message)
       }
     }
-    commit('toggleTaskSaving', false)
   },
 
   async updateDag({ state, commit, dispatch }, data = {}) {
