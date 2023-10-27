@@ -191,7 +191,7 @@ $height: 30px;
     }
   }
 
-  &:hover/*:not(.node--disabled:not(.node--disabled__main))*/ {
+  &:hover:not(.node--disabled:not(.node--disabled__main)) {
     .df-node-options {
       display: flex;
     }

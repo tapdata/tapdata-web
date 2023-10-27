@@ -25,6 +25,7 @@
       </div>
       <div class="flex gap-1 p-1">
         <AsyncSelect
+          :disabled="disabled"
           v-model:value="dagNode.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
@@ -46,7 +47,7 @@
           class="table-select"
           v-model:value="dagNode.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
-          :disabled="!dagNode.connectionId"
+          :disabled="!dagNode.connectionId || disabled"
           collapse-tags
           :method="loadTable"
           :connectionId="dagNode.connectionId"
@@ -57,7 +58,7 @@
           @change="onChangeTable"
         ></TableSelect>
       </div>
-      <ElForm class="node-form px-1" label-position="top" @submit.prevent>
+      <ElForm class="node-form px-1" label-position="top" @submit.prevent :disabled="disabled">
         <template v-if="!isMainTable">
           <ElFormItem :label="$t('packages_dag_join_table')">
             <ElSelect :value="node.parentId" class="w-100" @change="$emit('change-parent', node, $event)">
@@ -68,7 +69,7 @@
             <template v-slot:label>
               <div class="flex align-center justify-content-between">
                 <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
-                <ElLink class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
+                <ElLink :disabled="disabled" class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
                   <VIcon>add</VIcon>
                   {{ $t('public_button_add') }}</ElLink
                 >
@@ -78,6 +79,7 @@
               v-if="!node.joinKeys || !node.joinKeys.length"
               type="ghost"
               class="w-100 fs-8"
+              :disabled="disabled"
               @click="handleAddJoinKey"
             >
               <VIcon>add</VIcon>
@@ -99,7 +101,7 @@
                   @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
                 <!--</div>-->
-                <IconButton @click="node.joinKeys.splice(i, 1)">delete</IconButton>
+                <IconButton :disabled="disabled" @click="node.joinKeys.splice(i, 1)">delete</IconButton>
               </div>
             </div>
           </ElFormItem>
@@ -135,7 +137,13 @@
     <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover v-if="displaySchema" placement="top" width="240" v-model:value="fieldNameVisible" trigger="manual">
+        <ElPopover
+          v-if="displaySchema && !disabled"
+          placement="top"
+          width="240"
+          v-model:value="fieldNameVisible"
+          trigger="manual"
+        >
           <div ref="fieldPopover">
             <ElInput
               v-model:value="fieldName"
@@ -181,6 +189,8 @@
         :data="treeData"
         :render-content="renderContent"
         :empty-text="treeEmptyText"
+        @node-expand="onNodeExpandAndCollapse"
+        @node-collapse="onNodeExpandAndCollapse"
       ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
@@ -226,7 +236,8 @@ export default {
     nodeMap: Object,
     inputsMap: Object,
     hasTargetNode: Boolean,
-    schemaLoading: Boolean
+    schemaLoading: Boolean,
+    disabled: Boolean
   },
   components: {
     NodeIcon,
@@ -301,51 +312,27 @@ export default {
     },
 
     treeData() {
-      // console.log('computed:treeData')
-      let { schema } = this
+      let schema = this.schema ? [...this.schema] : []
 
       if (!schema) return []
 
-      const richFields = (inputs, targetPath) => {
-        let arr = []
-        for (const input of inputs) {
-          const inputNode = this.nodeMap[input]
-          let fields = this.nodeSchemaMap[input]
-          if (!fields) continue
-
-          let nodeTargetPath = inputNode.targetPath
-          if (nodeTargetPath && targetPath) {
-            nodeTargetPath = nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
-          }
-
-          if (this.inputsMap[input]?.length) {
-            arr = unionBy(arr, fields, richFields(this.inputsMap[input], nodeTargetPath), 'field_name')
-          } else {
-            // if (nodeTargetPath && targetPath) {
-            //   nodeTargetPath.replace(new RegExp(`${targetPath}?.`), '')
-            // }
-
-            if (nodeTargetPath) {
-              fields = fields.map(field => {
-                return {
-                  ...field,
-                  field_name: `${nodeTargetPath}.${field.field_name}`
-                }
-              })
-              fields.unshift({
-                field_name: nodeTargetPath,
-                dataType: 'DOCUMENT'
-              })
-            }
-            arr = unionBy(arr, fields)
-          }
-        }
-        return arr
-      }
       const inputs = this.inputsMap?.[this.node.id]
 
       if (inputs?.length) {
-        const mergedFields = richFields(this.inputsMap[this.node.id], this.node.targetPath)
+        const { targetPath } = this.node
+        let mergedFields = this.richFields(this.inputsMap[this.node.id], this.node.targetPath)
+
+        if (targetPath) {
+          mergedFields = mergedFields
+            .map(field => {
+              return {
+                ...field,
+                field_name: field.field_name.replace(new RegExp(`^${targetPath}\\.|^${targetPath}$`), '')
+              }
+            })
+            .filter(field => !!field.field_name)
+        }
+
         schema = unionBy(schema, mergedFields, 'field_name')
         schema.sort((a, b) => {
           let aVal, bVal
@@ -364,12 +351,9 @@ export default {
 
           return aVal - bVal
         })
-        console.log('schema', schema)
       }
 
-      const treeData = this.createTree(schema)
-
-      return treeData
+      return this.createTree(schema)
     },
 
     sourceNodes() {
@@ -809,6 +793,8 @@ export default {
       Object.keys(nodeAttrs).forEach(key => {
         this.dagNode.attrs[key] = nodeAttrs[key]
       })
+
+      console.log('this.dagNode.attrs', this.dagNode.attrs.connectionName, connection)
     },
 
     async onChangeConnection() {
@@ -839,6 +825,71 @@ export default {
           $emit(this, 'change-path', this.node, '')
         }
       }
+    },
+
+    onNodeExpandAndCollapse() {
+      let animationStartTime
+      let animationId
+
+      const revalidate = timestamp => {
+        if (!animationStartTime) {
+          animationStartTime = timestamp
+        }
+
+        const elapsedTime = timestamp - animationStartTime
+
+        this.jsPlumbIns.revalidate(this.node.id)
+
+        if (elapsedTime < 350) {
+          animationId = requestAnimationFrame(revalidate)
+        } else {
+          cancelAnimationFrame(animationId)
+        }
+      }
+
+      animationId = requestAnimationFrame(revalidate)
+    },
+
+    /**
+     * 根据写入路径，收集上游字段
+     * @param inputs
+     * @param targetPath
+     * @returns {*[]}
+     */
+    richFields(inputs, targetPath) {
+      let arr = []
+
+      for (const input of inputs) {
+        const inputNode = this.nodeMap[input]
+        let fields = this.nodeSchemaMap[input]
+
+        if (!fields) continue
+
+        let nodeTargetPath = inputNode.targetPath
+
+        if (nodeTargetPath) {
+          fields = fields.map(field => {
+            return {
+              ...field,
+              field_name: `${nodeTargetPath}.${field.field_name}`
+            }
+          })
+
+          fields.unshift({
+            field_name: nodeTargetPath,
+            dataType: inputNode.mergeType === 'updateIntoArray' ? 'ARRAY' : 'DOCUMENT'
+          })
+        }
+
+        if (this.inputsMap[input]?.length) {
+          const newFields = this.richFields(this.inputsMap[input], nodeTargetPath)
+          arr = unionBy(arr, fields, newFields, 'field_name')
+        } else {
+          arr = unionBy(arr, fields)
+        }
+      }
+
+      return arr
     }
   },
   emits: [

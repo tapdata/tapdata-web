@@ -66,7 +66,8 @@
                 temp.labelActionTitle
               }}</ElLink>
             </div>
-            <div v-if="['permissions'].includes(temp.key)" class="pt-2">
+            <pre v-if="temp.key === 'databaseLogInfo'" class="box-line__value" v-html="temp.value"></pre>
+            <div v-else-if="['permissions'].includes(temp.key)" class="pt-2">
               <ElTag v-for="per in permissions" :key="per.roleId" type="info" class="mr-2 mb-1">{{
                 per.roleName
               }}</ElTag>
@@ -123,7 +124,7 @@ import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
-import { connectionsApi, dataPermissionApi, usersApi } from '@tap/api'
+import { connectionsApi, dataPermissionApi, usersApi, proxyApi } from '@tap/api'
 import { VIcon, Drawer } from '@tap/component'
 import { getIcon } from '@tap/assets/icons'
 
@@ -149,6 +150,7 @@ export default {
       drawer: false,
       visible: false,
       timer: null,
+      databaseLogInfoTimer: null,
       direction: 'rtl',
       loading: false,
       showProgress: false,
@@ -284,7 +286,9 @@ export default {
     clearTimer() {
       // 清除定时器
       clearTimeout(this.timer)
+      clearTimeout(this.databaseLogInfoTimer)
       this.timer = null
+      this.databaseLogInfoTimer = null
     },
     handleClose() {
       this.clearTimer()
@@ -318,13 +322,14 @@ export default {
 
       return row
     },
-    open(row) {
+    async open(row) {
       this.visible = true
       this.showProgress = false
       this.formData = cloneDeep(row)
       this.connection = this.transformData(row)
       //组装数据
       this.connection['last_updated'] = dayjs(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      // await this.getDatabaseLogInfo(row)
       this.loadList(row)
       this.isDaas && this.loadPermissions(row.id)
     },
@@ -410,7 +415,7 @@ export default {
       })
     },
     getProgress() {
-      this.clearTimer()
+      clearTimeout(this.timer)
       connectionsApi
         .getNoSchema(this.connection.id)
         .then(data => {
@@ -447,7 +452,7 @@ export default {
       const heartbeatTable = await this.loadHeartbeatTable(row)
 
       this.connection.heartbeatTable = heartbeatTable?.[0]
-
+      console.log('row', row.databaseLogInfo?.value)
       // 有uri
       if (row.uri) {
         this.list = [
@@ -499,7 +504,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       } else {
         this.list = [
@@ -538,7 +555,19 @@ export default {
                   }
                 ]
               }
-            : {}
+            : {},
+          row.databaseLogInfo?.value
+              ? {
+                icon: 'warning-circle',
+                items: [
+                  {
+                    label: row.databaseLogInfo.key,
+                    key: 'databaseLogInfo',
+                    value: row.databaseLogInfo.value
+                  }
+                ]
+              }
+              : {}
         ]
       }
 
@@ -557,6 +586,9 @@ export default {
             }
           ]
         })
+
+      // DatabaseLogInfo
+      this.getDatabaseLogInfo(row)
     },
     getConnectionIcon() {
       const { connection } = this
@@ -633,6 +665,42 @@ export default {
       if (!this.isDaas) return false
       const data = row.permissionActions || []
       return !data.includes(type)
+    },
+
+    async getDatabaseLogInfo(row = {}) {
+      const { id } = row
+      const params = {
+        className: 'PDKConnectionService',
+        method: 'databaseLogInfoService',
+        args: [id]
+      }
+      try {
+        const data = await proxyApi.call(params)
+        row.databaseLogInfo = data || {}
+        // list 添加findDatabaseLogInfo
+        let findDatabaseLogInfo = this.list.find(t => t.items?.[0]?.key === 'databaseLogInfo')
+        if (findDatabaseLogInfo) {
+          findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
+          findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
+        } else {
+          row.databaseLogInfo.value &&
+            this.list.push({
+              icon: 'warning-circle',
+              items: [
+                {
+                  label: row.databaseLogInfo.key,
+                  key: 'databaseLogInfo',
+                  value: row.databaseLogInfo.value
+                }
+              ]
+            })
+        }
+        this.databaseLogInfoTimer = setTimeout(() => {
+          this.getDatabaseLogInfo(row)
+        }, 60000)
+      } catch (e) {
+        console.log(e)
+      }
     }
   },
   emits: ['test', 'close', 'reload-schema']

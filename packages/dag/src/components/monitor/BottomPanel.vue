@@ -8,7 +8,7 @@
       @action="$emit('action', arguments[0])"
     ></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs v-model:value="currentTab" class="setting-tabs h-100 flex-1 flex flex-column" key="bottomPanel">
+      <ElTabs v-model:value="currentTab" class="setting-tabs h-100 flex-1 flex flex-column w-100" key="bottomPanel">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
             v-bind="$attrs"
@@ -194,6 +194,18 @@ $headerHeight: 40px;
   will-change: width;
   box-sizing: border-box;
   z-index: 11;
+  :deep(.el-tabs__content) {
+	  > div {
+		  max-width: 100%;
+		  overflow-x: auto;
+		  > div {
+			  min-width: 1200px;
+		  }
+		  //.milestone-main, .node-log-main, .record-wrap, .alert-main {
+		  //  width: 0;
+		  //}
+	  }
+  }
   &.show-record {
     width: 320px;
   }

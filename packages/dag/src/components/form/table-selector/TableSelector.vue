@@ -57,6 +57,9 @@
                     <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
+                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-text-dark mr-1 mt-n1"
+                      >fingerprint</VIcon
+                    >
                     <span>{{ item }}</span>
                     <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
                       `(${getTableInfo(item).tableComment})`
@@ -155,6 +158,9 @@
                     <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
+                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-dark mr-1 mt-n1">
+                      fingerprint
+                    </VIcon>
                     <slot name="right-item" :row="item">{{ item }}</slot>
                     <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
                       `(${getTableInfo(item).tableComment})`
@@ -467,9 +473,9 @@ export default {
           let tables = data.map(it => it.tableName)
           let map = {}
           data.forEach((el = {}) => {
-            const { tableName, tableComment, primaryKeyCounts = 0 } = el
-            if (tableComment || primaryKeyCounts) {
-              map[tableName] = { tableComment, primaryKeyCounts }
+            const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
+            if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
+              map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
             }
           })
           this.tableMap = map

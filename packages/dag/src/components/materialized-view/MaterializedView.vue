@@ -14,7 +14,7 @@
         </div>
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
-          <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
+          <ElTooltip v-if="!disabled" transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
             <button @click="handleDelete" class="icon-btn">
               <VIcon size="20">delete</VIcon>
             </button>
@@ -75,9 +75,21 @@
             </button>
           </ElTooltip>
         </div>
+        <ElButton
+          v-if="buttonShowMap.Start"
+          :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
+          :loading="isSaving"
+          class="ml-auto"
+          size="medium"
+          type="primary"
+          @click="$emit('start')"
+        >
+          {{ $t('public_button_start') }}
+        </ElButton>
       </header>
       <PaperScroller v-if="showPaper" class="flex-1" ref="paperScroller" @change-scale="handleChangeScale">
         <Node
+          :disabled="disabled"
           v-for="node in nodes"
           :key="node.id"
           :class="{
@@ -110,6 +122,7 @@
           @load-schema="onLoadSchema(node.id)"
         ></Node>
         <TargetNode
+          :disabled="disabled"
           v-if="targetNode"
           :id="targetNode.id"
           :node="targetNode"
@@ -140,7 +153,16 @@ import { config, jsPlumb } from '../../instance'
 export default {
   name: 'MaterializedView',
   props: {
-    visible: Boolean
+    visible: Boolean,
+    disabled: Boolean,
+    isSaving: Boolean,
+    dataflow: Object,
+    buttonShowMap: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
   data() {
@@ -165,7 +187,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
     scaleTxt() {
@@ -230,7 +252,7 @@ export default {
   },
   mounted() {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
-      this.visible && this.handleDelete()
+      this.visible && !this.disabled && this.handleDelete()
     })
     Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
       e.preventDefault()
@@ -269,7 +291,7 @@ export default {
       this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
     },
 
-    handleDelete() {
+    async handleDelete() {
       if (!this.selectedNodeId || this.nodes.length === 1) return
 
       const { selectedNodeId: id } = this
@@ -292,6 +314,10 @@ export default {
         const indexOfParent = parentNode.children.findIndex(n => n.id === id)
         ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
         parentNode.children.push(...childrenNodes)
+
+        // 从父节点的输入上删除
+        const oldIndex = this.inputsMap[parentNode.id].indexOf(id)
+        this.inputsMap[parentNode.id].splice(oldIndex, 1)
       } else {
         const { mergeProperties } = this.activeNode
         const index = mergeProperties.findIndex(n => n.id === id)
@@ -320,6 +346,9 @@ export default {
       }
 
       $emit(this, 'delete-node', id)
+
+      await this.afterTaskSaved()
+      await this.onLoadTargetSchema(this.targetNode.id)
     },
 
     handleZoomIn() {
@@ -652,7 +681,7 @@ export default {
       if (this.targetNode?.id) {
         // 更新目标节点schema
         await this.afterTaskSaved()
-        await this.loadNodeSchema(this.targetNode.id)
+        await this.onLoadTargetSchema(this.targetNode.id)
       }
     },
 
@@ -762,7 +791,6 @@ export default {
     afterTaskSaved() {
       return new Promise(resolve => {
         setTimeout(() => {
-          console.log('afterTaskSaved', this.taskSaving)
           if (this.taskSaving) {
             let unwatch = this.$watch('taskSaving', () => {
               unwatch()

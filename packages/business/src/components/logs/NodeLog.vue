@@ -4,10 +4,10 @@
       v-show="!hideFilter"
       v-model:value="activeNodeId"
       :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
-      class="node-list border-end"
+      class="node-list border-end flex-shrink-0"
       @change="changeItem"
     ></NodeList>
-    <div class="main flex-fill flex flex-column px-4 py-3">
+    <div class="main node-log-main flex-fill flex flex-column px-4 py-3">
       <div class="flex mb-2 align-items-center justify-content-between">
         <div class="flex align-items-center">
           <TimeSelect

@@ -178,6 +178,8 @@
         :tooltip="$t('packages_business_task_list_nindekeyunxing')"
         :go-page="upgradeFeeGoPage"
       ></UpgradeCharges>
+
+      <MaterializedView ref="materializedView" :visible.sync="materializedViewVisible" disabled></MaterializedView>
     </section>
   </section>
 </template>
@@ -218,6 +220,7 @@ import NodeDetailDialog from './components/monitor/components/NodeDetailDialog'
 import { TIME_FORMAT_MAP, getTimeGranularity } from './components/monitor/util'
 import AlarmStatistics from './components/monitor/components/AlarmStatistics'
 import ConsolePanel from './components/migration/ConsolePanel'
+import MaterializedView from './components/materialized-view/MaterializedView.vue'
 
 export default {
   name: 'MigrationMonitor',
@@ -229,6 +232,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    MaterializedView,
     UpgradeFee,
     UpgradeCharges,
     AlarmStatistics,

@@ -3,7 +3,7 @@
     <NodeList
       v-model:value="activeNodeId"
       :label="$t('packages_business_milestone_list_zhengtijindu')"
-      class="node-list border-end mr-4"
+      class="node-list border-end mr-4 flex-shrink-0"
       :customClass="handleCustomClass"
       @change="handleChange"
     >
@@ -14,10 +14,14 @@
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
       <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" hide-on-single-page class="pt-4">
         <template v-slot:statusLabel="scope">
-          <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
-            <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">{{
-              $t('public_task_mission_error')
-            }}</span>
+          <div
+            v-if="scope.row.status === 'ERROR'"
+            :class="scope.row.statusColor"
+            class="inline-flex align-items-center cursor-pointer"
+            @click="handleError(scope.row)"
+          >
+            <span class="color-danger underline">{{ $t('public_task_mission_error') }}</span>
+            <VIcon class="color-danger ml-2">error</VIcon>
           </div>
           <div v-else :class="scope.row.statusColor">
             {{ scope.row.statusLabel }}
@@ -25,7 +29,7 @@
         </template>
       </VTable>
     </div>
-    <div v-else class="flex-fill overflow-auto py-4">
+    <div v-else class="milestone-main flex-fill overflow-auto py-4">
       <div v-for="(item, index) in wholeItems" :key="index" class="pro-line flex">
         <div class="position-relative">
           <div v-if="index + 1 !== wholeItems.length" class="step__line position-absolute"></div>

@@ -10,6 +10,7 @@
       </div>
       <div class="flex gap-1 p-1">
         <AsyncSelect
+          :disabled="disabled"
           v-model:value="node.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
@@ -24,11 +25,14 @@
               <NodeIcon :node="node" :size="20" />
             </div>
           </template>
+          <template #prepend-item>
+            <div class="px-5 py-2 fs-7 font-color-sslight">{{ $t('packages_dag_only_mongodb') }}</div>
+          </template>
         </AsyncSelect>
         <TableSelect
           v-model:value="node.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
-          :disabled="!node.connectionId"
+          :disabled="!node.connectionId || disabled"
           :method="loadTable"
           :connectionId="node.connectionId"
           itemType="object"
@@ -48,6 +52,8 @@
         :data="treeData"
         :render-content="renderContent"
         :empty-text="treeEmptyText"
+        @node-expand="onNodeExpandAndCollapse"
+        @node-collapse="onNodeExpandAndCollapse"
       ></ElTree>
       <code class="color-success-light-5">}</code>
     </div>
@@ -78,7 +84,8 @@ export default {
     },
     data: Object,
     jsPlumbIns: Object,
-    schemaLoading: Boolean
+    schemaLoading: Boolean,
+    disabled: Boolean
   },
   components: {
     NodeIcon,
@@ -554,6 +561,29 @@ export default {
       this.node.name = table
       await this.updateDag({ vm: this, isNow: true })
       $emit(this, 'load-schema')
+    },
+
+    onNodeExpandAndCollapse() {
+      let animationStartTime
+      let animationId
+
+      const revalidate = timestamp => {
+        if (!animationStartTime) {
+          animationStartTime = timestamp
+        }
+
+        const elapsedTime = timestamp - animationStartTime
+
+        this.jsPlumbIns.revalidate(this.node.id)
+
+        if (elapsedTime < 350) {
+          animationId = requestAnimationFrame(revalidate)
+        } else {
+          cancelAnimationFrame(animationId)
+        }
+      }
+
+      animationId = requestAnimationFrame(revalidate)
     }
   },
   emits: [

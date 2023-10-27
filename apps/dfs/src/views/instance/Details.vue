@@ -108,6 +108,7 @@
             type="text"
             :disabled="scope.row.status === 0"
             @click="handleDeleteUploadLog(scope.row)"
+            class="ml-3"
             >{{ $t('public_button_delete') }}</ElButton
           >
         </template>

@@ -10,7 +10,10 @@
       :placeholder="placeholder"
       @input="inputHandler"
     >
-      <ElOption v-for="opt in options" :key="opt" :label="opt" :value="opt"></ElOption>
+      <ElOption v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value">
+        <span>{{ opt.label }}</span>
+        <VIcon v-if="opt.is_index" size="12" class="field-icon ml-1"> fingerprint </VIcon>
+      </ElOption>
     </ElSelect>
     <template v-if="values.length">
       <div class="fields-selector--display flex p-2 mt-2">
@@ -51,7 +54,10 @@ export default {
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(this, 'update:value', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
+      const result = Array.from(new Set(values.filter(v => !!v.trim()))).join(',')
+
+	    $emit(this, 'update:value', result)
+	    $emit(this, 'change', result)
     },
     remove(index) {
       this.values.splice(index, 1)

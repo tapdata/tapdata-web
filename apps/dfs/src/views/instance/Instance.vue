@@ -184,12 +184,15 @@
                 <ElButton
                   size="mini"
                   v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
+                  type="primary"
                   @click="toDeploy(item)"
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
                 <ElButton
                   name="start"
                   size="mini"
+                  type="primary"
+                  plain
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleStart(item)"
@@ -203,6 +206,8 @@
                     !stopBtnDisabled(item)
                   "
                   size="mini"
+                  type="primary"
+                  plain
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
                   >{{ $t('public_button_stop') }}</ElButton
@@ -210,18 +215,22 @@
                 <ElButton
                   name="restart"
                   size="mini"
+                  type="warning"
+                  plain
                   v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRenew(item)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                  >{{ $t('public_button_restart') }}</ElButton
                 >
                 <ElButton
                   name="restart"
                   size="mini"
+                  type="warning"
+                  plain
                   v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRestart(item)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                  >{{ $t('public_button_restart') }}</ElButton
                 >
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <!--68-2 免费实例可以删除-->
@@ -246,6 +255,7 @@
                   v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
                   class="mr-2"
                   size="mini"
+                  type="primary"
                   @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
@@ -259,22 +269,25 @@
                     placement="top"
                     :content="getTooltipContent(item, 'upgrading')"
                   >
-                    <div class="upgrading-box">
-                      <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
-                      <ElProgress
-                        v-if="upgradingProgres(item) !== undefined"
-                        class="upgrading-progress"
-                        type="circle"
-                        color="rgb(61, 156, 64)"
-                        :percentage="upgradingProgres(item)"
-                        :show-text="false"
-                        :format="
-                          value => {
-                            return value
-                          }
-                        "
-                      ></ElProgress>
-                    </div>
+                    <ElButton size="mini" disabled>
+                      <span class="inline-flex align-items-center">
+                        <span>{{ $t('public_status_altering') }}</span>
+                        <ElProgress
+                          class="upgrading-progress mx-1"
+                          type="circle"
+                          color="#3b47e5"
+                          stroke-width="20"
+                          :percentage="upgradingProgres(item) || 0"
+                          :show-text="false"
+                          :format="
+                            value => {
+                              return value
+                            }
+                          "
+                        ></ElProgress>
+                        <span class="color-primary">{{ (upgradingProgres(item) || 0) + '%' }}</span>
+                      </span>
+                    </ElButton>
                   </ElTooltip>
                   <ElTooltip
                     v-else-if="upgradeFailedFlag(item)"
@@ -283,9 +296,16 @@
                     placement="top"
                     :content="getTooltipContent(item, 'fail')"
                   >
-                    <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(item)"
-                      >upgrade-error-color</VIcon
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      plain
+                      class="cursor-pointer block inline-flex align-items-center"
+                      @click="showUpgradeErrorDialogFnc(item)"
                     >
+                      <span>{{ $t('dfs_instance_instance_shengji') }}</span>
+                      <VIcon size="14" class="color-warning ml-2">warning</VIcon>
+                    </el-button>
                   </ElTooltip>
                   <ElTooltip
                     v-else-if="!upgradeFlag(item)"
@@ -294,9 +314,14 @@
                     placement="top"
                     :content="getTooltipContent(item)"
                   >
-                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)">{{
-                      $t('dfs_instance_instance_shengji')
-                    }}</el-button>
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      plain
+                      class="cursor-pointer block"
+                      @click="showUpgradeDialogFnc(item)"
+                      >{{ $t('dfs_instance_instance_shengji') }}</el-button
+                    >
                   </ElTooltip>
                 </template>
               </div>
@@ -405,7 +430,8 @@
                 <VButton
                   :loading="selectedRow.btnLoading.stop"
                   :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                  type="primary"
+                  type="danger"
+                plain
                   class="flex-fill min-w-0"
                   @click="handleStop(selectedRow)"
                 >
@@ -1969,8 +1995,8 @@ export default {
 }
 .upgrading-progress {
   :deep(.el-progress-circle) {
-    width: 20px !important;
-    height: 20px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 }
 .inline-input {

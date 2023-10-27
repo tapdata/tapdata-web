@@ -37,24 +37,27 @@
         >
           <VIcon size="20">action-delete</VIcon>
         </div>
-        <div
-          name="action-enable"
-          class="cursor-pointer"
-          v-if="data.disabled"
-          @click.stop="$emit('enable', data)"
-          :title="$t('packages_dag_btn_disable_node')"
-        >
-          <VIcon size="20">action-enable</VIcon>
-        </div>
-        <div
-          name="action-disable"
-          class="cursor-pointer"
-          v-else
-          @click.stop="$emit('disable', data)"
-          :title="$t('packages_dag_btn_disable_node')"
-        >
-          <VIcon size="20">action-disable</VIcon>
-        </div>
+
+        <template v-if="!hideDisableAction">
+          <div
+            name="action-enable"
+            class="cursor-pointer"
+            v-if="data.disabled"
+            @click.stop="$emit('enable', data)"
+            :title="$t('packages_dag_btn_disable_node')"
+          >
+            <VIcon size="20">action-enable</VIcon>
+          </div>
+          <div
+            name="action-disable"
+            class="cursor-pointer"
+            v-else
+            @click.stop="$emit('disable', data)"
+            :title="$t('packages_dag_btn_disable_node')"
+          >
+            <VIcon size="20">action-disable</VIcon>
+          </div>
+        </template>
       </div>
       <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
         <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
@@ -91,7 +94,8 @@ export default {
       type: String,
       required: true
     },
-    jsPlumbIns: Object
+    jsPlumbIns: Object,
+    hideDisableAction: Boolean
   },
   mixins: [deviceSupportHelpers],
   data() {

@@ -203,6 +203,8 @@ export default {
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({
           uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`]
+       ,
+          cssClass: this.nodeById(source).attrs.disabled ? 'connection-disabled' : ''
         })
       })
     },
@@ -372,6 +374,7 @@ export default {
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
 
+      if (target.attrs.disabled) return false
       if (!this.checkAsTarget(target, showMsg)) return false
       if (!this.checkTargetMaxInputs(target, showMsg)) return false
       return this.allowConnect(sourceId, targetId) && this.checkAllowTargetOrSource(source, target, showMsg)
@@ -399,6 +402,7 @@ export default {
     async makeTaskName(source) {
       const taskNames = await taskApi.get({
         filter: JSON.stringify({
+          limit: 9999,
           fields: { name: 1 },
           where: { name: { like: `^${source}\\d+$` } }
         })
@@ -843,7 +847,7 @@ export default {
         const connectionIns = info.connection
 
         info.connection.bind('click', () => {
-          if (this.stateIsReadonly) return
+          if (this.stateIsReadonly || connectionIns.hasClass('connection-disabled')) return
           this.handleDeselectAllConnections()
           info.connection.showOverlay('removeConn')
           info.connection.showOverlay('addNodeOnConn')
@@ -851,15 +855,16 @@ export default {
           this.selectConnection(connection)
         })
         info.connection.bind('mouseover', () => {
-          if (!this.stateIsReadonly) {
-            info.connection.showOverlay('removeConn')
-            info.connection.showOverlay('addNodeOnConn')
-          }
+          if (this.stateIsReadonly || connectionIns.hasClass('connection-disabled')) return
+
+          info.connection.showOverlay('removeConn')
+          info.connection.showOverlay('addNodeOnConn')
         })
         info.connection.bind('mouseout', () => {
           if (
-            connectionIns.hasClass('connection-selected') /* ||
-          (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
+            connectionIns.hasClass('connection-selected')  ||
+          connectionIns.hasClass('connection-disabled') /* ||
+            (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
           )
             return
           connectionIns.hideOverlay('removeConn')
@@ -935,6 +940,9 @@ export default {
         if (this.stateIsReadonly) return false
         // 根据连接类型判断，节点是否仅支持作为目标
         const node = this.nodeById(this.getRealId(sourceId))
+
+        if (node.disabled || node.attrs.disabled) return false
+
         return this.checkAsSource(node, true)
       })
 
@@ -942,7 +950,9 @@ export default {
       jsPlumbIns.bind('connectionDrag', info => {
         if (this.stateIsReadonly) return false
         const source = this.nodeById(this.getRealId(info.sourceId))
-        const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
+        const canBeConnectedNodes = this.allNodes.filter(
+          target => !target.attrs.disabled && this.checkCanBeConnected(source.id, target.id)
+        )
         this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
       })
 
@@ -1027,22 +1037,24 @@ export default {
       this.nodeMenu.show = false // 防止节点删除后，popover仍在显示
     },
 
-    findParentNodes(id) {
+    findParentNodes(id, excludeId) {
       let node = this.scope.findNodeById(id)
       const nodes = []
       let parentIds = node.$inputs || []
 
-      parentIds.forEach(id => {
-        let node = this.scope.findNodeById(id)
+      for (const parentId of parentIds) {
+        if (parentId === excludeId) continue
 
-        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1) return
+        let node = this.scope.findNodeById(parentId)
+
+        if (!node || node.__Ctor.maxInputs !== 1 || node.$outputs.length > 1) continue
 
         nodes.push(node)
 
         if (node.$inputs?.length) {
-          nodes.push(...this.findParentNodes(id))
+          nodes.push(...this.findParentNodes(parentId))
         }
-      })
+      }
 
       return nodes
     },
@@ -1053,13 +1065,18 @@ export default {
       let ids = node.$outputs || []
 
       ids.forEach(id => {
-        let node = this.scope.findNodeById(id)
+        let child = this.scope.findNodeById(id)
 
-        if (!node || node.__Ctor.maxInputs !== 1) return
+        if (!child) return
 
-        nodes.push(node)
+        // Join 节点特殊处理，整个Join链路禁用
+        if (child.type === 'join_processor') {
+          nodes.push(...this.findParentNodes(child.id, node.id))
+        } else if (child.__Ctor.maxInputs !== 1) return
 
-        if (node.$outputs?.length) {
+        nodes.push(child)
+
+        if (child.$outputs?.length) {
           nodes.push(...this.findChildNodes(id))
         }
       })
@@ -1095,12 +1112,19 @@ export default {
             target: NODE_PREFIX + node.id
           })
         )
+        connections.push(
+          ...this.jsPlumbIns.getConnections({
+            source: NODE_PREFIX + node.id
+          })
+        )
       })
 
       const handler = value ? 'addClass' : 'removeClass'
       connections.forEach(connection => {
         connection[handler]('connection-disabled')
       })
+
+      this.updateDag({ vm: this })
     },
 
     handleZoomIn() {
@@ -1287,9 +1311,9 @@ export default {
       }
     },
 
-    async validateAllNodes() {
+    async validateAllNodes(nodes) {
       await Promise.all(
-        this.allNodes.map(node => {
+        nodes.map(node => {
           if (this.activeNodeId === node.id) {
             return this.$refs.configPanel.validateForm()
           } else {
@@ -1581,9 +1605,16 @@ export default {
 
     async validate() {
       if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
-      if (!this.allNodes.length) return this.$t('packages_dag_editor_cell_validate_none_data_node')
 
-      await this.validateAllNodes()
+      const nodes = this.allNodes.filter(node => {
+        return !node.disabled && !node.attrs.disabled
+      })
+
+      if (nodes.length < 2) {
+        return this.$t('packages_dag_editor_cell_validate_none_data_node')
+      }
+
+      await this.validateAllNodes(nodes)
 
       return await this.eachValidate(
         this.validateSetting,

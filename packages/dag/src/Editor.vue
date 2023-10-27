@@ -98,7 +98,11 @@
 
       <MaterializedView
         ref="materializedView"
-        v-model:visible="materializedViewVisible"
+        v-model:is-saving="isSaving"
+        :visible="materializedViewVisible"
+        :buttonShowMap="buttonShowMap"
+        :dataflow="dataflow"
+        @start="handleStart"
         @add-node="onAddMaterializedViewNode"
         @add-target-node="onAddMaterializedViewTargetNode()"
         @delete-node="handleDeleteById"
@@ -375,6 +379,7 @@ export default {
 
       const errorMsg = await this.validate()
       if (errorMsg) {
+        this.setMaterializedViewVisible(false)
         if (this.destory) return
         this.$message.error(errorMsg)
         this.isSaving = false

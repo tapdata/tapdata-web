@@ -1,6 +1,6 @@
 <template>
   <div class="log-container flex justify-content-between">
-    <div class="filter-items border-end">
+    <div class="filter-items border-end flex-shrink-0">
       <div
         v-for="(item, index) in items"
         :key="index"
@@ -15,7 +15,7 @@
         <div><VIcon>arrow-right</VIcon></div>
       </div>
     </div>
-    <div class="main flex-fill flex flex-column pt-5">
+    <div class="main alert-main flex-fill flex flex-column pt-5">
       <div class="flex ml-4 mb-4 align-items-center">
         <div>
           <span>{{ $t('packages_dag_components_alert_gaojingjibie') }}</span>
@@ -72,7 +72,7 @@
             {{ scope.row.levelLabel }}
           </span>
         </template>
-        <template fixed="right" v-slot:operation="scope">
+        <template #operation="scope">
           <div class="operate-columns">
             <ElButton
               size="mini"
@@ -146,18 +146,20 @@ export default {
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
-          prop: 'summary'
+          prop: 'summary',
+          minWidth: 120
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'firstOccurrenceTime',
-          dataType: 'time'
+          dataType: 'time',
+          minWidth: 180
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          width: 160
+          minWidth: 180
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -167,7 +169,7 @@ export default {
         {
           label: i18n.t('public_operation'),
           slotName: 'operation',
-          fixed: 'right',
+          // fixed: 'right',
           width: 150
         }
       ],
