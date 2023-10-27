@@ -773,15 +773,9 @@ export default {
               alarmSettings
             })
           ).then(() => {
-            // this.$router.back()
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$router.push({
-              name: 'dataVerificationList'
-            })
+            this.$router.back() // back 保留上个路由的参数
           })
-          // .catch(err => {
-          //   this.$message.error(message)
-          // })
         }
       })
     },
