@@ -1,6 +1,8 @@
 import axios, { AxiosInstance } from 'axios'
 
 const CancelToken = axios.CancelToken
+const isCancel = axios.isCancel
+
 export default class Http {
   url: string
   axios: AxiosInstance
@@ -71,4 +73,4 @@ export default class Http {
     return this.axios.get(this.url + '/findOne', { params })
   }
 }
-export { CancelToken }
+export { CancelToken, isCancel }

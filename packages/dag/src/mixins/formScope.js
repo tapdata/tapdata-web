@@ -986,7 +986,8 @@ export default {
     afterTaskSaved() {
       return new Promise(resolve => {
         if (this.taskSaving) {
-          this.$watch('taskSaving', () => {
+          let unwatch = this.$watch('taskSaving', () => {
+            unwatch()
             resolve()
           })
         } else {
