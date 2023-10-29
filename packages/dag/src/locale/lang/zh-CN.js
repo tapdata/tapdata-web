@@ -311,6 +311,7 @@ export default {
   packages_dag_nodes_aggregate_juhehanshu: '聚合函数',
   packages_dag_nodes_database_zengliangduoxiancheng: '增量多线程写入',
   packages_dag_nodes_database_quanliangduoxiancheng: '全量多线程写入',
+  packages_dag_nodes_database_duoxianchengfenqujian: '多线程写入-分区键',
   packages_dag_nodes_database_bucunzaishidiu: '不存在时丢弃',
   packages_dag_nodes_database_shanchushijian: '删除事件',
   packages_dag_nodes_database_bucunzaishicha: '不存在时插入',
