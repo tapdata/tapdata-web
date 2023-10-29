@@ -405,6 +405,30 @@ export class Table extends NodeType {
                         }
                       }
                     }
+                  },
+                  concurrentWritePartitionMap: {
+                    type: 'object',
+                    title: '多线程写入-分区键',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'TableFieldSelect',
+                    'x-component-props': {
+                      nodeId: `{{ $values.id }}`,
+                      tableName: `{{ $values.tableName }}`,
+                      defaultFields: `{{ $values.updateConditionFields }}`,
+                      refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`
+                    },
+                    'x-reactions': [{
+                      dependencies: ['.initialConcurrent', '.cdcConcurrent'],
+                      fulfill: {
+                        state: {
+                          display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}'
+                        }
+                      }
+                    }],
+                    'x-validator': {
+                      triggerType: 'onBlur',
+                      validator: `{{validateConcurrentWritePartitionMap}}`
+                    }
                   }
                 }
               },
