@@ -5,6 +5,7 @@
       filterable
       allow-create
       default-first-option
+      v-bind="$attrs"
       class="fields-selector--input"
       v-model="selected.fields"
       @change="handleChange"
@@ -22,6 +23,7 @@ export default {
   name: 'AsyncSelect',
 
   props: {
+    value: Object,
     nodeId: String,
     tableName: String,
     defaultFields: Array
@@ -40,15 +42,19 @@ export default {
 
   watch: {
     tableName(v) {
-      console.log('watch-tableName', v)
       this.clear()
       this.loadData()
     }
   },
 
   mounted() {
-    this.selected.table = this.tableName
-    this.selected.fields = cloneDeep(this.defaultFields)
+    if (!isEmpty(this.value)) {
+      this.selected.table = this.tableName
+      this.selected.fields = cloneDeep(this.value[this.tableName])
+    } else {
+      this.selected.table = this.tableName
+      this.selected.fields = cloneDeep(this.defaultFields)
+    }
     this.handleChange()
     this.loadData()
   },
@@ -85,5 +91,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped></style>
