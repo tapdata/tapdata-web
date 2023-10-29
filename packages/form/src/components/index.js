@@ -20,5 +20,6 @@ export * from './input'
 export * from './batch-add-field'
 export * from './json-editor'
 export * from './form-collapse'
+export * from './table-field-select'
 
 export * from '@formily/element'
