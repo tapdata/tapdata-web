@@ -424,7 +424,11 @@ export class Table extends NodeType {
                           display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}'
                         }
                       }
-                    }]
+                    }],
+                    'x-validator': {
+                      triggerType: 'onBlur',
+                      validator: `{{validateConcurrentWritePartitionMap}}`
+                    }
                   }
                 }
               },
