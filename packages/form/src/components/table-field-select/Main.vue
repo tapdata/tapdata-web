@@ -26,7 +26,8 @@ export default {
     value: Object,
     nodeId: String,
     tableName: String,
-    defaultFields: Array
+    defaultFields: Array,
+    refresh: String
   },
 
   data() {
@@ -41,26 +42,33 @@ export default {
   },
 
   watch: {
-    tableName(v) {
+    tableName() {
       this.clear()
-      this.loadData()
+      this.loadOptions()
+    },
+    refresh() {
+      this.init()
     }
   },
 
   mounted() {
-    if (!isEmpty(this.value)) {
-      this.selected.table = this.tableName
-      this.selected.fields = cloneDeep(this.value[this.tableName])
-    } else {
-      this.selected.table = this.tableName
-      this.selected.fields = cloneDeep(this.defaultFields)
-    }
+    this.init()
     this.handleChange()
-    this.loadData()
+    this.loadOptions()
   },
 
   methods: {
-    async loadData() {
+    init() {
+      if (!isEmpty(this.value)) {
+        this.selected.table = this.tableName
+        this.selected.fields = cloneDeep(this.value[this.tableName])
+      } else {
+        this.selected.table = this.tableName
+        this.selected.fields = cloneDeep(this.defaultFields)
+      }
+    },
+
+    async loadOptions() {
       const data = await metadataInstancesApi.nodeSchema(this.nodeId)
       this.options = data[0].fields
         .map(item => ({

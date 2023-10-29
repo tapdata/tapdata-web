@@ -414,7 +414,8 @@ export class Table extends NodeType {
                     'x-component-props': {
                       nodeId: `{{ $values.id }}`,
                       tableName: `{{ $values.tableName }}`,
-                      defaultFields: `{{ $values.updateConditionFields }}`
+                      defaultFields: `{{ $values.updateConditionFields }}`,
+                      refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`
                     },
                     'x-reactions': [{
                       dependencies: ['.initialConcurrent', '.cdcConcurrent'],
