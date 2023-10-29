@@ -324,6 +324,7 @@ export default {
   packages_dag_nodes_aggregate_juhehanshu: 'Aggregate Function',
   packages_dag_nodes_database_zengliangduoxiancheng: 'Incremental multi-threaded write',
   packages_dag_nodes_database_quanliangduoxiancheng: 'Full multi-threaded write',
+  packages_dag_nodes_database_duoxianchengfenqujian: 'Multithreaded Write - Partition Key',
   packages_dag_nodes_database_bucunzaishidiu: 'Discard if not exists',
   packages_dag_nodes_database_shanchushijian: 'Delete Event',
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
