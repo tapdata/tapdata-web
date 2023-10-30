@@ -22,36 +22,33 @@
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
-        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_revoke') + `(${commandCode} + Z)`">
+        <ElTooltip :hide-after="0" :content="$t('public_button_revoke') + `(${commandCode} + Z)`">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
         </ElTooltip>
         <!--重做-->
-        <ElTooltip
-          transition="tooltip-fade-in"
-          :content="$t('packages_dag_button_redo') + `(${commandCode} + Shift + Z)`"
-        >
+        <ElTooltip :hide-after="0" :content="$t('packages_dag_button_redo') + `(${commandCode} + Shift + Z)`">
           <button @click="$emit('redo')" class="icon-btn">
             <VIcon size="20">redo</VIcon>
           </button>
         </ElTooltip>
         <!--删除-->
-        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
+        <ElTooltip :hide-after="0" :content="$t('public_button_delete') + '(Del)'">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
         </ElTooltip>
       </template>
       <!--内容居中-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
+      <ElTooltip :hide-after="0" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
       <!--自动布局-->
       <ElTooltip
-        transition="tooltip-fade-in"
+        :hide-after="0"
         :content="$t('packages_dag_button_auto_layout') + `(${commandCode} + ${optionCode} + L)`"
       >
         <button @click="$emit('auto-layout')" class="icon-btn">
@@ -59,20 +56,20 @@
         </button>
       </ElTooltip>
       <!--移动画布-->
-      <!--<ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_move_paper')">
+      <!--<ElTooltip :hide-after="0" :content="$t('packages_dag_button_move_paper')">
               <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
                 <VIcon size="20">hand</VIcon>
               </button>
             </ElTooltip>-->
       <!--拖选画布-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_mouse_selection')">
+      <ElTooltip :hide-after="0" :content="$t('packages_dag_mouse_selection')">
         <button @click="toggleShiftKeyPressed()" class="icon-btn" :class="{ active: shiftKeyPressed }">
           <VIcon size="20">kuangxuan</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
+      <ElTooltip :hide-after="0" :content="$t('packages_dag_button_zoom_out') + `(${commandCode} -)`">
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
@@ -99,32 +96,35 @@
         </ElPopover>
       </div>
       <!--放大-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
+      <ElTooltip :hide-after="0" :content="$t('packages_dag_button_zoom_in') + `(${commandCode} +)`">
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--信息输出-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('public_task_log')">
+      <ElTooltip :hide-after="0" :content="$t('public_task_log')">
         <button @click="toggleConsole()" class="icon-btn" :class="{ active: showConsole }">
           <VIcon size="16">list</VIcon>
         </button> </ElTooltip
       ><VDivider class="mx-3" vertical inset></VDivider>
       <!--搜索节点-->
       <ElPopover
-        v-model:value="showSearchNodePopover"
+        v-model:visible="showSearchNodePopover"
+        width="auto"
         placement="bottom"
         trigger="click"
         popper-class="rounded-xl p-0"
         @after-leave="nodeSearchInput = null"
       >
-        <template v-slot:reference>
-          <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_search_node')">
-            <button class="icon-btn mx-2">
-              <VIcon size="20">magnify</VIcon>
-            </button>
-          </ElTooltip>
+        <template #reference>
+          <div class="inline-flex">
+            <ElTooltip :hide-after="0" :content="$t('packages_dag_search_node')">
+              <button class="icon-btn mx-2">
+                <VIcon size="20">magnify</VIcon>
+              </button>
+            </ElTooltip>
+          </div>
         </template>
 
         <div class="choose-pane-wrap">
@@ -607,17 +607,11 @@ $sidebarBg: #fff;
 <style lang="scss">
 .choose-pane-wrap {
   max-width: 450px;
-  .input-filled .el-input__inner {
-    height: 40px;
-    line-height: 40px;
-  }
 }
 
 .input-filled {
-  .el-input__inner {
-    border: 0;
-    border-radius: 0;
-    background: unset;
+  .el-input__wrapper {
+    box-shadow: none;
   }
 }
 .choose-list-wrap {

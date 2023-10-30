@@ -14,22 +14,17 @@ export default {
     if (!this.$attrs.role || this.$attrs.role === 'separator') {
       orientation = this.vertical ? 'vertical' : 'horizontal'
     }
-    return Vue.h(
-      'hr',
-      plantRenderPara({
-        class: {
-          'v-divider': true,
+    return Vue.h('hr', {
+      role: 'separator',
+      'aria-orientation': orientation,
+      class: [
+        'v-divider',
+        {
           'v-divider--inset': this.inset,
           'v-divider--vertical': this.vertical
-        },
-        attrs: {
-          role: 'separator',
-          'aria-orientation': orientation,
-          ...this.$attrs
-        },
-        on: this.$listeners
-      })
-    )
+        }
+      ]
+    })
   }
 }
 </script>
