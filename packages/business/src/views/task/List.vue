@@ -545,7 +545,8 @@ export default {
         functionRetryStatus: true,
         taskRetryStatus: true,
         shareCdcStop: true,
-        shareCdcStopMessage: true
+        shareCdcStopMessage: true,
+        taskRetryStartTime: true
       }
       let where = {
         syncType
