@@ -204,7 +204,7 @@ export default defineComponent({
                 })}
               </div>
             </div>
-            <div staticClass="flex-1 min-h-0 position-relative">
+            <div class="flex-1 min-h-0 position-relative">
               <ProTable
                 class={['catalog-table']}
                 ref="table"

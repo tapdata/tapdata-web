@@ -1,11 +1,10 @@
 <template>
-  <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
+  <div class="df-node">
     <div class="df-node-icon">
-      <component :is="$options.components.NodeIcon" :node="props.node" />
-      <!--<NodeIcon :node="props.node"></NodeIcon>-->
+      <NodeIcon :node="node" />
     </div>
-    <slot v-bind:text="props.node.name" name="text">
-      <div class="df-node-text">{{ props.node.name }}</div>
+    <slot v-bind:text="node.name" name="text">
+      <div class="df-node-text">{{ node.name }}</div>
     </slot>
     <slot></slot>
   </div>

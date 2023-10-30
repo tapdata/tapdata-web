@@ -325,7 +325,6 @@ export default {
     'forceStop',
     'stop',
     'change-name',
-    ,
     'page-return',
     'center-content',
     'zoom-out',

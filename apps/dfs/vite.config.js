@@ -6,7 +6,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
-import requireTransform from 'vite-plugin-require-transform'
 // import Icons from 'unplugin-icons/vite'
 // import IconsResolver from 'unplugin-icons/resolver'
 import path from 'path'
@@ -173,10 +172,4 @@ export default defineConfig({
       }
     }
   }
-
-  // optimizeDeps: {
-  //   esbuildOptions: {
-  //     plugins: [esbuildCommonjs(['ali-oss'])]
-  //   }
-  // }
 })

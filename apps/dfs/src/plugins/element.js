@@ -1,5 +1,6 @@
 import ElementPlus, { ElLoading } from 'element-plus'
-// import 'element-plus/lib/theme-chalk/index.css'
+import 'element-plus/theme-chalk/src/message.scss'
+
 import i18n from '@/i18n'
 
 // TODO 可能需要重写适配
@@ -38,7 +39,7 @@ class MessageConstructor {
 export const Message = new MessageConstructor()*/
 
 export const install = app => {
-  app.use(ElementPlus, { size: 'small', i18n: i18n.global.t })
+  app.use(ElementPlus, { i18n: i18n.global.t })
   app.use(ElLoading)
 }
 

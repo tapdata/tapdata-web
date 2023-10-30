@@ -594,8 +594,7 @@ export default {
     'nodeSelected',
     'add-node',
     'deselectAllNodes',
-    'load-schema',
-    ,
+    'load-schema'
   ]
 }
 </script>

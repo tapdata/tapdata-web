@@ -312,8 +312,10 @@ export default {
 
       return (
         <div
-          staticClass="custom-tree-node flex align-items-center position-relative"
-          class={{ grabbable: data.isObject, 'opacity-50': data.disabled }}
+          class={[
+            'custom-tree-node flex align-items-center position-relative',
+            { grabbable: data.isObject, 'opacity-50': data.disabled }
+          ]}
           onClick={() => {
             $emit(this, 'preview', data, node.parent.data)
           }}

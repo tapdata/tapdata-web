@@ -3,6 +3,7 @@ import { defineComponent, ref, nextTick } from 'vue'
 import i18n from '@tap/i18n'
 
 export const ClipboardButton = defineComponent({
+  name: 'ClipboardButton',
   props: {
     content: String,
     title: String,
@@ -23,12 +24,15 @@ export const ClipboardButton = defineComponent({
       default: false
     }
   },
-  setup(props, { attrs, refs }) {
+  setup(props, { attrs }) {
+    // 声明一个 ref 来存放该元素的引用
+    // 必须和模板里的 ref 同名
+    const btnRef = ref(null)
+    const iconRef = ref(null)
+    const tooltipRef = ref(null)
     const contentRef = ref(props.tooltip)
     const onMouseleave = () => {
-      // 加快关闭tooltip
-      refs.tooltip.setExpectedState(false)
-      refs.tooltip.handleClosePopper()
+      btnRef.value.$el.blur()
       setTimeout(() => {
         contentRef.value = props.tooltip
       }, 200)
@@ -49,21 +53,27 @@ export const ClipboardButton = defineComponent({
       input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
       document.execCommand?.('copy')
       document.body.removeChild(input)
-      props.icon ? refs.icon.focus() : refs.btn.$el.focus()
+      props.icon ? iconRef.value.focus() : btnRef.value.$el.focus()
       contentRef.value = props.finishTooltip
 
       // 提示内容改变，更新popper位置
       nextTick(() => {
-        refs.tooltip.updatePopper()
+        tooltipRef.value.updatePopper()
       })
     }
 
     return () => {
       return (
-        <ElTooltip ref="tooltip" transition="tooltip-fade-in" placement="top" content={contentRef.value}>
+        <ElTooltip
+          ref={tooltipRef}
+          transition="tooltip-fade-in"
+          placement="top"
+          content={contentRef.value}
+          hide-after={0}
+        >
           {props.icon ? (
             <i
-              ref="icon"
+              ref={iconRef}
               class="p-2 cursor-pointer iconfont icon-fuzhi1"
               style="min-width: unset;"
               attrs={attrs}
@@ -72,14 +82,14 @@ export const ClipboardButton = defineComponent({
             ></i>
           ) : (
             <ElButton
-              ref="btn"
+              ref={btnRef}
               class="p-2"
               style="min-width: unset;"
-              icon="el-icon-document-copy"
               attrs={attrs}
               onClick={onCopy}
-              vOn:mouseleave_native={onMouseleave}
+              onMouseleave={onMouseleave}
             >
+              <VIcon>copy</VIcon>
               {props.title}
             </ElButton>
           )}

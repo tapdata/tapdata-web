@@ -280,7 +280,7 @@ const TaskList = defineComponent({
       const list = isLimit.value ? props.list.slice(0, limit) : props.list
 
       return (
-        <div staticClass="item__content position-relative">
+        <div class="item__content position-relative">
           {props.list.length ? (
             <div class="task-list">
               <div class="task-list-content">
@@ -377,8 +377,7 @@ const TaskList = defineComponent({
                     }}
                     size="mini"
                     round
-                    staticClass="task-list-item-more fs-8"
-                    class={{ 'is-reverse': !isLimit.value }}
+                    class={['task-list-item-more fs-8', { 'is-reverse': !isLimit.value }]}
                   >
                     {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
                     <VIcon class="ml-1">arrow-down</VIcon>

@@ -82,17 +82,7 @@ export default ({ routes }) => {
     window.$vueApp.component(VIcon.name, VIcon)
     window.$vueApp.component(VButton.name, VButton)
 
-    window.$vueApp.mixin({
-      created() {
-        // 创建实例时传入wsOptions，即可默认开启websocket
-        let wsOptions = this.$options.wsOptions
-        // 根实例才有ws
-        if (wsOptions) {
-          window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
-        }
-      }
-    })
-
+    window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
     window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
       return new Promise((resolve, reject) => {
         VConfirm.confirm(message, title, options)

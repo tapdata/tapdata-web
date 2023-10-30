@@ -903,7 +903,6 @@ export default {
     'nodeSelected',
     'add-node',
     'load-schema',
-    ,
     'add-target-node',
     'change-parent',
     'change-path'

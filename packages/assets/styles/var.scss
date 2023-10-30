@@ -74,4 +74,10 @@ $iconFillColor: (
       'base': map-get($color, primary)
     ),
   ),
+  $border-radius: (
+    'base': 6px,
+    'small': 4px,
+    'round': 20px,
+    'circle': 100%,
+  )
 );

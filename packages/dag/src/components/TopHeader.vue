@@ -376,7 +376,6 @@ export default {
     'start',
     'change-name',
     'locate-node',
-    ,
     'page-return',
     'undo',
     'redo',

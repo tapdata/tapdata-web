@@ -17,7 +17,6 @@
     </div>
     <VIcon
       v-if="!readonly"
-      ,
       v-show="!hiddenIcon"
       @click="handleFocusInput"
       class="text-editable-icon ml-2 flex-shrink-0"

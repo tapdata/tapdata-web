@@ -56,7 +56,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@cn-xufei/vite-plugin-svg-icons": "^2.0.1",
+    "@cn-xufei/vite-plugin-svg-icons": "^2.0.2",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",

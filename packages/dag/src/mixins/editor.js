@@ -202,8 +202,7 @@ export default {
       // 连线
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({
-          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`]
-       ,
+          uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
           cssClass: this.nodeById(source).attrs.disabled ? 'connection-disabled' : ''
         })
       })
@@ -862,8 +861,8 @@ export default {
         })
         info.connection.bind('mouseout', () => {
           if (
-            connectionIns.hasClass('connection-selected')  ||
-          connectionIns.hasClass('connection-disabled') /* ||
+            connectionIns.hasClass('connection-selected') ||
+            connectionIns.hasClass('connection-disabled') /* ||
             (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
           )
             return

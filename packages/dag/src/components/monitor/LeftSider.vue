@@ -790,9 +790,6 @@ export default {
 
       &__arrow {
         order: -1;
-        &:before {
-          content: '\e791';
-        }
       }
 
       &__content {

@@ -99,8 +99,10 @@ export const PythonEditor = connect(
       }
       return this.before || this.after ? (
         <div
-          staticClass="form-js-editor-wrap form-python-editor-wrap flex flex-column border rounded-2"
-          class={this.fullscreen && 'full-mode'}
+          class={[
+            'form-js-editor-wrap form-python-editor-wrap flex flex-column border rounded-2',
+            { 'full-mode': this.fullscreen }
+          ]}
           style={{ height: this.height + 'px' }}
         >
           {this.showFullscreen && (

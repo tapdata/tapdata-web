@@ -38,7 +38,6 @@
         feedbackLayout: 'terse'
       }"
       @update:InputsOrOutputs="handleLoadMeta"
-      @setSchema="handleSetSchema"
     />
     <SettingPanel
       v-bind="$attrs"
@@ -86,8 +85,7 @@ export default {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: 'settings',
-      name: this.activeNode?.name,
-      form: null
+      name: this.activeNode?.name
     }
   },
 
@@ -160,10 +158,6 @@ export default {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    },
-
-    handleSetSchema() {
-      this.form = cloneDeep(this.$refs.formPanel?.form)
     }
   }
 }
@@ -251,7 +245,7 @@ $tabHeight: 44px;
     }
   }
 
-  :deep(.config-tabs.el-tabs) {
+  :deep(.el-tabs) {
     height: 100%;
 
     > .el-tabs__header {

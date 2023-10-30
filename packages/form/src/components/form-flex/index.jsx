@@ -10,6 +10,7 @@ export const FormFlex = defineComponent({
   setup(props, { attrs, slots }) {
     return () => {
       const classList = [
+        'flex',
         {
           [`align-items-${props.align}`]: props.align,
           [`align-content-${props.alignContent}`]: props.alignContent,
@@ -17,7 +18,7 @@ export const FormFlex = defineComponent({
         }
       ]
       return (
-        <div staticClass="flex" class={classList} attrs={attrs} style={{ gap: `${props.gap}px` }}>
+        <div class={classList} attrs={attrs} style={{ gap: `${props.gap}px` }}>
           {slots.default?.()}
         </div>
       )

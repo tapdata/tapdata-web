@@ -1,8 +1,9 @@
 // export * from './select'
 import { Space } from './space'
+import { Input } from './input'
 
-export { Space }
-export * from './preview-text'
+export { Space, Input }
+// export * from './preview-text'
 // export * from './space'
 export * from './js-editor'
 export * from './python-editor'
@@ -19,7 +20,7 @@ export * from './tag'
 export * from './highlight-code'
 export * from './Button'
 export * from './InputNumber'
-export * from './input'
+// export * from './input'
 export * from './batch-add-field'
 export * from './json-editor'
 export * from './form-collapse'

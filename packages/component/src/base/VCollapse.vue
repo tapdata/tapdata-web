@@ -62,9 +62,6 @@ $headerH: 34px;
 
     .el-collapse-item__arrow {
       order: -1;
-      &:before {
-        content: '\e791';
-      }
     }
 
     .el-collapse-item__content {

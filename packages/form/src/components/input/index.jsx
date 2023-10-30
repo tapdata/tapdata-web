@@ -9,21 +9,21 @@ export const Input = defineComponent({
       default: true
     }
   },
-  setup(props, { attrs, listeners }) {
+  setup(props, { attrs }) {
     return () => {
+      console.log('Input', attrs)
       return (
         <_Input
-          attrs={{ ...attrs }}
-          on={{
-            ...listeners,
-            blur: ev => {
+          {...{
+            ...attrs,
+            onBlur: ev => {
               let val = ev.target.value
               let newVal = val
 
               if (props.trim) {
                 newVal = val?.trim()
               }
-              if (newVal !== val) listeners.change(newVal)
+              if (newVal !== val) attrs.onChange(newVal)
             }
           }}
         />

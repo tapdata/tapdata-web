@@ -97,6 +97,7 @@ export function getTaskBtnDisabled(row, or) {
 const BASE_URL = import.meta.env.BASE_URL || '/'
 
 export function getNodeIconSrc(node) {
+  console.log('getNodeIconSrc', node)
   if (!node) return
   const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {

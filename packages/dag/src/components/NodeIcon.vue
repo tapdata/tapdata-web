@@ -1,33 +1,29 @@
-<script>
-import { plantRenderPara } from '../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
-import { getNodeIconSrc } from '../util'
+<script lang="jsx">
+import { getNodeIconSrc } from '@tap/business'
 
-export default function render(_props, _context) {
-  const context = {
-    ..._context,
-    props: _props,
-    data: _context.attr,
-    children: _context.slots
+export default function render(_props, { attrs }) {
+  const props = {
+    ..._props,
+    ...attrs,
+    src: getNodeIconSrc(_props.node)
   }
-  const { props, data } = context
-  const _data = { ...data, props: { src: getNodeIconSrc(props.node) } }
 
   if (props.size) {
-    _data.style = {
+    props.style = {
       width: props.size + 'px',
       height: props.size + 'px'
     }
   }
-  // _data.props = { src: getNodeIconSrc(props.node) }
-  return _data.props.src
-    ? Vue.h('ElImage', _data)
-    : Vue.h(
-        'div',
-        plantRenderPara({
-          class: 'inline-block',
-          ..._data
-        })
-      )
+
+  return props.src ? (
+    <ElImage {...props}></ElImage>
+  ) : (
+    <div
+      {...{
+        class: 'inline-block',
+        ..._data
+      }}
+    ></div>
+  )
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <ElCollapse v-model:value="collapseMode" ref="dbCollapse" class="collapse-fill db-list-container" accordion>
+      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill db-list-container" accordion>
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
@@ -23,7 +23,7 @@
                   >add-outline</VIcon
                 >
               </template>
-              <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
+              <span v-else class="flex-1 user-select-none text-truncate text-start">{{ activeConnection.name }}</span>
             </div>
           </template>
           <div class="flex flex-column h-100">
@@ -212,11 +212,11 @@
       </div>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" model-value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">
+            <span class="flex-1 user-select-none text-start">
               <!--处理节点-->
               {{ $t('public_node_processor') }}
             </span>
@@ -692,11 +692,11 @@ export default {
     }, 100),
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.setScrollTop(0)
     },
 
     scrollTopOfTableList() {
-      if (this.$refs.tbList && this.$refs.tbList.wrap.scrollTop > 0) this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList && this.$refs.tbList.wrapRef.scrollTop > 0) this.$refs.tbList.setScrollTop(0)
     },
 
     handleShowTBInput() {
@@ -1022,9 +1022,6 @@ $hoverBg: #eef3ff;
 
       &__arrow {
         order: -1;
-        &:before {
-          content: '\e791';
-        }
       }
 
       &__content {

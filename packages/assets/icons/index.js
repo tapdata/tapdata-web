@@ -1,6 +1,7 @@
 export function getIcon(icon, dir = 'node') {
   try {
-    return require(`./${dir}/${icon}.svg`)
+    // return require(`./${dir}/${icon}.svg`)
+    return new URL(`./${dir}/${icon}.svg`, import.meta.url).href
   } catch (e) {
     console.log('getIcon', e)
     return null

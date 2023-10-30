@@ -6,6 +6,7 @@ import { AsyncSelect } from '@tap/form'
 import { metadataInstancesApi } from '@tap/api'
 
 import './style.scss'
+import { useStore } from 'vuex'
 
 const useTableExist = (attrs, refs, connectionId) => {
   if (!attrs.allowCreate) {
@@ -92,13 +93,14 @@ const useTableExist = (attrs, refs, connectionId) => {
 export const TableSelect = observer(
   defineComponent({
     props: ['reloadTime', 'connectionId'],
-    setup(props, { attrs, listeners, emit, root, refs }) {
+    setup(props, { attrs, listeners, refs }) {
+      const store = useStore()
       const params = computed(() => {
         return {
           reloadTime: props.reloadTime,
           where: {
             'source.id': props.connectionId,
-            taskId: root.$store.state.dataflow.taskId
+            taskId: store.state.dataflow.taskId
           }
         }
       })
@@ -133,7 +135,9 @@ export const TableSelect = observer(
           )
         }
 
-        return (
+        return <ElSelect></ElSelect>
+
+        /*return (
           <AsyncSelect
             class="async-select"
             ref="select"
@@ -145,7 +149,7 @@ export const TableSelect = observer(
             params={params.value}
             scopedSlots={scopedSlots}
           ></AsyncSelect>
-        )
+        )*/
       }
     }
   })

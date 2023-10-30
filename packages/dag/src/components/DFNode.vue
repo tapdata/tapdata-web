@@ -356,7 +356,6 @@ export default {
     'deselectNode',
     'nodeSelected',
     'deselectAllNodes',
-    ,
     'show-node-popover',
     'delete',
     'enable',

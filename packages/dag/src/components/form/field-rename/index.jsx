@@ -368,11 +368,13 @@ export const FieldRename = observer(
                         <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label', 'ellipsis']}>
                           {data.level === 1 && !data.children?.length ? (
                             <div
-                              staticClass="el-input el-input--small tree-field-input text__inner"
-                              class={{
-                                'tree-field-input-primary': data.field_name !== data.previousFieldName,
-                                'is-disabled': props.disabled || transformLoading.value
-                              }}
+                              class={[
+                                'el-input el-input--small tree-field-input text__inner',
+                                {
+                                  'tree-field-input-primary': data.field_name !== data.previousFieldName,
+                                  'is-disabled': props.disabled || transformLoading.value
+                                }
+                              ]}
                             >
                               <input
                                 disabled={props.disabled || transformLoading.value}

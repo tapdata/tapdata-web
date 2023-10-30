@@ -7,10 +7,12 @@ import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
 import FieldList from '../field-inference/List'
 import './style.scss'
+import { useStore } from 'vuex'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
-  setup(props, { root, refs }) {
+  setup(props) {
+    const store = useStore()
     const formRef = useForm()
     const form = formRef.value
     const treeData = ref([])
@@ -18,7 +20,7 @@ export const SchemaPreview = defineComponent({
     const isTreeView = ref(true)
     const isTarget = form.values.type === 'table' && !!form.values.$inputs.length
     const isSource = form.values.type === 'table' && !form.values.$inputs.length
-    const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
+    const readonly = ref(props.disabled || store.state.dataflow?.stateIsReadonly || !isTarget)
     let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
     const createTree = data => {
@@ -130,7 +132,7 @@ export const SchemaPreview = defineComponent({
       )
     }
 
-    useSchemaEffect(root, () => [formRef.value.values.tableName], loadSchema)
+    useSchemaEffect(() => [formRef.value.values.tableName], loadSchema)
 
     loadSchema()
 
