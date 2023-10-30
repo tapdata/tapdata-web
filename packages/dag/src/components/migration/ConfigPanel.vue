@@ -234,9 +234,9 @@ $tabHeight: 44px;
 
         .config-tabs-decorator {
           height: 100%;
-          > .formily-element-form-item-control {
+          > .formily-element-plus-form-item-control {
             height: 100%;
-            > .formily-element-form-item-control-content {
+            > .formily-element-plus-form-item-control-content {
               height: 100%;
             }
           }

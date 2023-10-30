@@ -131,7 +131,7 @@ $headerBg: #fff;
   }
 
   :deep(.formily-element-form-item-layout-horizontal) {
-    .formily-element-form-item-control-content-component > .el-switch {
+    .formily-element-plus-form-item-control-content-component > .el-switch {
       height: 40px;
       line-height: 40px;
     }
@@ -161,7 +161,7 @@ $headerBg: #fff;
     }
   }
 
-  :deep(.formily-element-form-item-control) {
+  :deep(.formily-element-plus-form-item-control) {
     .formily-element-space-horizontal {
       vertical-align: top;
     }
@@ -172,9 +172,9 @@ $headerBg: #fff;
   }
 
   :deep(.form-item-dense
-      .formily-element-form-item-control
-      .formily-element-form-item-control-content
-      .formily-element-form-item-control-content-component) {
+      .formily-element-plus-form-item-control
+      .formily-element-plus-form-item-control-content
+      .formily-element-plus-form-item-control-content-component) {
     min-height: unset;
     line-height: normal;
   }
