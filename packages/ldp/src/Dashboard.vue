@@ -70,7 +70,11 @@
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
-    <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask"  @handle-show-upgrade="handleShowUpgradeDialog" />
+    <TablePreview
+      ref="tablePreview"
+      @create-single-task="hanldeCreateSingleTask"
+      @handle-show-upgrade="handleShowUpgradeDialog"
+    />
     <ConnectionPreview ref="connectionView" />
 
     <UpgradeFee
@@ -593,7 +597,7 @@ export default {
               return
             }
 
-            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()
           })
