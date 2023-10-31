@@ -82,6 +82,7 @@ export default {
     },
 
     handleChange() {
+      if (this.$attrs.disabled) return
       this.result[this.selected.table] = cloneDeep(this.selected.fields)
       let result = cloneDeep(this.result)
       if (isEmpty(result)) {
