@@ -4,6 +4,7 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
+    "skipLibCheck": true,
     "importHelpers": true, // 从 tslib 导入辅助工具函数
     "declaration": true, // 生成相应的 '.d.ts' 文件
     "esModuleInterop": true,
@@ -91,6 +92,7 @@
     "apps/dfs/tests/**/*.tsx",
     "apps/dfs/types/**/*.ts",
     "packages/api/src/*.ts",
+    "packages/form/src/**/*.ts",
     "types/*.d.ts"
   ],
   "exclude": ["node_modules"]

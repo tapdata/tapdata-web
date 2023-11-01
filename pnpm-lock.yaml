@@ -555,7 +555,7 @@ importers:
         version: link:../shared
       '@vueuse/core':
         specifier: ^10.5.0
-        version: 10.5.0
+        version: 10.5.0(vue@3.3.4)
       core-js:
         specifier: ^3.8.3
         version: 3.8.3
@@ -586,6 +586,9 @@ importers:
 
   packages/form:
     dependencies:
+      '@element-plus/utils':
+        specifier: ^0.0.5
+        version: 0.0.5(vue@3.3.4)
       '@formily/core':
         specifier: 2.2.13
         version: 2.2.13
@@ -622,6 +625,9 @@ importers:
       '@tap/shared':
         specifier: workspace:^
         version: link:../shared
+      '@vueuse/core':
+        specifier: ^10.5.0
+        version: 10.5.0(vue@3.3.4)
       ace-builds:
         specifier: ^1.4.13
         version: 1.4.13
@@ -631,9 +637,15 @@ importers:
       cron-parser:
         specifier: ^4.6.0
         version: 4.6.0
+      element-plus:
+        specifier: ^2.4.1
+        version: 2.4.1(vue@3.3.4)
       highlight.js:
         specifier: ^11.0.1
         version: 11.0.1
+      lodash:
+        specifier: ^4.17.15
+        version: 4.17.21
       resize-observer-polyfill:
         specifier: ^1.5.1
         version: 1.5.1
@@ -2094,6 +2106,17 @@ packages:
     peerDependencies:
       vue: ^3.2.0
     dependencies:
+      vue: 3.3.4
+    dev: false
+
+  /@element-plus/utils@0.0.5(vue@3.3.4):
+    resolution: {integrity: sha512-te1xzcbDbLZlA3qNvbvK7ARIQWsgWUvxpdNwe2z6KV4llFMg6/yCRY36c1B4uwq6tGEEheruWxwSLQjDVvhtrw==}
+    peerDependencies:
+      vue: 3.1.1
+    dependencies:
+      lodash: 4.17.21
+      normalize-wheel: 1.0.1
+      resize-observer-polyfill: 1.5.1
       vue: 3.3.4
     dev: false
 
@@ -3648,12 +3671,12 @@ packages:
     resolution: {integrity: sha512-Iu8Tbg3f+emIIMmI2ycSI8QcEuAUgPTgHwesDU1eKMLE4YC/c/sFbGc70QgMq31ijRftV0R7vCm9co6rldCeOA==}
     dev: true
 
-  /@vueuse/core@10.5.0:
+  /@vueuse/core@10.5.0(vue@3.3.4):
     resolution: {integrity: sha512-z/tI2eSvxwLRjOhDm0h/SXAjNm8N5ld6/SC/JQs6o6kpJ6Ya50LnEL8g5hoYu005i28L0zqB5L5yAl8Jl26K3A==}
     dependencies:
       '@types/web-bluetooth': 0.0.18
       '@vueuse/metadata': 10.5.0
-      '@vueuse/shared': 10.5.0
+      '@vueuse/shared': 10.5.0(vue@3.3.4)
       vue-demi: 0.14.6(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -3680,7 +3703,7 @@ packages:
     resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==}
     dev: false
 
-  /@vueuse/shared@10.5.0:
+  /@vueuse/shared@10.5.0(vue@3.3.4):
     resolution: {integrity: sha512-18iyxbbHYLst9MqU1X1QNdMHIjks6wC7XTVf0KNOv5es/Ms6gjVFCAAWTVP2JStuGqydg3DT+ExpFORUEi9yhg==}
     dependencies:
       vue-demi: 0.14.6(vue@3.3.4)
@@ -8293,6 +8316,10 @@ packages:
 
   /normalize-wheel-es@1.2.0:
     resolution: {integrity: sha512-Wj7+EJQ8mSuXr2iWfnujrimU35R2W4FAErEyTmJoJ7ucwTn2hOUSsRehMb5RSYkxXGTM7Y9QpvPmp++w5ftoJw==}
+    dev: false
+
+  /normalize-wheel@1.0.1:
+    resolution: {integrity: sha512-1OnlAPZ3zgrk8B91HyRj+eVv+kS5u+Z0SCsak6Xil/kmgEia50ga7zfkumayonZrImffAxPU/5WcyGhzetHNPA==}
     dev: false
 
   /npm-run-path@2.0.2:

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@element-plus/utils": "^0.0.5",
     "@formily/core": "^2.0.9",
     "@formily/element-plus": "^2.0.9",
     "@formily/json-schema": "^2.0.9",
@@ -22,10 +23,13 @@
     "@tap/component": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
     "@tap/shared": "workspace:^",
+    "@vueuse/core": "^10.5.0",
     "ace-builds": "^1.4.13",
     "core-js": "^3.8.3",
     "cron-parser": "^4.6.0",
+    "element-plus": "^2.4.1",
     "highlight.js": "^11.0.1",
+    "lodash": "^4.17.15",
     "resize-observer-polyfill": "^1.5.1",
     "tiny-emitter": "^2.1.0",
     "vue": "^3.0.0"

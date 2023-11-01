@@ -8,4 +8,5 @@ declare global {
   const ElIconArrowRight: typeof import('@element-plus/icons-vue')['ArrowRight']
   const ElOption: typeof import('element-plus/es')['ElOption']
   const ElSelect: typeof import('element-plus/es')['ElSelect']
+  const ElTooltip: typeof import('element-plus/es')['ElTooltip']
 }

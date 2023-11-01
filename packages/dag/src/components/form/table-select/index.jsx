@@ -135,9 +135,9 @@ export const TableSelect = observer(
           )
         }
 
-        return <ElSelect></ElSelect>
+        // return <ElSelect></ElSelect>
 
-        /*return (
+        return (
           <AsyncSelect
             class="async-select"
             ref="select"
@@ -149,7 +149,7 @@ export const TableSelect = observer(
             params={params.value}
             scopedSlots={scopedSlots}
           ></AsyncSelect>
-        )*/
+        )
       }
     }
   })
