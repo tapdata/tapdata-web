@@ -408,7 +408,7 @@ export class Table extends NodeType {
                   },
                   concurrentWritePartitionMap: {
                     type: 'object',
-                    title: '多线程写入-分区键',
+                    title: i18n.t('packages_dag_nodes_database_duoxianchengfenqujian'),
                     'x-decorator': 'FormItem',
                     'x-component': 'TableFieldSelect',
                     'x-component-props': {

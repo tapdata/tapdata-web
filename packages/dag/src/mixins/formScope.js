@@ -889,11 +889,13 @@ export default {
 
           let flag = false
           const concurrentWritePartitionMap = JSON.parse(JSON.stringify($values.concurrentWritePartitionMap))
-          if (isEmpty) {
+          if (isEmpty(concurrentWritePartitionMap)) {
             flag = true
           }
           for(let key in concurrentWritePartitionMap) {
-            if (!concurrentWritePartitionMap.length) flag = true
+            if (!concurrentWritePartitionMap[key]?.length) {
+              flag = true
+            }
           }
           return flag ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         },
