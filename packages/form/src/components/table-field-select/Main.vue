@@ -59,7 +59,7 @@ export default {
 
   methods: {
     init() {
-      if (this.value?.[this.tableName]?.lenth) {
+      if (this.value?.[this.tableName]?.length) {
         this.selected.table = this.tableName
         this.selected.fields = cloneDeep(this.value[this.tableName])
       } else {
@@ -82,6 +82,7 @@ export default {
     },
 
     handleChange() {
+      if (this.$attrs.disabled) return
       this.result[this.selected.table] = cloneDeep(this.selected.fields)
       let result = cloneDeep(this.result)
       if (isEmpty(result)) {
