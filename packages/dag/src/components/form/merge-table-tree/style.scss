@@ -1,7 +1,7 @@
 .merge-table-tree-space {
-  padding: 0 12px;
   border-radius: 4px;
   border: 1px solid rgba(221, 221, 221, 0.4);
+  max-height: calc(100vh - 120px);
 
   hr.v-divider {
     border-color: rgba(221, 221, 221, 0.4);
@@ -13,8 +13,6 @@
 
   .el-tree {
     &-node {
-      margin-top: 1px;
-
       &__content {
         height: 30px;
         border-radius: 4px;
@@ -62,6 +60,16 @@
         border: 2px solid #2c65ff;
         transform: translate(-100%, -50%);
       }
+    }
+  }
+
+  .merge-table-tree-node {
+    &-action {
+      display: none;
+    }
+
+    &:hover .merge-table-tree-node-action {
+      display: inline-flex;
     }
   }
 }

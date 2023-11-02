@@ -375,6 +375,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: '复制表名',
   packages_dag_nodes_table_qingxuanzebiao: '请选择表',
   packages_dag_nodes_table_fuzhishujuku: '复制数据库名',
+  packages_dag_copy_node_id: '复制节点ID',
   packages_dag_nodes_table_shujuku: '数据库',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: '目标存在时更新',
   packages_dag_nodes_targetdatabase_baochimubiaoduan: '保持目标端原有表结构，清除数据',

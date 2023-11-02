@@ -863,6 +863,13 @@ export default {
           }
 
           this.scope.clearNodeError($values.id)
+        },
+
+        centerNode: nodeId => {
+          this.$refs.paperScroller.centerNode(this.$store.state.dataflow.NodeMap[nodeId])
+          setTimeout(() => {
+            this.nodeSelectedById(nodeId, false, true)
+          }, 300)
         }
       }
     }

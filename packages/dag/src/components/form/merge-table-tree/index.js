@@ -4,6 +4,7 @@ import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, Space, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
 import { getNodeIconSrc } from '@tap/business'
+import { OverflowTooltip, IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
 
@@ -124,9 +125,12 @@ export const MergeTableTree = observer(
         const iconSrc = getNodeIconSrc(dagNode)
 
         return (
-          <div class="flex flex-1 align-center ml-n2 overflow-hidden">
+          <div class="flex flex-1 align-center ml-n2 overflow-hidden merge-table-tree-node cursor-pointer">
             <ElImage class="mr-2" src={iconSrc}></ElImage>
-            <div class="flex-1 text-truncate">{dagNode.name}</div>
+            <OverflowTooltip class="text-truncate flex-1 lh-1" placement="left" text={dagNode.name} open-delay={300} />
+            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+              location
+            </IconButton>
           </div>
         )
       }
@@ -214,8 +218,10 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
+          <div class="merge-table-tree-space flex overflow-hidden">
             <FormItem.BaseItem
+              feedbackLayout="none"
+              class="overflow-y-auto px-3"
               label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
               tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
@@ -235,7 +241,7 @@ export const MergeTableTree = observer(
                 vOn:node-drop={handleNodeDrop}
               />
             </FormItem.BaseItem>
-            <div class="flex-fill">
+            <div class="border-start flex-1 px-3 overflow-y-auto">
               {currentPath.value &&
                 createElement(
                   RecursionField,
@@ -251,7 +257,7 @@ export const MergeTableTree = observer(
                   {}
                 )}
             </div>
-          </Space>
+          </div>
         )
       }
     }

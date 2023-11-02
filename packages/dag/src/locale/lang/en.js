@@ -389,6 +389,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: 'Copy table name',
   packages_dag_nodes_table_qingxuanzebiao: 'Please select a table',
   packages_dag_nodes_table_fuzhishujuku: 'Copy database name',
+  packages_dag_copy_node_id: 'Copy Node ID',
   packages_dag_nodes_table_shujuku: 'Database',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_targetdatabase_baochimubiaoduan:
