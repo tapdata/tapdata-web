@@ -511,7 +511,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     const isValidValue = isValid(value)
 
     for (let i = states.cachedOptions.size - 1; i >= 0; i--) {
-      const cachedOption = states.cachedOptions[i]
+      const cachedOption = cachedOptionsArray.value[i]
       const isEqualValue = isObjectValue
         ? get(cachedOption.value, props.valueKey) === get(value, props.valueKey)
         : cachedOption.value === value

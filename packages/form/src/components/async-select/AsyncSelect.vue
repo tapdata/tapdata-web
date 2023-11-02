@@ -91,8 +91,10 @@
                       </div>
                     </template>
                   </el-tooltip>
-                  <span v-else :class="nsSelect.e('tags-text')">+ {{ selected.length - maxCollapseTags }}</span>
-                </el-tag>
+                  <span v-else :class="nsSelect.e('tags-text')"
+                    >+ {{ selected.length - maxCollapseTags }}</span
+                  > </el-tag
+                >e
               </span>
             </transition>
             <transition v-if="!collapseTags" @after-leave="resetInputHeight">

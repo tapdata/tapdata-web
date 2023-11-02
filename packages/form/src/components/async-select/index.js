@@ -1,7 +1,21 @@
-// TODO 需要重写
+import { connect, mapProps, mapReadPretty } from '@formily/vue'
+import { transformComponent } from '@formily/element-plus/esm/__builtins__'
+import { PreviewText } from '@formily/element-plus'
 import AsyncSelect from './AsyncSelect'
-// import { ElSelectV2 as AsyncSelect } from 'element-plus'
 
-export { AsyncSelect }
+const TransformAsyncSelect = transformComponent(AsyncSelect, {
+  change: 'update:modelValue'
+})
 
-// export default AsyncSelect
+const InnerAsyncSelect = connect(
+  TransformAsyncSelect,
+  mapProps({
+    value: 'modelValue',
+    readOnly: 'readonly'
+  }),
+  mapReadPretty(PreviewText.Input)
+)
+
+export { InnerAsyncSelect as AsyncSelect }
+
+export default AsyncSelect

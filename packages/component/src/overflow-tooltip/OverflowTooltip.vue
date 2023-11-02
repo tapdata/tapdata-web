@@ -1,5 +1,4 @@
 <script lang="jsx">
-import * as Vue from 'vue'
 export default {
   name: 'OverflowTooltip',
   props: {
@@ -28,7 +27,7 @@ export default {
   },
 
   render() {
-    const { text, $slots } = this
+    const { text, $slots, $attrs } = this
     const elm = ($slots.default && $slots.default())?.[0]?.elm
     const defaultText = elm?.innerText || text
     return this.overflow ? (
@@ -38,7 +37,7 @@ export default {
           props: this.$attrs
         }}
       >
-        <div ref="container" class="overflow-tip">
+        <div ref="container" class={['overflow-tip', $attrs.class]}>
           <span ref="text" class="overflow-tip-text">
             {$slots.default && $slots.default() ? $slots.default && $slots.default() : text}
           </span>

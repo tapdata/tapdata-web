@@ -8,7 +8,7 @@ import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
 import { useStore } from 'vuex'
 
-const useTableExist = (attrs, refs, connectionId) => {
+const useTableExist = (attrs, selectRef, connectionId) => {
   if (!attrs.allowCreate) {
     return {
       showNotExistsTip: ref(false),
@@ -70,7 +70,7 @@ const useTableExist = (attrs, refs, connectionId) => {
   watch(() => attrs.value, handleChange)
 
   onMounted(() => {
-    $input = refs.select.$el.querySelector('input')
+    $input = selectRef.value.$el.querySelector('input')
     const { fontSize, fontFamily, fontWeight, borderLeftWidth, paddingLeft } = getComputedStyle($input)
     inputStyle = {
       fontSize,
@@ -92,8 +92,10 @@ const useTableExist = (attrs, refs, connectionId) => {
 
 export const TableSelect = observer(
   defineComponent({
+    name: 'TableSelect',
     props: ['reloadTime', 'connectionId'],
-    setup(props, { attrs, listeners, refs }) {
+    setup(props, { attrs }) {
+      const select = ref(null)
       const store = useStore()
       const params = computed(() => {
         return {
@@ -105,11 +107,7 @@ export const TableSelect = observer(
         }
       })
 
-      const { showNotExistsTip, leftPosition, handleCreated, handleChange } = useTableExist(
-        attrs,
-        refs,
-        props.connectionId
-      )
+      const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(attrs, select, props.connectionId)
 
       return () => {
         const scopedSlots = {
@@ -135,14 +133,11 @@ export const TableSelect = observer(
           )
         }
 
-        // return <ElSelect></ElSelect>
-
         return (
           <AsyncSelect
+            {...attrs}
             class="async-select"
-            ref="select"
-            attrs={attrs}
-            on={listeners}
+            ref={select}
             onCreate={handleCreated}
             itemType={attrs.itemType || 'string'}
             itemQuery={attrs.itemQuery || 'original_name'}
