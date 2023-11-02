@@ -1,8 +1,8 @@
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual, isEmpty } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
+import { merge, isEqual } from 'lodash'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -969,6 +969,13 @@ export default {
           }
 
           return options
+        },
+
+        centerNode: nodeId => {
+          this.$refs.paperScroller.centerNode(this.$store.state.dataflow.NodeMap[nodeId])
+          setTimeout(() => {
+            this.nodeSelectedById(nodeId, false, true)
+          }, 300)
         }
       }
     }
