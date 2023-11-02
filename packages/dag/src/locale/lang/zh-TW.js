@@ -52,6 +52,7 @@ export default {
   packages_dag_dag_data_setting_runMinute: '每分鐘運行一次',
   packages_dag_dag_data_setting_runDay: '每天2點運行',
   packages_dag_connection_form_access_node: 'agent設置',
+  packages_dag_agent_setting_from: '代理设置來自以下連結',
   packages_dag_connection_form_automatic: '平台自動分配',
   packages_dag_connection_form_manual: '用戶手動指定',
   packages_dag_task_setting_automatic_ddl: '自動DDL',
