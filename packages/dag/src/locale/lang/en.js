@@ -58,6 +58,7 @@ export default {
   packages_dag_dag_data_setting_runMinute: 'Run every minute',
   packages_dag_dag_data_setting_runDay: "Run at 2 o'clock every day",
   packages_dag_connection_form_access_node: 'Agent Settings',
+  packages_dag_agent_setting_from: 'Agent settings derive from the following',
   packages_dag_connection_form_automatic: 'Platform automatic allocation',
   packages_dag_connection_form_manual: 'User specified manually',
   packages_dag_task_setting_automatic_ddl: 'Automatic DDL',
