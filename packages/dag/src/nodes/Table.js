@@ -49,6 +49,11 @@ export class Table extends NodeType {
           }
         }
       },
+      connectionId: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': '{{useAsyncDataSourceByConfig({service: useSyncConnection})}}'
+      },
       tabs: {
         type: 'void',
         'x-decorator': 'FormItem',
@@ -417,14 +422,16 @@ export class Table extends NodeType {
                       defaultFields: `{{ $values.updateConditionFields }}`,
                       refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`
                     },
-                    'x-reactions': [{
-                      dependencies: ['.initialConcurrent', '.cdcConcurrent'],
-                      fulfill: {
-                        state: {
-                          display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}'
+                    'x-reactions': [
+                      {
+                        dependencies: ['.initialConcurrent', '.cdcConcurrent'],
+                        fulfill: {
+                          state: {
+                            display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}'
+                          }
                         }
                       }
-                    }],
+                    ],
                     'x-validator': {
                       triggerType: 'onBlur',
                       validator: `{{validateConcurrentWritePartitionMap}}`
