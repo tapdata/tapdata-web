@@ -14,11 +14,7 @@ export const MergeTableTree = observer(
       value: Array,
       disabled: Boolean,
       findNodeById: Function,
-      loadFieldsMethod: Function,
-      treeWidth: {
-        type: [Number, String],
-        default: 320
-      }
+      loadFieldsMethod: Function
     },
     setup(props, { emit, refs, root }) {
       const formRef = useForm()
@@ -27,14 +23,6 @@ export const MergeTableTree = observer(
       const treeRef = ref([])
       const currentKey = ref('')
       const currentPath = ref('')
-      const treeStyle = computed(() => {
-        let width = props.treeWidth
-        if (!isNaN(width)) width += 'px'
-        return {
-          width
-        }
-      })
-
       const setPath = pathArr => {
         const path = pathArr.join('.children.')
         currentPath.value = path
