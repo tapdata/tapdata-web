@@ -1,4 +1,4 @@
-@import '@tap/assets/styles/element-overrides';
+//@import '@tap/assets/styles/element-overrides';
 /*
 * native
 */
@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: $--color-white;
+  //background: $--color-white;
   color: #333;
   font-family: $fontFamily;
   -webkit-text-size-adjust: 100%;

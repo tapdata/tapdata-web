@@ -1,7 +1,5 @@
 <template>
-  <div id="app" :class="[$route.name]">
-    <RouterView />
-  </div>
+  <RouterView />
 </template>
 
 <script>

@@ -2,7 +2,7 @@
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
     <ElAside class="left-aside" width="220px">
-      <ElMenu class="layout-menu" :default-active="activeMenu" @select="menuTrigger">
+      <ElMenu class="layout-menu border-end-0" :default-active="activeMenu" @select="menuTrigger">
         <div class="flex-1">
           <template v-for="menu in menus">
             <ElSubMenu v-if="menu.children" :index="menu.name">

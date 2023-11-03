@@ -5,15 +5,12 @@ import * as VueRouter from 'vue-router'
 import 'github-markdown-css'
 import './assets/styles/app.scss'
 import axios from '@/plugins/axios'
-// import VueClipboard from 'vue-clipboard2'
-
 import i18n from './i18n'
 import store from '@/store'
 import { errorConfirmFnc } from '@/util'
 import VConfirm from '@/components/v-confirm'
 import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
 import { VIcon, VButton } from '@tap/component'
-import FormBuilder from '@tap/component/src/form-builder'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
@@ -63,14 +60,7 @@ export default ({ routes }) => {
 
     store.commit('setUser', window.__USER_INFO__)
 
-    const app =
-      (window.App =
-      window.$vueApp =
-        Vue.createApp(App, {
-          wsOptions: {
-            url: wsUrl
-          }
-        }))
+    const app = (window.App = window.$vueApp = Vue.createApp(App))
 
     installAllPlugins(app)
     installDirectives(app)
@@ -96,16 +86,6 @@ export default ({ routes }) => {
     }
 
     app.mount('#app')
-
-    /*window.App = {
-      router,
-      store,
-      i18n,
-      wsOptions: {
-        url: wsUrl
-      },
-      render: h => h(App)
-    }.$mount('#app')*/
 
     // 版本升级检测
     createVersionPolling({

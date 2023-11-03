@@ -2,9 +2,12 @@
   <!-- 头部导航 -->
   <ElHeader class="dfs-header" :class="{ isMockUser: mockUserId }">
     <div class="dfs-header__body">
-      <ElLink class="logo" @click="command('workbench')">
+      <router-link :to="{ name: 'Home' }" class="logo">
         <img src="../../assets/image/logo.svg" alt="" />
-      </ElLink>
+      </router-link>
+      <!--<ElLink class="logo" @click="command('workbench')">
+        <img src="../../assets/image/logo.svg" alt="" />
+      </ElLink>-->
       <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
         <!--付费专业版-->
         <div class="vip-btn rounded-4 cursor-pointer flex align-center gap-1" @click="setUpgradeFeeVisible(true)">

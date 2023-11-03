@@ -77,7 +77,7 @@
           </div>
         </div>
       </ElCol>
-      <ElCol :span="6">
+      <ElCol :span="6" class="mh-100">
         <div class="bg-white rounded-xl p-4 shadow-sm mh-100 flex flex-column">
           <div class="aside-title mb-4">{{ $t('workbench_notice') }}</div>
           <div class="notice-list flex-grow-1 min-h-0 overflow-y-auto">

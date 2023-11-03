@@ -22,12 +22,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'off', // 不允许给this设置别名，例如 let self = this
     '@typescript-eslint/no-empty-function': 'off',
 
-    'prefer-const': [
-      'off', // 使用const代替let,暂时关闭
-      {
-        ignoreReadBeforeAssign: true //https://eslint.bootcss.com/docs/rules/prefer-const
-      }
-    ],
+    'vue/multi-word-component-names': 0,
 
     'prettier/prettier': [
       'error',
