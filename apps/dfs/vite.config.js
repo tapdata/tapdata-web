@@ -128,6 +128,13 @@ export default defineConfig({
             }
           },
           {
+            name: 'removeAttributesBySelector',
+            params: {
+              selector: "[stroke='none']",
+              attributes: ['stroke']
+            }
+          },
+          {
             name: 'removeAttrs',
             active: true,
             params: {
