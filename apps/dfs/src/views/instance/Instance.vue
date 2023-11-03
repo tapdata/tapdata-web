@@ -198,7 +198,7 @@
                     !stopBtnDisabled(item)
                   "
                   size="mini"
-                  type="primary"
+                  type="danger"
                   plain
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
