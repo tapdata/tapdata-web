@@ -93,7 +93,8 @@ export class MergeTable extends NodeType {
                 'x-component-props': {
                   treeWidth: 200,
                   findNodeById: '{{findNodeById}}',
-                  loadFieldsMethod: '{{loadNodeFieldOptions}}'
+                  loadFieldsMethod: '{{loadNodeFieldOptions}}',
+                  '@center-node': '{{centerNode}}'
                 },
                 items: {
                   type: 'object',
