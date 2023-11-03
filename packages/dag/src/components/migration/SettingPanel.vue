@@ -6,12 +6,12 @@
 import i18n from '@tap/i18n'
 
 import { mapGetters } from 'vuex'
-import { createForm, onFieldValueChange, onFormInputChange, onFormValuesChange } from '@formily/core'
+import { createForm, onFieldValueChange } from '@formily/core'
 // import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
-import { alarmApi, taskApi, usersApi, dataPermissionApi } from '@tap/api'
+import { alarmApi, dataPermissionApi, taskApi, usersApi } from '@tap/api'
 import { getPickerOptionsBeforeTime } from '@tap/business/src/shared/util'
 import { FormTab } from '../../../../form'
 import { action } from '@formily/reactive'
@@ -141,6 +141,27 @@ export default observer({
 
         handleRemovePermissionsItem: () => {
           this.savePermissionsConfig()
+        },
+
+        getConnectionNameByAgent: field => {
+          // 消费收集下 field.dataSource 的依赖，当选项改变时重新执行该方法
+          if (!field.value || !field.dataSource?.length || !this.accessNodeProcessIdMap[field.value]) {
+            field.setDescription('')
+            return
+          }
+
+          const map = {}
+
+          for (const id of this.accessNodeProcessIdMap[field.value]) {
+            const node = this.$store.state.dataflow.NodeMap[id]
+            map[node.connectionId] = node.attrs.connectionName
+          }
+
+          const values = Object.values(map)
+
+          field.setDescription(
+            values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : ''
+          )
         }
       },
 
@@ -655,7 +676,8 @@ export default observer({
                                     effects: ['onFieldInputValueChange'],
                                     fulfill: {
                                       state: {
-                                        value: '{{$target.value || $target.dataSource[0].value}}'
+                                        value:
+                                          '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
                                       }
                                     }
                                   }
@@ -664,7 +686,8 @@ export default observer({
                               accessNodeProcessId: {
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                'x-component': 'Select'
+                                'x-component': 'Select',
+                                'x-reactions': '{{getConnectionNameByAgent}}'
                               }
                             }
                           }
@@ -1099,19 +1122,31 @@ export default observer({
   computed: {
     ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
-    accessNodeProcessIdArr() {
-      const set = this.allNodes
+    accessNodeProcessIdMap() {
+      return this.allNodes
         .filter(item => item.type === 'database' || item.type === 'table')
-        .reduce((set, item) => {
-          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
-          return set
-        }, new Set())
-      return [...set]
+        .reduce((map, node) => {
+          const { accessNodeProcessId } = node.attrs
+          if (accessNodeProcessId) {
+            let nodeIdArr = map[accessNodeProcessId]
+
+            if (!nodeIdArr) {
+              nodeIdArr = map[accessNodeProcessId] = []
+            }
+
+            nodeIdArr.push(node.id)
+          }
+          return map
+        }, {})
+    },
+
+    accessNodeProcessIdArr() {
+      return Object.keys(this.accessNodeProcessIdMap)
     },
 
     accessNodeProcessList() {
       if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
-      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+      return this.scope.$agents.filter(item => !!this.accessNodeProcessIdMap[item.value])
     },
 
     sourceNodes() {
@@ -1169,6 +1204,7 @@ export default observer({
 
       immediate: true
     },
+
     accessNodeProcessList: {
       deep: true,
 

@@ -2,8 +2,8 @@ import i18n from '@tap/i18n'
 import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
-import { FormItem, Space, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
-import { getNodeIconSrc } from '@tap/business'
+import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
+import { OverflowTooltip, IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
 import NodeIcon from '../../NodeIcon'
@@ -14,11 +14,7 @@ export const MergeTableTree = observer(
       value: Array,
       disabled: Boolean,
       findNodeById: Function,
-      loadFieldsMethod: Function,
-      treeWidth: {
-        type: [Number, String],
-        default: 320
-      }
+      loadFieldsMethod: Function
     },
     setup(props, { emit, refs, root }) {
       const formRef = useForm()
@@ -27,14 +23,6 @@ export const MergeTableTree = observer(
       const treeRef = ref([])
       const currentKey = ref('')
       const currentPath = ref('')
-      const treeStyle = computed(() => {
-        let width = props.treeWidth
-        if (!isNaN(width)) width += 'px'
-        return {
-          width
-        }
-      })
-
       const setPath = pathArr => {
         const path = pathArr.join('.children.')
         currentPath.value = path
@@ -52,8 +40,6 @@ export const MergeTableTree = observer(
       watch(
         treeRef,
         val => {
-          // eslint-disable-next-line
-          console.log('🤖MergeTableTree.watch', val, treeRef.value)
           emit('change', JSON.parse(JSON.stringify(val)))
         },
         { deep: true }
@@ -113,8 +99,6 @@ export const MergeTableTree = observer(
       makeTree()
 
       observe(formRef.value.values.$inputs, () => {
-        // eslint-disable-next-line
-        console.log('formRef.value.values.$inputs', formRef.value.values.$inputs)
         makeTree()
       })
 
@@ -123,9 +107,12 @@ export const MergeTableTree = observer(
         if (!dagNode) return
 
         return (
-          <div class="flex flex-1 align-center ml-n2 overflow-hidden gap-1">
+          <div class="flex flex-1 align-center ml-n2 overflow-hidden merge-table-tree-node cursor-pointer">
             <NodeIcon size={20} node={dagNode}></NodeIcon>
-            <div class="flex-1 text-truncate">{dagNode.name}</div>
+            <OverflowTooltip class="text-truncate flex-1 lh-1" placement="left" text={dagNode.name} open-delay={300} />
+            <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
+              location
+            </IconButton>
           </div>
         )
       }
@@ -135,7 +122,6 @@ export const MergeTableTree = observer(
         const nodePath = refs.tree.getNodePath(node)
         nodePath.reduce((parent, item) => {
           if (parent) {
-            // temp.push(parent.indexOf(item))
             temp.push(parent.findIndex(p => p.id === item.id))
           }
           return item.children
@@ -213,14 +199,16 @@ export const MergeTableTree = observer(
 
       return () => {
         return (
-          <Space class="merge-table-tree-space" align="stretch" size={12} split={true} inline={false}>
+          <div class="merge-table-tree-space flex overflow-hidden">
             <FormItem.BaseItem
+              wrapperWidth={240}
+              feedbackLayout="none"
+              class="overflow-y-auto px-2 pb-2"
               label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
               tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
               <ElTree
                 ref="tree"
-                style={treeStyle.value}
                 data={treeRef.value}
                 nodeKey="id"
                 defaultExpandAll={true}
@@ -234,13 +222,11 @@ export const MergeTableTree = observer(
                 vOn:node-drop={handleNodeDrop}
               />
             </FormItem.BaseItem>
-            <div class="flex-fill">
+            <div class="border-start flex-1 px-2 overflow-y-auto">
               {currentPath.value &&
                 createElement(
                   RecursionField,
                   {
-                    // key: currentPath.value,
-                    // key: `${currentKey.value}_${currentPath.value}`,
                     props: {
                       onlyRenderProperties: true,
                       name: currentPath.value,
@@ -250,7 +236,7 @@ export const MergeTableTree = observer(
                   {}
                 )}
             </div>
-          </Space>
+          </div>
         )
       }
     }

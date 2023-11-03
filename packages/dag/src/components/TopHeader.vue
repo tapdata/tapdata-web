@@ -12,6 +12,7 @@
       max-width="260"
       hidden-icon
       :input-min-width="32"
+      :maxlength="200"
       @change="onNameInputChange"
     />
 

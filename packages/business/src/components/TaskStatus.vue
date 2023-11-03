@@ -57,14 +57,13 @@
         key="retrying"
         placement="top"
         popper-class="agent-tooltip__popper"
-        :visible-arrow="false"
         effect="light"
       >
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
-          <div class="flex flex-wrap align-center font-color-dark">
+          <div class="flex align-items-start font-color-dark py-2">
             <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
-            {{ $t('packages_business_task_status_retrying_tooltip') }}
+            <span class="fs-8">{{ taskRetryStartTimeTip }}</span>
           </div>
         </template>
       </ElTooltip>
@@ -136,6 +135,12 @@ export default {
     showRetrying() {
       const { functionRetryStatus, taskRetryStatus } = this.task
       return functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
+    },
+
+    taskRetryStartTimeTip() {
+      return this.$t('packages_business_task_status_retrying_tooltip', {
+        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss')
+      })
     }
   },
 

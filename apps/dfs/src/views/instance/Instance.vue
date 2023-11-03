@@ -111,7 +111,7 @@
                 </div>
               </div>
               <div class="agent-item__content flex flex-wrap px-4">
-                <div class="flex mb-2 w-50" v-for="col in agentConfig">
+                <div class="flex mb-2 w-50" v-for="(col, i) in agentConfig" :key="i">
                   <span class="font-color-light mr-2">{{ col.label }}: </span>
                   <!--数据复制-->
                   <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
@@ -186,8 +186,8 @@
                   v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
                   type="primary"
                   @click="toDeploy(item)"
-                  >{{ $t('public_agent_button_deploy') }}</ElButton
-                >
+                  >{{ $t('public_agent_button_deploy') }}
+                </ElButton>
                 <ElButton
                   name="start"
                   size="mini"
@@ -196,8 +196,8 @@
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleStart(item)"
-                  >{{ $t('public_button_start') }}</ElButton
-                >
+                  >{{ $t('public_button_start') }}
+                </ElButton>
                 <!--全托管没有部署停止按钮，离线状态不能停止-->
                 <ElButton
                   v-if="
@@ -206,12 +206,12 @@
                     !stopBtnDisabled(item)
                   "
                   size="mini"
-                  type="primary"
+                  type="danger"
                   plain
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
-                  >{{ $t('public_button_stop') }}</ElButton
-                >
+                  >{{ $t('public_button_stop') }}
+                </ElButton>
                 <ElButton
                   name="restart"
                   size="mini"
@@ -220,8 +220,8 @@
                   v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRenew(item)"
-                  >{{ $t('public_button_restart') }}</ElButton
-                >
+                  >{{ $t('public_button_restart') }}
+                </ElButton>
                 <ElButton
                   name="restart"
                   size="mini"
@@ -230,8 +230,8 @@
                   v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRestart(item)"
-                  >{{ $t('public_button_restart') }}</ElButton
-                >
+                  >{{ $t('public_button_restart') }}
+                </ElButton>
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <!--68-2 免费实例可以删除-->
                 <ElButton
@@ -249,16 +249,16 @@
                   v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleUnsubscribe(item)"
-                  >{{ $t('public_button_unsubscribe') }}</ElButton
-                >
+                  >{{ $t('public_button_unsubscribe') }}
+                </ElButton>
                 <ElButton
                   v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
                   class="mr-2"
                   size="mini"
                   type="primary"
                   @click="openRenew(item)"
-                  >{{ $t('public_button_renew') }}</ElButton
-                >
+                  >{{ $t('public_button_renew') }}
+                </ElButton>
 
                 <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
                 <template v-if="showUpgradeIcon(item)">
@@ -320,8 +320,8 @@
                       plain
                       class="cursor-pointer block"
                       @click="showUpgradeDialogFnc(item)"
-                      >{{ $t('dfs_instance_instance_shengji') }}</el-button
-                    >
+                      >{{ $t('dfs_instance_instance_shengji') }}
+                    </el-button>
                   </ElTooltip>
                 </template>
               </div>
@@ -361,19 +361,19 @@
             </div>
             <div class="dialog-btn flex justify-content-end mt-6">
               <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
-                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-                  $t('public_agent_button_auto_upgrade')
-                }}</ElButton>
+                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc"
+                  >{{ $t('public_agent_button_auto_upgrade') }}
+                </ElButton>
               </div>
               <div class="text-end w-50" v-if="selectedRow.agentType === 'Cloud'">
-                <ElButton type="primary" @click="fullManagementUpgradeFnc">{{
-                  $t('public_agent_button_auto_upgrade')
-                }}</ElButton>
+                <ElButton type="primary" @click="fullManagementUpgradeFnc"
+                  >{{ $t('public_agent_button_auto_upgrade') }}
+                </ElButton>
               </div>
               <div class="text-end w-50" v-else>
-                <ElButton type="primary" @click="manualUpgradeFnc">{{
-                  $t('public_agent_button_manual_upgrade')
-                }}</ElButton>
+                <ElButton type="primary" @click="manualUpgradeFnc"
+                  >{{ $t('public_agent_button_manual_upgrade') }}
+                </ElButton>
               </div>
             </div>
             <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
@@ -385,14 +385,14 @@
             </div>
             <div class="dialog-btn flex justify-content-evenly mt-6">
               <div class="text-center">
-                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-                  $t('public_button_retry')
-                }}</ElButton>
+                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc"
+                  >{{ $t('public_button_retry') }}
+                </ElButton>
               </div>
               <div>
-                <ElButton type="primary" @click="manualUpgradeFnc">{{
-                  $t('public_agent_button_manual_upgrade')
-                }}</ElButton>
+                <ElButton type="primary" @click="manualUpgradeFnc"
+                  >{{ $t('public_agent_button_manual_upgrade') }}
+                </ElButton>
               </div>
             </div>
           </ElDialog>
@@ -431,7 +431,7 @@
                   :loading="selectedRow.btnLoading.stop"
                   :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
                   type="danger"
-                plain
+                  plain
                   class="flex-fill min-w-0"
                   @click="handleStop(selectedRow)"
                 >
@@ -441,17 +441,9 @@
               </div>
             </template>
           </Details>
-          <!--   创建订阅   -->
-          <CreateDialog v-model:value="createDialog" @finish="fetch"></CreateDialog>
-          <!--   选择授权码   -->
-          <SelectListDialog
-            v-model:value="selectListDialog"
-            :type="selectListType"
-            @create="createDialog = true"
-            @new-agent="handleNewAgent"
-          ></SelectListDialog>
+
           <!--转账支付弹窗信息--->
-          <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
+          <transferDialog :price="price" v-model:visible="showTransferDialogVisible"></transferDialog>
           <!-- 新的创建实例 -->
           <SubscriptionModelDialog v-model:visible="subscriptionModelVisible"></SubscriptionModelDialog>
         </div>
@@ -496,8 +488,8 @@
                     type="primary"
                     class="text-decoration-underline"
                     @click="handleVisitInfo(item)"
-                    >{{ $t('public_button_obtain') }}</ElLink
-                  >
+                    >{{ $t('public_button_obtain') }}
+                  </ElLink>
                   <span v-else>{{ item[col.prop] }}</span>
                 </div>
               </div>
@@ -506,11 +498,11 @@
                   v-if="item.scope === 'Private' && item.deploymentType !== 'Local'"
                   type="text"
                   @click="handleCreateIps(item)"
-                  >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}</ElButton
-                >
-                <ElButton class="mr-2" type="text" :disabled="disableRenew(item)" @click="openRenew(item)">{{
-                  $t('public_button_renew')
-                }}</ElButton>
+                  >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}
+                </ElButton>
+                <ElButton class="mr-2" type="text" :disabled="disableRenew(item)" @click="openRenew(item)"
+                  >{{ $t('public_button_renew') }}
+                </ElButton>
                 <!--68-2 免费实例可以删除-->
                 <ElButton v-if="item.scope === 'Share'" size="mini" type="text" @click="openMdbUnsubscribe(item)">
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
@@ -565,11 +557,7 @@ import Details from './Details'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import Renew from '../../components/Renew.vue'
 import { secondDifference } from '../../util'
-import updateLocale from 'dayjs/plugin/updateLocale'
 import { mapGetters } from 'vuex'
-
-const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
-const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
 
 let timer = null
 
@@ -581,8 +569,6 @@ export default {
     VIcon,
     Details,
     FilterBar,
-    CreateDialog,
-    SelectListDialog,
     transferDialog,
     SubscriptionModelDialog,
     Unsubscribe
@@ -671,8 +657,6 @@ export default {
       showDetails: false,
       detailId: null,
       filterItems: [],
-      createDialog: false,
-      selectListDialog: false,
       selectListType: 'code',
       subscriptionModelVisible: false,
       showUnsubscribeDetailVisible: false,
@@ -1194,6 +1178,10 @@ export default {
       if (this.stopBtnDisabled(row)) {
         return
       }
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       let flag = false
       if (from === 'details' && this.selectedRow?.id === row.id) {
         row = this.selectedRow
@@ -1491,56 +1479,14 @@ export default {
           this.showCreateIps = false
         })
     },
-    // 创建Agent
-    async createAgent() {
-      this.createAgentLoading = true
-      const userInfo = window.__USER_INFO__ || {}
-      // 免费实例
-      if (await this.handleFreeAgent()) return (this.createAgentLoading = false)
-      // 开启授权码
-      if (userInfo.enableLicense) {
-        this.$axios
-          .get('api/tcm/aliyun/market/license/available')
-          .then(data => {
-            if (data.length) {
-              this.handleSelectListDialog('code')
-            } else {
-              this.handleCreateAuthorizationCode()
-            }
-          })
-          .finally(() => {
-            this.createAgentLoading = false
-          })
-        return
-      }
-      this.$axios
-        .get('api/tcm/paid/plan/queryAvailableSubscribe')
-        .then(data => {
-          if (data.length) {
-            this.handleSelectListDialog('order')
-            return
-          }
-          this.createDialog = true
-        })
-        .finally(() => {
-          this.createAgentLoading = false
-        })
-        .catch(() => {
-          this.createDialog = true
-        })
-    },
+
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
     },
     // 禁用停止
     stopBtnDisabled(row) {
-      return (
-        row.agentType === 'Cloud' ||
-        row.status !== 'Running' ||
-        row.metric.runningTaskNum > 0 ||
-        row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
-      )
+      return row.agentType === 'Cloud' || row.status !== 'Running' || row.metric.runningTaskNum > 0
     },
     // 禁用删除
     delBtnDisabled(row) {
@@ -1583,18 +1529,12 @@ export default {
     },
     //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return (
-        ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
-        ['starting'].includes(row.engineStatus)
-      ) //tapdataAgent 失活了
+      return ['Creating', 'Stopping', 'Stopped'].includes(row.status) || ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
     },
     //agent运行中，预期 启动 不能点击
     startBtnDisabled(row) {
       return (
-        ['Creating', 'Stopping', 'Running'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
-        ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
+        ['Creating', 'Stopping', 'Running'].includes(row.status) || ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
     showVersionFlag(row) {
@@ -1638,10 +1578,7 @@ export default {
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
     },
-    handleSelectListDialog(type = 'code') {
-      this.selectListType = type
-      this.selectListDialog = true
-    },
+
     async handleNewAgent(params = {}) {
       try {
         const data = await this.$axios.post('api/tcm/orders', params)
@@ -1701,6 +1638,10 @@ export default {
     },
     // 半托管重启
     handleRestart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1713,6 +1654,10 @@ export default {
     },
     // 半托管启动
     handleStart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1862,12 +1807,14 @@ export default {
 .order-flex {
   display: flex;
 }
+
 // agent列表
 .agent-ul {
   gap: 16px;
   //height: 100%;
   overflow: auto;
 }
+
 .agent-item {
   width: 48%;
   border-radius: 8px;
@@ -1875,10 +1822,12 @@ export default {
   background: #fff;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
 }
+
 .mdb-ul {
   gap: 16px;
   overflow: auto;
 }
+
 .mdb-item {
   width: 99%;
   min-height: 205px;
@@ -1887,6 +1836,7 @@ export default {
   background: #fff;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
 }
+
 .instance-wrapper {
   display: flex;
   width: 100%;
@@ -1894,6 +1844,7 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -1901,84 +1852,102 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .upgrade-img {
     width: 20px;
     height: 20px;
   }
+
   .main {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
+
   .instance-operation {
     display: flex;
     justify-content: space-between;
+
     .instance-operation-left {
       li {
         float: left;
       }
     }
+
     .el-form {
       .el-input {
         display: block;
         height: 32px;
+
         :deep(.el-input__inner) {
           display: block;
         }
       }
+
       .el-select {
         display: block;
         height: 32px;
       }
     }
   }
+
   .instance-table {
     flex: 1;
     overflow: auto;
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
+
     .el-divider--vertical {
       margin: 0 8px;
     }
   }
+
   .instance-table__empty {
     color: map-get($fontColor, light);
   }
+
   .upgrade-text {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: map-get($color, dark);
   }
+
   .upgrade-version {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
     color: map-get($color, dark);
   }
+
   .upgrade-desc {
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
     color: map-get($color, light);
   }
+
   .imgBox {
     width: 65px;
     height: 65px;
     background: rgba(201, 205, 212, 0.1);
     border-radius: 4px;
   }
+
   .upgrade-mb8 {
     margin-bottom: 8px;
   }
+
   .upgrade-mb16 {
     margin-bottom: 16px;
   }
+
   .upgrade-mb24 {
     margin-bottom: 24px;
   }
 }
+
 .upgrading-box {
   width: 20px;
   height: 20px;
@@ -1993,12 +1962,14 @@ export default {
     margin-left: -7px;
   }
 }
+
 .upgrading-progress {
   :deep(.el-progress-circle) {
     width: 16px !important;
     height: 16px !important;
   }
 }
+
 .inline-input {
   :deep(.input) {
     flex: 1;
@@ -2015,9 +1986,11 @@ export default {
     height: 20px;
   }
 }
+
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
   color: map-get($color, disable);
   cursor: default;
+
   &:hover {
     background: unset;
     color: map-get($color, disable);
@@ -2040,6 +2013,7 @@ export default {
   flex: 1;
   flex-direction: column;
 }
+
 .subscription-ul {
   background: #e9e9eb;
   border: 1px solid #e9e9eb;
@@ -2052,6 +2026,7 @@ export default {
 :not(body):has(> .agent-item .driver-active-element) {
   overflow: hidden !important;
 }
+
 .el-message-box {
   &.delete-agent {
     .el-message-box__title {

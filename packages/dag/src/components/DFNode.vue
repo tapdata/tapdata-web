@@ -11,7 +11,7 @@
         />
         <VIcon v-if="ins.beta" class="mr-1" size="32">beta</VIcon>
       </template>
-      <div v-if="!stateIsReadonly" class="df-node-options gap-2" @click.stop>
+      <div v-if="!stateIsReadonly" class="df-node-options gap-4" @click.stop>
         <div
           :disabled="data.disabled"
           class="cursor-pointer"
@@ -24,18 +24,6 @@
           "
         >
           <VIcon size="20">action-add</VIcon>
-        </div>
-        <div
-          :disabled="data.disabled"
-          name="action-delete"
-          class="cursor-pointer"
-          :class="{
-            'opacity-50 cursor-not-allowed': data.disabled
-          }"
-          @click.stop="!data.disabled && $emit('delete', data.id)"
-          :title="$t('packages_dag_components_dfnode_shanchujiedian')"
-        >
-          <VIcon size="20">action-delete</VIcon>
         </div>
 
         <template v-if="!hideDisableAction">
@@ -58,6 +46,19 @@
             <VIcon size="20">action-disable</VIcon>
           </div>
         </template>
+
+        <div
+          :disabled="data.disabled"
+          name="action-delete"
+          class="cursor-pointer"
+          :class="{
+            'opacity-50 cursor-not-allowed': data.disabled
+          }"
+          @click.stop="!data.disabled && $emit('delete', data.id)"
+          :title="$t('packages_dag_components_dfnode_shanchujiedian')"
+        >
+          <VIcon size="20">action-delete</VIcon>
+        </div>
       </div>
       <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
         <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>

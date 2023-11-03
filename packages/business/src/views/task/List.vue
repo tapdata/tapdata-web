@@ -560,7 +560,8 @@ export default {
         functionRetryStatus: true,
         taskRetryStatus: true,
         shareCdcStop: true,
-        shareCdcStopMessage: true
+        shareCdcStopMessage: true,
+        taskRetryStartTime: true
       }
       let where = {
         syncType
@@ -1149,7 +1150,7 @@ export default {
               return
             }
 
-            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier')
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
               ? this.handleShowUpgradeFee()
               : this.handleShowUpgradeCharges()
           })

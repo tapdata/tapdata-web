@@ -6,8 +6,8 @@
   >
     <div
       v-if="activeNode"
-      v-show="activeType === 'node'"
-      class="position-absolute config-tabs-left-extra flex align-center"
+      class="position-absolute config-tabs-left-extra align-center"
+      :class="activeType === 'node' ? 'flex' : 'none'"
     >
       <NodeIcon :node="activeNode" :size="24" />
     </div>

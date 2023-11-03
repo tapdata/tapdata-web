@@ -11,6 +11,7 @@
             v-model:value="name"
             :placeholder="$t('packages_dag_monitor_topheader_qingshururenwu')"
             :input-min-width="32"
+            :maxlength="200"
             @change="onNameInputChange"
           />
           <TaskStatus :task="dataflow" :agent-map="agentMap" class="ml-4" />
