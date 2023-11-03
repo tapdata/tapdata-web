@@ -533,7 +533,7 @@ export default {
   packages_dag_js_processor_index_riqichuli: 'Date Processing',
   packages_dag_merge_table_tree_index_biaozhijianketong:
     'Tables can be nested by dragging and dropping to determine the master-slave relationship',
-  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name (support drag and drop)',
+  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name',
   packages_dag_migration_settingpanel_cronbiao: 'Cron expression format error',
   packages_dag_hooks_useaftertasksaved_moxingyishengcheng: 'The model has been generated, execute callback',
   packages_dag_mixins_editor_wsshoudaole: 'Ws received the return of other tasks',

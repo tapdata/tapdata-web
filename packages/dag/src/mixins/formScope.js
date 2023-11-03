@@ -1,8 +1,8 @@
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi } from '@tap/api'
+import { merge, isEqual, isEmpty } from 'lodash'
+import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -892,7 +892,7 @@ export default {
           if (isEmpty(concurrentWritePartitionMap)) {
             flag = true
           }
-          for(let key in concurrentWritePartitionMap) {
+          for (let key in concurrentWritePartitionMap) {
             if (!concurrentWritePartitionMap[key]?.length) {
               flag = true
             }
