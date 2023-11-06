@@ -719,12 +719,6 @@ export default {
           }
         })
       }
-
-      // makeStatusAndDisabled(data)
-      // this.$set(this.dataflow, 'status', data.status)
-      // this.$set(this.dataflow, 'disabledData', data.btnDisabled)
-      // this.$set(this.dataflow, 'taskRecordId', data.taskRecordId)
-      // console.log('this.dataflow', this.dataflow) // eslint-disable-line
     },
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {

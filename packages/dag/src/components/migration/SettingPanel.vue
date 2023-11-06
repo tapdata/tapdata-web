@@ -6,8 +6,7 @@
 import i18n from '@tap/i18n'
 
 import { mapGetters } from 'vuex'
-import { createForm, onFieldValueChange } from '@formily/core'
-// import { observable } from '@formily/reactive'
+import { createForm, onFieldInputValueChange, onFieldValueChange } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
 import { debounce } from 'lodash'
@@ -1252,7 +1251,7 @@ export default observer({
   methods: {
     // 绑定表单事件
     useEffects() {
-      onFieldValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
+      onFieldInputValueChange('*(alarmSettings.*.*,alarmRules.*.*)', (field, form) => {
         if (this.stateIsReadonly) this.lazySaveAlarmConfig()
       })
       // 权限设置修改了
@@ -1262,12 +1261,16 @@ export default observer({
     },
 
     saveAlarmConfig() {
-      if (!this.form.values?.id || !this.form.values?.name) {
+      const { values } = this.form
+
+      if (!values?.id || !values?.name) {
         return
       }
+
       taskApi.patch({
-        id: this.form.values.id,
-        ...JSON.parse(JSON.stringify(this.form.values))
+        id: values.id,
+        alarmSettings: values.alarmSettings,
+        alarmRules: values.alarmRules
       })
     },
 
