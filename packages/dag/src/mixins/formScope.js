@@ -1,7 +1,7 @@
 import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { merge, isEqual } from 'lodash'
+import { merge, isEqual, isEmpty } from 'lodash'
 import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
@@ -880,6 +880,26 @@ export default {
           return !$values.updateConditionFields?.length ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
         },
 
+        validateConcurrentWritePartitionMap: async (value, rule, ctx) => {
+          const { field, form } = ctx
+          const $values = form.values
+          if (!$values.$inputs[0]) {
+            return
+          }
+
+          let flag = false
+          const concurrentWritePartitionMap = JSON.parse(JSON.stringify($values.concurrentWritePartitionMap))
+          if (isEmpty(concurrentWritePartitionMap)) {
+            flag = true
+          }
+          for (let key in concurrentWritePartitionMap) {
+            if (!concurrentWritePartitionMap[key]?.length) {
+              flag = true
+            }
+          }
+          return flag ? i18n.t('packages_dag_mixins_formscope_gaiziduanshibi') : ''
+        },
+
         validateTableNames: (value, rule, ctx) => {
           const { field, form } = ctx
           const $values = form.values
@@ -949,6 +969,13 @@ export default {
           }
 
           return options
+        },
+
+        centerNode: nodeId => {
+          this.$refs.paperScroller.centerNode(this.$store.state.dataflow.NodeMap[nodeId])
+          setTimeout(() => {
+            this.nodeSelectedById(nodeId, false, true)
+          }, 300)
         }
       }
     }
@@ -986,7 +1013,8 @@ export default {
     afterTaskSaved() {
       return new Promise(resolve => {
         if (this.taskSaving) {
-          this.$watch('taskSaving', () => {
+          let unwatch = this.$watch('taskSaving', () => {
+            unwatch()
             resolve()
           })
         } else {

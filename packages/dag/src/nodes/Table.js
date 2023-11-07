@@ -49,6 +49,11 @@ export class Table extends NodeType {
           }
         }
       },
+      connectionId: {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': '{{useAsyncDataSourceByConfig({service: useSyncConnection})}}'
+      },
       tabs: {
         type: 'void',
         'x-decorator': 'FormItem',
@@ -77,16 +82,44 @@ export class Table extends NodeType {
                   columnGap: 16
                 },
                 properties: {
-                  name: {
-                    type: 'string',
+                  nameWrap: {
+                    type: 'void',
                     title: i18n.t('public_node_name'),
-                    required: true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Input',
+                    'x-decorator-props': {
+                      asterisk: true,
+                      feedbackLayout: 'none'
+                    },
+                    'x-component': 'FormFlex',
                     'x-component-props': {
-                      onChange: `{{() => {
-                        $values.attrs.hasNameEdited = true
-                      }}}`
+                      gap: 8,
+                      align: 'start'
+                    },
+                    properties: {
+                      name: {
+                        type: 'string',
+                        required: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          style: {
+                            flex: 1
+                          }
+                        },
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
+                        }
+                      },
+
+                      clipboardButton: {
+                        type: 'void',
+                        'x-component': 'ClipboardButton',
+                        'x-component-props': {
+                          tooltip: i18n.t('packages_dag_copy_node_id'),
+                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
+                          content: '{{$values.id}}'
+                        }
+                      }
                     }
                   },
                   'attrs.connectionName': {
@@ -404,6 +437,32 @@ export class Table extends NodeType {
                           min: 0
                         }
                       }
+                    }
+                  },
+                  concurrentWritePartitionMap: {
+                    type: 'object',
+                    title: i18n.t('packages_dag_nodes_database_duoxianchengfenqujian'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'TableFieldSelect',
+                    'x-component-props': {
+                      nodeId: `{{ $values.id }}`,
+                      tableName: `{{ $values.tableName }}`,
+                      defaultFields: `{{ $values.updateConditionFields }}`,
+                      refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.initialConcurrent', '.cdcConcurrent'],
+                        fulfill: {
+                          state: {
+                            display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}'
+                          }
+                        }
+                      }
+                    ],
+                    'x-validator': {
+                      triggerType: 'onBlur',
+                      validator: `{{validateConcurrentWritePartitionMap}}`
                     }
                   }
                 }

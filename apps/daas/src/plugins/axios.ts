@@ -45,7 +45,7 @@ const errorCallback = (error: AxiosError): Promise<AxiosError | string> => {
   if (axios.isCancel(error)) {
     // eslint-disable-next-line no-console
     console.log('Request canceled', error.message)
-    return Promise.reject('Request canceled')
+    return Promise.reject(error)
   }
   if (error?.config || error?.response?.config) {
     removePending(error.config || error.response.config)
@@ -114,7 +114,7 @@ axios.interceptors.request.use(function (config: AxiosRequestConfig): AxiosReque
     cancelFunc = c
   })
   if (pending.includes(key)) {
-    console.log('Cancel request:', JSON.parse(key)) //eslint-disable-line
+    console.warn('Cancel request:', JSON.parse(key)) //eslint-disable-line
     cancelFunc()
   } else if (config.method !== 'get') {
     pending.push(key)

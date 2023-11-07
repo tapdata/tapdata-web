@@ -52,6 +52,7 @@ export default {
   packages_dag_dag_data_setting_runMinute: '每分钟运行一次',
   packages_dag_dag_data_setting_runDay: '每天2点运行',
   packages_dag_connection_form_access_node: 'agent设置',
+  packages_dag_agent_setting_from: 'agent设置来源于以下连接',
   packages_dag_connection_form_automatic: '平台自动分配',
   packages_dag_connection_form_manual: '用户手动指定',
   packages_dag_task_setting_automatic_ddl: '自动DDL',
@@ -311,6 +312,7 @@ export default {
   packages_dag_nodes_aggregate_juhehanshu: '聚合函数',
   packages_dag_nodes_database_zengliangduoxiancheng: '增量多线程写入',
   packages_dag_nodes_database_quanliangduoxiancheng: '全量多线程写入',
+  packages_dag_nodes_database_duoxianchengfenqujian: '多线程写入-分区键',
   packages_dag_nodes_database_bucunzaishidiu: '不存在时丢弃',
   packages_dag_nodes_database_shanchushijian: '删除事件',
   packages_dag_nodes_database_bucunzaishicha: '不存在时插入',
@@ -377,6 +379,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: '复制表名',
   packages_dag_nodes_table_qingxuanzebiao: '请选择表',
   packages_dag_nodes_table_fuzhishujuku: '复制数据库名',
+  packages_dag_copy_node_id: '复制节点ID',
   packages_dag_nodes_table_shujuku: '数据库',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: '目标存在时更新',
   packages_dag_nodes_targetdatabase_baochimubiaoduan: '保持目标端原有表结构，清除数据',
@@ -659,5 +662,6 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空数组',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。',
-  packages_dag_btn_disable_node: '禁用节点'
+  packages_dag_btn_disable_node: '禁用节点',
+  packages_dag_only_mongodb: '仅支持 MongoDB 数据库'
 }

@@ -176,12 +176,15 @@
                 <ElButton
                   size="mini"
                   v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
+                  type="primary"
                   @click="toDeploy(item)"
                   >{{ $t('public_agent_button_deploy') }}</ElButton
                 >
                 <ElButton
                   name="start"
                   size="mini"
+                  type="primary"
+                  plain
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleStart(item)"
@@ -195,6 +198,8 @@
                     !stopBtnDisabled(item)
                   "
                   size="mini"
+                  type="danger"
+                  plain
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
                   >{{ $t('public_button_stop') }}</ElButton
@@ -202,18 +207,22 @@
                 <ElButton
                   name="restart"
                   size="mini"
+                  type="warning"
+                  plain
                   v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRenew(item)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                  >{{ $t('public_button_restart') }}</ElButton
                 >
                 <ElButton
                   name="restart"
                   size="mini"
+                  type="warning"
+                  plain
                   v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleRestart(item)"
-                  >{{ $t('dfs_instance_instance_zhongqi') }}</ElButton
+                  >{{ $t('public_button_restart') }}</ElButton
                 >
                 <!--需要考虑老实例/免费实例 无订单信息的-->
                 <!--68-2 免费实例可以删除-->
@@ -238,6 +247,7 @@
                   v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
                   class="mr-2"
                   size="mini"
+                  type="primary"
                   @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}</ElButton
                 >
@@ -252,22 +262,25 @@
                     :content="getTooltipContent(item, 'upgrading')"
                     key="upgrading"
                   >
-                    <div class="upgrading-box">
-                      <VIcon class="v-icon animation-rotate" size="14" color="rgb(61, 156, 64)">loading-circle</VIcon>
-                      <ElProgress
-                        v-if="upgradingProgres(item) !== undefined"
-                        class="upgrading-progress"
-                        type="circle"
-                        color="rgb(61, 156, 64)"
-                        :percentage="upgradingProgres(item)"
-                        :show-text="false"
-                        :format="
-                          value => {
-                            return value
-                          }
-                        "
-                      ></ElProgress>
-                    </div>
+                    <ElButton size="mini" disabled>
+                      <span class="inline-flex align-items-center">
+                        <span>{{ $t('public_status_altering') }}</span>
+                        <ElProgress
+                          class="upgrading-progress mx-1"
+                          type="circle"
+                          color="#3b47e5"
+                          stroke-width="20"
+                          :percentage="upgradingProgres(item) || 0"
+                          :show-text="false"
+                          :format="
+                            value => {
+                              return value
+                            }
+                          "
+                        ></ElProgress>
+                        <span class="color-primary">{{ (upgradingProgres(item) || 0) + '%' }}</span>
+                      </span>
+                    </ElButton>
                   </ElTooltip>
                   <ElTooltip
                     v-else-if="upgradeFailedFlag(item)"
@@ -277,9 +290,16 @@
                     :content="getTooltipContent(item, 'fail')"
                     key="fail"
                   >
-                    <VIcon size="20" class="cursor-pointer block" @click="showUpgradeErrorDialogFnc(item)"
-                      >upgrade-error-color</VIcon
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      plain
+                      class="cursor-pointer block inline-flex align-items-center"
+                      @click="showUpgradeErrorDialogFnc(item)"
                     >
+                      <span>{{ $t('dfs_instance_instance_shengji') }}</span>
+                      <VIcon size="14" class="color-warning ml-2">warning</VIcon>
+                    </el-button>
                   </ElTooltip>
                   <ElTooltip
                     v-else-if="!upgradeFlag(item)"
@@ -289,9 +309,14 @@
                     :content="getTooltipContent(item)"
                     key="done"
                   >
-                    <el-button size="mini" class="cursor-pointer block" @click="showUpgradeDialogFnc(item)">{{
-                      $t('dfs_instance_instance_shengji')
-                    }}</el-button>
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      plain
+                      class="cursor-pointer block"
+                      @click="showUpgradeDialogFnc(item)"
+                      >{{ $t('dfs_instance_instance_shengji') }}</el-button
+                    >
                   </ElTooltip>
                 </template>
               </div>
@@ -394,7 +419,8 @@
               <VButton
                 :loading="selectedRow.btnLoading.stop"
                 :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
-                type="primary"
+                type="danger"
+                plain
                 class="flex-fill min-w-0"
                 @click="handleStop(selectedRow)"
               >
@@ -422,15 +448,7 @@
               >-->
             </div>
           </Details>
-          <!--   创建订阅   -->
-          <CreateDialog v-model="createDialog" @finish="fetch"></CreateDialog>
-          <!--   选择授权码   -->
-          <SelectListDialog
-            v-model="selectListDialog"
-            :type="selectListType"
-            @create="createDialog = true"
-            @new-agent="handleNewAgent"
-          ></SelectListDialog>
+
           <!--转账支付弹窗信息--->
           <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
           <!-- 新的创建实例 -->
@@ -545,9 +563,6 @@ import { secondDifference } from '../../util'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { mapGetters } from 'vuex'
 
-const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
-const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
-
 let timer = null
 
 export default {
@@ -558,8 +573,6 @@ export default {
     VIcon,
     Details,
     FilterBar,
-    CreateDialog,
-    SelectListDialog,
     transferDialog,
     SubscriptionModelDialog,
     Unsubscribe
@@ -648,8 +661,6 @@ export default {
       showDetails: false,
       detailId: null,
       filterItems: [],
-      createDialog: false,
-      selectListDialog: false,
       selectListType: 'code',
       subscriptionModelVisible: false,
       showUnsubscribeDetailVisible: false,
@@ -896,23 +907,23 @@ export default {
               const AES_KEY = '5fa25b06ee34581d'
               const AES_PAD = '5fa25b06ee34581d'
               const AES_PASSWORD = CryptoJS.AES.decrypt(
-                  {
-                    ciphertext: CryptoJS.enc.Base64.parse(password)
-                  },
-                  CryptoJS.enc.Latin1.parse(AES_KEY),
-                  {
-                    iv: CryptoJS.enc.Latin1.parse(AES_PAD)
-                  }
+                {
+                  ciphertext: CryptoJS.enc.Base64.parse(password)
+                },
+                CryptoJS.enc.Latin1.parse(AES_KEY),
+                {
+                  iv: CryptoJS.enc.Latin1.parse(AES_PAD)
+                }
               ).toString(CryptoJS.enc.Utf8)
               const splitStr = '://'
               const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
               if (splitIndex > -1) {
                 item.visitInfo.showUri =
-                    connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
+                  connectionString.slice(0, splitIndex) + `***:***@` + connectionString.slice(splitIndex)
                 item.visitInfo.copyUri =
-                    connectionString.slice(0, splitIndex) +
-                    `${username}:${AES_PASSWORD}@` +
-                    connectionString.slice(splitIndex)
+                  connectionString.slice(0, splitIndex) +
+                  `${username}:${AES_PASSWORD}@` +
+                  connectionString.slice(splitIndex)
               }
             }
 
@@ -1154,6 +1165,10 @@ export default {
     // 停止
     handleStop(row, from) {
       if (this.stopBtnDisabled(row)) {
+        return
+      }
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
         return
       }
       let flag = false
@@ -1453,44 +1468,7 @@ export default {
           this.showCreateIps = false
         })
     },
-    // 创建Agent
-    async createAgent() {
-      this.createAgentLoading = true
-      const userInfo = window.__USER_INFO__ || {}
-      // 免费实例
-      if (await this.handleFreeAgent()) return (this.createAgentLoading = false)
-      // 开启授权码
-      if (userInfo.enableLicense) {
-        this.$axios
-          .get('api/tcm/aliyun/market/license/available')
-          .then(data => {
-            if (data.length) {
-              this.handleSelectListDialog('code')
-            } else {
-              this.handleCreateAuthorizationCode()
-            }
-          })
-          .finally(() => {
-            this.createAgentLoading = false
-          })
-        return
-      }
-      this.$axios
-        .get('api/tcm/paid/plan/queryAvailableSubscribe')
-        .then(data => {
-          if (data.length) {
-            this.handleSelectListDialog('order')
-            return
-          }
-          this.createDialog = true
-        })
-        .finally(() => {
-          this.createAgentLoading = false
-        })
-        .catch(() => {
-          this.createDialog = true
-        })
-    },
+
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
@@ -1500,8 +1478,7 @@ export default {
       return (
         row.agentType === 'Cloud' ||
         row.status !== 'Running' ||
-        row.metric.runningTaskNum > 0 ||
-        row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        row.metric.runningTaskNum > 0
       )
     },
     // 禁用删除
@@ -1547,7 +1524,6 @@ export default {
     restartBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus)
       ) //tapdataAgent 失活了
     },
@@ -1555,7 +1531,6 @@ export default {
     startBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Running'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
@@ -1600,10 +1575,7 @@ export default {
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
     },
-    handleSelectListDialog(type = 'code') {
-      this.selectListType = type
-      this.selectListDialog = true
-    },
+
     async handleNewAgent(params = {}) {
       try {
         const data = await this.$axios.post('api/tcm/orders', params)
@@ -1663,6 +1635,10 @@ export default {
     },
     // 半托管重启
     handleRestart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1675,6 +1651,10 @@ export default {
     },
     // 半托管启动
     handleStart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1959,8 +1939,8 @@ export default {
 .upgrading-progress {
   ::v-deep {
     .el-progress-circle {
-      width: 20px !important;
-      height: 20px !important;
+      width: 16px !important;
+      height: 16px !important;
     }
   }
 }

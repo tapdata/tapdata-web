@@ -1259,6 +1259,7 @@ export default {
   dfs_instance_expired_time_tip4: '3.实例因过期禁止调度时，可以通过续费恢复实例继续调度运行任务',
   dfs_instance_expired_time_full_tip2: '1.过期1天后，将自动停止 Agent（Agent 上运行的任务也会停止）',
   dfs_instance_expired_time_full_tip3: '2.实例因过期停止时，可以通过续费恢复实例继续运行任务',
+  dfs_instance_tapdata_agent_status_tip: 'tapdata啟停管理服務已離線，請手動在安裝目錄執行啟停操作。',
   dfs_user_center_zhifufuwu: '支付服務',
   dfs_user_center_ninjiangzhifur: '您將支付“{val1}”業務，支付後您將享受該服務，確定是否繼續？ ',
   dfs_user_center_xudingfuwu: '續訂服務',

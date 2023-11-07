@@ -1,6 +1,7 @@
 import Http from './Http'
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
+import { AxiosResponse } from 'axios'
 
 export default class Task extends Http {
   constructor() {

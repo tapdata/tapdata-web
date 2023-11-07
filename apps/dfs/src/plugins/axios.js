@@ -48,9 +48,7 @@ let skipErrorHandler = false
 const errorCallback = error => {
   let status = error?.response?.status
   if (axios.isCancel(error)) {
-    // eslint-disable-next-line no-console
-    console.log('Request canceled', error.message)
-    return Promise.reject('Request canceled')
+    return Promise.reject(error)
   }
   // 从请求池清除掉错误请求
   if (error?.response?.config || error?.config) {
@@ -122,7 +120,7 @@ const requestInterceptor = config => {
   let key = getPendingKey(config)
   // 判断请求池是否有相同请求，有则取消当前请求（后一条）,没有则将请求注入请求池
   if (pending.includes(key)) {
-    console.log('Cancel request:', config) //eslint-disable-line
+    console.warn('Cancel request:', config) //eslint-disable-line
     cancelFunc('cancel')
   } else if (config.method !== 'get') {
     pending.push(key)

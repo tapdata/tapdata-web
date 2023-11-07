@@ -1388,6 +1388,8 @@ export default {
     '1. After 1 day expires, the Agent will be automatically stopped (the tasks running on the Agent will also be stopped)',
   dfs_instance_expired_time_full_tip3:
     '2. When the instance is stopped due to expiration, the instance can be resumed by renewal to continue running tasks',
+  dfs_instance_tapdata_agent_status_tip:
+    'The tapdata start/stop management service is offline. Please manually perform the start/stop operation in the installation directory.',
   dfs_user_center_zhifufuwu: 'Payment Service',
   dfs_user_center_ninjiangzhifur:
     'You will pay for the "{val1}" service, and you will enjoy the service after payment. Are you sure whether to continue? ',
