@@ -58,6 +58,7 @@ export default {
   packages_dag_dag_data_setting_runMinute: 'Run every minute',
   packages_dag_dag_data_setting_runDay: "Run at 2 o'clock every day",
   packages_dag_connection_form_access_node: 'Agent Settings',
+  packages_dag_agent_setting_from: 'Agent settings derive from the following',
   packages_dag_connection_form_automatic: 'Platform automatic allocation',
   packages_dag_connection_form_manual: 'User specified manually',
   packages_dag_task_setting_automatic_ddl: 'Automatic DDL',
@@ -324,6 +325,7 @@ export default {
   packages_dag_nodes_aggregate_juhehanshu: 'Aggregate Function',
   packages_dag_nodes_database_zengliangduoxiancheng: 'Incremental multi-threaded write',
   packages_dag_nodes_database_quanliangduoxiancheng: 'Full multi-threaded write',
+  packages_dag_nodes_database_duoxianchengfenqujian: 'Multithreaded Write - Partition Key',
   packages_dag_nodes_database_bucunzaishidiu: 'Discard if not exists',
   packages_dag_nodes_database_shanchushijian: 'Delete Event',
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
@@ -391,6 +393,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: 'Copy table name',
   packages_dag_nodes_table_qingxuanzebiao: 'Please select a table',
   packages_dag_nodes_table_fuzhishujuku: 'Copy database name',
+  packages_dag_copy_node_id: 'Copy Node ID',
   packages_dag_nodes_table_shujuku: 'Database',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_targetdatabase_baochimubiaoduan:
@@ -530,7 +533,7 @@ export default {
   packages_dag_js_processor_index_riqichuli: 'Date Processing',
   packages_dag_merge_table_tree_index_biaozhijianketong:
     'Tables can be nested by dragging and dropping to determine the master-slave relationship',
-  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name (support drag and drop)',
+  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name',
   packages_dag_migration_settingpanel_cronbiao: 'Cron expression format error',
   packages_dag_hooks_useaftertasksaved_moxingyishengcheng: 'The model has been generated, execute callback',
   packages_dag_mixins_editor_wsshoudaole: 'Ws received the return of other tasks',
@@ -698,5 +701,6 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
-  packages_dag_btn_disable_node: 'Disable Node'
+  packages_dag_btn_disable_node: 'Disable Node',
+  packages_dag_only_mongodb: 'Supports MongoDB databases only.'
 }

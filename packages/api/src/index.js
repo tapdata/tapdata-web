@@ -1,4 +1,4 @@
-import Http, { CancelToken } from './Http'
+import Http, { CancelToken, isCancel } from './Http'
 
 import Connections from './Connections'
 const connectionsApi = new Connections()
@@ -240,6 +240,6 @@ export {
 }
 export * from './ApiClient'
 
-export { CancelToken }
+export { CancelToken, isCancel }
 
 export default Http

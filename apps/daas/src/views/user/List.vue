@@ -100,7 +100,7 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_role')" prop="roleMappings">
         <template slot-scope="scope">
-          {{ permissionsmethod(scope.row.roleMappings) }}
+          {{ permissionsmethod(scope.row.roleMappings, scope.row.roleusers) }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
@@ -769,12 +769,13 @@ export default {
       })
     },
     // 关联用户
-    permissionsmethod(data) {
+    permissionsmethod(data = [], roleusers = []) {
       let html = ''
       if (data && data.length) {
-        data.forEach(item => {
-          if (item.role && item.role.name) {
-            html += ' ' + item.role.name + ','
+        roleusers.forEach(item => {
+          const roleName = data.find(t => t.roleId === item)?.role?.name
+          if (roleName) {
+            html += ' ' + roleName + ','
           }
         })
       }

@@ -198,7 +198,7 @@
                     !stopBtnDisabled(item)
                   "
                   size="mini"
-                  type="primary"
+                  type="danger"
                   plain
                   :loading="item.btnLoading.stop"
                   @click="handleStop(item)"
@@ -448,15 +448,7 @@
               >-->
             </div>
           </Details>
-          <!--   创建订阅   -->
-          <CreateDialog v-model="createDialog" @finish="fetch"></CreateDialog>
-          <!--   选择授权码   -->
-          <SelectListDialog
-            v-model="selectListDialog"
-            :type="selectListType"
-            @create="createDialog = true"
-            @new-agent="handleNewAgent"
-          ></SelectListDialog>
+
           <!--转账支付弹窗信息--->
           <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
           <!-- 新的创建实例 -->
@@ -571,9 +563,6 @@ import { secondDifference } from '../../util'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { mapGetters } from 'vuex'
 
-const CreateDialog = () => import(/* webpackChunkName: "CreateInstanceDialog" */ './Create')
-const SelectListDialog = () => import(/* webpackChunkName: "SelectListInstanceDialog" */ './SelectList')
-
 let timer = null
 
 export default {
@@ -584,8 +573,6 @@ export default {
     VIcon,
     Details,
     FilterBar,
-    CreateDialog,
-    SelectListDialog,
     transferDialog,
     SubscriptionModelDialog,
     Unsubscribe
@@ -674,8 +661,6 @@ export default {
       showDetails: false,
       detailId: null,
       filterItems: [],
-      createDialog: false,
-      selectListDialog: false,
       selectListType: 'code',
       subscriptionModelVisible: false,
       showUnsubscribeDetailVisible: false,
@@ -1182,6 +1167,10 @@ export default {
       if (this.stopBtnDisabled(row)) {
         return
       }
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       let flag = false
       if (from === 'details' && this.selectedRow?.id === row.id) {
         row = this.selectedRow
@@ -1479,44 +1468,7 @@ export default {
           this.showCreateIps = false
         })
     },
-    // 创建Agent
-    async createAgent() {
-      this.createAgentLoading = true
-      const userInfo = window.__USER_INFO__ || {}
-      // 免费实例
-      if (await this.handleFreeAgent()) return (this.createAgentLoading = false)
-      // 开启授权码
-      if (userInfo.enableLicense) {
-        this.$axios
-          .get('api/tcm/aliyun/market/license/available')
-          .then(data => {
-            if (data.length) {
-              this.handleSelectListDialog('code')
-            } else {
-              this.handleCreateAuthorizationCode()
-            }
-          })
-          .finally(() => {
-            this.createAgentLoading = false
-          })
-        return
-      }
-      this.$axios
-        .get('api/tcm/paid/plan/queryAvailableSubscribe')
-        .then(data => {
-          if (data.length) {
-            this.handleSelectListDialog('order')
-            return
-          }
-          this.createDialog = true
-        })
-        .finally(() => {
-          this.createAgentLoading = false
-        })
-        .catch(() => {
-          this.createDialog = true
-        })
-    },
+
     // 禁用部署
     deployBtnDisabled(row) {
       return row.agentType === 'Cloud' || !!row.deployDisable
@@ -1526,8 +1478,7 @@ export default {
       return (
         row.agentType === 'Cloud' ||
         row.status !== 'Running' ||
-        row.metric.runningTaskNum > 0 ||
-        row.tapdataAgentStatus === 'stopped' //tapdataAgent 失活了
+        row.metric.runningTaskNum > 0
       )
     },
     // 禁用删除
@@ -1573,7 +1524,6 @@ export default {
     restartBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus)
       ) //tapdataAgent 失活了
     },
@@ -1581,7 +1531,6 @@ export default {
     startBtnDisabled(row) {
       return (
         ['Creating', 'Stopping', 'Running'].includes(row.status) ||
-        row.tapdataAgentStatus === 'stopped' ||
         ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
@@ -1626,10 +1575,7 @@ export default {
     isWindons(row) {
       return row?.metric?.systemInfo?.os?.includes('win')
     },
-    handleSelectListDialog(type = 'code') {
-      this.selectListType = type
-      this.selectListDialog = true
-    },
+
     async handleNewAgent(params = {}) {
       try {
         const data = await this.$axios.post('api/tcm/orders', params)
@@ -1689,6 +1635,10 @@ export default {
     },
     // 半托管重启
     handleRestart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
@@ -1701,6 +1651,10 @@ export default {
     },
     // 半托管启动
     handleStart(row) {
+      if (row.tapdataAgentStatus === 'stopped') {
+        this.$message.warning(this.$t('dfs_instance_tapdata_agent_status_tip'))
+        return
+      }
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,

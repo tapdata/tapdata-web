@@ -12,10 +12,14 @@
     <div v-if="activeNodeId" class="flex-fill overflow-auto">
       <VTable ref="table" row-key="id" :columns="columns" :data="nodeData" hide-on-single-page class="pt-4">
         <template slot="statusLabel" slot-scope="scope">
-          <div v-if="scope.row.status === 'ERROR'" :class="scope.row.statusColor">
-            <span class="color-danger underline cursor-pointer" @click="handleError(scope.row)">{{
-              $t('public_task_mission_error')
-            }}</span>
+          <div
+            v-if="scope.row.status === 'ERROR'"
+            :class="scope.row.statusColor"
+            class="inline-flex align-items-center cursor-pointer"
+            @click="handleError(scope.row)"
+          >
+            <span class="color-danger underline">{{ $t('public_task_mission_error') }}</span>
+            <VIcon class="color-danger ml-2">error</VIcon>
           </div>
           <div v-else :class="scope.row.statusColor">{{ scope.row.statusLabel }}</div>
         </template>

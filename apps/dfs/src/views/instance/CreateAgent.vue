@@ -50,19 +50,30 @@
             <span class="font-color-light text-end">{{
               $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
             }}</span>
-            <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
-              <ElRadio
-                v-for="(item, index) in cloudProviderList"
-                :key="index"
-                :label="item.cloudProvider"
-                border
-                class="rounded-4 subscription-radio m-0 position-relative"
-              >
-                <span class="inline-flex align-center">
-                  {{ item.cloudProviderName }}
-                </span>
-              </ElRadio>
-            </ElRadioGroup>
+
+            <el-skeleton :loading="loading" animated>
+              <template slot="template">
+                <div class="flex gap-4">
+                  <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
+                </div>
+              </template>
+              <template>
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+                  <ElRadio
+                    v-for="(item, index) in cloudProviderList"
+                    :key="index"
+                    :label="item.cloudProvider"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.cloudProviderName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
+
             <span
               class="font-color-light text-end"
               :class="[
@@ -71,19 +82,29 @@
               ]"
               >{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span
             >
-            <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
-              <ElRadio
-                v-for="(item, index) in cloudDetail"
-                :key="index"
-                :label="item.region"
-                border
-                class="rounded-4 subscription-radio m-0 position-relative"
-              >
-                <span class="inline-flex align-center">
-                  {{ item.regionName }}
-                </span>
-              </ElRadio>
-            </ElRadioGroup>
+
+            <el-skeleton :loading="loading" animated>
+              <template slot="template">
+                <div class="flex gap-4">
+                  <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
+                </div>
+              </template>
+              <template>
+                <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
+                  <ElRadio
+                    v-for="(item, index) in cloudDetail"
+                    :key="index"
+                    :label="item.region"
+                    border
+                    class="rounded-4 subscription-radio m-0 position-relative"
+                  >
+                    <span class="inline-flex align-center">
+                      {{ item.regionName }}
+                    </span>
+                  </ElRadio>
+                </ElRadioGroup>
+              </template>
+            </el-skeleton>
           </div>
         </ElFormItem>
 
@@ -91,71 +112,90 @@
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_guide_index_xuanzejisuanyin') }}
           </div>
-          <el-row type="flex" class="flex-wrap lh-base" :gutter="16" style="row-gap: 16px">
-            <el-col :span="8" v-for="(item, i) in specificationItems" :key="i">
-              <div
-                class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
-                :class="{
-                  active: specification === item.value,
-                  disabled: hasFreeAgent && item.chargeProvider === 'FreeTier'
-                }"
-                @click="changeSpec(item.value, hasFreeAgent && item.chargeProvider === 'FreeTier')"
-              >
-                <div class="is-active position-absolute top-0 end-0">
-                  <div class="is-active-triangle"></div>
-                  <VIcon size="16" class="is-active-icon">check-bold</VIcon>
-                </div>
-                <div class="spec-li-title lh-base fw-bold font-color-dark">
-                  <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
-                  <ElTag
-                    v-if="item.chargeProvider === 'FreeTier'"
-                    size="small"
-                    class="bg-color-warning text-white border-0 ml-2"
-                    >{{
-                      platform === 'selfHost'
-                        ? $t('dfs_instance_instance_mianfei')
-                        : $t('dfs_instance_createagent_mianfeitiyan')
-                    }}</ElTag
-                  >
-                </div>
-                <div
-                  v-if="platform === 'selfHost'"
-                  class="spec-li-title mt-1 lh-base font-color-sslight"
-                  v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
-                ></div>
+          <el-skeleton :loading="loading" animated>
+            <template slot="template">
+              <div class="flex gap-4">
+                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
-            </el-col>
-          </el-row>
+            </template>
+            <template>
+              <el-row type="flex" class="flex-wrap lh-base" :gutter="16" style="row-gap: 16px">
+                <el-col :span="8" v-for="(item, i) in specificationItems" :key="i">
+                  <div
+                    class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
+                    :class="{
+                      active: specification === item.value,
+                      disabled: hasFreeAgent && item.chargeProvider === 'FreeTier'
+                    }"
+                    @click="changeSpec(item.value, hasFreeAgent && item.chargeProvider === 'FreeTier')"
+                  >
+                    <div class="is-active position-absolute top-0 end-0">
+                      <div class="is-active-triangle"></div>
+                      <VIcon size="16" class="is-active-icon">check-bold</VIcon>
+                    </div>
+                    <div class="spec-li-title lh-base fw-bold font-color-dark">
+                      <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
+                      <ElTag
+                        v-if="item.chargeProvider === 'FreeTier'"
+                        size="small"
+                        class="bg-color-warning text-white border-0 ml-2"
+                        >{{
+                          platform === 'selfHost'
+                            ? $t('dfs_instance_instance_mianfei')
+                            : $t('dfs_instance_createagent_mianfeitiyan')
+                        }}</ElTag
+                      >
+                    </div>
+                    <div
+                      v-if="platform === 'selfHost'"
+                      class="spec-li-title mt-1 lh-base font-color-sslight"
+                      v-html="$t('dfs_agent_specification_description', updateAgentCap(item.cpu, item.memory))"
+                    ></div>
+                  </div>
+                </el-col>
+              </el-row>
+            </template>
+          </el-skeleton>
         </ElFormItem>
 
         <ElFormItem>
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_instance_instance_dingyuefangshi') }}
           </div>
-          <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
-            <ElRadio
-              v-for="(item, index) in packageItems"
-              :key="index"
-              :label="item.value"
-              border
-              class="subscription-radio m-0 position-relative"
-            >
-              <span class="inline-flex align-center">
-                {{ item.label }}
-                <ElTag
-                  v-if="item.type === 'recurring' || item.periodUnit === 'year'"
-                  class="discount-tag fw-sub rounded-4 border-0 ml-2"
-                  >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(item) }) }}</ElTag
-                >
 
-                <VIcon
-                  v-if="item.type === 'recurring' && item.periodUnit === 'year'"
-                  class="position-absolute discount-hot-icon"
-                  >hot-o</VIcon
+          <el-skeleton :loading="loading" animated>
+            <template slot="template">
+              <div class="flex gap-4">
+                <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
+              </div>
+            </template>
+            <template>
+              <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
+                <ElRadio
+                  v-for="(item, index) in packageItems"
+                  :key="index"
+                  :label="item.value"
+                  border
+                  class="subscription-radio m-0 position-relative"
                 >
-              </span>
-            </ElRadio>
-          </ElRadioGroup>
+                  <span class="inline-flex align-center">
+                    {{ item.label }}
+                    <ElTag
+                      v-if="item.type === 'recurring' || item.periodUnit === 'year'"
+                      class="discount-tag fw-sub rounded-4 border-0 ml-2"
+                      >{{ $t('dfs_agent_subscription_discount', { val: getDiscount(item) }) }}</ElTag
+                    >
+
+                    <VIcon
+                      v-if="item.type === 'recurring' && item.periodUnit === 'year'"
+                      class="position-absolute discount-hot-icon"
+                      >hot-o</VIcon
+                    >
+                  </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
         </ElFormItem>
       </ElForm>
     </div>
@@ -199,6 +239,7 @@ export default {
 
   data() {
     return {
+      loading: false,
       submitLoading: false,
       platform: 'selfHost',
       platformOptions: [
@@ -268,18 +309,13 @@ export default {
       const params = {
         productType: this.platform
       }
-      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
+      return this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
         let { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
           paidPrice.map(t => {
             const { cpu = 0, memory = 0 } = t.spec || {}
-            let desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
-              val: this.getSuggestPipelineNumber(cpu, memory)
-            })
-            if (t.chargeProvider === 'FreeTier') {
-              desc = i18n.t('dfs_agent_download_subscriptionmodeldialog_mianfeishilizui')
-            }
+
             return {
               label: getSpec(t.spec),
               value: getSpec(t.spec),
@@ -287,7 +323,9 @@ export default {
               memory,
               name: t.spec.name.toUpperCase(),
               chargeProvider: t.chargeProvider,
-              desc: desc
+              desc: i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
+                val: t.limitTask
+              })
             }
           }),
           'value'
@@ -330,23 +368,25 @@ export default {
     },
 
     //查找云厂商
-    getCloudProvider() {
-      return this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
-        this.cloudProviderList = data?.items || []
-        this.provider = this.cloudProviderList?.[0].cloudProvider
-        this.changeProvider()
-        this.getPrice()
-      })
+    async getCloudProvider() {
+      const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
+
+      this.cloudProviderList = data?.items || []
+      this.provider = this.cloudProviderList?.[0].cloudProvider
+      this.changeProvider()
+      await this.getPrice()
     },
 
-    handleChangePlatform(platform) {
+    async handleChangePlatform(platform) {
+      this.loading = true
       this.platform = platform
 
       if (this.platform === 'fullManagement') {
-        this.getCloudProvider()
+        await this.getCloudProvider()
       } else {
-        this.getPrice()
+        await this.getPrice()
       }
+      this.loading = false
     },
 
     //切换云厂商

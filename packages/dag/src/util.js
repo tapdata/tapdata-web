@@ -91,6 +91,8 @@ export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {
     return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0, uniqueIndexCounts: 0 }, map[t])
   })
   const list =
-    filterType === 'HasKeys' ? result.filter(t => !!t.primaryKeyCounts || !!t.uniqueIndexCounts) : result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
+    filterType === 'HasKeys'
+      ? result.filter(t => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
+      : result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
   return list.map(t => t.tableName)
 }
