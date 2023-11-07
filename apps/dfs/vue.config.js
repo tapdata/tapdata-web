@@ -87,7 +87,7 @@ let localTmProxy = {
 
 module.exports = {
   pages,
-  lintOnSave: process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
+  lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath: './',
   productionSourceMap: false,
 

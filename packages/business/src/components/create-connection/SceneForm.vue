@@ -86,11 +86,11 @@ import {
 } from '@tap/api'
 import { VIcon } from '@tap/component'
 import { SchemaToForm } from '@tap/form'
-import { checkConnectionName, isEmpty, openUrl, submitForm } from '@tap/shared'
+import { checkConnectionName, openUrl, submitForm } from '@tap/shared'
 import Test from '@tap/business/src/views/connections/Test'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import resize from '@tap/component/src/directives/resize'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import ConnectorDoc from '../ConnectorDoc'
 
 export default {

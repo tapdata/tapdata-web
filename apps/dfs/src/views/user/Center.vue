@@ -278,7 +278,12 @@
             disabled
           >
             <el-select v-model="passwordForm.countryCode" slot="prepend" style="width: 110px" filterable>
-              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+              <el-option
+                v-for="item in countryCode"
+                :key="item.dial_code"
+                :label="'+ ' + item.dial_code"
+                :value="item.dial_code"
+              >
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
               >
