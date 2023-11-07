@@ -210,10 +210,10 @@ export default ({ routes }) => {
 
   window.axios
     .get('config/config.json', {
-      cache: false,
       responseType: 'json',
       headers: {
-        Accept: 'application/json'
+        Accept: 'application/json',
+        'Cache-Control': 'no-cache'
       }
     })
     .then(res => {
