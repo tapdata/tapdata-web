@@ -1,202 +1,205 @@
 <template>
-  <section
-    class="operation-logs-wrapper g-panel-container"
-    :class="[isEn ? 'is-en' : '']"
-    v-if="$route.name === 'order'"
-  >
-    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
-      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
-        <div class="main" v-loading="loadingSubscribe">
-          <div class="list-operation">
-            <div class="list-operation-left flex justify-content-between">
-              <ul class="flex align-items-center">
-                <li
-                  v-for="(item, index) in filterArray"
-                  :key="index"
-                  :class="['filter-li mr-4 px-4 py-1 cursor-pointer', { active: activedFilter === item.value }]"
-                  @click="changeActivedFilter(item)"
-                >
-                  {{ item.label }}
-                </li>
-                <li class="px-4 py-1">
-                  <ElButton plain class="btn-refresh" @click="remoteMethod">
-                    <VIcon>refresh</VIcon>
-                  </ElButton>
-                </li>
-              </ul>
-              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-                <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
-              </ElButton>
-            </div>
-          </div>
-
-          <ul v-if="subscribeList.length" class="overflow-auto flex-fill mt-4">
-            <li class="list-li flex mb-4 rounded-lg p-4" v-for="item in subscribeList" :key="item.id">
-              <template v-for="(row, rIndex) in item.subscribeItems">
-                <div class="flex w-60">
-                  <div class="w-50">
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_dingyueleixing') }}:</span>
-                      <span class="li-item__value font-color-dark">{{ row.productType }}</span>
-                    </div>
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight">{{ $t('dfs_instance_instance_guige') }}:</span>
-                      <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
-                    </div>
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight">Agent Id:</span>
-                      <ElLink
-                        type="primary"
-                        class="li-item__value text-decoration-underline"
-                        @click="goInstance(row)"
-                        >{{ row.resourceId }}</ElLink
-                      >
-                    </div>
-                  </div>
-                  <div class="w-50">
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight">{{ $t('dfs_user_center_jine') }}:</span>
-                      <span class="li-item__value font-color-dark">{{
-                        formatterPrice(item.currency, row.amount)
-                      }}</span>
-                    </div>
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight"
-                        >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
-                      >
-                      <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
-                    </div>
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight"
-                        >{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}:</span
-                      >
-                      <span class="li-item__value font-color-dark">{{
-                        formatterTime(item.startAt, 'YYYY-MM-DD') + '~' + formatterTime(item.endAt, 'YYYY-MM-DD')
-                      }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex justify-content-between w-40">
-                  <div>
-                    <div>
-                      <span class="li-item__label font-color-sslight"
-                        >{{ $t('dfs_order_list_dingyuezhuangtai') }}:</span
-                      >
-                      <span class="inline-block li-item__value font-color-dark">
-                        <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
-                      </span>
-                    </div>
-                    <div>
-                      <span class="li-item__label font-color-sslight"
-                        >{{ $t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') }}:</span
-                      >
-                      <span class="li-item__value font-color-dark">{{ row.agentType }}</span>
-                    </div>
-                    <div class="mb-2">
-                      <span class="li-item__label font-color-sslight"
-                        >{{ $t('dfs_components_renew_dingyuebianhao') }}:</span
-                      >
-                      <span class="li-item__value font-color-dark">{{ item.id }}</span>
-                    </div>
-                  </div>
-                  <div class="li-operation">
-                    <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
-                      $t('public_button_pay')
-                    }}</ElButton>
-                    <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
-                      $t('dfs_change_record')
-                    }}</ElButton>
-                    <ElButton
-                      v-if="
-                        !(
-                          !['active'].includes(item.status) ||
-                          item.totalAmount === 0 ||
-                          item.subscribeType === 'recurring'
-                        )
-                      "
-                      type="primary"
-                      plain
-                      @click="openRenew(item)"
-                      >{{ $t('public_button_renew') }}</ElButton
-                    >
-                    <ElButton
-                      v-if="
-                        !disableUnsubscribe(row) &&
-                        ['active'].includes(item.status) &&
-                        row.productType === 'Engine' &&
-                        !(!row.amount && row.agentType === 'Cloud')
-                      "
-                      type="primary"
-                      plain
-                      @click="openChangeSubscribe(item)"
-                      >{{ $t('dfs_order_change') }}</ElButton
-                    >
-                    <ElButton
-                      v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
-                      type="danger"
-                      plain
-                      size="mini"
-                      @click="openUnsubscribe(item, row.productType)"
-                      >{{ $t('public_button_unsubscribe') }}</ElButton
-                    >
-                  </div>
-                </div>
-              </template>
-            </li>
-          </ul>
-          <div v-else class="flex-fill pt-12">
-            <VEmpty large class="flex"></VEmpty>
+  <div class="flex flex-column flex-fill">
+    <div class="bg-white rounded-lg mb-4">
+      <div class="flex align-items-center px-4">
+        <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      </div>
+      <ElDivider class="mt-0 mb-3"></ElDivider>
+      <el-tabs class="header-tabs flex flex-column overflow-hidden flex-1" v-model="activeName">
+        <el-tab-pane
+          class="order-flex overflow-hidden h-100"
+          :label="$t('dfs_order_list_wodedingyue')"
+          name="first"
+        ></el-tab-pane>
+        <el-tab-pane
+          class="order-flex flex-column overflow-hidden h-100"
+          :label="$t('dfs_instance_selectlist_shouquanma')"
+          name="second"
+        ></el-tab-pane>
+      </el-tabs>
+    </div>
+    <section
+      class="operation-logs-wrapper g-panel-container"
+      :class="[isEn ? 'is-en' : '']"
+      v-if="$route.name === 'order'"
+    >
+      <div v-if="activeName !== 'second'" class="main" v-loading="loadingSubscribe">
+        <div class="list-operation">
+          <div class="list-operation-left flex justify-content-between">
+            <ul class="flex align-items-center">
+              <li
+                v-for="(item, index) in filterArray"
+                :key="index"
+                :class="['filter-li mr-4 px-4 py-1 cursor-pointer', { active: activedFilter === item.value }]"
+                @click="changeActivedFilter(item)"
+              >
+                {{ item.label }}
+              </li>
+              <li class="px-4 py-1">
+                <ElButton plain class="btn-refresh" @click="remoteMethod">
+                  <VIcon>refresh</VIcon>
+                </ElButton>
+              </li>
+            </ul>
+            <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
+              <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
+            </ElButton>
           </div>
         </div>
-      </el-tab-pane>
-      <el-tab-pane
-        class="order-flex flex-column overflow-hidden h-100"
-        :label="$t('dfs_instance_selectlist_shouquanma')"
-        name="second"
-      >
-        <section class="flex flex-column overflow-hidden flex-1">
-          <div class="mt-2 flex justify-content-end">
-            <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
-            <!--            <el-button type="primary" @click="goLicense">{{-->
-            <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
-            <!--            }}</el-button>-->
-          </div>
-          <VTable
-            :columns="codeColumns"
-            :remoteMethod="codeRemoteMethod"
-            :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper'
-            }"
-            ref="tableCode"
-            class="mt-4"
-          >
-            <template #agentType="{ row }">
-              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-            </template>
-            <template #bindAgent="{ row }">
-              <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-                $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
-              }}</ElLink>
-              <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
-            </template>
-            <template #operation="{ row }">
-              <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
-            </template>
-          </VTable>
-        </section>
-      </el-tab-pane>
-    </el-tabs>
 
-    <!--转账{{$t('public_button_pay')}}-->
-    <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
-    <!--退订-->
-    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
-    <!--续订-->
-    <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
-    <!--变更-->
-    <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
-  </section>
-  <RouterView v-else></RouterView>
+        <ul v-if="subscribeList.length" class="overflow-auto flex-fill mt-4">
+          <li class="list-li flex mb-4 rounded-lg p-4" v-for="item in subscribeList" :key="item.id">
+            <template v-for="(row, rIndex) in item.subscribeItems">
+              <div class="flex w-60">
+                <div class="w-50">
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_dingyueleixing') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ row.productType }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_instance_instance_guige') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">Agent Id:</span>
+                    <ElLink type="primary" class="li-item__value text-decoration-underline" @click="goInstance(row)">{{
+                      row.resourceId
+                    }}</ElLink>
+                  </div>
+                </div>
+                <div class="w-50">
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_user_center_jine') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ formatterPrice(item.currency, row.amount) }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{
+                      formatterTime(item.startAt, 'YYYY-MM-DD') + '~' + formatterTime(item.endAt, 'YYYY-MM-DD')
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-content-between w-40">
+                <div>
+                  <div>
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_dingyuezhuangtai') }}:</span>
+                    <span class="inline-block li-item__value font-color-dark">
+                      <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
+                    </span>
+                  </div>
+                  <div>
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{ row.agentType }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_components_renew_dingyuebianhao') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{ item.id }}</span>
+                  </div>
+                </div>
+                <div class="li-operation">
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
+                    $t('public_button_pay')
+                  }}</ElButton>
+                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                    $t('dfs_change_record')
+                  }}</ElButton>
+                  <ElButton
+                    v-if="
+                      !(
+                        !['active'].includes(item.status) ||
+                        item.totalAmount === 0 ||
+                        item.subscribeType === 'recurring'
+                      )
+                    "
+                    type="primary"
+                    plain
+                    @click="openRenew(item)"
+                    >{{ $t('public_button_renew') }}</ElButton
+                  >
+                  <ElButton
+                    v-if="
+                      !disableUnsubscribe(row) &&
+                      ['active'].includes(item.status) &&
+                      row.productType === 'Engine' &&
+                      !(!row.amount && row.agentType === 'Cloud')
+                    "
+                    type="primary"
+                    plain
+                    @click="openChangeSubscribe(item)"
+                    >{{ $t('dfs_order_change') }}</ElButton
+                  >
+                  <ElButton
+                    v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
+                    type="danger"
+                    plain
+                    size="mini"
+                    @click="openUnsubscribe(item, row.productType)"
+                    >{{ $t('public_button_unsubscribe') }}</ElButton
+                  >
+                </div>
+              </div>
+            </template>
+          </li>
+        </ul>
+        <div v-else class="flex-fill pt-12">
+          <VEmpty large class="flex"></VEmpty>
+        </div>
+      </div>
+      <section v-if="activeName === 'second'" class="flex flex-column overflow-hidden flex-1">
+        <div class="mt-2 flex justify-content-end">
+          <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
+          <!--            <el-button type="primary" @click="goLicense">{{-->
+          <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
+          <!--            }}</el-button>-->
+        </div>
+        <VTable
+          :columns="codeColumns"
+          :remoteMethod="codeRemoteMethod"
+          :page-options="{
+            layout: 'total, ->, prev, pager, next, sizes, jumper'
+          }"
+          ref="tableCode"
+          class="mt-4"
+        >
+          <template #agentType="{ row }">
+            <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+          </template>
+          <template #bindAgent="{ row }">
+            <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+              $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
+            }}</ElLink>
+            <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+          </template>
+          <template #operation="{ row }">
+            <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+          </template>
+        </VTable>
+      </section>
+
+      <!--转账{{$t('public_button_pay')}}-->
+      <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
+      <!--退订-->
+      <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
+      <!--续订-->
+      <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
+      <!--变更-->
+      <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
+    </section>
+    <RouterView v-else></RouterView>
+  </div>
 </template>
 
 <script>
@@ -722,6 +725,9 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: column;
+  }
+  .header-tabs .el-tabs__header {
+    margin-bottom: 0;
   }
   .li-operation {
     .el-button {
