@@ -14,7 +14,7 @@
           v-bind="inputProps"
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
-          size="mini"
+          size="small"
           :style="inputStyle"
           v-model:value="inputValue"
         ></ElInput>
@@ -28,12 +28,12 @@
           class="inline-input-button"
           style="margin-left: 10px"
           type="primary"
-          size="mini"
+          size="small"
           :disabled="disabled"
           @click="save"
           >{{ $t('public_button_save') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton class="inline-input-button" size="small" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
       </template>
     </span>
   </div>

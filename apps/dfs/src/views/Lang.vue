@@ -53,7 +53,7 @@
     >
       <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
+          <ElButton size="small" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
         </div>
       </template>
       <template v-slot:name="scope">

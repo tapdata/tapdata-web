@@ -7,7 +7,7 @@
             <div class="flex">
               <ElInput
                 v-model:value="searchTable"
-                size="mini"
+                size="small"
                 :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
                 suffix-icon="el-icon-search"
                 clearable
@@ -67,7 +67,7 @@
           <div class="flex ml-2 text-start" style="margin-bottom: 8px">
             <div class="flex">
               <ElInput
-                size="mini"
+                size="small"
                 :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
                 suffix-icon="el-icon-search"
                 v-model:value="searchField"

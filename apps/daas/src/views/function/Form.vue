@@ -81,8 +81,8 @@
       </ElForm>
     </div>
     <div class="footer p-6">
-      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
+      <ElButton class="btn" size="small" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+      <ElButton class="btn" type="primary" size="small" @click="save">{{ $t('public_button_save') }}</ElButton>
     </div>
 
     <!-- </div>

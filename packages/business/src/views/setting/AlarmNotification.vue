@@ -8,11 +8,11 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="mini" @click="handlePageRead()">{{
+        <ElButton type="primary" size="small" @click="handlePageRead()">{{
           $t('packages_business_notify_mask_read')
         }}</ElButton>
-        <ElButton size="mini" @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
-        <ElButton id="alarm-settings" size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton size="small" @click="handleAllRead()">{{ $t('packages_business_notify_mask_read_all') }}</ElButton>
+        <ElButton id="alarm-settings" size="small" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>

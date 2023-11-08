@@ -201,11 +201,11 @@
       </template>
     </DynamicScroller>
     <div class="joint-table-footer">
-      <ElButton size="mini" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
+      <ElButton size="small" @click="addItem">{{ $t('packages_business_verification_addTable') }}</ElButton>
       <ElButton
         v-if="taskId"
         type="primary"
-        size="mini"
+        size="small"
         :disabled="!!list.length"
         :loading="autoAddTableLoading"
         @click="autoAddTable"
@@ -235,8 +235,8 @@
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" size="mini" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton size="small" @click="handleAddScriptClose">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" size="small" @click="submitScript">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

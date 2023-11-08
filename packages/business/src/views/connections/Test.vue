@@ -81,8 +81,8 @@
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+        <el-button v-if="isTimeout" size="small" @click="start()">{{ $t('public_button_retry') }}</el-button>
+        <el-button size="small" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
       </span>
     </template>
   </el-dialog>

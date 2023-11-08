@@ -35,7 +35,7 @@
         v-model:value="keyword"
         :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
         prefix-icon="el-icon-search"
-        size="mini"
+        size="small"
         clearable
         @keydown.stop
         @keyup.stop

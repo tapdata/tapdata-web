@@ -18,7 +18,7 @@
           <ElButton
             v-readonlybtn="'API_creation'"
             class="btn btn-create"
-            size="mini"
+            size="small"
             type="primary"
             @click="openCreateDialog"
           >
@@ -70,13 +70,13 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_clients_amangement'" size="small" type="text" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
           <ElButton
             v-readonlybtn="'API_clients_amangement'"
             v-if="scope.row.clientName !== 'Data Explorer'"
-            size="mini"
+            size="small"
             type="text"
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}</ElButton
@@ -94,10 +94,10 @@
     >
       <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
         <ElFormItem :label="$t('application_header_client_name')" required prop="clientName">
-          <ElInput v-model:value="createForm.clientName" size="mini"></ElInput>
+          <ElInput v-model:value="createForm.clientName" size="small"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_grant_type')" required prop="grantTypes">
-          <ElSelect v-model:value="createForm.grantTypes" multiple size="mini">
+          <ElSelect v-model:value="createForm.grantTypes" multiple size="small">
             <ElOption label="Implicit" value="implicit"></ElOption>
             <ElOption label="Client Credentials" value="client_credentials"></ElOption>
             <ElOption label="Refresh Token" value="refresh_token"></ElOption>
@@ -105,14 +105,14 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_client_secret')" required prop="clientSecret">
           <ElCol :span="22">
-            <ElInput v-model:value="createForm.clientSecret" size="mini"></ElInput>
+            <ElInput v-model:value="createForm.clientSecret" size="small"></ElInput>
           </ElCol>
           <ElCol :span="2" style="text-align: right">
-            <ElButton type="text" size="mini" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
+            <ElButton type="text" size="small" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
           </ElCol>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
-          <ElSelect v-model:value="createForm.scopes" multiple size="mini">
+          <ElSelect v-model:value="createForm.scopes" multiple size="small">
             <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
@@ -125,7 +125,7 @@
           ></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_show_menu')" required prop="showMenu">
-          <ElSelect v-model:value="createForm.showMenu" size="mini">
+          <ElSelect v-model:value="createForm.showMenu" size="small">
             <ElOption :label="$t('application_true')" :value="true"></ElOption>
             <ElOption :label="$t('application_false')" :value="false"></ElOption>
           </ElSelect>

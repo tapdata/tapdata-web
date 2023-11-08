@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="footer pt-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton class="btn" size="small" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
       </div>
     </div>
 

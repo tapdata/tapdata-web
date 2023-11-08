@@ -14,7 +14,7 @@
           v-readonlybtn="'new_model_creation'"
           type="primary"
           class="btn btn-create"
-          size="mini"
+          size="small"
           @click="openCreateDialog"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="120">
           <template v-slot="scope">
-            <el-button size="mini" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
+            <el-button size="small" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
               $t('public_button_delete')
             }}</el-button>
           </template>
@@ -66,7 +66,7 @@
         <el-form-item :label="$t('metadata_details_collectionName')" props="name">
           <el-input
             type="text"
-            size="mini"
+            size="small"
             v-model="createForm.name"
             :placeholder="$t('public_select_placeholder') + $t('metadata_details_collectionName')"
           ></el-input>

@@ -12,7 +12,7 @@
             v-readonlybtn="'role_creation'"
             type="primary"
             class="btn btn-create"
-            size="mini"
+            size="small"
             @click="openCreateDialog()"
           >
             <span>{{ $t('role_list_create') }}</span>
@@ -137,8 +137,8 @@
       </ElForm>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="mini" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
-          <ElButton size="mini" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
+          <ElButton size="small" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
+          <ElButton size="small" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
         </div>
       </template>
     </ElDialog>
@@ -158,8 +158,8 @@
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton size="small" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

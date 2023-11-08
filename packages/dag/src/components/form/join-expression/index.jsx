@@ -129,12 +129,12 @@ export const JoinExpression = observer(
                 <FormItem class="join-operator">=</FormItem>
                 <div class="join-field  flex-1">{right}</div>
                 <FormItem>
-                  <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => handleAdd()}>
+                  <ElButton class="ml-3 align-middle" size="small" type="text" onClick={() => handleAdd()}>
                     <VIcon size={16}>plus</VIcon>
                   </ElButton>
                   <ElButton
                     class="ml-3 align-middle"
-                    size="mini"
+                    size="small"
                     type="text"
                     disabled={fieldArr.length < 2}
                     onClick={() => handleRemove(i)}

@@ -24,7 +24,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
+          <el-button class="btn btn-create" type="primary" size="small" :loading="loadingConfig" @click="handleClose">
             <span>{{ $t('public_button_close') }}</span>
           </el-button>
         </div>

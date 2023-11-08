@@ -25,7 +25,7 @@
         <ElInput
           ref="search"
           v-model:value="search"
-          size="mini"
+          size="small"
           clearable
           @keydown.stop
           @keyup.stop
@@ -196,14 +196,14 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
+          <ElButton size="small" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :loading="creating" size="small" @click="taskDialogSubmit(false)">{{
             $t('packages_business_save_only')
           }}</ElButton>
           <ElButton
             :loading="creating || checkCanStartIng"
             :disabled="!taskDialogConfig.canStart"
-            size="mini"
+            size="small"
             type="primary"
             @click="taskDialogSubmit(true)"
           >
@@ -219,7 +219,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="mini"
+            size="small"
             v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
@@ -250,8 +250,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="dialogSubmit()">
+          <ElButton size="small" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>
         </span>

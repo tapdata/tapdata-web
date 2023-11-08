@@ -16,7 +16,7 @@
             v-readonlybtn="'new_model_creation'"
             type="primary"
             class="btn btn-create"
-            size="mini"
+            size="small"
             @click="handleEditor"
           >
             <span>{{ $t('packages_business_application_list_chuangjianyingyong') }}</span>

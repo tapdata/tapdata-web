@@ -11,20 +11,20 @@
   >
     <ElForm ref="form" label-position="left" label-width="150px" :model="form" class="my-n6">
       <ElFormItem
-        size="mini"
+        size="small"
         :label="$t('packages_business_permissionse_settings_create_xuanzeshouquanjiao')"
         prop="roleId"
       >
-        <ElSelect v-model:value="form.roleId" size="mini" @change="getData">
+        <ElSelect v-model:value="form.roleId" size="small" @change="getData">
           <ElOption v-for="item in roleList" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem
-        size="mini"
+        size="small"
         :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')"
         prop="checked"
       >
-        <ElCheckboxGroup v-model:value="form.checked" size="mini" class="inline-flex ml-4" @change="handleChange">
+        <ElCheckboxGroup v-model:value="form.checked" size="small" class="inline-flex ml-4" @change="handleChange">
           <ElCheckbox
             v-for="item in items"
             :label="item.value"
@@ -38,8 +38,8 @@
 
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :disabled="!form.roleId" size="mini" type="primary" :loading="saveLoading" @click="handleSave">{{
+        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :disabled="!form.roleId" size="small" type="primary" :loading="saveLoading" @click="handleSave">{{
           $t('public_button_save')
         }}</ElButton>
       </span>

@@ -283,7 +283,7 @@
                   <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
                   <ElInput
                     class="item-input"
-                    size="mini"
+                    size="small"
                     v-model:value="form.cdcDuration"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
@@ -299,7 +299,7 @@
                   }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="mini"
+                    size="small"
                     v-model:value="form.cdcBeginDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
@@ -312,7 +312,7 @@
                   <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="mini"
+                    size="small"
                     v-model:value="form.cdcEndDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
@@ -356,11 +356,11 @@
       </div>
       <div v-if="!!errorMessageLevel" class="color-danger mt-2" v-html="jointErrorMessage"></div>
       <div class="mt-4">
-        <ElButton size="mini" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <!--        <ElButton type="primary" size="mini" @click="save()">{{-->
+        <ElButton size="small" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
+        <!--        <ElButton type="primary" size="small" @click="save()">{{-->
         <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
         <!--        }}-->
-        <ElButton type="primary" size="mini" :disabled="saveDisabled" @click="save(true)">{{
+        <ElButton type="primary" size="small" :disabled="saveDisabled" @click="save(true)">{{
           $t('public_button_save')
         }}</ElButton>
       </div>

@@ -56,7 +56,7 @@
         <div class="pt-4">
           <el-button
             v-readonlybtn="'user_category_application'"
-            size="mini"
+            size="small"
             class="btn"
             v-show="multipleSelection.length > 0"
             @click="$refs.table.showClassify(handleSelectTag())"
@@ -68,7 +68,7 @@
             v-readonlybtn="'user_edition'"
             v-show="multipleSelection.length > 0"
           >
-            <el-button class="btn btn-dropdowm" size="mini">
+            <el-button class="btn btn-dropdowm" size="small">
               <i class="iconfont icon-piliang back-btn-icon"></i>
               <span> {{ $t('public_button_bulk_operation') }}</span>
             </el-button>
@@ -90,7 +90,7 @@
             v-readonlybtn="'new_model_creation'"
             class="btn btn-create"
             type="primary"
-            size="mini"
+            size="small"
             @click="openCreateDialog"
           >
             <span>{{ $t('public_button_create') }}</span>
@@ -135,7 +135,7 @@
           <div>
             <el-button
               v-readonlybtn="'user_edition'"
-              size="mini"
+              size="small"
               type="text"
               v-if="['rejected', 'notActivated'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
@@ -146,7 +146,7 @@
             <ElDivider v-if="['rejected', 'notActivated'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
-              size="mini"
+              size="small"
               type="text"
               v-if="!['rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
@@ -157,7 +157,7 @@
             <ElDivider v-if="!['rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
-              size="mini"
+              size="small"
               type="text"
               v-if="['notVerified'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
@@ -167,7 +167,7 @@
             <ElDivider v-if="['notVerified'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
-              size="mini"
+              size="small"
               type="text"
               v-if="['activated', 'rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
@@ -177,7 +177,7 @@
             <ElDivider v-if="['activated', 'rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_delete'"
-              size="mini"
+              size="small"
               type="text"
               :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
@@ -198,7 +198,7 @@
       <div>
         <span class="label">{{ $t('user_form_activation_code') }}</span>
         <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
-        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('public_button_reset') }}</el-button>
+        <el-button @click="resetAccesCode" type="text" size="small">{{ $t('public_button_reset') }}</el-button>
         <el-tooltip
           placement="top"
           manual
@@ -213,14 +213,14 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <el-button type="text" size="mini">{{ $t('public_button_copy') }}</el-button>
+            <el-button type="text" size="small">{{ $t('public_button_copy') }}</el-button>
           </span>
         </el-tooltip>
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('public_button_confirm') }}</el-button>
+          <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="createNewUser()" size="small">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

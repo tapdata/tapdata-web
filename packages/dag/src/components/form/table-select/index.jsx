@@ -114,7 +114,7 @@ export const TableSelect = observer(
           'created-option': ({ value }) => (
             <span>
               {value}
-              <ElTag class="ml-1" size="mini">
+              <ElTag class="ml-1" size="small">
                 {i18n.t('packages_dag_table_not_exist')}
               </ElTag>
             </span>
@@ -126,7 +126,7 @@ export const TableSelect = observer(
             <ElTag
               class="position-absolute translate-middle-y top-50 m-0 prefix-tag"
               style={{ left: leftPosition.value }}
-              size="mini"
+              size="small"
             >
               {i18n.t('packages_dag_table_not_exist')}
             </ElTag>

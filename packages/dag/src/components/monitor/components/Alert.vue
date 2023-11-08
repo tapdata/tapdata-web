@@ -24,7 +24,7 @@
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"
-            size="mini"
+            size="small"
             ref="select"
             @change="getList"
           >
@@ -43,7 +43,7 @@
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"
-            size="mini"
+            size="small"
             ref="select"
             @change="getList"
           >
@@ -75,13 +75,13 @@
         <template #operation="scope">
           <div class="operate-columns">
             <ElButton
-              size="mini"
+              size="small"
               type="text"
               :disabled="scope.row.status === 'CLOESE'"
               @click="handleClose(scope.row)"
               >{{ $t('public_button_close') }}</ElButton
             >
-            <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
+            <ElButton size="small" type="text" @click="handleLog(scope.row)">{{
               $t('packages_dag_monitor_bottompanel_rizhi')
             }}</ElButton>
           </div>

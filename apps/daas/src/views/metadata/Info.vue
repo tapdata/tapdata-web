@@ -105,7 +105,7 @@
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata_details_businessAttributes') }}</span>
-              <ElLink type="primary" size="mini" @click.stop="creatBusiness"
+              <ElLink type="primary" size="small" @click.stop="creatBusiness"
                 >+ {{ $t('metadata_details_creat') }}</ElLink
               >
             </div>
@@ -140,7 +140,7 @@
                             :placeholder="$t('metadata_details_searchPlaceholder')"
                             clearable
                             v-model="searchParams.keyword"
-                            size="mini"
+                            size="small"
                             style="width: 160px"
                           >
                             <template v-slot:prefix>
@@ -151,7 +151,7 @@
                           </el-input>
                         </li>
                         <li class="item">
-                          <el-button type="text" class="restBtn" size="mini" @click="reset()">
+                          <el-button type="text" class="restBtn" size="small" @click="reset()">
                             {{ $t('public_button_reset') }}
                           </el-button>
                         </li>
@@ -160,7 +160,7 @@
                     <div class="table-page-operation-bar">
                       <template v-slot:operation>
                         <div class="operation">
-                          <el-button class="btn-create" type="primary" size="mini" @click="hanldCreateFiled">
+                          <el-button class="btn-create" type="primary" size="small" @click="hanldCreateFiled">
                             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
                             <span> {{ $t('metadata_details_createFiled') }}</span>
                           </el-button>
@@ -248,7 +248,7 @@
                       <template v-slot="scope">
                         <el-button
                           v-readonlybtn="'data_catalog_edition'"
-                          size="mini"
+                          size="small"
                           type="text"
                           @click="edit(scope.row)"
                         >
@@ -257,7 +257,7 @@
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
                           v-if="scope.row.field_name !== '_id'"
-                          size="mini"
+                          size="small"
                           type="text"
                           @click="remove(scope.row, scope.$index, 0)"
                           >{{ $t('public_button_delete') }}</el-button

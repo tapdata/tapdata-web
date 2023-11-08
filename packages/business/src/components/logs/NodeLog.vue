@@ -21,12 +21,12 @@
             v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-            size="mini"
+            size="small"
             clearable
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+          <ElButton :loading="downloadLoading" type="text" size="small" class="ml-4" @click="handleDownload">{{
             $t('public_button_download')
           }}</ElButton>
           <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
@@ -46,7 +46,7 @@
           v-model:value="checkList"
           :disabled="loading"
           :min="1"
-          size="mini"
+          size="small"
           class="inline-flex"
           @change="searchFnc"
         >
@@ -162,8 +162,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
+          <ElButton size="small" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :disabled="saveLoading" size="small" type="primary" @click="handleSave">{{
             $t('public_button_confirm')
           }}</ElButton>
         </span>
@@ -203,7 +203,7 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+            <ElButton type="primary" size="small">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
           </span>
         </ElTooltip>
       </div>

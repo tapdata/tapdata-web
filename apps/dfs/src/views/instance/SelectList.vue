@@ -35,14 +35,14 @@
     <template v-slot:footer>
       <span class="dialog-footer">
         <template v-if="type === 'code'">
-          <ElButton size="mini" type="primary" @click="goLicense">{{
+          <ElButton size="small" type="primary" @click="goLicense">{{
             $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')
           }}</ElButton>
-          <ElButton size="mini" type="primary" @click="handleCreateCode">{{
+          <ElButton size="small" type="primary" @click="handleCreateCode">{{
             $t('dfs_instance_selectlist_goumaixinshili')
           }}</ElButton>
         </template>
-        <ElButton v-else size="mini" type="primary" @click="create">{{
+        <ElButton v-else size="small" type="primary" @click="create">{{
           $t('dfs_instance_selectlist_chuangjianxinshili')
         }}</ElButton>
       </span>

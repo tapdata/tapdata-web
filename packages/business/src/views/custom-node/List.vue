@@ -6,7 +6,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton type="primary" class="btn-create" size="mini" @click="toCreate">
+          <ElButton type="primary" class="btn-create" size="small" @click="toCreate">
             <span>{{ $t('public_button_add') }}</span>
           </ElButton>
         </div>

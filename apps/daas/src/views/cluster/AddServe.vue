@@ -10,7 +10,7 @@
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.name" size="mini" :placeholder="$t('cluster_placeholder_mon_server')"></el-input>
+        <el-input v-model="ruleForm.name" size="small" :placeholder="$t('cluster_placeholder_mon_server')"></el-input>
       </el-form-item>
 
       <el-form-item
@@ -22,11 +22,11 @@
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.command" size="mini" :placeholder="$t('cluster_placeholder_command')"></el-input>
+        <el-input v-model="ruleForm.command" size="small" :placeholder="$t('cluster_placeholder_command')"></el-input>
       </el-form-item>
 
       <el-form-item label="arguements:" prop="arguements">
-        <el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
+        <el-input v-model="ruleForm.arguments" size="small" placeholder="arguements"></el-input>
       </el-form-item>
     </el-form>
   </section>

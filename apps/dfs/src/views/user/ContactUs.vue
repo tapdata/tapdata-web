@@ -12,7 +12,7 @@
           <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_zaixianzixun') }}</span>
         </div>
-        <ElButton type="primary" class="mt-2" size="mini" @click="openChat">{{
+        <ElButton type="primary" class="mt-2" size="small" @click="openChat">{{
           $t('dfs_user_contactus_lijiduihua')
         }}</ElButton>
         <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
@@ -22,7 +22,7 @@
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini" @click="goSlack">Join Slack</ElButton>
+        <ElButton type="text" class="mt-2" size="small" @click="goSlack">Join Slack</ElButton>
         <div class="mt-2 font-color-sslight">
           {{ $t('dfs_user_contactus_weinintigongchan') }}
         </div>
@@ -32,7 +32,7 @@
           <VIcon size="20" class="mr-2 color-primary">email-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
+        <ElButton type="text" class="mt-2" size="small">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">
           {{ $t('dfs_user_contactus_weinintigongchan') }}
         </div>
@@ -43,7 +43,7 @@
           <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
         </div>
         <ElTooltip placement="top" effect="light" popper-class="contact-us-enterprise-wechat shadow p-0">
-          <ElButton type="primary" class="mt-2" size="mini">{{ $t('tap_contact_us') }}</ElButton>
+          <ElButton type="primary" class="mt-2" size="small">{{ $t('tap_contact_us') }}</ElButton>
           <template #content>
             <div class="px-4 py-5 text-center rounded-4">
               <ElImage :src="require('@/assets/image/enterprise-wechat-code.png')" class="code-image mb-2"></ElImage>
@@ -60,7 +60,7 @@
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
-        <ElButton type="text" class="mt-2" size="mini">0755-26656080</ElButton>
+        <ElButton type="text" class="mt-2" size="small">0755-26656080</ElButton>
         <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
     </ul>
@@ -72,7 +72,7 @@
         <div class="font-color-dark">
           {{ $t('dfs_user_contactus_wodegongdan') }}
         </div>
-        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="small">
           {{ $t('dfs_user_contactus_tijiaogongdanjie') }}
         </div>
         <ElLink type="primary" class="mt-2" @click="goTicketSystem">{{
@@ -83,7 +83,7 @@
         <div class="font-color-dark">
           {{ $t('workbench_guide_documentation') }}
         </div>
-        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
+        <div type="primary" class="mt-2 fs-8 font-color-sslight" size="small">
           {{ $t('dfs_user_contactus_tigongchanpinjie') }}
         </div>
         <ElLink type="primary" class="mt-2" @click="handleDocs">{{ $t('dfs_user_contactus_chakanwendang') }}</ElLink>

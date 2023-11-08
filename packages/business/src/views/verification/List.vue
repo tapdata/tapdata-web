@@ -16,7 +16,7 @@
         <div>
           <ElButton
             v-readonlybtn="'SYNC_category_application'"
-            size="mini"
+            size="small"
             class="btn"
             v-show="multipleSelection.length > 0"
             @click="handleExport"
@@ -28,7 +28,7 @@
           <!--          v-readonlybtn="'datasource_creation'"-->
           <!--          class="btn btn-create"-->
           <!--          type="primary"-->
-          <!--          size="mini"-->
+          <!--          size="small"-->
           <!--          @click="$router.push({ name: 'dataVerificationCreate' })"-->
           <!--        >-->
           <!--          <span> {{ $t('public_button_create') }}</span>-->
@@ -37,7 +37,7 @@
             v-readonlybtn="'datasource_creation'"
             class="btn btn-create"
             type="primary"
-            size="mini"
+            size="small"
             @click="handleCreate('pipeline')"
           >
             <span>{{ $t('packages_business_verification_list_renwuyizhixing') }}</span>
@@ -46,7 +46,7 @@
             v-readonlybtn="'datasource_creation'"
             class="btn btn-create"
             type="primary"
-            size="mini"
+            size="small"
             @click="handleCreate('random')"
           >
             <span>{{ $t('packages_business_verification_list_renyibiaoshuju') }}</span>

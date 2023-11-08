@@ -24,19 +24,19 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
+          <ElButton size="small" v-if="selectedStopped.length" @click="batch('active')">{{
             $t('modules_allarelease')
           }}</ElButton>
 
-          <ElButton size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
+          <ElButton size="small" v-if="selectedRunning.length" @click="batch('pending')">{{
             $t('modules_allacancel')
           }}</ElButton>
-          <ElButton size="mini" @click="exportFile">{{ $t('public_button_export') }}</ElButton>
-          <ElButton size="mini" @click="importFile">{{ $t('modules_import') }}</ElButton>
+          <ElButton size="small" @click="exportFile">{{ $t('public_button_export') }}</ElButton>
+          <ElButton size="small" @click="importFile">{{ $t('modules_import') }}</ElButton>
           <ElButton
             v-show="multipleSelection.length > 0"
             v-readonlybtn="'data_catalog_category_application'"
-            size="mini"
+            size="small"
             class="btn"
             @click="$refs.table.showClassify(handleSelectTag())"
           >
@@ -47,7 +47,7 @@
             v-readonlybtn="'API_creation'"
             class="btn btn-create"
             type="primary"
-            size="mini"
+            size="small"
             @click="openCreateDialog"
           >
             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -115,22 +115,22 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="260" fixed="right">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
+          <ElButton v-readonlybtn="'API_creation'" size="small" type="text" @click="copy(scope.row)">
             {{ $t('public_button_copy') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
-          <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="small" type="text" @click="toDetails(scope.row)">
                 {{ $t('public_button_preview') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
+              <ElButton v-readonlybtn="'API_doc_&_test'" size="small" type="text" @click="toDocumentTest(scope.row)">
                 {{ $t('modules_api_test') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
-            size="mini"
+            size="small"
             type="text"
             :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="publish(scope.row)"
@@ -140,7 +140,7 @@
           <ElButton
             v-else
             v-readonlybtn="'API_publish'"
-            size="mini"
+            size="small"
             type="text"
             :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="unpublish(scope.row)"
@@ -148,17 +148,17 @@
             {{ $t('modules_unpublish_api') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
-          <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_edition'" size="small" type="text" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
-          <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_export'" size="small" type="text" @click="handleDownload(scope.row)">
                 {{ $t('public_button_export') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_delete'"
-            size="mini"
+            size="small"
             type="text"
             :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
             @click="remove(scope.row)"

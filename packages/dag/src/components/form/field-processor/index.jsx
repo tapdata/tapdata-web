@@ -543,7 +543,7 @@ export const FieldRenameProcessor = observer(
         const label = (
           <div class="inline-flex align-center position-absolute w-100">
             <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-            <ElLink disabled={props.disabled} onClick={doOperationRest} size="mini" type="primary">
+            <ElLink disabled={props.disabled} onClick={doOperationRest} size="small" type="primary">
               <div class="flex align-center px-1">
                 <VIcon class="mr-1">reset</VIcon>
                 {i18n.t('public_button_reset')}
@@ -619,7 +619,7 @@ export const FieldRenameProcessor = observer(
               <div class="task-form-left pt-0 border-0 flex flex-column">
                 <div class="flex p-2">
                   <ElInput
-                    size="mini"
+                    size="small"
                     placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
                     prefix-icon="el-icon-search"
                     clearable
@@ -698,7 +698,7 @@ export const FieldRenameProcessor = observer(
                 <div class="flex p-2 justify-content-between fields-toolbar">
                   <div class="flex field-search-input-wrap">
                     <ElInput
-                      size="mini"
+                      size="small"
                       placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
                       prefix-icon="el-icon-search"
                       clearable

@@ -33,7 +33,7 @@
                 ref="dbInput"
                 class="header__input"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="mini"
+                size="small"
                 clearable
                 @keydown.stop
                 @keyup.stop
@@ -146,7 +146,7 @@
               v-model:value="tbSearchTxt"
               ref="tbInput"
               :placeholder="$t('packages_dag_table_name_search_placeholder')"
-              size="mini"
+              size="small"
               clearable
               @keydown.stop
               @keyup.stop

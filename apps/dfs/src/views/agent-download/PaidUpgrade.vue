@@ -37,7 +37,7 @@
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
           <el-input-number
-            size="mini"
+            size="small"
             controls-position="right"
             v-model="form.extraPipelines"
             :min="0"

@@ -7,8 +7,8 @@
           <span>{{ $t('role_currentRole') }}: {{ roleName }}</span>
         </div>
         <div>
-          <el-button size="mini" @click="back">{{ $t('public_button_back') }} </el-button>
-          <el-button size="mini" type="primary" :loading="saveloading" @click="save('ruleForm')"
+          <el-button size="small" @click="back">{{ $t('public_button_back') }} </el-button>
+          <el-button size="small" type="primary" :loading="saveloading" @click="save('ruleForm')"
             >{{ $t('public_button_save') }}
           </el-button>
         </div>

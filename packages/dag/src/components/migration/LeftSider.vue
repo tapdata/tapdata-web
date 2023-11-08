@@ -31,7 +31,7 @@
                 v-model:value="dbSearchTxt"
                 ref="dbInput"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="mini"
+                size="small"
                 clearable
                 @keydown.stop
                 @keyup.stop

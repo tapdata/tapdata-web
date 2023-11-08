@@ -17,7 +17,7 @@
               v-show="multipleSelection.length > 0 && isDaas"
               :disabled="$disabledReadonlyUserBtn()"
               v-readonlybtn="'SYNC_job_export'"
-              size="mini"
+              size="small"
               class="btn message-button-cancel"
               @click="handleExport"
             >
@@ -26,7 +26,7 @@
             <el-button
               v-if="isDaas"
               v-readonlybtn="'SYNC_job_import'"
-              size="mini"
+              size="small"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
@@ -34,7 +34,7 @@
               <span> {{ $t('packages_business_button_bulk_import') }}</span>
             </el-button>
           </template>
-          <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
+          <ElButton class="btn btn-create" type="primary" size="small" @click="create">
             <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
           </ElButton>
         </div>

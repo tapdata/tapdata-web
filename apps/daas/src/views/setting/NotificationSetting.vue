@@ -20,7 +20,7 @@
                 <el-input
                   v-model="item.lagTimeInterval"
                   class="item-input"
-                  size="mini"
+                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -46,7 +46,7 @@
                 <el-input
                   v-model="item.noticeIntervalInterval"
                   class="item-input"
-                  size="mini"
+                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -66,7 +66,7 @@
                 <el-input
                   v-model="item.Interval"
                   class="item-input"
-                  size="mini"
+                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -111,7 +111,7 @@
       <ElButton
         class="btn"
         @click="submit"
-        size="mini"
+        size="small"
         type="primary"
         :disabled="!runNotification || !systemNotification || !agentNotification"
         >{{ $t('public_button_save') }}</ElButton

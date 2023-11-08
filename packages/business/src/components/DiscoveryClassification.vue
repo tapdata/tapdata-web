@@ -1,7 +1,7 @@
 <template>
   <div class="classification pt-3 h-100">
     <div class="classification-header pl-0">
-      <!--<ElButton class="btn-addIcon" size="mini" type="text" @click="showDialog()">
+      <!--<ElButton class="btn-addIcon" size="small" type="text" @click="showDialog()">
             <VIcon size="12">add</VIcon>
           </ElButton>
           <div class="title">
@@ -9,7 +9,7 @@
           </div>-->
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <ElInput size="mini" v-model:value="filterText">
+        <ElInput size="small" v-model:value="filterText">
           <template v-slot:suffix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
@@ -48,7 +48,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="80px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="mini"
+            size="small"
             v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
@@ -79,8 +79,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="dialogSubmit()">
+          <ElButton size="small" @click="hideDialog()">{{ $t('packages_component_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="dialogSubmit()">
             {{ $t('packages_component_button_confirm') }}
           </ElButton>
         </span>

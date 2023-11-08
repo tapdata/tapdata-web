@@ -79,8 +79,8 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
+        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
       </span>
     </template>
   </ElDialog>

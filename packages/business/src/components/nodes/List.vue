@@ -16,7 +16,7 @@
     >
       <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
       <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-      <ElTag v-if="showType" class="ml-2" effect="plain" size="mini">{{ typeMap[node.nodeType] }}</ElTag>
+      <ElTag v-if="showType" class="ml-2" effect="plain" size="small">{{ typeMap[node.nodeType] }}</ElTag>
       <slot name="right"></slot>
     </div>
   </div>

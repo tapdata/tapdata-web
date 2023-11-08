@@ -2,7 +2,7 @@
   <div class="api-doc">
     <div class="section-wrap-box h-100">
       <div class="api-doc-box">
-        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="mini" @click="exportJson">
+        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="small" @click="exportJson">
           {{ $t('public_button_export') }}
         </el-button>
       </div>

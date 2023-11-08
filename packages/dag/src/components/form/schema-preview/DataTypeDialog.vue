@@ -64,9 +64,9 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton size="mini" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton size="small" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton
-          size="mini"
+          size="small"
           type="primary"
           :disabled="!currentData.newDataType"
           :loading="editBtnLoading"
@@ -164,16 +164,8 @@ export default {
 
     submitEdit() {
       const { qualified_name, nodeId } = this.data
-      const {
-        changeRuleId,
-        fieldName,
-        dataType,
-        dataTypeTemp,
-        newDataType,
-        useToAll,
-        selectDataType,
-        coefficient
-      } = this.currentData
+      const { changeRuleId, fieldName, dataType, dataTypeTemp, newDataType, useToAll, selectDataType, coefficient } =
+        this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
         dataTypes: [newDataType]

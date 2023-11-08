@@ -32,8 +32,8 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" size="mini" @click="skipErrorData">{{
+        <el-button @click="dialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" size="small" @click="skipErrorData">{{
           $t('packages_business_dataFlow_skipError_startJob')
         }}</el-button>
       </span>

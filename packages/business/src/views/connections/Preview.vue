@@ -26,7 +26,7 @@
               <el-button
                 :disabled="isFileSource()"
                 type="primary"
-                size="mini"
+                size="small"
                 class="flex-fill min-w-0"
                 @click="reload()"
                 >{{ $t('public_connection_button_load_schema') }}
@@ -35,7 +35,7 @@
           </el-tooltip>
           <el-button
             class="flex-fill min-w-0"
-            size="mini"
+            size="small"
             @click="edit()"
             :disabled="
               $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
@@ -43,7 +43,7 @@
           >
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button class="flex-fill min-w-0" size="mini" @click="$emit('test', connection)">
+          <el-button class="flex-fill min-w-0" size="small" @click="$emit('test', connection)">
             {{ $t('public_connection_button_test') }}
           </el-button>
         </div>
@@ -506,7 +506,7 @@ export default {
               }
             : {},
           row.databaseLogInfo?.value
-              ? {
+            ? {
                 icon: 'warning-circle',
                 items: [
                   {
@@ -516,7 +516,7 @@ export default {
                   }
                 ]
               }
-              : {}
+            : {}
         ]
       } else {
         this.list = [
@@ -557,7 +557,7 @@ export default {
               }
             : {},
           row.databaseLogInfo?.value
-              ? {
+            ? {
                 icon: 'warning-circle',
                 items: [
                   {
@@ -567,7 +567,7 @@ export default {
                   }
                 ]
               }
-              : {}
+            : {}
         ]
       }
 

@@ -29,7 +29,7 @@
                   </div>
                   <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
                     <ElButton
-                      size="mini"
+                      size="small"
                       type="danger"
                       v-if="item.canUpdate"
                       @click="updateFn(item, item.management.status, 'management', 'update')"
@@ -123,7 +123,7 @@
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
+                          size="small"
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
@@ -156,7 +156,7 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="mini"
+                          size="small"
                           type="text"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
@@ -164,7 +164,7 @@
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
+                          size="small"
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
@@ -197,7 +197,7 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="mini"
+                          size="small"
                           type="text"
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
@@ -205,7 +205,7 @@
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
+                          size="small"
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
@@ -326,7 +326,7 @@
             <el-input
               style="width: 85%"
               v-model="agentName"
-              size="mini"
+              size="small"
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
@@ -334,7 +334,7 @@
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
-          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="small" style="width: 85%">
             <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
           <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>

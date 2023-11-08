@@ -68,11 +68,11 @@
                   ></ElButton>
                 </template>
                 <template v-else>
-                  <ElInput v-model:value="editName" size="mini" class="mr-2"></ElInput>
-                  <ElButton size="mini" @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
+                  <ElInput v-model:value="editName" size="small" class="mr-2"></ElInput>
+                  <ElButton size="small" @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
                   <ElButton
                     type="primary"
-                    size="mini"
+                    size="small"
                     :disabled="!editName || !editName.trim()"
                     @click="changeName($index)"
                     >{{ $t('public_button_save') }}</ElButton
@@ -86,10 +86,10 @@
           <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
           <ElTableColumn width="120px" :label="$t('public_operation')">
             <template #default="{ row, $index }">
-              <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{
+              <ElButton size="small" type="text" @click="openSetting(row, $index)">{{
                 $t('public_button_setting')
               }}</ElButton>
-              <ElButton size="mini" type="text" @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
+              <ElButton size="small" type="text" @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -97,8 +97,8 @@
             </div> -->
       </div>
       <div class="footer mt-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
+        <ElButton class="btn" size="small" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton class="btn" type="primary" size="small" @click="save">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
 
@@ -137,8 +137,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton class="btn" size="mini" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton class="btn" type="primary" size="mini" @click="submitSetting">{{
+          <ElButton class="btn" size="small" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton class="btn" type="primary" size="small" @click="submitSetting">{{
             $t('public_button_confirm')
           }}</ElButton>
         </span>

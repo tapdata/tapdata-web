@@ -77,7 +77,7 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</el-button>
+          <el-button type="primary" size="small" @click="save">{{ $t('public_button_save') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -93,7 +93,7 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="send">{{ $t('account_sendEmail') }}</el-button>
+          <el-button type="primary" size="small" @click="send">{{ $t('account_sendEmail') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -117,7 +117,7 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button type="primary" size="mini" @click="confirm">{{ $t('dialog_downAgent_ok') }}</el-button>
+          <el-button type="primary" size="small" @click="confirm">{{ $t('dialog_downAgent_ok') }}</el-button>
         </div>
       </template>
     </el-dialog>

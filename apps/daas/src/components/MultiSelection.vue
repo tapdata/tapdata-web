@@ -1,7 +1,7 @@
 <template>
   <div class="multi-selection">
     <el-select
-      size="mini"
+      size="small"
       :model-value="values"
       multiple
       filterable

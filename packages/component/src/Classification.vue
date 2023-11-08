@@ -1,15 +1,15 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <ElButton type="text" class="btn-expand no-expand toggle" size="small" @click="toggle()" v-if="!isExpand">
       <VIcon size="16" class="icon">expand-list</VIcon>
     </ElButton>
     <div class="classification-header" v-else>
-      <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
+      <ElButton type="text" class="btn-expand" size="small" @click="toggle()">
         <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>
       <ElButton
         class="btn-addIcon"
-        size="mini"
+        size="small"
         type="text"
         :disabled="$disabledReadonlyUserBtn()"
         v-readonlybtn="authority"
@@ -21,7 +21,7 @@
         <span>{{ comTitle }}</span>
       </div>
       <div class="search-box">
-        <ElInput class="search" size="mini" v-model:value="filterText">
+        <ElInput class="search" size="small" v-model:value="filterText">
           <template v-slot:suffix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
@@ -54,7 +54,7 @@
             <span class="table-label">{{ data.value }}</span>
             <ElDropdown
               class="btn-menu"
-              size="mini"
+              size="small"
               @command="handleRowCommand($event, node)"
               v-readonlybtn="authority"
             >
@@ -88,7 +88,7 @@
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>
       <ElInput
-        size="mini"
+        size="small"
         v-model:value="dialogConfig.label"
         :placeholder="$t('packages_component_classification_nodeName')"
         maxlength="50"
@@ -96,8 +96,8 @@
       ></ElInput>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="mini" type="primary" @click="dialogSubmit()">
+          <ElButton size="small" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>
         </span>

@@ -14,7 +14,7 @@
             <p v-if="type === 'registy'">{{ $t('app_signIn_clickBtn') }}</p>
             <p v-else>{{ $t('app_signIn_resetClickBtn') }}</p>
 
-            <el-button class="btn" type="primary" size="mini" @click="goLogin">{{
+            <el-button class="btn" type="primary" size="small" @click="goLogin">{{
               $t('app_signIn_goLogin')
             }}</el-button>
           </div>

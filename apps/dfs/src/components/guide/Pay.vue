@@ -6,8 +6,8 @@
     <div class="dot-pulse mt-2 mb-6"></div>
     <div>{{ $t('dfs_instance_pay_wait_subtitle') }}</div>
     <div class="mt-4 mb-4">
-      <el-button size="mini" @click="$emit('refresh')">{{ $t('public_button_refresh') }}</el-button>
-      <el-button size="mini" type="primary" @click="goPay">{{ $t('dfs_instance_pay_wait_continue') }}</el-button>
+      <el-button size="small" @click="$emit('refresh')">{{ $t('public_button_refresh') }}</el-button>
+      <el-button size="small" type="primary" @click="goPay">{{ $t('dfs_instance_pay_wait_continue') }}</el-button>
     </div>
     <div class="box-card mt-4">
       <div class="mb-4">{{ $t('dfs_instance_pay_wait_step_title') }}</div>

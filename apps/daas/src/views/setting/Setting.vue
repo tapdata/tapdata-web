@@ -83,14 +83,14 @@
                         v-model="childItem.value"
                         :disabled="item.category === 'license'"
                         :mask="childItem.mask"
-                        size="mini"
+                        size="small"
                         :label="
                           $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                         "
                       >
                       </el-input>
 
-                      <el-select v-else v-model="childItem.value" size="mini">
+                      <el-select v-else v-model="childItem.value" size="small">
                         <el-option
                           v-for="options in childItem.enums"
                           :key="options"
@@ -113,7 +113,7 @@
         </div>
 
         <div class="footer">
-          <el-button v-if="email === 'admin@admin.com'" @click="save" size="mini" type="primary">{{
+          <el-button v-if="email === 'admin@admin.com'" @click="save" size="small" type="primary">{{
             $t('public_button_save')
           }}</el-button>
         </div>
@@ -186,7 +186,7 @@
       </el-row>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button size="mini" type="primary" @click="emailTemplateDialog = false">{{
+          <el-button size="small" type="primary" @click="emailTemplateDialog = false">{{
             $t('public_button_confirm')
           }}</el-button>
         </div>

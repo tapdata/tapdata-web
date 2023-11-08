@@ -13,7 +13,7 @@
             v-readonlybtn="'API_creation'"
             type="primary"
             class="btn btn-create"
-            size="mini"
+            size="small"
             @click="openCreateDialog"
           >
             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -54,16 +54,16 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="170" fixed="right">
         <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
+          <el-button v-readonlybtn="'API_clients_amangement'" size="small" type="text" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="remove(scope.row)">{{
+          <el-button v-readonlybtn="'API_clients_amangement'" size="small" type="text" @click="remove(scope.row)">{{
             $t('public_button_delete')
           }}</el-button>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
             <el-button
               v-readonlybtn="'API_clients_amangement'"
-              size="mini"
+              size="small"
               type="text"
               @click="downloadConfig(scope.row)"
               >{{ $t('public_button_download') }}</el-button

@@ -15,7 +15,7 @@
       </template>
       <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
+          <ElButton size="small" type="text" @click="handleDetail(scope.row)">{{
             $t('public_button_details')
           }}</ElButton>
         </div>

@@ -5,9 +5,9 @@
         <div class="flex justify-content-between">
           <div class="connection-name mb-2 ellipsis">{{ viewData.name }}</div>
           <div class="flex justify-content-end mt-4 mb-4">
-            <!--<el-button size="mini" type="primary">加载Schema</el-button>-->
-            <el-button size="mini" @click="edit">{{ $t('public_button_edit') }}</el-button>
-            <!--<el-button size="mini">测试连接</el-button>-->
+            <!--<el-button size="small" type="primary">加载Schema</el-button>-->
+            <el-button size="small" @click="edit">{{ $t('public_button_edit') }}</el-button>
+            <!--<el-button size="small">测试连接</el-button>-->
           </div>
         </div>
         <div class="color-info mb-4">
@@ -84,12 +84,12 @@
         <header class="header flex align-center mb-4">
           <div class="table-info-name">{{ $t('packages_business_tasks') }}</div>
           <ElDivider class="mx-3" direction="vertical"></ElDivider>
-          <ElRadioGroup v-model:value="asTaskType" size="mini">
+          <ElRadioGroup v-model:value="asTaskType" size="small">
             <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
             <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
             <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
           </ElRadioGroup>
-          <!--<el-button type="primary" size="mini">新建</el-button>-->
+          <!--<el-button type="primary" size="small">新建</el-button>-->
         </header>
         <el-table class="discovery-page-table" :data="filterTask" :has-pagination="false">
           <el-table-column :label="$t('public_task_name')" prop="name" width="200px" show-overflow-tooltip>
@@ -186,9 +186,10 @@ export default {
       const config = this.viewData.config
 
       if (config.uri && config.isUri !== false) {
-        const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-          config.uri
-        )
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
         }
@@ -209,9 +210,10 @@ export default {
       config.additionalString = config.extParams || config.addtionalString
 
       if (config.uri && config.isUri !== false) {
-        const regResult = /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-          config.uri
-        )
+        const regResult =
+          /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+            config.uri
+          )
         if (regResult && regResult.groups) {
           const hostArr = regResult.groups.host.split(':')
           config.host = hostArr[0]

@@ -7,10 +7,10 @@
           v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
-          size="mini"
+          size="small"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
+        <ElCheckboxGroup v-model:value="checkList" :min="1" size="small" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>

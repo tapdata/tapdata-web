@@ -10,7 +10,7 @@
               class="search-item"
               popper-class="user-notification-data-picker"
               style="width: 320px"
-              size="mini"
+              size="small"
               v-model="search.range"
               type="datetimerange"
               range-separator="-"
@@ -49,7 +49,7 @@
               clearable
               v-if="isAdmin"
               class="search-item"
-              size="mini"
+              size="small"
               v-model="search.userId"
               :placeholder="$t('notification_placeholder_user')"
               @change="getData(1)"

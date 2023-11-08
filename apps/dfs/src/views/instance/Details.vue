@@ -40,14 +40,16 @@
       </div>
       <div class="mt-4 flex flex-wrap gap-3">
         <ElButton
-          size="mini"
+          size="small"
           type="primary"
           :disabled="!showUpload || agent.agentType === 'Cloud'"
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
-        <ElButton size="mini" @click="downServeFn(agent)">{{ $t('dfs_instance_details_xianchengziyuanxia') }}</ElButton>
-        <ElButton size="mini" @click="downConnectorsFn(agent)">{{
+        <ElButton size="small" @click="downServeFn(agent)">{{
+          $t('dfs_instance_details_xianchengziyuanxia')
+        }}</ElButton>
+        <ElButton size="small" @click="downConnectorsFn(agent)">{{
           $t('dfs_instance_details_shujuyuanziyuan')
         }}</ElButton>
       </div>
@@ -97,14 +99,14 @@
         </template>
         <template #operation="scope">
           <ElButton
-            size="mini"
+            size="small"
             type="text"
             :disabled="[0, 2, 3].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
             >{{ $t('public_button_download') }}</ElButton
           >
           <ElButton
-            size="mini"
+            size="small"
             type="text"
             :disabled="scope.row.status === 0"
             @click="handleDeleteUploadLog(scope.row)"

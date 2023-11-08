@@ -14,7 +14,7 @@
         <ElInput
           ref="search"
           v-model:value="search"
-          size="mini"
+          size="small"
           clearable
           autofocus
           @keydown.stop
@@ -103,7 +103,7 @@
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
                   <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" type="info" size="mini">{{ $t('public_status_invalid') }}</ElTag>
+                  <ElTag v-if="data.disabled" type="info" size="small">{{ $t('public_status_invalid') }}</ElTag>
                 </span>
               </span>
             </template>
@@ -286,7 +286,7 @@ export default {
               {data.name}
             </span>
             {data.disabled && (
-              <ElTag type="info" size="mini">
+              <ElTag type="info" size="small">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}
@@ -342,7 +342,7 @@ export default {
             {data.name}
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
-              <ElTag type="info" size="mini" class="ml-2">
+              <ElTag type="info" size="small" class="ml-2">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}

@@ -18,12 +18,12 @@
       ></queryCond>
       <div v-if="cond.type != 'group'" class="item">
         <div class="field">
-          <el-select v-model="cond.field" filterable size="mini" placeholder="select field">
+          <el-select v-model="cond.field" filterable size="small" placeholder="select field">
             <el-option v-for="item in primaryKeyOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </div>
         <div class="field">
-          <el-select v-model="cond.command" size="mini" placeholder="select op">
+          <el-select v-model="cond.command" size="small" placeholder="select op">
             <el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
           </el-select>
         </div>
@@ -34,7 +34,7 @@
             v-if="!cond.isDatetime"
             type="text"
             v-model="cond.value"
-            size="mini"
+            size="small"
           ></el-input>
           <el-date-picker
             v-if="cond.isDatetime"
@@ -47,7 +47,7 @@
         <div class="field">
           <div class="btn" style="width: 52px">
             <span class="el-icon-close" @click="removeChild(idx)" style="width: 24px"></span>
-            <el-dropdown size="mini" @command="handleCommand">
+            <el-dropdown size="small" @command="handleCommand">
               <span class="el-dropdown-link el-icon-plus"></span>
               <template v-slot:dropdown>
                 <el-dropdown-menu>

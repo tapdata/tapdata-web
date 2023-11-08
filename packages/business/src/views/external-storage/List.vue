@@ -6,7 +6,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton class="btn btn-create" type="primary" size="mini" @click="openDialog()">
+          <ElButton class="btn btn-create" type="primary" size="small" @click="openDialog()">
             <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
           </ElButton>
         </div>
@@ -81,7 +81,7 @@
         ref="form"
         label-position="left"
         :label-width="labelWidth"
-        size="mini"
+        size="small"
         :model="form"
         :rules="rules"
       >
@@ -128,8 +128,8 @@
           <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
-          <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton size="small" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" size="small" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

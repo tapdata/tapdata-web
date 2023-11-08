@@ -90,7 +90,7 @@
                 <div class="connector-item-content flex-1 overflow-hidden">
                   <div class="connector-item-title font-color-dark flex align-center">
                     <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
-                    <ElTag size="mini" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
+                    <ElTag size="small" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
                       >DEMO</ElTag
                     >
                   </div>
@@ -115,7 +115,7 @@
                 <div class="connector-item-title font-color-dark flex align-center">
                   <span class="ellipsis mr-1">{{ item.name }}</span>
                   <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                  <ElTag v-else-if="item.qcType" size="small" class="text-uppercase ml-auto px-1 connector-item-tag">{{
                     item.qcType
                   }}</ElTag>
                 </div>

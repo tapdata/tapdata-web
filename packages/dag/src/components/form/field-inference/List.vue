@@ -126,9 +126,9 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="mini" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton size="small" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
           <ElButton
-            size="mini"
+            size="small"
             type="primary"
             :disabled="!currentData.newDataType"
             :loading="editBtnLoading"

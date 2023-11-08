@@ -40,7 +40,7 @@
 
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton type="primary" @click="submit" size="mini">{{
+          <ElButton type="primary" @click="submit" size="small">{{
             $t('packages_business_components_upgradecharges_dingyuexinyinqing')
           }}</ElButton>
         </div>

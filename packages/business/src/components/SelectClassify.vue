@@ -10,7 +10,7 @@
     <div>
       <el-tag
         v-bind:key="item.value"
-        size="mini"
+        size="small"
         class="SelectClassify-tag"
         closable
         v-for="item in tagList"
@@ -40,10 +40,10 @@
     </el-tree>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{
+        <el-button class="message-button-cancel" @click="handleCancel" size="small">{{
           $t('public_button_cancel')
         }}</el-button>
-        <el-button type="primary" @click="handleAdd" size="mini">{{ $t('public_button_save') }}</el-button>
+        <el-button type="primary" @click="handleAdd" size="small">{{ $t('public_button_save') }}</el-button>
       </span>
     </template>
   </el-dialog>

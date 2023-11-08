@@ -10,7 +10,7 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput ref="search" v-model:value="search" size="mini" clearable @keydown.stop @keyup.stop @click.stop>
+        <ElInput ref="search" v-model:value="search" size="small" clearable @keydown.stop @keyup.stop @click.stop>
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -221,11 +221,11 @@
         </ElForm>
         <template v-slot:footer>
           <span class="dialog-footer">
-            <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-            <ElButton :disabled="highlightBoard" :loading="creating" size="mini" @click="dialogSubmit(false)">{{
+            <ElButton size="small" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
+            <ElButton :disabled="highlightBoard" :loading="creating" size="small" @click="dialogSubmit(false)">{{
               $t('packages_business_save_only')
             }}</ElButton>
-            <ElButton :loading="creating" size="mini" type="primary" @click="dialogSubmit(true)">
+            <ElButton :loading="creating" size="small" type="primary" @click="dialogSubmit(true)">
               {{ $t('packages_business_save_and_run_now') }}
             </ElButton>
           </span>
@@ -376,7 +376,7 @@ const TaskList = defineComponent({
                     onClick={() => {
                       isLimit.value = !isLimit.value
                     }}
-                    size="mini"
+                    size="small"
                     round
                     class={['task-list-item-more fs-8', { 'is-reverse': !isLimit.value }]}
                   >

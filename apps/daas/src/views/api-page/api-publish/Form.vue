@@ -7,7 +7,7 @@
             <ElSelect
               v-model:value="createForm.datasource"
               filterable
-              size="mini"
+              size="small"
               :placeholder="$t('public_select_placeholder')"
               :disabled="!!$route.query.id"
             >
@@ -18,7 +18,7 @@
           <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules.tablename" required>
             <VirtualSelect
               v-model:value="createForm.tablename"
-              size="mini"
+              size="small"
               filterable
               clearable
               :item-size="34"
@@ -48,19 +48,19 @@
             <div class="module-path-button">
               <el-button
                 v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
-                size="mini"
+                size="small"
                 type="primary"
                 @click="customeApiPath"
                 >{{ $t('module_form_customer_Api') }}</el-button
               >
-              <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
+              <!-- <el-button size="small" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
                     $t('module_form_security')
                   }}</el-button>
-                  <el-button size="mini" v-else @click="updateAuthority">{{ $t('public_button_edit') }}</el-button> -->
-              <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
+                  <el-button size="small" v-else @click="updateAuthority">{{ $t('public_button_edit') }}</el-button> -->
+              <el-button size="small" v-if="createForm.status === 'active'" @click="openDocument">{{
                 $t('module_form_document')
               }}</el-button>
-              <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
+              <el-button size="small" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
             </div>
           </div>
           <div class="module-path-content">
@@ -74,14 +74,14 @@
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('public_select_placeholder')">
+                    <el-select v-model="item.acl" multiple size="small" :placeholder="$t('public_select_placeholder')">
                       <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
                       </el-option>
                     </el-select>
                   </div>
                   <div style="margin-left: 10px">
                     <el-tooltip class="item" effect="dark" :content="$t('public_button_delete')" placement="bottom">
-                      <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
+                      <ElButton type="text" title="remove" size="small" @click="removeApiPath(index)">
                         <!-- <i class="fa fa-times el-icon-delete"></i> -->
                         {{ $t('public_button_delete') }}
                       </ElButton>
@@ -115,10 +115,10 @@
         </el-button>
       </div>
       <div class="module-form-footer">
-        <el-button class="cancel" @click="handleBack()" size="mini">
+        <el-button class="cancel" @click="handleBack()" size="small">
           {{ $t('public_button_back') }}
         </el-button>
-        <el-button type="primary" @click="submit()" size="mini"> {{ $t('public_button_save') }}</el-button>
+        <el-button type="primary" @click="submit()" size="small"> {{ $t('public_button_save') }}</el-button>
       </div>
     </div>
   </section>

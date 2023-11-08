@@ -8,7 +8,7 @@
         <span class="expire-msg" v-if="licenseExpireVisible">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
-        <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
+        <ElButton v-if="creatAuthority" type="primary" size="small" @click="command('newDataFlow')">
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>

@@ -64,8 +64,8 @@
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="handleCancelRename" size="mini">{{ $t('public_button_cancel') }}</el-button>
-          <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+          <el-button @click="handleCancelRename" size="small">{{ $t('public_button_cancel') }}</el-button>
+          <el-button @click="submitEdit()" size="small" type="primary" :loading="editBtnLoading">{{
             $t('public_button_confirm')
           }}</el-button>
         </span>

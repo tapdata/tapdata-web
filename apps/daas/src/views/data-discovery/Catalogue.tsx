@@ -34,9 +34,9 @@ export default defineComponent({
       filterItems: []
     })
     const loadData = ({ page }) => {
-      let { sourceType, queryKey } = data.searchParams
-      let { size, current } = page
-      let where = {
+      const { sourceType, queryKey } = data.searchParams
+      const { size, current } = page
+      const where = {
         page: current,
         pageSize: size,
         tagId: data?.currentNode?.['id'] || ''
@@ -44,7 +44,7 @@ export default defineComponent({
       sourceType && (where['objType'] = sourceType)
       queryKey && (where['queryKey'] = queryKey)
       return discoveryApi.discoveryList(where).then(res => {
-        let { total, items } = res
+        const { total, items } = res
         return {
           total: total,
           data: items
@@ -56,9 +56,9 @@ export default defineComponent({
       refs.table.fetch(1)
     }
     const loadFilterList = () => {
-      let filterType = ['objType']
+      const filterType = ['objType']
       discoveryApi.filterList(filterType).then(res => {
-        let { objType } = res
+        const { objType } = res
         data.filterItems = [
           {
             label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
@@ -167,10 +167,10 @@ export default defineComponent({
     const handleDragStart = (row, column, ev) => {
       dragState.isDragging = true
       console.log('nodeDragStart', row, column, event) // eslint-disable-line
-      let draggingRow = [row]
+      const draggingRow = [row]
 
       if (row.id in multipleSelectionMap.value) {
-        let selectionRows = Object.values(multipleSelectionMap.value)
+        const selectionRows = Object.values(multipleSelectionMap.value)
         draggingRow.length = selectionRows.length
         dragState.draggingObjects = selectionRows
       } else {
@@ -273,7 +273,7 @@ export default defineComponent({
             ) : (
               <el-button
                 type="primary"
-                size="mini"
+                size="small"
                 onClick={() => {
                   this.handleSourceDrawer()
                 }}

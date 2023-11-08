@@ -8,7 +8,7 @@
             v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
-            size="mini"
+            size="small"
             clearable
             style="width: 240px"
             @input="searchFnc(800)"
@@ -30,7 +30,7 @@
             </el-tooltip>
             <ElButton
               type="primary"
-              size="mini"
+              size="small"
               :disabled="!selection.length || verifyLoading"
               :loading="verifyLoading || isChecking"
               @click="handleAgainCheck"

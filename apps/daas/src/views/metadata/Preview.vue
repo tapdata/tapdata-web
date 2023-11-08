@@ -3,7 +3,7 @@
     <TablePage ref="table" row-key="id" class="metadata-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:operation>
         <div>
-          <el-button class="btn btn-create" size="mini" @click="handleQuery">
+          <el-button class="btn btn-create" size="small" @click="handleQuery">
             <span>{{ $t('metadata_details_query') }}</span>
           </el-button>
         </div>

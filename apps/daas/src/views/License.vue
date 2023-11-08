@@ -3,10 +3,10 @@
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <template v-slot:operation>
         <div>
-          <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{
+          <ElButton :loading="copyLoading" class="btn" size="small" @click="copySid">{{
             $t('public_button_copy')
           }}</ElButton>
-          <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{
+          <ElButton class="btn" type="primary" size="small" @click="openDialog">{{
             $t('public_event_update')
           }}</ElButton>
         </div>
@@ -26,7 +26,7 @@
       <ElInput v-model.trim="license" type="textarea"></ElInput>
       <template v-slot:footer>
         <div>
-          <ElButton type="primary" size="mini" :disabled="!license" :loading="dialogLoading" @click="updateLicense">{{
+          <ElButton type="primary" size="small" :disabled="!license" :loading="dialogLoading" @click="updateLicense">{{
             $t('public_event_update')
           }}</ElButton>
         </div>

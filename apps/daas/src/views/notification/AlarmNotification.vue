@@ -8,9 +8,9 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="mini" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
-        <ElButton size="mini" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
-        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton type="primary" size="small" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
+        <ElButton size="small" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
+        <ElButton size="small" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>

@@ -32,8 +32,8 @@
       </template>
     </VTable>
     <footer class="flex justify-content-end mb-4">
-      <el-button size="mini" @click="remoteMethod()">{{ $t('public_button_cancel') }}</el-button>
-      <el-button size="mini" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
+      <el-button size="small" @click="remoteMethod()">{{ $t('public_button_cancel') }}</el-button>
+      <el-button size="small" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
     <el-dialog :title="$t('daas_setting_alarmnotification_renwumorengao')" width="70%" v-model="alarmRulesVisible">
       <div class="mb-4">
@@ -56,8 +56,8 @@
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
+        <el-button size="small" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="small" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>

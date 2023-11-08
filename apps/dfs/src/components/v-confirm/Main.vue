@@ -51,7 +51,7 @@
             :loading="cancelButtonLoading"
             :class="[{ cancelButtonClasses }, 'message-button-cancel']"
             v-if="showCancelButton"
-            size="mini"
+            size="small"
             @click="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
@@ -63,7 +63,7 @@
             ref="confirm"
             :class="[confirmButtonClasses]"
             v-show="showConfirmButton"
-            size="mini"
+            size="small"
             @click="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >

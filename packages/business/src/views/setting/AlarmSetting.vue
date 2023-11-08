@@ -62,11 +62,11 @@
           <el-checkbox
             v-if="channels.includes('sms')"
             v-model="form.connectionInterrupted.sms"
-            size="mini"
+            size="small"
             @change="handleSettingValue"
             >{{ $t('notify_sms_notification') }}</el-checkbox
           >
-          <el-checkbox v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connectionInterrupted.email" size="small" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
           <br />
@@ -81,7 +81,7 @@
           <el-checkbox
             v-if="isOpenid && channels.includes('wechat')"
             v-model="form.connectionInterrupted.weChat"
-            size="mini"
+            size="small"
             :disabled="!isOpenid"
             @change="handleSettingValue"
           >
@@ -92,7 +92,7 @@
           <el-checkbox
             v-if="channels.includes('sms')"
             v-model="form.connected.sms"
-            size="mini"
+            size="small"
             @change="handleSettingValue"
             >{{ $t('notify_sms_notification') }}</el-checkbox
           >
@@ -118,8 +118,8 @@
       </ElForm>
     </section>
     <footer class="flex justify-content-end mt-4">
-      <el-button size="mini" @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
-      <el-button size="mini" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
+      <el-button size="small" @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
+      <el-button size="small" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
     <el-dialog
       :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
@@ -159,8 +159,8 @@
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="mini" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
+        <el-button size="small" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="small" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>

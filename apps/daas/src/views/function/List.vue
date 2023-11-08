@@ -19,7 +19,7 @@
             </ElRadioGroup>
           </li>
           <li class="item">
-            <ElButton plain class="btn-refresh" size="mini" @click="table.fetch()">
+            <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
               <el-icon><el-icon-refresh /></el-icon>
             </ElButton>
           </li>
@@ -30,7 +30,7 @@
           <ElButton
             v-if="searchParams.type !== 'custom'"
             class="ml-4 btn-create"
-            size="mini"
+            size="small"
             @click="
               $router.push({
                 name: 'FunctionImport'
@@ -44,7 +44,7 @@
               v-show="multipleSelection.length > 0"
               :disabled="$disabledReadonlyUserBtn()"
               v-readonlybtn="'SYNC_job_export'"
-              size="mini"
+              size="small"
               class="btn message-button-cancel"
               @click="handleExport"
             >
@@ -52,7 +52,7 @@
             </el-button>
             <el-button
               v-readonlybtn="'SYNC_job_import'"
-              size="mini"
+              size="small"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
@@ -63,7 +63,7 @@
           <ElButton
             class="btn-create"
             type="primary"
-            size="mini"
+            size="small"
             @click="
               $router.push({
                 name: 'FunctionCreate'
@@ -94,16 +94,16 @@
       <ElTableColumn width="180" :label="$t('public_operation')">
         <template #default="{ row }">
           <ElLink
-            size="mini"
+            size="small"
             type="primary"
             @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })"
             >{{ $t('public_button_check') }}</ElLink
           >
           <template v-if="row.type !== 'system'">
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
+            <ElLink type="primary" size="small" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
+            <ElLink type="primary" size="small" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
           </template>
         </template>
       </ElTableColumn>

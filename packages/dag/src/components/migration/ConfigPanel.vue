@@ -18,7 +18,7 @@
       <ElButton
         @click="setMaterializedViewVisible(true)"
         class="--with-icon flex align-center px-2 py-0 gap-1"
-        size="mini"
+        size="small"
       >
         <VIcon size="30">beta</VIcon>
         {{ $t('packages_dag_materialized_view') }}</ElButton

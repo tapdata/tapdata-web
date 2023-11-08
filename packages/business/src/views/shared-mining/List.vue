@@ -6,7 +6,7 @@
       </template>
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
       <!--      <div slot="operation">-->
-      <!--        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">-->
+      <!--        <el-button class="btn btn-create" type="primary" size="small" :loading="loadingConfig" @click="handleSetting">-->
       <!--        </el-button>-->
       <!--      </div>-->
       <el-table-column min-width="250" :label="$t('packages_business_shared_list_name')" :show-overflow-tooltip="true">
@@ -121,7 +121,7 @@
       >
         <el-form-item
           prop="persistenceMode"
-          size="mini"
+          size="small"
           :label="$t('packages_business_shared_cdc_setting_select_mode')"
         >
           <el-select v-model="digSettingForm.persistenceMode">
@@ -132,7 +132,7 @@
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
           prop="persistenceMongodb_uri_db"
-          size="mini"
+          size="small"
           label="MongoDB URI"
         >
           <el-input type="textarea" v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
@@ -140,7 +140,7 @@
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'MongoDB'"
           prop="persistenceMongodb_collection"
-          size="mini"
+          size="small"
           :label="$t('packages_business_shared_form_setting_table_name')"
         >
           <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
@@ -148,14 +148,14 @@
         <el-form-item
           v-if="digSettingForm.persistenceMode === 'RocksDB'"
           prop="persistenceMongodb_collection"
-          size="mini"
+          size="small"
           :label="$t('packages_business_shared_cdc_persistence_rocksdb_path')"
         >
           <el-input type="textarea" v-model="digSettingForm.persistenceRocksdb_path"></el-input>
         </el-form-item>
         <el-form-item
           v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
-          size="mini"
+          size="small"
           :label="$t('packages_business_shared_form_setting_log_time')"
         >
           <el-select
@@ -170,8 +170,8 @@
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button size="mini" @click="settingDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
-          <el-button size="mini" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
+          <el-button size="small" @click="settingDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button size="small" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
             $t('public_button_confirm')
           }}</el-button>
         </span>
@@ -202,7 +202,7 @@
       </VTable>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="mini" @click=";(showUsingTaskDialog.list = []), (showUsingTaskDialog.visible = false)"
+          <ElButton size="small" @click=";(showUsingTaskDialog.list = []), (showUsingTaskDialog.visible = false)"
             >{{ $t('public_button_cancel') }}
           </ElButton>
         </div>

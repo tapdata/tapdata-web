@@ -13,7 +13,7 @@
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
         }}</span>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="small" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
@@ -202,7 +202,7 @@
           <div class="p-4">
             <div class="rounded-lg bg-white border border-gray-200 overflow-hidden">
               <div class="flex align-center p-3">
-                <ElRadioGroup v-model:value="asTaskType" size="mini">
+                <ElRadioGroup v-model:value="asTaskType" size="small">
                   <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
                   <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
                   <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>

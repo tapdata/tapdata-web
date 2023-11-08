@@ -16,7 +16,7 @@
         <ElButton
           v-if="!hasTargetNode && isMainTable && dagNode.connectionId && dagNode.tableName"
           class="ml-auto"
-          size="mini"
+          size="small"
           @click="$emit('add-target-node')"
         >
           <VIcon>add</VIcon>
@@ -69,7 +69,7 @@
             <template v-slot:label>
               <div class="flex align-center justify-content-between">
                 <span>{{ $t('packages_dag_nodes_mergetable_guanliantiaojian') }}</span>
-                <ElLink :disabled="disabled" class="fs-8" type="primary" size="mini" @click="handleAddJoinKey">
+                <ElLink :disabled="disabled" class="fs-8" type="primary" size="small" @click="handleAddJoinKey">
                   <VIcon>add</VIcon>
                   {{ $t('public_button_add') }}</ElLink
                 >
@@ -152,10 +152,10 @@
               @keydown.enter="onSaveFieldName"
             ></ElInput>
             <div class="mt-2 text-end">
-              <el-button size="mini" type="text" @click="fieldNameVisible = false">{{
+              <el-button size="small" type="text" @click="fieldNameVisible = false">{{
                 $t('public_button_cancel')
               }}</el-button>
-              <el-button type="primary" size="mini" @click="onSaveFieldName">{{
+              <el-button type="primary" size="small" @click="onSaveFieldName">{{
                 $t('public_button_confirm')
               }}</el-button>
             </div>
@@ -163,7 +163,7 @@
           <template #reference>
             <ElDropdown trigger="click" @command="handleCommand">
               <ElButton
-                size="mini"
+                size="small"
                 v-click-outside="{
                   handler: onClickOutside,
                   include

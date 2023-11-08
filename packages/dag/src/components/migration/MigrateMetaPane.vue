@@ -4,7 +4,7 @@
       <div class="field-inference__nav flex flex-column">
         <ElInput
           v-model:value="searchTable"
-          size="mini"
+          size="small"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
@@ -51,12 +51,12 @@
           <ElInput
             v-model:value="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            size="mini"
+            size="small"
             suffix-icon="el-icon-search"
             clearable
             @input="handleSearchField"
           ></ElInput>
-          <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+          <ElButton size="small" plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
           </ElButton>
         </div>

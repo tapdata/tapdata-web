@@ -3,12 +3,12 @@
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3 flex">
       <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model:value="selectedConnectionId" size="mini" class="ml-4" clearable @change="() => fetch()">
+      <ElSelect v-model:value="selectedConnectionId" size="small" class="ml-4" clearable @change="() => fetch()">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
     <div class="flex justify-content-between mb-4">
-      <ElRadioGroup v-model:value="currentTab" size="mini" @change="handleChangeTab">
+      <ElRadioGroup v-model:value="currentTab" size="small" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
       </ElRadioGroup>
       <div>
@@ -25,7 +25,7 @@
           v-if="currentTab === 'running'"
           :disabled="!multipleSelection.length"
           type="primary"
-          size="mini"
+          size="small"
           class="ml-4"
           @click="handleStop"
           >{{ $t('public_button_stop_mining') }}</ElButton
@@ -35,7 +35,7 @@
           :loading="recoverLoading"
           :disabled="!multipleSelection.length"
           type="primary"
-          size="mini"
+          size="small"
           class="ml-4"
           @click="handleRecover"
           >{{ $t('public_button_stop_recover') }}</ElButton
@@ -68,9 +68,9 @@
         </ElTooltip>
         <span v-else>{{ row.name }}</span>
       </template>
-	    <template v-slot:empty>
-		    <div>{{ $t('public_data_no_data') }}</div>
-	    </template>
+      <template v-slot:empty>
+        <div>{{ $t('public_data_no_data') }}</div>
+      </template>
     </VTable>
 
     <ElDialog

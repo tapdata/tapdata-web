@@ -1,13 +1,13 @@
 <template>
   <div class="debug-logs">
     <CustomerLogs v-if="logsType === 'normal'" :id="id">
-      <ElRadioGroup v-if="showAll" v-model:value="logsType" size="mini">
+      <ElRadioGroup v-if="showAll" v-model:value="logsType" size="small">
         <ElRadioButton label="normal">{{ $t('packages_business_logs_index_putong') }}</ElRadioButton>
         <ElRadioButton label="detailed">{{ $t('packages_business_logs_index_xiangxi') }}</ElRadioButton>
       </ElRadioGroup>
     </CustomerLogs>
     <TechnologyLogs v-if="logsType === 'detailed'" :id="id">
-      <ElRadioGroup v-if="showAll" v-model:value="logsType" size="mini">
+      <ElRadioGroup v-if="showAll" v-model:value="logsType" size="small">
         <ElRadioButton label="normal">{{ $t('packages_business_logs_index_putong') }}</ElRadioButton>
         <ElRadioButton label="detailed">{{ $t('packages_business_logs_index_xiangxi') }}</ElRadioButton>
       </ElRadioGroup>
