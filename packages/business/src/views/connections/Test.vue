@@ -38,13 +38,24 @@
         </div>
       </div>
     </div>
+<!--    v-show="showProgress"-->
+    <div class="mb-4">
+      <div>
+        <span class="mr-2">下载器</span>
+        <span>{{ fileInfo.currentFileSizeLabel }}</span>
+        <span class="mx-2">/</span>
+        <span>{{ fileInfo.fileSizeLabel }}</span>
+        <span v-if="fileInfo.status === 'ERROR'">错误</span>
+      </div>
+      <ElProgress class="my-2" :show-text="false" :percentage="fileInfo.progress"></ElProgress>
+    </div>
     <el-table
       :data="testData.testLogs"
       style="width: 100%"
       max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
-      v-show="testData.testLogs && testData.testLogs.length > 0"
+      v-show="!showProgress && testData.testLogs && testData.testLogs.length > 0"
     >
       <el-table-column prop="show_msg" :label="$t('packages_business_dataForm_test_items')">
         <template slot-scope="scope">
@@ -88,6 +99,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
+import { calcUnit } from '@tap/shared'
 export default {
   name: 'Test',
   components: { VIcon },
@@ -143,6 +155,18 @@ export default {
         waiting: this.$t('packages_business_dataForm_test_testing'),
         failed: this.$t('packages_business_dataForm_test_fail'),
         unTest: this.$t('packages_business_dataForm_test_unTest')
+      },
+      showProgress: true,
+      fileInfo: {
+        fileSize: 0,
+        fileSizeLabel: '0B',
+        currentFileSizeLabel: '0B',
+        progress: 0,
+        status: ''
+      },
+      fileStatusMap: {
+        downloading: '下载中',
+        ERROR: '下载失败'
       }
     }
   },
@@ -228,7 +252,8 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
-      this.startByConnection(data, updateSchema, editTest)
+      // this.startByConnection(data, updateSchema, editTest)
+      this.startDownLoadConnector(data, updateSchema, editTest)
     },
 
     startByConnection(connection, updateSchema, editTest) {
@@ -273,6 +298,59 @@ export default {
       this.$ws.off('testConnection')
       this.testData.testLogs = []
       this.status = ''
+    },
+
+    startDownLoadConnector(connection, updateSchema, editTest) {
+      this.fileInfo = {
+        fileSize: 0,
+        fileSizeLabel: '0B',
+        currentFileSizeLabel: '0B',
+        progress: 0,
+        status: ''
+      }
+      let msg = {
+        type: 'downLoadConnector',
+        data: connection
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
+        // 连接测试时出现access_token过期,重发消息
+        this.$ws.once('401', () => {
+          this.$ws.send(msg)
+        })
+
+        // 检查下载器
+        this.$ws.on('downloadPdkFileFlag', data => {
+          this.showProgress = !!data.result
+          if (!this.showProgress) {
+            this.startLoadTestItems(connection, updateSchema, editTest)
+          }
+        })
+        // 下载器进度
+        this.$ws.on('progressReporting', data => {
+          const { fileSize = 0, progress = 0, status } = data.result || {}
+          if (status === 'finish') {
+            this.startLoadTestItems(connection, updateSchema, editTest)
+          } else {
+            const fileSizeLabel = calcUnit(fileSize * 1, 'byte')
+            const currentFileSizeLabel = calcUnit((fileSize * 1 * progress) / 100, 'byte')
+            this.fileInfo = {
+              fileSize,
+              fileSizeLabel,
+              currentFileSizeLabel,
+              progress,
+              status
+            }
+          }
+        })
+      })
+    },
+
+    startLoadTestItems() {
+      this.startByConnection(...arguments)
+      setTimeout(() => {
+        this.showProgress = false
+      }, 800)
     }
   }
 }
