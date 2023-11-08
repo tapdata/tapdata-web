@@ -20,10 +20,8 @@
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
-        <ElButton class="icon-button ml-4" size="medium" :disabled="disabled" @click="save"
-          ><VIcon size="12">check</VIcon></ElButton
-        >
-        <ElButton class="icon-button ml-2" size="medium" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
+        <ElButton class="icon-button ml-4" :disabled="disabled" @click="save"><VIcon size="12">check</VIcon></ElButton>
+        <ElButton class="icon-button ml-2" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
       </template>
       <template v-else>
         <ElButton

@@ -53,7 +53,7 @@
                 </el-col>
               </el-row>
             </el-form-item>
-            <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+            <ElButton class="btn-sign-in" type="primary" :loading="loading" @click="submit">
               {{ $t('app_signIn_nextStep') }}
             </ElButton>
           </el-form>

@@ -41,16 +41,14 @@
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">
-        <ElButton class="icon-button min-w-0" size="medium" :disabled="disabled" @click="save"
+        <ElButton class="icon-button min-w-0" :disabled="disabled" @click="save"
           ><VIcon size="12">check</VIcon></ElButton
         >
-        <ElButton class="icon-button min-w-0 m-0" size="medium" @click="cancel"
-          ><VIcon size="12">close</VIcon></ElButton
-        >
+        <ElButton class="icon-button min-w-0 m-0" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
       </template>
       <template v-else-if="type === 'text'">
-        <ElButton type="text" class="min-w-0" size="medium" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
-        <ElButton type="text" class="m-0 min-w-0" size="medium" @click="cancel">{{ cancelText }}</ElButton>
+        <ElButton type="text" class="min-w-0" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
+        <ElButton type="text" class="m-0 min-w-0" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
         <ElButton class="inline-input-button" type="primary" size="mini" :disabled="disabled" @click="save">{{

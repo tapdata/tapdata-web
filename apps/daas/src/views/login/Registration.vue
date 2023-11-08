@@ -42,14 +42,7 @@
                 >{{ $t('app_signIn_registry_tip') }} <i>{{ $t('app_signIn_userPplicy') }}</i></span
               >
             </el-checkbox>
-            <el-button
-              class="btn-sign-in"
-              type="primary"
-              size="medium"
-              :disabled="!keepSignIn"
-              :loading="loading"
-              @click="submit"
-            >
+            <el-button class="btn-sign-in" type="primary" :disabled="!keepSignIn" :loading="loading" @click="submit">
               {{ $t('app_signIn_nextStep') }}
             </el-button>
           </el-form>

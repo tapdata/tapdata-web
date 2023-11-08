@@ -18,10 +18,10 @@
         :visible-arrow="false"
         effect="light"
       >
-        <VIcon size="16" class="color-warning">warning</VIcon>
+        <VIcon size="16" class="color-warning ssss">warning</VIcon>
         <template #content>
           <div class="flex flex-wrap align-center font-color-dark">
-            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
+            <VIcon size="16" class="mr-2 color-warning">warning</VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
@@ -53,12 +53,7 @@
     </template>
     <!--重试状态-->
     <template v-if="showRetrying">
-      <ElTooltip
-        key="retrying"
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        effect="light"
-      >
+      <ElTooltip key="retrying" placement="top" popper-class="agent-tooltip__popper" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="flex align-items-start font-color-dark py-2">

@@ -80,7 +80,6 @@
           :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
           :loading="isSaving"
           class="ml-auto"
-          size="medium"
           type="primary"
           @click="$emit('start')"
         >

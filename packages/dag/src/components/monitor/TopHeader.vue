@@ -92,7 +92,7 @@
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
-      <ElButton v-if="!hideSetting" class="ml-3" size="medium" @click="$emit('showSettings')">
+      <ElButton v-if="!hideSetting" class="ml-3" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
@@ -100,7 +100,6 @@
           v-if="dataflow.disabledData && !dataflow.disabledData.edit && !hideEdit && buttonShowMap.Edit"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           @click="$emit('edit')"
         >
           <VIcon class="mr-1">edit-outline</VIcon>{{ $t('public_button_edit') }}
@@ -109,7 +108,6 @@
           v-if="!(dataflow.disabledData && dataflow.disabledData.reset) && buttonShowMap.Reset"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="warning"
           @click="$emit('reset')"
         >
@@ -119,7 +117,6 @@
           v-if="!(dataflow.disabledData && dataflow.disabledData.start) && buttonShowMap.Start"
           :disabled="$disabledReadonlyUserBtn()"
           class="ml-3"
-          size="medium"
           type="primary"
           @click="$emit('start')"
         >
@@ -130,7 +127,6 @@
             v-if="isShowForceStop(dataflow) && buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.forceStop) || $disabledReadonlyUserBtn()"
             class="ml-3"
-            size="medium"
             type="danger"
             @click="$emit('forceStop')"
           >
@@ -139,7 +135,6 @@
           <ElButton
             v-else-if="buttonShowMap.Stop"
             :disabled="(dataflow.disabledData && dataflow.disabledData.stop) || $disabledReadonlyUserBtn()"
-            size="medium"
             type="danger"
             class="ml-3"
             @click="$emit('stop')"

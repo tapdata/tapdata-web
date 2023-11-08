@@ -157,7 +157,7 @@
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton class="ml-3" size="medium" @click="$emit('showSettings')">
+      <ElButton class="ml-3" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
       <ElButton
@@ -165,7 +165,6 @@
         :loading="isSaving"
         :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
         class="ml-3"
-        size="medium"
         @click="$emit('save')"
       >
         <!--保存-->
@@ -177,7 +176,6 @@
         :disabled="$disabledReadonlyUserBtn()"
         class="ml-3"
         :class="{ 'btn--text': isViewer }"
-        size="medium"
         type="warning"
         @click="$emit('reset')"
       >
@@ -185,7 +183,7 @@
         {{ $t('public_button_reset') }}
       </ElButton>
       <template v-if="stateIsReadonly">
-        <ElButton v-if="stateIsReadonly" size="medium" class="ml-3 btn--text" @click="$emit('detail')">
+        <ElButton v-if="stateIsReadonly" class="ml-3 btn--text" @click="$emit('detail')">
           <VIcon>monitoring</VIcon>
           <!--运行监控-->
           {{ $t('packages_dag_task_list_button_monitor') }}
@@ -193,7 +191,6 @@
         <ElButton
           v-if="$route.name !== 'MigrateEditor' && buttonShowMap.Edit"
           class="ml-3 btn--text"
-          size="medium"
           :disabled="(dataflow.disabledData && dataflow.disabledData.edit) || $disabledReadonlyUserBtn()"
           @click="$emit('edit')"
         >
@@ -204,7 +201,6 @@
           v-if="dataflow.status === 'stopping' && buttonShowMap.Stop"
           class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.forceStop"
-          size="medium"
           @click="$emit('forceStop')"
         >
           <VIcon>stop</VIcon>
@@ -214,7 +210,6 @@
           v-else-if="buttonShowMap.Stop"
           class="ml-3 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-          size="medium"
           @click="$emit('stop')"
         >
           <VIcon>stop</VIcon>
@@ -226,7 +221,6 @@
         v-if="buttonShowMap.Start"
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
         class="ml-3"
-        size="medium"
         type="primary"
         @click="$emit('start')"
       >

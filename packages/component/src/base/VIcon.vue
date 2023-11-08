@@ -49,9 +49,9 @@ export default defineComponent({
       const size = convertToUnit(props.size)
 
       if (slotValue) {
-        slotIcon.value = flattenFragments(slotValue).filter(
-          node => node.type === Text && node.children && typeof node.children === 'string'
-        )[0]?.children
+        slotIcon.value = flattenFragments(slotValue)
+          .filter(node => node.type === Text && node.children && typeof node.children === 'string')[0]
+          ?.children?.trim()
       }
 
       const sizeData = size
