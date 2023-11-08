@@ -270,6 +270,7 @@ import {
 } from '@tap/business'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
+import { mapGetters } from 'vuex'
 
 const TaskList = defineComponent({
   props: ['list', 'startTask', 'forceStopTask', 'stopTask', 'getReplicateLag'],
@@ -450,6 +451,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['startingTour']),
     allowDrop() {
       return (
         this.dragState.isDragging &&
@@ -986,7 +988,11 @@ export default {
             )
           })
 
-          this.$store.commit('setTourBehavior', 'add-task')
+          if (this.startingTour) {
+            this.$store.commit('setTourBehavior', 'add-task')
+            // 上报引导创任务
+            this.buried(`guideCreateTask`, '')
+          }
         }
       })
     },

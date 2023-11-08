@@ -119,7 +119,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.companyName || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model:value="enForm.companyName" class="enterprise-item__value"></ElInput>
+            <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
             <div
@@ -131,7 +131,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.website || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model:value="enForm.website" class="enterprise-item__value"></ElInput>
+            <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
@@ -145,7 +145,7 @@
             <div v-if="!isEdit" class="enterprise-item__value">
               {{ enData.industry || $t('user_Center_weiTianXie') }}
             </div>
-            <ElInput v-else v-model:value="enForm.industry" class="enterprise-item__value"></ElInput>
+            <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
             <div
@@ -154,10 +154,8 @@
             >
               {{ $t('user_Center_suoShuChengShi') }}
             </div>
-            <div v-if="!isEdit" class="enterprise-item__value">
-              {{ enData.city || $t('user_Center_weiTianXie') }}
-            </div>
-            <ElInput v-else v-model:value="enForm.city" class="enterprise-item__value"></ElInput>
+            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
+            <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
         <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
@@ -287,7 +285,12 @@
           >
             <template v-slot:prepend>
               <el-select v-model="passwordForm.countryCode" style="width: 110px" filterable>
-                <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <el-option
+                v-for="item in countryCode"
+                :key="item.dial_code"
+                :label="'+ ' + item.dial_code"
+                :value="item.dial_code"
+              >
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >

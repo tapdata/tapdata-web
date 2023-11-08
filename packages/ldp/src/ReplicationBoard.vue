@@ -177,10 +177,24 @@ export default {
     handleAdd(type) {
       this.selectorType = type
       this.showSceneDialog = true
+
+      if (this.startingTour) {
+        type = type.charAt(0).toUpperCase() + type.slice(1)
+        // 上报引导创建源/目标连接
+        this.buried(`guideCreate${type}Connection`, '')
+      }
     },
 
     handleSuccess(connection) {
-      this.$store.commit('setTourBehavior', 'add-' + this.selectorType)
+      if (this.startingTour) {
+        let type = this.selectorType
+        type = type.charAt(0).toUpperCase() + type.slice(1)
+        this.$store.commit('setTourBehavior', 'add-' + this.selectorType)
+        // 上报引导创建源/目标连接
+        this.buried(`guideCreate${type}Connection`, '', {
+          result: true
+        })
+      }
 
       if (connection.connection_type === 'source_and_target') {
         this.$refs.source.addItem(connection)
