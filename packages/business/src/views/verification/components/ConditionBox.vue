@@ -57,7 +57,6 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
-                  :lazy="!taskId"
                   itemQuery="name"
                   filterable
                   class="item-select"
@@ -72,7 +71,6 @@
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
-                  :lazy="!taskId"
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"

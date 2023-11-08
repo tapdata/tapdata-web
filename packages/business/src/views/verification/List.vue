@@ -407,11 +407,14 @@ export default {
         })
       })
     },
-    goEdit(id) {
+    goEdit(id, flowId) {
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
           id: id
+        },
+        query: {
+          taskMode: flowId ? 'pipeline' : 'random'
         }
       })
     },
