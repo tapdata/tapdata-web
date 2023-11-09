@@ -38,14 +38,13 @@
         </div>
       </div>
     </div>
-<!--    v-show="showProgress"-->
     <div class="mb-4">
       <div>
-        <span class="mr-2">下载器</span>
-        <span>{{ fileInfo.currentFileSizeLabel }}</span>
-        <span class="mx-2">/</span>
-        <span>{{ fileInfo.fileSizeLabel }}</span>
-        <span v-if="fileInfo.status === 'ERROR'">错误</span>
+        <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
+        <span>{{ fileInfo.progress + '%' }}</span>
+        <span v-if="fileInfo.status === 'ERROR'" class="color-danger">{{
+          $t('packages_business_connections_test_xiazaishibai')
+        }}</span>
       </div>
       <ElProgress class="my-2" :show-text="false" :percentage="fileInfo.progress"></ElProgress>
     </div>
@@ -99,7 +98,6 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import { calcUnit } from '@tap/shared'
 export default {
   name: 'Test',
   components: { VIcon },
@@ -159,14 +157,8 @@ export default {
       showProgress: true,
       fileInfo: {
         fileSize: 0,
-        fileSizeLabel: '0B',
-        currentFileSizeLabel: '0B',
         progress: 0,
         status: ''
-      },
-      fileStatusMap: {
-        downloading: '下载中',
-        ERROR: '下载失败'
       }
     }
   },
@@ -296,6 +288,8 @@ export default {
     clearInterval() {
       // 取消长连接
       this.$ws.off('testConnection')
+      this.$ws.off('downloadPdkFileFlag')
+      this.$ws.off('progressReporting')
       this.testData.testLogs = []
       this.status = ''
     },
@@ -303,8 +297,6 @@ export default {
     startDownLoadConnector(connection, updateSchema, editTest) {
       this.fileInfo = {
         fileSize: 0,
-        fileSizeLabel: '0B',
-        currentFileSizeLabel: '0B',
         progress: 0,
         status: ''
       }
@@ -324,6 +316,7 @@ export default {
           this.showProgress = !!data.result
           if (!this.showProgress) {
             this.startLoadTestItems(connection, updateSchema, editTest)
+            this.fileInfo.progress = 100
           }
         })
         // 下载器进度
@@ -331,13 +324,10 @@ export default {
           const { fileSize = 0, progress = 0, status } = data.result || {}
           if (status === 'finish') {
             this.startLoadTestItems(connection, updateSchema, editTest)
+            this.fileInfo.progress = 100
           } else {
-            const fileSizeLabel = calcUnit(fileSize * 1, 'byte')
-            const currentFileSizeLabel = calcUnit((fileSize * 1 * progress) / 100, 'byte')
             this.fileInfo = {
               fileSize,
-              fileSizeLabel,
-              currentFileSizeLabel,
               progress,
               status
             }

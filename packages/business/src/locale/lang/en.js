@@ -1226,5 +1226,7 @@ export default {
   packages_business_ssh_host: 'Host',
   packages_business_ssh_port: 'Port',
   packages_business_ssh_username: 'Username',
-  packages_business_ssh_password: 'Password'
+  packages_business_ssh_password: 'Password',
+  packages_business_connections_test_xiazaijindu: 'Download Progress',
+  packages_business_connections_test_xiazaishibai: 'Download Failed'
 }

@@ -1158,5 +1158,7 @@ export default {
   packages_business_ssh_host: '主機名',
   packages_business_ssh_port: '端口',
   packages_business_ssh_username: '用戶名',
-  packages_business_ssh_password: '密碼'
+  packages_business_ssh_password: '密碼',
+  packages_business_connections_test_xiazaijindu: '下載進度',
+  packages_business_connections_test_xiazaishibai: '下載失敗'
 }
