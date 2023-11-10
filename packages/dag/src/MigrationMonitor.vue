@@ -169,13 +169,13 @@
 
       <UpgradeFee
         :visible.sync="upgradeFeeVisible"
-        :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+        :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
         :go-page="upgradeFeeGoPage"
       ></UpgradeFee>
 
       <UpgradeCharges
         :visible.sync="upgradeChargesVisible"
-        :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+        :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
         :go-page="upgradeFeeGoPage"
       ></UpgradeCharges>
 
@@ -304,7 +304,9 @@ export default {
         items: []
       },
       upgradeFeeVisible: false,
-      upgradeChargesVisible: false
+      upgradeFeeVisibleTips: '',
+      upgradeChargesVisible: false,
+      upgradeChargesVisibleTips: ''
     }
   },
 
