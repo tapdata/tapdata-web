@@ -2,10 +2,10 @@
   "name": "@tap/business",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index",
   "keywords": [],
-  "author": "",
   "license": "ISC",
+  "author": "",
+  "main": "src/index",
   "dependencies": {
     "@tap/api": "workspace:^1.0.0",
     "@tap/assets": "workspace:^1.0.0",

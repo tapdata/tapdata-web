@@ -15,7 +15,7 @@ const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   // test: 'https://dev.cloud.tapdata.net/',
-  test: 'https://test3.cloud.tapdata.net/'
+  test: 'https://test3.cloud.tapdata.net/',
 }
 
 // const userId = '60b60af1147bce7705727188' // zed?
@@ -37,12 +37,12 @@ if (~argv.indexOf('--origin')) {
 const proxy = {
   target: origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true,
-  secure: false
+  secure: false,
 }
 
 if (process.env.NODE_ENV === 'development') {
   // 设置本地环境的token
-  const getToken = userId => {
+  const getToken = (userId) => {
     const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
 
     function __encrypt(string) {
@@ -58,7 +58,7 @@ if (process.env.NODE_ENV === 'development') {
     }
 
     function encodeStaticTokenByUserId(userId) {
-      let token = __encrypt(userId)
+      const token = __encrypt(userId)
       return encodeBase64(userId) + '.' + encodeBase64(token)
     }
 
@@ -71,7 +71,7 @@ if (process.env.NODE_ENV === 'development') {
 
 export default defineConfig({
   define: {
-    'process.env': process.env
+    'process.env': process.env,
   },
 
   plugins: [
@@ -80,79 +80,64 @@ export default defineConfig({
     viteCommonjs({ exclude: ['ali-oss'] }),
 
     AutoImport({
-      resolvers: [
-        ElementPlusResolver({ importStyle: 'sass' })
-        // 自动导入图标组件
-        // IconsResolver({
-        //   prefix: 'Icon'
-        // })
-      ]
+      resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+      dts: 'src/auto-imports.d.ts',
     }),
 
     Components({
-      resolvers: [
-        // 自动注册图标组件
-        // IconsResolver({
-        //   enabledCollections: ['ep']
-        // }),
-        ElementPlusResolver()
-      ],
-      directoryAsNamespace: true
+      resolvers: [ElementPlusResolver()],
+      // directoryAsNamespace: true
+      dts: 'src/components.d.ts',
     }),
-
-    // Icons({
-    //   autoInstall: true
-    // }),
 
     createSvgIconsPlugin({
       iconDirs: [
         path.resolve(process.cwd(), 'src/assets/icons/svg'),
         path.resolve(process.cwd(), 'src/assets/icons/colorSvg'),
         path.resolve(process.cwd(), '../../packages/assets/icons/svg'),
-        path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
+        path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg'),
       ],
       symbolId: 'icon-[name]',
       svgoOptions: {
         exclude: [
           path.resolve(process.cwd(), 'src/assets/icons/colorSvg'),
-          path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg')
+          path.resolve(process.cwd(), '../../packages/assets/icons/colorSvg'),
         ],
         plugins: [
-          { name: 'removeTitle', active: true },
-          { name: 'removeStyleElement', active: true },
+          { name: 'removeTitle' },
+          { name: 'removeStyleElement' },
           {
             name: 'removeAttributesBySelector',
             params: {
               selector: ":not(path[fill='none'])",
-              attributes: ['fill']
-            }
+              attributes: ['fill'],
+            },
           },
           {
             name: 'removeAttributesBySelector',
             params: {
               selector: "[stroke='none']",
-              attributes: ['stroke']
-            }
+              attributes: ['stroke'],
+            },
           },
           {
             name: 'removeAttrs',
-            active: true,
             params: {
-              attrs: ['class', 'p-id']
-            }
-          }
-        ]
-      }
-    })
+              attrs: ['class', 'p-id'],
+            },
+          },
+        ],
+      },
+    }),
   ],
 
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './src'),
     },
 
     // TODO 建议显式指定扩展名，vite 默认就不支持忽略.vue
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
 
   server: {
@@ -164,19 +149,19 @@ export default defineConfig({
       '/tm/': Object.assign(
         {
           ws: true,
-          secure: false
+          secure: false,
         },
-        proxy
-      )
-    }
+        proxy,
+      ),
+    },
   },
 
   // 全局注入var.scss
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@tap/assets/styles/var.scss" as *;`
-      }
-    }
-  }
+        additionalData: `@use "@tap/assets/styles/var.scss" as *;`,
+      },
+    },
+  },
 })

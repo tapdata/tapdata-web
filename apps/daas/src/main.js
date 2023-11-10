@@ -1,44 +1,41 @@
 import '@/styles/app.scss'
-
 import * as Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
-import VueClipboard from 'vue-clipboard2'
+import router from './router'
 // import factory from '@/api/factory'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { VIcon } from '@tap/component'
-import getRouter from '@/router'
-import VConfirm from '@/components/v-confirm'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
-import FormBuilder from '@tap/component/src/form-builder'
 
 import { installAllPlugins } from '@/plugins'
 // import '@/plugins/element'
-import '@/plugins/icon'
-import '@/directives'
-import LoadMore from '@/utils/loadMore'
+import { installDirectives } from './directives'
 
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
 
+import 'virtual:svg-icons-register'
+
 window._TAPDATA_OPTIONS_ = {
   version: import.meta.env.VITE_VERSION,
-  logoUrl: require(`@/assets/images/${import.meta.env.VITE_LOGO_IMG}`),
-  loginUrl: require(`@/assets/images/${import.meta.env.VITE_LOGIN_IMG}`),
-  loadingImg: require(`@/assets/icons/${import.meta.env.VITE_LOADING_IMG}`),
+  logoUrl: new URL(`./assets/images/${import.meta.env.VITE_LOGO_IMG}`, import.meta.url).href,
+  loginUrl: new URL(`./assets/images/${import.meta.env.VITE_LOGIN_IMG}`, import.meta.url).href,
+  loadingImg: new URL(`./assets/icons/${import.meta.env.VITE_LOADING_IMG}`, import.meta.url).href,
   logoWidth: import.meta.env.VITE_LOGO_WIDTH,
   logoHeight: import.meta.env.VITE_LOGO_HEIGHT,
   loginSize: import.meta.env.VITE_LOGIN_IMG_SIZE,
-  homeUrl: import.meta.env.VITE_HOME_URL
+  homeUrl: import.meta.env.VITE_HOME_URL,
 }
-window.getSettingByKey = key => {
+
+window.getSettingByKey = (key) => {
   let value = ''
 
-  let setting = window?.__settings__.find(it => it.key === key) || {}
+  let setting = window?.__settings__.find((it) => it.key === key) || {}
   value = setting.isArray ? setting.value.split(',') : setting.value
   return value
 }
@@ -86,7 +83,7 @@ if (TOKEN) {
 
 let token = Cookie.get('access_token')
 
-let init = settings => {
+let init = (settings) => {
   window.__settings__ = settings
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
@@ -103,20 +100,14 @@ let init = settings => {
   const app = (window.App = window.$vueApp = Vue.createApp(App))
 
   installAllPlugins(app)
+  installDirectives(app)
 
-  window.$vueApp.use(VueClipboard)
-  window.$vueApp.use(LoadMore)
-  window.$vueApp.use(FormBuilder)
-  window.$vueApp.mixin({
-    created() {
-      // 创建实例时传入wsOptions，即可默认开启websocket
-      let wsOptions = this.$options.wsOptions
-      // 根实例才有ws
-      if (wsOptions) {
-        window.$vueApp.config.globalProperties.$ws = new WSClient(wsOptions.url, wsOptions.protocols, wsOptions)
-      }
-    }
-  })
+  // TODO 废弃，后续替换
+  // window.$vueApp.use(VueClipboard)
+  // window.$vueApp.use(LoadMore)
+  // window.$vueApp.use(FormBuilder)
+
+  window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
 
   // Vue.prototype.$api = factory
 
@@ -125,13 +116,14 @@ let init = settings => {
     return path + (path.endsWith('/') ? '' : '/') + pathToAppend
   }
   window.$vueApp.config.globalProperties.$getSettingByKey = window.getSettingByKey
+  window.$vueApp.use(i18n)
   window.$vueApp.use(store)
-  window.$vueApp.use(undefined)
+  window.$vueApp.use(router)
   window.$vueApp.mount('#app')
 }
 settingsApi
   .get()
-  .then(async data => {
+  .then(async (data) => {
     let initData = data || []
     if (initData.length) {
       localStorage.setItem('TAPDATA_SETTINGS', JSON.stringify(initData))
@@ -146,11 +138,11 @@ settingsApi
     }
     init(initData)
     // 设置服务器时间
-    timeStampApi.get().then(t => {
+    timeStampApi.get().then((t) => {
       Time.setTime(t)
     })
   })
-  .catch(err => {
+  .catch((err) => {
     // eslint-disable-next-line
     console.log(i18n.t('daas_src_main_qingqiuquanjupei') + err)
   })
@@ -163,28 +155,3 @@ document.addEventListener('visibilitychange', () => {
     ele && ele.blur()
   }, 50)
 })
-
-// 判断浏览器是否为IE
-// const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
-
-// // 兼容ie iframe切换路由不生效
-// if (isIE) {
-//   window.addEventListener(
-//     'hashchange',
-//     () => {
-//       let currentPath = window.location.hash.slice(1)
-//       let arr = ['/dataFlows', '/connections'] // 匹配的路由：同步任务、连接管理、数据校验
-//       let flag = false // 是否是iframe使用到的路由地址
-//       arr.forEach(el => {
-//         let reg = new RegExp('^' + el)
-//         if (reg.test(currentPath)) {
-//           flag = true
-//         }
-//       })
-//       if (flag && window.App.$route.fullPath !== currentPath) {
-//         window.App.$router.push(currentPath)
-//       }
-//     },
-//     false
-//   )
-// }

@@ -1,17 +1,9 @@
 export function installAllPlugins(app) {
-  const modules = import.meta.glob('!**/index.js', { eager: true })
+  const modules = import.meta.glob(['./*.js', '!**/index.js'], { eager: true })
 
-  for (const module of modules) {
-    console.log('module', module)
-    if (typeof module.install === 'function') {
-      module.install(app)
+  for (const path in modules) {
+    if (typeof modules[path].install === 'function') {
+      modules[path].install(app)
     }
   }
-
-  // const files = require.context('.', true, /\.ts$/)
-  // files.keys().forEach(key => {
-  //   if (typeof files(key).install === 'function') {
-  //     if (key !== './index.js') files(key).install(app)
-  //   }
-  // })
 }

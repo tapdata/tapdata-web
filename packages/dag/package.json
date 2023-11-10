@@ -2,13 +2,13 @@
   "name": "@tap/dag",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@figmania/anim": "^2.3.12",
     "@figmania/webcomponent": "^2.3.12",

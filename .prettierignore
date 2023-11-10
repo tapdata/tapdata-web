@@ -1,5 +1,2 @@
 /apps/*/dist/
 /apps/*/public/
-/apps/daas/src/editor/lib/rappid/rappid.js
-/apps/daas/src/editor/lib/rappid/themes/style.default.css
-/apps/daas/src/assets/style/font/iconfont.css

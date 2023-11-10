@@ -8,7 +8,7 @@
             <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
           </div>
           <div class="error-tips align-center justify-content-start" v-show="errorMessage">
-            <el-icon class="mr-2"><el-icon-warning-outline /></el-icon>
+            <el-icon class="mr-2"><el-icon-warning /></el-icon>
             {{ errorMessage }}
           </div>
           <form>
