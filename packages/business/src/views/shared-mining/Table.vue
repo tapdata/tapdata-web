@@ -242,9 +242,12 @@ export default {
         size: size
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
-        this.listTotal = data.total || 0
+        const total = data.total || 0
+        if (!keyword) {
+          this.listTotal = total
+        }
         return {
-          total: this.listTotal,
+          total: total,
           data: data.items || []
         }
       })
