@@ -38,7 +38,7 @@ export default ({ routes }) => {
   const init = () => {
     const router = VueRouter.createRouter({
       history: VueRouter.createWebHashHistory(),
-      routes
+      routes,
     })
     startTimeOnPage(router)
 
@@ -92,7 +92,7 @@ export default ({ routes }) => {
       appETagKey: '__APP_ETAG__',
       pollingInterval: 5 * 1000, // 单位为毫秒
       silent: process.env.NODE_ENV === 'development', // 开发环境下不检测
-      onUpdate: self => {
+      onUpdate: (self) => {
         const h = window.App.$createElement
         Notification({
           customClass: 'version-upgrade-notification',
@@ -100,17 +100,17 @@ export default ({ routes }) => {
           message: h(
             'div',
             {
-              class: 'flex align-items-start gap-2 ml-n3 mr-n2'
+              class: 'flex align-items-start gap-2 ml-n3 mr-n2',
             },
             [
               h('ElImage', {
                 class: 'flex-shrink-0',
-                attrs: { src: require('@/assets/image/version-rocket.svg') }
+                attrs: { src: require('@/assets/image/version-rocket.svg') },
               }),
               h(
                 'div',
                 {
-                  class: 'flex flex-column align-items-start gap-2 text-start'
+                  class: 'flex flex-column align-items-start gap-2 text-start',
                 },
                 [
                   h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
@@ -120,18 +120,18 @@ export default ({ routes }) => {
                     {
                       class: 'ml-auto',
                       props: { type: 'primary', size: 'mini' },
-                      on: { click: () => self.onRefresh() }
+                      on: { click: () => self.onRefresh() },
                     },
-                    i18n.t('public_button_refresh')
-                  )
-                ]
-              )
-            ]
+                    i18n.t('public_button_refresh'),
+                  ),
+                ],
+              ),
+            ],
           ),
           duration: 0,
-          position: 'bottom-right'
+          position: 'bottom-right',
         })
-      }
+      },
     })
 
     // 路由守卫
@@ -146,7 +146,7 @@ export default ({ routes }) => {
           'DataflowEditor',
           'MigrateCreate',
           'MigrateEditor',
-          'MigrateEditor'
+          'MigrateEditor',
         ].includes(to.name) &&
         domainName === 'demo.cloud.tapdata.net' &&
         !removeReadonly
@@ -156,7 +156,7 @@ export default ({ routes }) => {
         next()
       }
     })
-    router.onError(error => {
+    router.onError((error) => {
       const pattern = /Loading chunk (\d)+ failed/g
       const isChunkLoadFailed = error.message.match(pattern)
       if (isChunkLoadFailed) {
@@ -175,7 +175,7 @@ export default ({ routes }) => {
   let getData = () => {
     axios
       .get('api/tcm/user')
-      .then(data => {
+      .then((data) => {
         let userInfo = data
         window.__USER_INFO__ = userInfo
 
@@ -183,11 +183,11 @@ export default ({ routes }) => {
         init()
 
         // 设置服务器时间
-        timeStampApi.get().then(t => {
+        timeStampApi.get().then((t) => {
           Time.setTime(t)
         })
       })
-      .catch(err => {
+      .catch((err) => {
         // 获取用户信息失败
         if (count < 4) {
           // eslint-disable-next-line
@@ -213,10 +213,10 @@ export default ({ routes }) => {
       responseType: 'json',
       headers: {
         Accept: 'application/json',
-        'Cache-Control': 'no-cache'
-      }
+        'Cache-Control': 'no-cache',
+      },
     })
-    .then(res => {
+    .then((res) => {
       store.commit('setConfig', res.data)
       window.__config__ = res.data
 

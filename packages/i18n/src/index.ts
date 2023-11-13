@@ -6,13 +6,11 @@ import locale from './locale'
 const i18n = createI18n({
   locale: getCurrentLanguage(),
   messages: locale,
-  silentTranslationWarn: true
+  silentTranslationWarn: true,
 })
 
-// window.$vueApp.use(i18n)
-
 i18n.merge = (langs = {}) => {
-  Object.keys(langKeyMap).forEach(f => {
+  Object.keys(langKeyMap).forEach((f) => {
     i18n.global.mergeLocaleMessage(f, langs[f])
   })
 }

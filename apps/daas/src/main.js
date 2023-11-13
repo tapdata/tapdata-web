@@ -1,6 +1,6 @@
 import '@/styles/app.scss'
 import * as Vue from 'vue'
-import App from '@/App.tsx'
+import App from '@/App.vue'
 import store from '@/vuex' // 引入全局数据控制
 import i18n from './i18n'
 import router from './router'

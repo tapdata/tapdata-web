@@ -5,7 +5,7 @@
   "keywords": [],
   "license": "ISC",
   "author": "",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +13,6 @@
     "@tap/shared": "workspace:^1.0.0",
     "core-js": "^3.8.3",
     "tiny-emitter": "^2.1.0",
-    "vue-i18n": "^9.5.0"
+    "vue-i18n": "^9.6.5"
   }
 }

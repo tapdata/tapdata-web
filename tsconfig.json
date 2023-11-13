@@ -5,10 +5,7 @@
     "module": "ESNext",
     "jsx": "preserve",
     "skipLibCheck": true,
-    "importHelpers": true, // 从 tslib 导入辅助工具函数
-    "declaration": true, // 生成相应的 '.d.ts' 文件
     "esModuleInterop": true,
-    "sourceMap": true,
     "lib": ["ESNext", "DOM"],
 
     /* 严格的类型检查选项 */
@@ -22,7 +19,11 @@
     "moduleResolution": "node", // 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6)
     "baseUrl": ".",
     // /* 模块解析选项 */
-    "allowSyntheticDefaultImports": true // 允许从没有设置默认导出的模块中默认导入。
+    "allowSyntheticDefaultImports": true, // 允许从没有设置默认导出的模块中默认导入。
+
+    "paths": {
+      "@tap/*": ["packages/*/src"]
+    }
 
     // /* 基本选项 */
     // "target": "es5",                       // 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES6'/'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'
@@ -75,9 +76,9 @@
   },
 
   "include": [
-    "packages/**/*.ts",
-    "packages/**/*.tsx",
-    "packages/**/*.vue"
+    "packages/*/src/**/*.ts",
+    "packages/*/src/**/*.tsx",
+    "packages/*/src/**/*.vue"
   ],
   "exclude": ["node_modules"]
 }

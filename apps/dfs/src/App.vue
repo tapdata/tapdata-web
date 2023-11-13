@@ -1,24 +1,38 @@
 <template>
-  <RouterView />
+  <ElConfigProvider :locale="locale">
+    <RouterView />
+  </ElConfigProvider>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, provide } from 'vue'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
+import en from 'element-plus/dist/locale/en.mjs'
 import { buried } from '@/plugins/buried'
-export default {
-  name: 'app',
-  provide: {
-    async checkAgent(callback) {
-      let data = await this.$axios.get('api/tcm/agent/agentCount')
-      if (data.agentRunningCount || data.agentRunningCount > 0) {
-        callback?.()
-      } else {
-        this.$message.error(this.$t('agent_error_check'))
-        throw new Error(this.$t('agent_error_check'))
-      }
-    },
-    buried
-  }
+import i18n from '@tap/i18n'
+import axios from '@/plugins/axios'
+
+const langMap = {
+  'zh-CN': zhCn,
+  'zh-TW': zhTw,
+  en,
 }
+
+const locale = computed(() => {
+  return langMap[i18n.global.locale || 'en']
+})
+
+provide('checkAgent', async (callback) => {
+  let data = await axios.get('api/tcm/agent/agentCount')
+  if (data.agentRunningCount || data.agentRunningCount > 0) {
+    callback?.()
+  } else {
+    ElMessage.error(i18n.t('agent_error_check'))
+    throw new Error(i18n.t('agent_error_check'))
+  }
+})
+provide('buried', buried)
 </script>
 
 <style lang="scss">
