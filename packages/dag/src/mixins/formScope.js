@@ -156,6 +156,9 @@ export default {
         findParentNodes: (id, ifMyself) => {
           let node = this.scope.findNodeById(id)
           const parents = []
+
+          if (!node) return parents
+
           let parentIds = node.$inputs || []
           if (ifMyself && !parentIds.length) return [node]
           parentIds.forEach(pid => {
