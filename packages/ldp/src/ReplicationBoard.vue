@@ -54,6 +54,8 @@ const TYPE2NAME = {
 export default {
   name: 'ReplicationBoard',
 
+  inject: ['buried'],
+
   components: {
     SourceItem,
     TargetItem,
