@@ -77,6 +77,9 @@ export default {
     autoScale: {
       type: Boolean,
       default: false
+    },
+    labelUnitType: {
+      type: String
     }
   },
 
@@ -195,7 +198,7 @@ export default {
       let result = {
         tooltip: {
           trigger: 'axis',
-          backgroundColor: 'rgba(54, 66, 82, 0.7)',
+          backgroundColor: 'rgba(54, 66, 82, 0.9)',
           textStyle: {
             color: '#fff',
             fontSize: 12
@@ -214,6 +217,8 @@ export default {
                   val = calcTimeUnit(val, 2, {
                     digits: 2
                   })
+                } else if (this.labelUnitType) {
+                  val = calcUnit(val, this.labelUnitType)
                 } else {
                   val = val.toLocaleString('zh', {
                     minimumFractionDigits: 2,
@@ -292,7 +297,7 @@ export default {
                 ? calcTimeUnit(val || 0, 2, {
                     digits: 2
                   })
-                : calcUnit(val)
+                : calcUnit(val, this.labelUnitType)
             },
             // showMaxLabel: false,
             showMinLabel: canScale ? true : null

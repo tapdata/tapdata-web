@@ -800,7 +800,7 @@ export default {
             taskId,
             taskRecordId
           },
-          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag'],
+          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag', 'inputSizeQps',  'outputSizeQps', 'qpsType'],
           type: 'continuous' // 连续数据
         },
         // dag数据
