@@ -43,7 +43,7 @@
       <template slot-scope="scope">
         <div>
           <span>{{
-            `${Math.round(scope.row.progress * 10000) / 100 ? Math.round(scope.row.progress * 10000) / 100 : 0}%`
+            `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%`
           }}</span>
         </div>
       </template>
