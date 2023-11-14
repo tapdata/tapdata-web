@@ -116,7 +116,7 @@
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
             {{
-              `(${scope.row.InspectResult.progress ? Math.round(scope.row.InspectResult.progress * 10000) / 100 : 0}%)`
+              `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)`
             }}
           </span>
         </template>
