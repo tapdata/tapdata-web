@@ -1353,7 +1353,7 @@ export default {
   dfs_instance_instance_pclas:
     '<p class="flex align-content-center">Click to open <a class="color-primary text-decoration-underline" href="{val1}" target="_blank">Aliyun Market</a> Purchase an instance and obtain an authorization code</p>',
   dfs_instance_instance_daoqishijian: 'Exp. Date',
-  dfs_instance_instance_dingyuefangshi: 'Subscription Period',
+  dfs_instance_instance_dingyuefangshi: 'Subscription Method',
   dfs_instance_instance_guige: 'Spec',
   dfs_instance_selectlist_yibangding: 'Already Bound',
   dfs_instance_selectlist_bangdingshilizhuang: 'Binding instance status',
@@ -1796,5 +1796,6 @@ export default {
   dfs_user_contactus_lianxifangshi: 'Contact Information',
   dfs_user_contactus_weinintigongzhuan: 'Provide you with professional service support',
   dfs_system_update: 'System Update',
-  dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!"
+  dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!",
+  dfs_order_list_bianhao: 'Number'
 }
