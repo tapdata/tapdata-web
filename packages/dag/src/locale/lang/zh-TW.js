@@ -330,8 +330,10 @@ export default {
   packages_dag_nodes_database_ddLshijian: 'DDL事件採集',
   packages_dag_nodes_database_kaiqihourenwu: '開啟後任務將會自動採集選中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '動態新增表',
-  packages_dag_nodes_database_quanliangmeipici: '全量每批次讀取的條數',
-  packages_dag_nodes_database_piliangduqutiao: '批量讀取條數',
+  packages_dag_nodes_database_quanliangmeipici:
+    '全量每批次讀取的條數, 一般保持默認值即可, 如果你的下游較慢, 任務出現源的游標丟失的情況, 請調小此值',
+  packages_dag_nodes_database_piliangduqutiao: '全量每批讀取條數',
+  packages_dag_nodes_database_zengliangmeipici: '增量每批讀取條數',
   packages_dag_nodes_database_zidingyi: '自定義',
   packages_dag_nodes_database_xuanzebiao: '選擇表',
   packages_dag_nodes_database_suoshuage: '所屬agent',

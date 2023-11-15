@@ -529,24 +529,36 @@ export class Database extends NodeType {
                       }
                     },
                     properties: {
-                      readBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
-                        },
+                      sizeSpace: {
+                        type: 'void',
+                        'x-component': 'Space',
                         'x-component-props': {
-                          min: 1,
-                          max: 100000
+                          size: 'middle'
                         },
-                        default: 100,
-                        'x-reactions': {
-                          fulfill: {
-                            state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                            }
+                        properties: {
+                          readBatchSize: {
+                            title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //全量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-decorator-props': {
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
+                            },
+                            'x-component-props': {
+                              min: 1,
+                              max: 100000
+                            },
+                            default: 100
+                          },
+                          increFetchSize: {
+                            title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1
+                            },
+                            default: 1
                           }
                         }
                       }
