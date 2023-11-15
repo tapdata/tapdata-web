@@ -52,7 +52,6 @@ export default {
     },
     onCopy() {
       this.showTooltip = true
-      this.$emit('behavior', `copy_${this.downLoadType}`)
     },
     handleCopy() {
       const MAP = {
@@ -62,6 +61,7 @@ export default {
         AliComputenest: 'copyTokenInAliComputenest'
       }
       this.buried(MAP[this.downLoadType])
+      this.$emit('behavior', `copy_${this.downLoadType}`)
     },
     // windows下载
     handleDownLoad() {
@@ -140,7 +140,11 @@ export default {
           </el-button>
         </ElTooltip>
       </div>
-      <div class="box rounded-4 title-text my-2 mt-4" :class="{ 'overflow-hidden': showAllCode }">
+      <div
+        class="box rounded-4 title-text my-2 mt-4 user-select-all"
+        :class="{ 'overflow-hidden': showAllCode }"
+        @copy="handleCopy"
+      >
         <span class="link-line" :class="{ 'hidden-all-code': showAllCode }">{{ links[downLoadType] }}</span>
       </div>
     </section>
