@@ -117,9 +117,7 @@
                     <span class="li-item__value font-color-dark">{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </div>
                   <div>
-                    <span class="li-item__label font-color-sslight"
-                      >{{$t('dfs_order_list_bianhao')}}:</span
-                    >
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_bianhao') }}:</span>
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
                 </div>
@@ -801,6 +799,7 @@ export default {
   &.active,
   &:hover {
     background-color: #e8f3ff;
+    color: map-get($color, primary);
   }
 }
 
