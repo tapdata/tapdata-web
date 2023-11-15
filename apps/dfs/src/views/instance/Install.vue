@@ -79,7 +79,7 @@
             <i>{{ $t('public_button_copy') }}</i>
           </el-button>
         </ElTooltip>
-        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis">
+        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis" @copy="handleCopy">
           {{ links[downLoadType] }}
         </div>
       </section>
@@ -116,13 +116,13 @@ export default {
     return {
       links: {
         linux: '',
-        docker: ''
+        docker: '',
       },
       downLoadType: 'linux',
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -140,9 +140,9 @@ export default {
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
         docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
       },
-      success: false
+      success: false,
     }
   },
 
@@ -162,7 +162,7 @@ export default {
 
       if (this.isDestroyed) return
 
-      this.$axios.get('api/tcm/agent/' + this.agentId).then(data => {
+      this.$axios.get('api/tcm/agent/' + this.agentId).then((data) => {
         if (data?.status !== 'Creating') {
           clearTimeout(this.timer)
           this.open(data?.status)
@@ -176,17 +176,17 @@ export default {
     },
     open() {
       this.success = true
-      setTimeout(() => {
-        this.$router.push('/instance')
-      }, 5000)
+      // setTimeout(() => {
+      //   this.$router.push('/instance')
+      // }, 5000)
     },
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           this.links[el.os] = el.command
         })
       })
@@ -226,7 +226,7 @@ export default {
     windowsToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#MjqcX',
-        '_blank'
+        '_blank',
       )
     },
     windowsToAgent() {
@@ -235,7 +235,7 @@ export default {
     linuxToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
-        '_blank'
+        '_blank',
       )
     },
     linuxToAgent() {
@@ -262,11 +262,11 @@ export default {
       const MAP = {
         linux: 'copyTokenInLinux',
         docker: 'copyTokenInDocker',
-        windows: 'copyTokenInWindows'
+        windows: 'copyTokenInWindows',
       }
       this.buried(MAP[this.downLoadType])
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -78,6 +78,8 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElTreeNode: typeof import('element-plus/es')['ElTreeNode']
+    ElTreeV2: typeof import('element-plus/es')['ElTreeV2']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Guide: typeof import('./components/guide/index.vue')['default']
     Header: typeof import('./components/the-header/Header.vue')['default']

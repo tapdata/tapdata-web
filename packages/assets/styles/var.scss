@@ -68,6 +68,11 @@ $iconFillColor: (
   normal: #4e5969
 );
 
+// 项目内用到 $namespace
+@forward 'element-plus/theme-chalk/src/mixins/config.scss' with (
+  $namespace: 'el'
+);
+
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (

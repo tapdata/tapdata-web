@@ -4,10 +4,11 @@
     "target": "ESNext",
     "module": "ESNext",
     "jsx": "preserve",
+    "sourceMap": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
-
+    "allowJs": true,
     /* 严格的类型检查选项 */
     // "noImplicitAny": true, // 在表达式和声明上有隐含的 any类型时报错
     // "strict": true, // 启用所有严格类型检查选项

@@ -24,7 +24,7 @@ import Drawer from './Drawer.vue'
 import InlineInput from './InlineInput.vue'
 import DarkSelect from './DarkSelect'
 import TimeSelect from './TimeSelect'
-import { ElTreeV2 as VirtualTree, ElSelectV2 as VirtualSelect } from 'element-plus'
+import { /*ElTreeV2 as VirtualTree, */ ElSelectV2 as VirtualSelect } from 'element-plus'
 
 // business
 import Chart from './chart'
@@ -62,12 +62,11 @@ export {
   OverflowTooltip,
   DarkSelect,
   TimeSelect,
-  VirtualTree
 }
 
 export * from './base'
 
-// export * from './virtual-tree'
+export * from './virtual-tree'
 
 export * from './pro-table'
 

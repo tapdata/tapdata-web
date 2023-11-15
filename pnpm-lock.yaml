@@ -436,6 +436,9 @@ importers:
 
   packages/component:
     dependencies:
+      '@element-plus/icons-vue':
+        specifier: ^2.1.0
+        version: 2.1.0(vue@3.3.4)
       '@tap/api':
         specifier: workspace:^1.0.0
         version: link:../api
