@@ -28,30 +28,9 @@ export default {
       type: Object,
       default: () => {
         return {
-          x: [
-            '2000-06-01',
-            '2000-06-02',
-            '2000-06-03',
-            '2000-06-04',
-            '2000-06-05',
-            '2000-06-06',
-            '2000-06-07',
-            '2000-06-08',
-            '2000-06-09',
-            '2000-06-10',
-            '2000-06-11',
-            '2000-06-12',
-            '2000-06-13',
-            '2000-06-14',
-            '2000-06-15',
-            '2000-06-16',
-            '2000-06-17',
-            '2000-06-18',
-            '2000-06-19',
-            '2000-06-20'
-          ],
+          x: [],
           name: [i18n.t('public_title')],
-          value: [12, 3, 42, 4, 78, 24, 7, 5, 44, 22, 12, 3, 42, 4, 78, 24, 7, 5, 44, 222]
+          value: []
         }
       }
     },
@@ -77,6 +56,9 @@ export default {
     autoScale: {
       type: Boolean,
       default: false
+    },
+    labelUnitType: {
+      type: String
     }
   },
 
@@ -195,7 +177,7 @@ export default {
       let result = {
         tooltip: {
           trigger: 'axis',
-          backgroundColor: 'rgba(54, 66, 82, 0.7)',
+          backgroundColor: 'rgba(54, 66, 82, 0.9)',
           textStyle: {
             color: '#fff',
             fontSize: 12
@@ -214,6 +196,8 @@ export default {
                   val = calcTimeUnit(val, 2, {
                     digits: 2
                   })
+                } else if (this.labelUnitType) {
+                  val = calcUnit(val, this.labelUnitType)
                 } else {
                   val = val.toLocaleString('zh', {
                     minimumFractionDigits: 2,
@@ -292,7 +276,7 @@ export default {
                 ? calcTimeUnit(val || 0, 2, {
                     digits: 2
                   })
-                : calcUnit(val)
+                : calcUnit(val, this.labelUnitType)
             },
             // showMaxLabel: false,
             showMinLabel: canScale ? true : null

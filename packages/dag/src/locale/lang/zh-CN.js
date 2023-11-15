@@ -421,11 +421,13 @@ export default {
   packages_dag_monitor_leftsider_tiaoshixinxi: '调试信息',
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: '当前节点处理事件的平均耗时',
   packages_dag_components_nodedetaildialog_dangqianjiedianping: '当前节点平均每秒处理的输入事件数和输出事件数',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping2: '当前节点平均每秒处理的输入事件大小和输出事件大小',
   packages_dag_monitor_leftsider_renwuchuliwan:
     '任务处理完成一条新产生事件需要消耗的总时间，当有多个目标时只统计最大的处理耗时',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件从源库生成到经任务处理完成写入目标的延迟时间，当有多个目标时只统计最大的增量延迟时间',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任务平均每秒处理的输入事件数和输出事件数',
+  packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任务平均每秒处理的输入事件大小和输出事件大小',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
     '增量读取延迟：增量阶段下增量事件从生成到被读取到任务开始处理的延迟时间',
   packages_dag_components_nodedetaildialog_pingjunduquhao2: '平均读取耗时：全量阶段下读取每条数据的平均耗时',

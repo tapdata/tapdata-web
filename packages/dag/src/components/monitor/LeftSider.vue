@@ -167,20 +167,32 @@
           </ElTooltip>
         </div>
         <div class="line-chart__box mb-2">
-          <ElTooltip
-            transition="tooltip-fade-in"
-            placement="top"
-            :content="$t('packages_dag_monitor_leftsider_qpSshizhi')"
-          >
-            <span class="inline-flex align-items-center">
-              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
-              <VIcon size="14" class="color-primary">info</VIcon>
-            </span>
-          </ElTooltip>
+          <div class="flex justify-content-between">
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="
+                qpsChartsType === 'count'
+                  ? $t('packages_dag_monitor_leftsider_qpSshizhi')
+                  : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+              "
+            >
+              <span class="inline-flex align-items-center">
+                <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+                <VIcon size="14" class="color-primary">info</VIcon>
+              </span>
+            </ElTooltip>
+            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+              <ElRadioButton label="count">count</ElRadioButton>
+              <ElRadioButton label="size">size</ElRadioButton>
+            </ElRadioGroup>
+          </div>
+
           <LineChart
-            :data="qpsData"
+            :data="qpsMap[qpsChartsType]"
             :color="['#26CF6C', '#2C65FF']"
             :time-format="timeFormat"
+            :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
             auto-scale
             class="line-chart"
           ></LineChart>
@@ -310,11 +322,34 @@
       :close-on-click-modal="false"
       :modal-append-to-body="false"
     >
+      <div class="line-chart__box mb-2">
+        <div class="flex justify-content-between">
+          <ElTooltip
+            transition="tooltip-fade-in"
+            placement="top"
+            :content="
+              qpsChartsType === 'count'
+                ? $t('packages_dag_monitor_leftsider_qpSshizhi')
+                : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+            "
+          >
+            <span class="inline-flex align-items-center">
+              <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
+              <VIcon size="14" class="color-primary">info</VIcon>
+            </span>
+          </ElTooltip>
+          <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+            <ElRadioButton label="count">count</ElRadioButton>
+            <ElRadioButton label="size">size</ElRadioButton>
+          </ElRadioGroup>
+        </div>
+      </div>
+
       <LineChart
-        :data="qpsData"
+        :data="qpsMap[qpsChartsType]"
         :color="['#26CF6C', '#2C65FF']"
-        title="QPS(Q/S)"
         :time-format="timeFormat"
+        :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
         style="height: 200px"
       ></LineChart>
       <LineChart
@@ -343,6 +378,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
@@ -389,15 +425,15 @@ export default {
       collectorData: {
         externalStorage: {}
       },
-      infoList: []
+      infoList: [],
+      qpsChartsType: 'count'
     }
   },
 
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
-    // qps
-    qpsData() {
+    qpsMap() {
       const data = this.quota.samples?.lineChartData?.[0]
       if (!data) {
         return {
@@ -412,8 +448,13 @@ export default {
         }
       }
       const { time = [] } = this.quota
-      let inputQps = data.inputQps?.map(t => Math.abs(t))
+      // const { inputQps = [], outputQps = [], inputSizeQps = [], outputSizeQps = [] } = data
+      // const
+      // this.labelUnitType = data.inputSizeQps ? 'byte' : ''
+      const inputQps = data.inputQps?.map(t => Math.abs(t))
       const outputQps = data.outputQps?.map(t => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
@@ -427,7 +468,8 @@ export default {
       let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [inputQps, outputQps],
+        // value: [inputQps, outputQps],
+        value: [],
         zoomValue: 10
       }
 
@@ -450,7 +492,14 @@ export default {
         ]
       }
 
-      return opt
+      return {
+        count: Object.assign(cloneDeep(opt), {
+          value: [inputQps, outputQps]
+        }),
+        size: Object.assign(cloneDeep(opt), {
+          value: [inputSizeQps, outputSizeQps]
+        })
+      }
     },
 
     // 处理耗时
@@ -808,6 +857,12 @@ export default {
 
     .el-scrollbar {
       height: 100%;
+    }
+
+    .chart__radio {
+      .el-radio-button--mini .el-radio-button__inner {
+        padding: 4px 8px;
+      }
     }
   }
 }
