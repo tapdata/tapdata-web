@@ -803,8 +803,9 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
         } else {
           const findManuallyScheduleLimit = data.find(t => t.code === 'Task.ManuallyScheduleLimit')
-          if (data.some(t => t.code === 'Task.ScheduleLimit')) {
-            this.$emit('handle-show-upgrade')
+          const findScheduleLimit = data.find(t => t.code === 'Task.ScheduleLimit')
+          if (findScheduleLimit) {
+            this.$emit('handle-show-upgrade', findScheduleLimit)
             return
           } else if (findManuallyScheduleLimit) {
             this.$message.error(findManuallyScheduleLimit.message)

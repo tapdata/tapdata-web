@@ -54,6 +54,7 @@
           @preview="handlePreview"
           @find-parent="handleFindParent"
           @handle-connection="handleConnection"
+          @handle-show-upgrade="handleShowUpgradeDialog"
         ></component>
       </template>
     </div>
@@ -79,13 +80,13 @@
 
     <UpgradeFee
       :visible.sync="upgradeFeeVisible"
-      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeFee>
 
     <UpgradeCharges
       :visible.sync="upgradeChargesVisible"
-      :tooltip="$t('packages_business_task_list_nindekeyunxing')"
+      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeCharges>
   </div>
@@ -166,7 +167,9 @@ export default {
       nodes: [],
       edgsLinks: [],
       upgradeFeeVisible: false,
-      upgradeChargesVisible: false
+      upgradeFeeVisibleTips: '',
+      upgradeChargesVisible: false,
+      upgradeChargesVisibleTips: ''
     }
   },
 
@@ -568,16 +571,18 @@ export default {
     },
 
     // 升级专业版
-    handleShowUpgradeFee() {
+    handleShowUpgradeFee(msg) {
+      this.upgradeFeeVisibleTips = msg
       this.upgradeFeeVisible = true
     },
 
     // 升级规格
-    handleShowUpgradeCharges() {
+    handleShowUpgradeCharges(msg) {
+      this.upgradeChargesVisibleTips = msg
       this.upgradeChargesVisible = true
     },
 
-    handleShowUpgradeDialog() {
+    handleShowUpgradeDialog(err = {}) {
       !this.isDaas &&
         this.$axios
           .get(
@@ -598,8 +603,8 @@ export default {
             }
 
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
-              ? this.handleShowUpgradeFee()
-              : this.handleShowUpgradeCharges()
+              ? this.handleShowUpgradeFee(err.message)
+              : this.handleShowUpgradeCharges(err.message)
           })
     }
   }

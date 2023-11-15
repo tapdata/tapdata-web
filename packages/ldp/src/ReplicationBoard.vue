@@ -21,6 +21,7 @@
         @node-drag-end="handleDragEnd"
         @preview="handlePreview"
         @handle-connection="handleConnection"
+        @handle-show-upgrade="handleShowUpgradeDialog"
       ></TargetItem>
     </div>
     <SceneDialog
@@ -32,11 +33,21 @@
     ></SceneDialog>
     <TablePreview ref="tablePreview" @create-single-task="hanldeCreateSingleTask" />
     <ConnectionPreview ref="connectionView" />
+    <UpgradeFee
+      :visible.sync="upgradeFeeVisible"
+      :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeFee>
+    <UpgradeCharges
+      :visible.sync="upgradeChargesVisible"
+      :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
+      :go-page="upgradeFeeGoPage"
+    ></UpgradeCharges>
   </div>
 </template>
 
 <script>
-import { SceneDialog, EventEmitter } from '@tap/business'
+import { SceneDialog, EventEmitter, UpgradeCharges, UpgradeFee } from '@tap/business'
 import { connectionsApi, lineageApi, metadataDefinitionsApi, ldpApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 
@@ -57,6 +68,8 @@ export default {
   inject: ['buried'],
 
   components: {
+    UpgradeFee,
+    UpgradeCharges,
     SourceItem,
     TargetItem,
     TablePreview,
@@ -96,7 +109,11 @@ export default {
       jsPlumbIns: jsPlumb.getInstance(),
       showParentLineage: false,
       nodes: [],
-      edgsLinks: []
+      edgsLinks: [],
+      upgradeFeeVisible: false,
+      upgradeFeeVisibleTips: '',
+      upgradeChargesVisible: false,
+      upgradeChargesVisibleTips: ''
     }
   },
 
@@ -500,6 +517,51 @@ export default {
     handleUpdateVisible(val) {
       this.showSceneDialog = val
       this.$store.commit('setReplicationConnectionDialog', val)
+    },
+
+    upgradeFeeGoPage() {
+      const routeUrl = this.$router.resolve({
+        name: 'createAgent'
+      })
+      window.open(routeUrl.href, '_blank')
+    },
+
+    // 升级专业版
+    handleShowUpgradeFee(msg) {
+      this.upgradeFeeVisibleTips = msg
+      this.upgradeFeeVisible = true
+    },
+
+    // 升级规格
+    handleShowUpgradeCharges(msg) {
+      this.upgradeChargesVisibleTips = msg
+      this.upgradeChargesVisible = true
+    },
+
+    handleShowUpgradeDialog(err = {}) {
+      !this.isDaas &&
+        this.$axios
+          .get(
+            'api/tcm/agent?filter=' +
+              encodeURIComponent(
+                JSON.stringify({
+                  size: 100,
+                  page: 1
+                })
+              )
+          )
+          .then(async data => {
+            const { items = [] } = data
+
+            if (items.some(t => t.status === 'Stopped')) {
+              this.$message.error(this.$t('public_task_error_schedule_limit'))
+              return
+            }
+
+            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+              ? this.handleShowUpgradeFee(err.message)
+              : this.handleShowUpgradeCharges(err.message)
+          })
     }
   }
 }
