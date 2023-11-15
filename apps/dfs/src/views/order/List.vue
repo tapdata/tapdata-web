@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-column flex-fill">
+  <div class="flex flex-column h-100">
     <div class="bg-white rounded-lg mb-4">
       <div class="flex align-items-center px-4">
         <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
@@ -19,7 +19,7 @@
       </el-tabs>
     </div>
     <section
-      class="operation-logs-wrapper g-panel-container"
+      class="operation-logs-wrapper g-panel-container flex-fill"
       :class="[isEn ? 'is-en' : '']"
       v-if="$route.name === 'order'"
     >
@@ -30,7 +30,7 @@
               <li
                 v-for="(item, index) in filterArray"
                 :key="index"
-                :class="['filter-li mr-4 px-4 py-1 cursor-pointer', { active: activedFilter === item.value }]"
+                :class="['filter-li mr-4 px-4 cursor-pointer', { active: activedFilter === item.value }]"
                 @click="changeActivedFilter(item)"
               >
                 {{ item.label }}
@@ -48,23 +48,35 @@
         </div>
 
         <ul v-if="subscribeList.length" class="overflow-auto flex-fill mt-4">
-          <li class="list-li flex mb-4 rounded-lg p-4" v-for="item in subscribeList" :key="item.id">
+          <li
+            class="list-li flex rounded-lg p-4"
+            :class="[item.productType === 'MongoDB' ? 'warning' : 'primary', { 'mt-4': itemIndex !== 0 }]"
+            v-for="(item, itemIndex) in subscribeList"
+            :key="item.id"
+          >
             <template v-for="(row, rIndex) in item.subscribeItems">
               <div class="flex w-60">
                 <div class="w-50">
                   <div class="mb-2">
-                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_dingyueleixing') }}:</span>
+                    <span class="li-item__label font-color-sslight">{{ $t('public_type') }}:</span>
                     <span class="li-item__value font-color-dark">{{ row.productType }}</span>
                   </div>
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight">{{ $t('dfs_instance_instance_guige') }}:</span>
-                    <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
+                    <span class="li-item__value font-color-dark">{{ row.specLabel }}</span>
                   </div>
-                  <div class="mb-2">
-                    <span class="li-item__label font-color-sslight">Agent Id:</span>
-                    <ElLink type="primary" class="li-item__value text-decoration-underline" @click="goInstance(row)">{{
-                      row.resourceId
-                    }}</ElLink>
+                  <div>
+                    <span class="li-item__label font-color-sslight"
+                      >{{ item.productType === 'MongoDB' ? 'Storage Id' : 'Agent Id' }}:</span
+                    >
+                    <span v-if="item.productType === 'MongoDB'">{{ row.resourceId }}</span>
+                    <ElLink
+                      v-else
+                      type="primary"
+                      class="li-item__value text-decoration-underline"
+                      @click="goInstance(row)"
+                      >{{ row.resourceId }}</ElLink
+                    >
                   </div>
                 </div>
                 <div class="w-50">
@@ -76,9 +88,11 @@
                     <span class="li-item__label font-color-sslight"
                       >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
                     >
-                    <span class="li-item__value font-color-dark">{{ row.subscriptionMethodLabel }}</span>
+                    <span class="li-item__value" :class="[item.isFree ? 'color-success' : 'font-color-dark']">{{
+                      row.subscriptionMethodLabel
+                    }}</span>
                   </div>
-                  <div class="mb-2">
+                  <div>
                     <span class="li-item__label font-color-sslight"
                       >{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}:</span
                     >
@@ -90,21 +104,21 @@
               </div>
               <div class="flex justify-content-between w-40">
                 <div>
-                  <div>
-                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_dingyuezhuangtai') }}:</span>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('public_status') }}:</span>
                     <span class="inline-block li-item__value font-color-dark">
                       <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
                     </span>
                   </div>
-                  <div>
+                  <div class="mb-2">
                     <span class="li-item__label font-color-sslight"
                       >{{ $t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') }}:</span
                     >
-                    <span class="li-item__value font-color-dark">{{ row.agentType }}</span>
+                    <span class="li-item__value font-color-dark">{{ agentTypeMap[row.agentType || 'local'] }}</span>
                   </div>
-                  <div class="mb-2">
+                  <div>
                     <span class="li-item__label font-color-sslight"
-                      >{{ $t('dfs_components_renew_dingyuebianhao') }}:</span
+                      >{{$t('dfs_order_list_bianhao')}}:</span
                     >
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
@@ -483,16 +497,19 @@ export default {
         this.page.total = data.total
         this.subscribeList = items.map(item => {
           if (item.totalAmount !== 0) {
+            item.isFree = item.subscribeType === 'FreeTier'
             item.subscriptionMethodLabel =
               getPaymentMethod(
                 { periodUnit: item.periodUnit, type: item.subscribeType },
                 item.paymentMethod || 'Stripe'
               ) || '-'
           } else {
+            item.isFree = true
             item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
           }
 
-          if (item.subscribeItems && item.subscribeItems.length > 0) {
+          if (item.subscribeItems?.length) {
+            item.productType = item.subscribeItems[0].productType
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
@@ -733,35 +750,54 @@ export default {
     .el-button {
       padding: 2px 12px;
       min-width: unset;
+      height: 24px;
+      font-size: 12px;
       &.el-button--text {
         padding-left: 0;
         padding-right: 0;
       }
     }
   }
+  .list-li {
+    .status-tag {
+      padding: 2px 8px;
+      font-size: 12px;
+      line-height: 24px;
+    }
+  }
 }
 
 .list-li {
   border: 1px solid map-get($bgColor, hover);
-  border-left: 8px solid map-get($color, primary);
+  &.primary {
+    border-left: 8px solid map-get($color, primary);
+  }
+  &.warning {
+    border-left: 8px solid map-get($color, warning);
+  }
 }
 
 .li-item__label {
   display: inline-block;
-  width: 80px;
+  width: 64px;
+  line-height: 24px;
 }
 
 .li-item__value {
   margin-left: 8px;
+  display: inline-block;
+  line-height: 24px;
 }
 
 .is-en {
   .li-item__label {
-    width: 150px;
+    width: 142px;
   }
 }
 
 .filter-li {
+  line-height: 32px;
+  height: 32px;
   &.active,
   &:hover {
     background-color: #e8f3ff;

@@ -1631,5 +1631,6 @@ export default {
   dfs_user_contactus_lianxifangshi: '聯繫方式',
   dfs_user_contactus_weinintigongzhuan: '為您提供專業的服務支持',
   dfs_system_update: '系統更新',
-  dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!'
+  dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!',
+  dfs_order_list_bianhao: '編號'
 }

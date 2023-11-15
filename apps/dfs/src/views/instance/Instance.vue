@@ -925,7 +925,7 @@ export default {
             const { connectionString } = item
             item.visitInfo = item.dbUsers?.find(t => t.roles.some(r => r.role === 'readAnyDatabase'))
             if (item.visitInfo) {
-              const { username, password } = item.visitInfo
+              const { username = '', password = '' } = item.visitInfo
               const AES_KEY = '5fa25b06ee34581d'
               const AES_PAD = '5fa25b06ee34581d'
               const AES_PASSWORD = CryptoJS.AES.decrypt(
