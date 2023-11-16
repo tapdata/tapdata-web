@@ -77,9 +77,9 @@
         <footer slot="footer" class="footer text-center border-top py-4">
           <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
           <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
-            $t('packages_business_connections_databaseform_jiaobentiaoshi')
-          }}</el-button>
+          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug"
+            >{{ $t('packages_business_connections_databaseform_jiaobentiaoshi') }}
+          </el-button>
           <el-button type="primary" :loading="submitBtnLoading" @click="submit">
             {{ $t('public_button_save') }}
           </el-button>
@@ -260,6 +260,12 @@ export default {
       vm.pathUrl = from?.fullPath
     })
   },
+  mounted() {
+    const { fromPath } = this.$route.query
+    if (fromPath) {
+      this.pathUrl = fromPath
+    }
+  },
   methods: {
     goBack() {
       let msg = this.$route.params.id
@@ -276,14 +282,21 @@ export default {
         if (!resFlag) {
           return
         }
-        if (this.pathUrl === '/') {
-          this.$router.push({
-            name: 'connections'
-          })
-        } else {
-          this.$router.back()
-        }
+        this.gotoBackPath()
       })
+    },
+    gotoBackPath() {
+      if (this.pathUrl) {
+        this.$router.push(
+          this.pathUrl === '/'
+            ? {
+                name: 'connections'
+              }
+            : this.pathUrl
+        )
+      } else {
+        this.$router.back()
+      }
     },
     submit() {
       this.buried('connectionSubmit')
@@ -332,7 +345,7 @@ export default {
               result: true
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$router.back()
+            this.gotoBackPath()
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
@@ -1200,7 +1213,8 @@ export default {
           }
         },
         goToAuthorized: async params => {
-          const routeQuery = cloneDeep(this.$route.query)
+          // fromPath 记录进入编辑连接的来源路由，认证回来后设置返回的路由
+          const routeQuery = { ...this.$route.query, fromPath: this.pathUrl }
           const routeParams = this.$route.params
           delete routeQuery['connectionConfig']
           let routeUrl = this.$router.resolve({
@@ -1404,9 +1418,11 @@ export default {
   height: 100%;
   overflow: hidden;
   background-color: #eff1f4;
+
   .alert-primary {
     background: #e8f3ff;
   }
+
   .connection-from-body {
     display: flex;
     flex: 1;
@@ -1418,27 +1434,32 @@ export default {
       display: flex;
       flex: 1;
       flex-direction: column;
+
       .connection-from-title {
         font-size: $fontSubtitle;
         font-weight: 500;
         color: map-get($fontColor, dark);
         line-height: 28px;
       }
+
       .connection-from-label {
         display: flex;
         align-items: center;
         margin-bottom: 24px;
+
         .label:before {
           content: '*';
           color: #f56c6c;
           margin-right: 4px;
         }
+
         .label {
           width: 160px;
           font-size: $fontBaseTitle;
           color: map-get($fontColor, light);
           text-transform: capitalize;
         }
+
         .content-box {
           display: flex;
           max-width: 680px;
@@ -1452,6 +1473,7 @@ export default {
           text-overflow: ellipsis;
           overflow: hidden;
         }
+
         .img-box {
           display: flex;
           width: 25px;
@@ -1460,15 +1482,18 @@ export default {
           align-items: center;
           background: map-get($bgColor, white);
           border-radius: 3px;
+
           img {
             width: 100%;
           }
         }
       }
+
       .form-wrap {
         display: flex;
         flex: 1;
         overflow: hidden;
+
         .form {
           width: 100%;
           height: 100%;
@@ -1478,45 +1503,56 @@ export default {
           //}
           .form-builder {
             width: 396px;
+
             ::v-deep {
               .e-form-builder-item {
                 &.large-item {
                   width: 610px;
+
                   .el-form-item__content {
                     padding-right: 20px;
                   }
                 }
+
                 &.small-item {
                   width: 320px;
                 }
+
                 &.mongodb-item {
                   width: 680px;
                 }
+
                 &.mongodb-tip-item .el-form-item__content {
                   width: 680px;
                 }
+
                 .url-tip {
                   font-size: 12px;
                   color: map-get($fontColor, light);
+
                   b {
                     font-size: 12px;
                     font-weight: 400;
                     color: map-get($fontColor, light);
                   }
                 }
+
                 .fb-radio-group {
                   .el-radio--mini.is-bordered {
                     padding-top: 0;
                   }
                 }
+
                 .el-input .el-input__inner,
                 .el-textarea__inner {
                   background-color: rgba(239, 241, 244, 0.2);
                 }
+
                 .el-textarea__inner {
                   min-height: 70px !important;
                 }
               }
+
               .el-input-group__append button.el-button {
                 background-color: inherit;
                 border-color: azure;
@@ -1530,6 +1566,7 @@ export default {
             .el-input-number {
               width: 180px;
             }
+
             .el-input-number--small {
               width: 130px;
             }
@@ -1537,34 +1574,39 @@ export default {
         }
       }
     }
+
     .status {
       font-size: 12px;
       margin-top: 2px;
+
       .error {
         color: #f56c6c;
       }
+
       .success {
         color: #67c23a;
       }
+
       .warning {
         color: #e6a23c;
       }
     }
   }
+
   .footer {
     /*width: 100%;
-    height: 62px;
-    background-color: map-get($bgColor, white);
-    border-left: none;
-    line-height: 62px;
-    border-top: 1px solid #dedee4;
-    .footer-btn {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin: 0 auto;
-      padding-top: 18px;
-    }*/
+		height: 62px;
+		background-color: map-get($bgColor, white);
+		border-left: none;
+		line-height: 62px;
+		border-top: 1px solid #dedee4;
+		.footer-btn {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			margin: 0 auto;
+			padding-top: 18px;
+		}*/
   }
 }
 
@@ -1573,6 +1615,7 @@ export default {
     .formily-element-form-item-feedback-layout-loose {
       margin-bottom: 20px;
     }
+
     .formily-element-form-item-layout-vertical {
       > .formily-element-form-item-label {
         margin-bottom: 8px;
@@ -1581,10 +1624,12 @@ export default {
           min-height: unset;
           height: unset;
         }
+
         .formily-element-form-item-label-tooltip {
           margin-left: 4px;
           height: unset;
         }
+
         * {
           line-height: 22px;
         }
