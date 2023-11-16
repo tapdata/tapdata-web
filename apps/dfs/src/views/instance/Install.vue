@@ -69,7 +69,7 @@
             <i>{{ $t('public_button_copy') }}</i>
           </el-button>
         </ElTooltip>
-        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis">
+        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all" @copy="handleCopy">
           {{ links[downLoadType] }}
         </div>
       </section>
