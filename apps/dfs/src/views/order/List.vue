@@ -777,7 +777,7 @@ export default {
 
 .li-item__label {
   display: inline-block;
-  width: 64px;
+  width: 72px;
   line-height: 24px;
 }
 
