@@ -19,7 +19,7 @@
       </el-tabs>
     </div>
     <section
-      class="operation-logs-wrapper g-panel-container flex-fill"
+      class="operation-logs-wrapper g-panel-container flex-fill rounded-lg"
       :class="[isEn ? 'is-en' : '']"
       v-if="$route.name === 'order'"
     >
