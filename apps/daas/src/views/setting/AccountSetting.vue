@@ -6,7 +6,7 @@
         <li v-for="item in infoList" :key="item.key">
           <span class="label">{{ item.label }}</span>
           <span class="text"> {{ item.value }} </span>
-          <ElButton type="text" v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
+          <ElButton text v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
           <!-- <i
                 :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
                 v-if="item.key !== 'email'"
@@ -161,12 +161,12 @@ export default {
       loading: false,
       form: {
         newEmail: '',
-        password: ''
+        password: '',
       },
       pwd: {
         oldPassword: '',
         newPassword: '',
-        comfirmPassword: ''
+        comfirmPassword: '',
       },
       userName: '',
       infoList: [
@@ -174,26 +174,26 @@ export default {
           label: this.$t('account_email'),
           value: '',
           key: 'email',
-          icon: this.$t('public_button_revise')
+          icon: this.$t('public_button_revise'),
         },
         {
           label: this.$t('account_userName'),
           value: '',
           key: 'username',
-          icon: this.$t('public_button_revise')
+          icon: this.$t('public_button_revise'),
         },
         {
           label: this.$t('public_connection_form_password'),
           value: '******',
           key: 'password',
-          icon: this.$t('public_button_revise')
+          icon: this.$t('public_button_revise'),
         },
         {
           label: this.$t('account_accessCode'),
           value: '',
           key: 'accessCode',
-          icon: this.$t('public_button_refresh')
-        }
+          icon: this.$t('public_button_refresh'),
+        },
       ],
       emailDialogFalg: false,
       passwordDialogFalg: false,
@@ -211,50 +211,50 @@ export default {
           {
             required: true,
             message: this.$t('account_currentPassword'),
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             min: 5,
             message: this.$t('app_signIn_password_invalid'),
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             validator: validateisCN,
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         newPassword: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('account_newPassword')
+            message: this.$t('account_newPassword'),
           },
           {
             validator: validateNewPassword,
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             min: 5,
             message: this.$t('app_signIn_password_invalid'),
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             validator: validateisCN,
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         comfirmPassword: [
           {
             required: true,
             message: this.$t('account_confirmPassword'),
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             validator: validateNewPassword2,
-            trigger: 'blur'
-          }
-        ]
-      }
+            trigger: 'blur',
+          },
+        ],
+      },
     }
   },
   created() {
@@ -266,8 +266,8 @@ export default {
       this.loading = true
       let data = await usersApi.get([Cookie.get('user_id')])
       if (data) {
-        this.infoList.forEach(item => {
-          Object.keys(data).forEach(key => {
+        this.infoList.forEach((item) => {
+          Object.keys(data).forEach((key) => {
             if (item.key === key) {
               item.value = data[key]
             }
@@ -300,7 +300,7 @@ export default {
     confirm() {
       let parmas = {
         id: Cookie.get('user_id'),
-        username: this.userName
+        username: this.userName,
       }
       if (this.userName) {
         usersApi.patch(parmas).then(() => {
@@ -326,9 +326,9 @@ export default {
     save() {
       let parmas = {
         oldPassword: this.pwd.oldPassword,
-        newPassword: this.pwd.newPassword
+        newPassword: this.pwd.newPassword,
       }
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           usersApi.changePassword(parmas).then(() => {
             this.$message.success(this.$t('account_pawSaveSuccess'))
@@ -367,8 +367,8 @@ export default {
           this.comfirmPasswordType = this.comfirFlag ? 'text' : 'password'
           break
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

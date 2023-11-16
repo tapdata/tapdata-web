@@ -26,7 +26,7 @@
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="text" size="small" class="ml-4" @click="handleDownload">{{
+          <ElButton :loading="downloadLoading" text size="small" class="ml-4" @click="handleDownload">{{
             $t('public_button_download')
           }}</ElButton>
           <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
@@ -99,7 +99,7 @@
                 <div
                   class="log-item"
                   :class="{
-                    'hide-content cursor-pointer': handleHideContent(arguments[0], item)
+                    'hide-content cursor-pointer': handleHideContent(arguments[0], item),
                   }"
                   :ref="'icon' + item.id"
                   @click="handleLog(item)"
@@ -175,9 +175,9 @@
       v-model:visible="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
-      custom-class="error-code-dialog"
+      class="error-code-dialog"
     >
-      <template v-slot:title>
+      <template #header>
         <div>
           <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
         </div>
@@ -256,32 +256,32 @@ export default {
     DynamicScroller,
     DynamicScrollerItem,
     VEmpty,
-    NodeList
+    NodeList,
   },
   name: 'NodeLog',
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     hideFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     logTotals: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    nodeId: String
+    nodeId: String,
   },
   data() {
     return {
@@ -291,20 +291,20 @@ export default {
       checkItems: [
         {
           label: 'DEBUG',
-          text: 'DEBUG'
+          text: 'DEBUG',
         },
         {
           label: 'INFO',
-          text: 'INFO'
+          text: 'INFO',
         },
         {
           label: 'WARN',
-          text: 'WARN'
+          text: 'WARN',
         },
         {
           label: 'ERROR',
-          text: 'ERROR'
-        }
+          text: 'ERROR',
+        },
       ],
       timer: null,
       downloadLoading: false,
@@ -318,54 +318,54 @@ export default {
         WARN: 'warning',
         ERROR: 'error',
         FATAL: 'error',
-        DEBUG: 'debug'
+        DEBUG: 'debug',
       },
       colorMap: {
         INFO: 'color-info',
         WARN: 'color-warning',
         ERROR: 'color-danger',
         FATAL: 'color-danger',
-        DEBUG: 'color-disable'
+        DEBUG: 'color-disable',
       },
       newPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       oldPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       isScrollBottom: false,
       form: {
         level: 'INFO',
         intervalCeiling: 500,
-        recordCeiling: 500
+        recordCeiling: 500,
       },
       dialog: false,
       timeOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: 'full'
+          value: 'full',
         },
         {
           label: i18n.t('public_time_Last_six_hours'),
-          value: '6h'
+          value: '6h',
         },
         {
           label: i18n.t('public_time_last_day'),
-          value: '1d'
+          value: '1d',
         },
         {
           label: i18n.t('public_time_last_three_days'),
-          value: '3d'
+          value: '3d',
         },
         {
           label: i18n.t('public_time_custom_time'),
           type: 'custom',
-          value: 'custom'
-        }
+          value: 'custom',
+        },
       ],
       quotaTimeType: 'full',
       quotaTime: [],
@@ -374,15 +374,15 @@ export default {
       extraEnterCount: 0,
       codeDialog: {
         visible: false,
-        data: {}
+        data: {},
       },
       showCols: [],
       switchData: {
-        timestamp: false
+        timestamp: false,
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: import.meta.env.VITE_PAGE_TITLE === 'IKAS'
+      isIKAS: import.meta.env.VITE_PAGE_TITLE === 'IKAS',
     }
   },
   computed: {
@@ -390,7 +390,7 @@ export default {
 
     nodeLogCountMap() {
       return this.logTotals
-        .filter(t => t.nodeId)
+        .filter((t) => t.nodeId)
         .reduce((cur, next) => {
           const count = cur[next.nodeId] || 0
           return { ...cur, [next.nodeId]: count + next.count }
@@ -398,7 +398,7 @@ export default {
     },
 
     items() {
-      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
+      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -431,7 +431,7 @@ export default {
 
     logSetting() {
       return this.dataflow?.logSetting || {}
-    }
+    },
   },
   watch: {
     dataflow: {
@@ -441,11 +441,11 @@ export default {
         if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
           this.init()
         }
-      }
+      },
     },
     nodeId(v) {
       this.activeNodeId = v
-    }
+    },
   },
   created() {
     this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
@@ -462,13 +462,13 @@ export default {
         this.timeOptions = [
           {
             label: i18n.t('public_select_option_all'),
-            value: 'full'
+            value: 'full',
           },
           {
             label: i18n.t('public_time_custom_time'),
             type: 'custom',
-            value: 'custom'
-          }
+            value: 'custom',
+          },
         ]
       }
       this.extraEnterCount = 0
@@ -489,7 +489,7 @@ export default {
       this.oldPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -497,7 +497,7 @@ export default {
       this.newPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -527,7 +527,7 @@ export default {
 
     changeTime(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
@@ -595,7 +595,7 @@ export default {
       } else {
         this.newFilter.page++
         filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page
+          page: this.newFilter.page,
         })
       }
       if (!filter.start || !filter.end) {
@@ -623,7 +623,7 @@ export default {
 
     getFormatRow(rowData = []) {
       let result = cloneDeep(rowData)
-      result.forEach(row => {
+      result.forEach((row) => {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
@@ -661,7 +661,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       return params
     },
@@ -684,7 +684,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       this.newFilter = params
       return params
@@ -719,12 +719,12 @@ export default {
         start,
         end,
         taskId,
-        taskRecordId
+        taskRecordId,
       }
       this.downloadLoading = true
       monitoringLogsApi
         .export(filter)
-        .then(data => {
+        .then((data) => {
           downloadBlob(data)
         })
         .catch(() => {
@@ -742,14 +742,14 @@ export default {
         this.form = {
           level,
           intervalCeiling,
-          recordCeiling
+          recordCeiling,
         }
       }
       this.dialog = true
     },
 
     handleClose() {
-      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      const index = this.checkList.findIndex((t) => t === 'DEBUG')
       this.checkList.splice(index, 1)
       this.searchFnc()
       this.dialog = false
@@ -758,7 +758,7 @@ export default {
     handleSave() {
       const { form } = this
       let params = {
-        level: form.level
+        level: form.level,
       }
       if (form.level === 'DEBUG') {
         params.intervalCeiling = form.intervalCeiling
@@ -827,7 +827,7 @@ export default {
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCode',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn'],
       }
 
       this.codeDialog.data.errorStack = item.errorStack
@@ -835,7 +835,7 @@ export default {
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
       proxyApi
         .call(params)
-        .then(data => {
+        .then((data) => {
           this.codeDialog.data.describe = data.describe
           this.codeDialog.data.hasDescribe = data.hasDescribe
           this.codeDialog.data.seeAlso = data.seeAlso || []
@@ -851,7 +851,7 @@ export default {
     },
 
     command(command) {
-      const index = this.showCols.findIndex(t => t === command)
+      const index = this.showCols.findIndex((t) => t === command)
       index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
     },
 
@@ -879,9 +879,9 @@ export default {
 
     onCopy() {
       this.showTooltip = true
-    }
+    },
   },
-  emits: ['action', 'update:nodeId']
+  emits: ['action', 'update:nodeId'],
 }
 </script>
 

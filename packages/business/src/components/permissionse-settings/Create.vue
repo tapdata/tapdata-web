@@ -5,7 +5,7 @@
     :append-to-body="true"
     width="800px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     :close-on-click-modal="false"
     @close="handleClose"
   >
@@ -59,8 +59,8 @@ export default {
       type: String,
       default: () => {
         return i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
-      }
-    }
+      },
+    },
   },
 
   data() {
@@ -69,11 +69,11 @@ export default {
       type: 'Connections',
       form: {
         checked: [],
-        roleId: ''
+        roleId: '',
       },
       roleList: [],
       dataList: [],
-      saveLoading: false
+      saveLoading: false,
     }
   },
 
@@ -83,50 +83,50 @@ export default {
         Task: [
           {
             label: i18n.t('public_button_check'),
-            value: 'View'
+            value: 'View',
           },
           {
             label: i18n.t('public_button_edit'),
-            value: 'Edit'
+            value: 'Edit',
           },
           {
             label: i18n.t('public_button_delete'),
-            value: 'Delete'
+            value: 'Delete',
           },
           {
             label: i18n.t('public_button_reset'),
-            value: 'Reset'
+            value: 'Reset',
           },
           {
             label: i18n.t('public_button_start'),
-            value: 'Start'
+            value: 'Start',
           },
           {
             label: i18n.t('public_button_stop'),
-            value: 'Stop'
-          }
-        ]
+            value: 'Stop',
+          },
+        ],
       }
 
       let result = MAP[this.type] || [
         {
           label: i18n.t('public_button_check'),
-          value: 'View'
+          value: 'View',
         },
         {
           label: i18n.t('public_button_edit'),
-          value: 'Edit'
+          value: 'Edit',
         },
         {
           label: i18n.t('public_button_delete'),
-          value: 'Delete'
-        }
+          value: 'Delete',
+        },
       ]
 
       result[0].disabled = this.form.checked.length > 1
 
       return result
-    }
+    },
   },
 
   created() {
@@ -143,9 +143,9 @@ export default {
       let params = {
         typeId: val,
         dataType: this.type,
-        dataIds: this.dataList.map(t => t.id).join()
+        dataIds: this.dataList.map((t) => t.id).join(),
       }
-      dataPermissionApi.roleActions(params).then(data => {
+      dataPermissionApi.roleActions(params).then((data) => {
         this.form.checked = data
       })
     },
@@ -153,23 +153,23 @@ export default {
     getRoleList() {
       let filter = {
         order: 'name',
-        limit: 500
+        limit: 500,
       }
       usersApi
         .role({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.roleList =
-            data.items?.map(t => {
+            data.items?.map((t) => {
               return {
                 label: t.name,
-                value: t.id
+                value: t.id,
               }
             }) || []
           return {
             total: data?.total || 0,
-            data: data?.items || []
+            data: data?.items || [],
           }
         })
     },
@@ -194,8 +194,8 @@ export default {
         type: 'Role',
         typeIds: [this.form.roleId],
         dataType: this.type,
-        dataIds: this.dataList.map(t => t.id),
-        actions: this.form.checked
+        dataIds: this.dataList.map((t) => t.id),
+        actions: this.form.checked,
       }
 
       this.saveLoading = true
@@ -210,7 +210,7 @@ export default {
               message:
                 i18n.t('packages_business_permissionse_settings_create_wufaduiyixiashujujinxingshouquan') +
                 ':<br/>' +
-                this.dataList.map(t => t.name).join('<br/>')
+                this.dataList.map((t) => t.name).join('<br/>'),
             })
             // this.$message.warning('以下数据无权限修改，将跳过保存:' + ' ' + this.dataList.map(t => t.name).join(',\n<br/>'))
           }
@@ -226,7 +226,7 @@ export default {
       if (!checked.includes('View') && checked.length) {
         checked.unshift('View')
       }
-    }
-  }
+    },
+  },
 }
 </script>

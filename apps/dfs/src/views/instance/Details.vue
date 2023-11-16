@@ -18,7 +18,7 @@
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
           <div>
-            <StatusTag type="text" :status="agent.status" default-status="Stopped"></StatusTag>
+            <StatusTag text :status="agent.status" default-status="Stopped"></StatusTag>
           </div>
         </div>
       </div>
@@ -59,7 +59,7 @@
       v-model:visible="downloadDialog"
       :show-close="false"
       width="1250px"
-      custom-class="download-dialog"
+      class="download-dialog"
       append-to-body
     >
       <div class="flex justify-content-between">
@@ -100,14 +100,14 @@
         <template #operation="scope">
           <ElButton
             size="small"
-            type="text"
+            text
             :disabled="[0, 2, 3].includes(scope.row.status)"
             @click="handleDownload(scope.row)"
             >{{ $t('public_button_download') }}</ElButton
           >
           <ElButton
             size="small"
-            type="text"
+            text
             :disabled="scope.row.status === 0"
             @click="handleDeleteUploadLog(scope.row)"
             class="ml-3"
@@ -150,7 +150,7 @@ export default {
   mixins: [timeFunction],
   props: {
     value: Boolean,
-    detailId: [String, Number]
+    detailId: [String, Number],
   },
   data() {
     const $t = this.$t.bind(this)
@@ -162,8 +162,8 @@ export default {
         btnLoading: {
           deploy: false,
           stop: false,
-          delete: false
-        }
+          delete: false,
+        },
       },
       list: [
         {
@@ -171,99 +171,99 @@ export default {
           items: [
             {
               label: $t('agent_detail_synchronization_task_number'),
-              key: 'runningTaskNum'
-            }
-          ]
+              key: 'runningTaskNum',
+            },
+          ],
         },
         {
           icon: 'list',
           items: [
             {
               label: $t('agent_id'),
-              key: 'id'
+              key: 'id',
             },
             {
               label: $t('public_version'),
-              key: 'version'
+              key: 'version',
             },
             {
               label: $t('public_create_time'),
-              key: 'createAt'
-            }
-          ]
+              key: 'createAt',
+            },
+          ],
         },
         {
           icon: 'host',
           items: [
             {
               label: $t('agent_detail_host_name'),
-              key: 'hostname'
+              key: 'hostname',
             },
             {
               label: $t('agent_detail_host_ip'),
-              key: 'ips'
+              key: 'ips',
             },
             {
               label: $t('agent_detail_host_cpu_number'),
-              key: 'cpus'
+              key: 'cpus',
             },
             {
               label: $t('agent_detail_host_cpu_memory'),
-              key: 'totalmem'
+              key: 'totalmem',
             },
             {
               label: $t('agent_detail_cpu_utilization'),
-              key: 'cpuUsage'
+              key: 'cpuUsage',
             },
             {
               label: $t('agent_detail_mem_utilization'),
-              key: 'memoryRate'
+              key: 'memoryRate',
             },
             {
               label: $t('agent_detail_gc_rate'),
-              key: 'gcRate'
-            }
-          ]
+              key: 'gcRate',
+            },
+          ],
         },
         {
           icon: 'install',
           items: [
             {
               label: $t('agent_detail_installation_manual'),
-              key: 'installationDirectory'
+              key: 'installationDirectory',
             },
             {
               label: $t('agent_detail_run_manual'),
-              key: 'logDir'
-            }
-          ]
-        }
+              key: 'logDir',
+            },
+          ],
+        },
       ],
       //日志下载
       downloadDialog: false,
       downloadListCol: [
         {
           label: i18n.t('dfs_instance_instance_wenjianming'),
-          prop: 'id'
+          prop: 'id',
         },
         {
           label: i18n.t('dfs_instance_instance_wenjiandaxiao'),
-          slotName: 'fileSize'
+          slotName: 'fileSize',
         },
         {
           label: i18n.t('dfs_instance_instance_shangchuanshijian'),
           prop: 'createAt',
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('dfs_instance_instance_wenjianzhuangtai'),
-          slotName: 'status'
+          slotName: 'status',
         },
 
         {
           label: i18n.t('dfs_instance_instance_wenjianxiazai'),
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ],
       downloadList: [],
       currentAgentId: '',
@@ -285,29 +285,29 @@ export default {
       days: [
         {
           label: $t('dfs_instance_instance_upload_days', {
-            val: 1
+            val: 1,
           }),
-          value: 1
+          value: 1,
         },
         {
           label: $t('dfs_instance_instance_upload_days', {
-            val: 3
+            val: 3,
           }),
-          value: 3
+          value: 3,
         },
         {
           label: $t('dfs_instance_instance_upload_days', {
-            val: 7
+            val: 7,
           }),
-          value: 7
+          value: 7,
         },
         {
           label: $t('dfs_instance_instance_upload_days', {
-            val: 15
+            val: 15,
           }),
-          value: 15
-        }
-      ]
+          value: 15,
+        },
+      ],
     }
   },
   watch: {
@@ -316,7 +316,7 @@ export default {
       if (v) {
         this.init()
       }
-    }
+    },
   },
   methods: {
     init() {
@@ -326,7 +326,7 @@ export default {
       this.loading = true
       this.$axios
         .get('api/tcm/agent/' + this.detailId)
-        .then(async data => {
+        .then(async (data) => {
           if (data) {
             const measurement = await this.loadMeasurementData(data.tmInfo.agentId)
             // 是否显示版本号：待部署不显示
@@ -342,7 +342,7 @@ export default {
             data.createAt = this.formatTime(data.createAt)
             if (data?.metric?.systemInfo) {
               let arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
-              arr.forEach(el => {
+              arr.forEach((el) => {
                 data[el] = data.metric?.systemInfo?.[el] || ''
               })
               let num = Number(data.metric.systemInfo.totalmem) || 0
@@ -374,14 +374,14 @@ export default {
     //下载
     downServeFn(agent) {
       let id = agent?.tmInfo?.agentId
-      proxyApi.supervisor(id).then(data => {
+      proxyApi.supervisor(id).then((data) => {
         downloadJson(JSON.stringify(data), 'supervisor')
       })
     },
     //下载
     downConnectorsFn(agent) {
       let id = agent?.tmInfo?.agentId
-      proxyApi.connectors(id).then(data => {
+      proxyApi.connectors(id).then((data) => {
         downloadJson(JSON.stringify(data), 'connectors')
       })
     },
@@ -394,19 +394,19 @@ export default {
           data: {
             tags: {
               type: 'engine',
-              engineId
+              engineId,
             },
             fields: ['memoryRate', 'cpuUsage', 'gcRate'],
-            type: 'instant'
-          }
-        }
+            type: 'instant',
+          },
+        },
       })
       const defaultVal = '-'
       if (!data?.samples?.data?.[0])
         return {
           cpuUsage: defaultVal,
           memoryRate: defaultVal,
-          gcRate: defaultVal
+          gcRate: defaultVal,
         }
       const { cpuUsage, gcRate, memoryRate } = data.samples.data[0]
       return {
@@ -414,23 +414,23 @@ export default {
           typeof cpuUsage === 'number'
             ? (cpuUsage * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
             : defaultVal,
         memoryRate:
           typeof memoryRate === 'number'
             ? (memoryRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
             : defaultVal,
         gcRate:
           typeof gcRate === 'number'
             ? (gcRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
-            : defaultVal
+            : defaultVal,
       }
     },
 
@@ -490,20 +490,20 @@ export default {
       let filter = {
         where: {
           agentId: this.currentAgentId,
-          isDeleted: false
+          isDeleted: false,
         },
         page: this.currentPage,
         size: this.pageSize,
-        sort: ['createAt desc']
+        sort: ['createAt desc'],
       }
       this.$axios
         .get('api/tcm/queryUploadLog?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(res => {
+        .then((res) => {
           this.loadingLogTable = false
           this.downloadList = res?.items || []
           this.downloadTotal = res?.total || 0
           //当前列表中是否有上传中的
-          let uploading = this.downloadList?.length > 0 ? this.downloadList.filter(it => it.status === 0) : []
+          let uploading = this.downloadList?.length > 0 ? this.downloadList.filter((it) => it.status === 0) : []
           this.disabledUploadDialog = uploading?.length > 0
           if (!this.disabledUploadDialog) {
             this.loadingUpload = false
@@ -523,7 +523,7 @@ export default {
       this.$axios
         .post('api/tcm/deleteUploadLog', {
           agentId: this.currentAgentId,
-          id: row.id
+          id: row.id,
         })
         .then(() => {
           this.$message.success(i18n.t('public_message_delete_ok'))
@@ -534,7 +534,7 @@ export default {
     },
     //日志下载
     handleDownload(row) {
-      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then(data => {
+      this.$axios.get('api/tcm/downloadLog?id=' + row.id).then((data) => {
         let { accessKeyId, accessKeySecret, securityToken, region, uploadAddr, bucket } = data
         //ssl 凭证
         const OSS = require('ali-oss')
@@ -543,7 +543,7 @@ export default {
           accessKeySecret: accessKeySecret,
           region: region,
           bucket: bucket,
-          stsToken: securityToken
+          stsToken: securityToken,
         })
         window.location.href = client.signatureUrl(uploadAddr)
       })
@@ -577,9 +577,9 @@ export default {
         }
       }
       return true
-    }
+    },
   },
-  emits: ['load-data', 'update:value', 'opened', 'closed', , 'update:value']
+  emits: ['load-data', 'update:value', 'opened', 'closed', , 'update:value'],
 }
 </script>
 

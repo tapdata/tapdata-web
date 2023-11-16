@@ -13,7 +13,7 @@
           </el-option>
         </el-select>
         <!-- <el-input
-              type="text"
+              text
               size="small"
               v-model="model.collection"
               :placeholder="
@@ -59,8 +59,8 @@ export default {
   props: {
     pipelineData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -70,24 +70,24 @@ export default {
       isCoverDialog: false,
       model: {
         collection: '',
-        pipeline: ''
+        pipeline: '',
       },
       rules: {
         collection: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata_details_pipeline_collection') + this.$t('public_form_not_empty')
-          }
+            message: this.$t('metadata_details_pipeline_collection') + this.$t('public_form_not_empty'),
+          },
         ],
         pipeline: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('public_form_not_empty')
-          }
-        ]
-      }
+            message: this.$t('metadata_details_pipeline_pipeline') + this.$t('public_form_not_empty'),
+          },
+        ],
+      },
     }
   },
   created() {
@@ -104,13 +104,13 @@ export default {
         where: {
           meta_type: 'collection',
           databaseId: {
-            regexp: `^${this.pipelineData.databaseId}$`
-          }
-        }
-      }
+            regexp: `^${this.pipelineData.databaseId}$`,
+          },
+        },
+      },
     }
 
-    metadataInstancesApi.get(params).then(data => {
+    metadataInstancesApi.get(params).then((data) => {
       this.collections = data?.items || []
       this.model.collection = this.collections[0].original_name
     })
@@ -123,7 +123,7 @@ export default {
           closeOnClickModal: false,
           confirmButtonText: this.$t('public_button_confirm'),
           confirmButtonClass: this.$t('public_button_cancel'),
-          showClose: false
+          showClose: false,
         })
           .then(() => {
             this.applyToDB()
@@ -139,7 +139,7 @@ export default {
     // 管道
     applyToDB() {
       let _this = this
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           scheduleTasksApi
             .post({
@@ -155,10 +155,10 @@ export default {
                 type: 'view',
                 isApplication: true,
                 dropIfExists: true,
-                source: this.pipelineData.source._id
-              }
+                source: this.pipelineData.source._id,
+              },
             })
-            .then(data => {
+            .then((data) => {
               _this.isApplication = data?.task_data.isApplication
               if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
               this.$message.success(this.$t('metadata_details_pipeline_success'))
@@ -171,13 +171,13 @@ export default {
     saveSubmit() {
       metadataInstancesApi
         .patchId(this.pipelineData.id, {
-          pipline: this.model
+          pipline: this.model,
         })
         .then(() => {
           this.$message.success(this.$t('public_message_save_ok'))
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

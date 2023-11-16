@@ -59,7 +59,7 @@
                   <span class="ellipsis">{{ row.function_name }}</span>
                   <ElButton
                     class="ml-2"
-                    type="text"
+                    text
                     icon="el-icon-edit-outline"
                     @click="
                       editIndex = $index
@@ -86,10 +86,8 @@
           <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
           <ElTableColumn width="120px" :label="$t('public_operation')">
             <template #default="{ row, $index }">
-              <ElButton size="small" type="text" @click="openSetting(row, $index)">{{
-                $t('public_button_setting')
-              }}</ElButton>
-              <ElButton size="small" type="text" @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
+              <ElButton size="small" text @click="openSetting(row, $index)">{{ $t('public_button_setting') }}</ElButton>
+              <ElButton size="small" text @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -104,7 +102,7 @@
 
     <ElDialog
       width="694px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('function_dialog_setting_title')"
       :close-on-click-modal="false"
       :visible="!!settingData"
@@ -163,21 +161,21 @@ export default {
       form: {
         fileId: '',
         fileName: '',
-        packageName: ''
+        packageName: '',
       },
       rules: {
         fileId: [{ required: true, message: this.$t('function_file_upload_tips') }],
         packageName: [
           {
             required: true,
-            message: this.$t('function_package_name_placeholder')
-          }
-        ]
+            message: this.$t('function_package_name_placeholder'),
+          },
+        ],
       },
       settingData: null,
       editIndex: null,
       editName: '',
-      repeatNames: []
+      repeatNames: [],
     }
   },
   watch: {
@@ -186,7 +184,7 @@ export default {
     },
     'form.packageName'() {
       this.clearFunctionList()
-    }
+    },
   },
   created() {
     this?.$ws?.on('loadJarLibResult', this.hanlderResult)
@@ -200,7 +198,7 @@ export default {
       let map = {}
       let names = []
 
-      list.forEach(item => {
+      list.forEach((item) => {
         let name = item.function_name
         if (map[name]) {
           names.push(name)
@@ -214,16 +212,16 @@ export default {
             fields: { function_name: 1 },
             where: {
               function_name: {
-                inq: Object.keys(map)
-              }
-            }
-          })
+                inq: Object.keys(map),
+              },
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
-          names = names.concat(items.map(item => item.function_name))
+          names = names.concat(items.map((item) => item.function_name))
           this.repeatNames = Array.from(new Set(names))
-          this.funcList.forEach(item => {
+          this.funcList.forEach((item) => {
             item.isRepeat = this.repeatNames.includes(item.function_name)
           })
         })
@@ -242,7 +240,7 @@ export default {
     setFormat(item) {
       let params = item?.parameters?.sort((a, b) => a.index < b.index) || []
       let arr = []
-      params.forEach(p => {
+      params.forEach((p) => {
         arr.push(`${p.name}:${p.type}`)
       })
       return `${item.function_name}(${arr.join(', ')})`
@@ -253,7 +251,7 @@ export default {
       }
       let result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
-        this.funcList = result.map(item => {
+        this.funcList = result.map((item) => {
           item.function_name = item.methodName
           item.classNameFmt = item.className?.split(this.form.packageName + '.')?.[1] || ''
           item = Object.assign(item, {
@@ -261,7 +259,7 @@ export default {
             format: '',
             parameters_desc: '',
             return_value: '',
-            isRepeat: false
+            isRepeat: false,
           })
           item.format = this.setFormat(item)
           return item
@@ -278,7 +276,7 @@ export default {
       clearTimeout(timer)
     },
     loadFunction() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.$ws) {
             this.loading = true
@@ -287,8 +285,8 @@ export default {
               type: 'loadJar',
               data: {
                 fileId,
-                packageName
-              }
+                packageName,
+              },
             })
             // 设置10秒超时
             timer = setTimeout(() => {
@@ -303,8 +301,8 @@ export default {
       if (file.size > maxFileSize * 1024 * 1024) {
         this.$message.error(
           i18n.t('daas_function_importform_shangchuanwenjianda', {
-            val1: maxFileSize
-          })
+            val1: maxFileSize,
+          }),
         )
         return false
       }
@@ -347,20 +345,20 @@ export default {
       this.getRepeatNames(this.funcList)
     },
     save() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           let list = this.funcList
           if (!list?.length) {
             return this.$message.error(this.$t('function_message_function_empty'))
           }
-          if (list.some(item => item.isRepeat)) {
+          if (list.some((item) => item.isRepeat)) {
             return this.$message.error(this.$t('function_name_repeat'))
           }
           let loading = this.$loading()
           let { fileId, fileName, packageName } = this.form
           let useId = Cookie.get('user_id')
           let now = new Date()
-          let params = list.map(item => {
+          let params = list.map((item) => {
             let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
             return {
               type: 'jar',
@@ -375,7 +373,7 @@ export default {
               parameters_desc,
               return_value,
               last_updated: now,
-              user_id: useId
+              user_id: useId,
             }
           })
           javascriptFunctionsApi
@@ -389,8 +387,8 @@ export default {
             })
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

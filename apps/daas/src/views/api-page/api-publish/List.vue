@@ -6,7 +6,7 @@
       class="modules-list"
       :classify="{
         authority: 'API_category_management',
-        types: ['api']
+        types: ['api'],
       }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
@@ -115,15 +115,15 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="260" fixed="right">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'API_creation'" size="small" type="text" @click="copy(scope.row)">
+          <ElButton v-readonlybtn="'API_creation'" size="small" text @click="copy(scope.row)">
             {{ $t('public_button_copy') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
-          <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="small" type="text" @click="toDetails(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="small" text @click="toDetails(scope.row)">
                 {{ $t('public_button_preview') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton v-readonlybtn="'API_doc_&_test'" size="small" type="text" @click="toDocumentTest(scope.row)">
+              <ElButton v-readonlybtn="'API_doc_&_test'" size="small" text @click="toDocumentTest(scope.row)">
                 {{ $t('modules_api_test') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider> -->
@@ -131,7 +131,7 @@
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
             size="small"
-            type="text"
+            text
             :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="publish(scope.row)"
           >
@@ -141,25 +141,25 @@
             v-else
             v-readonlybtn="'API_publish'"
             size="small"
-            type="text"
+            text
             :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="unpublish(scope.row)"
           >
             {{ $t('modules_unpublish_api') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
-          <ElButton v-readonlybtn="'API_edition'" size="small" type="text" @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_edition'" size="small" text @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
-          <!-- <ElButton v-readonlybtn="'API_export'" size="small" type="text" @click="handleDownload(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_export'" size="small" text @click="handleDownload(scope.row)">
                 {{ $t('public_button_export') }}
               </ElButton>
               <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_delete'"
             size="small"
-            type="text"
+            text
             :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}</ElButton
@@ -169,7 +169,7 @@
             <ElLink type="primary" class="rotate-90">
               <el-icon><el-icon-more /></el-icon>
             </ElLink>
-            <template v-slot:dropdown>
+            <template #dropdown>
               <ElDropdownMenu class="dataflow-table-more-dropdown-menu">
                 <ElDropdownItem command="preview" v-readonlybtn="'API_data_explorer'"
                   >{{ $t('public_button_preview') }}
@@ -204,14 +204,14 @@ export default {
   components: {
     TablePage,
     FilterBar,
-    Upload: UploadDialog
+    Upload: UploadDialog,
   },
   name: 'ApiPublish',
   data() {
     return {
       searchParams: {
         keyword: '',
-        status: 'all'
+        status: 'all',
       },
       filterItems: [],
       order: 'last_updated DESC',
@@ -220,20 +220,20 @@ export default {
       statusList: [
         {
           label: this.$t('public_select_option_all'),
-          value: 'all'
+          value: 'all',
         },
         {
           label: this.$t('modules_active'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: this.$t('modules_pending'),
-          value: 'pending'
-        }
+          value: 'pending',
+        },
       ],
       multipleSelection: [],
       intervalId: 0,
-      moreAuthority: this.$has('API_data_explorer') || this.$has('API_doc_&_test') || this.$has('API_export')
+      moreAuthority: this.$has('API_data_explorer') || this.$has('API_doc_&_test') || this.$has('API_export'),
       // importDialogVisible: false,
       // importForm: {
       //   tag: [],
@@ -248,7 +248,7 @@ export default {
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     this.getWorkers()
@@ -259,11 +259,13 @@ export default {
       return this.$refs.table
     },
     selectedRunning() {
-      return this.multipleSelection.filter(v => v.status === 'active')
+      return this.multipleSelection.filter((v) => v.status === 'active')
     },
     selectedStopped() {
-      return this.multipleSelection.filter(v => v.status === 'pending' || v.status === 'error' || v.status === 'draft')
-    }
+      return this.multipleSelection.filter(
+        (v) => v.status === 'pending' || v.status === 'error' || v.status === 'draft',
+      )
+    },
   },
   methods: {
     // 重置查询条件
@@ -271,7 +273,7 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          status: ''
+          status: '',
         }
       }
       this.table.fetch(1)
@@ -295,7 +297,7 @@ export default {
         listtags: true,
         name: true,
         'source._id': true,
-        'source.user_id': true
+        'source.user_id': true,
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: escapeRegExp(keyword), options: 'i' }
@@ -305,7 +307,7 @@ export default {
 
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       let filter = {
@@ -313,20 +315,20 @@ export default {
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total,
             data:
-              data?.items?.map(item => {
+              data?.items?.map((item) => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -336,22 +338,22 @@ export default {
         worker_type: 'api-server',
         ping_time: {
           gte: '$serverDate',
-          gte_offset: 30000
-        }
+          gte_offset: 30000,
+        },
       }
       let filter = {
         order: 'ping_time DESC',
         limit: 1,
         fields: {
-          worker_status: true
+          worker_status: true,
         },
-        where
+        where,
       }
       workerApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data?.items?.length) {
             let record = data?.items[0] || {}
             let workerStatus = record.workerStatus || record.worker_status || {}
@@ -375,10 +377,10 @@ export default {
     // 选中分类
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.classifications && row.classifications.length > 0) {
           tagList[row.classifications[0].id] = {
-            value: row.classifications[0].value
+            value: row.classifications[0].value,
           }
         }
       })
@@ -387,8 +389,8 @@ export default {
     // 数据分类查询数据
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map(r => r.id),
-        listtags
+        id: this.multipleSelection.map((r) => r.id),
+        listtags,
       }
       modulesApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
@@ -409,29 +411,29 @@ export default {
     preview(ids, item) {
       this.$router.push({
         name: 'apiExplorer',
-        query: { id: item.basePath + '_' + item.apiVersion }
+        query: { id: item.basePath + '_' + item.apiVersion },
       })
     },
     // api文档及测试
     toDocumentTest(ids, item) {
       this.$router.push({
         name: 'apiDocAndTest',
-        query: { id: item.basePath + '_' + item.apiVersion }
+        query: { id: item.basePath + '_' + item.apiVersion },
       })
     },
     // 发布api
     publish(item) {
       this.$confirm(this.$t('modules_sure') + this.$t('modules_publish_api'), this.$t('modules_publish_api'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let parmas = {
           status: 'active',
           id: item.id,
-          tablename: item.tablename
+          tablename: item.tablename,
         }
         modulesApi.patch(parmas).then(() => {
           this.$message.success(this.$t('modules_active'))
@@ -446,15 +448,15 @@ export default {
     unpublish(item) {
       this.$confirm(this.$t('modules_sure') + this.$t('modules_unpublish_api'), this.$t('modules_unpublish_api'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let parmas = {
           status: 'pending',
           id: item.id,
-          tablename: item.tablename
+          tablename: item.tablename,
         }
         modulesApi.patch(parmas).then(() => {
           this.$message.success(this.$t('modules_pending'))
@@ -471,8 +473,8 @@ export default {
         name: 'apiPublishEdit',
         query: { id: item.id, name: item.table_name },
         params: {
-          id: item.id
-        }
+          id: item.id,
+        },
       })
     },
     // 删除列表
@@ -480,8 +482,8 @@ export default {
       const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -500,37 +502,37 @@ export default {
       const h = this.$createElement
       let text = action === 'active' ? this.$t('modules_releasefb') : this.$t('modules_releasecancel')
       let jobs = action === 'active' ? this.selectedStopped : this.selectedRunning
-      let tableNameData = jobs.map(item => {
+      let tableNameData = jobs.map((item) => {
         return item.tablename
       })
       let message = h('p', [text + ' ', h('div', { style: { color: '#409EFF' } }, tableNameData.join(', '))])
       let title = action === 'active' ? this.$t('modules_allarelease') : this.$t('modules_allacancel')
       this.$confirm(message, title, {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         let modulesData = []
-        jobs.forEach(item => {
+        jobs.forEach((item) => {
           let data =
             action === 'active'
               ? {
                   id: item.id,
                   status: 'active',
                   connectorStopped: false,
-                  transformerStopped: false
+                  transformerStopped: false,
                 }
               : {
                   id: item.id,
-                  status: 'pending'
+                  status: 'pending',
                 }
           modulesData.push(modulesApi.patch(data))
         })
 
-        Promise.all(modulesData).then(data => {
-          let successResults = data?.filter(rs => rs) || []
+        Promise.all(modulesData).then((data) => {
+          let successResults = data?.filter((rs) => rs) || []
           if (successResults.length === jobs.length) {
             this.table.fetch()
             this.$message.success(this.$t('public_message_save_ok'))
@@ -546,7 +548,7 @@ export default {
         let routeUrl = this.$router.resolve({
           name: 'connectionsEdit',
           params: { id: data.source.id },
-          query: { databaseType: data.source.database_type }
+          query: { databaseType: data.source.database_type },
         })
         window.open(routeUrl.href, '_blank')
       }
@@ -561,13 +563,13 @@ export default {
     // 批量导出
     exportFile() {
       let id = []
-      id = this.multipleSelection.map(v => {
+      id = this.multipleSelection.map((v) => {
         return v.id
       })
       let where = {
         _id: {
-          in: id
-        }
+          in: id,
+        },
       }
       metadataInstancesApi.download(where, 'Modules')
     },
@@ -575,8 +577,8 @@ export default {
     export(ids, item) {
       let where = {
         _id: {
-          in: [item.id]
-        }
+          in: [item.id],
+        },
       }
       metadataInstancesApi.download(where, 'Modules')
     },
@@ -584,7 +586,7 @@ export default {
     copy(item) {
       let parmas = {
         uri: `${item.id}/copy`,
-        headers: { 'lconname-name': item.basePath }
+        headers: { 'lconname-name': item.basePath },
       }
       modulesApi.post(parmas, { 'lconname-name': item.basePath }).then(() => {
         this.$message.success(this.$t('public_message_copy_success'))
@@ -600,13 +602,13 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     handleCommand(command, node) {
@@ -614,19 +616,19 @@ export default {
       if (node) {
         ids = [node.id]
       } else {
-        ids = this.multipleSelection.map(item => item.id)
+        ids = this.multipleSelection.map((item) => item.id)
       }
       this[command](ids, node)
     },
     getStatus(type) {
       return STATUS_MAP[type] || '-'
-    }
+    },
   },
   beforeUnmount() {
     if (this.intervalId) {
       clearTimeout(this.intervalId)
     }
-  }
+  },
 }
 </script>
 

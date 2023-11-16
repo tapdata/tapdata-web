@@ -60,7 +60,7 @@
         :columns="columns"
         :data="list"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
         }"
         ref="table"
         height="100"
@@ -74,14 +74,10 @@
         </template>
         <template #operation="scope">
           <div class="operate-columns">
-            <ElButton
-              size="small"
-              type="text"
-              :disabled="scope.row.status === 'CLOESE'"
-              @click="handleClose(scope.row)"
-              >{{ $t('public_button_close') }}</ElButton
-            >
-            <ElButton size="small" type="text" @click="handleLog(scope.row)">{{
+            <ElButton size="small" text :disabled="scope.row.status === 'CLOESE'" @click="handleClose(scope.row)">{{
+              $t('public_button_close')
+            }}</ElButton>
+            <ElButton size="small" text @click="handleLog(scope.row)">{{
               $t('packages_dag_monitor_bottompanel_rizhi')
             }}</ElButton>
           </div>
@@ -107,59 +103,59 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     alarmData: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       activeNodeId: 'all',
       form: {
         level: '',
-        status: ''
+        status: '',
       },
       columns: [
         {
           label: i18n.t('packages_dag_components_alert_gaojingjibie'),
           prop: 'level',
           slotName: 'levelSlot',
-          width: 120
+          width: 120,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'statusLabel',
-          width: 100
+          width: 100,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'firstOccurrenceTime',
           dataType: 'time',
-          minWidth: 180
+          minWidth: 180,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          minWidth: 180
+          minWidth: 180,
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -170,10 +166,10 @@ export default {
           label: i18n.t('public_operation'),
           slotName: 'operation',
           // fixed: 'right',
-          width: 150
-        }
+          width: 150,
+        },
       ],
-      list: []
+      list: [],
     }
   },
   computed: {
@@ -183,13 +179,13 @@ export default {
       let result = [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
-        }
+          value: '',
+        },
       ]
       for (let key in ALARM_LEVEL_MAP) {
         result.push({
           label: ALARM_LEVEL_MAP[key].text,
-          value: key
+          value: key,
         })
       }
       return result
@@ -199,13 +195,13 @@ export default {
       let result = [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
-        }
+          value: '',
+        },
       ]
       for (let key in ALARM_STATUS_MAP) {
         result.push({
           label: ALARM_STATUS_MAP[key].text,
-          value: key
+          value: key,
         })
       }
       return result
@@ -219,7 +215,7 @@ export default {
         }, {}) || {}
       const alarmList = this.alarmData?.alarmList || []
       const totals = alarmList.length
-      alarmList.forEach(el => {
+      alarmList.forEach((el) => {
         if (el.nodeId) {
           nodeMap[el.nodeId].num++
         }
@@ -228,29 +224,29 @@ export default {
         {
           label: i18n.t('packages_dag_components_alert_quanbugaojing'),
           value: 'all',
-          num: totals
+          num: totals,
         },
         ...this.allNodes
-          .map(t => {
+          .map((t) => {
             return {
               label: t.name,
               value: t.id,
               source: t.$outputs.length > 0,
               target: t.$inputs.length > 0,
-              num: nodeMap[t.id]?.num || 0
+              num: nodeMap[t.id]?.num || 0,
             }
           })
-          .filter(t => t.num)
+          .filter((t) => t.num),
       ]
-    }
+    },
   },
   watch: {
     alarmData: {
       deep: true,
       handler() {
         this.getList()
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.getList()
@@ -261,16 +257,16 @@ export default {
       const { activeNodeId } = this
       const { level, status } = this.form
       if (activeNodeId !== 'all') {
-        data = data.filter(t => t.nodeId === activeNodeId)
+        data = data.filter((t) => t.nodeId === activeNodeId)
       }
       if (level) {
-        data = data.filter(t => t.level === level)
+        data = data.filter((t) => t.level === level)
       }
       if (status) {
-        data = data.filter(t => t.status === status)
+        data = data.filter((t) => t.status === status)
       }
       this.list =
-        data.map(t => {
+        data.map((t) => {
           t.levelLabel = ALARM_LEVEL_MAP[t.level].text
           t.levelType = ALARM_LEVEL_MAP[t.level].type
           t.statusLabel = ALARM_STATUS_MAP[t.status].text
@@ -296,12 +292,12 @@ export default {
     handleLog(row = {}) {
       const params = {
         start: row.lastOccurrenceTime,
-        nodeId: row.nodeId
+        nodeId: row.nodeId,
       }
       $emit(this, 'change-tab', 'log', params)
-    }
+    },
   },
-  emits: ['change-tab', 'load-data']
+  emits: ['change-tab', 'load-data'],
 }
 </script>
 

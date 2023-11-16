@@ -8,7 +8,7 @@
     @open="handleOpen"
     @close="handleClose"
   >
-    <template v-slot:title>
+    <template #header>
       <div class="font-color-dark fs-6 fw-sub">
         {{ $t('packages_business_data_console_mode') }}
       </div>
@@ -248,13 +248,13 @@ export default {
       type: String,
       default: () => {
         return 'Product Capability Mode'
-      }
+      },
     },
     visible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
-    fdmConnection: Object
+    fdmConnection: Object,
   },
   data() {
     return {
@@ -264,30 +264,30 @@ export default {
       modeItems: [
         {
           label: 'Data Integration Mode',
-          value: 'integration'
+          value: 'integration',
         },
         {
           label: 'Data Service Platform Mode',
           value: 'service',
-          beta: true
-        }
+          beta: true,
+        },
       ],
       options: [
         {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
-          tag: 'Add a New Connection'
+          tag: 'Add a New Connection',
         },
         {
           label: this.$t('packages_business_mongodb_full_management_cluster'),
-          value: 'full-management'
-        }
+          value: 'full-management',
+        },
       ],
       form: {
         fdmStorageCluster: '',
         fdmStorageConnectionId: '',
         mdmStorageCluster: '',
-        mdmStorageConnectionId: ''
+        mdmStorageConnectionId: '',
       },
       loading: false,
       rules: {
@@ -295,20 +295,20 @@ export default {
           {
             required: true,
             message: i18n.t('public_select_placeholder'),
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         mdmStorageConnectionId: [
           {
             required: true,
             message: i18n.t('public_select_placeholder'),
-            trigger: 'change'
-          }
-        ]
+            trigger: 'change',
+          },
+        ],
       },
       liveDataPlatformId: '',
 
-      setting: null
+      setting: null,
     }
   },
   computed: {
@@ -327,7 +327,7 @@ export default {
         ((this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
           (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management'))
       )
-    }
+    },
   },
   created() {
     this.init()
@@ -352,23 +352,23 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target']
+            in: ['source_and_target'],
           },
           database_type: {
-            in: ['MongoDB', 'MongoDB Atlas']
-          }
-        }
+            in: ['MongoDB', 'MongoDB Atlas'],
+          },
+        },
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.connectionsList =
-            data?.items.map(t => {
+            data?.items.map((t) => {
               return {
                 label: t.name,
-                value: t.id
+                value: t.id,
               }
             }) || []
         })
@@ -403,7 +403,7 @@ export default {
     handleSelectMode(type) {
       this.setData({
         mode: type,
-        id: this.liveDataPlatformId
+        id: this.liveDataPlatformId,
       })
     },
 
@@ -416,7 +416,7 @@ export default {
     },
 
     submit() {
-      this.$refs.form.validate(v => {
+      this.$refs.form.validate((v) => {
         if (!v) return
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
@@ -448,11 +448,11 @@ export default {
 
     handleOrderStorage() {
       this.$router.push({
-        name: 'CreateStorage'
+        name: 'CreateStorage',
       })
-    }
+    },
   },
-  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'visible', 'update:visible', 'success']
+  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'visible', 'update:visible', 'success'],
 }
 </script>
 
@@ -494,7 +494,9 @@ export default {
   }
 
   &:hover {
-    box-shadow: 0 10px 36px 10px rgba(31, 35, 41, 0.04), 0 8px 24px rgba(31, 35, 41, 0.04),
+    box-shadow:
+      0 10px 36px 10px rgba(31, 35, 41, 0.04),
+      0 8px 24px rgba(31, 35, 41, 0.04),
       0 6px 12px -10px rgba(31, 35, 41, 0.06);
   }
 }

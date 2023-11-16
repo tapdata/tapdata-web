@@ -5,9 +5,9 @@
     :show-close="false"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    custom-class="tour-dialog"
+    class="tour-dialog"
   >
-    <template #title>
+    <template #header>
       <div v-if="!finish" class="text-center title-cover">
         <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
       </div>
@@ -50,11 +50,11 @@ export default {
   name: 'ReplicationTour',
   props: {
     value: Boolean,
-    finish: Boolean
+    finish: Boolean,
   },
   data() {
     return {
-      visible: this.value
+      visible: this.value,
     }
   },
   computed: {
@@ -63,7 +63,7 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -72,7 +72,7 @@ export default {
 
     value(v) {
       this.visible = v
-    }
+    },
   },
   methods: {
     cancel() {
@@ -98,8 +98,8 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
-          }
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe'),
+          },
         })
 
         const unwatch = this.$watch('$route', () => {
@@ -114,12 +114,12 @@ export default {
       this.$router.push({
         name: 'userCenter',
         query: {
-          bind: 'email'
-        }
+          bind: 'email',
+        },
       })
-    }
+    },
   },
-  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value']
+  emits: ['start', 'finish', 'update:value', 'finish', , 'update:value'],
 }
 </script>
 

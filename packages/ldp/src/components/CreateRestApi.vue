@@ -1,12 +1,12 @@
 <template>
   <ElDialog
-    custom-class="t-dialog"
+    class="t-dialog"
     v-model:visible="visible"
     @update:visible="handleVisible"
     width="600"
     :close-on-click-modal="false"
   >
-    <template v-slot:title>
+    <template #header>
       <span class="fs-6 fw-sub font-color-dark">
         {{ $t('packages_business_chuangjianfuwu') }}
       </span>
@@ -412,13 +412,13 @@ import { generateId } from '@tap/shared'
 
 export default {
   components: {
-    VCodeEditor
+    VCodeEditor,
   },
   name: 'CreateRestApi',
   props: {
     host: String,
     value: Boolean,
-    params: Object
+    params: Object,
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -454,7 +454,7 @@ export default {
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
-        acl: ['admin']
+        acl: ['admin'],
       },
       tab: 'form',
       isEdit: true,
@@ -463,69 +463,69 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_qingshurufuwu'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         acl: [
           {
             required: true,
             message: i18n.t('packages_business_selectPermissions'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         connectionType: [
           {
             required: true,
             message: i18n.t('packages_business_qingxuanzelianjie'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         connectionId: [
           {
             required: true,
             message: i18n.t('shared_cache_placeholder_connection'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         tableName: [
           {
             required: true,
             message: i18n.t('packages_business_qingxuanzeduixiang'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         param: [
           {
             required: true,
             validator: validateParams,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         basePath: [
           {
             required: true,
             validator: validateBasePath,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         prefix: [
           {
             required: false,
             validator: validatePrefix,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         apiVersion: [
           {
             required: true,
             validator: validateBasePath,
-            trigger: ['blur', 'change']
-          }
-        ]
+            trigger: ['blur', 'change'],
+          },
+        ],
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_morenchaxun'),
-        customerQuery: i18n.t('packages_business_zidingyichaxun')
+        customerQuery: i18n.t('packages_business_zidingyichaxun'),
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -547,12 +547,12 @@ export default {
 
       token: '',
       roles: [],
-      visible: this.value
+      visible: this.value,
     }
   },
   computed: {
     parameterOptions() {
-      return this.form?.params?.filter(item => !['page', 'limit'].includes(item.name)) || []
+      return this.form?.params?.filter((item) => !['page', 'limit'].includes(item.name)) || []
     },
     //计算基础路径
     customizePath() {
@@ -576,18 +576,18 @@ export default {
       return [
         {
           method: 'POST',
-          url: `${baseUrl}/find`
+          url: `${baseUrl}/find`,
         },
         {
           method: 'GET',
-          url: `${baseUrl}`
+          url: `${baseUrl}`,
         },
         {
           method: 'TOKEN',
-          url: `${location.origin + location.pathname}oauth/token`
-        }
+          url: `${location.origin + location.pathname}oauth/token`,
+        },
       ]
-    }
+    },
   },
   watch: {
     value(v) {
@@ -595,7 +595,7 @@ export default {
       if (v) {
         this.open()
       }
-    }
+    },
   },
   mounted() {
     this.getRoles()
@@ -622,7 +622,7 @@ export default {
       let debugParams = null
       if (this.tab === 'debug') {
         debugParams = {}
-        this.data.params.forEach(p => {
+        this.data.params.forEach((p) => {
           debugParams[p.name] = p.defaultvalue || ''
         })
       }
@@ -646,7 +646,7 @@ export default {
         basePath,
         apiVersion,
         prefix,
-        pathAccessMethod
+        pathAccessMethod,
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       let apiType = formData?.apiType || 'defaultApi'
@@ -670,7 +670,7 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl
+        acl: path.acl,
       }
       this.form.description = this.data.description
       this.form.acl = path.acl || ['admin']
@@ -679,7 +679,7 @@ export default {
       let baseUrl = host + _path
 
       if (this.data.status === 'active') {
-        this.getAPIServerToken(token => {
+        this.getAPIServerToken((token) => {
           this.templates = getTemplate(baseUrl, token)
         })
       }
@@ -688,9 +688,9 @@ export default {
     getRoles() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
         this.roles = data?.items || []
       })
     },
@@ -701,15 +701,15 @@ export default {
           type: 'number',
           defaultvalue: '1',
           description: i18n.t('packages_business_fenyebianhao'),
-          required: true
+          required: true,
         },
         {
           name: 'limit',
           type: 'number',
           defaultvalue: '20',
           description: i18n.t('packages_business_meigefenyefan'),
-          required: true
-        }
+          required: true,
+        },
       ]
       if (apiType === 'defaultApi') {
         params.push(
@@ -717,14 +717,14 @@ export default {
             {
               name: 'sort',
               type: 'object',
-              description: i18n.t('packages_business_paixu')
+              description: i18n.t('packages_business_paixu'),
             },
             {
               name: 'filter',
               type: 'object',
-              description: i18n.t('module_form_condition')
-            }
-          ]
+              description: i18n.t('module_form_condition'),
+            },
+          ],
         )
       }
       return params
@@ -749,7 +749,7 @@ export default {
       this.urls = {
         POST: `${baseUrl}/find`,
         GET: `${baseUrl}`,
-        TOKEN: `${location.origin + location.pathname}oauth/token`
+        TOKEN: `${location.origin + location.pathname}oauth/token`,
       }
 
       this.getDatabaseTypes()
@@ -763,7 +763,7 @@ export default {
     },
     // 保存，新建和修改
     handleSave(type) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           this.handleVisible(false)
 
@@ -796,10 +796,10 @@ export default {
             connectionName,
             apiVersion,
             prefix,
-            pathAccessMethod
+            pathAccessMethod,
           } = this.form
 
-          if (params.some(it => !it.name.trim())) {
+          if (params.some((it) => !it.name.trim())) {
             return this.$message.error(i18n.t('packages_business_qingshurucanshu'))
           }
 
@@ -828,8 +828,8 @@ export default {
             listtags: [
               {
                 id: this.params.to.id,
-                value: this.params.to.value
-              }
+                value: this.params.to.value,
+              },
             ], // 冗余老字段
 
             paths: [
@@ -844,9 +844,9 @@ export default {
                 where,
                 sort,
                 fields,
-                path
-              }
-            ]
+                path,
+              },
+            ],
           }
           if (!type) {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
@@ -873,8 +873,8 @@ export default {
     generate() {
       if (this.data.basePath && this.data.basePath !== '') {
         this.$confirm(this.$t('packages_business_confirm_tip'), {
-          type: 'warning'
-        }).then(resFlag => {
+          type: 'warning',
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -903,8 +903,8 @@ export default {
       })
       this.databaseTypes =
         data
-          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId))
-          ?.map(it => it.name) || []
+          ?.filter((it) => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId))
+          ?.map((it) => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()
     },
@@ -917,18 +917,18 @@ export default {
           connection_type: true,
           status: true,
           user_id: true,
-          database_type: true
+          database_type: true,
         },
         where: {
           database_type: this.form.connectionType
             ? this.form.connectionType
             : {
-                in: this.databaseTypes
+                in: this.databaseTypes,
               },
           connection_type: {
-            in: ['source_and_target', 'target']
-          }
-        }
+            in: ['source_and_target', 'target'],
+          },
+        },
       }
       let type = this.form.connectionType
       if (type) {
@@ -939,10 +939,10 @@ export default {
         this.connectionOptions = []
       })
       this.connectionOptions =
-        data?.map(it => ({
+        data?.map((it) => ({
           name: it.name,
           type: it.database_type,
-          id: it.id
+          id: it.id,
         })) || []
     },
     // 获取可选表，依赖连接id
@@ -960,23 +960,23 @@ export default {
         where: {
           'source.id': this.form.connectionId,
           original_name: this.form.tableName,
-          is_deleted: false
-        }
+          is_deleted: false,
+        },
       }
       const data = await metadataInstancesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .finally(() => {
           this.fieldLoading = false
         })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => {
+        data?.items?.[0]?.fields?.map((it) => {
           return Object.assign({}, it, {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: ''
+            comment: '',
           })
         }) || []
       if (!this.form.id) {
@@ -985,8 +985,8 @@ export default {
       // 回显输出结果中被选中的字段
       const fields = this.form.fields || []
       this.$nextTick(() => {
-        fields.forEach(row => {
-          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === row.id))
+        fields.forEach((row) => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find((it) => it.id === row.id))
         })
       })
     },
@@ -1003,7 +1003,7 @@ export default {
     },
     connectionNameChanged() {
       // 选择连接名时自动填充连接类型
-      const connection = this.connectionOptions.find(it => it.name === this.form.connectionName)
+      const connection = this.connectionOptions.find((it) => it.name === this.form.connectionName)
       this.form.connectionType = connection.type
       this.form.connectionId = connection.id
       this.form.tableName = ''
@@ -1031,9 +1031,9 @@ export default {
           fieldName: '',
           parameter: '',
           operator: '>',
-          condition: 'and'
+          condition: 'and',
         },
-        sort: { fieldName: '', type: 'asc' }
+        sort: { fieldName: '', type: 'asc' },
       }
       if (key === 'where') {
         let list = this.form.where
@@ -1051,9 +1051,9 @@ export default {
       const clientInfo = await applicationApi.get({
         filter: JSON.stringify({
           where: {
-            clientName: 'Data Explorer'
-          }
-        })
+            clientName: 'Data Explorer',
+          },
+        }),
       })
       const clientInfoItem = clientInfo?.items?.[0] || {}
 
@@ -1074,10 +1074,10 @@ export default {
             access_token: this.token,
             expires_in: 1209599,
             scope: 'admin',
-            token_type: 'Bearer'
+            token_type: 'Bearer',
           },
           null,
-          2
+          2,
         )
       } else {
         let url = this.urls[this.debugMethod] + '?access_token=' + this.token
@@ -1089,10 +1089,10 @@ export default {
         }
         if (method === 'GET') {
           params = {
-            params: params
+            params: params,
           }
         }
-        let result = await http[method.toLowerCase()](url, params).catch(error => {
+        let result = await http[method.toLowerCase()](url, params).catch((error) => {
           let result = error?.response?.data
           result = result ? JSON.stringify(result, null, 2) : ''
           this.debugResult = result
@@ -1105,9 +1105,9 @@ export default {
 
     handleVisible(v) {
       $emit(this, 'update:value', v)
-    }
+    },
   },
-  emits: ['save', 'update:value']
+  emits: ['save', 'update:value'],
 }
 </script>
 
@@ -1201,7 +1201,9 @@ export default {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC;
 }
 .data-server-path__method {
   margin-right: 40px;
@@ -1226,7 +1228,9 @@ export default {
   border: 1px solid map-get($borderColor, form);
   background: map-get($bgColor, form);
   border-radius: 4px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC;
 }
 .data-server__form {
   :deep(.form-item-name) {

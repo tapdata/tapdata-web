@@ -10,14 +10,14 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput ref="search" v-model:value="search" size="small" clearable @keydown.stop @keyup.stop @click.stop>
+        <ElInput ref="search" v-model="search" size="small" clearable @keydown.stop @keyup.stop @click.stop>
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-4 position-relative" @scroll="handleScroll">
+      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
@@ -67,16 +67,7 @@
               </div>
             </div>
             <div
-              class="
-                drop-mask
-                position-absolute
-                absolute-fill
-                p-2
-                flex-column
-                justify-content-center
-                align-center
-                gap-2
-              "
+              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
               :class="{ flex: nonSupportApi }"
             >
               <ElTooltip
@@ -141,8 +132,8 @@
         <!--</draggable>-->
       </div>
 
-      <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-        <template v-slot:title>
+      <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+        <template #header>
           <span class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
         </template>
         <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
@@ -152,7 +143,7 @@
               $t(
                 taskDialogConfig.tableName
                   ? 'packages_business_target_create_task_dialog_desc_prefix_sync'
-                  : 'packages_business_target_create_task_dialog_desc_prefix_clone'
+                  : 'packages_business_target_create_task_dialog_desc_prefix_clone',
               )
             }}</span
             ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
@@ -179,10 +170,10 @@
             >
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
-            <ElInput size="small" v-model:value="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-            <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+            <ElRadioGroup v-model="taskDialogConfig.task.type">
               <ElTooltip
                 :disabled="!taskDialogConfig.notSupportedCDC"
                 :content="$t('packages_ldp_not_support_increments')"
@@ -203,7 +194,7 @@
               prop="task.crontabExpressionType"
             >
               <ElSelect
-                v-model:value="taskDialogConfig.task.crontabExpressionType"
+                v-model="taskDialogConfig.task.crontabExpressionType"
                 @change="handleChangeCronType"
                 class="flex-1"
               >
@@ -215,24 +206,24 @@
               prop="task.crontabExpression"
               label-width="0"
             >
-              <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
+              <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
             </ElFormItem>
           </div>
         </ElForm>
         <template v-slot:footer>
           <span class="dialog-footer">
-            <ElButton size="small" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-            <ElButton :disabled="highlightBoard" :loading="creating" size="small" @click="dialogSubmit(false)">{{
+            <ElButton @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
+            <ElButton :disabled="highlightBoard" :loading="creating" @click="dialogSubmit(false)">{{
               $t('packages_business_save_only')
             }}</ElButton>
-            <ElButton :loading="creating" size="small" type="primary" @click="dialogSubmit(true)">
+            <ElButton :loading="creating" type="primary" @click="dialogSubmit(true)">
               {{ $t('packages_business_save_and_run_now') }}
             </ElButton>
           </span>
         </template>
       </ElDialog>
       <CreateRestApi
-        v-model:value="apiDialog.visible"
+        v-model="apiDialog.visible"
         :params="apiDialog"
         :host="apiServerHost"
         @save="handleAddApi"
@@ -256,7 +247,7 @@ import {
   modulesApi,
   proxyApi,
   taskApi,
-  workerApi
+  workerApi,
 } from '@tap/api'
 import { uuid, generateId, Time, calcTimeUnit } from '@tap/shared'
 import { VIcon, IconButton, VEmpty } from '@tap/component'
@@ -266,7 +257,7 @@ import {
   TaskStatus,
   DataServerDrawer as ApiPreview,
   makeStatusAndDisabled,
-  TASK_SETTINGS
+  TASK_SETTINGS,
 } from '@tap/business'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
@@ -341,7 +332,7 @@ const TaskList = defineComponent({
                         {i18n.t(
                           ['edit', 'wait_start'].includes(task.status)
                             ? 'public_button_edit'
-                            : 'packages_business_task_list_button_monitor'
+                            : 'packages_business_task_list_button_monitor',
                         )}
                       </ElLink>
                     </div>
@@ -392,7 +383,7 @@ const TaskList = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 export default {
@@ -401,7 +392,7 @@ export default {
   props: {
     dragState: Object,
     fdmAndMdmId: Array,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
 
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon, VEmpty },
@@ -426,12 +417,12 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       connectionTaskMap: {},
       apiDialog: {
-        visible: false
+        visible: false,
       },
       apiServerHost: '',
       searchIng: false,
@@ -442,11 +433,11 @@ export default {
       apiStatusMap: {
         active: this.$t('public_status_published'),
         pending: this.$t('public_status_unpublished'),
-        generating: this.$t('public_status_to_be_generated')
+        generating: this.$t('public_status_to_be_generated'),
       },
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
-      searchKeywordList: []
+      searchKeywordList: [],
     }
   },
 
@@ -463,14 +454,14 @@ export default {
     filterList() {
       if (this.showParentLineage) {
         let result = []
-        this.searchKeywordList.forEach(item => {
+        this.searchKeywordList.forEach((item) => {
           if (item.type === 'apiserverLineage') {
             // item的数据结构：appName,serverName,table,type
-            const appList = cloneDeep(this.list.filter(item => item.LDP_TYPE === 'app'))
-            const findApp = appList.find(t => t.value === item.appName)
-            const findServer = findApp?.modules?.find(t => t.name === item.serverName)
+            const appList = cloneDeep(this.list.filter((item) => item.LDP_TYPE === 'app'))
+            const findApp = appList.find((t) => t.value === item.appName)
+            const findServer = findApp?.modules?.find((t) => t.name === item.serverName)
             if (!findServer) return
-            const findOne = result.find(t => t.value === item.appName)
+            const findOne = result.find((t) => t.value === item.appName)
             if (findOne) {
               findOne.modules.push(findServer)
             } else {
@@ -480,12 +471,12 @@ export default {
         })
         return result
       }
-      if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
+      if (!this.search) return this.list.filter((item) => !this.fdmAndMdmId.includes(item.id))
 
       return this.list.filter(
-        item =>
+        (item) =>
           !this.fdmAndMdmId?.includes(item.id) &&
-          (item.name?.includes(this.search) || item.value?.includes(this.search))
+          (item.name?.includes(this.search) || item.value?.includes(this.search)),
       )
     },
 
@@ -503,7 +494,7 @@ export default {
 
     nonSupportApi() {
       return this.dragDatabaseType && !this.apiSupportTypes.includes(this.dragDatabaseType)
-    }
+    },
   },
 
   mounted() {
@@ -523,14 +514,14 @@ export default {
 
       if (this.isDaas) {
         appList = await this.getApiAppList()
-        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
+        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then((list) => {
           appList.forEach((app, i) => {
             app['modules'] = list[i]
           })
         })
       }
 
-      this.connectionIds = connectionList.map(item => item.id)
+      this.connectionIds = connectionList.map((item) => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -546,15 +537,15 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', 'target']
+            in: ['source_and_target', 'target'],
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
       return res.items.map(this.mapConnection)
@@ -587,14 +578,14 @@ export default {
     async loadConnectionTaskMap() {
       const data = await taskApi.getTaskByConnection({
         connectionIds: this.connectionIds.join(','),
-        position: 'target'
+        position: 'target',
       })
 
       const taskMap = {}
 
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         this.connectionTaskMap[key] = data[key]
-          .filter(task => {
+          .filter((task) => {
             if (task.status === 'running') {
               taskMap[task.id] = {
                 uri: '/api/measurement/query/v2',
@@ -606,14 +597,14 @@ export default {
                       tags: {
                         type: 'task',
                         taskId: task.id,
-                        taskRecordId: task.taskRecordId
+                        taskRecordId: task.taskRecordId,
                       },
                       endAt: Time.now(),
                       fields: ['replicateLag'],
-                      type: 'instant'
-                    }
-                  }
-                }
+                      type: 'instant',
+                    },
+                  },
+                },
               }
             }
             return (
@@ -673,7 +664,7 @@ export default {
           }
         })
 
-        const targetNode = dag.nodes.find(node => {
+        const targetNode = dag.nodes.find((node) => {
           return node.type === 'table' && inputsMap[node.id] && !outputsMap[node.id]
         })
 
@@ -686,16 +677,16 @@ export default {
         limit: 999,
         order: 'createTime DESC',
         where: {
-          item_type: 'app'
-        }
+          item_type: 'app',
+        },
       }
 
       return appApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
-          return items.map(item => {
+          return items.map((item) => {
             item.LDP_TYPE = 'app'
             return item
           })
@@ -707,13 +698,13 @@ export default {
         limit: 999,
         order: 'createAt DESC',
         where: {
-          'listtags.id': appId
-        }
+          'listtags.id': appId,
+        },
       }
 
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
           return items.map(this.mapApi)
@@ -730,9 +721,9 @@ export default {
         .call({
           className: 'PDKConnectionService',
           method: 'getConnectorWebsite',
-          args: [connectionId]
+          args: [connectionId],
         })
-        .then(data => {
+        .then((data) => {
           data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
           return data?.url
         })
@@ -744,9 +735,9 @@ export default {
           className: 'PDKConnectionService',
           method: 'getTableWebsite',
           args: [connectionId, [table]],
-          _: generateId(4)
+          _: generateId(4),
         })
-        .then(data => {
+        .then((data) => {
           data?.url && (task['website'] = data.url)
           return data?.url
         })
@@ -844,8 +835,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -862,8 +853,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -875,12 +866,12 @@ export default {
         tableName
           ? {
               migrateTableSelectType: 'custom',
-              tableNames: [tableName]
+              tableNames: [tableName],
             }
           : {
               migrateTableSelectType: 'expression',
-              tableExpression: '.*'
-            }
+              tableExpression: '.*',
+            },
       )
 
       return source
@@ -901,8 +892,8 @@ export default {
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
     },
 
@@ -914,8 +905,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -933,7 +924,7 @@ export default {
     },
 
     async dialogSubmit(ifStart) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           const { syncType, from, to, tableName, task: settings } = this.taskDialogConfig
           let task
@@ -953,8 +944,8 @@ export default {
             // taskInfo = await taskApi.save(task)
             taskInfo = await taskApi.saveAndStart(taskInfo, {
               params: {
-                confirm: true
-              }
+                confirm: true,
+              },
             })
           }
 
@@ -981,11 +972,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(taskInfo)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
 
           if (this.startingTour) {
@@ -1004,9 +995,9 @@ export default {
         this.$router.resolve({
           name: task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
           params: {
-            id: task.id
-          }
-        }).href
+            id: task.id,
+          },
+        }).href,
       )
     },
 
@@ -1019,8 +1010,8 @@ export default {
     mapConnection(item) {
       item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
-      item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
-      item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+      item.showConnectorWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
+      item.showTableWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
 
       if (item.showConnectorWebsite) {
         this.getWebsite(item.id)
@@ -1108,12 +1099,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -1126,12 +1117,12 @@ export default {
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -1150,23 +1141,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-all;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary',
             },
-            name
+            name,
           ),
-          strArr[1]
-        ]
+          strArr[1],
+        ],
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title)
+        title: this.$t('packages_business_dataFlow_' + title),
       }
     },
 
@@ -1175,11 +1166,11 @@ export default {
 
       if (replicateLag != undefined) {
         return calcTimeUnit(replicateLag, 2, {
-          autoHideMs: true
+          autoHideMs: true,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -22,7 +22,7 @@
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
         </div>
-        <ElButton type="text" class="mt-2" size="small" @click="goSlack">Join Slack</ElButton>
+        <ElButton text class="mt-2" size="small" @click="goSlack">Join Slack</ElButton>
         <div class="mt-2 font-color-sslight">
           {{ $t('dfs_user_contactus_weinintigongchan') }}
         </div>
@@ -32,7 +32,7 @@
           <VIcon size="20" class="mr-2 color-primary">email-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
-        <ElButton type="text" class="mt-2" size="small">team@tapdata.io</ElButton>
+        <ElButton text class="mt-2" size="small">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">
           {{ $t('dfs_user_contactus_weinintigongchan') }}
         </div>
@@ -60,7 +60,7 @@
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
-        <ElButton type="text" class="mt-2" size="small">0755-26656080</ElButton>
+        <ElButton text class="mt-2" size="small">0755-26656080</ElButton>
         <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
     </ul>
@@ -101,13 +101,13 @@ export default {
   inject: ['buried'],
 
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
 
   methods: {
     goTicketSystem() {
       this.$router.push({
-        name: 'TicketSystem'
+        name: 'TicketSystem',
       })
     },
 
@@ -135,8 +135,8 @@ export default {
 
     goSlack() {
       window.open(this.$store.state.config.slackLink, '_blank')
-    }
-  }
+    },
+  },
 }
 </script>
 

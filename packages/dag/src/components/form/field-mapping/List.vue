@@ -79,7 +79,7 @@
               <ElButton plain class="btn-refresh" @click="rest">
                 <VIcon>refresh</VIcon>
               </ElButton>
-              <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
+              <ElButton v-if="!readOnly" text class="btn-rest" @click="updateMetaData">
                 {{ $t('public_button_reset') }}
               </ElButton>
             </div>
@@ -206,7 +206,7 @@ import { mapState } from 'vuex'
 export default {
   components: {
     VIcon,
-    OverflowTooltip
+    OverflowTooltip,
   },
   name: 'List',
   props: ['isMetaData', 'readOnly', 'updateList'],
@@ -225,16 +225,16 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentOperationType: '',
       editValueType: {
         sourceFieldType: '',
-        defaultValue: ''
+        defaultValue: '',
       },
       titleType: {
         sourceFieldType: this.$t('packages_form_dag_dialog_field_mapping_tittle_data_type'),
-        defaultValue: this.$t('packages_form_dag_dialog_field_mapping_tittle_value')
+        defaultValue: this.$t('packages_form_dag_dialog_field_mapping_tittle_value'),
       },
       position: 0,
       selectRow: '',
@@ -245,7 +245,7 @@ export default {
       fieldMapping_table_error,
       fieldMapping_table,
       refresh,
-      noData
+      noData,
     }
   },
   mounted() {
@@ -255,7 +255,7 @@ export default {
     this.getMetadataTransformer() //不需要推演 直接拿推演结果
   },
   computed: {
-    ...mapState('dataflow', ['transformLoading'])
+    ...mapState('dataflow', ['transformLoading']),
   },
   watch: {
     updateList() {
@@ -266,7 +266,7 @@ export default {
       if (!v) {
         this.getMetadataTransformer()
       }
-    }
+    },
   },
   methods: {
     getDataFlow() {
@@ -276,7 +276,7 @@ export default {
       return {
         dag,
         editVersion,
-        ...dataflow
+        ...dataflow,
       }
     },
     async select(item, index) {
@@ -305,7 +305,7 @@ export default {
         nodeId: this.dataFlow['nodeId'],
         //todo 返回是否为sinkNodeId
         page: current,
-        pageSize: size
+        pageSize: size,
       }
       if (value && current !== value) {
         where.searchTable = value
@@ -316,7 +316,7 @@ export default {
       this.loadingTable = true
       taskApi
         .getNodeTableInfo(where)
-        .then(res => {
+        .then((res) => {
           let { total, items } = res
           this.page.total = total
           this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
@@ -340,7 +340,7 @@ export default {
         delayTrigger(() => {
           if (this.searchField.trim()) {
             this.searchField = this.searchField.trim().toString() //去空格
-            this.viewTableData = this.target.filter(v => {
+            this.viewTableData = this.target.filter((v) => {
               let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
               return str.indexOf(this.searchField.toLowerCase()) > -1
             })
@@ -386,7 +386,7 @@ export default {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let data = {
         taskId: id,
-        nodeId: this.dataFlow?.nodeId
+        nodeId: this.dataFlow?.nodeId,
       }
       this.searchField = ''
       metadataInstancesApi.resetTable(data).then(() => {
@@ -394,7 +394,7 @@ export default {
       })
     },
     updateTargetView(id, key, value) {
-      this.viewTableData.forEach(field => {
+      this.viewTableData.forEach((field) => {
         if (field.sourceFieldName === id) {
           field[key] = value
         }
@@ -405,7 +405,7 @@ export default {
         let field = {
           fieldName: row.sourceFieldName,
           fieldType: type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue,
         }
         this.editFields.push(field)
       } else {
@@ -421,7 +421,8 @@ export default {
               fieldName: row.sourceFieldName,
               fieldType:
                 type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-              defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+              defaultValue:
+                type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue,
             }
             this.editFields.push(field)
           }
@@ -434,7 +435,7 @@ export default {
         taskId: id,
         nodeId: this.dataFlow?.nodeId,
         tableName: this.selectRow?.sourceObjectName,
-        fields: this.editFields || []
+        fields: this.editFields || [],
       }
       metadataInstancesApi.saveTable(data).then(() => {
         if (val) {
@@ -450,36 +451,36 @@ export default {
     /*更新target 数据*/
     //获取typeMapping
     getTypeMapping() {
-      typeMappingApi.pdkDataType('Mysql').then(res => {
+      typeMappingApi.pdkDataType('Mysql').then((res) => {
         let targetObj = JSON.parse(res || '{}')
         for (let key in targetObj) {
           this.typeMapping.push({
             dbType: key,
-            rules: targetObj[key]
+            rules: targetObj[key],
           })
         }
       })
     },
     initDataType(val) {
-      let target = this.typeMapping.filter(type => type.dbType === val)
+      let target = this.typeMapping.filter((type) => type.dbType === val)
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
     querySearchPdkType(queryString, cb) {
-      let result = this.typeMapping.map(t => {
+      let result = this.typeMapping.map((t) => {
         return {
-          value: t.dbType
+          value: t.dbType,
         }
       })
       cb(result)
     },
     getPdkEditValueType() {
-      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      let findOne = this.typeMapping.find((t) => t.dbType === this.editValueType[this.currentOperationType])
       return findOne?.rules || ''
-    }
+    },
   },
-  emits: ['updateVisible']
+  emits: ['updateVisible'],
 }
 </script>
 

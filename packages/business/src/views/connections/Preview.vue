@@ -10,7 +10,7 @@
         <div class="ml-4 overflow-hidden">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
           <div>
-            <status-tag type="text" target="connection" :status="connection.status"></status-tag>
+            <status-tag text target="connection" :status="connection.status"></status-tag>
           </div>
         </div>
       </div>
@@ -141,8 +141,8 @@ export default {
   props: {
     hideOperation: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -159,20 +159,20 @@ export default {
         btnLoading: {
           deploy: false,
           stop: false,
-          delete: false
-        }
+          delete: false,
+        },
       },
       kafkaACK: {
         0: this.$t('packages_business_connection_preview_no_sure'),
         '-1': this.$t('packages_business_connection_preview_master_partition'),
         1: this.$t('packages_business_connection_preview_master_partition'),
-        all: this.$t('packages_business_connection_preview_isr_partition')
+        all: this.$t('packages_business_connection_preview_isr_partition'),
       },
       list: [],
       mqType: {
         0: 'ActiveMQ',
         1: 'RabbitMQ',
-        2: 'RocketMQ'
+        2: 'RocketMQ',
       },
       configModel: {
         default: [
@@ -181,73 +181,73 @@ export default {
             items: [
               {
                 label: this.$t('public_connection_table_structure_update_time'),
-                key: 'loadSchemaTime'
-              }
-            ]
+                key: 'loadSchemaTime',
+              },
+            ],
           },
           {
             icon: 'database',
             items: [
               {
                 label: this.$t('public_connection_form_database_address'),
-                key: 'database_host'
-              }
-            ]
+                key: 'database_host',
+              },
+            ],
           },
           {
             icon: 'port',
             items: [
               {
                 label: this.$t('public_connection_form_host'),
-                key: 'database_port'
-              }
-            ]
+                key: 'database_port',
+              },
+            ],
           },
           {
             icon: 'name',
             items: [
               {
                 label: this.$t('public_connection_form_database_name'),
-                key: 'database_name'
-              }
-            ]
+                key: 'database_name',
+              },
+            ],
           },
           {
             icon: 'database-user-name',
             items: [
               {
                 label: this.$t('public_connection_form_account'),
-                key: 'database_username'
-              }
-            ]
+                key: 'database_username',
+              },
+            ],
           },
           {
             icon: 'connect_schema',
             items: [
               {
                 label: this.$t('public_connection_form_schema'),
-                key: 'database_owner'
-              }
-            ]
+                key: 'database_owner',
+              },
+            ],
           },
           {
             icon: 'additional-string',
             items: [
               {
                 label: this.$t('public_connection_form_other_connection_string'),
-                key: 'addtionalString'
-              }
-            ]
+                key: 'addtionalString',
+              },
+            ],
           },
           {
             icon: 'origin-time',
             items: [
               {
                 label: this.$t('public_connection_form_time_zone_of_time_type'),
-                key: 'database_datetype_without_timezone'
-              }
-            ]
-          }
+                key: 'database_datetype_without_timezone',
+              },
+            ],
+          },
           // {
           //   icon: 'connect_shared_mining',
           //   items: [
@@ -266,10 +266,10 @@ export default {
           //     }
           //   ]
           // }
-        ]
+        ],
       },
       formData: {},
-      permissions: []
+      permissions: [],
     }
   },
   beforeUnmount() {
@@ -280,7 +280,7 @@ export default {
       if (!val) {
         this.clearTimer() //清除定时器
       }
-    }
+    },
   },
   methods: {
     clearTimer() {
@@ -345,9 +345,9 @@ export default {
           '',
           {
             type: 'warning',
-            showClose: false
-          }
-        ).then(resFlag => {
+            showClose: false,
+          },
+        ).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -355,24 +355,24 @@ export default {
           this.$router.push({
             name: 'connectionsEdit',
             params: {
-              id: id
+              id: id,
             },
             query: {
               pdkHash,
-              pdkId
-            }
+              pdkId,
+            },
           })
         })
       } else {
         this.$router.push({
           name: 'connectionsEdit',
           params: {
-            id: id
+            id: id,
           },
           query: {
             pdkHash,
-            pdkId
-          }
+            pdkId,
+          },
         })
       }
     },
@@ -381,7 +381,7 @@ export default {
         //先将管理端状态改为testing
         connectionsApi
           .updateById(this.connection.id, {
-            status: 'testing'
+            status: 'testing',
           })
           .then(() => {
             // let testData = JSON.parse(JSON.stringify(this.connection))
@@ -401,10 +401,10 @@ export default {
     testSchema(cb) {
       let parms = {
         loadCount: 0,
-        loadFieldsStatus: 'loading'
+        loadFieldsStatus: 'loading',
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connection.id, parms).then(data => {
+      connectionsApi.updateById(this.connection.id, parms).then((data) => {
         cb?.()
         if (!this?.$refs?.test) {
           return
@@ -418,7 +418,7 @@ export default {
       clearTimeout(this.timer)
       connectionsApi
         .getNoSchema(this.connection.id)
-        .then(data => {
+        .then((data) => {
           this.formData = cloneDeep(data)
           this.connection = this.transformData(data)
           //组装数据
@@ -465,10 +465,10 @@ export default {
                   items: [
                     {
                       label: i18n.t('public_connection_form_link_plugin_source'),
-                      key: 'sourceFrom'
-                    }
-                  ]
-                }
+                      key: 'sourceFrom',
+                    },
+                  ],
+                },
               ]),
           this.connection.heartbeatTable
             ? {
@@ -483,13 +483,13 @@ export default {
                       const routeUrl = this.$router.resolve({
                         name: 'HeartbeatMonitor',
                         params: {
-                          id: this.connection.heartbeatTable
-                        }
+                          id: this.connection.heartbeatTable,
+                        },
                       })
                       openUrl(routeUrl.href)
-                    }
-                  }
-                ]
+                    },
+                  },
+                ],
               }
             : {},
           row.uri
@@ -500,9 +500,9 @@ export default {
                     label: 'URI',
                     key: 'uri',
                     value: row.uri,
-                    class: 'text-break text-wrap'
-                  }
-                ]
+                    class: 'text-break text-wrap',
+                  },
+                ],
               }
             : {},
           row.databaseLogInfo?.value
@@ -512,11 +512,11 @@ export default {
                   {
                     label: row.databaseLogInfo.key,
                     key: 'databaseLogInfo',
-                    value: row.databaseLogInfo.value
-                  }
-                ]
+                    value: row.databaseLogInfo.value,
+                  },
+                ],
               }
-            : {}
+            : {},
         ]
       } else {
         this.list = [
@@ -529,10 +529,10 @@ export default {
                   items: [
                     {
                       label: i18n.t('public_connection_form_link_plugin_source'),
-                      key: 'sourceFrom'
-                    }
-                  ]
-                }
+                      key: 'sourceFrom',
+                    },
+                  ],
+                },
               ]),
           this.connection.heartbeatTable
             ? {
@@ -547,13 +547,13 @@ export default {
                       const routeUrl = this.$router.resolve({
                         name: 'HeartbeatMonitor',
                         params: {
-                          id: this.connection.heartbeatTable
-                        }
+                          id: this.connection.heartbeatTable,
+                        },
                       })
                       openUrl(routeUrl.href)
-                    }
-                  }
-                ]
+                    },
+                  },
+                ],
               }
             : {},
           row.databaseLogInfo?.value
@@ -563,11 +563,11 @@ export default {
                   {
                     label: row.databaseLogInfo.key,
                     key: 'databaseLogInfo',
-                    value: row.databaseLogInfo.value
-                  }
-                ]
+                    value: row.databaseLogInfo.value,
+                  },
+                ],
               }
-            : {}
+            : {},
         ]
       }
 
@@ -582,9 +582,9 @@ export default {
               labelActionTitle: i18n.t('packages_business_connections_preview_quanxianguanli'),
               labelAction: () => {
                 this.$refs.permissionsDialog.open(this.connection)
-              }
-            }
-          ]
+              },
+            },
+          ],
         })
 
       // DatabaseLogInfo
@@ -600,7 +600,7 @@ export default {
 
     sync(list) {
       if (!this.visible) return
-      const result = list.find(item => item.id === this.connection.id)
+      const result = list.find((item) => item.id === this.connection.id)
       if (!result) return
       this.formData = cloneDeep(result)
       this.connection = this.transformData(result)
@@ -611,7 +611,7 @@ export default {
       const MAP = {
         publicfalse: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
         publictrue: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
-        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan')
+        customer: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
       }
       return MAP[definitionScope + beta] || MAP['customer']
     },
@@ -637,26 +637,26 @@ export default {
     loadPermissions(id) {
       const filter = {
         dataType: 'Connections',
-        dataId: id
+        dataId: id,
       }
       dataPermissionApi.permissions(filter).then((data = []) => {
         usersApi
           .role({
             filter: JSON.stringify({
-              limit: 1000
-            })
+              limit: 1000,
+            }),
           })
           .then((roleList = []) => {
             this.permissions = data
-              .map(t => {
-                const role = roleList.items?.find(r => r.id === t.typeId) || {}
+              .map((t) => {
+                const role = roleList.items?.find((r) => r.id === t.typeId) || {}
                 return {
                   checked: t.actions,
                   roleId: t.typeId,
-                  roleName: role.name
+                  roleName: role.name,
                 }
               })
-              .filter(t => !!t.roleName)
+              .filter((t) => !!t.roleName)
           })
       })
     },
@@ -672,13 +672,13 @@ export default {
       const params = {
         className: 'PDKConnectionService',
         method: 'databaseLogInfoService',
-        args: [id]
+        args: [id],
       }
       try {
         const data = await proxyApi.call(params)
         row.databaseLogInfo = data || {}
         // list 添加findDatabaseLogInfo
-        let findDatabaseLogInfo = this.list.find(t => t.items?.[0]?.key === 'databaseLogInfo')
+        let findDatabaseLogInfo = this.list.find((t) => t.items?.[0]?.key === 'databaseLogInfo')
         if (findDatabaseLogInfo) {
           findDatabaseLogInfo.items[0].label = row.databaseLogInfo.key
           findDatabaseLogInfo.items[0].value = row.databaseLogInfo.value
@@ -690,9 +690,9 @@ export default {
                 {
                   label: row.databaseLogInfo.key,
                   key: 'databaseLogInfo',
-                  value: row.databaseLogInfo.value
-                }
-              ]
+                  value: row.databaseLogInfo.value,
+                },
+              ],
             })
         }
         this.databaseLogInfoTimer = setTimeout(() => {
@@ -701,9 +701,9 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
   },
-  emits: ['test', 'close', 'reload-schema']
+  emits: ['test', 'close', 'reload-schema'],
 }
 </script>
 

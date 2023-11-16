@@ -22,7 +22,7 @@ export const FieldRename = observer(
         id: '',
         op: 'RENAME',
         field: '',
-        operand: ''
+        operand: '',
       }
       const loadFields = async () => {
         if (!form?.values?.$inputs?.length) {
@@ -33,12 +33,12 @@ export const FieldRename = observer(
         }
 
         let fields = await props.getFields(form?.values.id)
-        options.value = fields.filter(item => !item.is_deleted)
+        options.value = fields.filter((item) => !item.is_deleted)
         fieldMap = options.value.reduce((map, field) => {
           map[field.previousFieldName] = true
           return map
         }, {})
-        invalidOperations.value = fieldRef.value.value.filter(op => {
+        invalidOperations.value = fieldRef.value.value.filter((op) => {
           return !fieldMap[op.field]
         })
       }
@@ -53,9 +53,9 @@ export const FieldRename = observer(
       const removeAllInvalidOperations = () => {
         invalidOperations.value.splice(0)
         fieldModel.setValue(
-          fieldModel.value.filter(op => {
+          fieldModel.value.filter((op) => {
             return fieldMap[op.field]
-          })
+          }),
         )
       }
       // 删除单个无效的操作
@@ -69,20 +69,20 @@ export const FieldRename = observer(
         })
       }
 
-      const isRename = field => {
-        let ops = fieldModel.value.filter(v => v.field === field && v.op === 'RENAME')
+      const isRename = (field) => {
+        let ops = fieldModel.value.filter((v) => v.field === field && v.op === 'RENAME')
         return ops && ops.length > 0
       }
 
-      const isReset = field => {
-        let ops = fieldModel.value.filter(v => v.field === field && v.op === 'RENAME' && v.reset)
+      const isReset = (field) => {
+        let ops = fieldModel.value.filter((v) => v.field === field && v.op === 'RENAME' && v.reset)
         return ops && ops.length > 0
       }
-      const firstReset = field => {
-        let ops = fieldModel.value.filter(v => v.field === field && v.op === 'RENAME' && v.firstReset)
+      const firstReset = (field) => {
+        let ops = fieldModel.value.filter((v) => v.field === field && v.op === 'RENAME' && v.firstReset)
         return ops && ops.length > 0
       }
-      const checkOps = fields => {
+      const checkOps = (fields) => {
         //查找是否有被删除的字段且operation有操作
         if (fieldModel.value?.length > 0 && fields?.length > 0) {
           for (let i = 0; i < fieldModel.value.length; i++) {
@@ -90,7 +90,7 @@ export const FieldRename = observer(
 
             if (!item) return fields
 
-            let targetIndex = fields.findIndex(n => n.previousFieldName === item.field)
+            let targetIndex = fields.findIndex((n) => n.previousFieldName === item.field)
 
             if (targetIndex === -1) {
               continue
@@ -104,7 +104,7 @@ export const FieldRename = observer(
               fields[targetIndex].field_name = newNameStr
 
               // change children field name
-              fields.forEach(field => {
+              fields.forEach((field) => {
                 if (field?.field_name?.startsWith(name + '.')) {
                   field.field_name = newNameStr + field.field_name.substring(name.length)
                 }
@@ -123,7 +123,7 @@ export const FieldRename = observer(
         }
         //eslint-disable-next-line
         console.log('fieldProcessor.handlerRename(node,data,nativeData,operations', node, data, fieldModel.value)
-        let ops = fieldModel.value.filter(v => v.field === data.previousFieldName && v.op === 'RENAME')
+        let ops = fieldModel.value.filter((v) => v.field === data.previousFieldName && v.op === 'RENAME')
         let op
         if (ops.length === 0) {
           op = {
@@ -136,14 +136,14 @@ export const FieldRename = observer(
             primary_key_position: data.primary_key_position,
             field_name: data.field_name,
             reset: form.values.fieldsNameTransforms !== '',
-            firstReset: first || false
+            firstReset: first || false,
           }
           fieldModel.value.push(op)
         } else {
           op = ops[0]
           if (data.field_name === data.previousFieldName) {
             //再次改名跟原来名字一样 删除当前operation 记录
-            let index = fieldModel.value.findIndex(v => v.field === data.previousFieldName && v.op === 'RENAME')
+            let index = fieldModel.value.findIndex((v) => v.field === data.previousFieldName && v.op === 'RENAME')
             fieldModel.value.splice(index, 1)
           } else {
             op.operand = data.field_name
@@ -158,7 +158,7 @@ export const FieldRename = observer(
         // 改名前查找同级中是否重名，若有则return且还原改动并提示
         let exist = false
         if (node && node.parent && node.parent.childNodes) {
-          let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
+          let parentNode = node.parent.childNodes.filter((v) => data.field_name === v.data.field_name)
           if (parentNode && parentNode.length === 2) {
             root.$message.error(data.field_name + i18n.t('packages_form_message_exists_name'))
             exist = true
@@ -202,7 +202,7 @@ export const FieldRename = observer(
           data.field_name = dataLabel
         }
       }
-      const getParentFieldName = node => {
+      const getParentFieldName = (node) => {
         let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
         if (node.level > 1 && node.parent && node.parent.data) {
           let parentFieldName = getParentFieldName(node.parent)
@@ -210,7 +210,7 @@ export const FieldRename = observer(
         }
         return fieldName
       }
-      const changeCapitalized = val => {
+      const changeCapitalized = (val) => {
         capitalized.value = val
         form.setValuesIn('fieldsNameTransform', val)
       }
@@ -230,7 +230,7 @@ export const FieldRename = observer(
         let search = searchFiledName.value.trim()
 
         if (search !== '') {
-          fields = fields.filter(v => {
+          fields = fields.filter((v) => {
             let str = v.label.toLowerCase()
             return str.indexOf(search.toLowerCase()) > -1
           })
@@ -264,7 +264,7 @@ export const FieldRename = observer(
                   <span class="field-ops inline-block mr-4">
                     <ElButton
                       disabled={props.disabled || transformLoading.value}
-                      type="text"
+                      text
                       onClick={() => removeAllInvalidOperations()}
                     >
                       <VIcon size="16">delete</VIcon>
@@ -281,7 +281,7 @@ export const FieldRename = observer(
                       <span class="field-ops mr-4">
                         <ElButton
                           disabled={props.disabled || transformLoading.value}
-                          type="text"
+                          text
                           class="ml-5"
                           onClick={() => removeInvalidOperation(data.field, index)}
                         >
@@ -297,7 +297,7 @@ export const FieldRename = observer(
               <ElSelect
                 value={capitalized.value}
                 disabled={props.disabled || transformLoading.value}
-                onChange={val => {
+                onChange={(val) => {
                   changeCapitalized(val)
                 }}
                 class="w-auto"
@@ -314,7 +314,7 @@ export const FieldRename = observer(
               class="my-2"
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               value={searchFiledName.value}
-              onInput={val => {
+              onInput={(val) => {
                 searchFiledName.value = val
               }}
               clearable
@@ -372,17 +372,17 @@ export const FieldRename = observer(
                                 'el-input el-input--small tree-field-input text__inner',
                                 {
                                   'tree-field-input-primary': data.field_name !== data.previousFieldName,
-                                  'is-disabled': props.disabled || transformLoading.value
-                                }
+                                  'is-disabled': props.disabled || transformLoading.value,
+                                },
                               ]}
                             >
                               <input
                                 disabled={props.disabled || transformLoading.value}
-                                type="text"
+                                text
                                 autocomplete="off"
                                 class="el-input__inner"
                                 value={data.field_name}
-                                onChange={event => {
+                                onChange={(event) => {
                                   const val = event.target.value?.trim()
                                   if (val) {
                                     data.field_name = val
@@ -399,7 +399,7 @@ export const FieldRename = observer(
                         </span>
                         <span class="e-ops mr-4">
                           <ElButton
-                            type="text"
+                            text
                             class="ml-5"
                             disabled={
                               (fieldsNameTransforms === '' && !isRename(data.previousFieldName)) ||
@@ -413,7 +413,7 @@ export const FieldRename = observer(
                           </ElButton>
                         </span>
                       </span>
-                    )
+                    ),
                   }}
                 />
               </div>
@@ -421,8 +421,8 @@ export const FieldRename = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export default FieldRename

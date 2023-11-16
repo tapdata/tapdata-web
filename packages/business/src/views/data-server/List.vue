@@ -53,20 +53,16 @@
         <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
       </template>
       <template #operation="{ row }">
-        <ElButton
-          v-if="row.status !== 'active'"
-          :disabled="row.status !== 'pending'"
-          type="text"
-          @click="changeStatus(row)"
-          >{{ $t('public_button_public') }}</ElButton
-        >
-        <ElButton v-if="row.status === 'active'" type="text" @click="changeStatus(row)">{{
+        <ElButton v-if="row.status !== 'active'" :disabled="row.status !== 'pending'" text @click="changeStatus(row)">{{
+          $t('public_button_public')
+        }}</ElButton>
+        <ElButton v-if="row.status === 'active'" text @click="changeStatus(row)">{{
           $t('public_button_revoke')
         }}</ElButton>
         <ElDivider direction="vertical"></ElDivider>
-        <ElButton type="text" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
+        <ElButton text @click="output(row)">{{ $t('public_button_export') }}</ElButton>
         <ElDivider direction="vertical"></ElDivider>
-        <ElButton type="text" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
+        <ElButton text @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
       </template>
 
       <template v-slot:empty>
@@ -99,18 +95,18 @@ export default {
   props: {
     showFilter: {
       type: Boolean,
-      default: true
+      default: true,
     },
     columns: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     params: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -122,26 +118,26 @@ export default {
         type: '',
         status: '',
         keyword: '',
-        appId: ''
+        appId: '',
       },
       statusOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: i18n.t('public_status_published'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: i18n.t('public_status_unpublished'),
-          value: 'pending'
+          value: 'pending',
         },
         {
           label: i18n.t('public_status_to_be_generated'),
-          value: 'generating'
-        }
-      ]
+          value: 'generating',
+        },
+      ],
     }
   },
   computed: {
@@ -153,57 +149,57 @@ export default {
       if (this.columns.length) return this.columns
       return [
         {
-          type: 'selection'
+          type: 'selection',
         },
         {
           label: this.$t('packages_business_data_server_list_fuwumingcheng'),
           prop: 'name',
           slotName: 'name',
           'min-width': 180,
-          'show-overflow-tooltip': true
+          'show-overflow-tooltip': true,
         },
         {
           label: i18n.t('packages_business_application_list_yingyongmingcheng'),
-          prop: 'appName'
+          prop: 'appName',
         },
         {
           label: this.$t('public_connection_type'),
           prop: 'connectionType',
-          'min-width': 120
+          'min-width': 120,
         },
         {
           label: this.$t('public_connection_name'),
           prop: 'connectionName',
-          'min-width': 200
+          'min-width': 200,
         },
         {
           label: this.$t('packages_business_data_server_list_guanlianduixiang'),
           'min-width': 120,
-          prop: 'tableName'
+          prop: 'tableName',
         },
         {
           label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
           'min-width': 100,
           prop: 'statusFmt',
-          slotName: 'statusFmt'
+          slotName: 'statusFmt',
         },
         {
           label: this.$t('public_operation'),
           width: 200,
           prop: 'operation',
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ]
     },
     // 选中的已发布数据
     multipleSelectionActive() {
-      return this.multipleSelection.filter(t => t.status === 'active')
-    }
+      return this.multipleSelection.filter((t) => t.status === 'active')
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -223,27 +219,27 @@ export default {
           items: async () => {
             let params = {
               where: {
-                item_type: 'app'
+                item_type: 'app',
               },
               order: 'createTime DESC',
-              limit: 1000
+              limit: 1000,
             }
             let res = await appApi.get({ filter: JSON.stringify(params) })
             let data =
-              res.items.map(t => {
+              res.items.map((t) => {
                 return {
                   label: t.value,
-                  value: t.id
+                  value: t.id,
                 }
               }) || []
             //默认全部
             let all = {
               label: this.$t('public_select_option_all'),
-              value: ''
+              value: '',
             }
             data.unshift(all)
             return data
-          }
+          },
         },
         {
           label: this.$t('public_connection_form_database_type'),
@@ -253,37 +249,37 @@ export default {
             let data = await databaseTypesApi.get()
             data = data || []
             let databaseTypes = []
-            databaseTypes = data?.filter(it =>
-              ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId)
+            databaseTypes = data?.filter((it) =>
+              ['mysql', 'sqlserver', 'oracle', 'mongodb', 'pg', 'tidb'].includes(it.pdkId),
             )
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
-              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
             )
             //默认全部
             let all = {
               name: this.$t('public_select_option_all'),
-              type: ''
+              type: '',
             }
             databaseTypeOptions.unshift(all)
-            return databaseTypeOptions.map(item => {
+            return databaseTypeOptions.map((item) => {
               return {
                 label: item.name,
-                value: item.type
+                value: item.type,
               }
             })
-          }
+          },
         },
         {
           label: i18n.t('public_status'),
           key: 'status', //对象类型
           type: 'select-inner',
-          items: this.statusOptions
+          items: this.statusOptions,
         },
         {
           placeholder: i18n.t('public_input_placeholder') + i18n.t('public_name'),
           key: 'keyword', //输入搜索名称
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getData({ page = {} }) {
@@ -306,7 +302,7 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
 
       if (this.params) {
@@ -315,17 +311,17 @@ export default {
 
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let list = (data?.items || []).map(item => {
-            item.statusFmt = this.statusOptions.find(it => it.value === item.status)?.label || '-'
+        .then((data) => {
+          let list = (data?.items || []).map((item) => {
+            item.statusFmt = this.statusOptions.find((it) => it.value === item.status)?.label || '-'
             item.appName = item.listtags?.[0]?.value || '-'
             return item
           })
           return {
             total: data?.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -348,7 +344,7 @@ export default {
     async removeServer(row) {
       const flag = await this.$confirm(i18n.t('packages_business_data_server_list_querenshanchufu'), '', {
         type: 'warning',
-        showClose: false
+        showClose: false,
       })
       if (flag) {
         await modulesApi.delete(row.id)
@@ -362,13 +358,13 @@ export default {
       }
       const flag = await this.$confirm(msg, '', {
         type: 'warning',
-        showClose: false
+        showClose: false,
       })
       if (flag) {
         await modulesApi.patch({
           id: row.id,
           status: row.status === 'active' ? 'pending' : 'active',
-          tableName: row.tableName
+          tableName: row.tableName,
         })
         this.table.fetch()
       }
@@ -377,10 +373,10 @@ export default {
       metadataInstancesApi.download(
         {
           _id: {
-            in: [row.id]
-          }
+            in: [row.id],
+          },
         },
-        'Modules'
+        'Modules',
       )
     },
     showDrawer(item) {
@@ -390,18 +386,18 @@ export default {
       this.table.fetch()
     },
     handleExport() {
-      const ids = this.multipleSelection.map(t => t.id)
+      const ids = this.multipleSelection.map((t) => t.id)
       modulesApi.export(ids)
     },
     handleImport() {
       this.$refs.upload.show()
     },
     handleExportApiDoc() {
-      const ids = this.multipleSelectionActive.map(t => t.id)
+      const ids = this.multipleSelectionActive.map((t) => t.id)
       modulesApi.apiExport(ids, this.apiServerHost)
-    }
+    },
   },
-  emits: ['drawer-visible']
+  emits: ['drawer-visible'],
 }
 </script>
 

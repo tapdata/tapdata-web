@@ -16,7 +16,7 @@
       </ElTableColumn>
       <ElTableColumn :label="$t('public_operation')" width="80">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'data_catalog_edition'" size="small" type="text" @click="toDetails(scope.row)">
+          <ElButton v-readonlybtn="'data_catalog_edition'" size="small" text @click="toDetails(scope.row)">
             {{ $t('metadata_details_version_compared') }}
           </ElButton>
         </template>
@@ -24,7 +24,7 @@
     </ElTable>
     <!-- 数据校验表格 end -->
     <ElDialog
-      custom-class="history-dialog"
+      class="history-dialog"
       :title="histories.name"
       :close-on-click-modal="false"
       v-model:visible="showVersionDialog"
@@ -44,14 +44,14 @@ import dayjs from 'dayjs'
 
 export default {
   components: {
-    HistoryVersion
+    HistoryVersion,
   },
 
   props: {
     histories: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -60,7 +60,7 @@ export default {
       showVersionDialog: false,
       tableData: [],
       comparedData: null,
-      currentVersion: ''
+      currentVersion: '',
     }
   },
   computed: {
@@ -74,7 +74,7 @@ export default {
       } else {
         return this.$route.meta.types || []
       }
-    }
+    },
   },
   created() {
     this.getData()
@@ -85,13 +85,13 @@ export default {
       this.tableData = []
       let histories = self.histories?.histories || []
       if (histories?.length)
-        histories.forEach(item => {
+        histories.forEach((item) => {
           this.tableData.unshift({
             id: this.histories.id,
             version: item.version,
             version_user_id: item.version_user_id,
             version_user_name: item.version_user_name,
-            versionTimeFmt: dayjs(item.version_time).format('YYYY-MM-DD HH:mm:ss')
+            versionTimeFmt: dayjs(item.version_time).format('YYYY-MM-DD HH:mm:ss'),
           })
           this.currentVersion = this.histories.version
         })
@@ -104,8 +104,8 @@ export default {
     toDetails(item) {
       this.comparedData = item
       this.showVersionDialog = true
-    }
-  }
+    },
+  },
 }
 </script>
 

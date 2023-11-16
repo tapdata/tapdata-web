@@ -1,3 +1,4 @@
+import path from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -6,9 +7,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from '@cn-xufei/vite-plugin-svg-icons'
-// import Icons from 'unplugin-icons/vite'
-// import IconsResolver from 'unplugin-icons/resolver'
-import path from 'path'
 import crypto from 'crypto'
 
 const serveUrlMap = {
@@ -73,23 +71,51 @@ export default defineConfig({
   define: {
     'process.env': process.env,
   },
-
+  resolve: {
+    alias: {
+      '@/': `${path.resolve(__dirname, 'src')}/`,
+    },
+    // TODO 建议显式指定扩展名，vite 默认就不支持忽略.vue
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@tap/assets/styles/var.scss" as *;`,
+      },
+    },
+  },
+  server: {
+    proxy: {
+      '/config/': proxy,
+      '/private_ask/': proxy,
+      '/api/tcm/': proxy,
+      '/api/gw/': proxy,
+      '/tm/': Object.assign(
+        {
+          ws: true,
+          secure: false,
+        },
+        proxy,
+      ),
+    },
+  },
   plugins: [
     vue(),
     vueJsx(),
     viteCommonjs({ exclude: ['ali-oss'] }),
-
     AutoImport({
       resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       dts: 'src/auto-imports.d.ts',
     }),
-
     Components({
-      resolvers: [ElementPlusResolver()],
-      // directoryAsNamespace: true
+      resolvers: [
+        ElementPlusResolver({
+          importStyle: 'sass',
+        }),
+      ],
       dts: 'src/components.d.ts',
     }),
-
     createSvgIconsPlugin({
       iconDirs: [
         path.resolve(process.cwd(), 'src/assets/icons/svg'),
@@ -130,38 +156,4 @@ export default defineConfig({
       },
     }),
   ],
-
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-
-    // TODO 建议显式指定扩展名，vite 默认就不支持忽略.vue
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
-  },
-
-  server: {
-    proxy: {
-      '/config/': proxy,
-      '/private_ask/': proxy,
-      '/api/tcm/': proxy,
-      '/api/gw/': proxy,
-      '/tm/': Object.assign(
-        {
-          ws: true,
-          secure: false,
-        },
-        proxy,
-      ),
-    },
-  },
-
-  // 全局注入var.scss
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "@tap/assets/styles/var.scss" as *;`,
-      },
-    },
-  },
 })

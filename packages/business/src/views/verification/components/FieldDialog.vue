@@ -5,7 +5,7 @@
     :append-to-body="true"
     width="1200px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
     <div v-if="visible">
@@ -21,7 +21,7 @@
       <div class="position-relative">
         <div class="list-table__header flex justify-content-between">
           <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
-          <ElButton type="text" class="ml-4 color-primary" @click="handleAdd">
+          <ElButton text class="ml-4 color-primary" @click="handleAdd">
             <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
           >
         </div>
@@ -67,7 +67,7 @@
                     "
                     filterable
                   />
-                  <ElButton type="text" class="mx-2 px-2 color-primary" @click="handleDelete(fIndex)">
+                  <ElButton text class="mx-2 px-2 color-primary" @click="handleDelete(fIndex)">
                     <VIcon> delete</VIcon>
                   </ElButton>
                 </div>
@@ -109,7 +109,7 @@ export default {
       targetFields: [],
       sourceDynamicSchema: false,
       targetDynamicSchema: false,
-      dynamicSchemaMap: {}
+      dynamicSchemaMap: {},
     }
   },
   methods: {
@@ -122,10 +122,10 @@ export default {
         source.forEach((el, i) => {
           list.push({
             source: el,
-            target: target[i]
+            target: target[i],
           })
         })
-        this.list = list.filter(t => t.source || t.target)
+        this.list = list.filter((t) => t.source || t.target)
         return
       }
 
@@ -134,16 +134,16 @@ export default {
         this.sourceFields = await this.getFields(item.source.table, item.source.connectionId)
         this.targetFields = await this.getFields(item.target.table, item.target.connectionId)
 
-        let list = this.sourceFields.map(el => {
-          const findTarget = this.targetFields.find(t => t.value === el.value) || {}
+        let list = this.sourceFields.map((el) => {
+          const findTarget = this.targetFields.find((t) => t.value === el.value) || {}
           findTarget.used = true
           return {
             source: el.value,
-            target: findTarget.value || ''
+            target: findTarget.value || '',
           }
         })
 
-        list.push(...this.targetFields.filter(t => !t.used).map(t => ({ source: '', target: t.value })))
+        list.push(...this.targetFields.filter((t) => !t.used).map((t) => ({ source: '', target: t.value })))
         this.list = list
         this.loading = false
         return
@@ -154,7 +154,7 @@ export default {
         nodeId: item.target.nodeId,
         tableFilter: item.target.table,
         page: 1,
-        pageSize: 1
+        pageSize: 1,
       }
       this.loading = true
       const nodeSchemaPage = await metadataInstancesApi.nodeSchemaPage(params)
@@ -162,75 +162,75 @@ export default {
         nodeId: item.source.nodeId,
         tableFilter: item.source.table,
         page: 1,
-        pageSize: 1
+        pageSize: 1,
       })
       let fieldMap = {}
       const nodeSchemaPageFields = nodeSchemaPage.items?.[0]?.fields || []
-      nodeSchemaPageFields.forEach(t => {
+      nodeSchemaPageFields.forEach((t) => {
         fieldMap[t.original_field_name] = t.field_name
       })
 
       this.sourceFields = cloneDeep(
-        (sourceNodeSchemaPage.items?.[0]?.fields || []).map(t => {
+        (sourceNodeSchemaPage.items?.[0]?.fields || []).map((t) => {
           return {
             id: t.id,
             key: t.id,
             label: t.original_field_name,
             value: t.original_field_name,
             field_name: t.original_field_name,
-            primary_key_position: t.primary_key_position
+            primary_key_position: t.primary_key_position,
           }
-        })
+        }),
       )
 
       this.targetFields = cloneDeep(
-        nodeSchemaPageFields.map(t => {
+        nodeSchemaPageFields.map((t) => {
           return {
             id: t.id,
             key: t.id,
             label: t.field_name,
             value: t.field_name,
             field_name: t.field_name,
-            primary_key_position: t.primary_key_position
+            primary_key_position: t.primary_key_position,
           }
-        })
+        }),
       )
 
       let sourceList = this.sourceFields
-      let targetList = this.targetFields.map(t => {
+      let targetList = this.targetFields.map((t) => {
         t.used = false
         return t
       })
 
-      let list = Object.keys(fieldMap).map(t => {
+      let list = Object.keys(fieldMap).map((t) => {
         return {
           source: t,
-          target: fieldMap[t]
+          target: fieldMap[t],
         }
       })
 
       // sourceList未匹配的字段，独立一行
       list.push(
         ...sourceList
-          .filter(t => !fieldMap[t.value])
-          .map(t => {
+          .filter((t) => !fieldMap[t.value])
+          .map((t) => {
             return {
               source: t.value,
-              target: t.value
+              target: t.value,
             }
-          })
+          }),
       )
 
       // targetList未匹配的字段，独立一行
       list.push(
         ...targetList
-          .filter(t => !Object.values(fieldMap).includes(t.value))
-          .map(t => {
+          .filter((t) => !Object.values(fieldMap).includes(t.value))
+          .map((t) => {
             return {
               source: t.value,
-              target: t.value
+              target: t.value,
             }
-          })
+          }),
       )
 
       this.list = list
@@ -249,7 +249,7 @@ export default {
     getItem() {
       return {
         source: '',
-        target: ''
+        target: '',
       }
     },
 
@@ -264,7 +264,7 @@ export default {
     getFilterList() {
       const { keyword } = this
       return this.list
-        .filter(t => (t.source + t.target).toLowerCase().includes(keyword.toLowerCase()))
+        .filter((t) => (t.source + t.target).toLowerCase().includes(keyword.toLowerCase()))
         .map((t, i) => {
           t.id = `${t.source}_${t.target}_${i}`
           return t
@@ -276,7 +276,7 @@ export default {
     },
 
     handleSave() {
-      if (this.list.some(t => !t.source || !t.target)) {
+      if (this.list.some((t) => !t.source || !t.target)) {
         this.$message.error(i18n.t('packages_business_components_fielddialog_ziduanbuyunxu'))
         return
       }
@@ -291,24 +291,24 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             original_name: table,
-            'source._id': connectionId
+            'source._id': connectionId,
           },
-          limit: 1
-        })
+          limit: 1,
+        }),
       })
 
-      return Object.values(targetMetadataInstances.items[0]?.nameFieldMap || {}).map(t => {
+      return Object.values(targetMetadataInstances.items[0]?.nameFieldMap || {}).map((t) => {
         return {
           id: t.id,
           label: t.fieldName,
           value: t.fieldName,
           field_name: t.fieldName,
-          primary_key_position: t.primaryKey
+          primary_key_position: t.primaryKey,
         }
       })
-    }
+    },
   },
-  emits: ['save']
+  emits: ['save'],
 }
 </script>
 

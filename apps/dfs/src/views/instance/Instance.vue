@@ -173,7 +173,7 @@
                   <span
                     v-else-if="col.value === 'subscriptionMethodLabel'"
                     :class="{
-                      'color-success': item.chargeProvider === 'FreeTier'
+                      'color-success': item.chargeProvider === 'FreeTier',
                     }"
                     >{{ item[col.value] }}</span
                   >
@@ -280,7 +280,7 @@
                           :percentage="upgradingProgres(item) || 0"
                           :show-text="false"
                           :format="
-                            value => {
+                            (value) => {
                               return value
                             }
                           "
@@ -496,15 +496,15 @@
               <div class="w-25 flex justify-content-end align-items-start mt-2 py-4 px-4">
                 <ElButton
                   v-if="item.scope === 'Private' && item.deploymentType !== 'Local'"
-                  type="text"
+                  text
                   @click="handleCreateIps(item)"
                   >{{ $t('dfs_instance_instance_tianjiabaimingdan') }}
                 </ElButton>
-                <ElButton class="mr-2" type="text" :disabled="disableRenew(item)" @click="openRenew(item)"
+                <ElButton class="mr-2" text :disabled="disableRenew(item)" @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}
                 </ElButton>
                 <!--68-2 免费实例可以删除-->
-                <ElButton v-if="item.scope === 'Share'" size="small" type="text" @click="openMdbUnsubscribe(item)">
+                <ElButton v-if="item.scope === 'Share'" size="small" text @click="openMdbUnsubscribe(item)">
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
               </div>
@@ -571,7 +571,7 @@ export default {
     FilterBar,
     transferDialog,
     SubscriptionModelDialog,
-    Unsubscribe
+    Unsubscribe,
   },
   inject: ['buried'],
   mixins: [timeFunction],
@@ -582,61 +582,61 @@ export default {
       createAgentLoading: false,
       searchParams: {
         status: '',
-        keyword: ''
+        keyword: '',
       },
       list: [],
       customColors: [
         { color: '#23C343', percentage: 25 },
         { color: '#2C65FF', percentage: 50 },
         { color: '#F3961A', percentage: 80 },
-        { color: '#F53F3F', percentage: 100 }
+        { color: '#F53F3F', percentage: 100 },
       ],
       agentConfig: [
         {
           label: this.$t('dfs_instance_instance_guige'),
-          value: 'specLabel'
+          value: 'specLabel',
         },
         {
           label: this.$t('dfs_instance_instance_subscribe_time'),
-          value: 'periodStartTime'
+          value: 'periodStartTime',
         },
         {
           label: this.$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
-          value: 'agentTypeLabel'
+          value: 'agentTypeLabel',
         },
         {
           label: this.$t('dfs_instance_instance_daoqishijian'),
-          value: 'expiredTimeLabel'
+          value: 'expiredTimeLabel',
         },
         {
           label: this.$t('dfs_instance_instance_dingyuefangshi'),
-          value: 'subscriptionMethodLabel'
+          value: 'subscriptionMethodLabel',
         },
         {
           label: this.$t('agent_heartbeat'),
-          value: 'pingTimeLabel'
+          value: 'pingTimeLabel',
         },
         {
           label: this.$t('task_manage_etl'),
-          value: 'runningTaskSync'
+          value: 'runningTaskSync',
         },
         {
           label: 'IP',
-          value: 'ips'
+          value: 'ips',
         },
         {
           label: this.$t('task_manage_migrate'),
-          value: 'runningTaskMigrate'
+          value: 'runningTaskMigrate',
         },
         {
           label: this.$t('public_version'),
-          value: 'versionLabel'
-        }
+          value: 'versionLabel',
+        },
       ],
       page: {
         current: 0,
         size: 1000,
-        total: 0
+        total: 0,
       },
       order: 'createAt desc',
       statusMap: INSTANCE_STATUS_MAP,
@@ -647,8 +647,8 @@ export default {
         btnLoading: {
           deploy: false,
           stop: false,
-          delete: false
-        }
+          delete: false,
+        },
       },
       agentStatus: 'stop',
       version: '',
@@ -668,51 +668,51 @@ export default {
       form: {
         refundReason: '',
         refundDescribe: '',
-        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui')
+        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui'),
       },
       currentRow: '',
       refundAmount: '',
       columns: [
         {
           label: this.$t('dfs_instance_instance_guige'),
-          prop: 'spec'
+          prop: 'spec',
         },
         {
           label: this.$t('start_time'),
-          prop: 'periodStart'
+          prop: 'periodStart',
         },
         {
           label: this.$t('end_time'),
-          prop: 'periodEnd'
+          prop: 'periodEnd',
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
-          prop: 'actualAmount'
+          prop: 'actualAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_yixiaohaojine'),
-          prop: 'spentAmount'
+          prop: 'spentAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_tuidingjine'),
-          prop: 'refundAmount'
-        }
+          prop: 'refundAmount',
+        },
       ],
       rules: {
         refundDescribe: [
           {
             required: true,
             message: i18n.t('dfs_instance_instance_qingshurutuiding'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       paidRenewDetail: [],
       unsubscribeHelpDocumentation: '',
       supportResPools: [], //可用资源列表
       scopeMap: {
         Private: i18n.t('dfs_instance_instance_duxiangshili'),
-        Share: i18n.t('dfs_instance_instance_gongxiangshili')
+        Share: i18n.t('dfs_instance_instance_gongxiangshili'),
       },
       mdbData: [],
       //存储资源
@@ -720,54 +720,54 @@ export default {
       specColumns: [
         {
           label: i18n.t('dfs_instance_instance_yunchangshang'),
-          prop: 'providerName'
+          prop: 'providerName',
         },
         {
           label: i18n.t('dfs_instance_instance_access_information'),
-          prop: 'visitInfo'
+          prop: 'visitInfo',
         },
         {
           label: i18n.t('dfs_instance_instance_cunchuleixing'),
-          prop: 'scopeLabel'
+          prop: 'scopeLabel',
         },
         {
           label: i18n.t('dfs_instance_instance_fuwushang'),
-          prop: 'serviceProvider'
+          prop: 'serviceProvider',
         },
         {
           label: i18n.t('dfs_instance_instance_bushufangshi'),
-          prop: 'deploymentTypeLabel'
+          prop: 'deploymentTypeLabel',
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_diqu'),
-          prop: 'regionName'
+          prop: 'regionName',
         },
         {
           label: i18n.t('dfs_instance_instance_baimingdanIp'),
-          prop: 'whiteList'
+          prop: 'whiteList',
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
-          prop: 'specLabel'
+          prop: 'specLabel',
         },
         {
           label: i18n.t('dfs_instance_instance_daoqishijian'),
-          prop: 'expiredTimeLabel'
+          prop: 'expiredTimeLabel',
         },
         {
           label: i18n.t('agent_status'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageLabel'
-        }
+          prop: 'storageLabel',
+        },
       ],
       //创建白名单
       showCreateIps: false,
       ipAddress: '',
-      currentMdbId: ''
+      currentMdbId: '',
     }
   },
   computed: {
@@ -776,10 +776,10 @@ export default {
     statusItems() {
       let result = []
       let filter = ['Creating', 'Running', 'Stopped']
-      filter.forEach(el => {
+      filter.forEach((el) => {
         result.push({
           label: this.statusMap[el]?.text,
-          value: el
+          value: el,
         })
       })
       return result
@@ -803,7 +803,7 @@ export default {
     },
     tableCode() {
       return this.$refs.tableCode
-    }
+    },
   },
   watch: {
     $route(route, oldRoute) {
@@ -825,7 +825,7 @@ export default {
         this.searchParams.status = query.status || ''
         this.fetch(queryStr === '{}' ? undefined : 1)
       }
-    }
+    },
   },
   created() {
     this.init()
@@ -869,7 +869,7 @@ export default {
         this.handleCreateAgent()
         // 清除创建标记
         this.$router.replace({
-          name: 'Instance'
+          name: 'Instance',
         })
       } else if (detailId) {
         this.$nextTick(() => {
@@ -885,11 +885,11 @@ export default {
     },
     //存储资源
     specRemoteMethod() {
-      this.$axios.get('api/tcm/mdb').then(data => {
+      this.$axios.get('api/tcm/mdb').then((data) => {
         const items = data.items || []
         this.mdbData = items
-          .filter(t => !(t.deploymentType == 'Local' && t.scope === 'Private'))
-          .map(item => {
+          .filter((t) => !(t.deploymentType == 'Local' && t.scope === 'Private'))
+          .map((item) => {
             const { subscribeDto = {} } = item.orderInfo
             const { endAt } = subscribeDto || {}
 
@@ -903,19 +903,19 @@ export default {
 
             // 获取访问的账号密码，以及完整的uri
             const { connectionString } = item
-            item.visitInfo = item.dbUsers?.find(t => t.roles.some(r => r.role === 'readAnyDatabase'))
+            item.visitInfo = item.dbUsers?.find((t) => t.roles.some((r) => r.role === 'readAnyDatabase'))
             if (item.visitInfo) {
               const { username, password } = item.visitInfo
               const AES_KEY = '5fa25b06ee34581d'
               const AES_PAD = '5fa25b06ee34581d'
               const AES_PASSWORD = CryptoJS.AES.decrypt(
                 {
-                  ciphertext: CryptoJS.enc.Base64.parse(password)
+                  ciphertext: CryptoJS.enc.Base64.parse(password),
                 },
                 CryptoJS.enc.Latin1.parse(AES_KEY),
                 {
-                  iv: CryptoJS.enc.Latin1.parse(AES_PAD)
-                }
+                  iv: CryptoJS.enc.Latin1.parse(AES_PAD),
+                },
               ).toString(CryptoJS.enc.Utf8)
               const splitStr = '://'
               const splitIndex = connectionString.indexOf(splitStr) + splitStr.length
@@ -949,17 +949,17 @@ export default {
           label: i18n.t('agent_status'),
           key: 'status',
           type: 'select-inner',
-          items: this.statusItems
+          items: this.statusItems,
         },
         {
           placeholder: i18n.t('instance_Instance_anIDShiLi'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getLatestVersion() {
-      this.$axios.get('api/tcm/config/version/latest').then(data => {
+      this.$axios.get('api/tcm/config/version/latest').then((data) => {
         this.version = data.version
         this.supportResPools = data.supportResPools
       })
@@ -967,7 +967,7 @@ export default {
     search() {
       this.$router.replace({
         name: 'Instance',
-        query: this.searchParams
+        query: this.searchParams,
       })
     },
     fetch(pageNum, hideLoading) {
@@ -984,23 +984,23 @@ export default {
       }
       if (status) {
         where.status = {
-          $in: status.split(',')
+          $in: status.split(','),
         }
       }
       let filter = {
         where,
         size: 100,
         page: current,
-        sort: [this.order]
+        sort: [this.order],
       }
 
       // 升级状态
       // let getUpgradeList = await this.getUpgradeList()
       this.$axios
         .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(async data => {
+        .then(async (data) => {
           let list = data.items || []
-          this.list = list.map(item => {
+          this.list = list.map((item) => {
             item.deployDisable = item?.tmInfo?.pingTime || false
             const { subscribeDto = {}, license = {}, chargeProvider } = item.orderInfo || {}
             const { startAt, endAt, periodUnit, subscribeType, paymentMethod } = subscribeDto
@@ -1015,7 +1015,7 @@ export default {
                 getPaymentMethod(
                   { periodUnit: periodUnit, type: subscribeType },
                   paymentMethod || 'Stripe',
-                  chargeProvider
+                  chargeProvider,
                 ) || '-'
             } else {
               item.subscriptionMethodLabel = '-'
@@ -1074,7 +1074,7 @@ export default {
             item.btnLoading = {
               deploy: false,
               stop: false,
-              delete: false
+              delete: false,
             }
             item.ips = item.metric?.systemInfo?.ips?.[0]
             return item
@@ -1108,27 +1108,27 @@ export default {
         typeof cpuUsage === 'number'
           ? (cpuUsage * 100).toLocaleString('zh-CN', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2
+              maximumFractionDigits: 2,
             })
           : 0
       let memory =
         typeof memoryRate === 'number'
           ? (memoryRate * 100).toLocaleString('zh-CN', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2
+              maximumFractionDigits: 2,
             })
           : 0
       let gc =
         typeof gcRate === 'number'
           ? (gcRate * 100).toLocaleString('zh-CN', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2
+              maximumFractionDigits: 2,
             })
           : 0
       return {
         cpuUsage: cpu === '0.00' ? 0 : Number(cpu),
         memoryRate: memory === '0.00' ? 0 : Number(memory),
-        gcRate: gc === '0.00' ? 0 : Number(gc)
+        gcRate: gc === '0.00' ? 0 : Number(gc),
       }
     },
     handlePingTime(row) {
@@ -1157,8 +1157,8 @@ export default {
         name: 'Instance',
         query: {
           ...this.$route.query,
-          detailId: undefined
-        }
+          detailId: undefined,
+        },
       })
     },
     toDeploy(row) {
@@ -1169,8 +1169,8 @@ export default {
       this.$router.push({
         name: 'installAgent',
         params: {
-          id: row?.id
-        }
+          id: row?.id,
+        },
       })
     },
     // 停止
@@ -1193,8 +1193,8 @@ export default {
       this.$confirm(message, this.$t('agent_button_stop_tip'), {
         type: 'warning',
         confirmButtonText: this.$t('public_button_confirm'),
-        cancelButtonText: this.$t('public_button_cancel')
-      }).then(res => {
+        cancelButtonText: this.$t('public_button_cancel'),
+      }).then((res) => {
         if (res) {
           if (row.btnLoading) {
             row.btnLoading.stop = true
@@ -1233,8 +1233,8 @@ export default {
         type: 'warning',
         confirmButtonText: this.$t('public_button_confirm'),
         cancelButtonText: this.$t('public_button_cancel'),
-        customClass: 'delete-agent'
-      }).then(res => {
+        customClass: 'delete-agent',
+      }).then((res) => {
         if (res) {
           if (noDelFlag) {
             return
@@ -1245,7 +1245,7 @@ export default {
           if (row.agentType === 'Cloud') {
             this.$axios
               .post('api/tcm/orders/cancel', {
-                instanceId: row.id
+                instanceId: row.id,
               })
               .then(() => {
                 this.$message.success(this.$t('agent_button_delete_success'))
@@ -1286,7 +1286,7 @@ export default {
       this.$axios
         .post('api/tcm/agent', {
           id,
-          name: val
+          name: val,
         })
         .then(() => {
           this.$message.success(this.$t('operate_update_success'))
@@ -1299,7 +1299,7 @@ export default {
     reset() {
       this.searchParams = {
         status: '',
-        keyword: ''
+        keyword: '',
       }
       this.fetch(1)
     },
@@ -1307,8 +1307,8 @@ export default {
       this.$router.push({
         name,
         query: {
-          agentId: id
-        }
+          agentId: id,
+        },
       })
     },
     showUpgradeDialogFnc(row) {
@@ -1319,7 +1319,7 @@ export default {
         return
       }
       // 版本号
-      this.$axios.get('api/tcm/config/version/latest/' + row.id).then(getVersion => {
+      this.$axios.get('api/tcm/config/version/latest/' + row.id).then((getVersion) => {
         //升级弹窗使用
         let { packageSize, changeList, estimatedUpgradeTime, version, releaseNoteUri } = getVersion
         this.currentVersionInfo = {
@@ -1330,7 +1330,7 @@ export default {
               ? (Math.floor(estimatedUpgradeTime / 60) % 60) + i18n.t('dfs_instance_instance_fenzhong')
               : '-') || '-',
           releaseNoteUri: releaseNoteUri,
-          version: version
+          version: version,
         }
         this.upgradeDialog = true
       })
@@ -1349,14 +1349,14 @@ export default {
       // }
       let row = this.selectedRow
       this.$axios.get('api/tcm/config/version/latest/' + row.id).then(({ token }) => {
-        this.$axios.get(`api/tcm/productRelease/${this.version}`).then(downloadUrl => {
+        this.$axios.get(`api/tcm/productRelease/${this.version}`).then((downloadUrl) => {
           this.$axios
             .post('tm/api/clusterStates/updataAgent', {
               downloadUrl,
               process_id: this.selectedRow?.tmInfo?.agentId,
               version: this.version,
               token: token,
-              op: 'upgrade'
+              op: 'upgrade',
             })
             .then(() => {
               this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
@@ -1369,7 +1369,7 @@ export default {
     fullManagementUpgradeFnc() {
       let params = {
         agentId: this.selectedRow.id,
-        version: this.version //最新版本号
+        version: this.version, //最新版本号
       }
       this.$axios.post('api/tcm/orders/change', params).then(() => {
         this.$message.success(this.$t('agent_auto_upgrade_tip_start'))
@@ -1388,8 +1388,8 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'UpgradeVersion',
         query: {
-          agentId: row.id
-        }
+          agentId: row.id,
+        },
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -1409,7 +1409,7 @@ export default {
               ? ''
               : i18n.t('instance_Instance_tHIST', {
                   val1: this.$t('agent_auto_upgrade_tip_progress'),
-                  val2: this.upgradingProgres(row)
+                  val2: this.upgradingProgres(row),
                 }))
           break
         case 'fail':
@@ -1435,8 +1435,8 @@ export default {
         .replace({
           name: 'Instance',
           query: Object.assign({}, query, {
-            detailId: this.selectedRow.id
-          })
+            detailId: this.selectedRow.id,
+          }),
         })
         .catch(() => {})
     },
@@ -1449,7 +1449,7 @@ export default {
     handleCreateAgent() {
       //this.subscriptionModelVisible = true
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       this.buried('newAgentStripeDialog')
     },
@@ -1467,7 +1467,7 @@ export default {
       }
       let params = {
         mdbId: this.currentMdbId,
-        whiteList: this.ipAddress
+        whiteList: this.ipAddress,
       }
       this.$axios
         .post('api/tcm/mdb/update/whitelist', params)
@@ -1547,7 +1547,7 @@ export default {
       if (row.agentType === 'Cloud') {
         //全托管升级必须在支持升级可用资源区
         let available =
-          this.supportResPools.filter(it => it.provider === row.provider && it.region === row.region) || []
+          this.supportResPools.filter((it) => it.provider === row.provider && it.region === row.region) || []
         return !!(version && row.status === 'Running' && row?.spec?.version !== version && available?.length > 0)
       }
       return !!(version && row?.tmInfo?.pingTime && row?.spec?.version !== version)
@@ -1585,7 +1585,7 @@ export default {
         this.buried('agentCreate')
         this.fetch()
         this.toDeploy({
-          id: data.agentId
+          id: data.agentId,
         })
         this.createAgentLoading = false
         return true
@@ -1603,12 +1603,12 @@ export default {
         {
           dangerouslyUseHTMLString: true,
           confirmButtonText: i18n.t('dfs_aliyun_market_checklicnese_jihuoshouquanma'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (resFlag) {
           this.$router.push({
-            name: 'aliyunMarketLicense'
+            name: 'aliyunMarketLicense',
           })
         }
       })
@@ -1626,7 +1626,7 @@ export default {
       if (count) return false
       const flag = await this.handleNewAgent({
         agentType: 'Local',
-        chargeProvider: 'FreeTier'
+        chargeProvider: 'FreeTier',
       })
       return flag
     },
@@ -1645,7 +1645,7 @@ export default {
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
-          op: 'restart'
+          op: 'restart',
         })
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -1661,7 +1661,7 @@ export default {
       this.$axios
         .post('tm/api/clusterStates/updataAgent', {
           process_id: row?.tmInfo?.agentId,
-          op: 'start'
+          op: 'start',
         })
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -1676,7 +1676,7 @@ export default {
         id: subscriptionId,
         paidType: subscribeDto?.paymentMethod,
         type: 'Engine',
-        subscribeItems: subscribeDto?.subscribeItems
+        subscribeItems: subscribeDto?.subscribeItems,
       }
       this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'Engine')
     },
@@ -1688,7 +1688,7 @@ export default {
         id: subscriptionId,
         paidType: subscribeDto?.paymentMethod,
         type: 'MongoDB',
-        subscribeItems: subscribeDto?.subscribeItems
+        subscribeItems: subscribeDto?.subscribeItems,
       }
       this.$refs?.UnsubscribeDetailDialog?.getUnsubscribePrice(sub, 'MongoDB')
     },
@@ -1697,7 +1697,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -1711,7 +1711,7 @@ export default {
         endAt: subscribeDto?.endAt,
         subscribeItems: subscribeDto?.subscribeItems,
         currency: subscribeDto?.currency,
-        periodUnit: subscribeDto?.periodUnit
+        periodUnit: subscribeDto?.periodUnit,
       }
       this.$refs?.RenewDetailDialog?.openRenew(sub)
     },
@@ -1721,13 +1721,13 @@ export default {
         i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
         i18n.t('dfs_user_center_tuidingfuwu'),
         {
-          type: 'warning'
-        }
-      ).then(res => {
+          type: 'warning',
+        },
+      ).then((res) => {
         if (!res) return
         const { paidType } = row
         this.buried('unsubscribeAgentStripe', '', {
-          type: paidType
+          type: paidType,
         })
         this.$axios
           .post('api/tcm/orders/cancel', { instanceId: row.id })
@@ -1735,14 +1735,14 @@ export default {
             this.fetch()
             this.buried('unsubscribeAgentStripe', '', {
               result: true,
-              type: paidType
+              type: paidType,
             })
             this.$message.success(this.$t('public_message_operation_success'))
           })
           .catch(() => {
             this.buried('unsubscribeAgentStripe', '', {
               result: false,
-              type: paidType
+              type: paidType,
             })
           })
       })
@@ -1753,9 +1753,9 @@ export default {
         i18n.t('dfs_user_center_ninjiangtuidingr', { val1: row.content }),
         i18n.t('dfs_user_center_tuidingfuwu'),
         {
-          type: 'warning'
-        }
-      ).then(res => {
+          type: 'warning',
+        },
+      ).then((res) => {
         if (!res) return
         this.$axios.post('tm/api/Workers/share/delete').then(() => {
           this.fetch()
@@ -1766,8 +1766,8 @@ export default {
     //删除存储
     handleDeleteMdb(row) {
       this.$confirm(i18n.t('agent_button_delete_mdb_confirm_title'), i18n.t('button_delete'), {
-        type: 'warning'
-      }).then(res => {
+        type: 'warning',
+      }).then((res) => {
         if (!res) return
         let url = 'api/tcm/mdb/share/' + row.id
         if (row.scope === 'Private') {
@@ -1792,14 +1792,14 @@ export default {
       this.$confirm(showUri || this.$t('public_data_no_data'), i18n.t('dfs_instance_instance_access_information'), {
         type: 'warning',
         confirmButtonText: i18n.t('public_button_copy'),
-        showCancelButton: false
-      }).then(res => {
+        showCancelButton: false,
+      }).then((res) => {
         if (!res) return
         onCopy(copyUri || this.$t('public_data_no_data'))
         this.$message.success(this.$t('public_message_copied'))
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -47,23 +47,19 @@
         <template #default="{ row }">
           <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
-            type="text"
+            text
             v-model:value="row.defaultStorage"
             :disabled="row.defaultStorage"
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton :disabled="row.type !== 'mongodb'" type="text" @click="handleTest(row)"
+          <ElButton :disabled="row.type !== 'mongodb'" text @click="handleTest(row)"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
-            $t('public_button_edit')
-          }}</ElButton>
+          <ElButton text :disabled="!row.canEdit" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" :disabled="!row.canDelete" @click="remove(row)">{{
-            $t('public_button_delete')
-          }}</ElButton>
+          <ElButton text :disabled="!row.canDelete" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -156,7 +152,7 @@
       <div>
         {{
           $t('packages_business_external_storage_list_tishi', {
-            val1: usingTasks.length
+            val1: usingTasks.length,
           })
         }}
       </div>
@@ -214,7 +210,7 @@ export default {
       order: 'createAt DESC',
       searchParams: {
         type: '',
-        keyword: ''
+        keyword: '',
       },
       dialogVisible: false,
       dialogForm: {},
@@ -224,16 +220,16 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_external_storage_list_qingshuruwaicun'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         uri: [
           {
             required: true,
             message: i18n.t('packages_business_external_storage_list_qingshurucunchu'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       isShowDetails: false,
       details: '',
@@ -244,18 +240,18 @@ export default {
       usingTasks: [],
       schemaData: null,
       dialogTestVisible: false,
-      model: {}
+      model: {},
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     this.searchParams = Object.assign(this.searchParams, this.$route.query)
@@ -274,18 +270,18 @@ export default {
             {
               fulfill: {
                 state: {
-                  visible: '{{$self.value===true}}'
-                }
+                  visible: '{{$self.value===true}}',
+                },
               },
-              target: '*(sslKey,sslPass,sslValidate)'
-            }
+              target: '*(sslKey,sslPass,sslValidate)',
+            },
           ],
           'x-component-props': {
-            optionType: 'button'
+            optionType: 'button',
           },
           type: 'boolean',
           title: i18n.t('packages_business_external_storage_list_shiyongTls'),
-          'x-index': 80
+          'x-index': 80,
         },
         sslCA: {
           'x-decorator': 'FormItem',
@@ -294,7 +290,7 @@ export default {
           title: i18n.t('packages_business_external_storage_list_zhengshubanfaji'),
           'x-index': 120,
           fileNameField: 'sslCAFile',
-          required: true
+          required: true,
         },
         sslKey: {
           'x-decorator': 'FormItem',
@@ -303,14 +299,14 @@ export default {
           title: i18n.t('packages_business_external_storage_list_kehuduansiyao'),
           'x-index': 90,
           fileNameField: 'sslKeyFile',
-          required: true
+          required: true,
         },
         sslPass: {
           'x-decorator': 'FormItem',
           'x-component': 'Password',
           type: 'string',
           title: i18n.t('packages_business_external_storage_list_siyaomima'),
-          'x-index': 100
+          'x-index': 100,
         },
         sslValidate: {
           'x-decorator': 'FormItem',
@@ -320,17 +316,17 @@ export default {
             {
               fulfill: {
                 state: {
-                  visible: '{{$self.value===true}}'
-                }
+                  visible: '{{$self.value===true}}',
+                },
               },
-              target: 'sslCA'
-            }
+              target: 'sslCA',
+            },
           ],
           type: 'boolean',
           title: i18n.t('packages_business_external_storage_list_yanzhengfuwuduan'),
-          'x-index': 110
-        }
-      }
+          'x-index': 110,
+        },
+      },
     }
 
     //定时轮询
@@ -348,7 +344,7 @@ export default {
         const label = EXTERNAL_STORAGE_TYPE_MAP[key]
         typeOptions.push({
           label,
-          value: key
+          value: key,
         })
       }
       this.filterItems = [
@@ -356,13 +352,13 @@ export default {
           label: this.$t('public_connection_form_database_type'),
           key: 'type', //对象分类
           type: 'select-inner',
-          items: typeOptions
+          items: typeOptions,
         },
         {
           placeholder: i18n.t('public_input_placeholder_name'),
           key: 'keyword', //输入搜索名称
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getData({ page }) {
@@ -379,14 +375,14 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return externalStorageApi
         .list({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let list = (data?.items || []).map(item => {
+        .then((data) => {
+          let list = (data?.items || []).map((item) => {
             item.typeFmt = EXTERNAL_STORAGE_TYPE_MAP[item.type] || '-'
             item.createTimeFmt = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') || '-'
             item.status = item.status || 'ready'
@@ -394,7 +390,7 @@ export default {
           })
           return {
             total: data?.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -407,14 +403,14 @@ export default {
             name: '',
             type: 'mongodb',
             uri: '',
-            defaultStorage: false
+            defaultStorage: false,
           }
       this.$nextTick(() => {
         this.$refs?.form?.clearValidate()
       })
     },
     submit() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           const main = async () => {
             let formValues = this.$refs.schemaToForm?.getFormValues?.()
@@ -427,9 +423,9 @@ export default {
                 name,
                 type,
                 uri,
-                defaultStorage
+                defaultStorage,
               },
-              formValues
+              formValues,
             )
             const catchFunc = () => {
               this.loading = false
@@ -476,7 +472,7 @@ export default {
       this.usingTasks = (await externalStorageApi.usingTask(row.id)) || []
       const flag = await this.$confirm(i18n.t('packages_business_external_storage_list_querenshanchuwai'), '', {
         type: 'warning',
-        showClose: false
+        showClose: false,
       })
       if (flag) {
         if (this.usingTasks?.length) {
@@ -493,23 +489,23 @@ export default {
         {
           label: this.$t('public_external_memory_type'),
           value: row.typeFmt,
-          icon: 'name'
+          icon: 'name',
         },
         {
           label: this.$t('public_create_time'),
           value: row.createTimeFmt,
-          icon: 'cacheTimeAtFmt'
+          icon: 'cacheTimeAtFmt',
         },
         {
           label: this.$t('packages_business_external_storage_list_cunchulujing'),
           value: row.uri,
-          icon: 'database'
+          icon: 'database',
         },
         {
           label: this.$t('packages_business_external_storage_list_sheweimoren'),
           value: row.defaultStorage,
-          icon: 'record'
-        }
+          icon: 'record',
+        },
       ]
       this.isShowDetails = true
     },
@@ -527,13 +523,13 @@ export default {
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
         mem_cache: 'sharedCacheList',
-        connHeartbeat: 'HeartbeatTableList'
+        connHeartbeat: 'HeartbeatTableList',
       }
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
         query: {
-          keyword: item.name
-        }
+          keyword: item.name,
+        },
       })
       openUrl(routeUrl.href)
     },
@@ -548,7 +544,7 @@ export default {
     },
 
     handleEditorTest() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
           schemaFormInstance?.validate().then(async () => {
@@ -562,9 +558,9 @@ export default {
                 name,
                 type,
                 uri,
-                defaultStorage
+                defaultStorage,
               },
-              formValues
+              formValues,
             )
             let result = { id }
             for (let key in params) {
@@ -598,15 +594,15 @@ export default {
         this.$message.error(this.$t('public_connection_button_test') + this.$t('public_status_invalid'), false)
       }
       this.buried('externalStorage_connectionTest', '', {
-        result: status === 'ready'
+        result: status === 'ready',
       })
       this.table.fetch()
     },
 
     getStatus(status) {
       return CONNECTION_STATUS_MAP[status]?.text || ''
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -23,32 +23,32 @@ export default {
   components: {
     Desciption: {
       props: {
-        desc: [String, Function]
+        desc: [String, Function],
       },
       render() {
         if (this.desc) {
           if (Object.prototype.toString.call(this.desc) === '[object Function]') {
             return Vue.h('span', plantRenderPara({ class: 'flex align-items-center' }), [
-              this.desc(Vue.h, this.$t.bind(this))
+              this.desc(Vue.h, this.$t.bind(this)),
             ])
           } else {
             return Vue.h('span', this.desc)
           }
         }
         return null
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       breadcrumbData: [],
-      isHidden: false
+      isHidden: false,
     }
   },
   watch: {
     '$route.name'() {
       this.getBreadcrumb(this.$route)
-    }
+    },
   },
   created() {
     this.getBreadcrumb(this.$route)
@@ -59,7 +59,7 @@ export default {
       let data = []
       let isHidden = false
       if (matched.length) {
-        matched.forEach(route => {
+        matched.forEach((route) => {
           isHidden = route.meta?.hideTitle
           if (/^\/.*\/$/.test(route.path)) {
             data.pop()
@@ -70,21 +70,21 @@ export default {
                 ? null
                 : ['settingCenter', 'notification'].includes(route.name)
                 ? 'layout'
-                : route.name
+                : route.name,
           }
           if (route.meta?.doNotJump) {
             to = null
           }
           data.push({
             name: this.$t(route.meta?.title || ''),
-            to
+            to,
           })
         })
       }
       this.isHidden = !!isHidden
       this.breadcrumbData = data
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -8,7 +8,7 @@
         <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
+      <ElButton v-if="!readonly" text class="ml-3" @click="rollbackAll">{{
         $t('packages_form_field_inference_main_quanbuhuifumo')
       }}</ElButton>
     </div>
@@ -169,7 +169,7 @@ export default {
 
   props: {
     form: Object,
-    readOnly: Boolean
+    readOnly: Boolean,
   },
 
   data() {
@@ -183,7 +183,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
@@ -197,21 +197,21 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0
+          total: 0,
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0
+          total: 0,
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0
-        }
+          total: 0,
+        },
       ],
       transformExNum: 0,
-      updateExNum: 0
+      updateExNum: 0,
     }
   },
 
@@ -219,7 +219,7 @@ export default {
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
     },
 
     readonly() {
@@ -229,7 +229,7 @@ export default {
     isErrorSelect() {
       const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
-    }
+    },
   },
 
   mounted() {
@@ -243,7 +243,7 @@ export default {
         this.activeClassification = ''
         this.loadData()
       }
-    }
+    },
   },
 
   methods: {
@@ -254,11 +254,11 @@ export default {
       let rules = this.form.getValuesIn('fieldChangeRules') || []
       if (rules.length) {
         let allTableFields = []
-        this.navList.forEach(el => {
-          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        this.navList.forEach((el) => {
+          allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
         })
-        rules.forEach(el => {
-          const f = allTableFields.find(t => t.changeRuleId === el.id)
+        rules.forEach((el) => {
+          const f = allTableFields.find((t) => t.changeRuleId === el.id)
           if (f && el.accept !== f.dataTypeTemp) {
             el.accept = f.dataTypeTemp
           }
@@ -272,33 +272,33 @@ export default {
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map(t => {
+      this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach(el => {
+        fields.forEach((el) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
             this.fieldChangeRules,
-            findPossibleDataTypes
+            findPossibleDataTypes,
           )
         })
-        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
           ? 'error'
-          : fields.some(f => f.matchedDataTypeLevel === 'warning')
+          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
           ? 'warning'
           : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach(el => {
+      this.tableClassification.forEach((el) => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
@@ -324,7 +324,7 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
@@ -340,8 +340,8 @@ export default {
     rollbackAll() {
       this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -388,8 +388,8 @@ export default {
     },
 
     updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach(t => {
-        const f = fields.find(el => el.field_name === t.field_name)
+      this.selected.fields.forEach((t) => {
+        const f = fields.find((el) => el.field_name === t.field_name)
         if (f) {
           t.data_type = f.data_type
           t.changeRuleId = f.changeRuleId
@@ -401,18 +401,18 @@ export default {
       const { qualified_name, nodeId, source = {}, fields = [] } = item
       const { database_type } = source
       const params = {
-        rules: rules.filter(t => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        rules: rules.filter((t) => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
         qualifiedName: qualified_name,
         nodeId,
         databaseType: database_type,
-        fields
+        fields,
       }
       const data = (await metadataInstancesApi.multiTransform(params)) || {
-        fields: []
+        fields: [],
       }
       return data.fields.length ? data.fields : fields
-    }
-  }
+    },
+  },
 }
 </script>
 

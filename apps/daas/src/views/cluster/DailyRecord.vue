@@ -66,7 +66,7 @@
               </el-select>
             </li>
             <li>
-              <el-button type="text" class="restBtn" size="small" @click="rest()">
+              <el-button text class="restBtn" size="small" @click="rest()">
                 {{ $t('public_button_reset') }}
               </el-button>
             </li>
@@ -106,21 +106,21 @@ export default {
         closeDate: '',
         level: '',
         serverType: '',
-        ip: ''
+        ip: '',
       },
       tableData: [],
       levelList: [
         { label: 'INFO', value: 'INFO' },
         { label: 'WARN', value: 'WARN' },
-        { label: 'ERROR', value: 'ERROR' }
+        { label: 'ERROR', value: 'ERROR' },
       ],
       serverTypeList: [
         { label: 'engine', value: 'engine' },
         { label: 'management', value: 'management' },
         { label: 'apiServer', value: 'apiServer' },
-        { label: 'tapdataAgent', value: 'tapdataAgent' }
+        { label: 'tapdataAgent', value: 'tapdataAgent' },
       ],
-      ipList: []
+      ipList: [],
     }
   },
   mounted() {
@@ -133,7 +133,7 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   unmounted() {
     clearInterval(timeout)
@@ -141,9 +141,9 @@ export default {
   methods: {
     // 获取ip
     getIpFn() {
-      clusterApi.get().then(data => {
+      clusterApi.get().then((data) => {
         let items = data?.items || []
-        items.forEach(item => {
+        items.forEach((item) => {
           this.ipList.push({ value: item.systemInfo.ip })
         })
       })
@@ -163,16 +163,16 @@ export default {
         order: 'last_updated DESC',
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return logsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total || 0,
-            data: data?.items || []
+            data: data?.items || [],
           }
         })
     },
@@ -182,7 +182,7 @@ export default {
         closeDate: '',
         level: '',
         serverType: '',
-        ip: ''
+        ip: '',
       }
       this.table.fetch(1)
     },
@@ -219,10 +219,10 @@ export default {
     //运行日志
     goClusterManagement() {
       this.$router.push({
-        name: 'clusterManagement'
+        name: 'clusterManagement',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

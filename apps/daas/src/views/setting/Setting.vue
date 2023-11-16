@@ -64,7 +64,7 @@
                                         .split(')')
                                         .join('_')
                                         .split('.')
-                                        .join('_')
+                                        .join('_'),
                                   )
                                 }}
                               </div>
@@ -123,7 +123,7 @@
     <el-dialog
       :title="$t('setting_email_template')"
       :close-on-click-modal="false"
-      custom-class="dialog-email-template"
+      class="dialog-email-template"
       v-model="emailTemplateDialog"
       width="800px"
     >
@@ -214,7 +214,7 @@ export default {
       liceseItems: [],
       emailTemplateDialog: false,
       formData: {
-        items: []
+        items: [],
       },
       activeTab: 0,
       activePanel: 'Log',
@@ -222,44 +222,44 @@ export default {
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
-          status: 'running'
+          status: 'running',
         },
         {
           label: this.$t('setting_Email_Template_Paused'),
-          status: 'paused'
+          status: 'paused',
         },
         {
           label: this.$t('setting_Email_Template_Error'),
-          status: 'error'
+          status: 'error',
         },
         {
           label: this.$t('setting_Email_Template_Draft'),
-          status: 'draft'
+          status: 'draft',
         },
         {
           label: this.$t('setting_Email_Template_CDC'),
-          status: 'CDC Lag'
+          status: 'CDC Lag',
         },
-        { label: this.$t('setting_Email_Template_DDL') }
+        { label: this.$t('setting_Email_Template_DDL') },
       ],
       keyMapping: {
         TASK_INCREMENT_DELAY: i18n.t('daas_setting_setting_renwudezengliang'),
         DATANODE_HTTP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanwanglu'),
         DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_setting_shujuyuanxieyi'),
         DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_shujuyuanjiedian'),
-        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande')
+        PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_setting_chulijiediande'),
       },
       columns: [
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'keySlot'
+          slotName: 'keySlot',
         },
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'valueSlot'
-        }
+          slotName: 'valueSlot',
+        },
       ],
-      email: ''
+      email: '',
     }
   },
   created() {
@@ -271,17 +271,17 @@ export default {
       let result = {}
       let items = this.formData.items
       if (items && items.length) {
-        let SMTP = find(items, item => {
+        let SMTP = find(items, (item) => {
           return item.category === 'SMTP'
         })
         if (SMTP && SMTP.items) {
-          SMTP.items.forEach(it => {
+          SMTP.items.forEach((it) => {
             result[it.key_label.split(' ').join('_')] = it.value
           })
         }
       }
       return result
-    }
+    },
   },
   watch: {
     deep: true,
@@ -290,8 +290,8 @@ export default {
 
       handler(value) {
         this.formData = value
-      }
-    }
+      },
+    },
   },
   methods: {
     changeName(name) {
@@ -301,21 +301,21 @@ export default {
     getData() {
       let _this = this
       let auth_data = []
-      licensesApi.get({}).then(data => {
+      licensesApi.get({}).then((data) => {
         auth_data = data?.items || []
       })
-      settingsApi.get().then(data => {
+      settingsApi.get().then((data) => {
         let items = [],
           itemsCategories = [],
           cat = []
         data = data || []
-        items = data.map(item => item.category)
+        items = data.map((item) => item.category)
         items = uniq(items)
         items.sort((a, b) => {
           return a.sort < b.sort ? -1 : 1
         })
-        items.map(item => {
-          let values = data.filter(childItem => {
+        items.map((item) => {
+          let values = data.filter((childItem) => {
             return childItem.category === item && childItem.user_visible
           })
           values.sort((a, b) => {
@@ -327,18 +327,18 @@ export default {
           }
         })
 
-        let sortCategories = cat.map(item => {
-          let values = data.filter(childItem => {
+        let sortCategories = cat.map((item) => {
+          let values = data.filter((childItem) => {
             return childItem.category === item
           })
           return {
             category: item,
-            category_sort: values[0].category_sort
+            category_sort: values[0].category_sort,
           }
         })
 
-        let vals = sortCategories.map(item => {
-          let value = find(itemsCategories, val => {
+        let vals = sortCategories.map((item) => {
+          let value = find(itemsCategories, (val) => {
             return val.category === item.category
           })
           return Object.assign(value, item)
@@ -351,15 +351,15 @@ export default {
       let lincenseData = {
         liceseItems: auth_data,
         items: auth_data,
-        category: 'license'
+        category: 'license',
       }
       _this.formData.items.push(lincenseData)
     },
     // 保存
     save() {
       let settingData = []
-      this.formData.items.filter(item => {
-        item.items.forEach(childItem => {
+      this.formData.items.filter((item) => {
+        item.items.forEach((childItem) => {
           settingData.push(childItem)
         })
       })
@@ -386,14 +386,14 @@ export default {
       const params = {
         ...this.SMTP,
         title: `Tapdata Notification:`,
-        text: 'This is a test email'
+        text: 'This is a test email',
       }
       settingsApi.testEmail(params).then(() => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
         this.$message.success(this.$t('setting_test_email_success'))
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

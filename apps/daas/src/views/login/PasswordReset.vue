@@ -43,7 +43,7 @@
                 <el-col :span="17">
                   <el-input
                     v-model="form.validateCode"
-                    type="text"
+                    text
                     maxlength="6"
                     :placeholder="$t('signin_verify_code')"
                   ></el-input>
@@ -59,7 +59,7 @@
           </el-form>
           <div class="back-login">
             {{ $t('app_signIn_rememberPasswords') }}
-            <ElButton type="text" @click="backLogin">{{ $t('app_signIn_backLogin') }}</ElButton>
+            <ElButton text @click="backLogin">{{ $t('app_signIn_backLogin') }}</ElButton>
           </div>
         </div>
       </section>
@@ -74,7 +74,7 @@ import { usersApi } from '@tap/api'
 import LoginPage from './LoginPage'
 export default {
   components: {
-    LoginPage
+    LoginPage,
   },
   name: 'SignIn',
   data() {
@@ -84,7 +84,7 @@ export default {
         email: '',
         newPassword: '',
         validateCode: '',
-        location_origin: window.location.origin
+        location_origin: window.location.origin,
       },
       errorMessage: '',
       flag: false,
@@ -103,8 +103,8 @@ export default {
               } else {
                 callback()
               }
-            }
-          }
+            },
+          },
         ],
         newPassword: [
           {
@@ -118,8 +118,8 @@ export default {
               } else {
                 callback()
               }
-            }
-          }
+            },
+          },
         ],
         validateCode: [
           {
@@ -131,10 +131,10 @@ export default {
               } else {
                 callback()
               }
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     }
   },
   methods: {
@@ -143,7 +143,7 @@ export default {
       this.passwordType = this.flag ? 'text' : 'password'
     },
     submit() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           this.loading = true
 
@@ -152,10 +152,10 @@ export default {
             .then(() => {
               this.$router.push({
                 name: 'verificationEmail',
-                params: { first: 1, data: this.form, type: 'reset' }
+                params: { first: 1, data: this.form, type: 'reset' },
               })
             })
-            .catch(e => {
+            .catch((e) => {
               if (e?.data?.message) {
                 if (e.data.message === i18n.t('daas_login_passwordreset_zhaobudaodianzi')) {
                   this.errorMessage = this.$t('signin_not_mailbox')
@@ -195,7 +195,7 @@ export default {
         return
       }
       let params = {
-        email: this.form.email
+        email: this.form.email,
       }
       usersApi.sendValidateCode(params).then(() => {
         this.$message.success(this.$t('signin_verify_code_success'))
@@ -206,10 +206,10 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.form.email }
+        query: { email: this.form.email },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

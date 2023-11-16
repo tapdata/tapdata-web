@@ -33,7 +33,7 @@
             <el-form-item prop="inviteCode">
               <el-input
                 v-model="form.inviteCode"
-                type="text"
+                text
                 :placeholder="$t('app_signIn_inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
@@ -71,7 +71,7 @@ import { usersApi } from '@tap/api'
 
 export default {
   components: {
-    Header
+    Header,
   },
   name: 'SignIn',
   data() {
@@ -81,12 +81,12 @@ export default {
         email: '',
         password: '',
         emailVerified: true,
-        role: 0
+        role: 0,
       },
       errorMessage: '',
       keepSignIn: true,
       passwordType: 'password',
-      flag: false
+      flag: false,
     }
   },
   methods: {
@@ -137,7 +137,7 @@ export default {
         Cookie.set('user_id', data.id)
         this.$router.replace({
           name: 'verificationEmail',
-          params: { data: this.form }
+          params: { data: this.form },
         })
       } catch (e) {
         if (e.response && e.response.msg) {
@@ -161,10 +161,10 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.form.email }
+        query: { email: this.form.email },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

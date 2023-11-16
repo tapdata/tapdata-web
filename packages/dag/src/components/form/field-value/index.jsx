@@ -18,7 +18,7 @@ export const FieldValue = connect(
         return {
           databaseType: form.values.databaseType,
           scripts: form.values.scripts,
-          form
+          form,
         }
       },
 
@@ -33,7 +33,7 @@ export const FieldValue = connect(
             open: false,
             script: '//Enter you code at here',
             fieldName: '',
-            fn: function () {}
+            fn: function () {},
           },
           current: '',
           /*字段处理器支持功能类型*/
@@ -42,8 +42,8 @@ export const FieldValue = connect(
             field: '',
             scriptType: 'js',
             script: '',
-            id: ''
-          }
+            id: '',
+          },
         }
       },
       watch: {
@@ -53,20 +53,20 @@ export const FieldValue = connect(
             this.form.setValuesIn('scripts', v)
             $emit(this, 'change', v)
             console.log('scripts', v) // eslint-disable-line
-          }
-        }
+          },
+        },
       },
 
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
-        fields = fields.filter(item => !item.is_deleted)
+        fields = fields.filter((item) => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || []
         fields = this.checkOps(fields) || []
         this.searchFiledName = this.searchFiledName.trim().toString() //去空格
         if (this.searchFiledName !== '') {
-          fields = fields.filter(v => {
+          fields = fields.filter((v) => {
             let str = v.label.toLowerCase()
             return str.indexOf(this.searchFiledName.toLowerCase()) > -1
           })
@@ -131,7 +131,7 @@ export const FieldValue = connect(
                       <span class="field-name inline-block ellipsis">{data.script}</span>
                       <span class="e-ops">
                         <ElButton
-                          type="text"
+                          text
                           class="ml-5"
                           disabled={this.disabled}
                           onClick={() => this.handleScript(node, data)}
@@ -139,7 +139,7 @@ export const FieldValue = connect(
                           <VIcon>js</VIcon>
                         </ElButton>
                         <ElButton
-                          type="text"
+                          text
                           class="ml-5"
                           onClick={() => this.handleReset(node, data)}
                           disabled={!this.isScript(data.id) || this.disabled}
@@ -148,7 +148,7 @@ export const FieldValue = connect(
                         </ElButton>
                       </span>
                     </span>
-                  )
+                  ),
                 }}
               />
             </div>
@@ -162,7 +162,7 @@ export const FieldValue = connect(
               }
               visible={this.scriptDialog.open}
               append-to-body
-              custom-class="scriptDialog"
+              class="scriptDialog"
               close-on-click-modal={false}
               before-close={() => (this.scriptDialog.open = false)}
             >
@@ -171,8 +171,8 @@ export const FieldValue = connect(
                   <JsEditor
                     ref="jsEditor"
                     value={this.scriptDialog.script}
-                    onChange={val => (this.scriptDialog.script = val)}
-                    onInit={editor => {
+                    onChange={(val) => (this.scriptDialog.script = val)}
+                    onInit={(editor) => {
                       $emit(this, 'editor-init', editor)
                     }}
                     height={80}
@@ -202,7 +202,7 @@ export const FieldValue = connect(
       },
       methods: {
         isScript(id) {
-          let scripts = this.scripts.filter(v => v.id === id)
+          let scripts = this.scripts.filter((v) => v.id === id)
           return scripts.length > 0 ? scripts[0].script : ''
         },
         /*rename
@@ -232,7 +232,7 @@ export const FieldValue = connect(
           if (this.scripts?.length > 0 && fields?.length > 0) {
             for (let i = 0; i < this.scripts.length; i++) {
               if (this.scripts[i]?.scriptType === 'js') {
-                let targetIndex = fields.findIndex(n => n.id === this.scripts[i].id)
+                let targetIndex = fields.findIndex((n) => n.id === this.scripts[i].id)
                 if (targetIndex === -1) {
                   continue
                 }
@@ -265,7 +265,7 @@ export const FieldValue = connect(
           let tableName = (self.scriptDialog.tableName = data.table_name)
           let id = data.id
 
-          let idx = self.scripts.findIndex(script => script.id === id)
+          let idx = self.scripts.findIndex((script) => script.id === id)
           let script
           if (idx !== -1) {
             script = self.scripts[idx]
@@ -278,7 +278,7 @@ export const FieldValue = connect(
               color: data.color,
               label: data.field_name,
               tableName,
-              id
+              id,
             })
           }
           self.scriptDialog.script = script.script
@@ -324,11 +324,11 @@ export const FieldValue = connect(
         },
         handleAllReset() {
           this.scripts.splice(0)
-        }
-      }
-    })
+        },
+      },
+    }),
   ),
-  mapProps({ dataSource: 'options', loading: true })
+  mapProps({ dataSource: 'options', loading: true }),
 )
 
 export default FieldValue

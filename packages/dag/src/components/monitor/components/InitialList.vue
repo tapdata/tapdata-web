@@ -6,7 +6,7 @@
     :modal-append-to-body="false"
     @close="$emit('input', false)"
   >
-    <template v-slot:title>
+    <template #header>
       <div>
         <span>{{ $t('packages_dag_components_initiallist_quanliangxinxixiang') }}</span>
         <ElTooltip
@@ -44,8 +44,8 @@ export default {
     dataflow: Object,
     value: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -53,31 +53,31 @@ export default {
       statusMap: {
         NOT_START: {
           text: i18n.t('packages_dag_components_initiallist_weikaishi'),
-          type: 'waiting'
+          type: 'waiting',
         },
         PAUSE: {
           text: i18n.t('public_status_stop'),
-          type: 'pause'
+          type: 'pause',
         },
         DONE: {
           text: i18n.t('public_status_finished'),
-          type: 'finish'
+          type: 'finish',
         },
         ING: {
           text: i18n.t('packages_dag_components_initiallist_tongbuzhong'),
-          type: 'running'
-        }
+          type: 'running',
+        },
       },
       columns: [
         {
           label: i18n.t('packages_dag_components_initiallist_yuanbiaoming'),
           prop: 'originTable',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('packages_dag_components_initiallist_mubiaobiaoming'),
           prop: 'targetTable',
-          width: 180
+          width: 180,
         },
         // {
         //   label: '表结构同步',
@@ -88,14 +88,14 @@ export default {
         {
           label: i18n.t('packages_dag_components_initiallist_shujutongbu'),
           prop: 'progress',
-          slotName: 'progress'
+          slotName: 'progress',
         },
         {
           label: i18n.t('packages_dag_components_initiallist_quanliangtongbuzhuang'),
           prop: 'syncStatus',
           slotName: 'syncStatus',
-          width: 120
-        }
+          width: 120,
+        },
         // {
         //   label: '操作',
         //   prop: 'operation',
@@ -103,7 +103,7 @@ export default {
         //   width: 60
         // }
       ],
-      timer: null
+      timer: null,
     }
   },
   watch: {
@@ -114,7 +114,7 @@ export default {
       } else {
         this.clearTimer()
       }
-    }
+    },
   },
   methods: {
     init() {
@@ -133,7 +133,7 @@ export default {
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
         size,
-        page: current
+        page: current,
       }
       return filter
     },
@@ -144,27 +144,27 @@ export default {
       let filter = {
         taskRecordId: this.dataflow?.taskRecordId,
         size,
-        page: current
+        page: current,
       }
-      return measurementApi.fullStatistics(filter).then(data => {
+      return measurementApi.fullStatistics(filter).then((data) => {
         return {
           total: data.total || 0,
-          data: data.items.map(t => {
+          data: data.items.map((t) => {
             const rate = Math.floor(t.syncRate * 100)
             t.progress = rate > 100 ? 100 : rate
             t.syncStatusText = this.statusMap[t.fullSyncStatus]?.text
             t.syncStatusType = this.statusMap[t.fullSyncStatus]?.type
             return t
-          })
+          }),
         }
       })
     },
 
     clearTimer() {
       clearInterval(this.timer)
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

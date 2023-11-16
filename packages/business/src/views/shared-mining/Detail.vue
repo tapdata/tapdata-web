@@ -81,8 +81,8 @@
         </template>
         <template v-slot:operation="scope">
           <div class="operate-columns">
-            <ElButton size="small" type="text" @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
-            <ElButton size="small" type="text" @click="getTables(scope.row.id)">{{
+            <ElButton size="small" text @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
+            <ElButton size="small" text @click="getTables(scope.row.id)">{{
               $t('packages_business_shared_detail_button_table_info')
             }}</ElButton>
           </div>
@@ -91,7 +91,7 @@
     </div>
     <el-dialog
       width="400px"
-      custom-class="edit-dialog"
+      class="edit-dialog"
       :title="$t('packages_business_shared_detail_title')"
       :close-on-click-modal="false"
       v-model="tableDialogVisible"
@@ -142,25 +142,25 @@ export default {
       statisticsTime: [],
       lineData: {
         x: [],
-        y: [[], []]
+        y: [[], []],
       },
       lineDataDeep: {
         x: [],
-        y: [[], []]
+        y: [[], []],
       },
       loading: true,
       task: {},
       lineOptions: {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 4,
           right: 0,
-          show: false
+          show: false,
         },
         xAxis: {
-          type: 'time'
+          type: 'time',
         },
         yAxis: [
           {
@@ -172,8 +172,8 @@ export default {
                   value = value / 1000 + 'K'
                 }
                 return value
-              }
-            }
+              },
+            },
           },
           {
             // max: 'dataMax',
@@ -183,50 +183,50 @@ export default {
                   value = value / 1000 + 'K'
                 }
                 return value
-              }
-            }
-          }
+              },
+            },
+          },
         ],
         grid: {
           left: 0,
           right: 0,
           top: '24px',
-          bottom: 0
+          bottom: 0,
         },
         series: [
           {
             name: this.$t('public_time_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
-              width: 1
+              width: 1,
             },
             areaStyle: {
-              color: 'rgba(24, 144, 255, 0.2)'
+              color: 'rgba(24, 144, 255, 0.2)',
             },
             symbol: 'none',
             itemStyle: {
-              color: 'rgba(24, 144, 255, 1)'
+              color: 'rgba(24, 144, 255, 1)',
             },
             // type: 'line',
-            data: []
+            data: [],
           },
           {
             name: this.$t('public_time_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
-              width: 1
+              width: 1,
             },
             symbol: 'none',
             areaStyle: {
-              color: 'rgba(118, 205, 238, 0.2)'
+              color: 'rgba(118, 205, 238, 0.2)',
             },
             itemStyle: {
-              color: 'rgba(118, 205, 238, 1)'
+              color: 'rgba(118, 205, 238, 1)',
             },
             // type: 'line',
-            data: []
-          }
-        ]
+            data: [],
+          },
+        ],
       },
       activeTab: 'schedule',
       showContent: false,
@@ -235,31 +235,31 @@ export default {
       columnsTableName: [
         {
           label: i18n.t('packages_business_tablename'),
-          prop: 'tablename'
-        }
+          prop: 'tablename',
+        },
       ],
       columns: [
         {
           label: this.$t('packages_business_shared_detail_call_task'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('packages_business_shared_detail_source_time'),
-          slotName: 'sourceTimestamp'
+          slotName: 'sourceTimestamp',
         },
         {
           label: this.$t('packages_business_shared_detail_sycn_time_point'),
-          slotName: 'syncTimestamp'
+          slotName: 'syncTimestamp',
         },
         {
           label: this.$t('packages_business_shared_detail_mining_status'),
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: this.$t('public_operation'),
           prop: 'operation',
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ],
       tableDialogVisible: false,
       timeRange: [], //时间范围
@@ -268,17 +268,17 @@ export default {
       pageSize: 20,
       tableNameTotal: 0,
       replicateLag: 0,
-      timer: null //定时器
+      timer: null, //定时器
     }
   },
   computed: {
     connectionIds() {
       return (
-        this.task?.stages?.map(item => {
+        this.task?.stages?.map((item) => {
           return item.connectionId
         }) || []
       )
-    }
+    },
   },
   created() {
     this.id = this.$route.params.id
@@ -296,7 +296,7 @@ export default {
     },
 
     getData(id) {
-      logcollectorApi.getDetail(id).then(data => {
+      logcollectorApi.getDetail(id).then((data) => {
         let detailData = data || {}
         detailData.taskList = detailData.taskList?.map(makeStatusAndDisabled)
         this.detailData = detailData
@@ -313,22 +313,22 @@ export default {
           {
             tags: {
               subTaskId: this.detailData.subTaskId,
-              type: 'subTask'
+              type: 'subTask',
             },
             fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: 'minute'
-          }
+            guanluary: 'minute',
+          },
         ],
         statistics: [
           {
             tags: {
               subTaskId: this.detailData.subTaskId,
-              type: 'subTask'
+              type: 'subTask',
             },
-            fields: ['replicateLag']
-          }
-        ]
+            fields: ['replicateLag'],
+          },
+        ],
       }
       let start = this.timeRange?.[0]
       let end = this.timeRange?.[1]
@@ -349,9 +349,9 @@ export default {
       let diff = (end || Date.now()) - start
       params.samples[0].guanluary = this.getGuanluary(diff)
       let guanluaryFormat = this.getGuanluary(diff, true)
-      measurementApi.query(params).then(data => {
+      measurementApi.query(params).then((data) => {
         let { samples } = data || {}
-        samples.forEach(el => {
+        samples.forEach((el) => {
           for (let key in el) {
             el[key] = el[key].reverse()
           }
@@ -363,7 +363,7 @@ export default {
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData?.time || []
 
-        let xArr = qpsDataTime.map(t => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+        let xArr = qpsDataTime.map((t) => this.formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
@@ -376,11 +376,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i]]
+            value: [time, inputQPS[i]],
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i]]
+            value: [time, outputQPS[i]],
           })
         })
         // eslint-disable-next-line
@@ -400,19 +400,19 @@ export default {
             //   },
             xAxis: {
               axisLabel: {
-                formatter: val => {
+                formatter: (val) => {
                   return this.formatTime(val, guanluaryFormat)
-                }
-              }
+                },
+              },
             },
             series: [
               {
-                data: Object.assign([], this.lineDataDeep.y[0])
+                data: Object.assign([], this.lineDataDeep.y[0]),
               },
               {
-                data: Object.assign([], this.lineDataDeep.y[1])
-              }
-            ]
+                data: Object.assign([], this.lineDataDeep.y[1]),
+              },
+            ],
           })
         })
       })
@@ -429,15 +429,15 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           params: {
-            id: row.id
-          }
+            id: row.id,
+          },
         })
       } else {
         this.$router.push({
           name: 'TaskMonitor',
           params: {
-            id: row.id
-          }
+            id: row.id,
+          },
         })
       }
     },
@@ -481,14 +481,14 @@ export default {
     getTableNames(callSubId) {
       let filter = {
         limit: this.pageSize,
-        skip: (this.currentPage - 1) * this.pageSize
+        skip: (this.currentPage - 1) * this.pageSize,
       }
-      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then(data => {
+      logcollectorApi.newTableNames(this.detailData.id, callSubId, filter).then((data) => {
         this.tableNameList = data?.items || []
         this.tableNameTotal = data?.total || 0
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

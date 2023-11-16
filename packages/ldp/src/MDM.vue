@@ -113,7 +113,7 @@
     </div>
 
     <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
       </template>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
@@ -191,7 +191,7 @@
     </ElDialog>
 
     <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
@@ -237,7 +237,7 @@
     </ElDialog>
 
     <ElDialog v-model:visible="showMaterialized" width="480px" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span class="fs-6 fw-sub">{{ $t('packages_dag_build_materialized_view') }}</span>
       </template>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
@@ -287,8 +287,8 @@ export default {
     loadingDirectory: Boolean,
     mapCatalog: {
       type: Function,
-      require: true
-    }
+      require: true,
+    },
   },
   components: { DatabaseIcon, VirtualTree, IconButton },
   mixins: [commonMix],
@@ -307,8 +307,8 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       expandedKeys: [],
       dialogConfig: {
@@ -319,7 +319,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
       searchIng: false,
       search: '',
@@ -327,7 +327,7 @@ export default {
       filterTreeData: [],
       tablePrefix: 'MDM_',
       showMaterialized: false,
-      materializedTableName: ''
+      materializedTableName: '',
     }
   },
   computed: {
@@ -346,14 +346,14 @@ export default {
 
     isDragSelf() {
       return this.dragState.isDragging && this.dragState.from === 'MDM'
-    }
+    },
   },
   watch: {
     loadingDirectory(v) {
       if (!v) {
         this.setNodeExpand()
       }
-    }
+    },
   },
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
@@ -376,7 +376,7 @@ export default {
         actions = [
           <IconButton
             sm
-            onClick={ev => {
+            onClick={(ev) => {
               ev.stopPropagation()
               this.showDialog(data, 'add')
             }}
@@ -387,10 +387,10 @@ export default {
             class="inline-flex"
             placement="bottom"
             trigger="click"
-            onCommand={command => this.handleMoreCommand(command, data)}
+            onCommand={(command) => this.handleMoreCommand(command, data)}
           >
             <IconButton
-              onClick={ev => {
+              onClick={(ev) => {
                 ev.stopPropagation()
               }}
               sm
@@ -401,7 +401,7 @@ export default {
               <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
               <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
             </ElDropdownMenu>
-          </ElDropdown>
+          </ElDropdown>,
         ]
       }
 
@@ -420,28 +420,28 @@ export default {
             click: () => {
               data.isObject &&
                 $emit(this, 'preview', data, this.mdmConnection, {
-                  onDelete: tagId => {
+                  onDelete: (tagId) => {
                     // this.setNodeExpand(tagId)
                     this.$refs.tree.remove(data.id)
-                  }
+                  },
                 })
             },
-            dragenter: ev => {
+            dragenter: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragEnter(ev, data, node)
             },
-            dragover: ev => {
+            dragover: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragOver(ev, data, node)
             },
-            dragleave: ev => {
+            dragleave: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragLeave(ev, data, node)
             },
-            drop: ev => {
+            drop: (ev) => {
               ev.stopPropagation()
               this.handleTreeDrop(ev, data, node)
-            }
+            },
           }}
         >
           <div class="flex align-center flex-fill mr-2">
@@ -468,7 +468,7 @@ export default {
                 <VIcon
                   size="18"
                   class="lineage-icon"
-                  onClick={ev => {
+                  onClick={(ev) => {
                     ev.stopPropagation()
                     this.handleFindLineage(data)
                   }}
@@ -534,7 +534,7 @@ export default {
 
     showTaskDialog(tagId) {
       const {
-        draggingObjects: [object]
+        draggingObjects: [object],
       } = this.dragState
 
       this.taskDialogConfig.from = object.parent.data
@@ -567,7 +567,7 @@ export default {
     },
 
     async taskDialogSubmit(start, confirmTable) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) return
         const { tableName, from, newTableName, tagId, task: settings } = this.taskDialogConfig
         let task = Object.assign(this.makeTask(from, tableName, this.tablePrefix + newTableName), settings)
@@ -576,7 +576,7 @@ export default {
         try {
           const result = await ldpApi.createMDMTask(task, {
             silenceMessage: true,
-            params: { tagId, confirmTable, start }
+            params: { tagId, confirmTable, start },
           })
           this.taskDialogConfig.visible = false
           this.$message.success({
@@ -587,11 +587,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(result)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
           setTimeout(() => {
             this.setNodeExpand(tagId)
@@ -612,11 +612,11 @@ export default {
                   on: {
                     click: () => {
                       this.handleClickName(data)
-                    }
-                  }
+                    },
+                  },
                 },
-                this.$t('packages_business_task_created_fail_no_primary_key')
-              )
+                this.$t('packages_business_task_created_fail_no_primary_key'),
+              ),
             })
             setTimeout(() => {
               this.setNodeExpand(tagId)
@@ -626,8 +626,8 @@ export default {
               onlyTitle: true,
               type: 'warning',
               closeOnClickModal: false,
-              zIndex: 999999
-            }).then(resFlag => {
+              zIndex: 999999,
+            }).then((resFlag) => {
               if (!resFlag) {
                 return
               }
@@ -654,8 +654,8 @@ export default {
         name: this.getTaskName(from, tableName, newTableName),
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -674,8 +674,8 @@ export default {
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
     },
 
@@ -694,7 +694,7 @@ export default {
 
       this.$refs.tree.updateKeyChildren(data.id, objects)
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
-      objects.forEach(item => {
+      objects.forEach((item) => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
         item.isObject = true
@@ -756,14 +756,14 @@ export default {
         metadataDefinitionsApi
           .changeById({
             id: draggingNode.data.id,
-            parent_id: dropNode.data.id || ''
+            parent_id: dropNode.data.id || '',
           })
           .then(() => {
             this.$message.success(this.$t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.message)
           })
       } else {
@@ -788,13 +788,13 @@ export default {
       draggingNode = {
         ...draggingNode,
         parent: {
-          data: this.mdmConnection
-        }
+          data: this.mdmConnection,
+        },
       }
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name
+        draggingNode.data.name,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
       ev.dataTransfer.effectAllowed = 'copy'
@@ -824,7 +824,7 @@ export default {
         isParent: true,
         desc: type === 'edit' ? data?.desc : '',
         title:
-          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit'),
       }
     },
     hideDialog() {
@@ -845,7 +845,7 @@ export default {
       let params = {
         item_type: itemType,
         desc: config.desc,
-        value
+        value,
       }
 
       if (config.type === 'edit') {
@@ -878,10 +878,10 @@ export default {
     async moveTag(from, to, objects) {
       if (from === to) return
 
-      const tagBindingParams = objects.map(t => {
+      const tagBindingParams = objects.map((t) => {
         return {
           id: t.id,
-          objCategory: t.category
+          objCategory: t.category,
         }
       })
       /*await discoveryApi.patchTags({
@@ -891,9 +891,9 @@ export default {
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
-        oldTagIds: [from]
+        oldTagIds: [from],
       })
-      objects.forEach(item => (item.parent_id = to))
+      objects.forEach((item) => (item.parent_id = to))
       this.$message.success(this.$t('public_message_operation_success'))
     },
 
@@ -916,9 +916,9 @@ export default {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('packages_component_message_cancel'),
           type: 'warning',
-          closeOnClickModal: false
-        }
-      ).then(resFlag => {
+          closeOnClickModal: false,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -955,12 +955,12 @@ export default {
         query: {
           by: 'materialized-view',
           connectionId: this.mdmConnection.id,
-          tableName: this.tablePrefix + tableName
-        }
+          tableName: this.tablePrefix + tableName,
+        },
       })
-    }
+    },
   },
-  emits: ['preview', 'find-parent', 'show-settings', 'node-drag-end', 'handle-connection']
+  emits: ['preview', 'find-parent', 'show-settings', 'node-drag-end', 'handle-connection'],
 }
 </script>
 

@@ -42,7 +42,7 @@
       </transition-group>
 
       <input
-        type="text"
+        text
         class="el-select__input"
         :class="[selectSize ? `is-${selectSize}` : '']"
         :disabled="selectDisabled"
@@ -66,7 +66,7 @@
         :style="{
           'flex-grow': '1',
           width: inputLength / (inputWidth - 32) + '%',
-          'max-width': inputWidth - 42 + 'px'
+          'max-width': inputWidth - 42 + 'px',
         }"
         ref="input"
       />
@@ -76,7 +76,7 @@
       ref="reference"
       v-model:value="selectedLabel"
       :id="id"
-      type="text"
+      text
       :name="name"
       :placeholder="currentPlaceholder"
       :autocomplete="autoComplete || autocomplete"
@@ -213,77 +213,77 @@ import VIcon from './base/VIcon.vue'
 export default {
   components: {
     RecycleScroller,
-    VIcon
+    VIcon,
   },
   name: 'SelectList',
   extends: Select,
   props: {
     value: {
-      type: [Number, String]
+      type: [Number, String],
     },
     items: {
       type: [Array, Function],
-      default: () => []
+      default: () => [],
     },
     buffer: {
       type: Number,
-      default: 30
+      default: 30,
     },
     itemSize: {
       type: Number,
-      default: 30
+      default: 30,
     },
     filterDelay: {
       type: Number,
-      default: 200
+      default: 200,
     },
     url: {
-      type: String
+      type: String,
     },
     params: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     labelKey: {
       type: String,
-      default: 'name'
+      default: 'name',
     },
     valueKey: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     filterKey: {
       type: String,
-      default: 'name'
+      default: 'name',
     },
     // 回填搜索的key
     echoKey: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     lastPageText: {
       type: String,
       default: () => {
         return i18n.t('packages_component_src_selectlist_meiyougengduoshu')
-      }
+      },
     },
     menuMinWidth: {
       type: String,
-      default: '200px'
+      default: '200px',
     },
     innerLabel: {
-      type: String
+      type: String,
     },
     formatData: {
-      type: Function
+      type: Function,
     },
     noneBorder: {
-      type: Boolean
+      type: Boolean,
     },
     selectedWidth: {
       type: String,
-      default: '120px'
-    }
+      default: '120px',
+    },
   },
   data() {
     return {
@@ -292,9 +292,9 @@ export default {
       pageObj: {
         size: 50,
         page: 1,
-        totalPage: 1
+        totalPage: 1,
       },
-      keyword: ''
+      keyword: '',
     }
   },
   computed: {
@@ -337,7 +337,7 @@ export default {
     // 获取已选中的数量
     selectedCount() {
       return this.multiple ? this.value.length : this.value ? 1 : 0
-    }
+    },
     // comItems() {
     //   const { items } = this
     //   if (typeof items === 'function') {
@@ -363,8 +363,8 @@ export default {
         if (v1 && v2 && JSON.stringify(v1) !== JSON.stringify(v2)) {
           this.init()
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
@@ -405,7 +405,7 @@ export default {
         return
       }
       this.$nextTick(() => {
-        this.selectedLabel = this.list.find(item => item.value === value)?.label
+        this.selectedLabel = this.list.find((item) => item.value === value)?.label
       })
     },
     resetInputWidth() {
@@ -426,8 +426,8 @@ export default {
       let filter = cloneDeep(
         Object.assign({}, this.params, {
           size: size,
-          page: page
-        })
+          page: page,
+        }),
       )
       if (isSearch) {
         this.resetPage()
@@ -444,15 +444,15 @@ export default {
         filter.where[this.echoKey] = val
       }
       let comUrl = this.url + '?filter=' + encodeURIComponent(JSON.stringify(filter))
-      this.$axios.get(comUrl).then(data => {
+      this.$axios.get(comUrl).then((data) => {
         // 格式化数据
         if (this.formatData) {
           data = this.formatData(data, size)
         } else {
-          data.items = data.items.map(item => {
+          data.items = data.items.map((item) => {
             return {
               label: item[this.labelKey],
-              value: item[this.valueKey]
+              value: item[this.valueKey],
             }
           })
         }
@@ -470,7 +470,7 @@ export default {
         }
         // 回显
         if (isEcho) {
-          this.selectedLabel = this.filteredItems.find(item => item.value === this.value)?.label
+          this.selectedLabel = this.filteredItems.find((item) => item.value === this.value)?.label
         }
       })
     },
@@ -506,7 +506,7 @@ export default {
         // 远程数据
         if (this.isRemote) {
           if (val) {
-            let findone = this.filteredItems.filter(item => {
+            let findone = this.filteredItems.filter((item) => {
               return item.label === val && item.value === this.value
             })
             if (findone?.length === 0) {
@@ -518,7 +518,7 @@ export default {
         } else {
           // 本地数据
           if (val) {
-            this.filteredItems = this.list.filter(item => {
+            this.filteredItems = this.list.filter((item) => {
               return item.label.toLowerCase().indexOf(val.toLowerCase()) !== -1
             })
           } else {
@@ -537,7 +537,7 @@ export default {
       const $option = Array.isArray(option) ? option[0] : option
       if ($option) {
         const { value } = $option
-        const index = this.filteredItems.findIndex(item => item.value === value)
+        const index = this.filteredItems.findIndex((item) => item.value === value)
         this.$refs.virtualScroller.scrollToItem(index)
       }
     },
@@ -570,9 +570,9 @@ export default {
     },
     handleSearch() {
       this.handleQueryChange(this.keyword)
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

@@ -8,7 +8,7 @@
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
     v-model:visible="dialogVisible"
-    custom-class="bind-phone-dialog"
+    class="bind-phone-dialog"
   >
     <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.prevent>
       <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
@@ -38,7 +38,7 @@
           :disabled="!phoneForm.current"
           :style="{ width: '180px', textAlign: 'center' }"
           class="ml-6"
-          type="text"
+          text
         ></VerificationCode>
       </ElFormItem>
     </ElForm>
@@ -70,17 +70,17 @@ export default {
   components: { VerificationCode },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     showLabel: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   watch: {
     visible(v) {
       this.dialogVisible = !!v
-    }
+    },
   },
   data() {
     return {
@@ -91,8 +91,8 @@ export default {
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86'
-      }
+        countryCode: '86',
+      },
     }
   },
   mounted() {
@@ -107,14 +107,14 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
           $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })
-        .catch(e => {
+        .catch((e) => {
           $emit(this, 'error', phoneForm.current, e)
         })
         .finally(() => {
@@ -122,13 +122,13 @@ export default {
         })
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then(res => {
+      this.$axios.get('config/countryCode.json').then((res) => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
-    }
+    },
   },
-  emits: ['success', 'error']
+  emits: ['success', 'error'],
 }
 </script>
 

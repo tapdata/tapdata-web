@@ -7,7 +7,7 @@
     :append-to-body="true"
     :title="$t('dfs_agent_download_subscriptionmodeldialog_zhuanzhangzhifu')"
     width="1000px"
-    custom-class="tap-dialog"
+    class="tap-dialog"
   >
     <div class="transfer-info transfer-price mt-4 mb-4">
       {{ $t('dfs_agent_zhuanzhang_price') }}:
@@ -58,18 +58,18 @@ export default {
   inject: ['buried'],
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     price: {
-      type: String
-    }
+      type: String,
+    },
   },
   methods: {
     close() {
       $emit(this, 'update:visible', false)
-    }
+    },
   },
-  emits: ['update:visible']
+  emits: ['update:visible'],
 }
 </script>
 

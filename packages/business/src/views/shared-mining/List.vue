@@ -106,7 +106,7 @@
 
     <el-dialog
       width="500px"
-      custom-class="setting-dialog"
+      class="setting-dialog"
       :title="$t('packages_business_shared_list_setting')"
       :close-on-click-modal="false"
       v-model="settingDialogVisible"
@@ -185,13 +185,13 @@
       :title="$t('public_message_title_prompt')"
       :close-on-click-modal="false"
       v-model:visible="showUsingTaskDialog.visible"
-      custom-class="create-role"
+      class="create-role"
       width="600px"
     >
       <div>
         {{
           $t('packages_business_shared_mining_list_gaiwajuerenwu', {
-            val: showUsingTaskDialog.list.length
+            val: showUsingTaskDialog.list.length,
           })
         }}
       </div>
@@ -230,25 +230,25 @@ export default {
     FilterBar,
     TaskStatus,
     Editor,
-    VTable
+    VTable,
   },
   data() {
     return {
       searchParams: {
         taskName: '',
-        connectionName: ''
+        connectionName: '',
       },
       filterItems: [
         {
           placeholder: this.$t('packages_business_shared_cdc_placeholder_task_name'),
           key: 'taskName',
-          type: 'input'
+          type: 'input',
         },
         {
           placeholder: this.$t('packages_business_shared_cdc_placeholder_connection_name'),
           key: 'connectionName',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       order: 'createTime DESC',
       list: null,
@@ -259,7 +259,7 @@ export default {
         persistenceMongodb_uri_db: '', // mongodb uri
         persistenceMongodb_collection: '', // mongodb tablename
         persistenceRocksdb_path: '', // rocksdb路径
-        share_cdc_ttl_day: 3
+        share_cdc_ttl_day: 3,
       },
       enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
@@ -269,31 +269,31 @@ export default {
           {
             required: true,
             message: this.$t('packages_business_shared_cdc_setting_select_mongodb_tip'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         persistenceMongodb_collection: [
           {
             required: true,
             message: this.$t('packages_business_shared_cdc_setting_select_table_tip'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       taskBuried: {
-        start: 'sharedMiningStart'
+        start: 'sharedMiningStart',
       },
       showUsingTaskDialog: {
         visible: false,
-        list: []
+        list: [],
       },
       taskColumns: [
         {
           label: i18n.t('public_task_name'),
           prop: 'name',
-          slotName: 'name'
-        }
-      ]
+          slotName: 'name',
+        },
+      ],
     }
   },
   mounted() {
@@ -302,7 +302,7 @@ export default {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
-      taskName: this.$route.query?.keyword || ''
+      taskName: this.$route.query?.keyword || '',
     })
   },
   computed: {
@@ -319,12 +319,12 @@ export default {
         systemTimeZone = '+' + -timeZone
       }
       return systemTimeZone
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   unmounted() {
     clearInterval(timeout)
@@ -341,18 +341,18 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return logcollectorApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           let pointTime = new Date()
           return {
             total: data?.total || 0,
-            data: list.map(item => {
+            data: list.map((item) => {
               item['pointTime'] = pointTime
               if (item.syncTimePoint === 'current') {
                 item.pointTime = dayjs(pointTime).format('YYYY-MM-DD HH:mm:ss')
@@ -367,7 +367,7 @@ export default {
                 item.btnDisabled.start = false
               }
               return item
-            })
+            }),
           }
         })
     },
@@ -377,12 +377,12 @@ export default {
       this.loadingConfig = true
       logcollectorApi
         .check()
-        .then(data => {
+        .then((data) => {
           this.showEditSettingBtn = data?.data //true是可用，false是禁用 数据结构本身多了一层
           this.settingDialogVisible = true
           logcollectorApi
             .getSystemConfig()
-            .then(data => {
+            .then((data) => {
               if (data) {
                 this.digSettingForm = data
               }
@@ -397,7 +397,7 @@ export default {
     },
     //保存全局挖掘设置
     saveSetting() {
-      this.$refs.digSettingForm.validate(valid => {
+      this.$refs.digSettingForm.validate((valid) => {
         if (valid) {
           if (this.digSettingForm?.persistenceMode === 'Mem') {
             this.digSettingForm.persistenceMongodb_uri_db = ''
@@ -421,13 +421,13 @@ export default {
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
-          id: ids[0]
-        }
+          id: ids[0],
+        },
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi
           .batchStart(ids)
-          .then(data => {
+          .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(data?.message || this.$t('public_message_operation_success'))
             this.table.fetch()
@@ -443,12 +443,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -460,13 +460,13 @@ export default {
         this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
         {
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -489,8 +489,8 @@ export default {
       this.openRoute({
         name: 'SharedMiningMonitor',
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -506,7 +506,7 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title)
+        title: this.$t('dataFlow_' + title),
       }
     },
 
@@ -515,12 +515,12 @@ export default {
       let msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then(data => {
+        taskApi.batchRenew([id]).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -530,20 +530,20 @@ export default {
     async handleDelete(row) {
       const filter = {
         type: 'task_by_collector',
-        taskId: row.id
+        taskId: row.id,
       }
       this.showUsingTaskDialog.list = await taskApi.taskConsoleRelations(filter)
 
       this.$confirm(
         this.$t('packages_business_shared_mining_list_shanchurenwus', {
-          val1: row.name
+          val1: row.name,
         }),
         '',
         {
           type: 'warning',
-          dangerouslyUseHTMLString: true
-        }
-      ).then(flag => {
+          dangerouslyUseHTMLString: true,
+        },
+      ).then((flag) => {
         if (!flag) {
           return
         }
@@ -551,7 +551,7 @@ export default {
           this.showUsingTaskDialog.visible = true
           return
         }
-        taskApi.batchDelete([row.id]).then(data => {
+        taskApi.batchDelete([row.id]).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -564,17 +564,17 @@ export default {
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
         mem_cache: 'sharedCacheList',
-        connHeartbeat: 'HeartbeatTableList'
+        connHeartbeat: 'HeartbeatTableList',
       }
       const routeUrl = this.$router.resolve({
         name: MAP[type] || MAP[syncType],
         query: {
-          keyword: name
-        }
+          keyword: name,
+        },
       })
       openUrl(routeUrl.href)
-    }
-  }
+    },
+  },
 }
 </script>
 

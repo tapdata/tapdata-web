@@ -21,9 +21,9 @@ const limitTreeDrag = ({ dropPosition }) => {
 export const TreePanel = observer(
   defineComponent({
     props: ['defaultOptionValue', 'allowTree', 'treeDataSource'],
-    setup: props => {
+    setup: (props) => {
       const prefix = usePrefix('data-source-setter')
-      const dropHandler = info => {
+      const dropHandler = (info) => {
         const dropKey = info.node?.key
         const dragKey = info.dragNode?.key
         const dropPos = info.node.pos.split('-')
@@ -38,14 +38,14 @@ export const TreePanel = observer(
           }
         })
         if (!info.dropToGap) {
-          traverseTree(data, item => {
+          traverseTree(data, (item) => {
             if (item.key === dropKey) {
               item.children = item.children || []
               item.children.unshift(dragObj)
             }
           })
         } else if ((info.node.children || []).length > 0 && info.node.expanded && dropPosition === 1) {
-          traverseTree(data, item => {
+          traverseTree(data, (item) => {
             if (item.key === dropKey) {
               item.children = item.children || []
               item.children.unshift(dragObj)
@@ -74,24 +74,24 @@ export const TreePanel = observer(
             <TextWidget slot="title" token="SettingComponents.DataSourceSetter.dataSourceTree" />
             <Button
               slot="extra"
-              type="text"
+              text
               onClick={() => {
                 const uuid = uid()
                 const dataSource = props.treeDataSource.dataSource
-                const initialKeyValuePairs = props.defaultOptionValue?.map(item => ({ ...item })) || [
+                const initialKeyValuePairs = props.defaultOptionValue?.map((item) => ({ ...item })) || [
                   {
                     label: 'label',
                     value: `${GlobalRegistry.getDesignerMessage(`SettingComponents.DataSourceSetter.item`)} ${
                       dataSource.length + 1
-                    }`
+                    }`,
                   },
-                  { label: 'value', value: uuid }
+                  { label: 'value', value: uuid },
                 ]
                 props.treeDataSource.dataSource = dataSource.concat({
                   key: uuid,
                   duplicateKey: uuid,
                   map: initialKeyValuePairs,
-                  children: []
+                  children: [],
                 })
                 // eslint-disable-next-line
                 console.log('dataSource', dataSource)
@@ -129,6 +129,6 @@ export const TreePanel = observer(
           </div>
         </FragmentComponent>
       )
-    }
-  })
+    },
+  }),
 )

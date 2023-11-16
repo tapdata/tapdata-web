@@ -1,6 +1,6 @@
 <template>
   <ElDialog v-model:visible="visible" width="480px" :close-on-click-modal="false" @close="cancel">
-    <template v-slot:title>
+    <template #header>
       <span class="fs-6 fw-sub font-color-dark">{{ $t('dfs_alarm_setting_tour_title') }}</span>
     </template>
 
@@ -50,11 +50,11 @@ import { driver } from 'driver.js'
 export default {
   name: 'TaskAlarmTour',
   props: {
-    value: Boolean
+    value: Boolean,
   },
   data() {
     return {
-      visible: this.value
+      visible: this.value,
     }
   },
   computed: {
@@ -63,7 +63,7 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -72,7 +72,7 @@ export default {
 
     value(v) {
       this.visible = v
-    }
+    },
   },
   methods: {
     cancel() {
@@ -98,8 +98,8 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
-          }
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe'),
+          },
         })
 
         const unwatch = this.$watch('$route', () => {
@@ -114,12 +114,12 @@ export default {
       this.$router.push({
         name: 'userCenter',
         query: {
-          bind: 'email'
-        }
+          bind: 'email',
+        },
       })
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

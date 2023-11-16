@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="70" fixed="right">
         <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" size="small" type="text" @click="toDetails(scope.row)">
+          <el-button v-readonlybtn="'API_clients_amangement'" size="small" text @click="toDetails(scope.row)">
             {{ $t('public_button_details') }}
           </el-button>
         </template>
@@ -68,7 +68,7 @@ import { apiCallsApi } from '@tap/api'
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
   },
   name: 'ApiAudit',
   data() {
@@ -78,7 +78,7 @@ export default {
         method: '',
         code: '',
         start: '',
-        end: ''
+        end: '',
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -86,14 +86,14 @@ export default {
       createForm: {
         processId: '',
         clientName: '',
-        clientURI: ''
+        clientURI: '',
       },
       colorMap: {
         POST: '#478C6C',
         PATCH: '#F2994B',
         DELETE: '#DB5050',
-        GET: '#09819C'
-      }
+        GET: '#09819C',
+      },
     }
   },
   created() {
@@ -102,19 +102,19 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
     },
-    'searchParams.createTime'() {}
+    'searchParams.createTime'() {},
   },
   methods: {
     toDetails(item) {
       this.$router.push({
         name: 'dataServerAuditDetails',
-        params: { id: item.id }
+        params: { id: item.id },
       })
     },
 
@@ -144,20 +144,20 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return apiCallsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total || 0,
             data:
-              data?.items.map(item => {
+              data?.items.map((item) => {
                 item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -176,14 +176,14 @@ export default {
           items: async () => {
             let data = await apiCallsApi.getAllMethod()
             data = data || []
-            return data.map(item => {
+            return data.map((item) => {
               return {
                 label: item,
-                value: item
+                value: item,
               }
             })
           },
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('apiaudit_visit_result'),
@@ -192,30 +192,30 @@ export default {
           items: async () => {
             let data = await apiCallsApi.getAllResponseCode()
             data = data || []
-            return data.map(item => {
+            return data.map((item) => {
               return {
                 label: item == 200 ? this.$t('apiaudit_success') : this.$t('public_status_failed'),
-                value: item
+                value: item,
               }
             })
           },
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           title: this.$t('apiaudit_interview_time'),
           key: 'start,end',
           type: 'datetimerange',
           placeholder: this.$t('public_select_placeholder'),
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('apiaudit_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
-    }
-  }
+    },
+  },
 }
 </script>
 

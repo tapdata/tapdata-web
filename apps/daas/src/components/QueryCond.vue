@@ -29,13 +29,7 @@
         </div>
 
         <div class="field">
-          <el-input
-            placeholder="enter value"
-            v-if="!cond.isDatetime"
-            type="text"
-            v-model="cond.value"
-            size="small"
-          ></el-input>
+          <el-input placeholder="enter value" v-if="!cond.isDatetime" text v-model="cond.value" size="small"></el-input>
           <el-date-picker
             v-if="cond.isDatetime"
             v-model="cond.value"
@@ -49,7 +43,7 @@
             <span class="el-icon-close" @click="removeChild(idx)" style="width: 24px"></span>
             <el-dropdown size="small" @command="handleCommand">
               <span class="el-dropdown-link el-icon-plus"></span>
-              <template v-slot:dropdown>
+              <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item v-if="databaseType != 'mongodb'" command="and">+ and</el-dropdown-item>
                   <el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
@@ -76,30 +70,30 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     value: {
       type: Object,
       default() {
         return { conditions: [] }
-      }
+      },
     },
     databaseType: {
-      type: String
+      type: String,
     },
     level: {
       type: Number,
       default() {
         return 1
-      }
-    }
+      },
+    },
   },
   computed: {
     conditions() {
       return this.value.conditions
     },
     isDatetime() {
-      let field = this.fields.filter(v => v.value === this.queryField)[0]
+      let field = this.fields.filter((v) => v.value === this.queryField)[0]
       if (field) {
         let type = field.type
 
@@ -108,12 +102,12 @@ export default {
         }
       }
       return false
-    }
+    },
   },
   data() {
     return {
       calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
-      color: 'level1'
+      color: 'level1',
     }
   },
   mounted() {
@@ -124,8 +118,8 @@ export default {
       deep: true,
       handler() {
         $emit(this, 'update:value', this.value)
-      }
-    }
+      },
+    },
   },
   methods: {
     handleCommand(command) {
@@ -146,9 +140,9 @@ export default {
               type: 'condition',
               field: '',
               command: '',
-              value: ''
-            }
-          ]
+              value: '',
+            },
+          ],
         }
       } else if (type === 'condition') {
         child = {
@@ -156,7 +150,7 @@ export default {
           operator: operator,
           field: '',
           command: '',
-          value: ''
+          value: '',
         }
       }
       this.value.conditions.push(child)
@@ -166,9 +160,9 @@ export default {
       this.value.conditions.splice(index, 1)
       //if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
       if (this.value.conditions.length == 0) $emit(this, 'remove')
-    }
+    },
   },
-  emits: ['update:value', 'remove']
+  emits: ['update:value', 'remove'],
 }
 </script>
 

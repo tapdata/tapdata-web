@@ -36,7 +36,7 @@
           </ElButton>
 
           <div class="remember">
-            <ElButton type="text" @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
+            <ElButton text @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
           </div>
         </div>
       </section>
@@ -55,7 +55,7 @@ import { configUser } from '@/utils/util'
 
 export default {
   components: {
-    LoginPage
+    LoginPage,
   },
   name: 'SignIn',
   data() {
@@ -63,10 +63,10 @@ export default {
       loading: false,
       form: {
         email: '',
-        password: ''
+        password: '',
       },
       keepSignIn: true,
-      errorMessage: ''
+      errorMessage: '',
     }
   },
   created() {
@@ -118,7 +118,7 @@ export default {
           }, 50)
         } else {
           this.$router.push({
-            name: 'dashboard'
+            name: 'dashboard',
           })
         }
       } catch (e) {
@@ -129,15 +129,15 @@ export default {
     // 注册账号
     registry() {
       this.$router.push({
-        name: 'registry'
+        name: 'registry',
       })
     },
 
     // 忘记密码
     forgetPassword() {
       this.$router.push({ name: 'passwordReset' })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -15,20 +15,20 @@ const InnerInput = {
   props: ['value', 'readOnly'],
   data() {
     return {
-      val: null
+      val: null,
     }
   },
   watch: {
     value(val) {
       this.val = val
-    }
+    },
   },
   created() {
     this.val = this.value
   },
   render() {
-    return <input class="px-1" readOnly={this.readOnly} value={this.val} onChange={ev => $emit(this, 'change', ev)} />
-  }
+    return <input class="px-1" readOnly={this.readOnly} value={this.val} onChange={(ev) => $emit(this, 'change', ev)} />
+  },
 }
 
 // onChange 懒触发前后缀的变化， 备选方案
@@ -39,9 +39,9 @@ const FormInput = defineComponent({
 
     watch(
       () => props.value,
-      val => {
+      (val) => {
         input.value = val
-      }
+      },
     )
 
     onMounted(() => {
@@ -51,17 +51,17 @@ const FormInput = defineComponent({
     return () => (
       <ElInput
         value={input.value}
-        onInput={val => {
+        onInput={(val) => {
           input.value = val
         }}
         disabled={props.disabled}
         clearable
-        onChange={val => {
+        onChange={(val) => {
           emit('change', val)
         }}
       />
     )
-  }
+  },
 })
 
 export const FieldRenameProcessor = observer(
@@ -75,10 +75,10 @@ export const FieldRenameProcessor = observer(
       const defaultOperation = {
         prefix: '',
         suffix: '',
-        capitalized: ''
+        capitalized: '',
       }
       let fieldsOperation = form.values.fieldsOperation || {
-        ...defaultOperation
+        ...defaultOperation,
       }
 
       const config = reactive({
@@ -96,18 +96,18 @@ export const FieldRenameProcessor = observer(
         searchTable: '',
         searchField: '',
         operation: {
-          ...fieldsOperation
+          ...fieldsOperation,
         },
         page: {
           size: 10,
           current: 1,
           total: 0,
-          count: 1
+          count: 1,
         },
-        transformLoading: root.$store.state.dataflow.transformLoading
+        transformLoading: root.$store.state.dataflow.transformLoading,
       })
-      const updateDeletedNum = item => {
-        item.userDeletedNum = item.fieldsMapping.filter(field => !field.isShow).length
+      const updateDeletedNum = (item) => {
+        item.userDeletedNum = item.fieldsMapping.filter((field) => !field.isShow).length
         return item
       }
 
@@ -116,7 +116,7 @@ export const FieldRenameProcessor = observer(
         config.page.current = 1
       }
       //数据初始化
-      const loadData = silence => {
+      const loadData = (silence) => {
         config.loadingNav = !silence
         config.loadingTable = !silence
 
@@ -126,12 +126,12 @@ export const FieldRenameProcessor = observer(
           nodeId: props.nodeId,
           searchTable: config.searchTable,
           page: config.page.current,
-          pageSize: config.page.size
+          pageSize: config.page.size,
         }
 
         taskApi
           .getNodeTableInfo(where)
-          .then(res => {
+          .then((res) => {
             let { total, items = [] } = res
             list.value = items.map(updateDeletedNum)
             config.page.total = total
@@ -152,7 +152,7 @@ export const FieldRenameProcessor = observer(
       const doSearchField = () => {
         if (config.searchField.trim()) {
           config.searchField = config.searchField.trim().toString() //去空格
-          tableList.value = config.target.filter(v => {
+          tableList.value = config.target.filter((v) => {
             let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
             return str.indexOf(config.searchField.toLowerCase()) > -1
           })
@@ -163,19 +163,19 @@ export const FieldRenameProcessor = observer(
 
       const columns = [
         {
-          type: 'selection'
+          type: 'selection',
         },
         {
           label: i18n.t('public_serial_number'),
           type: 'index',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('packages_form_dag_dialog_field_mapping_field'),
           showOverflowTooltip: true,
           prop: 'sourceFieldName',
           slot: 'sourceFieldName',
-          width: 140
+          width: 140,
         },
         {
           label: i18n.t('packages_form_field_processor_index_xinziduanming'),
@@ -183,20 +183,20 @@ export const FieldRenameProcessor = observer(
           prop: 'targetFieldName',
           slot: 'targetFieldName',
           class: 'p-0 pt-1',
-          width: 140
+          width: 140,
         },
         {
           label: i18n.t('public_operation'),
           prop: 'operation',
           // width: 60,
-          slot: 'operation'
-        }
+          slot: 'operation',
+        },
       ]
 
       const filterFieldList = computed(() => {
         const search = config.searchField.trim().toLowerCase()
         if (search) {
-          return tableList.value.filter(v => {
+          return tableList.value.filter((v) => {
             let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
             return str.includes(search)
           })
@@ -209,42 +209,42 @@ export const FieldRenameProcessor = observer(
       const restOp = {
         prefix: '',
         suffix: '',
-        capitalized: ''
+        capitalized: '',
       }
       //转成mapping table级别
-      const mapping = data => {
+      const mapping = (data) => {
         let map = {}
         if (!data || data?.length === 0) return map
-        data.forEach(t => {
+        data.forEach((t) => {
           if (!map[t.qualifiedName]) {
             map[t.qualifiedName] = {
               qualifiedName: t?.qualifiedName,
               previousTableName: t?.previousTableName,
               originTableName: t?.originTableName,
               operation: t?.operation,
-              fields: t.fields || []
+              fields: t.fields || [],
             }
           }
         })
         return map
       }
       //转成mapping Field级别
-      const mappingField = data => {
+      const mappingField = (data) => {
         let map = {}
         if (!data || data?.length === 0) return map
-        data.forEach(t => {
+        data.forEach((t) => {
           if (!map[t.sourceFieldName]) {
             map[t.sourceFieldName] = {
               sourceFieldName: t?.sourceFieldName,
               targetFieldName: t?.targetFieldName,
-              isShow: t.isShow
+              isShow: t.isShow,
             }
           }
         })
         return map
       }
       //map -> array
-      const toList = map => {
+      const toList = (map) => {
         let list = []
         for (let key in map) {
           if (key && key !== 'undefined') {
@@ -267,9 +267,9 @@ export const FieldRenameProcessor = observer(
             operation: {
               prefix: '',
               suffix: '',
-              capitalized: ''
+              capitalized: '',
             },
-            fields: []
+            fields: [],
           }
         }
         let fields = mappingField(map[qualifiedName]?.fields) || {}
@@ -281,7 +281,7 @@ export const FieldRenameProcessor = observer(
             sourceFieldName: row.sourceFieldName,
             targetFieldName: target === 'rename' ? val : row.targetFieldName,
             isShow: target === 'del' ? val : row.isShow,
-            migrateType: 'custom'
+            migrateType: 'custom',
           }
         }
 
@@ -293,7 +293,7 @@ export const FieldRenameProcessor = observer(
       }
 
       //选择右侧字段
-      const doSelectionField = value => {
+      const doSelectionField = (value) => {
         config.checkedFields = value
       }
 
@@ -302,7 +302,7 @@ export const FieldRenameProcessor = observer(
         config.checkedFields = []
       }
 
-      const updateView = index => {
+      const updateView = (index) => {
         refs.table?.clearSelection()
         config.position = index
         config.selectTableRow = list.value[index]
@@ -371,7 +371,7 @@ export const FieldRenameProcessor = observer(
         metadataInstancesApi
           .resetTable({
             taskId: root.$route.params.id,
-            nodeId: props.nodeId
+            nodeId: props.nodeId,
           })
           .then(() => {
             resetParams()
@@ -380,7 +380,7 @@ export const FieldRenameProcessor = observer(
       }
 
       //单个删除字段
-      const doShowRow = row => {
+      const doShowRow = (row) => {
         for (let i = 0; i < tableList.value.length; i++) {
           if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
             tableList.value[i]['isShow'] = true
@@ -390,7 +390,7 @@ export const FieldRenameProcessor = observer(
         doUpdateField(row, 'del', true)
       }
 
-      const doDeleteRow = row => {
+      const doDeleteRow = (row) => {
         for (let i = 0; i < tableList.value.length; i++) {
           if (tableList.value[i].sourceFieldName === row.sourceFieldName) {
             tableList.value[i]['isShow'] = false
@@ -434,15 +434,15 @@ export const FieldRenameProcessor = observer(
             class={[
               'cursor-pointer',
               {
-                'color-primary': row.sourceFieldName !== row.targetFieldName
-              }
+                'color-primary': row.sourceFieldName !== row.targetFieldName,
+              },
             ]}
           >
             <InnerInput
               readOnly={props.disabled}
               class="rename-table-item-input px-1"
               value={row.targetFieldName}
-              onChange={event => {
+              onChange={(event) => {
                 const val = event.target.value?.trim()
                 if (val) {
                   row.targetFieldName = val
@@ -478,12 +478,12 @@ export const FieldRenameProcessor = observer(
       }
 
       const showBatchRemove = computed(() => {
-        return config.checkedFields.some(field => !!field.isShow)
+        return config.checkedFields.some((field) => !!field.isShow)
       })
 
-      const updateFieldsShow = isShow => {
+      const updateFieldsShow = (isShow) => {
         let qualifiedName = config.selectTableRow?.sourceQualifiedName
-        let table = fieldsMapping.find(map => map.qualifiedName === qualifiedName)
+        let table = fieldsMapping.find((map) => map.qualifiedName === qualifiedName)
         let originTableName = config.selectTableRow?.sourceObjectName
         let previousTableName = config.selectTableRow?.sinkObjectName
 
@@ -495,21 +495,21 @@ export const FieldRenameProcessor = observer(
             operation: {
               prefix: '',
               suffix: '',
-              capitalized: ''
+              capitalized: '',
             },
-            fields: []
+            fields: [],
           }
           fieldsMapping.push(table)
         }
 
         let fieldMap = mappingField(table.fields) || {}
-        config.checkedFields.forEach(field => {
+        config.checkedFields.forEach((field) => {
           field.isShow = isShow
           fieldMap[field.sourceFieldName] = {
             sourceFieldName: field.sourceFieldName,
             targetFieldName: field.targetFieldName,
             isShow,
-            migrateType: 'custom'
+            migrateType: 'custom',
           }
         })
 
@@ -529,12 +529,12 @@ export const FieldRenameProcessor = observer(
 
       watch(
         () => root.$store.state.dataflow.transformLoading,
-        v => {
+        (v) => {
           config.transformLoading = root.$store.state.dataflow.transformLoading
           if (!v) {
             loadData()
           }
-        }
+        },
       )
 
       loadData()
@@ -561,7 +561,7 @@ export const FieldRenameProcessor = observer(
                     <ElSelect
                       value={fieldsOperation.capitalized}
                       disabled={props.disabled}
-                      onChange={val => {
+                      onChange={(val) => {
                         console.log('fieldsOperation.capitalized', fieldsOperation.capitalized) // eslint-disable-line
                         fieldsOperation.capitalized = val
                         doModify()
@@ -594,7 +594,7 @@ export const FieldRenameProcessor = observer(
                       value={fieldsOperation.prefix}
                       disabled={props.disabled}
                       clearable
-                      onInput={val => {
+                      onInput={(val) => {
                         fieldsOperation.prefix = val
                         doModify()
                       }}
@@ -605,7 +605,7 @@ export const FieldRenameProcessor = observer(
                       value={fieldsOperation.suffix}
                       disabled={props.disabled}
                       clearable
-                      onInput={val => {
+                      onInput={(val) => {
                         fieldsOperation.suffix = val
                         doModify()
                       }}
@@ -624,7 +624,7 @@ export const FieldRenameProcessor = observer(
                     prefix-icon="el-icon-search"
                     clearable
                     value={config.searchTable}
-                    onInput={val => {
+                    onInput={(val) => {
                       config.searchTable = val
                       doSearchTables()
                     }}
@@ -672,10 +672,10 @@ export const FieldRenameProcessor = observer(
                   class="flex mt-3 din-font"
                   layout="total, prev, slot, next"
                   on={{
-                    'current-change': page => {
+                    'current-change': (page) => {
                       config.page.current = page
                       loadData()
-                    }
+                    },
                   }}
                   current-page={config.page.current}
                   total={config.page.total}
@@ -703,7 +703,7 @@ export const FieldRenameProcessor = observer(
                       prefix-icon="el-icon-search"
                       clearable
                       value={config.searchField}
-                      onInput={val => {
+                      onInput={(val) => {
                         config.searchField = val
                         doSearchField()
                       }}
@@ -712,7 +712,7 @@ export const FieldRenameProcessor = observer(
                   <div class="item px-2">
                     <ElButton
                       key="batchRemove"
-                      type="text"
+                      text
                       class="btn-operation"
                       onClick={batchRemove}
                       disabled={
@@ -723,7 +723,7 @@ export const FieldRenameProcessor = observer(
                     </ElButton>
                     <ElButton
                       key="batchShow"
-                      type="text"
+                      text
                       class="btn-operation"
                       onClick={batchShow}
                       disabled={
@@ -742,7 +742,7 @@ export const FieldRenameProcessor = observer(
                   scopedSlots={{
                     sourceFieldName: renderSourceNode,
                     targetFieldName: renderNode,
-                    operation: renderOpNode
+                    operation: renderOpNode,
                   }}
                   row-class-name={tableRowClassName}
                   on-selection-change={doSelectionField}
@@ -789,6 +789,6 @@ export const FieldRenameProcessor = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

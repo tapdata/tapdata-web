@@ -5,7 +5,7 @@
     :append-to-body="true"
     width="800px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
     <ElForm
@@ -89,34 +89,34 @@ export default {
         id: '',
         name: '',
         storageTime: 3,
-        syncPoints: []
+        syncPoints: [],
       },
       rulesEdit: {
         name: [
           {
             required: true,
             message: this.$t('packages_business_shared_cdc_name'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       pointTypeOptions: [
         {
           label: this.$t('public_time_user_specified_time'),
-          value: 'localTZ'
+          value: 'localTZ',
         },
         {
           label: this.$t('public_time_current'),
-          value: 'current'
-        }
+          value: 'current',
+        },
       ],
       dag: null,
       dagForm: {
         cdcConcurrent: false,
-        cdcConcurrentWriteNum: 4
+        cdcConcurrentWriteNum: 4,
       },
       schemaData: null,
-      schemaScope: null
+      schemaScope: null,
     }
   },
   methods: {
@@ -125,7 +125,7 @@ export default {
         id: '',
         name: '',
         storageTime: 3,
-        syncPoints: []
+        syncPoints: [],
       }
       this.schemaData = null
       this.loadDag()
@@ -136,7 +136,7 @@ export default {
       this.loading = true
       logcollectorApi
         .getDetail(this.taskId)
-        .then(task => {
+        .then((task) => {
           this.editForm.name = task.name
           this.editForm.storageTime = task.storageTime
           let syncPoints = task.syncPoints
@@ -144,21 +144,21 @@ export default {
             this.editForm.syncPoints = syncPoints
           } else {
             const [connectionId, connectionName] = Object.entries(task.connections[0])[0]
-            const sourceNodeIds = (task.dag?.edges || []).map(t => t.source)
+            const sourceNodeIds = (task.dag?.edges || []).map((t) => t.source)
             const sourceNodes = (task.dag?.nodes || [])
-              .filter(node => sourceNodeIds.includes(node.id))
-              .map(node => ({
+              .filter((node) => sourceNodeIds.includes(node.id))
+              .map((node) => ({
                 nodeId: node.id,
                 nodeName: node.name,
                 connectionId: connectionId,
-                connectionName: connectionName
+                connectionName: connectionName,
               }))
-            const result = sourceNodes.map(item => {
+            const result = sourceNodes.map((item) => {
               const point = {
                 ...item,
                 timeZone: this.systemTimeZone,
                 pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: ''
+                dateTime: '',
               }
               return point
             })
@@ -172,7 +172,7 @@ export default {
 
     // 获取任务的dag
     loadDag() {
-      taskApi.get(this.taskId).then(data => {
+      taskApi.get(this.taskId).then((data) => {
         this.dag = data.dag
 
         this.dag.nodes.forEach((el = {}) => {
@@ -181,7 +181,7 @@ export default {
             this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
           } else if (el.type === 'logCollector') {
             // 获取连接信息
-            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
+            databaseTypesApi.pdkHash(el.attrs.pdkHash).then((con) => {
               const nodeProperties = con.properties?.node?.properties
               if (Object.keys(nodeProperties).length) {
                 this.schemaData = {
@@ -192,25 +192,25 @@ export default {
                     $inputs: {
                       type: 'array',
                       'x-display': 'hidden',
-                      default: []
+                      default: [],
                     },
                     $outputs: {
                       type: 'array',
                       'x-display': 'hidden',
-                      default: []
+                      default: [],
                     },
                     nodeConfig: {
                       type: 'object',
-                      properties: nodeProperties
-                    }
-                  }
+                      properties: nodeProperties,
+                    },
+                  },
                 }
               }
 
               const { nodeConfig } = el
               if (nodeConfig) {
                 this.$refs.schemaToForm.getForm()?.setValues({
-                  nodeConfig
+                  nodeConfig,
                 })
               }
             })
@@ -230,7 +230,7 @@ export default {
     },
 
     handleSave() {
-      this.$refs.form?.validate(valid => {
+      this.$refs.form?.validate((valid) => {
         if (valid) {
           logcollectorApi.patchId(this.taskId, this.editForm).then(() => {
             $emit(this, 'success', ...arguments)
@@ -249,14 +249,14 @@ export default {
       if (item.pointType === 'connTZ')
         return {
           disabledDate: null,
-          selectableRange: null
+          selectableRange: null,
         }
       const now = Date.now()
       const formatMap = {
         date: 'YYYY-MM-DD',
         time: 'HH:mm:ss',
         startTime: '00:00:00',
-        endTime: '23:59:59'
+        endTime: '23:59:59',
       }
 
       const pickDate = dayjs(val).format(formatMap.date)
@@ -266,9 +266,9 @@ export default {
         item.dateTime = now
       }
       let op = {
-        disabledDate: time => {
+        disabledDate: (time) => {
           return new Date(time).getTime() > now
-        }
+        },
       }
       if (pickDate === nowDate) {
         op.selectableRange = `${formatMap.startTime} - ${nowTime}`
@@ -283,26 +283,26 @@ export default {
       const { cdcConcurrent, cdcConcurrentWriteNum } = this.dagForm
 
       const getFormValues = this.$refs.schemaToForm?.getFormValues() || {}
-      dag.nodes.forEach(el => {
+      dag.nodes.forEach((el) => {
         if (el.type === 'hazelcastIMDG') {
           Object.assign(el, {
             cdcConcurrent,
-            cdcConcurrentWriteNum
+            cdcConcurrentWriteNum,
           })
         } else if (el.type === 'logCollector') {
           const { $inputs, $outputs, ...formVal } = getFormValues
           Object.assign(el, {
-            nodeConfig: formVal.nodeConfig
+            nodeConfig: formVal.nodeConfig,
           })
         }
       })
       taskApi.patch({
         id: this.taskId,
-        dag
+        dag,
       })
-    }
+    },
   },
-  emits: ['success']
+  emits: ['success'],
 }
 </script>
 

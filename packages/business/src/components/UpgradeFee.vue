@@ -5,7 +5,7 @@
     @input="$emit('update:visible', $event)"
     :append-to-body="true"
     width="880px"
-    custom-class="paid-upgrade-dialog"
+    class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
     <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
@@ -44,15 +44,7 @@
         </div>
       </li>
       <li
-        class="
-          paid-upgrade-right
-          copilot-pricing-card-container
-          ml-6
-          flex flex-column
-          bg
-          cursor-pointer
-          position-relative
-        "
+        class="paid-upgrade-right copilot-pricing-card-container ml-6 flex flex-column bg cursor-pointer position-relative"
         @click="goPaidUpgrade"
       >
         <img
@@ -132,15 +124,15 @@ export default {
         return
       }
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       this.handleClose()
     },
     handleClose() {
       $emit(this, 'update:visible', false)
-    }
+    },
   },
-  emits: ['update:visible']
+  emits: ['update:visible'],
 }
 </script>
 

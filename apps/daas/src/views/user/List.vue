@@ -72,7 +72,7 @@
               <i class="iconfont icon-piliang back-btn-icon"></i>
               <span> {{ $t('public_button_bulk_operation') }}</span>
             </el-button>
-            <template v-slot:dropdown>
+            <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
                   $t('user_list_bulk_activation')
@@ -136,7 +136,7 @@
             <el-button
               v-readonlybtn="'user_edition'"
               size="small"
-              type="text"
+              text
               v-if="['rejected', 'notActivated'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleActive(scope.row)"
@@ -147,7 +147,7 @@
             <el-button
               v-readonlybtn="'user_edition'"
               size="small"
-              type="text"
+              text
               v-if="!['rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleFreeze(scope.row)"
@@ -158,7 +158,7 @@
             <el-button
               v-readonlybtn="'user_edition'"
               size="small"
-              type="text"
+              text
               v-if="['notVerified'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleCheck(scope.row)"
@@ -168,7 +168,7 @@
             <el-button
               v-readonlybtn="'user_edition'"
               size="small"
-              type="text"
+              text
               v-if="['activated', 'rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="edit(scope.row)"
@@ -178,7 +178,7 @@
             <el-button
               v-readonlybtn="'user_delete'"
               size="small"
-              type="text"
+              text
               :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
               >{{ $t('public_button_delete') }}</el-button
@@ -192,13 +192,13 @@
       :title="createForm.id ? $t('user_list_edit_user') : $t('user_list_creat_user')"
       :close-on-click-modal="false"
       v-model="createDialogVisible"
-      custom-class="creatDialog"
+      class="creatDialog"
     >
       <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
       <div>
         <span class="label">{{ $t('user_form_activation_code') }}</span>
         <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
-        <el-button @click="resetAccesCode" type="text" size="small">{{ $t('public_button_reset') }}</el-button>
+        <el-button @click="resetAccesCode" text size="small">{{ $t('public_button_reset') }}</el-button>
         <el-tooltip
           placement="top"
           manual
@@ -213,7 +213,7 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <el-button type="text" size="small">{{ $t('public_button_copy') }}</el-button>
+            <el-button text size="small">{{ $t('public_button_copy') }}</el-button>
           </span>
         </el-tooltip>
       </div>
@@ -238,13 +238,13 @@ import { TablePage } from '@tap/business'
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
   },
   data() {
     return {
       searchParams: {
         keyword: '',
-        isFuzzy: true
+        isFuzzy: true,
         // time: ''
       },
       showTooltip: false,
@@ -259,14 +259,14 @@ export default {
         {
           name: this.$t('user_status_notActivated'),
           key: 'notActivated',
-          count: 0
+          count: 0,
         },
         {
           name: this.$t('user_status_notVerified'),
           key: 'notVerified',
-          count: 0
+          count: 0,
         },
-        { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 }
+        { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 },
       ],
       notActivatedCount: 0,
       notVerifiedCount: 0,
@@ -278,14 +278,14 @@ export default {
         password: '',
         roleusers: [],
         status: 'activated',
-        accesscode: ''
+        accesscode: '',
       },
       createFormConfig: {
         form: {
           labelPosition: 'right',
           labelWidth: '100px',
           size: 'small',
-          inlineMessage: true
+          inlineMessage: true,
         },
         items: [
           {
@@ -294,7 +294,7 @@ export default {
             field: 'username',
             maxlength: 100,
             required: true,
-            showWordLimit: true
+            showWordLimit: true,
           },
           {
             type: 'input',
@@ -316,22 +316,22 @@ export default {
                   } else {
                     return callback()
                   }
-                }
-              }
+                },
+              },
             ],
             dependOn: [
               {
                 triggerOptions: [
                   {
                     field: 'id',
-                    value: undefined
-                  }
+                    value: undefined,
+                  },
                 ],
                 triggerConfig: {
-                  mode: 'form'
-                }
-              }
-            ]
+                  mode: 'form',
+                },
+              },
+            ],
           },
           {
             type: 'input',
@@ -356,9 +356,9 @@ export default {
                   } else {
                     return callback()
                   }
-                }
-              }
-            ]
+                },
+              },
+            ],
           },
           {
             type: 'select',
@@ -366,7 +366,7 @@ export default {
             field: 'roleusers',
             multiple: true,
             options: [],
-            required: true
+            required: true,
           },
           {
             type: 'select',
@@ -375,23 +375,23 @@ export default {
             options: [
               {
                 label: this.$t('user_status_notVerified'),
-                value: 'notVerified'
+                value: 'notVerified',
               },
               {
                 label: this.$t('user_status_notActivated'),
-                value: 'notActivated'
+                value: 'notActivated',
               },
               { label: this.$t('user_status_activated'), value: 'activated' },
-              { label: this.$t('user_status_rejected'), value: 'rejected' }
+              { label: this.$t('user_status_rejected'), value: 'rejected' },
             ],
-            required: true
-          }
-        ]
+            required: true,
+          },
+        ],
       },
       count1: 0,
       count2: 0,
       userRole: [],
-      roleList: []
+      roleList: [],
     }
   },
   created() {
@@ -402,13 +402,13 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    }
+    },
   },
   methods: {
     // 重置
@@ -416,7 +416,7 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          isFuzzy: true
+          isFuzzy: true,
         }
       }
       this.table.fetch(1)
@@ -447,26 +447,26 @@ export default {
 
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       let filter = {
         order: this.order,
         limit: size,
-        skip: (current - 1) * size
+        skip: (current - 1) * size,
       }
       if (JSON.stringify(where) !== '{}') {
         filter.where = where
       }
       return usersApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
+            data: list.map((item) => {
               if (!item.emailVerified) {
                 item.status = 'notVerified'
               } else {
@@ -481,7 +481,7 @@ export default {
               }
               item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
               return item
-            })
+            }),
           }
         })
     },
@@ -489,19 +489,19 @@ export default {
       Promise.all([
         usersApi.count({
           where: JSON.stringify({
-            where: { emailVerified: true, account_status: 2 }
-          })
+            where: { emailVerified: true, account_status: 2 },
+          }),
         }),
         usersApi.count({
           where: JSON.stringify({
-            where: { emailVerified: false, account_status: { neq: 0 } }
-          })
+            where: { emailVerified: false, account_status: { neq: 0 } },
+          }),
         }),
         usersApi.count({
           where: JSON.stringify({
-            where: { account_status: 0 }
-          })
-        })
+            where: { account_status: 0 },
+          }),
+        }),
       ]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
         this.notActivatedCount = notActivatedCount.count
         this.notVerifiedCount = notVerifiedCount.count
@@ -512,17 +512,17 @@ export default {
     getDbOptions() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
         let items = data?.items || []
         this.roleList = items
         let options = []
-        items.forEach(db => {
+        items.forEach((db) => {
           if (db.name !== 'admin') {
             options.push({
               label: db.name,
-              value: db.id
+              value: db.id,
             })
           }
         })
@@ -545,10 +545,10 @@ export default {
     // 选择分类
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.listtags && row.listtags.length > 0) {
           tagList[row.listtags[0].id] = {
-            value: row.listtags[0].value
+            value: row.listtags[0].value,
           }
         }
       })
@@ -556,13 +556,13 @@ export default {
     },
     // 分类设置保存
     handleOperationClassify(listtags) {
-      let ids = this.multipleSelection.map(item => {
+      let ids = this.multipleSelection.map((item) => {
         return item.id
       })
       let where = {
         id: {
-          inq: ids
-        }
+          inq: ids,
+        },
       }
       usersApi.update(where, { listTags: listtags }).then(() => {
         this.table.fetch()
@@ -572,25 +572,25 @@ export default {
     getMappingModel(id) {
       let filter = {
         where: {
-          principalId: id
-        }
+          principalId: id,
+        },
       }
       roleMappingsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
           this.roleMappding = items
-          this.createForm.roleusers = items.map(item => item.roleId)
+          this.createForm.roleusers = items.map((item) => item.roleId)
         })
     },
     // 创建用户弹窗
     openCreateDialog() {
       this.createDialogVisible = true
       //过滤出默认角色register_user_default
-      let data = this.roleList.filter(it => it.register_user_default)
-      let roleusers = data.map(it => it.id) || []
+      let data = this.roleList.filter((it) => it.register_user_default)
+      let roleusers = data.map((it) => it.id) || []
       this.createForm = {
         username: '',
         email: '',
@@ -599,7 +599,7 @@ export default {
         status: 'activated',
         accesscode: '',
         emailVerified: true,
-        account_status: 1
+        account_status: 1,
       }
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
@@ -618,7 +618,7 @@ export default {
         status: item.status ? item.status : '',
         accesscode: item.accesscode,
         emailVerified: item.emailVerified,
-        account_status: item.account_status
+        account_status: item.account_status,
       }
       this.$nextTick(() => {
         this.$refs.form.clearValidate()
@@ -629,7 +629,7 @@ export default {
     createNewUser() {
       let that = this
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (that.createForm.id) {
           this.$refs.form.clearValidate('password')
         }
@@ -663,7 +663,7 @@ export default {
           }
           // delete params.status;
           usersApi[that.createForm.id ? 'patch' : 'post'](params)
-            .then(data => {
+            .then((data) => {
               if (data) {
                 that.$message.success(this.$t('public_message_save_ok'))
                 this.table.fetch()
@@ -697,46 +697,46 @@ export default {
           } else {
             done()
           }
-        }
+        },
       })
     },
     // 激活
     handleActive(item) {
       let params = {
         id: item.id,
-        account_status: 1
+        account_status: 1,
       }
       let successMsg = this.$t('user_list_activetion_success')
       let errorMsg = this.$t('user_list_activetion_error')
       this.$confirm(
         this.$t('user_list_activetion_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_activation'))
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_activation')),
       )
     },
     // 冻结
     handleFreeze(item) {
       let params = {
         id: item.id,
-        account_status: 0
+        account_status: 0,
       }
       let successMsg = this.$t('user_list_freeze_success')
       let errorMsg = this.$t('user_list_freeze_error')
       this.$confirm(
         this.$t('user_list_freeze_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_freeze'))
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_freeze')),
       )
     },
     // 校验
     handleCheck(item) {
       let params = {
         id: item.id,
-        emailVerified: true
+        emailVerified: true,
       }
       let successMsg = this.$t('user_list_check_success')
       let errorMsg = this.$t('user_list_check_error')
       this.$confirm(
         this.$t('user_list_check_user', [item.username]),
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_check'))
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_check')),
       )
     },
     // 改变状态提示
@@ -764,18 +764,18 @@ export default {
           } else {
             done()
           }
-        }
+        },
       }
     },
     // 批量操作处理
     handleCommand(command) {
-      let ids = this.multipleSelection.map(item => {
+      let ids = this.multipleSelection.map((item) => {
         return item.id
       })
       let where = {
         id: {
-          inq: ids
-        }
+          inq: ids,
+        },
       }
       let params = {}
       switch (command) {
@@ -798,8 +798,8 @@ export default {
     permissionsmethod(data = [], roleusers = []) {
       let html = ''
       if (data && data.length) {
-        roleusers.forEach(item => {
-          const roleName = data.find(t => t.roleId === item)?.role?.name
+        roleusers.forEach((item) => {
+          const roleName = data.find((t) => t.roleId === item)?.role?.name
           if (roleName) {
             html += ' ' + roleName + ','
           }
@@ -826,11 +826,11 @@ export default {
         {
           placeholder: this.$t('user_list_user_name_email'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
-    }
-  }
+    },
+  },
 }
 </script>
 

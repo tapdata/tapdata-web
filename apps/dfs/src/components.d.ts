@@ -45,6 +45,7 @@ declare module 'vue' {
     ElIconCirclePlus: typeof import('@element-plus/icons-vue')['CirclePlus']
     ElIconClose: typeof import('@element-plus/icons-vue')['Close']
     ElIconLoading: typeof import('@element-plus/icons-vue')['Loading']
+    ElIconPlus: typeof import('@element-plus/icons-vue')['Plus']
     ElIconRemove: typeof import('@element-plus/icons-vue')['Remove']
     ElIconWarning: typeof import('@element-plus/icons-vue')['Warning']
     ElImage: typeof import('element-plus/es')['ElImage']

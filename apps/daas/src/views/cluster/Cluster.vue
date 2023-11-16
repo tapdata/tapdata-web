@@ -116,7 +116,7 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
                           >{{ $t('public_button_start') }}
@@ -124,14 +124,14 @@
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="small"
-                          type="text"
+                          text
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
                           >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
                           >{{ $t('public_button_restart') }}
@@ -157,7 +157,7 @@
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="small"
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_start') }}</ElButton
@@ -165,14 +165,14 @@
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="small"
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_restart') }}</ElButton
@@ -198,7 +198,7 @@
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="small"
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_start') }}</ElButton
@@ -206,14 +206,14 @@
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="small"
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_restart') }}</ElButton
@@ -233,11 +233,9 @@
                     </el-col>
                     <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
-                        <ElButton type="text" @click="delServe(child, item.status)">{{
-                          $t('public_button_delete')
-                        }}</ElButton>
+                        <ElButton text @click="delServe(child, item.status)">{{ $t('public_button_delete') }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
-                        <ElButton type="text" @click="editServe(child, item.status, item)">{{
+                        <ElButton text @click="editServe(child, item.status, item)">{{
                           $t('public_button_edit')
                         }}</ElButton>
                       </div>
@@ -293,7 +291,7 @@
 
     <el-dialog
       :title="$t('cluster_add_server_mon')"
-      custom-class="serverDialog"
+      class="serverDialog"
       v-model="dialogForm"
       :append-to-body="true"
       :lock-scroll="false"
@@ -313,7 +311,7 @@
     </el-dialog>
     <el-dialog
       :title="$t('cluster_agentSetting')"
-      custom-class="serverDialog"
+      class="serverDialog"
       v-model="editAgentDialog"
       :lock-scroll="false"
       :close-on-click-modal="false"
@@ -330,7 +328,7 @@
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
+            <ElButton text class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
@@ -363,7 +361,7 @@ import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 export default {
   components: {
     AddServe,
-    FilterBar
+    FilterBar,
   },
   data() {
     return {
@@ -391,16 +389,16 @@ export default {
       delData: '',
       processIdData: [],
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       accessToken: '',
       filterItems: [
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
-      ]
+          type: 'input',
+        },
+      ],
     }
   },
   created() {
@@ -411,7 +409,7 @@ export default {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.getDataApi()
-    }
+    },
   },
   methods: {
     // 提交
@@ -425,7 +423,7 @@ export default {
             uuid: this.currentData.uuid,
             name: getFrom.name,
             command: getFrom.command,
-            arguments: getFrom.arguments ? getFrom.arguments : ''
+            arguments: getFrom.arguments ? getFrom.arguments : '',
           }
           if (getFrom.id === '') {
             await clusterApi
@@ -467,13 +465,13 @@ export default {
     delServe(data, status) {
       let params = {
         uuid: data.uuid,
-        id: data.id
+        id: data.id,
       }
 
       if (status === 'running') {
         this.$confirm(this.$t('public_message_delete_confirm') + '?', {
-          type: 'warning'
-        }).then(resFlag => {
+          type: 'warning',
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -495,13 +493,13 @@ export default {
     },
     //下载
     downServeFn(item) {
-      proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
+      proxyApi.supervisor(item.systemInfo?.process_id).then((data) => {
         downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_supervisor_summary`)
       })
     },
     //下载
     downConnectorsFn(item) {
-      proxyApi.connectors(item.systemInfo?.process_id).then(data => {
+      proxyApi.connectors(item.systemInfo?.process_id).then((data) => {
         downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_connectors_memory`)
       })
     },
@@ -511,12 +509,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'start'
+          operation: 'start',
         }
         this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -538,12 +536,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'stop'
+          operation: 'stop',
         }
         this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -564,12 +562,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'restart'
+          operation: 'restart',
         }
         this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -581,7 +579,7 @@ export default {
       let data = {
         uuid: item.uuid,
         server: 'agent',
-        operation: 'update:' + this.toVersion
+        operation: 'update:' + this.toVersion,
       }
       this.operationFn(data)
       this.canUpdate = false
@@ -608,9 +606,9 @@ export default {
     getUsageRate(processId) {
       let where = {
         process_id: {
-          inq: processId
+          inq: processId,
         },
-        worker_type: 'connector'
+        worker_type: 'connector',
       }
       return workerApi.get({ filter: JSON.stringify({ where: where }) })
     },
@@ -623,36 +621,36 @@ export default {
             or: [
               {
                 agentName: {
-                  $exists: false
+                  $exists: false,
                 },
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword
-                }
+                  like: this.searchParams.keyword,
+                },
               },
               {
                 agentName: '',
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword
-                }
+                  like: this.searchParams.keyword,
+                },
               },
               {
                 agentName: {
-                  like: this.searchParams.keyword
-                }
-              }
-            ]
-          }
+                  like: this.searchParams.keyword,
+                },
+              },
+            ],
+          },
         }
       }
       let clusterData = await clusterApi.get(params)
       clusterData = clusterData?.items || []
-      let processId = clusterData.map(it => it?.systemInfo?.process_id)
+      let processId = clusterData.map((it) => it?.systemInfo?.process_id)
       let workerData = await this.getUsageRate(processId)
       //处理worker 数据
       workerData = workerData?.items || []
       let metricValuesData = {}
       if (workerData?.length) {
-        workerData.forEach(item => {
+        workerData.forEach((item) => {
           if (item.metricValues) {
             item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
             item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
@@ -690,7 +688,7 @@ export default {
         if (clusterData[i]?.engine?.status !== 'running') {
           clusterData[i]['metricValues'] = {
             CpuUsage: '-',
-            HeapMemoryUsage: '-'
+            HeapMemoryUsage: '-',
           }
         }
         if (clusterData[i]?.engine?.netStat) {
@@ -715,8 +713,8 @@ export default {
       const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -754,7 +752,7 @@ export default {
       }
       let data = {
         custIP: this.custIP,
-        agentName: this.agentName
+        agentName: this.agentName,
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
@@ -769,17 +767,17 @@ export default {
     //运行日志
     goDailyRecord() {
       this.$router.push({
-        name: 'dailyRecord'
+        name: 'dailyRecord',
       })
     },
     getStatus(type) {
       return STATUS_MAP[type] || '-'
-    }
+    },
   },
   unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  }
+  },
 }
 </script>
 

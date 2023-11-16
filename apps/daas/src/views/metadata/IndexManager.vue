@@ -38,7 +38,7 @@
         <template v-slot="scope">
           <el-button
             size="small"
-            type="text"
+            text
             style="color: #f56c6c"
             @click="remove(scope.row)"
             v-if="scope.row.name !== '_id_' && scope.row.status === 'created'"
@@ -51,7 +51,7 @@
     <!-- 创建索引弹窗 start -->
     <el-dialog
       width="600px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('metadata_details_index_create')"
       :close-on-click-modal="false"
       v-model="createDialogVisible"
@@ -59,7 +59,7 @@
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata_details_index_name')">
           <el-input
-            type="text"
+            text
             size="small"
             v-model="createForm.task_data.name"
             :placeholder="$t('public_select_placeholder') + $t('metadata_details_index_name')"
@@ -100,7 +100,7 @@
                       { name: '1(asc)', value: 1 },
                       { name: '-1(desc)', value: -1 },
                       { name: '2dsphere', value: '2dsphere' },
-                      { name: '2d', value: '2d' }
+                      { name: '2d', value: '2d' },
                     ]"
                     :key="unitItem.value"
                     :label="unitItem.name"
@@ -115,7 +115,7 @@
             <el-button
               plain
               style="padding: 0; color: red"
-              type="text"
+              text
               @click="removeRow(item, index)"
               v-if="createForm.indexDefinition.length > 1"
             >
@@ -124,7 +124,7 @@
             <el-button
               plain
               style="padding: 0"
-              type="text"
+              text
               @click="addRow"
               v-if="index === createForm.indexDefinition.length - 1"
             >
@@ -143,7 +143,7 @@
         </el-form-item>
         <el-form-item v-if="createForm.task_data.ttl">
           <el-col :span="16">
-            <el-input type="text" size="small" v-model="createForm.task_data.expireAfterSeconds"></el-input>
+            <el-input text size="small" v-model="createForm.task_data.expireAfterSeconds"></el-input>
           </el-col>
           <el-col :span="6" class="fr">
             <el-select v-model="createForm.task_data.data_type" size="small">
@@ -170,8 +170,8 @@ export default {
   props: {
     indexData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -187,8 +187,8 @@ export default {
         indexDefinition: [
           {
             key: '',
-            value: 1
-          }
+            value: 1,
+          },
         ],
         task_data: {
           name: '',
@@ -200,8 +200,8 @@ export default {
           uri: '',
           ttl: false,
           type_data: '',
-          data_type: 's'
-        }
+          data_type: 's',
+        },
       },
       dataTypeList: [
         { label: this.$t('public_time_s'), value: 's' },
@@ -210,27 +210,27 @@ export default {
         { label: this.$t('public_time_d'), value: 'd' },
         { label: this.$t('timeToLive_w'), value: 'w' },
         { label: this.$t('timeToLive_mo'), value: 'mo' },
-        { label: this.$t('timeToLive_y'), value: 'y' }
-      ]
+        { label: this.$t('timeToLive_y'), value: 'y' },
+      ],
     }
   },
   created() {
     this.getData()
   },
   mounted() {
-    if (this.indexData.fields) this.fieldsArr = this.indexData.fields.map(item => item.field_name)
+    if (this.indexData.fields) this.fieldsArr = this.indexData.fields.map((item) => item.field_name)
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   methods: {
     getData() {
       if (this.indexData.indexes)
-        this.indexData.indexes.forEach(item => {
+        this.indexData.indexes.forEach((item) => {
           let props = {}
-          Object.keys(item).forEach(key => {
+          Object.keys(item).forEach((key) => {
             if (item.key && typeof item.key === 'string') {
               item.key = JSON.parse(item.key)
             }
@@ -257,8 +257,8 @@ export default {
         indexDefinition: [
           {
             key: '',
-            value: 1
-          }
+            value: 1,
+          },
         ],
         task_data: {
           name: '',
@@ -270,25 +270,25 @@ export default {
           uri: '',
           ttl: false,
           type_data: '',
-          data_type: 's'
-        }
+          data_type: 's',
+        },
       }
     },
     // 保存
     createNewModel() {
       let _this = this
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           let { name, background, unique, ttl, expireAfterSeconds, data_type } = _this.createForm.task_data
-          let existsIndexes = _this.indexTableData.filter(it => it.name === name)
+          let existsIndexes = _this.indexTableData.filter((it) => it.name === name)
           if (existsIndexes && existsIndexes.length > 0) {
             this.$message.error(this.$t('metadata_details_index_name_exists'))
             return false
           }
           let key = {}
-          _this.createForm.indexDefinition.forEach(v => (key[v.key] = v.value))
+          _this.createForm.indexDefinition.forEach((v) => (key[v.key] = v.value))
           let _keyJson = JSON.stringify(key)
-          existsIndexes = _this.indexTableData.find(v => _keyJson === JSON.stringify(v.key))
+          existsIndexes = _this.indexTableData.find((v) => _keyJson === JSON.stringify(v.key))
           if (existsIndexes) {
             this.$message.error(this.$t('metadata_details_index_index_exists'))
             return false
@@ -331,8 +331,8 @@ export default {
               type_data: typeData,
               unique: unique,
               background: background,
-              uri: _this.indexData.source ? _this.indexData.source.database_uri : ''
-            }
+              uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
+            },
           }
           scheduleTasksApi.post(params).then(() => {
             this.createDialogVisible = false
@@ -348,8 +348,8 @@ export default {
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(flag => {
+        closeOnClickModal: false,
+      }).then((flag) => {
         if (flag) {
           scheduleTasksApi
             .post({
@@ -361,8 +361,8 @@ export default {
                 uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
                 name: item.name,
                 ns: item.ns,
-                meta_id: _this.$route.params.id
-              }
+                meta_id: _this.$route.params.id,
+              },
             })
             .then(() => {
               this.$message.success(this.$t('public_message_deleting'))
@@ -374,14 +374,14 @@ export default {
     addRow() {
       this.createForm.indexDefinition.push({
         key: '',
-        value: '1'
+        value: '1',
       })
     },
     // 删除索引字段
     removeRow(item, index) {
       this.createForm.indexDefinition.splice(index, 1)
-    }
-  }
+    },
+  },
 }
 </script>
 

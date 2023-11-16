@@ -4,7 +4,7 @@
     :model-value="visible"
     width="70%"
     append-to-body
-    custom-class="field-mapping-table-dialog"
+    class="field-mapping-table-dialog"
     :close-on-click-modal="false"
     @close="closeDialog"
   >
@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      loadingSave: false
+      loadingSave: false,
     }
   },
   methods: {
@@ -45,9 +45,9 @@ export default {
     },
     closeDialog() {
       $emit(this, 'update:visible', false)
-    }
+    },
   },
-  emits: ['update:visible']
+  emits: ['update:visible'],
 }
 </script>
 

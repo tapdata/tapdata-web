@@ -42,7 +42,7 @@
       </transition-group>
 
       <input
-        type="text"
+        text
         class="el-select__input"
         :class="[selectSize ? `is-${selectSize}` : '']"
         :disabled="selectDisabled"
@@ -66,7 +66,7 @@
         :style="{
           'flex-grow': '1',
           width: inputLength / (inputWidth - 32) + '%',
-          'max-width': inputWidth - 42 + 'px'
+          'max-width': inputWidth - 42 + 'px',
         }"
         ref="input"
       />
@@ -74,7 +74,7 @@
     <el-input
       ref="reference"
       v-model="selectedLabel"
-      type="text"
+      text
       :placeholder="currentPlaceholder"
       :name="name"
       :id="id"
@@ -131,7 +131,7 @@
           view-class="el-select-dropdown__list"
           ref="scrollbar"
           :class="{
-            'is-empty': !allowCreate && query && filteredOptionsCount === 0
+            'is-empty': !allowCreate && query && filteredOptionsCount === 0,
           }"
           v-show="options.length > 0 && !loading"
         >
@@ -185,9 +185,9 @@ export default {
       this.$nextTick(() => {
         this.scrollToOption(option)
       })
-    }
+    },
   },
-  emits: ['create', 'update:value']
+  emits: ['create', 'update:value'],
 }
 </script>
 

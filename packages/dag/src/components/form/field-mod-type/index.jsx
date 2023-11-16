@@ -31,12 +31,12 @@ export const FieldModType = observer(
         }
 
         let fields = await props.getFields(form?.values.id)
-        options.value = fields.filter(item => !item.is_deleted)
+        options.value = fields.filter((item) => !item.is_deleted)
         fieldMap = options.value.reduce((map, field) => {
           map[field.previousFieldName] = true
           return map
         }, {})
-        invalidOperations.value = fieldRef.value.value.filter(op => {
+        invalidOperations.value = fieldRef.value.value.filter((op) => {
           return !fieldMap[op.field]
         })
       }
@@ -48,7 +48,7 @@ export const FieldModType = observer(
         options,
         databaseType: form.values.databaseType,
         operations: form.values.operations,
-        form
+        form,
       }
     },
 
@@ -59,36 +59,36 @@ export const FieldModType = observer(
         selectList: [
           {
             label: 'String',
-            value: 'String'
+            value: 'String',
           },
           {
             label: 'Date',
-            value: 'Date'
+            value: 'Date',
           },
           {
             label: 'Double',
-            value: 'Double'
+            value: 'Double',
           },
           {
             label: 'Float',
-            value: 'Float'
+            value: 'Float',
           },
           {
             label: 'BigDecimal',
-            value: 'BigDecimal'
+            value: 'BigDecimal',
           },
           {
             label: 'Long',
-            value: 'Long'
+            value: 'Long',
           },
           {
             label: 'Map',
-            value: 'Map'
+            value: 'Map',
           },
           {
             label: 'Array',
-            value: 'Array'
-          }
+            value: 'Array',
+          },
         ],
         originalFields: [],
         checkAll: false,
@@ -98,8 +98,8 @@ export const FieldModType = observer(
           op: 'CONVERT',
           field: '',
           operand: '',
-          originalDataType: ''
-        }
+          originalDataType: '',
+        },
       }
     },
     watch: {
@@ -108,20 +108,20 @@ export const FieldModType = observer(
         handler(v) {
           $emit(this, 'change', v)
           console.log('operations', v) // eslint-disable-line
-        }
-      }
+        },
+      },
     },
 
     render() {
       // eslint-disable-next-line no-console
       console.log('🚗 FieldProcessor', this.loading, this.options)
       let fields = this.options || []
-      fields = fields.filter(item => !item.is_deleted)
+      fields = fields.filter((item) => !item.is_deleted)
       fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
       fields = this.checkOps(fields)
       this.searchFiledName = this.searchFiledName.trim().toString() //去空格
       if (this.searchFiledName !== '') {
-        fields = fields.filter(v => {
+        fields = fields.filter((v) => {
           let str = v.label.toLowerCase()
           return str.indexOf(this.searchFiledName.toLowerCase()) > -1
         })
@@ -196,13 +196,13 @@ export const FieldModType = observer(
                       disabled={this.disabled}
                       onChange={() => this.handleDataType(node, data)}
                     >
-                      {this.selectList.map(op => (
+                      {this.selectList.map((op) => (
                         <ElOption label={op.label} value={op.value} key={op.value} />
                       ))}
                     </ElSelect>
                     <span class="e-ops">
                       <ElButton
-                        type="text"
+                        text
                         class="ml-5"
                         disabled={!this.isConvertDataType(data.previousFieldName) || this.disabled}
                         onClick={() => this.handleReset(node, data)}
@@ -211,7 +211,7 @@ export const FieldModType = observer(
                       </ElButton>
                     </span>
                   </span>
-                )
+                ),
               }}
             />
           </div>
@@ -220,7 +220,7 @@ export const FieldModType = observer(
     },
     methods: {
       isConvertDataType(field) {
-        let ops = this.operations.filter(v => v.field === field && v.op === 'CONVERT')
+        let ops = this.operations.filter((v) => v.field === field && v.op === 'CONVERT')
         return ops && ops.length > 0
       },
       getNativeData(id) {
@@ -247,7 +247,7 @@ export const FieldModType = observer(
         if (this.operations?.length > 0 && fields?.length > 0) {
           for (let i = 0; i < this.operations.length; i++) {
             if (this.operations[i]?.op === 'CONVERT') {
-              let targetIndex = fields.findIndex(n => n.field === this.operations[i].field)
+              let targetIndex = fields.findIndex((n) => n.field === this.operations[i].field)
               if (targetIndex === -1) {
                 continue
               }
@@ -264,9 +264,9 @@ export const FieldModType = observer(
         console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
         let nativeData = this.getNativeData(data.id)
         let ops = this.operations.filter(
-          v =>
+          (v) =>
             v.field === data.previousFieldName /*|| data?.oldIdList.findIndex(t => t === v.id) > -1*/ &&
-            v.op === 'CONVERT'
+            v.op === 'CONVERT',
         )
         let op
         if (ops.length === 0) {
@@ -280,7 +280,7 @@ export const FieldModType = observer(
             primary_key_position: data.primary_key_position,
             color: data.color,
             label: data.field_name,
-            field_name: data.field_name
+            field_name: data.field_name,
           })
           this.operations.push(op)
         } else {
@@ -324,9 +324,9 @@ export const FieldModType = observer(
       },
       handleAllReset() {
         this.operations.splice(0)
-      }
-    }
-  })
+      },
+    },
+  }),
 )
 
 export default FieldModType

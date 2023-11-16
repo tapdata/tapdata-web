@@ -3,7 +3,7 @@
     <span class="inline-input-body" v-show="!editing">
       <span
         :style="{
-          width: inputStyle && inputStyle.width
+          width: inputStyle && inputStyle.width,
         }"
         :class="[wordBreak ? 'word-break' : 'ellipsis']"
         :title="value"
@@ -47,8 +47,8 @@
         <ElButton class="icon-button min-w-0 m-0" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
       </template>
       <template v-else-if="type === 'text'">
-        <ElButton type="text" class="min-w-0" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
-        <ElButton type="text" class="m-0 min-w-0" @click="cancel">{{ cancelText }}</ElButton>
+        <ElButton text class="min-w-0" :disabled="disabled" @click="save">{{ saveText }}</ElButton>
+        <ElButton text class="m-0 min-w-0" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
         <ElButton class="inline-input-button" type="primary" size="small" :disabled="disabled" @click="save">{{
@@ -79,35 +79,35 @@ export default {
     inputProps: Object,
     min: {
       type: Number,
-      default: 1
+      default: 1,
     },
     max: {
       type: Number,
-      default: 32
+      default: 32,
     },
     editText: {
       type: String,
       default: () => {
         return i18n.t('public_button_edit')
-      }
+      },
     },
     saveText: {
       type: String,
       default: () => {
         return i18n.t('public_button_save')
-      }
+      },
     },
     cancelText: {
       type: String,
       default: () => {
         return i18n.t('public_button_cancel')
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       editing: false,
-      inputValue: ''
+      inputValue: '',
     }
   },
   computed: {
@@ -124,16 +124,16 @@ export default {
       let { min, max } = this
       return i18n.t('components_InlineInput_ziFuChangDuXian', {
         val1: min,
-        val2: max
+        val2: max,
       })
-    }
+    },
   },
   watch: {
     editing(val) {
       if (val) {
         this.inputValue = this.value
       }
-    }
+    },
   },
   methods: {
     save() {
@@ -145,9 +145,9 @@ export default {
     },
     cancel() {
       this.editing = false
-    }
+    },
   },
-  emits: ['click-text', 'save', 'update:value', , 'update:value']
+  emits: ['click-text', 'save', 'update:value', , 'update:value'],
 }
 </script>
 

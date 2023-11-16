@@ -1,16 +1,16 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <ElButton type="text" class="btn-expand no-expand toggle" size="small" @click="toggle()" v-if="!isExpand">
+    <ElButton text class="btn-expand no-expand toggle" size="small" @click="toggle()" v-if="!isExpand">
       <VIcon size="16" class="icon">expand-list</VIcon>
     </ElButton>
     <div class="classification-header" v-else>
-      <ElButton type="text" class="btn-expand" size="small" @click="toggle()">
+      <ElButton text class="btn-expand" size="small" @click="toggle()">
         <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>
       <ElButton
         class="btn-addIcon"
         size="small"
-        type="text"
+        text
         :disabled="$disabledReadonlyUserBtn()"
         v-readonlybtn="authority"
         @click="showDialog()"
@@ -58,10 +58,10 @@
               @command="handleRowCommand($event, node)"
               v-readonlybtn="authority"
             >
-              <ElButton type="text" :disabled="$disabledReadonlyUserBtn()"
+              <ElButton text :disabled="$disabledReadonlyUserBtn()"
                 ><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton
               >
-              <template v-slot:dropdown>
+              <template #dropdown>
                 <ElDropdownMenu>
                   <ElDropdownItem command="add">
                     {{ $t('packages_component_classification_addChildernNode') }}
@@ -76,7 +76,7 @@
       </ElTree>
       <ElButton
         v-if="treeData && treeData.length === 0 && isExpand"
-        type="text"
+        text
         v-readonlybtn="authority"
         @click="showDialog()"
         class="create"
@@ -84,7 +84,7 @@
       >
     </div>
     <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>
       <ElInput
@@ -119,17 +119,17 @@ export default {
       type: Array,
       default: () => {
         return []
-      }
+      },
     },
     authority: {
-      type: String
+      type: String,
     },
     title: {
-      type: String
+      type: String,
     },
     viewPage: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
@@ -140,7 +140,7 @@ export default {
       default_expanded: false,
       props: {
         key: 'id',
-        label: 'value'
+        label: 'value',
       },
       isActive: true,
 
@@ -150,11 +150,11 @@ export default {
         gid: '',
         label: '',
         title: '',
-        visible: false
+        visible: false,
       },
 
       nodeName: '',
-      parent_id: ''
+      parent_id: '',
     }
   },
   computed: {
@@ -168,7 +168,7 @@ export default {
           ? this.$t('packages_component_classification_userTitle')
           : this.$t('packages_component_classification_title'))
       )
-    }
+    },
   },
   mounted() {
     this.getData()
@@ -219,7 +219,7 @@ export default {
     },
     filterText(val) {
       this.$refs.tree.filter(val)
-    }
+    },
   },
   methods: {
     ...mapMutations('classification', ['setTag', 'setPanelFlag']),
@@ -227,7 +227,7 @@ export default {
       this.isExpand = !this.isExpand
       this.setPanelFlag({
         panelFlag: this.isExpand,
-        type: this.viewPage
+        type: this.viewPage,
       })
     },
     clear() {
@@ -235,9 +235,9 @@ export default {
     },
     checkHandler(data, { checkedKeys }) {
       let checked = checkedKeys.includes(data.id)
-      let setChecked = arr => {
+      let setChecked = (arr) => {
         if (arr && arr.length) {
-          arr.forEach(node => {
+          arr.forEach((node) => {
             this.$refs.tree.setChecked(node, checked, true)
             setChecked(node.children)
           })
@@ -256,38 +256,38 @@ export default {
       $emit(this, 'nodeChecked', checkedNodes)
       this.setTag({
         value: checkedNodes,
-        type: this.viewPage
+        type: this.viewPage,
       })
     },
     getData(cb) {
       let where = {}
       if (this.types.length) {
         where.item_type = {
-          $in: this.types
+          $in: this.types,
         }
       }
       let filter = {
-        where
+        where,
       }
       if (this.types[0] === 'user') {
         userGroupsApi
           .get({
             filter: JSON.stringify({
-              limit: 999
-            })
+              limit: 999,
+            }),
           })
-          .then(data => {
+          .then((data) => {
             let treeData = []
             let items = data?.items || []
             if (items.length) {
-              treeData = items.map(item => ({
+              treeData = items.map((item) => ({
                 value: item.name,
                 name: item.name,
                 id: item.id,
                 gid: item.gid,
                 parent_id: item.parent_id,
                 last_updated: item.last_updated,
-                user_id: item.user_id
+                user_id: item.user_id,
               }))
             }
             this.treeData = this.formatData(treeData)
@@ -297,9 +297,9 @@ export default {
       } else {
         metadataDefinitionsApi
           .childAccount({
-            filter: JSON.stringify(filter)
+            filter: JSON.stringify(filter),
           })
-          .then(data => {
+          .then((data) => {
             let items = data?.items || []
             this.treeData = this.formatData(items)
             cb && cb(items)
@@ -311,26 +311,26 @@ export default {
         userGroupsApi
           .get({
             filter: JSON.stringify({
-              limit: 999
-            })
+              limit: 999,
+            }),
           })
-          .then(data => {
+          .then((data) => {
             let items = data?.items || []
             let treeData = []
             if (items?.length) {
-              treeData = items.map(item => ({
+              treeData = items.map((item) => ({
                 value: item.name,
                 id: item.id,
                 gid: item.gid,
                 parent_id: item.parent_id,
                 last_updated: item.last_updated,
-                user_id: item.user_id
+                user_id: item.user_id,
               }))
             }
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi.childAccount().then(data => {
+        metadataDefinitionsApi.childAccount().then((data) => {
           cb && cb(data?.items || [])
         })
       }
@@ -341,7 +341,7 @@ export default {
         let map = {}
         let nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach(it => {
+        items.forEach((it) => {
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -351,8 +351,8 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = nodes => {
-          return nodes.map(it => {
+        let checkChildren = (nodes) => {
+          return nodes.map((it) => {
             let children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
@@ -402,12 +402,12 @@ export default {
             ? node
               ? this.$t('packages_component_classification_addChildernNode')
               : this.$t('packages_component_classification_addNode')
-            : this.$t('public_button_edit')
+            : this.$t('public_button_edit'),
       }
     },
     hideDialog() {
       this.dialogConfig = {
-        visible: false
+        visible: false,
       }
     },
     async dialogSubmit() {
@@ -429,7 +429,7 @@ export default {
           return this.$message.error(this.$t('packages_component_classification_nameExist'))
         }
         let params = {
-          name: value
+          name: value,
         }
         if (config.type === 'edit') {
           method = 'patch'
@@ -450,7 +450,7 @@ export default {
       } else {
         let params = {
           item_type: itemType,
-          value
+          value,
         }
         if (config.type === 'edit') {
           method = 'changeById'
@@ -475,8 +475,8 @@ export default {
         confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -484,8 +484,8 @@ export default {
           let params = {
             id: id,
             headers: {
-              gid: id
-            }
+              gid: id,
+            },
           }
           userGroupsApi.delete(params).then(() => {
             let self = this
@@ -500,20 +500,20 @@ export default {
       })
     },
     checkName(value) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         if (this.types[0] === 'user') {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.name === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.name === value))
           })
         } else {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.value === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.value === value))
           })
         }
       })
-    }
+    },
   },
-  emits: ['nodeChecked']
+  emits: ['nodeChecked'],
 }
 </script>
 

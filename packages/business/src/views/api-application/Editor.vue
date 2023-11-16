@@ -5,7 +5,7 @@
     :append-to-body="true"
     width="800px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
     <ElForm
@@ -18,7 +18,7 @@
       class="my-n6"
     >
       <ElFormItem size="small" :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model:value="editForm.value" type="text" maxlength="50" clearable></ElInput>
+        <ElInput v-model:value="editForm.value" text maxlength="50" clearable></ElInput>
       </ElFormItem>
       <ElFormItem size="small" :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
         <ElInput v-model:value="editForm.desc" type="textarea"></ElInput>
@@ -54,10 +54,10 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_application_delete_yingyongmingchengbu'),
-            trigger: 'blur'
-          }
-        ]
-      }
+            trigger: 'blur',
+          },
+        ],
+      },
     }
   },
   methods: {
@@ -65,7 +65,7 @@ export default {
       this.editForm = {
         id: '',
         value: '',
-        desc: ''
+        desc: '',
       }
       this.taskId && this.loadData(this.taskId)
     },
@@ -79,7 +79,7 @@ export default {
           this.editForm = {
             id,
             value,
-            desc
+            desc,
           }
         })
         .finally(() => {
@@ -98,7 +98,7 @@ export default {
     },
 
     handleSave() {
-      this.$refs.form?.validate(valid => {
+      this.$refs.form?.validate((valid) => {
         if (valid) {
           this.saveLoading = true
           ;(this.taskId ? appApi.updateById(this.taskId, this.editForm) : appApi.post(this.editForm))
@@ -113,8 +113,8 @@ export default {
             })
         }
       })
-    }
+    },
   },
-  emits: ['success']
+  emits: ['success'],
 }
 </script>

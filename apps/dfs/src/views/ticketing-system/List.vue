@@ -13,7 +13,7 @@
         :columns="columns"
         :remoteMethod="remoteMethod"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
         }"
         ref="table"
         class="mt-4"
@@ -27,8 +27,8 @@
           <StatusTag type="tag" :status="row.status" default-status="Stopped" target="ticket"></StatusTag>
         </template>
         <template #operation="{ row }">
-          <ElButton type="text" @click="handleDetails(row)">{{ $t('public_button_details') }}</ElButton>
-          <ElButton type="text" @click="close(row.id)" :disabled="row.status === 'Closed'">{{
+          <ElButton text @click="handleDetails(row)">{{ $t('public_button_details') }}</ElButton>
+          <ElButton text @click="close(row.id)" :disabled="row.status === 'Closed'">{{
             $t('public_button_close')
           }}</ElButton>
         </template>
@@ -133,7 +133,7 @@ export default {
       pricePay: '',
       agentTypeMap: AGENT_TYPE_MAP,
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       search: '',
       filterItems: [],
@@ -141,66 +141,66 @@ export default {
         jobId: '',
         connectionId: '',
         subject: '',
-        description: ''
+        description: '',
       },
       columns: [
         {
           label: i18n.t('dfs_ticketing_system_list_zhuti'),
           prop: 'subject',
-          slotName: 'name'
+          slotName: 'name',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_wenti'),
           prop: 'description',
           width: '200px',
-          showOverflowTooltip: true
+          showOverflowTooltip: true,
         },
         {
           label: i18n.t('dfs_ticketing_system_list_gongdanbianhao'),
-          prop: 'ticketNumber'
+          prop: 'ticketNumber',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_gongdanzhuangtai'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: i18n.t('dfs_ticketing_system_list_tijiaoshijian'),
           prop: 'createdTime',
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('public_operation'),
           prop: 'operation',
           slotName: 'operation',
-          width: 140
-        }
+          width: 140,
+        },
       ],
       rules: {
         subject: [
           {
             required: true,
             message: i18n.t('dfs_ticketing_system_list_qingshuruzhuti'),
-            trigger: 'change'
-          }
+            trigger: 'change',
+          },
         ],
         description: [
           {
             required: true,
             message: i18n.t('dfs_ticketing_system_list_qingmiaoshuninde'),
-            trigger: 'change'
-          }
-        ]
+            trigger: 'change',
+          },
+        ],
       },
       taskList: [],
       connectionList: [],
-      submitLoading: false
+      submitLoading: false,
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   created() {
     this.getFilterItems()
@@ -215,7 +215,7 @@ export default {
         let pageNum = query === '{}' ? undefined : 1
         this.table.fetch(pageNum)
       }
-    }
+    },
   },
   methods: {
     getFilterItems() {
@@ -224,8 +224,8 @@ export default {
           placeholder: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
           label: i18n.t('dfs_ticketing_system_list_shurugongdanming'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     remoteMethod({ page }) {
@@ -236,18 +236,18 @@ export default {
       if (keyword) {
         url = `api/ticket?userId=${userId}&page=${current}&limit=${size}&subject=${keyword}`
       }
-      return this.$axios.get(url).then(data => {
+      return this.$axios.get(url).then((data) => {
         let items = data.items || []
         return {
           total: data.total,
           data:
-            items.map(t => {
+            items.map((t) => {
               t.statusLabel = ORDER_STATUS_MAP[t.status]
               const { spec, type, periodUnit, period } = t || {}
               t.subscriptionMethodLabel = getPaymentMethod({
                 type,
                 periodUnit,
-                period
+                period,
               })
               t.agentDeploy = this.agentTypeMap[t.agentDeploy || 'selfHost']
               t.content = `${t.subscriptionMethodLabel} ${getSpec(spec)} ${i18n.t('public_agent')}`
@@ -262,14 +262,14 @@ export default {
                 CURRENCY_SYMBOL_MAP[t.currency] +
                 (t.price / 100).toLocaleString('zh', {
                   minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  maximumFractionDigits: 2,
                 })
               t.priceLabel = t.formatPrice + t.priceSuffix
               t.bindAgent = t.agentId
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
               return t
-            }) || []
+            }) || [],
         }
       })
     },
@@ -281,19 +281,19 @@ export default {
       let fields = {
         id: true,
         name: true,
-        last_updated: true
+        last_updated: true,
       }
       let filter = {
         order: 'last_updated DESC',
         limit: 1000,
         fields: fields,
-        skip: 0
+        skip: 0,
       }
       taskApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.taskList = data?.items || []
         })
     },
@@ -303,13 +303,13 @@ export default {
         order: 'last_updated DESC',
         limit: 1000,
         noSchema: 1,
-        skip: 0
+        skip: 0,
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.connectionList = data?.items || []
         })
     },
@@ -322,12 +322,12 @@ export default {
     },
     //提交工单
     create() {
-      this.$refs.createForm.validate(valid => {
+      this.$refs.createForm.validate((valid) => {
         if (valid) {
           this.submitLoading = true
           let { userId, email, telephone, nickname } = window.__USER_INFO__
-          let taskName = this.taskList.find(task => task.id === this.createForm?.jobId)?.name
-          let connectionName = this.connectionList.find(conn => conn.id === this.createForm?.connectionId)?.name
+          let taskName = this.taskList.find((task) => task.id === this.createForm?.jobId)?.name
+          let connectionName = this.connectionList.find((conn) => conn.id === this.createForm?.connectionId)?.name
           const country = this.$store.getters.isDomesticStation ? 'China' : 'Abroad'
           let params = Object.assign(this.createForm, {
             connectionName: connectionName,
@@ -336,7 +336,7 @@ export default {
             phone: telephone,
             email: email,
             nickname: nickname,
-            country
+            country,
           })
           this.$axios.post('api/ticket', params).then(() => {
             this.closeDialog()
@@ -352,8 +352,8 @@ export default {
       this.createForm = {}
       this.$refs?.createForm?.resetFields()
       this.createDialog = false
-    }
-  }
+    },
+  },
 }
 </script>
 

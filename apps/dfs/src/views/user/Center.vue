@@ -37,7 +37,7 @@
               class="inline-input"
               :value="userData.nickname"
               :icon-config="{ class: 'color-primary', size: '14' }"
-              type="text"
+              text
               :inputStyle="{ width: '180px' }"
               @save="updateName($event)"
             ></InlineInput>
@@ -158,12 +158,10 @@
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
-          $t('user_Center_qiYeXinXiXiu')
-        }}</VButton>
+        <VButton v-if="!isEdit" text class="pl-0" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
         <template v-else>
-          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
+          <VButton text class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
+          <VButton text auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
         </template>
       </div>
     </div>
@@ -286,11 +284,11 @@
             <template v-slot:prepend>
               <el-select v-model="passwordForm.countryCode" style="width: 110px" filterable>
                 <el-option
-                v-for="item in countryCode"
-                :key="item.dial_code"
-                :label="'+ ' + item.dial_code"
-                :value="item.dial_code"
-              >
+                  v-for="item in countryCode"
+                  :key="item.dial_code"
+                  :label="'+ ' + item.dial_code"
+                  :value="item.dial_code"
+                >
                   <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
                 >
@@ -314,7 +312,7 @@
             :disabled="!emailForm.email"
             :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
-            type="text"
+            text
           ></VerificationCode>
         </ElFormItem>
         <ElFormItem v-else prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
@@ -328,7 +326,7 @@
             :disabled="!passwordForm.telephone"
             :style="{ width: '180px', textAlign: 'center' }"
             class="ml-6"
-            type="text"
+            text
           ></VerificationCode>
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
@@ -392,7 +390,7 @@
             :disabled="!phoneForm.current"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
-            type="text"
+            text
           ></VerificationCode>
         </ElFormItem>
       </ElForm>
@@ -526,7 +524,7 @@
             <VerificationCode
               :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
               :disabled="!emailForm.email"
-              type="text"
+              text
             ></VerificationCode>
           </div>
         </ElFormItem>
@@ -573,7 +571,7 @@
             <VerificationCode
               :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
               :disabled="!emailForm.email"
-              type="text"
+              text
             ></VerificationCode>
           </div>
         </ElFormItem>
@@ -594,7 +592,7 @@
             <VerificationCode
               :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
               :disabled="!emailForm.newEmail"
-              type="text"
+              text
             ></VerificationCode>
           </div>
         </ElFormItem>
@@ -680,7 +678,7 @@ export default {
     InlineInput,
     VerificationCode,
     UploadFile,
-    VTable
+    VTable,
   },
   name: 'Center',
   inject: ['buried'],
@@ -698,13 +696,13 @@ export default {
         licenseCodes: [],
         customData: {
           firstName: '',
-          lastName: ''
-        }
+          lastName: '',
+        },
       },
       nameForm: {
         nickname: '',
         firstName: '',
-        lastName: ''
+        lastName: '',
       },
       avatar: '',
       dialogObj: {
@@ -715,7 +713,7 @@ export default {
         bindWx: false,
         bindEmail: false,
         editEmail: false,
-        firstName: false
+        firstName: false,
       },
       passwordForm: {
         telephone: '',
@@ -723,37 +721,37 @@ export default {
         emailCode: '',
         countryCode: '86',
         newPassword: '',
-        newAgainPassword: ''
+        newAgainPassword: '',
       },
       phoneForm: {
         current: '',
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86'
+        countryCode: '86',
       },
       emailForm: {
         email: '',
         code: '',
         newEmail: '',
-        newCode: ''
+        newCode: '',
       },
       enData: {
         companyName: '',
         website: '',
         industry: '',
-        city: ''
+        city: '',
       },
       enForm: {
         companyName: '',
         website: '',
         industry: '',
-        city: ''
+        city: '',
       },
       keyForm: {
         accessKey: '',
         secretKey: '',
-        decodeSecretKey: ''
+        decodeSecretKey: '',
       },
       isEdit: false,
       accessKeyTooltip: false,
@@ -762,34 +760,34 @@ export default {
       codeColumns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
-          prop: 'licenseCode'
+          prop: 'licenseCode',
         },
         {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
           prop: 'activateTimeLabel',
-          width: 320
+          width: 320,
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType'
+          slotName: 'agentType',
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
           prop: 'expiredTimeLabel',
-          width: 320
+          width: 320,
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
-          slotName: 'bindAgent'
+          slotName: 'bindAgent',
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation',
-          width: 100
-        }
+          width: 100,
+        },
       ],
       recordData: {
         visible: false,
@@ -799,27 +797,27 @@ export default {
         items: [
           {
             label: i18n.t('dfs_user_center_fukuanfangshi'),
-            value: i18n.t('dfs_user_center_weixinzhifu')
+            value: i18n.t('dfs_user_center_weixinzhifu'),
           },
           {
             label: i18n.t('public_create_time'),
-            value: '2023-03-04 17:56:33'
+            value: '2023-03-04 17:56:33',
           },
           {
             label: i18n.t('dfs_user_center_zhifushijian'),
-            value: '2023-03-04 17:56:40'
+            value: '2023-03-04 17:56:40',
           },
           {
             label: i18n.t('dfs_user_center_dingdanhao'),
-            value: '2023030419203919321'
-          }
-        ]
+            value: '2023030419203919321',
+          },
+        ],
       },
-      countryCode: []
+      countryCode: [],
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
   mounted() {
     this.init()
@@ -849,20 +847,20 @@ export default {
       nameForm.lastName = customData.lastName
 
       userData.licenseCodes =
-        userData.licenseCodes?.map(item => {
+        userData.licenseCodes?.map((item) => {
           item.activateTime = item.activateTime ? dayjs(item.activateTime).format('YYYY-MM-DD HH:mm:ss') : ''
           item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
           return item
         }) || []
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then(res => {
+      this.$axios.get('config/countryCode.json').then((res) => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
     },
     getEnterprise() {
-      this.$axios.get('tm/api/Customer').then(data => {
+      this.$axios.get('tm/api/Customer').then((data) => {
         for (let key in this.enData) {
           this.enData[key] = data[key] || ''
           this.enForm[key] = data[key] || ''
@@ -870,18 +868,18 @@ export default {
       })
     },
     getAkAndSk() {
-      this.$axios.get('api/tcm/user/ak').then(data => {
+      this.$axios.get('api/tcm/user/ak').then((data) => {
         const { accessKey, secretKey } = data?.[0] || {}
         const key = '5fa25b06ee34581d'
         this.keyForm.accessKey = accessKey
         this.keyForm.decodeSecretKey = CryptoJS.AES.decrypt(
           {
-            ciphertext: CryptoJS.enc.Base64.parse(secretKey)
+            ciphertext: CryptoJS.enc.Base64.parse(secretKey),
           },
           CryptoJS.enc.Latin1.parse(key),
           {
-            iv: CryptoJS.enc.Latin1.parse(key)
-          }
+            iv: CryptoJS.enc.Latin1.parse(key),
+          },
         ).toString(CryptoJS.enc.Utf8)
         this.keyForm.secretKey = this.keyForm.decodeSecretKey.replace(/(\w{3})\w*(\w{3})/, '$1****$2')
       })
@@ -924,7 +922,7 @@ export default {
       let nickname = val
       this.$axios
         .patch('api/tcm/user', {
-          nickname
+          nickname,
         })
         .then(() => {
           this.userData.nickname = nickname
@@ -936,8 +934,8 @@ export default {
       const params = {
         customData: {
           firstName,
-          lastName
-        }
+          lastName,
+        },
       }
       this.$axios
         .patch('api/tcm/user', params)
@@ -958,7 +956,7 @@ export default {
         this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
         return
       }
-      urlToBase64(URL.createObjectURL(file)).then(res => {
+      urlToBase64(URL.createObjectURL(file)).then((res) => {
         this.avatar = res
       })
     },
@@ -973,7 +971,7 @@ export default {
       const avatar = encodeURI(this.avatar)
       this.$axios
         .patch('api/tcm/user', {
-          avatar
+          avatar,
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiTouXiangCheng'))
@@ -988,12 +986,12 @@ export default {
     sendCode(phone, scene) {
       return this.$axios.post('api/tcm/sms/captcha', {
         phone,
-        scene
+        scene,
       })
     },
     getCodeOptions(val, scene, type = 'sms') {
       let params = {
-        scene
+        scene,
       }
       if (type === 'sms') {
         params.phone = val
@@ -1004,14 +1002,14 @@ export default {
       return {
         method: 'post',
         url: `api/tcm/${type}/captcha`,
-        params
+        params,
       }
     },
     editPassword() {
       if (this.isDomesticStation && !this.userData.telephone) {
         this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
-          type: 'warning'
-        }).then(resFlag => {
+          type: 'warning',
+        }).then((resFlag) => {
           if (resFlag) {
             this.dialogObj.bindPhone = true
           }
@@ -1034,7 +1032,7 @@ export default {
           phoneCode: passwordForm.code,
           countryCode: passwordForm.countryCode ? passwordForm.countryCode.replace('-', '') : '86',
           emailCode: passwordForm.emailCode, // 邮件验证吗
-          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
+          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString(),
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
@@ -1054,7 +1052,7 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
         })
         .then(() => {
           this.userData.telephone = phoneForm.current
@@ -1093,7 +1091,7 @@ export default {
           oldPhoneCode: phoneForm.oldCode,
           phone: phoneForm.newPhone,
           phoneCode: phoneForm.newCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
@@ -1107,8 +1105,8 @@ export default {
     },
     unbindWx() {
       this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
@@ -1126,7 +1124,7 @@ export default {
       this.$axios
         .post('api/tcm/user/email', {
           email: emailForm.email,
-          code: emailForm.code
+          code: emailForm.code,
         })
         .then(() => {
           this.$store.commit('setUserEmail', emailForm.email)
@@ -1160,7 +1158,7 @@ export default {
           // email: emailForm.email,
           oldEmailCode: emailForm.code,
           email: emailForm.newEmail,
-          emailCode: emailForm.newCode
+          emailCode: emailForm.newCode,
         })
         .then(() => {
           this.userData.email = emailForm.newEmail
@@ -1186,7 +1184,7 @@ export default {
           companyName: enForm.companyName,
           website: enForm.website,
           industry: enForm.industry,
-          city: enForm.city
+          city: enForm.city,
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
@@ -1214,20 +1212,20 @@ export default {
       this.recordData.items = [
         {
           label: i18n.t('dfs_user_center_fukuanfangshi'),
-          value: '-'
+          value: '-',
         },
         {
           label: i18n.t('public_create_time'),
-          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-'
+          value: createAt ? dayjs(createAt).format('YYYY-MM-DD HH:mm:ss') : '-',
         },
         {
           label: i18n.t('dfs_user_center_zhifushijian'),
-          value: '-'
+          value: '-',
         },
         {
           label: i18n.t('dfs_user_center_dingdanhao'),
-          value: invoiceId || '-'
-        }
+          value: invoiceId || '-',
+        },
       ]
       this.recordData.visible = true
     },
@@ -1235,8 +1233,8 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.agentId
-        }
+          keyword: row.agentId,
+        },
       })
     },
 
@@ -1250,40 +1248,40 @@ export default {
       this.$confirm(
         i18n.t('dfs_user_center_ninjiangxudingr', {
           val1: row.content,
-          val2: label
+          val2: label,
         }),
         i18n.t('dfs_user_center_xudingfuwu'),
         {
           type: 'warning',
-          dangerouslyUseHTMLString: true
-        }
-      ).then(res => {
+          dangerouslyUseHTMLString: true,
+        },
+      ).then((res) => {
         if (res) {
           const { agentId } = row
           const params = {
             agentId,
             successUrl: location.href,
-            cancelUrl: location.href
+            cancelUrl: location.href,
           }
           this.buried('renewAgentStripe')
           this.$axios
             .post('api/tcm/orders/renew', params)
-            .then(data => {
+            .then((data) => {
               openUrl(data.paymentUrl)
               this.buried('renewAgentStripe', '', {
-                result: true
+                result: true,
               })
             })
             .catch(() => {
               this.buried('renewAgentStripe', '', {
-                result: false
+                result: false,
               })
             })
         }
       })
-    }
+    },
   },
-  emits: ['get-user']
+  emits: ['get-user'],
 }
 </script>
 

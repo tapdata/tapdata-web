@@ -42,7 +42,7 @@
             <ElInput
               v-if="isEdit"
               v-model:value="form.name"
-              type="text"
+              text
               maxlength="50"
               :placeholder="$t('public_input_placeholder') + $t('public_name')"
             ></ElInput>
@@ -474,7 +474,7 @@ import {
   modulesApi,
   applicationApi,
   roleApi,
-  workerApi
+  workerApi,
 } from '@tap/api'
 import { Drawer, VCodeEditor } from '@tap/component'
 import { uid } from '@tap/shared'
@@ -486,14 +486,14 @@ export default {
   components: {
     Drawer,
     VCodeEditor,
-    ListSelect
+    ListSelect,
   },
   props: {
     host: String,
     tag: {
       type: String,
-      default: 'Drawer'
-    }
+      default: 'Drawer',
+    },
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -532,7 +532,7 @@ export default {
         basePath: '',
         acl: ['admin'],
         appValue: '',
-        appLabel: ''
+        appLabel: '',
       },
       tab: 'form',
       isEdit: false,
@@ -541,77 +541,77 @@ export default {
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingshurufuwu'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         acl: [
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_selectPermissions'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         connectionType: [
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingxuanzelianjie'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         connectionId: [
           {
             required: true,
             message: i18n.t('public_input_placeholder') + i18n.t('public_connection'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         tableName: [
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingxuanzeduixiang'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         param: [
           {
             required: true,
             validator: validateParams,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         basePath: [
           {
             required: true,
             message: i18n.t('public_input_placeholder') + i18n.t('packages_business_data_server_drawer_base_path'),
-            trigger: ['blur', 'change']
+            trigger: ['blur', 'change'],
           },
-          { validator: validateBasePath, trigger: ['blur', 'change'] }
+          { validator: validateBasePath, trigger: ['blur', 'change'] },
         ],
         prefix: [
           {
             required: false,
             validator: validatePrefix,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         apiVersion: [
           {
             required: true,
             validator: validateBasePath,
-            trigger: ['blur', 'change']
-          }
+            trigger: ['blur', 'change'],
+          },
         ],
         appValue: [
           {
             required: true,
             message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
-            trigger: ['blur', 'change']
-          }
-        ]
+            trigger: ['blur', 'change'],
+          },
+        ],
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_data_server_drawer_morenchaxun'),
-        customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun')
+        customerQuery: i18n.t('packages_business_data_server_drawer_zidingyichaxun'),
       },
       databaseTypes: null,
       connectionOptions: null,
@@ -637,13 +637,13 @@ export default {
       intervalId: 0,
       appData: {
         label: '',
-        value: ''
-      }
+        value: '',
+      },
     }
   },
   computed: {
     parameterOptions() {
-      return this.form?.params?.filter(item => !['page', 'limit'].includes(item.name)) || []
+      return this.form?.params?.filter((item) => !['page', 'limit'].includes(item.name)) || []
     },
     //计算基础路径
     customizePath() {
@@ -663,14 +663,14 @@ export default {
 
     debugDisabled() {
       return this.workerStatus !== 'running'
-    }
+    },
   },
   watch: {
     visible(v) {
       if (!v) {
         this.intervalId && clearTimeout(this.intervalId)
       }
-    }
+    },
   },
   mounted() {
     this.getRoles()
@@ -694,7 +694,7 @@ export default {
         basePath: '',
         acl: ['admin'],
         appValue: '',
-        appLabel: ''
+        appLabel: '',
       }
 
       this.formatData(formData || {})
@@ -728,7 +728,7 @@ export default {
       if (this.tab === 'debug') {
         this.isEdit = false
         debugParams = {}
-        this.data.params.forEach(p => {
+        this.data.params.forEach((p) => {
           debugParams[p.name] = p.defaultvalue || ''
         })
         setTimeout(this.getWorkers, 2000)
@@ -754,7 +754,7 @@ export default {
         apiVersion,
         prefix,
         pathAccessMethod,
-        listtags
+        listtags,
       } = formData
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
 
@@ -780,13 +780,13 @@ export default {
         pathAccessMethod,
         method: path.method || 'GET',
         fields,
-        params: path.params?.filter(t => t.name !== 'sort') || this.getDefaultParams(apiType),
+        params: path.params?.filter((t) => t.name !== 'sort') || this.getDefaultParams(apiType),
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
         acl: path.acl || ['admin'],
         appValue,
-        appLabel
+        appLabel,
       }
       this.form = cloneDeep(this.data)
       let host = this.host
@@ -795,10 +795,10 @@ export default {
       this.urls = {
         POST: `${baseUrl}/find`,
         GET: `${baseUrl}`,
-        TOKEN: `${location.origin + location.pathname}oauth/token`
+        TOKEN: `${location.origin + location.pathname}oauth/token`,
       }
       if (this.data.status === 'active') {
-        this.getAPIServerToken(token => {
+        this.getAPIServerToken((token) => {
           this.templates = getTemplate(baseUrl, token)
         })
       }
@@ -807,13 +807,13 @@ export default {
     getRoles() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
       roleApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.roles = data?.items || []
         })
     },
@@ -824,15 +824,15 @@ export default {
           type: 'number',
           defaultvalue: '1',
           description: i18n.t('packages_business_data_server_drawer_fenyebianhao'),
-          required: true
+          required: true,
         },
         {
           name: 'limit',
           type: 'number',
           defaultvalue: '20',
           description: i18n.t('packages_business_data_server_drawer_meigefenyefan'),
-          required: true
-        }
+          required: true,
+        },
       ]
       if (apiType === 'defaultApi') {
         params.push(
@@ -841,9 +841,9 @@ export default {
             {
               name: 'filter',
               type: 'object',
-              description: i18n.t('public_data_filter_condition')
-            }
-          ]
+              description: i18n.t('public_data_filter_condition'),
+            },
+          ],
         )
       }
       return params
@@ -853,14 +853,14 @@ export default {
       this.form.status = 'pending'
       this.isEdit = true
       this.$nextTick(() => {
-        this.data.fields.forEach(f => {
-          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === f.id))
+        this.data.fields.forEach((f) => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find((it) => it.id === f.id))
         })
       })
     },
     // 保存，新建和修改
     save(type) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           //自定义路径 数据清理
           if (this.form.pathAccessMethod === 'default') {
@@ -892,7 +892,7 @@ export default {
             prefix,
             pathAccessMethod,
             appLabel,
-            appValue
+            appValue,
           } = this.form
 
           // basePath
@@ -900,12 +900,12 @@ export default {
             status = 'pending'
           }
 
-          if (params.some(it => !it.name.trim())) {
+          if (params.some((it) => !it.name.trim())) {
             return this.$message.error(i18n.t('packages_business_data_server_drawer_qingshurucanshu'))
           }
 
           // 排除 fields: [null]
-          fields = fields.filter(f => !!f)
+          fields = fields.filter((f) => !!f)
 
           this.loading = true
           let formData = {
@@ -932,8 +932,8 @@ export default {
             listtags: [
               {
                 id: appValue,
-                value: appLabel
-              }
+                value: appLabel,
+              },
             ], // 冗余老字段
 
             paths: [
@@ -948,9 +948,9 @@ export default {
                 where,
                 sort,
                 fields,
-                path
-              }
-            ]
+                path,
+              },
+            ],
           }
           if (!type) {
             //生成按钮 不传fields覆盖数据库已有数据 (open 抽屉this.allFields 就清空了数据)
@@ -966,7 +966,7 @@ export default {
           data.connection = connectionId
           data.source = {
             database_type: connectionType,
-            name: connectionName
+            name: connectionName,
           }
           this.formatData(data || [])
           this.orginData && Object.assign(this.orginData, data)
@@ -978,8 +978,8 @@ export default {
     generate() {
       if (this.data.basePath && this.data.basePath !== '') {
         this.$confirm(this.$t('packages_business_data_server_drawer_confirm_tip'), {
-          type: 'warning'
-        }).then(resFlag => {
+          type: 'warning',
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -1008,8 +1008,8 @@ export default {
       })
       this.databaseTypes =
         data
-          ?.filter(it => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'postgres', 'tidb', 'doris'].includes(it.pdkId))
-          ?.map(it => it.name) || []
+          ?.filter((it) => ['mysql', 'sqlserver', 'oracle', 'mongodb', 'postgres', 'tidb', 'doris'].includes(it.pdkId))
+          ?.map((it) => it.name) || []
       // this.databaseTypes = data?.map(it => it.name) || []
       this.getConnectionOptions()
     },
@@ -1022,18 +1022,18 @@ export default {
           connection_type: true,
           status: true,
           user_id: true,
-          database_type: true
+          database_type: true,
         },
         where: {
           database_type: this.form.connectionType
             ? this.form.connectionType
             : {
-                in: this.databaseTypes
+                in: this.databaseTypes,
               },
           connection_type: {
-            in: ['source_and_target', 'target']
-          }
-        }
+            in: ['source_and_target', 'target'],
+          },
+        },
       }
       let type = this.form.connectionType
       if (type) {
@@ -1044,10 +1044,10 @@ export default {
         this.connectionOptions = []
       })
       this.connectionOptions =
-        data?.map(it => ({
+        data?.map((it) => ({
           name: it.name,
           type: it.database_type,
-          id: it.id
+          id: it.id,
         })) || []
     },
     // 获取可选表，依赖连接id
@@ -1066,23 +1066,23 @@ export default {
           'source.id': this.form.connectionId,
           original_name: this.form.tableName,
           is_deleted: false,
-          sourceType: 'SOURCE'
-        }
+          sourceType: 'SOURCE',
+        },
       }
       const data = await metadataInstancesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .finally(() => {
           this.fieldLoading = false
         })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => {
+        data?.items?.[0]?.fields?.map((it) => {
           return Object.assign({}, it, {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: it.comment
+            comment: it.comment,
           })
         }) || []
       if (!this.form.id) {
@@ -1091,8 +1091,8 @@ export default {
       // 回显输出结果中被选中的字段
       const fields = this.form.fields || []
       this.$nextTick(() => {
-        fields.forEach(row => {
-          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find(it => it.id === row.id))
+        fields.forEach((row) => {
+          this.$refs?.fieldTable.toggleRowSelection(this.allFields.find((it) => it.id === row.id))
         })
       })
     },
@@ -1109,7 +1109,7 @@ export default {
     },
     connectionNameChanged() {
       // 选择连接名时自动填充连接类型
-      const connection = this.connectionOptions.find(it => it.name === this.form.connectionName)
+      const connection = this.connectionOptions.find((it) => it.name === this.form.connectionName)
       this.form.connectionType = connection.type
       this.form.connectionId = connection.id
       this.form.tableName = ''
@@ -1138,9 +1138,9 @@ export default {
           fieldName: '',
           parameter: '',
           operator: '>',
-          condition: 'and'
+          condition: 'and',
         },
-        sort: { fieldName: '', type: 'asc' }
+        sort: { fieldName: '', type: 'asc' },
       }
       if (key === 'where') {
         let list = this.form.where
@@ -1158,9 +1158,9 @@ export default {
       const clientInfo = await applicationApi.get({
         filter: JSON.stringify({
           where: {
-            clientName: 'Data Explorer'
-          }
-        })
+            clientName: 'Data Explorer',
+          },
+        }),
       })
       const clientInfoItem = clientInfo?.items?.[0] || {}
 
@@ -1181,10 +1181,10 @@ export default {
             access_token: this.token,
             expires_in: 1209599,
             scope: 'admin',
-            token_type: 'Bearer'
+            token_type: 'Bearer',
           },
           null,
-          2
+          2,
         )
       } else {
         let url = this.urls[this.debugMethod] + '?access_token=' + this.token
@@ -1196,10 +1196,10 @@ export default {
         }
         if (method === 'GET') {
           params = {
-            params: params
+            params: params,
           }
         }
-        let result = await http[method.toLowerCase()](url, params).catch(error => {
+        let result = await http[method.toLowerCase()](url, params).catch((error) => {
           let result = error?.response?.data
           result = result ? JSON.stringify(result, null, 2) : ''
           this.debugResult = result
@@ -1215,22 +1215,22 @@ export default {
         worker_type: 'api-server',
         ping_time: {
           gte: '$serverDate',
-          gte_offset: 30000
-        }
+          gte_offset: 30000,
+        },
       }
       let filter = {
         order: 'ping_time DESC',
         limit: 1,
         fields: {
-          worker_status: true
+          worker_status: true,
         },
-        where
+        where,
       }
       workerApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           if (data?.items?.length) {
             const record = data.items[0] || {}
             const workerStatus = record.workerStatus || record.worker_status || {}
@@ -1252,26 +1252,26 @@ export default {
           'source.id': this.form.connectionId,
           original_name: this.form.tableName,
           is_deleted: false,
-          sourceType: 'SOURCE'
-        }
+          sourceType: 'SOURCE',
+        },
       }
       const data = await metadataInstancesApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
       this.allFields =
-        data?.items?.[0]?.fields?.map(it => {
+        data?.items?.[0]?.fields?.map((it) => {
           return Object.assign({}, it, {
             id: it.id,
             field_name: it.field_name,
             originalDataType: it.data_type,
-            comment: ''
+            comment: '',
           })
         }) || []
     },
 
     handleChangePermissionsAndSave() {
       if (this.isEdit) return
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) return
         let { id, apiType, params, where, sort, fields, method, path, acl, appLabel, appValue } = this.form
 
@@ -1280,8 +1280,8 @@ export default {
           listtags: [
             {
               id: appValue,
-              value: appLabel
-            }
+              value: appLabel,
+            },
           ],
           paths: [
             {
@@ -1294,17 +1294,17 @@ export default {
               where,
               sort,
               fields,
-              path
-            }
-          ]
+              path,
+            },
+          ],
         }
         modulesApi.patch(formData).then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
         })
       })
-    }
+    },
   },
-  emits: ['visible', 'save']
+  emits: ['visible', 'save'],
 }
 </script>
 
@@ -1362,7 +1362,9 @@ export default {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC;
 }
 .data-server-path__method {
   margin-right: 40px;
@@ -1386,7 +1388,9 @@ export default {
   border: 1px solid map-get($borderColor, form);
   background: map-get($bgColor, form);
   border-radius: 4px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC;
 }
 .data-server__form {
   :deep(.form-item-name) {

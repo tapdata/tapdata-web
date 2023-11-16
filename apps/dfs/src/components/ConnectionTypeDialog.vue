@@ -4,7 +4,7 @@
     :model-value="dialogVisible"
     :append-to-body="true"
     width="848px"
-    custom-class="connection-dialog"
+    class="connection-dialog"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -25,25 +25,25 @@ import { ConnectionTypeSelector } from '@tap/business'
 export default {
   name: 'DatasourceDialog',
   components: {
-    ConnectionTypeSelector
+    ConnectionTypeSelector,
   },
   props: {
     dialogVisible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
     allwoType: {
       value: Array,
       default: () => {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       database: [],
       otherType: [],
-      loading: true
+      loading: true,
     }
   },
   watch: {
@@ -51,7 +51,7 @@ export default {
       if (v) {
         this.getDatabaseType()
       }
-    }
+    },
   },
   created() {
     this.getDatabaseType()
@@ -67,9 +67,11 @@ export default {
     getDatabaseType() {
       databaseTypesApi
         .get()
-        .then(data => {
+        .then((data) => {
           if (data) {
-            let items = data?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            let items = data?.filter(
+              (t) => !this.database.length || !this.database.some((d) => d.pdkHash === t.pdkHash),
+            )
             if (!items.length) {
               return
             }
@@ -79,9 +81,9 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
+    },
   },
-  emits: ['dialogVisible', 'update:dialogVisible', 'databaseType']
+  emits: ['dialogVisible', 'update:dialogVisible', 'databaseType'],
 }
 </script>
 

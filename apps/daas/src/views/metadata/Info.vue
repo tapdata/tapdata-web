@@ -19,7 +19,7 @@
                 : $t('metadata_detail_original_table_name')
             }}：{{ metadataDataObj.original_name }}
             <span v-if="metadataDataObj.alias_name">)</span>
-            <el-button type="text" @click="handleChangeName" style="padding: 0 10px">{{
+            <el-button text @click="handleChangeName" style="padding: 0 10px">{{
               $t('metadata_details_renamed')
             }}</el-button>
           </h3>
@@ -29,7 +29,7 @@
             <span v-else>{{ $t('metadata_details_clickAddDes') }}</span>
             <el-button
               class="e-button"
-              type="text"
+              text
               @click=";(editCommentDialogVisible = true), (editCommentForm.comment = metadataDataObj.comment)"
               >{{ $t('public_button_edit') }}</el-button
             >
@@ -151,7 +151,7 @@
                           </el-input>
                         </li>
                         <li class="item">
-                          <el-button type="text" class="restBtn" size="small" @click="reset()">
+                          <el-button text class="restBtn" size="small" @click="reset()">
                             {{ $t('public_button_reset') }}
                           </el-button>
                         </li>
@@ -246,19 +246,14 @@
                     <el-table-column prop="comment" :label="$t('public_description')"></el-table-column>
                     <el-table-column width="120" :label="$t('public_operation')">
                       <template v-slot="scope">
-                        <el-button
-                          v-readonlybtn="'data_catalog_edition'"
-                          size="small"
-                          type="text"
-                          @click="edit(scope.row)"
-                        >
+                        <el-button v-readonlybtn="'data_catalog_edition'" size="small" text @click="edit(scope.row)">
                           {{ $t('public_button_edit') }}
                         </el-button>
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
                           v-if="scope.row.field_name !== '_id'"
                           size="small"
-                          type="text"
+                          text
                           @click="remove(scope.row, scope.$index, 0)"
                           >{{ $t('public_button_delete') }}</el-button
                         >
@@ -329,7 +324,7 @@
       :title="$t('metadata_details_businessAttrTitle')"
       :close-on-click-modal="false"
       v-model="businessDialogVisible"
-      custom-class="dialogForm"
+      class="dialogForm"
     >
       <FormBuilder ref="form" v-model:value="businessForm" :config="businessFormConfig"></FormBuilder>
       <template v-slot:footer>
@@ -346,7 +341,7 @@
       :title="$t('metadata_details_editAliasNameTitle')"
       :close-on-click-modal="false"
       v-model="editNameDialogVisible"
-      custom-class="dialogForm"
+      class="dialogForm"
     >
       <el-form :model="editNameForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item :label="$t('metadata_details_originalTableName')" prop="name">
@@ -370,7 +365,7 @@
       :title="$t('metadata_details_editCommentTitle')"
       :close-on-click-modal="false"
       v-model="editCommentDialogVisible"
-      custom-class="dialogForm"
+      class="dialogForm"
     >
       <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
         <el-form-item :label="$t('public_description')" prop="name">
@@ -410,7 +405,7 @@ export default {
     Preview,
     Pipeline,
     Collections,
-    VIcon
+    VIcon,
   },
   data() {
     return {
@@ -422,7 +417,7 @@ export default {
         {
           name: this.$t('metadata_details_model'),
           mateTypes: ['collection', 'table', 'mongo_view'],
-          key: 'model'
+          key: 'model',
         },
         {
           name: this.$t('metadata_details_version_version_control'),
@@ -437,10 +432,10 @@ export default {
             'job',
             'directory',
             'ftp',
-            'apiendpoint'
+            'apiendpoint',
           ],
-          key: 'version'
-        }
+          key: 'version',
+        },
       ],
       description: '',
       searchParams: {},
@@ -452,7 +447,7 @@ export default {
       fieldObj: {},
       metadataDataObj: {
         original_name: '',
-        comment: ''
+        comment: '',
       },
       tableFieldList: [],
       pageSize: 20,
@@ -460,40 +455,40 @@ export default {
       pageTotal: 0,
       tableHeaderStyle: {
         padding: '0',
-        lineHeight: '30px'
+        lineHeight: '30px',
       },
       businessDialogVisible: false,
       businessForm: {
         key: '',
-        value: ''
+        value: '',
       },
       businessFormConfig: {
         form: {
           labelPosition: 'right',
-          labelWidth: '100px'
+          labelWidth: '100px',
         },
         items: [
           {
             type: 'input',
             label: this.$t('metadata_details_attrName'),
-            field: 'key'
+            field: 'key',
           },
           {
             type: 'input',
             label: this.$t('metadata_details_attrKey'),
-            field: 'value'
-          }
-        ]
+            field: 'value',
+          },
+        ],
       },
       editNameDialogVisible: false,
       editNameForm: {
         original_name: '',
-        alias_name: ''
+        alias_name: '',
       },
       editCommentForm: {
-        comment: ''
+        comment: '',
       },
-      filterData: []
+      filterData: [],
     }
   },
   created() {
@@ -504,7 +499,7 @@ export default {
       let oldTableData = this.metadataDataObj.fields
       if (val) {
         this.filterData = []
-        this.metadataDataObj.fields.filter(item => {
+        this.metadataDataObj.fields.filter((item) => {
           if (
             String(item.field_name).indexOf(val) > -1 ||
             (item.alias_name && String(item.alias_name).indexOf(val) > -1) ||
@@ -521,7 +516,7 @@ export default {
     $route() {
       this.activePanel = 'model'
       this.getData()
-    }
+    },
   },
   methods: {
     changePanel(key) {
@@ -543,7 +538,7 @@ export default {
       this.loading = true
       return metadataInstancesApi
         .findTablesById([id])
-        .then(data => {
+        .then((data) => {
           data.createTimeFmt = dayjs(data.createTime || data.createAt).format('YYYY-MM-DD HH:mm:ss')
           data.lastUpdatedFmt = dayjs(data.last_updated || data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
           this.metadataDataObj = data
@@ -562,7 +557,7 @@ export default {
     // 重置
     reset() {
       this.searchParams = {
-        keyword: ''
+        keyword: '',
       }
       this.setCurrentPageData(this.metadataDataObj.fields)
     },
@@ -572,12 +567,12 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
-        h('span', { style: { color: '#2C65FF' } }, item.field_name)
+        h('span', { style: { color: '#2C65FF' } }, item.field_name),
       ])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -588,7 +583,7 @@ export default {
         let fields = this.metadataDataObj.fields
 
         if (fields && fields.length) {
-          fields.forEach(field => {
+          fields.forEach((field) => {
             if (
               // 主键值减1
               item.primary_key &&
@@ -598,12 +593,12 @@ export default {
             }
             field.relation &&
               field.relation.length &&
-              field.relation.forEach(item => {
+              field.relation.forEach((item) => {
                 let key = item.table_name + item.rel
                 if (groupRelation[key]) {
                   groupRelation[key].fields.push({
                     local: item.field_name,
-                    foreign: field.field_name
+                    foreign: field.field_name,
                   })
                 } else {
                   groupRelation[key] = {
@@ -612,9 +607,9 @@ export default {
                     fields: [
                       {
                         local: item.field_name,
-                        foreign: field.field_name
-                      }
-                    ]
+                        foreign: field.field_name,
+                      },
+                    ],
                   }
                 }
               })
@@ -623,7 +618,7 @@ export default {
         let relation = Object.values(groupRelation)
         let params = {
           fields: fields,
-          relation: relation
+          relation: relation,
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
@@ -642,7 +637,7 @@ export default {
     setCurrentPageData(tableData) {
       let begin = (this.pageCurrent - 1) * this.pageSize
       let end = this.pageCurrent * this.pageSize
-      tableData = tableData.filter(item => !item.field_name.includes('__tapd8') && !item?.is_deleted)
+      tableData = tableData.filter((item) => !item.field_name.includes('__tapd8') && !item?.is_deleted)
       this.tableFieldList = tableData.slice(begin, end)
     },
     handleSizeChange(val) {
@@ -666,7 +661,7 @@ export default {
       this.businessDialogVisible = true
       this.businessForm = {
         key: '',
-        value: ''
+        value: '',
       }
     },
     // 删除业务属性
@@ -674,12 +669,12 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
-        h('span', { style: { color: '#409EFF' } }, key)
+        h('span', { style: { color: '#409EFF' } }, key),
       ])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(flag => {
+        closeOnClickModal: false,
+      }).then((flag) => {
         if (!flag) {
           return
         }
@@ -689,7 +684,7 @@ export default {
           }
         }
         let params = {
-          custom_properties: this.metadataDataObj.custom_properties
+          custom_properties: this.metadataDataObj.custom_properties,
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
@@ -708,7 +703,7 @@ export default {
         custom_properties = this.metadataDataObj.custom_properties ? this.metadataDataObj.custom_properties : {}
       obj[this.businessForm.key] = this.businessForm.value
       let params = {
-        custom_properties: Object.assign(custom_properties, obj)
+        custom_properties: Object.assign(custom_properties, obj),
       }
       metadataInstancesApi
         .patchId(this.metadataDataObj.id, params)
@@ -727,14 +722,14 @@ export default {
     handleChangeName() {
       this.editNameForm = {
         original_name: this.metadataDataObj.original_name,
-        alias_name: this.metadataDataObj.alias_name
+        alias_name: this.metadataDataObj.alias_name,
       }
       this.editNameDialogVisible = true
     },
     // 保存改名
     saveAliasName() {
       let params = {
-        alias_name: this.editNameForm.alias_name
+        alias_name: this.editNameForm.alias_name,
       }
       // params.alias_name = this.editNameForm.alias_name;
 
@@ -753,7 +748,7 @@ export default {
     // 编辑描述
     saveComment() {
       let params = {
-        comment: this.editCommentForm.comment
+        comment: this.editCommentForm.comment,
       }
       metadataInstancesApi
         .patchId(this.metadataDataObj.id, params)
@@ -771,8 +766,8 @@ export default {
     back() {
       this.$router.go(-1)
       // $router.push({ name: 'metadata' })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -128,7 +128,7 @@
       </div>
     </div>
     <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       </template>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
@@ -213,7 +213,7 @@
       </template>
     </ElDialog>
     <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template v-slot:title>
+      <template #header>
         <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
@@ -282,7 +282,7 @@ export default {
     directory: Object,
     eventDriver: Object,
     mapCatalog: Function,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
   components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
   mixins: [commonMix],
@@ -304,8 +304,8 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       creating: false,
       expandedKeys: [],
@@ -321,11 +321,11 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
       checkCanStartIng: false,
       startedTags: [],
-      prefixMap: {}
+      prefixMap: {},
     }
   },
   computed: {
@@ -345,14 +345,14 @@ export default {
     },
     treeMap() {
       return this.treeData.reduce((obj, item) => ((obj[item.id] = item), obj), {})
-    }
+    },
   },
   watch: {
     loadingDirectory(v) {
       if (!v) {
         this.loadTask()
       }
-    }
+    },
   },
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
@@ -373,7 +373,7 @@ export default {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
         if (this.showSearch) return
-        this.expandedKeys.forEach(id => {
+        this.expandedKeys.forEach((id) => {
           this.updateObject(id)
         })
         this.loadTask()
@@ -417,7 +417,7 @@ export default {
       let actions = []
 
       if (!data.isObject) {
-        if (data.children.some(child => child.isVirtual)) {
+        if (data.children.some((child) => child.isVirtual)) {
           actions.push(
             <IconButton
               sm
@@ -427,7 +427,7 @@ export default {
               }}
             >
               play-circle
-            </IconButton>
+            </IconButton>,
           )
         }
         actions.push(
@@ -435,10 +435,10 @@ export default {
             class="inline-flex"
             placement="bottom"
             trigger="click"
-            onCommand={command => this.handleMoreCommand(command, data)}
+            onCommand={(command) => this.handleMoreCommand(command, data)}
           >
             <IconButton
-              onClick={ev => {
+              onClick={(ev) => {
                 ev.stopPropagation()
               }}
               sm
@@ -448,7 +448,7 @@ export default {
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
             </ElDropdownMenu>
-          </ElDropdown>
+          </ElDropdown>,
         )
       }
 
@@ -467,8 +467,8 @@ export default {
             class={[
               'w-0 flex-1 overflow-hidden flex align-center',
               {
-                'opacity-50': data.isObject && data.isVirtual
-              }
+                'opacity-50': data.isObject && data.isVirtual,
+              },
             ]}
           >
             {!data.isObject && (
@@ -514,8 +514,8 @@ export default {
             database_type: 'MongoDB',
             connection_type: 'source_and_target',
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -528,15 +528,15 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
             id: item.id,
             name: item.name,
@@ -544,7 +544,7 @@ export default {
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            accessNodeProcessId: item.accessNodeProcessId,
           }
         })
 
@@ -604,7 +604,7 @@ export default {
     async checkCanStart() {
       this.taskDialogConfig.canStart = false
       this.checkCanStartIng = true
-      const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const tag = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
 
       if (tag) {
         const task = this.tag2Task[tag.id]
@@ -621,7 +621,7 @@ export default {
     },
 
     async taskDialogSubmit(start) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) return
 
         const { tableName, from = {}, task: settings, prefix } = this.taskDialogConfig
@@ -633,7 +633,7 @@ export default {
         try {
           const result = await ldpApi.createFDMTask(task, {
             silenceMessage: true,
-            params: { start }
+            params: { start },
           })
           this.taskDialogConfig.visible = false
           const h = this.$createElement
@@ -645,11 +645,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(result)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
         } catch (error) {
           console.log(error) // eslint-disable-line
@@ -675,9 +675,9 @@ export default {
         filter: JSON.stringify({
           where: {
             item_type: { $nin: ['database', 'dataflow', 'api'] },
-            parent_id: this.directory.id
-          }
-        })
+            parent_id: this.directory.id,
+          },
+        }),
       })
 
       /*items.forEach(item => {
@@ -690,7 +690,7 @@ export default {
       return item
     })*/
 
-      this.directory.children = items.map(item => {
+      this.directory.children = items.map((item) => {
         item = this.mapCatalog(item)
         const children = this.treeMap[item.id]?.children
 
@@ -776,10 +776,10 @@ export default {
         dag: {
           edges: [
             { source: source.id, target: tableReNameNode.id },
-            { source: tableReNameNode.id, target: target.id }
+            { source: tableReNameNode.id, target: target.id },
           ],
-          nodes: [source, tableReNameNode, target]
-        }
+          nodes: [source, tableReNameNode, target],
+        },
       }
     },
 
@@ -791,12 +791,12 @@ export default {
         tableName
           ? {
               migrateTableSelectType: 'custom',
-              tableNames: [tableName]
+              tableNames: [tableName],
             }
           : {
               migrateTableSelectType: 'expression',
-              tableExpression: '.*'
-            }
+              tableExpression: '.*',
+            },
       )
 
       return source
@@ -819,8 +819,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -829,7 +829,7 @@ export default {
         id: uuid(),
         type: 'table_rename_processor',
         name: i18n.t('packages_business_swimlane_fdm_biaobianji'),
-        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
+        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`,
       }
     },
 
@@ -858,13 +858,13 @@ export default {
       draggingNode = {
         ...draggingNode,
         parent: {
-          data: this.fdmConnection
-        }
+          data: this.fdmConnection,
+        },
       }
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name
+        draggingNode.data.name,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
       ev.dataTransfer.effectAllowed = 'copy'
@@ -878,14 +878,14 @@ export default {
     },
 
     setNodeExpand() {
-      const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const target = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
       if (target) {
         const node = this.$refs.tree.getNode(target.id)
         node && (node.loading = true)
         setTimeout(async () => {
           this.setExpand(target.id, true)
           let objects = await this.loadObjects(target)
-          objects = objects.map(item => {
+          objects = objects.map((item) => {
             item.parent_id = target.id
             item.isObject = true
             item.connectionId = item.sourceConId
@@ -945,7 +945,7 @@ export default {
         isParent: true,
         desc: type === 'edit' ? data?.desc : '',
         title:
-          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit'),
       }
     },
 
@@ -961,9 +961,9 @@ export default {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('packages_component_message_cancel'),
           type: 'warning',
-          closeOnClickModal: false
-        }
-      ).then(resFlag => {
+          closeOnClickModal: false,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -988,7 +988,7 @@ export default {
       let params = {
         item_type: itemType,
         desc: config.desc,
-        value
+        value,
       }
 
       if (config.type === 'edit') {
@@ -1017,11 +1017,11 @@ export default {
     async loadTask() {
       if (!this.treeData.length) return
 
-      const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
+      const map = await ldpApi.getTaskByTag(this.treeData.map((item) => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
         let task = map[tagId].find(
-          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+          (task) => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain,
         )
         if (task) {
           task = makeStatusAndDisabled(task)
@@ -1032,7 +1032,7 @@ export default {
             crontabExpressionFlag: task.crontabExpressionFlag,
             crontabExpression: task.crontabExpression,
             status: task.status,
-            disabledData: task.disabledData
+            disabledData: task.disabledData,
           }
         }
       }
@@ -1041,7 +1041,7 @@ export default {
     },
 
     checkStartedTag() {
-      this.startedTags = this.startedTags.filter(tagId => {
+      this.startedTags = this.startedTags.filter((tagId) => {
         const task = this.tag2Task[tagId]
         const node = this.$refs.tree.getNode(tagId)
         if (node && task && ['running', 'complete', 'stop', 'error'].includes(task.status)) {
@@ -1069,7 +1069,7 @@ export default {
 
     async searchByKeywordList(val = []) {
       let searchExpandedKeys = []
-      this.filterTreeData = val.map(t => {
+      this.filterTreeData = val.map((t) => {
         searchExpandedKeys.push(t.connectionId)
         return {
           LDP_TYPE: 'connection',
@@ -1087,9 +1087,9 @@ export default {
               isLeaf: true,
               isObject: true,
               type: 'table',
-              LDP_TYPE: 'table'
-            }
-          ]
+              LDP_TYPE: 'table',
+            },
+          ],
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
@@ -1104,9 +1104,9 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
-    }
+    },
   },
-  emits: ['preview', 'show-settings', 'node-drag-end', 'load-directory']
+  emits: ['preview', 'show-settings', 'node-drag-end', 'load-directory'],
 }
 </script>
 

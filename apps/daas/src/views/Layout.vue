@@ -16,7 +16,7 @@
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">wenda</VIcon>
           </div>
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem command="help">{{ $t('app_document') }}</ElDropdownItem>
             </ElDropdownMenu>
@@ -33,7 +33,7 @@
             <VIcon size="18">shezhi</VIcon>
           </div>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
                 $t('page_title_setting')
@@ -54,7 +54,7 @@
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">language_icon</VIcon>
           </div>
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
                 <span v-if="lang === key" class="color-primary">{{ value }}</span>
@@ -71,7 +71,7 @@
               >{{ userName }}<el-icon class="ml-2"><el-icon-arrow-down /></el-icon
             ></span>
           </div>
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
               <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
@@ -146,8 +146,8 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult'
-                ].includes($route.name)
+                  'dataVerifyResult',
+                ].includes($route.name),
               },
               {
                 'pb-5': ![
@@ -167,9 +167,9 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult'
-                ].includes($route.name)
-              }
+                  'dataVerifyResult',
+                ].includes($route.name),
+              },
             ]"
           >
             <RouterView />
@@ -203,13 +203,13 @@ let menuSetting = [
   {
     name: 'dataConsole',
     icon: 'process-platform',
-    code: 'v2_data-console'
+    code: 'v2_data-console',
   },
   {
     name: 'connectionsList',
     icon: 'agent',
     code: 'v2_datasource_menu',
-    parent: 'connections'
+    parent: 'connections',
   },
   {
     name: 'dataPipeline',
@@ -222,9 +222,9 @@ let menuSetting = [
       {
         name: 'dataVerificationList',
         code: 'v2_data_check',
-        parent: 'dataVerification'
-      }
-    ]
+        parent: 'dataVerification',
+      },
+    ],
   },
   {
     name: 'advancedFeatures',
@@ -235,21 +235,21 @@ let menuSetting = [
       {
         name: 'sharedCacheList',
         code: 'v2_shared_cache',
-        parent: 'sharedCache'
+        parent: 'sharedCache',
       }, // PDK暂时不支持共享缓存，暂时屏蔽
       {
         name: 'functionList',
         code: 'v2_function_management',
-        parent: 'function'
+        parent: 'function',
       },
       { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
       {
         name: 'sharedMiningList',
         code: 'v2_log_collector',
-        parent: 'sharedMining'
+        parent: 'sharedMining',
       },
-      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' }
-    ]
+      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
+    ],
   },
   {
     name: 'discovery',
@@ -258,9 +258,9 @@ let menuSetting = [
     code: 'v2_data_discovery',
     hidden: true, // 放开了数据面板，隐藏数据发现
     children: [
-      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' }
+      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' },
       // { name: 'objectList', code: 'v2_data_object', parent: 'object' },
-    ]
+    ],
   },
   {
     name: 'dataService',
@@ -271,18 +271,18 @@ let menuSetting = [
       {
         name: 'apiApplication',
         code: 'v2_api-application',
-        parent: 'apiApplication'
+        parent: 'apiApplication',
       },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
       {
         name: 'dataServerAuditList',
         code: 'v2_data_server_audit',
-        parent: 'dataServerAudit'
+        parent: 'dataServerAudit',
       },
       { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
       { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
-      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' }
-    ]
+      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
+    ],
   },
   {
     name: 'system',
@@ -293,9 +293,9 @@ let menuSetting = [
       { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
       { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
       { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
-      { name: 'externalStorage', code: 'v2_external-storage_menu' }
-    ]
-  }
+      { name: 'externalStorage', code: 'v2_external-storage_menu' },
+    ],
+  },
 ]
 export default {
   components: {
@@ -303,7 +303,7 @@ export default {
     newDataFlow,
     NotificationPopover,
     PageHeader,
-    VIcon
+    VIcon,
   },
   data() {
     return {
@@ -330,7 +330,7 @@ export default {
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
       activeMenu: '',
-      showHelp: !import.meta.env.VITE_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
+      showHelp: !import.meta.env.VITE_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP'),
     }
   },
   computed: {
@@ -343,15 +343,15 @@ export default {
       const height = window._TAPDATA_OPTIONS_.logoHeight
       return {
         width: width && (!isNaN(width) ? `${width}px` : width),
-        height: height && (!isNaN(height) ? `${height}px` : height)
+        height: height && (!isNaN(height) ? `${height}px` : height),
       }
-    }
+    },
   },
   watch: {
     $route(data) {
       this.isNotAside = data?.meta?.isNotAside || false
       this.getActiveMenu()
-    }
+    },
   },
   async created() {
     const hideMenuMap = await this.getHideMenuItem()
@@ -361,7 +361,7 @@ export default {
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
     this.email = Cookie.get('email')
 
-    window.iframeRouterChange = route => {
+    window.iframeRouterChange = (route) => {
       this.$router.push(route)
     }
     let self = this
@@ -369,7 +369,7 @@ export default {
       self.$store.commit(key, data)
     }
 
-    window.getFormLocal = data => {
+    window.getFormLocal = (data) => {
       return self.$store.state[data]
     }
 
@@ -384,8 +384,8 @@ export default {
     getActiveMenu() {
       let route = this.$route
       let activeMap = {}
-      const getMap = menus => {
-        menus.forEach(item => {
+      const getMap = (menus) => {
+        menus.forEach((item) => {
           if (item?.children?.length) {
             getMap(item?.children)
           } else {
@@ -397,7 +397,7 @@ export default {
       }
       getMap(menuSetting)
       let matched = route.matched || []
-      let activeRoute = matched.find(r => activeMap[r.name])
+      let activeRoute = matched.find((r) => activeMap[r.name])
       this.activeMenu = activeMap[activeRoute?.name] || ''
     },
     getMenus(hideMenuMap = {}) {
@@ -405,9 +405,9 @@ export default {
 
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
-      let routes = this.$router.options.routes.find(r => r.name === 'layout').children
-      let getRoutesMap = routes => {
-        routes.forEach(r => {
+      let routes = this.$router.options.routes.find((r) => r.name === 'layout').children
+      let getRoutesMap = (routes) => {
+        routes.forEach((r) => {
           routerMap[r.name] = r
           if (r.children) {
             getRoutesMap(r.children)
@@ -416,8 +416,8 @@ export default {
       }
       getRoutesMap(routes)
 
-      let formatMenu = items => {
-        return items.map(item => {
+      let formatMenu = (items) => {
+        return items.map((item) => {
           let route = routerMap[item.name]
           let menu = item
           let label = menu.alias ? menu.alias : menu.label
@@ -430,10 +430,10 @@ export default {
           }
 
           menu.hidden =
-            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some(p => p.code === menu.code))
+            menu.hidden || hideMenuMap[menu.name] || (menu.code && !permissions.some((p) => p.code === menu.code))
           if (!menu.hidden && menu.children) {
             menu.children = formatMenu(menu.children)
-            if (menu.children.every(m => m.hidden)) {
+            if (menu.children.every((m) => m.hidden)) {
               menu.hidden = true
             }
           }
@@ -448,12 +448,12 @@ export default {
       switch (command) {
         case 'account':
           this.$router.push({
-            name: 'settingCenter'
+            name: 'settingCenter',
           })
           break
         case 'setting':
           this.$router.push({
-            name: 'notificationSetting'
+            name: 'notificationSetting',
           })
           break
         case 'newDataFlow':
@@ -469,7 +469,7 @@ export default {
           if (window.getSettingByKey('SHOW_DK_VERSION')) {
             this.$message.info({
               dangerouslyUseHTMLString: true,
-              message: 'DK_VERSION_1</br>DK_VERSION_2'
+              message: 'DK_VERSION_1</br>DK_VERSION_2',
             })
           } else {
             this.$message.info(window._TAPDATA_OPTIONS_.version)
@@ -477,7 +477,7 @@ export default {
           break
         case 'license':
           this.$router.push({
-            name: 'License'
+            name: 'License',
           })
           break
         case 'home':
@@ -485,8 +485,8 @@ export default {
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
-            type: 'warning'
-          }).then(resFlag => {
+            type: 'warning',
+          }).then((resFlag) => {
             if (!resFlag) {
               return
             }
@@ -495,7 +495,7 @@ export default {
           break
         case 'settings':
           this.$router.push({
-            name: 'settings'
+            name: 'settings',
           })
           break
         default:
@@ -512,7 +512,7 @@ export default {
         return
       }
       this.$router.push({
-        name
+        name,
       })
     },
     changeLanguage(lang) {
@@ -523,10 +523,10 @@ export default {
 
     async getLicense() {
       let stime = ''
-      await timeStampApi.get().then(data => {
+      await timeStampApi.get().then((data) => {
         stime = data || Time.now()
       })
-      licensesApi.expires({}).then(data => {
+      licensesApi.expires({}).then((data) => {
         let expires_on = data?.expires_on || ''
         if (Cookie.get('isAdmin') == 1) {
           let endTime = expires_on - stime
@@ -547,11 +547,11 @@ export default {
             await taskApi.get({
               filter: JSON.stringify({
                 where: {
-                  syncType: 'connHeartbeat'
-                }
-              })
+                  syncType: 'connHeartbeat',
+                },
+              }),
             })
-          )?.total || 0
+          )?.total || 0,
       }
       return Object.keys(map).reduce((result, key) => {
         if (!map[key]) {
@@ -559,8 +559,8 @@ export default {
         }
         return result
       }, {})
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -775,7 +775,9 @@ export default {
   .expire-msg {
     margin-right: 25px;
     font-size: $fontBaseTitle;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-family:
+      PingFangSC-Medium,
+      PingFang SC;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;

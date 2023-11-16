@@ -5,12 +5,12 @@
     :append-to-body="true"
     width="80%"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     destroy-on-close
     @open="handleOpen"
     @close="handleClose"
   >
-    <template v-slot:title>
+    <template #header>
       <div class="text-center font-color-dark fs-2 fw-bold">
         {{ showForm ? 'Configure Source' : title }}
       </div>
@@ -49,19 +49,19 @@ export default {
   components: {
     ConnectionSelector,
     ConnectionForm,
-    ServeForm
+    ServeForm,
   },
   props: {
     title: {
       type: String,
       default: () => {
         return i18n.t('packages_business_create_connection_dialog_xuanzeshujuyuan')
-      }
+      },
     },
     visible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -69,7 +69,7 @@ export default {
       formParams: {},
       showForm: false,
       timer: null,
-      activeTab: ''
+      activeTab: '',
     }
   },
   watch: {
@@ -78,7 +78,7 @@ export default {
     },
     showDialog(v) {
       $emit(this, 'update:visible', v)
-    }
+    },
   },
   mounted() {
     console.log('ConnectionDialog') // eslint-disable-line
@@ -129,9 +129,9 @@ export default {
     handleSaveAndMore() {
       $emit(this, 'saveAndMore', ...arguments)
       this.init()
-    }
+    },
   },
-  emits: ['update:visible', 'visible', 'success', 'saveAndMore']
+  emits: ['update:visible', 'visible', 'success', 'saveAndMore'],
 }
 </script>
 

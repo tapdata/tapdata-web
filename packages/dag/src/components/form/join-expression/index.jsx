@@ -21,14 +21,14 @@ export const JoinExpression = observer(
         let fieldNames = []
 
         if (id) {
-          formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, state => {
+          formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, (state) => {
             state.loading = true
           })
 
           fieldNames = await props.loadNodeFieldNamesById(id)
         }
 
-        formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, state => {
+        formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, (state) => {
           state.dataSource = fieldNames
           state.loading = false
         })
@@ -36,18 +36,18 @@ export const JoinExpression = observer(
 
       watch(
         () => props.leftNodeId,
-        async val => {
+        async (val) => {
           await loadFieldNames(val, 'left')
         },
-        { immediate: true }
+        { immediate: true },
       )
 
       watch(
         () => props.rightNodeId,
-        async val => {
+        async (val) => {
           await loadFieldNames(val, 'right')
         },
-        { immediate: true }
+        { immediate: true },
       )
 
       /*watch(
@@ -74,11 +74,11 @@ export const JoinExpression = observer(
           fieldArr.push({
             left: '',
             right: '',
-            expression: '='
+            expression: '=',
           })
         }
 
-        const handleRemove = index => {
+        const handleRemove = (index) => {
           fieldArr.splice(index, 1)
         }
 
@@ -89,7 +89,7 @@ export const JoinExpression = observer(
 
         const handleExchange = () => {
           doExchange()
-          props.value.forEach(item => {
+          props.value.forEach((item) => {
             const { left, right } = item
             item.left = right
             item.right = left
@@ -105,11 +105,11 @@ export const JoinExpression = observer(
                 props: {
                   name: i,
                   schema: schema.items,
-                  filterProperties: schema => schema.name === 'left',
-                  onlyRenderProperties: true
-                }
+                  filterProperties: (schema) => schema.name === 'left',
+                  onlyRenderProperties: true,
+                },
               },
-              {}
+              {},
             )
             const right = createElement(
               RecursionField,
@@ -117,11 +117,11 @@ export const JoinExpression = observer(
                 props: {
                   name: i,
                   schema: schema.items,
-                  filterProperties: schema => schema.name === 'right',
-                  onlyRenderProperties: true
-                }
+                  filterProperties: (schema) => schema.name === 'right',
+                  onlyRenderProperties: true,
+                },
               },
-              {}
+              {},
             )
             return (
               <div class="flex join-expression-row" key={i}>
@@ -129,13 +129,13 @@ export const JoinExpression = observer(
                 <FormItem class="join-operator">=</FormItem>
                 <div class="join-field  flex-1">{right}</div>
                 <FormItem>
-                  <ElButton class="ml-3 align-middle" size="small" type="text" onClick={() => handleAdd()}>
+                  <ElButton class="ml-3 align-middle" size="small" text onClick={() => handleAdd()}>
                     <VIcon size={16}>plus</VIcon>
                   </ElButton>
                   <ElButton
                     class="ml-3 align-middle"
                     size="small"
-                    type="text"
+                    text
                     disabled={fieldArr.length < 2}
                     onClick={() => handleRemove(i)}
                   >
@@ -166,8 +166,8 @@ export const JoinExpression = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export default JoinExpression

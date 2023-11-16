@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     width="900px"
-    custom-class="browse_query"
+    class="browse_query"
     :before-close="handleClose"
     :title="$t('dataExplorer_query')"
     :close-on-click-modal="false"
@@ -34,7 +34,7 @@
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
         <el-checkbox
-          v-for="item in header.filter(v => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
+          v-for="item in header.filter((v) => v.value !== '__operation' && v.value !== '__tapd8' && v.value !== '_id')"
           :label="item.text"
           :key="item.value"
           >{{ item.text }}</el-checkbox
@@ -63,20 +63,20 @@ export default {
   props: {
     fieldData: {
       required: true,
-      value: Array
+      value: Array,
     },
     header: {
       required: true,
-      value: Array
+      value: Array,
     },
     conditionData: {
       required: true,
-      value: Object
+      value: Object,
     },
     dialogVisible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -84,12 +84,12 @@ export default {
       condition: null,
       isIndeterminate: true,
       showAllColumn: true,
-      selectionRow: []
+      selectionRow: [],
     }
   },
   created() {
     this.condition = this.conditionData
-    this.fieldData.forEach(v => {
+    this.fieldData.forEach((v) => {
       if (v.show) {
         this.selectionRow.push(v.value)
       }
@@ -98,7 +98,7 @@ export default {
   computed: {
     fields() {
       let _this = this
-      let fieldData = _this.fieldData.map(item => {
+      let fieldData = _this.fieldData.map((item) => {
         if (item) {
           item.field_name = item.alias_name ? item.alias_name + ' ( ' + item.field_name + ' ) ' : item.field_name
           item.javaType = item.data_type || item.javaType
@@ -106,23 +106,23 @@ export default {
         }
       })
       return fieldData
-    }
+    },
   },
   watch: {
     'model.requiredQueryField'() {
       this.handlerQueryField()
-    }
+    },
   },
   methods: {
     // 全选
     showAllColumns(val) {
       this.selectionRow = val
-        ? this.fields.map(item => {
+        ? this.fields.map((item) => {
             return item.value
           })
         : []
       this.isIndeterminate = false
-      this.fields.forEach(item => (item.show = true))
+      this.fields.forEach((item) => (item.show = true))
       // setTimeout(() => {
       //   this.querysavefn()
       // }, 2000)
@@ -132,7 +132,7 @@ export default {
       let checkedCount = value.length
       this.showAllColumn = checkedCount === this.fields.length
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.fields.length
-      this.fields.forEach(v => {
+      this.fields.forEach((v) => {
         if (value.includes(v.value)) {
           v.show = true
         }
@@ -152,13 +152,13 @@ export default {
     handleFavorite() {
       this.$prompt('', this.$t('dataExplorer_add_favorite_name'), {
         customClass: 'change-name-prompt',
-        inputValue: this.favoriteName
-      }).then(flag => {
+        inputValue: this.favoriteName,
+      }).then((flag) => {
         if (flag) {
           let exists = false
-          usersApi.get().then(data => {
+          usersApi.get().then((data) => {
             if (data) {
-              let collect = data.favorites.filter(v => v.meta.title === this.favoriteName)
+              let collect = data.favorites.filter((v) => v.meta.title === this.favoriteName)
               exists = collect.length > 0
             }
             if (exists) {
@@ -193,9 +193,9 @@ export default {
     handleClose() {
       this.dialogFormVisible = false
       $emit(this, 'backDialogVisible', false)
-    }
+    },
   },
-  emits: ['backShowColumn', 'backDialogVisible']
+  emits: ['backShowColumn', 'backDialogVisible'],
 }
 </script>
 

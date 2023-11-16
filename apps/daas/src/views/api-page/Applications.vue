@@ -70,14 +70,14 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'API_clients_amangement'" size="small" type="text" @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_clients_amangement'" size="small" text @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
           <ElButton
             v-readonlybtn="'API_clients_amangement'"
             v-if="scope.row.clientName !== 'Data Explorer'"
             size="small"
-            type="text"
+            text
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}</ElButton
           >
@@ -87,7 +87,7 @@
     <!-- 创建客户端 -->
     <ElDialog
       width="600px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('application_create')"
       :close-on-click-modal="false"
       v-model:visible="createDialogVisible"
@@ -108,7 +108,7 @@
             <ElInput v-model:value="createForm.clientSecret" size="small"></ElInput>
           </ElCol>
           <ElCol :span="2" style="text-align: right">
-            <ElButton type="text" size="small" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
+            <ElButton text size="small" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
           </ElCol>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
@@ -154,12 +154,12 @@ export default {
   name: 'Applications',
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
   },
   data() {
     return {
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       filterItems: [],
       order: 'clientName DESC',
@@ -172,8 +172,8 @@ export default {
         scopes: [],
         redirectUris: [],
         redirectUrisStr: '',
-        showMenu: true
-      }
+        showMenu: true,
+      },
     }
   },
   created() {
@@ -183,14 +183,14 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   methods: {
     // 重置查询条件
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
-          keyword: ''
+          keyword: '',
         }
       }
       this.table.fetch(1)
@@ -208,7 +208,7 @@ export default {
         scopes: [],
         redirectUris: [],
         redirectUrisStr: '',
-        showMenu: true
+        showMenu: true,
       }
     },
     // 编辑
@@ -224,8 +224,8 @@ export default {
       const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -248,7 +248,7 @@ export default {
       params.redirectUris = params.redirectUrisStr?.split(',') || []
       delete params['redirectUrisStr']
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           applicationApi[method](params).then(() => {
             this.table.fetch()
@@ -283,20 +283,20 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return applicationApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total || 0,
             data:
-              data?.items.map(item => {
+              data?.items.map((item) => {
                 item.redirectUrisStr = item.redirectUris ? item.redirectUris.join(',') : ''
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -304,9 +304,9 @@ export default {
     getRoles() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
         this.roles = data?.items || []
       })
     },
@@ -321,11 +321,11 @@ export default {
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
-    }
-  }
+    },
+  },
 }
 </script>
 

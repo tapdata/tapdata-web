@@ -13,15 +13,11 @@
       </div>
       <div class="query-build-header-right">
         <el-tooltip class="item" effect="dark" :content="$t('query_build_addGroup')" placement="top">
-          <el-button v-if="level < maxLevel" @click="addChild('group')" type="text">{{
-            $t('query_build_add')
-          }}</el-button>
+          <el-button v-if="level < maxLevel" @click="addChild('group')" text>{{ $t('query_build_add') }}</el-button>
         </el-tooltip>
 
         <el-tooltip class="item" effect="dark" :content="$t('query_build_removeGroup')" placement="top">
-          <el-button v-if="level > 1" @click="removeGroup(value)" type="text">{{
-            $t('public_button_delete')
-          }}</el-button>
+          <el-button v-if="level > 1" @click="removeGroup(value)" text>{{ $t('public_button_delete') }}</el-button>
         </el-tooltip>
       </div>
     </div>
@@ -55,12 +51,12 @@
             <!-- 添加 条件 -->
             <div class="query-build-group-col query-build-group-button">
               <el-tooltip class="item" effect="dark" :content="$t('query_build_addCondition')" placement="top">
-                <el-button v-if="item.type === 'condition'" @click="addChild('condition')" type="text">{{
+                <el-button v-if="item.type === 'condition'" @click="addChild('condition')" text>{{
                   $t('query_build_add')
                 }}</el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" :content="$t('query_build_removeCondition')" placement="top">
-                <el-button v-if="conditionCount > 1" @click="removeChild(item, index)" type="text">{{
+                <el-button v-if="conditionCount > 1" @click="removeChild(item, index)" text>{{
                   $t('public_button_delete')
                 }}</el-button>
               </el-tooltip>
@@ -84,36 +80,36 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     fieldValue: {
       type: String,
       default() {
         return 'value'
-      }
+      },
     },
     fieldLabel: {
       type: String,
       default() {
         return 'text'
-      }
+      },
     },
     value: {
       type: Object,
       default() {
         return []
-      }
+      },
     },
     level: {
       type: Number,
       default() {
         return 1
-      }
+      },
     },
     maxLevel: {
       type: Number,
-      default: 10
-    }
+      default: 10,
+    },
     // showFilterDialog: {
     //   type: Boolean,
     //   default() {
@@ -124,7 +120,7 @@ export default {
   data() {
     return {
       color: '',
-      fieldList: []
+      fieldList: [],
     }
   },
   watch: {
@@ -149,7 +145,7 @@ export default {
     },
     conditionCount() {
       return this.value.conditions.length
-    }
+    },
   },
   created() {
     this.fieldList = this.fields
@@ -170,16 +166,16 @@ export default {
               type: 'condition',
               field: '',
               command: 'eq',
-              value: ''
-            }
-          ]
+              value: '',
+            },
+          ],
         }
       } else if (type === 'condition') {
         child = {
           type: 'condition',
           field: '',
           command: '',
-          value: ''
+          value: '',
         }
       }
       this.value.conditions.push(child)
@@ -193,9 +189,9 @@ export default {
     removeChild(item, index) {
       let self = this
       self.value.conditions.splice(index, 1)
-    }
+    },
   },
-  emits: ['update:value', 'remove']
+  emits: ['update:value', 'remove'],
 }
 </script>
 

@@ -4,10 +4,10 @@
     :append-to-body="true"
     width="800px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
-    <template v-slot:title>
+    <template #header>
       <div class="flex align-items-center">
         <VIcon class="color-warning mr-2">warning</VIcon>
         <span>{{ $t('packages_business_application_delete_shanchuyingyong') }}</span>
@@ -51,20 +51,20 @@ export default {
       visible: false,
       details: {
         id: '',
-        value: ''
+        value: '',
       },
       loading: false,
       saveLoading: false,
       form: {
         appValue: '',
-        appLabel: ''
-      }
+        appLabel: '',
+      },
     }
   },
   computed: {
     desc() {
       return i18n.t('packages_business_application_delete_ninzhengzaishanchu2', { val1: this.details.value })
-    }
+    },
   },
   methods: {
     init(row = {}) {
@@ -72,11 +72,11 @@ export default {
         .get({
           filter: JSON.stringify({
             where: {
-              'listtags.id': row.id
-            }
-          })
+              'listtags.id': row.id,
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           if (data.total) {
             this.details.id = row.id
             this.details.value = row.value
@@ -85,14 +85,14 @@ export default {
           }
           this.$confirm(
             i18n.t('packages_business_application_delete_ninzhengzaishanchu', {
-              val1: row.value
+              val1: row.value,
             }),
             i18n.t('packages_business_application_delete_shanchuyingyong'),
             {
               type: 'warning',
-              dangerouslyUseHTMLString: true
-            }
-          ).then(resFlag => {
+              dangerouslyUseHTMLString: true,
+            },
+          ).then((resFlag) => {
             if (!resFlag) return
             this.saveLoading = true
             this.handleDelete(row.id)
@@ -104,18 +104,18 @@ export default {
       let params = {
         where: {
           item_type: 'app',
-          readOnly: true
-        }
+          readOnly: true,
+        },
       }
       appApi
         .get({
-          filter: JSON.stringify(params)
+          filter: JSON.stringify(params),
         })
-        .then(data => {
+        .then((data) => {
           const item = data.items?.[0] || {}
           this.form = {
             appValue: item.id,
-            appLabel: item.value
+            appLabel: item.value,
           }
         })
         .finally(() => {
@@ -131,7 +131,7 @@ export default {
       this.saveLoading = true
       appApi
         .move(this.details.id, this.form.appValue)
-        .then(dd => {
+        .then((dd) => {
           this.handleDelete(this.details.id)
         })
         .catch(() => {
@@ -153,9 +153,9 @@ export default {
     },
 
     handleFormat(data) {
-      return data.filter(t => t.value !== this.details.id)
-    }
+      return data.filter((t) => t.value !== this.details.id)
+    },
   },
-  emits: ['success']
+  emits: ['success'],
 }
 </script>

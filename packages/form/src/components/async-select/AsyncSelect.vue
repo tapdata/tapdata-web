@@ -82,7 +82,7 @@
                             <span
                               :class="nsSelect.e('tags-text')"
                               :style="{
-                                maxWidth: inputWidth - 75 + 'px'
+                                maxWidth: inputWidth - 75 + 'px',
                               }"
                               >{{ item.currentLabel }}</span
                             >
@@ -122,7 +122,7 @@
               v-if="filterable && !selectDisabled"
               ref="input"
               v-model="query"
-              type="text"
+              text
               :class="inputKls"
               :disabled="selectDisabled"
               :autocomplete="autocomplete"
@@ -155,13 +155,13 @@
             ref="iOSInput"
             :class="iOSInputKls"
             :disabled="selectDisabled"
-            type="text"
+            text
           />
           <el-input
             :id="id"
             ref="reference"
             v-model="selectedLabel"
-            type="text"
+            text
             :placeholder="typeof currentPlaceholder === 'function' ? currentPlaceholder() : currentPlaceholder"
             :name="name"
             :autocomplete="autocomplete"
@@ -298,64 +298,64 @@ export default defineComponent({
   props: {
     method: {
       type: Function,
-      required: true
+      required: true,
     },
     createValidate: Function, // 当allowCreate打开时，验证创建项
     onSetSelected: Function, // 主要是在schema场景下做交互使用
     params: Object,
     itemType: {
       type: String,
-      default: 'object'
+      default: 'object',
     },
     itemLabel: {
       type: String,
-      default: 'label'
+      default: 'label',
     },
     itemValue: {
       type: String,
-      default: 'value'
+      default: 'value',
     },
     itemQuery: String,
     filterable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     defaultFirstOption: {
       type: Boolean,
-      default: true
+      default: true,
     },
     filterMethod: {
       type: Function,
-      default: () => {}
+      default: () => {},
     },
     remote: {
       type: Boolean,
-      default: true
+      default: true,
     },
     remoteShowSuffix: {
       type: Boolean,
-      default: true
+      default: true,
     },
     lazy: {
       type: Boolean,
-      default: false
+      default: false,
     },
     currentLabel: [String, Array],
     debounceWait: {
       type: Number,
-      default: 200
+      default: 200,
     },
     inputQueryWait: {
       type: Number,
-      default: 100
+      default: 100,
     },
     pageSize: {
       type: Number,
-      default: 20
-    }
+      default: 20,
+    },
   },
   components: {
-    ElSelectMenu /*: Select.components.ElSelectMenu*/
+    ElSelectMenu /*: Select.components.ElSelectMenu*/,
   },
   setup(props, ctx) {
     const nsSelect = useNamespace('select')
@@ -427,7 +427,7 @@ export default defineComponent({
       // extends
       showLoading,
       loadMore,
-      scrollDisabled
+      scrollDisabled,
     } = useSelect(props, states, ctx)
 
     const {
@@ -447,7 +447,7 @@ export default defineComponent({
       cachedOptions,
       optionsCount,
       prefixWidth,
-      items
+      items,
     } = toRefs(states)
 
     const wrapperKls = computed(() => {
@@ -466,23 +466,23 @@ export default defineComponent({
 
     const tagWrapperKls = computed(() => [
       nsSelect.b('tags-wrapper'),
-      { 'has-prefix': unref(prefixWidth) && unref(selected).length }
+      { 'has-prefix': unref(prefixWidth) && unref(selected).length },
     ])
 
     const inputKls = computed(() => [
       nsSelect.e('input'),
       nsSelect.is(unref(selectSize)),
-      nsSelect.is('disabled', unref(selectDisabled))
+      nsSelect.is('disabled', unref(selectDisabled)),
     ])
 
     const iOSInputKls = computed(() => [
       nsSelect.e('input'),
       nsSelect.is(unref(selectSize)),
-      nsSelect.em('input', 'iOS')
+      nsSelect.em('input', 'iOS'),
     ])
 
     const scrollbarKls = computed(() => [
-      nsSelect.is('empty', !props.allowCreate && Boolean(unref(query)) && unref(filteredOptionsCount) === 0)
+      nsSelect.is('empty', !props.allowCreate && Boolean(unref(query)) && unref(filteredOptionsCount) === 0),
     ])
 
     const tagTextStyle = computed(() => {
@@ -494,7 +494,7 @@ export default defineComponent({
       marginLeft: `${unref(prefixWidth)}px`,
       flexGrow: 1,
       width: `${unref(inputLength) / (unref(inputWidth) - 32)}%`,
-      maxWidth: `${unref(inputWidth) - 42}px`
+      maxWidth: `${unref(inputWidth) - 42}px`,
     }))
 
     provide(
@@ -514,8 +514,8 @@ export default defineComponent({
         selected,
         setSelected,
         queryChange,
-        groupQueryChange
-      })
+        groupQueryChange,
+      }),
     )
 
     onMounted(() => {
@@ -551,7 +551,7 @@ export default defineComponent({
       return tooltipRef.value?.popperRef?.contentRef
     })
 
-    const onOptionsRendered = v => {
+    const onOptionsRendered = (v) => {
       optionList.value = v
     }
 
@@ -639,7 +639,7 @@ export default defineComponent({
       showLoading,
       loadMore,
       items,
-      scrollDisabled
+      scrollDisabled,
       // pagination,
       // total,
       // items,
@@ -651,7 +651,7 @@ export default defineComponent({
     }
   },
 
-  emits: ['option-select', 'create', 'change-label']
+  emits: ['option-select', 'create', 'change-label'],
 })
 </script>
 

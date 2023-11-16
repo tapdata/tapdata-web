@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     width="1200px"
     top="10vh"
-    custom-class="connection-dialog ldp-conection-dialog flex flex-column"
+    class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
     <Form ref="form" :task-id="taskId" v-model:loading="loading" class="mt-n6" @success="handleSuccess"></Form>
@@ -32,7 +32,7 @@ export default {
     return {
       visible: false,
       taskId: '',
-      loading: false
+      loading: false,
     }
   },
   methods: {
@@ -59,8 +59,8 @@ export default {
     handleSuccess() {
       $emit(this, 'success')
       this.handleClose()
-    }
+    },
   },
-  emits: ['success']
+  emits: ['success'],
 }
 </script>

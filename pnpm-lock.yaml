@@ -132,9 +132,6 @@ importers:
       vue:
         specifier: ^3.3.4
         version: 3.3.4
-      vue-clipboard2:
-        specifier: ^0.3.1
-        version: 0.3.1
       vue-echarts:
         specifier: ^6.0.0
         version: 6.0.0(echarts@5.0.2)(vue@3.3.4)
@@ -295,9 +292,6 @@ importers:
       vue:
         specifier: ^3.3.4
         version: 3.3.4
-      vue-clipboard2:
-        specifier: ^0.3.1
-        version: 0.3.1
       vue-cookies:
         specifier: ^1.7.4
         version: 1.7.4
@@ -7009,12 +7003,6 @@ packages:
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
-
-  /vue-clipboard2@0.3.1:
-    resolution: {integrity: sha512-H5S/agEDj0kXjUb5GP2c0hCzIXWRBygaWLN3NEFsaI9I3uWin778SFEMt8QRXiPG+7anyjqWiw2lqcxWUSfkYg==}
-    dependencies:
-      clipboard: 2.0.11
-    dev: false
 
   /vue-cookies@1.7.4:
     resolution: {integrity: sha512-mOS5Btr8V9zvAtkmQ7/TfqJIropOx7etDAgBywPCmHjvfJl2gFbH2XgoMghleLoyyMTi5eaJss0mPN7arMoslA==}

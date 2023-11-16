@@ -65,16 +65,7 @@
               </div>
             </div>
             <div
-              class="
-                drop-mask
-                position-absolute
-                absolute-fill
-                p-2
-                flex-column
-                justify-content-center
-                align-center
-                gap-2
-              "
+              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
               :class="{ flex: nonSupportApi }"
             >
               <ElTooltip
@@ -115,7 +106,7 @@
               <div class="mt-2 font-color-light">
                 {{
                   $t('packages_business_data_console_target_connection_desc', {
-                    val: item.database_type
+                    val: item.database_type,
                   })
                 }}
               </div>
@@ -136,7 +127,7 @@
       </div>
 
       <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-        <template v-slot:title>
+        <template #header>
           <span class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
         </template>
         <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
@@ -146,7 +137,7 @@
               $t(
                 taskDialogConfig.tableName
                   ? 'packages_business_target_create_task_dialog_desc_prefix_sync'
-                  : 'packages_business_target_create_task_dialog_desc_prefix_clone'
+                  : 'packages_business_target_create_task_dialog_desc_prefix_clone',
               )
             }}</span
             ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
@@ -251,7 +242,7 @@ import {
   TaskStatus,
   DataServerDrawer as ApiPreview,
   makeStatusAndDisabled,
-  TASK_SETTINGS
+  TASK_SETTINGS,
 } from '@tap/business'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
@@ -325,7 +316,7 @@ const TaskList = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 export default {
@@ -334,7 +325,7 @@ export default {
   props: {
     dragState: Object,
     fdmAndMdmId: Array,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
 
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
@@ -359,12 +350,12 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       connectionTaskMap: {},
       apiDialog: {
-        visible: false
+        visible: false,
       },
       apiServerHost: '',
       searchIng: false,
@@ -375,11 +366,11 @@ export default {
       apiStatusMap: {
         active: this.$t('public_status_published'),
         pending: this.$t('public_status_unpublished'),
-        generating: this.$t('public_status_to_be_generated')
+        generating: this.$t('public_status_to_be_generated'),
       },
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
-      searchKeywordList: []
+      searchKeywordList: [],
     }
   },
 
@@ -395,14 +386,14 @@ export default {
     filterList() {
       if (this.showParentLineage) {
         let result = []
-        this.searchKeywordList.forEach(item => {
+        this.searchKeywordList.forEach((item) => {
           if (item.type === 'apiserverLineage') {
             // item的数据结构：appName,serverName,table,type
-            const appList = cloneDeep(this.list.filter(item => item.LDP_TYPE === 'app'))
-            const findApp = appList.find(t => t.value === item.appName)
-            const findServer = findApp?.modules?.find(t => t.name === item.serverName)
+            const appList = cloneDeep(this.list.filter((item) => item.LDP_TYPE === 'app'))
+            const findApp = appList.find((t) => t.value === item.appName)
+            const findServer = findApp?.modules?.find((t) => t.name === item.serverName)
             if (!findServer) return
-            const findOne = result.find(t => t.value === item.appName)
+            const findOne = result.find((t) => t.value === item.appName)
             if (findOne) {
               findOne.modules.push(findServer)
             } else {
@@ -412,12 +403,12 @@ export default {
         })
         return result
       }
-      if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
+      if (!this.search) return this.list.filter((item) => !this.fdmAndMdmId.includes(item.id))
 
       return this.list.filter(
-        item =>
+        (item) =>
           !this.fdmAndMdmId?.includes(item.id) &&
-          (item.name?.includes(this.search) || item.value?.includes(this.search))
+          (item.name?.includes(this.search) || item.value?.includes(this.search)),
       )
     },
 
@@ -435,7 +426,7 @@ export default {
 
     nonSupportApi() {
       return this.dragDatabaseType && !this.apiSupportTypes.includes(this.dragDatabaseType)
-    }
+    },
   },
 
   mounted() {
@@ -455,14 +446,14 @@ export default {
 
       if (this.isDaas) {
         appList = await this.getApiAppList()
-        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
+        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then((list) => {
           appList.forEach((app, i) => {
             app['modules'] = list[i]
           })
         })
       }
 
-      this.connectionIds = connectionList.map(item => item.id)
+      this.connectionIds = connectionList.map((item) => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -479,15 +470,15 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', 'target']
+            in: ['source_and_target', 'target'],
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
       return res.items.map(this.mapConnection)
@@ -496,24 +487,24 @@ export default {
     async loadTask(list) {
       if (!list.length) return
       const spec = []
-      const ids = list.map(item => {
+      const ids = list.map((item) => {
         if (item.showTableWebsite) spec.push(item.id)
         return item.id
       })
       const data = await taskApi.getTaskByConnection({
         connectionIds: ids.join(','),
-        position: 'target'
+        position: 'target',
       })
 
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         this.connectionTaskMap[key] = data[key]
-          .filter(task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
+          .filter((task) => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted)
           .reverse()
           .map(this.mapTask)
       })
 
       if (spec.length) {
-        spec.forEach(id => {
+        spec.forEach((id) => {
           const taskList = data[id]
           if (taskList?.length) {
             const mapTaskList = this.connectionTaskMap[id]
@@ -534,10 +525,10 @@ export default {
       this.loadTaskTimer = setTimeout(async () => {
         const data = await taskApi.getTaskByConnection({
           connectionIds: this.connectionIds.join(','),
-          position: 'target'
+          position: 'target',
         })
 
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           this.connectionTaskMap[key] = data[key].reverse().map(this.mapTask)
         })
 
@@ -568,7 +559,7 @@ export default {
           }
         })
 
-        const targetNode = dag.nodes.find(node => {
+        const targetNode = dag.nodes.find((node) => {
           return node.type === 'table' && inputsMap[node.id] && !outputsMap[node.id]
         })
 
@@ -581,16 +572,16 @@ export default {
         limit: 999,
         order: 'createTime DESC',
         where: {
-          item_type: 'app'
-        }
+          item_type: 'app',
+        },
       }
 
       return appApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
-          return items.map(item => {
+          return items.map((item) => {
             item.LDP_TYPE = 'app'
             return item
           })
@@ -602,13 +593,13 @@ export default {
         limit: 999,
         order: 'createAt DESC',
         where: {
-          'listtags.id': appId
-        }
+          'listtags.id': appId,
+        },
       }
 
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
           return items.map(this.mapApi)
@@ -625,9 +616,9 @@ export default {
         .call({
           className: 'PDKConnectionService',
           method: 'getConnectorWebsite',
-          args: [connectionId]
+          args: [connectionId],
         })
-        .then(data => {
+        .then((data) => {
           data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
           return data?.url
         })
@@ -639,9 +630,9 @@ export default {
           className: 'PDKConnectionService',
           method: 'getTableWebsite',
           args: [connectionId, [table]],
-          _: generateId(4)
+          _: generateId(4),
         })
-        .then(data => {
+        .then((data) => {
           data?.url && (task['website'] = data.url)
           return data?.url
         })
@@ -732,7 +723,7 @@ export default {
       let target = this.getDatabaseNode(to)
       Object.assign(source, {
         migrateTableSelectType: 'expression',
-        tableExpression: '.*'
+        tableExpression: '.*',
       })
 
       return {
@@ -741,8 +732,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -759,8 +750,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -779,8 +770,8 @@ export default {
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
     },
 
@@ -792,8 +783,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -811,7 +802,7 @@ export default {
     },
 
     async dialogSubmit(ifStart) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           const { syncType, from, to, tableName, task: settings } = this.taskDialogConfig
           let task
@@ -831,8 +822,8 @@ export default {
             // 保存并运行
             taskInfo = await taskApi.saveAndStart(taskInfo, {
               params: {
-                confirm: true
-              }
+                confirm: true,
+              },
             })
           }
 
@@ -859,11 +850,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(taskInfo)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
         }
       })
@@ -876,9 +867,9 @@ export default {
         this.$router.resolve({
           name: task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
           params: {
-            id: task.id
-          }
-        }).href
+            id: task.id,
+          },
+        }).href,
       )
     },
 
@@ -891,8 +882,8 @@ export default {
     mapConnection(item) {
       item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
-      item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
-      item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+      item.showConnectorWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
+      item.showTableWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
 
       if (item.showConnectorWebsite) {
         this.getWebsite(item.id)
@@ -962,8 +953,8 @@ export default {
 
     searchByKeywordList(val = []) {
       this.searchKeywordList = val
-    }
-  }
+    },
+  },
 }
 </script>
 

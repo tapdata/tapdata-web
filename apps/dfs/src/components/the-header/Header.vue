@@ -76,7 +76,7 @@
           <span class="cursor-pointer command-item rounded-4 icon-btn">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu class="no-triangle">
               <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
                 {{ value }}
@@ -97,7 +97,7 @@
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
 
-          <template v-slot:dropdown>
+          <template #dropdown>
             <ElDropdownMenu>
               <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
               <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
@@ -143,7 +143,7 @@ export default {
       isFeeUser: true,
       //用户注册时间
       registrationTime: '',
-      showQuestionnaire: false
+      showQuestionnaire: false,
     }
   },
 
@@ -151,7 +151,7 @@ export default {
     ...mapGetters(['isDomesticStation']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
-    }
+    },
   },
 
   created() {
@@ -166,14 +166,14 @@ export default {
           text: 'header_technical_support', //技术支持
           link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
           icon: 'question',
-          type: 'support'
+          type: 'support',
         },
         {
           text: 'header_manual', //使用手册
           link: 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud',
           icon: 'send',
-          type: 'handbook'
-        }
+          type: 'handbook',
+        },
       ]
     }
     //获取用户注册时间
@@ -210,20 +210,20 @@ export default {
         case 'userCenter':
           // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
-            name: 'userCenter'
+            name: 'userCenter',
           })
           break
         case 'order':
           this.$router.push({
-            name: 'order'
+            name: 'order',
           })
           break
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
             type: 'warning',
             confirmButtonText: this.$t('public_button_confirm'),
-            cancelButtonText: this.$t('public_button_cancel')
-          }).then(res => {
+            cancelButtonText: this.$t('public_button_cancel'),
+          }).then((res) => {
             if (res) {
               this.clearCookie()
               location.href = './logout'
@@ -266,18 +266,18 @@ export default {
     // 我的工单
     goTicketSystem() {
       this.$router.push({
-        name: 'TicketSystem'
+        name: 'TicketSystem',
       })
     },
     // 联系我们
     goContactUs() {
       this.$router.push({
-        name: 'userContactUs'
+        name: 'userContactUs',
       })
     },
     //判断是否是付费用户
     getAgentCount() {
-      this.$axios.get('api/tcm/agent/agentCount').then(data => {
+      this.$axios.get('api/tcm/agent/agentCount').then((data) => {
         this.isFeeUser = data?.subscriptionAgentCount > 0
       })
     },
@@ -295,11 +295,11 @@ export default {
     },
 
     loadUserMock() {
-      this.$axios.get('api/gw/user').then(data => {
+      this.$axios.get('api/gw/user').then((data) => {
         this.mockUserId = data?.mockUserId || false
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    custom-class="agent-download-dialog"
+    class="agent-download-dialog"
     width="1000px"
     v-model:visible="dialogVisible"
     :close-on-click-modal="false"
@@ -263,12 +263,12 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     source: {
       type: Object,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -279,8 +279,8 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest'
-        }
+          value: 'AliComputenest',
+        },
       ],
       showTooltip: false,
       windowsLink: '',
@@ -294,7 +294,7 @@ export default {
       token: '',
       version: '',
       trialUrl: '',
-      url: ''
+      url: '',
     }
   },
   watch: {
@@ -305,8 +305,8 @@ export default {
       deep: true,
       handler(v) {
         v && this.loadData()
-      }
-    }
+      },
+    },
   },
   methods: {
     setTimer() {
@@ -320,11 +320,11 @@ export default {
     getAgentStatus() {
       let filter = {
         where: {
-          id: this.agentId
+          id: this.agentId,
         },
-        limit: 10
+        limit: 10,
       }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then((data) => {
         this.isFinished = data?.items[0]?.status === 'Running'
       })
     },
@@ -332,7 +332,7 @@ export default {
       let data = Object.assign({}, this.source)
       this.agentId = data.agentId
       // this.dialogVisible = true
-      data.deployInfo.links.forEach(el => {
+      data.deployInfo.links.forEach((el) => {
         if (el?.os === 'AliComputenest') {
           this.trialUrl = el?.trialUrl
           this.url = el?.url
@@ -363,7 +363,7 @@ export default {
     linuxToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
-        '_blank'
+        '_blank',
       )
     },
     dockerToInstall() {
@@ -376,13 +376,13 @@ export default {
     toConnection() {
       this.closeModal()
       this.$router.push({
-        name: 'connections'
+        name: 'connections',
       })
     },
     toWorkbench() {
       this.closeModal()
       this.$router.push({
-        name: 'Workbench'
+        name: 'Workbench',
       })
     },
     getImg(name) {
@@ -393,8 +393,8 @@ export default {
       let user = window.__USER_INFO__
       Cookie.set('deployLaterUser', user.userId)
       this.closeModal()
-    }
-  }
+    },
+  },
 }
 </script>
 

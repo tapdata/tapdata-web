@@ -42,7 +42,7 @@
       </transition-group>
 
       <input
-        type="text"
+        text
         class="el-select__input"
         :class="[selectSize ? `is-${selectSize}` : '']"
         :disabled="selectDisabled"
@@ -66,7 +66,7 @@
         :style="{
           'flex-grow': '1',
           width: inputLength / (inputWidth - 32) + '%',
-          'max-width': inputWidth - 42 + 'px'
+          'max-width': inputWidth - 42 + 'px',
         }"
         ref="input"
       />
@@ -75,7 +75,7 @@
       ref="reference"
       v-model:value="selectedLabel"
       :id="id"
-      type="text"
+      text
       :name="name"
       :placeholder="currentPlaceholder"
       :autocomplete="autoComplete || autocomplete"
@@ -171,32 +171,32 @@ import { getValueByPath } from 'element-ui/lib/utils/util'
 
 export default {
   components: {
-    RecycleScroller
+    RecycleScroller,
   },
   name: 'VirtualSelect',
   extends: Select,
   props: {
     items: {
       type: Array,
-      required: true
+      required: true,
     },
     buffer: {
       type: Number,
-      default: 30
+      default: 30,
     },
     itemSize: {
       type: Number,
-      default: null
+      default: null,
     },
     filterDelay: {
       type: Number,
-      default: 200
-    }
+      default: 200,
+    },
   },
   data() {
     return {
       lazySearch: '',
-      filteredItems: this.items
+      filteredItems: this.items,
     }
   },
   computed: {
@@ -223,7 +223,7 @@ export default {
         }
       }
       return null
-    }
+    },
   },
   watch: {
     items(val) {
@@ -233,7 +233,7 @@ export default {
       if (val) {
         this.filteredItems = this.items
       }
-    }
+    },
   },
   methods: {
     handleQueryChange(val) {
@@ -266,7 +266,7 @@ export default {
         this.broadcast('ElOptionGroup', 'queryChange')
       } else {
         if (val) {
-          this.filteredItems = this.items.filter(item => {
+          this.filteredItems = this.items.filter((item) => {
             return item.label.toLowerCase().includes(val.toLowerCase())
           })
         } else {
@@ -283,7 +283,7 @@ export default {
       const $option = Array.isArray(option) ? option[0] : option
       if ($option) {
         const { value } = $option
-        const index = this.items.findIndex(item => item.value === value)
+        const index = this.items.findIndex((item) => item.value === value)
         this.$refs.virtualScroller.scrollToItem(index)
       }
     },
@@ -308,14 +308,14 @@ export default {
       const label = !isObject && !isNull && !isUndefined ? String(value) : ''
       let newOption = {
         value: value,
-        currentLabel: label
+        currentLabel: label,
       }
       if (this.multiple) {
         newOption.hitState = false
       }
       return newOption
-    }
-  }
+    },
+  },
 }
 </script>
 

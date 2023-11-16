@@ -25,14 +25,12 @@
       <el-table ref="table" class="table-page-table" height="100%" v-loading="loading" :data="collectionTableData">
         <el-table-column :label="$t('metadata_details_collectionName')" prop="name">
           <template v-slot="scope">
-            <el-button type="text" @click="handleJumpTable(scope.row)" style="padding: 0 10px">{{
-              scope.row.name
-            }}</el-button>
+            <el-button text @click="handleJumpTable(scope.row)" style="padding: 0 10px">{{ scope.row.name }}</el-button>
           </template>
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="120">
           <template v-slot="scope">
-            <el-button size="small" type="text" style="color: #f56c6c" @click="remove(scope.row)">{{
+            <el-button size="small" text style="color: #f56c6c" @click="remove(scope.row)">{{
               $t('public_button_delete')
             }}</el-button>
           </template>
@@ -57,7 +55,7 @@
     <!-- 创建索引弹窗 start -->
     <el-dialog
       width="600px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('metadata_details_createCollection')"
       :close-on-click-modal="false"
       v-model="createDialogVisible"
@@ -65,7 +63,7 @@
       <el-form ref="form" :model="createForm" class="dataRule-form">
         <el-form-item :label="$t('metadata_details_collectionName')" props="name">
           <el-input
-            type="text"
+            text
             size="small"
             v-model="createForm.name"
             :placeholder="$t('public_select_placeholder') + $t('metadata_details_collectionName')"
@@ -92,8 +90,8 @@ export default {
   props: {
     collectionData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -105,8 +103,8 @@ export default {
       pageCurrent: 1,
       pageTotal: 0,
       createForm: {
-        name: ''
-      }
+        name: '',
+      },
     }
   },
   created() {
@@ -115,7 +113,7 @@ export default {
   methods: {
     // 获取表格数据
     getData() {
-      metadataInstancesApi.findTablesById([this.$route.params.id]).then(data => {
+      metadataInstancesApi.findTablesById([this.$route.params.id]).then((data) => {
         let collections = data?.collections || []
         this.collectionTableData = collections
         this.pageTotal = this.collectionTableData.length
@@ -128,7 +126,7 @@ export default {
         this.$refs.form.clearValidate()
       })
       this.createForm = {
-        name: ''
+        name: '',
       }
     },
     // 跳转表
@@ -142,7 +140,7 @@ export default {
     // 保存数据集
     createNewModel() {
       let _this = this
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           let params = {
             meta_type: 'collection',
@@ -152,7 +150,7 @@ export default {
             // source: _this.collectionData.source,
             // is_deleted: false,
             databaseId: _this.collectionData.id,
-            name: _this.createForm.name
+            name: _this.createForm.name,
           }
           params.qualified_name = _this.collectionData.source.database_uri + '_' + params.name
           params.qualified_name = params.qualified_name
@@ -163,7 +161,7 @@ export default {
             this.createDialogVisible = false
             let page = {
               current: 1,
-              size: 20
+              size: 20,
             }
             this.getData(page)
             this.$message.success(this.$t('public_message_save_ok'))
@@ -179,7 +177,7 @@ export default {
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
+        closeOnClickModal: false,
       }).then(() => {
         metadataInstancesApi.delete(item.id).then(() => {
           this.getData()
@@ -202,8 +200,8 @@ export default {
       this.pageCurrent = val
       this.getData()
       this.setCurrentPageData(this.collectionTableData)
-    }
-  }
+    },
+  },
 }
 </script>
 

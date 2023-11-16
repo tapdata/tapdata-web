@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    custom-class="agent-guide-dialog"
+    class="agent-guide-dialog"
     :width="style['dialog']"
     v-model:visible="visible"
     :close-on-click-modal="false"
@@ -195,8 +195,8 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -205,7 +205,7 @@ export default {
       step: 1,
       style: {},
       showClose: false, //关闭按钮
-      showTip: false
+      showTip: false,
     }
   },
   mounted() {
@@ -224,7 +224,7 @@ export default {
               dialog: '1100px',
               top: '20px',
               'ordinary-suffix': '365px',
-              step: '448px'
+              step: '448px',
             }
           : {
               current: '135px',
@@ -234,7 +234,7 @@ export default {
               dialog: '1035px',
               top: '110px',
               'ordinary-suffix': '130px',
-              step: '382px'
+              step: '382px',
             }
     },
     changeImg(type) {
@@ -278,9 +278,9 @@ export default {
       this.buried('agentGuideDemo')
       this.showClose = true
       window.open('https://demo.cloud.tapdata.net/console/v3/')
-    }
+    },
   },
-  emits: ['update:visible', 'openAgentDownload']
+  emits: ['update:visible', 'openAgentDownload'],
 }
 </script>
 

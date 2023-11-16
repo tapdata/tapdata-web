@@ -6,7 +6,7 @@
       @input="$emit('update:visible', $event)"
       :append-to-body="true"
       width="880px"
-      custom-class="paid-upgrade-dialog"
+      class="paid-upgrade-dialog"
       :before-close="handleClose"
     >
       <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
@@ -63,7 +63,7 @@ export default {
   props: ['visible', 'tooltip', 'goPage'],
   data() {
     return {
-      list: []
+      list: [],
     }
   },
   watch: {
@@ -71,7 +71,7 @@ export default {
       if (v) {
         this.loadData()
       }
-    }
+    },
   },
   methods: {
     loadData() {
@@ -81,19 +81,19 @@ export default {
         sort: ['createAt desc'],
         where: {
           status: {
-            $ne: 'invalid' //过滤 invild
-          }
-        }
+            $ne: 'invalid', //过滤 invild
+          },
+        },
       }
-      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then((data) => {
         this.list =
           data.items
-            ?.filter(t => t.status === 'active' && t.totalAmount !== 0)
-            ?.map(item => {
+            ?.filter((t) => t.status === 'active' && t.totalAmount !== 0)
+            ?.map((item) => {
               item.subscriptionMethodLabel =
                 getPaymentMethod(
                   { periodUnit: item.periodUnit, type: item.subscribeType },
-                  item.paymentMethod || 'Stripe'
+                  item.paymentMethod || 'Stripe',
                 ) || '-'
 
               if (item.subscribeItems?.length > 0) {
@@ -128,11 +128,11 @@ export default {
         return
       }
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
-    }
+    },
   },
-  emits: ['update:visible']
+  emits: ['update:visible'],
 }
 </script>
 

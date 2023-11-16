@@ -6,7 +6,7 @@
       class="metadata-list"
       :classify="{
         authority: 'data_catalog_category_management',
-        types: metaType
+        types: metaType,
       }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
@@ -86,7 +86,7 @@
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="small"
-            type="text"
+            text
             :disabled="
               $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
             "
@@ -98,7 +98,7 @@
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="small"
-            type="text"
+            text
             :disabled="
               $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
             "
@@ -110,7 +110,7 @@
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="small"
-            type="text"
+            text
             :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
             >{{ $t('public_button_delete') }}</el-button
@@ -121,7 +121,7 @@
     <!-- 创建模型 -->
     <el-dialog
       width="500px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('metadata_form_create')"
       :close-on-click-modal="false"
       v-model="createDialogVisible"
@@ -166,7 +166,7 @@
     <!-- 改名 -->
     <el-dialog
       width="500px"
-      custom-class="change-name"
+      class="change-name"
       :title="$t('metadata_change_name')"
       :close-on-click-modal="false"
       v-model="changeNameDialogVisible"
@@ -199,7 +199,7 @@ import { delayTrigger } from '@tap/shared'
 export default {
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
   },
   data() {
     let types =
@@ -210,14 +210,14 @@ export default {
       searchParams: {
         keyword: '',
         metaType: '',
-        dbId: ''
+        dbId: '',
       },
       order: 'last_updated DESC',
       dbOptions: [],
-      metaTypeOptions: types.map(v => {
+      metaTypeOptions: types.map((v) => {
         return {
           label: this.$t('metadata_metaType_' + v),
-          value: v
+          value: v,
         }
       }),
       list: null,
@@ -226,17 +226,17 @@ export default {
       createForm: {
         model_type: 'collection',
         database: '',
-        tableName: ''
+        tableName: '',
       },
       modelTyoeList: [
         {
           label: this.$t('metadata_form_collection'),
-          value: 'collection'
+          value: 'collection',
         },
         {
           label: this.$t('metadata_form_mongo_view'),
-          value: 'mongo_view'
-        }
+          value: 'mongo_view',
+        },
       ],
       createRules: {
         database: [
@@ -247,8 +247,8 @@ export default {
                 return callback(new Error(this.$t('metadata_form_database') + this.$t('public_form_not_empty')))
               }
               return callback()
-            }
-          }
+            },
+          },
         ],
         tableName: [
           {
@@ -262,14 +262,14 @@ export default {
                 return callback(new Error(this.$t('dialog_placeholderTable')))
               }
               return callback()
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       changeNameDialogVisible: false,
       changeNameValue: '',
       changeNameData: null,
-      filterItems: []
+      filterItems: [],
     }
   },
   created() {
@@ -279,7 +279,7 @@ export default {
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   computed: {
     table() {
@@ -292,7 +292,7 @@ export default {
       } else {
         return this.$route.meta.types || []
       }
-    }
+    },
   },
   methods: {
     reset(name) {
@@ -300,7 +300,7 @@ export default {
         this.searchParams = {
           keyword: '',
           metaType: '',
-          dbId: ''
+          dbId: '',
         }
       }
 
@@ -310,7 +310,7 @@ export default {
       let { current, size } = page
       let { keyword, metaType, dbId } = this.searchParams
       let where = {
-        is_deleted: false
+        is_deleted: false,
       }
       let fields = {
         name: true,
@@ -329,7 +329,7 @@ export default {
         id: true,
         source: true,
         databaseId: true,
-        user_id: true
+        user_id: true,
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: escapeRegExp(keyword), options: 'i' }
@@ -338,7 +338,7 @@ export default {
 
       if (tags && tags.length) {
         where['classifications.id'] = {
-          in: tags
+          in: tags,
         }
       }
       let types = this.$route.meta.types
@@ -346,7 +346,7 @@ export default {
         where.meta_type = metaType
       } else if (types) {
         where.meta_type = {
-          in: types
+          in: types,
         }
       }
       dbId && (where['source.id'] = dbId)
@@ -355,20 +355,20 @@ export default {
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return metadataInstancesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return {
             total: data?.total,
             data:
-              data?.items?.map(item => {
+              data?.items?.map((item) => {
                 item.lastUpdatedFmt = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
                 return item
-              }) || []
+              }) || [],
           }
         })
     },
@@ -379,20 +379,20 @@ export default {
           id: true,
           database_type: true,
           connection_type: true,
-          status: true
+          status: true,
         },
         where: {
-          connection_type: { $in: ['target', 'source_and_target'] }
-        }
+          connection_type: { $in: ['target', 'source_and_target'] },
+        },
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let dbOptions = data?.items || []
 
-          this.dbOptions = dbOptions.map(item => {
+          this.dbOptions = dbOptions.map((item) => {
             return { label: item.name, value: item.id }
           })
         })
@@ -406,10 +406,10 @@ export default {
     },
     handleSelectTag() {
       let tagList = {}
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.classifications && row.classifications.length > 0) {
           tagList[row.classifications[0].id] = {
-            value: row.classifications[0].value
+            value: row.classifications[0].value,
           }
         }
       })
@@ -418,12 +418,12 @@ export default {
     handleOperationClassify(classifications) {
       metadataInstancesApi
         .classification({
-          metadatas: this.multipleSelection.map(it => {
+          metadatas: this.multipleSelection.map((it) => {
             return {
               id: it.id,
-              classifications: classifications
+              classifications: classifications,
             }
-          })
+          }),
         })
         .then(() => {
           this.table.fetch()
@@ -443,14 +443,14 @@ export default {
       this.createForm = {
         model_type: 'collection',
         database: '',
-        tableName: ''
+        tableName: '',
       }
     },
     createNewModel() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find(it => it.value === database)
+          let db = this.dbOptions.find((it) => it.value === database)
           let fields = [
             {
               checked: false,
@@ -473,8 +473,8 @@ export default {
               comment: '', //长描述
               dictionary: null,
               dictionary_id: '',
-              relation: []
-            }
+              relation: [],
+            },
           ]
           let params = {
             connectionId: db.value,
@@ -485,7 +485,7 @@ export default {
             databaseId: db.value,
             // classifications: db.classifications ? db.classifications : [],
             alias_name: '',
-            comment: ''
+            comment: '',
           }
           params.fields = model_type === 'collection' ? fields : []
           metadataInstancesApi.post(params).then(() => {
@@ -501,7 +501,7 @@ export default {
     saveChangeName() {
       metadataInstancesApi
         .updateById(this.changeNameData.id, {
-          name: this.changeNameValue
+          name: this.changeNameValue,
         })
         .then(() => {
           this.$message.success(this.$t('public_message_save_ok'))
@@ -520,13 +520,13 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
-        h('span', { style: { color: '#2C65FF' } }, item.original_name)
+        h('span', { style: { color: '#2C65FF' } }, item.original_name),
       ])
       this.$confirm(message, '', {
         type: 'warning',
         closeOnClickModal: false,
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -540,7 +540,7 @@ export default {
       delayTrigger(() => {
         this.$router.replace({
           name: 'metadataDefinition',
-          query: this.searchParams
+          query: this.searchParams,
         })
       }, debounce)
     },
@@ -551,8 +551,8 @@ export default {
           id: true,
           database_type: true,
           connection_type: true,
-          status: true
-        }
+          status: true,
+        },
       }
       this.filterItems = [
         {
@@ -560,7 +560,7 @@ export default {
           key: 'metaType',
           type: 'select-inner',
           items: this.metaTypeOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('metadata_db'),
@@ -569,23 +569,23 @@ export default {
           items: async () => {
             let data = await connectionsApi.findAll(filter)
             let items = data || []
-            return items.map(item => {
+            return items.map((item) => {
               return {
                 label: item.name,
-                value: item.id
+                value: item.id,
               }
             })
-          }
+          },
         },
         {
           placeholder: this.$t('metadata_name_placeholder'),
           key: 'keyword',
           type: 'input',
-          slotName: ''
-        }
+          slotName: '',
+        },
       ]
-    }
-  }
+    },
+  },
 }
 </script>
 

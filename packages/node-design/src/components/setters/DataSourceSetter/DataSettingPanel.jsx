@@ -20,14 +20,14 @@ const { SchemaField, SchemaVoidField, SchemaStringField, SchemaArrayField, Schem
     FormItem,
     Input,
     ArrayItems,
-    ValueInput
-  }
+    ValueInput,
+  },
 })
 
 export const DataSettingPanel = observer(
   defineComponent({
     props: ['treeDataSource', 'allowExtendOption', 'effects'],
-    setup: props => {
+    setup: (props) => {
       const { allowExtendOption, effects } = props
       const prefix = usePrefix('data-source-setter')
 
@@ -37,14 +37,14 @@ export const DataSettingPanel = observer(
         cancelIdle(idleTaskRef.value)
         idleTaskRef.value = requestIdle(() => {
           let values
-          traverseTree(props.treeDataSource.dataSource, dataItem => {
+          traverseTree(props.treeDataSource.dataSource, (dataItem) => {
             if (dataItem.key === props.treeDataSource.selectedKey) {
               values = dataItem
             }
           })
           formRef.value = createForm({
             values,
-            effects: effects
+            effects: effects,
           })
         })
       }
@@ -54,7 +54,7 @@ export const DataSettingPanel = observer(
       observe(props.treeDataSource, () => {
         // requestIdleTask()
         let values
-        traverseTree(props.treeDataSource.dataSource, dataItem => {
+        traverseTree(props.treeDataSource.dataSource, (dataItem) => {
           if (dataItem.key === props.treeDataSource.selectedKey) {
             values = dataItem
           }
@@ -79,9 +79,9 @@ export const DataSettingPanel = observer(
               {allowExtendOption ? (
                 <Button
                   slot="extra"
-                  type="text"
+                  text
                   onClick={() => {
-                    formRef.value.setFieldState('map', state => {
+                    formRef.value.setFieldState('map', (state) => {
                       state.value.push({})
                     })
                   }}
@@ -116,8 +116,8 @@ export const DataSettingPanel = observer(
                             margin: 5,
                             display: 'flex',
                             justifyContent: 'center',
-                            alignItems: 'center'
-                          }
+                            alignItems: 'center',
+                          },
                         }}
                       />
                     </SchemaObjectField>
@@ -128,6 +128,6 @@ export const DataSettingPanel = observer(
           </FragmentComponent>
         )
       }
-    }
-  })
+    },
+  }),
 )

@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     width="600px"
-    custom-class="import-upload-dialog"
+    class="import-upload-dialog"
     :title="$t('packages_business_modules_dialog_import_title')"
     :close-on-click-modal="false"
     v-model:visible="dialogVisible"
@@ -59,17 +59,17 @@ import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
-    VIcon
+    VIcon,
   },
   props: {
     type: {
       required: true,
-      value: String
+      value: String,
     },
     showTag: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -81,8 +81,8 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz'
-      }
+        accept: '.gz',
+      },
     }
   },
   created() {
@@ -123,7 +123,7 @@ export default {
       const map = {
         api: originPath + `api/MetadataInstances/upload?${upsert}&${listtags}&${downType}&${accessToken}`,
         Javascript_functions: originPath + `api/Javascript_functions/batch/import?${listtags}&${accessToken}&${cover}`,
-        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`
+        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`,
       }
       this.importForm.action =
         map[this.type] || originPath + `api/Task/batch/import?${listtags}&${accessToken}&${cover}`
@@ -132,13 +132,13 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] }
+        where: { or: [{ item_type: this.type }] },
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.classifyList = data?.items || []
         })
     },
@@ -170,9 +170,9 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.$refs.upload.clearFiles()
-    }
+    },
   },
-  emits: ['success']
+  emits: ['success'],
 }
 </script>
 
