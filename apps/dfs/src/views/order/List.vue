@@ -121,7 +121,7 @@
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
                 </div>
-                <div class="li-operation">
+                <div class="li-operation flex">
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
