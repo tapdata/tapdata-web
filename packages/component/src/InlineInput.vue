@@ -14,7 +14,6 @@
           v-bind="inputProps"
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
-          size="small"
           :style="inputStyle"
           v-model:value="inputValue"
         ></ElInput>
@@ -28,12 +27,11 @@
           class="inline-input-button"
           style="margin-left: 10px"
           type="primary"
-          size="small"
           :disabled="disabled"
           @click="save"
           >{{ $t('public_button_save') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="small" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton class="inline-input-button" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
       </template>
     </span>
   </div>
@@ -55,17 +53,17 @@ export default {
     inputProps: Object,
     min: {
       type: Number,
-      default: 1
+      default: 1,
     },
     max: {
       type: Number,
-      default: 32
-    }
+      default: 32,
+    },
   },
   data() {
     return {
       editing: false,
-      inputValue: ''
+      inputValue: '',
     }
   },
   computed: {
@@ -82,16 +80,16 @@ export default {
       let { min, max } = this
       return i18n.t('packages_component_src_inlineinput_zifuchangduxian', {
         val1: min,
-        val2: max
+        val2: max,
       })
-    }
+    },
   },
   watch: {
     editing(val) {
       if (val) {
         this.inputValue = this.value
       }
-    }
+    },
   },
   methods: {
     save() {
@@ -103,9 +101,9 @@ export default {
     },
     cancel() {
       this.editing = false
-    }
+    },
   },
-  emits: ['click-text', 'save', 'update:value', , , 'update:value']
+  emits: ['click-text', 'save', 'update:value', , , 'update:value'],
 }
 </script>
 

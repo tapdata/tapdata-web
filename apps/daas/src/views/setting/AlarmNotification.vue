@@ -32,8 +32,8 @@
       </template>
     </VTable>
     <footer class="flex justify-content-end mb-4">
-      <el-button size="small" @click="remoteMethod()">{{ $t('public_button_cancel') }}</el-button>
-      <el-button size="small" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
+      <el-button @click="remoteMethod()">{{ $t('public_button_cancel') }}</el-button>
+      <el-button type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
     <el-dialog :title="$t('daas_setting_alarmnotification_renwumorengao')" width="70%" v-model="alarmRulesVisible">
       <div class="mb-4">
@@ -56,8 +56,8 @@
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="small" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
+        <el-button @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>
@@ -76,18 +76,18 @@ export default {
       columns: [
         {
           label: i18n.t('public_description'),
-          slotName: 'key'
+          slotName: 'key',
         },
         {
           label: i18n.t('daas_notification_alarmnotification_gaojingtongzhi'),
           prop: 'notify',
-          slotName: 'notify'
+          slotName: 'notify',
         },
         {
           label: i18n.t('notify_noticeInterval'),
           prop: 'interval',
-          slotName: 'interval'
-        }
+          slotName: 'interval',
+        },
       ],
       keyMapping: {
         TASK_STATUS_ERROR: i18n.t('daas_setting_alarmnotification_dangrenwuyudao'),
@@ -101,21 +101,21 @@ export default {
         DATANODE_TCP_CONNECT_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanxie'),
         DATANODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangshujuyuanjie'),
         PROCESSNODE_AVERAGE_HANDLE_CONSUME: i18n.t('daas_setting_alarmnotification_dangjiediandeping'),
-        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('daas_setting_alarmnotification_dangrenwustop')
+        SYSTEM_FLOW_EGINGE_DOWN: i18n.t('daas_setting_alarmnotification_dangrenwustop'),
       },
       alarmRulesColumns: [
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'keySlot'
+          slotName: 'keySlot',
         },
         {
           label: i18n.t('daas_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'valueSlot'
-        }
+          slotName: 'valueSlot',
+        },
       ],
       alarmRulesVisible: false,
       alarmData: [],
-      tableData: []
+      tableData: [],
     }
   },
   mounted() {
@@ -123,7 +123,7 @@ export default {
   },
   methods: {
     remoteMethod() {
-      settingsApi.findAlarm().then(data => {
+      settingsApi.findAlarm().then((data) => {
         this.tableData = data
       })
     },
@@ -138,7 +138,7 @@ export default {
     },
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
-      alarmRuleApi.find().then(data => {
+      alarmRuleApi.find().then((data) => {
         this.alarmData = data
       })
     },
@@ -148,7 +148,7 @@ export default {
         this.alarmRulesVisible = false
         this.$message.success(this.$t('public_message_save_ok'))
       })
-    }
-  }
+    },
+  },
 }
 </script>

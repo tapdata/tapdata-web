@@ -3,7 +3,7 @@
   <section class="pipeline-list-wrap">
     <el-form :model="model" :rules="rules" ref="form" label-position="top">
       <el-form-item :label="$t('metadata_details_pipeline_collection')" prop="collection" required>
-        <el-select v-model="model.collection" size="small">
+        <el-select v-model="model.collection">
           <el-option
             v-for="item in collections"
             :key="item.original_name"
@@ -14,7 +14,7 @@
         </el-select>
         <!-- <el-input
               text
-              size="small"
+
               v-model="model.collection"
               :placeholder="
                 $t('public_select_placeholder') +
@@ -25,7 +25,6 @@
       <el-form-item :label="$t('metadata_details_pipeline_pipeline')" prop="pipeline" required>
         <el-input
           type="textarea"
-          size="small"
           v-model="model.pipeline"
           :placeholder="$t('public_input_placeholder') + $t('metadata_details_pipeline_pipeline')"
         ></el-input>
@@ -43,10 +42,8 @@
       </el-form-item>
       <el-form-item size="large">
         <div class="btn">
-          <el-button type="primary" @click="applicationBtn" size="small">{{
-            $t('metadata_details_pipeline_apply')
-          }}</el-button>
-          <el-button type="primary" @click="saveSubmit" size="small">{{ $t('public_button_save') }}</el-button>
+          <el-button type="primary" @click="applicationBtn">{{ $t('metadata_details_pipeline_apply') }}</el-button>
+          <el-button type="primary" @click="saveSubmit">{{ $t('public_button_save') }}</el-button>
         </div>
       </el-form-item>
     </el-form>

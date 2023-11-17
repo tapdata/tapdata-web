@@ -2,7 +2,7 @@
   <div class="api-doc">
     <div class="section-wrap-box h-100">
       <div class="api-doc-box">
-        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" size="small" @click="exportJson">
+        <el-button :title="$t('daas_api_page_apidocandtest_daochudaopo')" @click="exportJson">
           {{ $t('public_button_export') }}
         </el-button>
       </div>
@@ -22,7 +22,7 @@ export default {
     return {
       openapi: {},
       openapiAll: {},
-      token: ''
+      token: '',
     }
   },
   created() {
@@ -30,14 +30,14 @@ export default {
     if (!parseInt(Cookie.get('user_id'))) {
       return this.$router.push({
         name: 'login',
-        query: { redirect: '/apiAnalysis' }
+        query: { redirect: '/apiAnalysis' },
       })
     }
   },
   async mounted() {
     try {
       let servers = await apiServerApi.get({
-        'filter[where][clientName]': 'Default APIServer'
+        'filter[where][clientName]': 'Default APIServer',
       })
 
       if (servers?.items?.length) {
@@ -90,8 +90,8 @@ export default {
         name: 'access_token',
         schema: {
           type: 'string',
-          default: this.token
-        }
+          default: this.token,
+        },
       }
       if (obj && obj.paths) {
         for (let x in obj.paths) {
@@ -126,22 +126,22 @@ export default {
                         data: {
                           type: 'array',
                           items: {
-                            $ref: '#/components/schemas/AccessToken1'
-                          }
+                            $ref: '#/components/schemas/AccessToken1',
+                          },
                         },
                         total: {
                           type: 'object',
                           properties: {
                             count: {
-                              type: 'number'
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+                              type: 'number',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             },
             requestBody: {
               description: '',
@@ -151,20 +151,20 @@ export default {
                     properties: {
                       grant_type: {
                         type: 'String',
-                        default: 'client_credentials'
+                        default: 'client_credentials',
                       },
                       client_id: {
-                        type: 'String'
+                        type: 'String',
                       },
                       client_secret: {
-                        type: 'String'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+                        type: 'String',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         }
 
         let fileName = 'openApi.json'
@@ -181,8 +181,8 @@ export default {
         }
         fakeClick(save_link)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

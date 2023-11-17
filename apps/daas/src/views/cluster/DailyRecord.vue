@@ -17,7 +17,6 @@
             <li>
               <el-date-picker
                 type="daterange"
-                size="small"
                 range-separator="-"
                 :start-placeholder="$t('cluster_selectDate')"
                 :end-placeholder="$t('cluster_selectDate')"
@@ -28,7 +27,6 @@
             <li>
               <el-select
                 v-model="searchParams.ip"
-                size="small"
                 :placeholder="$t('public_select_placeholder')"
                 @input="table.fetch(1)"
               >
@@ -38,7 +36,6 @@
             <li>
               <el-select
                 v-model="searchParams.serverType"
-                size="small"
                 :placeholder="$t('public_select_placeholder')"
                 @input="table.fetch(1)"
               >
@@ -53,7 +50,6 @@
             <li>
               <el-select
                 v-model="searchParams.level"
-                size="small"
                 :placeholder="$t('public_select_placeholder')"
                 @input="table.fetch(1)"
               >
@@ -66,7 +62,7 @@
               </el-select>
             </li>
             <li>
-              <el-button text class="restBtn" size="small" @click="rest()">
+              <el-button text class="restBtn" @click="rest()">
                 {{ $t('public_button_reset') }}
               </el-button>
             </li>

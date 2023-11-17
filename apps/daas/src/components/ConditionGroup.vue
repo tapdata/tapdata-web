@@ -6,7 +6,7 @@
         <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
         <el-radio v-model="value.operator" label="and">{{ $t('public_select_option_all') }}</el-radio>
         <el-radio v-model="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
-        <!-- <el-radio-group v-model="value.operator" size="small" class="query-build-header-radio">
+        <!-- <el-radio-group v-model="value.operator"  class="query-build-header-radio">
               <el-radio-button label="and">{{ $t('public_select_option_all') }}</el-radio-button>
               <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
             </el-radio-group> -->

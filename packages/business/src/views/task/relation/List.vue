@@ -29,14 +29,12 @@
         </template>
         <template #tableNum="{ row }">
           <div class="operate-columns">
-            <ElButton size="small" text @click="handleTableNum(row)">{{ row.tableNum }}</ElButton>
+            <ElButton text @click="handleTableNum(row)">{{ row.tableNum }}</ElButton>
           </div>
         </template>
         <template #operation="{ row }">
           <div class="operate-columns">
-            <ElButton size="small" text @click="handleMonitor(row)">{{
-              $t('packages_business_task_list_button_monitor')
-            }}</ElButton>
+            <ElButton text @click="handleMonitor(row)">{{ $t('packages_business_task_list_button_monitor') }}</ElButton>
           </div>
         </template>
       </VTable>

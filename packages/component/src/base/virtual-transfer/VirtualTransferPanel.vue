@@ -11,7 +11,6 @@
       <el-input
         class="el-transfer-panel__filter"
         v-model="query"
-        size="small"
         :placeholder="placeholder"
         @input="handleQueryInput"
         @mouseenter="inputHover = true"
@@ -79,10 +78,10 @@ export default {
 
     OptionContent: {
       props: {
-        option: Object
+        option: Object,
       },
       render() {
-        const getParent = vm => {
+        const getParent = (vm) => {
           if (vm.$options.name === 'VirtualTransferPanel') {
             return vm
           } else if (vm.$parent) {
@@ -101,28 +100,28 @@ export default {
           transferSlots.default({ option: this.option })
         ) : transferSlots.left || transferSlots.right ? (
           (panel.$slots.default && panel.$slots.default())({
-            option: this.option
+            option: this.option,
           }) || <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
         ) : (
           <span>{this.option[panel.labelProp] || this.option[panel.keyProp]}</span>
         )
-      }
-    }
+      },
+    },
   },
   extends: TransferPanel,
   props: {
     buffer: {
       type: Number,
-      default: 50
+      default: 50,
     },
     itemSize: {
       type: Number,
-      default: null
+      default: null,
     },
     searchAfterScrollTop: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   watch: {
     checked(val, oldVal) {
@@ -130,34 +129,34 @@ export default {
       this.updateAllChecked()
 
       const newObj = {}
-      val.every(item => {
+      val.every((item) => {
         newObj[item] = true
       })
       const oldObj = {}
-      oldVal.every(item => {
+      oldVal.every((item) => {
         oldObj[item] = true
       })
       if (this.checkChangeByUser) {
-        const movedKeys = val.concat(oldVal).filter(v => newObj[v] || oldVal[v])
+        const movedKeys = val.concat(oldVal).filter((v) => newObj[v] || oldVal[v])
         $emit(this, 'checked-change', val, movedKeys)
       } else {
         $emit(this, 'checked-change', val)
         this.checkChangeByUser = true
       }
       // console.timeEnd('checked')
-    }
+    },
   },
   methods: {
     updateAllChecked() {
       // console.time('do-updateAllChecked')
       const checkObj = {}
-      this.checked.forEach(item => {
+      this.checked.forEach((item) => {
         checkObj[item] = true
       })
       this.allChecked =
         this.checkableData.length > 0 &&
         this.checked.length > 0 &&
-        this.checkableData.every(item => checkObj[item[this.keyProp]])
+        this.checkableData.every((item) => checkObj[item[this.keyProp]])
       // console.timeEnd('do-updateAllChecked')
     },
 
@@ -173,9 +172,9 @@ export default {
         this.query = ''
         this.handleQueryInput()
       }
-    }
+    },
   },
-  emits: ['checked-change']
+  emits: ['checked-change'],
 }
 </script>
 

@@ -1,15 +1,14 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <ElButton text class="btn-expand no-expand toggle" size="small" @click="toggle()" v-if="!isExpand">
+    <ElButton text class="btn-expand no-expand toggle" @click="toggle()" v-if="!isExpand">
       <VIcon size="16" class="icon">expand-list</VIcon>
     </ElButton>
     <div class="classification-header" v-else>
-      <ElButton text class="btn-expand" size="small" @click="toggle()">
+      <ElButton text class="btn-expand" @click="toggle()">
         <VIcon size="16" class="icon">expand-list</VIcon>
       </ElButton>
       <ElButton
         class="btn-addIcon"
-        size="small"
         text
         :disabled="$disabledReadonlyUserBtn()"
         v-readonlybtn="authority"
@@ -21,7 +20,7 @@
         <span>{{ comTitle }}</span>
       </div>
       <div class="search-box">
-        <ElInput class="search" size="small" v-model:value="filterText">
+        <ElInput class="search" v-model:value="filterText">
           <template v-slot:suffix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
@@ -52,12 +51,7 @@
             <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
             <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
             <span class="table-label">{{ data.value }}</span>
-            <ElDropdown
-              class="btn-menu"
-              size="small"
-              @command="handleRowCommand($event, node)"
-              v-readonlybtn="authority"
-            >
+            <ElDropdown class="btn-menu" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
               <ElButton text :disabled="$disabledReadonlyUserBtn()"
                 ><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton
               >
@@ -88,7 +82,6 @@
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>
       <ElInput
-        size="small"
         v-model:value="dialogConfig.label"
         :placeholder="$t('packages_component_classification_nodeName')"
         maxlength="50"
@@ -96,8 +89,8 @@
       ></ElInput>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="small" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="small" type="primary" @click="dialogSubmit()">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>
         </span>

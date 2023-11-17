@@ -14,22 +14,22 @@ export const JsDebug = observer(
       schema: Object,
       visible: Boolean,
       pdkOptions: Object,
-      connectionId: String
+      connectionId: String,
     },
     directives: {
-      resize
+      resize,
     },
     setup(props, { emit, root, refs }) {
       const logList = ref([])
       const logLoading = ref(false)
       const connForm = props.getForm()
       const form = createForm({
-        values: connForm.values
+        values: connForm.values,
       })
       const params = reactive({
         connectType: '',
         input: '',
-        rows: 1
+        rows: 1,
       })
 
       const fullscreen = ref(true)
@@ -44,15 +44,15 @@ export const JsDebug = observer(
           type: 'object',
           properties: {
             '__TAPDATA.connection_type': {
-              type: 'string'
+              type: 'string',
             },
             syncType: { type: 'string' },
-            ...props.schema
-          }
+            ...props.schema,
+          },
         }
       })
 
-      const onTabChange = current => {
+      const onTabChange = (current) => {
         if (current == '0') {
           refs.beforeJson.editor.resize(true)
           refs.afterJson.editor.resize(true)
@@ -75,8 +75,8 @@ export const JsDebug = observer(
             command: 'TryRun',
             argMap: {
               before: JSON.parse(inputRef.value),
-              logSize: 100
-            }
+              logSize: 100,
+            },
           })
           .then((data = {}) => {
             outputRef.value = JSON.stringify(data.after, null, 2)
@@ -92,9 +92,9 @@ export const JsDebug = observer(
         proxyApi
           .callHistory({
             connectionId: 'source#' + props.connectionId,
-            dataSize: params.rows
+            dataSize: params.rows,
           })
-          .then(data => {
+          .then((data) => {
             inputRef.value = JSON.stringify(data, null, 2)
           })
           .finally(() => {
@@ -104,11 +104,11 @@ export const JsDebug = observer(
 
       watch(
         () => props.visible,
-        show => {
+        (show) => {
           if (show) {
             handleGetParams()
           }
-        }
+        },
       )
 
       return () => {
@@ -123,10 +123,10 @@ export const JsDebug = observer(
                 lang="json"
                 options={{
                   highlightActiveLine: false,
-                  highlightGutterLine: false
+                  highlightGutterLine: false,
                 }}
                 theme="chrome"
-                onInput={val => (inputRef.value = val)}
+                onInput={(val) => (inputRef.value = val)}
               ></VCodeEditor>
             </div>
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
@@ -139,7 +139,7 @@ export const JsDebug = observer(
                 options={{
                   readOnly: true,
                   highlightActiveLine: false,
-                  highlightGutterLine: false
+                  highlightGutterLine: false,
                 }}
                 theme="chrome"
               ></VCodeEditor>
@@ -152,8 +152,8 @@ export const JsDebug = observer(
             class={[
               'connection-js-debug-editor',
               {
-                fullscreen: fullscreen.value
-              }
+                fullscreen: fullscreen.value,
+              },
             ]}
           >
             <div class="flex border-bottom justify-content-end align-center px-4 py-2">
@@ -178,7 +178,6 @@ export const JsDebug = observer(
                   loading={running.value}
                   onClick={handleRun}
                   type="primary"
-                  size="small"
                 >
                   {i18n.t('packages_form_js_processor_index_shiyunxing')}
                 </ElButton>
@@ -192,13 +191,13 @@ export const JsDebug = observer(
                     {
                       name: 'resize',
                       value: {
-                        minWidth: 100
+                        minWidth: 100,
                       },
                       modifiers: {
-                        left: true
-                      }
-                    }
-                  ]
+                        left: true,
+                      },
+                    },
+                  ],
                 }}
                 class="flex border-start"
                 style="width: 55vw;"
@@ -212,7 +211,6 @@ export const JsDebug = observer(
                         loading={paramsLoading.value}
                         onClick={handleGetParams}
                         type="primary"
-                        size="small"
                       >
                         {i18n.t('packages_business_connections_jsdebug_huoqutiaoshishu')}
                       </ElButton>
@@ -223,7 +221,7 @@ export const JsDebug = observer(
                         value={params.rows}
                         min={1}
                         max={10}
-                        onInput={val => {
+                        onInput={(val) => {
                           params.rows = val
                         }}
                         controls-position="right"
@@ -238,7 +236,7 @@ export const JsDebug = observer(
                     <div class="connection-js-debug-editor-console-panel h-100 overflow-auto">
                       <div class="js-log-list">
                         {logList.value.length
-                          ? logList.value.map(item => {
+                          ? logList.value.map((item) => {
                               if (/^[{[].*[\]}]$/.test(item.message)) {
                                 let code
                                 try {
@@ -246,7 +244,7 @@ export const JsDebug = observer(
                                 } catch (e) {
                                   const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
                                   code = `${item.message.charAt(0)}\n${message
-                                    .map(line => `  ${line}`)
+                                    .map((line) => `  ${line}`)
                                     .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                                 }
 
@@ -282,6 +280,6 @@ export const JsDebug = observer(
         )
         return props.visible && <div class="connection-js-debug font-color-light">{content}</div>
       }
-    }
-  })
+    },
+  }),
 )

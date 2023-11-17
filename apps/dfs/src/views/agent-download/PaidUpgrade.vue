@@ -36,12 +36,7 @@
           <span class="version">¥3600</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <el-input-number
-            size="small"
-            controls-position="right"
-            v-model="form.extraPipelines"
-            :min="0"
-          ></el-input-number
+          <el-input-number controls-position="right" v-model="form.extraPipelines" :min="0"></el-input-number
           ><span class="desc">× {{ form.extraPipelines || 0 }}</span>
         </div>
         <div class="link paid-upgrade-mb16"></div>
@@ -88,41 +83,41 @@ export default {
         contactTelephone: user.telephone,
         paidPlanCode: 'standard',
         count: 1,
-        extraPipelines: 0
+        extraPipelines: 0,
       },
       rules: {
         contactName: [
           {
             required: true,
             message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'),
-            trigger: 'blur'
-          }
+            trigger: 'blur',
+          },
         ],
         contactTelephone: [
           {
             required: true,
             message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       successStatus: false,
-      successData: ''
+      successData: '',
     }
   },
   computed: {
     total() {
       return 12000 + this.form.extraPipelines * 3600
-    }
+    },
   },
   methods: {
     handleChecked(val) {
       this.form.extraPipelines = val ? 1 : 0
     },
     save() {
-      this.$refs.paidForm.validate(valid => {
+      this.$refs.paidForm.validate((valid) => {
         if (valid) {
-          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then(data => {
+          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then((data) => {
             this.successData = data
             this.successStatus = true
           })
@@ -134,10 +129,10 @@ export default {
     },
     goBack() {
       this.$router.push({
-        name: 'Workbench'
+        name: 'Workbench',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

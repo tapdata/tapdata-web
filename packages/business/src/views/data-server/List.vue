@@ -7,7 +7,6 @@
           v-show="multipleSelection.length > 0"
           :disabled="$disabledReadonlyUserBtn()"
           v-readonlybtn="'SYNC_job_export'"
-          size="small"
           class="btn message-button-cancel"
           @click="handleExport"
         >
@@ -15,7 +14,6 @@
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_job_import'"
-          size="small"
           class="btn"
           :disabled="$disabledReadonlyUserBtn()"
           @click="handleImport"
@@ -24,14 +22,13 @@
         </ElButton>
         <ElButton
           v-readonlybtn="'SYNC_job_export'"
-          size="small"
           class="btn"
           :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
           @click="handleExportApiDoc"
         >
           <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
         </ElButton>
-        <ElButton class="btn btn-create" type="primary" size="small" @click.stop="showDrawer()">
+        <ElButton class="btn btn-create" type="primary" @click.stop="showDrawer()">
           <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
         </ElButton>
       </div>

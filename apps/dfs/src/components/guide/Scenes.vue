@@ -9,7 +9,6 @@
     <el-checkbox-group
       class="scenes-wrap flex flex-column overflow-auto gap-4 flex-1 min-h-0 pr-2"
       :model-value="scenes"
-      size="small"
       @input="$emit('handleScenes', $event)"
     >
       <el-checkbox v-for="(item, index) in list" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
@@ -30,40 +29,40 @@ export default {
       list: [
         {
           label: i18n.t('dfs_guide_scenes_1'),
-          value: 'MDB-MV'
+          value: 'MDB-MV',
         },
         {
           label: i18n.t('dfs_guide_scenes_2'),
-          value: 'DB-REP'
+          value: 'DB-REP',
         },
         {
           label: i18n.t('dfs_guide_scenes_3'),
-          value: 'DB-SYNC'
+          value: 'DB-SYNC',
         },
         {
           label: i18n.t('dfs_guide_scenes_4'),
-          value: 'DB-KAFKA'
+          value: 'DB-KAFKA',
         },
         {
           label: i18n.t('dfs_guide_scenes_5'),
-          value: 'QUERY-ACC'
+          value: 'QUERY-ACC',
         },
         {
           label: i18n.t('dfs_guide_scenes_6'),
-          value: 'CLOUD-MOVE'
+          value: 'CLOUD-MOVE',
         },
         {
           label: i18n.t('dfs_guide_scenes_7'),
-          value: 'CENTRAL-STORE'
+          value: 'CENTRAL-STORE',
         },
         {
           label: i18n.t('dfs_guide_scenes_8'),
-          value: 'EXPLORE'
-        }
-      ]
+          value: 'EXPLORE',
+        },
+      ],
     }
   },
-  emits: ['handleScenes']
+  emits: ['handleScenes'],
 }
 </script>
 

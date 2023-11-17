@@ -12,10 +12,8 @@
     <Form ref="form" :task-id="taskId" v-model:loading="loading" class="mt-n6" @success="handleSuccess"></Form>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="loading" size="small" type="primary" @click="handleSave">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton :loading="loading" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
       </span>
     </template>
   </ElDialog>

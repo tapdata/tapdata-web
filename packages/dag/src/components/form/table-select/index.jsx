@@ -14,19 +14,19 @@ const useTableExist = (attrs, selectRef, connectionId) => {
       showNotExistsTip: ref(false),
       leftPosition: ref(''),
       handleCreated: () => {},
-      handleChange: () => {}
+      handleChange: () => {},
     }
   }
 
   // 显示物理表不存在提示
   const showNotExistsTip = ref(false)
   // 检查物理表是否存在
-  const checkTableExist = async tableName => {
+  const checkTableExist = async (tableName) => {
     if (!tableName) return
     try {
       const data = await metadataInstancesApi.checkTableExist({
         connectionId,
-        tableName
+        tableName,
       })
 
       if (!data.exist) {
@@ -40,7 +40,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
   }
 
   let timer
-  const handleCreated = value => {
+  const handleCreated = (value) => {
     setTagPosition(value)
     clearTimeout(timer)
     timer = setTimeout(() => {
@@ -50,7 +50,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
   const handleChange = () => {
     showNotExistsTip.value = false
   }
-  const setTagPosition = tableName => {
+  const setTagPosition = (tableName) => {
     if (!$input || !tableName) return
 
     const span = document.createElement('span')
@@ -76,7 +76,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
       fontSize,
       fontFamily,
       fontWeight,
-      visibility: 'hidden'
+      visibility: 'hidden',
     }
     baseLeftPosition = parseInt(borderLeftWidth) + parseInt(paddingLeft)
     checkTableExist(attrs.value)
@@ -86,7 +86,7 @@ const useTableExist = (attrs, selectRef, connectionId) => {
     showNotExistsTip,
     leftPosition,
     handleCreated,
-    handleChange
+    handleChange,
   }
 }
 
@@ -102,8 +102,8 @@ export const TableSelect = observer(
           reloadTime: props.reloadTime,
           where: {
             'source.id': props.connectionId,
-            taskId: store.state.dataflow.taskId
-          }
+            taskId: store.state.dataflow.taskId,
+          },
         }
       })
 
@@ -114,11 +114,9 @@ export const TableSelect = observer(
           'created-option': ({ value }) => (
             <span>
               {value}
-              <ElTag class="ml-1" size="small">
-                {i18n.t('packages_dag_table_not_exist')}
-              </ElTag>
+              <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
             </span>
-          )
+          ),
         }
 
         if (showNotExistsTip.value) {
@@ -126,7 +124,6 @@ export const TableSelect = observer(
             <ElTag
               class="position-absolute translate-middle-y top-50 m-0 prefix-tag"
               style={{ left: leftPosition.value }}
-              size="small"
             >
               {i18n.t('packages_dag_table_not_exist')}
             </ElTag>
@@ -146,8 +143,8 @@ export const TableSelect = observer(
           ></AsyncSelect>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export default TableSelect

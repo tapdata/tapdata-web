@@ -6,7 +6,7 @@
 					</div> -->
       <!-- <div class="function-details__body" v-loading="!details.id">
 						<div class="main px-6 py-4"> -->
-      <ElForm label-position="left" label-width="160px" size="small" :model="details">
+      <ElForm label-position="left" label-width="160px" :model="details">
         <ElFormItem :label="$t('function_name_label') + ':'">
           <span class="details-value">{{ details.function_name }}</span>
         </ElFormItem>
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="footer pt-6">
-        <ElButton class="btn" size="small" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
       </div>
     </div>
 
@@ -66,7 +66,7 @@ export default {
   components: { JsEditor },
   data() {
     return {
-      details: {}
+      details: {},
     }
   },
   created() {
@@ -77,10 +77,10 @@ export default {
       let typeMap = {
         custom: this.$t('function_type_option_custom'),
         jar: this.$t('function_type_option_jar'),
-        system: this.$t('function_type_option_system')
+        system: this.$t('function_type_option_system'),
       }
 
-      javascriptFunctionsApi.get([this.$route.params.id]).then(data => {
+      javascriptFunctionsApi.get([this.$route.params.id]).then((data) => {
         let details = data || {}
         // 处理老数据问题
         if (details.type === 'custom' && !details.script) {
@@ -92,8 +92,8 @@ export default {
         details.typeFmt = typeMap[details.type]
         this.details = details
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

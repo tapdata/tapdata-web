@@ -1,7 +1,7 @@
 <template>
   <section
     v-resize.top="{
-      minHeight: 40
+      minHeight: 40,
     }"
     class="console-panel border-top"
     :class="showConsole ? 'flex' : 'none'"
@@ -30,7 +30,7 @@
     </div>
     <div class="flex-1 flex flex-column">
       <div class="flex p-2">
-        <ElCheckboxGroup v-model:value="levels" :min="1" size="small" class="inline-flex flex-1" @change="autoLoad">
+        <ElCheckboxGroup v-model:value="levels" :min="1" class="inline-flex flex-1" @change="autoLoad">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -84,7 +84,7 @@ import NodeIcon from '../NodeIcon'
 export default {
   name: 'ConsolePanel',
   directives: {
-    resize
+    resize,
   },
   components: { VEmpty, NodeIcon, VIcon },
   data() {
@@ -98,19 +98,19 @@ export default {
       type: '',
       over: false,
       warnNum: 0,
-      errorNum: 0
+      errorNum: 0,
     }
   },
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId'])
+    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId']),
   },
   watch: {
     showConsole(v) {
       if (v) {
         // this.loadData()
       }
-    }
+    },
   },
   beforeUnmount() {
     this.stopAuto()
@@ -121,12 +121,12 @@ export default {
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'toggleConsole'
+      'toggleConsole',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
     sleep(time) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => resolve(), time)
       })
     },
@@ -138,10 +138,10 @@ export default {
         taskId: taskId || this.$route.params.id,
         nodeId,
         type: this.type,
-        grade: this.levels.join(',')
+        grade: this.levels.join(','),
       })
-      const list = data.list?.filter(t => !t.describe) || []
-      const resetList = data.list?.filter(t => t.describe) || []
+      const list = data.list?.filter((t) => !t.describe) || []
+      const resetList = data.list?.filter((t) => t.describe) || []
       const modelList = data.modelList || []
       this.loading = false
       this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
@@ -151,7 +151,7 @@ export default {
       this.over = data.over
 
       const nodeList = []
-      Object.keys(data.nodes).forEach(id => {
+      Object.keys(data.nodes).forEach((id) => {
         let node = this.nodeById(id)
         node && nodeList.push(node)
       })
@@ -202,10 +202,10 @@ export default {
         SUCCEED: 'packages_dag_console_log_status_success',
         TASK_SUCCEED: 'packages_dag_console_log_status_success',
         FAILED: 'packages_dag_console_log_status_fail',
-        TASK_FAILED: 'packages_dag_console_log_status_fail'
+        TASK_FAILED: 'packages_dag_console_log_status_fail',
       }
       let result = []
-      data.forEach(el => {
+      data.forEach((el) => {
         el.st = el.status
         el.status = i18n.t(I18N_MAP[el.status])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
@@ -253,9 +253,9 @@ export default {
     getData() {
       const { warnNum = 0, errorNum = 0, over, logList } = this
       return { warnNum, errorNum, over, logList }
-    }
+    },
   },
-  emits: ['stopAuto']
+  emits: ['stopAuto'],
 }
 </script>
 

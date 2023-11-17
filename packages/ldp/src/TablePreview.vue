@@ -13,7 +13,7 @@
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
         }}</span>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="small" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
@@ -126,7 +126,7 @@
                         :options="{
                           readOnly: true,
                           highlightActiveLine: false,
-                          highlightGutterLine: false
+                          highlightGutterLine: false,
                         }"
                         theme="chrome"
                       ></VCodeEditor>
@@ -202,7 +202,7 @@
           <div class="p-4">
             <div class="rounded-lg bg-white border border-gray-200 overflow-hidden">
               <div class="flex align-center p-3">
-                <ElRadioGroup v-model:value="asTaskType" size="small">
+                <ElRadioGroup v-model:value="asTaskType">
                   <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
                   <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
                   <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
@@ -353,7 +353,7 @@ import {
   metadataInstancesApi,
   modulesApi,
   workerApi,
-  CancelToken
+  CancelToken,
 } from '@tap/api'
 import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP, makeStatusAndDisabled } from '@tap/business'
 import i18n from '@tap/i18n'
@@ -364,8 +364,8 @@ export default {
   props: {
     tag: {
       type: String,
-      default: 'Drawer'
-    }
+      default: 'Drawer',
+    },
   },
   components: {
     Drawer,
@@ -375,7 +375,7 @@ export default {
     DatabaseIcon,
     TableLineage,
     VCodeEditor,
-    IconButton
+    IconButton,
   },
   data() {
     return {
@@ -394,52 +394,52 @@ export default {
           label: i18n.t('public_name'),
           prop: 'name',
           className: 'text-nowrap',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('public_type'),
           prop: 'dataType',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
           slotName: 'primaryKey',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey',
           slotName: 'foreignKey',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
           prop: 'index',
           slotName: 'index',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('meta_table_not_null'),
           prop: 'notNull',
           slotName: 'notNull',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('meta_table_default'),
-          prop: 'defaultValue'
+          prop: 'defaultValue',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
-          prop: 'businessName'
+          prop: 'businessName',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
-          prop: 'businessType'
+          prop: 'businessType',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc'
-        }
+          prop: 'businessDesc',
+        },
       ],
       taskData: [],
       storageSize: '',
@@ -450,64 +450,64 @@ export default {
       statusMap: {
         error: i18n.t('packages_business_table_status_error'), // 异常
         draft: i18n.t('packages_business_table_status_draft'), // 草稿
-        normal: i18n.t('packages_business_table_status_normal') // 正常
+        normal: i18n.t('packages_business_table_status_normal'), // 正常
       },
       apisColumns: [
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apifuwu'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('packages_business_data_server_list_fuwuzhuangtai'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_fangwencishu'),
           prop: 'visitCount',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apIfangwen'),
           prop: 'visitLine',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apIchuanshu'),
           prop: 'transitQuantityLabel',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_zuihoufangwenshi'),
           prop: 'last_updated',
           dataType: 'time',
-          width: 160
-        }
+          width: 160,
+        },
       ],
       statusOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: i18n.t('modules_active'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: i18n.t('modules_pending'),
-          value: 'pending'
+          value: 'pending',
         },
         {
           label: i18n.t('api_monitor_total_api_list_status_generating'),
-          value: 'generating'
-        }
+          value: 'generating',
+        },
       ],
       selected: {},
       swimType: '', // source/fdm/mdm/target
       asTaskType: 'all',
       connection: null,
       taskLoading: false,
-      isTableView: false
+      isTableView: false,
     }
   },
   computed: {
@@ -518,10 +518,10 @@ export default {
       return this.taskData
     },
     sourceTask() {
-      return this.taskData.filter(task => task.isAsSource)
+      return this.taskData.filter((task) => task.isAsSource)
     },
     targetTask() {
-      return this.taskData.filter(task => !task.isAsSource)
+      return this.taskData.filter((task) => !task.isAsSource)
     },
     databaseName() {
       if (!this.connection) return this.detailData.sourceType
@@ -531,7 +531,7 @@ export default {
       if (config.uri && config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
+            config.uri,
           )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
@@ -546,18 +546,18 @@ export default {
         ? {
             taskType: 130,
             status: 145,
-            operation: 340
+            operation: 340,
           }
         : {
             taskType: 80,
             status: 110,
-            operation: 280
+            operation: 280,
           }
     },
 
     sampleDataJson() {
       return JSON.stringify(this.sampleData.slice(0, 10), null, 2)
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -565,7 +565,7 @@ export default {
         this.cancelSource?.cancel()
         clearTimeout(this.loadTaskTimer)
       }
-    }
+    },
   },
   beforeUnmount() {
     this.destroyed = true
@@ -589,23 +589,23 @@ export default {
       let result = [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'dataType'
-        }
+          prop: 'dataType',
+        },
       ]
       if (sourceType !== 'MongoDB') {
         result.push({
           label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment'
+          prop: 'comment',
         })
       }
       result.push({
         label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
         prop: 'businessDesc',
-        slotName: 'businessDesc'
+        slotName: 'businessDesc',
       })
       this.columnsPreview = result
     },
@@ -630,7 +630,7 @@ export default {
       this.loading = true
       discoveryApi
         .overViewStorage(row.id)
-        .then(res => {
+        .then((res) => {
           this.detailData = res
           this.detailData['lastUpdAt'] = this.detailData['lastUpdAt']
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
@@ -656,16 +656,16 @@ export default {
       this.taskLoading = !silenceLoading
       let params = {
         connectionId: this.connectionId,
-        tableName: this.detailData.name
+        tableName: this.detailData.name,
       }
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       return taskApi
         .getTaskByTableName(params, {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
-        .then(taskList => {
-          this.taskData = taskList.filter(task => {
+        .then((taskList) => {
+          this.taskData = taskList.filter((task) => {
             if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted) return false
 
             const { dag } = task
@@ -693,7 +693,7 @@ export default {
                 }
               })
 
-              task.isAsSource = dag.nodes.some(node => {
+              task.isAsSource = dag.nodes.some((node) => {
                 if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId === this.connectionId) {
                   if (node.type === 'database') return true
                   return node.tableName === params.tableName
@@ -712,15 +712,15 @@ export default {
       let params = {
         className: 'QueryDataBaseDataService',
         method: 'getData',
-        args: [this.connectionId, this.detailData.name]
+        args: [this.connectionId, this.detailData.name],
       }
       this.loadingSampleData = true
       proxyApi
         .call(params)
-        .then(res => {
+        .then((res) => {
           this.sampleData = res?.sampleData
           //schema返回的数据组装数据
-          this.sampleHeader = this.tableFields.map(it => it.name)
+          this.sampleHeader = this.tableFields.map((it) => it.name)
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
@@ -736,17 +736,17 @@ export default {
     saveTableDesc() {
       metadataInstancesApi.updateTableDesc({
         id: this.detailData.id,
-        description: this.detailData.description
+        description: this.detailData.description,
       })
     },
     //获取表状态
     getTaskStatus() {
-      taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
+      taskApi.tableStatus(this.connectionId, this.detailData.name).then((res) => {
         this.tableStatus = res?.status
         this.cdcDelayTime =
           isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
             ? calcTimeUnit(res.cdcDelayTime, 2, {
-                autoHideMs: true
+                autoHideMs: true,
               })
             : '-'
         this.lastDataChangeTime = res?.lastDataChangeTime
@@ -757,15 +757,15 @@ export default {
     getApisData() {
       const { connectionId, name } = this.selected || {}
 
-      return modulesApi.apiList({ connectionId, tableName: name }).then(data => {
+      return modulesApi.apiList({ connectionId, tableName: name }).then((data) => {
         return {
           total: data.total || 0,
           data:
-            data.items?.map(t => {
-              t.statusFmt = this.statusOptions.find(it => it.value === t.status)?.label || '-'
+            data.items?.map((t) => {
+              t.statusFmt = this.statusOptions.find((it) => it.value === t.status)?.label || '-'
               t.transitQuantityLabel = calcUnit(t.transitQuantity, 1)
               return t
-            }) || []
+            }) || [],
         }
       })
     },
@@ -799,8 +799,8 @@ export default {
       this.openRoute({
         name: routeName,
         params: {
-          id: row.id
-        }
+          id: row.id,
+        },
       })
     },
 
@@ -818,12 +818,12 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(data => {
+      taskApi.batchStart(ids).then((data) => {
         this.getTasks(true)
-        if (data.every(t => t.code === 'ok')) {
+        if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
         } else {
-          if (data.some(t => t.code === 'Task.ScheduleLimit')) {
+          if (data.some((t) => t.code === 'Task.ScheduleLimit')) {
             $emit(this, 'handle-show-upgrade')
             return
           }
@@ -841,12 +841,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -859,12 +859,12 @@ export default {
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -875,12 +875,12 @@ export default {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(data => {
+        taskApi.batchDelete(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -899,23 +899,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-all;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary',
             },
-            name
+            name,
           ),
-          strArr[1]
-        ]
+          strArr[1],
+        ],
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title)
+        title: this.$t('packages_business_dataFlow_' + title),
       }
     },
 
@@ -923,7 +923,7 @@ export default {
       metadataInstancesApi
         .updateTableFieldDesc(this.selected.id, {
           id,
-          businessDesc: val
+          businessDesc: val,
         })
         .catch(() => {
           this.$message.error(this.$t('public_message_save_fail'))
@@ -935,8 +935,8 @@ export default {
         this.activeName = 'tasks'
         this.$message.warning(
           i18n.t('packages_ldp_src_tablepreview_jiancedaoyouren', {
-            val1: this.selected.name
-          })
+            val1: this.selected.name,
+          }),
         )
         return
       }
@@ -947,9 +947,9 @@ export default {
         {
           type: 'warning',
           showClose: false,
-          zIndex: 999999
-        }
-      ).then(resFlag => {
+          zIndex: 999999,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -962,9 +962,9 @@ export default {
 
     toggleSampleData() {
       this.isTableView = !this.isTableView
-    }
+    },
   },
-  emits: ['create-single-task', 'handle-show-upgrade']
+  emits: ['create-single-task', 'handle-show-upgrade'],
 }
 </script>
 

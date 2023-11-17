@@ -38,7 +38,7 @@ export const TableRename = observer(
               }
               return obj
             }, {})
-          : {}
+          : {},
       )
       const config = reactive({
         search: '',
@@ -47,7 +47,7 @@ export const TableRename = observer(
         prefix: form.values.prefix || '', // 前缀
         suffix: form.values.suffix || '', // 后缀
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
-        transformLoading: root.$store.state.dataflow.transformLoading
+        transformLoading: root.$store.state.dataflow.transformLoading,
       })
 
       let prevMap = {}
@@ -61,12 +61,12 @@ export const TableRename = observer(
               taskId,
               nodeId: form.values.id,
               page: 1,
-              pageSize: 10000
+              pageSize: 10000,
             })
             .then(({ items = [] }) => {
               prevMap = {}
               tableMap = {}
-              tableDataRef.value = items.map(item => {
+              tableDataRef.value = items.map((item) => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 tableMap[item.previousTableName] = true
 
@@ -131,7 +131,7 @@ export const TableRename = observer(
       const filterNames = computed(() => {
         const txt = config.search.trim().toLowerCase()
         if (txt) {
-          return tableDataRef.value.filter(n => n.toLowerCase().includes(txt))
+          return tableDataRef.value.filter((n) => n.toLowerCase().includes(txt))
         }
         return tableDataRef.value
       })
@@ -141,7 +141,7 @@ export const TableRename = observer(
         const target = tableDataRef.value
         let flag
         // let skipTableName = []
-        target.forEach(n => {
+        target.forEach((n) => {
           let after = n
           after = config.replaceBefore
             ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
@@ -176,7 +176,7 @@ export const TableRename = observer(
           replaceAfter: '',
           prefix: '',
           suffix: '',
-          transferCase: ''
+          transferCase: '',
         })
         updateConfig()
       }
@@ -185,7 +185,7 @@ export const TableRename = observer(
         doReset()
         const keys = Object.keys(nameMap)
         if (keys.length) {
-          keys.forEach(key => {
+          keys.forEach((key) => {
             delete nameMap[key]
           })
           emitChange()
@@ -202,7 +202,7 @@ export const TableRename = observer(
             arr.push({
               originTableName,
               previousTableName,
-              currentTableName
+              currentTableName,
             })
             if (currentTableName in _countByName) {
               _countByName[currentTableName]++
@@ -221,11 +221,11 @@ export const TableRename = observer(
           replaceAfter: config.replaceAfter, // 替换后
           prefix: config.prefix, // 前缀
           suffix: config.suffix, // 后缀
-          transferCase: config.transferCase // toUpperCase ｜ toLowerCase
+          transferCase: config.transferCase, // toUpperCase ｜ toLowerCase
         })
       }
 
-      const scrollToItem = index => {
+      const scrollToItem = (index) => {
         refs.nameList.scrollTop = index * itemSize
       }
 
@@ -242,7 +242,7 @@ export const TableRename = observer(
         tableData: tableDataRef,
         loading,
         countByName,
-        itemSize
+        itemSize,
       }
     },
 
@@ -250,7 +250,7 @@ export const TableRename = observer(
       const label = (
         <div class="inline-flex align-center position-absolute w-100">
           <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-          <ElLink disabled={this.disabled} onClick={this.resetNames} size="small" type="primary">
+          <ElLink disabled={this.disabled} onClick={this.resetNames} type="primary">
             <div class="flex align-center px-1">
               <VIcon class="mr-1">reset</VIcon>
               {i18n.t('public_button_reset')}
@@ -343,6 +343,6 @@ export const TableRename = observer(
           </div>
         </div>
       )
-    }
-  })
+    },
+  }),
 )

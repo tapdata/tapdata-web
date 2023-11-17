@@ -1,7 +1,6 @@
 <template>
   <div class="multi-selection">
     <el-select
-      size="small"
       :model-value="values"
       multiple
       filterable
@@ -12,7 +11,7 @@
       @change="$emit('change', $event)"
       @input="inputHandler"
     >
-      <el-option v-for="opt in options.filter(i => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
+      <el-option v-for="opt in options.filter((i) => !!i)" :key="opt" :label="opt" :value="opt"> </el-option>
     </el-select>
     <ClipboardButton v-if="showCopyBtn" :content="value" icon></ClipboardButton>
   </div>
@@ -23,33 +22,33 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { ClipboardButton } from '@tap/form'
 export default {
   components: {
-    ClipboardButton
+    ClipboardButton,
   },
   props: {
     value: {
       type: [String],
-      required: true
+      required: true,
     },
     options: Array,
     placeholder: String,
     showCopyBtn: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    }
+    },
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      $emit(this, 'update:value', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
-    }
+      $emit(this, 'update:value', Array.from(new Set(values.filter((v) => !!v.trim()))).join(','))
+    },
   },
-  emits: ['remove-tag', 'change', 'update:value']
+  emits: ['remove-tag', 'change', 'update:value'],
 }
 </script>
 

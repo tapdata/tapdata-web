@@ -31,7 +31,6 @@
           <el-button
             v-readonlybtn="'SYNC_category_application'"
             :disabled="$disabledReadonlyUserBtn()"
-            size="small"
             class="btn"
             v-show="multipleSelection.length > 0"
             @click="$refs.table.showClassify(handleSelectTag())"
@@ -44,7 +43,7 @@
             @command="handleCommand($event)"
             v-show="multipleSelection.length > 0 && bulkOperation"
           >
-            <el-button class="btn-dropdowm" size="small">
+            <el-button class="btn-dropdowm">
               <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
               <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -72,7 +71,6 @@
               v-show="multipleSelection.length > 0 && isDaas"
               :disabled="$disabledReadonlyUserBtn()"
               v-readonlybtn="'SYNC_job_export'"
-              size="small"
               class="btn message-button-cancel"
               @click="handleCommand('export')"
             >
@@ -82,7 +80,6 @@
             <el-button
               v-if="isDaas && buttonShowMap.import"
               v-readonlybtn="'SYNC_job_import'"
-              size="small"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
@@ -94,7 +91,6 @@
           <ElButton
             v-if="$route.name === 'dataflowList'"
             class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-            size="small"
             :loading="createBtnLoading"
             @click="handleCreateMaterializedView"
           >
@@ -106,7 +102,6 @@
             v-readonlybtn="'SYNC_job_creation'"
             class="btn btn-create"
             type="primary"
-            size="small"
             id="task-list-create"
             :disabled="$disabledReadonlyUserBtn()"
             :loading="createBtnLoading"

@@ -50,7 +50,7 @@
             class="spec-li cursor-pointer position-relative cursor-pointer px-4 py-2 rounded-4 overflow-hidden w-100"
             :class="{
               active: specification === item.value,
-              disabled: agentCount > 0 && item.chargeProvider === 'FreeTier'
+              disabled: agentCount > 0 && item.chargeProvider === 'FreeTier',
             }"
             v-for="(item, i) in specificationItems"
             :key="i"
@@ -64,17 +64,12 @@
               <span class="align-middle"
                 ><span v-if="item.chargeProvider !== 'FreeTier'">{{ item.name }}:</span> {{ item.desc }}</span
               >
-              <ElTag
-                v-if="item.chargeProvider === 'FreeTier'"
-                size="small"
-                class="bg-color-warning text-white border-0 ml-2"
-                >{{
-                  platform === 'selfHost'
-                    ? $t('dfs_instance_instance_mianfei')
-                    : $t('dfs_instance_createagent_mianfeitiyan')
-                }}</ElTag
-              >
-              <ElTag v-else size="small" class="vip-btn bg-white border-0 ml-2 align-items-center"
+              <ElTag v-if="item.chargeProvider === 'FreeTier'" class="bg-color-warning text-white border-0 ml-2">{{
+                platform === 'selfHost'
+                  ? $t('dfs_instance_instance_mianfei')
+                  : $t('dfs_instance_createagent_mianfeitiyan')
+              }}</ElTag>
+              <ElTag v-else class="vip-btn bg-white border-0 ml-2 align-items-center"
                 ><VIcon size="17" class="mr-1 mb-1">icon-vip</VIcon
                 >{{ $t('packages_component_src_upgradefee_dingyuezhuanyeban') }}</ElTag
               >
@@ -102,7 +97,7 @@
               <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
                 <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
                   $t('dfs_agent_subscription_discount', {
-                    val: getDiscount(item)
+                    val: getDiscount(item),
                   })
                 }}</ElTag>
                 <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
@@ -124,7 +119,7 @@
         <span class="price-detail-label text-end inline-block mr-2"
           >{{
             $t('dfs_agent_subscription_discount', {
-              val: getDiscount(selected)
+              val: getDiscount(selected),
             })
           }}:
         </span>
@@ -159,23 +154,23 @@ export default {
       paidDetailColumns: [
         {
           label: i18n.global.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
+          prop: 'id',
         },
         {
           label: i18n.global.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.global.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.global.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
-          width: 180
-        }
+          width: 180,
+        },
       ],
       agentCount: false,
       currentPackage: '',
@@ -187,23 +182,23 @@ export default {
       region: '',
       cloudDetail: [],
       cloudProviderName: '',
-      cloudProviderList: []
+      cloudProviderList: [],
     }
   },
   computed: {
     ...mapGetters(['isDomesticStation']),
     singleMonth() {
-      return this.packageItems.find(item => item.type === 'one_time' && item.periodUnit === 'month')
+      return this.packageItems.find((item) => item.type === 'one_time' && item.periodUnit === 'month')
     },
     singleMonthAmount() {
-      return this.singleMonth?.currencyOption.find(item => item.currency === this.currencyType)?.amount
+      return this.singleMonth?.currencyOption.find((item) => item.currency === this.currencyType)?.amount
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
     },
     freeAgentCount() {
       return this.$store.state.agentCount.freeTierAgentCount
-    }
+    },
   },
   mounted() {
     this.getPrice()
@@ -223,13 +218,13 @@ export default {
     //查询规格价格
     getPrice() {
       const params = {
-        productType: this.platform
+        productType: this.platform,
       }
-      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then((data) => {
         let { paidPrice = [] } = data?.[0] || {}
         // 规格
         this.specificationItems = uniqBy(
-          paidPrice.map(t => {
+          paidPrice.map((t) => {
             const { cpu = 0, memory = 0 } = t.spec || {}
 
             return {
@@ -240,23 +235,23 @@ export default {
               name: t.spec.name.toUpperCase(),
               chargeProvider: t.chargeProvider,
               desc: i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
-                val: t.limitTask
-              })
+                val: t.limitTask,
+              }),
             }
           }),
-          'value'
+          'value',
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
         if (this.freeAgentCount > 0) {
-          this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
+          this.specificationItems = this.specificationItems.filter((it) => it.chargeProvider !== 'FreeTier')
         }
         //新人引导只取前四个规格
         this.specificationItems = this.specificationItems.splice(0, 4)
 
         this.specification = this.specificationItems[0]?.value
         // 价格套餐
-        this.allPackages = paidPrice.map(t => {
+        this.allPackages = paidPrice.map((t) => {
           return Object.assign(t, {
             label: getPaymentMethod(t),
             value: t.priceId,
@@ -264,7 +259,7 @@ export default {
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
             specification: getSpec(t.spec),
-            currencyOption: t.currencyOption || []
+            currencyOption: t.currencyOption || [],
           })
         })
         this.changeSpec(this.specification)
@@ -277,24 +272,24 @@ export default {
 
     //订购时长对应价格
     loadPackageItems() {
-      const specification = this.specificationItems.find(t => t.value === this.specification)
+      const specification = this.specificationItems.find((t) => t.value === this.specification)
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
-      const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
+      const specificationLabel = this.specificationItems.find((t) => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
       console.log(specification)
       this.packageItems = this.allPackages
-        .filter(t => this.specification === t.specification)
-        .map(t => {
+        .filter((t) => this.specification === t.specification)
+        .map((t) => {
           return Object.assign(t, {
             desc: i18n.global.t('dfs_instance_create_bencidinggouzhi', {
-              val1: specificationLabel
+              val1: specificationLabel,
             }),
             label:
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
                 : this.platform !== 'selfHost'
                 ? i18n.global.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.global.t('dfs_instance_utils_baoyue')
+                : i18n.global.t('dfs_instance_utils_baoyue'),
           })
         })
         .sort((a, b) => {
@@ -306,7 +301,7 @@ export default {
         })
       //不显示订购一年
       if (specification?.chargeProvider !== 'FreeTier') {
-        this.packageItems = this.packageItems.filter(it => !(it.type === 'one_time' && it.periodUnit === 'year'))
+        this.packageItems = this.packageItems.filter((it) => !(it.type === 'one_time' && it.periodUnit === 'year'))
       }
     },
     //切换规格
@@ -320,7 +315,7 @@ export default {
       let currentItem = this.packageItems[0]
       if (this.selected?.price && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
-          it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
+          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
         )
       }
       this.handleChange(currentItem)
@@ -329,13 +324,13 @@ export default {
     //切换订阅方式
     handleChange(item = {}) {
       if (!isObj(item)) {
-        item = this.packageItems.find(it => it.value === item)
+        item = this.packageItems.find((it) => it.value === item)
       }
       this.currentPackage = item.value
       this.selected = item
       if (item?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(item)
-        this.currency = this.currencyOption.find(it => it.currency === this.currencyType) || {}
+        this.currency = this.currencyOption.find((it) => it.currency === this.currencyType) || {}
       } else {
         this.currencyOption = []
         this.currency = item
@@ -344,20 +339,20 @@ export default {
     },
     //切换云厂商
     changeProvider() {
-      let cloudProvider = this.cloudProviderList.filter(it => it.cloudProvider === this.provider) || []
+      let cloudProvider = this.cloudProviderList.filter((it) => it.cloudProvider === this.provider) || []
       this.cloudProviderName = cloudProvider?.[0]?.cloudProviderName
       this.cloudDetail = cloudProvider?.[0].cloudDetail || []
       this.region = this.cloudDetail?.[0]?.region
       this.changeRegion()
     },
     changeRegion() {
-      let region = this.cloudDetail.filter(it => it.region === this.region) || []
+      let region = this.cloudDetail.filter((it) => it.region === this.region) || []
       this.regionName = region?.[0]?.regionName
     },
     updateAgentCap(cpu, memory) {
       return {
         mem: parseInt(memory * 1.1 + 2) + 'G',
-        tps: cpu * 2000
+        tps: cpu * 2000,
       }
     },
     formatterTime(time) {
@@ -373,22 +368,22 @@ export default {
         ' ' +
         (amount / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
     //查找云厂商
     getCloudProvider() {
-      return this.$axios.get('api/tcm/orders/queryCloudProvider').then(data => {
+      return this.$axios.get('api/tcm/orders/queryCloudProvider').then((data) => {
         //数据模式（带存储）过滤只带存储的云厂商
         if (this.platform === 'realTime') {
           let original = data?.items || []
-          original.forEach(it => {
+          original.forEach((it) => {
             if (it.cloudDetail?.length > 0) {
-              it.cloudDetail = it.cloudDetail.filter(item => item.productList.includes('mongodb')) || []
+              it.cloudDetail = it.cloudDetail.filter((item) => item.productList.includes('mongodb')) || []
             }
           })
-          this.cloudProviderList = original.filter(it => it.cloudDetail.length > 0)
+          this.cloudProviderList = original.filter((it) => it.cloudDetail.length > 0)
         } else this.cloudProviderList = data?.items || []
         //初始化云厂商
         this.provider = this.cloudProviderList?.[0].cloudProvider
@@ -428,7 +423,7 @@ export default {
         CURRENCY_SYMBOL_MAP[item.currency] +
         (amount / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -451,8 +446,8 @@ export default {
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
-          id: ''
-        }
+          id: '',
+        },
       })
       let params = {
         price: this.formatPrice(this.currency),
@@ -469,7 +464,7 @@ export default {
         periodUnit,
         currency: this.currencyType || currency,
         subscribeItems: [],
-        email: this.$store.state.user.email
+        email: this.$store.state.user.email,
       }
       let base = {
         productId: '', // 产品ID
@@ -484,13 +479,13 @@ export default {
         memorySpace: this.memorySpace,
         provider: this.provider || '', // 云厂商，全托管必填
         region: this.region || '', // 地域，全托管必填
-        zone: this.mdbZone || '' // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
+        zone: this.mdbZone || '', // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
       }
       params.subscribeItems.push(base)
       return params
-    }
+    },
   },
-  emits: ['changeSpec']
+  emits: ['changeSpec'],
 }
 </script>
 

@@ -10,10 +10,10 @@
   >
     <ElForm :model="model" ref="form" label-width="120px">
       <ElFormItem :label="$t('public_description')">
-        <ElInput v-model:value="model.describtion" size="small"></ElInput>
+        <ElInput v-model:value="model.describtion"></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('module_form_method')">
-        <ElSelect v-model:value="model.method" :placeholder="$t('public_select_placeholder')" size="small">
+        <ElSelect v-model:value="model.method" :placeholder="$t('public_select_placeholder')">
           <ElOption label="GET" value="GET"></ElOption>
           <ElOption label="STREAM" value="STREAM"></ElOption>
         </ElSelect>
@@ -38,7 +38,7 @@
         <!-- <QueryBuild v-model="model.condition" :fields="fields"></QueryBuild> -->
       </ElFormItem>
       <ElFormItem :label="$t('module_form_available_query_field')" v-if="model.method !== 'STREAM'">
-        <ElSelect v-model:value="model.availableQueryField" multiple filterable size="small">
+        <ElSelect v-model:value="model.availableQueryField" multiple filterable>
           <ElOption
             v-for="item in fields"
             :label="item.field_name"
@@ -48,7 +48,7 @@
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('module_form_required_query_field')" v-if="model.method !== 'STREAM'">
-        <ElSelect v-model:value="model.requiredQueryField" multiple filterable size="small">
+        <ElSelect v-model:value="model.requiredQueryField" multiple filterable>
           <ElOption
             v-for="item in fields"
             :label="item.field_name"
@@ -60,10 +60,10 @@
     </ElForm>
     <template v-slot:footer>
       <div class="dialog-footer">
-        <el-button class="cancel" @click="handleClose()" size="small">
+        <el-button class="cancel" @click="handleClose()">
           {{ $t('public_button_cancel') }}
         </el-button>
-        <el-button type="primary" @click="save()" size="small">{{ $t('public_button_save') }}</el-button>
+        <el-button type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
       </div>
     </template>
   </el-dialog>

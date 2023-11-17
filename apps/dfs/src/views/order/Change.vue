@@ -37,7 +37,7 @@
               <div
                 class="position-relative px-4 py-2 cursor-pointer active-group rounded-lg overflow-hidden border"
                 :class="{
-                  active: specification === item.value
+                  active: specification === item.value,
                 }"
                 @click="changeSpec(item.value)"
               >
@@ -47,16 +47,11 @@
                 </div>
                 <div class="spec-li-title lh-base fw-bold font-color-dark">
                   <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
-                  <ElTag
-                    v-if="item.chargeProvider === 'FreeTier'"
-                    size="small"
-                    class="bg-color-warning text-white border-0 ml-2"
-                    >{{
-                      platform === 'selfHost'
-                        ? $t('dfs_instance_instance_mianfei')
-                        : $t('dfs_instance_createagent_mianfeitiyan')
-                    }}</ElTag
-                  >
+                  <ElTag v-if="item.chargeProvider === 'FreeTier'" class="bg-color-warning text-white border-0 ml-2">{{
+                    platform === 'selfHost'
+                      ? $t('dfs_instance_instance_mianfei')
+                      : $t('dfs_instance_createagent_mianfeitiyan')
+                  }}</ElTag>
                 </div>
                 <div
                   v-if="platform === 'selfHost'"
@@ -87,7 +82,7 @@
                 <template v-if="item.type === 'recurring' || item.periodUnit === 'year'">
                   <ElTag class="discount-tag fw-sub rounded-4 border-0 ml-2">{{
                     $t('dfs_agent_subscription_discount', {
-                      val: getDiscount(item)
+                      val: getDiscount(item),
                     })
                   }}</ElTag>
                   <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
@@ -150,30 +145,30 @@ export default {
       paidDetailColumns: [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
+          prop: 'id',
         },
         {
           label: i18n.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
-          width: 180
-        }
+          width: 180,
+        },
       ],
       agentList: [],
       specificationItems: [],
       packageItems: [],
       agent: '',
       currentPackage: '',
-      platform: ''
+      platform: '',
     }
   },
   computed: {
@@ -181,18 +176,18 @@ export default {
       return !this.currentRow.totalAmount || this.currentRow.subscribeType === 'FreeTier'
     },
     singleMonth() {
-      return this.packageItems.find(item => item.type === 'one_time' && item.periodUnit === 'month')
+      return this.packageItems.find((item) => item.type === 'one_time' && item.periodUnit === 'month')
     },
     singleMonthAmount() {
-      return this.singleMonth?.currencyOption.find(item => item.currency === this.currencyType)?.amount
+      return this.singleMonth?.currencyOption.find((item) => item.currency === this.currencyType)?.amount
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
-    }
+    },
   },
   methods: {
     openChange(item) {
-      let agent = item?.subscribeItems.find(it => it.productType === 'Engine')
+      let agent = item?.subscribeItems.find((it) => it.productType === 'Engine')
       let specLabel = getSpec(agent?.spec)
       //组装续订列表
       let node = {
@@ -201,7 +196,7 @@ export default {
         specLabel: specLabel,
         subscriptionMethodLabel:
           getPaymentMethod({ periodUnit: item.periodUnit, type: item.subscribeType }, item.paymentMethod || 'Stripe') ||
-          '-'
+          '-',
       }
       this.agentList = [node]
       this.visible = true
@@ -214,15 +209,15 @@ export default {
     //查询规格价格
     getPrice(orw, agentType) {
       const params = {
-        productType: agentType === 'Cloud' ? 'fullManagement' : 'selfHost'
+        productType: agentType === 'Cloud' ? 'fullManagement' : 'selfHost',
       }
-      this.$axios.get('api/tcm/orders/paid/price', { params }).then(data => {
+      this.$axios.get('api/tcm/orders/paid/price', { params }).then((data) => {
         let { paidPrice = [] } = data?.[0] || {}
         const { spec: currentSpec, amount } = this.agent
 
         paidPrice = !amount
-          ? paidPrice.filter(item => item.chargeProvider !== 'FreeTier')
-          : paidPrice.filter(item => {
+          ? paidPrice.filter((item) => item.chargeProvider !== 'FreeTier')
+          : paidPrice.filter((item) => {
               const { cpu, memory } = item.spec
               return (
                 item.chargeProvider !== 'FreeTier' &&
@@ -234,7 +229,7 @@ export default {
 
         // 规格
         this.specificationItems = uniqBy(
-          paidPrice.map(t => {
+          paidPrice.map((t) => {
             const { cpu = 0, memory = 0 } = t.spec || {}
 
             return {
@@ -245,11 +240,11 @@ export default {
               name: t.spec.name.toUpperCase(),
               chargeProvider: t.chargeProvider,
               desc: i18n.t('dfs_agent_download_subscriptionmodeldialog_renwushujianyi', {
-                val: t.limitTask
-              })
+                val: t.limitTask,
+              }),
             }
           }),
-          'value'
+          'value',
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
@@ -257,7 +252,7 @@ export default {
         this.specification =
           !this.agentCount && this.orderStorage ? this.specificationItems[1]?.value : this.specificationItems[0]?.value
         // 价格套餐
-        this.allPackages = paidPrice.map(t => {
+        this.allPackages = paidPrice.map((t) => {
           return Object.assign(t, {
             label: getPaymentMethod(t),
             value: t.priceId,
@@ -265,7 +260,7 @@ export default {
             priceSuffix: t.type === 'recurring' ? TIME_MAP[t.periodUnit] : '',
             desc: '',
             specification: getSpec(t.spec),
-            currencyOption: t.currencyOption || []
+            currencyOption: t.currencyOption || [],
           })
         })
         this.changeSpec(this.specification)
@@ -287,23 +282,23 @@ export default {
     },
     //订购时长对应价格
     loadPackageItems() {
-      const specification = this.specificationItems.find(t => t.value === this.specification)
+      const specification = this.specificationItems.find((t) => t.value === this.specification)
       this.agentSizeCap = this.updateAgentCap(specification.cpu, specification.memory)
-      const specificationLabel = this.specificationItems.find(t => t.value === this.specification)?.name
+      const specificationLabel = this.specificationItems.find((t) => t.value === this.specification)?.name
       this.currentSpecName = specificationLabel
       this.packageItems = this.allPackages
-        .filter(it => this.specification === it.specification)
-        .map(t => {
+        .filter((it) => this.specification === it.specification)
+        .map((t) => {
           return Object.assign(t, {
             desc: i18n.t('dfs_instance_create_bencidinggouzhi', {
-              val1: specificationLabel
+              val1: specificationLabel,
             }),
             label:
               specification?.chargeProvider !== 'FreeTier'
                 ? t.label
                 : this.agentDeploy !== 'selfHost'
                 ? i18n.t('dfs_instance_createagent_mianfeishiyonggui')
-                : i18n.t('dfs_instance_utils_baoyue')
+                : i18n.t('dfs_instance_utils_baoyue'),
           })
         })
         .sort((a, b) => {
@@ -326,13 +321,13 @@ export default {
       this.currentPackage = currentItem?.value
       if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
-          it => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
+          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
         )
       }
       this.selected = currentItem
       if (currentItem?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(currentItem)
-        this.currency = this.currencyOption.find(it => it.currency === this.currencyType) || {}
+        this.currency = this.currencyOption.find((it) => it.currency === this.currencyType) || {}
       } else {
         this.currencyOption = []
         this.currency = currentItem
@@ -343,7 +338,7 @@ export default {
       return {
         mem: parseInt(memory * 1.1 + 2) + 'G',
         pipeline: this.getSuggestPipelineNumber(cpu, memory),
-        tps: cpu * 2000
+        tps: cpu * 2000,
       }
     },
     formatterTime(time) {
@@ -359,7 +354,7 @@ export default {
         ' ' +
         (amount / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -401,7 +396,7 @@ export default {
         currency: selectCurrency,
         periodUnit: selectPeriodUnit,
         label,
-        specification
+        specification,
       } = this.selected
 
       if (this.isFree) {
@@ -423,17 +418,17 @@ export default {
             // 跟新增订阅一样
             resourceId: resourceId, // 要变更的产品id，为空时表示新增订阅产品
             priceId: priceId, // 变更后的价格方案
-            productType: 'Engine' // 产品类型：Engine,MongoDB
-          }
-        ]
+            productType: 'Engine', // 产品类型：Engine,MongoDB
+          },
+        ],
       }
       this.loadingCancelSubmit = true
       this.$axios
         .post('api/tcm/subscribe/change', param)
-        .then(async data => {
+        .then(async (data) => {
           this.buried('unsubscribeAgentStripe', '', {
             result: true,
-            type: ''
+            type: '',
           })
           this.$message.success(this.$t('public_message_operation_success'))
           this.visible = false
@@ -445,8 +440,8 @@ export default {
             this.$router.push({
               name: 'payForChange',
               params: {
-                id: data?.id
-              }
+                id: data?.id,
+              },
             })
           } else {
             await this.$axios.post('api/tcm/subscribe/payment', {
@@ -454,7 +449,7 @@ export default {
               paymentMethod: 'Stripe',
               successUrl: '',
               cancelUrl: '',
-              subscribeAlterId: data.id
+              subscribeAlterId: data.id,
             })
           }
 
@@ -479,20 +474,20 @@ export default {
     //切换订阅方式
     handleChange(item = {}) {
       if (!isObj(item)) {
-        item = this.packageItems.find(it => it.value === item)
+        item = this.packageItems.find((it) => it.value === item)
       }
       this.currentPackage = item.value
       this.selected = item
       if (item?.chargeProvider !== 'FreeTier') {
         this.changeCurrencyOption(item)
-        this.currency = this.currencyOption.find(it => it.currency === this.currencyType) || {}
+        this.currency = this.currencyOption.find((it) => it.currency === this.currencyType) || {}
       } else {
         this.currencyOption = []
         this.currency = item
       }
-    }
+    },
   },
-  emits: ['closeVisible']
+  emits: ['closeVisible'],
 }
 </script>
 

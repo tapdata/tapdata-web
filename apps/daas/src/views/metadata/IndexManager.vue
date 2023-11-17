@@ -2,13 +2,7 @@
   <!-- 索引 -->
   <section class="index-list-wrap">
     <div class="table-page-operation-bar">
-      <el-button
-        v-readonlybtn="'new_model_creation'"
-        class="btn btn-create"
-        type="primary"
-        size="small"
-        @click="openCreateDialog"
-      >
+      <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
         <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
         <span>{{ $t('metadata_details_index_create') }}</span>
       </el-button>
@@ -37,7 +31,6 @@
       <el-table-column :label="$t('public_operation')" width="120">
         <template v-slot="scope">
           <el-button
-            size="small"
             text
             style="color: #f56c6c"
             @click="remove(scope.row)"
@@ -60,7 +53,6 @@
         <el-form-item :label="$t('metadata_details_index_name')">
           <el-input
             text
-            size="small"
             v-model="createForm.task_data.name"
             :placeholder="$t('public_select_placeholder') + $t('metadata_details_index_name')"
           ></el-input>
@@ -82,7 +74,7 @@
                   allow-create
                   default-first-option
                 >
-                  <el-select v-model="item.key" size="small">
+                  <el-select v-model="item.key">
                     <el-option
                       v-for="fieldsItem in fieldsArr"
                       :key="fieldsItem"
@@ -94,7 +86,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-select v-model="item.value" size="small">
+                <el-select v-model="item.value">
                   <el-option
                     v-for="unitItem in [
                       { name: '1(asc)', value: 1 },
@@ -143,10 +135,10 @@
         </el-form-item>
         <el-form-item v-if="createForm.task_data.ttl">
           <el-col :span="16">
-            <el-input text size="small" v-model="createForm.task_data.expireAfterSeconds"></el-input>
+            <el-input text v-model="createForm.task_data.expireAfterSeconds"></el-input>
           </el-col>
           <el-col :span="6" class="fr">
-            <el-select v-model="createForm.task_data.data_type" size="small">
+            <el-select v-model="createForm.task_data.data_type">
               <el-option v-for="item in dataTypeList" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -155,8 +147,8 @@
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="createNewModel()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

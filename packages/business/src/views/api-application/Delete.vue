@@ -27,10 +27,8 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" :loading="saveLoading" @click="handleSave">{{
-          $t('public_button_confirm')
-        }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </template>
   </ElDialog>

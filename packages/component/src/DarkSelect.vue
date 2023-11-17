@@ -7,7 +7,6 @@
       :popper-append-to-body="false"
       popper-class="time-select__popper"
       class="ml-2 dark flex-fill"
-      size="small"
       ref="select"
       @change="changeFnc"
     >
@@ -28,17 +27,17 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_title')
-      }
+      },
     },
     items: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   data() {
     return {
       period: '',
-      list: []
+      list: [],
     }
   },
   mounted() {
@@ -52,9 +51,9 @@ export default {
 
     openSelect() {
       this.$refs.select?.$el?.click()
-    }
+    },
   },
-  emits: ['change', 'update:value', , , 'update:value']
+  emits: ['change', 'update:value', , , 'update:value'],
 }
 </script>
 

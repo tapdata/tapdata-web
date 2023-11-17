@@ -54,7 +54,7 @@
             <div
               class="el-message-box__errormsg"
               :style="{
-                visibility: !!editorErrorMessage ? 'visible' : 'hidden'
+                visibility: !!editorErrorMessage ? 'visible' : 'hidden',
               }"
             >
               {{ editorErrorMessage }}
@@ -67,7 +67,6 @@
             :class="[cancelButtonClasses]"
             v-if="showCancelButton"
             :round="roundButton"
-            size="small"
             @click="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
@@ -79,7 +78,6 @@
             :class="[confirmButtonClasses]"
             v-show="showConfirmButton"
             :round="roundButton"
-            size="small"
             @click="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
@@ -98,14 +96,14 @@ import i18n from '@/i18n'
 
 export default {
   components: {
-    VIcon
+    VIcon,
   },
   extends: MsgBox,
   data() {
     return {
       width: null,
       cancelButtonTextDefault: i18n.t('public_button_cancel'),
-      confirmButtonTextDefault: i18n.t('public_button_confirm')
+      confirmButtonTextDefault: i18n.t('public_button_confirm'),
     }
   },
   computed: {
@@ -123,8 +121,8 @@ export default {
     showContentIcon() {
       let { title, message } = this
       return !title && message
-    }
-  }
+    },
+  },
 }
 </script>
 

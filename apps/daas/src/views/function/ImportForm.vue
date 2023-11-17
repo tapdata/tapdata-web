@@ -6,7 +6,7 @@
           </div> -->
       <!-- <div class="import-form__body">
             <div class="main px-6 py-4"> -->
-      <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
+      <ElForm ref="form" label-position="left" label-width="120px" :model="form" :rules="rules">
         <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
           <div class="flex align-center">
             <ElUpload
@@ -18,9 +18,7 @@
               :on-change="fileChange"
               :on-remove="fileRemove"
             >
-              <ElButton style="margin-right: 10px" size="small" type="primary">{{
-                $t('function_button_file_upload')
-              }}</ElButton>
+              <ElButton style="margin-right: 10px" type="primary">{{ $t('function_button_file_upload') }}</ElButton>
             </ElUpload>
             <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
           </div>
@@ -32,7 +30,7 @@
               class="form-input"
               :placeholder="$t('function_package_name_placeholder')"
             ></ElInput>
-            <ElButton class="btn ml-4" type="primary" size="small" :loading="loading" @click="loadFunction">
+            <ElButton class="btn ml-4" type="primary" :loading="loading" @click="loadFunction">
               <span>{{ $t('function_button_load_function') }}</span>
             </ElButton>
           </div>
@@ -68,15 +66,11 @@
                   ></ElButton>
                 </template>
                 <template v-else>
-                  <ElInput v-model:value="editName" size="small" class="mr-2"></ElInput>
-                  <ElButton size="small" @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
-                  <ElButton
-                    type="primary"
-                    size="small"
-                    :disabled="!editName || !editName.trim()"
-                    @click="changeName($index)"
-                    >{{ $t('public_button_save') }}</ElButton
-                  >
+                  <ElInput v-model:value="editName" class="mr-2"></ElInput>
+                  <ElButton @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
+                  <ElButton type="primary" :disabled="!editName || !editName.trim()" @click="changeName($index)">{{
+                    $t('public_button_save')
+                  }}</ElButton>
                 </template>
               </div>
             </template>
@@ -86,8 +80,8 @@
           <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
           <ElTableColumn width="120px" :label="$t('public_operation')">
             <template #default="{ row, $index }">
-              <ElButton size="small" text @click="openSetting(row, $index)">{{ $t('public_button_setting') }}</ElButton>
-              <ElButton size="small" text @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
+              <ElButton text @click="openSetting(row, $index)">{{ $t('public_button_setting') }}</ElButton>
+              <ElButton text @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -95,8 +89,8 @@
             </div> -->
       </div>
       <div class="footer mt-6">
-        <ElButton class="btn" size="small" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="small" @click="save">{{ $t('public_button_save') }}</ElButton>
+        <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton class="btn" type="primary" @click="save">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
 
@@ -107,7 +101,7 @@
       :close-on-click-modal="false"
       :visible="!!settingData"
     >
-      <ElForm v-if="settingData" label-position="left" label-width="120px" size="small" :model="settingData">
+      <ElForm v-if="settingData" label-position="left" label-width="120px" :model="settingData">
         <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
           <ElInput
             v-model:value="settingData.describe"
@@ -135,10 +129,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton class="btn" size="small" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton class="btn" type="primary" size="small" @click="submitSetting">{{
-            $t('public_button_confirm')
-          }}</ElButton>
+          <ElButton class="btn" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton class="btn" type="primary" @click="submitSetting">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

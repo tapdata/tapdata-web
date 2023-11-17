@@ -10,13 +10,7 @@
         > -->
     <div class="collection-box">
       <div class="table-page-operation-bar">
-        <el-button
-          v-readonlybtn="'new_model_creation'"
-          type="primary"
-          class="btn btn-create"
-          size="small"
-          @click="openCreateDialog"
-        >
+        <el-button v-readonlybtn="'new_model_creation'" type="primary" class="btn btn-create" @click="openCreateDialog">
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('metadata_details_createCollection') }}</span>
         </el-button>
@@ -30,7 +24,7 @@
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="120">
           <template v-slot="scope">
-            <el-button size="small" text style="color: #f56c6c" @click="remove(scope.row)">{{
+            <el-button text style="color: #f56c6c" @click="remove(scope.row)">{{
               $t('public_button_delete')
             }}</el-button>
           </template>
@@ -64,7 +58,6 @@
         <el-form-item :label="$t('metadata_details_collectionName')" props="name">
           <el-input
             text
-            size="small"
             v-model="createForm.name"
             :placeholder="$t('public_select_placeholder') + $t('metadata_details_collectionName')"
           ></el-input>
@@ -72,8 +65,8 @@
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="createNewModel()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

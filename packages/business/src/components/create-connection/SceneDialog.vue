@@ -1,167 +1,158 @@
 <template>
-  <div id="Feynman">
-    Feynman{{ visible }}
-    <ElDialog
-      :model-value="visible"
-      :append-to-body="true"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="!startingTour"
-      width="80%"
-      top="10vh"
-      class="connection-dialog ldp-connection-dialog flex flex-column"
-      destroy-on-close
-      @open="handleOpen"
-      @close="handleClose"
-    >
-      <template #header>
-        <div class="flex font-color-dark fs-6 fw-sub position-relative align-center">
-          <template v-if="!showForm">
-            <span>{{ title }}</span>
-            <ElInput
-              v-model:value="search"
-              class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
-              size="small"
-              clearable
-              :placeholder="$t('public_input_placeholder_search')"
-              @input="handleSearchInput"
-            >
-              <template #prefix>
-                <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-              </template>
-            </ElInput>
-          </template>
-          <template v-else>
-            <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
-            <DatabaseIcon v-if="formParams.pdkHash" class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
-            <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
-            <span>{{ formParams.name }}</span>
-          </template>
-        </div>
-      </template>
-      <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
-        <div
-          class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
-          :class="{
-            'is-en': $i18n.locale === 'en',
-          }"
-        >
-          <div class="scene-name-list overflow-y-auto">
-            <div
-              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
-              :class="{
-                active: (currentScene === item.key || currentScene === item.name) && !search,
-              }"
-              v-for="(item, i) in options"
-              :key="i"
-              @click="handleSelectScene(item)"
-            >
-              {{ item.name }}
-            </div>
-          </div>
-        </div>
-        <div ref="connectorContainer" v-loading="loading" class="flex-1 bg-light p-4 overflow-y-auto">
-          <div v-if="specialScene[currentScene]" class="connector-list grid gap-4">
-            <div
-              v-for="item in specialScene[currentScene]"
-              :key="item.key"
-              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-              @click="handleSelectSpecial(item)"
-            >
-              <div class="flex gap-3">
-                <VIcon size="38">{{ item.icon }}</VIcon>
-                <div class="connector-item-content flex-1 overflow-hidden">
-                  <div class="connector-item-title font-color-dark flex align-center">
-                    <span class="ellipsis mr-1">{{ item.name }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else-if="sceneDatabases.length" class="connector-list grid gap-4">
-            <template v-if="showDemoConnection">
-              <div
-                v-for="item in demoDatabase"
-                :key="`demo-${item.pdkId}`"
-                class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-                :class="{ active: item.pdkId === selected.pdkId }"
-                @click="handleSelect(item, true)"
-              >
-                <div class="flex gap-3">
-                  <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
-                  <div class="connector-item-content flex-1 overflow-hidden">
-                    <div class="connector-item-title font-color-dark flex align-center">
-                      <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
-                      <ElTag size="small" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
-                        >DEMO</ElTag
-                      >
-                    </div>
-                  </div>
-                </div>
-                <div class="font-color-light fs-8 mt-2">
-                  {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
-                </div>
-              </div>
+  <ElDialog
+    :model-value="visible"
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :show-close="!startingTour"
+    width="80%"
+    top="10vh"
+    class="ldp-connection-dialog flex flex-column"
+    destroy-on-close
+    @open="handleOpen"
+    @close="handleClose"
+  >
+    <template #header>
+      <div class="flex font-color-dark fs-6 fw-sub position-relative align-center">
+        <template v-if="!showForm">
+          <span>{{ title }}</span>
+          <ElInput
+            v-model:value="search"
+            class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
+            clearable
+            :placeholder="$t('public_input_placeholder_search')"
+            @input="handleSearchInput"
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
             </template>
-
+          </ElInput>
+        </template>
+        <template v-else>
+          <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
+          <DatabaseIcon v-if="formParams.pdkHash" class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+          <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
+          <span>{{ formParams.name }}</span>
+        </template>
+      </div>
+    </template>
+    <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
+      <div
+        class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
+        :class="{
+          'is-en': $i18n.locale === 'en',
+        }"
+      >
+        <div class="scene-name-list overflow-y-auto">
+          <div
+            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
+            :class="{
+              active: (currentScene === item.key || currentScene === item.name) && !search,
+            }"
+            v-for="(item, i) in options"
+            :key="i"
+            @click="handleSelectScene(item)"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+      </div>
+      <div ref="connectorContainer" v-loading="loading" class="flex-1 bg-light p-4 overflow-y-auto">
+        <div v-if="specialScene[currentScene]" class="connector-list grid gap-4">
+          <div
+            v-for="item in specialScene[currentScene]"
+            :key="item.key"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            @click="handleSelectSpecial(item)"
+          >
+            <div class="flex gap-3">
+              <VIcon size="38">{{ item.icon }}</VIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else-if="sceneDatabases.length" class="connector-list grid gap-4">
+          <template v-if="showDemoConnection">
             <div
-              v-for="item in sceneDatabases"
-              :key="item.pdkId"
+              v-for="item in demoDatabase"
+              :key="`demo-${item.pdkId}`"
               class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
               :class="{ active: item.pdkId === selected.pdkId }"
-              @click="handleSelect(item)"
+              @click="handleSelect(item, true)"
             >
               <div class="flex gap-3">
                 <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
                 <div class="connector-item-content flex-1 overflow-hidden">
                   <div class="connector-item-title font-color-dark flex align-center">
-                    <span class="ellipsis mr-1">{{ item.name }}</span>
-                    <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                    <ElTag
-                      v-else-if="item.qcType"
-                      size="small"
-                      class="text-uppercase ml-auto px-1 connector-item-tag"
-                      >{{ item.qcType }}</ElTag
-                    >
+                    <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
+                    <ElTag type="warning" class="text-uppercase ml-auto px-1 connector-item-tag">DEMO</ElTag>
                   </div>
                 </div>
               </div>
-              <div v-if="currentScene === 'recommend' && !search" class="font-color-light fs-8 mt-2">
-                {{ connectorDescMap[item.type] }}
+              <div class="font-color-light fs-8 mt-2">
+                {{ item.name }} {{ $t('packages_business_demo_database_desc') }}
               </div>
             </div>
+          </template>
+
+          <div
+            v-for="item in sceneDatabases"
+            :key="item.pdkId"
+            class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+            :class="{ active: item.pdkId === selected.pdkId }"
+            @click="handleSelect(item)"
+          >
+            <div class="flex gap-3">
+              <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
+              <div class="connector-item-content flex-1 overflow-hidden">
+                <div class="connector-item-title font-color-dark flex align-center">
+                  <span class="ellipsis mr-1">{{ item.name }}</span>
+                  <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
+                  <ElTag v-else-if="item.qcType" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                    item.qcType
+                  }}</ElTag>
+                </div>
+              </div>
+            </div>
+            <div v-if="currentScene === 'recommend' && !search" class="font-color-light fs-8 mt-2">
+              {{ connectorDescMap[item.type] }}
+            </div>
           </div>
-          <VEmpty v-else></VEmpty>
         </div>
+        <VEmpty v-else></VEmpty>
       </div>
-      <div
+    </div>
+    <div
+      v-else
+      v-loading="loading"
+      element-loading-background="#fff"
+      class="form__content flex flex-column h-100 overflow-hidden border-top"
+    >
+      <ServeForm
+        v-if="!formParams.pdkHash"
+        :params="formParams"
+        :selector-type="selectorType"
+        class="flex-fill"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
+      ></ServeForm>
+      <ConnectionForm
         v-else
-        v-loading="loading"
-        element-loading-background="#fff"
-        class="form__content flex flex-column h-100 overflow-hidden border-top"
-      >
-        <ServeForm
-          v-if="!formParams.pdkHash"
-          :params="formParams"
-          :selector-type="selectorType"
-          class="flex-fill"
-          @success="handleSuccess"
-          @saveAndMore="handleSaveAndMore"
-        ></ServeForm>
-        <ConnectionForm
-          v-else
-          ref="connectionForm"
-          :params="formParams"
-          :selector-type="selectorType"
-          :hide-connection-type="!!fixedPdkId"
-          class="flex-fill"
-          @back="init"
-          @success="handleSuccess"
-          @saveAndMore="handleSaveAndMore"
-        ></ConnectionForm>
-      </div>
-    </ElDialog>
-  </div>
+        ref="connectionForm"
+        :params="formParams"
+        :selector-type="selectorType"
+        :hide-connection-type="!!fixedPdkId"
+        class="flex-fill"
+        @back="init"
+        @success="handleSuccess"
+        @saveAndMore="handleSaveAndMore"
+      ></ConnectionForm>
+    </div>
+  </ElDialog>
 </template>
 
 <script>
@@ -565,8 +556,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-:deep(.ldp-connection-dialog) {
+<style lang="scss">
+.ldp-connection-dialog {
   margin-top: 32px !important;
   margin-bottom: 32px !important;
   height: calc(100% - 64px);
@@ -620,9 +611,6 @@ export default {
     &.is-en {
       width: 218px;
     }
-  }
-
-  .scene-name-list {
   }
 
   .scene-name-item {

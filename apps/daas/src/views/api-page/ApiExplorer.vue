@@ -51,7 +51,6 @@
         <div>
           <ElSelect
             v-model:value="without_timezone"
-            size="small"
             width="100%"
             :label="
               $t('dataExplorer_datetype_without_timezone') + '. ' + $t('dataExplorer_mysql_datetype_without_timezone')
@@ -61,20 +60,19 @@
           >
             <ElOption v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></ElOption>
           </ElSelect>
-          <ElButton v-readonlybtn="'API_data_explorer_export'" class="btn" size="small" @click="exportDialog = true">
+          <ElButton v-readonlybtn="'API_data_explorer_export'" class="btn" @click="exportDialog = true">
             <span>{{ $t('public_button_export') }}</span>
           </ElButton>
-          <ElButton class="btn" size="small" @click="showFilterDialog = true">
+          <ElButton class="btn" @click="showFilterDialog = true">
             <span>{{ $t('dataExplorer_query') }}</span>
           </ElButton>
-          <ElButton v-readonlybtn="'API_doc_&_test'" class="btn" size="small" @click="openDocument">
+          <ElButton v-readonlybtn="'API_doc_&_test'" class="btn" @click="openDocument">
             <span>{{ $t('dataExplorer_document') }}</span>
           </ElButton>
           <ElButton
             v-if="enableEdit"
             v-readonlybtn="'API_creation'"
             class="btn btn-create"
-            size="small"
             type="primary"
             @click="openCreate"
           >
@@ -107,13 +105,12 @@
                 v-model="editValue"
                 class="edit-input"
                 text
-                size="small"
               />
               <div>
-                <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" text size="small">
+                <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" text>
                   {{ $t('public_button_save') }}
                 </ElButton>
-                <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" text size="small">
+                <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" text>
                   {{ $t('public_button_cancel') }}
                 </ElButton>
               </div>
@@ -124,30 +121,18 @@
 
       <el-table-column :label="$t('public_operation')" width="220" fixed="right">
         <template v-slot="scope">
-          <ElButton v-if="downloadFileUrl" size="small" text @click="downloadFile(scope.row)">
+          <ElButton v-if="downloadFileUrl" text @click="downloadFile(scope.row)">
             {{ $t('public_button_download') }}
           </ElButton>
-          <ElButton
-            v-if="enableTag"
-            v-readonlybtn="'API_data_explorer_tagging'"
-            size="small"
-            text
-            @click="settingTag(scope.row)"
-          >
+          <ElButton v-if="enableTag" v-readonlybtn="'API_data_explorer_tagging'" text @click="settingTag(scope.row)">
             {{ $t('dataExplorer_tag_title') }}
           </ElButton>
-          <ElButton
-            v-if="enableEdit"
-            v-readonlybtn="'API_data_explorer_deleting'"
-            size="small"
-            text
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}</ElButton
-          >
+          <ElButton v-if="enableEdit" v-readonlybtn="'API_data_explorer_deleting'" text @click="remove(scope.row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
             <ElButton
               v-if="scope.row['dk_new_filename'] && scope.row['dk_orginal_filename'] && scope.row['dk_filepath']"
-              size="small"
               text
               @click="
                 downloadFileByField({
@@ -177,9 +162,9 @@
       v-model="exportDialog"
     >
       <span class="pr-5">{{ $t('public_type') }}:</span>
-      <ElButton size="small" @click="exportData('csv')">CSV</ElButton>
-      <ElButton size="small" @click="exportData('excel')">Excel</ElButton>
-      <ElButton size="small" @click="exportData('json')">JSON</ElButton>
+      <ElButton @click="exportData('csv')">CSV</ElButton>
+      <ElButton @click="exportData('excel')">Excel</ElButton>
+      <ElButton @click="exportData('json')">JSON</ElButton>
     </el-dialog>
     <!-- 查询 -->
     <BrowseQuery
@@ -209,9 +194,9 @@
       </ul>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton @click="openCreateDialog = false" size="small">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton @click="formatJson()" size="small">{{ $t('dataExplorer_format') }}</ElButton>
-          <ElButton type="primary" @click="createSave()" size="small">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton @click="openCreateDialog = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton @click="formatJson()">{{ $t('dataExplorer_format') }}</ElButton>
+          <ElButton type="primary" @click="createSave()">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </el-dialog>

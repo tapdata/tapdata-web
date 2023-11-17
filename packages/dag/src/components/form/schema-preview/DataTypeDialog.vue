@@ -64,15 +64,10 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton size="small" @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton
-          size="small"
-          type="primary"
-          :disabled="!currentData.newDataType"
-          :loading="editBtnLoading"
-          @click="submitEdit"
-          >{{ $t('public_button_confirm') }}</ElButton
-        >
+        <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </span>
     </template>
   </ElDialog>
@@ -89,7 +84,7 @@ export default {
     data: Object,
     activeNode: Object,
     fieldChangeRules: [],
-    getDataType: Function
+    getDataType: Function,
   },
 
   data() {
@@ -106,12 +101,12 @@ export default {
         errorMessage: '',
         source: {},
         canUseDataTypes: [],
-        coefficient: 1
+        coefficient: 1,
       },
       editBtnLoading: false,
       rules: [],
       modeType: 'custom',
-      originType: ''
+      originType: '',
     }
   },
 
@@ -127,13 +122,13 @@ export default {
       this.currentData.errorMessage = ''
       this.currentData.source = source
       this.currentData.canUseDataTypes = canUseDataTypes
-      const findRule = this.fieldChangeRules.find(t => t.id === this.currentData.changeRuleId)
+      const findRule = this.fieldChangeRules.find((t) => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
 
       const dataTypeCheckMultiple = await metadataInstancesApi.dataTypeCheckMultiple({
         databaseType: this.activeNode.databaseType,
-        dataType: this.currentData.dataType
+        dataType: this.currentData.dataType,
       })
 
       let modeType = 'custom'
@@ -168,7 +163,7 @@ export default {
         this.currentData
       const params = {
         databaseType: this.activeNode.databaseType,
-        dataTypes: [newDataType]
+        dataTypes: [newDataType],
       }
 
       if (this.modeType === 'coefficient') {
@@ -180,9 +175,9 @@ export default {
           f.accept = this.originType
           f.result = {
             dataType: `${this.originType}(${coefficient}n)`,
-            dataTypeTemp
+            dataTypeTemp,
           }
-          const index = this.rules.findIndex(t => t.id === ruleId)
+          const index = this.rules.findIndex((t) => t.id === ruleId)
           this.rules.splice(index, 1)
           this.rules.push(f)
         } else {
@@ -195,8 +190,8 @@ export default {
             multiple: coefficient,
             result: {
               dataType: `${this.originType}(${coefficient}n)`,
-              dataTypeTemp
-            }
+              dataTypeTemp,
+            },
           }
           ruleId = op.id
           ruleAccept = op.accept
@@ -204,7 +199,7 @@ export default {
         }
 
         this.handleUpdate()
-        this.data.fields.find(t => {
+        this.data.fields.find((t) => {
           if (t.dataTypeTemp === ruleAccept) {
             t.changeRuleId = ruleId
           }
@@ -218,7 +213,7 @@ export default {
       this.currentData.errorMessage = ''
       metadataInstancesApi
         .dataType2TapType(params)
-        .then(data => {
+        .then((data) => {
           const val = data[newDataType]
           const tapType = val && val.type !== 7 ? JSON.stringify(val) : null
           if (!tapType) {
@@ -239,7 +234,7 @@ export default {
                 batchRule.result = {
                   dataType: newDataType,
                   tapType,
-                  selectDataType
+                  selectDataType,
                 }
                 ruleId = batchRule.id
                 ruleAccept = newDataType
@@ -255,7 +250,7 @@ export default {
               f.result = { dataType: newDataType, tapType, selectDataType }
               ruleAccept = newDataType
             }
-            const index = this.rules.findIndex(t => t.id === ruleId)
+            const index = this.rules.findIndex((t) => t.id === ruleId)
             this.rules.splice(index, 1)
             this.rules.push(f)
           } else {
@@ -265,14 +260,14 @@ export default {
               namespace: useToAll ? [nodeId] : [nodeId, qualified_name, fieldName],
               type: 'DataType',
               accept: dataTypeTemp,
-              result: { dataType: newDataType, tapType, selectDataType }
+              result: { dataType: newDataType, tapType, selectDataType },
             }
             ruleId = op.id
             ruleAccept = dataTypeTemp
             this.rules.push(op)
           }
           this.handleUpdate()
-          this.data.fields.find(t => {
+          this.data.fields.find((t) => {
             if ((useToAll && t.dataTypeTemp === ruleAccept) || t.field_name === fieldName) {
               t.changeRuleId = ruleId
             }
@@ -288,15 +283,15 @@ export default {
 
     querySearch(val, cb) {
       cb(
-        this.currentData.canUseDataTypes?.map(t => {
+        this.currentData.canUseDataTypes?.map((t) => {
           return { value: t }
-        }) || []
+        }) || [],
       )
     },
 
     handleAutocomplete(item) {
       this.currentData.selectDataType = item.value
-    }
-  }
+    },
+  },
 }
 </script>

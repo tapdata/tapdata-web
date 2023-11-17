@@ -189,10 +189,8 @@ export const FieldValue = connect(
                 <div>{i18n.t('packages_form_field_value_index_varre')}</div>
               </div>
               <div slot="footer" class="dialog-footer">
-                <ElButton size="small" onClick={() => (this.scriptDialog.open = false)}>
-                  {i18n.t('public_button_cancel')}
-                </ElButton>
-                <ElButton type="primary" size="small" onClick={() => this.scriptDialog.fn()}>
+                <ElButton onClick={() => (this.scriptDialog.open = false)}>{i18n.t('public_button_cancel')}</ElButton>
+                <ElButton type="primary" onClick={() => this.scriptDialog.fn()}>
                   {i18n.t('packages_form_dataVerify_confirm')}
                 </ElButton>
               </div>

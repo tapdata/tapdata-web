@@ -7,10 +7,9 @@
           v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
-          size="small"
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" size="small" class="inline-flex ml-4" @change="searchFnc">
+        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -50,7 +49,7 @@ import { delayTrigger } from '@tap/shared'
 export default {
   components: {},
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -59,7 +58,7 @@ export default {
       keyword: '',
       logs: [],
       isScrollBottom: true,
-      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL']
+      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL'],
     }
   },
   created() {
@@ -68,8 +67,8 @@ export default {
       filter: {
         where: { 'contextMap.dataFlowId': { eq: this.id } },
         order: 'id DESC',
-        limit: 20
-      }
+        limit: 20,
+      },
     }
     this.$ws.on('logs', this.updateLogs)
     this.$ws.send(msg)
@@ -92,7 +91,7 @@ export default {
       let list = data || []
       list = data
         .reverse()
-        .filter(it => this.checkList.includes(it.level))
+        .filter((it) => this.checkList.includes(it.level))
         .map(this.formatLog)
       this.logs.push(...list)
       this.scrollToBottom()
@@ -113,17 +112,17 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            eq: this.id
-          }
+            eq: this.id,
+          },
         },
         order: `id DESC`,
-        limit: 35
+        limit: 35,
       }
       const { keyword, checkList } = this
       const len = checkList.length
       if (len > 0) {
         filter.where.level = {
-          $in: checkList
+          $in: checkList,
         }
       }
       if (keyword) {
@@ -132,14 +131,14 @@ export default {
       }
       if (!isSearch && this.logs.length) {
         filter.where.id = {
-          lt: this.logs[0].id
+          lt: this.logs[0].id,
         }
       }
       logsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           if (isSearch) {
             this.noMore = false
@@ -170,9 +169,9 @@ export default {
       let colorMap = {
         ERROR: 'color-danger',
         WARN: 'color-warning',
-        INFO: 'font-color-dark'
+        INFO: 'font-color-dark',
       }
-      let markKeyword = text => {
+      let markKeyword = (text) => {
         let keyword = this.keyword
         if (keyword) {
           let re = new RegExp(keyword, 'ig')
@@ -187,15 +186,15 @@ export default {
         threadName: markKeyword(log.threadName),
         loggerName: markKeyword(log.loggerName),
         message: markKeyword(log.message),
-        id: log.id
+        id: log.id,
       }
     },
     searchFnc(debounce) {
       delayTrigger(() => {
         this.getLogs(true)
       }, debounce)
-    }
-  }
+    },
+  },
 }
 </script>
 

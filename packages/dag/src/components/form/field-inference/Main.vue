@@ -16,7 +16,6 @@
       <div class="field-inference__nav flex flex-column">
         <ElInput
           v-model:value="searchTable"
-          size="small"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
@@ -95,7 +94,6 @@
           <ElSelect
             v-model:value="updateList"
             :disabled="navLoading"
-            size="small"
             allowCreate
             multiple
             filterable
@@ -116,12 +114,11 @@
           <ElInput
             v-model:value="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            size="small"
             suffix-icon="el-icon-search"
             clearable
             @input="handleSearchField"
           ></ElInput>
-          <ElButton size="small" plain class="btn-refresh ml-2" @click="refresh">
+          <ElButton plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
           </ElButton>
         </div>

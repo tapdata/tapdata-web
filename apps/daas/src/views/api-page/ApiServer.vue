@@ -9,13 +9,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <el-button
-            v-readonlybtn="'API_creation'"
-            type="primary"
-            class="btn btn-create"
-            size="small"
-            @click="openCreateDialog"
-          >
+          <el-button v-readonlybtn="'API_creation'" type="primary" class="btn btn-create" @click="openCreateDialog">
             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
             <span>{{ $t('api_server_create') }}</span>
           </el-button>
@@ -54,14 +48,14 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="170" fixed="right">
         <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" size="small" text @click="edit(scope.row)">
+          <el-button v-readonlybtn="'API_clients_amangement'" text @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button v-readonlybtn="'API_clients_amangement'" size="small" text @click="remove(scope.row)">{{
+          <el-button v-readonlybtn="'API_clients_amangement'" text @click="remove(scope.row)">{{
             $t('public_button_delete')
           }}</el-button>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
-            <el-button v-readonlybtn="'API_clients_amangement'" size="small" text @click="downloadConfig(scope.row)">{{
+            <el-button v-readonlybtn="'API_clients_amangement'" text @click="downloadConfig(scope.row)">{{
               $t('public_button_download')
             }}</el-button>
           </el-tooltip>
@@ -79,8 +73,8 @@
       <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createServer()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="createServer()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

@@ -65,15 +65,10 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton size="small" @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton
-          size="small"
-          type="primary"
-          :disabled="getSubmitDisabled()"
-          :loading="editBtnLoading"
-          @click="submit"
-          >{{ $t('public_button_confirm') }}</ElButton
-        >
+        <ElButton @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </span>
     </template>
   </ElDialog>

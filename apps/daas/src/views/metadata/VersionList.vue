@@ -16,7 +16,7 @@
       </ElTableColumn>
       <ElTableColumn :label="$t('public_operation')" width="80">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'data_catalog_edition'" size="small" text @click="toDetails(scope.row)">
+          <ElButton v-readonlybtn="'data_catalog_edition'" text @click="toDetails(scope.row)">
             {{ $t('metadata_details_version_compared') }}
           </ElButton>
         </template>

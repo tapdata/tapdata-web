@@ -17,14 +17,14 @@
       :rules="rulesEdit"
       class="my-n6"
     >
-      <ElFormItem size="small" :label="$t('packages_business_shared_form_edit_name')" prop="name">
+      <ElFormItem :label="$t('packages_business_shared_form_edit_name')" prop="name">
         <ElInput clearable v-model:value="editForm.name"></ElInput>
       </ElFormItem>
-      <ElFormItem size="small" :label="$t('packages_business_shared_form_setting_log_time')">
+      <ElFormItem :label="$t('packages_business_shared_form_setting_log_time')">
         <ElInputNumber v-model:value="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
         <span class="ml-2">{{ $t('public_time_d') }}</span>
       </ElFormItem>
-      <ElFormItem size="small" :label="$t('packages_business_shared_list_edit_title_start_time')">
+      <ElFormItem :label="$t('packages_business_shared_list_edit_title_start_time')">
         <div v-for="(item, index) in editForm.syncPoints" :key="index">
           <ElSelect v-model:value="item.pointType" :placeholder="$t('public_select_placeholder')">
             <ElOption v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></ElOption>
@@ -41,7 +41,7 @@
           ></ElDatePicker>
         </div>
       </ElFormItem>
-      <ElFormItem size="small" :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
+      <ElFormItem :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
         <ElSwitch v-model:value="dagForm.cdcConcurrent"></ElSwitch>
         <ElInputNumber
           v-if="dagForm.cdcConcurrent"
@@ -64,8 +64,8 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
       </span>
     </template>
   </ElDialog>

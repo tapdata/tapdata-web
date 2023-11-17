@@ -7,11 +7,10 @@
           v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
-          size="small"
           clearable
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" size="small" class="inline-flex ml-4" @change="searchFnc">
+        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -89,11 +88,11 @@ import { delayTrigger } from '@tap/shared'
 export default {
   components: {
     DynamicScroller,
-    DynamicScrollerItem
+    DynamicScrollerItem,
   },
   name: 'Normal',
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -111,15 +110,15 @@ export default {
       colorMap: {
         FATAL: 'color-red',
         ERROR: 'color-danger',
-        WARN: 'color-warning'
+        WARN: 'color-warning',
       },
       itemSize: 20,
       pageObj: {
         page: 1,
-        size: 20
+        size: 20,
       },
       isScrollBottom: false,
-      isNoMore: false
+      isNoMore: false,
     }
   },
   mounted() {
@@ -142,10 +141,10 @@ export default {
         filter: {
           where: { dataFlowId: this.id },
           order: 'id DESC',
-          limit: 20
-        }
+          limit: 20,
+        },
       }
-      this.$ws.on('logs', data => {
+      this.$ws.on('logs', (data) => {
         data && this.resetData()
       })
 
@@ -163,7 +162,7 @@ export default {
     toSolutions(code) {
       let routeUrl = this.$router.resolve({
         name: 'Solutions',
-        query: { code: code }
+        query: { code: code },
       })
       window.open(routeUrl.href)
     },
@@ -181,7 +180,7 @@ export default {
 
       if (checkList.length) {
         filter.where.level = {
-          in: checkList
+          in: checkList,
         }
       }
       return filter
@@ -192,14 +191,14 @@ export default {
       }
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       if (this.firstLogsId) {
         filter.where.id = {
-          lt: this.firstLogsId
+          lt: this.firstLogsId,
         }
       }
       this.addFilter(filter)
@@ -209,14 +208,14 @@ export default {
       // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       if (this.lastLogsId) {
         filter.where.id = {
-          gt: this.lastLogsId
+          gt: this.lastLogsId,
         }
       }
       this.addFilter(filter)
@@ -230,10 +229,10 @@ export default {
       this.preLoading = false
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       this.addFilter(filter)
 
@@ -253,7 +252,7 @@ export default {
       }
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
           items = items.reverse()
           if (!items.length) {
@@ -267,11 +266,11 @@ export default {
             return
           }
           const { keyword } = this
-          items.forEach(el => {
+          items.forEach((el) => {
             let { template, params, templateKeys } = el
             let content = template || ''
             if (templateKeys) {
-              templateKeys.forEach(t => {
+              templateKeys.forEach((t) => {
                 for (let key in params) {
                   let re = new RegExp(`{${key}}`, 'ig')
                   params[t] = params[t].replace(re, params[key])
@@ -352,12 +351,12 @@ export default {
         this.$message.success(this.$t('packages_business_customer_logs_copy_result'))
         window.open(link, '_blank')
       })
-    }
+    },
   },
   unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  }
+  },
 }
 </script>
 

@@ -17,7 +17,7 @@
         }}</el-radio>
       </ElFormItem>
       <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect v-model:value="importForm.tag" multiple size="small" class="w-75">
+        <ElSelect v-model:value="importForm.tag" multiple class="w-75">
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>
@@ -34,7 +34,7 @@
           :on-remove="handleRemove"
         >
           <template v-slot:trigger>
-            <ElLink class="align-top" type="primary" plain size="small">
+            <ElLink class="align-top" type="primary" plain>
               <VIcon class="mr-1 link-primary">upload</VIcon>
               {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
             >
@@ -44,8 +44,8 @@
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="submitUpload()" size="small">{{ $t('public_button_confirm') }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="submitUpload()">{{ $t('public_button_confirm') }}</ElButton>
       </span>
     </template>
   </ElDialog>

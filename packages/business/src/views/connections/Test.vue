@@ -81,8 +81,8 @@
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button v-if="isTimeout" size="small" @click="start()">{{ $t('public_button_retry') }}</el-button>
-        <el-button size="small" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+        <el-button v-if="isTimeout" @click="start()">{{ $t('public_button_retry') }}</el-button>
+        <el-button type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -93,21 +93,21 @@ import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
   components: {
-    VIcon
+    VIcon,
     // ElIconWarning,
     // ElIconSuccess
   },
   name: 'Test',
   props: {
     visible: {
-      value: Boolean
+      value: Boolean,
     },
     formData: {
-      value: Object
+      value: Object,
     },
     testType: {
-      value: String
-    }
+      value: String,
+    },
   },
   data() {
     return {
@@ -115,7 +115,7 @@ export default {
       testData: {
         testLogs: [],
         testResult: '',
-        progress: 0
+        progress: 0,
       },
       wsError: '',
       wsErrorMsg: '',
@@ -131,7 +131,7 @@ export default {
         ready: '#70AD47',
         invalid: '#f56c6c',
         testing: '#aaaaaa',
-        unTest: '#aaaaaa'
+        unTest: '#aaaaaa',
       },
       iconMap: {
         ready: 'success',
@@ -140,7 +140,7 @@ export default {
         passed: 'success',
         waiting: 'question-fill',
         failed: 'error',
-        unTest: ''
+        unTest: '',
       },
       statusMap: {
         ready: this.$t('packages_business_dataForm_test_success'),
@@ -149,8 +149,8 @@ export default {
         passed: this.$t('packages_business_dataForm_test_success'),
         waiting: this.$t('packages_business_dataForm_test_testing'),
         failed: this.$t('packages_business_dataForm_test_fail'),
-        unTest: this.$t('packages_business_dataForm_test_unTest')
-      }
+        unTest: this.$t('packages_business_dataForm_test_unTest'),
+      },
     }
   },
   mounted() {
@@ -170,7 +170,7 @@ export default {
     handleWS() {
       this.$ws.ready(() => {
         //接收数据
-        this.$ws.on('testConnectionResult', data => {
+        this.$ws.on('testConnectionResult', (data) => {
           this.isTimeout = false //有回调
           let result = data.result || []
           this.wsError = data.status
@@ -178,14 +178,14 @@ export default {
           clearTimeout(this.timer)
           this.timer = null
           let testData = {
-            wsError: data.status
+            wsError: data.status,
           }
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
-            let details = validate_details.filter(item => item.status !== 'waiting')
+            let details = validate_details.filter((item) => item.status !== 'waiting')
             // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
             if (details.length === 0) {
-              validate_details = validate_details.map(item => {
+              validate_details = validate_details.map((item) => {
                 item.status = 'unTest'
                 return item
               })
@@ -198,7 +198,7 @@ export default {
             testData['status'] = result.status
             this.status = result.status
           } else {
-            let logs = this.testData.testLogs.map(item => {
+            let logs = this.testData.testLogs.map((item) => {
               item.status = 'invalid'
               return item
             })
@@ -212,20 +212,20 @@ export default {
           $emit(this, 'returnTestData', testData)
         })
         //长连接失败
-        this.$ws.on('testConnection', data => {
+        this.$ws.on('testConnection', (data) => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
-            wsError: data.status
+            wsError: data.status,
           }
           $emit(this, 'returnTestData', testData)
         })
         //长连接失败
-        this.$ws.on('pipe', data => {
+        this.$ws.on('pipe', (data) => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
-            wsError: data.status
+            wsError: data.status,
           }
           $emit(this, 'returnTestData', testData)
         })
@@ -241,7 +241,7 @@ export default {
     startByConnection(connection, updateSchema, editTest) {
       let msg = {
         type: 'testConnection',
-        data: connection
+        data: connection,
       }
       if (this.testType) {
         msg.type = this.testType
@@ -269,7 +269,7 @@ export default {
           this.wsError = 'ERROR'
           this.wsErrorMsg = this.wsErrorMsg ? this.wsErrorMsg : this.$t('packages_business_dataForm_test_retryTest')
           let testData = {
-            wsError: 'ERROR'
+            wsError: 'ERROR',
           }
           $emit(this, 'returnTestData', testData)
         }, 120000)
@@ -280,9 +280,9 @@ export default {
       this.$ws.off('testConnection')
       this.testData.testLogs = []
       this.status = ''
-    }
+    },
   },
-  emits: ['update:visible', 'returnTestData']
+  emits: ['update:visible', 'returnTestData'],
 }
 </script>
 

@@ -6,8 +6,8 @@ export default defineComponent({
   props: {
     type: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
   setup(props) {
     return () => {
@@ -16,19 +16,19 @@ export default defineComponent({
       return (
         <div class="connection-type-tag-wrap d-flex flex-nowrap flex-shrink-0 align-center gap-1">
           {type.includes('source') && (
-            <el-tag class="type-source" effect="plain" size="small">
+            <el-tag class="type-source" effect="plain">
               {i18n.t('packages_business_connection_type_source')}
             </el-tag>
           )}
           {type.includes('target') && (
-            <el-tag class="type-target" effect="plain" size="small">
+            <el-tag class="type-target" effect="plain">
               {i18n.t('packages_business_connection_type_target')}
             </el-tag>
           )}
         </div>
       )
     }
-  }
+  },
 })
 </script>
 

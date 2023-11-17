@@ -11,7 +11,7 @@
     </div>
     <div class="panel-header-title">自定义节点名称</div>
     <div class="panel-header-actions text-end flex-grow-1 mr-3">
-      <ElButton size="small" type="primary"> 保存 </ElButton>
+      <ElButton type="primary"> 保存 </ElButton>
     </div>
   </div>
 </template>
@@ -21,6 +21,6 @@ import { VIcon } from '@tap/component'
 
 export default {
   name: 'PanelHeader',
-  components: { VIcon }
+  components: { VIcon },
 }
 </script>

@@ -35,7 +35,6 @@
           v-bind="inputProps"
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
-          size="small"
           :style="inputStyle"
           v-model:value="inputValue"
         ></ElInput>
@@ -51,12 +50,10 @@
         <ElButton text class="m-0 min-w-0" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
-        <ElButton class="inline-input-button" type="primary" size="small" :disabled="disabled" @click="save">{{
+        <ElButton class="inline-input-button" type="primary" :disabled="disabled" @click="save">{{
           $t('public_button_save')
         }}</ElButton>
-        <ElButton class="inline-input-button m-0" size="small" @click="cancel">{{
-          $t('public_button_cancel')
-        }}</ElButton>
+        <ElButton class="inline-input-button m-0" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
       </template>
     </span>
   </div>

@@ -32,8 +32,8 @@
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" size="small" @click="skipErrorData">{{
+        <el-button @click="dialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="skipErrorData">{{
           $t('packages_business_dataFlow_skipError_startJob')
         }}</el-button>
       </span>
@@ -54,7 +54,7 @@ export default {
       checkAll: false,
       checkedData: [],
       task: {},
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
     }
   },
   methods: {
@@ -92,7 +92,7 @@ export default {
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
-        this.checkedData.forEach(item => {
+        this.checkedData.forEach((item) => {
           data.push(this.errorEvents[item])
         })
         this.checkedData = data
@@ -101,9 +101,9 @@ export default {
       }
       $emit(this, 'skip', this.task.id, this.checkedData)
       this.dialogVisible = false
-    }
+    },
   },
-  emits: ['skip']
+  emits: ['skip'],
 }
 </script>
 

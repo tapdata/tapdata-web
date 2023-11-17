@@ -86,7 +86,7 @@
                   jointField:
                     $t('packages_business_verification_jointFieldTip') +
                     this.$t('packages_dag_components_node_zanbuzhichi') +
-                    notSupport['jointField'].join()
+                    notSupport['jointField'].join(),
                 }[form.inspectMethod]
               }}</span>
             </div>
@@ -283,7 +283,6 @@
                   <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
                   <ElInput
                     class="item-input"
-                    size="small"
                     v-model:value="form.cdcDuration"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
@@ -299,7 +298,6 @@
                   }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="small"
                     v-model:value="form.cdcBeginDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
@@ -312,7 +310,6 @@
                   <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="small"
                     v-model:value="form.cdcEndDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
@@ -356,13 +353,11 @@
       </div>
       <div v-if="!!errorMessageLevel" class="color-danger mt-2" v-html="jointErrorMessage"></div>
       <div class="mt-4">
-        <ElButton size="small" @click="goBack()">{{ $t('public_button_back') }}</ElButton>
-        <!--        <ElButton type="primary" size="small" @click="save()">{{-->
+        <ElButton @click="goBack()">{{ $t('public_button_back') }}</ElButton>
+        <!--        <ElButton type="primary"  @click="save()">{{-->
         <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
         <!--        }}-->
-        <ElButton type="primary" size="small" :disabled="saveDisabled" @click="save(true)">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton type="primary" :disabled="saveDisabled" @click="save(true)">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
   </section>
@@ -382,7 +377,7 @@ const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
   components: {
-    ConditionBox
+    ConditionBox,
   },
   data() {
     let self = this
@@ -416,10 +411,10 @@ export default {
           intervals: 24 * 60,
           intervalsUnit: 'minute',
           start: Time.now(),
-          end: Time.now() + 24 * 60 * 60 * 1000
+          end: Time.now() + 24 * 60 * 60 * 1000,
         },
         limit: {
-          keep: 100
+          keep: 100,
         },
         enabled: true,
         tasks: [],
@@ -431,7 +426,7 @@ export default {
             type: 'INSPECT',
             key: 'INSPECT_TASK_ERROR',
             notify: ['SYSTEM', 'EMAIL'],
-            open: true
+            open: true,
           },
           {
             type: 'INSPECT',
@@ -439,8 +434,8 @@ export default {
             notify: ['SYSTEM', 'EMAIL'],
             open: true,
             params: {
-              maxDifferentialRows: 0
-            }
+              maxDifferentialRows: 0,
+            },
           },
           {
             type: 'INSPECT',
@@ -448,39 +443,39 @@ export default {
             notify: ['SYSTEM', 'EMAIL'],
             open: true,
             params: {
-              maxDifferentialValues: 0
-            }
-          }
-        ]
+              maxDifferentialValues: 0,
+            },
+          },
+        ],
       },
       rules: {
         flowId: [
           {
-            validator: requiredValidator(this.$t('packages_business_verification_tasksDataFlow'))
-          }
+            validator: requiredValidator(this.$t('packages_business_verification_tasksDataFlow')),
+          },
         ],
         name: [
           {
-            validator: requiredValidator(this.$t('packages_business_verification_tasksJobName'))
-          }
+            validator: requiredValidator(this.$t('packages_business_verification_tasksJobName')),
+          },
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('packages_business_verification_tasksTime'), checkMode)
-          }
+            validator: requiredValidator(this.$t('packages_business_verification_tasksTime'), checkMode),
+          },
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('packages_business_verification_tasksVerifyInterval'), checkMode)
-          }
+            validator: requiredValidator(this.$t('packages_business_verification_tasksVerifyInterval'), checkMode),
+          },
         ],
         cdcBeginDate: [
           {
             validator: requiredValidator(i18n.t('packages_business_verification_form_qingshurukaishi'), () => {
               return self.form.inspectMethod === 'cdcCount'
-            })
-          }
-        ]
+            }),
+          },
+        ],
       },
       edges: [],
       allStages: [],
@@ -488,22 +483,22 @@ export default {
       notSupport: {
         row_count: ['Clickhouse', 'Kafka'],
         field: ['Kafka'],
-        jointField: ['Kafka']
+        jointField: ['Kafka'],
       },
       inspectMethodMap: {
         row_count: i18n.t('packages_business_verification_row_verify'),
         field: i18n.t('packages_business_verification_content_verify'),
-        jointField: i18n.t('packages_business_verification_joint_verify')
+        jointField: i18n.t('packages_business_verification_joint_verify'),
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
-      autoAddTableLoading: false
+      autoAddTableLoading: false,
     }
   },
   computed: {
     saveDisabled() {
       return this.errorMessageLevel === 'error' || this.autoAddTableLoading || this.loading
-    }
+    },
   },
   created() {
     // 设置form.taskMode
@@ -521,8 +516,8 @@ export default {
       let id = this.$route.params.id
       let where = {
         status: {
-          inq: ['running', 'stop', 'complete']
-        }
+          inq: ['running', 'stop', 'complete'],
+        },
       }
       taskApi
         .get({
@@ -531,17 +526,17 @@ export default {
             fields: {
               id: true,
               name: true,
-              status: true
+              status: true,
             },
             order: 'createTime DESC',
             limit: 999,
-            skip: 0
-          })
+            skip: 0,
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           this.flowOptions = list
-          let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+          let flow = this.flowOptions.find((item) => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
           if (id) {
@@ -560,18 +555,18 @@ export default {
         .findOne({
           filter: JSON.stringify({
             where: {
-              id: id
-            }
-          })
+              id: id,
+            },
+          }),
         })
         .then(async (data = {}) => {
           if (data) {
             // 加载数据源的Capabilities
             const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
-              ...data.tasks.map(t => t.source.connectionId),
-              ...data.tasks.map(t => t.target.connectionId)
+              ...data.tasks.map((t) => t.source.connectionId),
+              ...data.tasks.map((t) => t.target.connectionId),
             ])
-            data.tasks = data.tasks.map(t => {
+            data.tasks = data.tasks.map((t) => {
               t.source = Object.assign({}, TABLE_PARAMS, t.source)
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
               t.source.capabilities = capabilitiesMap[t.source.connectionId]
@@ -590,8 +585,8 @@ export default {
             data.taskMode = data.flowId ? 'pipeline' : 'random'
             // 历史数据，默认不打开；新数据默认打开
             const { alarmSettings = [] } = data
-            data.alarmSettings = this.form.alarmSettings.map(t => {
-              const f = alarmSettings.find(item => item.key === t.key)
+            data.alarmSettings = this.form.alarmSettings.map((t) => {
+              const f = alarmSettings.find((item) => item.key === t.key)
               if (f) return Object.assign(t, f)
               t.notify = []
               t.open = false
@@ -610,25 +605,25 @@ export default {
       this.loading = true
       taskApi
         .getId(this.form.flowId)
-        .then(data => {
+        .then((data) => {
           this.isDbClone = data.syncType === 'migrate'
           let edges = data.dag?.edges || []
           let nodes = data.dag?.nodes || []
-          const findOne = this.flowOptions.find(t => t.id === data.id)
+          const findOne = this.flowOptions.find((t) => t.id === data.id)
           if (!findOne) {
             this.flowOptions.unshift({
               id: data.id,
-              name: data.name
+              name: data.name,
             })
           }
           if (!edges.length) {
             return { items: [], total: 0 }
           }
           let stages = []
-          nodes.forEach(n => {
+          nodes.forEach((n) => {
             let outputLanes = []
             let inputLanes = []
-            edges.forEach(e => {
+            edges.forEach((e) => {
               if (e.source === n.id) {
                 outputLanes.push(e.target)
               }
@@ -639,8 +634,8 @@ export default {
             stages.push(
               Object.assign({}, n, {
                 outputLanes,
-                inputLanes
-              })
+                inputLanes,
+              }),
             )
           })
 
@@ -674,9 +669,9 @@ export default {
         this.$t('packages_business_verification_backConfirmMessage'),
         this.$t('packages_business_verification_backConfirmTitle'),
         {
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -684,11 +679,11 @@ export default {
       })
     },
     save(saveOnly = false) {
-      this.$refs.baseForm.validate(async valid => {
+      this.$refs.baseForm.validate(async (valid) => {
         if (valid) {
           let tasks = this.$refs.conditionBox.getList()
           // 自动过滤出完整数据，以及索引字段数量不相等的情况
-          tasks = tasks.filter(t => {
+          tasks = tasks.filter((t) => {
             if (this.form.inspectMethod === 'row_count') {
               return t.source.table && t.target.table
             }
@@ -700,7 +695,7 @@ export default {
           // 检查校验类型是否支持
           const notSupportList = this.notSupport[this.form.inspectMethod]
           let notSupportStr = ''
-          tasks.forEach(t => {
+          tasks.forEach((t) => {
             if (notSupportList.includes(t.source.databaseType)) {
               notSupportStr = t.source.databaseType
             }
@@ -714,7 +709,7 @@ export default {
               this.inspectMethodMap[this.form.inspectMethod] +
                 ', ' +
                 this.$t('packages_dag_components_node_zanbuzhichi') +
-                notSupportStr
+                notSupportStr,
             )
 
           if (!tasks.length) {
@@ -726,11 +721,11 @@ export default {
           }
 
           if (this.form.inspectMethod === 'jointField') {
-            tasks.forEach(item => {
+            tasks.forEach((item) => {
               item['fullMatch'] = false
             })
           } else {
-            tasks.forEach(item => {
+            tasks.forEach((item) => {
               item['fullMatch'] = true
             })
           }
@@ -743,7 +738,7 @@ export default {
             this.form.inspectMethod === 'row_count'
               ? ['INSPECT_TASK_ERROR', 'INSPECT_COUNT_ERROR']
               : ['INSPECT_TASK_ERROR', 'INSPECT_VALUE_ERROR']
-          const alarmSettings = this.form.alarmSettings.filter(t => alarmSettingsKeys.includes(t.key))
+          const alarmSettings = this.form.alarmSettings.filter((t) => alarmSettingsKeys.includes(t.key))
 
           inspectApi[this.form.id ? 'patch' : 'post'](
             Object.assign({}, this.form, {
@@ -767,17 +762,17 @@ export default {
                     showAdvancedVerification,
                     script,
                     webScript,
-                    jsEngineName
+                    jsEngineName,
                   }
-                }
+                },
               ),
               platformInfo: {
-                agentType: 'private'
+                agentType: 'private',
               },
               byFirstCheckId: '',
               browserTimezoneOffset: new Date().getTimezoneOffset(),
-              alarmSettings
-            })
+              alarmSettings,
+            }),
           ).then(() => {
             this.$message.success(this.$t('public_message_save_ok'))
             this.$router.back() // back 保留上个路由的参数
@@ -813,11 +808,11 @@ export default {
     setVerifyName() {
       // 任务模式
       if (this.form.taskMode === 'pipeline') {
-        let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
+        let flow = this.flowOptions.find((item) => item.id === this.form.flowId) || {}
         this.form.name = (flow.name || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -8,9 +8,9 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="small" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
-        <ElButton size="small" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
-        <ElButton size="small" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton type="primary" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
+        <ElButton @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
+        <ElButton v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
@@ -142,7 +142,7 @@ export default {
       loading: false,
       searchParams: {
         search: '',
-        msg: ''
+        msg: '',
       },
 
       currentPage: 1,
@@ -151,7 +151,7 @@ export default {
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
-        INFO: '#2c65ff'
+        INFO: '#2c65ff',
       },
       systemMap: {
         sync: this.$t('notify_sync'),
@@ -160,74 +160,74 @@ export default {
         agent: this.$t('notify_manage_sever'),
         inspect: this.$t('notify_inspect'),
         JobDDL: this.$t('notify_ddl_deal'),
-        system: this.$t('notify_system')
+        system: this.$t('notify_system'),
       },
       options: [
         {
           value: 'ERROR',
-          label: 'ERROR'
+          label: 'ERROR',
         },
         {
           value: 'WARN',
-          label: 'WARN'
+          label: 'WARN',
         },
         {
           value: 'INFO',
-          label: 'INFO'
-        }
+          label: 'INFO',
+        },
       ],
       msgOptions: [
         {
           value: 'deleted',
-          label: this.$t('notification_jobDeleted')
+          label: this.$t('notification_jobDeleted'),
         },
         {
           value: 'paused',
-          label: this.$t('notification_jobPaused')
+          label: this.$t('notification_jobPaused'),
         },
         {
           value: 'stoppedByError',
-          label: this.$t('notification_stoppedByError')
+          label: this.$t('notification_stoppedByError'),
         },
         {
           value: 'jobStateError',
-          label: this.$t('notification_jobStateError')
+          label: this.$t('notification_jobStateError'),
         },
         {
           value: 'jobEncounterError',
-          label: this.$t('notification_jobEncounterError')
+          label: this.$t('notification_jobEncounterError'),
         },
         {
           value: 'CDCLag',
-          label: this.$t('notification_CDCLag')
+          label: this.$t('notification_CDCLag'),
         },
         {
           value: 'JobDDL',
-          label: this.$t('notification_DDL')
+          label: this.$t('notification_DDL'),
         },
         {
           value: 'connectionInterrupted',
-          label: this.$t('notification_serverDisconnected')
+          label: this.$t('notification_serverDisconnected'),
         },
         {
           value: 'manageSeverStartedSuccessfully',
-          label: this.$t('notification_agentStarted')
+          label: this.$t('notification_agentStarted'),
         },
         {
           value: 'manageSeverStoppedSuccessfully',
-          label: this.$t('notification_agentStopped')
+          label: this.$t('notification_agentStopped'),
         },
         {
           value: 'newSeverCreatedSuccessfully',
-          label: this.$t('notification_agentCreated')
+          label: this.$t('notification_agentCreated'),
         },
         {
           value: 'newSeverDeletedSuccessfully',
-          label: this.$t('notification_agentDeleted')
-        }
+          label: this.$t('notification_agentDeleted'),
+        },
       ],
       typeMap: TYPEMAP,
-      count: ''
+      count: '',
     }
   },
   created() {
@@ -257,18 +257,18 @@ export default {
         where,
         order: 'createTime DESC',
         limit: this.pagesize,
-        skip: (this.currentPage - 1) * this.pagesize
+        skip: (this.currentPage - 1) * this.pagesize,
       }
 
       this.loading = true
       notificationApi
         .get({ filter: JSON.stringify(filter) })
-        .then(data => {
+        .then((data) => {
           this.listData = data?.items || []
           this.total = data?.total || 0
           //格式化日期
           if (this.listData && this.listData.length > 0) {
-            this.listData.map(item => {
+            this.listData.map((item) => {
               item['createTime'] = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
             })
           }
@@ -299,7 +299,7 @@ export default {
       }
       notificationApi
         .count({ where: JSON.stringify(where) })
-        .then(data => {
+        .then((data) => {
           this.total = data?.count
         })
         .finally(() => {
@@ -313,7 +313,7 @@ export default {
           this.read = read
           $emit(this.$root, 'notificationUpdate')
           let msg = {
-            type: 'notification'
+            type: 'notification',
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
@@ -324,16 +324,16 @@ export default {
     // 标记本页已读
     handlePageRead() {
       let ids = []
-      this.listData.map(item => {
+      this.listData.map((item) => {
         ids.push(item.id)
       })
       let id = {
-        inq: ids
+        inq: ids,
       }
 
       let data = {
         read: true,
-        id
+        id,
       }
       let read = this.read
       notificationApi.pageRead(data).then(() => {
@@ -342,7 +342,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -364,7 +364,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -386,8 +386,8 @@ export default {
           this.$router.push({
             name: 'MigrateEditor',
             params: {
-              id: item.sourceId
-            }
+              id: item.sourceId,
+            },
           })
           break
         case 'sync':
@@ -396,13 +396,13 @@ export default {
             query: {
               id: item.sourceId,
               isMoniting: true,
-              mapping: item.mappingTemplate
-            }
+              mapping: item.mappingTemplate,
+            },
           })
           break
         case 'agent':
           this.$router.push({
-            name: 'clusterManagement'
+            name: 'clusterManagement',
           })
           break
       }
@@ -414,18 +414,18 @@ export default {
           key: 'search',
           type: 'select-inner',
           items: this.options,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('notify_notice_type'),
           key: 'msg',
           type: 'select-inner',
-          items: this.msgOptions
-        }
+          items: this.msgOptions,
+        },
       ]
-    }
+    },
   },
-  emits: ['notificationUpdate']
+  emits: ['notificationUpdate'],
 }
 </script>
 

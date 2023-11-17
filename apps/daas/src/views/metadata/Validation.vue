@@ -1,7 +1,7 @@
 <template>
   <section class="validation-list-wrap">
     <div class="table-page-operation-bar">
-      <el-button type="primary" size="small" class="btn btn-create" @click="openCreateDialog">
+      <el-button type="primary" class="btn btn-create" @click="openCreateDialog">
         <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
         <span>{{ $t('metadata_details_validation_create') }}</span>
       </el-button>
@@ -19,9 +19,7 @@
       <el-table-column :label="$t('public_operation')" width="120">
         <template v-slot="scope">
           <!-- v-if="scope.row.name !== '_id_' && scope.row.status === 'created'" -->
-          <el-button size="small" text style="color: #f56c6c" @click="remove(scope.row)">{{
-            $t('public_button_delete')
-          }}</el-button>
+          <el-button text style="color: #f56c6c" @click="remove(scope.row)">{{ $t('public_button_delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -39,7 +37,6 @@
         <el-form-item :label="$t('metadata_details_validation_field_name')">
           <el-select
             v-model="createForm.field_name"
-            size="small"
             filterable
             allow-create
             default-first-option
@@ -51,7 +48,6 @@
         <el-form-item :label="$t('metadata_details_validation_ruleTem')">
           <el-select
             v-model="createForm.rule_def"
-            size="small"
             filterable
             default-first-option
             clearable
@@ -78,7 +74,6 @@
                   <el-select
                     v-model="createForm.ruleType"
                     clearable
-                    size="small"
                     :placeholder="$t('public_select_placeholder') + $t('dataRule_classification')"
                   >
                     <el-option
@@ -117,7 +112,6 @@
                   >
                     <el-select
                       v-model="createForm.rule.dataType"
-                      size="small"
                       :placeholder="$t('public_select_placeholder') + $t('dataRule_classification')"
                     >
                       <el-option
@@ -142,7 +136,6 @@
                   >
                     <el-input
                       v-model="createForm.rule.dataRegex"
-                      size="small"
                       :placeholder="$t('public_input_placeholder') + $t('dataRule_data_Regex')"
                     ></el-input>
                   </el-form-item>
@@ -160,7 +153,6 @@
                   >
                     <el-input
                       v-model="createForm.rule.enumData"
-                      size="small"
                       :placeholder="$t('public_input_placeholder') + $t('dataRule_data_Enum')"
                     ></el-input>
                   </el-form-item>
@@ -178,7 +170,6 @@
                   >
                     <el-select
                       v-model="createForm.rule.gt"
-                      size="small"
                       :placeholder="$t('public_select_placeholder') + $t('dataRule_greater_that')"
                     >
                       <el-option label=">" value="gt"></el-option>
@@ -192,7 +183,6 @@
                   <el-form-item prop="rule.gtData" :rules="gtDataRules">
                     <el-input
                       v-model.number="createForm.rule.gtData"
-                      size="small"
                       :placeholder="$t('dataRule_pleaseNum')"
                     ></el-input>
                   </el-form-item>
@@ -209,7 +199,6 @@
                   >
                     <el-select
                       v-model="createForm.rule.lt"
-                      size="small"
                       :placeholder="$t('public_select_placeholder') + $t('dataRule_less_that')"
                     >
                       <el-option label="<" value="lt"></el-option>
@@ -223,7 +212,6 @@
                   <el-form-item prop="rule.ltData" :rules="ltDataRules">
                     <el-input
                       v-model.number="createForm.rule.ltData"
-                      size="small"
                       :placeholder="$t('dataRule_pleaseNum')"
                     ></el-input>
                   </el-form-item>
@@ -236,8 +224,8 @@
       <!-- 数据验证弹窗表单 end -->
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button @click="createDialogVisible = false" size="small">{{ $t('public_button_cancel') }}</el-button>
-          <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button @click="createDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="createNewModel()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

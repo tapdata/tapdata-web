@@ -3,7 +3,7 @@
     <TablePage ref="table" row-key="id" class="metadata-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:operation>
         <div>
-          <el-button class="btn btn-create" size="small" @click="handleQuery">
+          <el-button class="btn btn-create" @click="handleQuery">
             <span>{{ $t('metadata_details_query') }}</span>
           </el-button>
         </div>
@@ -44,11 +44,11 @@ export default {
   props: {
     validaData: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    TablePage
+    TablePage,
   },
   data() {
     return {
@@ -57,14 +57,14 @@ export default {
       createDialogVisible: false,
       pageSize: 20,
       pageCurrent: 1,
-      pageTotal: 0
+      pageTotal: 0,
     }
   },
   mounted() {},
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   methods: {
     // 查询
@@ -98,21 +98,21 @@ export default {
       let where = {
         id: this.validaData.id,
         limit: size,
-        skip: (current - 1) * size
+        skip: (current - 1) * size,
       }
-      return previewDataApi.post(where).then(data => {
+      return previewDataApi.post(where).then((data) => {
         this.tableHeader = data?.head
         return {
           total: data?.total,
-          data: data?.items
+          data: data?.items,
         }
       })
     },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    }
-  }
+    },
+  },
 }
 </script>
 

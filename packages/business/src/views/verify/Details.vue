@@ -8,7 +8,6 @@
             v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
-            size="small"
             clearable
             style="width: 240px"
             @input="searchFnc(800)"
@@ -30,7 +29,6 @@
             </el-tooltip>
             <ElButton
               type="primary"
-              size="small"
               :disabled="!selection.length || verifyLoading"
               :loading="verifyLoading || isChecking"
               @click="handleAgainCheck"
@@ -47,7 +45,7 @@
           :remoteMethod="remoteMethod"
           :columns="columns"
           :pageOptions="{
-            layout: 'total, prev, pager, next, sizes'
+            layout: 'total, prev, pager, next, sizes',
           }"
           ref="table"
           class="table-list"
@@ -195,29 +193,29 @@ export default {
       columns: [
         {
           type: 'selection',
-          reserveSelection: true
+          reserveSelection: true,
         },
         {
           label: i18n.t('packages_business_verification_details_yuanbiaoming'),
-          prop: 'originalTableName'
+          prop: 'originalTableName',
         },
         {
           label: i18n.t('packages_business_verification_details_mubiaobiaoming'),
           prop: 'targetTableName',
-          default: '-'
+          default: '-',
         },
         {
           label: i18n.t('packages_business_verification_details_yichangshuju'),
           prop: 'counts',
-          slotName: 'counts'
-        }
+          slotName: 'counts',
+        },
       ],
       showType: 'diff',
       resultList: [],
       page: {
         current: 1,
         size: 20,
-        total: 0
+        total: 0,
       },
       showAdvancedVerification: false,
       row: null,
@@ -225,21 +223,21 @@ export default {
       detailSvg: require('@tap/assets/images/detail-info.svg'),
       timeout: null,
       verifyLoading: false,
-      checkProgress: ''
+      checkProgress: '',
     }
   },
 
   computed: {
     isChecking() {
       return ['Scheduling', 'Running'].includes(this.checkProgress?.status)
-    }
+    },
   },
 
   mounted() {
     this.init()
     //轮询结果
     this.timeout = setInterval(() => {
-      this.getCheckingStatus(flag => {
+      this.getCheckingStatus((flag) => {
         if (!flag) {
           this.$refs.table.fetch?.(null, 0, true)
         }
@@ -264,9 +262,9 @@ export default {
     //再次校验
     handleAgainCheck() {
       if (this.selection?.length === 0) return
-      let tables = this.selection.map(row => row.originalTableName)
+      let tables = this.selection.map((row) => row.originalTableName)
       let params = {
-        tables: tables
+        tables: tables,
       }
       taskApi.autoInspectAgain(this.$route.params.id, params).then(() => {
         this.verifyLoading = true // 发起再次校验后 不能再校验
@@ -279,27 +277,27 @@ export default {
         id: this.$route.params.id,
         limit: size,
         skip: size * (current - 1),
-        filter: this.keyword
+        filter: this.keyword,
       }
-      return taskApi.autoInspectResultsGroupByTable(filter).then(data => {
+      return taskApi.autoInspectResultsGroupByTable(filter).then((data) => {
         const list =
-          data.items?.map(t => {
+          data.items?.map((t) => {
             t.counts = t.counts.toLocaleString()
             return t
           }) || []
-        if (!this.row || !list.find(t => JSON.stringify(this.row) === JSON.stringify(t))) {
+        if (!this.row || !list.find((t) => JSON.stringify(this.row) === JSON.stringify(t))) {
           this.handleRow(list[0])
         }
         //是否可以再次校验
         if (list?.length > 0) {
-          let check = list.filter(row => row?.toBeCompared > 0) || []
+          let check = list.filter((row) => row?.toBeCompared > 0) || []
           this.verifyLoading = check?.length > 0
         }
         //是否校验异常
         this.checkProgress = data?.progress || ''
         return {
           total: data.total,
-          data: list
+          data: list,
         }
       })
     },
@@ -320,33 +318,33 @@ export default {
       const { originalTableName } = this.row || {}
       let filter = {
         where: {
-          originalTableName
+          originalTableName,
         },
         limit: size,
-        skip: size * (current - 1)
+        skip: size * (current - 1),
       }
       this.detailLoading = true
       const startStamp = Time.now()
       taskApi
         .autoInspectResults(this.$route.params.id, {
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let result = []
           let items = data.items || []
           this.page.total = data.total || 0
-          items.forEach(el => {
+          items.forEach((el) => {
             const { sourceData = {}, targetData = {}, originalKeymap } = el
             let obj = {
               id: el.id,
               originalKeymap,
               sourceData: [],
-              targetData: []
+              targetData: [],
             }
             const notPrimaryKeyFields = uniq([
               ...Object.keys(sourceData || {}),
-              ...Object.keys(targetData || {})
-            ]).filter(t => !Object.keys(originalKeymap).includes(t))
+              ...Object.keys(targetData || {}),
+            ]).filter((t) => !Object.keys(originalKeymap).includes(t))
             for (let i = 0; i < notPrimaryKeyFields.length; i++) {
               const key = notPrimaryKeyFields[i]
               const sVal = sourceData?.[key]
@@ -358,12 +356,12 @@ export default {
               obj.sourceData.push({
                 label: key,
                 value: sVal,
-                isDiff
+                isDiff,
               })
               obj.targetData.push({
                 label: key,
                 value: tVal,
-                isDiff
+                isDiff,
               })
             }
             result.push(obj)
@@ -375,7 +373,7 @@ export default {
             () => {
               this.detailLoading = false
             },
-            Time.now() - startStamp < 1000 ? 1500 : 0
+            Time.now() - startStamp < 1000 ? 1500 : 0,
           )
         })
     },
@@ -385,14 +383,14 @@ export default {
         id: this.$route.params.id,
         limit: 1,
         skip: 0,
-        filter: this.keyword
+        filter: this.keyword,
       }
-      taskApi.autoInspectResultsGroupByTable(filter).then(data => {
+      taskApi.autoInspectResultsGroupByTable(filter).then((data) => {
         this.checkProgress = data?.progress
         callback?.(['Scheduling', 'Running'].includes(this.checkProgress?.status))
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

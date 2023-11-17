@@ -16,7 +16,7 @@
     >
       <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
       <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-      <ElTag v-if="showType" class="ml-2" effect="plain" size="small">{{ typeMap[node.nodeType] }}</ElTag>
+      <ElTag v-if="showType" class="ml-2" effect="plain">{{ typeMap[node.nodeType] }}</ElTag>
       <slot name="right"></slot>
     </div>
   </div>
@@ -34,22 +34,22 @@ export default {
   components: { NodeIcon, OverflowTooltip },
   props: {
     value: {
-      type: String
+      type: String,
     },
     label: {
       type: String,
       default: () => {
         return i18n.t('public_select_option_all')
-      }
+      },
     },
     showType: {
       type: Boolean,
-      default: false
+      default: false,
     },
     customClass: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -57,24 +57,24 @@ export default {
       typeMap: {
         source: i18n.t('packages_business_nodes_list_laiyuan'),
         target: i18n.t('public_connection_type_target'),
-        processor: i18n.t('public_node_processor')
-      }
+        processor: i18n.t('public_node_processor'),
+      },
     }
   },
   watch: {
     value(v) {
       this.activeNodeId = v
-    }
+    },
   },
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     items() {
       return this.allNodes
-        .filter(node => {
+        .filter((node) => {
           return !node.disabled && !node.attrs.disabled
         })
-        .map(t => {
+        .map((t) => {
           const { type, $inputs, $outputs } = t
           const isSource = (type === 'database' || type === 'table') && !$inputs.length
           const isTarget = (type === 'database' || type === 'table') && !$outputs.length
@@ -83,7 +83,7 @@ export default {
           return t
         })
         .sort((a, b) => a.index - b.index)
-    }
+    },
   },
   methods: {
     changeItem(itemId = '') {
@@ -95,11 +95,11 @@ export default {
         this.$emit('update:value', this.activeNodeId),
         'change',
         this.activeNodeId,
-        this.items.find(t => t.id === this.activeNodeId)
+        this.items.find((t) => t.id === this.activeNodeId),
       )
-    }
+    },
   },
-  emits: ['change', 'update:value']
+  emits: ['change', 'update:value'],
 }
 </script>
 

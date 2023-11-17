@@ -21,12 +21,11 @@
             v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-            size="small"
             clearable
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" text size="small" class="ml-4" @click="handleDownload">{{
+          <ElButton :loading="downloadLoading" text class="ml-4" @click="handleDownload">{{
             $t('public_button_download')
           }}</ElButton>
           <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
@@ -42,14 +41,7 @@
         </div>
       </div>
       <div class="level-line mb-2">
-        <ElCheckboxGroup
-          v-model:value="checkList"
-          :disabled="loading"
-          :min="1"
-          size="small"
-          class="inline-flex"
-          @change="searchFnc"
-        >
+        <ElCheckboxGroup v-model:value="checkList" :disabled="loading" :min="1" class="inline-flex" @change="searchFnc">
           <ElCheckbox
             v-for="item in checkItems"
             :label="item.label"
@@ -162,8 +154,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="small" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :disabled="saveLoading" size="small" type="primary" @click="handleSave">{{
+          <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :disabled="saveLoading" type="primary" @click="handleSave">{{
             $t('public_button_confirm')
           }}</ElButton>
         </span>
@@ -203,7 +195,7 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <ElButton type="primary" size="small">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+            <ElButton type="primary">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
           </span>
         </ElTooltip>
       </div>

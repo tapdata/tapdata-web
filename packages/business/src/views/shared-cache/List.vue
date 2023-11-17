@@ -17,7 +17,6 @@
               v-show="multipleSelection.length > 0 && isDaas"
               :disabled="$disabledReadonlyUserBtn()"
               v-readonlybtn="'SYNC_job_export'"
-              size="small"
               class="btn message-button-cancel"
               @click="handleExport"
             >
@@ -26,7 +25,6 @@
             <el-button
               v-if="isDaas"
               v-readonlybtn="'SYNC_job_import'"
-              size="small"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
@@ -34,7 +32,7 @@
               <span> {{ $t('packages_business_button_bulk_import') }}</span>
             </el-button>
           </template>
-          <ElButton class="btn btn-create" type="primary" size="small" @click="create">
+          <ElButton class="btn btn-create" type="primary" @click="create">
             <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
           </ElButton>
         </div>
@@ -44,7 +42,7 @@
         type="selection"
         width="45"
         align="center"
-        :selectable="row => !row.hasChildren"
+        :selectable="(row) => !row.hasChildren"
       >
       </el-table-column>
       <ElTableColumn show-overflow-tooltip prop="name" :label="$t('packages_business_shared_cache_name')">
@@ -181,36 +179,36 @@ export default {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
-        connectionName: ''
+        connectionName: '',
       },
       filterItems: [
         {
           placeholder: this.$t('packages_business_shared_cache_placeholder_task_name'),
           key: 'name',
-          type: 'input'
+          type: 'input',
         },
         {
           placeholder: this.$t('packages_business_shared_cache_placeholder_connection_name'),
           key: 'connectionName',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       order: 'cacheTimeAt DESC',
       taskBuried: {
-        start: 'sharedMiningStart'
+        start: 'sharedMiningStart',
       },
-      multipleSelection: []
+      multipleSelection: [],
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   mounted() {
     //定时轮询
@@ -218,7 +216,7 @@ export default {
       this.table.fetch(null, 0, true)
     }, 8000)
     this.searchParams = Object.assign(this.searchParams, {
-      name: this.$route.query?.keyword || ''
+      name: this.$route.query?.keyword || '',
     })
   },
   unmounted() {
@@ -233,35 +231,35 @@ export default {
       connectionName &&
         (where.connectionName = {
           like: escapeRegExp(connectionName),
-          options: 'i'
+          options: 'i',
         })
 
       let filter = {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return sharedCacheApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
+            data: list.map((item) => {
               item.createTimeFmt = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'
 
               makeStatusAndDisabled(item)
               return item
-            })
+            }),
           }
         })
     },
     create() {
       this.handleEditor({
-        id: ''
+        id: '',
       })
     },
     checkDetails(row) {
@@ -269,8 +267,8 @@ export default {
     },
     del(row = {}) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(flag => {
+        type: 'warning',
+      }).then((flag) => {
         if (flag) {
           sharedCacheApi.delete(row.id).then(() => {
             this.$message.success(this.$t('public_message_delete_ok'))
@@ -298,13 +296,13 @@ export default {
       this.buried(this.taskBuried.start)
       let filter = {
         where: {
-          id: ids[0]
-        }
+          id: ids[0],
+        },
       }
       taskApi.get({ filter: JSON.stringify(filter) }).then(() => {
         taskApi
           .batchStart(ids)
-          .then(data => {
+          .then((data) => {
             this.buried(this.taskBuried.start, '', { result: true })
             this.$message.success(data?.message || this.$t('public_message_operation_success'))
             this.table.fetch()
@@ -320,12 +318,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -337,13 +335,13 @@ export default {
         this.$t('packages_business_stop_confirm_message'),
         this.$t('packages_business_important_reminder'),
         {
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -366,8 +364,8 @@ export default {
       this.openRoute({
         name: 'SharedCacheMonitor',
         params: {
-          id: task.id
-        }
+          id: task.id,
+        },
       })
     },
 
@@ -383,7 +381,7 @@ export default {
         </p>`
       return {
         msg,
-        title: this.$t('dataFlow_' + title)
+        title: this.$t('dataFlow_' + title),
       }
     },
 
@@ -392,12 +390,12 @@ export default {
       let msgObj = this.getConfirmMessage('initialize', row)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning',
-        dangerouslyUseHTMLString: true
-      }).then(resFlag => {
+        dangerouslyUseHTMLString: true,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchRenew([id]).then(data => {
+        taskApi.batchRenew([id]).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'))
           this.table.fetch()
         })
@@ -405,14 +403,14 @@ export default {
     },
 
     handleExport() {
-      const ids = this.multipleSelection.map(t => t.id)
+      const ids = this.multipleSelection.map((t) => t.id)
       taskApi.export(ids)
     },
 
     handleImport() {
       this.$refs.upload.show()
-    }
-  }
+    },
+  },
 }
 </script>
 

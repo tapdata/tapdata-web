@@ -62,11 +62,10 @@
           <el-checkbox
             v-if="channels.includes('sms')"
             v-model="form.connectionInterrupted.sms"
-            size="small"
             @change="handleSettingValue"
             >{{ $t('notify_sms_notification') }}</el-checkbox
           >
-          <el-checkbox v-model="form.connectionInterrupted.email" size="small" @change="handleSettingValue">{{
+          <el-checkbox v-model="form.connectionInterrupted.email" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
           <br />
@@ -81,7 +80,6 @@
           <el-checkbox
             v-if="isOpenid && channels.includes('wechat')"
             v-model="form.connectionInterrupted.weChat"
-            size="small"
             :disabled="!isOpenid"
             @change="handleSettingValue"
           >
@@ -89,13 +87,9 @@
           >
         </ElFormItem>
         <ElFormItem :label="$t('notify_agent_status_running')" style="border-bottom: 1px solid #ebeef5">
-          <el-checkbox
-            v-if="channels.includes('sms')"
-            v-model="form.connected.sms"
-            size="small"
-            @change="handleSettingValue"
-            >{{ $t('notify_sms_notification') }}</el-checkbox
-          >
+          <el-checkbox v-if="channels.includes('sms')" v-model="form.connected.sms" @change="handleSettingValue">{{
+            $t('notify_sms_notification')
+          }}</el-checkbox>
           <el-checkbox v-if="channels.includes('email')" v-model="form.connected.email" @change="handleSettingValue">{{
             $t('notify_email_notification')
           }}</el-checkbox>
@@ -118,8 +112,8 @@
       </ElForm>
     </section>
     <footer class="flex justify-content-end mt-4">
-      <el-button size="small" @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
-      <el-button size="small" type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
+      <el-button @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
+      <el-button type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
     <el-dialog
       :title="$t('packages_business_setting_alarmnotification_renwumorengao')"
@@ -159,8 +153,8 @@
         </template>
       </VTable>
       <footer class="flex justify-content-end mt-4">
-        <el-button size="small" @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
+        <el-button @click="alarmRulesVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
   </section>
@@ -181,18 +175,18 @@ export default {
       columns: [
         {
           label: i18n.t('public_description'),
-          slotName: 'key'
+          slotName: 'key',
         },
         {
           label: i18n.t('packages_business_setting_notification_alarm_notification_gaojingtongzhi'),
           prop: 'notify',
-          slotName: 'notify'
+          slotName: 'notify',
         },
         {
           label: i18n.t('packages_business_setting_alarm_notification_notify_noticeInterval'),
           prop: 'interval',
-          slotName: 'interval'
-        }
+          slotName: 'interval',
+        },
       ],
       keyMapping: {
         TASK_STATUS_ERROR: i18n.t('packages_business_setting_alarmnotification_dangrenwuyudao'),
@@ -210,17 +204,17 @@ export default {
         INSPECT_COUNT_ERROR: i18n.t('packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu'),
         INSPECT_VALUE_ERROR: i18n.t('packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu'),
         SYSTEM_FLOW_EGINGE_DOWN: i18n.t('packages_business_setting_alarmnotification_dangrenwustop'),
-        SYSTEM_FLOW_EGINGE_UP: i18n.t('packages_business_setting_alarmnotification_dangrenwuuP')
+        SYSTEM_FLOW_EGINGE_UP: i18n.t('packages_business_setting_alarmnotification_dangrenwuuP'),
       },
       alarmRulesColumns: [
         {
           label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'keySlot'
+          slotName: 'keySlot',
         },
         {
           label: i18n.t('packages_business_setting_alarmnotification_gaojingzhibiao'),
-          slotName: 'valueSlot'
-        }
+          slotName: 'valueSlot',
+        },
       ],
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
@@ -231,22 +225,22 @@ export default {
         connected: {
           email: true,
           sms: false,
-          weChat: false
+          weChat: false,
         },
         connectionInterrupted: {
           email: true,
           sms: false,
-          weChat: false
+          weChat: false,
         },
         stoppedByError: {
           email: true,
           sms: false,
-          weChat: false
-        }
+          weChat: false,
+        },
       },
       userId: '',
       currentData: [],
-      channels: ['wechat', 'system', 'sms', 'email']
+      channels: ['wechat', 'system', 'sms', 'email'],
     }
   },
   mounted() {
@@ -254,7 +248,7 @@ export default {
     if (!this.isDaas) {
       //是否绑定微信
       // 获取tm用户id
-      this.$axios.get('tm/api/users/self').then(data => {
+      this.$axios.get('tm/api/users/self').then((data) => {
         if (data) {
           this.userId = data.id
           if (data.notification) {
@@ -268,14 +262,14 @@ export default {
   },
   methods: {
     remoteMethod(type) {
-      settingsApi.findAlarm().then(data => {
+      settingsApi.findAlarm().then((data) => {
         this.tableData = data
         if (!this.isDaas && type) {
           $emit(this, 'updateVisible', false)
         }
         //过滤掉agent停止时
-        this.currentData = data.filter(item => item.key === 'SYSTEM_FLOW_EGINGE_DOWN')
-        this.tableData = this.tableData.filter(item => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN')
+        this.currentData = data.filter((item) => item.key === 'SYSTEM_FLOW_EGINGE_DOWN')
+        this.tableData = this.tableData.filter((item) => item.key !== 'SYSTEM_FLOW_EGINGE_DOWN')
       })
     },
     save() {
@@ -294,8 +288,8 @@ export default {
     },
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
-      alarmRuleApi.find().then(data => {
-        this.alarmData = data.map(item => {
+      alarmRuleApi.find().then((data) => {
+        this.alarmData = data.map((item) => {
           item.point = this.getPoints(item.point)
           item.ms = this.getSecond(item.ms)
           return item
@@ -313,7 +307,7 @@ export default {
     saveAlarmRules() {
       //告警设置单独保存
       let data = cloneDeep(this.alarmData)
-      data = data.map(item => {
+      data = data.map((item) => {
         item.point = Math.ceil(item.point * 12) < 1 ? 1 : Math.ceil(item.point * 12)
         item.ms = Math.ceil(item.ms * 1000) < 1 ? 1 : Math.ceil(item.ms * 1000)
         return item
@@ -325,16 +319,16 @@ export default {
     },
     handleSettingValue() {
       let data = {
-        notification: this.form
+        notification: this.form,
       }
       this.$axios.patch(`tm/api/users/${this.userId}`, data)
     },
 
     //获取支持通知方式
     getChannels() {
-      alarmApi.channels().then(data => {
+      alarmApi.channels().then((data) => {
         this.channels = []
-        this.channels = data.map(item => item.type)
+        this.channels = data.map((item) => item.type)
       })
     },
 
@@ -348,20 +342,20 @@ export default {
         this.$t('public_message_title_prompt'),
         {
           type: 'warning',
-          confirmButtonText: i18n.t('packages_business_setting_alarmsetting_qubangding')
-        }
-      ).then(flag => {
+          confirmButtonText: i18n.t('packages_business_setting_alarmsetting_qubangding'),
+        },
+      ).then((flag) => {
         if (flag) {
           this.$router.push({
             name: 'userCenter',
             query: {
-              bind: 'email'
-            }
+              bind: 'email',
+            },
           })
         }
       })
-    }
+    },
   },
-  emits: ['updateVisible']
+  emits: ['updateVisible'],
 }
 </script>

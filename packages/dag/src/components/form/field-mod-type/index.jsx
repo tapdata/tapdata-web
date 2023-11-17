@@ -192,7 +192,6 @@ export const FieldModType = observer(
                     <ElSelect
                       v-model={data.data_type}
                       class="flex-1 inline-block"
-                      size="small"
                       disabled={this.disabled}
                       onChange={() => this.handleDataType(node, data)}
                     >

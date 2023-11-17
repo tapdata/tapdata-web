@@ -33,7 +33,6 @@
                 ref="dbInput"
                 class="header__input"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="small"
                 clearable
                 @keydown.stop
                 @keyup.stop
@@ -68,13 +67,13 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
                     :class="{
                       grabbable: !stateIsReadonly,
-                      active: activeConnection.id === db.id
+                      active: activeConnection.id === db.id,
                     }"
                     @click="handleSelectDB(db)"
                     @dblclick="onDBClick('')"
@@ -146,7 +145,6 @@
               v-model:value="tbSearchTxt"
               ref="tbInput"
               :placeholder="$t('packages_dag_table_name_search_placeholder')"
-              size="small"
               clearable
               @keydown.stop
               @keyup.stop
@@ -188,7 +186,7 @@
                   onStart: onTBStart,
                   onMove,
                   onDrop,
-                  onStop
+                  onStop,
                 }"
                 :key="tb.id"
                 class="tb-item flex align-center px-2 user-select-none rounded-2"
@@ -233,7 +231,7 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
@@ -297,7 +295,7 @@ export default {
     BaseNode,
     VIcon,
     ConnectionType,
-    StageButton
+    StageButton,
   },
   data() {
     return {
@@ -321,7 +319,7 @@ export default {
       activeConnection: {
         id: '',
         name: '',
-        databaseType: ''
+        databaseType: '',
       },
       dragStarting: false,
       dragMoving: false,
@@ -344,13 +342,13 @@ export default {
         type: 'table',
         title: this.$t('packages_dag_dialog_createTable'),
         placeholder: this.$t('packages_dag_dialog_placeholderTable'),
-        visible: false
-      }
+        visible: false,
+      },
     }
   },
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
@@ -374,7 +372,7 @@ export default {
     scrollbarWrapStyle() {
       let gutter = getScrollBarWidth()
       return `position:relative;height: calc(100% + ${gutter}px);`
-    }
+    },
   },
   created() {
     this.getDatabaseType()
@@ -386,7 +384,7 @@ export default {
     const { stop: stopTbResizeObserver } = useResizeObserver(this.$refs.tbList.$el, this.updateTBScrollbar)
     const { stop: stopProcessorResizeObserver } = useResizeObserver(
       this.$refs.processorCollapse.$el,
-      this.updateProcessorScrollbar
+      this.updateProcessorScrollbar,
     )
 
     this.stopDbResizeObserver = stopDbResizeObserver
@@ -404,7 +402,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     getDatabaseType() {
-      databaseTypesApi.get().then(res => {
+      databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -451,10 +449,10 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
-        where: {}
+        where: {},
       }
 
       const txt = escapeRegExp(this.dbSearchTxt.trim())
@@ -463,7 +461,7 @@ export default {
       }
 
       filter.where.createType = {
-        $ne: 'System'
+        $ne: 'System',
       }
 
       return { filter: JSON.stringify(filter) }
@@ -482,7 +480,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -507,7 +505,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -536,16 +534,16 @@ export default {
           'source.id': this.activeConnection.id,
           taskId: this.$store.state.dataflow.taskId,
           meta_type: {
-            in: ['collection', 'table', 'view']
+            in: ['collection', 'table', 'view'],
           },
           is_deleted: false,
-          sourceType: 'SOURCE'
+          sourceType: 'SOURCE',
         },
         fields: {
           id: true,
-          original_name: true
+          original_name: true,
         },
-        order: ['original_name ASC']
+        order: ['original_name ASC'],
       }
 
       const txt = escapeRegExp(this.tbSearchTxt.trim())
@@ -578,7 +576,7 @@ export default {
       let data
       try {
         data = await metadataInstancesApi.get(this.getTableFilter(), {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -586,16 +584,16 @@ export default {
         return
       }
 
-      const tables = data.items.map(tb => ({
+      const tables = data.items.map((tb) => ({
         id: tb.id,
         name: tb.original_name,
-        comment: tb.comment
+        comment: tb.comment,
       }))
 
       this.tbTotal = data.total
 
       if (loadMore) {
-        tables.forEach(item => {
+        tables.forEach((item) => {
           if (!this.tbIdMap[item.id]) {
             this.tbList.push(item)
             this.tbIdMap[item.id] = true
@@ -632,7 +630,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -658,7 +656,7 @@ export default {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       }
       this.dragNode = node
@@ -763,19 +761,19 @@ export default {
             properties: {
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
-          {}
+          {},
         )
         delete nodeConfig.$inputs
         delete nodeConfig.$outputs
@@ -795,7 +793,7 @@ export default {
           pdkType: connection.pdkType,
           pdkHash: connection.pdkHash,
           capabilities: connection.capabilities || [],
-          hasCreated: false
+          hasCreated: false,
           /*capabilities: [
           ...(connection.capabilities || []),
           {
@@ -803,7 +801,7 @@ export default {
             type: 11
           }
         ]*/
-        }
+        },
       }
     },
 
@@ -812,7 +810,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -834,9 +832,9 @@ export default {
       if (this.stateIsReadonly) return
 
       $emit(this, 'add-node', item)
-    }
+    },
   },
-  emits: ['move-node', 'drop-node', 'add-table-as-node', 'add-node']
+  emits: ['move-node', 'drop-node', 'add-table-as-node', 'add-node'],
 }
 </script>
 

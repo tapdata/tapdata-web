@@ -1,13 +1,7 @@
 <template>
   <div class="solutions flex flex-column">
     <div class="search-row mb-4">
-      <ElInput
-        v-model:value="keyword"
-        clearable
-        size="small"
-        :placeholder="$t('solution_error_code')"
-        @input="search(800)"
-      >
+      <ElInput v-model:value="keyword" clearable :placeholder="$t('solution_error_code')" @input="search(800)">
         <template v-slot:prepend>
           <ElSelect v-model:value="select" :placeholder="$t('solution_select_placeholder_type')" class="type-select">
             <ElOption v-for="item in selectItems" :key="item.value" :value="item.value" :label="item.label"></ElOption>
@@ -58,11 +52,11 @@ export default {
       selectItems: [
         {
           label: $t('solution_customer_job_logs'),
-          value: 'CustomerJobLogs'
-        }
+          value: 'CustomerJobLogs',
+        },
       ],
       loading: false,
-      list: []
+      list: [],
     }
   },
   mounted() {
@@ -94,14 +88,14 @@ export default {
       }
       customerJobLogsApi
         .solutions(params)
-        .then(data => {
+        .then((data) => {
           this.list = data || []
         })
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

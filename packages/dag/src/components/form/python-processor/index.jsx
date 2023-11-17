@@ -18,7 +18,7 @@ export const PythonProcessor = observer(
   defineComponent({
     props: ['value', 'disabled'],
     directives: {
-      resize
+      resize,
     },
     setup(props, { emit, root, attrs, refs }) {
       const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
@@ -38,7 +38,7 @@ export const PythonProcessor = observer(
         taskId,
         jsNodeId: form.values.id,
         tableName: '',
-        rows: 1
+        rows: 1,
       })
       const tableList = ref([])
 
@@ -50,12 +50,12 @@ export const PythonProcessor = observer(
             taskId,
             nodeId: form.values.id,
             page: 1,
-            pageSize: 10000
+            pageSize: 10000,
           })
           .then(({ items = [] }) => {
-            tableList.value = items.map(item => ({
+            tableList.value = items.map((item) => ({
               label: item.previousTableName,
-              value: item.previousTableName
+              value: item.previousTableName,
             }))
             params.tableName = tableList.value[0]?.value
           })
@@ -92,9 +92,9 @@ export const PythonProcessor = observer(
           pageSize: 50,
           start: queryStart,
           nodeId,
-          end: Time.now()
+          end: Time.now(),
         })
-        logList.value = logData?.items.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+        logList.value = logData?.items.filter((item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
       }
 
       const handleQuery = async () => {
@@ -103,9 +103,9 @@ export const PythonProcessor = observer(
           .getRunJsResult({
             version,
             taskId,
-            jsNodeId: nodeId
+            jsNodeId: nodeId,
           })
-          .then(res => {
+          .then((res) => {
             // 版本号不一致
             if (lastVersion !== version) return true
             inputRef.value = res.before ? JSON.stringify(res.before, null, 2) : ''
@@ -144,7 +144,7 @@ export const PythonProcessor = observer(
           return
         }
         handleQuery()
-          .then(isOver => {
+          .then((isOver) => {
             if (!isOver) {
               timer = setTimeout(() => {
                 handleAutoQuery()
@@ -194,7 +194,7 @@ export const PythonProcessor = observer(
           result = await taskApi.testRunPythonRpc({
             ...params,
             version,
-            script: props.value
+            script: props.value,
           })
         } catch (e) {
           console.log(e) // eslint-disable-line
@@ -205,7 +205,7 @@ export const PythonProcessor = observer(
         logs = result?.logs
         inputRef.value = before ? JSON.stringify(before, null, 2) : ''
         outputRef.value = after ? JSON.stringify(after, null, 2) : ''
-        logList.value = logs?.filter(item => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
+        logList.value = logs?.filter((item) => !new RegExp(`^.*\\[${nodeId}]`).test(item.message)) || []
         resetQuery()
       }
 
@@ -220,7 +220,7 @@ export const PythonProcessor = observer(
         }, 10)
       }
 
-      const toggleDoc = event => {
+      const toggleDoc = (event) => {
         event.stopPropagation()
         showDoc.value = !showDoc.value
       }
@@ -229,7 +229,7 @@ export const PythonProcessor = observer(
       const classDescMap = {
         DateUtil: i18n.t('packages_dag_js_processor_index_riqichuli'),
         idGen: i18n.t('packages_dag_js_processor_index_iDshengchengqi'),
-        networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju')
+        networkUtil: i18n.t('packages_dag_js_processor_index_wangluogongju'),
       }
       const loadFunction = async () => {
         console.log('loadFunction')
@@ -237,9 +237,9 @@ export const PythonProcessor = observer(
           filter: JSON.stringify({
             limit: 1000,
             where: {
-              type: 'system'
-            }
-          })
+              type: 'system',
+            },
+          }),
         })
         const group = groupBy(data.items, 'className')
         const noClassFunction = group['']
@@ -249,7 +249,7 @@ export const PythonProcessor = observer(
 
       loadFunction()
 
-      const onTabChange = current => {
+      const onTabChange = (current) => {
         if (current == '1') {
           refs.beforeJson.editor.resize(true)
           refs.afterJson.editor.resize(true)
@@ -272,9 +272,9 @@ export const PythonProcessor = observer(
       }
 
       let pythonEditor
-      const onEditorInit = editor => {
+      const onEditorInit = (editor) => {
         pythonEditor = editor
-        const idx = editor.completers?.findIndex(item => item.id === 'recordFields') || -1
+        const idx = editor.completers?.findIndex((item) => item.id === 'recordFields') || -1
 
         if (~idx) editor.completers.splice(idx, 1)
 
@@ -293,17 +293,17 @@ export const PythonProcessor = observer(
               } else if (prefix === 'context') {
                 callback(
                   null,
-                  ['event', 'before', 'info', 'global'].map(t => {
+                  ['event', 'before', 'info', 'global'].map((t) => {
                     return {
                       value: t,
                       score: 1000,
-                      meta: 'system'
+                      meta: 'system',
                     }
-                  })
+                  }),
                 )
               }
             }
-          }
+          },
         })
         // 绑定 '.' 按键事件
         editor.keyBinding.addKeyboardHandler({
@@ -313,7 +313,7 @@ export const PythonProcessor = observer(
                 editor.execCommand('startAutocomplete')
               }, 10)
             }
-          }
+          },
         })
       }
 
@@ -326,7 +326,7 @@ export const PythonProcessor = observer(
             nodeId,
             fields: ['original_name', 'fields', 'qualified_name'],
             page: 1,
-            pageSize: 1
+            pageSize: 1,
           })
           fields = result.items[0]?.fields || []
         } else {
@@ -336,12 +336,12 @@ export const PythonProcessor = observer(
 
         nodeFields =
           fields
-            .filter(item => !item.is_deleted)
-            .map(f => {
+            .filter((item) => !item.is_deleted)
+            .map((f) => {
               return {
                 value: f.field_name,
                 score: 1000,
-                meta: f.data_type
+                meta: f.data_type,
               }
             }) || []
       }
@@ -396,7 +396,7 @@ export const PythonProcessor = observer(
                   item-size={34}
                   items={tableList.value}
                   loading={tableLoading.value}
-                  onInput={val => {
+                  onInput={(val) => {
                     params.tableName = val
                   }}
                 />
@@ -414,7 +414,7 @@ export const PythonProcessor = observer(
                   value={params.rows}
                   min={1}
                   max={10}
-                  onInput={val => {
+                  onInput={(val) => {
                     params.rows = val
                   }}
                   controls-position="right"
@@ -427,7 +427,6 @@ export const PythonProcessor = observer(
                 loading={running.value || tableLoading.value}
                 onClick={handleRun}
                 type="primary"
-                size="small"
               >
                 {i18n.t('packages_form_js_processor_index_shiyunxing')}
               </ElButton>
@@ -447,7 +446,7 @@ export const PythonProcessor = observer(
                 options={{
                   readOnly: true,
                   highlightActiveLine: false,
-                  highlightGutterLine: false
+                  highlightGutterLine: false,
                 }}
                 theme="chrome"
               ></VCodeEditor>
@@ -462,7 +461,7 @@ export const PythonProcessor = observer(
                 options={{
                   readOnly: true,
                   highlightActiveLine: false,
-                  highlightGutterLine: false
+                  highlightGutterLine: false,
                 }}
                 theme="chrome"
               ></VCodeEditor>
@@ -479,19 +478,19 @@ export const PythonProcessor = observer(
               size={600}
               visible={showDoc.value}
               on={{
-                ['update:visible']: v => {
+                ['update:visible']: (v) => {
                   console.log('update:visible', v) // eslint-disable-line
                   showDoc.value = v
-                }
+                },
               }}
             >
               <div class="px-4 js-doc-content">
-                {Object.keys(functionGroup.value).map(className => {
+                {Object.keys(functionGroup.value).map((className) => {
                   return [
                     <h2>{className}</h2>,
                     classDescMap[className] && <p>{classDescMap[className]}</p>,
                     <h3>{i18n.t('packages_dag_js_processor_index_fangfa')}</h3>,
-                    functionGroup.value[className].map(item => {
+                    functionGroup.value[className].map((item) => {
                       return [
                         <h4>{item.methodName}</h4>,
                         <ul>
@@ -501,9 +500,9 @@ export const PythonProcessor = observer(
                           </li>
                           <li>{i18n.t('packages_dag_js_processor_index_yongfa')}</li>
                         </ul>,
-                        <HighlightCode code={item.example}></HighlightCode>
+                        <HighlightCode code={item.example}></HighlightCode>,
                       ]
-                    })
+                    }),
                   ]
                 })}
               </div>
@@ -512,12 +511,12 @@ export const PythonProcessor = observer(
               class={[
                 'js-processor-editor',
                 {
-                  fullscreen: fullscreen.value
-                }
+                  fullscreen: fullscreen.value,
+                },
               ]}
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
-                {fullscreen && runTool}
+                {fullscreen.value && runTool}
                 <div>
                   <ElLink class="mr-3" onClick={toggleDoc} type="primary">
                     {i18n.t('packages_dag_api_docs')}
@@ -533,7 +532,7 @@ export const PythonProcessor = observer(
                   <PythonEditor
                     ref="pythonEditor"
                     value={props.value}
-                    onChange={val => {
+                    onChange={(val) => {
                       emit('change', val)
                     }}
                     onInit={onEditorInit}
@@ -554,13 +553,13 @@ export const PythonProcessor = observer(
                       {
                         name: 'resize',
                         value: {
-                          minWidth: 100
+                          minWidth: 100,
                         },
                         modifiers: {
-                          left: true
-                        }
-                      }
-                    ]
+                          left: true,
+                        },
+                      },
+                    ],
                   }}
                   class="js-processor-editor-console border-start"
                 >
@@ -569,7 +568,7 @@ export const PythonProcessor = observer(
                       <div class="js-processor-editor-console-panel h-100 overflow-auto">
                         <div class="js-log-list">
                           {logList.value.length
-                            ? logList.value.map(item => {
+                            ? logList.value.map((item) => {
                                 if (/^[{[].*[\]}]$/.test(item.message)) {
                                   let code
                                   try {
@@ -577,7 +576,7 @@ export const PythonProcessor = observer(
                                   } catch (e) {
                                     const message = item.message.replace(/^[{[](.*)[\]}]$/, '$1').split(', ')
                                     code = `${item.message.charAt(0)}\n${message
-                                      .map(line => `  ${line}`)
+                                      .map((line) => `  ${line}`)
                                       .join('\n')}\n${item.message.charAt(item.message.length - 1)}`
                                   }
 
@@ -616,7 +615,7 @@ export const PythonProcessor = observer(
 
             <PythonDeclare
               value={form.values.declareScript}
-              onChange={val => {
+              onChange={(val) => {
                 form.setValuesIn('declareScript', val)
               }}
               height={240}
@@ -629,6 +628,6 @@ export const PythonProcessor = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

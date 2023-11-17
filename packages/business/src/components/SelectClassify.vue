@@ -10,7 +10,6 @@
     <div>
       <el-tag
         v-bind:key="item.value"
-        size="small"
         class="SelectClassify-tag"
         closable
         v-for="item in tagList"
@@ -40,10 +39,8 @@
     </el-tree>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button class="message-button-cancel" @click="handleCancel" size="small">{{
-          $t('public_button_cancel')
-        }}</el-button>
-        <el-button type="primary" @click="handleAdd" size="small">{{ $t('public_button_save') }}</el-button>
+        <el-button class="message-button-cancel" @click="handleCancel">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="handleAdd">{{ $t('public_button_save') }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -61,8 +58,8 @@ export default {
       value: Array,
       default: () => {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -71,10 +68,10 @@ export default {
       props: {
         children: 'children',
         label: 'label',
-        isLeaf: 'leaf'
+        isLeaf: 'leaf',
       },
       treeData: [],
-      tagList: []
+      tagList: [],
     }
   },
   methods: {
@@ -86,31 +83,31 @@ export default {
     getData(cb) {
       let where = {}
       if (this.types.length) {
-        where.or = this.types.map(t => ({ item_type: t }))
+        where.or = this.types.map((t) => ({ item_type: t }))
       }
 
       if (!parseInt(Cookie.get('isAdmin'))) where.user_id = { regexp: `^${Cookie.get('user_id')}$` }
 
       let filter = {
-        where
+        where,
       }
 
       if (this.types[0] === 'user') {
         userGroupsApi
           .get({
             filter: JSON.stringify({
-              limit: 999
-            })
+              limit: 999,
+            }),
           })
-          .then(data => {
+          .then((data) => {
             let items = data?.items || []
-            let treeData = items.map(item => ({
+            let treeData = items.map((item) => ({
               value: item.name,
               id: item.id,
               gid: item.gid,
               parent_id: item.parent_id,
               last_updated: item.last_updated,
-              user_id: item.user_id
+              user_id: item.user_id,
             }))
             this.treeData = this.formatData(treeData)
             cb && cb(data)
@@ -118,9 +115,9 @@ export default {
       } else {
         metadataDefinitionsApi
           .get({
-            filter: JSON.stringify(filter)
+            filter: JSON.stringify(filter),
           })
-          .then(data => {
+          .then((data) => {
             let items = data?.items || []
             this.treeData = this.formatData(items)
             cb && cb(items)
@@ -133,7 +130,7 @@ export default {
         let map = {}
         let nodes = []
         //遍历第一次， 先把所有子类按照id分成若干数组
-        items.forEach(it => {
+        items.forEach((it) => {
           if (it.parent_id) {
             let children = map[it.parent_id] || []
             children.push(it)
@@ -143,8 +140,8 @@ export default {
           }
         })
         //接着从没有子类的数据开始递归，将之前分好的数组分配给每一个类目
-        let checkChildren = nodes => {
-          return nodes.map(it => {
+        let checkChildren = (nodes) => {
+          return nodes.map((it) => {
             let children = map[it.id]
             if (children) {
               it.children = checkChildren(children)
@@ -175,7 +172,7 @@ export default {
       }
       let node = {
         id: data.id,
-        value: data.value
+        value: data.value,
       }
       this.tagList.push(node)
     },
@@ -204,9 +201,9 @@ export default {
       }
       $emit(this, 'operationsClassify', this.tagList)
       this.handleClose()
-    }
+    },
   },
-  emits: ['operationsClassify']
+  emits: ['operationsClassify'],
 }
 </script>
 

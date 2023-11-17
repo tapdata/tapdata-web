@@ -18,10 +18,10 @@
         field-value="value"
       ></QueryBuild>
       <div class="browse_button">
-        <el-button @click="handleFavorite()" size="small">
+        <el-button @click="handleFavorite()">
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
-        <!-- <el-button type="primary" @click="search(1)" size="small">
+        <!-- <el-button type="primary" @click="search(1)" >
               {{ $t('dataExplorer_query') }}
             </el-button> -->
       </div>
@@ -44,10 +44,10 @@
 
     <template v-slot:footer>
       <div class="dialog-footer">
-        <el-button class="cancel" @click="handleClose()" size="small">
+        <el-button class="cancel" @click="handleClose()">
           {{ $t('public_button_cancel') }}
         </el-button>
-        <el-button type="primary" @click="save()" size="small">{{ $t('public_button_confirm') }}</el-button>
+        <el-button type="primary" @click="save()">{{ $t('public_button_confirm') }}</el-button>
       </div>
     </template>
   </el-dialog>

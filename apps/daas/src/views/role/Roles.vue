@@ -8,13 +8,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton
-            v-readonlybtn="'role_creation'"
-            type="primary"
-            class="btn btn-create"
-            size="small"
-            @click="openCreateDialog()"
-          >
+          <ElButton v-readonlybtn="'role_creation'" type="primary" class="btn btn-create" @click="openCreateDialog()">
             <span>{{ $t('role_list_create') }}</span>
           </ElButton>
         </div>
@@ -105,7 +99,7 @@
           prop="name"
           :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <ElInput v-model:value="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></ElInput>
+          <ElInput v-model:value="form.name" :placeholder="$t('role_list_select_role_name')"></ElInput>
         </ElFormItem>
         <ElFormItem
           :label="$t('role_list_description')"
@@ -137,8 +131,8 @@
       </ElForm>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="small" @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
-          <ElButton size="small" type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
+          <ElButton @click="dialogFormVisible = false">{{ $t('public_button_cancel') }} </ElButton>
+          <ElButton type="primary" @click="createSave">{{ $t('public_button_confirm') }} </ElButton>
         </div>
       </template>
     </ElDialog>
@@ -158,8 +152,8 @@
       </div>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="small" @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="small" type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton @click="dialogUserVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="saveUser">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

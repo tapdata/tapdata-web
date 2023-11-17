@@ -16,7 +16,6 @@
         <div>
           <ElButton
             v-readonlybtn="'SYNC_category_application'"
-            size="small"
             class="btn"
             v-show="multipleSelection.length > 0"
             @click="handleExport"
@@ -28,7 +27,7 @@
           <!--          v-readonlybtn="'datasource_creation'"-->
           <!--          class="btn btn-create"-->
           <!--          type="primary"-->
-          <!--          size="small"-->
+          <!--          -->
           <!--          @click="$router.push({ name: 'dataVerificationCreate' })"-->
           <!--        >-->
           <!--          <span> {{ $t('public_button_create') }}</span>-->
@@ -37,7 +36,6 @@
             v-readonlybtn="'datasource_creation'"
             class="btn btn-create"
             type="primary"
-            size="small"
             @click="handleCreate('pipeline')"
           >
             <span>{{ $t('packages_business_verification_list_renwuyizhixing') }}</span>
@@ -46,7 +44,6 @@
             v-readonlybtn="'datasource_creation'"
             class="btn btn-create"
             type="primary"
-            size="small"
             @click="handleCreate('random')"
           >
             <span>{{ $t('packages_business_verification_list_renyibiaoshuju') }}</span>
@@ -202,7 +199,7 @@ export default {
   components: {
     TablePage,
     VIcon,
-    FilterBar
+    FilterBar,
     // ElIconError,
     // ElIconSuccess
   },
@@ -213,7 +210,7 @@ export default {
         inspectMethod: '',
         mode: '',
         enabled: '',
-        result: ''
+        result: '',
       },
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
@@ -222,60 +219,60 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
+        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
       },
       statusMap: {
         waiting: this.$t('packages_business_verification_waiting'),
         scheduling: this.$t('packages_business_verification_scheduling'),
         error: this.$t('packages_business_verification_error'),
         done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running')
+        running: this.$t('packages_business_verification_running'),
       },
       validList: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
           label: this.$t('packages_business_verification_check_same'),
-          value: 'passed'
+          value: 'passed',
         },
         {
           label: this.$t('packages_business_verification_count_difference'),
-          value: 'row_count'
+          value: 'row_count',
         },
         {
           label: this.$t('packages_business_verification_content_difference'),
-          value: 'valueDiff'
+          value: 'valueDiff',
         },
-        { label: 'Error', value: 'error' }
+        { label: 'Error', value: 'error' },
       ],
       verifyTypeList: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
           label: this.$t('packages_business_verification_row_verify'),
-          value: 'row_count'
+          value: 'row_count',
         },
         {
           label: this.$t('packages_business_verification_content_verify'),
-          value: 'field'
+          value: 'field',
         },
         {
           label: this.$t('packages_business_verification_joint_verify'),
-          value: 'jointField'
-        }
+          value: 'jointField',
+        },
       ],
       multipleSelection: [],
-      moreAuthority: this.$has('verify_job_delete_all_data')
+      moreAuthority: this.$has('verify_job_delete_all_data'),
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     timeout = setInterval(() => {
@@ -296,11 +293,11 @@ export default {
     },
     // 批量导出
     handleExport() {
-      let ids = this.multipleSelection.map(item => item.id)
+      let ids = this.multipleSelection.map((item) => item.id)
       let where = {
         _id: {
-          in: ids
-        }
+          in: ids,
+        },
       }
       metadataInstancesApi.download(where, 'Inspect')
     },
@@ -349,17 +346,17 @@ export default {
         order: this.order,
         limit: size,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return inspectApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           return {
             total: data?.total,
-            data: list.map(item => {
+            data: list.map((item) => {
               let result = item.InspectResult
               let sourceTotal = '-'
               let targetTotal = '-'
@@ -371,7 +368,7 @@ export default {
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
               return item
-            })
+            }),
           }
         })
     },
@@ -386,30 +383,30 @@ export default {
       this.$router.push({
         name: 'dataVerifyDetails',
         params: {
-          id
-        }
+          id,
+        },
       })
     },
     history(id) {
       this.$router.push({
         name: 'dataVerifyHistory',
         params: {
-          id
-        }
+          id,
+        },
       })
     },
     startTask(id) {
       inspectApi
         .update(
           {
-            id: id
+            id: id,
           },
           {
             status: 'scheduling',
             ping_time: 0,
             scheduleTimes: 0,
-            byFirstCheckId: ''
-          }
+            byFirstCheckId: '',
+          },
         )
         .then(() => {
           this.$message.success(this.$t('packages_business_verification_startVerify'))
@@ -424,9 +421,9 @@ export default {
         {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('public_button_cancel'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
+          type: 'warning',
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -440,8 +437,8 @@ export default {
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
-          id: id
-        }
+          id: id,
+        },
       })
     },
     getFilterItems() {
@@ -451,7 +448,7 @@ export default {
           key: 'inspectMethod',
           type: 'select-inner',
           items: this.verifyTypeList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('packages_business_verification_check_frequency'),
@@ -461,13 +458,13 @@ export default {
             { label: this.$t('public_select_option_all'), value: '' },
             {
               label: this.$t('packages_business_verification_single'),
-              value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+              value: 'MANUALLY_SPECIFIED_BY_THE_USER',
             },
             {
               label: this.$t('packages_business_verification_repeating'),
-              value: 'cron'
-            }
-          ]
+              value: 'cron',
+            },
+          ],
         },
         {
           label: this.$t('packages_business_verification_is_enabled'),
@@ -477,25 +474,25 @@ export default {
             { label: this.$t('public_select_option_all'), value: '' },
             {
               label: this.$t('packages_business_verification_job_enable'),
-              value: 1
+              value: 1,
             },
             {
               label: this.$t('packages_business_verification_job_disable'),
-              value: 2
-            }
-          ]
+              value: 2,
+            },
+          ],
         },
         {
           label: this.$t('packages_business_verification_result_title'),
           key: 'result',
           type: 'select-inner',
-          items: this.validList
+          items: this.validList,
         },
         {
           placeholder: this.$t('packages_business_verification_task_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     handleError(row = {}) {
@@ -503,11 +500,11 @@ export default {
         type: 'warning',
         closeOnClickModal: false,
         customClass: 'verify-list-error-msg',
-        width: '600px'
+        width: '600px',
       })
     },
     getInspectName(row = {}) {
-      if (row.tasks?.some(t => !!t.source.columns || !!t.target.columns)) {
+      if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
         return i18n.t('packages_business_verification_list_biaobufenziduan')
       }
       return this.inspectMethod[row.inspectMethod]
@@ -516,9 +513,9 @@ export default {
       inspectApi
         .update(
           {
-            id: id
+            id: id,
           },
-          { status: 'stopping' }
+          { status: 'stopping' },
         )
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -528,10 +525,10 @@ export default {
     handleCreate(type) {
       this.$router.push({
         name: 'dataVerificationCreate',
-        query: { taskMode: type }
+        query: { taskMode: type },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

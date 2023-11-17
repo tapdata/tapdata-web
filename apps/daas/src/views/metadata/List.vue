@@ -22,7 +22,6 @@
         <div>
           <el-button
             v-readonlybtn="'data_catalog_category_application'"
-            size="small"
             class="btn"
             v-show="multipleSelection.length > 0"
             @click="$refs.table.showClassify(handleSelectTag())"
@@ -34,7 +33,6 @@
             v-readonlybtn="'new_model_creation'"
             type="primary"
             class="btn btn-create"
-            size="small"
             @click="openCreateDialog"
           >
             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -55,7 +53,6 @@
                 class="tag"
                 type="info"
                 effect="dark"
-                size="small"
               >
                 {{ scope.row.classifications[0].value }}
               </el-tag>
@@ -85,7 +82,6 @@
         <template v-slot="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
-            size="small"
             text
             :disabled="
               $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
@@ -97,7 +93,6 @@
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
-            size="small"
             text
             :disabled="
               $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
@@ -109,7 +104,6 @@
           <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
-            size="small"
             text
             :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
@@ -126,14 +120,7 @@
       :close-on-click-modal="false"
       v-model="createDialogVisible"
     >
-      <ElForm
-        ref="form"
-        label-position="left"
-        label-width="100px"
-        size="small"
-        :model="createForm"
-        :rules="createRules"
-      >
+      <ElForm ref="form" label-position="left" label-width="100px" :model="createForm" :rules="createRules">
         <ElFormItem :label="$t('public_type')" required prop="model_type">
           <ElSelect v-model:value="createForm.model_type" width="100%">
             <ElOption
@@ -156,10 +143,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button class="message-button-cancel" @click="createDialogVisible = false" size="small">{{
+          <el-button class="message-button-cancel" @click="createDialogVisible = false">{{
             $t('public_button_cancel')
           }}</el-button>
-          <el-button type="primary" @click="createNewModel()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button type="primary" @click="createNewModel()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -178,10 +165,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button class="message-button-cancel" @click="changeNameDialogVisible = false" size="small">{{
+          <el-button class="message-button-cancel" @click="changeNameDialogVisible = false">{{
             $t('public_button_cancel')
           }}</el-button>
-          <el-button type="primary" @click="saveChangeName()" size="small">{{ $t('public_button_confirm') }}</el-button>
+          <el-button type="primary" @click="saveChangeName()">{{ $t('public_button_confirm') }}</el-button>
         </span>
       </template>
     </el-dialog>

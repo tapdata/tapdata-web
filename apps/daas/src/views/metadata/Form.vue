@@ -14,7 +14,6 @@
             :placeholder="$t('public_input_placeholder') + $t('metadata_details_filedName')"
             autocomplete="off"
             :disabled="fieldNameDisabled"
-            size="small"
             maxlength="50"
             show-word-limit
           ></el-input>
@@ -24,7 +23,6 @@
             v-model="form.alias_name"
             :placeholder="$t('public_input_placeholder') + $t('metadata_details_alias')"
             autocomplete="off"
-            size="small"
             maxlength="50"
             show-word-limit
           ></el-input>
@@ -55,13 +53,13 @@
           <el-checkbox v-model="form.primary_key">{{ $t('metadata_details_primaryKey') }}</el-checkbox>
         </el-form-item>
         <!--        <el-form-item :label="$t('metadata_details_fieldLength')">-->
-        <!--          <el-input-number v-model="form.columnSize" :min="0" size="small"></el-input-number>-->
+        <!--          <el-input-number v-model="form.columnSize" :min="0" ></el-input-number>-->
         <!--        </el-form-item>-->
         <!--        <el-form-item :label="$t('metadata_details_accuracy')">-->
-        <!--          <el-input-number v-model="form.scale" :min="0" size="small"></el-input-number>-->
+        <!--          <el-input-number v-model="form.scale" :min="0" ></el-input-number>-->
         <!--        </el-form-item>-->
         <!--        <el-form-item :label="$t('metadata_details_numberLength')">-->
-        <!--          <el-input-number v-model="form.precision" :min="0" size="small"></el-input-number>-->
+        <!--          <el-input-number v-model="form.precision" :min="0" ></el-input-number>-->
         <!--        </el-form-item>-->
       </div>
       <!-- 字典模板 -->
@@ -70,12 +68,12 @@
             <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
               <el-table-column prop="key" :label="$t('metadata_details_initialValue')">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.key" size="small"> </el-input>
+                  <el-input v-model="scope.row.key" > </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="value" :label="$t('metadata_details_mappedValue')">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.value" size="small"> </el-input>
+                  <el-input v-model="scope.row.value" > </el-input>
                 </template>
               </el-table-column>
               <el-table-column prop="address" :label="$t('public_operation')" width="60">
@@ -84,14 +82,14 @@
                     @click="delDictionary(scope.$index, 0)"
                     text
                     class="iconfont icon-quxiao"
-                    size="small"
+
                   ></el-button>
                 </template>
               </el-table-column>
             </el-table>
             <div class="addBtn">
-              <el-button @click="addDictionary" size="small">+ {{ $t('metadata_details_newMapping') }}</el-button>
-              <el-button @click="handleSelectTemplate(form)" size="small">{{
+              <el-button @click="addDictionary" >+ {{ $t('metadata_details_newMapping') }}</el-button>
+              <el-button @click="handleSelectTemplate(form)" >{{
                 $t('metadata_details_chooseTemplate')
               }}</el-button>
             </div>
@@ -102,7 +100,7 @@
         <el-table :data="form.relation" border class="e-table" style="width: 100%">
           <el-table-column prop="table_name" :label="$t('metadata_details_associationTable')">
             <template v-slot="scope">
-              <el-select v-model="scope.row.table_name" @change="changeRecordTable($event)" size="small">
+              <el-select v-model="scope.row.table_name" @change="changeRecordTable($event)">
                 <el-option
                   v-for="item in getAvailableTable(scope.$index)"
                   :label="item.original_name"
@@ -114,7 +112,7 @@
           </el-table-column>
           <el-table-column prop="field_name" :label="$t('metadata_details_associationField')">
             <template v-slot="scope">
-              <el-select v-model="scope.row.field_name" @focus="changeRecordTable(scope.row.table_name)" size="small">
+              <el-select v-model="scope.row.field_name" @focus="changeRecordTable(scope.row.table_name)">
                 <el-option
                   v-for="item in fieldList"
                   :label="item.field_name"
@@ -126,7 +124,7 @@
           </el-table-column>
           <el-table-column prop="rel" :label="$t('metadata_details_connectionRelation')">
             <template v-slot="scope">
-              <el-select v-model="scope.row.rel" size="small">
+              <el-select v-model="scope.row.rel">
                 <el-option
                   v-for="item in relationshipList"
                   :label="item.name"
@@ -138,28 +136,21 @@
           </el-table-column>
           <el-table-column prop="address" :label="$t('public_operation')" width="60">
             <template v-slot="scope">
-              <el-button
-                @click="delRelation(scope.$index, 0)"
-                text
-                class="iconfont icon-quxiao"
-                size="small"
-              ></el-button>
+              <el-button @click="delRelation(scope.$index, 0)" text class="iconfont icon-quxiao"></el-button>
             </template>
           </el-table-column>
         </el-table>
         <div class="addBtn">
-          <el-button @click="addRelation" class="add" size="small"
-            >+ {{ $t('metadata_details_addRelatedTable') }}</el-button
-          >
+          <el-button @click="addRelation" class="add">+ {{ $t('metadata_details_addRelatedTable') }}</el-button>
         </div>
       </div>
     </el-form>
     <template v-slot:footer>
       <div class="dialog-footer">
-        <el-button class="cancel" @click="handleClose()" size="small">
+        <el-button class="cancel" @click="handleClose()">
           {{ $t('public_button_cancel') }}
         </el-button>
-        <el-button type="primary" @click="save()" size="small">{{ $t('public_button_save') }}</el-button>
+        <el-button type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
       </div>
     </template>
     <el-dialog
@@ -184,12 +175,10 @@
     			</ul> -->
       <template v-slot:footer>
         <div class="dialog-footer">
-          <el-button class="cancel" @click="dialogDictionaryVisible = false" size="small">{{
+          <el-button class="cancel" @click="dialogDictionaryVisible = false">{{
             $t('public_button_cancel')
           }}</el-button>
-          <el-button type="primary" @click="handleSelectDictionary" size="small">{{
-            $t('public_button_confirm')
-          }}</el-button>
+          <el-button type="primary" @click="handleSelectDictionary">{{ $t('public_button_confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>

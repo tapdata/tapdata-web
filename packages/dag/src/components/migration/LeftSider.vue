@@ -31,7 +31,6 @@
                 v-model:value="dbSearchTxt"
                 ref="dbInput"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="small"
                 clearable
                 @keydown.stop
                 @keyup.stop
@@ -66,7 +65,7 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
@@ -129,7 +128,7 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
@@ -211,7 +210,7 @@ export default {
     BaseNode,
     VIcon,
     ConnectionTypeSelector,
-    ConnectionType
+    ConnectionType,
   },
   data() {
     return {
@@ -240,12 +239,12 @@ export default {
       comingAllowDatabase: [], // 即将上线
       otherType: [],
       automationType: '', //插件化数据源
-      connectionType: 'source'
+      connectionType: 'source',
     }
   },
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
@@ -262,7 +261,7 @@ export default {
     scrollbarWrapStyle() {
       let gutter = getScrollBarWidth()
       return `height: calc(100% + ${gutter}px);`
-    }
+    },
   },
   async created() {
     await this.getDatabaseType()
@@ -276,7 +275,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
-      await databaseTypesApi.get().then(res => {
+      await databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -291,7 +290,7 @@ export default {
 
     getDbFilter() {
       const databaseTypeList =
-        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
+        this.database?.map((t) => t.type).filter((t) => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -319,17 +318,17 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
         where: {
           database_type: {
-            in: databaseTypeList
+            in: databaseTypeList,
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
@@ -354,7 +353,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -379,7 +378,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -424,7 +423,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -440,7 +439,7 @@ export default {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       }
       this.dragNode = node
@@ -488,19 +487,19 @@ export default {
             properties: {
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
-          {}
+          {},
         )
         delete nodeConfig.$inputs
         delete nodeConfig.$outputs
@@ -519,8 +518,8 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities || []
-        }
+          capabilities: item.capabilities || [],
+        },
       }
     },
 
@@ -544,7 +543,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -566,9 +565,9 @@ export default {
       if (this.stateIsReadonly) return
 
       $emit(this, 'add-node', item)
-    }
+    },
   },
-  emits: ['move-node', 'drop-node', 'add-node']
+  emits: ['move-node', 'drop-node', 'add-node'],
 }
 </script>
 

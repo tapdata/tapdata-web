@@ -23,19 +23,13 @@
             class="load-schema__tooltip"
           >
             <span>
-              <el-button
-                :disabled="isFileSource()"
-                type="primary"
-                size="small"
-                class="flex-fill min-w-0"
-                @click="reload()"
+              <el-button :disabled="isFileSource()" type="primary" class="flex-fill min-w-0" @click="reload()"
                 >{{ $t('public_connection_button_load_schema') }}
               </el-button>
             </span>
           </el-tooltip>
           <el-button
             class="flex-fill min-w-0"
-            size="small"
             @click="edit()"
             :disabled="
               $disabledReadonlyUserBtn() || connection.agentType === 'Cloud' || getDisabled(connection, 'Edit')
@@ -43,7 +37,7 @@
           >
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button class="flex-fill min-w-0" size="small" @click="$emit('test', connection)">
+          <el-button class="flex-fill min-w-0" @click="$emit('test', connection)">
             {{ $t('public_connection_button_test') }}
           </el-button>
         </div>

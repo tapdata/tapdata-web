@@ -26,7 +26,6 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="small"
             v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
@@ -57,8 +56,8 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton size="small" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="small" type="primary" @click="dialogSubmit()">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
             {{ $t('public_button_confirm') }}
           </ElButton>
         </span>

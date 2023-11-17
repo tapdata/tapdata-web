@@ -81,8 +81,8 @@
         </template>
         <template v-slot:operation="scope">
           <div class="operate-columns">
-            <ElButton size="small" text @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
-            <ElButton size="small" text @click="getTables(scope.row.id)">{{
+            <ElButton text @click="goDetail(scope.row)">{{ $t('public_button_check') }}</ElButton>
+            <ElButton text @click="getTables(scope.row.id)">{{
               $t('packages_business_shared_detail_button_table_info')
             }}</ElButton>
           </div>

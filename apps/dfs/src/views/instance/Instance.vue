@@ -182,7 +182,6 @@
               </div>
               <div class="w-100 flex justify-content-end mt-2 py-4 px-4">
                 <ElButton
-                  size="small"
                   v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
                   type="primary"
                   @click="toDeploy(item)"
@@ -190,7 +189,6 @@
                 </ElButton>
                 <ElButton
                   name="start"
-                  size="small"
                   type="primary"
                   plain
                   v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
@@ -205,7 +203,6 @@
                     !['Stopped', 'Stopping'].includes(item.status) &&
                     !stopBtnDisabled(item)
                   "
-                  size="small"
                   type="danger"
                   plain
                   :loading="item.btnLoading.stop"
@@ -214,7 +211,6 @@
                 </ElButton>
                 <ElButton
                   name="restart"
-                  size="small"
                   type="warning"
                   plain
                   v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
@@ -224,7 +220,6 @@
                 </ElButton>
                 <ElButton
                   name="restart"
-                  size="small"
                   type="warning"
                   plain
                   v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
@@ -238,14 +233,12 @@
                   v-if="
                     (item.publicAgent || (item.orderInfo && item.orderInfo.subscriptionId)) && !disableUnsubscribe(item)
                   "
-                  size="small"
                   :loading="item.btnLoading.delete"
                   @click="openUnsubscribe(item)"
                 >
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
                 <ElButton
-                  size="small"
                   v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
                   :loading="item.btnLoading.delete"
                   @click="handleUnsubscribe(item)"
@@ -254,7 +247,6 @@
                 <ElButton
                   v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
                   class="mr-2"
-                  size="small"
                   type="primary"
                   @click="openRenew(item)"
                   >{{ $t('public_button_renew') }}
@@ -269,7 +261,7 @@
                     placement="top"
                     :content="getTooltipContent(item, 'upgrading')"
                   >
-                    <ElButton size="small" disabled>
+                    <ElButton disabled>
                       <span class="inline-flex align-items-center">
                         <span>{{ $t('public_status_altering') }}</span>
                         <ElProgress
@@ -297,7 +289,6 @@
                     :content="getTooltipContent(item, 'fail')"
                   >
                     <el-button
-                      size="small"
                       type="primary"
                       plain
                       class="cursor-pointer block inline-flex align-items-center"
@@ -314,12 +305,7 @@
                     placement="top"
                     :content="getTooltipContent(item)"
                   >
-                    <el-button
-                      size="small"
-                      type="primary"
-                      plain
-                      class="cursor-pointer block"
-                      @click="showUpgradeDialogFnc(item)"
+                    <el-button type="primary" plain class="cursor-pointer block" @click="showUpgradeDialogFnc(item)"
                       >{{ $t('dfs_instance_instance_shengji') }}
                     </el-button>
                   </ElTooltip>
@@ -504,7 +490,7 @@
                   >{{ $t('public_button_renew') }}
                 </ElButton>
                 <!--68-2 免费实例可以删除-->
-                <ElButton v-if="item.scope === 'Share'" size="small" text @click="openMdbUnsubscribe(item)">
+                <ElButton v-if="item.scope === 'Share'" text @click="openMdbUnsubscribe(item)">
                   <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
                 >
               </div>

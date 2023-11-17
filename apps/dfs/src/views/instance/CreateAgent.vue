@@ -142,10 +142,7 @@
                     </div>
                     <div class="spec-li-title lh-base fw-bold font-color-dark">
                       <span class="align-middle">{{ item.name }}: {{ item.desc }}</span>
-                      <ElTag
-                        v-if="item.chargeProvider === 'FreeTier'"
-                        size="small"
-                        class="bg-color-warning text-white border-0 ml-2"
+                      <ElTag v-if="item.chargeProvider === 'FreeTier'" class="bg-color-warning text-white border-0 ml-2"
                         >{{
                           platform === 'selfHost'
                             ? $t('dfs_instance_instance_mianfei')

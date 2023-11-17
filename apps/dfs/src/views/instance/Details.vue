@@ -40,18 +40,13 @@
       </div>
       <div class="mt-4 flex flex-wrap gap-3">
         <ElButton
-          size="small"
           type="primary"
           :disabled="!showUpload || agent.agentType === 'Cloud'"
           @click="open(agent.id, agent.status)"
           >{{ $t('dfs_instance_instance_rizhishangchuan') }}</ElButton
         >
-        <ElButton size="small" @click="downServeFn(agent)">{{
-          $t('dfs_instance_details_xianchengziyuanxia')
-        }}</ElButton>
-        <ElButton size="small" @click="downConnectorsFn(agent)">{{
-          $t('dfs_instance_details_shujuyuanziyuan')
-        }}</ElButton>
+        <ElButton @click="downServeFn(agent)">{{ $t('dfs_instance_details_xianchengziyuanxia') }}</ElButton>
+        <ElButton @click="downConnectorsFn(agent)">{{ $t('dfs_instance_details_shujuyuanziyuan') }}</ElButton>
       </div>
     </div>
     <!-- 日志上传   -->
@@ -98,21 +93,12 @@
           <span>{{ calcUnit(scope.row.fileSize, 'b') }}</span>
         </template>
         <template #operation="scope">
-          <ElButton
-            size="small"
-            text
-            :disabled="[0, 2, 3].includes(scope.row.status)"
-            @click="handleDownload(scope.row)"
-            >{{ $t('public_button_download') }}</ElButton
-          >
-          <ElButton
-            size="small"
-            text
-            :disabled="scope.row.status === 0"
-            @click="handleDeleteUploadLog(scope.row)"
-            class="ml-3"
-            >{{ $t('public_button_delete') }}</ElButton
-          >
+          <ElButton text :disabled="[0, 2, 3].includes(scope.row.status)" @click="handleDownload(scope.row)">{{
+            $t('public_button_download')
+          }}</ElButton>
+          <ElButton text :disabled="scope.row.status === 0" @click="handleDeleteUploadLog(scope.row)" class="ml-3">{{
+            $t('public_button_delete')
+          }}</ElButton>
         </template>
       </VTable>
       <template v-slot:footer>

@@ -17,19 +17,17 @@
       :rules="rulesEdit"
       class="my-n6"
     >
-      <ElFormItem size="small" :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
+      <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
         <ElInput v-model:value="editForm.value" text maxlength="50" clearable></ElInput>
       </ElFormItem>
-      <ElFormItem size="small" :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
+      <ElFormItem :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
         <ElInput v-model:value="editForm.desc" type="textarea"></ElInput>
       </ElFormItem>
     </ElForm>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <ElButton @click="handleClose" size="small">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" :loading="saveLoading" @click="handleSave">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :loading="saveLoading" @click="handleSave">{{ $t('public_button_save') }}</ElButton>
       </span>
     </template>
   </ElDialog>

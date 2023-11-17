@@ -15,11 +15,7 @@
       v-if="activeNode && activeNode.type === 'merge_table_processor'"
       class="position-absolute config-tabs-right-extra flex align-center"
     >
-      <ElButton
-        @click="setMaterializedViewVisible(true)"
-        class="--with-icon flex align-center px-2 py-0 gap-1"
-        size="small"
-      >
+      <ElButton @click="setMaterializedViewVisible(true)" class="--with-icon flex align-center px-2 py-0 gap-1">
         <VIcon size="30">beta</VIcon>
         {{ $t('packages_dag_materialized_view') }}</ElButton
       >
@@ -35,7 +31,7 @@
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
+        feedbackLayout: 'terse',
       }"
       @update:InputsOrOutputs="handleLoadMeta"
     />
@@ -66,7 +62,7 @@ export default {
 
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
 
   props: {
@@ -75,9 +71,9 @@ export default {
     showSchemaPanel: Boolean,
     includesType: {
       type: Array,
-      default: () => ['node', 'settings']
+      default: () => ['node', 'settings'],
     },
-    syncType: String
+    syncType: String,
   },
 
   data() {
@@ -85,7 +81,7 @@ export default {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: 'settings',
-      name: this.activeNode?.name
+      name: this.activeNode?.name,
     }
   },
 
@@ -101,13 +97,13 @@ export default {
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
-    }
+    },
   },
 
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
 
   mounted() {
@@ -120,7 +116,7 @@ export default {
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'setMaterializedViewVisible'
+      'setMaterializedViewVisible',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
@@ -158,8 +154,8 @@ export default {
           metaPane[this.syncType === 'sync' ? 'loadFields' : 'loadData']()
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

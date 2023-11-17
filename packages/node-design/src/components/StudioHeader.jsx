@@ -19,7 +19,7 @@ export const StudioHeader = observer(
 
       watch(
         () => root.$route,
-        async route => {
+        async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
             const data = await customNodeApi.get([route.params?.id])
@@ -31,7 +31,7 @@ export const StudioHeader = observer(
             customNodeRef.value.from({})
           }
         },
-        { immediate: true }
+        { immediate: true },
       )
 
       const save = async () => {
@@ -48,7 +48,7 @@ export const StudioHeader = observer(
             customNode.id = data.id
             root.$router.replace({
               name: 'NodeEditor',
-              params: { id: data.id, action: 'nodeSave' }
+              params: { id: data.id, action: 'nodeSave' },
             })
           }
           root.$message.success(root.$t('public_message_save_ok'))
@@ -65,7 +65,7 @@ export const StudioHeader = observer(
             <button
               onClick={() => {
                 root.$router.push({
-                  name: 'customNodeList'
+                  name: 'customNodeList',
                 })
               }}
               class="panel-header-btn inline-flex align-center p-1"
@@ -81,7 +81,7 @@ export const StudioHeader = observer(
               maxWidth="254"
               placeholder="请输入节点名称"
               value={customNodeRef.value.name}
-              onInput={val => {
+              onInput={(val) => {
                 customNodeRef.value.name = val
               }}
             />
@@ -129,12 +129,12 @@ export const StudioHeader = observer(
             </ElTooltip>
           </div>
           <div class="panel-header-actions text-end flex-grow-1 mr-3">
-            <ElButton loading={saving.value} size="small" type="primary" onClick={save}>
+            <ElButton loading={saving.value} type="primary" onClick={save}>
               保存
             </ElButton>
           </div>
         </div>
       )
-    }
-  })
+    },
+  }),
 )

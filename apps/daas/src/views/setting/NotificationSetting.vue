@@ -20,7 +20,6 @@
                 <el-input
                   v-model="item.lagTimeInterval"
                   class="item-input"
-                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -46,7 +45,6 @@
                 <el-input
                   v-model="item.noticeIntervalInterval"
                   class="item-input"
-                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -66,7 +64,6 @@
                 <el-input
                   v-model="item.Interval"
                   class="item-input"
-                  size="small"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
@@ -111,7 +108,6 @@
       <ElButton
         class="btn"
         @click="submit"
-        size="small"
         type="primary"
         :disabled="!runNotification || !systemNotification || !agentNotification"
         >{{ $t('public_button_save') }}</ElButton
@@ -135,7 +131,7 @@ export default {
       runNotification: [],
       systemNotification: [],
       agentNotification: [],
-      loading: false
+      loading: false,
     }
   },
   created() {
@@ -146,7 +142,7 @@ export default {
       this.loading = true
       settingsApi
         .findOne('76')
-        .then(data => {
+        .then((data) => {
           let value = JSON.parse(data?.value || '{}')
           this.runNotification = value.runNotification
           this.systemNotification = value.systemNotification
@@ -158,12 +154,12 @@ export default {
     },
     submit() {
       let where = {
-        _id: '76'
+        _id: '76',
       }
       let data = {
         runNotification: this.runNotification,
         systemNotification: this.systemNotification,
-        agentNotification: this.agentNotification
+        agentNotification: this.agentNotification,
       }
       if (!data) {
         return
@@ -176,8 +172,8 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

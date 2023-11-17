@@ -51,7 +51,6 @@
             :loading="cancelButtonLoading"
             :class="[{ cancelButtonClasses }, 'message-button-cancel']"
             v-if="showCancelButton"
-            size="small"
             @click="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
@@ -63,7 +62,6 @@
             ref="confirm"
             :class="[confirmButtonClasses]"
             v-show="showConfirmButton"
-            size="small"
             @click="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
@@ -85,10 +83,10 @@ import i18n from '@/i18n'
 
 export default {
   components: {
-    VIcon
+    VIcon,
   },
   props: {
-    value: Boolean
+    value: Boolean,
   },
   data() {
     return {
@@ -127,7 +125,7 @@ export default {
       width: '416px', // 需要完整的像素字符串
       confirmButtonTextDefault: i18n.t('public_button_confirm'),
       cancelButtonTextDefault: i18n.t('public_button_cancel'),
-      onlyTitle: false
+      onlyTitle: false,
     }
   },
   computed: {
@@ -144,7 +142,7 @@ export default {
     haveTitleAndMessage() {
       let { title, message } = this
       return title && message
-    }
+    },
   },
   watch: {
     value(v) {
@@ -152,7 +150,7 @@ export default {
     },
     visible(v) {
       v && this.init()
-    }
+    },
   },
   beforeUnmount() {
     this.close()
@@ -181,9 +179,9 @@ export default {
         return
       }
       this.iconClass = 'color-' + type
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

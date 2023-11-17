@@ -14,7 +14,6 @@
         <ElInput
           ref="search"
           v-model:value="search"
-          size="small"
           clearable
           autofocus
           @keydown.stop
@@ -29,7 +28,7 @@
       </div>
       <div
         v-if="!showParentLineage"
-        class="flex-fill min-h-0 pl-2 py-2"
+        class="flex-fill min-h-0 pl-1 py-1"
         v-loading="loading || searchIng"
         ref="treeContainer"
       >
@@ -110,7 +109,7 @@
                 <span class="table-label" :title="data.name">
                   {{ data.name }}
                   <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
-                  <ElTag v-if="data.disabled" type="info" size="small">{{ $t('public_status_invalid') }}</ElTag>
+                  <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
                 </span>
               </span>
             </template>
@@ -319,7 +318,7 @@ export default defineComponent({
   },
   mounted() {
     useResizeObserver(this.$refs.treeContainer, () => {
-      this.treeHeight = this.$refs.treeContainer.getBoundingClientRect().height - 16
+      this.treeHeight = this.$refs.treeContainer.getBoundingClientRect().height - 8
     })
   },
   beforeUnmount() {
@@ -361,11 +360,7 @@ export default defineComponent({
             <span class="table-label" title={data.name}>
               {data.name}
             </span>
-            {data.disabled && (
-              <ElTag type="info" size="small">
-                {this.$t('public_status_invalid')}
-              </ElTag>
-            )}
+            {data.disabled && <ElTag type="info">{this.$t('public_status_invalid')}</ElTag>}
             <IconButton
               class="btn-menu"
               sm
@@ -419,7 +414,7 @@ export default defineComponent({
             {data.name}
             {data.comment && <span class="font-color-sslight">{`(${data.comment})`}</span>}
             {data.disabled && (
-              <ElTag type="info" size="small" class="ml-2">
+              <ElTag type="info" class="ml-2">
                 {this.$t('public_status_invalid')}
               </ElTag>
             )}
@@ -489,7 +484,6 @@ export default defineComponent({
         items.push(connection)
       })
       this.connectionMap = map
-      console.log('items', items)
       return items
     },
 

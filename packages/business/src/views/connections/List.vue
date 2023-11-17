@@ -24,7 +24,6 @@
             <ElRadioGroup
               :class="{ 'ml-2': isDaas }"
               v-model:value="searchParams.databaseModel"
-              size="small"
               @change="table.fetch(1)"
             >
               <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
@@ -43,7 +42,6 @@
             v-if="isDaas"
             v-show="multipleSelection.length > 0"
             v-readonlybtn="'datasource_category_application'"
-            size="small"
             class="btn"
             @click="$refs.table.showClassify(handleSelectTag())"
           >
@@ -56,7 +54,6 @@
             v-readonlybtn="'datasource_creation'"
             class="btn btn-create"
             type="primary"
-            size="small"
             :disabled="$disabledReadonlyUserBtn()"
             @click="checkTestConnectionAvailable"
           >

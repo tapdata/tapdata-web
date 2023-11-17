@@ -6,7 +6,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton type="primary" class="btn-create" size="small" @click="toCreate">
+          <ElButton type="primary" class="btn-create" @click="toCreate">
             <span>{{ $t('public_button_add') }}</span>
           </ElButton>
         </div>
@@ -43,25 +43,25 @@ export default {
         {
           placeholder: this.$t('packages_business_custom_node_placeholder'),
           key: 'name',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
       searchParams: {
-        name: ''
+        name: '',
       },
-      order: 'last_updated DESC'
+      order: 'last_updated DESC',
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
 
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
 
   methods: {
@@ -75,27 +75,27 @@ export default {
         where: where,
         order: this.order,
         limit: size,
-        skip: (current - 1) * size
+        skip: (current - 1) * size,
       }
       return customNodeApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ total, items }) => {
           return {
             total,
-            data: items.map(item => {
+            data: items.map((item) => {
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.last_updated = dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item
-            })
+            }),
           }
         })
     },
     remove(item) {
       this.$confirm(this.$t('public_message_delete_confirm'), this.$t('public_message_title_prompt'), {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -110,14 +110,14 @@ export default {
           this.$router.resolve({
             name: 'NodeEditor',
             params: {
-              id: row.id
-            }
-          }).href
+              id: row.id,
+            },
+          }).href,
         )
       let usedTaskData = await customNodeApi.checkUsed(row.id)
       if (usedTaskData?.length) {
         const arr = ['starting', 'running']
-        const filterData = usedTaskData.map(makeStatusAndDisabled).filter(item => {
+        const filterData = usedTaskData.map(makeStatusAndDisabled).filter((item) => {
           return arr.includes(item.status)
         })
         if (!filterData.length) {
@@ -128,7 +128,7 @@ export default {
           <div class="w-100">
             <div>{this.$t('packages_business_custom_node_edit_confirm')}</div>
             <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
-              {filterData.map(item => {
+              {filterData.map((item) => {
                 return (
                   <a
                     class="block link-primary"
@@ -138,8 +138,8 @@ export default {
                       this.$router.resolve({
                         name: item.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
                         params: {
-                          id: item.id
-                        }
+                          id: item.id,
+                        },
                       }).href
                     }
                   >
@@ -153,9 +153,9 @@ export default {
           {
             customClass: 'custom-node-edit-confirm',
             confirmButtonText: this.$t('dataFlow_continueEditing'),
-            type: 'warning'
-          }
-        ).then(resFlag => {
+            type: 'warning',
+          },
+        ).then((resFlag) => {
           if (!resFlag) return
           open()
         })
@@ -166,16 +166,16 @@ export default {
     toCreate() {
       window.open(
         this.$router.resolve({
-          name: 'NodeNew'
-        }).href
+          name: 'NodeNew',
+        }).href,
       )
     },
     //筛选条件
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    }
-  }
+    },
+  },
 }
 </script>
 

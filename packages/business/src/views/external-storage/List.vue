@@ -6,7 +6,7 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton class="btn btn-create" type="primary" size="small" @click="openDialog()">
+          <ElButton class="btn btn-create" type="primary" @click="openDialog()">
             <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
           </ElButton>
         </div>
@@ -72,15 +72,7 @@
           : $t('packages_business_external_storage_list_chuangjianwaicun')
       "
     >
-      <ElForm
-        class=""
-        ref="form"
-        label-position="left"
-        :label-width="labelWidth"
-        size="small"
-        :model="form"
-        :rules="rules"
-      >
+      <ElForm class="" ref="form" label-position="left" :label-width="labelWidth" :model="form" :rules="rules">
         <ElFormItem :label="$t('public_external_memory_name')" prop="name">
           <ElInput v-model:value="form.name"></ElInput>
         </ElFormItem>
@@ -124,8 +116,8 @@
           <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
-          <ElButton size="small" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" size="small" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
+          <ElButton @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
         </span>
       </template>
     </ElDialog>

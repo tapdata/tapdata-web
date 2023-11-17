@@ -29,7 +29,6 @@
                   </div>
                   <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
                     <ElButton
-                      size="small"
                       type="danger"
                       v-if="item.canUpdate"
                       @click="updateFn(item, item.management.status, 'management', 'update')"
@@ -123,7 +122,6 @@
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="small"
                           text
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
@@ -156,7 +154,6 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="small"
                           text
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
@@ -164,7 +161,6 @@
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="small"
                           text
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
@@ -197,7 +193,6 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="small"
                           text
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
@@ -205,7 +200,6 @@
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="small"
                           text
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
@@ -302,10 +296,8 @@
       <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="small" @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{
-            $t('public_button_confirm')
-          }}</ElButton>
+          <ElButton @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitForm('ruleForm')">{{ $t('public_button_confirm') }}</ElButton>
         </div>
       </template>
     </el-dialog>
@@ -324,7 +316,6 @@
             <el-input
               style="width: 85%"
               v-model="agentName"
-              size="small"
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
@@ -332,7 +323,7 @@
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
-          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="small" style="width: 85%">
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" style="width: 85%">
             <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
           <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>
@@ -340,8 +331,8 @@
       </el-form>
       <template v-slot:footer>
         <div class="dialog-footer">
-          <ElButton size="small" @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
+          <ElButton @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitEditAgent('editAgentForm')">{{
             $t('public_button_confirm')
           }}</ElButton>
         </div>

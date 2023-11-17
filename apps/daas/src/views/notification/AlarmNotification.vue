@@ -8,9 +8,9 @@
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="small" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
-        <ElButton size="small" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
-        <ElButton size="small" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton type="primary" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
+        <ElButton @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
+        <ElButton v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
@@ -87,7 +87,7 @@ export default {
       loading: false,
       searchParams: {
         search: '',
-        msg: ''
+        msg: '',
       },
 
       currentPage: 1,
@@ -96,25 +96,25 @@ export default {
       options: [
         {
           label: this.$t('packages_business_components_alert_huifu'),
-          value: 'RECOVERY'
+          value: 'RECOVERY',
         },
         {
           label: this.$t('packages_business_shared_const_yiban'),
-          value: 'NORMAL'
+          value: 'NORMAL',
         },
         {
           label: this.$t('packages_business_shared_const_jinggao'),
-          value: 'WARNING'
+          value: 'WARNING',
         },
         {
           label: this.$t('packages_business_shared_const_yanzhong'),
-          value: 'CRITICAL'
+          value: 'CRITICAL',
         },
         {
           label: this.$t('packages_business_shared_const_jinji'),
-          value: 'EMERGENCY'
-        }
-      ]
+          value: 'EMERGENCY',
+        },
+      ],
     }
   },
   created() {
@@ -126,7 +126,7 @@ export default {
       let where = {
         msgType: 'ALARM',
         page: this.currentPage,
-        size: this.pagesize
+        size: this.pagesize,
       }
       if (this.searchParams.search) {
         where.level = this.searchParams.search
@@ -137,9 +137,9 @@ export default {
       this.loading = true
       notificationApi
         .list(where)
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
-          this.listData = list.map(item => {
+          this.listData = list.map((item) => {
             item.levelLabel = ALARM_LEVEL_MAP[item.level].text
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             return item
@@ -165,7 +165,7 @@ export default {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
           let msg = {
-            type: 'notification'
+            type: 'notification',
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
@@ -177,16 +177,16 @@ export default {
     // 标记本页已读
     handlePageRead() {
       let ids = []
-      this.listData.map(item => {
+      this.listData.map((item) => {
         ids.push(item.id)
       })
       let id = {
-        inq: ids
+        inq: ids,
       }
 
       let data = {
         read: true,
-        id
+        id,
       }
       let read = this.read
       notificationApi.pageRead(data).then(() => {
@@ -195,7 +195,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -217,7 +217,7 @@ export default {
         this.read = read
         $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -240,15 +240,15 @@ export default {
           key: 'search',
           type: 'select-inner',
           items: this.options,
-          selectedWidth: '200px'
-        }
+          selectedWidth: '200px',
+        },
       ]
     },
     handleSetting() {
       this.$router.push({ name: 'alarmSetting' })
-    }
+    },
   },
-  emits: ['notificationUpdate']
+  emits: ['notificationUpdate'],
 }
 </script>
 

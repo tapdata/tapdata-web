@@ -10,7 +10,7 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput ref="search" v-model="search" size="small" clearable @keydown.stop @keyup.stop @click.stop>
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop>
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -86,12 +86,9 @@
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
-                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
-                    $t('public_status_invalid')
-                  }}</ElTag>
+                  <ElTag v-if="item.disabled" class="ml-1" type="info">{{ $t('public_status_invalid') }}</ElTag>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                    size="small"
                     class="ml-1 px-1 flex align-center clickable"
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                     ><VIcon class="mr-1" size="14">open-in-new</VIcon
@@ -346,7 +343,7 @@ const TaskList = defineComponent({
                         open-in-new
                       </IconButton>
                       /*<ElTag
-                        size="small"
+
                         class="ml-1 px-1 flex align-center clickable"
                         onClick={() => {
                           window.open(task.website)
@@ -367,7 +364,6 @@ const TaskList = defineComponent({
                     onClick={() => {
                       isLimit.value = !isLimit.value
                     }}
-                    size="small"
                     round
                     class={['task-list-item-more fs-8', { 'is-reverse': !isLimit.value }]}
                   >

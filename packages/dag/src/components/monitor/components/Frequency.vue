@@ -7,7 +7,6 @@
         :popper-append-to-body="false"
         popper-class="time-select__popper"
         class="ml-2 dark"
-        size="small"
         ref="select"
         @change="changeFnc"
       >
@@ -29,58 +28,58 @@ export default {
       type: String,
       default: () => {
         return i18n.t('packages_dag_components_frequency_shuaxinpinlu')
-      }
+      },
     },
     options: {
       type: Array,
       default: () => [
         {
           label: '5s',
-          value: 5 * 1000
+          value: 5 * 1000,
         },
         {
           label: '10s',
-          value: 10 * 1000
+          value: 10 * 1000,
         },
         {
           label: '30s',
-          value: 30 * 1000
+          value: 30 * 1000,
         },
         {
           label: '1m',
-          value: 60 * 1000
+          value: 60 * 1000,
         },
         {
           label: '5m',
-          value: 5 * 60 * 1000
+          value: 5 * 60 * 1000,
         },
         {
           label: '15m',
-          value: 15 * 60 * 1000
+          value: 15 * 60 * 1000,
         },
         {
           label: '30m',
-          value: 30 * 60 * 1000
+          value: 30 * 60 * 1000,
         },
         {
           label: '1h',
-          value: 60 * 60 * 1000
+          value: 60 * 60 * 1000,
         },
         {
           label: '2h',
-          value: 2 * 60 * 60 * 1000
+          value: 2 * 60 * 60 * 1000,
         },
         {
           label: '1d',
-          value: 24 * 60 * 60 * 1000
-        }
-      ]
-    }
+          value: 24 * 60 * 60 * 1000,
+        },
+      ],
+    },
   },
   data() {
     return {
       period: '',
-      items: []
+      items: [],
     }
   },
   mounted() {
@@ -94,9 +93,9 @@ export default {
 
     openSelect() {
       this.$refs.select?.$el?.click()
-    }
+    },
   },
-  emits: ['change', 'update:value', , 'update:value']
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
 

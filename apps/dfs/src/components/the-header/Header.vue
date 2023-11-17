@@ -73,7 +73,7 @@
 
         <NotificationPopover class="command-item flex align-items-center rounded-4"></NotificationPopover>
         <ElDropdown placement="bottom" :show-timeout="0" @command="changeLanguage" v-if="!onlyEnglishLanguage">
-          <span class="cursor-pointer command-item rounded-4 icon-btn">
+          <span class="cursor-pointer command-item rounded-4 icon-btn outline-0">
             <VIcon size="20">{{ 'language-' + lang }}</VIcon>
           </span>
           <template #dropdown>
@@ -85,7 +85,7 @@
           </template>
         </ElDropdown>
         <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
-          <div class="username flex align-items-center">
+          <div class="username flex align-items-center outline-0">
             <img
               v-if="user.avatar"
               :src="user.avatar"

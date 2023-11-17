@@ -17,24 +17,23 @@
       class="data-server__form overflow-auto flex-1"
       ref="form"
       label-position="top"
-      size="small"
       :model="form"
       :rules="rules"
     >
       <div class="flex gap-4">
-        <ElFormItem :label="$t('public_name')" class="flex-1 form-item-name" size="small" prop="name">
+        <ElFormItem :label="$t('public_name')" class="flex-1 form-item-name" prop="name">
           <ElInput v-if="isEdit" v-model:value="form.name" :placeholder="$t('public_input_placeholder_name')"></ElInput>
           <div v-else class="fw-sub fs-7 font-color-normal">
             {{ data.name }}
           </div>
         </ElFormItem>
-        <ElFormItem class="flex-1" size="small" :label="$t('packages_business_quanxianfanwei')" prop="acl">
+        <ElFormItem class="flex-1" :label="$t('packages_business_quanxianfanwei')" prop="acl">
           <ElSelect v-model:value="form.acl" multiple :disabled="!isEdit" @change="aclChanged" class="w-100">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
       </div>
-      <ElFormItem :label="$t('public_description')" class="flex-1 form-item-name" size="small" prop="description">
+      <ElFormItem :label="$t('public_description')" class="flex-1 form-item-name" prop="description">
         <ElInput
           v-model:value="form.description"
           type="textarea"
@@ -115,7 +114,7 @@
         <div class="mt-4 fs-7 data-server-panel__title">
           {{ $t('packages_business_aPI_path_Settings') }}
         </div>
-        <div class="flex-1 mt-4" size="small">
+        <div class="flex-1 mt-4">
           <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
             <el-radio label="default">{{ $t('packages_business_default_path') }}</el-radio>
             <el-radio label="customize">{{ $t('packages_business_custom_path') }}</el-radio>
@@ -123,7 +122,6 @@
         </div>
         <ElFormItem
           class="flex-1 mt-4"
-          size="small"
           :label="$t('public_version')"
           prop="apiVersion"
           :rules="rules.apiVersion"
@@ -133,7 +131,6 @@
         </ElFormItem>
         <ElFormItem
           class="flex-1 mt-4"
-          size="small"
           :label="$t('packages_business_prefix')"
           prop="prefix"
           v-if="form.pathAccessMethod === 'customize'"
@@ -142,7 +139,6 @@
         </ElFormItem>
         <ElFormItem
           class="flex-1 mt-4"
-          size="small"
           :label="$t('packages_business_base_path')"
           prop="basePath"
           v-if="form.pathAccessMethod === 'customize'"
@@ -151,7 +147,6 @@
         </ElFormItem>
         <ElFormItem
           class="flex-1 mt-4"
-          size="small"
           :label="$t('packages_business_path')"
           v-if="form.pathAccessMethod === 'customize'"
         >
@@ -176,7 +171,7 @@
                 :show-message="false"
                 :rules="rules.param"
               >
-                <ElInput v-model:value="form.params[$index].name" size="small"></ElInput>
+                <ElInput v-model:value="form.params[$index].name"></ElInput>
               </ElFormItem>
             </div>
             <div v-else>{{ row.name }}</div>
@@ -185,7 +180,7 @@
         <ElTableColumn :label="$t('public_type')" prop="type">
           <template #default="{ row, $index }">
             <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'" min-width="60">
-              <ElSelect v-model:value="form.params[$index].type" size="small">
+              <ElSelect v-model:value="form.params[$index].type">
                 <ElOption v-for="type in typeOptions" :key="type" :value="type" :label="type"></ElOption>
               </ElSelect>
             </div>
@@ -195,7 +190,7 @@
         <ElTableColumn v-if="tab === 'form'" :label="$t('meta_table_default')" prop="defaultvalue" min-width="60">
           <template #default="{ row, $index }">
             <div v-if="isEdit && row.defaultvalue !== undefined">
-              <ElInput v-model:value="form.params[$index].defaultvalue" size="small"></ElInput>
+              <ElInput v-model:value="form.params[$index].defaultvalue"></ElInput>
             </div>
             <div v-else>{{ row.defaultvalue }}</div>
           </template>
@@ -203,14 +198,14 @@
         <ElTableColumn :label="$t('public_description')" prop="description" min-width="100">
           <template #default="{ row, $index }">
             <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
-              <ElInput v-model:value="form.params[$index].description" size="small"></ElInput>
+              <ElInput v-model:value="form.params[$index].description"></ElInput>
             </div>
             <div v-else>{{ row.description }}</div>
           </template>
         </ElTableColumn>
         <ElTableColumn v-if="debugParams" :label="$t('packages_business_canshuzhi')" min-width="100">
           <template #default="{ row }">
-            <ElInput v-model:value="debugParams[row.name]" size="small"></ElInput>
+            <ElInput v-model:value="debugParams[row.name]"></ElInput>
           </template>
         </ElTableColumn>
         <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
@@ -238,13 +233,13 @@
                 :label="opt.field_name"
               ></ElOption>
             </ElSelect>
-            <ElSelect v-model:value="form.where[index].operator" size="small" class="mr-4">
+            <ElSelect v-model:value="form.where[index].operator" class="mr-4">
               <ElOption v-for="item in operatorOptions" :key="item" :value="item" :label="item"></ElOption>
             </ElSelect>
             <ElSelect v-model:value="form.where[index].parameter" class="mr-4">
               <ElOption v-for="opt in parameterOptions" :key="opt.name" :value="opt.name" :label="opt.name"></ElOption>
             </ElSelect>
-            <ElSelect v-model:value="form.where[index].condition" size="small" class="mr-4">
+            <ElSelect v-model:value="form.where[index].condition" class="mr-4">
               <template v-for="item in conditionOptions">
                 <ElOption
                   v-if="item !== 'null' || index === form.where.length - 1"
@@ -282,7 +277,7 @@
                 :label="opt.field_name"
               ></ElOption>
             </ElSelect>
-            <ElSelect v-model:value="form.sort[index].type" size="small" class="mr-4">
+            <ElSelect v-model:value="form.sort[index].type" class="mr-4">
               <ElOption value="asc" label="ASC"></ElOption>
               <ElOption value="desc" label="DESC"></ElOption>
             </ElSelect>
@@ -321,7 +316,6 @@
           <ElButton
             v-if="this.data.id && form.pathAccessMethod === 'default' && data.status !== 'active'"
             type="primary"
-            size="small"
             @click="generate"
             >{{ $t('application_generator') }}</ElButton
           >
@@ -345,17 +339,12 @@
         </div>
         <div class="flex">
           <div class="data-server-debug__url flex-1 flex align-center mr-4">
-            <ElSelect
-              v-model:value="debugMethod"
-              class="data-server-debug__method mr-4"
-              style="width: 100px"
-              size="small"
-            >
+            <ElSelect v-model:value="debugMethod" class="data-server-debug__method mr-4" style="width: 100px">
               <ElOption v-for="(url, method) in urls" :key="method" :value="method"></ElOption>
             </ElSelect>
             <div>{{ urls[debugMethod] }}</div>
           </div>
-          <ElButton type="primary" size="small" @click="debugData">{{ $t('public_button_submit') }}</ElButton>
+          <ElButton type="primary" @click="debugData">{{ $t('public_button_submit') }}</ElButton>
         </div>
       </template>
       <template v-if="tab === 'debug'">

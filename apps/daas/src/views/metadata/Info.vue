@@ -105,9 +105,7 @@
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata_details_businessAttributes') }}</span>
-              <ElLink type="primary" size="small" @click.stop="creatBusiness"
-                >+ {{ $t('metadata_details_creat') }}</ElLink
-              >
+              <ElLink type="primary" @click.stop="creatBusiness">+ {{ $t('metadata_details_creat') }}</ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
@@ -140,7 +138,6 @@
                             :placeholder="$t('metadata_details_searchPlaceholder')"
                             clearable
                             v-model="searchParams.keyword"
-                            size="small"
                             style="width: 160px"
                           >
                             <template v-slot:prefix>
@@ -151,7 +148,7 @@
                           </el-input>
                         </li>
                         <li class="item">
-                          <el-button text class="restBtn" size="small" @click="reset()">
+                          <el-button text class="restBtn" @click="reset()">
                             {{ $t('public_button_reset') }}
                           </el-button>
                         </li>
@@ -160,7 +157,7 @@
                     <div class="table-page-operation-bar">
                       <template v-slot:operation>
                         <div class="operation">
-                          <el-button class="btn-create" type="primary" size="small" @click="hanldCreateFiled">
+                          <el-button class="btn-create" type="primary" @click="hanldCreateFiled">
                             <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
                             <span> {{ $t('metadata_details_createFiled') }}</span>
                           </el-button>
@@ -246,13 +243,12 @@
                     <el-table-column prop="comment" :label="$t('public_description')"></el-table-column>
                     <el-table-column width="120" :label="$t('public_operation')">
                       <template v-slot="scope">
-                        <el-button v-readonlybtn="'data_catalog_edition'" size="small" text @click="edit(scope.row)">
+                        <el-button v-readonlybtn="'data_catalog_edition'" text @click="edit(scope.row)">
                           {{ $t('public_button_edit') }}
                         </el-button>
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
                           v-if="scope.row.field_name !== '_id'"
-                          size="small"
                           text
                           @click="remove(scope.row, scope.$index, 0)"
                           >{{ $t('public_button_delete') }}</el-button
@@ -329,10 +325,8 @@
       <FormBuilder ref="form" v-model:value="businessForm" :config="businessFormConfig"></FormBuilder>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
-            $t('public_button_cancel')
-          }}</el-button>
-          <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('public_button_save') }}</el-button>
+          <el-button class="cancel" @click="businessDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="saveBusiness()">{{ $t('public_button_save') }}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -348,15 +342,13 @@
           {{ editNameForm.original_name }}
         </el-form-item>
         <el-form-item :label="$t('metadata_details_alias')" prop="name">
-          <el-input v-model="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="editNameForm.alias_name" maxlength="100" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
-            $t('public_button_cancel')
-          }}</el-button>
-          <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('public_button_save') }}</el-button>
+          <el-button class="cancel" @click="editNameDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="saveAliasName()">{{ $t('public_button_save') }}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -374,10 +366,10 @@
       </el-form>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
+          <el-button class="cancel" @click="editCommentDialogVisible = false">{{
             $t('public_button_cancel')
           }}</el-button>
-          <el-button type="primary" @click="saveComment()" size="small">{{ $t('public_button_save') }}</el-button>
+          <el-button type="primary" @click="saveComment()">{{ $t('public_button_save') }}</el-button>
         </span>
       </template>
     </el-dialog>
