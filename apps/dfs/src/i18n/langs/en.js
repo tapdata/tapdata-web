@@ -222,6 +222,7 @@ export default {
     'After deletion, the storage resource will no longer be used. Are you sure to delete?',
 
   agent_deploy_start_install: 'Start Installation',
+  agent_deploy_tutorial: 'Deployment tutorial',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
   agent_deploy_start_install_windows_first: '1. Click',
@@ -1666,7 +1667,7 @@ export default {
   dfs_guide_index_zhanghaoanquanbang: 'Account Security Binding',
   dfs_guide_index_zhengzaijianceyin:
     'The engine deployment status is being detected, and the task guide page will be entered automatically after the detection is completed. ',
-  dfs_guide_index_dengdaibushu: 'Waiting for deployment',
+  dfs_guide_index_dengdaibushu: 'Waiting for manual deployment',
   dfs_guide_index_tapda: 'Please follow these simple steps to get started. ',
   dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud',
   dfs_guide_scenes_meiyoutedingde: 'Just exploring, don’t have specific project yet',
