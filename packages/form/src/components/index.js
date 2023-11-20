@@ -1,8 +1,9 @@
 // export * from './select'
 import { Space } from './space'
 import { Input } from './input'
+import { FormCollapse, FormCollapseItem } from './form-collapse'
 
-export { Space, Input }
+export { Space, Input, FormCollapse, FormCollapseItem }
 // export * from './preview-text'
 // export * from './space'
 export * from './js-editor'
@@ -23,7 +24,7 @@ export * from './Button'
 // export * from './input'
 export * from './batch-add-field'
 export * from './json-editor'
-export * from './form-collapse'
+// export * from './form-collapse'
 export * from './table-field-select'
 
 export * from '@formily/element-plus'

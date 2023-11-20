@@ -15,8 +15,8 @@ import * as _components from '../components/form'
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
-  }
+    ..._components,
+  },
 })
 
 export default {
@@ -32,12 +32,12 @@ export default {
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
-      })
-    }
+        feedbackLayout: 'terse',
+      }),
+    },
   },
 
-  components: { Form, SchemaField }
+  components: { Form, SchemaField },
 }
 </script>
 
@@ -107,10 +107,10 @@ $headerBg: #fff;
     }
   }
 
-  :deep(.formily-element-form-item) {
+  :deep(.#{$formNamespace}-form-item) {
     font-size: $fontBaseTitle;
 
-    .formily-element-form-item-label {
+    .#{$formNamespace}-form-item-label {
       label {
         color: map-get($fontColor, light);
       }
@@ -124,19 +124,19 @@ $headerBg: #fff;
       width: 130px;
     }
 
-    .formily-element-form-item-help,
-    .formily-element-form-item-extra {
+    .#{$formNamespace}-form-item-help,
+    .#{$formNamespace}-form-item-extra {
       white-space: pre-wrap;
     }
   }
 
-  :deep(.formily-element-form-item-layout-horizontal) {
-    .formily-element-plus-form-item-control-content-component > .el-switch {
+  :deep(.#{$formNamespace}-form-item-layout-horizontal) {
+    .#{$formNamespace}-form-item-control-content-component > .el-switch {
       height: 40px;
       line-height: 40px;
     }
 
-    .formily-element-space-horizontal {
+    .#{$formNamespace}-space-horizontal {
       .el-switch {
         height: 32px;
         line-height: 32px;
@@ -144,8 +144,8 @@ $headerBg: #fff;
     }
   }
 
-  :deep(.formily-element-form-item-layout-vertical) {
-    .formily-element-form-item-label-tooltip {
+  :deep(.#{$formNamespace}-form-item-layout-vertical) {
+    .#{$formNamespace}-form-item-label-tooltip {
       height: 40px;
 
       i {
@@ -153,7 +153,7 @@ $headerBg: #fff;
       }
     }
 
-    .formily-element-space-horizontal {
+    .#{$formNamespace}-space-horizontal {
       .el-switch {
         height: 40px;
         line-height: 40px;
@@ -161,20 +161,22 @@ $headerBg: #fff;
     }
   }
 
-  :deep(.formily-element-plus-form-item-control) {
-    .formily-element-space-horizontal {
+  :deep(.#{$formNamespace}-form-item-control) {
+    .#{$formNamespace}-space-horizontal {
       vertical-align: top;
     }
   }
 
-  :deep(.formily-element-form-item:not(.form-item-text) + .form-item-text) {
+  :deep(.#{$formNamespace}-form-item:not(.form-item-text) + .form-item-text) {
     margin-top: 16px;
   }
 
-  :deep(.form-item-dense
-      .formily-element-plus-form-item-control
-      .formily-element-plus-form-item-control-content
-      .formily-element-plus-form-item-control-content-component) {
+  :deep(
+      .form-item-dense
+        .#{$formNamespace}-form-item-control
+        .#{$formNamespace}-form-item-control-content
+        .#{$formNamespace}-form-item-control-content-component
+    ) {
     min-height: unset;
     line-height: normal;
   }
@@ -186,7 +188,7 @@ $headerBg: #fff;
 
     margin-bottom: 0;
 
-    .formily-element-form-item-label-content {
+    .#{$formNamespace}-form-item-label-content {
       min-height: unset;
       line-height: 1;
 
