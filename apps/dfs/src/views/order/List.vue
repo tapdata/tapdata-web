@@ -252,7 +252,7 @@ export default {
       },
       search: '',
       filterItems: [],
-      activedFilter: '',
+      activedFilter: 'active',
       filterArray: [],
       //授权码
       codeColumns: [
