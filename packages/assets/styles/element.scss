@@ -1,0 +1,14 @@
+// Table
+// css3 var in packages/theme-chalk/src/table.scss
+.el-table {
+  th.el-table__cell {
+    padding: 0;
+    height: 40px;
+    font-weight: 500;
+  }
+
+  .cell {
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+}

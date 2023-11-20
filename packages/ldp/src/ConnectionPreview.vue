@@ -153,11 +153,12 @@ import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConnectionPreview',
-  props: ['connectionId', 'viewData'],
+  props: ['connectionId'],
   components: { Drawer, SchemaProgress, TaskStatus },
   data() {
     return {
       visible: false,
+      viewData: null,
       taskData: [],
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),

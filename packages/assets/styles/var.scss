@@ -16,8 +16,8 @@ $color: (
   dprimary: #0e42d2,
   lprimary: #4080ff,
   disprimary: #94bfff,
-  success: #00B42A,
-  lsuccess: #E8FFEA,
+  success: #00b42a,
+  lsuccess: #e8ffea,
   danger: #f53f3f,
   warning: #ff7d00,
   info: #75849b,
@@ -26,7 +26,7 @@ $color: (
   white: #fff,
   tag: #008eff,
   secondary: #ff7d00,
-  submenu: #f1f2f4
+  submenu: #f1f2f4,
 );
 
 $fontColor: (
@@ -35,7 +35,7 @@ $fontColor: (
   light: #535f72,
   slight: #c9cdd4,
   sslight: #86909c,
-  white: #fff
+  white: #fff,
 );
 
 $bgColor: (
@@ -51,7 +51,7 @@ $bgColor: (
   white: #fff,
   pageCount: rgba(44, 101, 255, 0.08),
   disactive: rgba(106, 161, 255, 0.1),
-  tag: #009bff33
+  tag: #009bff33,
 );
 
 $borderColor: (
@@ -61,11 +61,11 @@ $borderColor: (
   light: #e4e7ed,
   form: #dcdfe6,
   aside: #e1e3e9,
-  sslight: #cdd0d6
+  sslight: #cdd0d6,
 );
 
 $iconFillColor: (
-  normal: #4e5969
+  normal: #4e5969,
 );
 
 // 项目内用到 $namespace
@@ -76,7 +76,7 @@ $iconFillColor: (
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': map-get($color, primary)
+      'base': map-get($color, primary),
     ),
   ),
   $border-radius: (
@@ -87,5 +87,9 @@ $iconFillColor: (
   ),
   $dialog: (
     'border-radius': 10px,
+  ),
+  $table: (
+    'header-bg-color': #fafafa,
+    'header-text-color': map-get($fontColor, normal),
   )
 );
