@@ -232,6 +232,7 @@ export default {
   agent_deploy_before_prepare_windows_third: '3.请严格按照下方的安装步骤部署，不要直接双击安装包！',
   agent_deploy_before_prepare_windows_four: '4.若安装路径包括中文或特殊字符可能导致安装失败。',
   agent_deploy_start_install: '开始安装',
+  agent_deploy_tutorial: '部署教程',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
   agent_deploy_start_install_windows_first: '1. 点击',
@@ -1538,7 +1539,7 @@ export default {
   dfs_guide_deploy_qingfuzhixiafang:
     ' 请复制下方命令并在部署环境执行，其包含镜像的下载及运行，计算引擎 的下载、自动部署及启动',
   dfs_guide_deploy_wanchengdoc: '完成 docker 服务安装后, 请复制下方命令执行, 执行后, 等待平台检测引擎启动',
-  dfs_guide_deploy_qingfuzhixiafang2: '请复制下方命令, 在目录中执行, 执行后, 等待平台检测引擎启动',
+  dfs_guide_deploy_qingfuzhixiafang2: '请复制下方命令并在本地部署环境执行，其包含 Tapdata Agent 的下载、自动部署及启动',
   dfs_guide_index_bushujisuanyin: '部署计算引擎',
   dfs_guide_index_qingxuanzeninxiang: '请选择您想通过本产品完成您的什么需求呢？',
   dfs_guide_index_xuanzejisuanyin: '选择计算引擎规格',
@@ -1546,7 +1547,9 @@ export default {
   dfs_guide_index_quedingshiyongchang: '确定使用场景',
   dfs_guide_index_zhanghaoanquanbang: '账号安全绑定',
   dfs_guide_index_zhengzaijianceyin: '正在检测引擎部署状态，检测完成之后自动进入任务引导页面。',
-  dfs_guide_index_dengdaibushu: '等待部署',
+  dfs_guide_index_waiting_for_deployment_tip: '完成本地部署后，请点击“我已部署完成按钮”以结束新手引导。',
+  dfs_guide_index_dengdaibushu: '等待手动部署',
+  dfs_guide_index_development_complete: '我已部署完成',
   dfs_guide_index_tapda:
     'Tapdata Cloud 是专业的数据集成与服务平台, 为了让您更流畅地使用产品, 请跟随我们的引导, 开始一步步操作吧',
   dfs_guide_index_huanyingshiyongT: '欢迎使用 Tapdata Cloud 数据服务',
@@ -1662,5 +1665,6 @@ export default {
   dfs_user_contactus_lianxifangshi: '联系方式',
   dfs_user_contactus_weinintigongzhuan: '为您提供专业的服务支持',
   dfs_system_update: '系统更新',
-  dfs_system_description: '系统已升级, 点击刷新，立即体验新功能!'
+  dfs_system_description: '系统已升级, 点击刷新，立即体验新功能!',
+  dfs_order_list_bianhao: '编号'
 }

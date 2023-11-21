@@ -166,7 +166,7 @@ const routes = [
             name: 'installAgent',
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Install'),
             meta: {
-              title: '部署计算引擎',
+              title: i18n.t('dfs_guide_index_bushujisuanyin'),
               hideTitle: true
             }
           }

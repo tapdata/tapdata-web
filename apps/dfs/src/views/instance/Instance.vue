@@ -1,443 +1,469 @@
 <template>
-  <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
-    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName" @tab-click="changeTabs">
-      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_instance_instance_agent2')" name="first">
-        <div class="main">
-          <div class="instance-operation">
-            <div class="instance-operation-left">
-              <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
-            </div>
-            <div class="instance-operation-right">
-              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-                <span>{{ $t('public_agent_button_create') }}</span>
-              </ElButton>
-            </div>
+  <div class="flex flex-column flex-fill">
+    <div class="bg-white rounded-lg mb-4">
+      <div class="flex align-items-center px-4">
+        <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      </div>
+      <ElDivider v-if="!isDomesticStation" class="mt-0 mb-3"></ElDivider>
+      <el-tabs
+        v-if="!isDomesticStation"
+        class="header-tabs flex flex-column overflow-hidden flex-1"
+        v-model="activeName"
+        @tab-click="changeTabs"
+      >
+        <el-tab-pane
+          class="order-flex overflow-hidden h-100"
+          :label="$t('dfs_instance_instance_agent2')"
+          name="first"
+        ></el-tab-pane>
+        <el-tab-pane
+          class="order-flex flex-column overflow-hidden h-100"
+          :label="$t('dfs_instance_instance_cunchuziyuan')"
+          name="second"
+        >
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+
+    <section
+      class="instance-wrapper g-panel-container flex-fill h-0 rounded-lg"
+      v-loading="loading"
+      v-if="$route.name === 'Instance'"
+    >
+      <div v-if="activeName !== 'second'" class="main">
+        <div class="instance-operation">
+          <div class="instance-operation-left">
+            <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
           </div>
-          <ul class="agent-ul flex flex-wrap mt-4">
-            <li
-              class="agent-item flex flex-column align-items-start"
-              v-for="item in list"
-              :key="item.id"
-              :id="`agent-${item.id}`"
-            >
-              <div class="flex justify-content-around w-100 border-bottom py-4 px-4 text-center" v-if="agentData(item)">
-                <div>
-                  <el-progress
-                    :width="68"
-                    type="circle"
-                    :percentage="agentData(item).cpuUsage"
-                    :color="customColors"
-                  ></el-progress>
-                  <div class="font-color-light text-center">CPU</div>
-                </div>
-                <div>
-                  <el-progress
-                    :width="68"
-                    type="circle"
-                    :percentage="agentData(item).memoryRate"
-                    :color="customColors"
-                  ></el-progress>
-                  <div class="font-color-light text-center">MEM</div>
-                </div>
-                <div>
-                  <el-progress
-                    :width="68"
-                    type="circle"
-                    :percentage="agentData(item).gcRate"
-                    :color="customColors"
-                  ></el-progress>
-                  <div class="font-color-light text-center">GC</div>
-                </div>
-                <div>
-                  <div class="position-relative">
-                    <el-progress
-                      :width="68"
-                      type="circle"
-                      :percentage="item.pingTimePercent"
-                      :color="customColors"
-                      :show-text="false"
-                    ></el-progress>
-                    <div class="absolute-fill flex align-center justify-content-center fs-8 font-color-light">
-                      <div style="width: 68px">{{ item.pingTimes }}</div>
-                    </div>
-                  </div>
-
-                  <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
-                </div>
-              </div>
-              <div class="flex justify-content-between w-100 pt-4 px-4">
-                <div>
-                  <span v-if="item.publicAgent">{{ item.name }}</span>
-                  <InlineInput
-                    v-else
-                    :class="['inline-input', 'color-primary', { 'cursor-pointer': item.agentType !== 'Cloud' }]"
-                    :value="item.name"
-                    :icon-config="{ class: 'color-primary', size: '12' }"
-                    type="icon"
-                    @click-text="handleDetails(item)"
-                    @save="updateName($event, item.id)"
-                  ></InlineInput>
-                </div>
-                <div>
-                  <StatusTag
-                    v-if="item.agentType === 'Cloud' && item.status === 'Creating'"
-                    type="tag"
-                    status="Deploying"
-                    default-status="Stopped"
-                  ></StatusTag>
-                  <StatusTag
-                    v-else
-                    type="tag"
-                    :status="item.engineStatus === 'starting' ? 'Starting' : item.status"
-                    default-status="Stopped"
-                  ></StatusTag>
-                  <ElTooltip v-if="item.status == 'Stopped'" placement="top">
-                    <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
-                    <template #content>
-                      <div style="max-width: 380px">
-                        {{ $t('dfs_instance_stopped_help_tip_prefix') }}
-                        <a
-                          target="_blank"
-                          href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
-                          class="color-primary"
-                          >{{ $t('dfs_online_help_docs') }}</a
-                        >
-                        {{ $t('dfs_instance_stopped_help_tip_suffix') }}
-                      </div>
-                    </template>
-                  </ElTooltip>
-                </div>
-              </div>
-              <div class="agent-item__content flex flex-wrap px-4">
-                <div class="flex mb-2 w-50" v-for="col in agentConfig">
-                  <span class="font-color-light mr-2">{{ col.label }}: </span>
-                  <!--数据复制-->
-                  <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
-                    <ElLink
-                      type="primary"
-                      :disabled="!item.tmInfo.agentId || !item[col.value]"
-                      @click="toDataFlow(item.tmInfo.agentId)"
-                      >{{ item[col.value] }}</ElLink
-                    >
-                  </span>
-                  <span v-else-if="col.value === 'runningTaskSync'" class="font-color-dark">
-                    <ElLink
-                      type="primary"
-                      :disabled="!item.tmInfo.agentId || !item[col.value]"
-                      @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
-                      >{{ item[col.value] }}</ElLink
-                    >
-                  </span>
-                  <!--到期时间-->
-                  <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark flex align-center">
-                    <ElTooltip :disabled="!getExpiredTimeLevel(item)" placement="top" :visible-arrow="false">
-                      <div class="flex align-center">
-                        <span>{{ item.expiredTimeLabel.split(' ')[0] }}</span>
-                        <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" size="16" class="ml-1 color-danger"
-                          >warning</VIcon
-                        >
-                        <VIcon
-                          v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'"
-                          size="16"
-                          class="ml-1 color-warning"
-                          >warning-circle</VIcon
-                        >
-                      </div>
-                      <template #content>
-                        <div v-if="getExpiredTimeLevel(item) === 'expired'">
-                          <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
-                          <div v-if="item.agentType === 'Cloud'">
-                            <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
-                            <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
-                          </div>
-                          <div v-else>
-                            <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
-                            <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
-                            <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
-                          </div>
-                        </div>
-                        <span v-else-if="item.paidType === 'recurring'">{{
-                          $t('dfs_instance_instance_xiacifufeishi')
-                        }}</span>
-                        <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
-                      </template>
-                    </ElTooltip>
-                  </span>
-                  <!--订阅方式-->
-                  <span
-                    v-else-if="col.value === 'subscriptionMethodLabel'"
-                    :class="{ 'color-success': item.chargeProvider === 'FreeTier' }"
-                    >{{ item[col.value] }}</span
-                  >
-                  <span v-else class="font-color-dark">{{ item[col.value] }}</span>
-                </div>
-              </div>
-              <div class="w-100 flex justify-content-end mt-2 py-4 px-4">
-                <ElButton
-                  size="mini"
-                  v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
-                  type="primary"
-                  @click="toDeploy(item)"
-                  >{{ $t('public_agent_button_deploy') }}</ElButton
-                >
-                <ElButton
-                  name="start"
-                  size="mini"
-                  type="primary"
-                  plain
-                  v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
-                  :loading="item.btnLoading.delete"
-                  @click="handleStart(item)"
-                  >{{ $t('public_button_start') }}</ElButton
-                >
-                <!--全托管没有部署停止按钮，离线状态不能停止-->
-                <ElButton
-                  v-if="
-                    item.agentType !== 'Cloud' &&
-                    !['Stopped', 'Stopping'].includes(item.status) &&
-                    !stopBtnDisabled(item)
-                  "
-                  size="mini"
-                  type="danger"
-                  plain
-                  :loading="item.btnLoading.stop"
-                  @click="handleStop(item)"
-                  >{{ $t('public_button_stop') }}</ElButton
-                >
-                <ElButton
-                  name="restart"
-                  size="mini"
-                  type="warning"
-                  plain
-                  v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
-                  :loading="item.btnLoading.delete"
-                  @click="handleRenew(item)"
-                  >{{ $t('public_button_restart') }}</ElButton
-                >
-                <ElButton
-                  name="restart"
-                  size="mini"
-                  type="warning"
-                  plain
-                  v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
-                  :loading="item.btnLoading.delete"
-                  @click="handleRestart(item)"
-                  >{{ $t('public_button_restart') }}</ElButton
-                >
-                <!--需要考虑老实例/免费实例 无订单信息的-->
-                <!--68-2 免费实例可以删除-->
-                <ElButton
-                  v-if="
-                    (item.publicAgent || (item.orderInfo && item.orderInfo.subscriptionId)) && !disableUnsubscribe(item)
-                  "
-                  size="mini"
-                  :loading="item.btnLoading.delete"
-                  @click="openUnsubscribe(item)"
-                >
-                  <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
-                >
-                <ElButton
-                  size="mini"
-                  v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
-                  :loading="item.btnLoading.delete"
-                  @click="handleUnsubscribe(item)"
-                  >{{ $t('public_button_unsubscribe') }}</ElButton
-                >
-                <ElButton
-                  v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
-                  class="mr-2"
-                  size="mini"
-                  type="primary"
-                  @click="openRenew(item)"
-                  >{{ $t('public_button_renew') }}</ElButton
-                >
-
-                <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
-                <template v-if="showUpgradeIcon(item)">
-                  <ElTooltip
-                    v-if="upgradingFlag(item)"
-                    class="ml-1"
-                    effect="dark"
-                    placement="top"
-                    :content="getTooltipContent(item, 'upgrading')"
-                    key="upgrading"
-                  >
-                    <ElButton size="mini" disabled>
-                      <span class="inline-flex align-items-center">
-                        <span>{{ $t('public_status_altering') }}</span>
-                        <ElProgress
-                          class="upgrading-progress mx-1"
-                          type="circle"
-                          color="#3b47e5"
-                          stroke-width="20"
-                          :percentage="upgradingProgres(item) || 0"
-                          :show-text="false"
-                          :format="
-                            value => {
-                              return value
-                            }
-                          "
-                        ></ElProgress>
-                        <span class="color-primary">{{ (upgradingProgres(item) || 0) + '%' }}</span>
-                      </span>
-                    </ElButton>
-                  </ElTooltip>
-                  <ElTooltip
-                    v-else-if="upgradeFailedFlag(item)"
-                    class="ml-1"
-                    effect="dark"
-                    placement="top"
-                    :content="getTooltipContent(item, 'fail')"
-                    key="fail"
-                  >
-                    <el-button
-                      size="mini"
-                      type="primary"
-                      plain
-                      class="cursor-pointer block inline-flex align-items-center"
-                      @click="showUpgradeErrorDialogFnc(item)"
-                    >
-                      <span>{{ $t('dfs_instance_instance_shengji') }}</span>
-                      <VIcon size="14" class="color-warning ml-2">warning</VIcon>
-                    </el-button>
-                  </ElTooltip>
-                  <ElTooltip
-                    v-else-if="!upgradeFlag(item)"
-                    class="ml-1"
-                    effect="dark"
-                    placement="top"
-                    :content="getTooltipContent(item)"
-                    key="done"
-                  >
-                    <el-button
-                      size="mini"
-                      type="primary"
-                      plain
-                      class="cursor-pointer block"
-                      @click="showUpgradeDialogFnc(item)"
-                      >{{ $t('dfs_instance_instance_shengji') }}</el-button
-                    >
-                  </ElTooltip>
-                </template>
-              </div>
-            </li>
-          </ul>
-          <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
-            <div>
-              <div class="flex upgrade-mb24">
-                <div class="imgBox flex justify-content-center align-items-center">
-                  <img :src="getImg('vector')" alt="" />
-                </div>
-                <div class="ml-6">
-                  <div class="upgrade-version">
-                    {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
-                  </div>
-                  <div class="upgrade-version mt-1">
-                    {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
-                  </div>
-                  <div class="upgrade-version mt-1">
-                    {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
-                  </div>
-                </div>
-              </div>
-              <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
-                {{ $t('dfs_instance_instance_xinzenggongneng') }}
-              </div>
-              <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
-                <li
-                  style="white-space: pre-wrap"
-                  class="upgrade-mb8 upgrade-text"
-                  v-html="currentVersionInfo.changeList"
-                ></li>
-              </ul>
-              <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
-              <!--              <div class="upgrade-text upgrade-mb16">-->
-              <!--                {{ $t('dfs_instance_instance_ruxuliaojiegeng')-->
-              <!--                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">-->
-              <!--                  Release Notes</el-link-->
-              <!--                >-->
-              <!--              </div>-->
-            </div>
-            <div class="dialog-btn flex justify-content-end mt-6">
-              <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
-                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-                  $t('public_agent_button_auto_upgrade')
-                }}</ElButton>
-              </div>
-              <div class="text-end w-50" v-if="selectedRow.agentType === 'Cloud'">
-                <ElButton type="primary" @click="fullManagementUpgradeFnc">{{
-                  $t('public_agent_button_auto_upgrade')
-                }}</ElButton>
-              </div>
-              <div class="text-end w-50" v-else>
-                <ElButton type="primary" @click="manualUpgradeFnc">{{
-                  $t('public_agent_button_manual_upgrade')
-                }}</ElButton>
-              </div>
-            </div>
-            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
-          </ElDialog>
-          <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
-          <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
-            <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
-            <div class="dialog-btn flex justify-content-evenly mt-6">
-              <div class="text-center">
-                <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
-                  $t('public_button_retry')
-                }}</ElButton>
+          <div class="instance-operation-right">
+            <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
+              <span>{{ $t('public_agent_button_create') }}</span>
+            </ElButton>
+          </div>
+        </div>
+        <ul class="agent-ul flex flex-wrap mt-4">
+          <li
+            class="agent-item flex flex-column align-items-start"
+            v-for="item in list"
+            :key="item.id"
+            :id="`agent-${item.id}`"
+          >
+            <div class="flex justify-content-around w-100 border-bottom py-4 px-4 text-center" v-if="agentData(item)">
+              <div>
+                <el-progress
+                  :width="68"
+                  type="circle"
+                  :percentage="agentData(item).cpuUsage"
+                  :color="customColors"
+                ></el-progress>
+                <div class="font-color-light text-center">CPU</div>
               </div>
               <div>
-                <ElButton type="primary" @click="manualUpgradeFnc">{{
-                  $t('public_agent_button_manual_upgrade')
-                }}</ElButton>
+                <el-progress
+                  :width="68"
+                  type="circle"
+                  :percentage="agentData(item).memoryRate"
+                  :color="customColors"
+                ></el-progress>
+                <div class="font-color-light text-center">MEM</div>
+              </div>
+              <div>
+                <el-progress
+                  :width="68"
+                  type="circle"
+                  :percentage="agentData(item).gcRate"
+                  :color="customColors"
+                ></el-progress>
+                <div class="font-color-light text-center">GC</div>
+              </div>
+              <div>
+                <div class="position-relative">
+                  <el-progress
+                    :width="68"
+                    type="circle"
+                    :percentage="item.pingTimePercent"
+                    :color="customColors"
+                    :show-text="false"
+                  ></el-progress>
+                  <div class="absolute-fill flex align-center justify-content-center fs-8 font-color-light">
+                    <div style="width: 68px">{{ item.pingTimes }}</div>
+                  </div>
+                </div>
+
+                <div class="font-color-light">{{ $t('dfs_instance_instance_xintiaobinlu') }}</div>
               </div>
             </div>
-          </ElDialog>
-          <!--  详情    -->
-          <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
-            <div slot="title">
-              <InlineInput
-                :value="selectedRow.name"
-                :icon-config="{ class: 'color-primary' }"
-                :input-style="{ width: '140px' }"
-                type="icon"
-                word-break
-                @save="updateName($event, selectedRow.id)"
-              ></InlineInput>
+            <div class="flex justify-content-between w-100 pt-4 px-4">
+              <div>
+                <span v-if="item.publicAgent">{{ item.name }}</span>
+                <InlineInput
+                  v-else
+                  :class="['inline-input', 'color-primary', { 'cursor-pointer': item.agentType !== 'Cloud' }]"
+                  :value="item.name"
+                  :icon-config="{ class: 'color-primary', size: '12' }"
+                  type="icon"
+                  @click-text="handleDetails(item)"
+                  @save="updateName($event, item.id)"
+                ></InlineInput>
+              </div>
+              <div>
+                <StatusTag
+                  v-if="item.agentType === 'Cloud' && item.status === 'Creating'"
+                  type="tag"
+                  status="Deploying"
+                  default-status="Stopped"
+                ></StatusTag>
+                <StatusTag
+                  v-else
+                  type="tag"
+                  :status="item.engineStatus === 'starting' ? 'Starting' : item.status"
+                  default-status="Stopped"
+                ></StatusTag>
+                <ElTooltip v-if="item.status == 'Stopped'" placement="top">
+                  <VIcon size="14" class="ml-2 color-primary">question-circle</VIcon>
+                  <template #content>
+                    <div style="max-width: 380px">
+                      {{ $t('dfs_instance_stopped_help_tip_prefix') }}
+                      <a
+                        target="_blank"
+                        href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                        class="color-primary"
+                        >{{ $t('dfs_online_help_docs') }}</a
+                      >
+                      {{ $t('dfs_instance_stopped_help_tip_suffix') }}
+                    </div>
+                  </template>
+                </ElTooltip>
+              </div>
             </div>
-            <div slot="operation" class="flex">
-              <VButton
-                :loading="selectedRow.btnLoading.deploy"
-                :disabled="deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+            <div class="agent-item__content flex flex-wrap px-4">
+              <div class="flex mb-2 w-50" v-for="col in agentConfig">
+                <span class="font-color-light mr-2">{{ col.label }}: </span>
+                <!--数据复制-->
+                <span v-if="col.value === 'runningTaskMigrate'" class="font-color-dark">
+                  <ElLink
+                    type="primary"
+                    :disabled="!item.tmInfo.agentId || !item[col.value]"
+                    @click="toDataFlow(item.tmInfo.agentId)"
+                    >{{ item[col.value] }}</ElLink
+                  >
+                </span>
+                <span v-else-if="col.value === 'runningTaskSync'" class="font-color-dark">
+                  <ElLink
+                    type="primary"
+                    :disabled="!item.tmInfo.agentId || !item[col.value]"
+                    @click="toDataFlow(item.tmInfo.agentId, 'dataflowList')"
+                    >{{ item[col.value] }}</ElLink
+                  >
+                </span>
+                <!--到期时间-->
+                <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark flex align-center">
+                  <ElTooltip :disabled="!getExpiredTimeLevel(item)" placement="top" :visible-arrow="false">
+                    <div class="flex align-center">
+                      <span>{{ item.expiredTimeLabel.split(' ')[0] }}</span>
+                      <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" size="16" class="ml-1 color-danger"
+                        >warning</VIcon
+                      >
+                      <VIcon
+                        v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'"
+                        size="16"
+                        class="ml-1 color-warning"
+                        >warning-circle</VIcon
+                      >
+                    </div>
+                    <template #content>
+                      <div v-if="getExpiredTimeLevel(item) === 'expired'">
+                        <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
+                        <div v-if="item.agentType === 'Cloud'">
+                          <p>{{ $t('dfs_instance_expired_time_full_tip2') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_full_tip3') }}</p>
+                        </div>
+                        <div v-else>
+                          <p>{{ $t('dfs_instance_expired_time_tip2') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_tip3') }}</p>
+                          <p>{{ $t('dfs_instance_expired_time_tip4') }}</p>
+                        </div>
+                      </div>
+                      <span v-else-if="item.paidType === 'recurring'">{{
+                        $t('dfs_instance_instance_xiacifufeishi')
+                      }}</span>
+                      <span v-else>{{ $t('dfs_user_center_jijiangguoqi') }}</span>
+                    </template>
+                  </ElTooltip>
+                </span>
+                <!--订阅方式-->
+                <span
+                  v-else-if="col.value === 'subscriptionMethodLabel'"
+                  :class="{ 'color-success': item.chargeProvider === 'FreeTier' }"
+                  >{{ item[col.value] }}</span
+                >
+                <span v-else class="font-color-dark">{{ item[col.value] }}</span>
+              </div>
+            </div>
+            <div class="w-100 flex justify-content-end mt-2 py-4 px-4">
+              <ElButton
+                size="mini"
+                v-if="item.agentType !== 'Cloud' && !deployBtnDisabled(item)"
                 type="primary"
-                class="flex-fill min-w-0"
-                @click="toDeploy(selectedRow)"
+                @click="toDeploy(item)"
+                >{{ $t('public_agent_button_deploy') }}</ElButton
               >
-                <VIcon size="12">deploy</VIcon>
-                <span class="ml-1">{{ $t('public_agent_button_deploy') }}</span>
-              </VButton>
-              <VButton
-                :loading="selectedRow.btnLoading.stop"
-                :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+              <ElButton
+                name="start"
+                size="mini"
+                type="primary"
+                plain
+                v-if="item.agentType === 'Local' && !['Running'].includes(item.status) && !startBtnDisabled(item)"
+                :loading="item.btnLoading.delete"
+                @click="handleStart(item)"
+                >{{ $t('public_button_start') }}</ElButton
+              >
+              <!--全托管没有部署停止按钮，离线状态不能停止-->
+              <ElButton
+                v-if="
+                  item.agentType !== 'Cloud' && !['Stopped', 'Stopping'].includes(item.status) && !stopBtnDisabled(item)
+                "
+                size="mini"
                 type="danger"
                 plain
-                class="flex-fill min-w-0"
-                @click="handleStop(selectedRow)"
+                :loading="item.btnLoading.stop"
+                @click="handleStop(item)"
+                >{{ $t('public_button_stop') }}</ElButton
               >
-                <VIcon size="12">stop</VIcon>
-                <span class="ml-1">{{ $t('public_button_stop') }}</span>
-              </VButton>
-              <!--              <VButton-->
-              <!--                v-if="selectedRow.orderInfo && selectedRow.orderInfo.chargeProvider === 'Stripe'"-->
-              <!--                type="primary"-->
-              <!--                :loading="selectedRow.btnLoading.delete"-->
-              <!--                :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"-->
-              <!--                @click="openUnsubscribe(selectedRow)"-->
-              <!--              >-->
-              <!--                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton-->
-              <!--              >-->
+              <ElButton
+                name="restart"
+                size="mini"
+                type="warning"
+                plain
+                v-if="item.agentType === 'Cloud' && !item.publicAgent && !renewBtnDisabled(item)"
+                :loading="item.btnLoading.delete"
+                @click="handleRenew(item)"
+                >{{ $t('public_button_restart') }}</ElButton
+              >
+              <ElButton
+                name="restart"
+                size="mini"
+                type="warning"
+                plain
+                v-if="item.agentType === 'Local' && !restartBtnDisabled(item)"
+                :loading="item.btnLoading.delete"
+                @click="handleRestart(item)"
+                >{{ $t('public_button_restart') }}</ElButton
+              >
+              <!--需要考虑老实例/免费实例 无订单信息的-->
+              <!--68-2 免费实例可以删除-->
+              <ElButton
+                v-if="
+                  (item.publicAgent || (item.orderInfo && item.orderInfo.subscriptionId)) && !disableUnsubscribe(item)
+                "
+                size="mini"
+                :loading="item.btnLoading.delete"
+                @click="openUnsubscribe(item)"
+              >
+                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></ElButton
+              >
+              <ElButton
+                size="mini"
+                v-else-if="!(item.orderInfo && item.orderInfo.subscriptionId) && !delBtnDisabled(item)"
+                :loading="item.btnLoading.delete"
+                @click="handleUnsubscribe(item)"
+                >{{ $t('public_button_unsubscribe') }}</ElButton
+              >
+              <ElButton
+                v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
+                class="mr-2"
+                size="mini"
+                type="primary"
+                @click="openRenew(item)"
+                >{{ $t('public_button_renew') }}</ElButton
+              >
 
-              <!--<VButton
+              <!--{{$t('dfs_instance_instance_shengji')}}按钮-->
+              <template v-if="showUpgradeIcon(item)">
+                <ElTooltip
+                  v-if="upgradingFlag(item)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(item, 'upgrading')"
+                  key="upgrading"
+                >
+                  <ElButton size="mini" disabled>
+                    <span class="inline-flex align-items-center">
+                      <span>{{ $t('public_status_altering') }}</span>
+                      <ElProgress
+                        class="upgrading-progress mx-1"
+                        type="circle"
+                        color="#3b47e5"
+                        stroke-width="20"
+                        :percentage="upgradingProgres(item) || 0"
+                        :show-text="false"
+                        :format="
+                          value => {
+                            return value
+                          }
+                        "
+                      ></ElProgress>
+                      <span class="color-primary">{{ (upgradingProgres(item) || 0) + '%' }}</span>
+                    </span>
+                  </ElButton>
+                </ElTooltip>
+                <ElTooltip
+                  v-else-if="upgradeFailedFlag(item)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(item, 'fail')"
+                  key="fail"
+                >
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    class="cursor-pointer block inline-flex align-items-center"
+                    @click="showUpgradeErrorDialogFnc(item)"
+                  >
+                    <span>{{ $t('dfs_instance_instance_shengji') }}</span>
+                    <VIcon size="14" class="color-warning ml-2">warning</VIcon>
+                  </el-button>
+                </ElTooltip>
+                <ElTooltip
+                  v-else-if="!upgradeFlag(item)"
+                  class="ml-1"
+                  effect="dark"
+                  placement="top"
+                  :content="getTooltipContent(item)"
+                  key="done"
+                >
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    class="cursor-pointer block"
+                    @click="showUpgradeDialogFnc(item)"
+                    >{{ $t('dfs_instance_instance_shengji') }}</el-button
+                  >
+                </ElTooltip>
+              </template>
+            </div>
+          </li>
+        </ul>
+        <ElDialog :visible.sync="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
+          <div>
+            <div class="flex upgrade-mb24">
+              <div class="imgBox flex justify-content-center align-items-center">
+                <img :src="getImg('vector')" alt="" />
+              </div>
+              <div class="ml-6">
+                <div class="upgrade-version">
+                  {{ $t('dfs_instance_instance_banbenhao') }}{{ currentVersionInfo.version }}
+                </div>
+                <div class="upgrade-version mt-1">
+                  {{ $t('dfs_instance_instance_anzhuangbao') }}{{ currentVersionInfo.packageSize }}
+                </div>
+                <div class="upgrade-version mt-1">
+                  {{ $t('dfs_instance_instance_yujianzhuangshi') }}{{ currentVersionInfo.estimatedUpgradeTime }}
+                </div>
+              </div>
+            </div>
+            <div class="upgrade-desc upgrade-mb16" v-if="currentVersionInfo.changeList">
+              {{ $t('dfs_instance_instance_xinzenggongneng') }}
+            </div>
+            <ul class="upgrade-mb24" v-if="currentVersionInfo.changeList">
+              <li
+                style="white-space: pre-wrap"
+                class="upgrade-mb8 upgrade-text"
+                v-html="currentVersionInfo.changeList"
+              ></li>
+            </ul>
+            <div class="upgrade-desc upgrade-mb8">{{ $t('dfs_instance_instance_bencigengxinbao') }}</div>
+            <!--              <div class="upgrade-text upgrade-mb16">-->
+            <!--                {{ $t('dfs_instance_instance_ruxuliaojiegeng')-->
+            <!--                }}<el-link type="primary" target="_blank" :href="currentVersionInfo.releaseNoteUri">-->
+            <!--                  Release Notes</el-link-->
+            <!--                >-->
+            <!--              </div>-->
+          </div>
+          <div class="dialog-btn flex justify-content-end mt-6">
+            <div class="w-50" v-if="showAutoUpgrade && selectedRow.agentType !== 'Cloud'">
+              <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
+                $t('public_agent_button_auto_upgrade')
+              }}</ElButton>
+            </div>
+            <div class="text-end w-50" v-if="selectedRow.agentType === 'Cloud'">
+              <ElButton type="primary" @click="fullManagementUpgradeFnc">{{
+                $t('public_agent_button_auto_upgrade')
+              }}</ElButton>
+            </div>
+            <div class="text-end w-50" v-else>
+              <ElButton type="primary" @click="manualUpgradeFnc">{{
+                $t('public_agent_button_manual_upgrade')
+              }}</ElButton>
+            </div>
+          </div>
+          <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
+        </ElDialog>
+        <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
+        <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
+          <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
+          <div class="dialog-btn flex justify-content-evenly mt-6">
+            <div class="text-center">
+              <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
+                $t('public_button_retry')
+              }}</ElButton>
+            </div>
+            <div>
+              <ElButton type="primary" @click="manualUpgradeFnc">{{
+                $t('public_agent_button_manual_upgrade')
+              }}</ElButton>
+            </div>
+          </div>
+        </ElDialog>
+        <!--  详情    -->
+        <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
+          <div slot="title">
+            <InlineInput
+              :value="selectedRow.name"
+              :icon-config="{ class: 'color-primary' }"
+              :input-style="{ width: '140px' }"
+              type="icon"
+              word-break
+              @save="updateName($event, selectedRow.id)"
+            ></InlineInput>
+          </div>
+          <div slot="operation" class="flex">
+            <VButton
+              :loading="selectedRow.btnLoading.deploy"
+              :disabled="deployBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+              type="primary"
+              class="flex-fill min-w-0"
+              @click="toDeploy(selectedRow)"
+            >
+              <VIcon size="12">deploy</VIcon>
+              <span class="ml-1">{{ $t('public_agent_button_deploy') }}</span>
+            </VButton>
+            <VButton
+              :loading="selectedRow.btnLoading.stop"
+              :disabled="stopBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"
+              type="danger"
+              plain
+              class="flex-fill min-w-0"
+              @click="handleStop(selectedRow)"
+            >
+              <VIcon size="12">stop</VIcon>
+              <span class="ml-1">{{ $t('public_button_stop') }}</span>
+            </VButton>
+            <!--              <VButton-->
+            <!--                v-if="selectedRow.orderInfo && selectedRow.orderInfo.chargeProvider === 'Stripe'"-->
+            <!--                type="primary"-->
+            <!--                :loading="selectedRow.btnLoading.delete"-->
+            <!--                :disabled="delBtnDisabled(selectedRow) || $disabledReadonlyUserBtn()"-->
+            <!--                @click="openUnsubscribe(selectedRow)"-->
+            <!--              >-->
+            <!--                <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton-->
+            <!--              >-->
+
+            <!--<VButton
                 v-if="!selectedRow.orderInfo"
                 type="primary"
                 :loading="selectedRow.btnLoading.delete"
@@ -446,21 +472,16 @@
               >
                 <span class="ml-1">{{ $t('public_button_unsubscribe') }}</span></VButton
               >-->
-            </div>
-          </Details>
+          </div>
+        </Details>
 
-          <!--转账支付弹窗信息--->
-          <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
-          <!-- 新的创建实例 -->
-          <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane
-        v-if="!isDomesticStation"
-        class="order-flex flex-column overflow-hidden h-100"
-        :label="$t('dfs_instance_instance_cunchuziyuan')"
-        name="second"
-      >
+        <!--转账支付弹窗信息--->
+        <transferDialog :price="price" :visible.sync="showTransferDialogVisible"></transferDialog>
+        <!-- 新的创建实例 -->
+        <SubscriptionModelDialog :visible.sync="subscriptionModelVisible"></SubscriptionModelDialog>
+      </div>
+      <template v-if="activeName === 'second'">
+        <div v-if="activeName === 'second'"></div>
         <section class="flex flex-column overflow-hidden flex-1">
           <ul class="mdb-ul flex flex-wrap mt-4" v-if="mdbData.length > 0">
             <li class="mdb-item flex" v-for="item in mdbData" :key="item.id">
@@ -531,21 +552,21 @@
             <el-button @click="addIps" type="primary">{{ $t('field_mapping_field_mapping_dialog_tianJia') }}</el-button>
           </span>
         </el-dialog>
-      </el-tab-pane>
-    </el-tabs>
-    <!--退订-->
-    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
-    <!--续订-->
-    <Renew ref="RenewDetailDialog" @closeVisible="specRemoteMethod"></Renew>
-  </section>
-  <RouterView v-else></RouterView>
+      </template>
+      <!--退订-->
+      <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="closeVisible"></Unsubscribe>
+      <!--续订-->
+      <Renew ref="RenewDetailDialog" @closeVisible="specRemoteMethod"></Renew>
+    </section>
+    <RouterView v-else></RouterView>
+  </div>
 </template>
 
 <script>
 import CryptoJS from 'crypto-js'
 import i18n from '@/i18n'
 import { VIcon, FilterBar } from '@tap/component'
-import { CURRENCY_SYMBOL_MAP, dayjs } from '@tap/business'
+import { CURRENCY_SYMBOL_MAP, dayjs, PageHeader } from '@tap/business'
 import timeFunction from '@/mixins/timeFunction'
 import Time from '@tap/shared/src/time'
 import SubscriptionModelDialog from '@/views/agent-download/SubscriptionModelDialog'
@@ -567,6 +588,7 @@ let timer = null
 
 export default {
   components: {
+    PageHeader,
     Renew,
     InlineInput,
     StatusTag,
@@ -903,7 +925,7 @@ export default {
             const { connectionString } = item
             item.visitInfo = item.dbUsers?.find(t => t.roles.some(r => r.role === 'readAnyDatabase'))
             if (item.visitInfo) {
-              const { username, password } = item.visitInfo
+              const { username = '', password = '' } = item.visitInfo
               const AES_KEY = '5fa25b06ee34581d'
               const AES_PAD = '5fa25b06ee34581d'
               const AES_PASSWORD = CryptoJS.AES.decrypt(
@@ -1475,11 +1497,7 @@ export default {
     },
     // 禁用停止
     stopBtnDisabled(row) {
-      return (
-        row.agentType === 'Cloud' ||
-        row.status !== 'Running' ||
-        row.metric.runningTaskNum > 0
-      )
+      return row.agentType === 'Cloud' || row.status !== 'Running' || row.metric.runningTaskNum > 0
     },
     // 禁用删除
     delBtnDisabled(row) {
@@ -1522,16 +1540,12 @@ export default {
     },
     //禁用半托管重启 -启动 agent离线，预期重启不能点击
     restartBtnDisabled(row) {
-      return (
-        ['Creating', 'Stopping', 'Stopped'].includes(row.status) ||
-        ['starting'].includes(row.engineStatus)
-      ) //tapdataAgent 失活了
+      return ['Creating', 'Stopping', 'Stopped'].includes(row.status) || ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
     },
     //agent运行中，预期 启动 不能点击
     startBtnDisabled(row) {
       return (
-        ['Creating', 'Stopping', 'Running'].includes(row.status) ||
-        ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
+        ['Creating', 'Stopping', 'Running'].includes(row.status) || ['starting'].includes(row.engineStatus) //tapdataAgent 失活了
       )
     },
     showVersionFlag(row) {
@@ -1982,6 +1996,9 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: column;
+  }
+  .header-tabs .el-tabs__header {
+    margin-bottom: 0;
   }
 }
 .subscription-ul {

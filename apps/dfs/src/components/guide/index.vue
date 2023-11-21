@@ -66,17 +66,18 @@
           class="guide-footer flex my-5"
           :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
         >
-          <ElButton size="default" v-if="activeStep > 1" @click="previous()">{{
-            $t('public_button_previous')
-          }}</ElButton>
+          <ElButton size="default" v-if="activeStep > 1" @click="previous()"
+            >{{ $t('public_button_previous') }}
+          </ElButton>
           <ElButton
             size="default"
             type="primary"
             @click="submitConfirm()"
             v-if="this.activeStep === this.steps.length"
             :loading="submitLoading"
-            >{{ $t('public_button_next') }}</ElButton
-          >
+            >{{ $t('public_button_next') }}
+          </ElButton>
+
           <!--绑定手机号单独一个提交按钮 -->
           <VButton
             size="default"
@@ -84,16 +85,16 @@
             auto-loading
             @click="submitConfirm(arguments[0])"
             v-else-if="this.activeStep === 1 && bindPhoneVisible"
-            >{{ $t('public_button_next') }}</VButton
-          >
+            >{{ $t('public_button_next') }}
+          </VButton>
           <ElButton
             size="default"
             type="primary"
             :disabled="activeKey === 'Scenes' && !scenes.length"
             @click="submitConfirm()"
             v-else
-            >{{ $t('public_button_next') }}</ElButton
-          >
+            >{{ $t('public_button_next') }}
+          </ElButton>
         </div>
       </div>
     </div>
@@ -506,6 +507,7 @@ export default {
   flex-shrink: 0;
   background: url('../../assets/image/guide-bg.png');
 }
+
 .box-card {
   display: flex;
   padding: 24px;
@@ -516,28 +518,35 @@ export default {
   border-radius: 4px;
   background: var(--color-blur-gary-light-9, #f4f5f7);
 }
+
 .guide-steps {
   height: 200px;
 }
+
 .guide-main {
   height: 680px;
 }
+
 .guide-desc {
   margin-bottom: 60px;
 }
+
 .guide-footer {
   //height: 30px;
 }
+
 .guide-dialog {
   ::v-deep {
     .el-dialog__body,
     .el-dialog__header {
       padding: 0;
     }
+
     .el-step__title.is-process {
       color: #c9cdd4;
       font-weight: normal;
     }
+
     .el-step__head.is-process {
       color: #c9cdd4;
       border-color: #c9cdd4;
