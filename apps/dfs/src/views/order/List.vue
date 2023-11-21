@@ -480,7 +480,7 @@ export default {
       }
       agentType && (where['subscribeItems.agentType'] = agentType)
       productType && (where['subscribeItems.productType'] = productType)
-      status && (where.status = status)
+      this.activedFilter && (where.status = this.activedFilter)
       let filter = {
         limit: size,
         skip: size * (current - 1),
