@@ -80,6 +80,9 @@ $formNamespace: formily-element-plus;
     'primary': (
       'base': map-get($color, primary),
     ),
+    'warning': (
+      'base': map-get($color, warning),
+    ),
   ),
   $border-radius: (
     'base': 6px,

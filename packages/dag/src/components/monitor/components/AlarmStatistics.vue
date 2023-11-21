@@ -10,16 +10,16 @@ export default defineComponent({
       type: Object,
       default: () => ({
         alert: 0,
-        error: 0
-      })
-    }
+        error: 0,
+      }),
+    },
   },
 
   setup(props, { emit }) {
     return () => {
       return (
         <div class="alarm-statistics">
-          <transition name="el-fade-in-linear">
+          <Transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.alert}
               class="alarm-statistic-item align-center cursor-pointer px-4 mb-4"
@@ -34,8 +34,8 @@ export default defineComponent({
               </VIcon>
               <span>告警：{props.alarmNum.alert}</span>
             </div>
-          </transition>
-          <transition name="el-fade-in-linear">
+          </Transition>
+          <Transition name="el-fade-in-linear">
             <div
               v-show={props.alarmNum.error}
               class="alarm-statistic-item align-center cursor-pointer px-4"
@@ -50,11 +50,11 @@ export default defineComponent({
               </VIcon>
               <span>错误：{props.alarmNum.error}</span>
             </div>
-          </transition>
+          </Transition>
         </div>
       )
     }
-  }
+  },
 })
 </script>
 
@@ -72,7 +72,9 @@ export default defineComponent({
     font-size: 14px;
     border-radius: 4px;
     background: #fff;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+      0px 4px 10px 0px rgba(0, 0, 0, 0.1);
   }
 }
 </style>
