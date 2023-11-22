@@ -133,8 +133,8 @@ export default {
     },
 
     showRetrying() {
-      const { functionRetryStatus, taskRetryStatus } = this.task
-      return functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
+      const { functionRetryStatus, taskRetryStatus, status } = this.task
+      return status === 'running' && (functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying')
     },
 
     taskRetryStartTimeTip() {
