@@ -823,8 +823,13 @@ export default {
         if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
         } else {
-          if (data.some((t) => t.code === 'Task.ScheduleLimit')) {
-            $emit(this, 'handle-show-upgrade')
+          const findManuallyScheduleLimit = data.find(t => t.code === 'Task.ManuallyScheduleLimit')
+          const findScheduleLimit = data.find((t) => t.code === 'Task.ScheduleLimit')
+          if (findScheduleLimit) {
+            $emit(this, 'handle-show-upgrade', findScheduleLimit)
+            return
+          } else if (findManuallyScheduleLimit) {
+            this.$message.error(findManuallyScheduleLimit.message)
             return
           }
           this.$message.error(data[0]?.message)

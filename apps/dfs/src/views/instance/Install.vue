@@ -21,7 +21,7 @@
         <div class="fw-sub mb-2 text-label font-color-dark">
           {{ $t('dfs_agent_download_type') }}
         </div>
-        <ElRadioGroup v-model:value="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
+        <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
           <ElRadio
             v-for="(item, index) in downType"
             :key="index"
@@ -79,7 +79,7 @@
             <i>{{ $t('public_button_copy') }}</i>
           </el-button>
         </ElTooltip>
-        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis" @copy="handleCopy">
+        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all" @copy="handleCopy" @copy="handleCopy">
           {{ links[downLoadType] }}
         </div>
       </section>

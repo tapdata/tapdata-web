@@ -8,7 +8,7 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput ref="search" v-model:value="search" clearable @keydown.stop @keyup.stop @click.stop>
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop>
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -811,16 +811,27 @@ export default {
           }
 
           Object.assign(task, settings)
+          let taskInfo
+          try {
+            taskInfo = await taskApi.save(task)
 
-          let taskInfo = await taskApi.save(task)
-
-          if (ifStart) {
-            // 保存并运行
-            taskInfo = await taskApi.saveAndStart(taskInfo, {
-              params: {
-                confirm: true,
-              },
-            })
+            if (ifStart) {
+              // 保存并运行
+              taskInfo = await taskApi.saveAndStart(taskInfo, {
+                params: {
+                  confirm: true,
+                },
+              })
+            }
+          } catch (e) {
+            if (e.data?.code === 'Task.ScheduleLimit') {
+              this.$emit('handle-show-upgrade', e.data)
+            } else if (e.data?.code === 'Task.ManuallyScheduleLimit') {
+              this.$message.error(e.data.message)
+            }
+            this.taskDialogConfig.visible = false
+            this.creating = false
+            return
           }
 
           const table = this.getTableByTask(taskInfo)

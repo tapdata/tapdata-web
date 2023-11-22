@@ -36,7 +36,7 @@
             <ElSelect
               filterable
               class="form-select"
-              v-model:value="form.flowId"
+              v-model="form.flowId"
               :loading="!flowOptions"
               clearable
               @input="flowChangeHandler"
@@ -51,25 +51,25 @@
             prop="name"
             :label="$t('packages_business_verification_task_name') + ': '"
           >
-            <ElInput class="form-input" v-model:value="form.name"></ElInput>
+            <ElInput class="form-input" v-model="form.name"></ElInput>
           </ElFormItem>
 
           <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
-            <ElRadioGroup v-model:value="form.inspectMethod" @change="handleChangeInspectMethod">
+            <ElRadioGroup v-model="form.inspectMethod" @change="handleChangeInspectMethod">
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
               <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
               <!-- <ElRadioButton label="cdcCount"
-                  >动态校验
-                  <ElTooltip
-                    class="item"
-                    effect="dark"
-                    content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
-                    placement="top"
-                  >
-                    <i class="el-icon-warning-outline"></i>
-                  </ElTooltip>
-                </ElRadioButton> -->
+              >动态校验
+              <ElTooltip
+                class="item"
+                effect="dark"
+                content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
+                placement="top"
+              >
+                <i class="el-icon-warning-outline"></i>
+              </ElTooltip>
+            </ElRadioButton> -->
             </ElRadioGroup>
             <div>
               <el-icon class="color-primary mr-1"><InfoFilled /></el-icon>
@@ -114,7 +114,7 @@
                 prop="inspectDifferenceMode"
                 :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
               >
-                <ElSelect filterable class="form-select" v-model:value="form.inspectDifferenceMode">
+                <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
                   <ElOption :label="$t('packages_business_verification_form_shuchusuoyoubu')" value="All"></ElOption>
                   <ElOption
                     :label="$t('packages_business_verification_form_zhishuchulaiyuan')"
@@ -124,7 +124,7 @@
               </ElFormItem>
 
               <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
-                <ElSelect class="form-select" v-model:value="form.mode" @input="form.enabled = true">
+                <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
                   <ElOption :label="$t('packages_business_verification_single')" value="manual"></ElOption>
                   <ElOption :label="$t('packages_business_verification_repeating')" value="cron"></ElOption>
                 </ElSelect>
@@ -134,7 +134,7 @@
                 class="form-item"
                 :label="$t('packages_business_verification_is_enabled') + ': '"
               >
-                <ElSwitch v-model:value="form.enabled"></ElSwitch>
+                <ElSwitch v-model="form.enabled"></ElSwitch>
               </ElFormItem>
               <template v-if="form.mode === 'cron'">
                 <ElFormItem
@@ -163,12 +163,12 @@
                 >
                   <ElInput
                     class="form-input"
-                    v-model:value="form.timing.intervals"
+                    v-model="form.timing.intervals"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
                     <template v-slot:append>
-                      <ElSelect style="width: 100px" v-model:value="form.timing.intervalsUnit">
+                      <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
                         <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
                       </ElSelect>
                     </template>
@@ -179,20 +179,18 @@
               <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
                 <div class="inline-block">
                   <div>
-                    <ElCheckbox
-                      v-model:value="form.alarmSettings[0].open"
-                      @change="handleChangeAlarm(arguments[0], 0)"
-                      >{{ $t('packages_business_verification_form_task_alarm_when_error') }}</ElCheckbox
-                    >
+                    <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)">{{
+                      $t('packages_business_verification_form_task_alarm_when_error')
+                    }}</ElCheckbox>
                   </div>
                   <div>
                     <ElCheckbox
                       v-show="form.inspectMethod === 'row_count'"
-                      v-model:value="form.alarmSettings[1].open"
+                      v-model="form.alarmSettings[1].open"
                       @change="handleChangeAlarm(arguments[0], 1)"
                       >{{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count1') }}
                       <ElInputNumber
-                        v-model:value="form.alarmSettings[1].params.maxDifferentialRows"
+                        v-model="form.alarmSettings[1].params.maxDifferentialRows"
                         controls-position="right"
                         :min="0"
                         style="width: 100px"
@@ -210,11 +208,11 @@
                     >
                     <ElCheckbox
                       v-show="['field', 'jointField'].includes(form.inspectMethod)"
-                      v-model:value="form.alarmSettings[2].open"
+                      v-model="form.alarmSettings[2].open"
                       @change="handleChangeAlarm(arguments[0], 2)"
                       >{{ $t('packages_business_verification_form_task_alarm_when_result_table_over_count1') }}
                       <ElInputNumber
-                        v-model:value="form.alarmSettings[2].params.maxDifferentialValues"
+                        v-model="form.alarmSettings[2].params.maxDifferentialValues"
                         controls-position="right"
                         :min="0"
                         style="width: 100px"
@@ -233,7 +231,7 @@
                   </div>
                 </div>
                 <div class="inline-block ml-8">
-                  <ElCheckboxGroup v-model:value="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
+                  <ElCheckboxGroup v-model="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
                     <ElCheckbox label="SYSTEM">{{
                       $t('packages_business_verification_form_xitongtongzhi')
                     }}</ElCheckbox>
@@ -243,7 +241,7 @@
                   </ElCheckboxGroup>
                   <ElCheckboxGroup
                     v-show="form.inspectMethod === 'row_count'"
-                    v-model:value="form.alarmSettings[1].notify"
+                    v-model="form.alarmSettings[1].notify"
                     @change="handleChangeAlarmItem"
                   >
                     <ElCheckbox label="SYSTEM">{{
@@ -255,7 +253,7 @@
                   </ElCheckboxGroup>
                   <ElCheckboxGroup
                     v-show="['field', 'jointField'].includes(form.inspectMethod)"
-                    v-model:value="form.alarmSettings[2].notify"
+                    v-model="form.alarmSettings[2].notify"
                     @change="handleChangeAlarmItem"
                   >
                     <ElCheckbox label="SYSTEM">{{
@@ -272,7 +270,7 @@
                 class="form-item"
                 :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
               >
-                <ElSelect class="form-select" v-model:value="form.limit.keep">
+                <ElSelect class="form-select" v-model="form.limit.keep">
                   <ElOption :value="100" label="100(rows)"></ElOption>
                   <ElOption :value="1000" label="1000(rows)"></ElOption>
                   <ElOption :value="10000" label="10000(rows)"></ElOption>
@@ -283,13 +281,12 @@
                   <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
                   <ElInput
                     class="item-input"
-                    v-model:value="form.cdcDuration"
+                    size="mini"
+                    v-model="form.cdcDuration"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
-                    <template v-slot:append>
-                      {{ $t('public_time_m') }}
-                    </template>
+                    <template v-slot:append> {{ $t('public_time_m') }} </template>
                   </ElInput>
                 </ElFormItem>
                 <ElFormItem class="setting-item" prop="cdcBeginDate">
@@ -298,7 +295,8 @@
                   }}</label>
                   <ElDatePicker
                     class="item-select"
-                    v-model:value="form.cdcBeginDate"
+                    size="mini"
+                    v-model="form.cdcBeginDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
                     format="yyyy-MM-dd HH:mm"
@@ -310,7 +308,8 @@
                   <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
                   <ElDatePicker
                     class="item-select"
-                    v-model:value="form.cdcEndDate"
+                    size="mini"
+                    v-model="form.cdcEndDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
                     format="yyyy-MM-dd HH:mm"
@@ -479,7 +478,7 @@ export default {
       },
       edges: [],
       allStages: [],
-      flowOptions: null,
+      flowOptions: [],
       notSupport: {
         row_count: ['Clickhouse', 'Kafka'],
         field: ['Kafka'],
@@ -533,132 +532,131 @@ export default {
             skip: 0,
           }),
         })
-        .then((data) => {
+        .then(async (data) => {
           let list = data?.items || []
           this.flowOptions = list
           let flow = this.flowOptions.find((item) => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
           if (id) {
-            this.getData(id)
-          } else {
-            this.loading = false
+            const details = await this.getData(id)
+            if (this.form.taskMode === 'pipeline') {
+              await this.getFlowStages(details.flowId)
+            }
+            this.form = Object.assign({}, this.form, details)
           }
+          this.loading = false
         })
         .catch(() => {
           this.loading = false
         })
     },
     //获取表单数据
-    getData(id) {
-      inspectApi
-        .findOne({
+    async getData(id) {
+      try {
+        const data = await inspectApi.findOne({
           filter: JSON.stringify({
             where: {
               id: id,
             },
           }),
         })
-        .then(async (data = {}) => {
-          if (data) {
-            // 加载数据源的Capabilities
-            const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
-              ...data.tasks.map((t) => t.source.connectionId),
-              ...data.tasks.map((t) => t.target.connectionId),
-            ])
-            data.tasks = data.tasks.map((t) => {
-              t.source = Object.assign({}, TABLE_PARAMS, t.source)
-              t.target = Object.assign({}, TABLE_PARAMS, t.target)
-              t.source.capabilities = capabilitiesMap[t.source.connectionId]
-              t.target.capabilities = capabilitiesMap[t.target.connectionId]
-              if (t.source.nodeId) {
-                t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
-                t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
-              }
-              t.id = t.taskId
-              return t
-            })
-
-            if (!data.timing) {
-              data.timing = this.form.timing
+        if (data) {
+          // 加载数据源的Capabilities
+          const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
+            ...data.tasks.map((t) => t.source.connectionId),
+            ...data.tasks.map((t) => t.target.connectionId),
+          ])
+          data.tasks = data.tasks.map((t) => {
+            t.source = Object.assign({}, TABLE_PARAMS, t.source)
+            t.target = Object.assign({}, TABLE_PARAMS, t.target)
+            t.source.capabilities = capabilitiesMap[t.source.connectionId]
+            t.target.capabilities = capabilitiesMap[t.target.connectionId]
+            if (t.source.nodeId) {
+              t.source.currentLabel = `${t.source.nodeName} / ${t.source.connectionName}`
+              t.target.currentLabel = `${t.target.nodeName} / ${t.target.connectionName}`
             }
-            data.taskMode = data.flowId ? 'pipeline' : 'random'
-            // 历史数据，默认不打开；新数据默认打开
-            const { alarmSettings = [] } = data
-            data.alarmSettings = this.form.alarmSettings.map((t) => {
+            t.id = t.taskId
+            return t
+          })
+
+          if (!data.timing) {
+            data.timing = this.form.timing
+          }
+          data.taskMode = data.flowId ? 'pipeline' : 'random'
+          // 历史数据，默认不打开；新数据默认打开
+          const { alarmSettings = [] } = data
+          data.alarmSettings =
+            this.form.alarmSettings?.map((t) => {
               const f = alarmSettings.find((item) => item.key === t.key)
               if (f) return Object.assign(t, f)
               t.notify = []
               t.open = false
               return t
-            })
+            }) || []
 
-            this.form = Object.assign({}, this.form, data)
-            this.getFlowStages()
-          }
-        })
-        .catch(() => {
-          this.loading = false
-        })
+          return data
+        }
+      } catch (e) {
+        return {}
+      }
     },
-    getFlowStages(cb) {
+    async getFlowStages(id, cb) {
       this.loading = true
-      taskApi
-        .getId(this.form.flowId)
-        .then((data) => {
-          this.isDbClone = data.syncType === 'migrate'
-          let edges = data.dag?.edges || []
-          let nodes = data.dag?.nodes || []
-          const findOne = this.flowOptions.find((t) => t.id === data.id)
-          if (!findOne) {
-            this.flowOptions.unshift({
-              id: data.id,
-              name: data.name,
-            })
-          }
-          if (!edges.length) {
-            return { items: [], total: 0 }
-          }
-          let stages = []
-          nodes.forEach((n) => {
-            let outputLanes = []
-            let inputLanes = []
-            edges.forEach((e) => {
-              if (e.source === n.id) {
-                outputLanes.push(e.target)
-              }
-              if (e.target === n.id) {
-                inputLanes.push(e.source)
-              }
-            })
-            stages.push(
-              Object.assign({}, n, {
-                outputLanes,
-                inputLanes,
-              }),
-            )
+      try {
+        const data = await taskApi.getId(id || this.form.flowId)
+        this.isDbClone = data.syncType === 'migrate'
+        let edges = data.dag?.edges || []
+        let nodes = data.dag?.nodes || []
+        const findOne = this.flowOptions.find(t => t.id === id)
+        if (!findOne) {
+          this.flowOptions.unshift({
+            id: data.id,
+            name: data.name
           })
+        }
+        if (!edges.length) {
+          return { items: [], total: 0 }
+        }
+        let stages = []
+        nodes.forEach(n => {
+          let outputLanes = []
+          let inputLanes = []
+          edges.forEach(e => {
+            if (e.source === n.id) {
+              outputLanes.push(e.target)
+            }
+            if (e.target === n.id) {
+              inputLanes.push(e.source)
+            }
+          })
+          stages.push(
+            Object.assign({}, n, {
+              outputLanes,
+              inputLanes
+            })
+          )
+        })
 
-          this.edges = edges
-          this.allStages = stages
-          if (cb) {
-            setTimeout(() => {
-              cb()
-              this.loading = false
-            }, 800)
-          } else {
+        this.edges = edges
+        this.allStages = stages
+        if (cb) {
+          setTimeout(() => {
+            cb()
             this.loading = false
-          }
-        })
-        .catch(() => {
+          }, 800)
+        } else {
           this.loading = false
-        })
+        }
+      } catch (e) {
+        this.loading = false
+      }
     },
     //dataflow改变时
     flowChangeHandler() {
       this.form.tasks = []
       this.setVerifyName()
-      this.getFlowStages(this.$refs.conditionBox.autoAddTable)
+      this.getFlowStages(null, this.$refs.conditionBox.autoAddTable)
     },
     timingChangeHandler(times) {
       this.form.timing.start = times?.[0] || ''

@@ -1168,5 +1168,7 @@ export default {
   packages_business_ssh_host: '主机名',
   packages_business_ssh_port: '端口',
   packages_business_ssh_username: '用户名',
-  packages_business_ssh_password: '密码'
+  packages_business_ssh_password: '密码',
+  packages_business_connections_test_xiazaijindu: '下载进度',
+  packages_business_connections_test_xiazaishibai: '下载失败'
 }

@@ -10,7 +10,7 @@
     <div class="flex mb-4 align-items-center">
       <div class="select__row flex align-items-center" @click.stop="handleSelect">
         <span>{{ $t('packages_dag_components_nodedetaildialog_jiedian') }}</span>
-        <ElSelect v-model:value="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init()">
+        <ElSelect v-model="selected" class="ml-2 dark" ref="nodeSelect" filterable @change="init()">
           <ElOption v-for="(item, index) in nodeItems" :key="index" :label="item.label" :value="item.value">
             <div class="flex align-center mx-n1">
               <NodeIcon class="mr-2" :node="item.node" :size="18" />
@@ -120,21 +120,32 @@
       </div>
       <div class="flex justify-content-between">
         <div v-loading="loading" class="chart-box rounded-2">
-          <div class="chart-box__title py-2 px-4 fw-bold font-color-normal flex align-items-center">
-            <span class="mr-2">QPS</span>
-            <ElTooltip
-              transition="tooltip-fade-in"
-              placement="top"
-              :content="$t('packages_dag_components_nodedetaildialog_dangqianjiedianping')"
-            >
-              <VIcon class="color-primary">info</VIcon>
-            </ElTooltip>
+          <div class="flex justify-content-between align-items-center chart-box__title px-4">
+            <div class="fw-bold font-color-normal flex align-items-center">
+              <span class="mr-2">QPS</span>
+              <ElTooltip
+                transition="tooltip-fade-in"
+                placement="top"
+                :content="
+                  qpsChartsType === 'count'
+                    ? $t('packages_dag_components_nodedetaildialog_dangqianjiedianping')
+                    : $t('packages_dag_monitor_leftsider_qpSshizhi2')
+                "
+              >
+                <VIcon class="color-primary">info</VIcon>
+              </ElTooltip>
+            </div>
+            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+              <ElRadioButton label="count">count</ElRadioButton>
+              <ElRadioButton label="size">size</ElRadioButton>
+            </ElRadioGroup>
           </div>
           <div class="chart-box__content p-4">
             <LineChart
-              :data="qpsData"
+              :data="qpsMap[qpsChartsType]"
               :color="['#26CF6C', '#2C65FF']"
               :time-format="timeFormat"
+              :labelUnitType="qpsChartsType === 'size' ? 'byte' : ''"
               auto-scale
               ref="qpsLineChart"
             ></LineChart>
@@ -209,6 +220,7 @@ import LineChart from './LineChart'
 import Frequency from './Frequency'
 import { TIME_FORMAT_MAP, getTimeGranularity } from '../util'
 import NodeIcon from '../../NodeIcon'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'NodeDetailDialog',
@@ -246,7 +258,8 @@ export default {
       quotaTimeType: '5m',
       loading: false,
       refreshRate: 5000,
-      currentNodeId: ''
+      currentNodeId: '',
+      qpsChartsType: 'count'
     }
   },
   computed: {
@@ -282,21 +295,28 @@ export default {
       return this.getInputOutput(data)
     },
 
-    // qps
-    qpsData() {
+    qpsMap() {
       const data = this.quota.samples?.lineChartData?.[0]
       if (!data) {
         return {
           x: [],
           name: [],
-          value: []
+          value: [[], []],
+          markLine: [
+            {
+              data: []
+            }
+          ]
         }
       }
-      const { qps, inputQps = [], outputQps = [] } = data
       const { time = [] } = this.quota
-
+      const inputQps = data.inputQps?.map(t => Math.abs(t))
+      const outputQps = data.outputQps?.map(t => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
-      const snapshotDoneAt = this.quota.samples?.totalData?.[0]?.snapshotDoneAt // time[50] + ''
+      const milestone = this.dataflow.attrs?.milestone || {}
+      const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
       time.forEach(el => {
         if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
@@ -307,17 +327,20 @@ export default {
       let opt = {
         x: time,
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
-        value: [qps || inputQps, qps || outputQps]
+        // value: [inputQps, outputQps],
+        value: [],
+        zoomValue: 10
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
         opt.markLine = [
           {
+            symbol: 'none',
             data: [
               {
                 xAxis: markLineTime + '',
                 lineStyle: {
-                  color: '#ddd'
+                  color: '#000'
                 },
                 label: {
                   show: false
@@ -328,7 +351,14 @@ export default {
         ]
       }
 
-      return opt
+      return {
+        count: Object.assign(cloneDeep(opt), {
+          value: [inputQps, outputQps]
+        }),
+        size: Object.assign(cloneDeep(opt), {
+          value: [inputSizeQps, outputSizeQps]
+        })
+      }
     },
 
     delayLineTitle() {
@@ -630,7 +660,10 @@ export default {
             'timeCostAvg',
             'snapshotSourceReadTimeCostAvg',
             'incrementalSourceReadTimeCostAvg',
-            'targetWriteTimeCostAvg'
+            'targetWriteTimeCostAvg',
+            'inputSizeQps',
+            'outputSizeQps',
+            'qpsType'
           ],
           type: 'continuous' // 连续数据
         }
@@ -765,11 +798,10 @@ export default {
   height: 200px;
 }
 .event-chart {
-  :deep(.event-chart__radio) {
-    //position: absolute;
-    //top: 4px;
-    //right: 0;
-    //margin-top: 0;
+  :deep(.chart__radio) {
+    .el-radio-button--mini .el-radio-button__inner {
+    padding: 4px 8px;
+    }
   }
 
   :deep(.total-line) {

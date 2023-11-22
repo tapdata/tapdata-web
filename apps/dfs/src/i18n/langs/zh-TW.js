@@ -211,6 +211,7 @@ export default {
   agent_deploy_before_prepare_windows_third: '3.請嚴格按照下方的安裝步驟部署，不要直接按兩下安裝包！',
   agent_deploy_before_prepare_windows_four: '4.若安裝路徑包括中文或特殊字元可能導致安裝失敗。',
   agent_deploy_start_install: '開始安裝',
+  agent_deploy_tutorial: '部署教程',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已複製',
   agent_deploy_start_install_windows_first: '1.點擊',
@@ -1516,7 +1517,7 @@ export default {
   dfs_guide_index_quedingshiyongchang: '確定使用場景',
   dfs_guide_index_zhanghaoanquanbang: '賬號安全綁定',
   dfs_guide_index_zhengzaijianceyin: '正在檢測引擎部署狀態，檢測完成之後自動進入任務引導頁面。 ',
-  dfs_guide_index_dengdaibushu: '等待部署',
+  dfs_guide_index_dengdaibushu: '等待手動部署',
   dfs_guide_index_tapda:
     'Tapdata Cloud 是專業的數據集成與服務平台, 為了讓您更流暢地使用產品, 請跟隨我們的引導, 開始一步步操作吧',
   dfs_guide_index_huanyingshiyongT: '歡迎使用 Tapdata Cloud 數據服務',
@@ -1631,5 +1632,6 @@ export default {
   dfs_user_contactus_lianxifangshi: '聯繫方式',
   dfs_user_contactus_weinintigongzhuan: '為您提供專業的服務支持',
   dfs_system_update: '系統更新',
-  dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!'
+  dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!',
+  dfs_order_list_bianhao: '編號'
 }

@@ -116,7 +116,9 @@
         <template v-slot="scope">
           <span>{{ statusMap[scope.row.status] }}</span>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-            {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
+            {{
+              `(${scope.row.InspectResult.progress ? Math.floor(scope.row.InspectResult.progress * 100) : 0}%)`
+            }}
           </span>
         </template>
       </el-table-column>
@@ -433,12 +435,15 @@ export default {
         })
       })
     },
-    goEdit(id) {
+    goEdit(id, flowId) {
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
-          id: id,
+          id: id
         },
+        query: {
+          taskMode: flowId ? 'pipeline' : 'random'
+        }
       })
     },
     getFilterItems() {

@@ -150,7 +150,14 @@ const responseInterceptor = response => {
         return reject(response)
       }
       // 其他情况交由业务端自行处理
-      if (['Datasource.TableNotFound', 'SubscribeFailed.OrderLimit', 'Task.ScheduleLimit'].includes(code)) {
+      if (
+        [
+          'Datasource.TableNotFound',
+          'SubscribeFailed.OrderLimit',
+          'Task.ScheduleLimit',
+          'Task.ManuallyScheduleLimit'
+        ].includes(code)
+      ) {
         return reject(Object.assign(response))
       }
       // 文件处理

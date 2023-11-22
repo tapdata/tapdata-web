@@ -79,9 +79,9 @@
         <footer class="footer text-center border-top py-4">
           <el-button @click="goBack()">{{ $t('public_button_back') }}</el-button>
           <el-button class="test" @click="startTest()">{{ $t('public_connection_button_test') }}</el-button>
-          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug">{{
-            $t('packages_business_connections_databaseform_jiaobentiaoshi')
-          }}</el-button>
+          <el-button v-if="['custom'].includes(pdkOptions.pdkId)" class="test" @click="handleDebug"
+            >{{ $t('packages_business_connections_databaseform_jiaobentiaoshi') }}
+          </el-button>
           <el-button type="primary" :loading="submitBtnLoading" @click="submit">
             {{ $t('public_button_save') }}
           </el-button>
@@ -267,6 +267,12 @@ export default {
       vm.pathUrl = from?.fullPath
     })
   },
+  mounted() {
+    const { fromPath } = this.$route.query
+    if (fromPath) {
+      this.pathUrl = fromPath
+    }
+  },
   methods: {
     goBack() {
       let msg = this.$route.params.id
@@ -283,14 +289,21 @@ export default {
         if (!resFlag) {
           return
         }
-        if (this.pathUrl === '/') {
-          this.$router.push({
-            name: 'connections',
-          })
-        } else {
-          this.$router.back()
-        }
+        this.gotoBackPath()
       })
+    },
+    gotoBackPath() {
+      if (this.pathUrl) {
+        this.$router.push(
+          this.pathUrl === '/'
+            ? {
+                name: 'connections',
+              }
+            : this.pathUrl
+        )
+      } else {
+        this.$router.back()
+      }
     },
     submit() {
       this.buried('connectionSubmit')
@@ -341,7 +354,7 @@ export default {
               result: true,
             })
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$router.back()
+            this.gotoBackPath()
           })
           .catch(() => {
             this.buried('connectionSubmit', '', {
@@ -1223,7 +1236,8 @@ export default {
           }
         },
         goToAuthorized: async (params) => {
-          const routeQuery = cloneDeep(this.$route.query)
+          // fromPath 记录进入编辑连接的来源路由，认证回来后设置返回的路由
+          const routeQuery = { ...this.$route.query, fromPath: this.pathUrl }
           const routeParams = this.$route.params
           delete routeQuery['connectionConfig']
           let routeUrl = this.$router.resolve({
@@ -1427,9 +1441,11 @@ export default {
   height: 100%;
   overflow: hidden;
   background-color: #eff1f4;
+
   .alert-primary {
     background: #e8f3ff;
   }
+
   .connection-from-body {
     display: flex;
     flex: 1;
@@ -1501,16 +1517,17 @@ export default {
           //}
           .form-builder {
             width: 396px;
+
             :deep(.e-form-builder-item) {
               &.large-item {
                 width: 610px;
                 .el-form-item__content {
-                  padding-right: 20px;
+                  padding-right: 20px;}
                 }
-              }
+
               &.small-item {
-                width: 320px;
-              }
+                width: 320px;}
+
               &.mongodb-item {
                 width: 680px;
               }
@@ -1536,9 +1553,9 @@ export default {
                 background-color: rgba(239, 241, 244, 0.2);
               }
               .el-textarea__inner {
-                min-height: 70px !important;
+                min-height: 70px !important;}
               }
-            }
+
 
             :deep(.el-input-group__append button.el-button) {
               background-color: inherit;
@@ -1571,21 +1588,6 @@ export default {
       }
     }
   }
-  .footer {
-    /*width: 100%;
-    height: 62px;
-    background-color: map-get($bgColor, white);
-    border-left: none;
-    line-height: 62px;
-    border-top: 1px solid #dedee4;
-    .footer-btn {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin: 0 auto;
-      padding-top: 18px;
-    }*/
-  }
 }
 .pdk-schema-form {
   :deep(.formily-element-form-item-feedback-layout-loose) {
@@ -1602,8 +1604,8 @@ export default {
       }
       .formily-element-form-item-label-tooltip {
         margin-left: 4px;
-        height: unset;
-      }
+        height: unset;}
+
       * {
         line-height: 22px;
       }

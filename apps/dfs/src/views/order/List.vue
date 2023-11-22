@@ -1,193 +1,223 @@
 <template>
-  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'order'">
-    <el-tabs class="flex flex-column overflow-hidden flex-1" v-model="activeName">
-      <el-tab-pane class="order-flex overflow-hidden h-100" :label="$t('dfs_order_list_wodedingyue')" name="first">
-        <div class="main" v-loading="loadingSubscribe">
-          <div class="list-operation">
-            <div class="list-operation-left flex justify-content-between">
-              <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="remoteMethod"> </FilterBar>
-              <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
-                <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
-              </ElButton>
-            </div>
+  <div class="flex flex-column h-100">
+    <div class="bg-white rounded-lg mb-4">
+      <div class="flex align-items-center px-4">
+        <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      </div>
+      <ElDivider class="mt-0 mb-3"></ElDivider>
+      <el-tabs class="header-tabs flex flex-column overflow-hidden flex-1" v-model="activeName">
+        <el-tab-pane
+          class="order-flex overflow-hidden h-100"
+          :label="$t('dfs_order_list_wodedingyue')"
+          name="first"
+        ></el-tab-pane>
+        <el-tab-pane
+          class="order-flex flex-column overflow-hidden h-100"
+          :label="$t('dfs_instance_selectlist_shouquanma')"
+          name="second"
+        ></el-tab-pane>
+      </el-tabs>
+    </div>
+    <section
+      class="operation-logs-wrapper g-panel-container flex-fill rounded-lg"
+      :class="[isEn ? 'is-en' : '']"
+      v-if="$route.name === 'order'"
+    >
+      <div v-if="activeName !== 'second'" class="main" v-loading="loadingSubscribe">
+        <div class="list-operation">
+          <div class="list-operation-left flex justify-content-between">
+            <ul class="flex align-items-center">
+              <li
+                v-for="(item, index) in filterArray"
+                :key="index"
+                :class="['filter-li mr-4 px-4 cursor-pointer', { active: activedFilter === item.value }]"
+                @click="changeActivedFilter(item)"
+              >
+                {{ item.label }}
+              </li>
+              <li class="px-4 py-1">
+                <ElButton text class="btn-refresh" @click="remoteMethod">
+                  <VIcon>refresh</VIcon>
+                </ElButton>
+              </li>
+            </ul>
+            <ElButton type="primary" @click="handleCreateAgent" :disabled="$disabledReadonlyUserBtn()">
+              <span>{{ $t('dfs_order_list_xinzengdingyue') }}</span>
+            </ElButton>
           </div>
-          <ul class="mt-4 overflow-auto flex-1">
-            <li class="sub-li mb-4 rounded-lg overflow-hidden" v-for="item in subscribeList" :key="item.id">
-              <div class="sub-li-header flex justify-content-between align-center">
-                <div class="felx align-center">
-                  <span class="font-color-dark fw-sub mr-2"
-                    >{{ $t('dfs_components_renew_dingyuebianhao') }}: {{ item.id }}</span
-                  >
-                  <el-divider direction="vertical"></el-divider>
-                  <span class="font-color-dark fw-sub mr-2"
-                    ><span class="font-color-light">{{ $t('dfs_order_list_zongjine') }}: </span>
-                    {{ formatterPrice(item.currency, item.totalAmount) || 0 }}</span
-                  >
-                  <el-divider direction="vertical"></el-divider>
-                  <span class="font-color-light fw-sub mr-2"
-                    ><span>{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}: </span>
-                    {{ formatterTime(item.startAt, 'YYYY-MM-DD') }} ~
-                    {{ formatterTime(item.endAt, 'YYYY-MM-DD') }}</span
-                  >
-                  <el-divider direction="vertical"></el-divider>
-                  <span class="font-color-dark fw-sub mr-2">
-                    <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag
-                  ></span>
+        </div>
+
+        <ul v-if="subscribeList.length" class="overflow-auto flex-fill mt-4">
+          <li
+            class="list-li flex rounded-lg p-4"
+            :class="[item.productType === 'MongoDB' ? 'warning' : 'primary', { 'mt-4': itemIndex !== 0 }]"
+            v-for="(item, itemIndex) in subscribeList"
+            :key="item.id"
+          >
+            <template v-for="(row, rIndex) in item.subscribeItems">
+              <div class="flex w-60">
+                <div class="w-50">
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('public_type') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ row.productType }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_instance_instance_guige') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ row.specLabel }}</span>
+                  </div>
+                  <div>
+                    <span class="li-item__label font-color-sslight"
+                      >{{ item.productType === 'MongoDB' ? 'Storage Id' : 'Agent Id' }}:</span
+                    >
+                    <span v-if="item.productType === 'MongoDB'">{{ row.resourceId }}</span>
+                    <ElLink
+                      v-else
+                      type="primary"
+                      class="li-item__value text-decoration-underline"
+                      @click="goInstance(row)"
+                      >{{ row.resourceId }}</ElLink
+                    >
+                  </div>
                 </div>
-                <div class="flex justify-content-center align-items-center subscribe-header-action">
-                  <ElButton
-                    :disabled="
-                      !['active'].includes(item.status) || item.totalAmount === 0 || item.subscribeType === 'recurring'
-                    "
-                    class="mr-2"
-                    text
-                    @click="openRenew(item)"
-                    >{{ $t('public_button_renew') }}</ElButton
-                  >
-                  <el-divider direction="vertical"></el-divider>
-                  <ElButton v-if="['incomplete'].includes(item.status)" text @click="handlePay(item)">{{
+                <div class="w-50">
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_user_center_jine') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ formatterPrice(item.currency, row.amount) }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
+                    >
+                    <span class="li-item__value" :class="[item.isFree ? 'color-success' : 'font-color-dark']">{{
+                      row.subscriptionMethodLabel
+                    }}</span>
+                  </div>
+                  <div>
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_instance_selectlist_dingyuezhouqi') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{
+                      formatterTime(item.startAt, 'YYYY-MM-DD') + '~' + formatterTime(item.endAt, 'YYYY-MM-DD')
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-content-between w-40">
+                <div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight">{{ $t('public_status') }}:</span>
+                    <span class="inline-block li-item__value font-color-dark">
+                      <StatusTag type="tag" :status="item.status" default-status="Stopped" target="order"></StatusTag>
+                    </span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="li-item__label font-color-sslight"
+                      >{{ $t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi') }}:</span
+                    >
+                    <span class="li-item__value font-color-dark">{{ agentTypeMap[row.agentType || 'local'] }}</span>
+                  </div>
+                  <div>
+                    <span class="li-item__label font-color-sslight">{{ $t('dfs_order_list_bianhao') }}:</span>
+                    <span class="li-item__value font-color-dark">{{ item.id }}</span>
+                  </div>
+                </div>
+                <div class="li-operation flex">
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
                   <ElButton v-if="['active'].includes(item.status)" text @click="goOpenChange(item)">{{
                     $t('dfs_change_record')
                   }}</ElButton>
-
-                  <!--                  <el-divider direction="vertical"></el-divider>-->
-                  <!--                  <ElButton-->
-                  <!--                    text-->
-                  <!--                    v-if="-->
-                  <!--                      item.subscribeItems &&-->
-                  <!--                      item.subscribeItems.length > 1 &&-->
-                  <!--                      ['active', 'past_due'].includes(item.status)-->
-                  <!--                    "-->
-                  <!--                    class="color-subscribe"-->
-                  <!--                    @click="openUnsubscribe(item, 'all')"-->
-                  <!--                  >-->
-                  <!--                    一键退订-->
-                  <!--                  </ElButton>-->
+                  <ElButton
+                    v-if="
+                      !(
+                        !['active'].includes(item.status) ||
+                        item.totalAmount === 0 ||
+                        item.subscribeType === 'recurring'
+                      )
+                    "
+                    type="primary"
+                    text
+                    @click="openRenew(item)"
+                    >{{ $t('public_button_renew') }}</ElButton
+                  >
+                  <ElButton
+                    v-if="
+                      !disableUnsubscribe(row) &&
+                      ['active'].includes(item.status) &&
+                      row.productType === 'Engine' &&
+                      !(!row.amount && row.agentType === 'Cloud')
+                    "
+                    type="primary"
+                    text
+                    @click="openChangeSubscribe(item)"
+                    >{{ $t('dfs_order_change') }}</ElButton
+                  >
+                  <ElButton
+                    v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
+                    type="danger"
+                    text
+                    size="mini"
+                    @click="openUnsubscribe(item, row.productType)"
+                    >{{ $t('public_button_unsubscribe') }}</ElButton
+                  >
                 </div>
               </div>
-              <div>
-                <VTable
-                  :columns="columns"
-                  :data="item.subscribeItems"
-                  ref="table"
-                  :has-pagination="false"
-                  header-cell-class-name="bg-white"
-                >
-                  <template #subscriptionMethodLabel="{ row }">
-                    <span :class="{ 'color-success': row.amount === 0 }">{{ row.subscriptionMethodLabel }}</span>
-                  </template>
-                  <template #agentType="{ row }">
-                    <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-                  </template>
-                  <template #price="{ row }">
-                    <div>{{ formatterPrice(item.currency, row.amount) }}</div>
-                  </template>
-                  <template #statusLabel="{ row }">
-                    <StatusTag
-                      v-if="row.agentType === 'Cloud' && row.status === 'Creating'"
-                      type="tag"
-                      status="Deploying"
-                      default-status="Stopped"
-                      target="instance"
-                    ></StatusTag>
-                    <StatusTag
-                      v-else
-                      type="tag"
-                      :status="row.status"
-                      default-status="Stopped"
-                      :target="row.productType === 'Engine' ? 'instance' : 'mdb'"
-                    ></StatusTag>
-                  </template>
-                  <template #operation="{ row }">
-                    <ElButton
-                      :disabled="disableUnsubscribe(row) || ['incomplete'].includes(item.status)"
-                      text
-                      @click="openUnsubscribe(item, row.productType)"
-                      >{{ $t('public_button_unsubscribe') }}</ElButton
-                    >
-                    <ElButton
-                      v-if="
-                        !disableUnsubscribe(row) && ['active'].includes(item.status) && row.productType === 'Engine'
-                      "
-                      :disabled="!row.amount && row.agentType === 'Cloud'"
-                      text
-                      @click="openChangeSubscribe(item)"
-                      >{{ $t('dfs_order_change') }}</ElButton
-                    >
-                  </template>
-                </VTable>
-              </div>
-            </li>
-          </ul>
-          <el-pagination
-            background
-            class="pagination mt-3"
-            v-model:current-page="page.current"
-            :page-sizes="[10, 20, 50, 100]"
-            v-model:page-size="page.size"
-            layout="total, sizes, ->, prev, pager, next, jumper"
-            :total="page.total"
-            @current-change="remoteMethod"
-          >
-          </el-pagination>
+            </template>
+          </li>
+        </ul>
+        <div v-else class="flex-fill pt-12">
+          <VEmpty large class="flex"></VEmpty>
         </div>
-      </el-tab-pane>
-      <el-tab-pane
-        class="order-flex flex-column overflow-hidden h-100"
-        :label="$t('dfs_instance_selectlist_shouquanma')"
-        name="second"
-      >
-        <section class="flex flex-column overflow-hidden flex-1">
-          <div class="mt-2 flex justify-content-end">
-            <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
-            <!--            <el-button type="primary" @click="goLicense">{{-->
-            <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
-            <!--            }}-->
-          </div>
-          <VTable
-            :columns="codeColumns"
-            :remoteMethod="codeRemoteMethod"
-            :page-options="{
-              layout: 'total, ->, prev, pager, next, sizes, jumper',
-            }"
-            ref="tableCode"
-            class="mt-4"
-          >
-            <template #agentType="{ row }">
-              <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
-            </template>
-            <template #bindAgent="{ row }">
-              <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-                $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
-              }}</ElLink>
-              <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
-            </template>
-            <template #operation="{ row }">
-              <ElButton text @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
-            </template>
-          </VTable>
-        </section>
-      </el-tab-pane>
-    </el-tabs>
+      </div>
+      <section v-if="activeName === 'second'" class="flex flex-column overflow-hidden flex-1">
+        <div class="mt-2 flex justify-content-end">
+          <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
+          <!--            <el-button type="primary" @click="goLicense">{{-->
+          <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
+          <!--            }}-->
+        </div>
+        <VTable
+          :columns="codeColumns"
+          :remoteMethod="codeRemoteMethod"
+          :page-options="{
+            layout: 'total, ->, prev, pager, next, sizes, jumper',
+          }"
+          ref="tableCode"
+          class="mt-4"
+        >
+          <template #agentType="{ row }">
+            <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
+          </template>
+          <template #bindAgent="{ row }">
+            <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
+              $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
+            }}</ElLink>
+            <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
+          </template>
+          <template #operation="{ row }">
+            <ElButton text @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+          </template>
+        </VTable>
+      </section>
 
-    <!--转账{{$t('public_button_pay')}}-->
-    <transferDialog v-model:visible="showTransferDialogVisible" :price="pricePay"></transferDialog>
-    <!--退订-->
-    <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
-    <!--续订-->
-    <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
-    <!--变更-->
-    <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
-  </section>
-  <RouterView v-else></RouterView>
+      <!--转账{{$t('public_button_pay')}}-->
+      <transferDialog v-model:visible="showTransferDialogVisible" :price="pricePay"></transferDialog>
+      <!--退订-->
+      <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
+      <!--续订-->
+      <Renew ref="RenewDetailDialog" @closeVisible="remoteMethod"></Renew>
+      <!--变更-->
+      <Change ref="ChangeSubscribeDetailDialog" @closeVisible="remoteMethod"></Change>
+    </section>
+    <RouterView v-else></RouterView>
+  </div>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
-import { FilterBar, VTable } from '@tap/component'
+import { FilterBar, VEmpty, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
 import { openUrl } from '@tap/shared'
 import Change from '@tap/business/src/views/order/Change'
@@ -201,7 +231,7 @@ import Renew from '../../components/Renew.vue'
 
 export default {
   components: {
-    Unsubscribe,
+   VEmpty, Unsubscribe,
     StatusTag,
     FilterBar,
     VTable,
@@ -230,6 +260,8 @@ export default {
       },
       search: '',
       filterItems: [],
+      activedFilter: 'active',
+      filterArray: [],
       //授权码
       codeColumns: [
         {
@@ -305,10 +337,11 @@ export default {
       subscribeList: [],
       page: {
         current: 1,
-        size: 10,
+        size: 100
       },
       loadingRenewSubmit: false,
       currentPrice: 0,
+      isEn: i18n.locale === 'en'
     }
   },
   computed: {
@@ -421,6 +454,28 @@ export default {
           ],
         },
       ]
+      this.filterArray = [
+        {
+          label: this.$t('public_select_option_all'),
+          value: ''
+        },
+        {
+          label: this.$t('packages_business_shared_const_yizhifu'),
+          value: 'active'
+        },
+        {
+          label: this.$t('packages_business_shared_const_weizhifu'),
+          value: 'incomplete'
+        },
+        {
+          label: this.$t('packages_business_shared_const_zhifushibai'),
+          value: 'payFail'
+        },
+        {
+          label: this.$t('packages_business_shared_const_shixiao'),
+          value: 'incomplete_expired'
+        }
+      ]
     },
     //我的订阅
     remoteMethod() {
@@ -433,7 +488,7 @@ export default {
       }
       agentType && (where['subscribeItems.agentType'] = agentType)
       productType && (where['subscribeItems.productType'] = productType)
-      status && (where.status = status)
+      this.activedFilter && (where.status = this.activedFilter)
       let filter = {
         limit: size,
         skip: size * (current - 1),
@@ -448,17 +503,20 @@ export default {
         this.page.total = data.total
         this.subscribeList = items.map((item) => {
           if (item.totalAmount !== 0) {
+            item.isFree = item.subscribeType === 'FreeTier'
             item.subscriptionMethodLabel =
               getPaymentMethod(
                 { periodUnit: item.periodUnit, type: item.subscribeType },
                 item.paymentMethod || 'Stripe',
               ) || '-'
           } else {
+            item.isFree = true
             item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
           }
 
-          if (item.subscribeItems && item.subscribeItems.length > 0) {
-            item.subscribeItems = item.subscribeItems.map((it) => {
+          if (item.subscribeItems?.length) {
+            item.productType = item.subscribeItems[0].productType
+            item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
               it.subscriptionMethodLabel =
@@ -610,6 +668,19 @@ export default {
     getChangeList() {
       this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then((data) => {})
     },
+    changeActivedFilter(item) {
+      this.activedFilter = item.value
+      this.searchParams.status = this.activedFilter
+      this.remoteMethod()
+    },
+    goInstance(row = {}) {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          keyword: row.resourceId
+        }
+      })
+    }
   },
 }
 </script>
@@ -678,5 +749,78 @@ export default {
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+:deep(.header-tabs) {
+  .el-tabs__header {
+    margin-bottom: 0;
+  }
+}
+
+:deep(.li-operation) {
+  .el-button {
+    padding: 2px 12px;
+    min-width: unset;
+    height: 24px;
+    font-size: 12px;
+    &.el-button--text {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
+:deep(.list-li) {
+  .status-tag {
+    padding: 2px 8px;
+    font-size: 12px;
+    line-height: 24px;
+  }
+}
+
+.list-li {
+  border: 1px solid map-get($bgColor, hover);
+  &.primary {
+    border-left: 8px solid map-get($color, primary);
+  }
+  &.warning {
+    border-left: 8px solid map-get($color, warning);
+  }
+}
+
+.li-item__label {
+  display: inline-block;
+  width: 72px;
+  line-height: 24px;
+}
+
+.li-item__value {
+  margin-left: 8px;
+  display: inline-block;
+  line-height: 24px;
+}
+
+.is-en {
+  .li-item__label {
+    width: 142px;
+  }
+}
+
+.filter-li {
+  line-height: 32px;
+  height: 32px;
+  &.active,
+  &:hover {
+    background-color: #e8f3ff;
+    color: map-get($color, primary);
+  }
+}
+
+.btn-refresh {
+  padding: 0;
+  height: 32px;
+  width: 32px;
+  min-width: 32px;
+  font-size: 16px;
 }
 </style>

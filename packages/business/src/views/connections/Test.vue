@@ -38,13 +38,23 @@
         </div>
       </div>
     </div>
+    <div class="mb-4">
+      <div>
+        <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
+        <span>{{ fileInfo.progress + '%' }}</span>
+        <span v-if="fileInfo.status === 'ERROR'" class="color-danger">{{
+          $t('packages_business_connections_test_xiazaishibai')
+        }}</span>
+      </div>
+      <ElProgress class="my-2" :show-text="false" :percentage="fileInfo.progress"></ElProgress>
+    </div>
     <el-table
       :data="testData.testLogs"
       style="width: 100%"
       max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
-      v-show="testData.testLogs && testData.testLogs.length > 0"
+      v-show="!showProgress && testData.testLogs && testData.testLogs.length > 0"
     >
       <el-table-column prop="show_msg" :label="$t('packages_business_dataForm_test_items')">
         <template v-slot="scope">
@@ -149,8 +159,14 @@ export default {
         passed: this.$t('packages_business_dataForm_test_success'),
         waiting: this.$t('packages_business_dataForm_test_testing'),
         failed: this.$t('packages_business_dataForm_test_fail'),
-        unTest: this.$t('packages_business_dataForm_test_unTest'),
+        unTest: this.$t('packages_business_dataForm_test_unTest')
       },
+      showProgress: true,
+      fileInfo: {
+        fileSize: 0,
+        progress: 0,
+        status: ''
+      }
     }
   },
   mounted() {
@@ -235,7 +251,8 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
-      this.startByConnection(data, updateSchema, editTest)
+      // this.startByConnection(data, updateSchema, editTest)
+      this.startDownLoadConnector(data, updateSchema, editTest)
     },
 
     startByConnection(connection, updateSchema, editTest) {
@@ -278,9 +295,60 @@ export default {
     clearInterval() {
       // 取消长连接
       this.$ws.off('testConnection')
+      this.$ws.off('downloadPdkFileFlag')
+      this.$ws.off('progressReporting')
       this.testData.testLogs = []
       this.status = ''
     },
+
+    startDownLoadConnector(connection, updateSchema, editTest) {
+      this.fileInfo = {
+        fileSize: 0,
+        progress: 0,
+        status: ''
+      }
+      let msg = {
+        type: 'downLoadConnector',
+        data: connection
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
+        // 连接测试时出现access_token过期,重发消息
+        this.$ws.once('401', () => {
+          this.$ws.send(msg)
+        })
+
+        // 检查下载器
+        this.$ws.on('downloadPdkFileFlag', data => {
+          this.showProgress = !!data.result
+          if (!this.showProgress) {
+            this.startLoadTestItems(connection, updateSchema, editTest)
+            this.fileInfo.progress = 100
+          }
+        })
+        // 下载器进度
+        this.$ws.on('progressReporting', data => {
+          const { fileSize = 0, progress = 0, status } = data.result || {}
+          if (status === 'finish') {
+            this.startLoadTestItems(connection, updateSchema, editTest)
+            this.fileInfo.progress = 100
+          } else {
+            this.fileInfo = {
+              fileSize,
+              progress,
+              status
+            }
+          }
+        })
+      })
+    },
+
+    startLoadTestItems() {
+      this.startByConnection(...arguments)
+      setTimeout(() => {
+        this.showProgress = false
+      }, 800)
+    }
   },
   emits: ['update:visible', 'returnTestData'],
 }

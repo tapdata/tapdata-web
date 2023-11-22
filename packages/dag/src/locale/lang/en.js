@@ -440,12 +440,16 @@ export default {
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: "The current node's average event processing time",
   packages_dag_components_nodedetaildialog_dangqianjiedianping:
     'The average number of input events and output events per second processed by the current node',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping2:
+    'The average input event size and output event size processed by the current node per second',
   packages_dag_monitor_leftsider_renwuchuliwan:
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
+  packages_dag_monitor_leftsider_qpSshizhi2:
+    'QPS refers to the average input event size and output event size processed by the task per second',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
     "Incremental read delay: the delay time from the time the incremental event is generated to the time it is read to the start of the task's processing in the incremental phase",
   packages_dag_components_nodedetaildialog_pingjunduquhao2:

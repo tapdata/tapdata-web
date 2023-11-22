@@ -2005,8 +2005,8 @@ export default {
         }).then(resFlag => {
           resFlag && location.reload()
         })
-      } else if (code === 'Task.ScheduleLimit') {
-        this.handleShowUpgradeDialog()
+      } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
+        this.handleShowUpgradeDialog(error.data)
       } else {
         const msg = error?.data?.message || msg
         this.$message.error(msg)
@@ -2421,16 +2421,18 @@ export default {
     },
 
     // 升级专业版
-    handleShowUpgradeFee() {
+    handleShowUpgradeFee(msg) {
+      this.upgradeFeeVisibleTips = msg
       this.upgradeFeeVisible = true
     },
 
     // 升级规格
-    handleShowUpgradeCharges() {
+    handleShowUpgradeCharges(msg) {
+      this.upgradeChargesVisibleTips = msg
       this.upgradeChargesVisible = true
     },
 
-    handleShowUpgradeDialog() {
+    handleShowUpgradeDialog(err) {
       !this.isDaas &&
         this.$axios
           .get(
@@ -2451,8 +2453,8 @@ export default {
             }
 
             items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
-              ? this.handleShowUpgradeFee()
-              : this.handleShowUpgradeCharges()
+              ? this.handleShowUpgradeFee(err.message)
+              : this.handleShowUpgradeCharges(err.message)
           })
     },
 

@@ -3,12 +3,12 @@
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3 flex">
       <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model:value="selectedConnectionId" class="ml-4" clearable @change="() => fetch()">
+      <ElSelect v-model="selectedConnectionId" class="ml-4" clearable @change="() => fetch()">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
     <div class="flex justify-content-between mb-4">
-      <ElRadioGroup v-model:value="currentTab" @change="handleChangeTab">
+      <ElRadioGroup v-model="currentTab" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
       </ElRadioGroup>
       <div>
@@ -254,9 +254,12 @@ export default {
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(
         (data) => {
-          this.listTotal = data.total || 0
-          return {
-            total: this.listTotal,
+          const total = data.total || 0
+          if (!keyword) {
+            this.listTotal = total
+        }
+        return {
+          total: total,
             data: data.items || [],
           }
         },
