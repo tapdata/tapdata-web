@@ -312,17 +312,19 @@ export default {
         })
 
         // 检查下载器
-        this.$ws.once('downloadPdkFileFlag', data => {
+        this.$ws.on('downloadPdkFileFlag', data => {
           this.showProgress = !!data.result
           if (!this.showProgress) {
+            this.$ws.off('downloadPdkFileFlag')
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           }
         })
         // 下载器进度
-        this.$ws.once('progressReporting', data => {
+        this.$ws.on('progressReporting', data => {
           const { fileSize = 0, progress = 0, status } = data.result || {}
           if (status === 'finish') {
+            this.$ws.off('progressReporting')
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           } else {
@@ -334,7 +336,8 @@ export default {
           }
         })
         // 检查不到下载器
-        this.$ws.once('unknown_event_result', () => {
+        this.$ws.on('unknown_event_result', () => {
+          this.$ws.off('unknown_event_result')
           this.startLoadTestItems(connection, updateSchema, editTest)
         })
       })
