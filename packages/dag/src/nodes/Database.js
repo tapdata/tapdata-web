@@ -550,7 +550,7 @@ export class Database extends NodeType {
                             },
                             default: 100
                           },
-                          increFetchSize: {
+                          increaseReadSize: {
                             title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
                             type: 'string',
                             'x-decorator': 'FormItem',
