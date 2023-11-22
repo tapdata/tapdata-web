@@ -335,6 +335,10 @@ export default {
             }
           }
         })
+        // 检查不到下载器
+        this.$ws.on('unknown_event_result', () => {
+          this.startLoadTestItems(connection, updateSchema, editTest)
+        })
       })
     },
 
