@@ -3,7 +3,7 @@
     <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
-        v-model:value="period"
+        v-model="period"
         :popper-append-to-body="false"
         popper-class="time-select__popper"
         class="ml-2 dark"

@@ -57,7 +57,7 @@
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0" width="auto">
           <template v-slot:reference>
             <div class="size-wrap">{{ scaleTxt }}</div>
           </template>
@@ -170,15 +170,15 @@ export default {
     showBottomPanel: Boolean,
     hideMenus: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     quota: Object,
     buttonShowMap: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   mixins: [syncTaskAgent],
   components: { VIcon, TaskStatus, VDivider, OverflowTooltip, TextEditable },
@@ -191,7 +191,7 @@ export default {
       syncMap: {
         'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc')
+        cdc: this.$t('public_task_type_cdc'),
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
@@ -200,8 +200,8 @@ export default {
       syncType: {
         initial_sync: i18n.t('public_task_type_initial_sync'),
         cdc: i18n.t('public_task_type_cdc'),
-        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
-      }
+        'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc'),
+      },
     }
   },
   computed: {
@@ -230,23 +230,23 @@ export default {
           typeof cpuUsage === 'number'
             ? (cpuUsage * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
             : '',
         memoryRate:
           typeof memoryRate === 'number'
             ? (memoryRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
             : '',
         gcRate:
           typeof gcRate === 'number'
             ? (gcRate * 100).toLocaleString('zh-CN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 2,
               }) + '%'
-            : ''
+            : '',
       }
     },
 
@@ -258,12 +258,12 @@ export default {
     hideEdit() {
       // 心跳任务，不显示编辑
       return ['connHeartbeat'].includes(this.dataflow.syncType)
-    }
+    },
   },
   watch: {
     dataflowName(v) {
       this.name = v
-    }
+    },
   },
   mounted() {
     this.name = this.dataflowName
@@ -293,19 +293,19 @@ export default {
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
-            name: 'Task'
+            name: 'Task',
           })
         } else {
           this.$router.push({
             name: 'dataFlows',
             query: {
-              mapping: mapping
-            }
+              mapping: mapping,
+            },
           })
         }
       }
       backToList()
-    }
+    },
   },
   emits: [
     'page-return',
@@ -332,8 +332,8 @@ export default {
     'reset',
     'start',
     'forceStop',
-    'stop'
-  ]
+    'stop',
+  ],
 }
 </script>
 
@@ -381,7 +381,9 @@ $sidebarBg: #fff;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
-    transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition:
+      background,
+      color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
     cursor: pointer;
 
     &.active,

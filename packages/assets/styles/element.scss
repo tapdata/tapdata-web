@@ -12,3 +12,15 @@
     word-break: normal;
   }
 }
+
+// Tabs
+// css3 var in packages/theme-chalk/src/tabs.scss
+.el-tabs__nav-wrap.is-top {
+  padding: 0 16px;
+}
+
+// Tooltip
+
+.el-popper[role='tooltip'] {
+  max-width: 400px;
+}

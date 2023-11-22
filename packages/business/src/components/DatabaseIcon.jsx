@@ -4,10 +4,11 @@ import { getNodeIconSrc } from '../shared'
 export const DatabaseIcon = defineComponent({
   props: {
     item: Object,
+    node: Object,
     size: Number,
   },
   setup(props, { attrs }) {
-    const _attrs = { ...attrs, src: getNodeIconSrc(props.item) }
+    const _attrs = { ...attrs, src: getNodeIconSrc(props.item || props.node) }
     let style
 
     if (props.size) {

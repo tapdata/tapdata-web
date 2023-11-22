@@ -20,7 +20,7 @@
         <div>
           <span>{{ $t('packages_dag_components_alert_gaojingjibie') }}</span>
           <ElSelect
-            v-model:value="form.level"
+            v-model="form.level"
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"
@@ -38,7 +38,7 @@
         <div class="ml-4">
           <span>{{ $t('packages_dag_components_alert_gaojingzhuangtai') }}</span>
           <ElSelect
-            v-model:value="form.status"
+            v-model="form.status"
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"

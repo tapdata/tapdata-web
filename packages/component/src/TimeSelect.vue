@@ -3,7 +3,7 @@
     <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
-        v-model:value="period"
+        v-model="period"
         :class="{ 'is-time': isTime }"
         :popper-append-to-body="false"
         popper-class="time-select__popper"
@@ -16,7 +16,7 @@
       <VIcon size="14" class="color-primary ml-1" @click="openPicker">timer</VIcon>
     </div>
     <ElDatePicker
-      v-model:value="time"
+      v-model="time"
       :picker-options="pickerOptions"
       ref="datetime"
       type="datetimerange"

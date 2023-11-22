@@ -8,7 +8,7 @@
       @action="$emit('action', arguments[0])"
     ></NodeLog>
     <div v-else class="panel-header flex h-100">
-      <ElTabs v-model:value="currentTab" class="setting-tabs h-100 flex-1 flex flex-column w-100" key="bottomPanel">
+      <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column w-100" key="bottomPanel">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
             v-bind="$attrs"
@@ -75,20 +75,20 @@ export default {
   components: { Record, Alert, RelationList, NodeLog, MilestoneList },
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
   props: {
     onlyLog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,
-      nodeId: ''
+      nodeId: '',
     }
   },
   computed: {
@@ -96,12 +96,12 @@ export default {
 
     showAlert() {
       return !['SharedCacheMonitor'].includes(this.$route.name)
-    }
+    },
   },
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
   mounted() {
     if (['MigrationMonitorViewer'].includes(this.$route.name)) {
@@ -109,7 +109,7 @@ export default {
       const { start, end } = this.$route.query
       this.changeTab(this.currentTab, {
         start: start * 1,
-        end: end * 1
+        end: end * 1,
       })
     }
     this.getRelationData()
@@ -123,8 +123,8 @@ export default {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name
-          }
+            name,
+          },
         })
         this.updateDag({ vm: this })
       } else {
@@ -162,19 +162,19 @@ export default {
       const { taskRecordId } = this.$route.query || {}
       let filter = {
         taskId: this.$route.params.id || id,
-        taskRecordId
+        taskRecordId,
       }
       if (['logCollector'].includes(syncType)) {
         filter.type = 'task_by_collector'
       } else if (['sync'].includes(syncType)) {
         // filter.type = 'task_by_collector'
       }
-      taskApi.taskConsoleRelations(filter).then(data => {
+      taskApi.taskConsoleRelations(filter).then((data) => {
         this.relationCount = data?.length || 0
       })
-    }
+    },
   },
-  emits: ['action', 'load-data', 'showBottomPanel', 'load-data', 'showBottomPanel']
+  emits: ['action', 'load-data', 'showBottomPanel', 'load-data', 'showBottomPanel'],
 }
 </script>
 
@@ -195,16 +195,16 @@ $headerHeight: 40px;
   box-sizing: border-box;
   z-index: 11;
   :deep(.el-tabs__content) {
-	  > div {
-		  max-width: 100%;
-		  overflow-x: auto;
-		  > div {
-			  min-width: 1200px;
-		  }
-		  //.milestone-main, .node-log-main, .record-wrap, .alert-main {
-		  //  width: 0;
-		  //}
-	  }
+    > div {
+      max-width: 100%;
+      overflow-x: auto;
+      > div {
+        min-width: 1200px;
+      }
+      //.milestone-main, .node-log-main, .record-wrap, .alert-main {
+      //  width: 0;
+      //}
+    }
   }
   &.show-record {
     width: 320px;
