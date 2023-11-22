@@ -888,6 +888,7 @@ export default {
   packages_business_shared_const_tuikuanshibai: 'Refund Failed',
   packages_business_shared_const_yituikuan: 'Refunded',
   packages_business_shared_const_zhifushibai: 'Payment Failed',
+  packages_business_payment_timeout: 'Payment Timeout',
   packages_business_shared_const_yizhifu: 'Paid',
   packages_business_shared_const_weizhifu: 'Unpaid',
   packages_business_shared_ws_client_webso: 'Websocket message parsing failed: ',
@@ -977,6 +978,8 @@ export default {
   packages_business_shared_cache_code_tooltip: 'You can enter this code in the JS node to use the cache',
   packages_business_shared_cache_column_connection: 'From Connection',
   packages_business_shared_cache_column_table: 'From Table',
+  packages_business_shared_cache_cache_key_message: 'The selected cache key is not indexed.',
+  packages_business_shared_cache_cache_key_auto_create: 'Automatic Index Creation',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
   packages_business_application_delete_shanchuyingyong: 'Delete Application',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1188,5 +1191,41 @@ export default {
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
   packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
   packages_business_notice_list_gonggaobiaoti: 'Notice Title',
-  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden'
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
+  packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
+  packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',
+  packages_business_components_upgradecharges_keyongrenwushu: 'Remaining available tasks',
+  packages_business_components_upgradecharges_dangqianguige: 'Current Specifications',
+  packages_business_components_upgradecharges_dingyueshengji: 'Subscription Upgrade',
+  packages_business_create_connection_sceneform_lianjieceshiwu:
+    'The connection test is invalid, please check your connection configuration',
+  packages_business_create_connection_sceneform_qingxianjinxinglian: 'Please perform a connection test first',
+  packages_business_logs_nodelog_qingshengjidingyue:
+    'Please upgrade your subscription to get more tasks, click the pop-up window to display the upgrade guide',
+  packages_business_logs_nodelog_yinqingkeyibei:
+    'The number of tasks that the engine can be invoked exceeds the limit,',
+  packages_business_task_list_nindekeyunxing:
+    'The number of tasks you can run has reached the upper limit, please subscribe to upgrade specifications so that you can run more tasks!',
+  packages_business_setting_alarmsetting_qubangding: 'to bind',
+  packages_business_setting_alarmsetting_jiancedaoninhai:
+    'It has been detected that you have not bound your email address, so email notification cannot be enabled.',
+  packages_business_verification_form_zhengzaijiyuren: 'Generating verification conditions based on tasks in progress',
+  packages_business_agent_ip_tips_prefix:
+    "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
+  packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
+  packages_business_demo_database_desc:
+    'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',
+  packages_business_use_ssl: 'Use SSL',
+  packages_business_certificate_authority: 'CA File',
+  packages_business_client_certificate: 'Client Certificate File',
+  packages_business_client_key: 'Client Key File',
+  packages_business_client_key_password: 'Client Key Password',
+  packages_business_use_ssh: 'Use SSH Tunnel',
+  packages_business_ssh_host: 'Host',
+  packages_business_ssh_port: 'Port',
+  packages_business_ssh_username: 'Username',
+  packages_business_ssh_password: 'Password',
+  packages_business_connections_test_xiazaijindu: 'Download Progress',
+  packages_business_connections_test_xiazaishibai: 'Download Failed'
 }
