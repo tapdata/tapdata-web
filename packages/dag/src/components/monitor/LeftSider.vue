@@ -184,7 +184,7 @@
                 <VIcon size="14" class="color-primary">info</VIcon>
               </span>
             </ElTooltip>
-            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
               <ElRadioButton label="count">count</ElRadioButton>
               <ElRadioButton label="size">size</ElRadioButton>
             </ElRadioGroup>
@@ -340,7 +340,7 @@
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
-          <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+          <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
             <ElRadioButton label="count">count</ElRadioButton>
             <ElRadioButton label="size">size</ElRadioButton>
           </ElRadioGroup>
@@ -406,18 +406,18 @@ export default {
           diffRecords: 0,
           diffTables: 0,
           totals: 0,
-          ignore: 0
+          ignore: 0,
         }
-      }
+      },
     },
-    timeFormat: String
+    timeFormat: String,
   },
   components: {
     LineChart,
     TimeSelect,
     Frequency,
     VIcon,
-    InitialList
+    InitialList,
   },
   data() {
     return {
@@ -425,10 +425,10 @@ export default {
       initialListDialog: false,
       timeSelectLabel: '',
       collectorData: {
-        externalStorage: {}
+        externalStorage: {},
       },
       infoList: [],
-      qpsChartsType: 'count'
+      qpsChartsType: 'count',
     }
   },
   computed: {
@@ -443,24 +443,24 @@ export default {
           value: [[], []],
           markLine: [
             {
-              data: []
-            }
-          ]
+              data: [],
+            },
+          ],
         }
       }
       const { time = [] } = this.quota
       // const { inputQps = [], outputQps = [], inputSizeQps = [], outputSizeQps = [] } = data
       // const
       // this.labelUnitType = data.inputSizeQps ? 'byte' : ''
-      const inputQps = data.inputQps?.map(t => Math.abs(t))
-      const outputQps = data.outputQps?.map(t => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
+      const inputQps = data.inputQps?.map((t) => Math.abs(t))
+      const outputQps = data.outputQps?.map((t) => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
-      time.forEach(el => {
+      time.forEach((el) => {
         if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
           markLineTime = el
         }
@@ -471,7 +471,7 @@ export default {
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         // value: [inputQps, outputQps],
         value: [],
-        zoomValue: 10
+        zoomValue: 10,
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
@@ -482,24 +482,24 @@ export default {
               {
                 xAxis: markLineTime + '',
                 lineStyle: {
-                  color: '#000'
+                  color: '#000',
                 },
                 label: {
-                  show: false
-                }
-              }
-            ]
-          }
+                  show: false,
+                },
+              },
+            ],
+          },
         ]
       }
 
       return {
         count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps]
+          value: [inputQps, outputQps],
         }),
         size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps]
-        })
+          value: [inputSizeQps, outputSizeQps],
+        }),
       }
     },
 
@@ -510,12 +510,12 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
       return {
         x: time,
-        value: data.timeCostAvg
+        value: data.timeCostAvg,
       }
     },
     // 增量延迟
@@ -525,17 +525,17 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
 
-      const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
-      const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const open = this.dataflow.alarmSettings?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.open
+      const delay = open ? this.dataflow.alarmRules?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
       const max = Math.max(...data.replicateLag)
       return {
         x: time,
         value: data.replicateLag,
-        yAxisMax: Math.max(delay, max)
+        yAxisMax: Math.max(delay, max),
       }
     },
 
@@ -548,7 +548,7 @@ export default {
         snapshotDoneAt,
         snapshotStartAt,
         replicateLag,
-        lastFiveMinutesQps
+        lastFiveMinutesQps,
       } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
@@ -560,7 +560,7 @@ export default {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         replicateLag: replicateLag,
-        finishDuration: time
+        finishDuration: time,
       }
     },
 
@@ -572,7 +572,7 @@ export default {
         currentSnapshotTableRowTotal = 0,
         snapshotDoneCost,
         outputQpsMax = 0,
-        outputQpsAvg = 0
+        outputQpsAvg = 0,
       } = this.quota.samples?.totalData?.[0] || {}
       // 如果分子大于分母，将分母的值调整成跟分子一样
       if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
@@ -585,7 +585,7 @@ export default {
         currentSnapshotTableRowTotal,
         snapshotDoneCost,
         outputQpsMax: Math.ceil(outputQpsMax),
-        outputQpsAvg: Math.ceil(outputQpsAvg)
+        outputQpsAvg: Math.ceil(outputQpsAvg),
       }
     },
 
@@ -625,7 +625,7 @@ export default {
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
-      return allNodes.some(node => fileType.includes(node.databaseType))
+      return allNodes.some((node) => fileType.includes(node.databaseType))
     },
 
     hideTotalData() {
@@ -634,12 +634,12 @@ export default {
 
     showToInitialList() {
       return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
-    }
+    },
   },
   watch: {
     'dataflow.syncType'(v) {
       v && this.getBasicInformation()
-    }
+    },
   },
   mounted() {
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
@@ -670,9 +670,9 @@ export default {
         'outputUpdateTotal',
         'outputDeleteTotal',
         'outputDdlTotal',
-        'outputOthersTotal'
+        'outputOthersTotal',
       ]
-      ;[...inputArr, ...outputArr].forEach(el => {
+      ;[...inputArr, ...outputArr].forEach((el) => {
         result[el] = data?.[el] || 0
       })
       result.inputTotals = inputArr.reduce((total, key) => {
@@ -697,19 +697,19 @@ export default {
     getReplicateLag(val) {
       return typeof val === 'number' && val >= 0
         ? calcTimeUnit(val, 2, {
-            autoHideMs: true
+            autoHideMs: true,
           })
         : i18n.t('public_data_no_data')
     },
 
     getCollectorData() {
-      logcollectorApi.getDetail(this.dataflow.id).then(data => {
+      logcollectorApi.getDetail(this.dataflow.id).then((data) => {
         const { externalStorage = {}, logTime, name } = data
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
           const regResult =
             /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-              externalStorage.uri
+              externalStorage.uri,
             )
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
@@ -718,34 +718,34 @@ export default {
           this.infoList = [
             {
               label: this.$t('packages_business_relation_details_rizhiwajueshi'),
-              value: this.formatTime(logTime)
-            }
+              value: this.formatTime(logTime),
+            },
           ]
           return
         }
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
-            value: this.formatTime(logTime)
+            value: this.formatTime(logTime),
           },
           {
             label: this.$t('public_external_memory_name'),
-            value: externalStorage.name
+            value: externalStorage.name,
           },
           {
             label: this.$t('public_external_memory_type'),
-            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type]
+            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type],
           },
           {
             label: this.$t('public_external_memory_table'),
-            value: externalStorage.table
+            value: externalStorage.table,
           },
           {
             label: this.$t('public_external_memory_info'),
             value: uriInfo,
             block: true,
-            class: 'text-break'
-          }
+            class: 'text-break',
+          },
         ]
       })
     },
@@ -755,7 +755,7 @@ export default {
     },
 
     getSharedCacheData(id) {
-      sharedCacheApi.findOne(id).then(data => {
+      sharedCacheApi.findOne(id).then((data) => {
         externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
           if (!ext.name) {
             this.infoList = []
@@ -768,20 +768,20 @@ export default {
             // },
             {
               label: i18n.t('public_external_memory_name'),
-              value: ext.name
+              value: ext.name,
             },
             {
               label: i18n.t('public_external_memory_type'),
-              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type]
+              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type],
             },
             {
               label: i18n.t('public_external_memory_table'),
-              value: ext.table
+              value: ext.table,
             },
             {
               label: i18n.t('public_external_memory_info'),
-              value: ext.uri
-            }
+              value: ext.uri,
+            },
           ]
         })
       })
@@ -790,12 +790,12 @@ export default {
     async getBasicInformation() {
       const map = {
         SharedMiningMonitor: this.getCollectorData,
-        SharedCacheMonitor: this.getSharedCacheData
+        SharedCacheMonitor: this.getSharedCacheData,
       }
       map[this.$route.name]?.(this.dataflow.id)
-    }
+    },
   },
-  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency', 'verifyDetails']
+  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency', 'verifyDetails'],
 }
 </script>
 

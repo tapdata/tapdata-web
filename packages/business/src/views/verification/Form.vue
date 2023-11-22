@@ -281,7 +281,6 @@
                   <label class="item-label">{{ $t('packages_business_verification_create_window_duration') }}</label>
                   <ElInput
                     class="item-input"
-                    size="mini"
                     v-model="form.cdcDuration"
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
@@ -295,7 +294,6 @@
                   }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="mini"
                     v-model="form.cdcBeginDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyankaishishi')"
@@ -308,7 +306,6 @@
                   <label class="item-label">{{ $t('packages_business_verification_form_jiaoyanjieshushi') }}</label>
                   <ElDatePicker
                     class="item-select"
-                    size="mini"
                     v-model="form.cdcEndDate"
                     type="datetime"
                     :placeholder="$t('packages_business_verification_form_jiaoyanjieshushi')"
@@ -608,21 +605,21 @@ export default {
         this.isDbClone = data.syncType === 'migrate'
         let edges = data.dag?.edges || []
         let nodes = data.dag?.nodes || []
-        const findOne = this.flowOptions.find(t => t.id === id)
+        const findOne = this.flowOptions.find((t) => t.id === id)
         if (!findOne) {
           this.flowOptions.unshift({
             id: data.id,
-            name: data.name
+            name: data.name,
           })
         }
         if (!edges.length) {
           return { items: [], total: 0 }
         }
         let stages = []
-        nodes.forEach(n => {
+        nodes.forEach((n) => {
           let outputLanes = []
           let inputLanes = []
-          edges.forEach(e => {
+          edges.forEach((e) => {
             if (e.source === n.id) {
               outputLanes.push(e.target)
             }
@@ -633,8 +630,8 @@ export default {
           stages.push(
             Object.assign({}, n, {
               outputLanes,
-              inputLanes
-            })
+              inputLanes,
+            }),
           )
         })
 

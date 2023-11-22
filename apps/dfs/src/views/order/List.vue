@@ -157,7 +157,6 @@
                     v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
                     type="danger"
                     text
-                    size="mini"
                     @click="openUnsubscribe(item, row.productType)"
                     >{{ $t('public_button_unsubscribe') }}</ElButton
                   >
@@ -231,7 +230,8 @@ import Renew from '../../components/Renew.vue'
 
 export default {
   components: {
-   VEmpty, Unsubscribe,
+    VEmpty,
+    Unsubscribe,
     StatusTag,
     FilterBar,
     VTable,
@@ -337,11 +337,11 @@ export default {
       subscribeList: [],
       page: {
         current: 1,
-        size: 100
+        size: 100,
       },
       loadingRenewSubmit: false,
       currentPrice: 0,
-      isEn: i18n.locale === 'en'
+      isEn: i18n.locale === 'en',
     }
   },
   computed: {
@@ -457,24 +457,24 @@ export default {
       this.filterArray = [
         {
           label: this.$t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('packages_business_shared_const_yizhifu'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: this.$t('packages_business_shared_const_weizhifu'),
-          value: 'incomplete'
+          value: 'incomplete',
         },
         {
           label: this.$t('packages_business_shared_const_zhifushibai'),
-          value: 'payFail'
+          value: 'payFail',
         },
         {
           label: this.$t('packages_business_shared_const_shixiao'),
-          value: 'incomplete_expired'
-        }
+          value: 'incomplete_expired',
+        },
       ]
     },
     //我的订阅
@@ -516,7 +516,7 @@ export default {
 
           if (item.subscribeItems?.length) {
             item.productType = item.subscribeItems[0].productType
-            item.subscribeItems = item.subscribeItems.map(it => {
+            item.subscribeItems = item.subscribeItems.map((it) => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
               it.subscriptionMethodLabel =
@@ -677,10 +677,10 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.resourceId
-        }
+          keyword: row.resourceId,
+        },
       })
-    }
+    },
   },
 }
 </script>
