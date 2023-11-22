@@ -124,6 +124,7 @@ export default {
       wsErrorMsg: '',
       status: '',
       timer: null,
+      outTimer: null,
       isTimeout: true,
       // hideTableInfo: false,
       colorMap: {
@@ -244,7 +245,6 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
-      // this.startByConnection(data, updateSchema, editTest)
       this.startDownLoadConnector(data, updateSchema, editTest)
     },
 
@@ -273,7 +273,6 @@ export default {
           this.$ws.send(msg)
         })
         this.timer && clearTimeout(this.timer)
-        this.timer = null
         this.timer = setTimeout(() => {
           this.isTimeout = true //重置
           this.wsError = 'ERROR'
@@ -314,17 +313,19 @@ export default {
         })
 
         // 检查下载器
-        this.$ws.on('downloadPdkFileFlag', data => {
+        this.$ws.once('downloadPdkFileFlag', data => {
           this.showProgress = !!data.result
           if (!this.showProgress) {
+            this.outTimer && clearTimeout(this.outTimer)
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           }
         })
         // 下载器进度
-        this.$ws.on('progressReporting', data => {
+        this.$ws.once('progressReporting', data => {
           const { fileSize = 0, progress = 0, status } = data.result || {}
           if (status === 'finish') {
+            this.outTimer && clearTimeout(this.outTimer)
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           } else {
@@ -336,17 +337,21 @@ export default {
           }
         })
         // 检查不到下载器
-        this.$ws.on('unknown_event_result', () => {
+        this.$ws.once('unknown_event_result', () => {
+          this.outTimer && clearTimeout(this.outTimer)
           this.startLoadTestItems(connection, updateSchema, editTest)
         })
+
+        this.outTimer && clearTimeout(this.outTimer)
+        this.outTimer = setTimeout(() => {
+          this.startLoadTestItems(connection, updateSchema, editTest)
+        }, 5000)
       })
     },
 
     startLoadTestItems() {
       this.startByConnection(...arguments)
-      setTimeout(() => {
-        this.showProgress = false
-      }, 800)
+      this.showProgress = false
     }
   }
 }
