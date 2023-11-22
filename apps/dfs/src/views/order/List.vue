@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-column h-100">
-    <div class="bg-white rounded-lg mb-4">
+    <div v-if="$route.name === 'order'" class="bg-white rounded-lg mb-4">
       <div class="flex align-items-center px-4">
         <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
       </div>
