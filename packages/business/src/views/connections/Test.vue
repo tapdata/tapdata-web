@@ -124,7 +124,6 @@ export default {
       wsErrorMsg: '',
       status: '',
       timer: null,
-      outTimer: null,
       isTimeout: true,
       // hideTableInfo: false,
       colorMap: {
@@ -316,7 +315,6 @@ export default {
         this.$ws.once('downloadPdkFileFlag', data => {
           this.showProgress = !!data.result
           if (!this.showProgress) {
-            this.outTimer && clearTimeout(this.outTimer)
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           }
@@ -325,7 +323,6 @@ export default {
         this.$ws.once('progressReporting', data => {
           const { fileSize = 0, progress = 0, status } = data.result || {}
           if (status === 'finish') {
-            this.outTimer && clearTimeout(this.outTimer)
             this.startLoadTestItems(connection, updateSchema, editTest)
             this.fileInfo.progress = 100
           } else {
@@ -338,14 +335,8 @@ export default {
         })
         // 检查不到下载器
         this.$ws.once('unknown_event_result', () => {
-          this.outTimer && clearTimeout(this.outTimer)
           this.startLoadTestItems(connection, updateSchema, editTest)
         })
-
-        this.outTimer && clearTimeout(this.outTimer)
-        this.outTimer = setTimeout(() => {
-          this.startLoadTestItems(connection, updateSchema, editTest)
-        }, 5000)
       })
     },
 
