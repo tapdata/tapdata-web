@@ -66,16 +66,7 @@
           </div>
         </div>
         <div
-          class="
-            flex flex-column flex-1
-            bg-white
-            api-monitor-table api-monitor-card
-            overflow-hidden
-            ml-5
-            mr-5
-            pl-5
-            pt-5
-          "
+          class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5"
         >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
@@ -83,7 +74,7 @@
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{
-                  'triangle-active': this.page.failRateOrder === 'ASC'
+                  'triangle-active': this.page.failRateOrder === 'ASC',
                 }"
               ></span>
               <span
@@ -122,13 +113,13 @@
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{
-                  'triangle-active': this.page.consumingTimeOrder === 'ASC'
+                  'triangle-active': this.page.consumingTimeOrder === 'ASC',
                 }"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
                 :class="{
-                  'active-top': this.page.consumingTimeOrder === 'DESC'
+                  'active-top': this.page.consumingTimeOrder === 'DESC',
                 }"
               ></span>
             </span>
@@ -232,22 +223,22 @@ export default {
       columns: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('api_monitor_total_columns_failed'),
-          slotName: 'failed'
-        }
+          slotName: 'failed',
+        },
       ],
       columnsRT: [
         {
           label: this.$t('api_monitor_total_api_list_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: this.$t('api_monitor_total_rTime'),
-          slotName: 'failed'
-        }
+          slotName: 'failed',
+        },
       ],
       previewData: {},
       chartData: [],
@@ -263,30 +254,30 @@ export default {
         consumingTimeTotal: 0,
         consumingTimeOrder: 'DESC',
         apiListCurrent: 1,
-        apiListTotal: 0
+        apiListTotal: 0,
       },
       filterItems: [],
       searchParams: {
         keyword: '',
         clientName: '',
-        status: ''
+        status: '',
       },
       clientNameList: [],
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
         {
           label: this.$t('api_monitor_total_api_list_status_active'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: this.$t('api_monitor_total_api_list_status_pending'),
-          value: 'pending'
+          value: 'pending',
         },
         {
           label: this.$t('api_monitor_total_api_list_status_generating'),
-          value: 'generating'
-        }
-      ]
+          value: 'generating',
+        },
+      ],
     }
   },
   computed: {
@@ -294,7 +285,7 @@ export default {
       let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
       if (isNaN(count)) return 0
       return count < 0 ? 0 : count
-    }
+    },
   },
   watch: {
     '$route.query'() {
@@ -303,7 +294,7 @@ export default {
       if (status || clientName) {
         this.getApiList(1)
       }
-    }
+    },
   },
   mounted() {
     this.initData()
@@ -321,7 +312,7 @@ export default {
         this.getClientName(),
         this.remoteFailedMethod(),
         this.consumingMethod(),
-        this.getApiList()
+        this.getApiList(),
       ]).finally(() => {
         this.silenceLoading = true
         this.timer = setTimeout(() => {
@@ -342,7 +333,7 @@ export default {
       this.loadingTotal = !this.silenceLoading
       return apiMonitorApi
         .preview()
-        .then(data => {
+        .then((data) => {
           this.previewData = data
         })
         .finally(() => {
@@ -351,13 +342,13 @@ export default {
     },
     //获取所有客户端
     getClientName() {
-      return apiMonitorApi.apiClientName().then(data => {
+      return apiMonitorApi.apiClientName().then((data) => {
         //重组数据
         if (data?.length > 0) {
           for (let i = 0; i < data.length; i++) {
             let obj = {
               label: data[i].name,
-              value: data[i].id
+              value: data[i].id,
             }
             this.clientNameList.push(obj)
           }
@@ -370,20 +361,20 @@ export default {
       let data = [
         {
           itemStyle: {
-            color: '#8FD8C0'
+            color: '#8FD8C0',
           },
           label: 'totalCount',
           name: this.$t('api_monitor_total_totalCount'),
-          value: this.previewData?.totalCount
+          value: this.previewData?.totalCount,
         },
         {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#2C65FF',
           },
           label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
-          value: this.previewData?.warningApiCount
-        }
+          value: this.previewData?.warningApiCount,
+        },
       ]
       this.chartData = data
       return {
@@ -392,9 +383,9 @@ export default {
             type: 'pie',
             avoidLabelOverlap: false,
             data: data,
-            radius: ['40%', '70%']
-          }
-        ]
+            radius: ['40%', '70%'],
+          },
+        ],
       }
     },
     //失败率排行榜
@@ -402,19 +393,19 @@ export default {
       let { failRateCurrent, size, failRateOrder } = this.page
       let filter = {
         where: {
-          type: 'failRate'
+          type: 'failRate',
         },
         limit: size,
         order: failRateOrder,
-        skip: size * (failRateCurrent - 1)
+        skip: size * (failRateCurrent - 1),
       }
       this.loadingFailRateList = !this.silenceLoading
       return apiMonitorApi
         .rankLists({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
-          let items = data?.items?.map(item => {
+        .then((data) => {
+          let items = data?.items?.map((item) => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -440,20 +431,20 @@ export default {
       let { consumingTimeCurrent, size, consumingTimeOrder } = this.page
       let filter = {
         where: {
-          type: 'responseTime'
+          type: 'responseTime',
         },
         limit: size,
         order: consumingTimeOrder,
-        skip: size * (consumingTimeCurrent - 1)
+        skip: size * (consumingTimeCurrent - 1),
       }
       this.loadingTimeList = !this.silenceLoading
       return apiMonitorApi
         .rankLists({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           //map
-          let items = data?.items?.map(item => {
+          let items = data?.items?.map((item) => {
             let abj = {}
             for (let key in item) {
               abj.name = key
@@ -493,14 +484,14 @@ export default {
         order: 'createTime DESC',
         limit: 5,
         skip: (apiListCurrent - 1) * 5,
-        where
+        where,
       }
       this.loadingApiList = !this.silenceLoading
       return apiMonitorApi
         .apiList({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.apiList = data.items
           this.page.apiListTotal = data.total
         })
@@ -516,26 +507,26 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('api_monitor_total_clientName'),
           key: 'clientName',
           type: 'select-inner',
           items: this.clientNameList,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('api_monitor_total_api_list_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     //控制手风琴（只展示一行)
     expandChange(row, expandRows) {
       if (expandRows.length > 1) {
-        this.apiList.forEach(expandrow => {
+        this.apiList.forEach((expandrow) => {
           if (row.id !== expandrow.id) {
             //这里需要判断一下展开行的length>1
             // toggleRowExpansion 设置是否展开，true则展开
@@ -546,9 +537,9 @@ export default {
     },
 
     getStatusLabel(status) {
-      return this.statusOptions.find(t => t.value === status)?.label
-    }
-  }
+      return this.statusOptions.find((t) => t.value === status)?.label
+    },
+  },
 }
 </script>
 

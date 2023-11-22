@@ -21,7 +21,7 @@ export class Operation {
   hover
 
   requests = {
-    snapshot: null
+    snapshot: null,
   }
 
   constructor(workspace) {
@@ -30,23 +30,23 @@ export class Operation {
     this.tree = new TreeNode({
       componentName: this.engine.props.rootComponentName,
       ...this.engine.props.defaultComponentTree,
-      operation: this
+      operation: this,
     })
     this.selection = new Selection({
-      operation: this
+      operation: this,
     })
     this.hover = new Hover({
-      operation: this
+      operation: this,
     })
     this.outlineDragon = new Dragon({
       operation: this,
       sensitive: false,
       forceBlock: true,
-      viewport: this.workspace.outline
+      viewport: this.workspace.outline,
     })
     this.viewportDragon = new Dragon({
       operation: this,
-      viewport: this.workspace.viewport
+      viewport: this.workspace.viewport,
     })
     this.selection.select(this.tree)
     this.makeObservable()
@@ -58,7 +58,7 @@ export class Operation {
   }
 
   getSelectedNodes() {
-    return this.selection.selected.map(id => this.tree.findById(id))
+    return this.selection.selected.map((id) => this.tree.findById(id))
   }
 
   setDragNodes(nodes) {
@@ -113,22 +113,22 @@ export class Operation {
     if (outline.isPointInViewport(point, false)) {
       this.outlineDragon.calculate({
         point,
-        touchNode: touchNode || this.tree
+        touchNode: touchNode || this.tree,
       })
       this.viewportDragon.calculate({
         touchNode: touchNode || this.tree,
         closestNode: this.outlineDragon.closestNode,
-        closestDirection: this.outlineDragon.closestDirection
+        closestDirection: this.outlineDragon.closestDirection,
       })
     } else if (viewport.isPointInViewport(point, false)) {
       this.viewportDragon.calculate({
         point,
-        touchNode: touchNode || this.tree
+        touchNode: touchNode || this.tree,
       })
       this.outlineDragon.calculate({
         touchNode: touchNode || this.tree,
         closestNode: this.viewportDragon.closestNode,
-        closestDirection: this.viewportDragon.closestDirection
+        closestDirection: this.viewportDragon.closestDirection,
       })
     } else {
       this.setTouchNode(null)
@@ -176,12 +176,12 @@ export class Operation {
   cloneNodes(nodes) {
     const groups = {}
     const lastGroupNode = {}
-    const filterNestedNode = this.sortNodes(nodes).filter(node => {
-      return !nodes.some(parent => {
+    const filterNestedNode = this.sortNodes(nodes).filter((node) => {
+      return !nodes.some((parent) => {
         return node.isMyParents(parent)
       })
     })
-    each(filterNestedNode, node => {
+    each(filterNestedNode, (node) => {
       if (node === node.root) return
       if (!node.allowClone()) return
       groups[node?.parent?.id] = groups[node?.parent?.id] || []
@@ -198,7 +198,7 @@ export class Operation {
     each(groups, (nodes, parentId) => {
       const lastNode = lastGroupNode[parentId]
       let insertPoint = lastNode
-      each(nodes, node => {
+      each(nodes, (node) => {
         const cloned = node.clone()
         if (!cloned) return
         if (this.selection.has(node) && insertPoint.parent.allowAppend([cloned])) {
@@ -227,7 +227,7 @@ export class Operation {
     define(this, {
       hover: observable.ref,
       removeNodes: action,
-      cloneNodes: action
+      cloneNodes: action,
     })
   }
 
@@ -254,7 +254,7 @@ export class Operation {
   serialize() {
     return {
       tree: this.tree.serialize(),
-      selected: this.selection.selected
+      selected: this.selection.selected,
     }
   }
 }

@@ -16,7 +16,7 @@
           :disabled="data.disabled"
           class="cursor-pointer"
           :class="{
-            'opacity-50 cursor-not-allowed': data.disabled
+            'opacity-50 cursor-not-allowed': data.disabled,
           }"
           :title="$t('packages_dag_components_dfnode_tianjiajiedian')"
           @click.stop="
@@ -52,7 +52,7 @@
           name="action-delete"
           class="cursor-pointer"
           :class="{
-            'opacity-50 cursor-not-allowed': data.disabled
+            'opacity-50 cursor-not-allowed': data.disabled,
           }"
           @click.stop="!data.disabled && $emit('delete', data.id)"
           :title="$t('packages_dag_components_dfnode_shanchujiedian')"
@@ -88,20 +88,20 @@ export default {
   components: {
     OverflowTooltip,
     VIcon,
-    BaseNode
+    BaseNode,
   },
   props: {
     nodeId: {
       type: String,
-      required: true
+      required: true,
     },
     jsPlumbIns: Object,
-    hideDisableAction: Boolean
+    hideDisableAction: Boolean,
   },
   mixins: [deviceSupportHelpers],
   data() {
     return {
-      id: this.$attrs.id
+      id: this.$attrs.id,
     }
   },
   computed: {
@@ -115,7 +115,7 @@ export default {
       'processorNodeTypes',
       'hasNodeError',
       'stateIsReadonly',
-      'activeType'
+      'activeType',
     ]),
 
     data() {
@@ -154,7 +154,7 @@ export default {
       const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
         left: left + 'px',
-        top: top + 'px'
+        top: top + 'px',
       }
     },
 
@@ -164,7 +164,7 @@ export default {
         return typeof res === 'string' ? res : i18n.t('packages_dag_components_dfnode_qingjianchajiedian')
       }
       return null
-    }
+    },
   },
   mounted() {
     if (this.data && this.ins) {
@@ -179,14 +179,14 @@ export default {
       '<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>NodeProperties',
       'resetSelectedNodes',
       'setNodeError',
-      'clearNodeError'
+      'clearNodeError',
     ]),
 
     __init() {
       const { id, nodeId } = this
 
       const targetParams = {
-        ...targetEndpoint
+        ...targetEndpoint,
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -195,7 +195,7 @@ export default {
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
-        start: params => {
+        start: (params) => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
@@ -210,7 +210,7 @@ export default {
           $emit(this, 'drag-start', params)
           return true
         },
-        drag: params => {
+        drag: (params) => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
@@ -252,12 +252,12 @@ export default {
               console.log(
                 i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
                 Time.now() - this.onMouseDownAt,
-                distance
+                distance,
               ) // eslint-disable-line
               this.removeActiveAction('dragActive')
             }
 
-            moveNodes.forEach(node => {
+            moveNodes.forEach((node) => {
               const nodeElement = NODE_PREFIX + node.id
               const element = document.getElementById(nodeElement)
               if (element === null) {
@@ -269,15 +269,15 @@ export default {
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  attrs: { position: newNodePosition }
-                }
+                  attrs: { position: newNodePosition },
+                },
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  attrs: { position }
-                }
+                  attrs: { position },
+                },
               })
               newProperties.push(updateInformation)
             })
@@ -285,11 +285,11 @@ export default {
 
           this.onMouseDownAt = undefined
           $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
-        }
+        },
       })
 
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target'
+        uuid: id + '_target',
       })
 
       // if (this.data.type !== 'table') {
@@ -314,16 +314,16 @@ export default {
                 if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
                   this.$message.error(
                     i18n.t('packages_dag_components_dfnode_gaijiedianth', {
-                      val1: this.data.name
-                    })
+                      val1: this.data.name,
+                    }),
                   )
                 }
-              }
-            }
+              },
+            },
           },
           {
-            uuid: id + '_source'
-          }
+            uuid: id + '_source',
+          },
         )
     },
 
@@ -344,7 +344,7 @@ export default {
           $emit(this, 'nodeSelected', this.nodeId, true)
         }
       }
-    }
+    },
   },
   emits: [
     'show-node-popover',
@@ -360,8 +360,8 @@ export default {
     'show-node-popover',
     'delete',
     'enable',
-    'disable'
-  ]
+    'disable',
+  ],
 }
 </script>
 

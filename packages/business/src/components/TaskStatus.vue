@@ -24,7 +24,7 @@
             <VIcon size="16" class="mr-2 color-warning">warning</VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
-                time: pingTime
+                time: pingTime,
               })
             }}<template v-if="agentStatus"
               >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
@@ -78,13 +78,13 @@ export default {
     task: Object,
     agentMap: Object,
     errorCause: String,
-    reverse: Boolean
+    reverse: Boolean,
   },
   data() {
     return {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       STATUS_MAP,
-      showErrorCause: false
+      showErrorCause: false,
     }
   },
   computed: {
@@ -134,9 +134,9 @@ export default {
 
     taskRetryStartTimeTip() {
       return this.$t('packages_business_task_status_retrying_tooltip', {
-        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss')
+        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss'),
       })
-    }
+    },
   },
 
   methods: {
@@ -144,14 +144,14 @@ export default {
       let route
       if (this.isDaas) {
         route = {
-          name: 'clusterManagement'
+          name: 'clusterManagement',
         }
       } else {
         route = {
           name: 'Instance',
           query: {
-            keyword: this.agentInfo?.itemId
-          }
+            keyword: this.agentInfo?.itemId,
+          },
         }
       }
       this.$router.push(route)
@@ -162,13 +162,13 @@ export default {
         if (!this.task.crontabExpression) return
         const interval = cronParse.parseExpression(this.task.crontabExpression)
         return this.$t('packages_business_task_status_next_run_time', {
-          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss'),
         })
       } catch (err) {
         console.log('Error: ' + err.message)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -219,6 +219,8 @@ export default {
 <style>
 .agent-tooltip__popper {
   border: none !important;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+    0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

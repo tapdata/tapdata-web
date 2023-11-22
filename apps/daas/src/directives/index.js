@@ -13,7 +13,7 @@ export function hasPermissionByCode(code) {
   } else if (Object.prototype.toString.call(code) === '[object Array]') {
     _codes = code
   }
-  let pList = permissions.filter(resource => _codes.indexOf(resource.code) !== -1)
+  let pList = permissions.filter((resource) => _codes.indexOf(resource.code) !== -1)
   if (pList && pList.length > 0) {
     return true
   }
@@ -44,7 +44,7 @@ export function installDirectives(app) {
         el.remove()
         vnode.child && vnode.child.$destroy()
       }
-    }
+    },
   })
 
   app.config.globalProperties.$has = function (code) {
@@ -71,6 +71,6 @@ export function installDirectives(app) {
           binding.value()
         }
       })
-    }
+    },
   })
 }

@@ -130,22 +130,22 @@ export default {
     Pay,
     StepGroups: {
       props: {
-        active: String
+        active: String,
       },
       render() {
         return <div>{this.$slots.default && this.$slots.default()}</div>
-      }
+      },
     },
     StepItem: {
       props: {
-        name: String
+        name: String,
       },
       render() {
         return (
           this.$parent.active === this.name && this.$slots.default && this.$slots.default() && this.$slots.default()
         )
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -166,7 +166,7 @@ export default {
       //是否有支付页面
       isPay: false,
       behavior: [],
-      behaviorAt: null
+      behaviorAt: null,
     }
   },
   mounted() {
@@ -180,7 +180,7 @@ export default {
 
     activeKey() {
       return this.steps[this.activeStep - 1]?.key
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -199,7 +199,7 @@ export default {
     subscribes(val) {
       this.subscribeId = val?.id
       this.subscribeStatus = val?.status
-    }
+    },
     // isUnDeploy(val) {
     //   if (val) {
     //     this.initGuide()
@@ -222,7 +222,7 @@ export default {
         spec: JSON.stringify(this.orderInfo),
         behavior: JSON.stringify(this.behavior),
         behaviorAt: this.behaviorAt,
-        tour: this.$store.state.replicationTour
+        tour: this.$store.state.replicationTour,
       }
       this.$axios.post('api/tcm/user_guide', params)
     },
@@ -234,7 +234,7 @@ export default {
       let step = this.steps[this.activeStep - 1]
       //去掉支付
       if (step.key === 'Spec') {
-        let index = this.steps.findIndex(it => it.key === 'Pay')
+        let index = this.steps.findIndex((it) => it.key === 'Pay')
         if (index > -1) {
           this.steps.splice(index, 1)
         }
@@ -247,44 +247,44 @@ export default {
         this.steps = [
           {
             key: 'Scenes',
-            title: i18n.t('dfs_guide_index_quedingshiyongchang')
+            title: i18n.t('dfs_guide_index_quedingshiyongchang'),
           },
           {
             key: 'DeploymentMethod',
-            title: i18n.t('dfs_guide_index_shezhishujuku')
+            title: i18n.t('dfs_guide_index_shezhishujuku'),
           },
           {
             key: 'Spec',
-            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
-          }
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin'),
+          },
         ]
       } else {
         this.steps = [
           {
             key: 'Account',
-            title: i18n.t('dfs_guide_index_zhanghaoanquanbang')
+            title: i18n.t('dfs_guide_index_zhanghaoanquanbang'),
           },
           {
             key: 'Scenes',
-            title: i18n.t('dfs_guide_index_quedingshiyongchang')
+            title: i18n.t('dfs_guide_index_quedingshiyongchang'),
           },
           {
             key: 'DeploymentMethod',
-            title: i18n.t('dfs_guide_index_shezhishujuku')
+            title: i18n.t('dfs_guide_index_shezhishujuku'),
           },
           {
             key: 'Spec',
-            title: i18n.t('dfs_guide_index_xuanzejisuanyin')
-          }
+            title: i18n.t('dfs_guide_index_xuanzejisuanyin'),
+          },
         ]
       }
     },
     //检查Agent状态
     checkAgentStatus() {
       if (this.agentId) {
-        this.$axios.get('api/tcm/agent').then(data => {
+        this.$axios.get('api/tcm/agent').then((data) => {
           let items = data?.items || []
-          this.agentStatus = items.find(i => i.id === this.agentId)?.status
+          this.agentStatus = items.find((i) => i.id === this.agentId)?.status
           if (this.agentStatus === 'Creating') {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
@@ -294,7 +294,7 @@ export default {
             clearTimeout(this.timer)
             $emit(this, 'update:visible', false)
             this.$router.push({
-              name: 'migrate'
+              name: 'migrate',
             })
           }
         })
@@ -303,7 +303,7 @@ export default {
     //确认提交
     submitConfirm(res) {
       let step = this.steps[this.activeStep - 1]
-      let isPay = this.steps.find(it => it.key === 'Pay')
+      let isPay = this.steps.find((it) => it.key === 'Pay')
       if (step.key === 'Spec') {
         this.getOrderInfo()
         //没有支付页-直接付款
@@ -337,11 +337,11 @@ export default {
     },
     changePlatform(val) {
       this.platform = val
-      let index = this.steps.findIndex(it => it.key === 'Deploy')
+      let index = this.steps.findIndex((it) => it.key === 'Deploy')
       if (val === 'selfHost' && index === -1) {
         this.steps.push({
           key: 'Deploy',
-          title: i18n.t('dfs_guide_index_bushujisuanyin')
+          title: i18n.t('dfs_guide_index_bushujisuanyin'),
         })
       } else if (val !== 'selfHost') {
         //移除
@@ -352,13 +352,13 @@ export default {
     },
     //切换实例
     changeSpec(item) {
-      let index = this.steps.findIndex(it => it.key === 'Pay')
+      let index = this.steps.findIndex((it) => it.key === 'Pay')
       let len = this.steps?.length - 1
       this.isDepaly = false
       if (item?.price !== 0) {
         const payStep = {
           key: 'Pay',
-          title: i18n.t('public_payment')
+          title: i18n.t('public_payment'),
         }
         if (this.platform !== 'selfHost' && index === -1) {
           this.steps.push(payStep)
@@ -400,7 +400,7 @@ export default {
         activeIndex: null,
         behavior: '',
         status: '',
-        view: 'board'
+        view: 'board',
       })
       const { guide } = this.$store.state
       // this.getSteps()
@@ -428,7 +428,7 @@ export default {
             guide.installStep = --this.activeStep
             this.postGuide()
           } else if (this.isUnDeploy && key !== 'Deploy') {
-            guide.installStep = this.activeStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
+            guide.installStep = this.activeStep = guide.steps.findIndex((step) => step.key === 'Deploy') + 1
             this.postGuide()
           }
         }
@@ -438,10 +438,10 @@ export default {
     refresh() {
       let filter = {
         where: {
-          id: this.subscribes?.id
-        }
+          id: this.subscribes?.id,
+        },
       }
-      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+      this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then((data) => {
         let item = data.items || []
         this.subscribeStatus = item?.[0]?.status
         if (this.subscribeStatus === 'active' && item?.[0]?.platform === 'selfHost') {
@@ -459,7 +459,7 @@ export default {
     submitOrder() {
       this.$axios
         .post('api/tcm/orders/subscribeV2', this.orderInfo)
-        .then(data => {
+        .then((data) => {
           this.agentId = data?.subscribeItems?.[0].resourceId
           this.subscribe = data?.subscribe
           this.subscribeId = data?.subscribe
@@ -481,7 +481,7 @@ export default {
               //订单不需要付款，只需对应跳转不同页面
               $emit(this, 'update:visible', false)
               this.$router.push({
-                name: 'Instance'
+                name: 'Instance',
               })
             }
           }
@@ -490,7 +490,7 @@ export default {
             installStep: this.activeStep,
             steps: this.steps,
             subscribeId: this.subscribeId,
-            agentId: this.agentId
+            agentId: this.agentId,
           })
         })
         .catch(() => {
@@ -502,9 +502,9 @@ export default {
       this.behavior.push(behavior)
       this.behaviorAt = Date.now()
       this.postGuide()
-    }
+    },
   },
-  emits: ['update:visible', 'changeIsUnDeploy']
+  emits: ['update:visible', 'changeIsUnDeploy'],
 }
 </script>
 
@@ -552,8 +552,8 @@ export default {
 
   :deep(.el-step__title.is-process) {
     color: #c9cdd4;
-    font-weight: normal;}
-
+    font-weight: normal;
+  }
 
   :deep(.el-step__head.is-process) {
     color: #c9cdd4;

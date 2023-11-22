@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'SettingsPanel'
+  name: 'SettingsPanel',
 }
 </script>
 

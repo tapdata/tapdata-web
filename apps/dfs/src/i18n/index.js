@@ -23,18 +23,18 @@ const localLangModifyEn = localStorage.getItem('localLangModifyEn') || '{}'
 const localStorageLangs = {
   'zh-CN': JSON.parse(localLangModifyZhCN),
   'zh-TW': JSON.parse(localLangModifyZhTW),
-  en: JSON.parse(localLangModifyEn)
+  en: JSON.parse(localLangModifyEn),
 }
 
 const eleLangs = {
   'zh-CN': elementZhLocale,
   'zh-TW': elementTwLocale,
-  en: elementEnLocale
+  en: elementEnLocale,
 }
 const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
-  en: en
+  en: en,
 }
 const current = i18n.locale
 

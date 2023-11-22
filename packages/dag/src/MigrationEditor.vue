@@ -53,7 +53,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               hide-disable-action
               @drag-start="onNodeDragStart"
@@ -123,7 +123,7 @@ export default {
   name: 'MigrationEditor',
 
   directives: {
-    resize
+    resize,
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -139,7 +139,7 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    TransformLoading
+    TransformLoading,
   },
 
   inject: ['buried'],
@@ -163,11 +163,11 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       scale: 1,
-      showLeftSider: true
+      showLeftSider: true,
     }
   },
 
@@ -180,7 +180,7 @@ export default {
     },
     'dataflow.id'() {
       this.getTaskPermissions()
-    }
+    },
   },
 
   async mounted() {
@@ -217,29 +217,29 @@ export default {
       this.addProcessorNode([
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
-          type: 'table_rename_processor'
+          type: 'table_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
-          type: 'migrate_field_rename_processor'
+          type: 'migrate_field_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_migrate_js_processor'
+          type: 'standard_migrate_js_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
-          beta: true
+          beta: true,
         },
         {
           name: i18n.t('packages_dag_date_processor'),
-          type: 'migrate_date_processor'
+          type: 'migrate_date_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'migrate_field_mod_type_filter_processor'
-        }
+          type: 'migrate_field_mod_type_filter_processor',
+        },
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -272,23 +272,23 @@ export default {
           this.$router.resolve({
             name: 'MigrationMonitor',
             query: {
-              id: this.dataflow.id
+              id: this.dataflow.id,
             },
             params: {
-              id: this.dataflow.id
-            }
+              id: this.dataflow.id,
+            },
           }).href,
-          `MigrateStatistics_${this.dataflow.id}`
+          `MigrateStatistics_${this.dataflow.id}`,
         )
       } else {
         this.$router.push({
           name: 'MigrationMonitor',
           query: {
-            id: this.dataflow.id
+            id: this.dataflow.id,
           },
           params: {
-            id: this.dataflow.id
-          }
+            id: this.dataflow.id,
+          },
         })
       }
     },
@@ -306,7 +306,7 @@ export default {
         this.setTaskInfo(this.dataflow)
         await this.$router.replace({
           name: 'MigrateEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' }
+          params: { id: dataflow.id, action: 'dataflowEdit' },
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -317,7 +317,7 @@ export default {
           await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'migrateList'
+            name: 'migrateList',
           })
         } else {
           this.handleError(e)
@@ -331,15 +331,15 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position }
+          attrs: { position },
         },
-        item
+        item,
       )
 
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
 
       return node
@@ -354,19 +354,19 @@ export default {
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
-          }
-        ).then(res => {
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text'),
+          },
+        ).then((res) => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'migrateList'
+            name: 'migrateList',
           })
         })
       } else {
         this.$router.push({
-          name: 'migrateList'
+          name: 'migrateList',
         })
       }
     },
@@ -374,7 +374,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' }
+        params: { id: this.dataflow.id, action: 'dataflowEdit' },
       })
     },
 
@@ -382,11 +382,11 @@ export default {
       this.$router.push({
         name: 'MigrationMonitor',
         query: {
-          id: this.dataflow.id
+          id: this.dataflow.id,
         },
         params: {
-          id: this.dataflow.id
-        }
+          id: this.dataflow.id,
+        },
       })
     },
 
@@ -411,7 +411,7 @@ export default {
         this.initWS()
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data, {
-          silenceMessage: true
+          silenceMessage: true,
         })
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
@@ -434,7 +434,7 @@ export default {
     async handleStart() {
       this.buried('migrationStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', v => {
+      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
@@ -500,15 +500,15 @@ export default {
               accessNodeProcessId: '',
               pdkType: 'pdk',
               pdkHash: con.pdkHash,
-              capabilities: con.capabilities
-            }
+              capabilities: con.capabilities,
+            },
           })
         } catch (error) {
           console.error(error) // eslint-disable-line
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

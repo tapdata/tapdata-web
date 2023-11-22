@@ -5,13 +5,13 @@ export default function render(_props, { attrs }) {
   const props = {
     ..._props,
     ...attrs,
-    src: getNodeIconSrc(_props.node)
+    src: getNodeIconSrc(_props.node),
   }
 
   if (props.size) {
     props.style = {
       width: props.size + 'px',
-      height: props.size + 'px'
+      height: props.size + 'px',
     }
   }
 
@@ -21,7 +21,7 @@ export default function render(_props, { attrs }) {
     <div
       {...{
         class: 'inline-block',
-        ..._data
+        ..._data,
       }}
     ></div>
   )

@@ -10,9 +10,9 @@ export default {
       {
         location: 1,
         width: 8,
-        length: 8
-      }
-    ]
+        length: 8,
+      },
+    ],
   ],
   // 鼠标不能拖动删除线
   DragOptions: { cursor: 'pointer', zIndex: 2000 },
@@ -20,5 +20,5 @@ export default {
   ConnectionsDetachable: false,
   // 是否打开jsPlumb的内部日志记录
   DeleteEndpointsOnDetach: false,
-  LogEnabled: true
+  LogEnabled: true,
 }

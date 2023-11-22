@@ -13,8 +13,8 @@ export const fieldInference = observer(
       return () => {
         return <Main ref="fieldMapping" form={form} attrs={attrs} on={listeners} />
       }
-    }
-  })
+    },
+  }),
 )
 
 export default fieldInference

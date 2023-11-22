@@ -45,5 +45,5 @@ export default {
   packages_ldp_run_every_10_minutes: 'Run every 10 minutes',
   packages_ldp_run_every_hour: 'Run every 1 hour',
   packages_ldp_run_every_day: 'Run every day',
-  packages_ldp_custom_cron_expression: 'Custom cron expression'
+  packages_ldp_custom_cron_expression: 'Custom cron expression',
 }

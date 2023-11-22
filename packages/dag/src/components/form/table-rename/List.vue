@@ -13,7 +13,8 @@
             :class="{
               'color-primary': !!nameMap[name],
               'color-danger border-danger':
-                (tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]) || countByName[nameMap[name] || name] > 1
+                (tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]) ||
+                countByName[nameMap[name] || name] > 1,
             }"
             @change="handleChange(name, $event)"
           ></InnerInput>
@@ -41,13 +42,13 @@ const InnerInput = {
   props: ['value', 'readOnly'],
   data() {
     return {
-      val: null
+      val: null,
     }
   },
   watch: {
     value(val) {
       this.val = val
-    }
+    },
   },
   created() {
     this.val = this.value
@@ -58,10 +59,10 @@ const InnerInput = {
         class="name-list-item-input px-2"
         readOnly={this.readOnly}
         value={this.val}
-        onChange={ev => $emit(this, 'change', ev)}
+        onChange={(ev) => $emit(this, 'change', ev)}
       />
     )
-  }
+  },
 }
 
 export default {
@@ -88,8 +89,8 @@ export default {
           this.emitChange()
         }
       }
-    }
+    },
   },
-  emits: ['change', 'update:value', , 'update:value']
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>

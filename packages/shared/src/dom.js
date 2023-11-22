@@ -8,8 +8,8 @@ export function matchesSelectorToParentElements(el, selector, baseNode) {
     'webkitMatchesSelector',
     'mozMatchesSelector',
     'msMatchesSelector',
-    'oMatchesSelector'
-  ].find(func => isFunction(node[func]))
+    'oMatchesSelector',
+  ].find((func) => isFunction(node[func]))
 
   if (!isFunction(node[matchesSelectorFunc])) return false
 
@@ -27,8 +27,8 @@ export function on(
   event,
   handler,
   options = {
-    capture: false
-  }
+    capture: false,
+  },
 ) {
   if (!el) {
     return

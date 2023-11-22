@@ -91,28 +91,28 @@ export default {
       filterItems: [],
       searchParams: {
         guanluary: 5,
-        type: 'visitTotalLine'
+        type: 'visitTotalLine',
       },
       typesOptions: [
         {
           label: this.$t('api_monitor_detail_visitTotalLine'),
-          value: 'visitTotalLine'
+          value: 'visitTotalLine',
         },
         {
           label: this.$t('api_monitor_detail_timeConsuming'),
-          value: 'latency'
+          value: 'latency',
         },
         { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
         {
           label: this.$t('api_monitor_detail_responseTime'),
-          value: 'responseTime'
-        }
+          value: 'responseTime',
+        },
       ],
       timeList: [
         { label: this.$t('public_time_five_min'), value: 5 },
         { label: this.$t('public_time_ten_min'), value: 10 },
         { label: this.$t('public_time_thirty_min'), value: 30 },
-        { label: this.$t('public_time_last_hour'), value: 60 }
+        { label: this.$t('public_time_last_hour'), value: 60 },
       ],
       allElection: [],
       clientName: [],
@@ -122,22 +122,22 @@ export default {
       clientNameList: [
         {
           name: 'Data Explorer',
-          id: '5c0e750b7a5cd42464a5099d'
-        }
+          id: '5c0e750b7a5cd42464a5099d',
+        },
       ],
       qpsDataTime: [],
       lineOptions: {
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         legend: {
           top: 4,
           right: 0,
-          show: false
+          show: false,
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false
+          boundaryGap: false,
         },
         yAxis: {
           axisLabel: {
@@ -146,17 +146,17 @@ export default {
                 value = value / 1000 + 'K'
               }
               return value
-            }
+            },
           },
           axisLine: {
-            show: true
+            show: true,
           },
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed'
-            }
-          }
+              type: 'dashed',
+            },
+          },
         },
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
@@ -165,27 +165,27 @@ export default {
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
-          borderColor: '#ccc'
+          borderColor: '#ccc',
         },
         series: [
           {
             name: this.$t('public_time_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
-              width: 1
+              width: 1,
             },
             areaStyle: {
-              color: 'rgba(24, 144, 255, 0.2)'
+              color: 'rgba(24, 144, 255, 0.2)',
             },
             symbol: 'none',
             itemStyle: {
-              color: 'rgba(24, 144, 255, 1)'
+              color: 'rgba(24, 144, 255, 1)',
             },
             type: 'line',
-            data: []
-          }
-        ]
-      }
+            data: [],
+          },
+        ],
+      },
     }
   },
   created() {
@@ -202,7 +202,7 @@ export default {
   watch: {
     '$route.query'() {
       this.getDetail()
-    }
+    },
   },
   unmounted() {
     this.timer && clearInterval(this.timer)
@@ -225,31 +225,31 @@ export default {
         guanluary: this.searchParams.guanluary || 5,
         clientId: [],
         start: Time.now(),
-        type: this.searchParams.type || 'visitTotalLine'
+        type: this.searchParams.type || 'visitTotalLine',
       }
       if (!hiddenLoading) {
         this.loadingDetail = true
       }
       apiMonitorApi
         .apiDetail(data)
-        .then(data => {
+        .then((data) => {
           //处理数据
           this.detail = data
           this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []
-          this.qpsDataTime = this.qpsDataTime.map(t => formatTime(t, 'HH:mm:ss')) // 时间不在这里格式化.map(t => formatTime(t))
+          this.qpsDataTime = this.qpsDataTime.map((t) => formatTime(t, 'HH:mm:ss')) // 时间不在这里格式化.map(t => formatTime(t))
           this.$nextTick(() => {
             this.$refs.chart?.chart?.setOption({
               xAxis: {
-                data: this.qpsDataTime
+                data: this.qpsDataTime,
               },
               series: [
                 {
-                  data: qpsDataValue // Object.assign([], this.lineDataDeep.y[0])
-                }
-              ]
+                  data: qpsDataValue, // Object.assign([], this.lineDataDeep.y[0])
+                },
+              ],
             })
           })
           //全选值
@@ -267,14 +267,14 @@ export default {
           type: 'select-inner',
           items: this.typesOptions,
           selectedWidth: '200px',
-          clearable: false
+          clearable: false,
         },
         {
           label: this.$t('api_monitor_detail_monitoring_period'),
           key: 'guanluary',
           type: 'select-inner',
-          items: this.timeList
-        }
+          items: this.timeList,
+        },
       ]
     },
     handleCheckAllChange(val) {
@@ -294,8 +294,8 @@ export default {
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.clientNameList.length
       //刷新数据
       this.getDetail()
-    }
-  }
+    },
+  },
 }
 </script>
 

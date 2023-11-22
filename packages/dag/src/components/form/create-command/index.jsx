@@ -8,8 +8,8 @@ export const ClipboardBtn = observer(
       return () => {
         return <ClipboardDialog attrs={attrs} on={listeners} itemType="string" itemQuery="original_name" />
       }
-    }
-  })
+    },
+  }),
 )
 
 export default ClipboardBtn

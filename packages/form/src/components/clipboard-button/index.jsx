@@ -11,18 +11,18 @@ export const ClipboardButton = defineComponent({
       type: String,
       default: () => {
         return i18n.t('public_button_copy')
-      }
+      },
     },
     finishTooltip: {
       type: String,
       default: () => {
         return i18n.t('public_message_copied')
-      }
+      },
     },
     icon: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { attrs }) {
     // 声明一个 ref 来存放该元素的引用
@@ -96,6 +96,6 @@ export const ClipboardButton = defineComponent({
         </ElTooltip>
       )
     }
-  }
+  },
 })
 export default ClipboardButton

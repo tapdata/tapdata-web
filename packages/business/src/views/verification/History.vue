@@ -118,7 +118,7 @@ export default {
         size: 10,
         total: 0,
         sortBy: '',
-        order: ''
+        order: '',
       },
       selections: [],
       statusMap: {
@@ -126,13 +126,13 @@ export default {
         scheduling: this.$t('packages_business_verification_scheduling'),
         error: this.$t('packages_business_verification_error'),
         done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running')
+        running: this.$t('packages_business_verification_running'),
       },
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify')
-      }
+        jointField: this.$t('packages_business_verification_jointVerify'),
+      },
     }
   },
   created() {
@@ -160,9 +160,9 @@ export default {
       }
       return inspectResultsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           return [{ count: data.total }, data.items]
         })
     },
@@ -175,17 +175,17 @@ export default {
       let id = this.$route.params.id
       let where = {
         inspect_id: { regexp: `^${id}$` },
-        parentId: { eq: null }
+        parentId: { eq: null },
       }
       let filter = {
         order: 'start DESC',
         limit: size,
         skip: (currentPage - 1) * size,
-        inspectGroupByFirstCheckId: true
+        inspectGroupByFirstCheckId: true,
       }
       if (this.$route.name === 'VerifyDiffHistory') {
         where = {
-          firstCheckId: { regexp: `^${id}$` }
+          firstCheckId: { regexp: `^${id}$` },
         }
         delete filter.inspectGroupByFirstCheckId
       }
@@ -193,7 +193,7 @@ export default {
       this.searchRequest(filter, where)
         .then(([countData, data]) => {
           if (data) {
-            this.page.data = data?.map(item => {
+            this.page.data = data?.map((item) => {
               item.startTimeFmt = this.formatTime(item.start || item.createTime)
               return item
             })
@@ -214,11 +214,11 @@ export default {
       this.$router.push({
         name: routeName,
         params: {
-          id
-        }
+          id,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -717,7 +717,7 @@ export default {
       let failList = data?.filter((t) => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
       if (failList.length) {
-        const findErr = failList.find(t => ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(t.code))
+        const findErr = failList.find((t) => ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(t.code))
         if (findErr) {
           this.handleShowUpgradeDialog(findErr)
           return

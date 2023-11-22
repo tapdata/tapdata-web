@@ -1162,5 +1162,5 @@ export default {
   packages_business_ssh_username: '用戶名',
   packages_business_ssh_password: '密碼',
   packages_business_connections_test_xiazaijindu: '下載進度',
-  packages_business_connections_test_xiazaishibai: '下載失敗'
+  packages_business_connections_test_xiazaishibai: '下載失敗',
 }

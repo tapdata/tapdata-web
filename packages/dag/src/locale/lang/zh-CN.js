@@ -666,5 +666,5 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。',
   packages_dag_btn_disable_node: '禁用节点',
-  packages_dag_only_mongodb: '仅支持 MongoDB 数据库'
+  packages_dag_only_mongodb: '仅支持 MongoDB 数据库',
 }

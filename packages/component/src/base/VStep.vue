@@ -38,27 +38,27 @@ export default {
         //     desc: '这是一段很长很长很长的描述性文字',
         //    }
         // ]
-      }
+      },
     },
     activeStep: {
       type: Number,
-      default: 0
+      default: 0,
     },
     hasNumber: {
       type: Boolean,
-      default: true
+      default: true,
     },
     showActive: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
-      active: 0
+      active: 0,
     }
   },
-  emits: ['activeStep']
+  emits: ['activeStep'],
 }
 </script>
 

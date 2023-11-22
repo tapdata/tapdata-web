@@ -36,8 +36,8 @@ const FoldItemComponent = observer(
                     class={[
                       prefix + '-title',
                       {
-                        expand: expand.value
-                      }
+                        expand: expand.value,
+                      },
                     ]}
                   >
                     {slots.extra && <IconWidget infer="Expand" size={10} />}
@@ -47,7 +47,7 @@ const FoldItemComponent = observer(
               >
                 <div
                   style={{ width: '100%' }}
-                  onClick={e => {
+                  onClick={(e) => {
                     e.stopPropagation()
                   }}
                 >
@@ -59,15 +59,15 @@ const FoldItemComponent = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export const FoldItem = composeExport(FoldItemComponent, {
   Base: composeExport(() => <FragmentComponent></FragmentComponent>, {
-    displayName: 'FoldItem.Base'
+    displayName: 'FoldItem.Base',
   }),
   Extra: composeExport(() => <FragmentComponent></FragmentComponent>, {
-    displayName: 'FoldItem.Extra'
-  })
+    displayName: 'FoldItem.Extra',
+  }),
 })

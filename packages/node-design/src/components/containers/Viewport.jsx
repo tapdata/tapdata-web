@@ -6,7 +6,7 @@ import { defineComponent, ref, onMounted } from 'vue'
 export const Viewport = defineComponent({
   props: {
     placeholder: {},
-    dragTipsDirection: {}
+    dragTipsDirection: {},
   },
   setup: (props, { slots, refs }) => {
     const placeholder = props.placeholder
@@ -51,8 +51,8 @@ export const Viewport = defineComponent({
         ref="root"
         class={prefix}
         style={{
-          opacity: !loaded ? 0 : 1,
-          overflow: isFrameRef.value ? 'hidden' : 'overlay'
+          opacity: !loaded.value ? 0 : 1,
+          overflow: isFrameRef.value ? 'hidden' : 'overlay',
         }}
       >
         {slots.default?.()}
@@ -60,5 +60,5 @@ export const Viewport = defineComponent({
         <EmptyWidget dragTipsDirection={dragTipsDirection}>{placeholder}</EmptyWidget>
       </div>
     )
-  }
+  },
 })

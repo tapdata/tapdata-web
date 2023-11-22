@@ -29,7 +29,7 @@ export const desensitization = function (url) {
 
 export const handleProgress = function (data) {
   let count = 0
-  data.forEach(log => {
+  data.forEach((log) => {
     if (log.status === 'passed') {
       count++
     }
@@ -44,15 +44,15 @@ export const defaultModel = {
     id: '',
     name: '',
     connection_type: '',
-    table_filter: ''
-  }
+    table_filter: '',
+  },
 }
 
 // 数据源图标
-export const getConnectionIcon = pdkHash => {
+export const getConnectionIcon = (pdkHash) => {
   if (pdkHash) {
     const params = {
-      pdkHash
+      pdkHash,
     }
     if (process.env.VITE_ACCESS_TOKEN) {
       params.__token = process.env.VITE_ACCESS_TOKEN

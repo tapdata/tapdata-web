@@ -13,11 +13,11 @@ const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
 const ICON = {
   folder: 'folder-o',
   table: 'table',
-  api: 'apiServer_navbar'
+  api: 'apiServer_navbar',
 }
 export default defineComponent({
   directives: {
-    resize
+    resize,
   },
   setup(props, { refs, root, listeners }) {
     const list = ref([])
@@ -30,22 +30,22 @@ export default defineComponent({
       tableLoading: false,
       searchParams: {
         sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        queryKey: queryKey || '',
       },
       page: {
         size: 20,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentNode: '',
-      filterItems: []
+      filterItems: [],
     })
     const currentNode = ref({})
     const pathMatch = ref([])
     const apiServerHost = ref('')
 
-    const matchParent = node => {
+    const matchParent = (node) => {
       let arr = [node]
       node = node.parent
 
@@ -95,7 +95,7 @@ export default defineComponent({
 
     isDaas && getApiServerHost()
 
-    const renderIcon = data => {
+    const renderIcon = (data) => {
       if (data.LDP_TYPE === 'connection') {
         return <DatabaseIcon item={data} size={20} />
       } else {
@@ -107,7 +107,7 @@ export default defineComponent({
       isDragging: false,
       draggingObjects: [],
       dropNode: null,
-      allowDrop: true
+      allowDrop: true,
     })
 
     let draggingNodeImage
@@ -127,7 +127,7 @@ export default defineComponent({
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.name,
-        dragState.draggingObjects.length
+        dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
@@ -141,14 +141,14 @@ export default defineComponent({
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = val => {
+    const handleSelectionChange = (val) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj
       }, {})
     }
 
-    const setTreeCurrent = data => {
+    const setTreeCurrent = (data) => {
       refs.tree.setCurrent(data)
     }
 
@@ -162,13 +162,13 @@ export default defineComponent({
                   name: 'resize',
                   value: {
                     minWidth: 300,
-                    maxWidth: 600
+                    maxWidth: 600,
                   },
                   modifiers: {
-                    right: true
-                  }
-                }
-              ]
+                    right: true,
+                  },
+                },
+              ],
             }}
             class="page-left border-right pt-3 pr-3 overflow-auto"
           >
@@ -217,7 +217,7 @@ export default defineComponent({
                   'row-click': setTreeCurrent,
                   'row-dragstart': handleDragStart,
                   'row-dragend': handleDragEnd,
-                  'selection-change': handleSelectionChange
+                  'selection-change': handleSelectionChange,
                 }}
               >
                 <el-table-column type="selection" width="24" class-name="ck-cell-wrap"></el-table-column>
@@ -258,5 +258,5 @@ export default defineComponent({
         </section>
       )
     }
-  }
+  },
 })

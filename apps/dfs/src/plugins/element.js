@@ -38,7 +38,7 @@ class MessageConstructor {
 
 export const Message = new MessageConstructor()*/
 
-export const install = app => {
+export const install = (app) => {
   app.use(ElementPlus, { i18n: i18n.global.t })
   // app.use(ElLoading)
 }

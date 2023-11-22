@@ -2,7 +2,7 @@
   <div
     class="empty-wrap"
     :class="{
-      'empty-small': props.small
+      'empty-small': props.small,
     }"
   >
     <div class="empty-image">
@@ -29,8 +29,8 @@
 export default {
   name: 'EmptyItem',
   props: {
-    small: Boolean
-  }
+    small: Boolean,
+  },
 }
 </script>
 

@@ -159,14 +159,14 @@ export default {
         passed: this.$t('packages_business_dataForm_test_success'),
         waiting: this.$t('packages_business_dataForm_test_testing'),
         failed: this.$t('packages_business_dataForm_test_fail'),
-        unTest: this.$t('packages_business_dataForm_test_unTest')
+        unTest: this.$t('packages_business_dataForm_test_unTest'),
       },
       showProgress: true,
       fileInfo: {
         fileSize: 0,
         progress: 0,
-        status: ''
-      }
+        status: '',
+      },
     }
   },
   mounted() {
@@ -305,11 +305,11 @@ export default {
       this.fileInfo = {
         fileSize: 0,
         progress: 0,
-        status: ''
+        status: '',
       }
       let msg = {
         type: 'downLoadConnector',
-        data: connection
+        data: connection,
       }
       this.$ws.ready(() => {
         this.$ws.send(msg)
@@ -319,7 +319,7 @@ export default {
         })
 
         // 检查下载器
-        this.$ws.on('downloadPdkFileFlag', data => {
+        this.$ws.on('downloadPdkFileFlag', (data) => {
           this.showProgress = !!data.result
           if (!this.showProgress) {
             this.startLoadTestItems(connection, updateSchema, editTest)
@@ -327,7 +327,7 @@ export default {
           }
         })
         // 下载器进度
-        this.$ws.on('progressReporting', data => {
+        this.$ws.on('progressReporting', (data) => {
           const { fileSize = 0, progress = 0, status } = data.result || {}
           if (status === 'finish') {
             this.startLoadTestItems(connection, updateSchema, editTest)
@@ -336,7 +336,7 @@ export default {
             this.fileInfo = {
               fileSize,
               progress,
-              status
+              status,
             }
           }
         })
@@ -348,7 +348,7 @@ export default {
       setTimeout(() => {
         this.showProgress = false
       }, 800)
-    }
+    },
   },
   emits: ['update:visible', 'returnTestData'],
 }

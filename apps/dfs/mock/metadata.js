@@ -29,7 +29,7 @@ module.exports = {
                 sort: 1,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2100',
@@ -38,7 +38,7 @@ module.exports = {
                 sort: 2,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2300',
@@ -47,7 +47,7 @@ module.exports = {
                 sort: 4,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2400',
@@ -56,7 +56,7 @@ module.exports = {
                 sort: 5,
                 error_code: null,
                 fail_message: null,
-                required: false
+                required: false,
               },
               {
                 stage_code: 'validate-2500',
@@ -65,7 +65,7 @@ module.exports = {
                 sort: 6,
                 error_code: null,
                 fail_message: null,
-                required: false
+                required: false,
               },
               {
                 stage_code: 'validate-2600',
@@ -74,10 +74,10 @@ module.exports = {
                 sort: 7,
                 error_code: null,
                 fail_message: null,
-                required: false
-              }
+                required: false,
+              },
             ],
-            retry: 0
+            retry: 0,
           },
           project: '',
           submit: true,
@@ -120,7 +120,7 @@ module.exports = {
           username: 'jason',
           loadFieldErrMsg:
             'Load schema fields error, connection name: jason-mysql-3306, message: Communications link failure\n\nThe last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.',
-          _id: '60cda022f0e73a0067428c38'
+          _id: '60cda022f0e73a0067428c38',
         },
         fields: [
           { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60cda024f0e73a0067428ca5' },
@@ -132,10 +132,10 @@ module.exports = {
           { field_name: 'SETTLED_AMOUNT', primary_key_position: 0, id: '60cda024f0e73a0067428cab' },
           { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60cda024f0e73a0067428cac' },
           { field_name: 'LAST_CHANGE', primary_key_position: 0, id: '60cda024f0e73a0067428cad' },
-          { field_name: 'P2', primary_key_position: 0, id: '60dc35712340b60e00088d2b' }
+          { field_name: 'P2', primary_key_position: 0, id: '60dc35712340b60e00088d2b' },
         ],
         databaseId: '60cda022f0e73a0067428c3e',
-        database: { name: 'jason-mysql-3306' }
+        database: { name: 'jason-mysql-3306' },
       },
       {
         meta_type: 'table',
@@ -165,7 +165,7 @@ module.exports = {
                 sort: 1,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2100',
@@ -174,7 +174,7 @@ module.exports = {
                 sort: 2,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2300',
@@ -183,7 +183,7 @@ module.exports = {
                 sort: 4,
                 error_code: null,
                 fail_message: null,
-                required: true
+                required: true,
               },
               {
                 stage_code: 'validate-2400',
@@ -192,7 +192,7 @@ module.exports = {
                 sort: 5,
                 error_code: null,
                 fail_message: null,
-                required: false
+                required: false,
               },
               {
                 stage_code: 'validate-2500',
@@ -201,7 +201,7 @@ module.exports = {
                 sort: 6,
                 error_code: null,
                 fail_message: null,
-                required: false
+                required: false,
               },
               {
                 stage_code: 'validate-2600',
@@ -210,10 +210,10 @@ module.exports = {
                 sort: 7,
                 error_code: null,
                 fail_message: null,
-                required: false
-              }
+                required: false,
+              },
             ],
-            retry: 0
+            retry: 0,
           },
           project: '',
           submit: true,
@@ -256,7 +256,7 @@ module.exports = {
           username: 'jason',
           loadFieldErrMsg:
             'Load schema fields error, connection name: jason-mysql-3306, message: Communications link failure\n\nThe last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.',
-          _id: '60cda022f0e73a0067428c38'
+          _id: '60cda022f0e73a0067428c38',
         },
         fields: [
           { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60dc35712340b60e00088d20' },
@@ -269,13 +269,13 @@ module.exports = {
           { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60dc35712340b60e00088d27' },
           { field_name: 'LAST_CHANGE', primary_key_position: 0, id: '60dc35712340b60e00088d28' },
           { field_name: 'P1', primary_key_position: 0, id: '60dc35712340b60e00088d29' },
-          { field_name: 'P2', primary_key_position: 0, id: '60dc35712340b60e00088d2a' }
+          { field_name: 'P2', primary_key_position: 0, id: '60dc35712340b60e00088d2a' },
         ],
         databaseId: '60cda022f0e73a0067428c3e',
-        database: { name: 'jason-mysql-3306' }
-      }
+        database: { name: 'jason-mysql-3306' },
+      },
     ],
     code: 'ok',
-    msg: 'ok'
-  }
+    msg: 'ok',
+  },
 }

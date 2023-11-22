@@ -56,5 +56,5 @@ export default {
   packages_component_src_upgradefee_dingyueshengji: '专业版',
   packages_component_src_selectlist_qingchuyixuan: '清除已选',
   packages_component_src_selectlist_xiang: '项',
-  packages_component_src_selectlist_yixuanze: '已选择'
+  packages_component_src_selectlist_yixuanze: '已选择',
 }

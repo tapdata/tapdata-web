@@ -46,7 +46,7 @@ function checkEvent(e, el, binding) {
   // Toggleable can return true if it wants to deactivate.
   // Note that, because we're in the capture phase, this callback will occur before
   // the bubbling click event on any outside elements.
-  return !elements.some(el => el.contains(e.target))
+  return !elements.some((el) => el.contains(e.target))
 }
 
 function checkIsActive(e, binding) {
@@ -82,32 +82,32 @@ export const ClickOutside = {
   // available, iOS does not support
   // clicks on body
   mounted(el, binding, vnode) {
-    const onClick = e => directive(e, el, binding)
-    const onMousedown = e => {
+    const onClick = (e) => directive(e, el, binding)
+    const onMousedown = (e) => {
       el._clickOutside.lastMousedownWasOutside = checkEvent(e, el, binding)
     }
 
-    handleShadow(el, app => {
+    handleShadow(el, (app) => {
       app.addEventListener('click', onClick, true)
       app.addEventListener('mousedown', onMousedown, true)
     })
 
     if (!el._clickOutside) {
       el._clickOutside = {
-        lastMousedownWasOutside: true
+        lastMousedownWasOutside: true,
       }
     }
 
     el._clickOutside[vnode.context?._uid] = {
       onClick,
-      onMousedown
+      onMousedown,
     }
   },
 
   unMounted(el, binding, vnode) {
     if (!el._clickOutside) return
 
-    handleShadow(el, app => {
+    handleShadow(el, (app) => {
       if (!app || !el._clickOutside?.[vnode.context?._uid]) return
 
       const { onClick, onMousedown } = el._clickOutside[vnode.context?._uid]
@@ -117,7 +117,7 @@ export const ClickOutside = {
     })
 
     delete el._clickOutside[vnode.context?._uid]
-  }
+  },
 }
 
 export default ClickOutside

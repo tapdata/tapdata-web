@@ -21,8 +21,8 @@ export const NodeActionsWidget = observer(
           </div>
         </div>
       )
-    }
-  })
+    },
+  }),
 )
 
 NodeActionsWidget.Action = defineComponent({
@@ -36,5 +36,5 @@ NodeActionsWidget.Action = defineComponent({
         </span>
       </Typography.Link>
     )
-  }
+  },
 })

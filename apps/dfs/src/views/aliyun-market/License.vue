@@ -49,7 +49,7 @@ export default {
     return {
       licenseCode: '',
       showGoDashboard: false,
-      saveLoading: false
+      saveLoading: false,
     }
   },
   mounted() {
@@ -62,30 +62,30 @@ export default {
       this.buried('activateAliyunCode')
       this.$axios
         .post('api/tcm/aliyun/market/license/activate', {
-          licenseCode: this.licenseCode
+          licenseCode: this.licenseCode,
         })
-        .then(data => {
+        .then((data) => {
           if (data.licenseStatus === 'ACTIVATED') {
             this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
             this.showGoDashboard = true
-            this.$axios.get('api/tcm/user').then(data => {
+            this.$axios.get('api/tcm/user').then((data) => {
               window.__USER_INFO__ = data
             })
             this.buried('activateAliyunCode', '', {
-              result: true
+              result: true,
             })
             setTimeout(() => {
               window.location.href = 'index.html'
             }, 30000)
           } else {
             this.buried('activateAliyunCode', '', {
-              result: false
+              result: false,
             })
           }
         })
         .catch(() => {
           this.buried('activateAliyunCode', '', {
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -94,8 +94,8 @@ export default {
     },
     getImg(name) {
       return require(`/images/dashboard/${name}.svg`)
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -278,5 +278,5 @@ export default {
   public_external_memory_type: '外存类型',
   public_external_memory_table: '外存表名',
   public_external_memory_connection: '外存连接',
-  public_external_memory_info: '外存信息'
+  public_external_memory_info: '外存信息',
 }

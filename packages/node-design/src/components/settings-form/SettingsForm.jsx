@@ -26,7 +26,7 @@ export const SettingsForm = defineComponent({
     const sources = reactive({
       key: nodeRef.value.id,
       schema: nodeRef.value?.designerProps?.propsSchema,
-      isEmpty: !(nodeRef.value && nodeRef.value.designerProps?.propsSchema && selectedRef.value.length === 1)
+      isEmpty: !(nodeRef.value && nodeRef.value.designerProps?.propsSchema && selectedRef.value.length === 1),
     })
 
     const formRef = ref()
@@ -41,7 +41,7 @@ export const SettingsForm = defineComponent({
             useLocales(nodeRef.value)
             // useSnapshot(operationRef.value, keyupRef)
             props.effects?.(form)
-          }
+          },
         })
         sources.key = nodeRef.value.id
         sources.schema = nodeRef.value?.designerProps?.propsSchema
@@ -84,7 +84,7 @@ export const SettingsForm = defineComponent({
                     props={{
                       schema: sources.schema,
                       components: props.components,
-                      scope: props.scope
+                      scope: props.scope,
                     }}
                   />
                 </Form>
@@ -108,5 +108,5 @@ export const SettingsForm = defineComponent({
         </IconContext.Provider>
       )
     }
-  }
+  },
 })

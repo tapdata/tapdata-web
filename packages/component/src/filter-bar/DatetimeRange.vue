@@ -36,30 +36,30 @@ export default {
     value: [String, Array, Number, Object],
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     startPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('packages_component_filter_bar_datetimerange_kaishishijian')
-      }
+      },
     },
     endPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('packages_component_filter_bar_datetimerange_jieshushijian')
-      }
+      },
     },
     range: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   data() {
     return {
       start: '',
       end: '',
       startOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { end } = this
           if (this.range) {
             return Math.abs((end ? this.getTimestamp(end) : Date.now()) - this.getTimestamp(time)) > this.range
@@ -71,10 +71,10 @@ export default {
             return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       endOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { start } = this
           if (this.range) {
             return Math.abs(this.getTimestamp(time) - (start ? this.getTimestamp(start) : Date.now())) > this.range
@@ -86,10 +86,10 @@ export default {
             return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       startRange: '00:00:00',
-      endRange: '23:59:59'
+      endRange: '23:59:59',
     }
   },
   watch: {
@@ -100,7 +100,7 @@ export default {
     end() {
       this.setEndValue()
       this.setEndRange()
-    }
+    },
   },
   mounted() {
     this.init()
@@ -193,9 +193,9 @@ export default {
     // 获取当天23:59:59时间戳，精确到s
     getDayEndTimestamp(timestamp) {
       return new Date(new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000).getTime()
-    }
+    },
   },
-  emits: ['change', 'update:value', , , 'update:value']
+  emits: ['change', 'update:value', , , 'update:value'],
 }
 </script>
 

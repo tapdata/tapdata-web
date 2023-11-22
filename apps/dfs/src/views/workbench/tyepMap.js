@@ -47,7 +47,7 @@ export const TYPEMAP = {
   inspectValue: i18n.global.t('notify_list_inspect_value'),
   inspectDelete: i18n.global.t('notify_list_inspect_delete'),
   inspectError: i18n.global.t('notify_list_inspect_error'),
-  approaching: i18n.global.t('notify_list_approaching')
+  approaching: i18n.global.t('notify_list_approaching'),
 }
 
 export const notificationMAP = {
@@ -64,5 +64,5 @@ export const notificationMAP = {
   agentStarted: i18n.global.t('notify_list_agent_started'),
   agentStopped: i18n.global.t('notify_list_agent_stopped'),
   agentCreated: i18n.global.t('notify_list_agent_created'),
-  agentDeleted: i18n.global.t('notify_list_agent_deleted')
+  agentDeleted: i18n.global.t('notify_list_agent_deleted'),
 }

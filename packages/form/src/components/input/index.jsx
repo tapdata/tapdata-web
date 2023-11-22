@@ -6,8 +6,8 @@ export const Input = defineComponent({
     // 默认去空格
     trim: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   setup(props, { attrs }) {
     return () => {
@@ -16,7 +16,7 @@ export const Input = defineComponent({
         <_Input
           {...{
             ...attrs,
-            onBlur: ev => {
+            onBlur: (ev) => {
               let val = ev.target.value
               let newVal = val
 
@@ -24,12 +24,12 @@ export const Input = defineComponent({
                 newVal = val?.trim()
               }
               if (newVal !== val) attrs.onChange(newVal)
-            }
+            },
           }}
         />
       )
     }
-  }
+  },
 })
 
 Input.TextArea = _Input.TextArea

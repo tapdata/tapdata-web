@@ -30,7 +30,7 @@ export default {
       hasMDB: false,
       hasActive: false,
       loading: true,
-      paying: true
+      paying: true,
     }
   },
 
@@ -81,12 +81,12 @@ export default {
           JSON.stringify({
             where: {
               status: {
-                $in: ['incomplete', 'active']
+                $in: ['incomplete', 'active'],
               },
-              'subscribeItems.productType': 'MongoDB'
-            }
-          })
-        )}`
+              'subscribeItems.productType': 'MongoDB',
+            },
+          }),
+        )}`,
       )
 
       if (data?.total) {
@@ -97,7 +97,7 @@ export default {
     async loadMDBStatus() {
       clearTimeout(this.timer)
       const { items } = await this.$axios.get('api/tcm/mdb')
-      this.hasActive = items.some(item => item.status === 'Activated')
+      this.hasActive = items.some((item) => item.status === 'Activated')
 
       if (!this.hasActive) {
         this.timer = setTimeout(() => {
@@ -109,8 +109,8 @@ export default {
     async handleRefresh() {
       this.$message.success(this.$t('public_message_operation_success'))
       await this.loadMDBStatus()
-    }
-  }
+    },
+  },
 }
 </script>
 

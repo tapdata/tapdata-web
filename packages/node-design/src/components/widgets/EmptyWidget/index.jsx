@@ -7,7 +7,7 @@ import { defineComponent } from 'vue'
 export const EmptyWidget = observer(
   defineComponent({
     props: {
-      dragTipsDirection: { type: String, default: 'left' }
+      dragTipsDirection: { type: String, default: 'left' },
     },
     setup: (props, { slots }) => {
       const treeRef = useTree()
@@ -45,6 +45,6 @@ export const EmptyWidget = observer(
         }
         return null
       }
-    }
-  })
+    },
+  }),
 )

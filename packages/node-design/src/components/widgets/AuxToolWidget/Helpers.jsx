@@ -69,15 +69,15 @@ export const Helpers = defineComponent({
             viewportRef.value.scrollX,
             viewportRef.value.scrollY,
             viewportRef.value.isScrollBottom,
-            viewportRef.value.isScrollTop
+            viewportRef.value.isScrollTop,
           ],
           () => {
             clearTimeout(request)
             request = setTimeout(update, HELPER_DEBOUNCE_TIMEOUT)
-          }
+          },
         )
       },
-      () => [viewportRef.value.value, nodeRect]
+      () => [viewportRef.value.value, nodeRect],
     )
 
     return () => {
@@ -87,8 +87,8 @@ export const Helpers = defineComponent({
           class={[
             prefix,
             {
-              [position.value]: true
-            }
+              [position.value]: true,
+            },
           ]}
           ref="root"
         >
@@ -101,5 +101,5 @@ export const Helpers = defineComponent({
         </div>
       )
     }
-  }
+  },
 })

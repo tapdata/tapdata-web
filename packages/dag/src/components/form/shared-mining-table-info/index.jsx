@@ -16,7 +16,7 @@ export const SharedMiningTableInfo = observer(
           <SharedMiningTable
             task-id={taskId}
             params={{
-              nodeId: activeNodeId
+              nodeId: activeNodeId,
             }}
             height={props.height}
             show-title={false}
@@ -33,6 +33,6 @@ export const SharedMiningTableInfo = observer(
           </FormItem.BaseItem>
         )
       }
-    }
-  })
+    },
+  }),
 )

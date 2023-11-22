@@ -36,27 +36,27 @@ export default {
     value: [String, Array, Number, Object],
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     startPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('start_time')
-      }
+      },
     },
     endPlaceholder: {
       type: String,
       default: () => {
         return i18n.t('end_time')
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       start: '',
       end: '',
       startOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { end } = this
           if (end) {
             if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
@@ -65,10 +65,10 @@ export default {
             return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       endOptions: {
-        disabledDate: time => {
+        disabledDate: (time) => {
           const { start } = this
           if (start) {
             if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
@@ -77,10 +77,10 @@ export default {
             return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
         },
-        selectableRange: null
+        selectableRange: null,
       },
       startRange: '00:00:00',
-      endRange: '23:59:59'
+      endRange: '23:59:59',
     }
   },
   watch: {
@@ -91,7 +91,7 @@ export default {
     end() {
       this.setEndValue()
       this.setEndRange()
-    }
+    },
   },
   mounted() {
     this.init()
@@ -184,9 +184,9 @@ export default {
     // 获取当天23:59:59时间戳，精确到s
     getDayEndTimestamp(timestamp) {
       return new Date(new Date(timestamp).setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1000).getTime()
-    }
+    },
   },
-  emits: ['change', 'update:value', , 'update:value']
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
 

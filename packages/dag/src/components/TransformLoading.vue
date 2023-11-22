@@ -19,7 +19,7 @@ export default defineComponent({
         </transition>
       )
     }
-  }
+  },
 })
 </script>
 

@@ -10,7 +10,7 @@ let Time = {
   now() {
     const { serverTime, systemTime } = Time
     return Date.now() - systemTime + serverTime
-  }
+  },
 }
 
 export default Time

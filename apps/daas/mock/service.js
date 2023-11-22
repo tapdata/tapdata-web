@@ -43,10 +43,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           loadCount: Random.integer(0, 100),
           'loadFieldsStatus|1': ['loading', 'finished', 'error'],
           tableCount: Random.integer(0, 100),
-          username: '@name'
-        }
-      ]
-    }
+          username: '@name',
+        },
+      ],
+    },
   },
   '/api/Settings/findOne': {
     data: {
@@ -65,10 +65,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       user_visible: false,
       hot_reloading: true,
       id: '76',
-      last_updated: '2021-06-16T09:43:53.468Z'
+      last_updated: '2021-06-16T09:43:53.468Z',
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Settings': settings,
   '/api/timeStamp': { data: '1620388869929', code: 'ok', msg: 'ok' },
@@ -82,8 +82,8 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       created: '2022-05-13T06:50:03Z',
       userId: '62172cfc49b865ee5379d3ed',
       authType: 'access_code',
-      last_updated: '2022-05-13T06:50:03Z'
-    }
+      last_updated: '2022-05-13T06:50:03Z',
+    },
   },
   '/api/users/:id/permissions': permission,
   '/api/DatabaseTypes': {
@@ -110,10 +110,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.849Z',
-        createTime: '2021-05-06T13:27:26.849Z'
+        createTime: '2021-05-06T13:27:26.849Z',
       },
       {
         id: '6093eebec51425290fec3d23',
@@ -137,10 +137,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.864Z',
-        createTime: '2021-05-06T13:27:26.864Z'
+        createTime: '2021-05-06T13:27:26.864Z',
       },
       {
         id: '6093eebec51425290fec3d24',
@@ -164,10 +164,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.871Z',
-        createTime: '2021-05-06T13:27:26.871Z'
+        createTime: '2021-05-06T13:27:26.871Z',
       },
       {
         id: '6093eebec51425290fec3d25',
@@ -191,10 +191,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.877Z',
-        createTime: '2021-05-06T13:27:26.877Z'
+        createTime: '2021-05-06T13:27:26.877Z',
       },
       {
         id: '6093eebec51425290fec3d26',
@@ -218,10 +218,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.883Z',
-        createTime: '2021-05-06T13:27:26.883Z'
+        createTime: '2021-05-06T13:27:26.883Z',
       },
       {
         id: '6093eebec51425290fec3d27',
@@ -245,10 +245,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.890Z',
-        createTime: '2021-05-06T13:27:26.890Z'
+        createTime: '2021-05-06T13:27:26.890Z',
       },
       {
         id: '6093eebec51425290fec3d28',
@@ -257,7 +257,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow', 'gridfs', 'file'],
         last_updated: '2021-05-06T13:27:26.896Z',
-        createTime: '2021-05-06T13:27:26.896Z'
+        createTime: '2021-05-06T13:27:26.896Z',
       },
       {
         id: '6093eebec51425290fec3d29',
@@ -281,10 +281,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.902Z',
-        createTime: '2021-05-06T13:27:26.902Z'
+        createTime: '2021-05-06T13:27:26.902Z',
       },
       {
         id: '6093eebec51425290fec3d2a',
@@ -308,10 +308,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.910Z',
-        createTime: '2021-05-06T13:27:26.910Z'
+        createTime: '2021-05-06T13:27:26.910Z',
       },
       {
         id: '6093eebec51425290fec3d2b',
@@ -335,10 +335,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'elasticsearch',
           'mem_cache',
           'custom_connection',
-          'mq'
+          'mq',
         ],
         last_updated: '2021-05-06T13:27:26.922Z',
-        createTime: '2021-05-06T13:27:26.922Z'
+        createTime: '2021-05-06T13:27:26.922Z',
       },
       {
         id: '6093eebec51425290fec3d2c',
@@ -361,10 +361,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
         ],
         last_updated: '2021-05-06T13:27:26.928Z',
-        createTime: '2021-05-06T13:27:26.928Z'
+        createTime: '2021-05-06T13:27:26.928Z',
       },
       {
         id: '6093eebec51425290fec3d2d',
@@ -387,10 +387,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
         ],
         last_updated: '2021-05-06T13:27:26.935Z',
-        createTime: '2021-05-06T13:27:26.935Z'
+        createTime: '2021-05-06T13:27:26.935Z',
       },
       {
         id: '6093eebec51425290fec3d2e',
@@ -413,10 +413,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
         ],
         last_updated: '2021-05-06T13:27:26.941Z',
-        createTime: '2021-05-06T13:27:26.941Z'
+        createTime: '2021-05-06T13:27:26.941Z',
       },
       {
         id: '6093eebec51425290fec3d2f',
@@ -439,10 +439,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
         ],
         last_updated: '2021-05-06T13:27:26.948Z',
-        createTime: '2021-05-06T13:27:26.948Z'
+        createTime: '2021-05-06T13:27:26.948Z',
       },
       {
         id: '6093eebec51425290fec3d30',
@@ -465,10 +465,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           'file',
           'elasticsearch',
           'mem_cache',
-          'custom_connection'
+          'custom_connection',
         ],
         last_updated: '2021-05-06T13:27:26.954Z',
-        createTime: '2021-05-06T13:27:26.954Z'
+        createTime: '2021-05-06T13:27:26.954Z',
       },
       {
         id: '6093eebec51425290fec3d31',
@@ -477,7 +477,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
         last_updated: '2021-05-06T13:27:26.960Z',
-        createTime: '2021-05-06T13:27:26.960Z'
+        createTime: '2021-05-06T13:27:26.960Z',
       },
       {
         id: '6093eebec51425290fec3d32',
@@ -486,7 +486,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
         last_updated: '2021-05-06T13:27:26.966Z',
-        createTime: '2021-05-06T13:27:26.966Z'
+        createTime: '2021-05-06T13:27:26.966Z',
       },
       {
         id: '6093eebec51425290fec3d33',
@@ -495,7 +495,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
         last_updated: '2021-05-06T13:27:26.972Z',
-        createTime: '2021-05-06T13:27:26.972Z'
+        createTime: '2021-05-06T13:27:26.972Z',
       },
       {
         id: '6093eebec51425290fec3d34',
@@ -504,7 +504,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow'],
         last_updated: '2021-05-06T13:27:26.978Z',
-        createTime: '2021-05-06T13:27:26.978Z'
+        createTime: '2021-05-06T13:27:26.978Z',
       },
       {
         id: '6093eebec51425290fec3d35',
@@ -513,11 +513,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         buildProfiles: null,
         supportTargetDatabaseType: ['dummy db', 'bitsflow', 'mysql'],
         last_updated: '2021-05-06T13:27:26.978Z',
-        createTime: '2021-05-06T13:27:26.978Z'
-      }
+        createTime: '2021-05-06T13:27:26.978Z',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Connections/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
   '/api/Workers/availableAgent': {
@@ -528,35 +528,35 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           ping_time: 1620390172519,
           worker_type: 'connector',
           version: 'v1.19.0-216-g54d4110e9',
-          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
+          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2',
         },
         {
           process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278',
           ping_time: 1620390172520,
           worker_type: 'transformer',
           version: 'v1.19.0-216-g54d4110e9',
-          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
-        }
-      ]
+          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2',
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Connections/:id/customQuery': { code: 'ok', msg: 'ok' },
   '/api/tcm/agent': {
     code: 'ok',
     data: {
       total: 10,
-      'items|10': [{}]
-    }
+      'items|10': [{}],
+    },
   },
   '/api/tcm/product/vip': { code: 'ok', msg: 'ok' },
   '/api/Connections/:id/copy': {
     code: 'ok',
     msg: 'ok',
     data: {
-      result: {}
-    }
+      result: {},
+    },
   },
   '/api/Connections/listAll': {
     reqId: '94c28e13-1934-491d-9680-2d636014eb36',
@@ -572,7 +572,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_oracle_sharecdc',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621c43cdae53313ba3312fc2',
@@ -583,7 +583,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_oracle_sharecdc_132',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621cb9a1ae53313ba3322487',
@@ -594,7 +594,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestMySQL_33061',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621cba06ae53313ba3322dcf',
@@ -605,7 +605,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mysql_5733_33063',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621da09698bcdf1ea2e02249',
@@ -616,7 +616,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'PG_183_15432',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621dd7bc98bcdf1ea2e14aad',
@@ -627,7 +627,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'robot-mysql',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621dd81698bcdf1ea2e14c70',
@@ -638,7 +638,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestADBMySQL_3306',
         connection_type: 'source',
         database_type: 'adb_mysql',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '621dd94398bcdf1ea2e152d3',
@@ -649,7 +649,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestSQLserver2019_11434',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621dda1498bcdf1ea2e15c11',
@@ -660,7 +660,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestMariaDB_43061',
         connection_type: 'source_and_target',
         database_type: 'mariadb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621ddab398bcdf1ea2e15f54',
@@ -671,7 +671,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Testoracle_tap122c',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '621de90998bcdf1ea2e1d56c',
@@ -682,7 +682,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestKunDB_3306',
         connection_type: 'source_and_target',
         database_type: 'kundb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ab98bcdf1ea2e22375',
@@ -693,7 +693,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mysql_source',
         connection_type: 'source',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ab98bcdf1ea2e22392',
@@ -704,7 +704,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracle_19c_TAPDATA',
         connection_type: 'source',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ac98bcdf1ea2e22397',
@@ -715,7 +715,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracle_niko_TAPDATA',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ac98bcdf1ea2e223a3',
@@ -726,7 +726,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'sqlserver_2019_source',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ac98bcdf1ea2e223a8',
@@ -737,7 +737,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'sqlserver_2019_target',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ac98bcdf1ea2e223ab',
@@ -746,7 +746,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'sqlserver_2017_no_cdc',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ac98bcdf1ea2e223b5',
@@ -755,7 +755,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'postgres_5437',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223b7',
@@ -766,7 +766,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'postgres_5437_target',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223c2',
@@ -777,7 +777,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_db2_source',
         connection_type: 'source',
         database_type: 'db2',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223c5',
@@ -786,7 +786,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_db2_target',
         connection_type: 'source',
         database_type: 'db2',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223cb',
@@ -797,7 +797,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_gaussdb_source_new',
         connection_type: 'source_and_target',
         database_type: 'gaussdb200',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223cf',
@@ -806,7 +806,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_gaussdb_target_new',
         connection_type: 'source_and_target',
         database_type: 'gaussdb200',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223d5',
@@ -815,7 +815,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_redis_target_01',
         connection_type: 'source',
         database_type: 'redis',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ad98bcdf1ea2e223e0',
@@ -826,7 +826,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_redis_target_02',
         connection_type: 'source',
         database_type: 'redis',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ae98bcdf1ea2e223e5',
@@ -837,7 +837,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'kafka_source_test',
         connection_type: 'source_and_target',
         database_type: 'kafka',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ae98bcdf1ea2e223e8',
@@ -848,7 +848,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'kafka_183_all_topic',
         connection_type: 'source_and_target',
         database_type: 'kafka',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ae98bcdf1ea2e223ec',
@@ -857,7 +857,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mariadb_source',
         connection_type: 'source',
         database_type: 'mariadb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3ae98bcdf1ea2e22415',
@@ -868,7 +868,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'ActiveMQ_source_and_target',
         connection_type: 'source_and_target',
         database_type: 'mq',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3af98bcdf1ea2e2241a',
@@ -877,7 +877,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Rocket_only_for_auto',
         connection_type: 'source_and_target',
         database_type: 'mq',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3af98bcdf1ea2e2241d',
@@ -888,7 +888,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Rabbit_only_for_auto',
         connection_type: 'source_and_target',
         database_type: 'mq',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '621df3af98bcdf1ea2e22421',
@@ -899,7 +899,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_hbase_source',
         connection_type: 'source',
         database_type: 'hbase',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '621df3af98bcdf1ea2e22429',
@@ -910,7 +910,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_kudu_source',
         connection_type: 'source_and_target',
         database_type: 'kudu',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '621df3b098bcdf1ea2e2245b',
@@ -921,7 +921,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Greenplum_183_source',
         connection_type: 'source_and_target',
         database_type: 'greenplum',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b098bcdf1ea2e22507',
@@ -932,7 +932,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Greenplum_183_target',
         connection_type: 'source_and_target',
         database_type: 'greenplum',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b098bcdf1ea2e22512',
@@ -943,7 +943,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'AUTO_TIDB_SOURCE',
         connection_type: 'source_and_target',
         database_type: 'tidb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b198bcdf1ea2e2251c',
@@ -954,7 +954,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'AUTO_TIDB_TARGET',
         connection_type: 'source_and_target',
         database_type: 'tidb',
-        status: 'testing'
+        status: 'testing',
       },
       {
         id: '621df3b198bcdf1ea2e22551',
@@ -965,7 +965,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_hana_source',
         connection_type: 'source_and_target',
         database_type: 'hana',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b198bcdf1ea2e2255c',
@@ -976,7 +976,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_hana_target',
         connection_type: 'source_and_target',
         database_type: 'hana',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b298bcdf1ea2e2256e',
@@ -987,7 +987,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_kundb_source',
         connection_type: 'source_and_target',
         database_type: 'kundb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621df3b298bcdf1ea2e22587',
@@ -998,7 +998,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_kundb_target',
         connection_type: 'source_and_target',
         database_type: 'kundb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '621e027d98bcdf1ea2e2e0ee',
@@ -1009,7 +1009,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62203d6da22d061bf2b206bc',
@@ -1018,7 +1018,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestMariaDB_43061 - Copy',
         connection_type: 'source_and_target',
         database_type: 'mariadb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6221c53a3c508618ff71ae37',
@@ -1029,7 +1029,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'sharecdc_mongo',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '6221c5cc3c508618ff71ae9f',
@@ -1040,7 +1040,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestMongoDB_24212',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62234fd03c508618ff76152f',
@@ -1051,7 +1051,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracle132_tap11g',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6225a74e3c508618ff7fb8a8',
@@ -1062,7 +1062,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'TestMongoDB_27017',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6229bbec33ce4462445aa1fd',
@@ -1073,7 +1073,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mongo',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622ab27e8c51e976658c45ad',
@@ -1084,7 +1084,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mysql - Copy',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622acd238c51e976658da02c',
@@ -1095,7 +1095,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mysql',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622ace0e8c51e976658dbcf9',
@@ -1106,7 +1106,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'docker_mysql_8023_target',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622adb5d8c51e976658f58b1',
@@ -1117,7 +1117,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test2',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622adbed8c51e976658f6d9d',
@@ -1128,7 +1128,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mysql',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622ade528c51e976658fa95f',
@@ -1139,7 +1139,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mysql - Copy - Copy',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622aef43e7507c5119b1273e',
@@ -1150,7 +1150,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_sqlserver',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622af5c5e7507c5119b130c0',
@@ -1161,7 +1161,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test_gbase_183',
         connection_type: 'source',
         database_type: 'gbase-8s',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622af678e7507c5119b13324',
@@ -1172,7 +1172,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test_Sybase_183',
         connection_type: 'source_and_target',
         database_type: 'sybase ase',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622af9d8e7507c5119b137d2',
@@ -1183,7 +1183,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'RabbitMQ_source_and_target',
         connection_type: 'source_and_target',
         database_type: 'mq',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '622b0972e7507c5119b1c326',
@@ -1194,7 +1194,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'RocketMQ_source_and_target',
         connection_type: 'source_and_target',
         database_type: 'mq',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622b1528e7507c5119b27ed7',
@@ -1203,7 +1203,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test_ADB PostgreSQL',
         connection_type: 'source_and_target',
         database_type: 'adb_postgres',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '622b2c2ae7507c5119b51634',
@@ -1214,7 +1214,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mongo_target',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622b4013ed64913b9c50bc94',
@@ -1225,7 +1225,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_oracle',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622c56f22565ef5315f4abbf',
@@ -1237,7 +1237,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mongo1',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '622c575b2565ef5315f4b214',
@@ -1249,7 +1249,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_pg',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '622f69d3d26a3d55c472a8f3',
@@ -1261,7 +1261,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mysql_test',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62303a9e8b7e4f3bbcee5aad',
@@ -1273,7 +1273,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'daivd_mongo',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62187cf145873f53272955ec',
@@ -1286,7 +1286,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'DexterMongoTarget',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '61b88b0d089de279de34221e',
@@ -1299,7 +1299,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'MySLQ - Source',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6232db93244134294fdd0b57',
@@ -1311,7 +1311,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test_redolog',
         connection_type: 'source',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62173beddfc4c80f880b7ef9',
@@ -1323,7 +1323,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mongo_sharecdc',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6233f1e557773654d6f3f261',
@@ -1335,7 +1335,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'daivd_mongo - Copy',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6234064757773654d6f52eff',
@@ -1347,7 +1347,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'test_redolog_126_tap11g',
         connection_type: 'source',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6234295757773654d6f685f4',
@@ -1359,7 +1359,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracle-126-tap11g',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623555dbf97dba3311e9bd71',
@@ -1371,7 +1371,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'zed_test',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62393f92decec63c31cdd25d',
@@ -1383,7 +1383,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Mongo to Mongo - Source and Target',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623940dfdecec63c31ce725b',
@@ -1395,7 +1395,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Mongo to Mongo Source',
         connection_type: 'source',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62394713decec63c31d0c97a',
@@ -1407,7 +1407,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracle_132',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6239471adecec63c31d0ce59',
@@ -1417,7 +1417,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_mongo_source',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62394729decec63c31d0e111',
@@ -1427,7 +1427,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'yun_target',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62394d8edecec63c31d276b3',
@@ -1439,7 +1439,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'AL-Test',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62396f19decec63c31d35e3c',
@@ -1451,7 +1451,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mysql8023TZ',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '62396ff1decec63c31d37c03',
@@ -1463,7 +1463,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Joe',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623972dcdecec63c31d4f46a',
@@ -1475,7 +1475,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'PG1016TZ',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6239733fdecec63c31d50416',
@@ -1487,7 +1487,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Mongo API',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623974fcdecec63c31d56478',
@@ -1499,7 +1499,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'oracel_132 - Copy',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623980cbdecec63c31d8d376',
@@ -1511,7 +1511,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Oracle132TZ',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623981dbdecec63c31d92208',
@@ -1521,7 +1521,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'SQLSerer2019TZ',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623983bddecec63c31d9800c',
@@ -1533,7 +1533,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mazhuangtest',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6239885fdecec63c31da4619',
@@ -1545,7 +1545,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mazhuangtest222',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6239cea00accdd390aa24122',
@@ -1555,7 +1555,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mysql-dev',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6239cebd0accdd390aa248d2',
@@ -1567,7 +1567,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mongo-dev',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623abd0cdc0d1f2c7269f71a',
@@ -1579,7 +1579,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Test_jira',
         connection_type: 'source_and_target',
         database_type: 'jira',
-        status: 'testing'
+        status: 'testing',
       },
       {
         id: '623abd75dc0d1f2c7269fafb',
@@ -1589,7 +1589,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Test_MySQL PXC',
         connection_type: 'source_and_target',
         database_type: 'mysql pxc',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '623ae4d3dc0d1f2c726bb3ca',
@@ -1601,7 +1601,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'saddddddddddd',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'invalid'
+        status: 'invalid',
       },
       {
         id: '623afa2a3baef91001916168',
@@ -1613,7 +1613,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzmongobd',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623b04b63baef91001921b80',
@@ -1623,7 +1623,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzOracle',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623b04fb3baef91001922367',
@@ -1635,7 +1635,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_mongodb',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623b0a613baef91001928afe',
@@ -1647,7 +1647,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_mysql',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623b0e993baef9100193225e',
@@ -1659,7 +1659,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_Sql server',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623b10913baef91001934980',
@@ -1671,7 +1671,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_pg',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623c0eae65a20174d54df5c1',
@@ -1683,7 +1683,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mz_P2oracle',
         connection_type: 'source_and_target',
         database_type: 'oracle',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623c452765a20174d550744f',
@@ -1695,7 +1695,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'yun_source',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623c49b865a20174d550d847',
@@ -1707,7 +1707,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_HANa',
         connection_type: 'source_and_target',
         database_type: 'hana',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623c5e2865a20174d552c4cb',
@@ -1717,7 +1717,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_KAFKA',
         connection_type: 'source_and_target',
         database_type: 'kafka',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623d24bb65a20174d575ae7b',
@@ -1729,7 +1729,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'docker_mysql_5733',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623d2b9365a20174d577285d',
@@ -1739,7 +1739,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_Greenplum',
         connection_type: 'source_and_target',
         database_type: 'greenplum',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623d2cd865a20174d5776f35',
@@ -1751,7 +1751,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_TiDB',
         connection_type: 'source_and_target',
         database_type: 'tidb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623d54e078a81b16f4b1071c',
@@ -1763,7 +1763,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_mongo _40',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623d7dd178a81b16f4bd8806',
@@ -1775,7 +1775,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'MongoDB44_27029',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623e72000bfc2b2a1b8e827e',
@@ -1787,7 +1787,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_pg - Copy',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623e7b670bfc2b2a1b8fc97b',
@@ -1797,7 +1797,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mysql-test-tapdata',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623e80bb45835e0df6dd1785',
@@ -1807,7 +1807,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'sqlserver-test-tapdata',
         connection_type: 'source_and_target',
         database_type: 'sqlserver',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623e820245835e0df6dd2763',
@@ -1819,7 +1819,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'pg-test-tapdata',
         connection_type: 'source_and_target',
         database_type: 'postgres',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623e850145835e0df6dd4476',
@@ -1829,7 +1829,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mongo-test-tapdata',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623ed4e0e37bb479a52c2793',
@@ -1841,7 +1841,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mzP2_kundb',
         connection_type: 'source_and_target',
         database_type: 'kundb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '623f3d2ec6edd81190b3fc69',
@@ -1853,7 +1853,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_test_mongo',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6242aa7dd98eb841aa80b321',
@@ -1865,7 +1865,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'david_kafka',
         connection_type: 'source_and_target',
         database_type: 'kafka',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6233e99b7207ec602e5dc268',
@@ -1877,7 +1877,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'local_mysql_2_src',
         connection_type: 'source',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6242d55ed98eb841aa868027',
@@ -1889,7 +1889,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'Agg测试源',
         connection_type: 'source',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6245646986cb197d1ee92a17',
@@ -1901,7 +1901,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'erin_test_mongodb_connection',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6245740386cb197d1eee766d',
@@ -1911,7 +1911,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'kafka_183_9093',
         connection_type: 'source_and_target',
         database_type: 'kafka',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6246620a9b4de251a8913284',
@@ -1921,7 +1921,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'auto_dummy_source',
         connection_type: 'source',
         database_type: 'dummy db',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6246d243862e9516af713f84',
@@ -1931,7 +1931,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mysql-by-majp',
         connection_type: 'source_and_target',
         database_type: 'mysql',
-        status: 'ready'
+        status: 'ready',
       },
       {
         id: '6246d297862e9516af71437b',
@@ -1941,9 +1941,9 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         name: 'mongo-by-majp',
         connection_type: 'source_and_target',
         database_type: 'mongodb',
-        status: 'ready'
-      }
-    ]
+        status: 'ready',
+      },
+    ],
   },
   '/api/Connections/databaseType': {
     reqId: '729ca9c8-12f5-4bde-ae6d-8e38625db101',
@@ -1978,8 +1978,8 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       'sqlserver',
       'sybase ase',
       'tcp_udp',
-      'tidb'
-    ]
+      'tidb',
+    ],
   },
   '/api/Connections/:id': {
     code: 'ok',
@@ -2012,8 +2012,8 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       'loadFieldsStatus|1': ['loading', 'finished', 'error'],
       tableCount: Random.integer(0, 100),
       username: '@name',
-      file_source_protocol: 'ftp'
-    }
+      file_source_protocol: 'ftp',
+    },
   },
   '/api/Workers/:id/availableAgent': {
     data: {
@@ -2023,19 +2023,19 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           ping_time: 1620390172519,
           worker_type: 'connector',
           version: 'v1.19.0-216-g54d4110e9',
-          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
+          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2',
         },
         {
           process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278',
           ping_time: 1620390172520,
           worker_type: 'transformer',
           version: 'v1.19.0-216-g54d4110e9',
-          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2'
-        }
-      ]
+          hostname: 'tapdaas-test-tapdaas-84b6db7bd6-rgmg2',
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/users/self': {
     data: {
@@ -2066,13 +2066,13 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             user_id: '604f4b7ce1ca905fa754520c',
             id: '5cda998c39a8c094a56811cf',
             modified: '2021-05-08T03:25:49.846Z',
-            created: '2021-05-08T03:25:49.846Z'
-          }
-        }
-      ]
+            created: '2021-05-08T03:25:49.846Z',
+          },
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/nodeConfigs': { data: [], code: 'ok', msg: 'ok' },
   '/api/Logs': { data: [], code: 'ok', msg: 'ok' },
@@ -2103,13 +2103,13 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               status: 'done',
               speed: Random.integer(0, 100),
               start: 1619339546806,
-              end: 1619339587965
-            }
+              end: 1619339587965,
+            },
           ],
           status: 'error',
           target_total: 44625001,
           threads: Random.integer(0, 100),
-          ttlTime: '2021-07-24T08:32:26.799Z'
+          ttlTime: '2021-07-24T08:32:26.799Z',
         },
         agentId: '@id',
         agentTags: [],
@@ -2148,9 +2148,9 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                 {
                   field_name: '@name',
                   id: '@id',
-                  primary_key_position: 1
-                }
-              ]
+                  primary_key_position: 1,
+                },
+              ],
             },
             target: {
               connectionId: '@id',
@@ -2161,21 +2161,21 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                 {
                   field_name: '@name',
                   id: '@id',
-                  primary_key_position: 1
-                }
-              ]
-            }
-          }
+                  primary_key_position: 1,
+                },
+              ],
+            },
+          },
         ],
         timing: {
           end: 1619425927612,
           intervals: 1440,
           intervalsUnit: 'minute',
-          start: 1619339527612
+          start: 1619339527612,
         },
-        user_id: '@id'
-      }
-    ]
+        user_id: '@id',
+      },
+    ],
   },
   '/api/Inspects/update': { data: { count: 1 }, code: 'ok', msg: 'ok' },
   '/api/InspectResults/count': { data: { count: 1 }, code: 'ok', msg: 'ok' },
@@ -2217,7 +2217,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               skip: Random.integer(0, 20),
               sortColumn: '@name',
               table: '@name',
-              where: null
+              where: null,
             },
             source_only: Random.integer(0, 20),
             source_total: Random.integer(0, 20),
@@ -2233,19 +2233,19 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               skip: Random.integer(0, 20),
               sortColumn: '@name',
               table: '@name',
-              where: null
+              where: null,
             },
             target_only: Random.integer(0, 20),
             target_total: Random.integer(0, 20),
-            taskId: '@id'
-          }
+            taskId: '@id',
+          },
         ],
         status: 'running',
         target_total: Random.integer(0, 20),
         threads: Random.integer(0, 20),
-        ttlTime: '@now'
-      }
-    ]
+        ttlTime: '@now',
+      },
+    ],
   },
   '/api/InspectDetails/count': { data: { count: 0 }, code: 'ok', msg: 'ok' },
   '/api/InspectDetails': { data: [], code: 'ok', msg: 'ok' },
@@ -2272,10 +2272,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               condition: '{"and":[{"POLICY_ID":"P100000001"}]}',
               sortBy: '_id',
               fields:
-                '{"POLICY_ID":true,"CUSTOMER_ID":true,"QUOTE_DAY":true,"COVER_START":true,"LAST_ANN_PREMIUM_GROSS":true,"POLICY_STATUS":true,"LAST_CHANGE":true,"_id":true}'
+                '{"POLICY_ID":true,"CUSTOMER_ID":true,"QUOTE_DAY":true,"COVER_START":true,"LAST_ANN_PREMIUM_GROSS":true,"POLICY_STATUS":true,"LAST_CHANGE":true,"_id":true}',
             },
-            meta: { title: 'tst' }
-          }
+            meta: { title: 'tst' },
+          },
         ],
         'roleMappings|1-5': [
           {
@@ -2290,14 +2290,14 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               id: '5b9a0a383fcba02649524bf1',
               last_updated: '2021-01-15T13:15:19.201Z',
               register_user_default: false,
-              user_id: '5fcf01b8f89acdf892e8bf78'
-            }
-          }
-        ]
-      }
+              user_id: '5fcf01b8f89acdf892e8bf78',
+            },
+          },
+        ],
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/menu': {
     'data|1-20': [
@@ -2307,11 +2307,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         label: '@name',
         'public|1': Boolean,
         'isApplication|1': Boolean,
-        client_id: '@id'
-      }
+        client_id: '@id',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Workers': {
     'data|1-10': [
@@ -2332,11 +2332,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         cpuLoad: Random.integer(0, 10),
         usedMemory: 1016008704,
         user_id: '5fcf01b8f89acdf892e8bf78',
-        serverDate: 1620809130695
-      }
+        serverDate: 1620809130695,
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Workers/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
   '/api/users/roles': {
@@ -2352,11 +2352,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         last_updated: '2021-04-23T03:43:08.093Z',
         createTime: '2021-04-23T03:43:08.093Z',
         userEmail: 'admin@admin.com',
-        userCount: 1
-      }
+        userCount: 1,
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/roles/count': { data: { count: 27 }, code: 'ok', msg: 'ok' },
   '/api/roles': {
@@ -2368,11 +2368,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         modified: '2021-01-07T13:03:42.794Z',
         last_updated: '2021-01-15T13:15:19.201Z',
         'register_user_default|1': Boolean,
-        user_id: '@id'
-      }
+        user_id: '@id',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Licenses': { data: [], code: 'ok', msg: 'ok' },
   '/api/users/:id': {
@@ -2397,10 +2397,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             condition: '{"and":[{"POLICY_ID":"P100000001"}]}',
             sortBy: '_id',
             fields:
-              '{"POLICY_ID":true,"CUSTOMER_ID":true,"QUOTE_DAY":true,"COVER_START":true,"LAST_ANN_PREMIUM_GROSS":true,"POLICY_STATUS":true,"LAST_CHANGE":true,"_id":true}'
+              '{"POLICY_ID":true,"CUSTOMER_ID":true,"QUOTE_DAY":true,"COVER_START":true,"LAST_ANN_PREMIUM_GROSS":true,"POLICY_STATUS":true,"LAST_CHANGE":true,"_id":true}',
           },
-          meta: { title: 'tst' }
-        }
+          meta: { title: 'tst' },
+        },
       ],
       roleMappings: [
         {
@@ -2415,13 +2415,13 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             id: '5b9a0a383fcba02649524bf1',
             last_updated: '2021-01-15T13:15:19.201Z',
             register_user_default: false,
-            user_id: '5fcf01b8f89acdf892e8bf78'
-          }
-        }
-      ]
+            user_id: '5fcf01b8f89acdf892e8bf78',
+          },
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/clusterStates': {
     reqId: 'c1e4f1f3-e1fc-45a5-9235-8f202d525daa',
@@ -2448,7 +2448,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             totalmem: 101134467072,
             logDir: '/data/tapdata/log',
             work_dir: '/data/tapdata',
-            installationDirectory: '/data/tapdata'
+            installationDirectory: '/data/tapdata',
           },
           reportInterval: 20000,
           engine: { status: 'running', processID: ' 233' },
@@ -2466,18 +2466,18 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               arguments: '',
               command: '111',
               name: '11',
-              uuid: '568c765b-9bc0-4950-ba24-46fd48884980'
+              uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
             },
             {
               id: '627a2f1795fade02e66ffffb',
               arguments: '1',
               command: '12',
               name: '192.168.1.181',
-              uuid: '568c765b-9bc0-4950-ba24-46fd48884980'
-            }
+              uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+            },
           ],
           last_updated: '2022-05-13T04:21:34.604+00:00',
-          user_id: '62172cfc49b865ee5379d3ed'
+          user_id: '62172cfc49b865ee5379d3ed',
         },
         {
           id: '6277b0e3410b7e96242e972e',
@@ -2495,7 +2495,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             totalmem: 101134467072,
             logDir: '/data/tapdata/log',
             work_dir: '/data/tapdata',
-            installationDirectory: '/data/tapdata'
+            installationDirectory: '/data/tapdata',
           },
           reportInterval: 20000,
           engine: { status: 'running', processID: ' 71' },
@@ -2506,7 +2506,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           status: 'running',
           insertTime: '2022-05-13T04:21:34.739+00:00',
           ttl: '2022-05-13T04:22:14.739+00:00',
-          last_updated: '2022-05-13T04:21:34.740+00:00'
+          last_updated: '2022-05-13T04:21:34.740+00:00',
         },
         {
           id: '6277cee1410b7e96246c8215',
@@ -2524,7 +2524,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             totalmem: 101134467072,
             logDir: '/data/tapdata/log',
             work_dir: '/data/tapdata',
-            installationDirectory: '/data/tapdata'
+            installationDirectory: '/data/tapdata',
           },
           reportInterval: 20000,
           engine: { status: 'running', processID: ' 71' },
@@ -2535,35 +2535,35 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           status: 'running',
           insertTime: '2022-05-13T04:21:25.567+00:00',
           ttl: '2022-05-13T04:22:05.567+00:00',
-          last_updated: '2022-05-13T04:21:25.568+00:00'
-        }
-      ]
-    }
+          last_updated: '2022-05-13T04:21:25.568+00:00',
+        },
+      ],
+    },
   },
   '/api/clusterStates/updataStatus': {
     data: { greeting: '1' },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/clusterStates/removeMonitor': {
     data: {},
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/clusterStates/editMonitor': {
     data: {},
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/MetadataInstances/count': {
     data: { count: 100 },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/MetadataInstances/dataMap': {
     data: { records: [] },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/MetadataInstances': {
     code: 'ok',
@@ -2582,8 +2582,8 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               ns: 'jason_db.d3333',
               status: 'created',
               v: 2,
-              key: { _id: 1, CUSTOMER_ID: 1 }
-            }
+              key: { _id: 1, CUSTOMER_ID: 1 },
+            },
           ],
           user_id: '6072c1cbbf43e90010570f3c',
           source: {
@@ -2608,7 +2608,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                   sort: 1,
                   error_code: null,
                   fail_message: null,
-                  required: true
+                  required: true,
                 },
                 {
                   stage_code: 'validate-3100',
@@ -2617,7 +2617,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                   sort: 2,
                   error_code: null,
                   fail_message: null,
-                  required: true
+                  required: true,
                 },
                 {
                   stage_code: 'validate-3400',
@@ -2626,7 +2626,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                   sort: 3,
                   error_code: null,
                   fail_message: null,
-                  required: true
+                  required: true,
                 },
                 {
                   stage_code: 'validate-3200',
@@ -2635,11 +2635,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                   sort: 4,
                   error_code: null,
                   fail_message: null,
-                  required: true
-                }
+                  required: true,
+                },
               ],
               retry: 0,
-              next_retry: 1619355584409
+              next_retry: 1619355584409,
             },
             project: '',
             submit: true,
@@ -2682,7 +2682,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             everLoadSchema: true,
             errorMsg: 'testing timeout',
             schema: {},
-            _id: '6076ffbab0f20408b0ec0914'
+            _id: '6076ffbab0f20408b0ec0914',
           },
           'fields|10-30': [
             {
@@ -2699,12 +2699,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               precision: 0,
               primary_key_position: 1,
               scale: 0,
-              table_name: '@name'
-            }
-          ]
-        }
-      ]
-    }
+              table_name: '@name',
+            },
+          ],
+        },
+      ],
+    },
   },
   '/api/MetadataInstances/search': {
     data: {
@@ -2713,18 +2713,18 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         'data|1-10': [
           {
             id: '@id',
-            table: { name: '@name', original_name: '@name', comment: '@name' }
-          }
-        ]
-      }
+            table: { name: '@name', original_name: '@name', comment: '@name' },
+          },
+        ],
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/MetadataInstances/tables': {
     code: 'ok',
     msg: 'ok',
-    'data|10000-50000': ['table_@uuid']
+    'data|10000-50000': ['table_@uuid'],
   },
   '/api/MetadataInstances/schema': {},
   '/api/DataCatalogs/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
@@ -2734,7 +2734,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         _id: '@id',
         conn_info: {
           uri: 'mongodb://root:123456@demodb.tapdata.net:21330/jason_db?replicaSet=tapd8_l&authSource=admin',
-          collection: 'TEST_DATA_CATALOG'
+          collection: 'TEST_DATA_CATALOG',
         },
         asset_desc: 'TEST_DATA_CATALOG',
         collection: 'TEST_DATA_CATALOG',
@@ -2750,12 +2750,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         source: {
           name: '@name',
           database_type: 'mongodb',
-          'status|1': ['ready']
-        }
-      }
+          'status|1': ['ready'],
+        },
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/old/static/localize': { code: 'ok', msg: 'ok' },
   '/api/MetadataDefinitions': {
@@ -2766,11 +2766,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         item_type: ['collection'],
         user_id: '@id',
         last_updated: '2020-12-17T04:55:29.220Z',
-        createTime: '2020-12-17T04:27:55.480Z'
-      }
+        createTime: '2020-12-17T04:27:55.480Z',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/ScheduleTasks': {
     'data|10': [
@@ -2783,11 +2783,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         task_profile: 'DEFAULT',
         agent_id: 'daaf405f-3d4c-4584-8087-bdc014966376',
         last_updated: '2021-06-21T07:33:59.956Z',
-        ping_time: 1624260839953
-      }
+        ping_time: 1624260839953,
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/ScheduleTasks/count': { data: { count: 6 }, code: 'ok', msg: 'ok' },
   '/api/DataFlowInsights/runtimeMonitor': ({ req }) => {
@@ -2805,146 +2805,146 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:51:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:52:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:53:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:54:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:55:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:56:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:57:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:58:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 18:59:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 19:00:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 19:01:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 19:02:00',
                 inputSize: 0,
                 outputSize: 0,
                 inputCount: 0,
-                outputCount: 0
+                outputCount: 0,
               },
               {
                 t: '2021-04-28 19:03:00',
                 inputSize: 39375,
                 outputSize: 39375,
                 inputCount: 15570,
-                outputCount: 15570
+                outputCount: 15570,
               },
               {
                 t: '2021-04-28 19:04:00',
                 inputSize: 18750,
                 outputSize: 18750,
                 inputCount: 6001,
-                outputCount: 6001
+                outputCount: 6001,
               },
               {
                 t: '2021-04-28 19:05:00',
                 inputSize: 17344,
                 outputSize: 17344,
                 inputCount: 6437,
-                outputCount: 6437
+                outputCount: 6437,
               },
               {
                 t: '2021-04-28 19:06:00',
                 inputSize: 15469,
                 outputSize: 15469,
                 inputCount: 5619,
-                outputCount: 5619
+                outputCount: 5619,
               },
               {
                 t: '2021-04-28 19:07:00',
                 inputSize: 16407,
                 outputSize: 16407,
                 inputCount: 5989,
-                outputCount: 5989
+                outputCount: 5989,
               },
               {
                 t: '2021-04-28 19:08:00',
                 inputSize: 12657,
                 outputSize: 12657,
                 inputCount: 4575,
-                outputCount: 4575
+                outputCount: 4575,
               },
               {
                 t: '2021-04-28 19:09:00',
                 inputSize: 12657,
                 outputSize: 12657,
                 inputCount: 5773,
-                outputCount: 5773
-              }
-            ]
-          }
+                outputCount: 5773,
+              },
+            ],
+          },
         ],
         code: 'ok',
-        msg: 'ok'
+        msg: 'ok',
       },
       trans_time: {
         data: [
@@ -2973,12 +2973,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               { t: '2021-04-28 19:06:00', d: '1.38' },
               { t: '2021-04-28 19:07:00', d: '1.44' },
               { t: '2021-04-28 19:08:00', d: '1.57' },
-              { t: '2021-04-28 19:09:00', d: '1.35' }
-            ]
-          }
+              { t: '2021-04-28 19:09:00', d: '1.35' },
+            ],
+          },
         ],
         code: 'ok',
-        msg: 'ok'
+        msg: 'ok',
       },
       repl_lag: {
         data: [
@@ -3007,12 +3007,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               { t: '2021-04-28 19:06:00', d: 0 },
               { t: '2021-04-28 19:07:00', d: 0 },
               { t: '2021-04-28 19:08:00', d: 0 },
-              { t: '2021-04-28 19:09:00', d: 0 }
-            ]
-          }
+              { t: '2021-04-28 19:09:00', d: 0 },
+            ],
+          },
         ],
         code: 'ok',
-        msg: 'ok'
+        msg: 'ok',
       },
       data_overview: {
         data: [
@@ -3026,13 +3026,13 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               inputSize: 155625,
               outputSize: 155625,
               inputCount: 3320000,
-              outputCount: 3320000
-            }
-          }
+              outputCount: 3320000,
+            },
+          },
         ],
         code: 'ok',
-        msg: 'ok'
-      }
+        msg: 'ok',
+      },
     }
     return data[req.query?.statsType]
   },
@@ -3053,9 +3053,9 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         oldName: '@name', //原名称
         type: 'userOperation',
         user_id: '60cc0c5887e32100106b6a17',
-        username: '@name'
-      }
-    ]
+        username: '@name',
+      },
+    ],
   },
   '/api/Javascript_functions': {
     data: [
@@ -3066,7 +3066,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         user_id: '61306d94725cec27ed3401e3',
         id: '6154119f0e5b5800dbcb2989',
         last_updated: '2021-11-02T02:59:09.129Z',
-        createTime: '2021-09-29T07:11:27.158Z'
+        createTime: '2021-09-29T07:11:27.158Z',
       },
       {
         function_name: 'majp',
@@ -3075,11 +3075,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         user_id: '61306d94725cec27ed3401e3',
         id: '6153e9940e5b5800dbcada25',
         last_updated: '2021-09-29T04:26:00.518Z',
-        createTime: '2021-09-29T04:20:36.852Z'
-      }
+        createTime: '2021-09-29T04:20:36.852Z',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
   '/api/License/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
@@ -3093,39 +3093,39 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
         license: '@name',
         createTime: '@now',
         last_updated: '@now',
-        'expirationDate|+1': ['2021-10-10T00:00:00.000Z', '2021-12-10T00:00:00.000Z', '2022-01-10T00:00:00.000Z']
-      }
-    ]
+        'expirationDate|+1': ['2021-10-10T00:00:00.000Z', '2021-12-10T00:00:00.000Z', '2022-01-10T00:00:00.000Z'],
+      },
+    ],
   },
   '/api/License/sid': {
     code: 'ok',
     msg: 'ok',
     data: {
-      sid: '@id'
-    }
+      sid: '@id',
+    },
   },
   '/api/License/upload': {
     code: 'ok',
     msg: 'ok',
-    data: 'ok'
+    data: 'ok',
   },
   '/api/Licenses/expires': {
     reqId: 'b8b050b0-9ef4-431b-81a0-f20dad252ddf',
     ts: 1645620145617,
     code: 'ok',
-    data: { msg: 'No license', expires_on: 1646762402588, status: 'none' }
+    data: { msg: 'No license', expires_on: 1646762402588, status: 'none' },
   },
   '/api/Messages/count': { reqId: 'aea4e226-fc68-4915-8c24-90104d8078f1', ts: 1645620145447, code: 'ok', data: 5170 },
   '/api/Task/checkName': {
     code: 'ok',
     msg: 'ok',
-    data: false
+    data: false,
   },
   '/api/Task/checkRun/:id': {
     reqId: '164c1a98-d9fc-4318-ba39-2313f4c31403',
     ts: 1649928488102,
     code: 'ok',
-    data: { neverRun: true }
+    data: { neverRun: true },
   },
   '/api/Task/:id': {
     reqId: '0e06996e-d6bd-47a9-8fdc-f205ce2eb036',
@@ -3150,7 +3150,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           source_databaseType: 'mysql',
           target_databaseType: 'mongodb',
           mqType: '',
-          shareCdcEnable: ''
+          shareCdcEnable: '',
         },
         task_setting_Data: {
           name: 'zed_long_time',
@@ -3182,11 +3182,11 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
               time: '',
               date: '',
               name: '',
-              timezone: '-08:00'
-            }
+              timezone: '-08:00',
+            },
           ],
-          sync_type: 'initial_sync+cdc'
-        }
+          sync_type: 'initial_sync+cdc',
+        },
       },
       crontabExpression: '',
       deduplicWriteMode: 'intellect',
@@ -5083,9 +5083,9 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
                   'vote_records',
                   'vote_recordss_memory',
                   'yt_ebay_download_items',
-                  'zmtest_index'
-                ]
-              }
+                  'zmtest_index',
+                ],
+              },
             ],
             batchOperationList: [],
             tableNames: ['zmtest_index'],
@@ -5099,7 +5099,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             catalog: 'data',
             id: '179d7f61-904e-4cd8-b9b3-08d94b23039e',
             name: 'zed_mongo',
-            elementType: 'Node'
+            elementType: 'Node',
           },
           {
             existDataProcessMode: 'keepData',
@@ -5111,17 +5111,17 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
             catalog: 'data',
             id: '5448595a-9b42-4e2e-8d9e-9ecfd10b7c40',
             name: 'MySQL_5733_33063',
-            elementType: 'Node'
-          }
-        ]
+            elementType: 'Node',
+          },
+        ],
       },
       shareCache: false,
       creator: 'admin@admin.com',
       _deleted: false,
       createTime: '2022-04-14T08:22:38.103+00:00',
       last_updated: '2022-04-14T08:24:00.015+00:00',
-      user_id: '62172cfc49b865ee5379d3ed'
-    }
+      user_id: '62172cfc49b865ee5379d3ed',
+    },
   },
   '/api/Messages': {
     reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
@@ -5139,7 +5139,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627dbab6713c2b1a34fbf429',
           read: false,
-          createTime: '2022-05-13T03:44:07Z'
+          createTime: '2022-05-13T03:44:07Z',
         },
         {
           id: '627dd3b4e958a239d48145dc',
@@ -5150,7 +5150,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627dba5b713c2b1a34fbf27d',
           read: false,
-          createTime: '2022-05-13T03:42:44Z'
+          createTime: '2022-05-13T03:42:44Z',
         },
         {
           id: '627dd35ae958a239d4814352',
@@ -5161,7 +5161,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db9e8713c2b1a34fbf0b5',
           read: false,
-          createTime: '2022-05-13T03:41:14Z'
+          createTime: '2022-05-13T03:41:14Z',
         },
         {
           id: '627dd2ffe958a239d4814114',
@@ -5172,7 +5172,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db98b713c2b1a34fbeee5',
           read: false,
-          createTime: '2022-05-13T03:39:43Z'
+          createTime: '2022-05-13T03:39:43Z',
         },
         {
           id: '627dd2a3e958a239d4813e89',
@@ -5183,7 +5183,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db940713c2b1a34fbed81',
           read: false,
-          createTime: '2022-05-13T03:38:11Z'
+          createTime: '2022-05-13T03:38:11Z',
         },
         {
           id: '627dd24fe958a239d4813bd8',
@@ -5194,7 +5194,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db8ed713c2b1a34fbebe2',
           read: false,
-          createTime: '2022-05-13T03:36:47Z'
+          createTime: '2022-05-13T03:36:47Z',
         },
         {
           id: '627dd1f8e958a239d4813981',
@@ -5205,7 +5205,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db893713c2b1a34fbea49',
           read: false,
-          createTime: '2022-05-13T03:35:20Z'
+          createTime: '2022-05-13T03:35:20Z',
         },
         {
           id: '627dd1a5e958a239d4813715',
@@ -5216,7 +5216,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db83f713c2b1a34fbe900',
           read: false,
-          createTime: '2022-05-13T03:33:57Z'
+          createTime: '2022-05-13T03:33:57Z',
         },
         {
           id: '627dd160e958a239d48135ba',
@@ -5227,7 +5227,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db7ef713c2b1a34fbe7bf',
           read: false,
-          createTime: '2022-05-13T03:32:48Z'
+          createTime: '2022-05-13T03:32:48Z',
         },
         {
           id: '627dd106e958a239d48133aa',
@@ -5238,7 +5238,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db78f713c2b1a34fbe649',
           read: false,
-          createTime: '2022-05-13T03:31:18Z'
+          createTime: '2022-05-13T03:31:18Z',
         },
         {
           id: '627dd0aae958a239d4813139',
@@ -5249,7 +5249,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db73a713c2b1a34fbe4b1',
           read: false,
-          createTime: '2022-05-13T03:29:46Z'
+          createTime: '2022-05-13T03:29:46Z',
         },
         {
           id: '627dd05ee958a239d4812ed2',
@@ -5260,7 +5260,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db6eb713c2b1a34fbe321',
           read: false,
-          createTime: '2022-05-13T03:28:30Z'
+          createTime: '2022-05-13T03:28:30Z',
         },
         {
           id: '627dd010e958a239d4812c81',
@@ -5271,7 +5271,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db69d713c2b1a34fbe1b9',
           read: false,
-          createTime: '2022-05-13T03:27:12Z'
+          createTime: '2022-05-13T03:27:12Z',
         },
         {
           id: '627dcfc6e958a239d4812b44',
@@ -5282,7 +5282,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db655713c2b1a34fbe06f',
           read: false,
-          createTime: '2022-05-13T03:25:58Z'
+          createTime: '2022-05-13T03:25:58Z',
         },
         {
           id: '627dcf68e958a239d4812930',
@@ -5293,7 +5293,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db5fd713c2b1a34fbdf34',
           read: false,
-          createTime: '2022-05-13T03:24:24Z'
+          createTime: '2022-05-13T03:24:24Z',
         },
         {
           id: '627dcf0fe958a239d48126c7',
@@ -5304,7 +5304,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db59c713c2b1a34fbdd6c',
           read: false,
-          createTime: '2022-05-13T03:22:55Z'
+          createTime: '2022-05-13T03:22:55Z',
         },
         {
           id: '627dcea3e958a239d48123d7',
@@ -5315,7 +5315,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db536713c2b1a34fbdbcb',
           read: false,
-          createTime: '2022-05-13T03:21:07Z'
+          createTime: '2022-05-13T03:21:07Z',
         },
         {
           id: '627dce47e958a239d48121c7',
@@ -5326,7 +5326,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db4d4713c2b1a34fbd9a0',
           read: false,
-          createTime: '2022-05-13T03:19:35Z'
+          createTime: '2022-05-13T03:19:35Z',
         },
         {
           id: '627dcdf9e958a239d4811f68',
@@ -5337,7 +5337,7 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db47a713c2b1a34fbd828',
           read: false,
-          createTime: '2022-05-13T03:18:17Z'
+          createTime: '2022-05-13T03:18:17Z',
         },
         {
           id: '627dcd98e958a239d4811ca4',
@@ -5348,10 +5348,10 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           title: '',
           sourceId: '627db426713c2b1a34fbd67a',
           read: false,
-          createTime: '2022-05-13T03:16:40Z'
-        }
-      ]
-    }
+          createTime: '2022-05-13T03:16:40Z',
+        },
+      ],
+    },
   },
   '/api/ExternalStorage/:id': {
     reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
@@ -5372,8 +5372,8 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       table: '@name',
       defaultStorage: '@boolean',
       last_updated: '2015-07-04 19:26:45',
-      uri: '@url'
-    }
+      uri: '@url',
+    },
   },
   '/api/ExternalStorage': {
     reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
@@ -5397,9 +5397,9 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
           table: '@name',
           defaultStorage: '@boolean',
           last_updated: '2015-07-04 19:26:45',
-          uri: '@url'
-        }
-      ]
-    }
-  }
+          uri: '@url',
+        },
+      ],
+    },
+  },
 })

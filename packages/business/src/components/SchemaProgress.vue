@@ -21,7 +21,7 @@ import dayjs from 'dayjs'
 
 export default {
   props: {
-    data: Object
+    data: Object,
   },
   computed: {
     schemaInfo() {
@@ -36,24 +36,24 @@ export default {
           color: 'success',
           tips: loadTime
             ? this.$t('packages_business_schema_progress_load_time', [dayjs(loadTime).format('YYYY-MM-DD HH:mm:ss')])
-            : ''
+            : '',
         }
       } else if (data.loadFieldsStatus === 'loading') {
         let process = (data.loadCount * 100) / data.tableCount || 0
         schemaInfo = {
           text: Math.floor(process) + '%',
           icon: 'warning',
-          color: 'warning'
+          color: 'warning',
         }
       } else if (data.loadFieldsStatus) {
         schemaInfo = {
           text: this.$t('packages_business_schema_progress_status_error'),
           icon: 'error',
-          color: 'danger'
+          color: 'danger',
         }
       }
       return schemaInfo
-    }
+    },
   },
   methods: {
     showErrorMsg() {
@@ -62,19 +62,19 @@ export default {
         h(
           'pre',
           {
-            class: 'pb-5 overflow-auto'
+            class: 'pb-5 overflow-auto',
           },
-          [this.data.loadFieldErrMsg]
+          [this.data.loadFieldErrMsg],
         ),
         this.$t('packages_business_schema_progress_dialog_error_title'),
         {
           type: 'error',
           customClass: 'schema-error-dialog',
-          confirmButtonText: this.$t('public_button_close')
-        }
+          confirmButtonText: this.$t('public_button_close'),
+        },
       )
-    }
-  }
+    },
+  },
 }
 </script>
 

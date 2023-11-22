@@ -46,20 +46,20 @@ export default {
     UserNotification,
     SystemAlarm,
     AlarmNotification,
-    VIcon
+    VIcon,
   },
   data() {
     return {
-      activePanel: 'system'
+      activePanel: 'system',
     }
   },
   computed: mapState({
-    unRead: state => state.notification.unRead
+    unRead: (state) => state.notification.unRead,
   }),
   watch: {
     $route(route) {
       this.activePanel = route.query.type || route.params.type || 'system'
-    }
+    },
   },
   created() {
     this.activePanel = this.$route.query.type || 'system'
@@ -71,40 +71,40 @@ export default {
           this.$router.push({
             name: 'systemNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'user':
           this.$router.push({
             name: 'userNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'alarmNotice':
           this.$router.push({
             name: 'alarmNotification',
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
         case 'alarm':
           this.$router.push({
             name: 'systemAlarm',
             params: {
-              type: name
+              type: name,
             },
             query: {
-              type: name
-            }
+              type: name,
+            },
           })
           break
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -207,8 +207,8 @@ export default class Task extends Http {
   getParentTaskSign(id, parentId) {
     return this.axios.get(`${this.url}/${id}/parent-task-sign`, {
       params: {
-        parentId
-      }
+        parentId,
+      },
     })
   }
 }

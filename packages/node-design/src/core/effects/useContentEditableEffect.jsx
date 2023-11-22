@@ -9,7 +9,7 @@ function getAllRanges(sel) {
     ranges[i] = {
       collapsed: range.collapsed,
       startOffset: range.startOffset,
-      endOffset: range.endOffset
+      endOffset: range.endOffset,
     }
   }
   return ranges
@@ -33,7 +33,7 @@ function createCaretCache(el) {
     const firstNode = el.childNodes[0]
     if (!firstNode) return
     sel.removeAllRanges()
-    ranges.forEach(item => {
+    ranges.forEach((item) => {
       const range = document.createRange()
       range.collapse(item.collapsed)
       range.setStart(firstNode, item.startOffset)
@@ -43,12 +43,12 @@ function createCaretCache(el) {
   }
 }
 
-export const useContentEditableEffect = engine => {
+export const useContentEditableEffect = (engine) => {
   const globalState = {
     activeElements: new Map(),
     queue: [],
     requestTimer: null,
-    isComposition: false
+    isComposition: false,
   }
 
   function onKeyDownHandler(event) {
@@ -109,7 +109,7 @@ export const useContentEditableEffect = engine => {
     if (parent) return parent.getAttribute(engine.props.nodeIdAttrName)
   }
 
-  engine.subscribeTo(MouseClickEvent, event => {
+  engine.subscribeTo(MouseClickEvent, (event) => {
     const target = event.data.target
     const editableElement = target?.closest?.(`*[${engine.props.contentEditableAttrName}]`)
     if (editableElement && editableElement.getAttribute('contenteditable') === 'true') return
@@ -126,7 +126,7 @@ export const useContentEditableEffect = engine => {
     })
   })
 
-  engine.subscribeTo(MouseDoubleClickEvent, event => {
+  engine.subscribeTo(MouseDoubleClickEvent, (event) => {
     const target = event.data.target
     const editableElement = target?.closest?.(`*[${engine.props.contentEditableAttrName}]`)
     const workspace = engine.workbench.activeWorkspace

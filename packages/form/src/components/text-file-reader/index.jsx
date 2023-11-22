@@ -10,14 +10,14 @@ export const TextFileReader = defineComponent({
     const form = formRef.value
     const fileNameField = props.fileNameField ?? `__TAPDATA_UI.${fieldRef.value.props.name}`
     const fileName = ref(props.fileName || form.getValuesIn(fileNameField) || '')
-    let selectFile = file => {
+    let selectFile = (file) => {
       if (file) {
         fileName.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
           root.$message.error(
             i18n.t('packages_form_text_file_reader_index_shangchuanwenjianda', {
-              val1: props.maxFileSize
-            })
+              val1: props.maxFileSize,
+            }),
           )
         } else {
           let reader = new FileReader()
@@ -65,12 +65,12 @@ export const TextFileReader = defineComponent({
                 autoUpload: false,
                 accept: props.accept,
                 showFileList: false,
-                onChange: file => {
+                onChange: (file) => {
                   selectFile(file.raw)
                 },
-                onExceed: fileList => {
+                onExceed: (fileList) => {
                   selectFile(fileList[0])
-                }
+                },
               }}
             >
               <ElButton>{root.$t('packages_form_formBuilder_file_button')}</ElButton>
@@ -79,5 +79,5 @@ export const TextFileReader = defineComponent({
         </ElInput>
       )
     }
-  }
+  },
 })

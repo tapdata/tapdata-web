@@ -11,7 +11,7 @@ export const ColorInput = defineComponent({
       <div class={prefix}>
         <Input
           value={props.value}
-          onInput={e => {
+          onInput={(e) => {
             emit('change', e)
           }}
           placeholder="Color"
@@ -19,12 +19,12 @@ export const ColorInput = defineComponent({
           <ColorPicker
             slot="prefix"
             value={props.value}
-            onInput={e => {
+            onInput={(e) => {
               emit('change', e)
             }}
           ></ColorPicker>
         </Input>
       </div>
     )
-  }
+  },
 })

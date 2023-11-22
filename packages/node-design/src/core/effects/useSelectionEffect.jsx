@@ -2,8 +2,8 @@ import { CursorStatus } from '../models'
 import { MouseClickEvent } from '../events'
 import { KeyCode, Point } from '@tap/shared'
 
-export const useSelectionEffect = engine => {
-  engine.subscribeTo(MouseClickEvent, event => {
+export const useSelectionEffect = (engine) => {
+  engine.subscribeTo(MouseClickEvent, (event) => {
     if (engine.cursor.status !== CursorStatus.Normal) return
     const target = event.data.target
     const el = target?.closest?.(`

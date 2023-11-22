@@ -13,6 +13,6 @@ export const Header = observer(
           {slots.extra?.()}
         </div>
       )
-    }
-  })
+    },
+  }),
 )

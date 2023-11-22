@@ -11,7 +11,7 @@ import {
   RemoveNodeEvent,
   UpdateNodePropsEvent,
   CloneNodeEvent,
-  FromNodeEvent
+  FromNodeEvent,
 } from '../events'
 import { GlobalRegistry } from '../registry'
 import { mergeLocales } from '../internals'
@@ -22,30 +22,30 @@ const TreeNodes = new Map()
 // 设计器可以编辑的属性
 const CommonDesignerPropsMap = new Map()
 
-const removeNode = node => {
+const removeNode = (node) => {
   if (node.parent) {
-    node.parent.children = node.parent.children.filter(child => child !== node)
+    node.parent.children = node.parent.children.filter((child) => child !== node)
   }
 }
 
 const resetNodesParent = (nodes, parent) => {
-  const resetDepth = node => {
+  const resetDepth = (node) => {
     node.depth = node.parent ? node.parent.depth + 1 : 0
     node.children.forEach(resetDepth)
   }
 
-  const shallowReset = node => {
+  const shallowReset = (node) => {
     node.parent = parent
     node.root = parent.root
     resetDepth(node)
   }
 
-  const deepReset = node => {
+  const deepReset = (node) => {
     shallowReset(node)
     resetNodesParent(node.children, node)
   }
 
-  return nodes.map(node => {
+  return nodes.map((node) => {
     if (node === parent) return node
     if (!parent.isSourceNode) {
       if (node.isSourceNode) {
@@ -139,7 +139,7 @@ export class TreeNode {
       remove: action,
       setProps: action,
       setChildren: action,
-      setComponentName: action
+      setComponentName: action,
     })
   }
 
@@ -177,7 +177,7 @@ export class TreeNode {
 
   get siblings() {
     if (this.parent) {
-      return this.parent.children.filter(node => node !== this)
+      return this.parent.children.filter((node) => node !== this)
     }
     return []
   }
@@ -286,7 +286,7 @@ export class TreeNode {
       return this
     } else {
       let finded = undefined
-      this.eachChildren(node => {
+      this.eachChildren((node) => {
         if (finder(node)) {
           finded = node
           return false
@@ -301,7 +301,7 @@ export class TreeNode {
     if (finder(this)) {
       results.push(this)
     }
-    this.eachChildren(node => {
+    this.eachChildren((node) => {
       if (finder(node)) {
         results.push(node)
       }
@@ -343,7 +343,7 @@ export class TreeNode {
   allowAppend(nodes) {
     if (!this.designerProps?.droppable) return false
     if (this.designerProps?.allowAppend?.(this, nodes) === false) return false
-    if (nodes.some(node => !node.allowDrop(this))) return false
+    if (nodes.some((node) => !node.allowDrop(this))) return false
     if (this.root === this) return true
     return true
   }
@@ -388,7 +388,7 @@ export class TreeNode {
   }
 
   contains(...nodes) {
-    return nodes.every(node => {
+    return nodes.every((node) => {
       if (node === this || node?.parent === this || node?.getParentByDepth(this.depth) === this) {
         return true
       }
@@ -408,8 +408,8 @@ export class TreeNode {
 
   resetNodesParent(nodes, parent) {
     return resetNodesParent(
-      nodes.filter(node => node !== this),
-      parent
+      nodes.filter((node) => node !== this),
+      parent,
     )
   }
 
@@ -417,11 +417,11 @@ export class TreeNode {
     return this.triggerMutation(
       new UpdateNodePropsEvent({
         target: this,
-        source: null
+        source: null,
       }),
       () => {
         Object.assign(this.props, props)
-      }
+      },
     )
   }
 
@@ -430,40 +430,40 @@ export class TreeNode {
   }
 
   prepend(...nodes) {
-    if (nodes.some(node => node.contains(this))) return []
-    const originSourceParents = nodes.map(node => node.parent)
+    if (nodes.some((node) => node.contains(this))) return []
+    const originSourceParents = nodes.map((node) => node.parent)
     const newNodes = this.resetNodesParent(nodes, this)
     if (!newNodes.length) return []
     return this.triggerMutation(
       new PrependNodeEvent({
         originSourceParents,
         target: this,
-        source: newNodes
+        source: newNodes,
       }),
       () => {
         this.children = newNodes.concat(this.children)
         return newNodes
       },
-      []
+      [],
     )
   }
 
   append(...nodes) {
-    if (nodes.some(node => node.contains(this))) return []
-    const originSourceParents = nodes.map(node => node.parent)
+    if (nodes.some((node) => node.contains(this))) return []
+    const originSourceParents = nodes.map((node) => node.parent)
     const newNodes = this.resetNodesParent(nodes, this)
     if (!newNodes.length) return []
     return this.triggerMutation(
       new AppendNodeEvent({
         originSourceParents,
         target: this,
-        source: newNodes
+        source: newNodes,
       }),
       () => {
         this.children = this.children.concat(newNodes)
         return newNodes
       },
-      []
+      [],
     )
   }
 
@@ -473,21 +473,21 @@ export class TreeNode {
     return this.triggerMutation(
       new WrapNodeEvent({
         target: this,
-        source: wrapper
+        source: wrapper,
       }),
       () => {
         resetParent(this, wrapper)
         resetParent(wrapper, parent)
         return wrapper
-      }
+      },
     )
   }
 
   insertAfter(...nodes) {
     const parent = this.parent
-    if (nodes.some(node => node.contains(this))) return []
+    if (nodes.some((node) => node.contains(this))) return []
     if (parent?.children?.length) {
-      const originSourceParents = nodes.map(node => node.parent)
+      const originSourceParents = nodes.map((node) => node.parent)
       const newNodes = this.resetNodesParent(nodes, parent)
       if (!newNodes.length) return []
 
@@ -495,7 +495,7 @@ export class TreeNode {
         new InsertAfterEvent({
           originSourceParents,
           target: this,
-          source: newNodes
+          source: newNodes,
         }),
         () => {
           parent.children = parent.children.reduce((buf, node) => {
@@ -507,7 +507,7 @@ export class TreeNode {
           }, [])
           return newNodes
         },
-        []
+        [],
       )
     }
     return []
@@ -515,16 +515,16 @@ export class TreeNode {
 
   insertBefore(...nodes) {
     const parent = this.parent
-    if (nodes.some(node => node.contains(this))) return []
+    if (nodes.some((node) => node.contains(this))) return []
     if (parent?.children?.length) {
-      const originSourceParents = nodes.map(node => node.parent)
+      const originSourceParents = nodes.map((node) => node.parent)
       const newNodes = this.resetNodesParent(nodes, parent)
       if (!newNodes.length) return []
       return this.triggerMutation(
         new InsertBeforeEvent({
           originSourceParents,
           target: this,
-          source: newNodes
+          source: newNodes,
         }),
         () => {
           parent.children = parent.children.reduce((buf, node) => {
@@ -536,23 +536,23 @@ export class TreeNode {
           }, [])
           return newNodes
         },
-        []
+        [],
       )
     }
     return []
   }
 
   insertChildren(start, ...nodes) {
-    if (nodes.some(node => node.contains(this))) return []
+    if (nodes.some((node) => node.contains(this))) return []
     if (this.children?.length) {
-      const originSourceParents = nodes.map(node => node.parent)
+      const originSourceParents = nodes.map((node) => node.parent)
       const newNodes = this.resetNodesParent(nodes, this)
       if (!newNodes.length) return []
       return this.triggerMutation(
         new InsertChildrenEvent({
           originSourceParents,
           target: this,
-          source: newNodes
+          source: newNodes,
         }),
         () => {
           this.children = this.children.reduce((buf, node, index) => {
@@ -563,26 +563,26 @@ export class TreeNode {
           }, [])
           return newNodes
         },
-        []
+        [],
       )
     }
     return []
   }
 
   setChildren(...nodes) {
-    const originSourceParents = nodes.map(node => node.parent)
+    const originSourceParents = nodes.map((node) => node.parent)
     const newNodes = this.resetNodesParent(nodes, this)
     return this.triggerMutation(
       new UpdateChildrenEvent({
         originSourceParents,
         target: this,
-        source: newNodes
+        source: newNodes,
       }),
       () => {
         this.children = newNodes
         return newNodes
       },
-      []
+      [],
     )
   }
 
@@ -598,12 +598,12 @@ export class TreeNode {
     return this.triggerMutation(
       new RemoveNodeEvent({
         target: this,
-        source: null
+        source: null,
       }),
       () => {
         removeNode(this)
         TreeNodes.delete(this.id)
-      }
+      },
     )
   }
 
@@ -614,22 +614,22 @@ export class TreeNode {
         componentName: this.componentName,
         sourceName: this.sourceName,
         props: toJS(this.props),
-        children: []
+        children: [],
       },
-      parent ? parent : this.parent
+      parent ? parent : this.parent,
     )
     newNode.children = resetNodesParent(
-      this.children.map(child => {
+      this.children.map((child) => {
         return child.clone(newNode)
       }),
-      newNode
+      newNode,
     )
     return this.triggerMutation(
       new CloneNodeEvent({
         target: this,
-        source: newNode
+        source: newNode,
       }),
-      () => newNode
+      () => newNode,
     )
   }
 
@@ -638,7 +638,7 @@ export class TreeNode {
     return this.triggerMutation(
       new FromNodeEvent({
         target: this,
-        source: node
+        source: node,
       }),
       () => {
         if (node.id && node.id !== this.id) {
@@ -655,11 +655,11 @@ export class TreeNode {
         }
         if (node.children) {
           this.children =
-            node.children?.map?.(node => {
+            node.children?.map?.((node) => {
               return new TreeNode(node, this)
             }) || []
         }
-      }
+      },
     )
   }
 
@@ -670,9 +670,9 @@ export class TreeNode {
       sourceName: this.sourceName,
       props: toJS(this.props),
       hidden: this.hidden,
-      children: this.children.map(treeNode => {
+      children: this.children.map((treeNode) => {
         return treeNode.serialize()
-      })
+      }),
     }
   }
 

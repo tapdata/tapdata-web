@@ -32,17 +32,17 @@ export default {
     value: [String, Array, Number, Object],
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     clearable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       time: '',
-      showClose: false
+      showClose: false,
     }
   },
   watch: {
@@ -50,7 +50,7 @@ export default {
       if (v) {
         this.time = v
       }
-    }
+    },
   },
   mounted() {},
   methods: {
@@ -72,9 +72,9 @@ export default {
     },
     focusFnc() {
       this.$refs.datepicker?.focus()
-    }
+    },
   },
-  emits: ['change', 'update:value', , 'update:value']
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
 

@@ -84,20 +84,20 @@ export default {
         {
           label: this.$t('apiaudit_access_records'),
           key: 'visitTotalCount',
-          value: 0
+          value: 0,
         },
         {
           label: this.$t('apiaudit_average_access_rate'),
           key: 'speed',
-          value: 0
+          value: 0,
         },
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         {
           label: this.$t('apiaudit_average_response_time'),
           key: 'averResponseTime',
-          value: 0
-        }
-      ]
+          value: 0,
+        },
+      ],
     }
   },
   created() {
@@ -110,12 +110,12 @@ export default {
       this.loading = true
       apiCallsApi
         .get([id])
-        .then(data => {
+        .then((data) => {
           if (data) {
             this.auditData = data
             this.auditData.createAt = data['createAt'] ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
 
-            this.list.forEach(item => {
+            this.list.forEach((item) => {
               for (let el in data) {
                 if (item.key === el) {
                   item.value = data[el]
@@ -146,8 +146,8 @@ export default {
     },
     calcUnit() {
       return calcUnit(...arguments)
-    }
-  }
+    },
+  },
 }
 </script>
 

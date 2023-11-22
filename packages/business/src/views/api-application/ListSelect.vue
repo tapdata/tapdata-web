@@ -20,24 +20,24 @@ export default {
   components: { AsyncSelect },
   props: {
     value: {
-      type: [String, Number]
+      type: [String, Number],
     },
     params: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     format: {
-      type: Function
-    }
+      type: Function,
+    },
   },
   data() {
     return {
       form: {
         label: '',
-        value: ''
-      }
+        value: '',
+      },
     }
   },
   watch: {
@@ -46,7 +46,7 @@ export default {
         this.form.value = v
         this.form.label = this.label
       }
-    }
+    },
   },
   methods: {
     handleChange(val, opt) {
@@ -59,29 +59,29 @@ export default {
       const { page, size } = filter
       let params = {
         where: {
-          item_type: 'app'
+          item_type: 'app',
         },
         order: 'createTime DESC',
         limit: size,
-        skip: (page - 1) * size
+        skip: (page - 1) * size,
       }
 
       const { label } = filter.where || {}
       if (label) {
         Object.assign(params.where, {
-          value: label
+          value: label,
         })
       }
 
       let res = await appApi.get({
-        filter: JSON.stringify(Object.assign(params, this.params))
+        filter: JSON.stringify(Object.assign(params, this.params)),
       })
 
-      res.items = res.items.map(t => {
+      res.items = res.items.map((t) => {
         return {
           label: t.value,
           value: t.id,
-          data: t
+          data: t,
         }
       })
 
@@ -90,8 +90,8 @@ export default {
       }
 
       return res
-    }
+    },
   },
-  emits: ['change', 'update:label', 'update:value']
+  emits: ['change', 'update:label', 'update:value'],
 }
 </script>

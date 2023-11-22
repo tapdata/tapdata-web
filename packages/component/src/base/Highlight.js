@@ -19,7 +19,7 @@ export default {
   data: function () {
     return {
       detectedLanguage: '',
-      unknownLanguage: false
+      unknownLanguage: false,
     }
   },
   computed: {
@@ -43,7 +43,7 @@ export default {
       } else {
         result = hljs.highlight(this.code, {
           language: this.language,
-          ignoreIllegals: this.ignoreIllegals
+          ignoreIllegals: this.ignoreIllegals,
         })
         this.detectedLanguage = this.language
       }
@@ -54,7 +54,7 @@ export default {
     },
     ignoreIllegals() {
       return true
-    }
+    },
   },
   // this avoids needing to use a whole Vue compilation pipeline just
   // to build Highlight.js
@@ -64,10 +64,10 @@ export default {
         'code',
         plantRenderPara({
           class: this.className,
-          domProps: { innerHTML: this.highlighted }
-        })
-      )
+          domProps: { innerHTML: this.highlighted },
+        }),
+      ),
     ])
-  }
+  },
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
 }

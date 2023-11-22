@@ -11,36 +11,36 @@ export const PythonEditor = connect(
       value: String,
       before: {
         type: String,
-        default: ''
+        default: '',
       },
       beforeRegexp: String,
       after: {
         type: String,
-        default: ''
+        default: '',
       },
       afterRegexp: String,
       height: {
         type: [String, Number],
-        default: 200
+        default: 200,
       },
       options: {
         type: Object,
-        default: () => ({})
+        default: () => ({}),
       },
       disabled: Boolean,
       includeBeforeAndAfter: Boolean,
       handleAddCompleter: Function,
       theme: {
         type: String,
-        default: 'chrome'
+        default: 'chrome',
       },
       showFullscreen: Boolean,
-      addTabInLine: Boolean
+      addTabInLine: Boolean,
     },
 
     data() {
       return {
-        fullscreen: false
+        fullscreen: false,
       }
     },
 
@@ -52,7 +52,7 @@ export const PythonEditor = connect(
             .replace(new RegExp(this.afterRegexp || this.before), '')
         }
         return this.value
-      }
+      },
     },
 
     methods: {
@@ -87,7 +87,7 @@ export const PythonEditor = connect(
 
       unbindEvent() {
         window.removeEventListener('beforeunload', this.handleBeforeunload)
-      }
+      },
     },
 
     render() {
@@ -95,13 +95,13 @@ export const PythonEditor = connect(
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         ...this.options,
-        readOnly: this.disabled
+        readOnly: this.disabled,
       }
       return this.before || this.after ? (
         <div
           class={[
             'form-js-editor-wrap form-python-editor-wrap flex flex-column border rounded-2',
-            { 'full-mode': this.fullscreen }
+            { 'full-mode': this.fullscreen },
           ]}
           style={{ height: this.height + 'px' }}
         >
@@ -147,7 +147,7 @@ export const PythonEditor = connect(
           ref="pythonEditor"
           class="border rounded-2 py-0"
           style={{
-            background: '#fff'
+            background: '#fff',
           }}
           theme={this.theme}
           value={this.code}
@@ -158,9 +158,9 @@ export const PythonEditor = connect(
           options={options}
         />
       )
-    }
+    },
   },
-  mapProps({ disabled: true })
+  mapProps({ disabled: true }),
 )
 
 export default PythonEditor

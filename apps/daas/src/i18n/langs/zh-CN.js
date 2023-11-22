@@ -1821,5 +1821,5 @@ export default {
   daas_role_role_yemianquanxian: '页面权限',
   daas_role_role_gongnengmokuai: '功能模块',
   daas_role_role_gouxuanxiangyingmo:
-    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。'
+    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。',
 }

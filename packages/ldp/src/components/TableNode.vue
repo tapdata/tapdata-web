@@ -51,14 +51,14 @@ export default {
     data: Object,
     nodeId: {
       type: String,
-      required: true
+      required: true,
     },
-    jsPlumbIns: Object
+    jsPlumbIns: Object,
   },
   components: { VIcon, OverflowTooltip, BaseNode, NodeIcon },
   data() {
     return {
-      id: this.$attrs.id
+      id: this.$attrs.id,
     }
   },
   computed: {
@@ -71,16 +71,16 @@ export default {
       'processorNodeTypes',
       'hasNodeError',
       'stateIsReadonly',
-      'activeType'
+      'activeType',
     ]),
 
     nodeStyle() {
       const [left = 0, top = 0] = this.data.attrs?.position || []
       return {
         left: left + 'px',
-        top: top + 'px'
+        top: top + 'px',
       }
-    }
+    },
   },
   mounted() {
     if (this.data) {
@@ -95,14 +95,14 @@ export default {
       'updateNodeProperties',
       'resetSelectedNodes',
       'setNodeError',
-      'clearNodeError'
+      'clearNodeError',
     ]),
 
     __init() {
       const { id, nodeId } = this
 
       const targetParams = {
-        ...targetEndpoint
+        ...targetEndpoint,
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -111,7 +111,7 @@ export default {
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
-        start: params => {
+        start: (params) => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
@@ -126,7 +126,7 @@ export default {
           $emit(this, 'drag-start', params)
           return true
         },
-        drag: params => {
+        drag: (params) => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
@@ -168,12 +168,12 @@ export default {
               console.log(
                 i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
                 Time.now() - this.onMouseDownAt,
-                distance
+                distance,
               ) // eslint-disable-line
               this.removeActiveAction('dragActive')
             }
 
-            moveNodes.forEach(node => {
+            moveNodes.forEach((node) => {
               const nodeElement = NODE_PREFIX + node.id
               const element = document.getElementById(nodeElement)
               if (element === null) {
@@ -185,15 +185,15 @@ export default {
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  attrs: { position: newNodePosition }
-                }
+                  attrs: { position: newNodePosition },
+                },
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  attrs: { position }
-                }
+                  attrs: { position },
+                },
               })
               newProperties.push(updateInformation)
             })
@@ -201,22 +201,22 @@ export default {
 
           this.onMouseDownAt = undefined
           $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
-        }
+        },
       })
 
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target'
+        uuid: id + '_target',
       })
 
       this.jsPlumbIns.addEndpoint(
         this.$el,
         {
           ...sourceEndpoint,
-          enabled: false
+          enabled: false,
         },
         {
-          uuid: id + '_source'
-        }
+          uuid: id + '_source',
+        },
       )
     },
 
@@ -237,9 +237,9 @@ export default {
           $emit(this, 'nodeSelected', this.nodeId, true)
         }
       }
-    }
+    },
   },
-  emits: ['drag-start', 'drag-move', 'drag-stop', 'deselectNode', 'nodeSelected', 'deselectAllNodes']
+  emits: ['drag-start', 'drag-move', 'drag-stop', 'deselectNode', 'nodeSelected', 'deselectAllNodes'],
 }
 </script>
 
@@ -317,7 +317,9 @@ export default {
   &.active {
     border-color: #2c65ff !important;
     //box-shadow: 0 0 0 4px rgba(5, 145, 255, 0.1);
-    box-shadow: 0 0 0 4px rgba(44, 101, 255, 0.4), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    box-shadow:
+      0 0 0 4px rgba(44, 101, 255, 0.4),
+      0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
   }
 }
 </style>

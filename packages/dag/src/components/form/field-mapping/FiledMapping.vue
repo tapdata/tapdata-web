@@ -25,14 +25,14 @@ export default {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       dialogVisible: false,
-      updateList: false
+      updateList: false,
     }
   },
   watch: {
     dialogVisible() {
       this.updateList = !this.dialogVisible
-    }
-  }
+    },
+  },
 }
 </script>
 

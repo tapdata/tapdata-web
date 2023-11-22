@@ -407,8 +407,8 @@ export default {
         { name: 'Windows (64 bit)', value: 'windows' },
         {
           name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
-          value: 'AliComputenest'
-        }
+          value: 'AliComputenest',
+        },
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -423,7 +423,7 @@ export default {
       agentId: '',
       timer: null,
       activeName: '1',
-      showAllCode: true
+      showAllCode: true,
     }
   },
   created() {
@@ -435,7 +435,7 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ]
     }
     this.getInstance()
@@ -449,7 +449,7 @@ export default {
     getInstance() {
       this.timer = null
       clearTimeout(this.timer)
-      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then((data) => {
         if (data?.status !== 'Creating') {
           this.timer = null
           clearTimeout(this.timer)
@@ -470,19 +470,19 @@ export default {
           confirmButtonText: this.$t('dfs_agent_down_goback'),
           type: 'warning',
           showClose: false,
-          showCancelButton: false
-        }
+          showCancelButton: false,
+        },
       ).then(() => {
         this.$router.push('/instance')
       })
     },
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           if (el?.os === 'AliComputenest') {
             this.trialUrl = el?.trialUrl
             this.url = el?.url
@@ -526,7 +526,7 @@ export default {
     windowsToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#MjqcX',
-        '_blank'
+        '_blank',
       )
     },
     windowsToAgent() {
@@ -535,7 +535,7 @@ export default {
     linuxToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
-        '_blank'
+        '_blank',
       )
     },
     linuxToAgent() {
@@ -563,7 +563,7 @@ export default {
       $zoho.salesiq = $zoho.salesiq || {
         widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {}
+        ready: function () {},
       }
       window.$zoho = $zoho
       let d = document
@@ -582,7 +582,7 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email
+          tapdata_email: user.email,
         })
       }
     },
@@ -591,11 +591,11 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest'
+        AliComputenest: 'copyTokenInAliComputenest',
       }
       this.buried(MAP[this.downLoadType])
-    }
-  }
+    },
+  },
 }
 </script>
 

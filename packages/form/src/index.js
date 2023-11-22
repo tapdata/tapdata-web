@@ -9,7 +9,7 @@ import SchemaToForm from './SchemaToForm'
 
 export { SchemaToForm }
 
-export const validateCron = value => {
+export const validateCron = (value) => {
   value = value?.trim()
   if (!value) return true
   const list = value.split(/\s+/g)
@@ -34,7 +34,7 @@ export const validateCron = value => {
 registerValidateRules({
   cron(value, rule) {
     return validateCron(value) ? '' : rule.message || i18n.t('packages_form_src_index_cronbiao')
-  }
+  },
 })
 
 export { composeExport, langs, components }

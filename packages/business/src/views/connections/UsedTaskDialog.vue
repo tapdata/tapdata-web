@@ -2,7 +2,7 @@
   <ElDialog :title="$t('public_message_title_prompt')" width="40%" v-model:visible="visible" @close="handleClose">
     <span>{{
       $t('packages_business_connections_list_gailianjieyibei', {
-        val1: data.total
+        val1: data.total,
       })
     }}</span>
     <el-table class="mt-4" height="250px" :data="data.items">
@@ -35,20 +35,20 @@ export default {
       default: () => {
         return {
           items: [],
-          total: 0
+          total: 0,
         }
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      visible: false
+      visible: false,
     }
   },
   watch: {
     value(v) {
       this.visible = v
-    }
+    },
   },
   methods: {
     handleClose() {
@@ -61,11 +61,11 @@ export default {
         migrate: 'migrateList',
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
-        mem_cache: 'sharedCacheList'
+        mem_cache: 'sharedCacheList',
       }
       let routeUrl = this.$router.resolve({
         name: map[item.syncType],
-        query: { keyword: item.name }
+        query: { keyword: item.name },
       })
       window.open(routeUrl.href, '_blank')
       // if (item?.syncType === 'migrate') {
@@ -83,8 +83,8 @@ export default {
       //     }
       //   })
       // }
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>

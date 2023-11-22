@@ -13,7 +13,7 @@ export function getNodeIconSrc(node) {
     const map = {
       memory: 'memory',
       mongodb: 'mongodb',
-      rocksdb: 'rocksdb'
+      rocksdb: 'rocksdb',
     }
     icon = map[node.externaltype]
   }
@@ -45,7 +45,7 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        pdkSchemaList.forEach(pdkSchema => Object.assign(pdkSchema, pdkProperties))
+        pdkSchemaList.forEach((pdkSchema) => Object.assign(pdkSchema, pdkProperties))
       }
     }
   }
@@ -61,7 +61,7 @@ export function getMatchedDataTypeLevel(
   field = {},
   canUseDataTypes = [],
   fieldChangeRules = [],
-  findPossibleDataTypes = {}
+  findPossibleDataTypes = {},
 ) {
   if (isEmpty(findPossibleDataTypes) || !findPossibleDataTypes[field.field_name]) return ''
   const tapType = JSON.parse(field.tapType || '{}')
@@ -87,12 +87,12 @@ export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {
   if (filterType === 'All') {
     return data
   }
-  const result = data.map(t => {
+  const result = data.map((t) => {
     return Object.assign({}, { tableName: t, tableComment: '', primaryKeyCounts: 0, uniqueIndexCounts: 0 }, map[t])
   })
   const list =
     filterType === 'HasKeys'
-      ? result.filter(t => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
-      : result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
-  return list.map(t => t.tableName)
+      ? result.filter((t) => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
+      : result.filter((t) => !t.primaryKeyCounts && !t.uniqueIndexCounts)
+  return list.map((t) => t.tableName)
 }

@@ -18,7 +18,7 @@ export const ArrayAggregate = connect(
             result._id = {
               // _tapd8_sub_name: aggregation.name
             }
-            aggregation.groupByExpression.forEach(key => {
+            aggregation.groupByExpression.forEach((key) => {
               result._id[key] = 'XXX'
               result[key] = 'XXX'
             })
@@ -27,9 +27,9 @@ export const ArrayAggregate = connect(
 
           return <Highlight class="mt-0" language="json" code={JSON.stringify(result, null, 2)}></Highlight>
         }
-      }
-    })
-  )
+      },
+    }),
+  ),
 )
 
 export default ArrayAggregate

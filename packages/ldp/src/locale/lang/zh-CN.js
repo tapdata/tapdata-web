@@ -40,5 +40,5 @@ export default {
   packages_ldp_run_every_10_minutes: '每10分钟运行一次',
   packages_ldp_run_every_hour: '每1小时运行一次',
   packages_ldp_run_every_day: '每天运行一次',
-  packages_ldp_custom_cron_expression: '自定义cron表达式'
+  packages_ldp_custom_cron_expression: '自定义cron表达式',
 }

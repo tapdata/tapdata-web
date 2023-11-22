@@ -21,7 +21,7 @@ const DashedBoxComponent = observer(
             pointerEvents: 'none',
             boxSizing: 'border-box',
             visibility: 'hidden',
-            zIndex: 2
+            zIndex: 2,
           }
           if (rect) {
             baseStyle.transform = `perspective(1px) translate3d(${rect.x}px,${rect.y}px,0)`
@@ -49,7 +49,7 @@ const DashedBoxComponent = observer(
                 fontSize: '12px',
                 userSelect: 'none',
                 fontWeight: 'lighter',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
               }}
             >
               {hoverRef.value?.node.getMessage('title')}
@@ -57,8 +57,8 @@ const DashedBoxComponent = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export const DashedBox = observer(
@@ -67,6 +67,6 @@ export const DashedBox = observer(
       return () => {
         return <DashedBoxComponent></DashedBoxComponent>
       }
-    }
-  })
+    },
+  }),
 )

@@ -299,7 +299,7 @@ export default {
             ? {
                 name: 'connections',
               }
-            : this.pathUrl
+            : this.pathUrl,
         )
       } else {
         this.$router.back()
@@ -1522,11 +1522,13 @@ export default {
               &.large-item {
                 width: 610px;
                 .el-form-item__content {
-                  padding-right: 20px;}
+                  padding-right: 20px;
                 }
+              }
 
               &.small-item {
-                width: 320px;}
+                width: 320px;
+              }
 
               &.mongodb-item {
                 width: 680px;
@@ -1553,9 +1555,9 @@ export default {
                 background-color: rgba(239, 241, 244, 0.2);
               }
               .el-textarea__inner {
-                min-height: 70px !important;}
+                min-height: 70px !important;
               }
-
+            }
 
             :deep(.el-input-group__append button.el-button) {
               background-color: inherit;
@@ -1604,7 +1606,8 @@ export default {
       }
       .formily-element-form-item-label-tooltip {
         margin-left: 4px;
-        height: unset;}
+        height: unset;
+      }
 
       * {
         line-height: 22px;

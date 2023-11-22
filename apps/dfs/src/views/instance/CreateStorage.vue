@@ -42,7 +42,7 @@
               class="font-color-light inline-block"
               :class="[
                 { 'form-label': this.$i18n.locale === 'zh-CN' },
-                { 'form-label-en': this.$i18n.locale === 'en' }
+                { 'form-label-en': this.$i18n.locale === 'en' },
               ]"
               >{{ $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang') }}</span
             >
@@ -124,7 +124,7 @@
                   <span
                     class="inline-flex align-center"
                     :class="{
-                      'color-warning': freeTierNames.includes(item.value)
+                      'color-warning': freeTierNames.includes(item.value),
                     }"
                   >
                     {{ freeTierNames.includes(item.value) ? 'Free Trial' : item.label }}
@@ -253,10 +253,10 @@ export default {
       current: {
         clusterTier: '',
         storageSize: '',
-        priceId: ''
+        priceId: '',
       },
       loadingAtlas: false,
-      addAtlasVisible: false
+      addAtlasVisible: false,
     }
   },
 
@@ -313,9 +313,9 @@ export default {
     tierOptions() {
       return Object.keys(this.clusterTierMap)
         .sort((name1, name2) => name1.localeCompare(name2))
-        .map(name => ({
+        .map((name) => ({
           label: `MongoDB Atlas ${name}`,
-          value: name
+          value: name,
         }))
     },
 
@@ -323,9 +323,9 @@ export default {
       const { clusterTier } = this.current
       const sizeMap = this.clusterTierMap[clusterTier] || {}
 
-      return Object.keys(sizeMap).map(size => ({
+      return Object.keys(sizeMap).map((size) => ({
         label: size,
-        value: size
+        value: size,
       }))
     },
 
@@ -335,19 +335,19 @@ export default {
       const list = sizeMap[storageSize] || []
 
       return list
-        .filter(item => item.type === 'recurring')
+        .filter((item) => item.type === 'recurring')
         .sort(
           (item1, item2) =>
             PERIOD_MAP[`${item1.type}_${item1.periodUnit}`].order -
-            PERIOD_MAP[`${item2.type}_${item2.periodUnit}`].order
+            PERIOD_MAP[`${item2.type}_${item2.periodUnit}`].order,
         )
-        .map(item => {
+        .map((item) => {
           return {
             label: PERIOD_MAP[`${item.type}_${item.periodUnit}`].label,
-            value: item.priceId
+            value: item.priceId,
           }
         })
-    }
+    },
   },
 
   async created() {
@@ -376,9 +376,9 @@ export default {
       const data = await databaseTypesApi.get({
         filter: JSON.stringify({
           where: {
-            pdkId: 'mongodb-atlas'
-          }
-        })
+            pdkId: 'mongodb-atlas',
+          },
+        }),
       })
 
       console.log('loadAtlas', data) // eslint-disable-line no-console
@@ -404,11 +404,11 @@ export default {
       this.loadingProvider = false
       //数据模式（带存储）过滤只带存储的云厂商
       let original = data?.items || []
-      this.cloudProviderList = original.filter(it => {
+      this.cloudProviderList = original.filter((it) => {
         // 暂时过滤掉阿里云
         it.cloudDetail =
           it.cloudDetail
-            .filter(item => {
+            .filter((item) => {
               item.hasFreeTrial = item.tag?.includes('supportFreeTrialStorage')
               return item.productList.includes('mongodb') && it.cloudProvider !== 'AliCloud'
             })
@@ -435,8 +435,8 @@ export default {
         params: {
           productType: 'mongoCluster',
           region: this.region,
-          cloudProvider: this.provider
-        }
+          cloudProvider: this.provider,
+        },
       })
       this.loadingMongoCluster = false
       const { paidPrice = [] } = data?.[0] || {}
@@ -461,14 +461,14 @@ export default {
         ' ' +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
 
     //是否有存储agent
     getMdbCount() {
-      return this.$axios.get('api/tcm/mdb/stats').then(data => {
+      return this.$axios.get('api/tcm/mdb/stats').then((data) => {
         this.mdbCount = data?.totalCount > 0
         this.mdbFreeCount = data?.freeCount
       })
@@ -494,7 +494,7 @@ export default {
           location.origin +
           location.pathname +
           this.$router.resolve({
-            name: 'dataConsole'
+            name: 'dataConsole',
           }).href,
         cancelUrl: location.href,
         periodUnit,
@@ -511,39 +511,39 @@ export default {
             name: '', // 实例名称
             memorySpace: spec.storageSize,
             provider: this.provider || '', // 云厂商，全托管必填
-            region: this.region || '' // 地域，全托管必填
-          }
-        ]
+            region: this.region || '', // 地域，全托管必填
+          },
+        ],
       }
 
       this.buried('newStorageStripe', '', {
-        type
+        type,
       })
       this.$axios
         .post('api/tcm/orders/subscribeV2', params)
-        .then(data => {
+        .then((data) => {
           this.buried('newStorageStripe', '', {
             type,
-            result: true
+            result: true,
           })
 
           this.$router.push(
             data.status === 'active'
               ? {
-                  name: 'dataConsole'
+                  name: 'dataConsole',
                 }
               : {
                   name: 'pay',
                   params: {
-                    id: data.subscribe
-                  }
-                }
+                    id: data.subscribe,
+                  },
+                },
           )
         })
         .catch(() => {
           this.buried('newStorageStripe', '', {
             type,
-            result: false
+            result: false,
           })
           if (paymentType === 'online') {
             this.submitOnlineLoading = false
@@ -576,16 +576,16 @@ export default {
         fdmStorageCluster: 'self',
         fdmStorageConnectionId: connection.id,
         mdmStorageCluster: 'self',
-        mdmStorageConnectionId: connection.id
+        mdmStorageConnectionId: connection.id,
       })
 
       await liveDataPlatformApi.patch(ldp)
 
       this.$router.push({
-        name: 'dataConsole'
+        name: 'dataConsole',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

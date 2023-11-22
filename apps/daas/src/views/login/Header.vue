@@ -23,15 +23,15 @@ export default {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: langMenu,
-      lang: getCurrentLanguage()
+      lang: getCurrentLanguage(),
     }
   },
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    }
-  }
+    },
+  },
 }
 </script>
 

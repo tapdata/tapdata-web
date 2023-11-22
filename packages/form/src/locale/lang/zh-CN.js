@@ -174,5 +174,5 @@ export default {
   packages_form_batch_add_field_prefix: '字段前缀',
   packages_form_batch_add_field_type: '字段类型',
   packages_form_batch_add_field_count: '字段数量',
-  packages_form_batch_add_field_start: '开始数字'
+  packages_form_batch_add_field_start: '开始数字',
 }

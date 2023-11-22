@@ -21,9 +21,9 @@ export default {
   props: {
     active: {
       type: String,
-      default: '1'
-    }
-  }
+      default: '1',
+    },
+  },
 }
 </script>
 

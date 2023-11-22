@@ -18,21 +18,21 @@ export class TableProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -41,12 +41,12 @@ export class TableProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -55,13 +55,13 @@ export class TableProcessor extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -70,10 +70,10 @@ export class TableProcessor extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               tableNames: {
                 type: 'array',
@@ -81,21 +81,21 @@ export class TableProcessor extends NodeType {
                 'x-component-props': {
                   findParentNodes: '{{findParentNodes}}',
                   listStyle: {
-                    maxHeight: 'calc((100vh - 120px) * 0.618)'
-                  }
+                    maxHeight: 'calc((100vh - 120px) * 0.618)',
+                  },
                 },
                 'x-validator': {
                   validator: `{{validateTableNames}}`,
-                  message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
-                }
-              }
-            }
+                  message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu'),
+                },
+              },
+            },
           },
           tab2: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
+              label: i18n.t('packages_dag_data_schema'),
             },
             properties: {
               schemaPanel: {
@@ -103,13 +103,13 @@ export class TableProcessor extends NodeType {
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
                   class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  formTab: '{{formTab}}',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

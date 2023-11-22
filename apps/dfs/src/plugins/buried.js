@@ -9,7 +9,7 @@ export const buried = (code, page, attrs, sid) => {
   let data = {
     user_id: userInfo.userId || '',
     code,
-    page
+    page,
   }
   attrs = Object.assign({}, attrs)
   if (sid) {
@@ -19,7 +19,7 @@ export const buried = (code, page, attrs, sid) => {
   let queryStr = '?data=' + encodeURIComponent(JSON.stringify(data))
   if (sid) {
     let where = {
-      'attrs.sid': sid
+      'attrs.sid': sid,
     }
     queryStr = queryStr + '&where=' + encodeURIComponent(JSON.stringify(where))
   }
@@ -49,9 +49,9 @@ export const updateTimeOnSite = () => {
       'timeOnSite',
       '/',
       {
-        times: Math.floor(count / 1000) + 's'
+        times: Math.floor(count / 1000) + 's',
       },
-      sessionId
+      sessionId,
     )
   } else {
     // eslint-disable-next-line
@@ -59,7 +59,7 @@ export const updateTimeOnSite = () => {
   }
 }
 
-export const startTimeOnPage = router => {
+export const startTimeOnPage = (router) => {
   let count = 1
 
   router.beforeEach((to, from, next) => {
@@ -115,9 +115,9 @@ export const updateTimeOnPage = () => {
         path,
         {
           times: second + 's',
-          pid: sessionId
+          pid: sessionId,
         },
-        sessionId
+        sessionId,
       )
     }
   } else {

@@ -38,7 +38,7 @@ export const GhostWidget = observer(
         return (
           <span
             style={{
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
             }}
           >
             <NodeTitleWidget node={firstNode} />
@@ -52,6 +52,6 @@ export const GhostWidget = observer(
           {renderNodes()}
         </div>
       )
-    }
-  })
+    },
+  }),
 )

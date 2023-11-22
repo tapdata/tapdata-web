@@ -24,21 +24,21 @@ export const TableListCard = observer(
         loading.value = true
         const params = {
           ...{ connectionId: props.connectionId },
-          ...props.params
+          ...props.params,
         }
         metadataInstancesApi
           .pageTables(params)
-          .then(data => {
+          .then((data) => {
             let map = {}
             let items = data?.items || []
-            items.forEach(t => {
+            items.forEach((t) => {
               if (t.tableComment || t.primaryKeyCounts) {
                 map[t.tableName] = t
               }
             })
             tableMap.value = map
             list.value = Object.freeze(
-              getPrimaryKeyTablesByType(items.map(t => t.tableName) || [], props.filterType, tableMap.value)
+              getPrimaryKeyTablesByType(items.map((t) => t.tableName) || [], props.filterType, tableMap.value),
             )
             total.value = data?.total || 0
           })
@@ -51,7 +51,7 @@ export const TableListCard = observer(
         () => props.filterType,
         () => {
           list.value = Object.freeze(getPrimaryKeyTablesByType(list.value, props.filterType, tableMap.value))
-        }
+        },
       )
 
       return () => {
@@ -85,7 +85,7 @@ export const TableListCard = observer(
                       )}
                     </span>
                   </OverflowTooltip>
-                )
+                ),
               }}
             />
           )
@@ -111,6 +111,6 @@ export const TableListCard = observer(
           </ElCard>
         )
       }
-    }
-  })
+    },
+  }),
 )

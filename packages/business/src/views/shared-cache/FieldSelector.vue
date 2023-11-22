@@ -35,36 +35,36 @@ import { ClipboardButton } from '@tap/form'
 
 export default {
   components: {
-    ClipboardButton
+    ClipboardButton,
   },
   props: {
     value: {
       type: [String],
-      required: true
+      required: true,
     },
     placeholder: String,
-    options: Array
+    options: Array,
   },
   computed: {
     values() {
       let value = this.value
       return value && value.length ? value.split(',') : []
-    }
+    },
   },
   methods: {
     inputHandler(values) {
       //过滤空字符串并去重，之后使用逗号分隔
-      const result = Array.from(new Set(values.filter(v => !!v.trim()))).join(',')
+      const result = Array.from(new Set(values.filter((v) => !!v.trim()))).join(',')
 
-	    $emit(this, 'update:value', result)
-	    $emit(this, 'change', result)
+      $emit(this, 'update:value', result)
+      $emit(this, 'change', result)
     },
     remove(index) {
       this.values.splice(index, 1)
       this.inputHandler(this.values)
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

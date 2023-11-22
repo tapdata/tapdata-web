@@ -132,49 +132,49 @@ export default [
     path: '/login',
     name: 'login',
     component: Vue.defineAsyncComponent(() => import('@/views/login/Login')),
-    title: 'tap.login'
+    title: 'tap.login',
   },
   {
     path: '/registry',
     name: 'registry',
     component: Vue.defineAsyncComponent(() => import('@/views/login/Registration')),
     meta: {
-      title: 'tap.registry'
-    }
+      title: 'tap.registry',
+    },
   },
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
     component: Vue.defineAsyncComponent(() => import('@/views/login/VerificationEmail')),
     meta: {
-      title: 'tap.verificationEmail'
-    }
+      title: 'tap.verificationEmail',
+    },
   },
   {
     path: '/registyResult',
     name: 'registyResult',
     component: Vue.defineAsyncComponent(() => import('@/views/login/RegistyResult')),
     meta: {
-      title: 'tap.registry'
-    }
+      title: 'tap.registry',
+    },
   },
   {
     path: '/passwordReset',
     name: 'passwordReset',
     component: Vue.defineAsyncComponent(() => import('@/views/login/PasswordReset')),
     meta: {
-      title: 'tap.passwordReset'
-    }
+      title: 'tap.passwordReset',
+    },
   },
   {
     path: '/node/editor',
     name: 'NodeNew',
-    component: NodeEditor
+    component: NodeEditor,
   },
   {
     path: '/node/editor/:id',
     name: 'NodeEditor',
-    component: NodeEditor
+    component: NodeEditor,
   },
   {
     path: '/dataflow/editor',
@@ -182,8 +182,8 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'v2_data_flow_dag_edit'
-    }
+      code: 'v2_data_flow_dag_edit',
+    },
   },
   {
     path: '/dataflow/editor/:id',
@@ -191,8 +191,8 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'v2_data_flow_edit'
-    }
+      code: 'v2_data_flow_edit',
+    },
   },
   {
     path: '/dataflow/viewer/:id',
@@ -200,8 +200,8 @@ export default [
     component: DagEditor,
     meta: {
       title: 'page_title_data_develop',
-      code: 'v2_data_flow_details'
-    }
+      code: 'v2_data_flow_details',
+    },
   },
   {
     path: '/dataflow/monitor/:id',
@@ -209,8 +209,8 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_flow_monitor'
-    }
+      code: 'v2_data_flow_monitor',
+    },
   },
 
   {
@@ -219,8 +219,8 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'v2_data_replication_dag_edit'
-    }
+      code: 'v2_data_replication_dag_edit',
+    },
   },
   {
     path: '/migrate/editor/:id',
@@ -228,8 +228,8 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'v2_data_replication_dag_edit'
-    }
+      code: 'v2_data_replication_dag_edit',
+    },
   },
   {
     path: '/migrate/viewer/:id',
@@ -237,8 +237,8 @@ export default [
     component: MigrationEditor,
     meta: {
       title: 'page_title_data_copy',
-      code: 'v2_data_replication_details'
-    }
+      code: 'v2_data_replication_details',
+    },
   },
   {
     path: '/migrate/monitor/:id',
@@ -246,8 +246,8 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor'
-    }
+      code: 'v2_data_replication_monitor',
+    },
   },
   {
     path: '/migrate/monitor-record/:id',
@@ -255,8 +255,8 @@ export default [
     component: MigrationMonitorViewer,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_record_monitor'
-    }
+      code: 'v2_data_replication_record_monitor',
+    },
   },
   {
     path: '/shared-mining/monitor/:id',
@@ -264,8 +264,8 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor'
-    }
+      code: 'v2_data_replication_monitor',
+    },
   },
   {
     path: '/heartbeat/monitor/:id',
@@ -273,8 +273,8 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor'
-    }
+      code: 'v2_data_replication_monitor',
+    },
   },
   {
     path: '/shared-cache/monitor/:id',
@@ -282,8 +282,8 @@ export default [
     component: MigrationMonitor,
     meta: {
       title: 'page_title_run_monitor',
-      code: 'v2_data_replication_monitor'
-    }
+      code: 'v2_data_replication_monitor',
+    },
   },
   {
     path: '/',
@@ -298,8 +298,8 @@ export default [
         name: 'dashboard',
         component: Vue.defineAsyncComponent(() => import('@/views/dashboard/Dashboard')),
         meta: {
-          title: 'page_title_overview'
-        }
+          title: 'page_title_overview',
+        },
       },
       /* ---------- 连接管理  ----------*/
       {
@@ -308,7 +308,7 @@ export default [
         component: Parent,
         redirect: 'connections/',
         meta: {
-          title: 'page_title_connections'
+          title: 'page_title_connections',
         },
         children: [
           {
@@ -317,8 +317,8 @@ export default [
             component: ConnectionList,
             meta: {
               title: 'page_title_connections',
-              code: 'v2_datasource_menu'
-            }
+              code: 'v2_datasource_menu',
+            },
           },
           {
             path: 'create',
@@ -326,8 +326,8 @@ export default [
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_create',
-              code: 'v2_datasource_creation'
-            }
+              code: 'v2_datasource_creation',
+            },
           },
           {
             path: ':id/edit',
@@ -335,10 +335,10 @@ export default [
             component: ConnectionForm,
             meta: {
               title: 'page_title_connections_edit',
-              code: 'v2_datasource_edition'
-            }
-          }
-        ]
+              code: 'v2_datasource_edition',
+            },
+          },
+        ],
       },
       /* ---------- 数据发现-数据对象  ----------*/
       {
@@ -347,7 +347,7 @@ export default [
         component: Parent,
         redirect: 'object/',
         meta: {
-          title: 'page_title_data_object'
+          title: 'page_title_data_object',
         },
         children: [
           {
@@ -356,10 +356,10 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/data-discovery/ObjectList.tsx')),
             meta: {
               title: 'page_title_data_object',
-              code: 'v2_data_object'
-            }
-          }
-        ]
+              code: 'v2_data_object',
+            },
+          },
+        ],
       },
       /* ---------- 数据发现-数据目录  ----------*/
       {
@@ -368,7 +368,7 @@ export default [
         component: Parent,
         redirect: 'catalogue',
         meta: {
-          title: 'page_title_data_catalogue'
+          title: 'page_title_data_catalogue',
         },
         children: [
           {
@@ -377,10 +377,10 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/data-discovery/Catalogue.tsx')),
             meta: {
               title: 'page_title_data_catalogue',
-              code: 'v2_data_catalogue'
-            }
-          }
-        ]
+              code: 'v2_data_catalogue',
+            },
+          },
+        ],
       },
       /* ---------- 数据复制  ----------*/
       {
@@ -389,7 +389,7 @@ export default [
         component: Parent,
         redirect: 'migrate/',
         meta: {
-          title: 'page_title_data_copy'
+          title: 'page_title_data_copy',
         },
         children: [
           {
@@ -398,10 +398,10 @@ export default [
             component: MigrateList,
             meta: {
               title: 'page_title_data_copy',
-              code: 'v2_data_replication'
-            }
-          }
-        ]
+              code: 'v2_data_replication',
+            },
+          },
+        ],
       },
       /* ---------- 数据开发  ----------*/
       {
@@ -410,7 +410,7 @@ export default [
         component: Parent,
         redirect: 'dataflow/',
         meta: {
-          title: 'page_title_data_develop'
+          title: 'page_title_data_develop',
         },
         children: [
           {
@@ -419,10 +419,10 @@ export default [
             component: TaskList,
             meta: {
               title: 'page_title_data_develop',
-              code: 'v2_data_flow'
-            }
-          }
-        ]
+              code: 'v2_data_flow',
+            },
+          },
+        ],
       },
       /* ---------- 数据校验  ----------*/
       {
@@ -432,7 +432,7 @@ export default [
         redirect: 'verify/',
         meta: {
           title: 'page_title_data_verify',
-          doNotJump: true
+          doNotJump: true,
         },
         children: [
           {
@@ -442,10 +442,10 @@ export default [
             meta: {
               title: 'page_title_data_difference_details',
               code: 'Data_verify',
-              isNotAside: true
-            }
-          }
-        ]
+              isNotAside: true,
+            },
+          },
+        ],
       },
       /* ---------- 数据校验1.x  ----------*/
       {
@@ -454,7 +454,7 @@ export default [
         component: Parent,
         redirect: 'dataVerification/',
         meta: {
-          title: 'page_title_data_verify'
+          title: 'page_title_data_verify',
         },
         children: [
           {
@@ -463,8 +463,8 @@ export default [
             component: VerificationList,
             meta: {
               title: 'page_title_data_verify',
-              code: 'v2_data_check'
-            }
+              code: 'v2_data_check',
+            },
           },
           {
             path: 'create',
@@ -472,8 +472,8 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_verification_create',
-              code: 'v2_data_check_create'
-            }
+              code: 'v2_data_check_create',
+            },
           },
           {
             path: ':id/edit',
@@ -481,8 +481,8 @@ export default [
             component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
-              code: 'v2_data_check_edit'
-            }
+              code: 'v2_data_check_edit',
+            },
           },
           {
             path: ':id/details',
@@ -490,8 +490,8 @@ export default [
             component: VerificationDetails,
             meta: {
               title: 'page_title_task_details',
-              code: 'v2_data_check_details'
-            }
+              code: 'v2_data_check_details',
+            },
           },
           {
             path: ':id/history',
@@ -499,8 +499,8 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_verification_history',
-              code: 'v2_data_check_history'
-            }
+              code: 'v2_data_check_history',
+            },
           },
           {
             path: '/dataVerifyResult/:id/history',
@@ -508,8 +508,8 @@ export default [
             component: VerificationHistory,
             meta: {
               title: 'page_title_diff_verification_history',
-              code: 'v2_data_check_result_history'
-            }
+              code: 'v2_data_check_result_history',
+            },
           },
           {
             path: '/dataVerifyResult/:id/details',
@@ -517,8 +517,8 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_diff_verification_details',
-              code: 'v2_data_check_result_details'
-            }
+              code: 'v2_data_check_result_details',
+            },
           },
           {
             path: '/dataVerifyResult/:id',
@@ -526,9 +526,9 @@ export default [
             component: VerificationResult,
             meta: {
               title: 'page_title_data_verification_result',
-              code: 'v2_data_check_result'
-            }
-          }
+              code: 'v2_data_check_result',
+            },
+          },
           // {
           //   path: ':id/verifyDetails',
           //   name: 'VerifyDetails',
@@ -539,7 +539,7 @@ export default [
           //     isNotAside: true
           //   }
           // }
-        ]
+        ],
       },
       /* ---------- 共享挖掘  ----------*/
       {
@@ -548,7 +548,7 @@ export default [
         component: Parent,
         redirect: 'shared-mining/',
         meta: {
-          title: 'page_title_shared_mining'
+          title: 'page_title_shared_mining',
         },
         children: [
           {
@@ -557,10 +557,10 @@ export default [
             component: SharedMiningList,
             meta: {
               title: 'page_title_shared_mining',
-              code: 'v2_log_collector'
-            }
-          }
-        ]
+              code: 'v2_log_collector',
+            },
+          },
+        ],
       },
       /* ---------- 心跳任务  ----------*/
       {
@@ -569,7 +569,7 @@ export default [
         component: Parent,
         redirect: 'heartbeat-table/',
         meta: {
-          title: 'page_title_heartbeat_table'
+          title: 'page_title_heartbeat_table',
         },
         children: [
           {
@@ -578,10 +578,10 @@ export default [
             component: HeartbeatTableList,
             meta: {
               title: 'page_title_heartbeat_table',
-              code: 'v2_log_collector'
-            }
-          }
-        ]
+              code: 'v2_log_collector',
+            },
+          },
+        ],
       },
       /* ---------- 函数管理  ----------*/
       {
@@ -590,7 +590,7 @@ export default [
         component: Parent,
         redirect: 'function/',
         meta: {
-          title: 'page_title_function'
+          title: 'page_title_function',
         },
         children: [
           {
@@ -599,8 +599,8 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/function/List')),
             meta: {
               title: 'page_title_function',
-              code: 'v2_function_management'
-            }
+              code: 'v2_function_management',
+            },
           },
           {
             path: 'create',
@@ -608,8 +608,8 @@ export default [
             component: FunctionForm,
             meta: {
               title: 'page_title_function_create',
-              code: 'v2_function_management_create'
-            }
+              code: 'v2_function_management_create',
+            },
           },
           {
             path: 'import',
@@ -617,8 +617,8 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/function/ImportForm')),
             meta: {
               title: 'page_title_function_import',
-              code: 'v2_function_management_import'
-            }
+              code: 'v2_function_management_import',
+            },
           },
           {
             path: 'edit/:id',
@@ -626,8 +626,8 @@ export default [
             component: FunctionForm,
             meta: {
               title: 'page_title_function_edit',
-              code: 'v2_function_management_edit'
-            }
+              code: 'v2_function_management_edit',
+            },
           },
           {
             path: 'details/:id',
@@ -635,10 +635,10 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/function/Details')),
             meta: {
               title: 'page_title_function_details',
-              code: 'v2_function_management_details'
-            }
-          }
-        ]
+              code: 'v2_function_management_details',
+            },
+          },
+        ],
       },
       /* ---------- 自定义节点  ----------*/
       {
@@ -647,7 +647,7 @@ export default [
         component: Parent,
         redirect: 'custom-node/',
         meta: {
-          title: 'page_title_custom_node'
+          title: 'page_title_custom_node',
         },
         children: [
           {
@@ -656,10 +656,10 @@ export default [
             component: CustomNodeList,
             meta: {
               title: 'page_title_custom_node',
-              code: 'v2_custom_node'
-            }
-          }
-        ]
+              code: 'v2_custom_node',
+            },
+          },
+        ],
       },
       /* ---------- 共享缓存  ----------*/
       {
@@ -668,7 +668,7 @@ export default [
         component: Parent,
         redirect: 'shared-cache/',
         meta: {
-          title: 'page_title_shared_cache'
+          title: 'page_title_shared_cache',
         },
         children: [
           {
@@ -677,8 +677,8 @@ export default [
             component: SharedCacheList,
             meta: {
               title: 'page_title_shared_cache',
-              code: 'v2_shared_cache'
-            }
+              code: 'v2_shared_cache',
+            },
           },
           {
             path: 'create',
@@ -686,8 +686,8 @@ export default [
             component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_create',
-              code: 'v2_shared_cache_create'
-            }
+              code: 'v2_shared_cache_create',
+            },
           },
           {
             path: ':id/edit',
@@ -695,10 +695,10 @@ export default [
             component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_edit',
-              code: 'v2_shared_cache_edit'
-            }
-          }
-        ]
+              code: 'v2_shared_cache_edit',
+            },
+          },
+        ],
       },
       /* ---------- 数据服务管理  ----------*/
       {
@@ -707,8 +707,8 @@ export default [
         component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
-          code: 'v2_data-server-list'
-        }
+          code: 'v2_data-server-list',
+        },
       },
       /* ---------- 应用管理  ----------*/
       {
@@ -717,8 +717,8 @@ export default [
         component: ApiApplicationList,
         meta: {
           title: 'page_title_api_application',
-          code: 'v2_api-application'
-        }
+          code: 'v2_api-application',
+        },
       },
       /* ---------- API客户端  ----------*/
       {
@@ -727,8 +727,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/api-page/Applications')),
         meta: {
           title: 'page_title_api_client',
-          code: 'v2_api-client'
-        }
+          code: 'v2_api-client',
+        },
       },
       /* ---------- API服务端  ----------*/
       {
@@ -737,8 +737,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/api-page/ApiServer')),
         meta: {
           title: 'page_title_api_servers',
-          code: 'v2_api-servers'
-        }
+          code: 'v2_api-servers',
+        },
       },
       /* ---------- 服务审计  ----------*/
       {
@@ -748,7 +748,7 @@ export default [
         redirect: 'data-server-audit/',
         meta: {
           title: 'page_title_api_audit',
-          code: 'v2_data_server_audit'
+          code: 'v2_data_server_audit',
         },
         children: [
           {
@@ -757,8 +757,8 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/data-server-audit/List')),
             meta: {
               title: 'page_title_api_audit',
-              code: 'v2_data_server_audit'
-            }
+              code: 'v2_data_server_audit',
+            },
           },
           {
             path: ':id/details',
@@ -766,10 +766,10 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/data-server-audit/Info')),
             meta: {
               title: 'page_title_api_audit_details',
-              code: 'v2_data_server_audit-details'
-            }
-          }
-        ]
+              code: 'v2_data_server_audit-details',
+            },
+          },
+        ],
       },
       /* ---------- API监控  ----------*/
       {
@@ -778,8 +778,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/api-page/api-monitor/ApiMonitor')),
         meta: {
           title: 'page_title_api_monitor',
-          code: 'v2_api_monitor'
-        }
+          code: 'v2_api_monitor',
+        },
       },
       /* ---------- 元数据管理  ----------*/
       // {
@@ -811,8 +811,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/cluster/Cluster')),
         meta: {
           title: 'page_title_cluster',
-          code: 'v2_cluster-management_menu'
-        }
+          code: 'v2_cluster-management_menu',
+        },
       },
       {
         path: '/external-storage',
@@ -820,8 +820,8 @@ export default [
         component: ExternalStorageList,
         meta: {
           title: 'page_title_external_storage',
-          code: 'v2_external-storage_menu'
-        }
+          code: 'v2_external-storage_menu',
+        },
       },
       /* ---------- 用户管理  ----------*/
       {
@@ -830,8 +830,8 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/user/List')),
         meta: {
           title: 'page_title_user',
-          code: 'v2_user_management_menu'
-        }
+          code: 'v2_user_management_menu',
+        },
       },
       /* ---------- 角色管理  ----------*/
       {
@@ -840,7 +840,7 @@ export default [
         component: Parent,
         redirect: 'role/',
         meta: {
-          title: 'page_title_role'
+          title: 'page_title_role',
         },
         children: [
           {
@@ -849,8 +849,8 @@ export default [
             component: Vue.defineAsyncComponent(() => import('@/views/role/Roles')),
             meta: {
               title: 'page_title_role',
-              code: 'v2_role_management'
-            }
+              code: 'v2_role_management',
+            },
           },
           {
             path: 'create',
@@ -858,8 +858,8 @@ export default [
             component: RoleDetails,
             meta: {
               title: 'role_list_setting_permissions',
-              code: 'v2_role_creation'
-            }
+              code: 'v2_role_creation',
+            },
           },
           {
             path: ':id/edit',
@@ -867,10 +867,10 @@ export default [
             component: RoleDetails,
             meta: {
               title: 'role_list_setting_permissions',
-              code: 'v2_role_edition'
-            }
-          }
-        ]
+              code: 'v2_role_edition',
+            },
+          },
+        ],
       },
       /* ---------- 设置  ----------*/
       {
@@ -880,7 +880,7 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/setting/SettingCenter')),
         meta: {
           title: 'page_title_back_menu',
-          isNotAside: true
+          isNotAside: true,
         },
         children: [
           {
@@ -888,14 +888,14 @@ export default [
             name: 'accountSetting',
             code: 'v2_account-setting-setting',
             component: Vue.defineAsyncComponent(() => import('@/views/setting/AccountSetting')),
-            meta: { title: 'page_title_account', isNotAside: true }
+            meta: { title: 'page_title_account', isNotAside: true },
           },
           {
             path: 'notificationSetting',
             name: 'notificationSetting',
             code: 'v2_notification-setting',
             component: Vue.defineAsyncComponent(() => import('@/views/setting/NotificationSetting')),
-            meta: { title: 'notify_setting', isNotAside: true }
+            meta: { title: 'notify_setting', isNotAside: true },
           },
           /* ---------- 系统设置  ----------*/
           {
@@ -905,8 +905,8 @@ export default [
             meta: {
               title: 'page_title_setting',
               code: 'v2_system_settings_menu',
-              isNotAside: true
-            }
+              isNotAside: true,
+            },
           },
           /* ---------- 告警设置  ----------*/
           {
@@ -916,17 +916,17 @@ export default [
             meta: {
               title: 'page_title_setting',
               code: 'v2_alarm_settings_menu',
-              isNotAside: true
-            }
-          }
-        ]
+              isNotAside: true,
+            },
+          },
+        ],
       },
 
       /* ---------- 不确定路由  ----------*/
       {
         path: '/dailyRecord',
         name: 'dailyRecord',
-        component: Vue.defineAsyncComponent(() => import('@/views/cluster/DailyRecord'))
+        component: Vue.defineAsyncComponent(() => import('@/views/cluster/DailyRecord')),
       },
       {
         path: '/notification',
@@ -935,50 +935,50 @@ export default [
         component: Vue.defineAsyncComponent(() => import('@/views/notification/Center')),
         meta: {
           title: 'page_title_back_menu',
-          isNotAside: true
+          isNotAside: true,
         },
         children: [
           {
             path: 'systemNotification',
             name: 'systemNotification',
             component: Vue.defineAsyncComponent(() => import('@/views/notification/SystemNotification')),
-            meta: { title: 'notify_system_notice', isNotAside: true }
+            meta: { title: 'notify_system_notice', isNotAside: true },
           },
           {
             path: 'userNotification',
             name: 'userNotification',
             component: Vue.defineAsyncComponent(() => import('@/views/notification/UserNotification')),
-            meta: { title: 'notify_user_notice', isNotAside: true }
+            meta: { title: 'notify_user_notice', isNotAside: true },
           },
           {
             path: 'alarmNotification',
             name: 'alarmNotification',
             component: Vue.defineAsyncComponent(() => import('@/views/notification/AlarmNotification')),
-            meta: { title: 'notify_system_notice', isNotAside: true }
+            meta: { title: 'notify_system_notice', isNotAside: true },
           },
           {
             path: 'systemAlarm',
             name: 'systemAlarm',
             component: Vue.defineAsyncComponent(() => import('@/views/notification/SystemAlarm')),
-            meta: { title: 'notify_user_notice', isNotAside: true }
-          }
-        ]
+            meta: { title: 'notify_user_notice', isNotAside: true },
+          },
+        ],
       },
       {
         path: 'license',
         name: 'License',
         component: Vue.defineAsyncComponent(() => import('@/views/License')),
         meta: {
-          title: 'page_title_license'
-        }
+          title: 'page_title_license',
+        },
       },
       {
         path: 'solutions',
         name: 'Solutions',
         component: Vue.defineAsyncComponent(() => import('@/views/solutions/Index')),
         meta: {
-          title: 'solution_name'
-        }
+          title: 'solution_name',
+        },
       },
       {
         path: '/data-console',
@@ -988,9 +988,9 @@ export default [
           title: 'page_title_data_hub',
           hideTitle: true,
           icon: 'data-server',
-          code: 'v2_data-console'
-        }
-      }
-    ]
-  }
+          code: 'v2_data-console',
+        },
+      },
+    ],
+  },
 ]

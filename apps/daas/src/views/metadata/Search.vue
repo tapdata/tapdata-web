@@ -119,7 +119,7 @@ export default {
       originalData: [],
       firstSearch: 0,
       lastId: '',
-      loading: true
+      loading: true,
     }
   },
   watch: {
@@ -133,8 +133,8 @@ export default {
             this.$refs.searchInput.focus()
           })
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     handleSearch(id) {
@@ -152,7 +152,7 @@ export default {
       this.loading = true
       metadataInstancesApi
         .search(params)
-        .then(result => {
+        .then((result) => {
           let data = result || []
           this.noMore = false
           if (data.length === 0 || (data.length < data.pageSize && !this.first)) {
@@ -180,21 +180,21 @@ export default {
         type: this.meta_type,
         keyword: this.keyword,
         pageSize: 16,
-        lastId: id || ''
+        lastId: id || '',
       }
       return params
     },
     handleKeywords(data) {
       let targetData = data || []
       if (targetData.length === 0) return
-      targetData.forEach(item => {
+      targetData.forEach((item) => {
         if (item.table) {
           item.table.name = this.markKeyword(this.keyword, item.table.name ? item.table.name : '')
           item.table.original_name = this.markKeyword(this.keyword, item.table.original_name)
           if (item.table.comment) item.table.comment = this.markKeyword(this.keyword, item.table.comment)
         }
         if (item.columns && item.columns.length > 0) {
-          item.columns.forEach(field => {
+          item.columns.forEach((field) => {
             field.field_name = this.markKeyword(this.keyword, field.field_name)
             field.original_field_name = this.markKeyword(this.keyword, field.original_field_name)
             if (field.comment) field.comment = this.markKeyword(this.keyword, field.comment)
@@ -212,11 +212,11 @@ export default {
       this.$router.push({
         name: 'metadataDetails',
         params: {
-          id: id
-        }
+          id: id,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

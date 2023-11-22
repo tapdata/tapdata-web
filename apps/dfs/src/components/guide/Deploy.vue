@@ -20,30 +20,30 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ],
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
         docker: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
       },
-      isCompleted: false
+      isCompleted: false,
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
   mounted() {
     this.getUrl()
   },
   methods: {
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           this.links[el.os] = el.command
         })
         this.$nextTick(() => {
@@ -59,7 +59,7 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest'
+        AliComputenest: 'copyTokenInAliComputenest',
       }
       this.buried(MAP[this.downLoadType])
       this.$emit('behavior', `copy_${this.downLoadType}`)
@@ -77,14 +77,14 @@ export default {
     },
     handleOpenDeployDocs() {
       this.buried('openDeploymentTutorial', {
-        downLoadType: this.downLoadType
+        downLoadType: this.downLoadType,
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
       }/cloud/quick-start/install-agent/agent-on-${this.downLoadType.toLowerCase()}`
       window.open(href, '_blank')
-    }
-  }
+    },
+  },
 }
 </script>
 

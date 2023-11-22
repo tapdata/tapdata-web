@@ -26,6 +26,6 @@ export const IconLabel = observer(
           </FormItem.BaseItem>
         )
       }
-    }
-  })
+    },
+  }),
 )

@@ -1869,5 +1869,5 @@ export default {
   daas_role_role_yemianquanxian: 'Page Permission',
   daas_role_role_gongnengmokuai: 'Function Module',
   daas_role_role_gouxuanxiangyingmo:
-    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. '
+    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. ',
 }

@@ -8,9 +8,9 @@ import './styles.scss'
 export const TreeNodeWidget = observer(
   defineComponent({
     props: {
-      node: Object
+      node: Object,
     },
-    setup: props => {
+    setup: (props) => {
       const designerRef = useDesigner(props.node?.designerProps?.effects)
       const componentsRef = useComponents()
 
@@ -21,17 +21,17 @@ export const TreeNodeWidget = observer(
         const node = props.node
         const renderChildren = () => {
           if (node?.designerProps?.selfRenderChildren) return []
-          const children = node?.children?.map(child => {
+          const children = node?.children?.map((child) => {
             return <TreeNodeWidget key={child.id} node={child} />
           })
           return children
         }
-        const renderProps = extendsProps => {
+        const renderProps = (extendsProps) => {
           const props = {
             ...node.designerProps?.defaultProps,
             ...extendsProps,
             ...node.props,
-            ...node.designerProps?.getComponentProps?.(node)
+            ...node.designerProps?.getComponentProps?.(node),
           }
           /*if (node.depth === 0) {
             delete props.style
@@ -63,16 +63,16 @@ export const TreeNodeWidget = observer(
 
         return <TreeNodeContext.Provider value={node}>{renderComponent()}</TreeNodeContext.Provider>
       }
-    }
-  })
+    },
+  }),
 )
 
 export const ComponentTreeWidget = observer(
   defineComponent({
     props: {
-      components: Object
+      components: Object,
     },
-    setup: props => {
+    setup: (props) => {
       const treeRef = useTree()
       const prefix = usePrefix('component-tree')
       const designer = useDesigner()
@@ -93,6 +93,6 @@ export const ComponentTreeWidget = observer(
           </DesignerComponentsContext.Provider>
         </div>
       )
-    }
-  })
+    },
+  }),
 )

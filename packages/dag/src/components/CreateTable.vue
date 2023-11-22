@@ -33,17 +33,17 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 export default {
   name: 'CreateTable',
   props: {
-    dialog: Object
+    dialog: Object,
   },
   data() {
     return {
       flag: null,
       ruleForm: {
-        newTable: ''
+        newTable: '',
       },
       rules: {
         newTable: [
-          { required: true, trigger: 'blur' }
+          { required: true, trigger: 'blur' },
           // {
           //
           //   pattern: /^[a-zA-Z][0-9a-zA-Z_.-]*$/,
@@ -51,8 +51,8 @@ export default {
           //   message:
           //     this.dialog.type === 'table' ? this.$t('packages_dag_dialog_tableValidateTip') : this.$t('packages_dag_dialog_collectionValidateTip')
           // }
-        ]
-      }
+        ],
+      },
     }
   },
   methods: {
@@ -65,7 +65,7 @@ export default {
     // 子组件校验，传递到父组件
     validateForm() {
       let flag = null
-      this.$refs['ruleForm'].validate(valid => {
+      this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           flag = true
         } else {
@@ -85,8 +85,8 @@ export default {
           $emit(this, 'handleTable', this.ruleForm.newTable)
         }
       }
-    }
+    },
   },
-  emits: ['handleTable']
+  emits: ['handleTable'],
 }
 </script>

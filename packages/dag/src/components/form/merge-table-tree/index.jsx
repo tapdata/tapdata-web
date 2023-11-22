@@ -14,7 +14,7 @@ export const MergeTableTree = observer(
       value: Array,
       disabled: Boolean,
       findNodeById: Function,
-      loadFieldsMethod: Function
+      loadFieldsMethod: Function,
     },
     setup(props, { emit, refs, root }) {
       const formRef = useForm()
@@ -23,15 +23,15 @@ export const MergeTableTree = observer(
       const treeRef = ref([])
       const currentKey = ref('')
       const currentPath = ref('')
-      const setPath = pathArr => {
+      const setPath = (pathArr) => {
         const path = pathArr.join('.children.')
         currentPath.value = path
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.mergeType`, {
-            display: 'hidden'
+            display: 'hidden',
           })
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
-            visible: false
+            visible: false,
           })
         }
         return path
@@ -39,17 +39,17 @@ export const MergeTableTree = observer(
 
       watch(
         treeRef,
-        val => {
+        (val) => {
           emit('change', JSON.parse(JSON.stringify(val)))
         },
-        { deep: true }
+        { deep: true },
       )
 
       const makeTree = () => {
         const $inputs = formRef.value.values.$inputs
-        const traverse = children => {
+        const traverse = (children) => {
           const filter = []
-          children.forEach(item => {
+          children.forEach((item) => {
             if (!$inputs.includes(item.id) && item.children?.length) {
               filter.push(...traverse(item.children))
             } else if ($inputs.includes(item.id) && item.children?.length) {
@@ -66,7 +66,7 @@ export const MergeTableTree = observer(
         }
         let filterIdMap = {}
         let newTree = traverse(JSON.parse(JSON.stringify(props.value)))
-        $inputs.forEach(id => {
+        $inputs.forEach((id) => {
           if (!filterIdMap[id]) {
             const node = props.findNodeById(id)
             newTree.push({
@@ -75,7 +75,7 @@ export const MergeTableTree = observer(
               targetPath: null,
               tableName: node.name,
               // joinKeys: [],
-              children: []
+              children: [],
             })
           }
         })
@@ -117,12 +117,12 @@ export const MergeTableTree = observer(
         )
       }
 
-      const updatePath = node => {
+      const updatePath = (node) => {
         const temp = []
         const nodePath = refs.tree.getNodePath(node)
         nodePath.reduce((parent, item) => {
           if (parent) {
-            temp.push(parent.findIndex(p => p.id === item.id))
+            temp.push(parent.findIndex((p) => p.id === item.id))
           }
           return item.children
         }, treeRef.value)
@@ -132,16 +132,16 @@ export const MergeTableTree = observer(
 
       const loadTargetField = (selfId, selfPath) => {
         form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-          loading: true
+          loading: true,
         })
-        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then(fields => {
+        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then((fields) => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
-            dataSource: fields.map(item => ({
+            dataSource: fields.map((item) => ({
               label: item.field_name,
               value: item.field_name,
-              isPrimaryKey: item.primary_key_position > 0
-            }))
+              isPrimaryKey: item.primary_key_position > 0,
+            })),
           })
         })
       }
@@ -149,16 +149,16 @@ export const MergeTableTree = observer(
       const loadField = (selfId, selfPath, ifWait) => {
         const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
-        props.loadFieldsMethod(selfId).then(fields => {
+        props.loadFieldsMethod(selfId).then((fields) => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
-            dataSource: fields
+            dataSource: fields,
           })
         })
 
         if (ifWait) {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
-            loading: true
+            loading: true,
           })
           // 等待自动保存接口响应后查询
           let unwatch = root.$watch(
@@ -166,7 +166,7 @@ export const MergeTableTree = observer(
             () => {
               unwatch()
               loadTargetField(selfId, selfPath)
-            }
+            },
           )
         } else {
           loadTargetField(selfId, selfPath)
@@ -216,7 +216,7 @@ export const MergeTableTree = observer(
                 expandOnClickNode={false}
                 draggable={!props.disabled}
                 scopedSlots={{
-                  default: renderNode
+                  default: renderNode,
                 }}
                 vOn:current-change={handleCurrentChange}
                 vOn:node-drop={handleNodeDrop}
@@ -230,15 +230,15 @@ export const MergeTableTree = observer(
                     props: {
                       onlyRenderProperties: true,
                       name: currentPath.value,
-                      schema: schemaRef.value.items
-                    }
+                      schema: schemaRef.value.items,
+                    },
                   },
-                  {}
+                  {},
                 )}
             </div>
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

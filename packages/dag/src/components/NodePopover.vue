@@ -29,19 +29,19 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'NodePopover',
   props: {
-    popover: {}
+    popover: {},
   },
   components: {
-    ElScrollbar: Select.components.ElScrollbar
+    ElScrollbar: Select.components.ElScrollbar,
   },
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes'])
+    ...mapGetters('dataflow', ['processorNodeTypes']),
   },
   methods: {
     handleClick(node) {
       $emit(this, 'click-node', node)
-    }
+    },
   },
-  emits: ['click-node']
+  emits: ['click-node'],
 }
 </script>

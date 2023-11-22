@@ -9,7 +9,7 @@
     <ul class="deployMethod-ul mt-4">
       <li
         :class="{
-          active: platform === 'fullManagement'
+          active: platform === 'fullManagement',
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden mb-4"
         @click="$emit('changePlatform', 'fullManagement')"
@@ -32,7 +32,7 @@
       </li>
       <li
         :class="{
-          active: platform === 'selfHost'
+          active: platform === 'selfHost',
         }"
         class="flex flex-column position-relative cursor-pointer overflow-hidden"
         @click="$emit('changePlatform', 'selfHost')"
@@ -64,7 +64,7 @@ export default {
   name: 'Account',
   props: ['platform'],
   components: { VIcon },
-  emits: ['changePlatform']
+  emits: ['changePlatform'],
 }
 </script>
 

@@ -5,5 +5,5 @@ export const FormContent = defineComponent({
     return () => {
       return <div style="display: contents">{slots.default?.()}</div>
     }
-  }
+  },
 })

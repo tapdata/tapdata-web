@@ -48,6 +48,6 @@ export const SettingsPanel = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

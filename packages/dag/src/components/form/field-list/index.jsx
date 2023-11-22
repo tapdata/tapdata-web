@@ -18,8 +18,8 @@ export const fieldList = observer(
       return () => {
         return <Main ref="fieldList" form={form} attrs={attrs} on={listeners} />
       }
-    }
-  })
+    },
+  }),
 )
 
 export default fieldList

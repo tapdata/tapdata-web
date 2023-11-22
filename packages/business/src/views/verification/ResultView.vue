@@ -148,10 +148,10 @@ import { VIcon } from '@tap/component'
 export default {
   components: {
     JsonViewer,
-    VIcon
+    VIcon,
   },
   props: {
-    remoteMethod: Function
+    remoteMethod: Function,
   },
   data() {
     return {
@@ -159,7 +159,7 @@ export default {
       page: {
         current: 1,
         size: 20,
-        total: 0
+        total: 0,
       },
       showAdvancedVerification: false,
       statsInfo: {},
@@ -167,13 +167,13 @@ export default {
       showType: 'diff',
       sourceSortColumn: [], // 源索引字段
       targetSortColumn: [], // 目标索引字段
-      inspectMethod: ''
+      inspectMethod: '',
     }
   },
   computed: {
     filterResultList() {
-      return this.resultList?.filter(t => !!t.details) || []
-    }
+      return this.resultList?.filter((t) => !!t.details) || []
+    },
   },
   methods: {
     fetch(current) {
@@ -187,7 +187,7 @@ export default {
             showAdvancedVerification,
             sourceSortColumn,
             targetSortColumn,
-            inspectMethod
+            inspectMethod,
           }) => {
             if (statsInfo?.result === 'failed') {
               let countResultText = ''
@@ -216,7 +216,7 @@ export default {
             this.sourceSortColumn = sourceSortColumn
             this.targetSortColumn = targetSortColumn
             this.inspectMethod = inspectMethod
-          }
+          },
         )
         .finally(() => {
           this.loading = false
@@ -224,7 +224,7 @@ export default {
     },
 
     getDetailsList(data = []) {
-      data.forEach(el => {
+      data.forEach((el) => {
         if (this.sourceSortColumn.includes(el.source.key)) {
           el.source.isSortColumn = true
         }
@@ -233,9 +233,9 @@ export default {
         }
       })
       if (this.showType === 'all') return data
-      return data.filter(t => !!t.red)
-    }
-  }
+      return data.filter((t) => !!t.red)
+    },
+  },
 }
 </script>
 

@@ -35,7 +35,7 @@ import VIcon from '../../base/VIcon.vue'
 export default {
   name: 'TextEditable',
   components: {
-    VIcon
+    VIcon,
   },
   props: {
     value: String,
@@ -46,27 +46,27 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_input_placeholder')
-      }
+      },
     },
     hiddenIcon: Boolean,
     maxlength: {
       type: Number,
-      default: 30
-    }
+      default: 30,
+    },
   },
   computed: {
     style() {
       const maxWidth = this.maxWidth
       return {
-        maxWidth: maxWidth && !isNaN(maxWidth) ? `${maxWidth}px` : maxWidth
+        maxWidth: maxWidth && !isNaN(maxWidth) ? `${maxWidth}px` : maxWidth,
       }
     },
     inputStyle() {
       const width = this.inputMinWidth
       return {
-        minWidth: width && !isNaN(width) ? `${width}px` : width
+        minWidth: width && !isNaN(width) ? `${width}px` : width,
       }
-    }
+    },
   },
   watch: {
     value: {
@@ -75,8 +75,8 @@ export default {
 
       handler() {
         this.updateStyle()
-      }
-    }
+      },
+    },
   },
   methods: {
     handleInput(event) {
@@ -97,9 +97,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.input.style.width = this.$refs.shadow.clientWidth + 'px'
       })
-    }
+    },
   },
-  emits: ['update:value', 'change']
+  emits: ['update:value', 'change'],
 }
 </script>
 

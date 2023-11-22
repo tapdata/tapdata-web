@@ -251,8 +251,8 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   components: {
     TextEditable,
@@ -260,7 +260,7 @@ export default {
     VDivider,
     VIcon,
     ElScrollbar: Select.components.ElScrollbar,
-    VEmpty
+    VEmpty,
   },
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -272,11 +272,11 @@ export default {
       syncMap: {
         'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
         initial_sync: this.$t('public_task_type_initial_sync'),
-        cdc: this.$t('public_task_type_cdc')
+        cdc: this.$t('public_task_type_cdc'),
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: ''
+      nodeSearchInput: '',
     }
   },
   computed: {
@@ -294,15 +294,15 @@ export default {
     nodeList() {
       if (this.nodeSearchInput) {
         const txt = this.nodeSearchInput.toLocaleLowerCase()
-        return this.allNodes.filter(node => node.name.toLocaleLowerCase().includes(txt))
+        return this.allNodes.filter((node) => node.name.toLocaleLowerCase().includes(txt))
       }
       return this.allNodes
-    }
+    },
   },
   watch: {
     dataflowName(v) {
       this.name = v
-    }
+    },
   },
   mounted() {
     this.name = this.dataflowName
@@ -311,7 +311,7 @@ export default {
     ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed', 'toggleConsole']),
 
     isShowForceStop(data) {
-      return data?.length && data.every(t => ['stopping'].includes(t.status))
+      return data?.length && data.every((t) => ['stopping'].includes(t.status))
     },
 
     onNameInputChange() {
@@ -332,14 +332,14 @@ export default {
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
-            name: 'Task'
+            name: 'Task',
           })
         } else {
           this.$router.push({
             name: 'dataFlows',
             query: {
-              mapping: mapping
-            }
+              mapping: mapping,
+            },
           })
         }
       }
@@ -349,7 +349,7 @@ export default {
     handleClickNode(node) {
       this.showSearchNodePopover = false
       $emit(this, 'locate-node', node)
-    }
+    },
   },
   emits: [
     'page-return',
@@ -387,8 +387,8 @@ export default {
     'edit',
     'forceStop',
     'stop',
-    'start'
-  ]
+    'start',
+  ],
 }
 </script>
 
@@ -505,7 +505,9 @@ $sidebarBg: #fff;
     outline: none;
     border: 1px solid transparent;
     border-radius: $radius;
-    transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition:
+      background,
+      color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
     cursor: pointer;
 
     &.active,

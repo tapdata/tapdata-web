@@ -92,7 +92,7 @@
           v-for="node in nodes"
           :key="node.id"
           :class="{
-            active: selectedNodeId === node.id
+            active: selectedNodeId === node.id,
           }"
           :node="node"
           :id="node.id"
@@ -160,8 +160,8 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
   data() {
@@ -182,7 +182,7 @@ export default {
       schemaLoading: false,
       targetNodeSchemaLoading: false,
       selectedNodeId: '',
-      loadingSchemaNodeId: ''
+      loadingSchemaNodeId: '',
     }
   },
   computed: {
@@ -210,9 +210,9 @@ export default {
     },
 
     tableOptions() {
-      return this.nodes.map(node => ({
+      return this.nodes.map((node) => ({
         label: node.tableNode.tableName,
-        value: node.id
+        value: node.id,
       }))
     },
 
@@ -230,7 +230,7 @@ export default {
         }
         return map
       }, {})
-    }
+    },
   },
   watch: {
     async visible(val) {
@@ -247,13 +247,13 @@ export default {
       this.loading = false
       this.handleAutoLayout()
       this.watchMergeProperties()
-    }
+    },
   },
   mounted() {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
       this.visible && !this.disabled && this.handleDelete()
     })
-    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
+    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], (e) => {
       e.preventDefault()
       this.visible && this.handleAutoLayout()
     })
@@ -270,7 +270,7 @@ export default {
           console.log('watchMergeProperties')
           this.updateDag({ vm: this })
         },
-        { deep: true }
+        { deep: true },
       )
     },
 
@@ -279,12 +279,12 @@ export default {
     },
 
     handleCenterContent() {
-      const allNodes = this.viewNodes.map(node => {
+      const allNodes = this.viewNodes.map((node) => {
         return {
           id: node.id,
           attrs: {
-            position: this.nodePositionMap[node.id]
-          }
+            position: this.nodePositionMap[node.id],
+          },
         }
       })
       this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
@@ -306,11 +306,11 @@ export default {
       const childrenNodes = node.children
       const parentNode = this.nodeMap[node.parentId]
       const { parentId = this.targetNode?.id } = node
-      const index = this.nodes.findIndex(n => n.id === id)
+      const index = this.nodes.findIndex((n) => n.id === id)
       ~index && this.nodes.splice(index, 1)
 
       if (parentNode) {
-        const indexOfParent = parentNode.children.findIndex(n => n.id === id)
+        const indexOfParent = parentNode.children.findIndex((n) => n.id === id)
         ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
         parentNode.children.push(...childrenNodes)
 
@@ -319,7 +319,7 @@ export default {
         this.inputsMap[parentNode.id].splice(oldIndex, 1)
       } else {
         const { mergeProperties } = this.activeNode
-        const index = mergeProperties.findIndex(n => n.id === id)
+        const index = mergeProperties.findIndex((n) => n.id === id)
         ~index && mergeProperties.splice(index, 1)
         mergeProperties.push(...childrenNodes)
       }
@@ -337,7 +337,7 @@ export default {
         if (parentId) {
           this.inputsMap[parentId].push(childId)
           this.jsPlumbIns.connect({
-            uuids: [childId + '_source', parentId + '_target']
+            uuids: [childId + '_source', parentId + '_target'],
           })
         }
 
@@ -369,11 +369,11 @@ export default {
 
       if (ifMyself && !parentIds.length) return [node]
 
-      parentIds.forEach(pid => {
+      parentIds.forEach((pid) => {
         let parent = this.nodeById(pid)
         if (parent) {
           if (parent.$inputs?.length) {
-            parent.$inputs.forEach(ppid => {
+            parent.$inputs.forEach((ppid) => {
               parents.push(...this.findParentNodes(ppid, true))
             })
           } else {
@@ -456,7 +456,7 @@ export default {
         await this.$nextTick()
         edges.forEach(({ source, target }) => {
           this.jsPlumbIns.connect({
-            uuids: [`${source}_source`, `${target}_target`]
+            uuids: [`${source}_source`, `${target}_target`],
           })
         })
       }
@@ -471,11 +471,11 @@ export default {
         this,
         'add-node',
         {
-          children: mergeProperties
+          children: mergeProperties,
         },
         {
-          mergeType: 'updateOrInsert' // 主表默认是更新已存在或插入新数据
-        }
+          mergeType: 'updateOrInsert', // 主表默认是更新已存在或插入新数据
+        },
       )
     },
 
@@ -506,20 +506,20 @@ export default {
         ranksep: 120,
         marginx: 50,
         marginy: 50,
-        rankdir: 'LR'
+        rankdir: 'LR',
       })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         let { width, height } = document.getElementById(n.id)?.getBoundingClientRect() || {}
         width /= scale
         height /= scale
         dg.setNode(n.id, { width, height })
       })
 
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
@@ -527,7 +527,7 @@ export default {
 
       this.jsPlumbIns.setSuspendDrawing(true)
 
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -539,12 +539,12 @@ export default {
       this.$nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
         // this.$refs.paperScroller.initVisibleArea()
-        const allNodes = this.viewNodes.map(node => {
+        const allNodes = this.viewNodes.map((node) => {
           return {
             id: node.id,
             attrs: {
-              position: this.nodePositionMap[node.id]
-            }
+              position: this.nodePositionMap[node.id],
+            },
           }
         })
         this.$refs.paperScroller.autoResizePaper(allNodes, '')
@@ -564,8 +564,8 @@ export default {
     async loadSchema() {
       this.schemaLoading = true
       const params = {
-        nodeIds: this.viewNodes.map(node => node.id).join(','),
-        fields: ['original_name', 'fields', 'qualified_name']
+        nodeIds: this.viewNodes.map((node) => node.id).join(','),
+        fields: ['original_name', 'fields', 'qualified_name'],
       }
       const data = await metadataInstancesApi.getNodeSchemaMapByIds(params)
 
@@ -584,7 +584,7 @@ export default {
       }, {})
 
       this.nodeSchemaMap[nodeId] = fields
-        .map(item => {
+        .map((item) => {
           item.dataType = item.data_type.replace(/\(.+\)/, '')
           item.indicesUnique = !!columnsMap[item.field_name]
           item.isPrimaryKey = item.primary_key_position > 0
@@ -614,10 +614,10 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: 1,
-        pageSize: 20
+        pageSize: 20,
       }
       const {
-        items: [schema = {}]
+        items: [schema = {}],
       } = await metadataInstancesApi.nodeSchemaPage(params)
       this.setNodeSchema(nodeId, schema)
     },
@@ -668,7 +668,7 @@ export default {
       if (!this.checkMainTable(node)) {
         if (arr.length > 1) {
           const parentPath = arr.slice(0, arr.length - 1).join('.')
-          const parentNode = this.nodes.find(node => node.targetPath === parentPath)
+          const parentNode = this.nodes.find((node) => node.targetPath === parentPath)
           parentId = parentNode?.id || parentId
         }
 
@@ -692,7 +692,7 @@ export default {
       let newTargetInputs = this.inputsMap[newTarget]
       const connectionIns = this.jsPlumbIns.getConnections({
         source,
-        target
+        target,
       })[0]
 
       if (!newTargetInputs) {
@@ -706,7 +706,7 @@ export default {
       newTargetInputs.push(source)
       this.jsPlumbIns.deleteConnection(connectionIns)
       this.jsPlumbIns.connect({
-        uuids: [source + '_source', newTarget + '_target']
+        uuids: [source + '_source', newTarget + '_target'],
       })
       this.handleAutoLayout()
     },
@@ -733,7 +733,7 @@ export default {
 
         this.$nextTick(() => {
           this.jsPlumbIns.connect({
-            uuids: [node.id + '_source', node.parentId + '_target']
+            uuids: [node.id + '_source', node.parentId + '_target'],
           })
           this.handleAutoLayout()
         })
@@ -747,12 +747,12 @@ export default {
       let inputs = this.inputsMap[node.id]
       this.nodePositionMap[node.id] = [0, 0] // 初始化坐标
       await this.$nextTick()
-      mergeProperties.forEach(item => {
+      mergeProperties.forEach((item) => {
         item.parentId = node.id
         inputs.push(item.id)
         this.outputsMap[item.id] = [node.id]
         this.jsPlumbIns.connect({
-          uuids: [item.id + '_source', node.id + '_target']
+          uuids: [item.id + '_source', node.id + '_target'],
         })
       })
       this.handleAutoLayout()
@@ -788,7 +788,7 @@ export default {
     },
 
     afterTaskSaved() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           if (this.taskSaving) {
             let unwatch = this.$watch('taskSaving', () => {
@@ -802,9 +802,9 @@ export default {
       })
     },
 
-    getNodeById() {}
+    getNodeById() {},
   },
-  emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node']
+  emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node'],
 }
 </script>
 
@@ -827,7 +827,9 @@ $sidebarBg: #fff;
   outline: none;
   border: 1px solid transparent;
   border-radius: $radius;
-  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition:
+    background,
+    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   cursor: pointer;
   &.active,
   &:hover {

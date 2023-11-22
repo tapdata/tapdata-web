@@ -195,7 +195,7 @@ export class Viewport {
       height: observable.ref,
       digestViewport: action,
       viewportElement: observable.ref,
-      contentWindow: observable.ref
+      contentWindow: observable.ref,
     })
   }
 
@@ -203,7 +203,7 @@ export class Viewport {
     return this.selector.query(
       this.viewportRoot,
       `*[${this.nodeIdAttrName}='${id}']
-      `
+      `,
     )
   }
 
@@ -212,7 +212,7 @@ export class Viewport {
     return this.selector.queryAll(
       this.viewportRoot,
       `*[${this.nodeIdAttrName}='${id}']
-      `
+      `,
     )
   }
 
@@ -226,12 +226,12 @@ export class Viewport {
     if (this.isIframe) {
       return {
         x: topPoint.x - this.offsetX + (this.contentWindow?.scrollX ?? 0),
-        y: topPoint.y - this.offsetY + (this.contentWindow?.scrollY ?? 0)
+        y: topPoint.y - this.offsetY + (this.contentWindow?.scrollY ?? 0),
       }
     } else {
       return {
         x: topPoint.x - this.offsetX + (this.viewportElement?.scrollLeft ?? 0),
-        y: topPoint.y - this.offsetY + (this.viewportElement?.scrollTop ?? 0)
+        y: topPoint.y - this.offsetY + (this.viewportElement?.scrollTop ?? 0),
       }
     }
   }
@@ -246,7 +246,7 @@ export class Viewport {
         rect.x,
         rect.y,
         this.scale !== 1 ? offsetWidth : rect.width,
-        this.scale !== 1 ? offsetHeight : rect.height
+        this.scale !== 1 ? offsetHeight : rect.height,
       )
     )
   }
@@ -257,7 +257,7 @@ export class Viewport {
    */
   getElementRectById(id) {
     const elements = this.findElementsById(id)
-    const rect = calcBoundingRect(elements.map(element => this.getElementRect(element)))
+    const rect = calcBoundingRect(elements.map((element) => this.getElementRect(element)))
     if (rect) {
       if (this.isIframe) {
         return (
@@ -277,7 +277,7 @@ export class Viewport {
   getElementOffsetRectById(id) {
     const elements = this.findElementsById(id)
     if (!elements.length) return
-    const elementRect = calcBoundingRect(elements.map(element => this.getElementRect(element)))
+    const elementRect = calcBoundingRect(elements.map((element) => this.getElementRect(element)))
     if (elementRect) {
       if (this.isIframe) {
         return (
@@ -286,7 +286,7 @@ export class Viewport {
             elementRect.x + this.contentWindow.scrollX,
             elementRect.y + this.contentWindow.scrollY,
             elementRect.width,
-            elementRect.height
+            elementRect.height,
           )
         )
       } else {
@@ -296,7 +296,7 @@ export class Viewport {
             (elementRect.x - this.offsetX + this.viewportElement.scrollLeft) / this.scale,
             (elementRect.y - this.offsetY + this.viewportElement.scrollTop) / this.scale,
             elementRect.width,
-            elementRect.height
+            elementRect.height,
           )
         )
       }
@@ -304,7 +304,7 @@ export class Viewport {
   }
 
   getValidNodeElement(node) {
-    const getNodeElement = node => {
+    const getNodeElement = (node) => {
       if (!node) return
       const ele = this.findElementById(node.id)
       if (ele) {
@@ -326,7 +326,7 @@ export class Viewport {
           return buf.concat(rect)
         }
         return buf
-      }, [])
+      }, []),
     )
   }
 
@@ -340,7 +340,7 @@ export class Viewport {
           return buf.concat(rect)
         }
         return buf
-      }, [])
+      }, []),
     )
   }
 

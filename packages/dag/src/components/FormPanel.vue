@@ -15,19 +15,19 @@ import FormRender from './FormRender'
 import { getSchema } from '../util'
 import { debounce } from 'lodash'
 
-const mapEnum = dataSource => (item, index) => {
+const mapEnum = (dataSource) => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
   return {
     ...item,
     value: item?.value ?? null,
-    label: label?.label ?? label
+    label: label?.label ?? label,
   }
 }
 
 export default {
   name: 'FormPanel',
   props: {
-    scope: {}
+    scope: {},
   },
   components: { FormRender },
   data() {
@@ -41,10 +41,10 @@ export default {
         // labelWidth: '120',
         layout: 'vertical',
         // layout: 'horizontal',
-        feedbackLayout: 'terse'
+        feedbackLayout: 'terse',
       },
 
-      schema: null
+      schema: null,
     }
   },
   computed: {
@@ -58,7 +58,7 @@ export default {
       'hasNodeError',
       'allEdges',
       'stateIsReadonly',
-      'getMessage'
+      'getMessage',
     ]),
 
     node() {
@@ -67,7 +67,7 @@ export default {
 
     ins() {
       return this.node?.__Ctor
-    }
+    },
   },
   watch: {
     stateIsReadonly(v) {
@@ -116,7 +116,7 @@ export default {
               // 节点的特殊处理，直接拿表单校验结果设置错误信息
               this.setNodeErrorMsg({
                 id: node.id,
-                msg: e[0].messages[0]
+                msg: e[0].messages[0],
               })
             } else {
               this.setNodeError(node.id)
@@ -125,29 +125,29 @@ export default {
         }
 
         this.setNodeInputsWatcher(
-          this.$watch('node.$inputs', v => {
+          this.$watch('node.$inputs', (v) => {
             if (!this.node || !v) return
             const $inputs = this.form.getFieldState('$inputs')
             if ($inputs && $inputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$inputs', [...v])
               $emit(this, 'update:InputsOrOutputs')
             }
-          })
+          }),
         )
         this.setNodeOutputsWatcher(
-          this.$watch('node.$outputs', v => {
+          this.$watch('node.$outputs', (v) => {
             if (!this.node || !v) return
             const $outputs = this.form.getFieldState('$outputs')
             if ($outputs && $outputs.value.join(',') !== v.join(',')) {
               this.form.setValuesIn('$outputs', [...v])
               $emit(this, 'update:InputsOrOutputs')
             }
-          })
+          }),
         )
       },
 
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   created() {
     this.lazySaveNodeAlarmConfig = debounce(this.saveNodeAlarmConfig, 100)
@@ -163,7 +163,7 @@ export default {
       'setNodeErrorMsg',
       'clearNodeError',
       'setNodeInputsWatcher',
-      'setNodeOutputsWatcher'
+      'setNodeOutputsWatcher',
     ]),
 
     ...mapActions('dataflow', ['updateDag']),
@@ -183,7 +183,7 @@ export default {
           // 节点的特殊处理，直接拿表单校验结果设置错误信息
           this.setNodeErrorMsg({
             id: this.node.id,
-            msg: e[0].messages[0]
+            msg: e[0].messages[0],
           })
         } else {
           this.setNodeError(id)
@@ -200,7 +200,7 @@ export default {
       this.form = createForm({
         disabled: this.stateIsReadonly,
         values,
-        effects: this.useEffects
+        effects: this.useEffects,
       })
 
       this.schema = getSchema(schema, values, this.$store.state.dataflow.pdkPropertiesMap)
@@ -224,12 +224,12 @@ export default {
       const formValues = JSON.parse(JSON.stringify(form.values))
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
 
-      filterProps.forEach(path => {
+      filterProps.forEach((path) => {
         Path.setIn(formValues, path, undefined)
       })
       this.updateNodeProperties({
         id: form.values.id,
-        properties: JSON.parse(JSON.stringify(formValues))
+        properties: JSON.parse(JSON.stringify(formValues)),
       })
       this.updateDag({ vm: this })
       clearTimeout(this.confirmTimer)
@@ -238,14 +238,14 @@ export default {
 
     // 绑定表单事件
     useEffects() {
-      onFormValuesChange(form => {
+      onFormValuesChange((form) => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
         console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
         this.updateNodePropsDebounce(form)
       })
 
-      onFormInputChange(form => {
+      onFormInputChange((form) => {
         if (this.stateIsReadonly) return
         // eslint-disable-next-line no-console
         console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
@@ -270,15 +270,15 @@ export default {
     saveNodeAlarmConfig() {
       this.updateNodeProperties({
         id: this.form.values.id,
-        properties: JSON.parse(JSON.stringify(this.form.values))
+        properties: JSON.parse(JSON.stringify(this.form.values)),
       })
 
       taskApi.patch({
         id: this.$store.state.dataflow.taskId,
-        dag: this.$store.state.dataflow.dag
+        dag: this.$store.state.dataflow.dag,
       })
-    }
+    },
   },
-  emits: ['update:InputsOrOutputs', 'setSchema']
+  emits: ['update:InputsOrOutputs', 'setSchema'],
 }
 </script>

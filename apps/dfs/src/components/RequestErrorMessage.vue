@@ -45,8 +45,8 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -58,7 +58,7 @@ export default {
       errorTitle: i18n.t('RequestErrorMessage_error_title'),
       codeLabel: i18n.t('RequestErrorMessage_code_label'),
       reqIdLabel: i18n.t('RequestErrorMessage_req_id_label'),
-      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label')
+      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label'),
     }
   },
   computed: {
@@ -70,7 +70,7 @@ export default {
     },
     message() {
       return this.errData.message
-    }
+    },
   },
   methods: {
     onCopy() {
@@ -79,8 +79,8 @@ export default {
     },
     clickItem() {
       this.expand = !this.expand
-    }
-  }
+    },
+  },
 }
 </script>
 

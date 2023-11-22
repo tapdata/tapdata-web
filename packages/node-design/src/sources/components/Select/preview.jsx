@@ -9,11 +9,11 @@ export const Select = FormSelect
 Select.Behavior = createBehavior({
   name: 'Select',
   extends: ['Field'],
-  selector: node => node.props['x-component'] === 'Select',
+  selector: (node) => node.props['x-component'] === 'Select',
   designerProps: {
-    propsSchema: createFieldSchema(AllSchemas.Select, null, true)
+    propsSchema: createFieldSchema(AllSchemas.Select, null, true),
   },
-  designerLocales: AllLocales.Select
+  designerLocales: AllLocales.Select,
 })
 
 Select.Resource = createResource({
@@ -24,8 +24,8 @@ Select.Resource = createResource({
       props: {
         title: 'Select',
         'x-decorator': 'FormItem',
-        'x-component': 'Select'
-      }
-    }
-  ]
+        'x-component': 'Select',
+      },
+    },
+  ],
 })

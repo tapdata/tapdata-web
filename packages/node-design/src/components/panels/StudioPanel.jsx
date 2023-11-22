@@ -18,5 +18,5 @@ export const StudioPanel = defineComponent({
         </div>
       </Layout>
     )
-  }
+  },
 })

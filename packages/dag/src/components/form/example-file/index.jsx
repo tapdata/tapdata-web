@@ -18,8 +18,8 @@ export const ExpressionExample = connect(
             this.form.setValuesIn('Example', v)
             $emit(this, 'change', v)
             console.log('scripts', v) // eslint-disable-line
-          }
-        }
+          },
+        },
       },
 
       render() {
@@ -112,10 +112,10 @@ export const ExpressionExample = connect(
             </table>
           </div>
         )
-      }
-    })
+      },
+    }),
   ),
-  mapProps({ dataSource: 'options' })
+  mapProps({ dataSource: 'options' }),
 )
 
 export default ExpressionExample

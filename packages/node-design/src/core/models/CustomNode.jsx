@@ -34,7 +34,7 @@ export class CustomNode {
   makeObservable() {
     define(this, {
       name: observable.ref,
-      template: observable.ref
+      template: observable.ref,
     })
   }
 
@@ -53,7 +53,7 @@ export class CustomNode {
       name: this.name,
       desc: this.desc,
       formSchema: this.formSchema,
-      template: this.template
+      template: this.template,
     }
   }
 

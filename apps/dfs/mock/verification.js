@@ -30,9 +30,9 @@ module.exports = {
                   { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '61052dec2e7c8d004f2bd257' },
                   { field_name: 'CLAIM_ID', primary_key_position: 1, id: '61052dec2e7c8d004f2bd255' },
                   { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25a' },
-                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25c' }
+                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25c' },
                 ],
-                connectionName: 'jason-oracle12c'
+                connectionName: 'jason-oracle12c',
               },
               target: {
                 connectionId: '61052dbc2e7c8d004f2bca22',
@@ -47,16 +47,16 @@ module.exports = {
                   { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '61052dec2e7c8d004f2bd257' },
                   { field_name: 'CLAIM_ID', primary_key_position: 1, id: '61052dec2e7c8d004f2bd255' },
                   { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25a' },
-                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25c' }
+                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '61052dec2e7c8d004f2bd25c' },
                 ],
-                connectionName: 'jason-oracle12c'
+                connectionName: 'jason-oracle12c',
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60ded447412e0b08d632d9c3-'
-            }
+              taskId: '60ded447412e0b08d632d9c3-',
+            },
           ],
           dataFlowName: '数据校验测试',
           status: 'done',
@@ -94,7 +94,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '61052dbc2e7c8d004f2bca22',
@@ -105,7 +105,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1628490933529,
                 end: 1628490933907,
@@ -121,8 +121,8 @@ module.exports = {
                 target_only: 0,
                 row_passed: 0,
                 row_failed: 1,
-                speed: 1
-              }
+                speed: 1,
+              },
             ],
             spendMilli: 0,
             inspect: {
@@ -149,7 +149,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '61052dbc2e7c8d004f2bca22',
@@ -160,16 +160,16 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
-                }
+                  showAdvancedVerification: false,
+                },
               ],
               customId: null,
               user_id: '60fe2770bc5ed6eb0fa469b9',
-              byFirstCheckId: null
+              byFirstCheckId: null,
             },
             start: 1628490933350,
             end: 1628490934048,
@@ -179,8 +179,8 @@ module.exports = {
             parentId: '6110cc9725d71e00512d9c83',
             ttlTime: '2021-11-07T06:35:33.449Z',
             last_updated: '2021-08-09T06:35:34.104Z',
-            createTime: '2021-08-09T06:35:33.452Z'
-          }
+            createTime: '2021-08-09T06:35:33.452Z',
+          },
         },
         {
           id: '60e0677a650161005779cd96',
@@ -208,8 +208,8 @@ module.exports = {
                   { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60cda024f0e73a0067428cac' },
                   { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60cda024f0e73a0067428ca5' },
                   { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '60cda024f0e73a0067428ca7' },
-                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60cda024f0e73a0067428caa' }
-                ]
+                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60cda024f0e73a0067428caa' },
+                ],
               },
               target: {
                 connectionId: '60cda022f0e73a0067428c38',
@@ -227,15 +227,15 @@ module.exports = {
                   { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60dc35712340b60e00088d27' },
                   { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60dc35712340b60e00088d20' },
                   { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '60dc35712340b60e00088d22' },
-                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60dc35712340b60e00088d25' }
-                ]
+                  { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60dc35712340b60e00088d25' },
+                ],
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60e0677a650161005779cd95-'
-            }
+              taskId: '60e0677a650161005779cd95-',
+            },
           ],
           dataFlowName: 'js处理错误 (1)',
           status: 'error',
@@ -274,7 +274,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '60cda022f0e73a0067428c38',
@@ -285,7 +285,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1627458910796,
                 end: null,
@@ -302,8 +302,8 @@ module.exports = {
                 target_only: 0,
                 row_passed: 0,
                 row_failed: 0,
-                speed: 0
-              }
+                speed: 0,
+              },
             ],
             spendMilli: 0,
             inspect: {
@@ -330,7 +330,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '60cda022f0e73a0067428c38',
@@ -341,15 +341,15 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
-                }
+                  showAdvancedVerification: false,
+                },
               ],
               customId: null,
-              user_id: '60cd992ff0e73a006742801b'
+              user_id: '60cd992ff0e73a006742801b',
             },
             start: 1627458910733,
             end: 1627458910893,
@@ -357,8 +357,8 @@ module.exports = {
             customId: '',
             ttlTime: '2021-10-26T07:55:10.741Z',
             last_updated: '2021-07-28T07:55:10.903Z',
-            createTime: '2021-07-28T07:55:10.743Z'
-          }
+            createTime: '2021-07-28T07:55:10.743Z',
+          },
         },
         {
           id: '60e01f97b845410057c00b33',
@@ -385,8 +385,8 @@ module.exports = {
                   { field_name: 'claim_reason', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c655' },
                   { field_name: 'claim_id', primary_key_position: 1, id: '60df0b2e5fba4c0ae613c64e' },
                   { field_name: 'claim_date', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c650' },
-                  { field_name: 'claim_amount', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c653' }
-                ]
+                  { field_name: 'claim_amount', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c653' },
+                ],
               },
               target: {
                 connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -402,14 +402,14 @@ module.exports = {
                   { field_name: 'claim_reason', primary_key_position: 0, id: '60e005ae51a5080057a7769c' },
                   { field_name: 'claim_id', primary_key_position: 1, id: '60e005ae51a5080057a77695' },
                   { field_name: 'claim_date', primary_key_position: 0, id: '60e005ae51a5080057a77697' },
-                  { field_name: 'claim_amount', primary_key_position: 0, id: '60e005ae51a5080057a7769a' }
-                ]
+                  { field_name: 'claim_amount', primary_key_position: 0, id: '60e005ae51a5080057a7769a' },
+                ],
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60e01f97b845410057c00b31-'
+              taskId: '60e01f97b845410057c00b31-',
             },
             {
               source: {
@@ -433,8 +433,8 @@ module.exports = {
                   { field_name: 'date_of_birth', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f3' },
                   { field_name: 'customer_id', primary_key_position: 1, id: '60df0b2f5fba4c0ae613c9ea' },
                   { field_name: 'country_code', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f7' },
-                  { field_name: 'city', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f6' }
-                ]
+                  { field_name: 'city', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f6' },
+                ],
               },
               target: {
                 connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -457,15 +457,15 @@ module.exports = {
                   { field_name: 'date_of_birth', primary_key_position: 0, id: '60e01f59b845410057c00a50' },
                   { field_name: 'customer_id', primary_key_position: 1, id: '60e01f59b845410057c00a47' },
                   { field_name: 'country_code', primary_key_position: 0, id: '60e01f59b845410057c00a54' },
-                  { field_name: 'city', primary_key_position: 0, id: '60e01f59b845410057c00a53' }
-                ]
+                  { field_name: 'city', primary_key_position: 0, id: '60e01f59b845410057c00a53' },
+                ],
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60e01f97b845410057c00b32-'
-            }
+              taskId: '60e01f97b845410057c00b32-',
+            },
           ],
           dataFlowName: 'PG-2-MySQL-db-clone',
           status: 'done',
@@ -502,7 +502,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -513,7 +513,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1625300889381,
                 end: 1625300889618,
@@ -529,7 +529,7 @@ module.exports = {
                 target_only: 0,
                 row_passed: 1064,
                 row_failed: 0,
-                speed: 1064
+                speed: 1064,
               },
               {
                 taskId: '60e01f97b845410057c00b32-',
@@ -542,7 +542,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -553,7 +553,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1625300889660,
                 end: 1625300889764,
@@ -569,8 +569,8 @@ module.exports = {
                 target_only: 0,
                 row_passed: 640,
                 row_failed: 0,
-                speed: 640
-              }
+                speed: 640,
+              },
             ],
             spendMilli: 0,
             inspect: {
@@ -597,7 +597,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -608,11 +608,11 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
+                  showAdvancedVerification: false,
                 },
                 {
                   taskId: '60e01f97b845410057c00b32-',
@@ -629,7 +629,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -640,15 +640,15 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
-                }
+                  showAdvancedVerification: false,
+                },
               ],
               customId: null,
-              user_id: '5fe442543be62700959d27ca'
+              user_id: '5fe442543be62700959d27ca',
             },
             start: 1625300889317,
             end: 1625300889783,
@@ -656,8 +656,8 @@ module.exports = {
             customId: '',
             ttlTime: '2021-10-01T08:28:09.331Z',
             last_updated: '2021-07-03T08:28:09.795Z',
-            createTime: '2021-07-03T08:28:09.332Z'
-          }
+            createTime: '2021-07-03T08:28:09.332Z',
+          },
         },
         {
           id: '60e01f97b845410057c00b32',
@@ -684,8 +684,8 @@ module.exports = {
                   { field_name: 'claim_reason', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c655' },
                   { field_name: 'claim_id', primary_key_position: 1, id: '60df0b2e5fba4c0ae613c64e' },
                   { field_name: 'claim_date', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c650' },
-                  { field_name: 'claim_amount', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c653' }
-                ]
+                  { field_name: 'claim_amount', primary_key_position: 0, id: '60df0b2e5fba4c0ae613c653' },
+                ],
               },
               target: {
                 connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -701,14 +701,14 @@ module.exports = {
                   { field_name: 'claim_reason', primary_key_position: 0, id: '60e005ae51a5080057a7769c' },
                   { field_name: 'claim_id', primary_key_position: 1, id: '60e005ae51a5080057a77695' },
                   { field_name: 'claim_date', primary_key_position: 0, id: '60e005ae51a5080057a77697' },
-                  { field_name: 'claim_amount', primary_key_position: 0, id: '60e005ae51a5080057a7769a' }
-                ]
+                  { field_name: 'claim_amount', primary_key_position: 0, id: '60e005ae51a5080057a7769a' },
+                ],
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60e01f97b845410057c00b31-'
+              taskId: '60e01f97b845410057c00b31-',
             },
             {
               source: {
@@ -732,8 +732,8 @@ module.exports = {
                   { field_name: 'date_of_birth', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f3' },
                   { field_name: 'customer_id', primary_key_position: 1, id: '60df0b2f5fba4c0ae613c9ea' },
                   { field_name: 'country_code', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f7' },
-                  { field_name: 'city', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f6' }
-                ]
+                  { field_name: 'city', primary_key_position: 0, id: '60df0b2f5fba4c0ae613c9f6' },
+                ],
               },
               target: {
                 connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -756,15 +756,15 @@ module.exports = {
                   { field_name: 'date_of_birth', primary_key_position: 0, id: '60e01f59b845410057c00a50' },
                   { field_name: 'customer_id', primary_key_position: 1, id: '60e01f59b845410057c00a47' },
                   { field_name: 'country_code', primary_key_position: 0, id: '60e01f59b845410057c00a54' },
-                  { field_name: 'city', primary_key_position: 0, id: '60e01f59b845410057c00a53' }
-                ]
+                  { field_name: 'city', primary_key_position: 0, id: '60e01f59b845410057c00a53' },
+                ],
               },
               fullMatch: true,
               showAdvancedVerification: false,
               script: '',
               webScript: '',
-              taskId: '60e01f97b845410057c00b32-'
-            }
+              taskId: '60e01f97b845410057c00b32-',
+            },
           ],
           dataFlowName: 'PG-2-MySQL-db-clone',
           status: 'running',
@@ -801,7 +801,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -812,7 +812,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1625300889381,
                 end: 1625300889618,
@@ -828,7 +828,7 @@ module.exports = {
                 target_only: 0,
                 row_passed: 1064,
                 row_failed: 0,
-                speed: 1064
+                speed: 1064,
               },
               {
                 taskId: '60e01f97b845410057c00b32-',
@@ -841,7 +841,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 target: {
                   connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -852,7 +852,7 @@ module.exports = {
                   columns: null,
                   limit: 0,
                   skip: 0,
-                  where: null
+                  where: null,
                 },
                 start: 1625300889660,
                 end: 1625300889764,
@@ -868,8 +868,8 @@ module.exports = {
                 target_only: 0,
                 row_passed: 640,
                 row_failed: 0,
-                speed: 640
-              }
+                speed: 640,
+              },
             ],
             spendMilli: 0,
             inspect: {
@@ -896,7 +896,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -907,11 +907,11 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
+                  showAdvancedVerification: false,
                 },
                 {
                   taskId: '60e01f97b845410057c00b32-',
@@ -928,7 +928,7 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   target: {
                     connectionId: '60dfe0291bc5f7202a3dccf2',
@@ -939,15 +939,15 @@ module.exports = {
                     columns: null,
                     limit: 0,
                     skip: 0,
-                    where: null
+                    where: null,
                   },
                   limit: null,
                   script: '',
-                  showAdvancedVerification: false
-                }
+                  showAdvancedVerification: false,
+                },
               ],
               customId: null,
-              user_id: '5fe442543be62700959d27ca'
+              user_id: '5fe442543be62700959d27ca',
             },
             start: 1625300889317,
             end: 1625300889783,
@@ -955,14 +955,14 @@ module.exports = {
             customId: '',
             ttlTime: '2021-10-01T08:28:09.331Z',
             last_updated: '2021-07-03T08:28:09.795Z',
-            createTime: '2021-07-03T08:28:09.332Z'
-          }
-        }
+            createTime: '2021-07-03T08:28:09.332Z',
+          },
+        },
       ],
-      total: 30
+      total: 30,
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/Inspects/update': { data: { count: 1 }, code: 'ok', msg: 'ok' },
   '/tm/api/Inspects/findById': {
@@ -997,12 +997,12 @@ module.exports = {
               { id: '61726035a178450013aaeaba', field_name: 'CLAIM_REASON', primary_key_position: '0' },
               { id: '61726035a178450013aaeab3', field_name: 'CLAIM_ID', primary_key_position: '1' },
               { id: '61726035a178450013aaeab5', field_name: 'CLAIM_DATE', primary_key_position: '0' },
-              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' }
+              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' },
             ],
             connectionId: '61541309e2196530160a1881',
             connectionName: 'ldw_local',
             sortColumn: 'CLAIM_ID',
-            table: 'AUTO_CLAIM'
+            table: 'AUTO_CLAIM',
           },
           target: {
             fields: [
@@ -1014,15 +1014,15 @@ module.exports = {
               { id: '61726035a178450013aaeaba', field_name: 'CLAIM_REASON', primary_key_position: '0' },
               { id: '61726035a178450013aaeab3', field_name: 'CLAIM_ID', primary_key_position: '1' },
               { id: '61726035a178450013aaeab5', field_name: 'CLAIM_DATE', primary_key_position: '0' },
-              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' }
+              { id: '61726035a178450013aaeab8', field_name: 'CLAIM_AMOUNT', primary_key_position: '0' },
             ],
             connectionId: '6154154fe2196530160a1882',
             connectionName: 'ldw_local - Copy',
             sortColumn: 'CLAIM_ID',
-            table: 'AUTO_CLAIM'
+            table: 'AUTO_CLAIM',
           },
-          taskId: '6172603717e4396fb056da0e'
-        }
+          taskId: '6172603717e4396fb056da0e',
+        },
       ],
       status: 'done',
       agentTags: [],
@@ -1032,8 +1032,8 @@ module.exports = {
       scheduleTimes: 0,
       errorMsg: '',
       createTime: '2021-10-22T06:55:00.023+00:00',
-      last_updated: '2021-10-25T09:49:19.618+00:00'
-    }
+      last_updated: '2021-10-25T09:49:19.618+00:00',
+    },
   },
   '/tm/api/Inspects/findOne': {
     data: {
@@ -1062,8 +1062,8 @@ module.exports = {
               { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60cda024f0e73a0067428cac' },
               { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60cda024f0e73a0067428ca5' },
               { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '60cda024f0e73a0067428ca7' },
-              { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60cda024f0e73a0067428caa' }
-            ]
+              { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60cda024f0e73a0067428caa' },
+            ],
           },
           target: {
             connectionId: '60cda022f0e73a0067428c38',
@@ -1081,15 +1081,15 @@ module.exports = {
               { field_name: 'CLAIM_REASON', primary_key_position: 0, id: '60dc35712340b60e00088d27' },
               { field_name: 'CLAIM_ID', primary_key_position: 1, id: '60dc35712340b60e00088d20' },
               { field_name: 'CLAIM_DATE', primary_key_position: 0, id: '60dc35712340b60e00088d22' },
-              { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60dc35712340b60e00088d25' }
-            ]
+              { field_name: 'CLAIM_AMOUNT', primary_key_position: 0, id: '60dc35712340b60e00088d25' },
+            ],
           },
           fullMatch: true,
           showAdvancedVerification: false,
           script: '',
           webScript: '',
-          taskId: '60dc5bf4fdbc9e17646376bd-'
-        }
+          taskId: '60dc5bf4fdbc9e17646376bd-',
+        },
       ],
       dataFlowName: 'test js ',
       status: 'done',
@@ -1102,10 +1102,10 @@ module.exports = {
       scheduleTime: 1625054200772,
       scheduleTimes: 1,
       errorMsg: '',
-      result: 'failed'
+      result: 'failed',
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/InspectResults/count': { data: { count: 65 }, code: 'ok', msg: 'ok' },
   '/tm/api/InspectResults': {
@@ -1134,7 +1134,7 @@ module.exports = {
               columns: null,
               limit: 0,
               skip: 0,
-              where: null
+              where: null,
             },
             target: {
               connectionId: '60cda022f0e73a0067428c38',
@@ -1145,7 +1145,7 @@ module.exports = {
               columns: null,
               limit: 0,
               skip: 0,
-              where: null
+              where: null,
             },
             start: 1625216074322,
             end: 1625216080464,
@@ -1161,7 +1161,7 @@ module.exports = {
             target_only: 0,
             row_passed: 51787,
             row_failed: 0,
-            speed: 7398
+            speed: 7398,
           },
           {
             taskId: '60ded447412e0b08d632d9c3-',
@@ -1174,7 +1174,7 @@ module.exports = {
               columns: null,
               limit: 0,
               skip: 0,
-              where: null
+              where: null,
             },
             target: {
               connectionId: '60cda022f0e73a0067428c38',
@@ -1185,7 +1185,7 @@ module.exports = {
               columns: null,
               limit: 0,
               skip: 0,
-              where: null
+              where: null,
             },
             start: 1625216074322,
             end: 1625216080464,
@@ -1201,8 +1201,8 @@ module.exports = {
             target_only: 0,
             row_passed: 51787,
             row_failed: 0,
-            speed: 7398
-          }
+            speed: 7398,
+          },
         ],
         spendMilli: 0,
         inspect: {
@@ -1229,7 +1229,7 @@ module.exports = {
                 columns: null,
                 limit: 0,
                 skip: 0,
-                where: null
+                where: null,
               },
               target: {
                 connectionId: '60cda022f0e73a0067428c38',
@@ -1240,15 +1240,15 @@ module.exports = {
                 columns: null,
                 limit: 0,
                 skip: 0,
-                where: null
+                where: null,
               },
               limit: null,
               script: '',
-              showAdvancedVerification: false
-            }
+              showAdvancedVerification: false,
+            },
           ],
           customId: null,
-          user_id: '60cd992ff0e73a006742801b'
+          user_id: '60cd992ff0e73a006742801b',
         },
         start: 1625216074256,
         end: 1625216080507,
@@ -1258,11 +1258,11 @@ module.exports = {
         last_updated: '2021-07-02T08:54:40.512Z',
         createTime: '2021-07-02T08:54:34.271Z',
         difference_number: 1,
-        result: 'failed'
-      }
+        result: 'failed',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/InspectDetails/count': { data: { count: 1 }, code: 'ok', msg: 'ok' },
   '/tm/api/InspectDetails': {
@@ -1282,7 +1282,7 @@ module.exports = {
           claim_id: 'CL_000000002',
           claim_type: 'BUIDLING',
           claim_reason: 'VANDALISM',
-          claim_date: 1190304000
+          claim_date: 1190304000,
         },
         target: null,
         inspectResultId: '60ded44a412e0b08d632d9d1',
@@ -1291,10 +1291,10 @@ module.exports = {
         customId: null,
         ttlTime: '2021-09-30T08:54:40.482Z',
         last_updated: '2021-07-02T08:54:40.483Z',
-        createTime: '2021-07-02T08:54:40.483Z'
-      }
+        createTime: '2021-07-02T08:54:40.483Z',
+      },
     ],
     code: 'ok',
-    msg: 'ok'
-  }
+    msg: 'ok',
+  },
 }

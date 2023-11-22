@@ -10,9 +10,9 @@ export const NodePathWidget = observer(
   defineComponent({
     props: {
       maxItems: Number,
-      workspaceId: String
+      workspaceId: String,
     },
-    setup: props => {
+    setup: (props) => {
       const selectedRef = useCurrentNode(props.workspaceId)
       const selectionRef = useSelection(props.workspaceId)
       const hoverRef = useHover(props.workspaceId)
@@ -41,7 +41,7 @@ export const NodePathWidget = observer(
                     onMouseenter={() => {
                       hoverRef.value.setHover(node)
                     }}
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation()
                       e.preventDefault()
                       selectionRef.value.select(node)
@@ -55,6 +55,6 @@ export const NodePathWidget = observer(
           </Breadcrumb>
         )
       }
-    }
-  })
+    },
+  }),
 )

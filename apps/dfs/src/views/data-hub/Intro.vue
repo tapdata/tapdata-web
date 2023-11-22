@@ -132,14 +132,14 @@ export default {
   name: 'Intro',
 
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
 
   methods: {
     openOfflineDeployment() {
       window.open('https://tapdata.net/tapdata-on-prem/demo.html')
-    }
-  }
+    },
+  },
 }
 </script>
 

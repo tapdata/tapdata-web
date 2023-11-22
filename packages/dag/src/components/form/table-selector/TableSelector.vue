@@ -86,7 +86,7 @@
           class="btn-transfer"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
+            'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled,
           }"
           @click="add"
         >
@@ -96,7 +96,7 @@
           class="btn-transfer mt-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
-            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
+            'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled,
           }"
           @click="remove"
         >
@@ -248,18 +248,18 @@ export default {
     RecycleScroller,
     OverflowTooltip,
     ConnectionTest,
-    VIcon
+    VIcon,
   },
   props: {
     connectionId: {
       type: String,
-      required: true
+      required: true,
     },
     value: Array,
     disabled: Boolean,
     hideReload: Boolean,
     reloadTime: [String, Number],
-    filterType: String
+    filterType: String,
   },
   data() {
     return {
@@ -269,13 +269,13 @@ export default {
         isCheckAll: false,
         searchKeyword: '',
         checked: [],
-        tables: []
+        tables: [],
       },
       selected: {
         isCheckAll: false,
         searchKeyword: '',
         checked: [],
-        tables: this.value
+        tables: this.value,
       },
       showProgress: false,
       progress: '',
@@ -284,7 +284,7 @@ export default {
       isOpenClipMode: false,
       clipboardValue: '',
       isFocus: false,
-      tableMap: {}
+      tableMap: {},
     }
   },
   computed: {
@@ -293,9 +293,9 @@ export default {
       try {
         let reg = new RegExp(searchKeyword, 'i')
         return getPrimaryKeyTablesByType(
-          tables.filter(item => reg.test(item)),
+          tables.filter((item) => reg.test(item)),
           this.filterType,
-          this.tableMap
+          this.tableMap,
         )
       } catch (error) {
         return []
@@ -305,7 +305,7 @@ export default {
       let { searchKeyword, tables } = this.selected
       let errorTables = this.getErrorTables(tables)
       let reg = new RegExp(searchKeyword, 'i')
-      let filterTables = tables.filter(item => reg.test(item))
+      let filterTables = tables.filter((item) => reg.test(item))
       filterTables = filterTables.sort((t1, t2) => {
         if (errorTables[t1]) {
           return -1
@@ -322,7 +322,7 @@ export default {
       let value = this.clipboardValue?.replace(/(\n)/g, ',')
       value = value?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
-      return Array.from(new Set(tables.filter(it => !!it && it.trim())))
+      return Array.from(new Set(tables.filter((it) => !!it && it.trim())))
     },
     isIndeterminate() {
       const checkedLength = this.table.checked.length
@@ -333,7 +333,7 @@ export default {
       const checkedLength = this.selected.checked.length
       const tablesLength = this.filterSelectedData.length
       return checkedLength > 0 && checkedLength < tablesLength
-    }
+    },
   },
   watch: {
     isFocus(v) {
@@ -363,7 +363,7 @@ export default {
     },
     filterType() {
       this.handleFilterType()
-    }
+    },
   },
   created() {
     let id = this.connectionId
@@ -403,7 +403,7 @@ export default {
       }
       let tables = this.selected.checked
       if (tables.length) {
-        this.selected.tables = Object.freeze(this.selected.tables.filter(it => !tables.includes(it)))
+        this.selected.tables = Object.freeze(this.selected.tables.filter((it) => !tables.includes(it)))
         this.selected.checked = []
         this.selected.isCheckAll = false
         $emit(this, 'update:value', this.selected.tables)
@@ -414,10 +414,10 @@ export default {
     },
     autofix() {
       if (this.isOpenClipMode) {
-        this.clipboardValue = this.clipboardTables.filter(t => !this.errorTables[t]).join(', ')
+        this.clipboardValue = this.clipboardTables.filter((t) => !this.errorTables[t]).join(', ')
         this.errorTables = {}
       } else {
-        this.selected.tables = Object.freeze(this.selected.tables.filter(t => !this.errorTables[t]))
+        this.selected.tables = Object.freeze(this.selected.tables.filter((t) => !this.errorTables[t]))
         $emit(this, 'update:value', this.selected.tables)
         $emit(this, 'change', this.selected.tables)
       }
@@ -427,7 +427,7 @@ export default {
       let errorTables = {}
 
       if (!this.loading) {
-        tables.forEach(t => {
+        tables.forEach((t) => {
           if (!allTables.includes(t)) {
             errorTables[t] = this.$t('packages_form_component_table_selector_error_not_exit')
           }
@@ -470,7 +470,7 @@ export default {
         .pageTables({ connectionId, limit: 0 })
         .then((res = {}) => {
           let data = res.items || []
-          let tables = data.map(it => it.tableName)
+          let tables = data.map((it) => it.tableName)
           let map = {}
           data.forEach((el = {}) => {
             const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
@@ -494,12 +494,12 @@ export default {
       } else {
         let config = {
           title: this.$t('packages_form_connection_reload_schema_confirm_title'),
-          Message: this.$t('packages_form_connection_reload_schema_confirm_msg')
+          Message: this.$t('packages_form_connection_reload_schema_confirm_msg'),
         }
         this.$confirm(config.Message + '?', config.title, {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (resFlag) {
             this.showProgress = true
             this.progress = 0
@@ -512,10 +512,10 @@ export default {
     testSchema() {
       let parms = {
         loadCount: 0,
-        loadFieldsStatus: 'loading'
+        loadFieldsStatus: 'loading',
       }
       this.loadFieldsStatus = 'loading'
-      connectionsApi.updateById(this.connectionId, parms).then(res => {
+      connectionsApi.updateById(this.connectionId, parms).then((res) => {
         if (this?.$refs?.test) {
           let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
@@ -528,7 +528,7 @@ export default {
     getProgress(check = false) {
       connectionsApi
         .getNoSchema(this.connectionId)
-        .then(res => {
+        .then((res) => {
           let data = res
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
@@ -540,7 +540,7 @@ export default {
               if (!check && taskId && activeNodeId) {
                 metadataInstancesApi
                   .logicSchema(taskId, {
-                    nodeId: activeNodeId
+                    nodeId: activeNodeId,
                   })
                   .then(() => {
                     this.getTables() //更新schema
@@ -568,13 +568,13 @@ export default {
 
     updateAllChecked() {
       this.table.isCheckAll =
-        this.filteredData.length > 0 && this.filteredData.every(item => this.table.checked.indexOf(item) > -1)
+        this.filteredData.length > 0 && this.filteredData.every((item) => this.table.checked.indexOf(item) > -1)
     },
 
     updateSelectedAllChecked() {
       this.selected.isCheckAll =
         this.filterSelectedData.length > 0 &&
-        this.filterSelectedData.every(item => this.selected.checked.indexOf(item) > -1)
+        this.filterSelectedData.every((item) => this.selected.checked.indexOf(item) > -1)
     },
 
     getTableInfo(table) {
@@ -591,14 +591,14 @@ export default {
 
       // 已选择表
       this.selected.tables = Object.freeze(
-        getPrimaryKeyTablesByType(this.selected.tables, this.filterType, this.tableMap)
+        getPrimaryKeyTablesByType(this.selected.tables, this.filterType, this.tableMap),
       )
       this.selected.isCheckAll = false
       $emit(this, 'update:value', this.selected.tables)
       $emit(this, 'change', this.selected.tables)
-    }
+    },
   },
-  emits: ['update:value', 'change']
+  emits: ['update:value', 'change'],
 }
 </script>
 

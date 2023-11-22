@@ -116,8 +116,8 @@ export default {
   props: {
     dialogVisible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -155,8 +155,8 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
-        'hazelcast_cloud_cluster'
-      ] //目前白名单,
+        'hazelcast_cloud_cluster',
+      ], //目前白名单,
     }
   },
   methods: {
@@ -165,14 +165,14 @@ export default {
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        name: 'MigrateCreate'
+        name: 'MigrateCreate',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
     },
     goNewCust() {
       let routeUrl = this.$router.resolve({
-        name: 'DataflowNew'
+        name: 'DataflowNew',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -191,7 +191,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        name: 'dataServer'
+        name: 'dataServer',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -207,11 +207,11 @@ export default {
       let query = { pdkHash }
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query,
       })
-    }
+    },
   },
-  emits: ['update:dialogVisible']
+  emits: ['update:dialogVisible'],
 }
 </script>
 

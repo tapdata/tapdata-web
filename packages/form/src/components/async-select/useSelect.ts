@@ -7,7 +7,7 @@ import {
   useFormSize,
   CHANGE_EVENT,
   EVENT_CODE,
-  UPDATE_MODEL_EVENT
+  UPDATE_MODEL_EVENT,
 } from 'element-plus'
 import {
   ValidateComponentsMap,
@@ -19,7 +19,7 @@ import {
   isNumber,
   isString,
   isUndefined,
-  scrollIntoView
+  scrollIntoView,
 } from 'element-plus/es/utils/index.mjs'
 import { isPlainObj as isObject, isValid, isFn } from '@tap/shared'
 // @ts-ignore
@@ -59,14 +59,14 @@ export function useSelectStates(props) {
     focused: false,
     // extends
     pagination: {
-      page: 1
+      page: 1,
     },
     total: 0,
     items: [],
     loadingMore: false,
     lastQuery: null,
     loadingData: false,
-    loadingOption: false
+    loadingOption: false,
   })
 }
 
@@ -82,9 +82,9 @@ export const useSelect: Function = (props, states: States, ctx) => {
       replacement: 'override style scheme',
       version: '2.3.0',
       scope: 'props',
-      ref: 'https://element-plus.org/en-US/component/select.html#select-attributes'
+      ref: 'https://element-plus.org/en-US/component/select.html#select-attributes',
     },
-    computed(() => props.suffixTransition === false)
+    computed(() => props.suffixTransition === false),
   )
 
   // template refs
@@ -121,13 +121,13 @@ export const useSelect: Function = (props, states: States, ctx) => {
     return criteria
   })
   const iconComponent = computed(() =>
-    props.remote && props.filterable && !props.remoteShowSuffix ? '' : props.suffixIcon
+    props.remote && props.filterable && !props.remoteShowSuffix ? '' : props.suffixIcon,
   )
   const iconReverse = computed(() => ns.is('reverse', iconComponent.value && states.visible && props.suffixTransition))
 
   // Consistent with the processing of Form in the input component
   const showStatusIconAndState = computed(
-    () => form?.statusIcon && formItem?.validateState && ValidateComponentsMap[formItem?.validateState]
+    () => form?.statusIcon && formItem?.validateState && ValidateComponentsMap[formItem?.validateState],
   )
 
   const debounce = computed(() => props.inputQueryWait || 0)
@@ -150,8 +150,8 @@ export const useSelect: Function = (props, states: States, ctx) => {
   const optionsArray = computed(() => {
     const list = Array.from(states.options.values())
     const newList = []
-    optionList.value.forEach(item => {
-      const index = list.findIndex(i => i.currentLabel === item)
+    optionList.value.forEach((item) => {
+      const index = list.findIndex((i) => i.currentLabel === item)
       if (index > -1) {
         newList.push(list[index])
       }
@@ -163,10 +163,10 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
   const showNewOption = computed(() => {
     const hasExistingOption = optionsArray.value
-      .filter(option => {
+      .filter((option) => {
         return !option.created
       })
-      .some(option => {
+      .some((option) => {
         return option.currentLabel === states.query
       })
     return props.filterable && props.allowCreate && states.query !== '' && !hasExistingOption
@@ -182,7 +182,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     },
     set(val: boolean) {
       states.visible = val
-    }
+    },
   })
 
   // watch
@@ -194,7 +194,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
   watch(
     () => props.placeholder,
-    val => {
+    (val) => {
       states.cachedPlaceHolder = states.currentPlaceholder = val
 
       const hasValue = props.multiple && Array.isArray(props.modelValue) && props.modelValue.length > 0
@@ -202,7 +202,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
       if (hasValue) {
         states.currentPlaceholder = ''
       }
-    }
+    },
   )
 
   watch(
@@ -225,18 +225,18 @@ export const useSelect: Function = (props, states: States, ctx) => {
         states.inputLength = 20
       }
       if (!isEqual(val, oldVal) && props.validateEvent) {
-        formItem?.validate('change').catch(err => debugWarn(err))
+        formItem?.validate('change').catch((err) => debugWarn(err))
       }
     },
     {
       flush: 'post',
-      deep: true
-    }
+      deep: true,
+    },
   )
 
   watch(
     () => states.visible,
-    val => {
+    (val) => {
       if (!val) {
         if (props.filterable) {
           if (isFunction(props.filterMethod)) {
@@ -297,7 +297,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
         }
       }
       ctx.emit('visible-change', val)
-    }
+    },
   )
 
   watch(
@@ -322,22 +322,22 @@ export const useSelect: Function = (props, states: States, ctx) => {
       }
     },
     {
-      flush: 'post'
-    }
+      flush: 'post',
+    },
   )
 
   watch(
     () => states.hoverIndex,
-    val => {
+    (val) => {
       if (isNumber(val) && val > -1) {
         hoverOption.value = optionsArray.value[val] || {}
       } else {
         hoverOption.value = {}
       }
-      optionsArray.value.forEach(option => {
+      optionsArray.value.forEach((option) => {
         option.hover = hoverOption.value === option
       })
-    }
+    },
   )
 
   // methods
@@ -369,7 +369,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     })
   }
 
-  const handleQueryChange = async val => {
+  const handleQueryChange = async (val) => {
     if (states.previousQuery === val || states.isOnComposition) return
     if (states.previousQuery === null && (isFn(props.filterMethod) || isFn(props.remoteMethod))) {
       states.previousQuery = val
@@ -442,8 +442,8 @@ export const useSelect: Function = (props, states: States, ctx) => {
    *   (NOTE: exclude options that are disabled or in disabled-group)
    */
   const checkDefaultFirstOption = () => {
-    const optionsInDropdown = optionsArray.value.filter(n => n.visible && !n.disabled && !n.states.groupDisabled)
-    const userCreatedOption = optionsInDropdown.find(n => n.created)
+    const optionsInDropdown = optionsArray.value.filter((n) => n.visible && !n.disabled && !n.states.groupDisabled)
+    const userCreatedOption = optionsInDropdown.find((n) => n.created)
     const firstOriginOption = optionsInDropdown[0]
     states.hoverIndex = getValueIndex(optionsArray.value, userCreatedOption || firstOriginOption)
   }
@@ -456,7 +456,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
         if (!option.$el) {
           props.onSetSelected(option)
         } else {
-          const item = states.items.find(item => item[props.itemValue] === props.modelValue)
+          const item = states.items.find((item) => item[props.itemValue] === props.modelValue)
           item && props.onSetSelected(item)
         }
       }
@@ -490,7 +490,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
         if (props.currentLabel?.length) {
           result.push({
             value,
-            currentLabel: props.currentLabel[i] || ''
+            currentLabel: props.currentLabel[i] || '',
           })
         } else {
           result.push(await getOption(value))
@@ -519,7 +519,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
         option = {
           value,
           currentLabel: cachedOption.currentLabel,
-          isDisabled: cachedOption.isDisabled
+          isDisabled: cachedOption.isDisabled,
         }
         optionData = states.items[i]
         break
@@ -533,7 +533,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     const label = isObjectValue ? value.label : isValidValue ? value : ''
     let newOption = {
       value,
-      currentLabel: label
+      currentLabel: label,
     }
 
     if (props.itemType === 'object' && states.total > 0 && !!value && !props.lazy) {
@@ -550,7 +550,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
   const getFilter = () => {
     const filter = merge({}, props.params, states.pagination, {
-      size: props.pageSize
+      size: props.pageSize,
     })
     const query = states.query.trim()
 
@@ -559,9 +559,9 @@ export const useSelect: Function = (props, states: States, ctx) => {
         where: {
           [props.itemQuery || props.itemLabel]: {
             like: escapeRegExp(query),
-            options: 'i'
-          }
-        }
+            options: 'i',
+          },
+        },
       })
     }
 
@@ -572,18 +572,18 @@ export const useSelect: Function = (props, states: States, ctx) => {
     setTimeout(() => {
       const valueKey = props.valueKey
       if (!props.multiple) {
-        states.hoverIndex = optionsArray.value.findIndex(item => {
+        states.hoverIndex = optionsArray.value.findIndex((item) => {
           return getValueKey(item) === getValueKey(states.selected)
         })
       } else {
         if (states.selected.length > 0) {
           states.hoverIndex = Math.min.apply(
             null,
-            states.selected.map(selected => {
-              return optionsArray.value.findIndex(item => {
+            states.selected.map((selected) => {
+              return optionsArray.value.findIndex((item) => {
                 return get(item, valueKey) === get(selected, valueKey)
               })
-            })
+            }),
           )
         } else {
           states.hoverIndex = -1
@@ -613,18 +613,18 @@ export const useSelect: Function = (props, states: States, ctx) => {
     onInputChange()
   }, debounce.value)
 
-  const debouncedQueryChange = lodashDebounce(e => {
+  const debouncedQueryChange = lodashDebounce((e) => {
     handleQueryChange(e.target.value)
   }, debounce.value)
 
-  const emitChange = val => {
+  const emitChange = (val) => {
     if (!isEqual(props.modelValue, val)) {
       ctx.emit(CHANGE_EVENT, val)
 
       if (props.multiple) {
         const uniqArr =
           uniqBy([...states.selected, ...states.cachedOptions.values(), ...states.options.values()], 'value') || []
-        const changeLabels = uniqArr.filter(t => val.includes(t.value)).map(t => t.currentLabel || t.label)
+        const changeLabels = uniqArr.filter((t) => val.includes(t.value)).map((t) => t.currentLabel || t.label)
         ctx.emit('change-label', changeLabels)
       } else {
         ctx.emit('change-label', states.options.get(val).currentLabel)
@@ -632,9 +632,9 @@ export const useSelect: Function = (props, states: States, ctx) => {
     }
   }
 
-  const getLastNotDisabledIndex = value => findLastIndex(value, it => !states.disabledOptions.has(it))
+  const getLastNotDisabledIndex = (value) => findLastIndex(value, (it) => !states.disabledOptions.has(it))
 
-  const deletePrevTag = e => {
+  const deletePrevTag = (e) => {
     if (e.code === EVENT_CODE.delete) return
     if (e.target.value.length <= 0 && !toggleLastOptionHitState()) {
       const value = props.modelValue.slice()
@@ -663,7 +663,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     focus()
   }
 
-  const deleteSelected = event => {
+  const deleteSelected = (event) => {
     event.stopPropagation()
     const value: string | any[] = props.multiple ? [] : ''
     if (!isString(value)) {
@@ -679,7 +679,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     focus()
   }
 
-  const handleOptionSelect = option => {
+  const handleOptionSelect = (option) => {
     ctx.emit('option-select', option)
 
     if (props.multiple) {
@@ -745,12 +745,12 @@ export const useSelect: Function = (props, states: States, ctx) => {
     }
   }
 
-  const scrollToOption = async option => {
+  const scrollToOption = async (option) => {
     const targetOption = Array.isArray(option) ? option[0] : option
     let target = null
 
     if (targetOption?.value) {
-      const options = optionsArray.value.filter(item => item.value === targetOption.value)
+      const options = optionsArray.value.filter((item) => item.value === targetOption.value)
       if (options.length > 0) {
         target = options[0].$el
       }
@@ -795,7 +795,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
   const toggleLastOptionHitState = (hit?: boolean) => {
     if (!Array.isArray(states.selected)) return
-    const lastNotDisabledIndex = getLastNotDisabledIndex(states.selected.map(it => it.value))
+    const lastNotDisabledIndex = getLastNotDisabledIndex(states.selected.map((it) => it.value))
     const option = states.selected[lastNotDisabledIndex]
     if (!option) return
 
@@ -808,7 +808,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     return option.hitState
   }
 
-  const handleComposition = event => {
+  const handleComposition = (event) => {
     const text = event.target.value
     if (event.type === 'compositionend') {
       states.isOnComposition = false
@@ -908,19 +908,19 @@ export const useSelect: Function = (props, states: States, ctx) => {
     }
   }
 
-  const getValueKey = item => {
+  const getValueKey = (item) => {
     return isObject(item.value) ? get(item.value, props.valueKey) : item.value
   }
 
   const optionsAllDisabled = computed(() =>
-    optionsArray.value.filter(option => option.visible).every(option => option.disabled)
+    optionsArray.value.filter((option) => option.visible).every((option) => option.disabled),
   )
 
   const showTagList = computed(() => (props.multiple ? states.selected.slice(0, props.maxCollapseTags) : []))
 
   const collapseTagList = computed(() => (props.multiple ? states.selected.slice(props.maxCollapseTags) : []))
 
-  const navigateOptions = direction => {
+  const navigateOptions = (direction) => {
     if (!states.visible) {
       states.visible = true
       return
@@ -964,7 +964,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
   // if in form and use statusIcon, the width of the icon needs to be subtracted, fix #13526
   const selectTagsStyle = computed(() => ({
     maxWidth: `${unref(states.inputWidth) - 32 - (showStatusIconAndState.value ? 22 : 0)}px`,
-    width: '100%'
+    width: '100%',
   }))
 
   const showLoading = computed(() => {
@@ -996,27 +996,27 @@ export const useSelect: Function = (props, states: States, ctx) => {
         debounceLoadData()
       }
     },
-    { deep: true }
+    { deep: true },
   )
 
   watch(
     () => states.visible,
-    v => {
+    (v) => {
       if (props.lazy && !states.items.length && v) {
         loadData()
       }
-    }
+    },
   )
 
   onMounted(async () => {
     if (!props.lazy) await loadData()
   })
 
-  const loadOption = async value => {
+  const loadOption = async (value) => {
     const { itemValue, itemLabel } = props
-    let filter = merge({}, props.params, {
+    const filter = merge({}, props.params, {
       where: { [itemValue]: value },
-      size: 1
+      size: 1,
     })
     const { items } = await props.method(filter)
     const [item] = items
@@ -1024,7 +1024,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
       return {
         ...item,
         value,
-        currentLabel: item[itemLabel]
+        currentLabel: item[itemLabel],
       }
     }
   }
@@ -1044,7 +1044,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
     try {
       const { items, total } = await props.method(getFilter(), {
-        cancelToken: cancelSource.token
+        cancelToken: cancelSource.token,
       })
       states.total = total
       if (isMore) {
@@ -1138,6 +1138,6 @@ export const useSelect: Function = (props, states: States, ctx) => {
     scrollDisabled,
     loadMore,
     loadData,
-    showLoading
+    showLoading,
   }
 }

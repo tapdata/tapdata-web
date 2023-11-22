@@ -15,18 +15,18 @@ export const DataSourceSetter = observer(
     props: {
       value: {
         type: Array,
-        default: () => []
+        default: () => [],
       },
       allowTree: {
         type: Boolean,
-        default: true
+        default: true,
       },
       allowExtendOption: {
         type: Boolean,
-        default: true
+        default: true,
       },
       defaultOptionValue: {},
-      effects: {}
+      effects: {},
     },
     setup: (props, { attrs, emit }) => {
       const { allowTree = true, allowExtendOption = true, defaultOptionValue, effects = () => {} } = props
@@ -35,7 +35,7 @@ export const DataSourceSetter = observer(
       const modalVisible = ref(false)
       const treeDataSource = observable({
         dataSource: transformValueToData(props.value),
-        selectedKey: ''
+        selectedKey: '',
       })
 
       watch(
@@ -43,7 +43,7 @@ export const DataSourceSetter = observer(
         () => {
           // eslint-disable-next-line
           console.log('watch.inner')
-        }
+        },
       )
       /*const treeDataSource = computed(() => {
         console.log('modalVisible', modalVisible.value)
@@ -106,6 +106,6 @@ export const DataSourceSetter = observer(
           </Dialog>
         </FragmentComponent>
       )
-    }
-  })
+    },
+  }),
 )

@@ -39,27 +39,27 @@ export default {
     label: [Number, String],
     clearable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dark: {
       type: Boolean,
-      dafault: false
+      dafault: false,
     },
     overflow: {
       type: Boolean,
-      dafault: false
-    }
+      dafault: false,
+    },
   },
   watch: {
     value(v) {
       v && this.init()
-    }
+    },
   },
   data() {
     return {
       visible: false,
       showClose: false,
-      current: ''
+      current: '',
     }
   },
   methods: {
@@ -94,9 +94,9 @@ export default {
     },
     mouseLeaveFnc() {
       this.showClose = false
-    }
+    },
   },
-  emits: ['change', 'update:value', , , 'update:value']
+  emits: ['change', 'update:value', , , 'update:value'],
 }
 </script>
 

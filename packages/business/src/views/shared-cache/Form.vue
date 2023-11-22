@@ -23,8 +23,8 @@
           filterable
           :params="{
             where: {
-              connection_type: { in: ['source', 'source_and_target'] }
-            }
+              connection_type: { in: ['source', 'source_and_target'] },
+            },
           }"
           class="form-input"
           @change="connectionInputHandler"
@@ -139,12 +139,12 @@ export default {
     VirtualSelect,
     FieldSelector,
     CodeView,
-    ConnectionListSelect
+    ConnectionListSelect,
   },
   props: {
     taskId: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
@@ -163,55 +163,55 @@ export default {
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_name')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_name'),
+          },
         ],
         connectionId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_connection')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_connection'),
+          },
         ],
         tableName: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_table')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_table'),
+          },
         ],
         cacheKeys: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_keys')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_keys'),
+          },
         ],
         fields: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_fields')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_fields'),
+          },
         ],
         maxMemory: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_max_memory')
-          }
+            message: this.$t('packages_business_shared_cache_placeholder_max_memory'),
+          },
         ],
         externalStorageId: [
           {
             required: true,
             trigger: 'blur',
-            message: this.$t('packages_business_shared_cache_placeholder_external_storage')
-          }
-        ]
+            message: this.$t('packages_business_shared_cache_placeholder_external_storage'),
+          },
+        ],
       },
       isEn: i18n.locale === 'en',
       metadataInstancesId: '',
-      showCachekeysCheckMsg: false
+      showCachekeysCheckMsg: false,
     }
   },
   created() {
@@ -229,7 +229,7 @@ export default {
         autoCreateIndex: false,
         fields: '',
         maxMemory: 500,
-        externalStorageId: ''
+        externalStorageId: '',
       }
       if (this.taskId) {
         await this.getData(this.taskId)
@@ -240,7 +240,7 @@ export default {
       this.loading = true
       await sharedCacheApi
         .findOne(id)
-        .then(async data => {
+        .then(async (data) => {
           data = data || {}
           let externalStorageId = data.externalStorageId
           const externalStorage = await externalStorageApi.get(externalStorageId)
@@ -257,7 +257,7 @@ export default {
             autoCreateIndex: data.autoCreateIndex,
             fields: data.fields?.join(',') || '',
             maxMemory: data.maxMemory,
-            externalStorageId
+            externalStorageId,
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -268,7 +268,7 @@ export default {
     },
     async getExternalStorageOptions() {
       let filter = {
-        where: {}
+        where: {},
       }
 
       const { externalStorageId } = this.form
@@ -278,14 +278,14 @@ export default {
       }
       const data = await externalStorageApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .catch(() => {
           this.externalStorageOptions = []
         })
       let defaultStorageId = ''
       this.externalStorageOptions =
-        data?.items?.map(it => {
+        data?.items?.map((it) => {
           if (it.defaultStorage) {
             defaultStorageId = it.id
           }
@@ -299,15 +299,15 @@ export default {
       this.tableOptionsLoading = true
       metadataInstancesApi
         .getTablesValue({ connectionId })
-        .then(data => {
+        .then((data) => {
           let options = []
           let list = data || []
-          list.forEach(opt => {
+          list.forEach((opt) => {
             if (opt) {
               options.push({
                 label: opt.tableName,
                 value: opt.tableName,
-                comment: opt.tableComment
+                comment: opt.tableComment,
               })
             }
           })
@@ -325,19 +325,19 @@ export default {
             original_name: tableName,
             is_deleted: false,
             'fields.is_deleted': false,
-            sourceType: 'SOURCE'
+            sourceType: 'SOURCE',
           },
           fields: {
             'fields.field_name': true,
             'fields.original_field_name': true,
-            indices: true
-          }
-        })
+            indices: true,
+          },
+        }),
       }
       this.fieldOptionsLoading = true
       metadataInstancesApi
         .get(params)
-        .then(data => {
+        .then((data) => {
           let table = data?.items?.[0]
           if (table) {
             this.metadataInstancesId = table.id
@@ -345,7 +345,7 @@ export default {
               this.handleChangeCacheKeys()
             }
             let fields = table.fields || []
-            this.fieldOptions = fields.map(opt => {
+            this.fieldOptions = fields.map((opt) => {
               opt.label = opt.field_name
               opt.value = opt.field_name
               return opt
@@ -373,7 +373,7 @@ export default {
       this.getTableSchema(tableName)
     },
     submit() {
-      this.$refs.form.validate(flag => {
+      this.$refs.form.validate((flag) => {
         if (flag) {
           let {
             name,
@@ -385,12 +385,12 @@ export default {
             autoCreateIndex,
             fields,
             maxMemory,
-            externalStorageId
+            externalStorageId,
           } = this.form
           let id = this.taskId
           const needCreateIndex = cacheKeys
             .split(',')
-            .filter(t => this.fieldOptions.some(field => t === field.value && !field.is_index))
+            .filter((t) => this.fieldOptions.some((field) => t === field.value && !field.is_index))
           let params = {
             id,
             name,
@@ -399,23 +399,23 @@ export default {
                 {
                   type: 'table',
                   attrs: {
-                    fields: fields.split(',')
+                    fields: fields.split(','),
                   },
                   tableName,
                   databaseType,
                   connectionId,
-                  connectionName
+                  connectionName,
                 },
                 {
                   cacheKeys: cacheKeys,
                   maxMemory: maxMemory,
                   externalStorageId,
                   needCreateIndex,
-                  autoCreateIndex
-                }
+                  autoCreateIndex,
+                },
               ],
-              edges: []
-            }
+              edges: [],
+            },
           }
           let method = id ? 'patch' : 'post'
           $emit(this, 'update:loading', true)
@@ -434,14 +434,14 @@ export default {
     handleChangeCacheKeys() {
       const params = {
         cacheKeys: this.form.cacheKeys,
-        id: this.metadataInstancesId
+        id: this.metadataInstancesId,
       }
-      metadataInstancesApi.checkFiledIndex(params).then(data => {
+      metadataInstancesApi.checkFiledIndex(params).then((data) => {
         this.showCachekeysCheckMsg = !data
       })
-    }
+    },
   },
-  emits: ['update:loading', 'success']
+  emits: ['update:loading', 'success'],
 }
 </script>
 

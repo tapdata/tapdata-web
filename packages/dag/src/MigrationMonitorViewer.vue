@@ -48,7 +48,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -67,7 +67,7 @@
         <BottomPanel
           v-if="showBottomPanel"
           v-resize.top="{
-            minHeight: 328
+            minHeight: 328,
           }"
           :dataflow="dataflow"
           class="tabs-header__hidden"
@@ -131,7 +131,7 @@ export default {
   name: 'MigrationMonitorViewer',
 
   directives: {
-    resize
+    resize,
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -143,13 +143,13 @@ export default {
     PaperScroller,
     TopHeader,
     DFNode,
-    NodeDetailDialog
+    NodeDetailDialog,
   },
 
   data() {
     const dataflow = observable({
       id: '',
-      name: ''
+      name: '',
     })
 
     return {
@@ -170,7 +170,7 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       dataflow,
@@ -185,7 +185,7 @@ export default {
       nodeDetailDialog: false,
       nodeDetailDialogId: '',
       timeFormat: 'HH:mm:ss',
-      dagData: null
+      dagData: null,
     }
   },
 
@@ -193,7 +193,7 @@ export default {
     formScope() {
       return {
         ...this.scope,
-        $settings: this.dataflow
+        $settings: this.dataflow,
       }
     },
 
@@ -209,13 +209,13 @@ export default {
 
     isEnterTimer() {
       return this.quotaTimeType !== 'custom' && !this.nodeDetailDialog && this.dataflow?.status === 'running'
-    }
+    },
   },
 
   watch: {
     'dataflow.type'(v) {
       v && this.init()
-    }
+    },
   },
 
   created() {
@@ -277,7 +277,7 @@ export default {
 
     async openDataflow(id) {
       const data = await this.loadDataflow(id, {
-        taskRecordId: this.$route.query?.taskRecordId
+        taskRecordId: this.$route.query?.taskRecordId,
       })
       if (data) {
         const { dag } = data
@@ -299,7 +299,7 @@ export default {
       if (!this.dataflow.name) return this.$t('packages_dag_editor_cell_validate_empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'database')
+      const tableNode = this.allNodes.filter((node) => node.type === 'database')
       if (tableNode.length < 2) {
         return this.$t('packages_dag_editor_cell_validate_none_data_node')
       }
@@ -309,7 +309,7 @@ export default {
       const sourceMap = {},
         targetMap = {},
         edges = this.allEdges
-      edges.forEach(item => {
+      edges.forEach((item) => {
         let _source = sourceMap[item.source]
         let _target = targetMap[item.target]
 
@@ -328,7 +328,7 @@ export default {
 
       let someErrorMsg = ''
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
-      this.allNodes.some(node => {
+      this.allNodes.some((node) => {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
         const inputNum = targetMap[id]?.length ?? 0
@@ -356,7 +356,7 @@ export default {
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
       if (this.dataflow.type === 'initial_sync+cdc') {
         typeName = i18n.t('public_task_type_initial_sync_and_cdc')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (
             sourceMap[node.id] &&
             (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
@@ -364,29 +364,29 @@ export default {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'initial_sync') {
         typeName = i18n.t('public_task_type_initial_sync')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
       } else if (this.dataflow.type === 'cdc') {
         typeName = i18n.t('public_task_type_cdc')
-        tableNode.forEach(node => {
+        tableNode.forEach((node) => {
           if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
             nodeNames.push(node.name)
             this.setNodeErrorMsg({
               id: node.id,
-              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName
+              msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi') + typeName,
             })
           }
         })
@@ -400,7 +400,7 @@ export default {
         ...tableNode.reduce((set, item) => {
           item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
           return set
-        }, new Set())
+        }, new Set()),
       ]
 
       if (accessNodeProcessIdArr.length > 1) {
@@ -413,14 +413,14 @@ export default {
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
-          tableNode.forEach(node => {
+          tableNode.forEach((node) => {
             if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
               this.setNodeErrorMsg({
                 id: node.id,
                 msg: i18n.t('packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi', {
                   val1: agent.hostName,
-                  val2: agent.ip
-                })
+                  val2: agent.ip,
+                }),
               })
               isError = true
             }
@@ -436,9 +436,9 @@ export default {
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
-      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      const firstNodes = this.allNodes.filter((node) => !targetMap[node.id]) // 链路的首节点
       const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
-      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+      if (firstNodes.some((node) => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
 
       return null
     },
@@ -446,11 +446,11 @@ export default {
     handlePageReturn() {
       if (this.dataflow.syncType === 'migrate') {
         this.$router.push({
-          name: 'migrateList'
+          name: 'migrateList',
         })
       } else {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
     },
@@ -458,7 +458,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id }
+        params: { id: this.dataflow.id },
       })
     },
 
@@ -473,8 +473,8 @@ export default {
         name: 'MigrateStatistics',
         query: {
           id: this.dataflow.id,
-          subId: subId
-        }
+          subId: subId,
+        },
       })
     },
 
@@ -514,7 +514,7 @@ export default {
           totalData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             endAt: Time.now(), // 停止时间 || 当前时间
             fields: [
@@ -537,15 +537,15 @@ export default {
               'snapshotDoneAt',
               'snapshotRowTotal',
               'snapshotInsertRowTotal',
-              'outputQps'
+              'outputQps',
             ],
-            type: 'instant' // 瞬时值
+            type: 'instant', // 瞬时值
           },
           // 任务事件统计（条）-所选周期累计
           barChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             fields: [
               'inputInsertTotal',
@@ -557,24 +557,24 @@ export default {
               'outputUpdateTotal',
               'outputDeleteTotal',
               'outputDdlTotal',
-              'outputOthersTotal'
+              'outputOthersTotal',
             ],
-            type: 'difference'
+            type: 'difference',
           },
           // qps + 增量延迟
           lineChartData: {
             tags: {
               type: 'task',
-              taskId
+              taskId,
             },
             fields: ['inputQps', 'outputQps', 'timeCostAvg'],
-            type: 'continuous' // 连续数据
+            type: 'continuous', // 连续数据
           },
           // dag数据
           dagData: {
             tags: {
               type: 'node',
-              taskId
+              taskId,
             },
             fields: [
               'inputInsertTotal',
@@ -600,11 +600,11 @@ export default {
               'snapshotInsertRowTotal',
               'snapshotTableTotal',
               'tableTotal',
-              'replicateLag'
+              'replicateLag',
             ],
-            type: 'instant' // 瞬时值
-          }
-        }
+            type: 'instant', // 瞬时值
+          },
+        },
       }
       return params
     },
@@ -613,8 +613,8 @@ export default {
       let params = {
         quota: {
           uri: '/api/measurement/query/v2',
-          param: this.getQuotaFilter()
-        }
+          param: this.getQuotaFilter(),
+        },
       }
       return params
     },
@@ -623,9 +623,9 @@ export default {
       if (!this.dataflow?.id) {
         return
       }
-      measurementApi.batch(this.getParams()).then(data => {
+      measurementApi.batch(this.getParams()).then((data) => {
         const map = {
-          quota: this.loadQuotaData
+          quota: this.loadQuotaData,
         }
         for (let key in data) {
           const item = data[key]
@@ -667,25 +667,25 @@ export default {
         ranksep: 200,
         marginx: 50,
         marginy: 50,
-        rankdir: 'LR'
+        rankdir: 'LR',
       })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         dg.setNode(NODE_PREFIX + n.id, {
           width: NODE_WIDTH,
-          height: NODE_HEIGHT
+          height: NODE_HEIGHT,
         })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -696,17 +696,17 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n]
-              }
-            }
+                position: nodePositionMap[n],
+              },
+            },
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
@@ -718,7 +718,7 @@ export default {
 
     handleChangeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
@@ -764,11 +764,11 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'VerifyDetails',
         params: {
-          id: this.dataflow?.id
+          id: this.dataflow?.id,
         },
         query: {
-          table
-        }
+          table,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -777,8 +777,8 @@ export default {
       let routeUrl = this.$router.resolve({
         name: 'connectionsList',
         query: {
-          keyword
-        }
+          keyword,
+        },
       })
       window.open(routeUrl.href)
     },
@@ -810,9 +810,9 @@ export default {
           fields: {
             messages: true,
             pdkHash: true,
-            properties: true
-          }
-        })
+            properties: true,
+          },
+        }),
       })
       this.setPdkPropertiesMap(
         databaseItems.reduce((map, item) => {
@@ -821,7 +821,7 @@ export default {
             map[item.pdkHash] = properties
           }
           return map
-        }, {})
+        }, {}),
       )
     },
 
@@ -831,8 +831,8 @@ export default {
 
     getTaskStatus(type) {
       return TASK_STATUS_MAP[type] || ''
-    }
-  }
+    },
+  },
 }
 </script>
 

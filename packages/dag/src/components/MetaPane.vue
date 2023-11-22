@@ -30,7 +30,7 @@ export default {
 
   props: {
     isShow: Boolean,
-    form: Object
+    form: Object,
   },
 
   data() {
@@ -39,7 +39,7 @@ export default {
       tableData: [],
       loading: false,
       data: '',
-      fieldChangeRules: []
+      fieldChangeRules: [],
     }
   },
 
@@ -59,7 +59,7 @@ export default {
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    }
+    },
   },
 
   watch: {
@@ -89,7 +89,7 @@ export default {
       if (v) {
         this.loadFields()
       }
-    }
+    },
   },
 
   methods: {
@@ -100,23 +100,23 @@ export default {
       try {
         const { items } = await this.getData()
         this.selected =
-          items.map(t => {
+          items.map((t) => {
             const { fields = [], findPossibleDataTypes = {} } = t
             //如果findPossibleDataTypes = {}，不做类型校验
             if (this.isTarget) {
-              fields.forEach(el => {
+              fields.forEach((el) => {
                 const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
                 el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = getMatchedDataTypeLevel(
                   el,
                   el.canUseDataTypes,
                   this.fieldChangeRules,
-                  findPossibleDataTypes
+                  findPossibleDataTypes,
                 )
               })
             } else {
               // 源节点 JSON.parse('{\"type\":7}').type==7
-              fields.forEach(el => {
+              fields.forEach((el) => {
                 const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
                 el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
                 el.matchedDataTypeLevel = errorFiledType(el)
@@ -139,8 +139,8 @@ export default {
     handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.form?.setValuesIn?.('fieldChangeRules', this.fieldChangeRules)
-    }
-  }
+    },
+  },
 }
 </script>
 

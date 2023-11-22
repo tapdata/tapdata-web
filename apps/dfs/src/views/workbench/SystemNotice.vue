@@ -8,7 +8,7 @@
 import { AlarmNotification } from '@tap/business'
 
 export default {
-  components: { AlarmNotification }
+  components: { AlarmNotification },
 }
 </script>
 

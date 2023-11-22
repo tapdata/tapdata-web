@@ -46,7 +46,7 @@ export default {
       password: '',
       timer: null,
       time: 0,
-      form: null
+      form: null,
     }
   },
 
@@ -80,7 +80,7 @@ export default {
           }, 1000)
           await usersApi.sendVerifyEmail({
             email: this.email,
-            inviteCode: this.inviteCode
+            inviteCode: this.inviteCode,
           })
         } catch (e) {
           // if (e.response && e.response.msg) {
@@ -122,15 +122,15 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.email }
+        query: { email: this.email },
       })
-    }
+    },
   },
 
   unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  }
+  },
 }
 </script>
 

@@ -31,6 +31,6 @@ export const PdkProperties = observer(
           <RecursionField basePath={field.value.address} schema={schema.value} onlyRenderProperties />
         ) : null
       }
-    }
-  })
+    },
+  }),
 )

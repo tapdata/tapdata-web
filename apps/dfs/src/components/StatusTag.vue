@@ -28,7 +28,7 @@ import {
   CONNECTION_STATUS_MAP_EN,
   MDB_STATUS_MAP,
   TICKET_STATUS_MAP,
-  ORDER_STATUS_MAP
+  ORDER_STATUS_MAP,
 } from '../const'
 export default {
   name: 'StatusTag',
@@ -36,28 +36,28 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'tag'
+      default: 'tag',
     },
     status: {
-      type: String
+      type: String,
     },
     target: {
       type: String,
-      default: 'instance'
+      default: 'instance',
     },
     onlyImg: {
       type: Boolean,
-      default: false
+      default: false,
     },
     statusMap: {
       type: Object,
       default: () => {
         return null
-      }
+      },
     },
     defaultStatus: {
-      type: String
-    }
+      type: String,
+    },
   },
   computed: {
     map() {
@@ -71,7 +71,7 @@ export default {
           milestone: MILESTONE_STATUS_MAP,
           connection_en: CONNECTION_STATUS_MAP_EN,
           ticket: TICKET_STATUS_MAP,
-          order: ORDER_STATUS_MAP
+          order: ORDER_STATUS_MAP,
         }[this.target]
       )
     },
@@ -80,8 +80,8 @@ export default {
     },
     imgSrc() {
       return require(`../../public/images/task/${this.statusObj.icon}.png`)
-    }
-  }
+    },
+  },
 }
 </script>
 

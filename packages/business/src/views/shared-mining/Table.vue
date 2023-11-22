@@ -257,9 +257,9 @@ export default {
           const total = data.total || 0
           if (!keyword) {
             this.listTotal = total
-        }
-        return {
-          total: total,
+          }
+          return {
+            total: total,
             data: data.items || [],
           }
         },

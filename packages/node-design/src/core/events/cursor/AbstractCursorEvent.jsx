@@ -10,7 +10,7 @@ export class AbstractCursorEvent {
       pageX: 0,
       pageY: 0,
       target: null,
-      view: window
+      view: window,
     }
     this.transformCoordinates()
   }

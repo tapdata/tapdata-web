@@ -7,14 +7,14 @@ export const HighlightCode = defineComponent({
     code: String,
     language: {
       type: String,
-      default: 'javascript'
-    }
+      default: 'javascript',
+    },
   },
   setup(props) {
     return () => {
       return <Highlight language={props.language} code={props.code}></Highlight>
     }
-  }
+  },
 })
 
 export default HighlightCode

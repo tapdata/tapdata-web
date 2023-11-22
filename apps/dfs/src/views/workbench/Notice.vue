@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'Notice'
+  name: 'Notice',
 }
 </script>
 
@@ -238,8 +238,15 @@ export default {
 }
 .number-title-box__number {
   color: rgb(255, 255, 255);
-  text-shadow: rgb(53 119 177) 0px 1.4px, rgb(69 104 188) 1px 1px, rgb(69 104 188) 1.4px 0px, rgb(69 104 188) 1px -1px,
-    rgb(69 104 188) 0px -1.4px, rgb(69 104 188) -1px -1px, rgb(69 104 188) -1.4px 0px, rgb(69 104 188) -1px 1px;
+  text-shadow:
+    rgb(53 119 177) 0px 1.4px,
+    rgb(69 104 188) 1px 1px,
+    rgb(69 104 188) 1.4px 0px,
+    rgb(69 104 188) 1px -1px,
+    rgb(69 104 188) 0px -1.4px,
+    rgb(69 104 188) -1px -1px,
+    rgb(69 104 188) -1.4px 0px,
+    rgb(69 104 188) -1px 1px;
   font-size: 51px;
   font-style: italic;
 }

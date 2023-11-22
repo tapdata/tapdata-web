@@ -2,7 +2,7 @@ import { transformComponent } from '@formily/element-plus/lib/__builtins__/share
 import _TableSelector from './TableSelector'
 
 export const TableSelector = transformComponent(_TableSelector, {
-  change: 'input'
+  change: 'input',
 })
 
 export default TableSelector

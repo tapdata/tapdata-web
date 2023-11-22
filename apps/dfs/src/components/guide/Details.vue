@@ -34,7 +34,7 @@
         <span class="price-detail-label text-end inline-block mr-2"
           >{{
             $t('dfs_agent_subscription_discount', {
-              val: orderInfo.priceDiscount
+              val: orderInfo.priceDiscount,
             })
           }}:
         </span>
@@ -64,25 +64,25 @@ export default {
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           prop: 'subscriptionMethodLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_user_center_jine'),
-          prop: 'price'
-        }
+          prop: 'price',
+        },
       ],
       payType: 'Stripe',
       subscribeItems: [],
       types: [
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_zaixianzhifu'),
-          value: 'Stripe'
-        }
+          value: 'Stripe',
+        },
       ],
 
       formRules: {
@@ -100,21 +100,21 @@ export default {
                 return
               }
               callback()
-            }
-          }
-        ]
-      }
+            },
+          },
+        ],
+      },
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
   mounted() {
     this.$nextTick(() => {
       //格式化items
       let subscribeItems = this.orderInfo?.subscribeItems || []
       const { subscriptionMethodLabel, originalPrice, priceOff } = this.orderInfo
-      this.subscribeItems = subscribeItems.map(it => {
+      this.subscribeItems = subscribeItems.map((it) => {
         it.subscriptionMethodLabel = subscriptionMethodLabel
         it.price = originalPrice
         return it
@@ -124,13 +124,13 @@ export default {
   },
   methods: {
     validateForm(ref) {
-      return new Promise(resolve => {
-        this.$refs[ref].validate(valid => {
+      return new Promise((resolve) => {
+        this.$refs[ref].validate((valid) => {
           resolve(valid)
         })
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

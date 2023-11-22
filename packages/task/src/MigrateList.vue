@@ -46,13 +46,13 @@ export default {
       taskBuried: {
         new: 'migrationCreate',
         newFail: 'migrationCreateAgentFail',
-        start: 'migrationStart'
+        start: 'migrationStart',
       },
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor'
-      }
+        monitor: 'MigrationMonitor',
+      },
     }
   },
 
@@ -66,19 +66,19 @@ export default {
       },
       set(value) {
         this.$store.commit('setReplicationView', value)
-      }
-    }
+      },
+    },
   },
 
   watch: {
     viewType() {
       if (!this.startingTour) {
         this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour
+          tour: this.$store.state.replicationTour,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

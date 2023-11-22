@@ -3,7 +3,7 @@
     class="v-empty-wrap"
     :class="{
       'empty-small': small,
-      'empty-large': large
+      'empty-large': large,
     }"
   >
     <div class="empty-image">
@@ -27,9 +27,9 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_data_no_data')
-      }
-    }
-  }
+      },
+    },
+  },
 }
 </script>
 

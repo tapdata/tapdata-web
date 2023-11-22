@@ -2,12 +2,12 @@
 export default {
   name: 'OverflowTooltip',
   props: {
-    text: String
+    text: String,
   },
 
   data() {
     return {
-      overflow: false
+      overflow: false,
     }
   },
 
@@ -22,8 +22,8 @@ export default {
           const textWidth = this.$refs.text?.getBoundingClientRect().width
           this.overflow = textWidth > containerWidth
         })
-      }
-    }
+      },
+    },
   },
 
   render() {
@@ -34,7 +34,7 @@ export default {
       <el-tooltip
         content={defaultText}
         {...{
-          props: this.$attrs
+          props: this.$attrs,
         }}
       >
         <div ref="container" class={['overflow-tip', $attrs.class]}>
@@ -50,7 +50,7 @@ export default {
         </span>
       </div>
     )
-  }
+  },
 }
 </script>
 

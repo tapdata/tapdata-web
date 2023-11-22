@@ -42,9 +42,7 @@
     <ElTableColumn prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
       <template v-slot="scope">
         <div>
-          <span>{{
-            `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%`
-          }}</span>
+          <span>{{ `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%` }}</span>
         </div>
       </template>
     </ElTableColumn>
@@ -82,17 +80,17 @@ export default {
       type: Array,
       default: () => {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      current: 0
+      current: 0,
     }
   },
   computed: {
     list() {
-      let list = this.data.map(item => {
+      let list = this.data.map((item) => {
         if (item.result === 'failed') {
           let countResultText = ''
           let contentResultText = ''
@@ -124,7 +122,7 @@ export default {
           return 0
         }
       })
-    }
+    },
   },
   methods: {
     setCurrentRow(row) {
@@ -134,9 +132,9 @@ export default {
     rowClickHandler(row) {
       this.current = row.taskId
       $emit(this, 'row-click', row)
-    }
+    },
   },
-  emits: ['row-click']
+  emits: ['row-click'],
 }
 </script>
 

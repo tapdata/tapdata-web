@@ -1,7 +1,7 @@
 import { each } from './array'
 import { isPlainObj } from './types'
 
-export const lowerSnake = str => {
+export const lowerSnake = (str) => {
   return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
 }
 

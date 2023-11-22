@@ -12,8 +12,8 @@ export default {
         change: (...args) => {
           $emit(self, 'change', ...args)
           self.config.on && self.config.on.change && self.config.on.change(...args)
-        }
-      }
+        },
+      },
     }
   },
   mounted() {
@@ -22,5 +22,5 @@ export default {
       this.on.input(defaultValue)
     }
   },
-  emits: ['update:value', 'change']
+  emits: ['update:value', 'change'],
 }

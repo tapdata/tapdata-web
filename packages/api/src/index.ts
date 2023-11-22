@@ -236,7 +236,7 @@ export {
   ldpApi,
   appApi,
   lineageApi,
-  dataPermissionApi
+  dataPermissionApi,
 }
 export * from './ApiClient'
 

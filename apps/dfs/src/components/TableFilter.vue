@@ -24,15 +24,15 @@ export default {
   components: { VIcon },
   props: {
     value: {
-      type: String
+      type: String,
     },
     options: {
-      type: [Array, Object]
-    }
+      type: [Array, Object],
+    },
   },
   data() {
     return {
-      visible: false
+      visible: false,
     }
   },
   watch: {
@@ -40,10 +40,10 @@ export default {
       this.$nextTick(() => {
         this.$parent.$forceUpdate()
       })
-    }
+    },
   },
   created() {
-    window.addEventListener('click', e => {
+    window.addEventListener('click', (e) => {
       if (e.target.className.indexOf('table-filter__icon') < 0) {
         this.visible = false
       }
@@ -65,9 +65,9 @@ export default {
       } else {
         this.visible = false
       }
-    }
+    },
   },
-  emits: ['update:value']
+  emits: ['update:value'],
 }
 </script>
 

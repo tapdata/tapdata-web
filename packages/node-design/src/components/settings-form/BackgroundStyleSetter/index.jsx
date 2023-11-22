@@ -36,28 +36,28 @@ export const BackgroundStyleSetter = observer(
                     dataSource={[
                       {
                         label: 'No Repeat',
-                        value: 'no-repeat'
+                        value: 'no-repeat',
                       },
                       {
                         label: 'Repeat',
-                        value: 'repeat'
+                        value: 'repeat',
                       },
                       {
                         label: 'Repeat X',
-                        value: 'repeat-x'
+                        value: 'repeat-x',
                       },
                       {
                         label: 'Repeat Y',
-                        value: 'repeat-y'
+                        value: 'repeat-y',
                       },
                       {
                         label: 'Space',
-                        value: 'space'
+                        value: 'space',
                       },
                       {
                         label: 'Round',
-                        value: 'round'
-                      }
+                        value: 'round',
+                      },
                     ]}
                   />
                 </InputItems.Item>
@@ -73,6 +73,6 @@ export const BackgroundStyleSetter = observer(
           </FoldItem>
         )
       }
-    }
-  })
+    },
+  }),
 )

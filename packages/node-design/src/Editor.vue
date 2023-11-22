@@ -52,7 +52,7 @@ import {
   WorkspacePanel,
   ViewportPanel,
   ViewPanel,
-  CompositePanel
+  CompositePanel,
 } from './components'
 import { GlobalRegistry } from './core'
 import * as icons from './icons'
@@ -79,7 +79,7 @@ import {
   DisplayStyleSetter,
   FlexStyleSetter,
   // DrawerSetter,
-  CollapseItem
+  CollapseItem,
 } from './components'
 
 GlobalRegistry.registerDesignerIcons(icons)
@@ -90,8 +90,8 @@ GlobalRegistry.registerDesignerLocales({
       Layouts: '布局组件',
       Arrays: '自增组件',
       Displays: '展示组件',
-      Business: '业务组件'
-    }
+      Business: '业务组件',
+    },
   },
   'en-US': {
     sources: {
@@ -99,9 +99,9 @@ GlobalRegistry.registerDesignerLocales({
       Layouts: 'Layouts',
       Arrays: 'Arrays',
       Displays: 'Displays',
-      Business: 'Business'
-    }
-  }
+      Business: 'Business',
+    },
+  },
 })
 
 export default {
@@ -120,7 +120,7 @@ export default {
     ResourceWidget,
     SchemaEditorWidget,
     CodeEditorWidget,
-    PreviewWidget
+    PreviewWidget,
   },
 
   data() {
@@ -136,7 +136,7 @@ export default {
         InputNumber,
         Checkbox,
         Radio,
-        FieldSelect
+        FieldSelect,
       },
       settingsFormComponents: {
         SizeInput,
@@ -144,10 +144,10 @@ export default {
         FlexStyleSetter,
         Slider,
         CollapseItem,
-        ValueInput
-      }
+        ValueInput,
+      },
     }
-  }
+  },
 }
 </script>
 

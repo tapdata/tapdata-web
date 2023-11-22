@@ -78,15 +78,15 @@ export default {
       renewColumns: [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
+          prop: 'id',
         },
         {
           label: i18n.t('dfs_instance_instance_daoqishijian'),
           prop: 'endAt',
           width: 180,
-          slotName: 'endAt'
-        }
-      ]
+          slotName: 'endAt',
+        },
+      ],
     }
   },
   methods: {
@@ -95,23 +95,23 @@ export default {
       //组装续订列表
       let renew = {
         id: item.id,
-        endAt: item.endAt
+        endAt: item.endAt,
       }
       this.renewColumns = [
         {
           label: i18n.t('dfs_components_renew_dingyuebianhao'),
-          prop: 'id'
-        }
+          prop: 'id',
+        },
       ]
-      let agent = item?.subscribeItems.find(it => it.productType === 'Engine')?.spec
+      let agent = item?.subscribeItems.find((it) => it.productType === 'Engine')?.spec
       let specLabel = getSpec(agent)
-      let mdb = item?.subscribeItems.find(it => it.productType === 'MongoDB')?.spec
+      let mdb = item?.subscribeItems.find((it) => it.productType === 'MongoDB')?.spec
       let specMdbLabel = getSpec(mdb)
       if (specLabel) {
         this.renewColumns.push({
           label: i18n.t('dfs_components_renew_shiliguige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         })
         renew.specLabel = specLabel
       }
@@ -119,7 +119,7 @@ export default {
         this.renewColumns.push({
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'specMdbLabel',
-          width: 180
+          width: 180,
         })
         renew.specMdbLabel = specMdbLabel
       }
@@ -127,7 +127,7 @@ export default {
         label: i18n.t('dfs_instance_instance_daoqishijian'),
         prop: 'endAt',
         width: 180,
-        slotName: 'endAt'
+        slotName: 'endAt',
       })
       this.renewList = [renew]
       this.showRenewDetailVisible = true
@@ -137,16 +137,16 @@ export default {
         url =
           'api/tcm/orders/paid/prices?prices=' + item?.subscribeItems[0].priceId + ',' + item?.subscribeItems[1].priceId
       }
-      this.$axios.get(url).then(data => {
+      this.$axios.get(url).then((data) => {
         this.currentRenewRow.currency = item?.currency
         //根据当前币种过滤出价格
         if (data?.[0]) {
-          this.currentPrice = data?.[0].currencyOption.find(it => it.currency === item?.currency).amount || 0
+          this.currentPrice = data?.[0].currencyOption.find((it) => it.currency === item?.currency).amount || 0
         }
         if (data?.length > 1) {
           this.currentPrice =
-            data?.[0].currencyOption.find(it => it.currency === item?.currency).amount +
-            data?.[1].currencyOption.find(it => it.currency === item?.currency).amount
+            data?.[0].currencyOption.find((it) => it.currency === item?.currency).amount +
+            data?.[1].currencyOption.find((it) => it.currency === item?.currency).amount
         }
       })
     },
@@ -156,32 +156,32 @@ export default {
         subscribeId: id,
         quantity: this.quantity,
         successUrl: location.href,
-        cancelUrl: location.href
+        cancelUrl: location.href,
       }
       this.loadingRenewSubmit = true
       this.buried('renewAgentStripe')
       this.$axios
         .post('api/tcm/subscribe/renew', params)
-        .then(data => {
+        .then((data) => {
           this.showRenewDetailVisible = false
           this.loadingRenewSubmit = false
           //刷新页面
           $emit(this, 'closeVisible')
           // openUrl(data.payUrl)
           this.buried('renewAgentStripe', '', {
-            result: true
+            result: true,
           })
 
           this.$router.push({
             name: 'payForRenew',
             params: {
-              id: data.subscribe
-            }
+              id: data.subscribe,
+            },
           })
         })
         .catch(() => {
           this.buried('renewAgentStripe', '', {
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -200,7 +200,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -211,8 +211,8 @@ export default {
         expiredTime = date.setFullYear(date.getFullYear() + this.quantity)
       }
       return dayjs(expiredTime).format('YYYY-MM-DD')
-    }
+    },
   },
-  emits: ['closeVisible']
+  emits: ['closeVisible'],
 }
 </script>

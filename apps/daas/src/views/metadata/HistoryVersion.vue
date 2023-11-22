@@ -32,7 +32,7 @@
             <template v-slot="scope">
               <span
                 :class="{
-                  activeColor: scope.row.baseValue != scope.row.compareValue
+                  activeColor: scope.row.baseValue != scope.row.compareValue,
                 }"
               >
                 {{ scope.row.compareValue }}
@@ -90,7 +90,7 @@
               <span
                 v-if="scope.row.base_autoincrement"
                 :class="{
-                  checkedActive: scope.row.autoincrement_result !== 'eq'
+                  checkedActive: scope.row.autoincrement_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -101,7 +101,7 @@
               <span
                 v-if="scope.row.base_primary_key_position"
                 :class="{
-                  checkedActive: scope.row.primary_key_position_result !== 'eq'
+                  checkedActive: scope.row.primary_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -112,7 +112,7 @@
               <span
                 v-if="scope.row.base_foreign_key_position"
                 :class="{
-                  checkedActive: scope.row.foreign_key_position_result !== 'eq'
+                  checkedActive: scope.row.foreign_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -123,7 +123,7 @@
               <span
                 v-if="scope.row.base_is_nullable"
                 :class="{
-                  checkedActive: scope.row.is_nullable_result !== 'eq'
+                  checkedActive: scope.row.is_nullable_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -134,7 +134,7 @@
               <span
                 v-if="scope.row.base_unique"
                 :class="{
-                  checkedActive: scope.row.unique_result !== 'eq'
+                  checkedActive: scope.row.unique_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -189,7 +189,7 @@
               <span
                 v-if="scope.row.compare_autoincrement"
                 :class="{
-                  checkedActive: scope.row.autoincrement_result !== 'eq'
+                  checkedActive: scope.row.autoincrement_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -200,7 +200,7 @@
               <span
                 v-if="scope.row.compare_primary_key_position"
                 :class="{
-                  checkedActive: scope.row.primary_key_position_result !== 'eq'
+                  checkedActive: scope.row.primary_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -211,7 +211,7 @@
               <span
                 v-if="scope.row.compare_foreign_key_position"
                 :class="{
-                  checkedActive: scope.row.foreign_key_position_result !== 'eq'
+                  checkedActive: scope.row.foreign_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -222,7 +222,7 @@
               <span
                 v-if="scope.row.compare_is_nullable"
                 :class="{
-                  checkedActive: scope.row.is_nullable_result !== 'eq'
+                  checkedActive: scope.row.is_nullable_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -233,7 +233,7 @@
               <span
                 v-if="scope.row.compare_unique"
                 :class="{
-                  checkedActive: scope.row.unique_result !== 'eq'
+                  checkedActive: scope.row.unique_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -254,19 +254,19 @@ export default {
   props: {
     comparedData: {
       type: Object,
-      required: true
+      required: true,
     },
     currentVersion: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       properties: [],
       fieldsItems: [],
       versionNum: '',
-      currentVersionNum: ''
+      currentVersionNum: '',
     }
   },
   computed: {
@@ -280,7 +280,7 @@ export default {
       } else {
         return this.$route.meta.types || []
       }
-    }
+    },
   },
   created() {
     this.currentVersionNum = this.currentVersion
@@ -290,13 +290,13 @@ export default {
   methods: {
     getData() {
       let params = {
-        historyVersion: this.comparedData.version
+        historyVersion: this.comparedData.version,
       }
-      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(data => {
+      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then((data) => {
         this.properties = data?.properties
         this.fieldsItems = data?.fields
 
-        this.fieldsItems.forEach(tableItem => {
+        this.fieldsItems.forEach((tableItem) => {
           if (tableItem.base_field_name) {
             tableItem.base_is_nullable = !tableItem.base_is_nullable
           } else {
@@ -315,8 +315,8 @@ export default {
           if (tableItem.compare_foreign_key_position > 0) tableItem.compare_foreign_key_position = true
         })
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

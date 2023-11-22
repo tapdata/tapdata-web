@@ -144,83 +144,83 @@ export default {
       form: {
         refundReason: '',
         refundDescribe: '',
-        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui')
+        refundChannel: i18n.t('dfs_instance_instance_yuanlutuihui'),
       },
       rules: {
         refundDescribe: [
           {
             required: true,
             message: i18n.t('dfs_instance_instance_qingshurutuiding'),
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
       memoryColumns: [
         {
           label: i18n.t('dfs_instance_createagent_cunchuguige'),
           prop: 'spec',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchukongjian'),
           prop: 'storageSize',
-          width: 120
+          width: 120,
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
           slotName: 'expiredTime',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
           prop: 'actualAmount',
-          slotName: 'actualAmount'
+          slotName: 'actualAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_yixiaohaojine'),
           prop: 'spentAmount',
-          slotName: 'spentAmount'
+          slotName: 'spentAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_tuidingjine'),
           prop: 'refundAmount',
-          slotName: 'refundAmount'
-        }
+          slotName: 'refundAmount',
+        },
       ],
       paidDetailColumns: [
         {
           label: this.$t('agent_name'),
           prop: 'agentName',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: this.$t('dfs_instance_instance_guige'),
           prop: 'spec',
-          width: 120
+          width: 120,
         },
         {
           label: i18n.t('dfs_instance_selectlist_dingyuezhouqi'),
           slotName: 'expiredTime',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_shifujine'),
           prop: 'actualAmount',
-          slotName: 'actualAmount'
+          slotName: 'actualAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_yixiaohaojine'),
           prop: 'spentAmount',
-          slotName: 'spentAmount'
+          slotName: 'spentAmount',
         },
         {
           label: i18n.t('dfs_instance_instance_tuidingjine'),
           prop: 'refundAmount',
-          slotName: 'refundAmount'
-        }
+          slotName: 'refundAmount',
+        },
       ],
       agentList: [],
-      memoryList: []
+      memoryList: [],
     }
   },
   methods: {
@@ -228,7 +228,7 @@ export default {
     getUnsubscribePrice(row = {}, type) {
       if (row?.refund) {
         let param = {
-          instanceId: row.agentId
+          instanceId: row.agentId,
         }
         this.$axios.post('api/tcm/subscribe/{subscribeId}/refund', param).then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -241,10 +241,10 @@ export default {
       this.currentRow['type'] = type //是否是单个退订
       this.memoryList = []
       this.agentList = []
-      this.$axios.get(url).then(data => {
+      this.$axios.get(url).then((data) => {
         if (data) {
-          let agentList = data.filter(it => it.productType === 'Engine')
-          let memoryList = data.filter(it => it.productType === 'MongoDB')
+          let agentList = data.filter((it) => it.productType === 'Engine')
+          let memoryList = data.filter((it) => it.productType === 'MongoDB')
           if (type === 'all') {
             //计算价格
             let price = data[0].refundAmount + data[1].refundAmount
@@ -263,7 +263,7 @@ export default {
       })
     },
     formatItems(data) {
-      return data.map(item => {
+      return data.map((item) => {
         item.actualAmount = this.formatPrice(item.currency, item.actualAmount)
         item.spentAmount = this.formatPrice(item.currency, item.spentAmount)
         item.refundAmount = this.formatPrice(item.currency, item.refundAmount)
@@ -285,13 +285,13 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
     //退订
     cancelSubmit() {
-      this.$refs.ruleForm.validate(valid => {
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loadingCancelSubmit = true
           const { paidType, id, type, subscribeItems } = this.currentRow
@@ -299,22 +299,22 @@ export default {
           //单个退订需要传resourceId
           let resourceId = ''
           if (type === 'Engine') {
-            resourceId = subscribeItems.find(it => it.productType === 'Engine')?.resourceId
+            resourceId = subscribeItems.find((it) => it.productType === 'Engine')?.resourceId
           } else if (type === 'MongoDB') {
-            resourceId = subscribeItems.find(it => it.productType === 'MongoDB')?.resourceId
+            resourceId = subscribeItems.find((it) => it.productType === 'MongoDB')?.resourceId
           }
           let param = {
             subscribeId: id,
             refundReason,
             resourceId: resourceId,
-            refundDescribe
+            refundDescribe,
           }
           this.$axios
             .post('api/tcm/subscribe/cancel', param)
             .then(() => {
               this.buried('unsubscribeAgentStripe', '', {
                 result: true,
-                type: paidType
+                type: paidType,
               })
               this.$message.success(this.$t('public_message_operation_success'))
               this.showUnsubscribeDetailVisible = false
@@ -328,9 +328,9 @@ export default {
             })
         }
       })
-    }
+    },
   },
-  emits: ['closeVisible']
+  emits: ['closeVisible'],
 }
 </script>
 

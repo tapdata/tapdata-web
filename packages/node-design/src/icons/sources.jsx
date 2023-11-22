@@ -459,7 +459,7 @@ export const DatePickerSource = {
       <rect fill="#4D4D4D" x="472" y="617" width="80" height="80" rx="10"></rect>
       <rect fill="#4D4D4D" x="472" y="777" width="80" height="80" rx="10"></rect>
     </g>
-  )
+  ),
 }
 
 export const DateRangePickerSource = {
@@ -564,7 +564,7 @@ export const DateRangePickerSource = {
         fillRule="nonzero"
       ></path>
     </g>
-  )
+  ),
 }
 
 export const TimePickerSource = () => (
@@ -752,7 +752,7 @@ export const PasswordSource = {
         ></path>
       </g>
     </svg>
-  )
+  ),
 }
 
 export const TransferSource = () => (
@@ -983,7 +983,7 @@ export const CardSource = {
         rx="10"
       ></rect>
     </g>
-  )
+  ),
 }
 
 export const GridSource = () => (
@@ -1254,7 +1254,7 @@ export const TabSource = {
         rx="10"
       ></rect>
     </g>
-  )
+  ),
 }
 
 export const CollapseSource = {
@@ -1383,7 +1383,7 @@ export const CollapseSource = {
         rx="10"
       ></rect>
     </g>
-  )
+  ),
 }
 
 export const ArrayCardsSource = () => (
@@ -1603,7 +1603,7 @@ export const ArrayTableSource = {
         rx="10"
       ></rect>
     </g>
-  )
+  ),
 }
 
 export const ButtonSource = () => (

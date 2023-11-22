@@ -24,7 +24,7 @@ export const SchemaFiledMapping = observer(
             timer = setTimeout(() => {
               refs.fieldMapping.$refs.list.getMetadataTransformer()
             }, 500)
-          }
+          },
         )
       })
       onBeforeUnmount(() => {
@@ -36,8 +36,8 @@ export const SchemaFiledMapping = observer(
           <FiledMapping ref="fieldMapping" attrs={attrs} on={listeners} itemType="string" itemQuery="original_name" />
         )
       }
-    }
-  })
+    },
+  }),
 )
 
 export default SchemaFiledMapping

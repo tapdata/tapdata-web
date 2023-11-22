@@ -15,15 +15,15 @@ export const ResourceWidget = observer(
       className: String,
       defaultExpand: {
         type: Boolean,
-        default: true
-      }
+        default: true,
+      },
     },
 
     setup(props) {
       // const designer = useDesigner()
       const prefix = 'fd-resource'
       const expand = ref(props.defaultExpand)
-      const renderNode = source => {
+      const renderNode = (source) => {
         const { node, icon, title, thumb, span } = source
         return (
           <div
@@ -59,13 +59,13 @@ export const ResourceWidget = observer(
             prefix,
             props.className,
             {
-              expand: expand.value
-            }
+              expand: expand.value,
+            },
           ]}
         >
           <div
             class={prefix + '-header'}
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation()
               e.preventDefault()
               expand.value = !expand.value
@@ -88,6 +88,6 @@ export const ResourceWidget = observer(
           </div>
         </div>
       )
-    }
-  })
+    },
+  }),
 )

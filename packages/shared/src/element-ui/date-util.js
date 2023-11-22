@@ -15,11 +15,11 @@ const newArray = function (start, end) {
 
 export const getI18nSettings = () => {
   return {
-    dayNamesShort: weeks.map(week => t(`el.datepicker.weeks.${week}`)),
-    dayNames: weeks.map(week => t(`el.datepicker.weeks.${week}`)),
-    monthNamesShort: months.map(month => t(`el.datepicker.months.${month}`)),
+    dayNamesShort: weeks.map((week) => t(`el.datepicker.weeks.${week}`)),
+    dayNames: weeks.map((week) => t(`el.datepicker.weeks.${week}`)),
+    monthNamesShort: months.map((month) => t(`el.datepicker.months.${month}`)),
     monthNames: months.map((month, index) => t(`el.datepicker.month${index + 1}`)),
-    amPm: ['am', 'pm']
+    amPm: ['am', 'pm'],
   }
 }
 
@@ -114,8 +114,8 @@ export const getRangeHours = function (ranges) {
   const hours = []
   let disabledHours = []
 
-  ;(ranges || []).forEach(range => {
-    const value = range.map(date => date.getHours())
+  ;(ranges || []).forEach((range) => {
+    const value = range.map((date) => date.getHours())
 
     disabledHours = disabledHours.concat(newArray(value[0], value[1]))
   })
@@ -141,7 +141,7 @@ export const getPrevMonthLastDays = (date, amount) => {
   return range(amount).map((_, index) => lastDay - (amount - index - 1))
 }
 
-export const getMonthDays = date => {
+export const getMonthDays = (date) => {
   const temp = new Date(date.getFullYear(), date.getMonth() + 1, 0)
   const days = temp.getDate()
   return range(days).map((_, index) => index + 1)
@@ -157,7 +157,7 @@ export const getRangeMinutes = function (ranges, hour) {
   const minutes = new Array(60)
 
   if (ranges.length > 0) {
-    ranges.forEach(range => {
+    ranges.forEach((range) => {
       const start = range[0]
       const end = range[1]
       const startHour = start.getHours()
@@ -213,22 +213,22 @@ export const clearMilliseconds = function (date) {
     date.getHours(),
     date.getMinutes(),
     date.getSeconds(),
-    0
+    0,
   )
 }
 
 export const limitTimeRange = function (date, ranges, format = 'HH:mm:ss') {
   // TODO: refactory a more elegant solution
   if (ranges.length === 0) return date
-  const normalizeDate = date => fecha.parse(fecha.format(date, format), format)
+  const normalizeDate = (date) => fecha.parse(fecha.format(date, format), format)
   const ndate = normalizeDate(date)
-  const nranges = ranges.map(range => range.map(normalizeDate))
-  if (nranges.some(nrange => ndate >= nrange[0] && ndate <= nrange[1])) return date
+  const nranges = ranges.map((range) => range.map(normalizeDate))
+  if (nranges.some((nrange) => ndate >= nrange[0] && ndate <= nrange[1])) return date
 
   let minDate = nranges[0][0]
   let maxDate = nranges[0][0]
 
-  nranges.forEach(nrange => {
+  nranges.forEach((nrange) => {
     minDate = new Date(Math.min(nrange[0], minDate))
     maxDate = new Date(Math.max(nrange[1], minDate))
   })

@@ -37,7 +37,7 @@ export default {
       visible: false,
       details: {
         value: '',
-        desc: ''
+        desc: '',
       },
       listColumns: [
         {
@@ -45,22 +45,22 @@ export default {
           prop: 'name',
           slotName: 'name',
           'min-width': 180,
-          'show-overflow-tooltip': true
+          'show-overflow-tooltip': true,
         },
         {
           label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
           'min-width': 100,
           prop: 'statusFmt',
-          slotName: 'statusFmt'
+          slotName: 'statusFmt',
         },
         {
           label: this.$t('public_operation'),
           width: 200,
           prop: 'operation',
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ],
-      listParams: {}
+      listParams: {},
     }
   },
 
@@ -82,8 +82,8 @@ export default {
           this.loadData(this.details, this.listParams)
         }, 80)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

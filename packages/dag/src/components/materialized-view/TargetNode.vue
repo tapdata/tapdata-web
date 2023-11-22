@@ -80,17 +80,17 @@ export default {
     schema: Array,
     node: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     data: Object,
     jsPlumbIns: Object,
     schemaLoading: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
   },
   components: {
     NodeIcon,
     AsyncSelect,
-    TableSelect
+    TableSelect,
   },
   directives: { ClickOutside },
   data() {
@@ -100,12 +100,12 @@ export default {
         isTarget: true,
         where: {
           database_type: {
-            in: ['MongoDB', 'MongoDB Atlas']
-          }
-        }
+            in: ['MongoDB', 'MongoDB Atlas'],
+          },
+        },
       },
       fieldNameVisible: false,
-      fieldName: ''
+      fieldName: '',
     }
   },
   computed: {
@@ -125,7 +125,7 @@ export default {
       const [left = 0, top = 0] = this.position || []
       return {
         left: left + 'px',
-        top: top + 'px'
+        top: top + 'px',
       }
     },
 
@@ -144,7 +144,7 @@ export default {
       }
 
       return this.$t('public_data_no_data')
-    }
+    },
   },
   mounted() {
     if (this.node.id) {
@@ -161,7 +161,7 @@ export default {
       'updateNodeProperties',
       'resetSelectedNodes',
       'setNodeError',
-      'clearNodeError'
+      'clearNodeError',
     ]),
 
     __init() {
@@ -169,7 +169,7 @@ export default {
       const nodeId = id
 
       const targetParams = {
-        ...targetEndpoint
+        ...targetEndpoint,
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -179,7 +179,7 @@ export default {
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
         handle: '.node-title, .node-title *',
-        start: params => {
+        start: (params) => {
           this.onMouseDownAt = Time.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.node.id)) {
@@ -194,7 +194,7 @@ export default {
           $emit(this, 'drag-start', params)
           return true
         },
-        drag: params => {
+        drag: (params) => {
           // console.log('node-drag-move', params.pos)
           params.id = nodeId // 增加id参数
           this.isDrag = true // 拖动标记
@@ -236,12 +236,12 @@ export default {
               console.log(
                 i18n.t('packages_dag_components_dfnode_tuodongshijianduan'),
                 Time.now() - this.onMouseDownAt,
-                distance
+                distance,
               ) // eslint-disable-line
               this.removeActiveAction('dragActive')
             }
 
-            moveNodes.forEach(node => {
+            moveNodes.forEach((node) => {
               const nodeElement = NODE_PREFIX + node.id
               const element = document.getElementById(nodeElement)
               if (element === null) {
@@ -253,15 +253,15 @@ export default {
               const updateInformation = {
                 id: node.id,
                 properties: {
-                  attrs: { position: newNodePosition }
-                }
+                  attrs: { position: newNodePosition },
+                },
               }
 
               oldProperties.push({
                 id: node.id,
                 properties: {
-                  attrs: { position }
-                }
+                  attrs: { position },
+                },
               })
               newProperties.push(updateInformation)
             })
@@ -269,11 +269,11 @@ export default {
 
           this.onMouseDownAt = undefined
           $emit(this, 'drag-stop', this.isNotMove, oldProperties, newProperties)
-        }
+        },
       })
 
       this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
-        uuid: id + '_target'
+        uuid: id + '_target',
       })
     },
 
@@ -302,8 +302,8 @@ export default {
         const _filter = {
           where: {
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -316,9 +316,9 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         // 过滤连接类型
         if (isSource && isTarget) {
@@ -326,25 +326,25 @@ export default {
         } else if (isSource) {
           _filter.where.connection_type = {
             like: 'source',
-            options: 'i'
+            options: 'i',
           }
         } else if (isTarget) {
           _filter.where.connection_type = {
             like: 'target',
-            options: 'i'
+            options: 'i',
           }
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
             label: `${item.name} ${item.status ? `(${CONNECTION_STATUS_MAP[item.status]?.text || item.status})` : ''}`,
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            ...item
+            ...item,
           }
         })
 
@@ -359,16 +359,16 @@ export default {
       filter.where &&
         Object.assign(filter.where, {
           meta_type: {
-            in: ['collection', 'table', 'view'] //,
+            in: ['collection', 'table', 'view'], //,
           },
           is_deleted: false,
-          sourceType: 'SOURCE'
+          sourceType: 'SOURCE',
         })
       Object.assign(filter, {
         fields: {
-          original_name: true
+          original_name: true,
         },
-        order: ['original_name ASC']
+        order: ['original_name ASC'],
       })
       if (filter.where?.value) {
         filter.where.original_name = filter.where?.value
@@ -376,26 +376,26 @@ export default {
       } else {
         filter.where.original_name = {
           // regexp: '^[^\\s]+$'
-          neq: ''
+          neq: '',
         }
       }
       const data = await metadataInstancesApi.get({ filter: JSON.stringify(filter) }, config)
-      data.items = data.items.map(item => {
+      data.items = data.items.map((item) => {
         return {
           label: item.original_name + (item.comment ? `(${item.comment})` : ''),
-          value: item.original_name
+          value: item.original_name,
         }
       })
       const table = filter.where.original_name?.like
-      if (table && !data.items.some(t => t.value.includes(table))) {
+      if (table && !data.items.some((t) => t.value.includes(table))) {
         const res = await metadataInstancesApi.checkTableExist({
           connectionId: filter.where['source.id'],
-          tableName: table
+          tableName: table,
         })
         if (res?.exist) {
           data.items.unshift({
             label: table,
-            value: table
+            value: table,
           })
         }
       }
@@ -414,7 +414,7 @@ export default {
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
-          let child = parent.children.find(c => c.field_name === field)
+          let child = parent.children.find((c) => c.field_name === field)
 
           if (!child) {
             child = { field_name: field, children: [] }
@@ -425,7 +425,7 @@ export default {
 
           if (i === fields.length - 1) {
             Object.assign(parent, item, {
-              field_name: field
+              field_name: field,
             })
           }
         }
@@ -440,10 +440,10 @@ export default {
         nodeId: this.node.id,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: 1,
-        pageSize: 20
+        pageSize: 20,
       }
       const {
-        items: [schema = {}]
+        items: [schema = {}],
       } = await metadataInstancesApi.nodeSchemaPage(params)
       const { fields = [], indices = [] } = schema
 
@@ -454,7 +454,7 @@ export default {
 
       this.treeData = this.createTree(
         fields.sort((a, b) => a.columnPosition - b.columnPosition),
-        columnsMap
+        columnsMap,
       )
       this.loading = false
     },
@@ -512,14 +512,14 @@ export default {
         'add-node',
         {
           id: this.node.id,
-          children: mergeProperties
+          children: mergeProperties,
         },
         {
           mergeType: this.currentCommand === 'Array' ? 'updateIntoArray' : 'updateWrite',
           targetPath: this.fieldName
             ? `${this.node.targetPath ? this.node.targetPath + '.' : ''}${this.fieldName}`
-            : this.node.targetPath || ''
-        }
+            : this.node.targetPath || '',
+        },
       )
     },
 
@@ -543,10 +543,10 @@ export default {
         accessNodeProcessId: connection.accessNodeProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
-        capabilities: connection.capabilities || []
+        capabilities: connection.capabilities || [],
       }
 
-      Object.keys(nodeAttrs).forEach(key => {
+      Object.keys(nodeAttrs).forEach((key) => {
         this.node.attrs[key] = nodeAttrs[key]
       })
     },
@@ -567,7 +567,7 @@ export default {
       let animationStartTime
       let animationId
 
-      const revalidate = timestamp => {
+      const revalidate = (timestamp) => {
         if (!animationStartTime) {
           animationStartTime = timestamp
         }
@@ -584,7 +584,7 @@ export default {
       }
 
       animationId = requestAnimationFrame(revalidate)
-    }
+    },
   },
   emits: [
     'drag-start',
@@ -594,8 +594,8 @@ export default {
     'nodeSelected',
     'add-node',
     'deselectAllNodes',
-    'load-schema'
-  ]
+    'load-schema',
+  ],
 }
 </script>
 

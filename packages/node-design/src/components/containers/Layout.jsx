@@ -6,17 +6,17 @@ export const Layout = defineComponent({
   props: {
     theme: {
       type: String,
-      default: 'light'
+      default: 'light',
     },
     prefixCls: {
       type: String,
-      default: 'fd-'
+      default: 'fd-',
     },
     position: {
       type: String,
-      default: 'fixed'
+      default: 'fixed',
     },
-    variables: Array
+    variables: Array,
   },
   setup: (props, { slots, refs }) => {
     const layoutRef = useContext(DesignerLayoutContext)
@@ -29,7 +29,7 @@ export const Layout = defineComponent({
             refs.root.style.setProperty(`--${key}`, value)
           })
         }
-      }
+      },
     )
 
     if (layoutRef.value) {
@@ -41,19 +41,19 @@ export const Layout = defineComponent({
         ref="root"
         class={{
           [`${props.prefixCls}app`]: true,
-          [`${props.prefixCls}${props.theme}`]: props.theme
+          [`${props.prefixCls}${props.theme}`]: props.theme,
         }}
       >
         <DesignerLayoutContext.Provider
           value={{
             theme: props.theme,
             prefixCls: props.prefixCls,
-            position: props.position
+            position: props.position,
           }}
         >
           {slots.default?.()}
         </DesignerLayoutContext.Provider>
       </div>
     )
-  }
+  },
 })

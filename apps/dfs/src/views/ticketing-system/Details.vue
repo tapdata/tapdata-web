@@ -91,16 +91,16 @@ export default {
         id: '',
         name: '',
         cacheKeysArr: [],
-        fields: []
+        fields: [],
       },
-      info: []
+      info: [],
     }
   },
 
   methods: {
     getData(id) {
       this.visible = true
-      this.$axios.get(`api/ticket/${id}`).then(data => {
+      this.$axios.get(`api/ticket/${id}`).then((data) => {
         this.details = data
         //格式化时间
         this.details.createdTime = this.details.createdTime
@@ -113,8 +113,8 @@ export default {
     },
     handleVisible() {
       this.visible = false
-    }
-  }
+    },
+  },
 }
 </script>
 

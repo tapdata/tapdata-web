@@ -9,7 +9,7 @@ import { ElMessage as Message } from 'element-plus'
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 const headers = {
-  'x-requested-with': 'XMLHttpRequest'
+  'x-requested-with': 'XMLHttpRequest',
 }
 axios.defaults.headers.common['x-requested-with'] = headers['x-requested-with']
 axios.defaults.baseURL = './tm'
@@ -18,10 +18,10 @@ const CancelToken = axios.CancelToken
 
 const _axios = axios.create({
   baseURL: './',
-  headers: headers
+  headers: headers,
 })
 
-const getPendingKey = config => {
+const getPendingKey = (config) => {
   let { url, method, data, params } = config
   let headers = {}
   for (const key in config.headers) {
@@ -35,17 +35,17 @@ const getPendingKey = config => {
     method,
     data,
     params,
-    headers
+    headers,
   })
   return key
 }
-const removePending = config => {
+const removePending = (config) => {
   let key = getPendingKey(config)
-  let index = pending.findIndex(it => it === key)
+  let index = pending.findIndex((it) => it === key)
   pending.splice(index, 1)
 }
 let skipErrorHandler = false
-const errorCallback = error => {
+const errorCallback = (error) => {
   let status = error?.response?.status
   if (axios.isCancel(error)) {
     return Promise.reject(error)
@@ -85,11 +85,11 @@ const errorCallback = error => {
   console.error(i18n.t('dfs_plugins_axios_qingqiubaocuo') + error) // eslint-disable-line
   return Promise.reject(error)
 }
-const requestInterceptor = config => {
-  config.paramsSerializer = params => {
+const requestInterceptor = (config) => {
+  config.paramsSerializer = (params) => {
     return Qs.stringify(params, {
       arrayFormat: 'brackets',
-      encoder: str => window.encodeURIComponent(str)
+      encoder: (str) => window.encodeURIComponent(str),
     })
   }
   // 本地开发使用header中加__token的方式绕过网关登录
@@ -114,7 +114,7 @@ const requestInterceptor = config => {
 
   // 获取取消请求的函数
   let cancelFunc = null
-  config.cancelToken = new CancelToken(c => {
+  config.cancelToken = new CancelToken((c) => {
     cancelFunc = c
   })
   let key = getPendingKey(config)
@@ -127,7 +127,7 @@ const requestInterceptor = config => {
   }
   return config
 }
-const responseInterceptor = response => {
+const responseInterceptor = (response) => {
   return new Promise((resolve, reject) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
@@ -155,7 +155,7 @@ const responseInterceptor = response => {
           'Datasource.TableNotFound',
           'SubscribeFailed.OrderLimit',
           'Task.ScheduleLimit',
-          'Task.ManuallyScheduleLimit'
+          'Task.ManuallyScheduleLimit',
         ].includes(code)
       ) {
         return reject(Object.assign(response))
@@ -222,18 +222,18 @@ export default Plugin*/
 
 export default _axios
 
-export const install = app => {
+export const install = (app) => {
   window.axios = _axios
   Object.defineProperties(window.$vueApp.config.globalProperties, {
     axios: {
       get() {
         return _axios
-      }
+      },
     },
     $axios: {
       get() {
         return _axios
-      }
-    }
+      },
+    },
   })
 }

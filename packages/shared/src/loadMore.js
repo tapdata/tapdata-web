@@ -17,6 +17,6 @@ export default MyPlugin.install = function () {
           binding.value()
         }
       })
-    }
+    },
   })
 }

@@ -4,16 +4,16 @@ import { PreviewText } from '@formily/element-plus'
 import AsyncSelect from './AsyncSelect'
 
 const TransformAsyncSelect = transformComponent(AsyncSelect, {
-  change: 'update:modelValue'
+  change: 'update:modelValue',
 })
 
 const InnerAsyncSelect = connect(
   TransformAsyncSelect,
   mapProps({
     value: 'modelValue',
-    readOnly: 'readonly'
+    readOnly: 'readonly',
   }),
-  mapReadPretty(PreviewText.Input)
+  mapReadPretty(PreviewText.Input),
 )
 
 export { InnerAsyncSelect as AsyncSelect }

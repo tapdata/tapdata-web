@@ -17,8 +17,8 @@ export default {
   name: 'BaseNode',
   components: { NodeIcon },
   props: {
-    node: Object
-  }
+    node: Object,
+  },
 }
 </script>
 

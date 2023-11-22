@@ -108,18 +108,18 @@ export default {
       value: Array,
       default: () => {
         return []
-      }
+      },
     },
     large: {
       value: Boolean,
       default: () => {
         return false
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -127,43 +127,43 @@ export default {
       tabs: [
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_renzhengshujuyuan'),
-          value: 'GA'
+          value: 'GA',
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_betashu'),
-          value: 'Beta'
+          value: 'Beta',
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_jijiangshangxian'),
-          value: 'Alpha'
+          value: 'Alpha',
         },
         {
           label: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
-          value: 'my'
-        }
-      ]
+          value: 'my',
+        },
+      ],
     }
   },
   computed: {
     alphaList() {
-      return this.types.filter(t => t.scope === 'public' && t.qcType === 'Alpha')
+      return this.types.filter((t) => t.scope === 'public' && t.qcType === 'Alpha')
     },
     betaList() {
-      return this.types.filter(t => t.scope === 'public' && t.qcType === 'Beta')
+      return this.types.filter((t) => t.scope === 'public' && t.qcType === 'Beta')
     },
     gaList() {
-      return this.types.filter(t => t.scope === 'public' && t.qcType === 'GA')
+      return this.types.filter((t) => t.scope === 'public' && t.qcType === 'GA')
     },
     customerList() {
-      return this.types.filter(t => t.scope === 'customer')
-    }
+      return this.types.filter((t) => t.scope === 'customer')
+    },
   },
   methods: {
     getPdkIcon(item) {
       return getConnectionIcon(item.pdkHash)
-    }
+    },
   },
-  emits: ['select']
+  emits: ['select'],
 }
 </script>
 

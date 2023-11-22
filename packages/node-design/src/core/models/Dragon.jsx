@@ -17,7 +17,7 @@ export const ClosestPosition = {
   ForbidInnerAfter: 'FORBID_INNER_AFTER',
   InnerBefore: 'INNER_BEFORE',
   ForbidInnerBefore: 'FORBID_INNER_BEFORE',
-  Forbid: 'FORBID'
+  Forbid: 'FORBID',
 }
 
 export class Dragon {
@@ -70,7 +70,7 @@ export class Dragon {
       return
     }
     const isAfter = isNearAfter(point, closestRect, this.forceBlock ? false : isInline)
-    const getValidParent = node => {
+    const getValidParent = (node) => {
       if (!node) return
       if (node.parent?.allowSibling(this.dragNodes)) return node.parent
       return getValidParent(node.parent)
@@ -170,7 +170,7 @@ export class Dragon {
         const touchDistance = calcDistancePointToEdge(point, touchNodeRect)
         let minDistance = touchDistance
         let minDistanceNode = this.touchNode
-        this.touchNode.eachChildren(node => {
+        this.touchNode.eachChildren((node) => {
           const rect = this.viewport.getElementRectById(node.id)
           if (!rect) return
           const distance = isPointInRect(point, rect, this.sensitive) ? 0 : calcDistanceOfPointToRect(point, rect)
@@ -231,8 +231,8 @@ export class Dragon {
     this.trigger(
       new DragNodeEvent({
         target: this.operation.tree,
-        source: dragNodes
-      })
+        source: dragNodes,
+      }),
     )
   }
 
@@ -260,8 +260,8 @@ export class Dragon {
     this.trigger(
       new DropNodeEvent({
         target: this.operation.tree,
-        source: node
-      })
+        source: node,
+      }),
     )
   }
 
@@ -296,7 +296,7 @@ export class Dragon {
       setClosestOffsetRect: action,
       setClosestRect: action,
       clear: action,
-      calculate: action
+      calculate: action,
     })
   }
 }

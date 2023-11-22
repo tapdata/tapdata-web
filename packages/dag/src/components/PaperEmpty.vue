@@ -262,7 +262,7 @@
 <script>
 import '@figmania/webcomponent'
 export default {
-  name: 'PaperEmpty'
+  name: 'PaperEmpty',
 }
 </script>
 

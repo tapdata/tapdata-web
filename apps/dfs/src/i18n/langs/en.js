@@ -1798,5 +1798,5 @@ export default {
   dfs_user_contactus_weinintigongzhuan: 'Provide you with professional service support',
   dfs_system_update: 'System Update',
   dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!",
-  dfs_order_list_bianhao: 'Number'
+  dfs_order_list_bianhao: 'Number',
 }

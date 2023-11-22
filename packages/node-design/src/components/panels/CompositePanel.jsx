@@ -4,14 +4,14 @@ import { usePrefix } from '../../hooks'
 import { defineComponent, ref, getCurrentInstance, watch } from 'vue'
 import { FragmentComponent } from '@formily/vue'
 
-const parseItems = children => {
+const parseItems = (children) => {
   const items = []
   children.forEach((child, index) => {
     items.push({
       key: child['key'] ?? index,
       ...child.componentOptions?.propsData,
       ...child.data.attrs,
-      children: child.children || child.componentOptions?.children
+      children: child.children || child.componentOptions?.children,
     })
   })
   return items
@@ -25,7 +25,7 @@ const findItem = (items, key) => {
   }
 }
 
-const getDefaultKey = children => {
+const getDefaultKey = (children) => {
   const items = parseItems(children)
   return items?.[0].key
 }
@@ -38,7 +38,7 @@ export const CompositePanel = defineComponent({
     showNavTitle: Boolean,
     defaultOpen: { type: Boolean, default: true },
     direction: String,
-    onChange: Function
+    onChange: Function,
   },
   setup(props, { emit }) {
     const { slots } = getCurrentInstance()
@@ -57,7 +57,7 @@ export const CompositePanel = defineComponent({
         if (isValid(props.activeKey) && activeKeyRef.value !== props.activeKey) {
           activeKeyRef.value = props.activeKey
         }
-      }
+      },
     )
 
     /*useEffect(() => {
@@ -75,8 +75,8 @@ export const CompositePanel = defineComponent({
           class={[
             prefix + '-tabs-content',
             {
-              pinning: pinningRef.value
-            }
+              pinning: pinningRef.value,
+            },
           ]}
         >
           <div class={prefix + '-tabs-header'}>
@@ -105,8 +105,8 @@ export const CompositePanel = defineComponent({
           class={[
             prefix,
             {
-              [`direction-${props.direction}`]: !!props.direction
-            }
+              [`direction-${props.direction}`]: !!props.direction,
+            },
           ]}
         >
           <div class={prefix + '-tabs'}>
@@ -122,7 +122,7 @@ export const CompositePanel = defineComponent({
                         ? null
                         : {
                             content: <TextWidget>{item.title}</TextWidget>,
-                            placement: props.direction === 'right' ? 'left' : 'right'
+                            placement: props.direction === 'right' ? 'left' : 'right',
                           }
                     }
                     infer={item.icon}
@@ -136,12 +136,12 @@ export const CompositePanel = defineComponent({
                   class={[
                     prefix + '-tabs-pane',
                     {
-                      active: activeKeyRef.value === item.key
-                    }
+                      active: activeKeyRef.value === item.key,
+                    },
                   ]}
                   key={index}
                   href={item.href}
-                  onClick={e => {
+                  onClick={(e) => {
                     if (shape === 'tab') {
                       if (activeKeyRef.value === item.key) {
                         visibleRef.value = !visibleRef.value
@@ -168,11 +168,11 @@ export const CompositePanel = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 CompositePanel.Item = defineComponent({
   setup(props, { slots }) {
     return () => <FragmentComponent>{slots.default?.()}</FragmentComponent>
-  }
+  },
 })

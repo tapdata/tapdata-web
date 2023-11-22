@@ -14,9 +14,9 @@ const cloneElement = (VNode, props = {}) => {
   return { ...VNode, data }
 }
 
-const isNumSize = val => /^[\d.]+$/.test(val)
+const isNumSize = (val) => /^[\d.]+$/.test(val)
 
-const isVNode = val => {
+const isVNode = (val) => {
   return isObj(val) && val?.context?._isVue
 }
 
@@ -31,7 +31,7 @@ export const IconWidget = observer(
       const size = props.size || '1em'
       const height = props.height || size
       const width = props.width || size
-      const takeIcon = infer => {
+      const takeIcon = (infer) => {
         if (isStr(infer)) {
           const finded = registry.getDesignerIcon(infer)
           if (finded) {
@@ -49,7 +49,7 @@ export const IconWidget = observer(
               fill: 'currentColor',
               viewBox: infer.data?.attrs?.viewBox || '0 0 1024 1024',
               focusable: 'false',
-              'aria-hidden': 'true'
+              'aria-hidden': 'true',
             })
           } else if (infer.tag === 'path' || infer.tag === 'g') {
             return (
@@ -75,7 +75,7 @@ export const IconWidget = observer(
           return null
         }
       }
-      const renderTooltips = children => {
+      const renderTooltips = (children) => {
         const context = contextRef.value
         if (!isStr(props.infer) && context?.tooltip) return children
         const tooltip = props.tooltip || registry.getDesignerMessage(`icons.${props.infer}`)
@@ -103,19 +103,19 @@ export const IconWidget = observer(
         renderTooltips(
           <span
             {...{
-              attrs: { ...attrs, infer: isStr(props.infer) && props.infer }
+              attrs: { ...attrs, infer: isStr(props.infer) && props.infer },
             }}
             class={prefix}
             style={{
-              cursor: listeners.click ? 'pointer' : attrs.style?.cursor
+              cursor: listeners.click ? 'pointer' : attrs.style?.cursor,
             }}
             onClick={() => emit('click')}
           >
             {takeIcon(props.infer)}
-          </span>
+          </span>,
         )
-    }
-  })
+    },
+  }),
 )
 
 IconWidget.ShadowSVG = defineComponent({
@@ -127,11 +127,11 @@ IconWidget.ShadowSVG = defineComponent({
     onMounted(() => {
       if (!refs.ref) return
       const root = refs.ref.attachShadow({
-        mode: 'open'
+        mode: 'open',
       })
       root.innerHTML = `<svg viewBox="0 0 1024 1024" style="width:${width};height:${height}">${props.content}</svg>`
     })
 
     return () => <div ref="ref"></div>
-  }
+  },
 })

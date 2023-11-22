@@ -12,15 +12,7 @@
               <div class="position-relative">
                 <ElImage class="scene-img" :src="item.img" />
                 <div
-                  class="
-                    position-absolute position-text
-                    flex
-                    justify-content-center
-                    align-items-center
-                    flex-column
-                    fs-8
-                    py-2
-                  "
+                  class="position-absolute position-text flex justify-content-center align-items-center flex-column fs-8 py-2"
                   style="min-height: 40px"
                 >
                   <div v-if="item.title" class="text-center explore-examples-ellipsis pl-1 pr-1">
@@ -204,36 +196,36 @@ export default {
             title: i18n.t('_workbench_workbench_jiangshujudaoru'),
             subTitle: i18n.t('_workbench_workbench_jiangshujudaorusub'),
             img: scene1,
-            url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104'
+            url: 'https://tapdata.net/how-to-import-data-into-tablestore-alibaba-cloud.html?fromColId=104',
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujuruhucang'),
             subTitle: 'MySQL → Doris',
             img: scene2,
-            url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104'
+            url: 'https://tapdata.net/real-time-data-entry-into-the-lake-and-warehouse.html?fromColId=104',
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_yigoushishitong'),
             subTitle: 'Oracle → MySQL ',
             img: scene3,
-            url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104'
+            url: 'https://tapdata.net/real-time-sync-of-hdb-from-oracle-to-mysql.html?fromColId=104',
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujurucang'),
             subTitle: 'SQL Server → BigQuery ',
             img: scene4,
-            url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html'
+            url: 'https://tapdata.net/tapdata-connector-sqlserver-bigquery.html',
           },
           {
             type: 'all',
             title: i18n.t('_workbench_workbench_shujurucang'),
             subTitle: 'MySQL → ClickHouse',
             img: scene5,
-            url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104'
-          }
+            url: 'https://tapdata.net/tapdata-connector-mysql-clickhouse.html?fromColId=104',
+          },
         ]
       : [
           {
@@ -241,29 +233,29 @@ export default {
             title: 'Tapdata',
             subTitle: 'Cloud Version Intro',
             img: io_scene1,
-            url: 'https://youtu.be/WpV5mAOPNL0?t=280'
+            url: 'https://youtu.be/WpV5mAOPNL0?t=280',
           },
           {
             type: 'all',
             title: 'Data Replication Feature',
             subTitle: '',
             img: io_scene2,
-            url: 'https://youtu.be/jHbDRDYp7Bs?t=6'
+            url: 'https://youtu.be/jHbDRDYp7Bs?t=6',
           },
           {
             type: 'all',
             title: 'Data Transformation',
             subTitle: '',
             img: io_scene3,
-            url: 'https://youtu.be/xQsaEaPxaXo?t=4'
+            url: 'https://youtu.be/xQsaEaPxaXo?t=4',
           },
           {
             type: 'all',
             title: 'Install Agent Locally',
             subTitle: '',
             img: io_scene4,
-            url: 'https://youtu.be/e-HTtN7JKJU'
-          }
+            url: 'https://youtu.be/e-HTtN7JKJU',
+          },
         ]
 
     return {
@@ -278,22 +270,22 @@ export default {
           desc: $t('workbench_agent_desc'),
           btnName: $t('public_agent_button_create'),
           action: this.createAgent,
-          icon: 'dashboard-agent'
+          icon: 'dashboard-agent',
         },
         {
           name: $t('connection_manage'),
           desc: $t('workbench_connection_desc'),
           btnName: $t('public_connection_button_create'),
           action: this.createConnection,
-          icon: 'dashboard-connection'
+          icon: 'dashboard-connection',
         },
         {
           name: $t('task_manage'),
           desc: $t('workbench_task_desc'),
           btnName: $t('workbench_task_button_create'),
           action: this.createTask,
-          icon: 'dashboard-task'
-        }
+          icon: 'dashboard-task',
+        },
       ], // 创建列表
       agentList: [
         {
@@ -304,13 +296,13 @@ export default {
           list: [
             {
               label: $t('workbench_overview_connection_ready'),
-              value: 0
+              value: 0,
             },
             {
               label: $t('workbench_overview_connection_invalid'),
-              value: 0
-            }
-          ]
+              value: 0,
+            },
+          ],
         },
         {
           name: $t('workbench_overview_task'),
@@ -320,17 +312,17 @@ export default {
           list: [
             {
               label: $t('public_task_type_initial_sync'),
-              value: 0
+              value: 0,
             },
             {
               label: $t('public_task_type_cdc'),
-              value: 0
+              value: 0,
             },
             {
               label: $t('public_task_type_initial_sync_and_cdc'),
-              value: 0
-            }
-          ]
+              value: 0,
+            },
+          ],
         },
         {
           name: 'Agent',
@@ -341,30 +333,30 @@ export default {
             {
               label: $t('public_status_running'),
               value: 0,
-              class: 'success'
+              class: 'success',
             },
             {
               label: $t('public_agent_status_offline'),
               value: 0,
-              class: 'error'
-            }
-          ]
-        }
+              class: 'error',
+            },
+          ],
+        },
       ], // 介绍列表
       notices: [], // 公告列表
       guides: [
         {
           name: $t('workbench_guide_documentation'),
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme',
         },
         {
           name: $t('workbench_guide_problem'),
-          url: 'https://www.yuque.com/tapdata/cloud/iff88o'
+          url: 'https://www.yuque.com/tapdata/cloud/iff88o',
         },
         {
           name: $t('workbench_guide_data_safe'),
-          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
-        }
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li',
+        },
       ],
       isGuide: true,
       taskInputNumber: 0,
@@ -374,7 +366,7 @@ export default {
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)'],
       showUpgrade: false, //版本升级弹窗
       //探索实例
-      examplesList
+      examplesList,
     }
   },
   mounted() {
@@ -399,11 +391,11 @@ export default {
     loadAgent() {
       let agent = this.agentList.find(({ key }) => key === 'agent')
       const loading = this.$loading({
-        target: this.$refs.agent?.[0]
+        target: this.$refs.agent?.[0],
       })
       this.$axios
         .get('api/tcm/agent/agentCount')
-        .then(data => {
+        .then((data) => {
           agent.value = data.agentTotalCount || 0
           agent.list[0].value = data.agentRunningCount || 0
           agent.list[1].value = agent.value - agent.list[0].value
@@ -415,7 +407,7 @@ export default {
     // 获取连接数据
     async getConnectionStats() {
       const connectionLoading = this.$loading({
-        target: this.$refs.connection?.[0]
+        target: this.$refs.connection?.[0],
       })
       const data = await connectionsApi.getStats().finally(() => {
         connectionLoading.close()
@@ -431,7 +423,7 @@ export default {
     // 获取任务数据
     async getTaskStats() {
       const taskLoading = this.$loading({
-        target: this.$refs.task?.[0]
+        target: this.$refs.task?.[0],
       })
       const data = await taskApi.getStats().finally(() => {
         taskLoading.close()
@@ -453,125 +445,125 @@ export default {
               type: '',
               name: 'Tapdata Cloud 3.5.6 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-6.html',
-              time: '2023-11-07 21:00'
+              time: '2023-11-07 21:00',
             },
             {
               id: 17,
               type: '',
               name: 'Tapdata Cloud 3.5.5 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-5.html',
-              time: '2023-10-24 21:00'
+              time: '2023-10-24 21:00',
             },
             {
               id: 16,
               type: '',
               name: 'Tapdata Cloud 3.5.4 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-4.html',
-              time: '2023-10-12 21:00'
+              time: '2023-10-12 21:00',
             },
             {
               id: 15,
               type: '',
               name: 'Tapdata Cloud 3.5.2 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-2.html',
-              time: '2023-09-21 21:00'
+              time: '2023-09-21 21:00',
             },
             {
               id: 14,
               type: '',
               name: 'Tapdata Cloud 3.5.1 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-5-1.html',
-              time: '2023-08-28 21:00'
+              time: '2023-08-28 21:00',
             },
             {
               id: 13,
               type: '',
               name: 'Tapdata Cloud 3.4 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-4.html',
-              time: '2023-08-15 21:00'
+              time: '2023-08-15 21:00',
             },
             {
               id: 12,
               type: '',
               name: 'Tapdata Cloud 3.2.6 Release Notes',
               link: 'https://tapdata.net/cloud_release_notes_3-2-6.html',
-              time: '2023-07-31 21:00'
+              time: '2023-07-31 21:00',
             },
             {
               id: 11,
               type: '',
               name: 'Tapdata Cloud 3.2.2 Release Notes',
               link: 'https://mp.weixin.qq.com/s/4hqjUoaa3WS5ejjEvKfwoA',
-              time: '2023-05-4 21:00'
+              time: '2023-05-4 21:00',
             },
             {
               id: 10,
               type: '',
               name: 'Tapdata Cloud 3.2.1 Release Notes',
               link: 'https://mp.weixin.qq.com/s/sHROGfP0tG_ftHPRCT1UIA',
-              time: '2023-04-20 21:00'
+              time: '2023-04-20 21:00',
             },
             {
               id: 9,
               type: '',
               name: 'Tapdata Cloud 3.1.9 Release Notes',
               link: 'https://mp.weixin.qq.com/s/eBHKEZBVkuQ0ah8Kv0wRKQ',
-              time: '2023-03-20 21:00'
+              time: '2023-03-20 21:00',
             },
             {
               id: 8,
               type: '',
               name: 'Tapdata Cloud 3.1.8 Release Notes',
               link: 'https://mp.weixin.qq.com/s/WQZx38g93lYuPpsWjbETZg',
-              time: '2023-03-2 21:00'
+              time: '2023-03-2 21:00',
             },
             {
               id: 7,
               type: '',
               name: this.$t('workbench_Notice_tAPDA12'),
-              time: '2023-03-2 21:00'
+              time: '2023-03-2 21:00',
             },
             {
               id: 6,
               type: '',
               name: 'Tapdata Cloud 3.1.7 Release Notes',
               link: 'https://mp.weixin.qq.com/s/npognQxT4O4xzc4u1bb4mg',
-              time: '2023-02-21 21:00'
+              time: '2023-02-21 21:00',
             },
             {
               id: 5,
               type: '',
               name: 'Tapdata Cloud 3.1.6 Release Notes',
               link: 'https://mp.weixin.qq.com/s/rG_ag8LY-WSte4VnIgThXA',
-              time: '2023-02-3 21:00'
+              time: '2023-02-3 21:00',
             },
             {
               id: 4,
               type: '',
               name: 'Tapdata Cloud 3.1.5 Release Notes',
               link: 'https://mp.weixin.qq.com/s/JYPt9aExnCL9tyOENe7QOA',
-              time: '2023-01-20 21:00'
+              time: '2023-01-20 21:00',
             },
             {
               id: 3,
               type: '',
               name: 'Tapdata Cloud 3.1.4 Release Notes',
               link: 'https://mp.weixin.qq.com/s/dUuqGQZGEI10cOLpbzqbHA',
-              time: '2023-01-3 21:00'
+              time: '2023-01-3 21:00',
             },
             {
               id: 2,
               type: '',
               name: 'Tapdata Cloud 3.1.3 Release Notes',
               link: 'https://mp.weixin.qq.com/s/mwMNTGsglm9rQi-k9zqRgg',
-              time: '2022-12-15 21:00'
+              time: '2022-12-15 21:00',
             },
             {
               id: 1,
               type: '',
               name: i18n.t('dfs_workbench_workbench_zhongyaobanbensheng'),
-              time: '2022-12-03 18:00'
-            }
+              time: '2022-12-03 18:00',
+            },
           ]
         : [
             {
@@ -579,50 +571,50 @@ export default {
               type: '',
               name: 'Tapdata Cloud 3.5.6 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-6/',
-              time: '2023-11-07 21:00'
+              time: '2023-11-07 21:00',
             },
             {
               id: 17,
               type: '',
               name: 'Tapdata Cloud 3.5.5 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-5/',
-              time: '2023-10-24 21:00'
+              time: '2023-10-24 21:00',
             },
             {
               id: 16,
               type: '',
               name: 'Tapdata Cloud 3.5.4 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-4-release-notes/',
-              time: '2023-10-12 21:00'
+              time: '2023-10-12 21:00',
             },
             {
               id: 15,
               type: '',
               name: 'Tapdata Cloud 3.5.2 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-2-release-notes/',
-              time: '2023-09-21 21:00'
+              time: '2023-09-21 21:00',
             },
             {
               id: 14,
               type: '',
               name: 'Tapdata Cloud 3.5.1 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-5-1-release-notes/',
-              time: '2023-08-28 21:00'
+              time: '2023-08-28 21:00',
             },
             {
               id: 13,
               type: '',
               name: 'Tapdata Cloud 3.4 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-4-release-notes/',
-              time: '2023-08-15 21:00'
+              time: '2023-08-15 21:00',
             },
             {
               id: 12,
               type: '',
               name: 'Tapdata Cloud 3.2.6 Release Notes',
               link: 'https://tapdata.io/release-notes/tapdata-cloud-3-2-6-release-notes/',
-              time: '2023-07-31 21:00'
-            }
+              time: '2023-07-31 21:00',
+            },
           ]
     },
     loadBarData() {
@@ -630,14 +622,14 @@ export default {
       this.$axios
         .get('tm/api/DataFlowInsights/statistics', {
           params: {
-            granularity
-          }
+            granularity,
+          },
         })
-        .then(data => {
+        .then((data) => {
           const list = data.inputDataStatistics || []
           this.taskInputNumber = (data.totalInputDataCount || 0).toLocaleString()
-          this.lineDataX = list.map(el => el.time)
-          this.lineDataY = list.map(el => {
+          this.lineDataX = list.map((el) => el.time)
+          this.lineDataY = list.map((el) => {
             let value = el.count
             if (value === 1) {
               value = 1.1
@@ -648,14 +640,14 @@ export default {
     },
     createAgent() {
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       this.buried('newAgentStripeDialog')
     },
     async createTask() {
       this.checkAgent(() => {
         this.$router.push({
-          name: 'MigrateCreate'
+          name: 'MigrateCreate',
         })
       })
     },
@@ -672,8 +664,8 @@ export default {
         this.$router.push({
           name: 'WorkbenchNotice',
           query: {
-            id: item?.id
-          }
+            id: item?.id,
+          },
         })
       }
     },
@@ -698,49 +690,49 @@ export default {
       let data = [
         {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#2C65FF',
           },
           value: item.list[0].value,
-          name: item.list[0].label
+          name: item.list[0].label,
         },
         {
           itemStyle: {
-            color: '#F3961A'
+            color: '#F3961A',
           },
           value: item.list[1].value,
-          name: item.list[1].label
-        }
+          name: item.list[1].label,
+        },
       ]
 
       if (item.key === 'task') {
         let node = {
           itemStyle: {
-            color: '#0FC6C2'
+            color: '#0FC6C2',
           },
           value: item.list[2].value,
-          name: item.list[2].label
+          name: item.list[2].label,
         }
         data.push(node)
       }
       return {
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
         },
         series: [
           {
             type: 'pie',
             labelLine: {
-              show: false
+              show: false,
             },
             label: {
               show: false,
-              position: 'center'
+              position: 'center',
             },
             avoidLabelOverlap: false,
             data: data,
-            radius: ['50%', '70%']
-          }
-        ]
+            radius: ['50%', '70%'],
+          },
+        ],
       }
     },
     //折线面积图
@@ -750,16 +742,16 @@ export default {
           top: 20,
           bottom: 20,
           left: 55,
-          right: 20
+          right: 20,
         },
         xAxis: {
           boundaryGap: false,
           axisLabel: {
-            formatter: val => {
+            formatter: (val) => {
               return this.formatTime(val, '', 'MM-DD')
-            }
+            },
           },
-          data: this.lineDataX
+          data: this.lineDataX,
         },
         yAxis: {
           show: true,
@@ -767,18 +759,18 @@ export default {
           min: 1,
           logBase: 10,
           axisLabel: {
-            formatter: val => {
+            formatter: (val) => {
               let res = val === 1 ? 0 : val
               if (res / 1000 >= 1) {
                 res = res / 1000 + 'K'
               }
               return res
-            }
-          }
+            },
+          },
         },
         tooltip: {
           trigger: 'item',
-          formatter: params => {
+          formatter: (params) => {
             let item = params
             let val = item.value
             if (val === 1.1) {
@@ -787,7 +779,7 @@ export default {
             val = val.toLocaleString()
             let html = val
             return html
-          }
+          },
         },
         series: [
           {
@@ -804,19 +796,19 @@ export default {
                 colorStops: [
                   {
                     offset: 0,
-                    color: 'rgba(0, 102, 255, 0.2)' // 0% 处的颜色
+                    color: 'rgba(0, 102, 255, 0.2)', // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: 'rgba(44, 127, 252, 0)' // 100% 处的颜色
-                  }
+                    color: 'rgba(44, 127, 252, 0)', // 100% 处的颜色
+                  },
                 ],
-                global: false // 缺省为 false
-              }
+                global: false, // 缺省为 false
+              },
             },
-            color: '#2C65FF' //线条颜色
-          }
-        ]
+            color: '#2C65FF', //线条颜色
+          },
+        ],
       }
     },
 
@@ -824,19 +816,19 @@ export default {
     checkLicense(user) {
       var licenseCodes = user?.licenseCodes || []
       //是否有临近过期授权码
-      let verify = licenseCodes.filter(it => it.nearExpiration)
+      let verify = licenseCodes.filter((it) => it.nearExpiration)
       if (user?.licenseValid && verify?.length > 0) {
         //授权码可用 存在有临近授权码
         this.aliyunMaketVisible = true
         this.userInfo = {
           showNextProcessing: true,
           licenseType: 'checkCode',
-          data: verify
+          data: verify,
         }
       }
-    }
+    },
   },
-  emits: ['select-connection-type', 'show-guide']
+  emits: ['select-connection-type', 'show-guide'],
 }
 </script>
 

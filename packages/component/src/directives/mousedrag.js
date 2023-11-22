@@ -5,13 +5,13 @@ const EVENT = {
   mouse: {
     start: 'mousedown',
     move: 'mousemove',
-    stop: 'mouseup'
+    stop: 'mouseup',
   },
   touch: {
     start: 'touchstart',
     move: 'touchmove',
-    stop: 'touchend'
-  }
+    stop: 'touchend',
+  },
 }
 
 export default {
@@ -23,7 +23,7 @@ export default {
     const [t = 0, r = 0, b = 0, l = 0] = box
     const GlobalState = {
       onMouseDownAt: 0,
-      startEvent: null
+      startEvent: null,
     }
 
     const moveAt = (posX, posY) => {
@@ -41,7 +41,7 @@ export default {
       $drag.style.opacity = 1
     }
 
-    const handleStart = (el._handleStart = async event => {
+    const handleStart = (el._handleStart = async (event) => {
       if (event.type === 'touchstart') {
         eventsFor = EVENT.touch
       } else {
@@ -55,18 +55,18 @@ export default {
         if (ifCancel === false) return false
         on(document.documentElement, eventsFor.move, handleMove, {
           capture: false,
-          passive: false
+          passive: false,
         })
         on(document.documentElement, eventsFor.stop, handleStop)
       }
     })
 
-    const handleMove = (el._handleMove = async event => {
+    const handleMove = (el._handleMove = async (event) => {
       event.preventDefault()
 
       const distance = Math.sqrt(
         Math.pow(event.pageX - GlobalState.startEvent.pageX, 2) +
-          Math.pow(event.pageY - GlobalState.startEvent.pageY, 2)
+          Math.pow(event.pageY - GlobalState.startEvent.pageY, 2),
       )
       const timeDelta = Time.now() - GlobalState.onMouseDownAt
 
@@ -87,7 +87,7 @@ export default {
       onMove?.(item, [posX, posY], $drag)
     })
 
-    const handleStop = (el._handleStop = event => {
+    const handleStop = (el._handleStop = (event) => {
       let posX = event.touches ? event.touches[0].pageX : event.pageX
       let posY = event.touches ? event.touches[0].pageY : event.pageY
 
@@ -129,5 +129,5 @@ export default {
     delete el._handleStart
     delete el._handleMove
     delete el._handleStop
-  }
+  },
 }

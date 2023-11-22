@@ -69,18 +69,18 @@ export default {
   data() {
     return {
       licenseCode: '',
-      current: []
+      current: [],
     }
   },
   watch: {
     visible(v) {
       if (v) {
-        this.user.data = this.user?.data.map(item => {
+        this.user.data = this.user?.data.map((item) => {
           item.expiredTime = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : ''
           return item
         })
       }
-    }
+    },
   },
   methods: {
     goAliyun() {
@@ -88,11 +88,11 @@ export default {
     },
     goLicense() {
       this.$router.push({
-        name: 'aliyunMarketLicense'
+        name: 'aliyunMarketLicense',
       })
-    }
+    },
   },
-  emits: ['update:visible']
+  emits: ['update:visible'],
 }
 </script>
 

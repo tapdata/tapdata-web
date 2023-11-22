@@ -14,8 +14,8 @@ export default {
         Creating: $t('public_agent_status_to_be_deployed'),
         Running: $t('public_status_running'),
         Stopping: $t('public_status_stopping'),
-        Stopped: $t('public_agent_status_offline')
-      }
+        Stopped: $t('public_agent_status_offline'),
+      },
     }
   },
 
@@ -35,7 +35,7 @@ export default {
         res[item.systemInfo['process_id']] = {
           status: this.agentStatusLabel[item.status] || '-',
           name: item.systemInfo.hostname,
-          itemId: item.id
+          itemId: item.id,
         }
         return res
       }, {})
@@ -49,16 +49,16 @@ export default {
           encodeURIComponent(
             JSON.stringify({
               size: 10000,
-              page: 1
-            })
-          )
+              page: 1,
+            }),
+          ),
       )
 
       const map = items.reduce((res, item) => {
         res[item.tmInfo.agentId] = {
           status: this.agentStatusLabel[item.status] || '-',
           name: item.name,
-          itemId: item.id
+          itemId: item.id,
         }
         return res
       }, {})
@@ -78,6 +78,6 @@ export default {
       this.syncTaskAgentTimer = setTimeout(() => {
         this.loop(callback, timeout)
       }, timeout)
-    }
-  }
+    },
+  },
 }

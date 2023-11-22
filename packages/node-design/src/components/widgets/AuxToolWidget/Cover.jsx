@@ -8,7 +8,7 @@ import { defineComponent } from 'vue'
 
 const CoverRect = defineComponent({
   props: ['node', 'dragging', 'dropping'],
-  setup: props => {
+  setup: (props) => {
     const prefix = usePrefix('aux-cover-rect')
     const rectRef = useValidNodeOffsetRect(props.node)
     const createCoverStyle = () => {
@@ -17,7 +17,7 @@ const CoverRect = defineComponent({
         position: 'absolute',
         top: 0,
         left: 0,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
       }
       if (rect) {
         baseStyle.transform = `perspective(1px) translate3d(${rect.x}px,${rect.y}px,0)`
@@ -33,13 +33,13 @@ const CoverRect = defineComponent({
           prefix,
           {
             dragging: props.dragging,
-            dropping: props.dropping
-          }
+            dropping: props.dropping,
+          },
         ]}
         style={createCoverStyle()}
       ></div>
     )
-  }
+  },
 })
 
 export const Cover = observer(
@@ -64,7 +64,7 @@ export const Cover = observer(
         if (cursor.status !== CursorStatus.Dragging) return null
         return (
           <FragmentComponent>
-            {viewportDragonRef.value.dragNodes.map(node => {
+            {viewportDragonRef.value.dragNodes.map((node) => {
               if (!node) return
               if (!viewport.findElementById(node.id)) return
               return <CoverRect key={node.id} node={node} dragging />
@@ -73,6 +73,6 @@ export const Cover = observer(
           </FragmentComponent>
         )
       }
-    }
-  })
+    },
+  }),
 )

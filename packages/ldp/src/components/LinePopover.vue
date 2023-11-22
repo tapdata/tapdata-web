@@ -30,13 +30,13 @@ import { TaskStatus } from '@tap/business'
 export default {
   name: 'NodePopover',
   props: {
-    popover: {}
+    popover: {},
   },
   computed: {
-    ...mapGetters('dataflow', ['processorNodeTypes'])
+    ...mapGetters('dataflow', ['processorNodeTypes']),
   },
   components: {
-    TaskStatus
+    TaskStatus,
   },
   methods: {
     handleClick(node) {
@@ -46,9 +46,9 @@ export default {
     handleClickTask(task) {
       $emit(this, 'click-task', task)
       this.popover.show = false
-    }
+    },
   },
-  emits: ['click-node', 'click-task']
+  emits: ['click-node', 'click-task'],
 }
 </script>
 

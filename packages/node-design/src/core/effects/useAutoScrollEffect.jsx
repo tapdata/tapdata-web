@@ -2,7 +2,7 @@ import { CursorStatus, CursorType } from '../models'
 import { DragMoveEvent, DragStartEvent, DragStopEvent } from '../events'
 import { calcAutoScrollBasicInfo, scrollAnimate, Point } from '@tap/shared'
 
-export const useAutoScrollEffect = engine => {
+export const useAutoScrollEffect = (engine) => {
   let xScroller = null
   let yScroller = null
   let xScrollerAnimationStop = null
@@ -35,23 +35,23 @@ export const useAutoScrollEffect = engine => {
     }
   }
 
-  engine.subscribeTo(DragStartEvent, event => {
+  engine.subscribeTo(DragStartEvent, (event) => {
     if (engine.cursor.type !== CursorType.Move && engine.cursor.type !== CursorType.Selection) return
-    engine.workbench.eachWorkspace(workspace => {
+    engine.workbench.eachWorkspace((workspace) => {
       const viewport = workspace.viewport
       const outline = workspace.outline
       const point = new Point(event.data.topClientX, event.data.topClientY)
       if (!viewport.isPointInViewport(point) && !outline.isPointInViewport(point)) return
       engine.cursor.setDragStartScrollOffset({
         scrollX: viewport.scrollX,
-        scrollY: viewport.scrollY
+        scrollY: viewport.scrollY,
       })
     })
   })
 
-  engine.subscribeTo(DragMoveEvent, event => {
+  engine.subscribeTo(DragMoveEvent, (event) => {
     if (engine.cursor.type !== CursorType.Move && engine.cursor.type !== CursorType.Selection) return
-    engine.workbench.eachWorkspace(workspace => {
+    engine.workbench.eachWorkspace((workspace) => {
       const viewport = workspace.viewport
       const outline = workspace.outline
       const point = new Point(event.data.topClientX, event.data.topClientY)

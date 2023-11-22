@@ -4,9 +4,9 @@ import { usePrefix } from '../../../hooks'
 import './styles.scss'
 import { defineComponent, ref, toRefs, watch } from 'vue'
 
-const isValid = val => val !== undefined && val !== null
+const isValid = (val) => val !== undefined && val !== null
 
-const getEventValue = event => {
+const getEventValue = (event) => {
   if (event?.target) {
     if (isValid(event.target.value)) return event.target.value
     if (isValid(event.target.checked)) return event.target.checked
@@ -32,7 +32,7 @@ export function createPolyInput(polyTypes = []) {
     props: {
       value: {},
       exclude: Array,
-      include: Array
+      include: Array,
     },
     setup: (props, { emit }) => {
       const { value, exclude, include, ...comProps } = toRefs(props)
@@ -50,7 +50,7 @@ export function createPolyInput(polyTypes = []) {
             }
           })
         },
-        { immediate: true }
+        { immediate: true },
       )
 
       const getNextType = () => {
@@ -73,7 +73,7 @@ export function createPolyInput(polyTypes = []) {
                 <component
                   {...{ props: { ...comProps } }}
                   value={type?.toInputValue ? type?.toInputValue(value.value) : value.value}
-                  onChange={event => {
+                  onChange={(event) => {
                     const value = getEventValue(event)
                     typesValue.value[type?.type] = value
                     emit('change', transformOnChangeValue(value, type))
@@ -84,7 +84,7 @@ export function createPolyInput(polyTypes = []) {
             <Button
               class={prefix + '-controller'}
               style={{
-                width: !component ? '100%' : 'auto'
+                width: !component ? '100%' : 'auto',
               }}
               block
               onClick={() => {
@@ -99,6 +99,6 @@ export function createPolyInput(polyTypes = []) {
           </div>
         )
       }
-    }
+    },
   })
 }

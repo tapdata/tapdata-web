@@ -101,7 +101,7 @@ import { VirtualTransferPanel } from '@tap/component'
 export default {
   components: {
     VirtualTransferPanel,
-    ElIconArrowRight
+    ElIconArrowRight,
   },
   name: 'MqTransfer',
   extends: Transfer,
@@ -110,51 +110,51 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     bottomValue: {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     rightTopDefaultChecked: {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     rightBottomDefaultChecked: {
       type: Array,
       default() {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       topChecked: [],
-      bottomChecked: []
+      bottomChecked: [],
     }
   },
   computed: {
     sourceData() {
       const allValue = [...this.topValue, ...this.bottomValue]
       const valueObj = {}
-      allValue.forEach(item => {
+      allValue.forEach((item) => {
         valueObj[item] = true
       })
-      return this.data.filter(item => !valueObj[item[this.props.key]])
+      return this.data.filter((item) => !valueObj[item[this.props.key]])
     },
 
     rightTopData() {
       let data
       if (this.targetOrder === 'original') {
         const valueObj = {}
-        this.topValue.forEach(item => {
+        this.topValue.forEach((item) => {
           valueObj[item] = true
         })
-        data = this.data.filter(item => valueObj[item[this.props.key]])
+        data = this.data.filter((item) => valueObj[item[this.props.key]])
       } else {
         data = this.topValue.reduce((arr, cur) => {
           const val = this.dataObj[cur]
@@ -171,10 +171,10 @@ export default {
       let data
       if (this.targetOrder === 'original') {
         const valueObj = {}
-        this.bottomValue.forEach(item => {
+        this.bottomValue.forEach((item) => {
           valueObj[item] = true
         })
-        data = this.data.filter(item => valueObj[item[this.props.key]])
+        data = this.data.filter((item) => valueObj[item[this.props.key]])
       } else {
         data = this.bottomValue.reduce((arr, cur) => {
           const val = this.dataObj[cur]
@@ -185,7 +185,7 @@ export default {
         }, [])
       }
       return data
-    }
+    },
   },
   methods: {
     onTargetCheckedChange(from, val, movedKeys) {
@@ -198,7 +198,7 @@ export default {
       const valueKey = `${from}Value`
       let currentValue = this[valueKey].slice()
       const currentChecked = this[`${from}Checked`]
-      currentChecked.forEach(item => {
+      currentChecked.forEach((item) => {
         const index = currentValue.indexOf(item)
         if (index > -1) {
           currentValue.splice(index, 1)
@@ -216,16 +216,16 @@ export default {
       const key = this.props.key
 
       let leftCheckedKeyPropsObj = {}
-      this.leftChecked.forEach(item => {
+      this.leftChecked.forEach((item) => {
         leftCheckedKeyPropsObj[item] = true
       })
 
       let valueKeyPropsObj = {}
-      allValue.forEach(item => {
+      allValue.forEach((item) => {
         valueKeyPropsObj[item] = true
       })
 
-      this.data.forEach(item => {
+      this.data.forEach((item) => {
         const itemKey = item[key]
         if (leftCheckedKeyPropsObj[itemKey] && !valueKeyPropsObj[itemKey]) {
           itemsToBeMoved.push(itemKey)
@@ -237,8 +237,8 @@ export default {
 
       $emit(this, `update:${valueKey}`, currentValue)
       $emit(this, 'change', currentValue, `right-${to}`, this.leftChecked)
-    }
+    },
   },
-  emits: ['right-top-check-change', , 'change']
+  emits: ['right-top-check-change', , 'change'],
 }
 </script>

@@ -14,13 +14,13 @@ export default {
       type: String,
       default: () => {
         return '304px'
-      }
-    }
+      },
+    },
   },
   watch: {
     visible() {
       this.resize()
-    }
+    },
   },
   mounted() {
     let mainContainer = document.body.getElementsByClassName('layout-main')[0]
@@ -52,9 +52,9 @@ export default {
           }
         }
       }
-    }
+    },
   },
-  emits: ['update:visible', 'visible']
+  emits: ['update:visible', 'visible'],
 }
 </script>
 
@@ -66,7 +66,10 @@ export default {
   z-index: 2001;
   height: 100%;
   background-color: map-get($bgColor, white);
-  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
+  box-shadow:
+    0 8px 10px -5px rgb(0 0 0 / 20%),
+    0 16px 24px 2px rgb(0 0 0 / 14%),
+    0 6px 30px 5px rgb(0 0 0 / 12%);
   overflow: auto;
   box-sizing: border-box;
 }

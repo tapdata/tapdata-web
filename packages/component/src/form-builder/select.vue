@@ -7,34 +7,34 @@ export default {
     value: [String, Number, Array],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
       defaultConfig: {},
-      filterList: this.config.options || []
+      filterList: this.config.options || [],
     }
   },
   watch: {
     'config.options'(data) {
       let list = data || []
       this.filterList = list
-    }
+    },
   },
   render(h) {
     let self = this
     let config = Object.assign(this.defaultConfig, self.config)
     let options = []
     if (this.filterList?.length) {
-      options = this.filterList.map(opt => {
+      options = this.filterList.map((opt) => {
         return h('ElOption', {
           props: {
             label: opt.label,
             value: opt.value,
-            disabled: opt.disabled
+            disabled: opt.disabled,
           },
-          key: opt.key || opt.value
+          key: opt.key || opt.value,
         })
       })
     }
@@ -46,7 +46,7 @@ export default {
         'ElOption',
         {
           props: { value: '0', disabled: true },
-          style: 'padding: 0 20px;background: #fff;cursor: default;'
+          style: 'padding: 0 20px;background: #fff;cursor: default;',
         },
         [
           h(
@@ -54,21 +54,21 @@ export default {
             {
               props: { value: this.value.length === this.filterList.length },
               on: {
-                input: val => {
+                input: (val) => {
                   if (val) {
                     this.$emit(
                       'input',
-                      this.filterList.map(opt => opt.value)
+                      this.filterList.map((opt) => opt.value),
                     )
                   } else {
                     this.$emit('input', [])
                   }
-                }
-              }
+                },
+              },
             },
-            [this.$t('packages_component_dataFlow_selectAll')]
-          )
-        ]
+            [this.$t('packages_component_dataFlow_selectAll')],
+          ),
+        ],
       )
     }
     const tip = self.config?.tip || ''
@@ -78,7 +78,7 @@ export default {
           'ElSelect',
           {
             domProps: {
-              readonly: true
+              readonly: true,
             },
             props: {
               value: self.value,
@@ -92,37 +92,37 @@ export default {
               multiple: config.multiple,
               disabled: config.disabled ? config.disabled : false,
               remote: config.remote,
-              remoteMethod: config.remoteMethod
+              remoteMethod: config.remoteMethod,
             },
             on: Object.assign(this.on, {
               'visible-change'(value) {
                 if (value && config.filterable) {
                   self.filterMethod('')
                 }
-              }
+              },
             }),
-            ref: 'select'
+            ref: 'select',
           },
-          [checkboxEl, ...options]
+          [checkboxEl, ...options],
         ),
         h(
           'div',
           {
             class: {
               'fb-select-mask': true,
-              'is-show': config.loading
-            }
+              'is-show': config.loading,
+            },
           },
-          [h('i', { class: 'el-icon-loading' })]
-        )
-      ])
+          [h('i', { class: 'el-icon-loading' })],
+        ),
+      ]),
     ]
     if (tip) {
       arr.push(
         h('div', { class: 'fb-switch-tip' }, [
           h('i', { class: 'el-icon-info' }),
-          h('span', { class: 'fb-switch-tip__text' }, tip)
-        ])
+          h('span', { class: 'fb-switch-tip__text' }, tip),
+        ]),
       )
     }
     return h('div', { class: 'select-item' }, arr)
@@ -132,7 +132,7 @@ export default {
       keyword = keyword.toLowerCase()
       let reg = new RegExp(keyword, 'ig')
       this.filterList = this.config.options
-        .filter(d => d.label.match(reg))
+        .filter((d) => d.label.match(reg))
         .sort((a, b) => {
           if (a.label.toLowerCase() === keyword) {
             return -1
@@ -142,8 +142,8 @@ export default {
             return a.label <= b.label ? -1 : 1
           }
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -27,7 +27,7 @@ export const loadSchemaTree = observer(
         () => root.$store.state.dataflow.editVersion,
         () => {
           formIsChange.value = true
-        }
+        },
       )
 
       async function getTask() {
@@ -52,7 +52,7 @@ export const loadSchemaTree = observer(
         }
         metadataInstancesApi
           .nodeSchema(nodeId)
-          .then(data => {
+          .then((data) => {
             fieldList.value = data?.[0]?.fields || []
           })
           .finally(() => {
@@ -69,7 +69,7 @@ export const loadSchemaTree = observer(
           className: 'DiscoverSchemaService',
           method: 'discoverSchema',
           nodeId,
-          args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)]
+          args: [connectionId, Object.assign({ file: 'file', nodeId }, nodeConfig)],
         }
         loading.value = true
         isTransformed.value = true
@@ -83,22 +83,22 @@ export const loadSchemaTree = observer(
                   where: {
                     'source.id': connectionId,
                     meta_type: {
-                      in: ['collection', 'table', 'view']
+                      in: ['collection', 'table', 'view'],
                     },
                     is_deleted: false,
                     sourceType: 'SOURCE',
                     original_name: {
-                      neq: ''
-                    }
+                      neq: '',
+                    },
                   },
                   page: 1,
                   size: 20,
                   fields: {
-                    original_name: true
+                    original_name: true,
                   },
-                  order: ['original_name ASC']
+                  order: ['original_name ASC'],
                 }
-                connectionsApi.get(connectionId).then(con => {
+                connectionsApi.get(connectionId).then((con) => {
                   if (con.loadFieldErrMsg) {
                     errorMsg.value = con.loadFieldErrMsg
                     loadStatus.value = true
@@ -106,7 +106,7 @@ export const loadSchemaTree = observer(
                   } else {
                     metadataInstancesApi
                       .get({ filter: JSON.stringify(filter) })
-                      .then(metaData => {
+                      .then((metaData) => {
                         const table = metaData.items?.[0]?.original_name
                         form.setValuesIn(tableNameField || 'tableName', '')
                         setTimeout(() => {
@@ -114,12 +114,12 @@ export const loadSchemaTree = observer(
                           isTransformed.value = false
                           let unwatchSaving = root.$watch(
                             () => root.$store.state.dataflow.taskSaving,
-                            v => {
+                            (v) => {
                               if (!v) {
                                 getSchemaData(true)
                                 unwatchSaving()
                               }
-                            }
+                            },
                           )
                         }, 3000)
                       })
@@ -130,7 +130,7 @@ export const loadSchemaTree = observer(
                   }
                 })
               })
-              .catch(err => {
+              .catch((err) => {
                 loadStatus.value = true
                 const msg = err?.data?.message
                 errorMsg.value = msg
@@ -214,6 +214,6 @@ export const loadSchemaTree = observer(
           </div>
         )
       }
-    }
-  })
+    },
+  }),
 )

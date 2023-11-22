@@ -13,7 +13,7 @@ function convertToUnit(str, unit = 'px') {
 
 function flattenFragments(nodes) {
   return nodes
-    .map(node => {
+    .map((node) => {
       if (node.type === Fragment) {
         return flattenFragments(node.children)
       } else {
@@ -37,8 +37,8 @@ export default defineComponent({
     tag: {
       type: String,
       required: false,
-      default: 'svg'
-    }
+      default: 'svg',
+    },
   },
 
   setup(props, { attrs, slots }) {
@@ -50,7 +50,7 @@ export default defineComponent({
 
       if (slotValue) {
         slotIcon.value = flattenFragments(slotValue)
-          .filter(node => node.type === Text && node.children && typeof node.children === 'string')[0]
+          .filter((node) => node.type === Text && node.children && typeof node.children === 'string')[0]
           ?.children?.trim()
       }
 
@@ -58,7 +58,7 @@ export default defineComponent({
         ? {
             fontSize: size,
             height: size,
-            width: size
+            width: size,
           }
         : {}
 
@@ -70,14 +70,14 @@ export default defineComponent({
               {
                 'v-icon--disabled': props.disabled,
                 'v-icon--link': !!attrs.onClick,
-                'v-icon--dense': props.dense
-              }
+                'v-icon--dense': props.dense,
+              },
             ],
             style: {
               ...sizeData,
               color: props.color,
-              'caret-color': props.color
-            }
+              'caret-color': props.color,
+            },
           }}
           disabled={!!attrs.onClick && props.disabled}
           role={attrs.onClick ? 'button' : undefined}
@@ -91,8 +91,8 @@ export default defineComponent({
                 xmlns: 'http://www.w3.org/2000/svg',
                 viewBox: '0 0 24 24',
                 role: 'img',
-                'aria-hidden': true
-              }
+                'aria-hidden': true,
+              },
             }}
           >
             <use xlink:href={`#icon-${slotIcon.value}`}></use>
@@ -100,7 +100,7 @@ export default defineComponent({
         </span>
       )
     }
-  }
+  },
 })
 </script>
 
@@ -119,7 +119,9 @@ svg.iconfont {
   vertical-align: -0.15em !important;
   fill: currentColor;
   overflow: hidden;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  transition:
+    0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+    visibility 0s;
 }
 .v-icon {
   position: relative;
@@ -133,7 +135,9 @@ svg.iconfont {
   letter-spacing: normal;
   line-height: 1;
   text-indent: 0;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  transition:
+    0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+    visibility 0s;
   vertical-align: middle;
   user-select: none;
 

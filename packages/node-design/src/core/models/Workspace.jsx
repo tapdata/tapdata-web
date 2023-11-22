@@ -33,14 +33,14 @@ export class Workspace {
       workspace: this,
       viewportElement: props.viewportElement,
       contentWindow: props.contentWindow,
-      nodeIdAttrName: this.engine.props.nodeIdAttrName
+      nodeIdAttrName: this.engine.props.nodeIdAttrName,
     })
     this.outline = new Viewport({
       engine: this.engine,
       workspace: this,
       viewportElement: props.viewportElement,
       contentWindow: props.contentWindow,
-      nodeIdAttrName: this.engine.props.outlineNodeIdAttrName
+      nodeIdAttrName: this.engine.props.outlineNodeIdAttrName,
     })
     this.operation = new Operation(this)
   }
@@ -50,7 +50,7 @@ export class Workspace {
       workbench: this.engine.workbench,
       workspace: this,
       engine: this.engine,
-      viewport: this.viewport
+      viewport: this.viewport,
     }
   }
 
@@ -71,7 +71,7 @@ export class Workspace {
       id: this.id,
       title: this.title,
       description: this.description,
-      operation: this.operation.serialize()
+      operation: this.operation.serialize(),
     }
   }
 

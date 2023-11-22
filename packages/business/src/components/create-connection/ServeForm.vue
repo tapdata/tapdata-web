@@ -21,7 +21,7 @@
     </div>
     <GitBook
       v-resize.left="{
-        minWidth: 350
+        minWidth: 350,
       }"
       :value="params.md"
       class="git-book overflow-auto"
@@ -43,27 +43,27 @@ export default {
   name: 'ServeForm',
   components: { GitBook, SchemaToForm },
   directives: {
-    resize
+    resize,
   },
   props: {
     params: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       schemaData: null,
       submitBtnLoading: false,
-      saveAndMoreLoading: false
+      saveAndMoreLoading: false,
     }
   },
   computed: {
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
-    }
+    },
   },
   mounted() {
     this.getForm()
@@ -79,7 +79,7 @@ export default {
             title: i18n.t('public_name'),
             required: true,
             'x-decorator': 'FormItem',
-            'x-component': 'Input'
+            'x-component': 'Input',
           },
           desc: {
             type: 'string',
@@ -88,11 +88,11 @@ export default {
             'x-component': 'Input.TextArea',
             'x-component-props': {
               autosize: {
-                minRows: 2
-              }
-            }
-          }
-        }
+                minRows: 2,
+              },
+            },
+          },
+        },
       }
       this.schemaData = result
     },
@@ -104,7 +104,7 @@ export default {
         console.log('this.schemaFormInstance', values, this.schemaFormInstance) // eslint-disable-line
         appApi
           .post(values)
-          .then(data => {
+          .then((data) => {
             data.LDP_TYPE = 'app'
             $emit(this, addNext ? 'saveAndMore' : 'success', data)
           })
@@ -122,9 +122,9 @@ export default {
       const md = new MarkdownIt({ html: true })
       // a标签，新窗口打开
       this.html = md.render(`### API 应用`)
-    }
+    },
   },
-  emits: []
+  emits: [],
 }
 </script>
 

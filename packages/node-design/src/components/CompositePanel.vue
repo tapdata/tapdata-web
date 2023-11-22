@@ -48,26 +48,26 @@ export default {
       tabItems: [
         {
           name: 'component',
-          title: '组件'
+          title: '组件',
         },
         {
           name: 'outline',
-          title: '大纲'
+          title: '大纲',
         },
         {
           name: 'history',
-          title: '历史记录'
-        }
+          title: '历史记录',
+        },
       ],
-      activeTab: 0
+      activeTab: 0,
     }
   },
 
   methods: {
     handleActiveTab(index) {
       this.activeTab = index
-    }
-  }
+    },
+  },
 }
 </script>
 

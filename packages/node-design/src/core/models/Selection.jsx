@@ -24,7 +24,7 @@ export class Selection {
       add: action,
       remove: action,
       clear: action,
-      crossAddTo: action
+      crossAddTo: action,
     })
   }
 
@@ -34,9 +34,9 @@ export class Selection {
         target: this.operation.tree,
         source: this.operation.getSelectedNodes(),
         extra: {
-          fromUser
-        }
-      })
+          fromUser,
+        },
+      }),
     )
   }
 
@@ -59,7 +59,7 @@ export class Selection {
   }
 
   mapIds(ids) {
-    return isArr(ids) ? ids.map(node => (isStr(node) ? node : node?.id)) : []
+    return isArr(ids) ? ids.map((node) => (isStr(node) ? node : node?.id)) : []
   }
 
   batchSelect(ids, fromUser) {
@@ -87,7 +87,7 @@ export class Selection {
   }
 
   add(...ids) {
-    this.mapIds(ids).forEach(id => {
+    this.mapIds(ids).forEach((id) => {
       if (isStr(id)) {
         if (!this.selected.includes(id)) {
           this.selected.push(id)
@@ -110,7 +110,7 @@ export class Selection {
         }, selectedNodes[0])
         if (minDistanceNode) {
           const crossNodes = node.crossSiblings(minDistanceNode)
-          crossNodes.forEach(node => {
+          crossNodes.forEach((node) => {
             if (!this.selected.includes(node.id)) {
               this.selected.push(node.id)
             }
@@ -124,9 +124,9 @@ export class Selection {
   }
 
   remove(...ids) {
-    this.mapIds(ids).forEach(id => {
+    this.mapIds(ids).forEach((id) => {
       if (isStr(id)) {
-        this.selected = this.selected.filter(item => item !== id)
+        this.selected = this.selected.filter((item) => item !== id)
       } else {
         this.remove(id?.id)
       }
@@ -135,7 +135,7 @@ export class Selection {
   }
 
   has(...ids) {
-    return this.mapIds(ids).some(id => {
+    return this.mapIds(ids).some((id) => {
       if (isStr(id)) {
         return this.selected.includes(id)
       } else {

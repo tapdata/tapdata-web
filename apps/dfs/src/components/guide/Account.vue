@@ -59,8 +59,8 @@ export default {
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86'
-      }
+        countryCode: '86',
+      },
     }
   },
   mounted() {
@@ -75,7 +75,7 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
@@ -90,13 +90,13 @@ export default {
         })
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then(res => {
+      this.$axios.get('config/countryCode.json').then((res) => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
-    }
+    },
   },
-  emits: ['next', 'error']
+  emits: ['next', 'error'],
 }
 </script>
 

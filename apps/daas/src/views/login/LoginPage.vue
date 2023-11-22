@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       languages: langMenu,
-      lang: getCurrentLanguage()
+      lang: getCurrentLanguage(),
     }
   },
 
@@ -32,17 +32,17 @@ export default {
     loginImageStyle() {
       return {
         background: `url('${window._TAPDATA_OPTIONS_.loginUrl}') left 0 no-repeat`,
-        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover'
+        backgroundSize: window._TAPDATA_OPTIONS_.loginSize || 'cover',
       }
-    }
+    },
   },
 
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    }
-  }
+    },
+  },
 }
 </script>
 

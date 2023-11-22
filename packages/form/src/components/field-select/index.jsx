@@ -29,16 +29,16 @@ const DefineFieldSelect = defineComponent({
                   </VIcon>
                 )}
               </div>
-            )
+            ),
           }}
         />
       )
     }
-  }
+  },
 })
 
 export const FieldSelect = connect(
   DefineFieldSelect,
   mapProps({ dataSource: 'options', loading: true }),
-  mapReadPretty(PreviewText.Select)
+  mapReadPretty(PreviewText.Select),
 )

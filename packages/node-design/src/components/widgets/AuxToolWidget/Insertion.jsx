@@ -18,7 +18,7 @@ export const Insertion = observer(
           position: 'absolute',
           transform: 'perspective(1px) translate3d(0,0,0)',
           top: 0,
-          left: 0
+          left: 0,
         }
         if (!closestRect) return baseStyle
         if (closestDirection === ClosestPosition.Before || closestDirection === ClosestPosition.ForbidBefore) {
@@ -76,6 +76,6 @@ export const Insertion = observer(
       }
 
       return () => <div class={prefix} style={createInsertionStyle()}></div>
-    }
-  })
+    },
+  }),
 )

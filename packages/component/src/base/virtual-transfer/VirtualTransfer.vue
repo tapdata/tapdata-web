@@ -56,7 +56,7 @@ import VirtualTransferPanel from './VirtualTransferPanel'
 
 export default {
   components: {
-    VirtualTransferPanel
+    VirtualTransferPanel,
   },
   name: 'VirtualTransfer',
   extends: Transfer,
@@ -64,10 +64,10 @@ export default {
     sourceData() {
       // console.time('sourceData')
       const valueObj = {}
-      this.value.forEach(item => {
+      this.value.forEach((item) => {
         valueObj[item] = true
       })
-      const data = this.data.filter(item => !valueObj[item[this.props.key]])
+      const data = this.data.filter((item) => !valueObj[item[this.props.key]])
       // console.timeEnd('sourceData')
       return data
     },
@@ -77,10 +77,10 @@ export default {
       let data
       if (this.targetOrder === 'original') {
         const valueObj = {}
-        this.value.forEach(item => {
+        this.value.forEach((item) => {
           valueObj[item] = true
         })
-        data = this.data.filter(item => valueObj[item[this.props.key]])
+        data = this.data.filter((item) => valueObj[item[this.props.key]])
       } else {
         data = this.value.reduce((arr, cur) => {
           const val = this.dataObj[cur]
@@ -92,7 +92,7 @@ export default {
       }
       // console.timeEnd('targetData')
       return data
-    }
+    },
   },
   methods: {
     addToRight() {
@@ -102,15 +102,15 @@ export default {
       const key = this.props.key
 
       let leftCheckedKeyPropsObj = {}
-      this.leftChecked.forEach(item => {
+      this.leftChecked.forEach((item) => {
         leftCheckedKeyPropsObj[item] = true
       })
       let valueKeyPropsObj = {}
-      this.value.forEach(item => {
+      this.value.forEach((item) => {
         valueKeyPropsObj[item] = true
       })
 
-      this.data.forEach(item => {
+      this.data.forEach((item) => {
         const itemKey = item[key]
         if (leftCheckedKeyPropsObj[itemKey] && !valueKeyPropsObj[itemKey]) {
           itemsToBeMoved.push(itemKey)
@@ -121,8 +121,8 @@ export default {
       $emit(this, 'update:value', currentValue)
       $emit(this, 'change', currentValue, 'right', this.leftChecked)
       // console.timeEnd('addToRight')
-    }
+    },
   },
-  emits: ['update:value', 'change']
+  emits: ['update:value', 'change'],
 }
 </script>

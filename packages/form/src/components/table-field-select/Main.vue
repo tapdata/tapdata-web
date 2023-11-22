@@ -27,7 +27,7 @@ export default {
     nodeId: String,
     tableName: String,
     defaultFields: Array,
-    refresh: String
+    refresh: String,
   },
 
   data() {
@@ -35,9 +35,9 @@ export default {
       result: {},
       selected: {
         table: '',
-        fields: []
+        fields: [],
       },
-      options: []
+      options: [],
     }
   },
 
@@ -48,7 +48,7 @@ export default {
     },
     refresh() {
       this.init()
-    }
+    },
   },
 
   mounted() {
@@ -71,14 +71,14 @@ export default {
     async loadOptions() {
       const data = await metadataInstancesApi.nodeSchema(this.nodeId)
       this.options = data[0].fields
-        .map(item => ({
+        .map((item) => ({
           label: item.field_name,
           value: item.field_name,
           isPrimaryKey: item.primary_key_position > 0,
           indicesUnique: !!item.indicesUnique,
-          type: item.data_type
+          type: item.data_type,
         }))
-        .filter(item => !item.is_deleted)
+        .filter((item) => !item.is_deleted)
     },
 
     handleChange() {
@@ -96,7 +96,7 @@ export default {
       this.selected.table = ''
       this.selected.fields = []
       this.result = {}
-    }
-  }
+    },
+  },
 }
 </script>

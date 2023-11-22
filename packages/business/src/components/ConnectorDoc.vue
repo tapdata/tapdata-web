@@ -86,7 +86,7 @@ const pdkDocMap = {
   'custom-connection': 'cloud/prerequisites/others/custom-connection',
   dummy: 'cloud/prerequisites/others/dummy',
   'http-receiver': 'cloud/prerequisites/others/http-receiver',
-  greenplum: 'cloud/prerequisites/warehouses-and-lake/greenplum'
+  greenplum: 'cloud/prerequisites/warehouses-and-lake/greenplum',
 }
 const pdkNameDictionary = {
   ali1688: 'alibaba-1688',
@@ -114,7 +114,7 @@ const pdkNameDictionary = {
   'tencent-db-mongodb': 'tencentdb-for-mongodb',
   'tencent-db-mysql': 'tencentdb-for-mysql',
   'tencent-db-postgres': 'tencentdb-for-pg',
-  'tencent-db-sqlserver': 'tencentdb-for-sql-server'
+  'tencent-db-sqlserver': 'tencentdb-for-sql-server',
 }
 
 export default {
@@ -122,17 +122,17 @@ export default {
 
   props: {
     pdkId: String,
-    pdkHash: String
+    pdkHash: String,
   },
 
   components: {
-    GitBook
+    GitBook,
   },
 
   data() {
     return {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
-      doc: ''
+      doc: '',
     }
   },
 
@@ -150,7 +150,7 @@ export default {
     },
     showIframe() {
       return !this.isDaas && this.docUrl
-    }
+    },
   },
 
   created() {
@@ -161,10 +161,10 @@ export default {
 
   methods: {
     getPdkDoc() {
-      pdkApi.doc(this.pdkHash).then(res => {
+      pdkApi.doc(this.pdkHash).then((res) => {
         this.doc = res?.data
       })
-    }
-  }
+    },
+  },
 }
 </script>

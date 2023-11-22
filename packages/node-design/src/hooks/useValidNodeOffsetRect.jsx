@@ -10,7 +10,7 @@ const isEqualRect = (rect1, rect2) => {
   )
 }
 
-export const useValidNodeOffsetRect = node => {
+export const useValidNodeOffsetRect = (node) => {
   const viewportRef = useViewport()
   const viewport = viewportRef.value
   const rectRef = ref(viewport.getValidNodeOffsetRect(node))
@@ -41,7 +41,7 @@ export const useValidNodeOffsetRect = node => {
         observerRef.value.disconnect()
       }
     },
-    () => [element, viewportRef.value]
+    () => [element, viewportRef.value],
   )
 
   useEffect(
@@ -60,7 +60,7 @@ export const useValidNodeOffsetRect = node => {
         cancelIdle(idleTaskRef.value)
       }
     },
-    () => [node]
+    () => [node],
   )
 
   return rectRef

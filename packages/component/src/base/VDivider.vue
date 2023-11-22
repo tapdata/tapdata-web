@@ -6,7 +6,7 @@ export default {
 
   props: {
     inset: Boolean,
-    vertical: Boolean
+    vertical: Boolean,
   },
 
   render() {
@@ -21,11 +21,11 @@ export default {
         'v-divider',
         {
           'v-divider--inset': this.inset,
-          'v-divider--vertical': this.vertical
-        }
-      ]
+          'v-divider--vertical': this.vertical,
+        },
+      ],
     })
-  }
+  },
 }
 </script>
 

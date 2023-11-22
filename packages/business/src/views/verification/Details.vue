@@ -80,13 +80,13 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
+        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
       },
       inspect: {},
       resultInfo: {},
       errorMsg: '',
       taskId: null,
-      expandErrorMessage: false
+      expandErrorMessage: false,
     }
   },
   computed: {
@@ -98,7 +98,7 @@ export default {
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod
-    }
+    },
   },
   created() {
     this.getData()
@@ -117,11 +117,11 @@ export default {
         .get({
           filter: JSON.stringify({
             where: {
-              id: this.$route.params.id
-            }
-          })
+              id: this.$route.params.id,
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let inspect = data?.items?.[0] || {}
           let inspectResult = inspect.InspectResult
           inspect.lastStartTime = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
@@ -130,11 +130,11 @@ export default {
             .get({
               filter: JSON.stringify({
                 where: {
-                  id: inspectResult.id
-                }
-              })
+                  id: inspectResult.id,
+                },
+              }),
             })
-            .then(data => {
+            .then((data) => {
               let result = data?.items?.[0]
               if (result) {
                 this.resultInfo = result
@@ -150,7 +150,7 @@ export default {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
                     }
                     if (this.taskId) {
-                      this.$refs.singleTable?.setCurrentRow(stats.find(t => t.taskId === this.taskId))
+                      this.$refs.singleTable?.setCurrentRow(stats.find((t) => t.taskId === this.taskId))
                     }
                   })
                 }
@@ -163,29 +163,29 @@ export default {
     },
     getResultData({ current, size }) {
       let taskId = this.taskId
-      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
+      let task = this.inspect.tasks?.find((item) => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
         const sourceSortColumn = task.source?.sortColumn?.split(',')
         const targetSortColumn = task.target?.sortColumn?.split(',')
         const inspectMethod = this.inspect.inspectMethod
-        let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
+        let statsInfo = this.tableData.find((item) => item.taskId === this.taskId)
         let where = {
           taskId,
           inspect_id: this.inspect.id,
-          inspectResultId: this.resultInfo.id
+          inspectResultId: this.resultInfo.id,
         }
         let filter = {
           where,
           order: 'createTime DESC',
           limit: showAdvancedVerification ? 1 : size,
-          skip: (current - 1) * (showAdvancedVerification ? 1 : size)
+          skip: (current - 1) * (showAdvancedVerification ? 1 : size),
         }
         return inspectDetailsApi
           .get({
-            filter: JSON.stringify(filter)
+            filter: JSON.stringify(filter),
           })
-          .then(data => {
+          .then((data) => {
             let resultList = []
             if (data?.items) {
               if (showAdvancedVerification) {
@@ -201,7 +201,7 @@ export default {
               resultList, // 结果详情
               sourceSortColumn, // 源索引字段
               targetSortColumn, // 目标索引字段
-              inspectMethod
+              inspectMethod,
             }
           })
       }
@@ -221,14 +221,14 @@ export default {
       inspectApi
         .update(
           {
-            id: this.inspect.id
+            id: this.inspect.id,
           },
           {
             status: 'scheduling',
             ping_time: 0,
             scheduleTimes: 0,
-            byFirstCheckId: firstCheckId
-          }
+            byFirstCheckId: firstCheckId,
+          },
         )
         .then(() => {
           this.$message.success(this.$t('packages_business_verification_startVerify'))
@@ -243,10 +243,10 @@ export default {
       if (data.length === 0) {
         return
       }
-      const findOne = this.tableData.find(t => t.taskId === this.taskId)
+      const findOne = this.tableData.find((t) => t.taskId === this.taskId)
       const sourceColumns = findOne.source?.columns || []
       const targetColumns = findOne.target?.columns || []
-      data.map(item => {
+      data.map((item) => {
         let source = item.source || {}
         let target = item.target || {}
         let sourceKeys = Object.keys(source)
@@ -263,15 +263,15 @@ export default {
         if (diffFiledIndexs.length) {
           this.handleLoadIndexField(item, diffFiledIndexs, sourceColumns, targetColumns)
         } else {
-          key.forEach(i => {
+          key.forEach((i) => {
             let sourceValue = ''
             let targetValue = ''
-            if (sourceKeys.filter(v => i === v)) {
+            if (sourceKeys.filter((v) => i === v)) {
               sourceValue = source[i]
             } else {
               sourceValue = ''
             }
-            if (targetKeys.filter(v => i === v)) {
+            if (targetKeys.filter((v) => i === v)) {
               targetValue = target[i]
             } else {
               targetValue = ''
@@ -282,12 +282,12 @@ export default {
               red: isDiff,
               source: {
                 key: i,
-                value: sourceValue
+                value: sourceValue,
               },
               target: {
                 key: i,
-                value: targetValue
-              }
+                value: targetValue,
+              },
             }
             item['details'] = item['details'] || []
             item['details'].push(node)
@@ -301,8 +301,8 @@ export default {
       let route = this.$router.resolve({
         name: 'VerifyDiffHistory',
         params: {
-          id: this.resultInfo.firstCheckId
-        }
+          id: this.resultInfo.firstCheckId,
+        },
       })
       url = route.href
       window.open(url, '_blank')
@@ -314,18 +314,18 @@ export default {
           red: indexArr.includes(i + ''),
           source: {
             key: el,
-            value: item.source[el]
+            value: item.source[el],
           },
           target: {
             key: targetColumns[i],
-            value: item.target[targetColumns[i]]
-          }
+            value: item.target[targetColumns[i]],
+          },
         }
         item['details'] = item['details'] || []
         item['details'].push(node)
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
