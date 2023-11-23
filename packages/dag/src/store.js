@@ -647,7 +647,7 @@ const mutations = {
     nodeIds.forEach((nodeId) => {
       const node = state.NodeMap[nodeId]
 
-      delete state.NodeMap
+      delete state.NodeMap[nodeId]
 
       if (node.$outputs?.length) {
         node.$outputs.forEach((id) => {
