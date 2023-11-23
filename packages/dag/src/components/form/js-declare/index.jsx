@@ -12,6 +12,7 @@ export const JsDeclare = defineComponent({
     },
     disabled: Boolean,
   },
+  emits: ['change'],
   setup(props, { attrs, emit }) {
     const before = `function declare(${props.param}) {`
     const after = `  return ${props.param}\n}`
