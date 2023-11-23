@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="mb-4">
+    <div v-show="showProgress && fileInfo.progress">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
         <span>{{ fileInfo.progress + '%' }}</span>
@@ -54,7 +54,7 @@
       max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
-      v-show="!showProgress && testData.testLogs && testData.testLogs.length > 0"
+      v-loading="testData.testLogs && !testData.testLogs.length"
     >
       <el-table-column prop="show_msg" :label="$t('packages_business_dataForm_test_items')">
         <template slot-scope="scope">
@@ -304,6 +304,8 @@ export default {
         type: 'downLoadConnector',
         data: connection
       }
+
+      this.showProgress = true
       this.$ws.ready(() => {
         this.$ws.send(msg)
         // 连接测试时出现access_token过期,重发消息
