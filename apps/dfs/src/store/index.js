@@ -53,7 +53,8 @@ const store = new Vuex.Store({
       agentId: '',
       steps: [],
       behavior: '',
-      behaviorAt: null
+      behaviorAt: null,
+      expand: {}
     },
     agentCount: {
       agentTotalCount: 0,

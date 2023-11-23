@@ -5,7 +5,7 @@
     :show-close="false"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    custom-class="tour-dialog"
+    :custom-class="customClass"
   >
     <template v-if="!finish">
       <div class="text-center title-cover" slot="title">
@@ -26,14 +26,29 @@
     </template>
 
     <template v-else>
-      <div class="text-center title-cover pt-4" slot="title">🎉</div>
-
-      <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">{{ $t('dfs_replication_tour_dialog_success_title') }}</h1>
+      <div class="text-center font-color-dark">
+        <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
+        <div class="mt-4 fs-5 color-primary">{{ $t('dfs_replication_tour_dialog_finished') }}</div>
+        <div class="mt-2">{{ $t('dfs_replication_tour_dialog_finished_subtitle') }}</div>
+        <div class="mt-12 fw-sub">{{ $t('dfs_replication_tour_dialog_finished_survey_title') }}</div>
+        <ElRadioGroup v-model="continueUse" class="inline-flex gap-4 mt-4">
+          <ElRadio label="yes" class="m-0 bg-white" border>是</ElRadio>
+          <ElRadio label="no" class="m-0 bg-white" border>否</ElRadio>
+        </ElRadioGroup>
+        <div class="px-6 mt-4">
+          <ElInput
+            v-model="suggestion"
+            type="textarea"
+            :placeholder="$t('dfs_replication_tour_dialog_finished_survey_placeholder')"
+            :rows="2"
+            :maxlength="200"
+            show-word-limit
+          ></ElInput>
+        </div>
       </div>
 
       <div slot="footer" class="text-center">
-        <el-button @click="$emit('finish')" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
+        <el-button @click="handleDone" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
       </div>
     </template>
   </ElDialog>
@@ -53,7 +68,9 @@ export default {
 
   data() {
     return {
-      visible: this.value
+      visible: this.value,
+      continueUse: '',
+      suggestion: ''
     }
   },
 
@@ -63,6 +80,12 @@ export default {
     },
     noEmail() {
       return !this.$store.state.user.email
+    },
+    customClass() {
+      if (this.finish) {
+        return 'tour-dialog is-finish'
+      }
+      return 'tour-dialog'
     }
   },
 
@@ -119,6 +142,19 @@ export default {
           bind: 'email'
         }
       })
+    },
+
+    handleDone() {
+      this.$emit('finish')
+
+      const { expand } = this.$store.state.guide
+      this.$axios.post('api/tcm/user_guide', {
+        expand: {
+          ...expand,
+          continueUse: this.continueUse,
+          suggestion: this.suggestion
+        }
+      })
     }
   }
 }
@@ -135,6 +171,12 @@ export default {
   overflow: hidden;
   .el-dialog__header {
     padding: 0;
+  }
+
+  &.is-finish {
+    background-image: url('../assets/image/teaching_completion_bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 }
 </style>
