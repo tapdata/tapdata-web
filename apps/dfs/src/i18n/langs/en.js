@@ -1765,7 +1765,13 @@ export default {
   dfs_replication_tour_dialog_start: 'Start',
   dfs_replication_tour_dialog_success_title:
     'Congratulations! You have successfully completed the guided tour for the replication task.',
-  dfs_replication_tour_dialog_finish: 'Finish',
+  dfs_replication_tour_dialog_finish: 'Done',
+  dfs_replication_tour_dialog_finished: 'Congratulations on completing the beginner tutorial!',
+  dfs_replication_tour_dialog_finished_subtitle:
+    'Next, you can enjoy a free trial of our product for tasks such as database replication and migration',
+  dfs_replication_tour_dialog_finished_survey_title:
+    'Through the onboarding guide, you now have a certain understanding of Tapdata. Will you continue to use Tapdata?',
+  dfs_replication_tour_dialog_finished_survey_placeholder: 'Enter your feedback or suggestions...',
   dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
   dfs_order_change: 'Change',
   dfs_change_record: 'Change Record',
