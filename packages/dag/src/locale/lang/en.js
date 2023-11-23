@@ -334,8 +334,7 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',
   packages_dag_nodes_database_shujuxieruce: 'Data write strategy',
-  packages_dag_nodes_database_baochimubiaoduan:
-    'To maintain the original table structure on the target side, please clear the data.',
+  packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
