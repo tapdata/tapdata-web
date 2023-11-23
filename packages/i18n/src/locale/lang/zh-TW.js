@@ -120,6 +120,7 @@ export default {
   public_button_stop_recover: '恢復挖掘',
   public_button_execute: '執行',
   public_button_obtain: '獲取',
+  public_button_help: '幫助',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',

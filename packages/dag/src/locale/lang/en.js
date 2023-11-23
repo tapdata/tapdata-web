@@ -686,6 +686,12 @@ export default {
   packages_dag_model_generation: 'Schema Generating',
   packages_dag_materialized_view: 'Materialized View',
   packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_materialized_view_help_title: 'How to build materialized views?',
+  packages_dag_materialized_view_help_desc:
+    'A materialized view is a special type of database view that enhances data retrieval speed. With Tapdata Cloud, you can create real-time materialized views, simplifying data management and application development processes.',
+  packages_dag_materialized_view_help_tutorial_btn: 'Detailed tutorial',
+  packages_dag_materialized_view_help_video_desc:
+    'The following video tutorial explains how to build materialized views using Tapdata Cloud...',
   packages_dag_select_database_tips: 'Select a Database',
   packages_dag_select_table_tips: 'Select a Table',
   packages_dag_join_table: 'Join Table',
