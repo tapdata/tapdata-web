@@ -98,7 +98,7 @@ export const JsEditor = connect(
       }
       return this.before || this.after ? (
         <div
-          class={['form-js-editor-wrap flex flex-column border rounded-2', { 'full-mode': this.fullscreen }]}
+          class={['form-js-editor-wrap flex flex-column border rounded-4', { 'full-mode': this.fullscreen }]}
           style={{ height: this.height + 'px' }}
         >
           {this.showFullscreen && (
@@ -141,7 +141,7 @@ export const JsEditor = connect(
       ) : (
         <_JsEditor
           ref="jsEditor"
-          class="border rounded-2 py-0"
+          class="border rounded-4 py-0"
           style={{
             background: '#fff',
           }}

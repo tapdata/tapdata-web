@@ -11,9 +11,11 @@ import { useStore } from 'vuex'
  * @param callback
  */
 export const useAfterTaskSaved = (root, obs, callback) => {
+  const store = useStore()
+
   const dispose = observe(obs, (...args) => {
     let unwatchSaving = watch(
-      () => root.$store.state.dataflow.taskSaving,
+      () => store.state.dataflow.taskSaving,
       (v) => {
         if (!v) {
           callback()
@@ -25,7 +27,7 @@ export const useAfterTaskSaved = (root, obs, callback) => {
 
   // 模型生成状态变化
   const unWatch = watch(
-    () => root.$store.state.dataflow.transformLoading,
+    () => store.state.dataflow.transformLoading,
     (v) => {
       if (!v) {
         console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))

@@ -328,7 +328,7 @@ export default {
             this.startTestPdk()
           },
           () => {
-            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+            this.$el.querySelector('.formily-element-plus-form-item-error').scrollIntoView()
           },
         )
       }).catch(() => {
@@ -1416,7 +1416,7 @@ export default {
           }
         }
 
-        :deep(.formily-element-form-item) {
+        :deep(.formily-element-plus-form-item) {
           .el-input-number {
             width: 180px;
           }
@@ -1463,19 +1463,19 @@ export default {
   width: 500px;
 }
 .pdk-schema-form {
-  :deep(.formily-element-form-item-feedback-layout-loose) {
+  :deep(.formily-element-plus-form-item-feedback-layout-loose) {
     margin-bottom: 20px;
   }
 
-  :deep(.formily-element-form-item-layout-vertical) {
-    > .formily-element-form-item-label {
+  :deep(.formily-element-plus-form-item-layout-vertical) {
+    > .formily-element-plus-form-item-label {
       margin-bottom: 8px;
 
-      .formily-element-form-item-label-content {
+      .formily-element-plus-form-item-label-content {
         min-height: unset;
         height: unset;
       }
-      .formily-element-form-item-label-tooltip {
+      .formily-element-plus-form-item-label-tooltip {
         margin-left: 4px;
         height: unset;
       }
@@ -1485,7 +1485,7 @@ export default {
     }
   }
 
-  :deep(.formily-element-form-collapse.border-bottom-0) {
+  :deep(.formily-element-plus-form-collapse.border-bottom-0) {
     .el-collapse-item__header {
       border-bottom: none;
     }

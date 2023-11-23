@@ -308,7 +308,7 @@ export default {
 
 <style lang="scss" scoped>
 .scheme-to-form {
-  :deep(.formily-element-form-item) {
+  :deep(.formily-element-plus-form-item) {
     margin-bottom: 10px;
   }
 }

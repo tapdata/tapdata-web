@@ -358,7 +358,7 @@ export const PythonProcessor = observer(
         const label = (
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">
-              <span class="formily-element-form-item-asterisk">*</span>
+              <span class="formily-element-plus-form-item-asterisk">*</span>
               <span>{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
               <ElTooltip content={tooltip} placement="top" class="ml-2">
                 <VIcon size="14" class="color-primary">

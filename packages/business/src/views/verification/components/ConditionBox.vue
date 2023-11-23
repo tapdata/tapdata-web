@@ -1928,7 +1928,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 }
 .scheme-to-form {
   :deep(
-      .formily-element-form-item-layout-horizontal
+      .formily-element-plus-form-item-layout-horizontal
         .formily-element-plus-form-item-control-content-component
         > .el-switch
     ) {

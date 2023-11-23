@@ -657,7 +657,7 @@ export default {
   }
 }
 .scheme-to-form {
-  :deep(.formily-element-form-item) {
+  :deep(.formily-element-plus-form-item) {
     margin-bottom: 18px;
   }
 }

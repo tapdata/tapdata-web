@@ -323,7 +323,7 @@ export default {
             this.startTestPdk()
           },
           () => {
-            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+            this.$el.querySelector('.formily-element-plus-form-item-error').scrollIntoView()
           },
         )
       }).catch(() => {
@@ -1200,7 +1200,7 @@ export default {
           }
         }
 
-        :deep(.formily-element-form-item) {
+        :deep(.formily-element-plus-form-item) {
           .el-input-number {
             width: 180px;
           }

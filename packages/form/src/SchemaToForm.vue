@@ -109,13 +109,13 @@ export default {
 
 <style lang="scss" scoped>
 .scheme-to-form {
-  :deep(.formily-element-form-item-label-tooltip) {
+  :deep(.formily-element-plus-form-item-label-tooltip) {
     margin-left: 0;
   }
 
-  :deep(.formily-element-form-item) {
+  :deep(.formily-element-plus-form-item) {
     font-size: $fontBaseTitle;
-    .formily-element-form-item-label {
+    .formily-element-plus-form-item-label {
       label {
         color: map-get($fontColor, light);
         text-transform: capitalize;
@@ -128,13 +128,13 @@ export default {
       width: 130px;
     }
 
-    .formily-element-form-item-help,
-    .formily-element-form-item-extra {
+    .formily-element-plus-form-item-help,
+    .formily-element-plus-form-item-extra {
       white-space: pre-wrap;
     }
   }
 
-  :deep(.formily-element-form-item-layout-horizontal) {
+  :deep(.formily-element-plus-form-item-layout-horizontal) {
     .formily-element-plus-form-item-control-content-component > .el-switch {
       height: 32px;
       line-height: 32px;

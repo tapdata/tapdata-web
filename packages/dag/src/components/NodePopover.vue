@@ -3,10 +3,11 @@
     v-bind="$attrs"
     v-if="popover.reference"
     ref="nodeMenu"
-    v-model:value="popover.show"
+    v-model:visible="popover.show"
     placement="bottom"
     popper-class="rounded-xl p-0"
-    :reference="popover.reference"
+    :referenceEl="popover.reference"
+    width="auto"
   >
     <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
       <div

@@ -33,7 +33,7 @@ export const PythonDeclare = defineComponent({
         props: editorProps,
       }
       return (
-        <el-collapse class="js-declare-collapse my-4 mx-n4 formily-element-form-collapse inset">
+        <el-collapse class="js-declare-collapse my-4 mx-n4 formily-element-plus-form-collapse inset">
           <el-collapse-item>
             <template slot="title">
               <span class="font-color-light fw-normal">

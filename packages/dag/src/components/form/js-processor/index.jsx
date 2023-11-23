@@ -1,4 +1,4 @@
-import { defineComponent, ref, reactive, onUnmounted, watch } from 'vue'
+import { defineComponent, ref, reactive, onUnmounted } from 'vue'
 import { useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
@@ -13,6 +13,7 @@ import Time from '@tap/shared/src/time'
 import { JsDeclare } from '../js-declare'
 import './style.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useStore } from 'vuex'
 
 export const JsProcessor = observer(
   defineComponent({
@@ -21,8 +22,9 @@ export const JsProcessor = observer(
       resize,
     },
     setup(props, { emit, root, attrs, refs }) {
+      const store = useStore()
       const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
-      const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
+      const { id: taskId, syncType } = store.state.dataflow.taskInfo
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -32,7 +34,7 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
-      const docSrc = `https://docs.tapdata.${root.$store.getters.isDomesticStation ? 'net' : 'io'}/cloud/appendix/${
+      const docSrc = `https://docs.tapdata.${store.getters.isDomesticStation ? 'net' : 'io'}/cloud/appendix/${
         props.isStandard ? 'standard' : 'enhanced'
       }-js?from=cloud`
 
@@ -89,7 +91,7 @@ export const JsProcessor = observer(
 
       const queryLog = async () => {
         const logData = await monitoringLogsApi.query({
-          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
+          taskId: store.state.dataflow.taskInfo.testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,
@@ -373,7 +375,7 @@ export const JsProcessor = observer(
         const label = (
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">
-              <span class="formily-element-form-item-asterisk">*</span>
+              <span class="formily-element-plus-form-item-asterisk">*</span>
               <span>{i18n.t('packages_form_js_processor_index_jiaoben')}</span>
               <ElTooltip content={tooltip} placement="top" class="ml-2">
                 <VIcon size="14" class="color-primary">
@@ -381,7 +383,7 @@ export const JsProcessor = observer(
                 </VIcon>
               </ElTooltip>
             </div>
-            <div className="flex align-center">
+            <div class="flex align-center">
               <ElLink class="mr-3" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElLink>
@@ -426,7 +428,7 @@ export const JsProcessor = observer(
                 <ElInputNumber
                   disabled={props.disabled}
                   style="width: 100px;"
-                  value={params.rows}
+                  modelValue={params.rows}
                   min={1}
                   max={10}
                   onInput={(val) => {
@@ -436,7 +438,6 @@ export const JsProcessor = observer(
                 ></ElInputNumber>
               </FormItem.BaseItem>
               <ElButton
-                disabled={props.disabled}
                 class="ml-4"
                 disabled={props.disabled || (isMigrate && !params.tableName)}
                 loading={running.value || tableLoading.value}
@@ -501,7 +502,7 @@ export const JsProcessor = observer(
               }}
             >
               {isDaas ? (
-                <div className="px-4 js-doc-content">
+                <div class="px-4 js-doc-content">
                   {Object.keys(functionGroup.value).map((className) => {
                     return [
                       <h2>{className}</h2>,

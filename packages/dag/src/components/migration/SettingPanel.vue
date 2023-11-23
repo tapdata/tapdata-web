@@ -1342,7 +1342,7 @@ export default observer({
     padding-top: 0;
   }
 
-  :deep(.formily-element-form-item-label label) {
+  :deep(.formily-element-plus-form-item-label label) {
     font-size: $fontBaseTitle;
   }
 

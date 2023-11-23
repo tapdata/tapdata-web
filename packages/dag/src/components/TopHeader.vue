@@ -76,7 +76,7 @@
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0" width="auto">
           <template v-slot:reference>
             <div class="size-wrap">{{ scaleTxt }}</div>
           </template>
