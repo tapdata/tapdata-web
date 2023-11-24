@@ -148,12 +148,11 @@ export default {
       this.$emit('finish')
 
       const { expand } = this.$store.state.guide
+
+      Object.assign(expand, { continueUse: this.continueUse, suggestion: this.suggestion })
+
       this.$axios.post('api/tcm/user_guide', {
-        expand: {
-          ...expand,
-          continueUse: this.continueUse,
-          suggestion: this.suggestion
-        }
+        expand
       })
     }
   }
