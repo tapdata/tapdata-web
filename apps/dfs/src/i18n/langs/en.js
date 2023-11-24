@@ -1667,7 +1667,10 @@ export default {
   dfs_guide_index_zhanghaoanquanbang: 'Account Security Binding',
   dfs_guide_index_zhengzaijianceyin:
     'The engine deployment status is being detected, and the task guide page will be entered automatically after the detection is completed. ',
+  dfs_guide_index_waiting_for_deployment_tip:
+    "After completing the local deployment, please click the 'I have completed deployment' button to finish the onboarding process",
   dfs_guide_index_dengdaibushu: 'Waiting for manual deployment',
+  dfs_guide_index_development_complete: 'I have completed the deployment',
   dfs_guide_index_tapda: 'Please follow these simple steps to get started. ',
   dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud',
   dfs_guide_scenes_meiyoutedingde: 'Just exploring, don’t have specific project yet',
