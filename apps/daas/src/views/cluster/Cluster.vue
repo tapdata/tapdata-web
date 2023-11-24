@@ -171,6 +171,13 @@
                           @click="restartFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_restart') }}</ElButton
                         >
+                        <ElDivider direction="vertical"></ElDivider>
+                        <ElButton
+                          type="text"
+                          :disabled="item.engine.status == 'stopped' ? false : true"
+                          @click="unbind(item, item.engine.status, 'engine')"
+                          >{{ $t('public_button_unbind') }}</ElButton
+                        >
                       </div>
                     </el-col>
                   </el-row>
@@ -527,7 +534,7 @@ export default {
           server: server,
           operation: 'stop'
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_closeSever') + '?', {
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -561,6 +568,31 @@ export default {
             return
           }
           this.operationFn(data)
+        })
+      }
+    },
+    // 解绑
+    unbind(item, status, server) {
+      let name
+      if (server === 'apiServer') {
+        name = 'API SEVER'
+      } else if (server === 'engine') {
+        name = this.$t('cluster_sync_gover')
+      } else {
+        name = this.$t('cluster_manage_sys')
+      }
+      if (status === 'stopped') {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_unbind_server') + '?', {
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (!resFlag) {
+            return
+          }
+          const { processID } = item.engine || {}
+          workerApi.unbindByProcessId({processId: processID}).then(() => {
+            this.getDataApi()
+          })
         })
       }
     },

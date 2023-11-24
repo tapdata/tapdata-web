@@ -611,6 +611,7 @@ export default {
   cluster_ip_tip: '切换网卡仅改变集群管理页服务器下IP的展示，不影响任何功能',
   cluster_confirm_text: '确认',
   cluster_restart_server: '重启服务',
+  cluster_unbind_server: '解绑服务',
   cluster_start_server: '启动服务',
   cluster_startup_after_add: '请启动后添加',
   cluster_startup_after_delete: '请启动后删除',
