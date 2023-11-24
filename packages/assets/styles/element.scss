@@ -20,7 +20,6 @@
 }
 
 // Tooltip
-
-.el-popper[role='tooltip'] {
+.el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
   max-width: 400px;
 }

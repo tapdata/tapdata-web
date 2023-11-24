@@ -2376,8 +2376,6 @@ export default {
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
-
-      console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {
