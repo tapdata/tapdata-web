@@ -1,28 +1,26 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
-      <ElCollapse v-model:value="collapseMode" ref="dbCollapse" class="collapse-fill h-100" accordion>
+      <ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill h-100" accordion>
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
-              <template>
-                <span class="flex-1 user-select-none text-truncate flex align-center">
-                  <!--连接-->
-                  {{ $t('packages_dag_dag_connection') }}
-                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
-                </span>
-                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
-                  >search-outline</VIcon
-                >
-                <VIcon
-                  size="20"
-                  class="click-btn"
-                  :class="{ 'click-btn-disabled': stateIsReadonly }"
-                  @mousedown.stop
-                  @click.stop="creat"
-                  >add-outline</VIcon
-                >
-              </template>
+              <span class="flex-1 user-select-none text-truncate flex align-center">
+                <!--连接-->
+                {{ $t('packages_dag_dag_connection') }}
+                <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
+              </span>
+              <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                >search-outline
+              </VIcon>
+              <VIcon
+                size="20"
+                class="click-btn"
+                :class="{ 'click-btn-disabled': stateIsReadonly }"
+                @mousedown.stop
+                @click.stop="creat"
+                >add-outline
+              </VIcon>
             </div>
           </template>
           <div class="flex flex-column h-100">
@@ -107,7 +105,7 @@
       </ElCollapse>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" model-value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -462,7 +460,7 @@ export default {
     },
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.setScrollTop(0)
     },
 
     handleDBInput: debounce(function () {
@@ -581,10 +579,12 @@ $hoverBg: #eef3ff;
   opacity: 0;
   transform-origin: center center;
 }
+
 .layout-sidebar.--left {
   overflow: visible;
   will-change: width;
   $headerH: 34px;
+
   .connection-tabs {
     position: relative;
     font-size: 0.875rem;
@@ -593,11 +593,14 @@ $hoverBg: #eef3ff;
       position: relative;
       height: 40px;
       cursor: pointer;
+
       &:hover {
         color: map-get($color, primary);
       }
+
       &.active {
         color: map-get($color, primary);
+
         &:before {
           position: absolute;
           content: '';
@@ -615,9 +618,11 @@ $hoverBg: #eef3ff;
     .el-tabs__header {
       margin-bottom: 0;
     }
+
     .el-tabs__nav-wrap {
       padding: 0 4px;
     }
+
     .el-tabs__item {
       padding: 0 12px;
     }
@@ -625,6 +630,7 @@ $hoverBg: #eef3ff;
 
   :deep(.db-list-container) {
     max-height: 50%;
+
     .el-collapse-item:last-child {
       margin-bottom: -2px;
     }
@@ -639,6 +645,7 @@ $hoverBg: #eef3ff;
     .click-btn-disabled {
       color: currentColor;
       cursor: not-allowed;
+
       &:hover {
         color: currentColor;
         background: rgba(242, 243, 245);
@@ -670,6 +677,7 @@ $hoverBg: #eef3ff;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid transparent;
+
     .tb-header-icon {
       flex-shrink: 0;
       width: 20px;
@@ -684,6 +692,7 @@ $hoverBg: #eef3ff;
       margin-bottom: 4px;
       font-size: $fontBaseTitle;
       line-height: normal;
+
       &.active {
         background-color: #eef3ff;
       }
@@ -706,6 +715,7 @@ $hoverBg: #eef3ff;
 
       &-content {
         overflow: hidden;
+
         > :not(:last-child) {
           margin-bottom: 4px;
           font-size: $fontBaseTitle;
@@ -742,15 +752,19 @@ $hoverBg: #eef3ff;
   :deep(*) {
     .el-collapse {
       border-top: 0;
+
       &.processor-collapse {
         max-height: 30%;
       }
+
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {
           height: 100%;
+
           .el-collapse-item__wrap {
             height: calc(100% - #{$headerH - 1});
           }
+
           .el-collapse-item__content {
             height: 100%;
           }
@@ -819,6 +833,7 @@ $hoverBg: #eef3ff;
     }
   }
 }
+
 .node-list {
   .node-item {
     border-radius: 4px;
