@@ -24,7 +24,7 @@ export default {
       ],
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
-        docker: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
+        docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
         windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
       },
       isCompleted: false
@@ -83,6 +83,12 @@ export default {
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
       }/cloud/quick-start/install-agent/agent-on-selfhosted/`
       window.open(href, '_blank')
+    },
+    handleComplete() {
+      this.isCompleted = true
+      this.buried('completedDeployment', {
+        downLoadType: this.downLoadType
+      })
     }
   }
 }
@@ -182,7 +188,7 @@ export default {
           size="default"
           type="primary"
           :disabled="activeKey === 'Scenes' && !scenes.length"
-          @click="isCompleted = true"
+          @click="handleComplete"
           >{{ $t('dfs_guide_index_development_complete') }}
         </ElButton>
       </template>
