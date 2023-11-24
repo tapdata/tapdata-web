@@ -1,12 +1,12 @@
 <template>
   <div v-loading="loading" class="table-selector">
     <!-- 候选区 -->
-    <div class="candidate-panel selector-panel">
+    <div class="candidate-panel selector-panel rounded-4">
       <div class="selector-panel__header">
         <div class="flex-1">
           <ElCheckbox
             v-if="table.tables.length"
-            v-model:value="table.isCheckAll"
+            v-model="table.isCheckAll"
             @input="checkAll($event, 'table')"
             :disabled="disabled"
             :indeterminate="isIndeterminate"
@@ -32,37 +32,49 @@
       <div class="selector-panel__body">
         <div class="selector-panel__search">
           <ElInput
-            v-model:value="table.searchKeyword"
+            v-model="table.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
             :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
-          v-model:value="table.checked"
+          v-model="table.checked"
           v-show="filteredData.length"
           :disabled="disabled"
           class="selector-panel__list"
           @input="checkedChange('table')"
         >
-          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
+          <RecycleScroller
+            class="selector-panel__scroller"
+            :item-size="36"
+            :buffer="50"
+            :items="filteredData"
+            key-field="name"
+          >
             <template #default="{ item }">
-              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+              <ElCheckbox class="selector-panel__item" :label="item.name">
                 <OverflowTooltip
-                  :text="item + (getTableInfo(item).tableComment ? `(${getTableInfo(item).tableComment})` : '')"
+                  :text="
+                    item.name +
+                    (getTableInfo(item.name).tableComment ? `(${getTableInfo(item.name).tableComment})` : '')
+                  "
                   placement="right"
                   :enterable="false"
                 >
                   <span>
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                    <VIcon v-if="!!getTableInfo(item.name).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
-                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-text-dark mr-1 mt-n1"
+                    <VIcon
+                      v-if="!!getTableInfo(item.name).uniqueIndexCounts"
+                      size="12"
+                      class="text-text-dark mr-1 mt-n1"
                       >fingerprint</VIcon
                     >
-                    <span>{{ item }}</span>
-                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
-                      `(${getTableInfo(item).tableComment})`
+                    <span>{{ item.name }}</span>
+                    <span v-if="getTableInfo(item.name).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item.name).tableComment})`
                     }}</span>
                   </span>
                 </OverflowTooltip>
@@ -83,7 +95,7 @@
     <div class="selector-center">
       <div class="selector-btns">
         <span
-          class="btn-transfer"
+          class="btn-transfer rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
             'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled,
@@ -93,7 +105,7 @@
           <el-icon><el-icon-arrow-right /></el-icon>
         </span>
         <span
-          class="btn-transfer mt-4"
+          class="btn-transfer rounded-4 mt-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
             'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled,
@@ -105,12 +117,12 @@
       </div>
     </div>
     <!-- 已选择区 -->
-    <div class="checked-panel selector-panel">
+    <div class="checked-panel selector-panel rounded-4">
       <div class="selector-panel__header">
         <div class="flex-1">
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
-            v-model:value="selected.isCheckAll"
+            v-model="selected.isCheckAll"
             :disabled="disabled"
             :indeterminate="selectedIsIndeterminate"
             @input="checkAll($event, 'selected')"
@@ -131,39 +143,45 @@
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
           <ElInput
-            v-model:value="selected.searchKeyword"
+            v-model="selected.searchKeyword"
             clearable
             suffix-icon="el-icon-search"
             :placeholder="$t('public_input_placeholder_search')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
-          v-model:value="selected.checked"
+          v-model="selected.checked"
           v-show="filterSelectedData.length && !isOpenClipMode"
           class="selector-panel__list"
           :disabled="disabled"
           @input="checkedChange('selected')"
         >
-          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
+          <RecycleScroller
+            class="selector-panel__scroller"
+            :item-size="36"
+            :buffer="50"
+            :items="filterSelectedData"
+            key-field="name"
+          >
             <template #default="{ item }">
-              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+              <ElCheckbox class="selector-panel__item" :label="item.name" :key="item.name">
                 <ElTooltip
                   class="ellipsis"
                   placement="right"
                   :enterable="false"
-                  :disabled="!errorTables[item]"
-                  :content="errorTables[item]"
+                  :disabled="!errorTables[item.name]"
+                  :content="errorTables[item.name]"
                 >
-                  <div :class="{ 'color-danger': errorTables[item] }">
-                    <VIcon v-if="!!getTableInfo(item).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
+                  <div :class="{ 'color-danger': errorTables[item.name] }">
+                    <VIcon v-if="!!getTableInfo(item.name).primaryKeyCounts" size="12" class="text-warning mr-1 mt-n1"
                       >key</VIcon
                     >
-                    <VIcon v-if="!!getTableInfo(item).uniqueIndexCounts" size="12" class="text-dark mr-1 mt-n1">
+                    <VIcon v-if="!!getTableInfo(item.name).uniqueIndexCounts" size="12" class="text-dark mr-1 mt-n1">
                       fingerprint
                     </VIcon>
-                    <slot name="right-item" :row="item">{{ item }}</slot>
-                    <span v-if="getTableInfo(item).tableComment" class="font-color-sslight">{{
-                      `(${getTableInfo(item).tableComment})`
+                    <slot name="right-item" :row="item.name">{{ item.name }}</slot>
+                    <span v-if="getTableInfo(item.name).tableComment" class="font-color-sslight">{{
+                      `(${getTableInfo(item.name).tableComment})`
                     }}</span>
                   </div>
                 </ElTooltip>
@@ -204,7 +222,7 @@
           </div>
           <ElInput
             v-show="isFocus"
-            v-model:value="clipboardValue"
+            v-model="clipboardValue"
             autosize
             ref="textarea"
             class="selector-clipboard__textarea"
@@ -296,7 +314,9 @@ export default {
           tables.filter((item) => reg.test(item)),
           this.filterType,
           this.tableMap,
-        )
+        ).map((name) => ({
+          name,
+        }))
       } catch (error) {
         return []
       }
@@ -315,7 +335,9 @@ export default {
         }
         return 0
       })
-      return getPrimaryKeyTablesByType(filterTables, this.filterType, this.tableMap)
+      return getPrimaryKeyTablesByType(filterTables, this.filterType, this.tableMap).map((name) => ({
+        name,
+      }))
     },
     clipboardTables() {
       //支持换行符 /n
@@ -629,7 +651,7 @@ export default {
   font-weight: 500;
 }
 .selector-panel__body {
-  padding: 16px 0;
+  padding: 12px 0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -641,13 +663,12 @@ export default {
   }
 }
 .selector-panel__search {
-  padding: 0 16px;
+  padding: 0 12px;
 }
 .selector-panel__list {
-  margin-top: 16px;
+  margin-top: 8px;
   flex: 1;
   height: calc(100% - 32px);
-  padding-bottom: 5px;
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
@@ -679,11 +700,14 @@ export default {
     width: 28px;
   }
   .btn-transfer {
-    display: inline-block;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     margin: 0;
     padding: 0;
     min-width: 28px;
     width: 28px;
+    height: 28px;
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
