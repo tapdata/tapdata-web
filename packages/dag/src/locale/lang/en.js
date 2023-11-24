@@ -334,8 +334,7 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',
   packages_dag_nodes_database_shujuxieruce: 'Data write strategy',
-  packages_dag_nodes_database_baochimubiaoduan:
-    'To maintain the original table structure on the target side, please clear the data.',
+  packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
   packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
@@ -687,6 +686,12 @@ export default {
   packages_dag_model_generation: 'Schema Generating',
   packages_dag_materialized_view: 'Materialized View',
   packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_materialized_view_help_title: 'How to build materialized views?',
+  packages_dag_materialized_view_help_desc:
+    'A materialized view is a special type of database view that enhances data retrieval speed. With Tapdata Cloud, you can create real-time materialized views, simplifying data management and application development processes.',
+  packages_dag_materialized_view_help_tutorial_btn: 'Detailed tutorial',
+  packages_dag_materialized_view_help_video_desc:
+    'The following video tutorial explains how to build materialized views using Tapdata Cloud...',
   packages_dag_select_database_tips: 'Select a Database',
   packages_dag_select_table_tips: 'Select a Table',
   packages_dag_join_table: 'Join Table',

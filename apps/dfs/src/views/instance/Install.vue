@@ -18,7 +18,7 @@
       </div>
 
       <div class="mb-4">
-        <div class="fw-sub mb-2 text-label font-color-dark">{{ $t('dfs_agent_download_type') }}</div>
+        <div class="fw-sub mb-2 text-label font-color-dark">1. {{ $t('dfs_agent_download_type') }}</div>
         <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
           <ElRadio
             v-for="(item, index) in downType"
@@ -35,7 +35,10 @@
         </ElRadioGroup>
       </div>
 
-      <div class="text-label fw-sub font-color-dark mb-2">{{ $t('agent_deploy_start_install') }}</div>
+      <div class="text-label fw-sub font-color-dark mb-2 flex align-center">
+        2. {{ $t('agent_deploy_start_install') }}:
+        <ElLink @click="handleOpenDeployDocs" class="ml-1" type="primary">{{ $t('agent_deploy_tutorial') }}</ElLink>
+      </div>
       <ul v-if="downLoadType === 'windows'" class="ul-style">
         <li class="flex justify-content-start align-items-center">
           {{ $t('agent_deploy_start_install_windows_first') }}
@@ -79,9 +82,20 @@
           <div class="fs-5 font-color-dark mt-4 mb-2">{{ $t('dfs_agent_deploy_success') }}</div>
           <div class="text-label font-color-light mb-2">{{ $t('dfs_agent_deploy_success_subtitle') }}</div>
         </template>
-        <template v-else>
+        <template v-else-if="isCompleted">
           <div class="dot-pulse mt-2 mb-6"></div>
+          <!--检测提示-->
+          <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
+        </template>
+        <template v-else>
+          <!--等待部署-->
           <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
+          <!--等待提示-->
+          <div class="font-color-light">{{ $t('dfs_guide_index_waiting_for_deployment_tip') }}</div>
+
+          <ElButton class="mt-4" plain size="default" type="primary" @click="handleComplete"
+            >{{ $t('dfs_guide_index_development_complete') }}
+          </ElButton>
         </template>
       </div>
     </main>
@@ -125,7 +139,8 @@ export default {
         docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
         windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
       },
-      success: false
+      success: false,
+      isCompleted: false
     }
   },
 
@@ -177,7 +192,9 @@ export default {
     // windows下载
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
-      this.buried('downloadTapdataExe')
+      this.buried('downloadTapdataExe', {
+        notGuide: true
+      })
     },
     //windows 下载
     handleDownLoadApplication() {
@@ -247,7 +264,26 @@ export default {
         docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows'
       }
-      this.buried(MAP[this.downLoadType])
+      this.buried(MAP[this.downLoadType], {
+        notGuide: true
+      })
+    },
+    handleOpenDeployDocs() {
+      this.buried('openDeploymentTutorial', {
+        notGuide: true,
+        downLoadType: this.downLoadType
+      })
+      let href = `https://docs.tapdata.${
+        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
+      }/cloud/quick-start/install-agent/agent-on-selfhosted/`
+      window.open(href, '_blank')
+    },
+    handleComplete() {
+      this.isCompleted = true
+      this.buried('completedDeployment', {
+        notGuide: true,
+        downLoadType: this.downLoadType
+      })
     }
   }
 }
