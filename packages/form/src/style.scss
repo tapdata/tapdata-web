@@ -73,9 +73,9 @@
       min-height: 32px;
     }
 
-    > .#{$formNamespace}-form-item-label-tooltip {
-      height: 32px !important;
-    }
+    //> .#{$formNamespace}-form-item-label-tooltip {
+    //  height: 32px !important;
+    //}
   }
 }
 
@@ -90,8 +90,28 @@
       min-height: 32px;
     }
 
+    //> .#{$formNamespace}-form-item-label-tooltip {
+    //  height: 32px !important;
+    //}
+  }
+}
+
+.#{$formNamespace}-form-item-layout-vertical {
+  > .#{$formNamespace}-form-item-label {
     > .#{$formNamespace}-form-item-label-tooltip {
-      height: 32px !important;
+      height: 40px;
     }
   }
+}
+
+.#{$formNamespace}-form-item-control-content-component {
+  font-size: 0;
+  > * {
+    font-size: 14px;
+    vertical-align: middle;
+  }
+}
+
+.#{$formNamespace}-space-item {
+  display: contents;
 }

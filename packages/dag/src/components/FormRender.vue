@@ -130,7 +130,7 @@ $headerBg: #fff;
     }
   }
 
-  :deep(.#{$formNamespace}-form-item-layout-horizontal) {
+  /*:deep(.#{$formNamespace}-form-item-layout-horizontal) {
     .#{$formNamespace}-form-item-control-content-component > .el-switch {
       height: 40px;
       line-height: 40px;
@@ -142,9 +142,9 @@ $headerBg: #fff;
         line-height: 32px;
       }
     }
-  }
+  }*/
 
-  :deep(.#{$formNamespace}-form-item-layout-vertical) {
+  /*:deep(.#{$formNamespace}-form-item-layout-vertical) {
     .#{$formNamespace}-form-item-label-tooltip {
       height: 40px;
 
@@ -153,19 +153,19 @@ $headerBg: #fff;
       }
     }
 
-    .#{$formNamespace}-space-horizontal {
+    !*.#{$formNamespace}-space-horizontal {
       .el-switch {
         height: 40px;
         line-height: 40px;
       }
-    }
-  }
+    }*!
+  }*/
 
-  :deep(.#{$formNamespace}-form-item-control) {
+  /*:deep(.#{$formNamespace}-form-item-control) {
     .#{$formNamespace}-space-horizontal {
       vertical-align: top;
     }
-  }
+  }*/
 
   :deep(.#{$formNamespace}-form-item:not(.form-item-text) + .form-item-text) {
     margin-top: 16px;
