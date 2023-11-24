@@ -15,8 +15,14 @@
 
 // Tabs
 // css3 var in packages/theme-chalk/src/tabs.scss
-.el-tabs__nav-wrap.is-top {
-  padding: 0 16px;
+.el-tabs {
+  .el-tabs__nav-wrap.is-top {
+    padding: 0 16px;
+  }
+
+  .el-tabs__item {
+    padding: 0 16px;
+  }
 }
 
 // Tooltip

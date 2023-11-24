@@ -1333,7 +1333,7 @@ export default observer({
 
 <style lang="scss" scoped>
 .setting-panel {
-  :deep(.config-tabs.el-tabs > .el-tabs__header .el-tabs__nav-wrap) {
+  :deep(.el-tabs > .el-tabs__header .el-tabs__nav-wrap) {
     padding-left: 16px !important;
   }
 }
