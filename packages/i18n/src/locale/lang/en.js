@@ -121,6 +121,7 @@ export default {
   public_button_stop_recover: 'Resume Mining',
   public_button_execute: 'Execute',
   public_button_obtain: 'Obtain',
+  public_button_help: 'Help',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',

@@ -1635,6 +1635,11 @@ export default {
   dfs_replication_tour_dialog_start: '开始',
   dfs_replication_tour_dialog_success_title: '恭喜您已经完成复制任务的引导',
   dfs_replication_tour_dialog_finish: '完成',
+  dfs_replication_tour_dialog_finished: '恭喜你完成引导',
+  dfs_replication_tour_dialog_finished_subtitle: '接下来可以免费体验我们的产品进行数据库的复制、迁移等工作啦',
+  dfs_replication_tour_dialog_finished_survey_title:
+    '通过新手引导，您现在对Tapdata有了一定的了解。您还会继续使用Tapdata吗？',
+  dfs_replication_tour_dialog_finished_survey_placeholder: '输入您的意见或者建议...',
   dfs_subscribe_to_professional_plan: '订阅专业版',
   dfs_order_change: '变更',
   dfs_change_record: '变更记录',

@@ -121,6 +121,7 @@ export default {
   public_button_stop_recover: '恢复挖掘',
   public_button_execute: '执行',
   public_button_obtain: '获取',
+  public_button_help: '帮助',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',

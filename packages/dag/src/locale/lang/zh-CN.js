@@ -646,6 +646,11 @@ export default {
   packages_dag_model_generation: '模型生成中',
   packages_dag_materialized_view: '物化视图',
   packages_dag_build_materialized_view: '构建物化视图',
+  packages_dag_materialized_view_help_title: '怎么构建物化视图？',
+  packages_dag_materialized_view_help_desc:
+    '物化视图是一种特殊的数据库视图，能提升数据读取速度。使用 Tapdata Cloud 可创建实时物化视图，简化数据管理和应用开发过程。',
+  packages_dag_materialized_view_help_tutorial_btn: '详细教程',
+  packages_dag_materialized_view_help_video_desc: '以下视频教程讲解了，如何使用 Tapdata Cloud 构建物化视图...',
   packages_dag_select_database_tips: '请选择数据库',
   packages_dag_select_table_tips: '请选择表',
   packages_dag_join_table: '关联表',
