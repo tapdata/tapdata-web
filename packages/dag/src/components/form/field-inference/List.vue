@@ -82,7 +82,12 @@
         </ElRadioGroup>
         <template v-if="modeType === 'custom'">
           <div class="flex">
-            <ElFormItem label="选择调整的类型:" prop="selectedDataType" inline-message required>
+            <ElFormItem
+              :label="$t('packages_dag_field_inference_list_xuanzetiaozhengde')"
+              prop="selectedDataType"
+              inline-message
+              required
+            >
               <ElSelect
                 v-model="currentData.selectedDataType"
                 filterable
@@ -99,7 +104,7 @@
             </ElFormItem>
             <ElFormItem
               v-if="currentData.selectedDataType === '__custom_data_type__'"
-              label="自定义类型"
+              :label="$t('packages_dag_field_inference_list_zidingyileixing')"
               prop="newDataType"
               :error="currentData.errorMessage"
               inline-message
@@ -342,7 +347,7 @@ export default {
     computedDataTypes() {
       return [
         {
-          label: '自定义类型',
+          label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
           value: '__custom_data_type__'
         },
         ...this.currentData.canUseDataTypes
@@ -671,10 +676,11 @@ export default {
             max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
             label: this.customInputLabelMap[key] || key
           }
-          const defaultValue = item.attrs['default'] ??
-              item.attrs['default' + key.charAt(0).toUpperCase() + key.slice(1)] ??
-              item.attrs[key]?.[0] ??
-              null
+          const defaultValue =
+            item.attrs['default'] ??
+            item.attrs['default' + key.charAt(0).toUpperCase() + key.slice(1)] ??
+            item.attrs[key]?.[0] ??
+            null
           this.currentData.customInputData[key].value = defaultValue ? defaultValue * 1 : null
         })
       }
