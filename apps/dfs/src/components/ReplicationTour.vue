@@ -32,8 +32,8 @@
         <div class="mt-2">{{ $t('dfs_replication_tour_dialog_finished_subtitle') }}</div>
         <div class="mt-12 fw-sub">{{ $t('dfs_replication_tour_dialog_finished_survey_title') }}</div>
         <ElRadioGroup v-model="continueUse" class="inline-flex gap-4 mt-4">
-          <ElRadio label="yes" class="m-0 bg-white" border>是</ElRadio>
-          <ElRadio label="no" class="m-0 bg-white" border>否</ElRadio>
+          <ElRadio label="yes" class="m-0 bg-white" border>{{ $t('public_yes') }}</ElRadio>
+          <ElRadio label="no" class="m-0 bg-white" border>{{ $t('public_no') }}</ElRadio>
         </ElRadioGroup>
         <div class="px-6 mt-4">
           <ElInput
