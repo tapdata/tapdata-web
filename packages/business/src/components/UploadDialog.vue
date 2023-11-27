@@ -8,7 +8,7 @@
     :before-close="handleClose"
   >
     <ElForm ref="form" :rules="rules" :model="importForm" class="applications-form" label-width="100px">
-      <ElFormItem :label="$t('packages_business_modules_dialog_condition') + ':'">
+      <ElFormItem prop="upsert" :label="$t('packages_business_modules_dialog_condition') + ':'">
         <el-radio v-model="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
@@ -16,7 +16,7 @@
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>
-      <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
+      <ElFormItem prop="tag" v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
         <ElSelect v-model="importForm.tag" multiple class="w-100">
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
@@ -144,9 +144,9 @@ export default {
   methods: {
     show() {
       this.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.upload.clearFiles()
-      })
+      this.resetRelmig()
+      this.$refs.upload?.clearFiles()
+      this.$refs.form?.resetFields()
     },
 
     // 上传文件成功失败钩子
