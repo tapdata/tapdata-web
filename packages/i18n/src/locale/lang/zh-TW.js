@@ -223,6 +223,8 @@ export default {
   public_connection_form_other_connection_string: '其他連接串參數',
   public_connection_form_time_zone_of_time_type: '時間類型的時區',
   public_connection_form_link_plugin_source: '鏈接插件來源',
+  public_source_database: '源數據庫',
+  public_target_database: '目標數據庫',
   // 任務
   public_task: '任務',
   public_task_name: '任務名稱',
