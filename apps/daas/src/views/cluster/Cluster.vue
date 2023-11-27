@@ -589,8 +589,8 @@ export default {
           if (!resFlag) {
             return
           }
-          const { processID } = item.engine || {}
-          workerApi.unbindByProcessId({processId: processID}).then(() => {
+          const { process_id } = item.systemInfo || {}
+          workerApi.unbindByProcessId({processId: process_id}).then(() => {
             this.getDataApi()
           })
         })
