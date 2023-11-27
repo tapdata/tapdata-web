@@ -127,6 +127,7 @@
                   :min="customInput.min"
                   :max="customInput.max"
                   class="coefficient-input custom-input"
+                  step-strictly
                   @change="handleChangeCustomInput"
                 ></ElInputNumber>
               </ElFormItem>
@@ -224,7 +225,13 @@ export default {
       type: String,
       default: 'target'
     },
-    ignoreError: Boolean
+    ignoreError: Boolean,
+    dataTypesJson: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
 
   data() {
@@ -660,16 +667,15 @@ export default {
           const key = el.replace(/^\$/, '')
           console.log('key', key)
           this.currentData.customInputData[key] = {
-            min: item.attrs[key]?.[0] ?? undefined,
-            max: item.attrs[key]?.[1] ?? undefined,
-            key,
-            value:
-              item.attrs['default'] ??
-              item.attrs['default' + key.charAt(0).toUpperCase() + key.slice(1)] ??
-              item.attrs[key]?.[0] ??
-              null,
+            min: item.attrs[key]?.[0] ? item.attrs[key]?.[0] * 1 : undefined,
+            max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
             label: this.customInputLabelMap[key] || key
           }
+          const defaultValue = item.attrs['default'] ??
+              item.attrs['default' + key.charAt(0).toUpperCase() + key.slice(1)] ??
+              item.attrs[key]?.[0] ??
+              null
+          this.currentData.customInputData[key].value = defaultValue ? defaultValue * 1 : null
         })
       }
       this.handleChangeCustomInput()
@@ -683,51 +689,7 @@ export default {
     },
 
     async getTypeJson() {
-      const dataTypes = {
-        smallint: {
-          bit: 16,
-          priority: 3,
-          value: [-32768, 32767],
-          to: 'TapNumber'
-        },
-        integer: {
-          bit: 32,
-          priority: 1,
-          value: [-2147483648, 2147483647],
-          to: 'TapNumber'
-        },
-        bigint: {
-          bit: 64,
-          priority: 3,
-          value: [-9223372036854775808, 9223372036854775807],
-          to: 'TapNumber'
-        },
-        'numeric[($precision,$scale)]': {
-          precision: [1, 1000],
-          scale: [0, 1000],
-          fixed: true,
-          preferPrecision: 20,
-          preferScale: 8,
-          priority: 1,
-          to: 'TapNumber'
-        },
-        'character varying[($byte)]': {
-          byte: 10485760,
-          priority: 1,
-          defaultByte: 10485760,
-          preferByte: 2000,
-          to: 'TapString'
-        },
-        'timestamp[($fraction)] without time zone': {
-          range: ['1000-01-01 00:00:00', '9999-12-31 23:59:59'],
-          pattern: 'yyyy-MM-dd HH:mm:ss',
-          fraction: [0, 6],
-          withTimeZone: false,
-          defaultFraction: 6,
-          priority: 1,
-          to: 'TapDateTime'
-        }
-      }
+      const dataTypes = this.dataTypesJson
       let result = []
       for (let key in dataTypes) {
         const item = dataTypes[key]
@@ -785,7 +747,7 @@ export default {
 ::v-deep {
   .el-dialog__body {
     padding-top: 24px;
-    border-top: 1px solid #E5E6EB;
+    border-top: 1px solid #e5e6eb;
   }
 }
 </style>
