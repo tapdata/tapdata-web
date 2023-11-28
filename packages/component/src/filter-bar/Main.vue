@@ -37,7 +37,8 @@ import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 
 import VIcon from '../base/VIcon.vue'
-// import { ElSelectV2 as SelectList } from 'element-plus'
+// import { ElSelect as SelectList } from 'element-plus'
+import SelectList from './FilterItemSelect.vue'
 import PopInput from './PopInput'
 import DatetimeRange from './DatetimeRange'
 import Datetime from './Datetime'
@@ -47,7 +48,7 @@ export default {
   name: 'FilterBar',
   components: {
     VIcon,
-    // SelectList,
+    SelectList,
     PopInput,
     DatetimeRange,
     Datetime,
@@ -225,6 +226,7 @@ export default {
     getOptions(item) {
       switch (item.type) {
         case 'select-inner':
+          // this.setDefaultValue(item, 'label', item.label)
           this.setDefaultValue(item, 'inner-label', item.label)
           this.setDefaultValue(item, 'last-page-text', '')
           this.setDefaultValue(item, 'none-border', true)
@@ -270,13 +272,13 @@ export default {
   font-size: 16px;
 }
 .filter-form {
-  font-size: 12px;
-  :deep(.el-form-item__content) {
-    font-size: 12px;
-    .el-input {
-      font-size: 12px;
-    }
-  }
+  //font-size: 12px;
+  //:deep(.el-form-item__content) {
+  //  font-size: 12px;
+  //  .el-input {
+  //    font-size: 12px;
+  //  }
+  //}
 
   .el-form-item {
     margin-bottom: 0;

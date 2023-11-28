@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :title="$t('dfs_subscribe_to_professional_plan')"
-    :value="visible"
+    :model-value="visible"
     @input="$emit('update:visible', $event)"
     :append-to-body="true"
     width="880px"

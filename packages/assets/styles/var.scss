@@ -84,6 +84,13 @@ $formNamespace: formily-element-plus;
       'base': map-get($color, warning),
     ),
   ),
+  $text-color: (
+    'primary': #000000E0,
+    'regular': #000000E0,
+    'secondary': #000000A6,
+    'placeholder': #00000040,
+    'disabled': #00000040,
+  ),
   $border-radius: (
     'base': 6px,
     'small': 4px,
@@ -96,5 +103,11 @@ $formNamespace: formily-element-plus;
   $table: (
     'header-bg-color': #fafafa,
     'header-text-color': map-get($fontColor, normal),
+  ),
+  $popover: (
+    'border-radius': 8px,
+  ),
+  $popper: (
+    'border-radius': 8px,
   )
 );

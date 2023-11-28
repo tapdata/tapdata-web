@@ -29,3 +29,32 @@
 .el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
   max-width: 400px;
 }
+
+// Select
+.el-select-v2__popper {
+  .el-select-dropdown {
+    &__list {
+      margin: 4px 0 !important;
+    }
+    &__option-item {
+      width: calc(100% - 8px) !important;
+      left: 4px !important;
+      border-radius: 6px;
+      font-size: var(--el-font-size-base);
+    }
+  }
+}
+
+.el-select__popper {
+  .el-select-dropdown {
+    &__list {
+      padding: 0 4px !important;
+      margin: 4px 0 !important;
+    }
+    &__item {
+      border-radius: 6px;
+    }
+  }
+}
+
+
