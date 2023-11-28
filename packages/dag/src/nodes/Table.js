@@ -468,7 +468,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
+                            '{{(!$deps[0].length || ($values.attrs.connectionType && $values.attrs.connectionType.includes("source"))) ? "visible":"hidden"}}'
                         }
                       }
                     }
@@ -500,7 +500,7 @@ export class Table extends NodeType {
                   fulfill: {
                     state: {
                       display:
-                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
+                        '{{(!$deps[0].length || ($values.attrs.connectionType && $values.attrs.connectionType.includes("source"))) ? "visible":"hidden"}}'
                     }
                   }
                 },

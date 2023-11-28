@@ -721,7 +721,11 @@ export default {
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
+          const pdkType = form.getValuesIn('attrs.pdkType')
+          const pdkHash = form.getValuesIn('attrs.pdkHash')
 
+          pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
+          pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
             form.setValuesIn('attrs.connectionType', connection.connectionType)
           accessNodeProcessId !== connection.accessNodeProcessId &&
@@ -895,7 +899,7 @@ export default {
           if (isEmpty(concurrentWritePartitionMap)) {
             flag = true
           }
-          for(let key in concurrentWritePartitionMap) {
+          for (let key in concurrentWritePartitionMap) {
             if (!concurrentWritePartitionMap[key]?.length) {
               flag = true
             }
