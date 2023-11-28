@@ -57,9 +57,7 @@
                 <AsyncSelect
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.source.currentLabel"
                   itemQuery="name"
-                  lazy
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
@@ -72,9 +70,7 @@
                 <AsyncSelect
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
-                  :currentLabel="item.target.currentLabel"
                   itemQuery="name"
-                  lazy
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
@@ -118,7 +114,7 @@
                 >
                 </AsyncSelect>
               </div>
-              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
+              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id + index + inspectMethod">
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
                   :value.sync="item"
@@ -297,6 +293,7 @@ export default {
   },
 
   data() {
+    let self = this
     return {
       list: [],
       jointErrorMessage: '',
@@ -311,10 +308,11 @@ export default {
       doc: '',
       schemaData: null,
       schemaScope: {
-        $supportFilterFunction:
-          this.inspectMethod === 'row_count'
+        getSupportFilterFunction: () => {
+          return self.inspectMethod === 'row_count'
             ? 'count_by_partition_filter_function'
-            : 'query_by_advance_filter_function',
+            : 'query_by_advance_filter_function'
+        },
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             field.loading = true
@@ -410,7 +408,7 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === getSupportFilterFunction())}}`
                           }
                         }
                       }
@@ -557,7 +555,7 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === $supportFilterFunction)}}`
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === getSupportFilterFunction())}}`
                           }
                         }
                       }
@@ -1048,7 +1046,7 @@ export default {
         tableNames.push(...m.objectNames)
       })
       // 加载数据源的Capabilities
-      const capabilitiesMap = await this.getCapabilities(connectionIds)
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
@@ -1293,6 +1291,10 @@ export default {
       item.target.connectionName = targetConnectionName
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
+
+      // 加载数据源的Capabilities
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
+      item.target.capabilities = capabilitiesMap[targetConnectionId]
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -1692,6 +1694,15 @@ function validate(sourceRow){
 
       return data.reduce((cur, pre) => {
         cur[pre.id] = pre.capabilities
+        return cur
+      }, {})
+    },
+
+    // 获取匹配节点的Capabilities
+    getMatchCapabilitiesMap() {
+      const list = cloneDeep(this.allStages)
+      return list.reduce((cur, pre) => {
+        cur[pre.connectionId] = pre.attrs?.capabilities
         return cur
       }, {})
     },
