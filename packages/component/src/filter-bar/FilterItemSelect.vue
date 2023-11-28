@@ -1,7 +1,8 @@
 <template>
   <FilterSelect
+    :filterable="filterable"
     class="filter-item-select"
-    popper-class="filter-item-select__popper"
+    :popper-class="popperClass"
     :options="options"
     :popper-options="{
       modifiers: [
@@ -13,18 +14,29 @@
         },
       ],
     }"
+    :popper-style="style"
   >
     <template #prefix>
       <span class="pl-2 lh-base font-color-light">{{ label }}</span>
+    </template>
+
+    <template #header="{ onUpdateInputValue }">
+      <div>
+        <div class="p-1">
+          <ElInput v-model="inputValue" @update:modelValue="onUpdateInputValue" clearable></ElInput>
+        </div>
+        <el-divider class="my-2" />
+      </div>
     </template>
   </FilterSelect>
 </template>
 
 <script setup>
-import { ref, toRefs, onBeforeMount } from 'vue'
+import { ref, toRefs, computed, onBeforeMount } from 'vue'
+import { addUnit } from 'element-plus/es/utils/index.mjs'
 import { isFn } from '@tap/shared'
-// import FilterSelect from './FilterSelect.vue'
-import { ElSelectV2 as FilterSelect } from 'element-plus'
+import FilterSelect from './FilterSelect.vue'
+// import { ElSelectV2 as FilterSelect } from 'element-plus'
 
 defineOptions({
   name: 'FilterItemSelect',
@@ -33,11 +45,27 @@ defineOptions({
 const props = defineProps({
   items: [Array, Function],
   label: String,
+  filterable: Boolean,
+  dropdownWidth: [String, Number],
 })
 
 const { items } = toRefs(props)
 
+const style = computed(() => {
+  return [
+    {
+      width: addUnit(props.dropdownWidth),
+    },
+  ]
+})
+
+const popperClass = computed(() => {
+  return ['filter-item-select__popper', props.filterable || props.dropdownWidth ? 'is-fixed-width' : '']
+})
+
 let options = ref([])
+
+const inputValue = ref('')
 
 onBeforeMount(async () => {
   if (isFn(items.value)) {
@@ -66,6 +94,11 @@ onBeforeMount(async () => {
 .filter-item-select__popper {
   .el-popper__arrow {
     display: none;
+  }
+  &.is-fixed-width {
+    .el-select-dropdown__list {
+      width: 100% !important;
+    }
   }
 }
 </style>

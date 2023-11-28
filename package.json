@@ -43,7 +43,7 @@
       "@formily/reactive-vue": "2.2.13",
       "@formily/shared": "2.2.13",
       "@formily/vue": "2.2.13",
-      "element-plus": "^2.4.1",
+      "element-plus": "^2.4.3",
       "vue": "^3.3.4"
     }
   }

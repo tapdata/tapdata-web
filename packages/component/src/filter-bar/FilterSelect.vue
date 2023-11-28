@@ -12,6 +12,7 @@
       :visible="dropdownMenuVisible"
       :teleported="teleported"
       :popper-class="[nsSelectV2.e('popper'), popperClass]"
+      :popper-style="popperStyle"
       :gpu-acceleration="false"
       :stop-popper-mouse-event="false"
       :popper-options="popperOptions"
@@ -22,6 +23,7 @@
       :transition="`${nsSelectV2.namespace.value}-zoom-in-top`"
       trigger="click"
       :persistent="persistent"
+      @update:visible="handleUpdateVisible"
       @before-show="handleMenuEnter"
       @hide="states.inputValue = states.displayInputValue"
     >
@@ -196,7 +198,7 @@
             </div>
           </div>
           <template v-else>
-            <div :class="[nsSelectV2.e('selected-item'), nsSelectV2.e('input-wrapper')]">
+            <!--<div :class="[nsSelectV2.e('selected-item'), nsSelectV2.e('input-wrapper')]">
               <input
                 :id="id"
                 ref="inputRef"
@@ -227,17 +229,16 @@
                 @keydown.esc.stop.prevent="handleEsc"
                 @update:modelValue="onUpdateInputValue"
               />
-            </div>
-            <span
+            </div>-->
+            <!--<span
               v-if="filterable"
               ref="calculatorRef"
               aria-hidden="true"
               :class="[nsSelectV2.e('selected-item'), nsSelectV2.e('input-calculator')]"
               v-text="states.displayInputValue"
-            />
+            />-->
           </template>
           <span
-            v-if="shouldShowPlaceholder"
             :class="[
               nsSelectV2.e('placeholder'),
               nsSelectV2.is('transparent', multiple ? modelValue.length === 0 : !hasModelValue),
@@ -274,6 +275,47 @@
           :hovering-index="states.hoveringIndex"
           :scrollbar-always-on="scrollbarAlwaysOn"
         >
+          <template v-if="filterable" #header>
+            <div class="border-bottom flex align-center filter-select__input-wrapper" style="height: 37px">
+              <ElInput
+                :id="id"
+                ref="inputRef"
+                v-model="states.displayInputValue"
+                clearable
+                class="m-0 p-0 outline-0 fs-7"
+                :placeholder="$t('public_input_placeholder')"
+                aria-autocomplete="list"
+                aria-haspopup="listbox"
+                :aria-labelledby="label"
+                :aria-expanded="expanded"
+                autocapitalize="off"
+                :autocomplete="autocomplete"
+                :disabled="disabled"
+                :name="name"
+                role="combobox"
+                :readonly="!filterable"
+                spellcheck="false"
+                type="text"
+                :unselectable="expanded ? 'on' : undefined"
+                @compositionstart="handleCompositionStart"
+                @compositionupdate="handleCompositionUpdate"
+                @compositionend="handleCompositionEnd"
+                @focus="handleFocus"
+                @blur="handleBlur"
+                @input="onInput"
+                @keydown.up.stop.prevent="onKeyboardNavigate('backward')"
+                @keydown.down.stop.prevent="onKeyboardNavigate('forward')"
+                @keydown.enter.stop.prevent="onKeyboardSelect"
+                @keydown.esc.stop.prevent="handleEsc"
+                @update:modelValue="onUpdateInputValue"
+              >
+                <template #prefix>
+                  <el-icon class="el-input__icon"><Search /></el-icon>
+                </template>
+              </ElInput>
+              <!--<VIcon size="16">close</VIcon>-->
+            </div>
+          </template>
           <template #default="scope">
             <slot v-bind="scope" />
           </template>
@@ -293,17 +335,22 @@
 <script>
 import { computed, defineComponent, onMounted, reactive, ref, toRefs, unref, provide, nextTick } from 'vue'
 import { ElSelectV2 as Select } from 'element-plus'
+import { Search } from '@element-plus/icons-vue'
 /* unplugin-vue-components disabled */
-import ElSelectMenu from 'element-plus/es/components/select-v2/src/select-dropdown'
+import ElSelectMenu from './select-dropdown'
 import { isFn } from '@tap/shared'
+import VIcon from '../base/VIcon.vue'
 
 export default defineComponent({
   name: 'FilterSelect',
   extends: Select,
   props: {
     label: String,
+    popperStyle: [String, Array, Object],
   },
   components: {
+    Search,
+    VIcon,
     ElSelectMenu /*: Select.components.ElSelectMenu*/,
   },
   setup(props, ctx) {
@@ -312,13 +359,29 @@ export default defineComponent({
     // } else {
     //   props.options = props.items
     // }
-
-    return {
-      ...Select.setup(props, ctx),
-      // 本地绑定
+    const handleUpdateVisible = (v) => {
+      console.log('handleUpdateVisible', v, API.inputRef)
+      API.inputRef.value?.focus?.()
     }
+
+    const API = {
+      ...Select.setup(props, ctx),
+      handleUpdateVisible,
+    }
+
+    return API
   },
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.filter-select__input-wrapper {
+  .el-input {
+    --el-input-height: 36px;
+    min-width: 180px;
+  }
+  .el-input__wrapper {
+    box-shadow: none;
+  }
+}
+</style>

@@ -296,7 +296,7 @@ export default {
       ],
       databaseTypeOptions: [],
       searchParams: {
-        databaseType: '',
+        databaseType: null,
         keyword: '',
         databaseModel: '',
         status: '',
@@ -767,7 +767,7 @@ export default {
           label: this.$t('packages_business_connection_list_form_database_type'),
           key: 'databaseType',
           type: 'select-inner',
-          menuMinWidth: '250px',
+          dropdownWidth: '250px',
           filterable: true,
           items: async () => {
             let data = await databaseTypesApi.get()
