@@ -133,6 +133,7 @@ export default {
   public_message_delete_fail: '刪除失敗',
   public_message_deleting: '刪除中',
   public_message_operation_success: '操作成功',
+  public_message_operation_failed: '操作失敗',
   public_message_request_error: '請求數據失敗',
   public_message_loading: '正在加載',
   public_message_401: '登錄過期，請重新登錄',

@@ -134,6 +134,7 @@ export default {
   public_message_delete_fail: '删除失败',
   public_message_deleting: '删除中',
   public_message_operation_success: '操作成功',
+  public_message_operation_failed: '操作失败',
   public_message_request_error: '请求数据失败',
   public_message_loading: '正在加载',
   public_message_401: '登录过期，请重新登录',
