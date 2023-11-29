@@ -208,7 +208,7 @@ export default {
         datetime: 'Datetime',
         datetimerange: 'DatetimeRange',
         'input-pop': 'PopInput',
-        input: 'ElInput',
+        input: ElInput,
       }
       return obj[type] || obj['input']
     },
