@@ -32,6 +32,8 @@ export default {
   public_list_view: '列表',
   public_all: '全部',
   public_no_permissions: '没有权限',
+  public_yes: '是',
+  public_no: '否',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',

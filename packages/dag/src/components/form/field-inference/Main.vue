@@ -128,6 +128,7 @@
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
           :fieldChangeRules.sync="fieldChangeRules"
+          :dataTypesJson="dataTypesJson"
           :readonly="readonly"
           ignore-error
           class="content__list flex-fill"
@@ -153,7 +154,7 @@ import { debounce, cloneDeep } from 'lodash'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
-import { metadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 
 import mixins from './mixins'
 import List from './List'
@@ -210,7 +211,8 @@ export default {
         }
       ],
       transformExNum: 0,
-      updateExNum: 0
+      updateExNum: 0,
+      dataTypesJson: {}
     }
   },
 
@@ -251,6 +253,9 @@ export default {
       this.fieldsLoading = true
       // TODO 获取原字段类型
       let rules = this.form.getValuesIn('fieldChangeRules') || []
+      let nodeAttrs = this.form.getValuesIn('attrs') || {}
+      const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
+      this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
       if (rules.length) {
         let allTableFields = []
         this.navList.forEach(el => {

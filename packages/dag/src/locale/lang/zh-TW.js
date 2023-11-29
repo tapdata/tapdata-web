@@ -656,5 +656,8 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。',
   packages_dag_btn_disable_node: '禁用節點',
-  packages_dag_only_mongodb: '僅支持 MongoDB 數據庫'
+  packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
+  packages_dag_field_inference_list_zidingyileixing: '自訂類型',
+  packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:'
+
 }

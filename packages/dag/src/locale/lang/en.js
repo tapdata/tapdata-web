@@ -711,5 +711,7 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
   packages_dag_btn_disable_node: 'Disable Node',
-  packages_dag_only_mongodb: 'Supports MongoDB databases only.'
+  packages_dag_only_mongodb: 'Supports MongoDB databases only.',
+  packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
+  packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:'
 }
