@@ -8,7 +8,7 @@
             {{ $t('app_signIn_newPasswordTip') }}
           </div>
           <div class="error-tips" v-show="errorMessage">
-            <el-icon><el-icon-warning-outline /></el-icon>
+            <el-icon><el-icon-warning /></el-icon>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form" :rules="rules">

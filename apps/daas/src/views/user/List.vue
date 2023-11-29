@@ -53,7 +53,7 @@
         </div>
       </template>
       <template v-slot:operation>
-        <div class="pt-4">
+        <div>
           <el-button
             v-readonlybtn="'user_category_application'"
             class="btn"
@@ -830,42 +830,9 @@ export default {
 <style lang="scss" scoped>
 .user-list-wrap {
   .tapNav {
-    height: 28px;
-
-    :deep(.el-tabs__nav-scroll) {
-      padding-left: 20px;
+    :deep(.el-tabs__header) {
+      margin-bottom: 0;
     }
-    // background-color: rgba(239, 241, 244, 100);
-    // .mune {
-    //   display: inline-block;
-    //   height: 28px;
-    //   line-height: 25px;
-    //   font-size: 12px;
-    //   // border-radius: 0px 3px 0px 0px;
-    //   // background-color: rgba(244, 245, 247, 100);
-    //   // box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
-    //   li {
-    //     float: left;
-    //     width: 100px;
-    //     height: 28px;
-    //     color: map-get($fontColor, light);
-    //     cursor: pointer;
-    //     text-align: center;
-    //     border-right: 1px solid #dedee4;
-
-    //     &:last-child {
-    //       border-right: 0;
-    //     }
-    //   }
-    //   li.active {
-    //     height: 29px;
-    //     border-radius: 3px 3px 0px 0px;
-    //     background-color: map-get($bgColor, white);
-    //     border-right: 0;
-    //     border-left: 0;
-    //     // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
-    //   }
-    // }
   }
   .user-list {
     .search-bar {
@@ -878,10 +845,6 @@ export default {
       margin-left: 5px;
     }
     .btn {
-      padding: 7px;
-      i.iconfont {
-        font-size: 12px;
-      }
       &.btn-dropdowm {
         margin-left: 10px;
       }
@@ -907,25 +870,21 @@ export default {
 
 <style lang="scss">
 .user-list-wrap {
-  padding: 0 24px 24px 0;
   .table-page-container {
     .table-page-body {
-      box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
       .table-page-topbar {
-        padding: 20px 20px 0;
+        padding-inline: 16px;
         background-color: map-get($bgColor, white);
-        .search-bar {
-          padding-top: 10px;
-        }
       }
-      .el-table {
-        padding: 0 20px;
+      .el-table,
+      .el-pagination {
+        padding-inline: 16px;
         box-sizing: border-box;
         overflow: hidden;
       }
       .table-page-pagination {
         margin-top: 0;
-        padding: 5px 20px;
+        //padding: 5px 20px;
         background-color: map-get($bgColor, white);
         box-sizing: border-box;
       }
@@ -934,6 +893,9 @@ export default {
         border-radius: 4px;
       }
     }
+  }
+  .classification {
+    margin-left: 16px;
   }
 }
 .creatDialog {
@@ -960,15 +922,4 @@ export default {
     }
   }
 }
-// .user-confirm {
-//   width: 500px;
-//   padding-bottom: 20px;
-//   .el-message-box__content {
-//     padding: 20px 30px;
-//   }
-//   .delConfirmbtn {
-//     background-color: #f56c6c;
-//     border: 1px solid #f56c6c;
-//   }
-// }
 </style>

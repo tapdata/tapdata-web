@@ -129,7 +129,7 @@
             class="flex-fill overflow-auto"
             :class="[
               {
-                'px-5': ![
+                'px-4': ![
                   'dashboard',
                   'clusterManagement',
                   'apiMonitor',
@@ -150,25 +150,7 @@
                 ].includes($route.name),
               },
               {
-                'pb-5': ![
-                  'dashboard',
-                  'clusterManagement',
-                  'apiMonitor',
-                  'migrateList',
-                  'dataflowList',
-                  'connectionsList',
-                  'connectionCreate',
-                  'users',
-                  'customNodeList',
-                  'dataConsole',
-                  'dataVerificationList',
-                  'dataVerificationCreate',
-                  'dataVerificationEdit',
-                  'dataVerifyDetails',
-                  'dataVerifyHistory',
-                  'VerifyDiffDetails',
-                  'dataVerifyResult',
-                ].includes($route.name),
+                'pb-4': ['dataServer'].includes($route.name),
               },
             ]"
           >

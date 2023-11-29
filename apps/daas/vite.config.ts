@@ -44,7 +44,7 @@ export default defineConfig({
     }),
 
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       // directoryAsNamespace: true,
       dts: 'src/components.d.ts',
     }),
