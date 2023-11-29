@@ -39,7 +39,7 @@
     &__option-item {
       width: calc(100% - 8px) !important;
       left: 4px !important;
-      border-radius: 6px;
+      border-radius: map-get($border-radius, base);
       font-size: var(--el-font-size-base);
     }
   }
@@ -52,9 +52,20 @@
       margin: 4px 0 !important;
     }
     &__item {
-      border-radius: 6px;
+      border-radius: map-get($border-radius, base);
     }
   }
 }
 
+// Dropdown
+.el-dropdown-menu {
+  padding: 4px !important;
+  &__item {
+    border-radius: map-get($border-radius, base);
+  }
+}
 
+// Tree
+.el-tree-node__content {
+  border-radius: map-get($border-radius, base);
+}

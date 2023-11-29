@@ -1,5 +1,5 @@
 <template>
-  <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
+  <section class="connection-list-wrap px-4">
     <TablePage
       ref="table"
       row-key="id"
@@ -841,7 +841,6 @@ export default {
   height: 100%;
   overflow: hidden;
   background: #fff;
-  padding: 0 24px 24px 24px;
   :deep(.el-select-dropdown__item) {
     span {
       font-size: $fontBaseTitle;

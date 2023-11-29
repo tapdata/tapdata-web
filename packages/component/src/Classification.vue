@@ -1,26 +1,17 @@
 <template>
-  <div class="classification" :class="{ expand: isExpand }">
-    <ElButton text class="btn-expand no-expand toggle" @click="toggle()" v-if="!isExpand">
-      <VIcon size="16" class="icon">expand-list</VIcon>
-    </ElButton>
-    <div class="classification-header" v-else>
-      <ElButton text class="btn-expand" @click="toggle()">
-        <VIcon size="16" class="icon">expand-list</VIcon>
-      </ElButton>
-      <ElButton
-        class="btn-addIcon"
-        text
-        :disabled="$disabledReadonlyUserBtn()"
-        v-readonlybtn="authority"
-        @click="showDialog()"
-      >
-        <VIcon size="16" class="icon">add-fill</VIcon>
-      </ElButton>
-      <div class="title">
-        <span>{{ comTitle }}</span>
+  <div class="classification py-0 pr-3 border-end" v-show="visible">
+    <div class="classification-header">
+      <div class="h-32 flex align-center mt-3">
+        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
+        <div class="fs-7 fw-sub flex-1">
+          <span>{{ comTitle }}</span>
+        </div>
+        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
+          add
+        </IconButton>
       </div>
-      <div class="search-box">
-        <ElInput class="search" v-model:value="filterText">
+      <div class="pt-1 pb-2">
+        <ElInput v-model="filterText">
           <template v-slot:suffix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
@@ -29,7 +20,8 @@
         </ElInput>
       </div>
     </div>
-    <div class="tree-block" v-if="isExpand">
+
+    <div v-if="visible">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -43,18 +35,16 @@
         :data="treeData"
         :filter-node-method="filterNode"
         :render-after-expand="false"
+        :indent="8"
         @node-click="nodeClickHandler"
         @check="checkHandler"
       >
         <template v-slot="{ node, data }">
           <span class="custom-tree-node">
-            <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
-            <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
+            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
             <span class="table-label">{{ data.value }}</span>
             <ElDropdown class="btn-menu" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-              <ElButton text :disabled="$disabledReadonlyUserBtn()"
-                ><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton
-              >
+              <IconButton sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
               <template #dropdown>
                 <ElDropdownMenu>
                   <ElDropdownItem command="add">
@@ -69,7 +59,7 @@
         </template>
       </ElTree>
       <ElButton
-        v-if="treeData && treeData.length === 0 && isExpand"
+        v-if="treeData && treeData.length === 0 && visible"
         text
         v-readonlybtn="authority"
         @click="showDialog()"
@@ -77,12 +67,12 @@
         >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
       >
     </div>
-    <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header>
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>
       <ElInput
-        v-model:value="dialogConfig.label"
+        v-model="dialogConfig.label"
         :placeholder="$t('packages_component_classification_nodeName')"
         maxlength="50"
         show-word-limit
@@ -104,10 +94,12 @@ import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
+import { IconButton } from './icon-button'
 
 export default {
-  components: { VIcon },
+  components: { IconButton, VIcon },
   props: {
+    visible: Boolean,
     types: {
       type: Array,
       default: () => {
@@ -127,7 +119,6 @@ export default {
   data() {
     return {
       searchFalg: false,
-      isExpand: false,
       filterText: '',
       treeData: [],
       default_expanded: false,
@@ -161,6 +152,15 @@ export default {
           ? this.$t('packages_component_classification_userTitle')
           : this.$t('packages_component_classification_title'))
       )
+    },
+
+    isExpand: {
+      get() {
+        return this.visible
+      },
+      set(value) {
+        this.$emit('update:visible', value)
+      },
     },
   },
   mounted() {
@@ -515,12 +515,10 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 20px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
   background: map-get($bgColor, white);
-  border-radius: 3px;
   .btn-expand {
     // padding: 2px 3px;
     // color: map-get($fontColor, light);
@@ -594,17 +592,13 @@ export default {
     }
   }
 
+  .h-32 {
+    height: 32px;
+  }
+
   /*头部样式*/
   .classification-header {
     position: relative;
-    padding: 0 12px;
-    // background: map-get($bgColor, normal);
-    // border-bottom: 1px solid #dedee4;
-    font-size: $fontBaseTitle;
-    line-height: 31px;
-    display: flex;
-    width: 214px;
-    flex-direction: column;
     .title {
       display: flex;
       align-items: center;
@@ -612,33 +606,6 @@ export default {
       padding: 0 8px 0 46px;
       color: map-get($fontColor, light);
       // background-color: #eff1f4;
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 3px;
-      // .iconfont {
-      // 	color: #c0c4cc;
-      // 	font-size: 12px;
-      // 	background-color: map-get($bgColor, white);
-      // 	border: 1px solid #dedee4;
-      // 	display: flex;
-      // 	justify-content: center;
-      // 	align-items: center;
-      // 	height: 66%;
-      // 	padding: 0 4px;
-      // 	padding-right: 6px;
-      // 	padding-left: 5px;
-      // 	margin-top: 0px;
-      // 	border-top-width: 1px;
-      // 	border-radius: 3px;
-      // 	cursor: pointer;
-      // }
-    }
-    .search {
-      margin-left: 7px;
     }
   }
   .tree-block {
@@ -671,11 +638,11 @@ export default {
       text-overflow: ellipsis;
       max-width: 120px;
     }
-    .btn-menu {
+    .btn-menu button:not([aria-expanded='true']) {
       display: none;
     }
-    &:hover .btn-menu {
-      display: block;
+    &:hover .btn-menu button {
+      display: inline-flex;
     }
   }
   .create {
@@ -683,16 +650,6 @@ export default {
     font-size: $fontBaseTitle;
     // color: map-get($color, primary);
     cursor: pointer;
-  }
-}
-</style>
-
-<style lang="scss">
-.classification-tree {
-  padding-bottom: 50px;
-  .el-tree-node__content {
-    height: 26px;
-    overflow: hidden;
   }
 }
 </style>

@@ -409,7 +409,7 @@
           </div>
         </ElDialog>
         <!--  详情    -->
-        <Details
+        <AgentDetails
           v-model:value="showDetails"
           :detail-id="detailId"
           @closed="detailsClosedFnc"
@@ -452,7 +452,7 @@
               </VButton>
             </div>
           </template>
-        </Details>
+        </AgentDetails>
 
         <!--转账支付弹窗信息--->
         <transferDialog :price="price" v-model:visible="showTransferDialogVisible"></transferDialog>
@@ -560,7 +560,7 @@ import StatusTag from '../../components/StatusTag'
 import InlineInput from '../../components/InlineInput'
 import Unsubscribe from '../../components/Unsubscribe.vue'
 import { INSTANCE_STATUS_MAP } from '../../const'
-import Details from './Details'
+import AgentDetails from './Details.vue'
 import { getSpec, getPaymentMethod, AGENT_TYPE_MAP } from './utils'
 import Renew from '../../components/Renew.vue'
 import { secondDifference } from '../../util'
@@ -575,7 +575,7 @@ export default {
     InlineInput,
     StatusTag,
     VIcon,
-    Details,
+    AgentDetails,
     FilterBar,
     transferDialog,
     SubscriptionModelDialog,

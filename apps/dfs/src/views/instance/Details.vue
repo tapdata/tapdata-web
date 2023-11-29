@@ -1,12 +1,11 @@
 <template>
   <ElDrawer
-    :modal="false"
-    v-model:visible="drawer"
-    :direction="direction"
+    v-model="drawer"
     :show-close="false"
     :with-header="false"
     size="304px"
-    style="top: 70px"
+    :modal="false"
+    close-on-click-modal
     @opened="openedFnc"
     @closed="closedFnc"
   >
@@ -131,7 +130,7 @@ import Time from '@tap/shared/src/time'
 import { downloadJson } from '@tap/shared'
 
 export default {
-  name: 'Details',
+  name: 'AgentDetails',
   components: { VIcon, StatusTag, VTable },
   mixins: [timeFunction],
   props: {
@@ -142,7 +141,6 @@ export default {
     const $t = this.$t.bind(this)
     return {
       drawer: false,
-      direction: 'rtl',
       loading: false,
       agent: {
         btnLoading: {

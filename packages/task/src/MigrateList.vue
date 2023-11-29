@@ -22,7 +22,7 @@
     <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
       v-else
-      class="overflow-hidden bg-white rounded-lg pr-4 pb-4"
+      class="overflow-hidden bg-white rounded-lg px-4"
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"

@@ -1,5 +1,5 @@
 <template>
-  <section class="data-verify-wrap bg-white section-wrap">
+  <section class="data-verify-wrap px-4 bg-white section-wrap">
     <TablePage
       ref="table"
       row-key="id"
@@ -538,7 +538,6 @@ export default {
 <style lang="scss" scoped>
 .data-verify-wrap {
   height: 100%;
-  padding: 0 24px 24px 24px;
   .btn-refresh {
     padding: 0;
     height: 32px;

@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap position-relative px-4" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
@@ -1153,7 +1153,6 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
-  padding: 0 24px 24px 0;
   background: #fff;
   .btn-refresh {
     padding: 0;

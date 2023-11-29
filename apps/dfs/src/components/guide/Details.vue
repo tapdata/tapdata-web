@@ -8,9 +8,9 @@
     </div>
     <div :class="{ card: isCard }">
       <p class="mt-4 mb-2">{{ $t('dfs_instance_create_jieshouzhangdande') }}</p>
-      <ElForm ref="from" :mode="orderInfo" :rules="formRules">
+      <ElForm v-if="orderInfo" ref="from" :mode="orderInfo" :rules="formRules">
         <ElFormItem prop="email">
-          <ElInput v-model:value="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
+          <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
         </ElFormItem>
       </ElForm>
     </div>

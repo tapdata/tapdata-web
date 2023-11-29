@@ -11,22 +11,31 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify">
-          <Classification
-            :authority="classify.authority"
-            :viewPage="classify.viewPage"
-            :types="classify.types"
-            :title="classify.title"
-            :kai-title="classify.title"
-            @nodeChecked="nodeChecked"
-          ></Classification>
-        </div>
+        <!--<div class="table-page-left" v-if="classify && !hideClassify"></div>-->
+        <Classification
+          v-if="classify && !hideClassify"
+          v-model:visible="classificationVisible"
+          ref="classification"
+          :comTitle="classify.comTitle"
+          :authority="classify.authority"
+          :viewPage="classify.viewPage"
+          :types="classify.types"
+          :title="classify.title"
+          :kai-title="classify.title"
+          @nodeChecked="nodeChecked"
+        ></Classification>
         <div class="table-page-body">
           <div class="table-page-nav">
             <slot name="nav"></slot>
           </div>
-          <div class="table-page-topbar">
-            <div class="table-page-search-bar">
+          <div class="table-page-topbar py-3" :class="{ 'pl-3': classificationVisible }">
+            <div class="table-page-search-bar flex align-center">
+              <IconButton
+                v-if="classify && !hideClassify && !classificationVisible"
+                class="mr-2 rotate-180"
+                @click="handleToggleClassify"
+                >expand-list</IconButton
+              >
               <slot name="search"></slot>
             </div>
             <div class="table-page-operation-bar">
@@ -61,7 +70,7 @@
           </div>
           <el-pagination
             background
-            class="table-page-pagination mt-3"
+            class="table-page-pagination my-3"
             layout="->,total, sizes,  prev, pager, next, jumper"
             v-model:current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
@@ -86,7 +95,7 @@
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification, ProTable } from '@tap/component'
+import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
 
 import SelectClassify from './SelectClassify'
 
@@ -96,6 +105,7 @@ export default {
     SelectClassify,
     VIcon,
     ProTable,
+    IconButton,
   },
   props: {
     title: String,
@@ -129,7 +139,7 @@ export default {
       list: [],
       multipleSelection: [],
       tags: [],
-      classifyDialogVisible: false,
+      classificationVisible: false,
     }
   },
   mounted() {
@@ -203,6 +213,9 @@ export default {
     clearSelection() {
       this.$refs?.table?.clearSelection()
     },
+    handleToggleClassify() {
+      this.$refs.classification.toggle()
+    },
   },
   emits: ['sort-change', 'classify-submit', 'selection-change'],
 }
@@ -258,7 +271,7 @@ export default {
   }
 
   .table-page-left {
-    border-right: 1px solid #ebeef5;
+    //border-right: 1px solid #ebeef5;
     // margin-right: 10px;
   }
 
@@ -267,9 +280,6 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 8px 0 0 0;
-    // background-color: map-get($bgColor, white);
-    border-radius: 4px;
     .el-table--border {
       border: none;
     }
@@ -278,12 +288,8 @@ export default {
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
-      .table-page-search-bar {
-        margin: 0 5px 12px 0;
-      }
 
       .table-page-operation-bar {
-        margin-bottom: 10px;
         text-align: right;
       }
     }
