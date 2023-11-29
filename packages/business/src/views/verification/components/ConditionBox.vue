@@ -114,7 +114,7 @@
                 >
                 </AsyncSelect>
               </div>
-              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
+              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id + index + inspectMethod">
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
                   :value.sync="item"
@@ -1138,7 +1138,7 @@ export default {
         tableNames.push(...m.objectNames)
       })
       // 加载数据源的Capabilities
-      const capabilitiesMap = await this.getCapabilities(connectionIds)
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
@@ -1383,6 +1383,10 @@ export default {
       item.target.connectionName = targetConnectionName
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
+
+      // 加载数据源的Capabilities
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
+      item.target.capabilities = capabilitiesMap[targetConnectionId]
 
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
@@ -1782,6 +1786,15 @@ function validate(sourceRow){
 
       return data.reduce((cur, pre) => {
         cur[pre.id] = pre.capabilities
+        return cur
+      }, {})
+    },
+
+    // 获取匹配节点的Capabilities
+    getMatchCapabilitiesMap() {
+      const list = cloneDeep(this.allStages)
+      return list.reduce((cur, pre) => {
+        cur[pre.connectionId] = pre.attrs?.capabilities
         return cur
       }, {})
     },
