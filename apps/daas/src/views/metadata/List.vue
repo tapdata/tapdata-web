@@ -122,7 +122,7 @@
     >
       <ElForm ref="form" label-position="left" label-width="100px" :model="createForm" :rules="createRules">
         <ElFormItem :label="$t('public_type')" required prop="model_type">
-          <ElSelect v-model:value="createForm.model_type" width="100%">
+          <ElSelect v-model="createForm.model_type" width="100%">
             <ElOption
               v-for="item in modelTyoeList"
               :label="item.label"
@@ -132,12 +132,12 @@
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('metadata_form_database')" required prop="database">
-          <ElSelect v-model:value="createForm.database" width="100%">
+          <ElSelect v-model="createForm.database" width="100%">
             <ElOption v-for="item in dbOptions" :label="item.label" :value="item.value" :key="item.value"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('public_name')" required prop="tableName">
-          <ElInput v-model:value="createForm.tableName"></ElInput>
+          <ElInput v-model="createForm.tableName"></ElInput>
         </ElFormItem>
       </ElForm>
 

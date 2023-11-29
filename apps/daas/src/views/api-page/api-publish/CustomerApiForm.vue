@@ -10,10 +10,10 @@
   >
     <ElForm :model="model" ref="form" label-width="120px">
       <ElFormItem :label="$t('public_description')">
-        <ElInput v-model:value="model.describtion"></ElInput>
+        <ElInput v-model="model.describtion"></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('module_form_method')">
-        <ElSelect v-model:value="model.method" :placeholder="$t('public_select_placeholder')">
+        <ElSelect v-model="model.method" :placeholder="$t('public_select_placeholder')">
           <ElOption label="GET" value="GET"></ElOption>
           <ElOption label="STREAM" value="STREAM"></ElOption>
         </ElSelect>
@@ -38,7 +38,7 @@
         <!-- <QueryBuild v-model="model.condition" :fields="fields"></QueryBuild> -->
       </ElFormItem>
       <ElFormItem :label="$t('module_form_available_query_field')" v-if="model.method !== 'STREAM'">
-        <ElSelect v-model:value="model.availableQueryField" multiple filterable>
+        <ElSelect v-model="model.availableQueryField" multiple filterable>
           <ElOption
             v-for="item in fields"
             :label="item.field_name"
@@ -48,7 +48,7 @@
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('module_form_required_query_field')" v-if="model.method !== 'STREAM'">
-        <ElSelect v-model:value="model.requiredQueryField" multiple filterable>
+        <ElSelect v-model="model.requiredQueryField" multiple filterable>
           <ElOption
             v-for="item in fields"
             :label="item.field_name"

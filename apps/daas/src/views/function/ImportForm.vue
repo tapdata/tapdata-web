@@ -26,7 +26,7 @@
         <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
           <div class="flex align-center">
             <ElInput
-              v-model:value="form.packageName"
+              v-model="form.packageName"
               class="form-input"
               :placeholder="$t('function_package_name_placeholder')"
             ></ElInput>
@@ -66,7 +66,7 @@
                   ></ElButton>
                 </template>
                 <template v-else>
-                  <ElInput v-model:value="editName" class="mr-2"></ElInput>
+                  <ElInput v-model="editName" class="mr-2"></ElInput>
                   <ElButton @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
                   <ElButton type="primary" :disabled="!editName || !editName.trim()" @click="changeName($index)">{{
                     $t('public_button_save')
@@ -104,24 +104,24 @@
       <ElForm v-if="settingData" label-position="left" label-width="120px" :model="settingData">
         <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
           <ElInput
-            v-model:value="settingData.describe"
+            v-model="settingData.describe"
             type="textarea"
             :placeholder="$t('function_describe_placeholder')"
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="format" :label="$t('function_format') + ':'">
-          <ElInput v-model:value="settingData.format" :placeholder="$t('function_format_placeholder')"></ElInput>
+          <ElInput v-model="settingData.format" :placeholder="$t('function_format_placeholder')"></ElInput>
         </ElFormItem>
         <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
           <ElInput
-            v-model:value="settingData.parameters_desc"
+            v-model="settingData.parameters_desc"
             type="textarea"
             :placeholder="$t('function_parameters_describe_placeholder')"
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
           <ElInput
-            v-model:value="settingData.return_value"
+            v-model="settingData.return_value"
             type="textarea"
             :placeholder="$t('function_return_value_placeholder')"
           ></ElInput>

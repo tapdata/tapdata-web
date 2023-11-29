@@ -3,7 +3,7 @@
     <div v-if="!!label" class="filter-datetime-range__title">{{ label }}</div>
     <Datetime
       v-bind="$attrs"
-      v-model:value="start"
+      v-model:value="end"
       :picker-options="startOptions"
       :placeholder="startPlaceholder"
       ref="startTime"

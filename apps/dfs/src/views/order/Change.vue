@@ -69,7 +69,7 @@
               {{ $t('dfs_instance_instance_dingyuefangshi') }}
             </div>
           </template>
-          <ElRadioGroup v-model:value="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
+          <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
             <ElRadio
               v-for="(item, index) in packageItems"
               :key="index"

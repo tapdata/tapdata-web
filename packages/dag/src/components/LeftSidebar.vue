@@ -29,7 +29,7 @@
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-model:value="dbSearchTxt"
+                v-model="dbSearchTxt"
                 ref="dbInput"
                 class="header__input"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
@@ -142,7 +142,7 @@
         <div class="flex flex-column flex-1 min-h-0">
           <div v-show="showTBInput" class="p-2">
             <ElInput
-              v-model:value="tbSearchTxt"
+              v-model="tbSearchTxt"
               ref="tbInput"
               :placeholder="$t('packages_dag_table_name_search_placeholder')"
               clearable

@@ -17,7 +17,7 @@
     <!--国内显示选择支付方式-->
     <div v-if="isDomesticStation" class="mt-4" :class="{ card: isCard }">
       <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
-      <ElRadioGroup v-model:value="payType" class="flex gap-4 mt-4 mb-4">
+      <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in types"
           :key="index"

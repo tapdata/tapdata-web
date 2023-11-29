@@ -20,25 +20,25 @@
           </div>
           <SelectList
             v-if="apiServersList.length"
-            v-model:value="searchParams.api_server_process_id"
+            v-model="searchParams.api_server_process_id"
             :items="serverData"
             :inner-label="$t('dataExplorer_apiservr')"
             none-border
             last-page-text=""
             clearable
-            menu-min-width="240px"
+            dropdown-width="240px"
             :placeholder="$t('dataExplorer_apiservr')"
             @change="table.fetch(1)"
           ></SelectList>
           <SelectList
             v-if="pathList.length"
-            v-model:value="searchParams.collection"
+            v-model="searchParams.collection"
             :items="pathList"
             :inner-label="$t('dataExplorer_base_path')"
             none-border
             last-page-text=""
             clearable
-            menu-min-width="240px"
+            dropdown-width="240px"
             :placeholder="$t('dataExplorer_base_path')"
             @change="table.fetch(1)"
           ></SelectList>
@@ -50,7 +50,7 @@
       <template v-slot:operation>
         <div>
           <ElSelect
-            v-model:value="without_timezone"
+            v-model="without_timezone"
             width="100%"
             :label="
               $t('dataExplorer_datetype_without_timezone') + '. ' + $t('dataExplorer_mysql_datetype_without_timezone')

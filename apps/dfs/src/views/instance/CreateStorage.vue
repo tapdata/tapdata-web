@@ -54,7 +54,7 @@
                 </div>
               </template>
               <template>
-                <ElRadioGroup v-model:value="provider" @change="changeProvider" class="flex flex-wrap gap-4">
+                <ElRadioGroup v-model="provider" @change="changeProvider" class="flex flex-wrap gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
                     :key="index"
@@ -80,7 +80,7 @@
                 </div>
               </template>
               <template>
-                <ElRadioGroup v-model:value="region" class="flex flex-wrap gap-4" @change="changeRegion">
+                <ElRadioGroup v-model="region" class="flex flex-wrap gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
                     :key="index"
@@ -113,7 +113,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model:value="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
+              <ElRadioGroup v-model="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in tierOptions"
                   :key="index"
@@ -148,7 +148,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model:value="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
+              <ElRadioGroup v-model="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in sizeOptions"
                   :key="index"
@@ -178,7 +178,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model:value="current.priceId" class="flex gap-4">
+              <ElRadioGroup v-model="current.priceId" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in periodOptions"
                   :key="index"

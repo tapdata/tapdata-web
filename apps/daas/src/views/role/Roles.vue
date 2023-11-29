@@ -38,7 +38,7 @@
       <ElTableColumn :label="$t('role_list_default_role')" width="90">
         <template v-slot="scope">
           <ElSwitch
-            v-model:value="scope.row.register_user_default"
+            v-model="scope.row.register_user_default"
             :disabled="!$has('role_edition')"
             @change="changeRowDefault(scope.row)"
           >
@@ -99,7 +99,7 @@
           prop="name"
           :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <ElInput v-model:value="form.name" :placeholder="$t('role_list_select_role_name')"></ElInput>
+          <ElInput v-model="form.name" :placeholder="$t('role_list_select_role_name')"></ElInput>
         </ElFormItem>
         <ElFormItem
           :label="$t('role_list_description')"
@@ -114,7 +114,7 @@
         >
           <ElInput
             type="textarea"
-            v-model:value="form.description"
+            v-model="form.description"
             autocomplete="off"
             maxlength="200"
             show-word-limit
@@ -122,7 +122,7 @@
         </ElFormItem>
         <ElFormItem :label="$t('role_list_default_role')">
           <ElSwitch
-            v-model:value="form.register_user_default"
+            v-model="form.register_user_default"
             inactive-color="#dcdfe6"
             :active-text="form.register_user_default ? $t('role_form_yes') : $t('role_form_no')"
             style="margin-right: 20px"
@@ -145,7 +145,7 @@
       width="600px"
     >
       <div class="userBox">
-        <ElSelect v-model:value="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
+        <ElSelect v-model="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
           <ElOption v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </ElOption>
         </ElSelect>
         <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>

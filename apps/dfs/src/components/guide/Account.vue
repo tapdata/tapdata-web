@@ -8,11 +8,7 @@
     </div>
     <ElForm class="mt-4" :model="phoneForm" label-position="top" :label-width="'120px'" @submit.prevent size="default">
       <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-        <ElInput
-          v-model:value="phoneForm.current"
-          :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
-          maxlength="50"
-        >
+        <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
           <template v-slot:prepend>
             <el-select v-model="phoneForm.countryCode" filterable style="width: 100px">
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
@@ -24,11 +20,7 @@
         </ElInput>
       </ElFormItem>
       <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
-        <ElInput
-          v-model:value="phoneForm.oldCode"
-          :placeholder="$t('user_Center_qingShuRuShouJi')"
-          maxlength="50"
-        ></ElInput>
+        <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
           size="default"
           :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"

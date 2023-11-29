@@ -17,6 +17,7 @@ import Highlight from './base/Highlight.js'
 import VCollapse from './base/VCollapse'
 import Classification from './Classification.vue'
 import FilterBar from './filter-bar'
+import SelectList from './filter-bar/FilterItemSelect.vue'
 import DatetimeRange from './filter-bar/DatetimeRange.vue'
 // import SelectList from './SelectList.vue'
 import GitBook from './GitBook.vue'
@@ -44,7 +45,7 @@ export {
   // VirtualTransfer,
   // VirtualTransferPanel,
   VirtualSelect,
-  VirtualSelect as SelectList,
+  SelectList,
   VirtualList,
   VTable,
   VCollapse,

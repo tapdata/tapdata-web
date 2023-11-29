@@ -7,7 +7,7 @@
     width="35%"
   >
     <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>
-      <ElRadioGroup v-if="!!originType" v-model:value="modeType" class="mb-3">
+      <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
         <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
         <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
       </ElRadioGroup>
@@ -24,14 +24,14 @@
         >
           <ElAutocomplete
             class="inline-input"
-            v-model:value="currentData.newDataType"
+            v-model="currentData.newDataType"
             :fetch-suggestions="querySearch"
             :placeholder="$t('public_input_placeholder')"
             @select="handleAutocomplete"
           ></ElAutocomplete>
         </ElFormItem>
         <div v-if="!hideBatch">
-          <ElCheckbox v-model:value="currentData.useToAll">{{
+          <ElCheckbox v-model="currentData.useToAll">{{
             $t('packages_form_field_inference_list_duidangqiantuiyan')
           }}</ElCheckbox>
           <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
@@ -48,7 +48,7 @@
             <span>{{ originType }}</span>
             <span>(</span>
             <ElInputNumber
-              v-model:value="currentData.coefficient"
+              v-model="currentData.coefficient"
               controls-position="right"
               :min="0.1"
               class="coefficient-input mx-2"

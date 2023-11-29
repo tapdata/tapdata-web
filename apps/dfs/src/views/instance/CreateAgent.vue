@@ -64,7 +64,7 @@
                 </div>
               </template>
               <template>
-                <ElRadioGroup v-model:value="provider" @input="changeProvider" class="flex gap-4">
+                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
                     :key="index"
@@ -95,7 +95,7 @@
                 </div>
               </template>
               <template>
-                <ElRadioGroup v-model:value="region" class="flex gap-4" @change="changeRegion">
+                <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
                     :key="index"
@@ -176,7 +176,7 @@
               </div>
             </template>
             <template>
-              <ElRadioGroup v-model:value="currentPackage" @input="handleChange" class="flex gap-4">
+              <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in packageItems"
                   :key="index"

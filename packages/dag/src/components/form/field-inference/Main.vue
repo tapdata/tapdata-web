@@ -15,7 +15,7 @@
     <div class="field-inference__main flex">
       <div class="field-inference__nav flex flex-column">
         <ElInput
-          v-model:value="searchTable"
+          v-model="searchTable"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable

@@ -69,7 +69,7 @@
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>
-        <ElRadioGroup v-if="!!originType" v-model:value="modeType" class="mb-3">
+        <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
           <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
           <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
         </ElRadioGroup>

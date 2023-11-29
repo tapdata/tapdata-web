@@ -17,7 +17,7 @@
           <span class="font-color-light inline-block">{{
             $t('dfs_agent_download_subscriptionmodeldialog_yunfuwushang')
           }}</span>
-          <ElRadioGroup v-model:value="provider" @input="changeProvider" class="flex flex-wrap gap-4">
+          <ElRadioGroup v-model="provider" @input="changeProvider" class="flex flex-wrap gap-4">
             <ElRadio
               v-for="(item, index) in cloudProviderList"
               :key="index"
@@ -31,7 +31,7 @@
             </ElRadio>
           </ElRadioGroup>
           <span class="font-color-light inline-block">{{ $t('dfs_agent_download_subscriptionmodeldialog_diqu') }}</span>
-          <ElSelect v-model:value="region" @change="changeRegion">
+          <ElSelect v-model="region" @change="changeRegion">
             <ElOption
               v-for="(item, index) in cloudDetail"
               :value="item.region"
@@ -84,7 +84,7 @@
       </ElFormItem>
       <!--订阅方式-->
       <ElFormItem :label="$t('dfs_instance_instance_dingyuefangshi')" class="mb-0">
-        <ElRadioGroup v-model:value="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
+        <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex flex-wrap gap-4">
           <ElRadio
             v-for="(item, index) in packageItems"
             :key="index"

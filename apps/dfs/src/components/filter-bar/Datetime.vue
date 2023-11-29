@@ -9,7 +9,7 @@
     </div>
     <ElDatePicker
       v-bind="$attrs"
-      v-model:value="time"
+      v-model="time"
       type="datetime"
       :clearable="false"
       :class="['date-picker', { 'empty-time': !this.time }]"

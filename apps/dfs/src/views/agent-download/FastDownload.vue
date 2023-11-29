@@ -9,7 +9,7 @@
       <div class="text-style mt-6">
         {{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}
       </div>
-      <ElRadioGroup v-model:value="downLoadType" @input="chooseDownLoadType" class="flex gap-4 mt-4 mb-4">
+      <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in downType"
           :key="index"

@@ -19,7 +19,7 @@
       <ElRow v-for="(item, index) in ruleForm.list" :key="index" class="mt-4">
         <ElCol :span="9">
           <ElInput
-            v-model:value="item.accept"
+            v-model="item.accept"
             :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
             disabled
           ></ElInput>
@@ -31,7 +31,7 @@
         </ElCol>
         <ElCol :span="9" class="flex align-items-center">
           <ElInput
-            v-model:value="item.result.dataType"
+            v-model="item.result.dataType"
             :placeholder="$t('packages_form_field_inference_dialog_cankaogeshiv')"
             disabled
             class="mr-1"

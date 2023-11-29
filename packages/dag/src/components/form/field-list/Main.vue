@@ -3,7 +3,7 @@
     <div class="field-inference__main flex">
       <div v-if="!hideNav" class="field-inference__nav flex flex-column">
         <ElInput
-          v-model:value="searchTable"
+          v-model="searchTable"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
@@ -51,7 +51,7 @@
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="flex align-items-center p-2">
           <ElInput
-            v-model:value="searchField"
+            v-model="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
             suffix-icon="el-icon-search"
             clearable

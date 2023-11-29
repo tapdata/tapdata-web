@@ -12,7 +12,7 @@
     >
       <template v-slot:nav>
         <div class="tapNav">
-          <ElTabs v-model:value="activePanel" @tab-click="handleTapClick">
+          <ElTabs v-model="activePanel" @tab-click="handleTapClick">
             <ElTabPane v-for="item in muneList" :key="item.icon" :name="item.key">
               <template v-slot:label>
                 <span

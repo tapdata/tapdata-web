@@ -20,24 +20,24 @@
     <div class="py-2 pl-4">
       <SelectList
         v-if="options.length"
-        v-model:value="searchParams.search"
+        v-model="searchParams.search"
         :items="options"
         :inner-label="$t('notify_notice_level')"
         none-border
         last-page-text=""
         clearable
-        menu-min-width="240px"
+        dropdown-width="240px"
         @change="getData()"
       ></SelectList>
       <SelectList
         v-if="msgOptions.length"
-        v-model:value="searchParams.msg"
+        v-model="searchParams.msg"
         :items="msgOptions"
         :inner-label="$t('notify_notice_type')"
         none-border
         last-page-text=""
         clearable
-        menu-min-width="240px"
+        dropdown-width="240px"
         @change="getData()"
       ></SelectList>
     </div>

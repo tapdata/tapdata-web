@@ -131,7 +131,7 @@
         <div class="choose-pane-wrap">
           <ElInput
             class="input-filled"
-            v-model:value="nodeSearchInput"
+            v-model="nodeSearchInput"
             clearable
             :placeholder="$t('packages_business_custom_node_placeholder')"
           >

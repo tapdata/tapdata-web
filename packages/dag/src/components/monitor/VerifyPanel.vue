@@ -32,7 +32,7 @@
     </div>
     <div class="px-4 py-2">
       <ElInput
-        v-model:value="keyword"
+        v-model="keyword"
         :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
         prefix-icon="el-icon-search"
         clearable

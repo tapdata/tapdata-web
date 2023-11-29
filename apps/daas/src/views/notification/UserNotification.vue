@@ -27,13 +27,13 @@
       ></DatetimeRange>
       <SelectList
         v-if="isAdmin"
-        v-model:value="search.userId"
+        v-model="search.userId"
         :items="userOptions"
         :inner-label="$t('notify_operator')"
         none-border
         last-page-text=""
         clearable
-        menu-min-width="240px"
+        dropdown-width="240px"
         @change="getData(1)"
       ></SelectList>
 

@@ -24,7 +24,7 @@
             }"
           >
             <ElInput
-              v-model:value="form.function_name"
+              v-model="form.function_name"
               class="form-input"
               :placeholder="$t('function_name_placeholder')"
             ></ElInput>
@@ -42,22 +42,18 @@
         </ElFormItem>
         <ElFormItem prop="describe" :label="$t('public_description') + ':'">
           <ElInput
-            v-model:value="form.describe"
+            v-model="form.describe"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_describe_placeholder')"
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="format" :label="$t('function_format') + ':'">
-          <ElInput
-            v-model:value="form.format"
-            class="form-input"
-            :placeholder="$t('function_format_placeholder')"
-          ></ElInput>
+          <ElInput v-model="form.format" class="form-input" :placeholder="$t('function_format_placeholder')"></ElInput>
         </ElFormItem>
         <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
           <ElInput
-            v-model:value="form.parameters_desc"
+            v-model="form.parameters_desc"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_parameters_describe_placeholder')"
@@ -65,7 +61,7 @@
         </ElFormItem>
         <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
           <ElInput
-            v-model:value="form.return_value"
+            v-model="form.return_value"
             class="form-input"
             type="textarea"
             :placeholder="$t('function_return_value_placeholder')"

@@ -12,11 +12,7 @@
   >
     <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.prevent>
       <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
-        <ElInput
-          v-model:value="phoneForm.current"
-          :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
-          maxlength="50"
-        >
+        <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
           <template v-slot:prepend>
             <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
               <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
@@ -28,11 +24,7 @@
         </ElInput>
       </ElFormItem>
       <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
-        <ElInput
-          v-model:value="phoneForm.oldCode"
-          :placeholder="$t('user_Center_qingShuRuShouJi')"
-          maxlength="50"
-        ></ElInput>
+        <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
           :request-options="getCodeOptions(phoneForm, 'BIND_PHONE')"
           :disabled="!phoneForm.current"

@@ -6,7 +6,7 @@
           <div class="flex mb-2 ml-2 mr-2">
             <div class="flex">
               <ElInput
-                v-model:value="searchTable"
+                v-model="searchTable"
                 :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
                 suffix-icon="el-icon-search"
                 clearable
@@ -68,7 +68,7 @@
               <ElInput
                 :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
                 suffix-icon="el-icon-search"
-                v-model:value="searchField"
+                v-model="searchField"
                 clearable
                 @input="search()"
               ></ElInput>
@@ -146,7 +146,7 @@
     >
       <div v-if="['sourceFieldType'].includes(currentOperationType)">
         <ElAutocomplete
-          v-model:value="editValueType[currentOperationType]"
+          v-model="editValueType[currentOperationType]"
           class="inline-input"
           style="width: 350px"
           :fetch-suggestions="querySearchPdkType"
@@ -176,7 +176,7 @@
       <ElInput
         type="textarea"
         v-if="['defaultValue'].includes(currentOperationType)"
-        v-model:value="editValueType[currentOperationType]"
+        v-model="editValueType[currentOperationType]"
       ></ElInput>
       <template v-slot:footer>
         <span class="dialog-footer">

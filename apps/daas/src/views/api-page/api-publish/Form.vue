@@ -5,7 +5,7 @@
         <ElForm :model="createForm" ref="form">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
             <ElSelect
-              v-model:value="createForm.datasource"
+              v-model="createForm.datasource"
               filterable
               :placeholder="$t('public_select_placeholder')"
               :disabled="!!$route.query.id"
@@ -16,7 +16,7 @@
           </ElFormItem>
           <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules.tablename" required>
             <VirtualSelect
-              v-model:value="createForm.tablename"
+              v-model="createForm.tablename"
               filterable
               clearable
               :item-size="34"
@@ -33,7 +33,7 @@
         <div class="url-tip pb-5">
           <span>{{ $t('module_form_path') }}</span>
           <span>
-            <ElRadioGroup v-model:value="createForm.apiType" @change="changeApiType">
+            <ElRadioGroup v-model="createForm.apiType" @change="changeApiType">
               <ElRadio label="defaultApi">{{ $t('module_form_default_Api') }}</ElRadio>
               <ElRadio label="customerApi">{{ $t('module_form_customer_Api') }}</ElRadio>
             </ElRadioGroup>

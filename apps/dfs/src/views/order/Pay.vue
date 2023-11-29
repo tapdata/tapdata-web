@@ -31,7 +31,7 @@
               </span>
             </template>
             <ElInput
-              v-model:value="payForm.email"
+              v-model="payForm.email"
               :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
               style="width: 300px"
             ></ElInput>
@@ -44,7 +44,7 @@
           {{ $t('dfs_instance_choose_payment_method') }}
         </div>
         <ElRadioGroup
-          v-model:value="payForm.paymentMethod"
+          v-model="payForm.paymentMethod"
           class="flex gap-4 mb-4"
           size="default"
           @input="handleChangePayMethod"

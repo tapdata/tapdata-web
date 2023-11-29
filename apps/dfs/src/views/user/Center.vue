@@ -268,7 +268,7 @@
       <ElForm :model="passwordForm" label-width="120px" @submit.prevent label-position="top">
         <ElFormItem v-if="!isDomesticStation" prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
-            v-model:value="emailForm.email"
+            v-model="emailForm.email"
             disabled
             :placeholder="$t('user_Center_qingShuRuYouXiang')"
             maxlength="50"
@@ -276,7 +276,7 @@
         </ElFormItem>
         <ElFormItem v-else prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
-            v-model:value="passwordForm.telephone"
+            v-model="passwordForm.telephone"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
@@ -303,7 +303,7 @@
           class="inline-form-item"
         >
           <ElInput
-            v-model:value="passwordForm.emailCode"
+            v-model="passwordForm.emailCode"
             :placeholder="$t('user_Center_qingShuRuYanZheng')"
             maxlength="50"
           ></ElInput>
@@ -317,7 +317,7 @@
         </ElFormItem>
         <ElFormItem v-else prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
           <ElInput
-            v-model:value="passwordForm.code"
+            v-model="passwordForm.code"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
             maxlength="50"
           ></ElInput>
@@ -331,7 +331,7 @@
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
           <ElInput
-            v-model:value="passwordForm.newPassword"
+            v-model="passwordForm.newPassword"
             :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
@@ -340,7 +340,7 @@
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_queRenMiMa')">
           <ElInput
-            v-model:value="passwordForm.newAgainPassword"
+            v-model="passwordForm.newAgainPassword"
             :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
@@ -368,7 +368,7 @@
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput v-model:value="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
+          <ElInput v-model="phoneForm.current" :placeholder="$t('user_Center_qingShuRuDangQian')" maxlength="50">
             <template v-slot:prepend>
               <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
                 <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
@@ -381,7 +381,7 @@
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
           <ElInput
-            v-model:value="phoneForm.oldCode"
+            v-model="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuShouJi')"
             maxlength="50"
           ></ElInput>
@@ -415,7 +415,7 @@
       <ElForm :model="phoneForm" label-width="120px" @submit.prevent label-position="top">
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
           <ElInput
-            v-model:value="phoneForm.current"
+            v-model="phoneForm.current"
             :placeholder="$t('user_Center_qingShuRuDangQian')"
             maxlength="50"
             disabled
@@ -432,7 +432,7 @@
         </ElFormItem>
         <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
           <ElInput
-            v-model:value="phoneForm.oldCode"
+            v-model="phoneForm.oldCode"
             :placeholder="$t('user_Center_qingShuRuJiuShou')"
             maxlength="50"
           ></ElInput>
@@ -445,7 +445,7 @@
           ></VerificationCode>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
-          <ElInput v-model:value="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
+          <ElInput v-model="phoneForm.newPhone" :placeholder="$t('user_Center_qingShuRuXinShou2')" maxlength="50">
             <template v-slot:prepend>
               <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
                 <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
@@ -457,7 +457,7 @@
           </ElInput>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
-          <ElInput v-model:value="phoneForm.newCode" :placeholder="$t('user_Center_qingShuRuXinShou')" maxlength="50">
+          <ElInput v-model="phoneForm.newCode" :placeholder="$t('user_Center_qingShuRuXinShou')" maxlength="50">
           </ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
@@ -508,7 +508,7 @@
       <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
           <ElInput
-            v-model:value="emailForm.email"
+            v-model="emailForm.email"
             :placeholder="$t('user_Center_qingShuRuYouXiang')"
             maxlength="50"
           ></ElInput>
@@ -516,7 +516,7 @@
         <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
-              v-model:value="emailForm.code"
+              v-model="emailForm.code"
               :placeholder="$t('user_Center_qingShuRuYanZheng')"
               maxlength="50"
               class="flex-1"
@@ -554,7 +554,7 @@
       <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
           <ElInput
-            v-model:value="emailForm.email"
+            v-model="emailForm.email"
             disabled
             :placeholder="$t('user_Center_qingShuRuYouXiang')"
             maxlength="50"
@@ -563,7 +563,7 @@
         <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
-              v-model:value="emailForm.code"
+              v-model="emailForm.code"
               :placeholder="$t('user_Center_qingShuRuYanZheng')"
               maxlength="50"
               class="flex-1"
@@ -577,7 +577,7 @@
         </ElFormItem>
         <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
           <ElInput
-            v-model:value="emailForm.newEmail"
+            v-model="emailForm.newEmail"
             :placeholder="$t('user_Center_qingShuRuXinYou')"
             maxlength="50"
           ></ElInput>
@@ -585,7 +585,7 @@
         <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
           <div class="flex gap-4 w-100">
             <ElInput
-              v-model:value="emailForm.newCode"
+              v-model="emailForm.newCode"
               :placeholder="$t('user_Center_qingShuRuYanZheng')"
               maxlength="50"
             ></ElInput>
@@ -639,10 +639,10 @@
     >
       <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" label="FirstName">
-          <ElInput v-model:value="nameForm.firstName" maxlength="50"></ElInput>
+          <ElInput v-model="nameForm.firstName" maxlength="50"></ElInput>
         </ElFormItem>
         <ElFormItem prop="email" label="LastName">
-          <ElInput v-model:value="nameForm.lastName" maxlength="50"></ElInput>
+          <ElInput v-model="nameForm.lastName" maxlength="50"></ElInput>
         </ElFormItem>
       </ElForm>
 

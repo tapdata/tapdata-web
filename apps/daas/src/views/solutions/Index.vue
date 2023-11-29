@@ -1,9 +1,9 @@
 <template>
   <div class="solutions flex flex-column">
     <div class="search-row mb-4">
-      <ElInput v-model:value="keyword" clearable :placeholder="$t('solution_error_code')" @input="search(800)">
+      <ElInput v-model="keyword" clearable :placeholder="$t('solution_error_code')" @input="search(800)">
         <template v-slot:prepend>
-          <ElSelect v-model:value="select" :placeholder="$t('solution_select_placeholder_type')" class="type-select">
+          <ElSelect v-model="select" :placeholder="$t('solution_select_placeholder_type')" class="type-select">
             <ElOption v-for="item in selectItems" :key="item.value" :value="item.value" :label="item.label"></ElOption>
           </ElSelect>
         </template>

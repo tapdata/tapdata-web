@@ -40,7 +40,7 @@
         <el-form-item :label="$t('metadata_details_fieldType')" prop="data_type" required>
           <ElAutocomplete
             :disabled="fieldNameDisabled"
-            v-model:value="form.data_type"
+            v-model="form.data_type"
             class="inline-input"
             style="width: 350px"
             :fetch-suggestions="querySearchPdkType"

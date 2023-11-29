@@ -36,7 +36,7 @@
           class="input"
           :class="[{ 'valid-input': disabled }, 'block']"
           :style="inputStyle"
-          v-model:value="inputValue"
+          v-model="inputValue"
         ></ElInput>
       </ElTooltip>
       <template v-if="type === 'icon'">

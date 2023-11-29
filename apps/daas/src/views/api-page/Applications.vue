@@ -87,10 +87,10 @@
     >
       <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
         <ElFormItem :label="$t('application_header_client_name')" required prop="clientName">
-          <ElInput v-model:value="createForm.clientName"></ElInput>
+          <ElInput v-model="createForm.clientName"></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_grant_type')" required prop="grantTypes">
-          <ElSelect v-model:value="createForm.grantTypes" multiple>
+          <ElSelect v-model="createForm.grantTypes" multiple>
             <ElOption label="Implicit" value="implicit"></ElOption>
             <ElOption label="Client Credentials" value="client_credentials"></ElOption>
             <ElOption label="Refresh Token" value="refresh_token"></ElOption>
@@ -98,27 +98,27 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_client_secret')" required prop="clientSecret">
           <ElCol :span="22">
-            <ElInput v-model:value="createForm.clientSecret"></ElInput>
+            <ElInput v-model="createForm.clientSecret"></ElInput>
           </ElCol>
           <ElCol :span="2" style="text-align: right">
             <ElButton text @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
           </ElCol>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_scopes')" required prop="scopes">
-          <ElSelect v-model:value="createForm.scopes" multiple>
+          <ElSelect v-model="createForm.scopes" multiple>
             <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
         <ElFormItem :label="$t('application_header_redirect_uri')" required prop="redirectUrisStr">
           <ElInput
-            v-model:value="createForm.redirectUrisStr"
+            v-model="createForm.redirectUrisStr"
             type="textarea"
             :maxlength="200"
             :showWordLimit="true"
           ></ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('application_show_menu')" required prop="showMenu">
-          <ElSelect v-model:value="createForm.showMenu">
+          <ElSelect v-model="createForm.showMenu">
             <ElOption :label="$t('application_true')" :value="true"></ElOption>
             <ElOption :label="$t('application_false')" :value="false"></ElOption>
           </ElSelect>

@@ -16,14 +16,11 @@
           </p>
 
           <ElFormItem prop="email" :rules="getEmailRules()">
-            <ElInput
-              v-model:value="orderInfo.email"
-              :placeholder="$t('dfs_instance_create_yongyujieshoumei')"
-            ></ElInput>
+            <ElInput v-model="orderInfo.email" :placeholder="$t('dfs_instance_create_yongyujieshoumei')"></ElInput>
           </ElFormItem>
 
           <div>{{ $t('dfs_instance_choose_payment_method') }}</div>
-          <ElRadioGroup v-model:value="payType" class="flex gap-4 mt-4 mb-4">
+          <ElRadioGroup v-model="payType" class="flex gap-4 mt-4 mb-4">
             <ElRadio
               v-for="(item, index) in types"
               :key="index"
