@@ -86,7 +86,6 @@
               :label="$t('packages_dag_field_inference_list_xuanzetiaozhengde')"
               prop="selectedDataType"
               inline-message
-              required
             >
               <ElSelect
                 v-model="currentData.selectedDataType"
@@ -103,7 +102,7 @@
               </ElSelect>
             </ElFormItem>
             <ElFormItem
-              v-if="currentData.selectedDataType === '__custom_data_type__'"
+              v-if="!currentData.selectedDataType"
               :label="$t('packages_dag_field_inference_list_zidingyileixing')"
               prop="newDataType"
               :error="currentData.errorMessage"
@@ -297,7 +296,7 @@ export default {
         canUseDataTypes: [],
         coefficient: 1,
         customInputData: {},
-        selectedDataType: '__custom_data_type__'
+        selectedDataType: ''
       },
       customInputDataValue: '',
       customInputLabelMap: {
@@ -348,7 +347,7 @@ export default {
       return [
         {
           label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
-          value: '__custom_data_type__'
+          value: ''
         },
         ...this.currentData.canUseDataTypes
       ]
@@ -654,6 +653,10 @@ export default {
     },
 
     handleAutocomplete(itemValue) {
+      if (!itemValue) {
+        this.currentData.newDataType = this.currentData.dataTypeTemp
+        return
+      }
       const item = this.computedDataTypes.find(t => t.value === itemValue)
       this.currentData.customInputData = {}
 
@@ -664,7 +667,7 @@ export default {
        * 4.每次修改输入框都会改变最终结果
        * */
       this.customInputDataValue = itemValue // 记录原始值
-      this.currentData.selectDataType = itemValue !== '__custom_data_type__' ? itemValue : ''
+      this.currentData.selectDataType = itemValue
       const contentStr = item.value.match(/\(([^)]+)\)/)?.[1]
       if (contentStr) {
         const contentArr = contentStr.split(',')

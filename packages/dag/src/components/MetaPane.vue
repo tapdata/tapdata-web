@@ -4,6 +4,7 @@
       ref="table"
       v-bind="$attrs"
       :data="selected"
+      :dataTypesJson="dataTypesJson"
       :readonly="stateIsReadonly || !isTarget"
       :fieldChangeRules.sync="fieldChangeRules"
       :type="isTarget ? 'target' : isSource ? 'source' : ''"
@@ -20,6 +21,7 @@ import { mapState, mapGetters } from 'vuex'
 import List from './form/field-inference/List'
 import mixins from './form/field-inference/mixins.js'
 import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '@tap/dag/src/util'
+import { databaseTypesApi } from '@tap/api'
 
 export default {
   name: 'MetaPane',
@@ -39,7 +41,8 @@ export default {
       tableData: [],
       loading: false,
       data: '',
-      fieldChangeRules: []
+      fieldChangeRules: [],
+      dataTypesJson: {}
     }
   },
 
@@ -97,6 +100,7 @@ export default {
       this.$refs.table?.doLayout()
       this.loading = true
       this.loadFieldChangeRules()
+      this.loadDataTypesJson()
       try {
         const { items } = await this.getData()
         this.selected =
@@ -134,6 +138,12 @@ export default {
     loadFieldChangeRules() {
       this.fieldChangeRules = this.form.getValuesIn('fieldChangeRules') || []
       this.$refs.table.setRules(this.fieldChangeRules)
+    },
+
+    async loadDataTypesJson() {
+      let nodeAttrs = this.form.getValuesIn('attrs') || {}
+      const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
+      this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
     },
 
     handleUpdateRules(val = []) {
