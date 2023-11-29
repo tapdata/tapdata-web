@@ -81,7 +81,7 @@ export default {
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/cloud/quick-start/install-agent/agent-on-selfhosted/`
+      }/cloud/quick-start/install-agent/`
       window.open(href, '_blank')
     },
     handleComplete() {
