@@ -73,3 +73,11 @@
 .el-tree-node__content {
   border-radius: map-get($border-radius, base);
 }
+
+// Radio
+.el-radio-group.button-style-outline {
+  .el-radio-button {
+    --el-radio-button-checked-bg-color: #fff;
+    --el-radio-button-checked-text-color: var(--el-color-primary);
+  }
+}

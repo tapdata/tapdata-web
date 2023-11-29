@@ -22,8 +22,9 @@
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)">
           <template #connectionType>
             <ElRadioGroup
+              class="button-style-outline"
               :class="{ 'ml-2': isDaas }"
-              v-model:value="searchParams.databaseModel"
+              v-model="searchParams.databaseModel"
               @change="table.fetch(1)"
             >
               <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
