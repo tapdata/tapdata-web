@@ -44,7 +44,7 @@
             <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
             <span class="table-label">{{ data.value }}</span>
             <ElDropdown class="btn-menu" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-              <IconButton sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
+              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
               <template #dropdown>
                 <ElDropdownMenu>
                   <ElDropdownItem command="add">
