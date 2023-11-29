@@ -136,8 +136,10 @@
           </div>
         </template>
         <template v-slot="scope">
-          <ElButton text @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElButton link type="primary" @click="testConnection(scope.row)"
+            >{{ $t('public_connection_button_test') }}
+          </ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElTooltip
             :disabled="!isFileSource(scope.row)"
             :content="$t('packages_business_connections_list_wenjianleixingde')"
@@ -145,18 +147,20 @@
           >
             <span>
               <ElButton
-                text
+                link
+                type="primary"
                 :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
                 @click="handleLoadSchema(scope.row)"
                 >{{ $t('public_connection_button_load_schema') }}
               </ElButton>
             </span>
           </ElTooltip>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElButton
             v-if="havePermission(scope.row.permissionActions, 'Edit')"
             v-readonlybtn="'datasource_edition'"
-            text
+            link
+            type="primary"
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
@@ -166,6 +170,7 @@
             >{{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider
+            class="mx-1"
             v-if="havePermission(scope.row.permissionActions, 'Edit')"
             direction="vertical"
             v-readonlybtn="'datasource_edition'"
@@ -173,17 +178,24 @@
           <ElButton
             v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
-            text
+            link
+            type="primary"
             :loading="scope.row.copyLoading"
             :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
-          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+          <ElDivider
+            class="mx-1"
+            v-if="buttonShowMap.copy"
+            direction="vertical"
+            v-readonlybtn="'datasource_creation'"
+          ></ElDivider>
           <ElButton
             v-if="havePermission(scope.row.permissionActions, 'Delete')"
             v-readonlybtn="'datasource_delete'"
-            text
+            link
+            type="primary"
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||

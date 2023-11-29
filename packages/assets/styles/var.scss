@@ -85,9 +85,9 @@ $formNamespace: formily-element-plus;
     ),
   ),
   $text-color: (
-    'primary': #000000E0,
-    'regular': #000000E0,
-    'secondary': #000000A6,
+    'primary': #000000e0,
+    'regular': #000000e0,
+    'secondary': #000000a6,
     'placeholder': #00000040,
     'disabled': #00000040,
   ),
@@ -112,5 +112,8 @@ $formNamespace: formily-element-plus;
   ),
   $tree: (
     'node-content-height': 28px,
+  ),
+  $pagination: (
+    'border-radius': 6px,
   )
 );
