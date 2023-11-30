@@ -21,7 +21,7 @@
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>
-      <ElFormItem :label="$t('packages_business_modules_dialog_file') + ':'">
+      <ElFormItem prop="fileList" :label="$t('packages_business_modules_dialog_file') + ':'">
         <ElUpload
           class="w-75"
           ref="upload"
@@ -30,6 +30,7 @@
           :file-list="importForm.fileList"
           :auto-upload="false"
           :on-success="handleSuccess"
+          :on-error="handleError"
           :on-change="handleChange"
           :on-remove="handleRemove"
           :data="uploadData"
@@ -61,7 +62,9 @@
     </ElForm>
     <span slot="footer" class="dialog-footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
+      <ElButton :loading="uploading" type="primary" @click="submitUpload()" size="mini">{{
+        $t('public_button_confirm')
+      }}</ElButton>
     </span>
   </ElDialog>
 </template>
@@ -106,7 +109,8 @@ export default {
       rules: {
         source: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
         sink: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }]
-      }
+      },
+      uploading: false
     }
   },
   computed: {
@@ -183,13 +187,20 @@ export default {
     },
 
     handleSuccess(response) {
+      this.uploading = false
       if (response.code !== 'ok') {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
         this.$emit('success')
+        this.importForm.fileList = []
+        this.$refs.upload.clearFiles()
+        this.dialogVisible = false
       }
-      this.$refs.upload.clearFiles()
+    },
+
+    handleError() {
+      this.uploading = false
     },
 
     // 上传保存
@@ -201,8 +212,8 @@ export default {
 
       this.$refs.form.validate(valid => {
         if (!valid) return
-        this.dialogVisible = false
         this.$refs.upload.submit()
+        this.uploading = true
       })
     },
 
