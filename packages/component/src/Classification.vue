@@ -68,8 +68,8 @@
       >
     </div>
     <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <template #header>
-        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      <template #header="{ titleClass }">
+        <span :class="titleClass">{{ dialogConfig.title }}</span>
       </template>
       <ElInput
         v-model="dialogConfig.label"
@@ -515,6 +515,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  width: 213px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
@@ -639,10 +640,10 @@ export default {
       max-width: 120px;
     }
     .btn-menu button:not([aria-expanded='true']) {
-      display: none;
+      visibility: hidden;
     }
     &:hover .btn-menu button {
-      display: inline-flex;
+      visibility: visible;
     }
   }
   .create {

@@ -81,3 +81,23 @@
     --el-radio-button-checked-text-color: var(--el-color-primary);
   }
 }
+
+// Dialog
+.el-dialog {
+  &__header {
+    padding-inline: 24px !important;
+    padding-block: 20px !important;
+  }
+  &__title {
+    font-weight: 500;
+  }
+  &__body {
+    padding-block: 0 !important;
+    padding-inline: 24px !important;
+    margin-bottom: var(--el-dialog-padding-primary);
+  }
+  &__footer {
+    padding-inline: 24px !important;
+    padding-top: 0 !important;
+  }
+}
