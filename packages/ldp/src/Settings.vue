@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
@@ -34,7 +34,7 @@
             :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
-            <ElRadio v-model:value="mode" class="mr-0" label="integration">
+            <ElRadio v-model="mode" class="mr-0" label="integration">
               <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
             </ElRadio>
           </div>
@@ -59,7 +59,7 @@
             :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"
           ></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
-            <ElRadio v-model:value="mode" class="mr-0" label="service">
+            <ElRadio v-model="mode" class="mr-0" label="service">
               <span class="fs-7 fw-sub"
                 >{{ $t('packages_business_data_console_mode_service') }}<VIcon class="ml-1" size="32">beta</VIcon></span
               >
@@ -128,14 +128,8 @@
                 </ElTooltip>
               </span>
             </template>
-            <ElRadioGroup v-model:value="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
-              <ElRadio
-                v-for="item in options"
-                :label="item.value"
-                :key="'FDM' + item.value"
-                border
-                class="rounded-2 mr-4 ml-0"
-              >
+            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
+              <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
                 <span>{{ item.label }}</span>
               </ElRadio>
             </ElRadioGroup>
@@ -144,7 +138,7 @@
           <ElFormItem prop="fdmStorageConnectionId">
             <ElSelect
               v-if="form.fdmStorageCluster === 'self'"
-              v-model:value="form.fdmStorageConnectionId"
+              v-model="form.fdmStorageConnectionId"
               :disabled="disabled"
               class="w-100"
             >
@@ -152,7 +146,7 @@
             </ElSelect>
             <template v-else>
               <div class="flex align-center gap-4">
-                <span class="preview-text inline-block rounded-2" v-if="fdmConnection">{{ fdmConnection.name }}</span>
+                <span class="preview-text inline-block rounded-4" v-if="fdmConnection">{{ fdmConnection.name }}</span>
                 <ElButton type="primary" @click="handleOrderStorage">{{
                   $t('packages_ldp_order_fully_managed_storage')
                 }}</ElButton>
@@ -396,8 +390,7 @@ export default {
     },
 
     handleClose() {
-      $emit(this, 'visible', false)
-      $emit(this, 'update:visible', false)
+      this.$emit('update:visible', false)
     },
 
     handleSelectMode(type) {
@@ -452,7 +445,7 @@ export default {
       })
     },
   },
-  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'visible', 'update:visible', 'success'],
+  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'update:visible', ' success'],
 }
 </script>
 

@@ -615,12 +615,15 @@ export default defineComponent({
       // 用于监听FDM/MDM的设置变化,删除掉已经渲染的连接节点
       this.unwatchFdmAndMdm?.()
       this.unwatchFdmAndMdm = this.$watch('fdmAndMdmId', (val) => {
-        this.$refs.tree.remove({
-          id: val[0],
-        })
-        this.$refs.tree.remove({
-          id: val[1],
-        })
+        const fdmIndex = this.treeData.findIndex((item) => item.id === val[0])
+        if (~fdmIndex) {
+          this.treeData.splice(fdmIndex, 1)
+        }
+
+        const mdmIndex = this.treeData.findIndex((item) => item.id === val[1])
+        if (~mdmIndex) {
+          this.treeData.splice(mdmIndex, 1)
+        }
       })
     },
 

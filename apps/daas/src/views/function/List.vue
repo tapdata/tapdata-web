@@ -11,7 +11,7 @@
       <template v-slot:search>
         <ul class="search-bar">
           <li class="item">
-            <ElRadioGroup v-model="searchParams.type" @input="table.fetch(1)">
+            <ElRadioGroup v-model="searchParams.type" @input="table.fetch(1)" class="button-style-outline">
               <ElRadioButton label="">{{ $t('public_select_option_all') }}</ElRadioButton>
               <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value"
                 >{{ label }}

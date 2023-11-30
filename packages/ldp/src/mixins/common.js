@@ -86,8 +86,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['startingTour']),
     ...mapState(['highlightBoard']),
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
   },
   unmounted() {
     this.debouncedSearch?.cancel()

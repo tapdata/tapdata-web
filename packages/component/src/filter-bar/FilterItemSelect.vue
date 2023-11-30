@@ -19,15 +19,6 @@
     <template #prefix>
       <span class="pl-2 lh-base font-color-light">{{ label }}</span>
     </template>
-
-    <template #header="{ onUpdateInputValue }">
-      <div>
-        <div class="p-1">
-          <ElInput v-model="inputValue" @update:modelValue="onUpdateInputValue" clearable></ElInput>
-        </div>
-        <el-divider class="my-2" />
-      </div>
-    </template>
   </FilterSelect>
 </template>
 

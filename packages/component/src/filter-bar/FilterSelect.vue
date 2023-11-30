@@ -230,13 +230,14 @@
                 @update:modelValue="onUpdateInputValue"
               />
             </div>-->
-            <!--<span
+            <span
               v-if="filterable"
               ref="calculatorRef"
               aria-hidden="true"
+              class="none"
               :class="[nsSelectV2.e('selected-item'), nsSelectV2.e('input-calculator')]"
               v-text="states.displayInputValue"
-            />-->
+            />
           </template>
           <span
             :class="[
@@ -268,7 +269,7 @@
         </div>
       </template>
       <template #content>
-        <el-select-menu
+        <SelectDropdown
           ref="menuRef"
           :data="filteredOptions"
           :width="popperSize"
@@ -282,7 +283,6 @@
                 ref="inputRef"
                 v-model="states.displayInputValue"
                 clearable
-                class="m-0 p-0 outline-0 fs-7"
                 :placeholder="$t('public_input_placeholder')"
                 aria-autocomplete="list"
                 aria-haspopup="listbox"
@@ -302,7 +302,7 @@
                 @compositionend="handleCompositionEnd"
                 @focus="handleFocus"
                 @blur="handleBlur"
-                @input="onInput"
+                @input="handleFilterInput"
                 @keydown.up.stop.prevent="onKeyboardNavigate('backward')"
                 @keydown.down.stop.prevent="onKeyboardNavigate('forward')"
                 @keydown.enter.stop.prevent="onKeyboardSelect"
@@ -310,10 +310,11 @@
                 @update:modelValue="onUpdateInputValue"
               >
                 <template #prefix>
-                  <el-icon class="el-input__icon"><Search /></el-icon>
+                  <el-icon class="el-input__icon">
+                    <Search />
+                  </el-icon>
                 </template>
               </ElInput>
-              <!--<VIcon size="16">close</VIcon>-->
             </div>
           </template>
           <template #default="scope">
@@ -326,19 +327,17 @@
               </p>
             </slot>
           </template>
-        </el-select-menu>
+        </SelectDropdown>
       </template>
     </el-tooltip>
   </div>
 </template>
 
 <script>
-import { computed, defineComponent, onMounted, reactive, ref, toRefs, unref, provide, nextTick } from 'vue'
+import { defineComponent } from 'vue'
 import { ElSelectV2 as Select } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
-/* unplugin-vue-components disabled */
-import ElSelectMenu from './select-dropdown'
-import { isFn } from '@tap/shared'
+import SelectDropdown from './select-dropdown'
 import VIcon from '../base/VIcon.vue'
 
 export default defineComponent({
@@ -351,22 +350,26 @@ export default defineComponent({
   components: {
     Search,
     VIcon,
-    ElSelectMenu /*: Select.components.ElSelectMenu*/,
+    SelectDropdown,
   },
   setup(props, ctx) {
-    // if (isFn(props.items)) {
-    //   props.options = await props.items()
-    // } else {
-    //   props.options = props.items
-    // }
     const handleUpdateVisible = (v) => {
       console.log('handleUpdateVisible', v, API.inputRef)
-      API.inputRef.value?.focus?.()
+      API.inputRef?.value?.focus?.()
+    }
+
+    const handleFilterInput = (value) => {
+      API.onInput({
+        target: {
+          value,
+        },
+      })
     }
 
     const API = {
       ...Select.setup(props, ctx),
       handleUpdateVisible,
+      handleFilterInput,
     }
 
     return API
@@ -380,6 +383,7 @@ export default defineComponent({
     --el-input-height: 36px;
     min-width: 180px;
   }
+
   .el-input__wrapper {
     box-shadow: none;
   }

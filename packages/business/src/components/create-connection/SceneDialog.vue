@@ -333,7 +333,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['startingTour']),
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types
