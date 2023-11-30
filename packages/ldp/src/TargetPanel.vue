@@ -999,9 +999,14 @@ export default {
           })
 
           if (this.startingTour) {
-            this.$store.commit('setTourBehavior', 'add-task')
+            this.$store.commit('setReplicationTour', {
+              behavior: 'add-task',
+              taskId: taskInfo.id
+            })
             // 上报引导创任务
-            this.buried(`guideCreateTask`, '')
+            this.buried(`guideCreateTask`, {
+              taskId: taskInfo.id
+            })
           }
         }
       })
