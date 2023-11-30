@@ -75,6 +75,7 @@ onBeforeMount(async () => {
   .el-select-v2__placeholder {
     position: relative;
     width: auto;
+    max-width: 200px;
     transform: none;
   }
   .el-select-v2__wrapper,
