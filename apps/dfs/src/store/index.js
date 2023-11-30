@@ -37,7 +37,12 @@ const store = new Vuex.Store({
       activeIndex: null,
       behavior: '', // add-source, add-target, add-task
       status: '', // starting, completed, paused
-      view: 'list' // board, list
+      view: 'list', // board, list
+      sourceConnectionId: '',
+      targetConnectionId: '',
+      isDemoSource: null,
+      isDemoTarget: null,
+      taskId: ''
     },
     // 新人引导
     guide: {

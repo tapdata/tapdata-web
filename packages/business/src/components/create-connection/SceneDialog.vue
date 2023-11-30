@@ -201,7 +201,8 @@ export default {
         name: '',
         pdkHash: null,
         pdkId: null,
-        md: null
+        md: null,
+        isDemo: false
       },
       selected: {},
       showForm: false,
@@ -457,7 +458,8 @@ export default {
         icon: null,
         pdkHash: item.pdkHash,
         pdkId: item.pdkId,
-        pdkOptions: item
+        pdkOptions: item,
+        isDemo
       })
       this.selected = item
       this.showForm = true
