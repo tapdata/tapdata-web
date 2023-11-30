@@ -294,6 +294,7 @@ export default {
         }
         promise
           .then(data => {
+            data.isDemo = this.params.isDemo // 标记是否是demo数据源
             this.buried('connectionSubmit', '', {
               result: true
             })
