@@ -13,7 +13,15 @@
       }}</ElButton>
     </div>
     <div class="field-inference__main flex">
-      <div class="field-inference__nav flex flex-column">
+      <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
+        <div class="nav-filter__list flex text-center lh-1 p-2">
+          <ElSelect v-model="activeClassification" @change="loadData">
+            <ElOption v-for="(item, index) in tableClassification" :key="index" :value="item.type" :label="item.label">
+              <span>{{ item.title }}</span>
+              <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
+            </ElOption>
+          </ElSelect>
+        </div>
         <ElInput
           v-model="searchTable"
           size="mini"
@@ -23,18 +31,6 @@
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
-        <div class="nav-filter__list flex text-center lh-1 mb-2">
-          <div
-            v-for="(item, index) in tableClassification"
-            :key="index"
-            class="nav-filter__item flex-fill py-1 cursor-pointer"
-            :class="[{ active: activeClassification === item.type }, { none: index && !item.total }]"
-            @click="handleTableClass(item.type)"
-          >
-            <div class="mb-2 text-center">{{ item.title }}</div>
-            <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
-          </div>
-        </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
@@ -80,9 +76,9 @@
           </div>
         </ElPagination>
       </div>
-      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column">
-        <div class="px-2">
-          <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column p-3">
+        <div>
+          <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
           <ElTooltip
             transition="tooltip-fade-in"
             :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
@@ -110,30 +106,33 @@
             </ElOption>
           </ElSelect>
         </div>
-        <div class="flex align-items-center p-2">
-          <ElInput
-            v-model="searchField"
-            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            size="mini"
-            suffix-icon="el-icon-search"
-            clearable
-            @input="handleSearchField"
-          ></ElInput>
-          <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
-            <VIcon>refresh</VIcon>
-          </ElButton>
+        <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
+          <div class="flex align-items-center p-2 font-color-dark">
+            <span style="width: 120px">{{ selected.name }}</span>
+            <ElInput
+              v-model="searchField"
+              :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+              size="mini"
+              suffix-icon="el-icon-search"
+              clearable
+              @input="handleSearchField"
+            ></ElInput>
+            <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+              <VIcon>refresh</VIcon>
+            </ElButton>
+          </div>
+          <List
+            ref="list"
+            :data="selected"
+            :show-columns="['index', 'field_name', 'data_type', 'operation']"
+            :fieldChangeRules.sync="fieldChangeRules"
+            :dataTypesJson="dataTypesJson"
+            :readonly="readonly"
+            ignore-error
+            class="content__list flex-fill"
+            @update-rules="handleUpdateRules"
+          ></List>
         </div>
-        <List
-          ref="list"
-          :data="selected"
-          :show-columns="['index', 'field_name', 'data_type', 'operation']"
-          :fieldChangeRules.sync="fieldChangeRules"
-          :dataTypesJson="dataTypesJson"
-          :readonly="readonly"
-          ignore-error
-          class="content__list flex-fill"
-          @update-rules="handleUpdateRules"
-        ></List>
       </div>
     </div>
     <Dialog
@@ -308,6 +307,7 @@ export default {
         } else {
           el.total = res[el.type + 'Num']
         }
+        el.label = `${el.title}(${el.total})`
       })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
       if (resetSelect) {
@@ -366,12 +366,6 @@ export default {
       this.filterFields()
     }, 200),
 
-    handleTableClass(type) {
-      if (this.activeClassification === type) return
-      this.activeClassification = type
-      this.loadData()
-    },
-
     handleVisibleChange(val) {
       !val && this.handleUpdateList()
     },
@@ -428,13 +422,15 @@ export default {
   height: 60vh;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
+  background-color: rgb(241, 242, 244);
 }
 .field-inference__nav {
   width: 210px;
-  border-right: 1px solid #f2f2f2;
+  border: 1px solid #e5e6eb;
 }
 .field-inference__content {
   width: 0;
+  border-left: 1px solid #e5e6eb;
 }
 .nav-list {
   overflow: hidden auto;
@@ -447,6 +443,7 @@ export default {
     &.active {
       background: map-get($bgColor, disactive);
       cursor: pointer;
+      color: map-get($color, primary);
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
@@ -483,6 +480,11 @@ export default {
 }
 .content__list {
   height: 0;
+  ::v-deep {
+    .el-table th.el-table__cell {
+      background-color: #ebeef5;
+    }
+  }
 }
 .page__current {
   width: 22px;
@@ -494,7 +496,26 @@ export default {
   background-color: map-get($bgColor, pageCount);
 }
 .nav-filter__list {
-  background-color: #fafafa;
+  background-color: #e5e6eb;
+  .el-select {
+    ::v-deep {
+      .el-input {
+        .el-input__inner {
+          background-color: #e5e6eb;
+          border-color: #e5e6eb;
+          color: map-get($fontColor, dark);
+
+          &:hover {
+            background-color: #fff;
+            border-color: map-get($color, primary);
+          }
+        }
+        .el-select__caret {
+          color: map-get($fontColor, dark);
+        }
+      }
+    }
+  }
 }
 .nav-filter__item {
   &.active {

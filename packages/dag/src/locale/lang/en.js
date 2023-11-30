@@ -337,7 +337,7 @@ export default {
   packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
-  packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
+  packages_dag_nodes_database_tuiyanjieguo: 'Target Table Structure',
   packages_dag_nodes_database_guolvjieguo: 'Filter Results',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node has the capability to process DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
