@@ -15,7 +15,7 @@
           </ElAlert>
         </div>
         <div class="form-wrap">
-          <div class="form px-4 pt-4">
+          <div class="form px-6 pt-4">
             <SchemaToForm
               ref="schemaToForm"
               class="pdk-schema-form"

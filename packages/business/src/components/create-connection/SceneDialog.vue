@@ -578,7 +578,8 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 0;
+    padding: 0 !important;
+    margin: 0;
     height: 0;
 
     .img-box {
