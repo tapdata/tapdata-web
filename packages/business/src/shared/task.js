@@ -172,7 +172,7 @@ export function makeStatusAndDisabled(item) {
   let { status } = item
   const mergeStatus = STATUS_MERGE[status]
 
-  if (item.is_deleted) {
+  if (item._deleted) {
     item.status = status = 'deleted'
   } else if (mergeStatus) {
     item.status = status = mergeStatus

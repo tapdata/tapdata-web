@@ -53,12 +53,7 @@
     </template>
     <!--重试状态-->
     <template v-if="showRetrying">
-      <ElTooltip
-        key="retrying"
-        placement="top"
-        popper-class="agent-tooltip__popper"
-        effect="light"
-      >
+      <ElTooltip key="retrying" placement="top" popper-class="agent-tooltip__popper" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <div class="flex align-items-start font-color-dark py-2">
@@ -197,7 +192,10 @@ export default {
   background-color: #b4edd8;
 }
 .task-status-renew_failed,
-.task-status-error {
+.task-status-error,
+.task-status-deleting,
+.task-status-delete_failed,
+.task-status-deleted {
   color: #d44d4d;
   background-color: #ffecec;
 }
