@@ -651,6 +651,7 @@ export default {
   packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_default_js: 'Default JS',
   packages_dag_standardization_js: 'Standardized JS',
+  packages_dag_mixins_formscope_gaiziduanshibi: 'This field is required!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
   packages_dag_table_not_exist: 'Table not exist, will be automatically created',
   packages_dag_field_inference_list_anxishutiaozheng: 'Adjust by coefficient',
