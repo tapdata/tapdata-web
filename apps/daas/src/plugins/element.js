@@ -1,4 +1,4 @@
-import { ElDialog, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox, ElDialog } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
 import { CloseIcon } from '@tap/component'
 

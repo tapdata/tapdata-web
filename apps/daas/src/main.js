@@ -1,4 +1,3 @@
-import '@/styles/app.scss'
 import * as Vue from 'vue'
 import App from '@/App.vue'
 import store from '@/vuex' // 引入全局数据控制
@@ -20,6 +19,7 @@ import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
 
 import 'virtual:svg-icons-register'
+import '@/styles/app.scss'
 
 window._TAPDATA_OPTIONS_ = {
   version: import.meta.env.VITE_VERSION,
