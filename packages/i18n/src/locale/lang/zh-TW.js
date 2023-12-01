@@ -68,6 +68,7 @@ export default {
   public_status_init: '初始化',
   public_status_waiting_delete: '等待删除',
   public_status_deleting: '删除中',
+  public_status_delete_failed: '刪除失敗',
   public_status_deleted: '已删除',
   // 按鈕
   public_button_edit: '編輯',

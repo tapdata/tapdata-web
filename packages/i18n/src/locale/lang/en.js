@@ -68,6 +68,7 @@ export default {
   public_status_init: 'Init',
   public_status_waiting_delete: 'Waiting Delete',
   public_status_deleting: 'Deleting',
+  public_status_delete_failed: 'Delete Failed',
   public_status_deleted: 'Deleted',
 
   // button

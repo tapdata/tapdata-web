@@ -138,6 +138,15 @@ export const STATUS_MAP = {
   },
   renew_failed: {
     i18n: 'public_status_renew_failed'
+  },
+  deleting: {
+    i18n: 'public_status_deleting'
+  },
+  delete_failed: {
+    i18n: 'public_status_delete_failed'
+  },
+  deleted: {
+    i18n: 'public_status_deleted'
   }
 }
 
@@ -163,11 +172,11 @@ export function makeStatusAndDisabled(item) {
   let { status } = item
   const mergeStatus = STATUS_MERGE[status]
 
-  if (mergeStatus) {
+  if (item.is_deleted) {
+    item.status = status = 'deleted'
+  } else if (mergeStatus) {
     item.status = status = mergeStatus
-  }
-
-  if (!(status in STATUS_MAP)) {
+  } else if (!(status in STATUS_MAP)) {
     console.error(
       i18n.t('packages_business_shared_task_weishibiederen', {
         val1: status
