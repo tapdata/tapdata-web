@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue'
+import { ElImage } from 'element-plus'
 import { getNodeIconSrc } from '../shared'
 
 export const DatabaseIcon = defineComponent({
