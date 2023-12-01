@@ -115,6 +115,7 @@ export default defineConfig({
         }),
       ],
       dts: 'src/components.d.ts',
+      include: [/\.vue$/, /\.vue\?vue/, /\.jsx|tsx$/],
     }),
     createSvgIconsPlugin({
       iconDirs: [

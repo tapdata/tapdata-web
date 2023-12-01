@@ -47,6 +47,7 @@ export default defineConfig({
       resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       // directoryAsNamespace: true,
       dts: 'src/components.d.ts',
+      include: [/\.vue$/, /\.vue\?vue/, /\.jsx|tsx$/],
     }),
 
     createSvgIconsPlugin({
