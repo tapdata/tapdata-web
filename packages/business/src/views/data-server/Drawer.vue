@@ -1015,6 +1015,12 @@ export default {
           original_name: this.form.tableName,
           is_deleted: false,
           sourceType: 'SOURCE'
+        },
+        fields: {
+          comment: true,
+          'fields.id': true,
+          'fields.field_name': true,
+          'fields.data_type': true
         }
       }
       const data = await metadataInstancesApi
@@ -1196,6 +1202,12 @@ export default {
           original_name: this.form.tableName,
           is_deleted: false,
           sourceType: 'SOURCE'
+        },
+        fields: {
+          comment: true,
+          'fields.id': true,
+          'fields.field_name': true,
+          'fields.data_type': true
         }
       }
       const data = await metadataInstancesApi.get({

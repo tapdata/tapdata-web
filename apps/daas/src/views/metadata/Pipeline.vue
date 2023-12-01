@@ -106,6 +106,9 @@ export default {
           databaseId: {
             regexp: `^${this.pipelineData.databaseId}$`
           }
+        },
+        fields: {
+          original_name: true
         }
       }
     }

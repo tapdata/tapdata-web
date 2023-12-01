@@ -542,7 +542,8 @@ export default {
         },
         fields: {
           id: true,
-          original_name: true
+          original_name: true,
+          comment: true
         },
         order: ['original_name ASC']
       }

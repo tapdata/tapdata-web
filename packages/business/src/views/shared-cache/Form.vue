@@ -298,6 +298,7 @@ export default {
             sourceType: 'SOURCE'
           },
           fields: {
+            id: true,
             'fields.field_name': true,
             'fields.original_field_name': true,
             indices: true

@@ -595,7 +595,8 @@ export default {
         })
       Object.assign(filter, {
         fields: {
-          original_name: true
+          original_name: true,
+          comment: true
         },
         order: ['original_name ASC']
       })
