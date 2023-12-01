@@ -6,7 +6,7 @@
         <el-card class="sign-in-panel">
           <div class="title">{{ $t('app_signIn_registry') }}</div>
           <div class="error-tips" v-show="errorMessage">
-            <i class="el-icon-warning-outline"></i>
+            <el-icon><el-icon-warning-outline /></el-icon>
             {{ errorMessage }}
           </div>
           <el-form ref="form" :model="form">
@@ -18,21 +18,22 @@
                 v-model="form.password"
                 :type="passwordType"
                 :placeholder="$t('app_signIn_password_placeholder')"
-                @keyup.13="submit"
+                @keyup.Enter="submit"
               >
-                <i
-                  slot="suffix"
-                  :class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
-                  style="margin-top: 8px; font-size: 18px; cursor: pointer"
-                  autocomplete="auto"
-                  @click="passwordTypeChange"
-                />
+                <template v-slot:suffix>
+                  <i
+                    :class="[flag ? 'icon-openeye' : 'icon-closeeye', 'iconfont']"
+                    style="margin-top: 8px; font-size: 18px; cursor: pointer"
+                    autocomplete="auto"
+                    @click="passwordTypeChange"
+                  />
+                </template>
               </el-input>
             </el-form-item>
             <el-form-item prop="inviteCode">
               <el-input
                 v-model="form.inviteCode"
-                type="text"
+                text
                 :placeholder="$t('app_signIn_inviteCode_placeholder')"
               ></el-input>
             </el-form-item>
@@ -41,14 +42,7 @@
                 >{{ $t('app_signIn_registry_tip') }} <i>{{ $t('app_signIn_userPplicy') }}</i></span
               >
             </el-checkbox>
-            <el-button
-              class="btn-sign-in"
-              type="primary"
-              size="medium"
-              :disabled="!keepSignIn"
-              :loading="loading"
-              @click="submit"
-            >
+            <el-button class="btn-sign-in" type="primary" :disabled="!keepSignIn" :loading="loading" @click="submit">
               {{ $t('app_signIn_nextStep') }}
             </el-button>
           </el-form>
@@ -76,8 +70,10 @@ import Cookie from '@tap/shared/src/cookie'
 import { usersApi } from '@tap/api'
 
 export default {
+  components: {
+    Header,
+  },
   name: 'SignIn',
-  components: { Header },
   data() {
     return {
       loading: false,
@@ -85,15 +81,14 @@ export default {
         email: '',
         password: '',
         emailVerified: true,
-        role: 0
+        role: 0,
       },
       errorMessage: '',
       keepSignIn: true,
       passwordType: 'password',
-      flag: false
+      flag: false,
     }
   },
-
   methods: {
     passwordTypeChange() {
       this.flag = !this.flag
@@ -142,7 +137,7 @@ export default {
         Cookie.set('user_id', data.id)
         this.$router.replace({
           name: 'verificationEmail',
-          params: { data: this.form }
+          params: { data: this.form },
         })
       } catch (e) {
         if (e.response && e.response.msg) {
@@ -166,10 +161,10 @@ export default {
     backLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.form.email }
+        query: { email: this.form.email },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 

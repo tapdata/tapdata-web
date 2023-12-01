@@ -1,8 +1,8 @@
 <template>
   <ElDialog
-    custom-class="agent-guide-dialog"
+    class="agent-guide-dialog"
     :width="style['dialog']"
-    :visible.sync="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="false"
@@ -13,8 +13,12 @@
         <header class="agent-guide-header mb-32">
           {{ $t('dfs_agent_download_agentguidedialog_huanyingshiyongT') }}
         </header>
-        <div class="agent-guide-desc mb-4">{{ $t('dfs_agent_download_agentguidedialog_dianjixiafangde') }}</div>
-        <div class="agent-guide-txt mb-4">{{ $t('dfs_agent_download_agentguidedialog_ninyaotongbude') }}</div>
+        <div class="agent-guide-desc mb-4">
+          {{ $t('dfs_agent_download_agentguidedialog_dianjixiafangde') }}
+        </div>
+        <div class="agent-guide-txt mb-4">
+          {{ $t('dfs_agent_download_agentguidedialog_ninyaotongbude') }}
+        </div>
         <div class="agent-guide-link flex">
           <div
             class="item mr-4 cursor-pointer"
@@ -23,7 +27,9 @@
             @click="changeImg('extranet')"
           >
             <VIcon size="30" class="color-primary">extranet</VIcon>
-            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}</div>
+            <div class="txt mt-2">
+              {{ $t('dfs_agent_download_agentguidedialog_womendeshuju') }}
+            </div>
           </div>
           <div
             class="item cursor-pointer"
@@ -32,7 +38,9 @@
             @click="changeImg('intranet')"
           >
             <VIcon size="30" class="color-primary">intranet</VIcon>
-            <div class="txt mt-2">{{ $t('dfs_agent_download_agentguidedialog_neiwang') }}</div>
+            <div class="txt mt-2">
+              {{ $t('dfs_agent_download_agentguidedialog_neiwang') }}
+            </div>
           </div>
         </div>
         <!-- 提示-->
@@ -60,7 +68,9 @@
               <VIcon size="18" class="color-primary mr-2">demoInstall</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_bantuoguanyunmo') }}
             </div>
-            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_ninkeyigenzhe') }}</div>
+            <div class="step-content">
+              {{ $t('dfs_agent_download_agentguidedialog_ninkeyigenzhe') }}
+            </div>
             <el-button type="primary" class="mb-2 step-button" @click="openAgentDownloadModal()">{{
               $t('dfs_agent_download_agentguidedialog_anzhuang')
             }}</el-button>
@@ -71,7 +81,9 @@
               <VIcon size="16" class="color-primary mr-2">offline-install</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_xianxiamoshizi') }}
             </div>
-            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_zainindeshuju') }}</div>
+            <div class="step-content">
+              {{ $t('dfs_agent_download_agentguidedialog_zainindeshuju') }}
+            </div>
             <el-button type="primary" class="mb-2" @click="goOnPrem()">{{
               $t('dfs_agent_download_agentguidedialog_huoquwanzhengshi')
             }}</el-button>
@@ -82,7 +94,9 @@
               <VIcon size="16" class="color-primary mr-2">cloud-install</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_quantuoguanyunmo') }}
             </div>
-            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_shiyongTap') }}</div>
+            <div class="step-content">
+              {{ $t('dfs_agent_download_agentguidedialog_shiyongTap') }}
+            </div>
             <el-button type="info" disabled class="mb-2" @click="openAgentDownloadModal()">{{
               $t('dfs_agent_download_agentguidedialog_jijiangshangxian')
             }}</el-button>
@@ -93,7 +107,9 @@
               <VIcon size="16" class="color-primary mr-2">selfInstall</VIcon
               >{{ $t('dfs_agent_download_agentguidedialog_tiyanDem') }}
             </div>
-            <div class="step-content">{{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}</div>
+            <div class="step-content">
+              {{ $t('dfs_agent_download_agentguidedialog_buxianganzhuanghuo') }}
+            </div>
             <el-button type="primary" class="mb-2 step-button" @click="goDemo()">{{
               $t('dfs_agent_download_agentguidedialog_tiyan')
             }}</el-button>
@@ -112,7 +128,9 @@
         <VIcon size="18" class="agent-download-icon" v-if="showClose" @click="close">close</VIcon>
       </div>
       <div class="agent-guide-init" v-show="type === 'init'">
-        <div class="agent-guide-right-txt">{{ $t('dfs_agent_download_agentguidedialog_tapda') }}</div>
+        <div class="agent-guide-right-txt">
+          {{ $t('dfs_agent_download_agentguidedialog_tapda') }}
+        </div>
       </div>
       <!--外网切换 -->
       <div class="agent-guide-sync" v-show="type === 'extranet-sync'">
@@ -165,7 +183,9 @@
     </section>
   </ElDialog>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 
@@ -175,8 +195,8 @@ export default {
   components: { VIcon },
   props: {
     visible: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -185,7 +205,7 @@ export default {
       step: 1,
       style: {},
       showClose: false, //关闭按钮
-      showTip: false
+      showTip: false,
     }
   },
   mounted() {
@@ -204,7 +224,7 @@ export default {
               dialog: '1100px',
               top: '20px',
               'ordinary-suffix': '365px',
-              step: '448px'
+              step: '448px',
             }
           : {
               current: '135px',
@@ -214,7 +234,7 @@ export default {
               dialog: '1035px',
               top: '110px',
               'ordinary-suffix': '130px',
-              step: '382px'
+              step: '382px',
             }
     },
     changeImg(type) {
@@ -239,13 +259,13 @@ export default {
     //关闭当前弹窗-弹出agent下载页面
     openAgentDownloadModal() {
       this.buried('agentGuideInstall')
-      this.$emit('openAgentDownload')
+      $emit(this, 'openAgentDownload')
     },
     close() {
       Cookie.set('deployLater', 1)
       let user = window.__USER_INFO__
       Cookie.set('deployLaterUser', user.userId)
-      this.$emit('update:visible', false)
+      $emit(this, 'update:visible', false)
     },
     //去官网报价
     goOnPrem() {
@@ -258,10 +278,12 @@ export default {
       this.buried('agentGuideDemo')
       this.showClose = true
       window.open('https://demo.cloud.tapdata.net/console/v3/')
-    }
-  }
+    },
+  },
+  emits: ['update:visible', 'openAgentDownload'],
 }
 </script>
+
 <style lang="scss" scoped>
 .agent-guide-main {
   .mt-110 {
@@ -438,18 +460,16 @@ export default {
     font-size: 12px;
   }
 }
-::v-deep {
-  .agent-guide-dialog {
-    margin-top: 9vh !important;
-    .el-button {
-      font-size: 16px;
-    }
-    .el-dialog__header {
-      padding: 0;
-    }
-    .el-dialog__body {
-      padding: 0;
-    }
+:deep(.agent-guide-dialog) {
+  margin-top: 9vh !important;
+  .el-button {
+    font-size: 16px;
+  }
+  .el-dialog__header {
+    padding: 0;
+  }
+  .el-dialog__body {
+    padding: 0;
   }
 }
 </style>

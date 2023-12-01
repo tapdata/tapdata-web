@@ -53,7 +53,7 @@
       </div>
       <template v-if="statsInfo.result !== 'passed'">
         <div v-if="inspectMethod !== 'jointField'" class="flex justify-content-between pt-4 px-4">
-          <ElRadioGroup v-model="showType">
+          <ElRadioGroup v-model:value="showType">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>
@@ -112,7 +112,9 @@
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>{{ $t('packages_business_verification_sourceTableData') }}</li>
+              <li>
+                {{ $t('packages_business_verification_sourceTableData') }}
+              </li>
               <li>{{ $t('packages_business_verification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
@@ -130,15 +132,113 @@
       background
       layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
-      :page-size.sync="page.size"
+      v-model:page-size="page.size"
       :total="page.total"
-      :current-page.sync="page.current"
+      v-model:current-page="page.current"
       @current-change="fetch"
       @size-change="fetch(1)"
     >
     </ElPagination>
   </div>
 </template>
+
+<script>
+import JsonViewer from 'vue-json-viewer'
+import { VIcon } from '@tap/component'
+export default {
+  components: {
+    JsonViewer,
+    VIcon,
+  },
+  props: {
+    remoteMethod: Function,
+  },
+  data() {
+    return {
+      loading: false,
+      page: {
+        current: 1,
+        size: 20,
+        total: 0,
+      },
+      showAdvancedVerification: false,
+      statsInfo: {},
+      resultList: [],
+      showType: 'diff',
+      sourceSortColumn: [], // 源索引字段
+      targetSortColumn: [], // 目标索引字段
+      inspectMethod: '',
+    }
+  },
+  computed: {
+    filterResultList() {
+      return this.resultList?.filter((t) => !!t.details) || []
+    },
+  },
+  methods: {
+    fetch(current) {
+      // this.loading = true
+      this.remoteMethod({ current, size: this.page.size })
+        .then(
+          ({
+            statsInfo = {},
+            resultList,
+            total,
+            showAdvancedVerification,
+            sourceSortColumn,
+            targetSortColumn,
+            inspectMethod,
+          }) => {
+            if (statsInfo?.result === 'failed') {
+              let countResultText = ''
+              let contentResultText = ''
+              let diffCount = statsInfo.target_total - statsInfo.source_total
+              let diffCountNum = Math.abs(diffCount)
+              if (diffCount > 0) {
+                countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
+              }
+              if (diffCount < 0) {
+                countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
+              }
+              if (this.type !== 'row_count') {
+                let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
+                if (diffContentNum !== 0) {
+                  contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
+                }
+              }
+              statsInfo.countResultText = countResultText
+              statsInfo.contentResultText = contentResultText
+            }
+            this.statsInfo = statsInfo
+            this.resultList = resultList
+            this.page.total = total
+            this.showAdvancedVerification = showAdvancedVerification
+            this.sourceSortColumn = sourceSortColumn
+            this.targetSortColumn = targetSortColumn
+            this.inspectMethod = inspectMethod
+          },
+        )
+        .finally(() => {
+          this.loading = false
+        })
+    },
+
+    getDetailsList(data = []) {
+      data.forEach((el) => {
+        if (this.sourceSortColumn.includes(el.source.key)) {
+          el.source.isSortColumn = true
+        }
+        if (this.targetSortColumn.includes(el.target.key)) {
+          el.target.isSortColumn = true
+        }
+      })
+      if (this.showType === 'all') return data
+      return data.filter((t) => !!t.red)
+    },
+  },
+}
+</script>
+
 <style lang="scss" scoped>
 $margin: 10px;
 .verification-result-view {
@@ -354,6 +454,7 @@ $margin: 10px;
   height: 20px;
 }
 </style>
+
 <style lang="scss">
 .result-view-pagination {
   padding-left: 24px;
@@ -365,99 +466,3 @@ $margin: 10px;
   }
 }
 </style>
-<script>
-import JsonViewer from 'vue-json-viewer'
-import { VIcon } from '@tap/component'
-export default {
-  components: {
-    JsonViewer,
-    VIcon
-  },
-  props: {
-    remoteMethod: Function
-  },
-  data() {
-    return {
-      loading: false,
-      page: {
-        current: 1,
-        size: 20,
-        total: 0
-      },
-      showAdvancedVerification: false,
-      statsInfo: {},
-      resultList: [],
-      showType: 'diff',
-      sourceSortColumn: [], // 源索引字段
-      targetSortColumn: [], // 目标索引字段
-      inspectMethod: ''
-    }
-  },
-  computed: {
-    filterResultList() {
-      return this.resultList?.filter(t => !!t.details) || []
-    }
-  },
-  methods: {
-    fetch(current) {
-      // this.loading = true
-      this.remoteMethod({ current, size: this.page.size })
-        .then(
-          ({
-            statsInfo = {},
-            resultList,
-            total,
-            showAdvancedVerification,
-            sourceSortColumn,
-            targetSortColumn,
-            inspectMethod
-          }) => {
-            if (statsInfo?.result === 'failed') {
-              let countResultText = ''
-              let contentResultText = ''
-              let diffCount = statsInfo.target_total - statsInfo.source_total
-              let diffCountNum = Math.abs(diffCount)
-              if (diffCount > 0) {
-                countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
-              }
-              if (diffCount < 0) {
-                countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
-              }
-              if (this.type !== 'row_count') {
-                let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
-                if (diffContentNum !== 0) {
-                  contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
-                }
-              }
-              statsInfo.countResultText = countResultText
-              statsInfo.contentResultText = contentResultText
-            }
-            this.statsInfo = statsInfo
-            this.resultList = resultList
-            this.page.total = total
-            this.showAdvancedVerification = showAdvancedVerification
-            this.sourceSortColumn = sourceSortColumn
-            this.targetSortColumn = targetSortColumn
-            this.inspectMethod = inspectMethod
-          }
-        )
-        .finally(() => {
-          this.loading = false
-        })
-    },
-
-    getDetailsList(data = []) {
-      data.forEach(el => {
-        if (this.sourceSortColumn.includes(el.source.key)) {
-          el.source.isSortColumn = true
-        }
-        if (this.targetSortColumn.includes(el.target.key)) {
-          el.target.isSortColumn = true
-        }
-      })
-      if (this.showType === 'all') return data
-      return data.filter(t => !!t.red)
-    }
-  }
-}
-</script>

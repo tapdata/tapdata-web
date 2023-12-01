@@ -8,29 +8,32 @@
         <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
         <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
       </div>
-      <ElButton v-if="!readonly" type="text" class="ml-3" @click="rollbackAll">{{
+      <ElButton v-if="!readonly" text class="ml-3" @click="rollbackAll">{{
         $t('packages_form_field_inference_main_quanbuhuifumo')
       }}</ElButton>
     </div>
     <div class="field-inference__main flex">
-      <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
-        <div class="nav-filter__list flex text-center lh-1 p-2">
-          <ElSelect v-model="activeClassification" @change="loadData">
-            <ElOption v-for="(item, index) in tableClassification" :key="index" :value="item.type" :label="item.label">
-              <span>{{ item.title }}</span>
-              <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
-            </ElOption>
-          </ElSelect>
-        </div>
+      <div class="field-inference__nav flex flex-column">
         <ElInput
           v-model="searchTable"
-          size="mini"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
           class="p-2"
           @input="handleSearchTable"
         ></ElInput>
+        <div class="nav-filter__list flex text-center lh-1 mb-2">
+          <div
+            v-for="(item, index) in tableClassification"
+            :key="index"
+            class="nav-filter__item flex-fill py-1 cursor-pointer"
+            :class="[{ active: activeClassification === item.type }, { none: index && !item.total }]"
+            @click="handleTableClass(item.type)"
+          >
+            <div class="mb-2 text-center">{{ item.title }}</div>
+            <span :class="[item.total && item.type ? 'color-danger' : 'color-info']">({{ item.total }})</span>
+          </div>
+        </div>
         <div v-loading="navLoading" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
@@ -44,18 +47,20 @@
                 <OverflowTooltip class="w-100 text-truncate target" :text="item.name" placement="right" />
               </div>
               <!--<ElTooltip
-                v-if="item.matchedDataTypeLevel === 'error'"
-                placement="top"
-                transition="tooltip-fade-in"
-                :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
-                class="mr-1"
-              >
-                <VIcon size="16" class="color-warning">warning</VIcon>
-              </ElTooltip>-->
+                      v-if="item.matchedDataTypeLevel === 'error'"
+                      placement="top"
+                      transition="tooltip-fade-in"
+                      :content="$t('packages_dag_field_inference_main_gaibiaocunzaibu')"
+                      class="mr-1"
+                    >
+                      <VIcon size="16" class="color-warning">warning</VIcon>
+                    </ElTooltip>-->
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
             <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
@@ -63,8 +68,8 @@
           small
           class="flex mt-3 p-0 din-font mx-auto"
           layout="total, prev, slot, next"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
           :total="page.total"
           :pager-count="5"
           @current-change="loadData"
@@ -76,9 +81,9 @@
           </div>
         </ElPagination>
       </div>
-      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column p-3">
-        <div>
-          <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+      <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column">
+        <div class="px-2">
+          <span>{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
           <ElTooltip
             transition="tooltip-fade-in"
             :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
@@ -87,9 +92,8 @@
             <VIcon size="16" class="color-primary">info</VIcon>
           </ElTooltip>
           <ElSelect
-            v-model="updateList"
+            v-model:value="updateList"
             :disabled="navLoading"
-            size="mini"
             allowCreate
             multiple
             filterable
@@ -106,55 +110,49 @@
             </ElOption>
           </ElSelect>
         </div>
-        <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
-          <div class="flex align-items-center p-2 font-color-dark">
-            <span style="width: 120px">{{ selected.name }}</span>
-            <ElInput
-              v-model="searchField"
-              :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-              size="mini"
-              suffix-icon="el-icon-search"
-              clearable
-              @input="handleSearchField"
-            ></ElInput>
-            <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
-              <VIcon>refresh</VIcon>
-            </ElButton>
-          </div>
-          <List
-            ref="list"
-            :data="selected"
-            :show-columns="['index', 'field_name', 'data_type', 'operation']"
-            :fieldChangeRules.sync="fieldChangeRules"
-            :dataTypesJson="dataTypesJson"
-            :readonly="readonly"
-            ignore-error
-            class="content__list flex-fill"
-            @update-rules="handleUpdateRules"
-          ></List>
+        <div class="flex align-items-center p-2">
+          <ElInput
+            v-model:value="searchField"
+            :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
+            suffix-icon="el-icon-search"
+            clearable
+            @input="handleSearchField"
+          ></ElInput>
+          <ElButton plain class="btn-refresh ml-2" @click="refresh">
+            <VIcon>refresh</VIcon>
+          </ElButton>
         </div>
+        <List
+          ref="list"
+          :data="selected"
+          :show-columns="['index', 'field_name', 'data_type', 'operation']"
+          v-model:fieldChangeRules="fieldChangeRules"
+          :readonly="readonly"
+          ignore-error
+          class="content__list flex-fill"
+          @update-rules="handleUpdateRules"
+        ></List>
       </div>
     </div>
     <Dialog
-      :visible.sync="visible"
+      v-model:visible="visible"
       :form="form"
-      :fieldChangeRules.sync="fieldChangeRules"
+      v-model:fieldChangeRules="fieldChangeRules"
       :readonly="readonly"
     ></Dialog>
   </div>
 </template>
 
 <script>
-import i18n from '@tap/i18n'
-
 import { mapGetters, mapState } from 'vuex'
 import { debounce, cloneDeep } from 'lodash'
 
+import i18n from '@tap/i18n'
 import noData from '@tap/assets/images/noData.png'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
-import { getCanUseDataTypes, getMatchedDataTypeLevel } from '@tap/dag/src/util'
-import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import { metadataInstancesApi } from '@tap/api'
 
+import { getCanUseDataTypes, getMatchedDataTypeLevel } from '../../../util'
 import mixins from './mixins'
 import List from './List'
 import Dialog from './Dialog'
@@ -168,7 +166,7 @@ export default {
 
   props: {
     form: Object,
-    readOnly: Boolean
+    readOnly: Boolean,
   },
 
   data() {
@@ -182,7 +180,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
@@ -196,22 +194,21 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0
+          total: 0,
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0
+          total: 0,
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0
-        }
+          total: 0,
+        },
       ],
       transformExNum: 0,
       updateExNum: 0,
-      dataTypesJson: {}
     }
   },
 
@@ -219,7 +216,7 @@ export default {
     ...mapGetters('dataflow', ['stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
     },
 
     readonly() {
@@ -229,7 +226,7 @@ export default {
     isErrorSelect() {
       const { hasPrimaryKey, hasUnionIndex, hasUpdateField } = this.selected || {}
       return !(hasPrimaryKey || hasUnionIndex || hasUpdateField)
-    }
+    },
   },
 
   mounted() {
@@ -243,7 +240,7 @@ export default {
         this.activeClassification = ''
         this.loadData()
       }
-    }
+    },
   },
 
   methods: {
@@ -252,16 +249,13 @@ export default {
       this.fieldsLoading = true
       // TODO 获取原字段类型
       let rules = this.form.getValuesIn('fieldChangeRules') || []
-      let nodeAttrs = this.form.getValuesIn('attrs') || {}
-      const pdkHashData = await databaseTypesApi.pdkHash(nodeAttrs.pdkHash)
-      this.dataTypesJson = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
       if (rules.length) {
         let allTableFields = []
-        this.navList.forEach(el => {
-          allTableFields.push(...el.fields.filter(t => !!t.changeRuleId))
+        this.navList.forEach((el) => {
+          allTableFields.push(...el.fields.filter((t) => !!t.changeRuleId))
         })
-        rules.forEach(el => {
-          const f = allTableFields.find(t => t.changeRuleId === el.id)
+        rules.forEach((el) => {
+          const f = allTableFields.find((t) => t.changeRuleId === el.id)
           if (f && el.accept !== f.dataTypeTemp) {
             el.accept = f.dataTypeTemp
           }
@@ -275,39 +269,38 @@ export default {
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map(t => {
+      this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach(el => {
+        fields.forEach((el) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
             this.fieldChangeRules,
-            findPossibleDataTypes
+            findPossibleDataTypes,
           )
         })
-        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
           ? 'error'
-          : fields.some(f => f.matchedDataTypeLevel === 'warning')
+          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
           ? 'warning'
           : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach(el => {
+      this.tableClassification.forEach((el) => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
           el.total = res[el.type + 'Num']
         }
-        el.label = `${el.title}(${el.total})`
       })
       this.page.count = total ? Math.ceil(total / this.page.size) : 1
       if (resetSelect) {
@@ -328,7 +321,7 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       fields = await this.getCurrentTableFields(item, this.fieldChangeRules)
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
@@ -344,8 +337,8 @@ export default {
     rollbackAll() {
       this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -365,6 +358,12 @@ export default {
     handleSearchField: debounce(function () {
       this.filterFields()
     }, 200),
+
+    handleTableClass(type) {
+      if (this.activeClassification === type) return
+      this.activeClassification = type
+      this.loadData()
+    },
 
     handleVisibleChange(val) {
       !val && this.handleUpdateList()
@@ -386,8 +385,8 @@ export default {
     },
 
     updateSelectedAllFields(fields = []) {
-      this.selected.fields.forEach(t => {
-        const f = fields.find(el => el.field_name === t.field_name)
+      this.selected.fields.forEach((t) => {
+        const f = fields.find((el) => el.field_name === t.field_name)
         if (f) {
           t.data_type = f.data_type
           t.changeRuleId = f.changeRuleId
@@ -399,16 +398,18 @@ export default {
       const { qualified_name, nodeId, source = {}, fields = [] } = item
       const { database_type } = source
       const params = {
-        rules: rules.filter(t => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
+        rules: rules.filter((t) => t.namespace.length === 1 || t.namespace.includes(qualified_name)),
         qualifiedName: qualified_name,
         nodeId,
         databaseType: database_type,
-        fields
+        fields,
       }
-      const data = (await metadataInstancesApi.multiTransform(params)) || { fields: [] }
+      const data = (await metadataInstancesApi.multiTransform(params)) || {
+        fields: [],
+      }
       return data.fields.length ? data.fields : fields
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -422,15 +423,13 @@ export default {
   height: 60vh;
   border: 1px solid #f2f2f2;
   border-radius: 4px;
-  background-color: rgb(241, 242, 244);
 }
 .field-inference__nav {
   width: 210px;
-  border: 1px solid #e5e6eb;
+  border-right: 1px solid #f2f2f2;
 }
 .field-inference__content {
   width: 0;
-  border-left: 1px solid #e5e6eb;
 }
 .nav-list {
   overflow: hidden auto;
@@ -443,7 +442,6 @@ export default {
     &.active {
       background: map-get($bgColor, disactive);
       cursor: pointer;
-      color: map-get($color, primary);
       border-left-color: map-get($color, primary);
     }
     .task-form-text-box {
@@ -480,11 +478,6 @@ export default {
 }
 .content__list {
   height: 0;
-  ::v-deep {
-    .el-table th.el-table__cell {
-      background-color: #ebeef5;
-    }
-  }
 }
 .page__current {
   width: 22px;
@@ -496,39 +489,17 @@ export default {
   background-color: map-get($bgColor, pageCount);
 }
 .nav-filter__list {
-  background-color: #e5e6eb;
-  .el-select {
-    ::v-deep {
-      .el-input {
-        .el-input__inner {
-          background-color: #e5e6eb;
-          border-color: #e5e6eb;
-          color: map-get($fontColor, dark);
-
-          &:hover {
-            background-color: #fff;
-            border-color: map-get($color, primary);
-          }
-        }
-        .el-select__caret {
-          color: map-get($fontColor, dark);
-        }
-      }
-    }
-  }
+  background-color: #fafafa;
 }
 .nav-filter__item {
   &.active {
     background: map-get($bgColor, disactive);
   }
 }
-
 .update-list-select {
   &.error {
-    ::v-deep {
-      .el-input__inner {
-        border-color: map-get($color, danger);
-      }
+    :deep(.el-input__inner) {
+      border-color: map-get($color, danger);
     }
   }
 }

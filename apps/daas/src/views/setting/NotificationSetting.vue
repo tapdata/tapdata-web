@@ -20,19 +20,19 @@
                 <el-input
                   v-model="item.lagTimeInterval"
                   class="item-input"
-                  size="mini"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <el-select
-                    v-model="item.lagTimeUtil"
-                    slot="append"
-                    :placeholder="$t('public_select_placeholder')"
-                    class="input-with-select"
-                  >
-                    <el-option label="hour" value="hour"></el-option>
-                    <el-option label="second" value="second"></el-option>
-                  </el-select>
+                  <template v-slot:append>
+                    <el-select
+                      v-model="item.lagTimeUtil"
+                      :placeholder="$t('public_select_placeholder')"
+                      class="input-with-select"
+                    >
+                      <el-option label="hour" value="hour"></el-option>
+                      <el-option label="second" value="second"></el-option>
+                    </el-select>
+                  </template>
                 </el-input>
               </span>
             </div>
@@ -45,38 +45,38 @@
                 <el-input
                   v-model="item.noticeIntervalInterval"
                   class="item-input"
-                  size="mini"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <el-select
-                    v-model="item.noticeIntervalUtil"
-                    slot="append"
-                    :placeholder="$t('public_select_placeholder')"
-                    class="input-with-select"
-                  >
-                    <el-option label="hour" value="hour"></el-option>
-                    <el-option label="second" value="second"></el-option>
-                  </el-select>
+                  <template v-slot:append>
+                    <el-select
+                      v-model="item.noticeIntervalUtil"
+                      :placeholder="$t('public_select_placeholder')"
+                      class="input-with-select"
+                    >
+                      <el-option label="hour" value="hour"></el-option>
+                      <el-option label="second" value="second"></el-option>
+                    </el-select>
+                  </template>
                 </el-input>
               </span>
               <span v-if="item.label === 'jobEncounterError' && item.email">
                 <el-input
                   v-model="item.Interval"
                   class="item-input"
-                  size="mini"
                   onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                   onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                 >
-                  <el-select
-                    v-model="item.util"
-                    slot="append"
-                    :placeholder="$t('public_select_placeholder')"
-                    class="input-with-select"
-                  >
-                    <el-option label="hour" value="hour"></el-option>
-                    <el-option label="second" value="second"></el-option>
-                  </el-select>
+                  <template v-slot:append>
+                    <el-select
+                      v-model="item.util"
+                      :placeholder="$t('public_select_placeholder')"
+                      class="input-with-select"
+                    >
+                      <el-option label="hour" value="hour"></el-option>
+                      <el-option label="second" value="second"></el-option>
+                    </el-select>
+                  </template>
                 </el-input>
               </span>
             </div>
@@ -108,15 +108,14 @@
       <ElButton
         class="btn"
         @click="submit"
-        size="mini"
         type="primary"
         :disabled="!runNotification || !systemNotification || !agentNotification"
         >{{ $t('public_button_save') }}</ElButton
       >
     </div>
     <!-- <div class="notification-main">
-      <div class="notification-right-list"></div>
-    </div> -->
+          <div class="notification-right-list"></div>
+        </div> -->
   </div>
 </template>
 
@@ -132,7 +131,7 @@ export default {
       runNotification: [],
       systemNotification: [],
       agentNotification: [],
-      loading: false
+      loading: false,
     }
   },
   created() {
@@ -143,7 +142,7 @@ export default {
       this.loading = true
       settingsApi
         .findOne('76')
-        .then(data => {
+        .then((data) => {
           let value = JSON.parse(data?.value || '{}')
           this.runNotification = value.runNotification
           this.systemNotification = value.systemNotification
@@ -155,12 +154,12 @@ export default {
     },
     submit() {
       let where = {
-        _id: '76'
+        _id: '76',
       }
       let data = {
         runNotification: this.runNotification,
         systemNotification: this.systemNotification,
-        agentNotification: this.agentNotification
+        agentNotification: this.agentNotification,
       }
       if (!data) {
         return
@@ -173,20 +172,14 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $unreadColor: #ee5353;
-.notification {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  font-size: $fontBaseTitle;
-  .notification-head {
+.notification{display:flex;flex-direction:column;justify-content:space-between;height:100%;font-size:$fontBaseTitle;.notification-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -232,11 +225,6 @@ $unreadColor: #ee5353;
         line-height: 32px;
         margin-bottom: 20px;
       }
-      // ::v-deep {
-      //   .el-checkbox__label {
-      //     color: #86909c;
-      //   }
-      // }
       .notice,
       .email {
         color: map-get($fontColor, light);
@@ -259,12 +247,11 @@ $unreadColor: #ee5353;
         .item-input {
           width: 200px;
         }
-        ::v-deep {
-          .el-checkbox {
-            .el-checkbox__label {
-              color: map-get($fontColor, light);
-            }
-          }
+
+        :deep(.el-checkbox) {
+	        .el-checkbox__label {
+		        color: map-get($fontColor, light);
+	        }
         }
       }
       .input-with-select {
@@ -280,15 +267,7 @@ $unreadColor: #ee5353;
     height: 60px;
     text-align: right;
     border-top: 1px solid map-get($borderColor, light);
-  }
-}
-
-// .notification-main {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: space-between;
-//   height: 100%;
-//   .notification-left-sidebar {
+  }}/*// .notification-main*/{/*//   display: flex;*//*//   flex-direction: column;*//*//   justify-content: space-between;*//*//   height: 100%;*//*//   .notification-left-sidebar {*/
 //     background: rgba(250, 250, 250, 1);
 //     border: 1px solid rgba(230, 230, 232, 1);
 //     width: 250px;
@@ -320,12 +299,9 @@ $unreadColor: #ee5353;
 //     padding-left: 20px;
 //   }
 
-// }
-.pagination {
-  float: right;
-  margin-top: 10px;
-}
+//}.pagination{float:right;margin-top:10px}
 </style>
+
 <style lang="scss">
 .notification {
   .el-tabs__item {

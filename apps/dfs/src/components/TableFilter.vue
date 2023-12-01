@@ -18,20 +18,21 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
   components: { VIcon },
   props: {
     value: {
-      type: String
+      type: String,
     },
     options: {
-      type: [Array, Object]
-    }
+      type: [Array, Object],
+    },
   },
   data() {
     return {
-      visible: false
+      visible: false,
     }
   },
   watch: {
@@ -39,10 +40,10 @@ export default {
       this.$nextTick(() => {
         this.$parent.$forceUpdate()
       })
-    }
+    },
   },
   created() {
-    window.addEventListener('click', e => {
+    window.addEventListener('click', (e) => {
       if (e.target.className.indexOf('table-filter__icon') < 0) {
         this.visible = false
       }
@@ -51,7 +52,7 @@ export default {
   methods: {
     input(value) {
       this.visible = false
-      this.$emit('input', value)
+      $emit(this, 'update:value', value)
       this.$nextTick(() => {
         this.$parent.$forceUpdate()
       })
@@ -64,8 +65,9 @@ export default {
       } else {
         this.visible = false
       }
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
 

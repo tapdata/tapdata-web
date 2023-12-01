@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, watch, nextTick, onMounted } from '@vue/composition-api'
+import { defineComponent, reactive, ref, watch, nextTick, onMounted } from 'vue'
 import { FilterBar, Drawer, VIcon } from '@tap/component'
 import { TablePage, DiscoveryClassification, makeDragNodeImage } from '@tap/business'
 import { discoveryApi } from '@tap/api'
@@ -11,7 +11,7 @@ import resize from '@tap/component/src/directives/resize'
 export default defineComponent({
   props: [''],
   directives: {
-    resize
+    resize,
   },
   setup(props, { refs, root }) {
     const list = ref([])
@@ -22,32 +22,32 @@ export default defineComponent({
       tableLoading: false,
       searchParams: {
         sourceType: sourceType || '',
-        queryKey: queryKey || ''
+        queryKey: queryKey || '',
       },
       page: {
         size: 20,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentNode: '',
-      filterItems: []
+      filterItems: [],
     })
     const loadData = ({ page }) => {
-      let { sourceType, queryKey } = data.searchParams
-      let { size, current } = page
-      let where = {
+      const { sourceType, queryKey } = data.searchParams
+      const { size, current } = page
+      const where = {
         page: current,
         pageSize: size,
-        tagId: data?.currentNode?.['id'] || ''
+        tagId: data?.currentNode?.['id'] || '',
       }
       sourceType && (where['objType'] = sourceType)
       queryKey && (where['queryKey'] = queryKey)
-      return discoveryApi.discoveryList(where).then(res => {
-        let { total, items } = res
+      return discoveryApi.discoveryList(where).then((res) => {
+        const { total, items } = res
         return {
           total: total,
-          data: items
+          data: items,
         }
       })
     }
@@ -56,43 +56,43 @@ export default defineComponent({
       refs.table.fetch(1)
     }
     const loadFilterList = () => {
-      let filterType = ['objType']
-      discoveryApi.filterList(filterType).then(res => {
-        let { objType } = res
+      const filterType = ['objType']
+      discoveryApi.filterList(filterType).then((res) => {
+        const { objType } = res
         data.filterItems = [
           {
             label: i18n.t('datadiscovery_catalogue_ziyuanleixing'),
             key: 'sourceType',
             type: 'select-inner',
             items: dataAssembly(objType),
-            selectedWidth: '200px'
+            selectedWidth: '200px',
           },
           {
             placeholder: i18n.t('datadiscovery_catalogue_lianjieduixiangming'),
             key: 'queryKey',
-            type: 'input'
-          }
+            type: 'input',
+          },
         ]
       })
     }
-    const dataAssembly = data => {
+    const dataAssembly = (data) => {
       if (data?.length === 0) return
-      return data.map(item => {
+      return data.map((item) => {
         return {
           label: item,
-          value: item
+          value: item,
         }
       })
     }
     //打开资源概览
-    const handlePreview = row => {
+    const handlePreview = (row) => {
       data.isShowDetails = true
       nextTick(() => {
         // @ts-ignore
         refs?.drawerContent?.loadData(row)
       })
     }
-    const closeDrawer = val => {
+    const closeDrawer = (val) => {
       data.isShowDetails = val
     }
     //打开资源绑定抽屉
@@ -107,7 +107,7 @@ export default defineComponent({
         refs?.objectTable?.loadTableData()
       })
     }
-    const closeSourceDrawer = val => {
+    const closeSourceDrawer = (val) => {
       data.isShowSourceDrawer = val
       nextTick(() => {
         // @ts-ignore
@@ -118,7 +118,7 @@ export default defineComponent({
       })
     }
     //切换目录
-    const getNodeChecked = node => {
+    const getNodeChecked = (node) => {
       data.currentNode = node
       // @ts-ignore
       refs.table.fetch(1)
@@ -133,7 +133,7 @@ export default defineComponent({
           </span>
           <span
             class="col-new-field-name inline-block ellipsis align-middle color-primary  mr-4 "
-            onClick={event => {
+            onClick={(event) => {
               event.stopPropagation()
               handlePreview(row)
             }}
@@ -146,10 +146,10 @@ export default defineComponent({
     loadFilterList()
     watch(
       () => root.$route.query,
-      val => {
+      (val) => {
         // @ts-ignore
         refs.table.fetch(1)
-      }
+      },
     )
     onMounted(() => {
       // @ts-ignore
@@ -160,17 +160,17 @@ export default defineComponent({
       isDragging: false,
       draggingObjects: [],
       dropNode: null,
-      allowDrop: true
+      allowDrop: true,
     })
 
     let draggingNodeImage
     const handleDragStart = (row, column, ev) => {
       dragState.isDragging = true
       console.log('nodeDragStart', row, column, event) // eslint-disable-line
-      let draggingRow = [row]
+      const draggingRow = [row]
 
       if (row.id in multipleSelectionMap.value) {
-        let selectionRows = Object.values(multipleSelectionMap.value)
+        const selectionRows = Object.values(multipleSelectionMap.value)
         draggingRow.length = selectionRows.length
         dragState.draggingObjects = selectionRows
       } else {
@@ -180,7 +180,7 @@ export default defineComponent({
       draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.name,
-        dragState.draggingObjects.length
+        dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(draggingNodeImage, 0, 0)
     }
@@ -194,7 +194,7 @@ export default defineComponent({
     }
 
     const multipleSelectionMap = ref({})
-    const handleSelectionChange = val => {
+    const handleSelectionChange = (val) => {
       multipleSelectionMap.value = val.reduce((obj, item) => {
         obj[item.id] = item
         return obj
@@ -214,7 +214,7 @@ export default defineComponent({
       handleDragStart,
       handleDragEnd,
       handleSelectionChange,
-      dragState
+      dragState,
     }
   },
   render() {
@@ -227,13 +227,13 @@ export default defineComponent({
                 name: 'resize',
                 value: {
                   minWidth: 300,
-                  maxWidth: 600
+                  maxWidth: 600,
                 },
                 modifiers: {
-                  right: true
-                }
-              }
-            ]
+                  right: true,
+                },
+              },
+            ],
           }}
           class="page-left border-right"
         >
@@ -252,7 +252,7 @@ export default defineComponent({
           on={{
             'row-dragstart': this.handleDragStart,
             'row-dragend': this.handleDragEnd,
-            'selection-change': this.handleSelectionChange
+            'selection-change': this.handleSelectionChange,
           }}
         >
           <template slot="search">
@@ -273,7 +273,6 @@ export default defineComponent({
             ) : (
               <el-button
                 type="primary"
-                size="mini"
                 onClick={() => {
                   this.handleSourceDrawer()
                 }}
@@ -289,7 +288,7 @@ export default defineComponent({
             show-overflow-tooltip
             width="350px"
             scopedSlots={{
-              default: this.renderNode
+              default: this.renderNode,
             }}
           ></el-table-column>
           <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
@@ -318,5 +317,5 @@ export default defineComponent({
         </el-drawer>
       </section>
     )
-  }
+  },
 })

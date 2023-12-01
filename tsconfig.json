@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
     /* 基本选项 */
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "ESNext",
     "jsx": "preserve",
-    "importHelpers": true, // 从 tslib 导入辅助工具函数
-    "declaration": true, // 生成相应的 '.d.ts' 文件
-    "esModuleInterop": true,
     "sourceMap": true,
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "allowJs": true,
     /* 严格的类型检查选项 */
     // "noImplicitAny": true, // 在表达式和声明上有隐含的 any类型时报错
     // "strict": true, // 启用所有严格类型检查选项
@@ -20,12 +19,12 @@
     /* 额外的检查 */
     "moduleResolution": "node", // 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6)
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["apps/daas/src/*"]
-    },
-
     // /* 模块解析选项 */
-    "allowSyntheticDefaultImports": true // 允许从没有设置默认导出的模块中默认导入。
+    "allowSyntheticDefaultImports": true, // 允许从没有设置默认导出的模块中默认导入。
+
+    "paths": {
+      "@tap/*": ["packages/*/src"]
+    }
 
     // /* 基本选项 */
     // "target": "es5",                       // 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES6'/'ES2015', 'ES2016', 'ES2017', or 'ESNEXT'
@@ -78,20 +77,9 @@
   },
 
   "include": [
-    "apps/daas/src/**/*.ts",
-    "apps/daas/src/**/*.tsx",
-    "apps/daas/src/**/*.vue",
-    "apps/daas/tests/**/*.ts",
-    "apps/daas/tests/**/*.tsx",
-    "apps/daas/types/**/*.ts",
-    "apps/dfs/src/**/*.ts",
-    "apps/dfs/src/**/*.tsx",
-    "apps/dfs/src/**/*.vue",
-    "apps/dfs/tests/**/*.ts",
-    "apps/dfs/tests/**/*.tsx",
-    "apps/dfs/types/**/*.ts",
-    "packages/api/src/*.ts",
-    "types/*.d.ts"
+    "packages/*/src/**/*.ts",
+    "packages/*/src/**/*.tsx",
+    "packages/*/src/**/*.vue"
   ],
   "exclude": ["node_modules"]
 }

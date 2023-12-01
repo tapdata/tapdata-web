@@ -3,21 +3,20 @@
     <span v-if="showTitle" class="fw-bold mb-4">{{ $t('packages_business_shared_mining_table_wajuebiaoxinxi') }}</span>
     <div class="mb-3 flex">
       <span class="flex-shrink-0">{{ $t('packages_business_shared_mining_table_yihebingdelian') }}</span>
-      <ElSelect v-model="selectedConnectionId" size="mini" class="ml-4" clearable @change="() => fetch()">
+      <ElSelect v-model="selectedConnectionId" class="ml-4" clearable @change="() => fetch()">
         <ElOption v-for="item in connectionsList" :label="item.name" :value="item.id" :key="item.id"></ElOption>
       </ElSelect>
     </div>
     <div class="flex justify-content-between mb-4">
-      <ElRadioGroup v-model="currentTab" size="mini" @change="handleChangeTab">
+      <ElRadioGroup v-model="currentTab" @change="handleChangeTab">
         <ElRadioButton v-for="item in tabItems" :label="item.value" :key="item.value">{{ item.label }}</ElRadioButton>
       </ElRadioGroup>
       <div>
         <ElInput
           class="search-input"
-          v-model="keyword"
+          v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('public_input_placeholder')"
-          size="small"
           clearable
           @input="handleSearch"
         ></ElInput>
@@ -25,7 +24,6 @@
           v-if="currentTab === 'running'"
           :disabled="!multipleSelection.length"
           type="primary"
-          size="mini"
           class="ml-4"
           @click="handleStop"
           >{{ $t('public_button_stop_mining') }}</ElButton
@@ -35,7 +33,6 @@
           :loading="recoverLoading"
           :disabled="!multipleSelection.length"
           type="primary"
-          size="mini"
           class="ml-4"
           @click="handleRecover"
           >{{ $t('public_button_stop_recover') }}</ElButton
@@ -46,12 +43,12 @@
       :columns="columns"
       :remoteMethod="remoteMethod"
       :page-options="{
-        layout: 'total, prev, pager, next, jumper'
+        layout: 'total, prev, pager, next, jumper',
       }"
       ref="table"
       height="100%"
       :style="{
-        height: height
+        height: height,
       }"
       hide-on-single-page
       @selection-change="handleSelectionChange"
@@ -68,11 +65,13 @@
         </ElTooltip>
         <span v-else>{{ row.name }}</span>
       </template>
-      <div slot="empty">{{ $t('public_data_no_data') }}</div>
+      <template v-slot:empty>
+        <div>{{ $t('public_data_no_data') }}</div>
+      </template>
     </VTable>
 
     <ElDialog
-      :visible.sync="visible"
+      v-model="visible"
       :title="$t('packages_business_shared_mining_table_tingzhiwajueti')"
       width="600px"
       :close-on-click-modal="false"
@@ -120,22 +119,22 @@ export default {
   props: {
     taskId: {
       required: true,
-      type: String
+      type: String,
     },
     params: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     showTitle: {
       type: Boolean,
-      default: true
+      default: true,
     },
     height: {
       type: String,
-      default: '100%'
-    }
+      default: '100%',
+    },
   },
 
   data() {
@@ -145,57 +144,57 @@ export default {
       tabItems: [
         {
           label: i18n.t('packages_business_shared_mining_table_zhengzaiwajue'),
-          value: 'running'
+          value: 'running',
         },
         {
           label: i18n.t('packages_business_shared_mining_table_yitingzhiwajue'),
-          value: 'stopped'
-        }
+          value: 'stopped',
+        },
       ],
       columns: [
         {
-          type: 'selection'
+          type: 'selection',
         },
         {
           label: i18n.t('packages_business_shared_mining_table_biaoming'),
           slotName: 'name',
-          minWidth: 140
+          minWidth: 140,
         },
         {
           label: i18n.t('public_connection_name'),
           prop: 'connectionName',
           default: '-',
-          minWidth: 200
+          minWidth: 200,
         },
         {
           label: i18n.t('packages_business_shared_mining_table_leijiwajue'),
-          prop: 'allCount'
+          prop: 'allCount',
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
-          prop: 'todayCount'
+          prop: 'todayCount',
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
           prop: 'joinTime',
           dataType: 'time',
           default: '-',
-          width: 160
+          width: 160,
         },
         {
           label: i18n.t('packages_business_shared_mining_table_shoutiaorizhishi'),
           prop: 'firstLogTime',
           dataType: 'time',
           default: '-',
-          width: 160
+          width: 160,
         },
         {
           label: i18n.t('packages_business_shared_mining_table_zuixinrizhishi'),
           prop: 'lastLogTime',
           dataType: 'time',
           default: '-',
-          width: 160
-        }
+          width: 160,
+        },
       ],
       multipleSelection: [],
       visible: false,
@@ -203,20 +202,20 @@ export default {
         {
           label: i18n.t('public_task_name'),
           prop: 'name',
-          slotName: 'name'
+          slotName: 'name',
         },
         {
           label: i18n.t('public_task_status'),
           prop: 'status',
-          slotName: 'status'
-        }
+          slotName: 'status',
+        },
       ],
       taskData: [],
       submitLoading: false,
       recoverLoading: false,
       selectedConnectionId: '',
       connectionsList: [],
-      listTotal: 0
+      listTotal: 0,
     }
   },
   watch: {
@@ -224,7 +223,7 @@ export default {
       if (newval?.nodeId !== oldval?.nodeId) {
         this.fetch() //node节点改变更新table数据
       }
-    }
+    },
   },
 
   async created() {
@@ -238,7 +237,7 @@ export default {
     }, 5000)
   },
 
-  destroyed() {
+  unmounted() {
     this.clearTimer()
   },
 
@@ -251,18 +250,20 @@ export default {
         connectionId: this.selectedConnectionId,
         keyword,
         page: current,
-        size: size
+        size: size,
       }
-      return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
-        const total = data.total || 0
-        if (!keyword) {
-          this.listTotal = total
-        }
-        return {
-          total: total,
-          data: data.items || []
-        }
-      })
+      return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(
+        (data) => {
+          const total = data.total || 0
+          if (!keyword) {
+            this.listTotal = total
+          }
+          return {
+            total: total,
+            data: data.items || [],
+          }
+        },
+      )
     },
 
     fetch() {
@@ -290,7 +291,7 @@ export default {
       if (flag) return this.$message.error(i18n.t('packages_business_shared_mining_table_shengyuyigelian'))
       const { taskId } = this
       let tableNameMap = {}
-      this.multipleSelection.forEach(t => {
+      this.multipleSelection.forEach((t) => {
         if (!tableNameMap[t.connectionId]) {
           tableNameMap[t.connectionId] = []
         }
@@ -299,11 +300,11 @@ export default {
       const filter = {
         taskId,
         type: 'task_by_collector_table',
-        tableNameMap
+        tableNameMap,
       }
       taskApi
         .taskConsoleRelations(filter)
-        .then(data => {
+        .then((data) => {
           this.taskData = data
         })
         .finally(() => {
@@ -316,12 +317,12 @@ export default {
       logcollectorApi
         .exclusionTables(
           this.taskId,
-          this.multipleSelection.map(t => {
+          this.multipleSelection.map((t) => {
             return {
               connectionId: t.connectionId,
-              tableNames: [t.name]
+              tableNames: [t.name],
             }
-          })
+          }),
         )
         .then(() => {
           this.visible = false
@@ -338,12 +339,12 @@ export default {
       logcollectorApi
         .addTables(
           this.taskId,
-          this.multipleSelection.map(t => {
+          this.multipleSelection.map((t) => {
             return {
               connectionId: t.connectionId,
-              tableNames: [t.name]
+              tableNames: [t.name],
             }
-          })
+          }),
         )
         .then(() => {
           this.$message.success(this.$t('public_message_operation_success'))
@@ -363,17 +364,17 @@ export default {
         migrate: 'migrateList',
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
-        mem_cache: 'sharedCacheList'
+        mem_cache: 'sharedCacheList',
       }
       const routeUrl = this.$router.resolve({
         name: MAP[syncType],
         query: {
-          keyword: name
-        }
+          keyword: name,
+        },
       })
       openUrl(routeUrl.href)
-    }
-  }
+    },
+  },
 }
 </script>
 

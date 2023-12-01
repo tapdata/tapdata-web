@@ -7,8 +7,8 @@ export default {
     loading: Boolean,
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {}
@@ -17,14 +17,14 @@ export default {
   render(h) {
     let self = this
     let config = { ...this.config }
-    let options = this.options.map(opt => {
+    let options = this.options.map((opt) => {
       return h('ElOption', {
         props: {
           label: opt.label,
           value: opt.value,
-          disabled: opt.disabled
+          disabled: opt.disabled,
         },
-        key: opt.key || opt.value
+        key: opt.key || opt.value,
       })
     })
     //当多选时，判断是否显示全选框
@@ -34,7 +34,7 @@ export default {
         'ElOption',
         {
           props: { value: '0', disabled: true },
-          style: 'padding: 0 20px;background: #fff;cursor: default;'
+          style: 'padding: 0 20px;background: #fff;cursor: default;',
         },
         [
           h(
@@ -42,21 +42,21 @@ export default {
             {
               props: { value: this.value.length === this.filterList.length },
               on: {
-                input: val => {
+                input: (val) => {
                   if (val) {
                     this.$emit(
                       'input',
-                      this.options.map(opt => opt.value)
+                      this.options.map((opt) => opt.value),
                     )
                   } else {
                     this.$emit('input', [])
                   }
-                }
-              }
+                },
+              },
             },
-            [this.$t('packages_component_dataFlow_selectAll')]
-          )
-        ]
+            [this.$t('packages_component_dataFlow_selectAll')],
+          ),
+        ],
       )
     }
     return h('div', { class: 'v-select' }, [
@@ -64,7 +64,7 @@ export default {
         'ElSelect',
         {
           domProps: {
-            readonly: true
+            readonly: true,
           },
           props: {
             value: this.value,
@@ -76,7 +76,7 @@ export default {
             defaultFirstOption: config.defaultFirstOption,
             clearable: config.clearable,
             multiple: config.multiple,
-            disabled: config.disabled ? config.disabled : false
+            disabled: config.disabled ? config.disabled : false,
           },
           on: {
             ...this.$listeners,
@@ -84,22 +84,22 @@ export default {
               if (value && config.filterable) {
                 self.filterMethod('')
               }
-            }
+            },
           },
-          ref: 'select'
+          ref: 'select',
         },
-        [checkboxEl, ...options]
+        [checkboxEl, ...options],
       ),
       h(
         'div',
         {
           class: {
             'v-select-mask': true,
-            'is-show': this.loading
-          }
+            'is-show': this.loading,
+          },
         },
-        [h('i', { class: 'el-icon-loading' })]
-      )
+        [h('i', { class: 'el-icon-loading' })],
+      ),
     ])
   },
   methods: {
@@ -107,7 +107,7 @@ export default {
       keyword = keyword.toLowerCase()
       let reg = new RegExp(keyword, 'ig')
       this.filterList = this.config.options
-        .filter(d => d.label.match(reg))
+        .filter((d) => d.label.match(reg))
         .sort((a, b) => {
           if (a.label.toLowerCase() === keyword) {
             return -1
@@ -117,8 +117,8 @@ export default {
             return a.label <= b.label ? -1 : 1
           }
         })
-    }
-  }
+    },
+  },
 }
 </script>
 

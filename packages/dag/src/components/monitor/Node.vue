@@ -1,8 +1,8 @@
-<script>
+<script lang="jsx">
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch } from 'vue'
 
 import i18n from '@tap/i18n'
 import { VIcon, IconButton } from '@tap/component'
@@ -15,13 +15,13 @@ dayjs.extend(relativeTime)
 dayjs.locale(i18n.locale || 'zh-cn')
 
 const setConnectionAlarm = (endpoint, type) => {
-  endpoint.connections?.forEach(conn => {
+  endpoint.connections?.forEach((conn) => {
     conn.setType(type)
   })
 }
 
-const clearConnectionAlarm = endpoint => {
-  endpoint.connections?.forEach(conn => {
+const clearConnectionAlarm = (endpoint) => {
+  endpoint.connections?.forEach((conn) => {
     conn.clearTypes()
   })
 }
@@ -31,7 +31,7 @@ export default defineComponent({
   components: {
     DFNode,
     VIcon,
-    TaskStatus
+    TaskStatus,
   },
 
   props: {
@@ -44,14 +44,14 @@ export default defineComponent({
         snapshotRowTotal: 0,
         outputQps: 0,
         snapshotTableTotal: 0,
-        tableTotal: 0
-      })
+        tableTotal: 0,
+      }),
     },
     alarmData: {
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     taskType: String,
     syncType: String,
@@ -60,11 +60,12 @@ export default defineComponent({
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
 
   setup(props, { attrs, listeners, emit, refs }) {
+    const dfNode = ref(null)
     const completeTime = computed(() => {
       const totalData = props.quota.samples?.totalData?.[0] || {}
       const { snapshotInsertRowTotal, snapshotRowTotal } = props.sample
@@ -114,7 +115,7 @@ export default defineComponent({
       const { replicateLag } = props.sample
       if (isNumber(replicateLag))
         return calcTimeUnit(replicateLag, 2, {
-          autoHideMs: true
+          autoHideMs: true,
         })
       return null
     })
@@ -133,7 +134,7 @@ export default defineComponent({
       const { outputQps = 0 } = props.sample
       return outputQps.toLocaleString('zh', {
         maximumFractionDigits: 3,
-        useGrouping: false
+        useGrouping: false,
       })
     })
 
@@ -186,7 +187,7 @@ export default defineComponent({
         (total, key) => {
           return total + (props.sample[key] || 0)
         },
-        0
+        0,
       )
     })
 
@@ -200,15 +201,15 @@ export default defineComponent({
         'outputDeleteTotal',
         'outputInsertTotal',
         'outputOthersTotal',
-        'outputUpdateTotal'
+        'outputUpdateTotal',
       ].reduce((total, key) => {
         return total + (props.sample[key] || 0)
       }, 0)
     })
 
-    const isNumber = value => typeof value === 'number'
+    const isNumber = (value) => typeof value === 'number'
 
-    const getVal = val => {
+    const getVal = (val) => {
       return val ?? i18n.t('public_data_no_data')
     }
 
@@ -240,7 +241,7 @@ export default defineComponent({
                     ? targetWriteTimeCostAvg.value
                     : isProcessor.value
                     ? timeCostAvg.value
-                    : completeTime.value
+                    : completeTime.value,
                 )
             return (
               <div class="statistic flex">
@@ -264,11 +265,11 @@ export default defineComponent({
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
             ? calcTimeUnit(replicateLagProps, 2, {
-                autoHideMs: true
+                autoHideMs: true,
               })
             : null
         const val = getVal(
-          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
+          isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value,
         )
         return (
           <div class="statistic flex">
@@ -427,15 +428,15 @@ export default defineComponent({
     onMounted(() => {
       watch(
         alarmLevel,
-        level => {
-          const endpoint = refs.dfNode?.targetPoint
+        (level) => {
+          const endpoint = dfNode.value?.targetPoint
           if (!endpoint) return
 
           clearConnectionAlarm(endpoint)
 
           level && setConnectionAlarm(endpoint, level)
         },
-        { immediate: true }
+        { immediate: true },
       )
     })
 
@@ -446,7 +447,7 @@ export default defineComponent({
 
       return (
         <DFNode
-          ref="dfNode"
+          ref={dfNode}
           {...nodeProps}
           class={alarmCls}
           on={{
@@ -459,58 +460,65 @@ export default defineComponent({
               ifDragStart.value = false
               refs.popover?.updatePopper?.() // 更新popover位置
               emit('drag-stop', ...args)
-            }
+            },
           }}
         >
-          <el-popover
-            ref="popover"
-            disabled={ifDragStart.value}
-            placement="bottom"
-            width="240"
-            trigger="hover"
-            popper-class="node-statistic-popover rounded-lg"
-          >
-            <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
-              <div class="flex align-center">
-                <div class="node-card-content p-2 flex-1 rounded-sm">{renderStatistic()}</div>
-                <button onClick={() => emit('open-detail')} class="ml-2 icon-btn">
-                  <VIcon size="16">menu-left</VIcon>
-                </button>
-              </div>
-              {isSource.value && hasInitalSync && (
-                <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
-              )}
+          <div>
+            <el-popover
+              ref="popover"
+              disabled={ifDragStart.value}
+              placement="bottom"
+              width="auto"
+              trigger="hover"
+              popper-class="node-statistic-popover rounded-lg"
+            >
+              {{
+                reference: () => (
+                  <div class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
+                    <div class="flex align-center">
+                      <div class="node-card-content p-2 flex-1 rounded-sm">{renderStatistic()}</div>
+                      <button onClick={() => emit('open-detail')} class="ml-2 icon-btn">
+                        <VIcon size="16">menu-left</VIcon>
+                      </button>
+                    </div>
+                    {isSource.value && hasInitalSync && (
+                      <ElProgress class="mt-2" show-text={false} percentage={initialSyncProcess.value} />
+                    )}
 
-              {!!sharedCache.length && (
-                <div class="fw-bold my-2 flex align-center">
-                  {i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}{' '}
-                  <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm clickAndRotate>
-                    refresh
-                  </IconButton>
-                </div>
-              )}
-              {!!sharedCache.length && (
-                <ul class="shared-cache-list rounded-4 p-2">
-                  {sharedCache.map(item => (
-                    <li class="flex justify-content-between align-items-center pb-1">
-                      <ElLink type="primary" onClick={() => emit('open-shared-cache', item)}>
-                        {item.name}
-                      </ElLink>
-                      <TaskStatus task={item} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div class="statistic-card">
-              <div class="grid statistic-list">{renderPopoverContent()}</div>
-            </div>
-          </el-popover>
+                    {!!sharedCache.length && (
+                      <div class="fw-bold my-2 flex align-center">
+                        {i18n.t('packages_dag_monitor_node_zhengzaishiyongdehuancun')}{' '}
+                        <IconButton onClick={() => emit('refresh-shared-cache')} class="ml-0.5" sm clickAndRotate>
+                          refresh
+                        </IconButton>
+                      </div>
+                    )}
+                    {!!sharedCache.length && (
+                      <ul class="shared-cache-list rounded-4 p-2">
+                        {sharedCache.map((item) => (
+                          <li class="flex justify-content-between align-items-center pb-1">
+                            <ElLink type="primary" onClick={() => emit('open-shared-cache', item)}>
+                              {item.name}
+                            </ElLink>
+                            <TaskStatus task={item} />
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ),
+                default: () => (
+                  <div class="statistic-card">
+                    <div class="grid statistic-list">{renderPopoverContent()}</div>
+                  </div>
+                ),
+              }}
+            </el-popover>
+          </div>
         </DFNode>
       )
     }
-  }
+  },
 })
 </script>
 
@@ -523,9 +531,11 @@ export default defineComponent({
   left: 50%;
   background-color: #fff;
   transform: translateX(-50%);
+
   &-content {
     background-color: #f5f8fe;
   }
+
   &-footer {
     height: 28px;
   }
@@ -538,6 +548,7 @@ export default defineComponent({
   .statistic {
     display: inline-block;
     color: map-get($fontColor, sslight);
+
     &-title {
       font-size: 12px;
       line-height: 1.5;
@@ -567,7 +578,9 @@ export default defineComponent({
   outline: none;
   border: 1px solid transparent;
   border-radius: 4px;
-  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition:
+    background,
+    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   cursor: pointer;
 
   &.active,
@@ -576,31 +589,37 @@ export default defineComponent({
     background: #eef3ff;
   }
 }
+
 .span-2 {
   grid-column: span 2 / auto;
 }
-.alarm-warn::v-deep {
-  .df-node {
+
+.alarm-warn {
+  :deep(.df-node) {
     border-color: #ff932c;
+
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(255, 147, 44, 0.3);
     }
   }
-  .statistic-value {
+
+  :deep(.statistic-value) {
     color: #ff932c;
   }
 }
 
-.alarm-error::v-deep {
-  .df-node {
+.alarm-error {
+  :deep(.df-node) {
     border-color: #d44d4d;
+
     &.active,
     &.selected {
       box-shadow: 0 0 0 2px rgba(212, 77, 77, 0.3);
     }
   }
-  .statistic-value {
+
+  :deep(.statistic-value) {
     color: #d44d4d;
   }
 }
@@ -611,17 +630,39 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
-.node-statistic-popover {
+.el-popover.el-popper.node-statistic-popover {
   $bg: rgba(54, 66, 82, 0.9);
   background: $bg;
   border: 1px solid #f2f2f2;
 
-  &.el-popper[x-placement^='top'] .popper__arrow::after {
-    border-top-color: $bg;
+  .el-popper__arrow {
+    width: 0;
+    height: 0;
+    &:before {
+      width: 0;
+      height: 0;
+      background: transparent;
+      border-width: 6px;
+      border-style: solid;
+      border-color: transparent;
+      transform: none;
+    }
   }
 
-  &.el-popper[x-placement^='bottom'] .popper__arrow::after {
-    border-bottom-color: $bg;
+  &.el-popper[data-popper-placement^='top'] .el-popper__arrow {
+    bottom: -6px;
+    &:before {
+      border-top-color: $bg !important;
+      border-bottom-width: 0;
+    }
+  }
+
+  &.el-popper[data-popper-placement^='bottom'] .el-popper__arrow {
+    top: -6px;
+    &:before {
+      border-bottom-color: $bg !important;
+      border-top-width: 0;
+    }
   }
 
   .statistic-list {

@@ -1,14 +1,20 @@
 <template>
-  <ElSteps v-bind="$attrs" v-on="$listeners" :active="activeStep">
+  <ElSteps v-bind="$attrs" :active="activeStep">
     <template v-if="!hasNumber">
       <ElStep v-for="(item, index) in stepList" :key="index" :class="[{ 'is-active': showActive === index + 1 }]">
-        <span slot="icon" class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
-        <div slot="title" class="cursor-pointer" @click="$emit('activeStep', index)">
-          {{ item.label }}
-        </div>
-        <div v-if="item.desc" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
-          {{ item.desc }}
-        </div>
+        <template v-slot:icon>
+          <span class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
+        </template>
+        <template v-slot:title>
+          <div class="cursor-pointer" @click="$emit('activeStep', index)">
+            {{ item.label }}
+          </div>
+        </template>
+        <template v-slot:description>
+          <div v-if="item.desc" class="cursor-pointer" @click="$emit('activeStep', index)">
+            {{ item.desc }}
+          </div>
+        </template>
       </ElStep>
     </template>
     <template v-else>
@@ -32,30 +38,31 @@ export default {
         //     desc: '这是一段很长很长很长的描述性文字',
         //    }
         // ]
-      }
+      },
     },
     activeStep: {
       type: Number,
-      default: 0
+      default: 0,
     },
     hasNumber: {
       type: Boolean,
-      default: true
+      default: true,
     },
     showActive: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
-      active: 0
+      active: 0,
     }
-  }
+  },
+  emits: ['activeStep'],
 }
 </script>
+
 <style lang="scss">
-// 步骤条
 .el-steps {
   &.primary {
     .el-step__head {
@@ -155,46 +162,49 @@ export default {
   background-color: map-get($color, disable);
 }
 .el-steps {
-  ::v-deep {
-    .el-step__head .el-step__icon {
-      border: 0;
-    }
-    .el-step__head.is-finish {
-      color: map-get($color, disable);
-      border-color: map-get($color, disable);
-    }
+  :deep(.el-step__head .el-step__icon) {
+    border: 0;
+  }
+
+  :deep(.el-step__head.is-finish) {
+    color: map-get($color, disable);
+    border-color: map-get($color, disable);
+  }
+
+  :deep(.el-step__line) {
+    height: 1px;
+    top: 11px;
+    left: 50%;
+    right: -50%;
+    background-color: map-get($color, disable);
+  }
+
+  :deep(.is-finish) {
     .el-step__line {
-      height: 1px;
-      top: 11px;
-      left: 50%;
-      right: -50%;
       background-color: map-get($color, disable);
     }
-    .is-finish {
-      .el-step__line {
-        background-color: map-get($color, disable);
-      }
-      .el-step__line-inner {
-        transition-delay: -150ms !important;
-        border-width: 0px !important;
-        width: 0% !important;
-      }
+    .el-step__line-inner {
+      transition-delay: -150ms !important;
+      border-width: 0px !important;
+      width: 0% !important;
     }
+  }
+
+  :deep(.el-step__title),
+  :deep(.el-step__description),
+  :deep(.el-step__description) {
+    font-size: 14px;
+    color: map-get($fontColor, slight);
+  }
+
+  :deep(.is-active) {
     .el-step__title,
-    .el-step__description,
     .el-step__description {
-      font-size: 14px;
-      color: map-get($fontColor, slight);
+      color: map-get($fontColor, normal);
     }
-    .is-active {
-      .el-step__title,
-      .el-step__description {
-        color: map-get($fontColor, normal);
-      }
-      .is-finish {
-        .circle-icon {
-          background-color: map-get($color, primary);
-        }
+    .is-finish {
+      .circle-icon {
+        background-color: map-get($color, primary);
       }
     }
   }

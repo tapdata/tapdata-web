@@ -1,7 +1,7 @@
 // 获取验证码
 export function getCodeOptions(form, scene, type = 'sms') {
   let params = {
-    scene
+    scene,
   }
   let { current, countryCode } = form
   if (type === 'sms') {
@@ -13,6 +13,6 @@ export function getCodeOptions(form, scene, type = 'sms') {
   return {
     method: 'post',
     url: `api/tcm/${type}/captcha`,
-    params
+    params,
   }
 }

@@ -19,7 +19,7 @@
                 : $t('metadata_detail_original_table_name')
             }}：{{ metadataDataObj.original_name }}
             <span v-if="metadataDataObj.alias_name">)</span>
-            <el-button type="text" @click="handleChangeName" style="padding: 0 10px">{{
+            <el-button text @click="handleChangeName" style="padding: 0 10px">{{
               $t('metadata_details_renamed')
             }}</el-button>
           </h3>
@@ -29,20 +29,20 @@
             <span v-else>{{ $t('metadata_details_clickAddDes') }}</span>
             <el-button
               class="e-button"
-              type="text"
+              text
               @click=";(editCommentDialogVisible = true), (editCommentForm.comment = metadataDataObj.comment)"
               >{{ $t('public_button_edit') }}</el-button
             >
           </div>
 
           <!-- <ul>
-						<li>来源表：2</li>
-						<li>去向表：2</li>
-						<li>任务引用：2</li>
-						<li>API引用：2</li>
-						<li>表分层：MDM</li>
-						<li>业务域：2</li>
-					</ul> -->
+    						<li>来源表：2</li>
+    						<li>去向表：2</li>
+    						<li>任务引用：2</li>
+    						<li>API引用：2</li>
+    						<li>表分层：MDM</li>
+    						<li>业务域：2</li>
+    					</ul> -->
         </div>
       </el-header>
       <!-- 元数据管理详情 头部信息 end -->
@@ -105,9 +105,7 @@
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata_details_businessAttributes') }}</span>
-              <ElLink type="primary" size="mini" @click.stop="creatBusiness"
-                >+ {{ $t('metadata_details_creat') }}</ElLink
-              >
+              <ElLink type="primary" @click.stop="creatBusiness">+ {{ $t('metadata_details_creat') }}</ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
@@ -127,7 +125,6 @@
             <template v-for="item in menuList">
               <el-tab-pane
                 v-if="item.mateTypes.includes(metadataDataObj.meta_type)"
-                :key="item.key"
                 :label="item.name"
                 :name="item.key"
               >
@@ -141,28 +138,31 @@
                             :placeholder="$t('metadata_details_searchPlaceholder')"
                             clearable
                             v-model="searchParams.keyword"
-                            size="mini"
                             style="width: 160px"
                           >
-                            <span slot="prefix" class="el-input__icon h-100 ml-1">
-                              <VIcon size="14">search</VIcon>
-                            </span>
+                            <template v-slot:prefix>
+                              <span class="el-input__icon h-100 ml-1">
+                                <VIcon size="14">search</VIcon>
+                              </span>
+                            </template>
                           </el-input>
                         </li>
                         <li class="item">
-                          <el-button type="text" class="restBtn" size="mini" @click="reset()">
+                          <el-button text class="restBtn" @click="reset()">
                             {{ $t('public_button_reset') }}
                           </el-button>
                         </li>
                       </ul>
                     </div>
                     <div class="table-page-operation-bar">
-                      <div slot="operation" class="operation">
-                        <el-button class="btn-create" type="primary" size="mini" @click="hanldCreateFiled">
-                          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-                          <span> {{ $t('metadata_details_createFiled') }}</span>
-                        </el-button>
-                      </div>
+                      <template v-slot:operation>
+                        <div class="operation">
+                          <el-button class="btn-create" type="primary" @click="hanldCreateFiled">
+                            <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+                            <span> {{ $t('metadata_details_createFiled') }}</span>
+                          </el-button>
+                        </div>
+                      </template>
                     </div>
                   </div>
                   <!-- 模型 start -->
@@ -175,7 +175,7 @@
                     :header-cell-style="tableHeaderStyle"
                   >
                     <el-table-column type="expand">
-                      <template slot-scope="scope">
+                      <template v-slot="scope">
                         <ul class="attributes">
                           <li class="more">
                             <label class="label">{{ $t('metadata_details_moreAttributes') }} </label>
@@ -209,7 +209,7 @@
                     </el-table-column>
                     <!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
                     <el-table-column prop="field_name" :label="$t('metadata_details_filedAliasName')" width="150">
-                      <template slot-scope="scope">
+                      <template v-slot="scope">
                         <div class="database-text" style="margin-left: 0">
                           <div>
                             {{ scope.row.field_name }}
@@ -222,14 +222,14 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="alias_name" :label="$t('metadata_details_alias')" width="80">
-                      <template slot-scope="scope">
+                      <template v-slot="scope">
                         <div class="database-text" style="margin-left: 0">
                           <div>{{ scope.row.alias_name }}</div>
                         </div>
                       </template>
                     </el-table-column>
                     <el-table-column prop="data_type" :label="$t('metadata_details_fieldType')" width="150">
-                      <template slot-scope="scope">
+                      <template v-slot="scope">
                         <div>
                           {{ scope.row.data_type }}
                         </div>
@@ -242,20 +242,14 @@
                     ></el-table-column>
                     <el-table-column prop="comment" :label="$t('public_description')"></el-table-column>
                     <el-table-column width="120" :label="$t('public_operation')">
-                      <template slot-scope="scope">
-                        <el-button
-                          v-readonlybtn="'data_catalog_edition'"
-                          size="mini"
-                          type="text"
-                          @click="edit(scope.row)"
-                        >
+                      <template v-slot="scope">
+                        <el-button v-readonlybtn="'data_catalog_edition'" text @click="edit(scope.row)">
                           {{ $t('public_button_edit') }}
                         </el-button>
                         <el-button
                           v-readonlybtn="'meta_data_deleting'"
                           v-if="scope.row.field_name !== '_id'"
-                          size="mini"
-                          type="text"
+                          text
                           @click="remove(scope.row, scope.$index, 0)"
                           >{{ $t('public_button_delete') }}</el-button
                         >
@@ -266,9 +260,9 @@
                     background
                     class="table-page-pagination"
                     layout="->,total, sizes, prev, pager, next"
-                    :current-page.sync="pageCurrent"
+                    v-model:current-page="pageCurrent"
                     :page-sizes="[10, 20, 50, 100]"
-                    :page-size.sync="pageSize"
+                    v-model:page-size="pageSize"
                     :total="pageTotal"
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -325,60 +319,63 @@
       width="600px"
       :title="$t('metadata_details_businessAttrTitle')"
       :close-on-click-modal="false"
-      :visible.sync="businessDialogVisible"
-      custom-class="dialogForm"
+      v-model="businessDialogVisible"
+      class="dialogForm"
     >
-      <FormBuilder ref="form" v-model="businessForm" :config="businessFormConfig"></FormBuilder>
-      <span slot="footer" class="dialog-footer">
-        <el-button class="cancel" @click="businessDialogVisible = false" size="small">{{
-          $t('public_button_cancel')
-        }}</el-button>
-        <el-button type="primary" @click="saveBusiness()" size="small">{{ $t('public_button_save') }}</el-button>
-      </span>
+      <FormBuilder ref="form" v-model:value="businessForm" :config="businessFormConfig"></FormBuilder>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button class="cancel" @click="businessDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="saveBusiness()">{{ $t('public_button_save') }}</el-button>
+        </span>
+      </template>
     </el-dialog>
     <el-dialog
       width="600px"
       :title="$t('metadata_details_editAliasNameTitle')"
       :close-on-click-modal="false"
-      :visible.sync="editNameDialogVisible"
-      custom-class="dialogForm"
+      v-model="editNameDialogVisible"
+      class="dialogForm"
     >
       <el-form :model="editNameForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item :label="$t('metadata_details_originalTableName')" prop="name">
           {{ editNameForm.original_name }}
         </el-form-item>
         <el-form-item :label="$t('metadata_details_alias')" prop="name">
-          <el-input v-model="editNameForm.alias_name" size="small" maxlength="100" show-word-limit></el-input>
+          <el-input v-model="editNameForm.alias_name" maxlength="100" show-word-limit></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button class="cancel" @click="editNameDialogVisible = false" size="small">{{
-          $t('public_button_cancel')
-        }}</el-button>
-        <el-button type="primary" @click="saveAliasName()" size="small">{{ $t('public_button_save') }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button class="cancel" @click="editNameDialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+          <el-button type="primary" @click="saveAliasName()">{{ $t('public_button_save') }}</el-button>
+        </span>
+      </template>
     </el-dialog>
     <el-dialog
       width="600px"
       :title="$t('metadata_details_editCommentTitle')"
       :close-on-click-modal="false"
-      :visible.sync="editCommentDialogVisible"
-      custom-class="dialogForm"
+      v-model="editCommentDialogVisible"
+      class="dialogForm"
     >
       <el-form :model="editCommentForm" ref="ruleForm" label-width="90px" class="demo-ruleForm">
         <el-form-item :label="$t('public_description')" prop="name">
           <el-input type="textarea" v-model="editCommentForm.comment" maxlength="500" show-word-limit></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button class="cancel" @click="editCommentDialogVisible = false" size="small">{{
-          $t('public_button_cancel')
-        }}</el-button>
-        <el-button type="primary" @click="saveComment()" size="small">{{ $t('public_button_save') }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button class="cancel" @click="editCommentDialogVisible = false">{{
+            $t('public_button_cancel')
+          }}</el-button>
+          <el-button type="primary" @click="saveComment()">{{ $t('public_button_save') }}</el-button>
+        </span>
+      </template>
     </el-dialog>
   </section>
 </template>
+
 <script>
 import VersionList from './VersionList'
 import FormPage from './Form'
@@ -400,7 +397,7 @@ export default {
     Preview,
     Pipeline,
     Collections,
-    VIcon
+    VIcon,
   },
   data() {
     return {
@@ -412,7 +409,7 @@ export default {
         {
           name: this.$t('metadata_details_model'),
           mateTypes: ['collection', 'table', 'mongo_view'],
-          key: 'model'
+          key: 'model',
         },
         {
           name: this.$t('metadata_details_version_version_control'),
@@ -427,10 +424,10 @@ export default {
             'job',
             'directory',
             'ftp',
-            'apiendpoint'
+            'apiendpoint',
           ],
-          key: 'version'
-        }
+          key: 'version',
+        },
       ],
       description: '',
       searchParams: {},
@@ -442,7 +439,7 @@ export default {
       fieldObj: {},
       metadataDataObj: {
         original_name: '',
-        comment: ''
+        comment: '',
       },
       tableFieldList: [],
       pageSize: 20,
@@ -450,40 +447,40 @@ export default {
       pageTotal: 0,
       tableHeaderStyle: {
         padding: '0',
-        lineHeight: '30px'
+        lineHeight: '30px',
       },
       businessDialogVisible: false,
       businessForm: {
         key: '',
-        value: ''
+        value: '',
       },
       businessFormConfig: {
         form: {
           labelPosition: 'right',
-          labelWidth: '100px'
+          labelWidth: '100px',
         },
         items: [
           {
             type: 'input',
             label: this.$t('metadata_details_attrName'),
-            field: 'key'
+            field: 'key',
           },
           {
             type: 'input',
             label: this.$t('metadata_details_attrKey'),
-            field: 'value'
-          }
-        ]
+            field: 'value',
+          },
+        ],
       },
       editNameDialogVisible: false,
       editNameForm: {
         original_name: '',
-        alias_name: ''
+        alias_name: '',
       },
       editCommentForm: {
-        comment: ''
+        comment: '',
       },
-      filterData: []
+      filterData: [],
     }
   },
   created() {
@@ -494,7 +491,7 @@ export default {
       let oldTableData = this.metadataDataObj.fields
       if (val) {
         this.filterData = []
-        this.metadataDataObj.fields.filter(item => {
+        this.metadataDataObj.fields.filter((item) => {
           if (
             String(item.field_name).indexOf(val) > -1 ||
             (item.alias_name && String(item.alias_name).indexOf(val) > -1) ||
@@ -511,7 +508,7 @@ export default {
     $route() {
       this.activePanel = 'model'
       this.getData()
-    }
+    },
   },
   methods: {
     changePanel(key) {
@@ -533,7 +530,7 @@ export default {
       this.loading = true
       return metadataInstancesApi
         .findTablesById([id])
-        .then(data => {
+        .then((data) => {
           data.createTimeFmt = dayjs(data.createTime || data.createAt).format('YYYY-MM-DD HH:mm:ss')
           data.lastUpdatedFmt = dayjs(data.last_updated || data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss')
           this.metadataDataObj = data
@@ -552,7 +549,7 @@ export default {
     // 重置
     reset() {
       this.searchParams = {
-        keyword: ''
+        keyword: '',
       }
       this.setCurrentPageData(this.metadataDataObj.fields)
     },
@@ -562,12 +559,12 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
-        h('span', { style: { color: '#2C65FF' } }, item.field_name)
+        h('span', { style: { color: '#2C65FF' } }, item.field_name),
       ])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -578,7 +575,7 @@ export default {
         let fields = this.metadataDataObj.fields
 
         if (fields && fields.length) {
-          fields.forEach(field => {
+          fields.forEach((field) => {
             if (
               // 主键值减1
               item.primary_key &&
@@ -588,12 +585,12 @@ export default {
             }
             field.relation &&
               field.relation.length &&
-              field.relation.forEach(item => {
+              field.relation.forEach((item) => {
                 let key = item.table_name + item.rel
                 if (groupRelation[key]) {
                   groupRelation[key].fields.push({
                     local: item.field_name,
-                    foreign: field.field_name
+                    foreign: field.field_name,
                   })
                 } else {
                   groupRelation[key] = {
@@ -602,9 +599,9 @@ export default {
                     fields: [
                       {
                         local: item.field_name,
-                        foreign: field.field_name
-                      }
-                    ]
+                        foreign: field.field_name,
+                      },
+                    ],
                   }
                 }
               })
@@ -613,7 +610,7 @@ export default {
         let relation = Object.values(groupRelation)
         let params = {
           fields: fields,
-          relation: relation
+          relation: relation,
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
@@ -632,7 +629,7 @@ export default {
     setCurrentPageData(tableData) {
       let begin = (this.pageCurrent - 1) * this.pageSize
       let end = this.pageCurrent * this.pageSize
-      tableData = tableData.filter(item => !item.field_name.includes('__tapd8') && !item?.is_deleted)
+      tableData = tableData.filter((item) => !item.field_name.includes('__tapd8') && !item?.is_deleted)
       this.tableFieldList = tableData.slice(begin, end)
     },
     handleSizeChange(val) {
@@ -656,7 +653,7 @@ export default {
       this.businessDialogVisible = true
       this.businessForm = {
         key: '',
-        value: ''
+        value: '',
       }
     },
     // 删除业务属性
@@ -664,12 +661,12 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
-        h('span', { style: { color: '#409EFF' } }, key)
+        h('span', { style: { color: '#409EFF' } }, key),
       ])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(flag => {
+        closeOnClickModal: false,
+      }).then((flag) => {
         if (!flag) {
           return
         }
@@ -679,7 +676,7 @@ export default {
           }
         }
         let params = {
-          custom_properties: this.metadataDataObj.custom_properties
+          custom_properties: this.metadataDataObj.custom_properties,
         }
         metadataInstancesApi.patchId(this.metadataDataObj.id, params).then(() => {
           this.getData()
@@ -698,7 +695,7 @@ export default {
         custom_properties = this.metadataDataObj.custom_properties ? this.metadataDataObj.custom_properties : {}
       obj[this.businessForm.key] = this.businessForm.value
       let params = {
-        custom_properties: Object.assign(custom_properties, obj)
+        custom_properties: Object.assign(custom_properties, obj),
       }
       metadataInstancesApi
         .patchId(this.metadataDataObj.id, params)
@@ -717,14 +714,14 @@ export default {
     handleChangeName() {
       this.editNameForm = {
         original_name: this.metadataDataObj.original_name,
-        alias_name: this.metadataDataObj.alias_name
+        alias_name: this.metadataDataObj.alias_name,
       }
       this.editNameDialogVisible = true
     },
     // 保存改名
     saveAliasName() {
       let params = {
-        alias_name: this.editNameForm.alias_name
+        alias_name: this.editNameForm.alias_name,
       }
       // params.alias_name = this.editNameForm.alias_name;
 
@@ -743,7 +740,7 @@ export default {
     // 编辑描述
     saveComment() {
       let params = {
-        comment: this.editCommentForm.comment
+        comment: this.editCommentForm.comment,
       }
       metadataInstancesApi
         .patchId(this.metadataDataObj.id, params)
@@ -761,17 +758,14 @@ export default {
     back() {
       this.$router.go(-1)
       // $router.push({ name: 'metadata' })
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .metadata-info {
-  // display: flex;
-  // flex-direction: column;
-  // width: 100%;
-  // height: 100%;
-  // background-color: rgba(239, 241, 244, 100);
+  /*// display: flex;*/ /*// flex-direction: column;*/ /*// width: 100%;*/ /*// height: 100%;*/ /*// background-color: rgba(239, 241, 244, 100);*/
   .icon-yuechi1 {
     color: darkorange;
   }
@@ -974,139 +968,139 @@ export default {
           }
         }
 
-        ::v-deep {
-          .el-tabs {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            height: 100%;
-            .el-tabs__header {
-              margin: 0;
-              .el-tabs__nav-wrap,
-              .el-tabs__nav-scroll,
-              .el-tabs__nav {
-                height: 60px;
-                line-height: 6px;
-              }
-              .el-tabs__item {
-                height: 60px;
-                line-height: 60px;
-                padding-left: 20px;
-              }
-              .el-tabs__nav-prev,
-              .el-tabs__nav-next {
-                line-height: 60px;
-              }
+        :deep(.el-tabs) {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          height: 100%;
+          .el-tabs__header {
+            margin: 0;
+            .el-tabs__nav-wrap,
+            .el-tabs__nav-scroll,
+            .el-tabs__nav {
+              height: 60px;
+              line-height: 6px;
             }
+            .el-tabs__item {
+              height: 60px;
+              line-height: 60px;
+              padding-left: 20px;
+            }
+            .el-tabs__nav-prev,
+            .el-tabs__nav-next {
+              line-height: 60px;
+            }
+          }
 
-            .el-tabs__content {
+          .el-tabs__content {
+            flex: 1;
+            .el-tab-pane {
+              height: 100%;
               flex: 1;
-              .el-tab-pane {
+              .table-box {
+                display: flex;
+                flex-direction: column;
                 height: 100%;
-                flex: 1;
-                .table-box {
+                padding: 20px;
+                background-color: map-get($bgColor, white);
+                // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+                box-sizing: border-box;
+                .table-page-topbar {
                   display: flex;
-                  flex-direction: column;
-                  height: 100%;
-                  padding: 20px;
-                  background-color: map-get($bgColor, white);
-                  // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
-                  box-sizing: border-box;
-                  .table-page-topbar {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-end;
-                    flex-wrap: wrap-reverse;
-                    // padding: 0 10px;
+                  justify-content: space-between;
+                  align-items: flex-end;
+                  flex-wrap: wrap-reverse;
+                  // padding: 0 10px;
 
-                    .table-page-search-bar {
-                      margin-right: 5px;
-                      margin-bottom: 10px;
-                      .search-bar {
-                        display: flex;
-                        flex-direction: row;
-                      }
+                  .table-page-search-bar {
+                    margin-right: 5px;
+                    margin-bottom: 10px;
+                    .search-bar {
+                      display: flex;
+                      flex-direction: row;
                     }
-                    .table-page-operation-bar {
-                      margin-bottom: 10px;
-                      text-align: right;
-                      .operation {
-                        .iconfont {
+                  }
+                  .table-page-operation-bar {
+                    margin-bottom: 10px;
+                    text-align: right;
+                    .operation {
+                      .iconfont {
+                        font-size: 12px;
+                      }
+                      .btn {
+                        padding: 7px;
+                        background: map-get($bgColor, main);
+                        i.iconfont {
                           font-size: 12px;
                         }
-                        .btn {
-                          padding: 7px;
-                          background: map-get($bgColor, main);
-                          i.iconfont {
-                            font-size: 12px;
-                          }
-                          &.btn-create {
-                            margin-left: 5px;
-                          }
+                        &.btn-create {
+                          margin-left: 5px;
                         }
                       }
                     }
                   }
-                  .attributes {
-                    li {
-                      width: 100%;
-                      margin: 5px 0;
-                      font-size: 12px;
-                      span {
-                        display: inline-block;
-                        padding: 3px 10px;
-                        margin: 3px 5px;
-                        color: map-get($fontColor, light);
-                        border-radius: 10px;
-                        background-color: #f7edee;
-                      }
-                      .label {
-                        display: inline-block;
-                        padding: 5px 0;
-                        color: #aaa;
-                        border-radius: 0;
-                        background-color: transparent;
-                      }
-                      .dropInfo {
-                        display: inline-block;
-                        width: calc(100% - 60px);
-                        white-space: break-spaces;
-                        overflow: hidden;
-                      }
+                }
+                .attributes {
+                  li {
+                    width: 100%;
+                    margin: 5px 0;
+                    font-size: 12px;
+                    span {
+                      display: inline-block;
+                      padding: 3px 10px;
+                      margin: 3px 5px;
+                      color: map-get($fontColor, light);
+                      border-radius: 10px;
+                      background-color: #f7edee;
                     }
-                    li.more {
-                      span {
-                        background-color: #e2f1f9;
-                      }
+                    .label {
+                      display: inline-block;
+                      padding: 5px 0;
+                      color: #aaa;
+                      border-radius: 0;
+                      background-color: transparent;
+                    }
+                    .dropInfo {
+                      display: inline-block;
+                      width: calc(100% - 60px);
+                      white-space: break-spaces;
+                      overflow: hidden;
+                    }
+                  }
+                  li.more {
+                    span {
+                      background-color: #e2f1f9;
                     }
                   }
                 }
               }
             }
           }
+        }
 
-          .table-page-table {
-            .el-table__header-wrapper {
-              height: 40px;
-              th {
-                padding: 0;
-                line-height: 40px !important;
-                // background-color: map-get($bgColor, normal);
-              }
-            }
-          }
-          .table-page-pagination {
-            padding-top: 20px;
-          }
-
-          flex-wrap: wrap;
-          li {
-            margin-right: 10px;
-            &:last-child {
-              margin-right: 0;
+        :deep(.table-page-table) {
+          .el-table__header-wrapper {
+            height: 40px;
+            th {
+              padding: 0;
+              line-height: 40px !important;
+              // background-color: map-get($bgColor, normal);
             }
           }
         }
+
+        :deep(.table-page-pagination) {
+          padding-top: 20px;
+        }
+
+        :deep(li) {
+          margin-right: 10px;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+
+        flex-wrap: wrap;
       }
       .boxWidth {
         width: calc(100% - 30px);
@@ -1115,6 +1109,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 // .metadata-info {
 //   .el-collapse {

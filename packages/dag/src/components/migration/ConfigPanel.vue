@@ -15,39 +15,32 @@
       v-if="activeNode && activeNode.type === 'merge_table_processor'"
       class="position-absolute config-tabs-right-extra flex align-center"
     >
-      <ElButton
-        @click="setMaterializedViewVisible(true)"
-        class="--with-icon flex align-center px-2 py-0 gap-1"
-        size="mini"
-      >
+      <ElButton @click="setMaterializedViewVisible(true)" class="--with-icon flex align-center px-2 py-0 gap-1">
         <VIcon size="30">beta</VIcon>
         {{ $t('packages_dag_materialized_view') }}</ElButton
       >
     </div>
 
     <FormPanel
+      v-bind="$attrs"
       v-if="!materializedViewVisible"
       class="config-form-panel"
       v-show="activeType !== 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
       ref="formPanel"
       :formProps="{
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
+        feedbackLayout: 'terse',
       }"
       @update:InputsOrOutputs="handleLoadMeta"
-      @setSchema="handleSetSchema"
     />
     <SettingPanel
+      v-bind="$attrs"
       v-if="settings.id"
       class="config-form-panel"
       :settings="settings"
       v-show="activeType === 'settings'"
-      v-on="$listeners"
-      v-bind="$attrs"
       ref="setting"
     ></SettingPanel>
   </section>
@@ -69,7 +62,7 @@ export default {
 
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
 
   props: {
@@ -78,18 +71,17 @@ export default {
     showSchemaPanel: Boolean,
     includesType: {
       type: Array,
-      default: () => ['node', 'settings']
+      default: () => ['node', 'settings'],
     },
-    syncType: String
+    syncType: String,
   },
 
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       currentTab: 'settings',
       titleCurrentTab: 'settings',
       name: this.activeNode?.name,
-      form: null
     }
   },
 
@@ -105,13 +97,13 @@ export default {
 
     isMonitor() {
       return ['TaskMonitor', 'MigrationMonitor'].includes(this.$route.name)
-    }
+    },
   },
 
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
 
   mounted() {
@@ -124,7 +116,7 @@ export default {
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'setMaterializedViewVisible'
+      'setMaterializedViewVisible',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
@@ -163,11 +155,7 @@ export default {
         }
       })
     },
-
-    handleSetSchema() {
-      this.form = cloneDeep(this.$refs.formPanel?.form)
-    }
-  }
+  },
 }
 </script>
 
@@ -183,17 +171,16 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 $color: map-get($color, primary);
 $tabsHeaderWidth: 180px;
 $headerHeight: 40px;
 $tabHeight: 44px;
 
 .el-button.--with-icon {
-  ::v-deep {
-    > span {
-      display: contents;
-    }
+  > :deep(span) {
+    display: contents;
   }
 }
 
@@ -235,20 +222,18 @@ $tabHeight: 44px;
   }
 
   .config-form-panel {
-    ::v-deep {
-      .attr-panel-body {
-        padding: 0 !important;
+    :deep(.attr-panel-body) {
+      padding: 0 !important;
 
-        .form-wrap {
-          min-height: 0;
+      .form-wrap {
+        min-height: 0;
 
-          .config-tabs-decorator {
+        .config-tabs-decorator {
+          height: 100%;
+          > .formily-element-plus-form-item-control {
             height: 100%;
-            > .formily-element-form-item-control {
+            > .formily-element-plus-form-item-control-content {
               height: 100%;
-              > .formily-element-form-item-control-content {
-                height: 100%;
-              }
             }
           }
         }
@@ -256,55 +241,53 @@ $tabHeight: 44px;
     }
   }
 
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
+  :deep(.el-tabs) {
+    height: 100%;
 
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: 52px;
-          padding-right: 16px;
+    > .el-tabs__header {
+      margin: 0;
+      .el-tabs__nav-wrap {
+        padding-left: 52px;
+        padding-right: 16px;
 
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          //padding: 0 12px;
-          line-height: $tabHeight;
-          height: $tabHeight;
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
+        &::after {
+          height: 1px;
         }
       }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
 
-      > .el-tabs__content {
-        height: calc(100% - $tabHeight);
-        padding: 4px 16px;
-        overflow: auto;
-        .el-tab-pane {
-          height: 100%;
+      .el-tabs__item {
+        //padding: 0 12px;
+        line-height: $tabHeight;
+        height: $tabHeight;
+        font-weight: 400;
+
+        &.is-active,
+        &:hover {
+          color: $color;
         }
       }
     }
 
-    .setting-tabs.el-tabs {
-      height: 100%;
-      > .el-tabs__header {
-        .el-tabs__nav-wrap {
-          padding-left: 0;
-          &::after {
-            height: 0;
-          }
+    > .el-tabs__content {
+      height: calc(100% - $tabHeight);
+      padding: 4px 16px;
+      overflow: auto;
+      .el-tab-pane {
+        height: 100%;
+      }
+    }
+  }
+
+  :deep(.setting-tabs.el-tabs) {
+    height: 100%;
+    > .el-tabs__header {
+      .el-tabs__nav-wrap {
+        padding-left: 0;
+        &::after {
+          height: 0;
         }
       }
     }

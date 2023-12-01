@@ -19,7 +19,7 @@ module.exports = {
           time: '2021-07-22T07:28:17.458Z',
           title: 'encounterERRORSkipped',
           userId: '5fcf01b8f89acdf892e8bf78',
-          username: 'admin'
+          username: 'admin',
         },
         {
           id: '60f91df9be0f18005773a7f2',
@@ -36,7 +36,7 @@ module.exports = {
           read: false,
           time: '2021-07-22T07:27:53.916Z',
           last_updated: '2021-07-22T07:27:53.917Z',
-          createTime: '2021-07-22T07:27:53.917Z'
+          createTime: '2021-07-22T07:27:53.917Z',
         },
         {
           id: '60f91decbe0f18005773a7c4',
@@ -53,7 +53,7 @@ module.exports = {
           read: false,
           time: '2021-07-22T07:27:40.935Z',
           last_updated: '2021-07-22T07:27:40.937Z',
-          createTime: '2021-07-22T07:27:40.937Z'
+          createTime: '2021-07-22T07:27:40.937Z',
         },
         {
           id: '60f9179bbe0f1800577396a1',
@@ -70,7 +70,7 @@ module.exports = {
           read: false,
           time: '2021-07-22T07:00:43.463Z',
           last_updated: '2021-07-22T07:00:43.466Z',
-          createTime: '2021-07-22T07:00:43.466Z'
+          createTime: '2021-07-22T07:00:43.466Z',
         },
         {
           id: '60f91783be0f180057739651',
@@ -84,7 +84,7 @@ module.exports = {
           username: 'admin',
           mappingTemplate: 'cluster-clone',
           last_updated: '2021-07-22T07:00:19.626Z',
-          createTime: '2021-07-22T07:00:19.626Z'
+          createTime: '2021-07-22T07:00:19.626Z',
         },
         {
           id: '60f8eeb694e73263605c256a',
@@ -104,7 +104,7 @@ module.exports = {
           title: 'inspectValue',
           type: 'field',
           userId: '5fcf01b8f89acdf892e8bf78',
-          username: 'admin'
+          username: 'admin',
         },
         {
           id: '60f8ed5a94e7326360585a8a',
@@ -129,7 +129,7 @@ module.exports = {
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
           username: null,
-          last_updated: '2021-07-22T06:54:35.422Z'
+          last_updated: '2021-07-22T06:54:35.422Z',
         },
         {
           id: '60f8ed5a94e7326360585a8b',
@@ -154,7 +154,7 @@ module.exports = {
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
           username: null,
-          last_updated: '2021-07-22T06:49:44.070Z'
+          last_updated: '2021-07-22T06:49:44.070Z',
         },
         {
           id: '60f8ed5a94e7326360585a8d',
@@ -178,7 +178,7 @@ module.exports = {
           time: '2021-07-22T07:43:26.197Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f8eb3494e732636050cb16',
@@ -194,7 +194,7 @@ module.exports = {
           time: '2021-07-22T03:52:16.571Z',
           title: 'encounterERRORSkipped',
           userId: '5fcf01b8f89acdf892e8bf78',
-          username: 'admin'
+          username: 'admin',
         },
         {
           id: '60f8eb3fbe0f1800577318ca',
@@ -211,7 +211,7 @@ module.exports = {
           read: false,
           time: '2021-07-22T03:51:27.813Z',
           last_updated: '2021-07-22T03:51:27.814Z',
-          createTime: '2021-07-22T03:51:27.814Z'
+          createTime: '2021-07-22T03:51:27.814Z',
         },
         {
           id: '60f8eb30be0f180057731886',
@@ -226,7 +226,7 @@ module.exports = {
           mappingTemplate: 'cluster-clone',
           last_updated: '2021-07-22T07:04:37.926Z',
           createTime: '2021-07-22T03:51:12.032Z',
-          read: true
+          read: true,
         },
         {
           id: '60f87cda94e73263604d9f55',
@@ -250,7 +250,7 @@ module.exports = {
           time: '2021-07-21T20:00:26.069Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f87cda94e73263604d9f56',
@@ -274,7 +274,7 @@ module.exports = {
           time: '2021-07-21T20:00:26.069Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f87cda94e73263604d9f54',
@@ -299,7 +299,7 @@ module.exports = {
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
           username: null,
-          last_updated: '2021-07-22T07:41:58.019Z'
+          last_updated: '2021-07-22T07:41:58.019Z',
         },
         {
           id: '60f86f3294e7326360308be5',
@@ -323,7 +323,7 @@ module.exports = {
           time: '2021-07-21T19:59:26.147Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f86f3294e7326360308be8',
@@ -347,7 +347,7 @@ module.exports = {
           time: '2021-07-21T19:02:10.145Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f86f3294e7326360308beb',
@@ -371,7 +371,7 @@ module.exports = {
           time: '2021-07-21T19:02:10.143Z',
           title: 'CDCLag',
           userId: '60d9346b0b18594e04e14ead',
-          username: null
+          username: null,
         },
         {
           id: '60f86f21be0f18005771cd1c',
@@ -384,7 +384,7 @@ module.exports = {
           read: false,
           time: '2021-07-21T19:01:53.602Z',
           last_updated: '2021-07-21T19:01:53.614Z',
-          createTime: '2021-07-21T19:01:53.614Z'
+          createTime: '2021-07-21T19:01:53.614Z',
         },
         {
           id: '60f7df14be0f18005770545d',
@@ -401,16 +401,16 @@ module.exports = {
           read: false,
           time: '2021-07-21T08:47:16.243Z',
           last_updated: '2021-07-21T08:47:16.246Z',
-          createTime: '2021-07-21T08:47:16.246Z'
-        }
+          createTime: '2021-07-21T08:47:16.246Z',
+        },
       ],
       total: '@integer(0, 100)',
       size: 20,
-      totalPage: 1
+      totalPage: 1,
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/Messages/update': { data: { count: 1 }, code: 'ok', msg: 'ok' },
-  '/tm/api/Messages/count': { data: '@integer(0, 100)', code: 'ok', msg: 'ok' }
+  '/tm/api/Messages/count': { data: '@integer(0, 100)', code: 'ok', msg: 'ok' },
 }

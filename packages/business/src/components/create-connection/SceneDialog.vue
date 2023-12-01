@@ -1,57 +1,54 @@
 <template>
   <ElDialog
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="!startingTour"
     width="80%"
     top="10vh"
-    custom-class="connection-dialog ldp-connection-dialog flex flex-column"
+    class="ldp-connection-dialog flex flex-column"
     destroy-on-close
     @open="handleOpen"
     @close="handleClose"
   >
-    <div slot="title" class="flex font-color-dark fs-6 fw-sub position-relative align-center">
-      <template v-if="!showForm">
-        <span>{{ title }}</span>
-        <ElInput
-          v-model="search"
-          class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
-          size="small"
-          clearable
-          :placeholder="$t('public_input_placeholder_search')"
-          @input="handleSearchInput"
-        >
-          <template #prefix>
-            <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
-          </template>
-        </ElInput>
-      </template>
-      <template v-else>
-        <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
-        <DatabaseIcon
-          key="databaseIcon"
-          v-if="formParams.pdkHash"
-          class="mr-2"
-          :size="24"
-          :item="formParams"
-        ></DatabaseIcon>
-        <VIcon v-else key="icon" class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
-        <span>{{ formParams.name }}</span>
-      </template>
-    </div>
+    <template #header>
+      <div class="flex font-color-dark fs-6 fw-sub position-relative align-center">
+        <template v-if="!showForm">
+          <span>{{ title }}</span>
+          <ElInput
+            v-model:value="search"
+            class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
+            clearable
+            :placeholder="$t('public_input_placeholder_search')"
+            @input="handleSearchInput"
+          >
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
+            </template>
+          </ElInput>
+        </template>
+        <template v-else>
+          <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
+          <DatabaseIcon v-if="formParams.pdkHash" class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
+          <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
+          <span>{{ formParams.name }}</span>
+        </template>
+      </div>
+    </template>
     <div v-if="!showForm" class="flex border-top flex-1 min-h-0">
       <div
         class="flex flex-column border-end scene-name-list-wrap overflow-x-hidden pt-4 pb-2"
         :class="{
-          'is-en': $i18n.locale === 'en'
+          'is-en': $i18n.locale === 'en',
         }"
       >
         <div class="scene-name-list overflow-y-auto">
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
-            :class="{ active: (currentScene === item.key || currentScene === item.name) && !search }"
+            :class="{
+              active: (currentScene === item.key || currentScene === item.name) && !search,
+            }"
             v-for="(item, i) in options"
             :key="i"
             @click="handleSelectScene(item)"
@@ -92,9 +89,7 @@
                 <div class="connector-item-content flex-1 overflow-hidden">
                   <div class="connector-item-title font-color-dark flex align-center">
                     <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
-                    <ElTag size="mini" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
-                      >DEMO</ElTag
-                    >
+                    <ElTag type="warning" class="text-uppercase ml-auto px-1 connector-item-tag">DEMO</ElTag>
                   </div>
                 </div>
               </div>
@@ -117,7 +112,7 @@
                 <div class="connector-item-title font-color-dark flex align-center">
                   <span class="ellipsis mr-1">{{ item.name }}</span>
                   <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
+                  <ElTag v-else-if="item.qcType" class="text-uppercase ml-auto px-1 connector-item-tag">{{
                     item.qcType
                   }}</ElTag>
                 </div>
@@ -161,6 +156,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import i18n from '@tap/i18n'
 
@@ -178,22 +174,22 @@ export default {
     ServeForm,
     VEmpty,
     DatabaseIcon,
-    IconButton
+    IconButton,
   },
   props: {
     visible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
     type: {
       type: String,
-      default: 'scene' // tag
+      default: 'scene', // tag
     },
     selectorType: String,
-    fixedPdkId: String
+    fixedPdkId: String,
   },
   data() {
-    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
     return {
       isDaas,
       search: '',
@@ -201,7 +197,7 @@ export default {
         name: '',
         pdkHash: null,
         pdkId: null,
-        md: null
+        md: null,
       },
       selected: {},
       showForm: false,
@@ -215,7 +211,7 @@ export default {
       sceneList: [
         {
           key: 'all',
-          name: i18n.t('public_select_option_all')
+          name: i18n.t('public_select_option_all'),
         },
         {
           key: 'recommend',
@@ -232,14 +228,14 @@ export default {
             'Dummy',
             'Kafka',
             'Doris',
-            'BigQuery'
-          ]
+            'BigQuery',
+          ],
         },
         {
           key: 'api',
           name: i18n.t('packages_business_api_publish'),
           hidden: !isDaas /*,
-          types: ['RESTful API', 'GraphQL']*/
+        types: ['RESTful API', 'GraphQL']*/,
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_rushucang'),
@@ -251,34 +247,34 @@ export default {
             'Tablestore',
             'Doris',
             'Clickhouse',
-            'Databend'
-          ]
+            'Databend',
+          ],
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_chaxunjiasu'),
-          types: ['MongoDB', 'Redis', 'Elasticsearch']
+          types: ['MongoDB', 'Redis', 'Elasticsearch'],
         },
         {
           key: 'Database',
           name: i18n.t('packages_business_create_connection_scenedialog_shujukutongbu'),
-          types: ['MongoDB']
+          types: ['MongoDB'],
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_guochantidai'),
-          types: ['Dameng', 'GBase-8a', 'KingBaseES-R3', 'KingBaseES-R6', 'Tidb', 'Oceanbase']
+          types: ['Dameng', 'GBase-8a', 'KingBaseES-R3', 'KingBaseES-R6', 'Tidb', 'Oceanbase'],
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_duiliegongshu'),
-          types: ['Kafka', 'ActiveMQ', 'RocketMQ', 'RabbitMQ']
+          types: ['Kafka', 'ActiveMQ', 'RocketMQ', 'RabbitMQ'],
         },
         {
           name: 'Reverse ETL',
-          types: ['vika', 'QingCloud']
+          types: ['vika', 'QingCloud'],
         },
         {
           name: i18n.t('packages_business_create_connection_scenedialog_gongzuoliu'),
-          types: ['Lark-IM', 'LarkTask']
-        }
+          types: ['Lark-IM', 'LarkTask'],
+        },
       ],
       connectorDescMap: {
         BigQuery: i18n.t('packages_business_create_connection_scenedialog_bigQu'),
@@ -295,34 +291,34 @@ export default {
         Dummy: i18n.t('packages_business_create_connection_dummy_desc'),
         Kafka: i18n.t('packages_business_create_connection_kafka_desc'),
         Doris: i18n.t('packages_business_create_connection_doris_desc'),
-        'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc')
+        'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc'),
       },
       currentScene: 'recommend',
       tagList: [
         {
           key: 'all',
-          name: i18n.t('public_select_option_all')
+          name: i18n.t('public_select_option_all'),
         },
         {
           key: 'recommend',
-          name: i18n.t('public_recommend')
+          name: i18n.t('public_recommend'),
         },
         {
           name: i18n.t('public_database'),
-          key: 'Database'
+          key: 'Database',
         },
         {
           name: 'SaaS',
-          key: 'SaaS'
+          key: 'SaaS',
         },
         {
           name: i18n.t('public_file'),
-          key: 'File'
+          key: 'File',
         },
         {
           name: i18n.t('packages_business_components_connectiontypeselectorsort_wodeshujuyuan'),
-          key: 'Custom'
-        }
+          key: 'Custom',
+        },
       ],
       specialScene: {
         api: [
@@ -330,14 +326,16 @@ export default {
             key: 'apiApp',
             icon: 'mini-app',
             name: this.$t('packages_business_api_application'),
-            md: this.$t('packages_business_api_application_md')
-          }
-        ]
-      }
+            md: this.$t('packages_business_api_application_md'),
+          },
+        ],
+      },
     }
   },
   computed: {
-    ...mapGetters(['startingTour']),
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types
@@ -347,7 +345,7 @@ export default {
     sceneDatabases() {
       if (this.search) {
         let search = this.search.toLowerCase()
-        return this.database.filter(db => db.name.toLowerCase().includes(search))
+        return this.database.filter((db) => db.name.toLowerCase().includes(search))
       }
 
       const { currentScene } = this
@@ -362,7 +360,7 @@ export default {
 
         if (!types.length) return arr
 
-        types.forEach(type => {
+        types.forEach((type) => {
           const item = this.databaseTypeMap[type]
           item && arr.push(item)
         })
@@ -370,11 +368,11 @@ export default {
         return arr
       }
 
-      return this.database.filter(db => db.tags?.includes(currentScene))
+      return this.database.filter((db) => db.tags?.includes(currentScene))
     },
     options() {
       let list = this.selectorType === 'target' ? this.sceneList : this.tagList
-      return list.filter(item => !item.hidden)
+      return list.filter((item) => !item.hidden)
     },
     title() {
       if (this.selectorType === 'target') {
@@ -385,7 +383,7 @@ export default {
 
     showDemoConnection() {
       return this.startingTour && this.currentScene === 'recommend' && !this.search
-    }
+    },
   },
   watch: {
     async visible(v) {
@@ -411,16 +409,15 @@ export default {
       }
     },
     showDialog(v) {
-      this.$emit('update:visible', v)
-    }
+      $emit(this, 'update:visible', v)
+    },
   },
-
   mounted() {
     const { type, pdkHash, pdkId } = this.$route.query
 
     // add-source/add-target
     if (type?.startsWith('add-') && this.selectorType !== 'source_and_target') {
-      this.$emit('update:selectorType', type.split('-').pop())
+      $emit(this, 'update:selectorType', type.split('-').pop())
       this.showDialog = true
       this.$nextTick(() => {
         this.formParams.pdkHash = pdkHash
@@ -429,7 +426,6 @@ export default {
       })
     }
   },
-
   methods: {
     getIcon,
     init() {
@@ -442,13 +438,13 @@ export default {
     },
 
     handleClose() {
-      this.$emit('visible', false)
-      this.$emit('update:visible', false)
+      $emit(this, 'visible', false)
+      $emit(this, 'update:visible', false)
     },
 
     handleSelect(item, isDemo = false) {
       if (this.selectorType === 'source_and_target') {
-        this.$emit('selected', item)
+        $emit(this, 'selected', item)
         return
       }
 
@@ -457,7 +453,7 @@ export default {
         icon: null,
         pdkHash: item.pdkHash,
         pdkId: item.pdkId,
-        pdkOptions: item
+        pdkOptions: item,
       })
       this.selected = item
       this.showForm = true
@@ -468,12 +464,12 @@ export default {
             const { demoDatabase } = this.$store.state.config
             this.$refs.connectionForm.schemaFormInstance.setValues({
               __TAPDATA: {
-                name: `${item.name}Demo`
+                name: `${item.name}Demo`,
               },
-              ...demoDatabase[item.pdkId]
+              ...demoDatabase[item.pdkId],
             })
             this.$refs.connectionForm.schemaFormInstance.setFieldState('*(!START.__TAPDATA.name)', {
-              disabled: true
+              disabled: true,
             })
           }, 0)
         })
@@ -481,18 +477,23 @@ export default {
     },
 
     handleSelectSpecial(item) {
-      Object.assign(this.formParams, { ...item, pdkHash: null, pdkId: null, pdkOptions: null })
+      Object.assign(this.formParams, {
+        ...item,
+        pdkHash: null,
+        pdkId: null,
+        pdkOptions: null,
+      })
       this.showForm = true
     },
 
     handleSuccess() {
-      this.$emit('success', ...arguments)
+      $emit(this, 'success', ...arguments)
       this.init()
       this.handleClose()
     },
 
     handleSaveAndMore() {
-      this.$emit('saveAndMore', ...arguments)
+      $emit(this, 'saveAndMore', ...arguments)
       this.init()
     },
 
@@ -510,15 +511,17 @@ export default {
       const params = {
         where: {
           tag: 'All',
-          authentication: 'All'
+          authentication: 'All',
         },
-        order: 'name ASC'
+        order: 'name ASC',
       }
       if (!noLoading) this.loading = true
-      const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
+      const res = await databaseTypesApi.getDatabases({
+        filter: JSON.stringify(params),
+      })
       const data =
         this.selectorType !== 'source_and_target'
-          ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+          ? res?.filter((t) => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
       this.database = data.sort((o1, o2) => {
         return o1.name.localeCompare(o2.name)
@@ -526,9 +529,9 @@ export default {
       this.databaseTypeMap = data.reduce((map, db) => ((map[db.type] = db), map), {})
 
       if (this.selectorType === 'source') {
-        this.demoDatabase = [data.find(t => t.pdkId === 'mysql')]
+        this.demoDatabase = [data.find((t) => t.pdkId === 'mysql')]
       } else if (this.selectorType === 'target') {
-        this.demoDatabase = [data.find(t => t.pdkId === 'mongodb')]
+        this.demoDatabase = [data.find((t) => t.pdkId === 'mongodb')]
       }
 
       this.loading = false
@@ -543,116 +546,117 @@ export default {
       const data = await databaseTypesApi.get({
         filter: JSON.stringify({
           where: {
-            pdkId: id
-          }
-        })
+            pdkId: id,
+          },
+        }),
       })
       this.loading = false
       return data?.[0]
-    }
-  }
+    },
+  },
+  emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
 }
 </script>
 
-<style scoped lang="scss">
-::v-deep {
-  .ldp-connection-dialog {
-    margin-top: 32px !important;
-    margin-bottom: 32px !important;
-    height: calc(100% - 64px);
-    overflow: hidden;
+<style lang="scss">
+.ldp-connection-dialog {
+  margin-top: 32px !important;
+  margin-bottom: 32px !important;
+  height: calc(100% - 64px);
+  overflow: hidden;
 
-    .el-dialog__header {
-      height: 64px;
-      min-height: 64px;
+  .el-dialog__header {
+    height: 64px;
+    min-height: 64px;
+  }
+
+  .ldp-connection-search-input {
+    width: 340px;
+  }
+
+  .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0;
+    height: 0;
+
+    .img-box {
+      width: 65px;
+      height: 65px;
+      border: 1px solid rgba(221, 221, 221, 0.4);
+      background-color: #fff;
     }
 
-    .ldp-connection-search-input {
-      width: 340px;
-    }
-
-    .el-dialog__body {
-      display: flex;
-      flex-direction: column;
+    .database-item {
+      width: 80px;
       flex: 1;
-      padding: 0;
-      height: 0;
-
-      .img-box {
-        width: 65px;
-        height: 65px;
-        border: 1px solid rgba(221, 221, 221, 0.4);
-        background-color: #fff;
-      }
-
-      .database-item {
-        width: 80px;
-        flex: 1;
-        margin-right: 53px;
-        margin-bottom: 48px;
-        &.active,
-        &:hover {
-          .img-box {
-            background: rgba(201, 205, 212, 0.3);
-          }
+      margin-right: 53px;
+      margin-bottom: 48px;
+      &.active,
+      &:hover {
+        .img-box {
+          background: rgba(201, 205, 212, 0.3);
         }
-        &.disable {
-          .img-box {
-            background-color: rgba(242, 242, 242, 0.2);
-          }
+      }
+      &.disable {
+        .img-box {
+          background-color: rgba(242, 242, 242, 0.2);
         }
       }
     }
+  }
 
-    .scene-name-list-wrap {
-      width: 196px;
+  .scene-name-list-wrap {
+    width: 196px;
 
-      &.is-en {
-        width: 218px;
-      }
+    &.is-en {
+      width: 218px;
+    }
+  }
+
+  .scene-name-item {
+    margin: 0 8px 1px;
+    height: 36px;
+    line-height: 36px;
+    transition: background 0.2s;
+
+    &:hover {
+      background-color: rgba(31, 35, 41, 0.08);
     }
 
-    .scene-name-list {
+    &.active {
+      color: map-get($color, primary);
+      background-color: #f0f4ff;
+    }
+  }
+
+  .connector-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .connector-item {
+    box-shadow:
+      0 1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02),
+      0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s;
+
+    &-title {
+      font-size: 15px;
+      line-height: 38px;
     }
 
-    .scene-name-item {
-      margin: 0 8px 1px;
-      height: 36px;
-      line-height: 36px;
-      transition: background 0.2s;
-
-      &:hover {
-        background-color: rgba(31, 35, 41, 0.08);
-      }
-
-      &.active {
-        color: map-get($color, primary);
-        background-color: #f0f4ff;
-      }
+    &-tag {
+      height: 18px;
+      line-height: 16px;
     }
 
-    .connector-list {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .connector-item {
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-      transition: box-shadow 0.2s;
-
-      &-title {
-        font-size: 15px;
-        line-height: 38px;
-      }
-
-      &-tag {
-        height: 18px;
-        line-height: 16px;
-      }
-
-      &:hover {
-        box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12),
-          0 5px 12px 4px rgba(0, 0, 0, 0.09);
-      }
+    &:hover {
+      box-shadow:
+        0 1px 2px -2px rgba(0, 0, 0, 0.16),
+        0 3px 6px 0 rgba(0, 0, 0, 0.12),
+        0 5px 12px 4px rgba(0, 0, 0, 0.09);
     }
   }
 }

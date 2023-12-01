@@ -1,7 +1,9 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">{{ $t('daas_notification_center_xitonggaojing') }}</div>
+      <div class="title font-color-dark fs-7">
+        {{ $t('daas_notification_center_xitonggaojing') }}
+      </div>
     </div>
     <el-tabs v-model="activeName">
       <el-tab-pane :label="$t('daas_notification_systemalarm_quanbugaojing')" name="first"></el-tab-pane>
@@ -12,19 +14,21 @@
       class="share-list"
       :remoteMethod="getData"
       @selection-change="
-        val => {
+        (val) => {
           multipleSelection = val
         }
       "
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      <template v-slot:search>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleClose">
-          <span>{{ $t('public_button_close') }}</span>
-        </el-button>
-      </div>
+      <template v-slot:operation>
+        <div>
+          <el-button class="btn btn-create" type="primary" :loading="loadingConfig" @click="handleClose">
+            <span>{{ $t('public_button_close') }}</span>
+          </el-button>
+        </div>
+      </template>
       <el-table-column type="selection"></el-table-column>
       <el-table-column :label="$t('packages_dag_components_alert_gaojingjibie')" prop="level">
         <template #default="{ row }">
@@ -55,11 +59,11 @@
       ></el-table-column>
       <el-table-column fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
-          <el-button type="text" @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
+          <el-button text @click="handleClose(row.id)" :disabled="row.status === 'CLOESE'">{{
             $t('public_button_close')
           }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button type="text" @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
+          <el-button text @click="goLog(row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -89,9 +93,9 @@ export default {
         type: 'alarm',
         status: '',
         time: '',
-        keyword: ''
+        keyword: '',
       },
-      count: ''
+      count: '',
     }
   },
   created() {
@@ -100,13 +104,13 @@ export default {
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    }
+    },
   },
   methods: {
     getData({ page }) {
@@ -114,7 +118,7 @@ export default {
       let { current, size } = page
       let where = {
         page: current,
-        size: size
+        size: size,
       }
       if (status || status !== '') {
         where.status = status
@@ -131,11 +135,11 @@ export default {
       if (end) {
         where.end = end
       }
-      return alarmApi.list(where).then(data => {
+      return alarmApi.list(where).then((data) => {
         let list = data?.items || []
         return {
           total: data?.total || 0,
-          data: list.map(item => {
+          data: list.map((item) => {
             item.firstOccurrenceTime = item.firstOccurrenceTime
               ? dayjs(item.firstOccurrenceTime).format('YYYY-MM-DD HH:mm:ss')
               : ''
@@ -146,7 +150,7 @@ export default {
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             item.statusLabel = ALARM_STATUS_MAP[item.status].text
             return item
-          })
+          }),
         }
       })
     },
@@ -159,34 +163,34 @@ export default {
           items: [
             {
               label: i18n.t('packages_business_shared_const_gaojingzhong'),
-              value: 'ING'
+              value: 'ING',
             },
             {
               label: i18n.t('packages_business_shared_const_yihuifu'),
-              value: 'RECOVER'
+              value: 'RECOVER',
             },
             {
               label: i18n.t('packages_business_components_alert_yiguanbi'),
-              value: 'CLOESE'
-            }
+              value: 'CLOESE',
+            },
           ],
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           title: i18n.t('daas_notification_systemalarm_gaojingshijian'),
           type: 'datetimerange',
-          key: 'start,end'
+          key: 'start,end',
         },
         {
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     handleClose(id) {
       let ids = id
       if (this.multipleSelection?.length > 0) {
-        ids = this.multipleSelection.map(item => item.id)
+        ids = this.multipleSelection.map((item) => item.id)
       }
       alarmApi.close(ids).then(() => {
         this.$message.success(i18n.t('daas_notification_systemalarm_guanbichenggong'))
@@ -198,23 +202,23 @@ export default {
         this.$router.push({
           name: 'MigrationMonitor',
           params: {
-            id: row.taskId
-          }
+            id: row.taskId,
+          },
         })
       } else {
         this.$router.push({
           name: 'TaskMonitor',
           params: {
-            id: row.taskId
-          }
+            id: row.taskId,
+          },
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .system-notification {
   display: flex;
   flex-direction: column;
@@ -242,6 +246,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .system-notification {
   .el-tabs {

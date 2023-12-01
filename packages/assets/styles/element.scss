@@ -1,0 +1,103 @@
+:root {
+  --el-font-weight-primary: 400;
+}
+
+// Table
+// css3 var in packages/theme-chalk/src/table.scss
+.el-table {
+  th.el-table__cell {
+    padding: 0;
+    height: 40px;
+    font-weight: 500;
+  }
+
+  .cell {
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+}
+
+// Tabs
+// css3 var in packages/theme-chalk/src/tabs.scss
+.el-tabs {
+  .el-tabs__nav-wrap.is-top {
+    padding: 0 16px;
+  }
+
+  .el-tabs__item {
+    padding: 0 16px;
+  }
+}
+
+// Tooltip
+.el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
+  max-width: 400px;
+}
+
+// Select
+.el-select-v2__popper {
+  .el-select-dropdown {
+    &__list {
+      margin: 4px 0 !important;
+    }
+    &__option-item {
+      width: calc(100% - 8px) !important;
+      left: 4px !important;
+      border-radius: map-get($border-radius, base);
+      font-size: var(--el-font-size-base);
+    }
+  }
+}
+
+.el-select__popper {
+  .el-select-dropdown {
+    &__list {
+      padding: 0 4px !important;
+      margin: 4px 0 !important;
+    }
+    &__item {
+      border-radius: map-get($border-radius, base);
+    }
+  }
+}
+
+// Dropdown
+.el-dropdown-menu {
+  padding: 4px !important;
+  &__item {
+    border-radius: map-get($border-radius, base);
+  }
+}
+
+// Tree
+.el-tree-node__content {
+  border-radius: map-get($border-radius, base);
+}
+
+// Radio
+.el-radio-group.button-style-outline {
+  .el-radio-button {
+    --el-radio-button-checked-bg-color: #fff;
+    --el-radio-button-checked-text-color: var(--el-color-primary);
+  }
+}
+
+// Dialog
+.el-dialog {
+  &__header {
+    padding-inline: 24px !important;
+    padding-block: 20px !important;
+  }
+  &__title {
+    font-weight: 500;
+  }
+  &__body {
+    padding-block: 0 !important;
+    padding-inline: 24px !important;
+    margin-bottom: var(--el-dialog-padding-primary);
+  }
+  &__footer {
+    padding-inline: 24px !important;
+    padding-top: 0 !important;
+  }
+}

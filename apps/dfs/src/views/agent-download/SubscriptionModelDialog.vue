@@ -1,13 +1,14 @@
 <template>
   <el-dialog
-    :visible.sync="visible"
+    :value="visible"
+    @input="$emit('update:visible', $event)"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="showClose"
     :top="'4vh'"
     :title="$t('dfs_agent_download_subscriptionmodeldialog_peizhishishishu')"
     width="1200px"
-    custom-class="tap-dialog"
+    class="tap-dialog"
   >
     <CreateAgent
       class="subscriptionModelDialog"
@@ -26,13 +27,14 @@ export default {
   components: { CreateAgent },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     showClose: {
       type: Boolean,
-      default: true
-    }
-  }
+      default: true,
+    },
+  },
+  emits: ['update:visible'],
 }
 </script>
 

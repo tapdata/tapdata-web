@@ -1,8 +1,7 @@
-@import '~@tap/assets/styles/var';
-@import '~@tap/assets/styles/reboot';
-@import '~@tap/assets/styles/utilities';
-@import '~@tap/assets/fonts/DIN/index.css';
-
+//@import '~@tap/assets/styles/var';
+@import '@tap/assets/styles/reboot';
+@import '@tap/assets/styles/utilities';
+@import '@tap/assets/fonts/DIN/index.css';
 @import 'overrides';
 
 .g-panel-container {

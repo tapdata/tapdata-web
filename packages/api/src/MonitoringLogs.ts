@@ -9,7 +9,7 @@ export default class Measurement extends Http {
   }
   export(params) {
     return this.axios.post(this.url + '/export', params, {
-      responseType: 'blob'
+      responseType: 'blob',
     })
   }
 }

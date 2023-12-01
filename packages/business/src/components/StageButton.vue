@@ -1,5 +1,5 @@
 <template>
-  <ElButton type="text" :loading="loading" @click="loadSchema">
+  <ElButton text :loading="loading" @click="loadSchema">
     <template v-if="loading">
       <span>{{ progress }}</span>
     </template>
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { mapActions } from 'vuex'
@@ -21,7 +22,6 @@ import { connectionsApi, metadataInstancesApi } from '@tap/api'
 
 export default {
   name: 'StageButton',
-
   props: {
     connectionId: String,
     taskId: String,
@@ -30,33 +30,28 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_button_reload')
-      }
-    }
+      },
+    },
   },
-
   data() {
     return {
       loading: false,
       destroyStatus: false,
-      progress: '0%'
+      progress: '0%',
     }
   },
-
   watch: {
     connectionId(v) {
       v && this.init()
-    }
+    },
   },
-
   mounted() {
     this.init()
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroyStatus = true
     clearTimeout(this.timer)
   },
-
   methods: {
     ...mapActions('dataflow', ['updateDag']),
 
@@ -69,12 +64,12 @@ export default {
       connectionsApi
         .updateById(this.connectionId, {
           loadCount: 0,
-          loadFieldsStatus: 'loading'
+          loadFieldsStatus: 'loading',
         })
-        .then(data => {
+        .then((data) => {
           this.progress = '0%'
           this.getProgress()
-          this.$emit('start')
+          $emit(this, 'start')
           this.startByConnection(data, true, false)
         })
     },
@@ -86,7 +81,7 @@ export default {
         this.loading = true
       }
       clearTimeout(this.timer)
-      connectionsApi.getNoSchema(this.connectionId).then(res => {
+      connectionsApi.getNoSchema(this.connectionId).then((res) => {
         if (res.loadFieldsStatus === 'loading') {
           this.progress = (Math.round((res.loadCount / res.tableCount) * 10000) / 100 || 0) + '%'
           this.timer = setTimeout(this.getProgress, 1000)
@@ -96,11 +91,11 @@ export default {
           if (!check && taskId && nodeId) {
             metadataInstancesApi
               .logicSchema(taskId, {
-                nodeId
+                nodeId,
               })
               .then(this.updateDag)
           }
-          !check && this.$emit('complete') // 防止跟父组件的加载重复
+          !check && $emit(this, 'complete') // 防止跟父组件的加载重复
           this.loading = false
         }
       })
@@ -109,7 +104,7 @@ export default {
     startByConnection(connection, updateSchema, editTest) {
       let msg = {
         type: 'testConnection',
-        data: connection
+        data: connection,
       }
       msg.data['updateSchema'] = false
       msg.data['editTest'] = false
@@ -125,9 +120,8 @@ export default {
           this.$ws.send(msg)
         })
       })
-    }
-  }
+    },
+  },
+  emits: ['start', 'complete'],
 }
 </script>
-
-<style scoped></style>

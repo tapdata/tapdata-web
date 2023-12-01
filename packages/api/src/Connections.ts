@@ -28,7 +28,7 @@ export default class Connections extends Http {
     return this.axios.get(`${this.url}/databaseType`)
   }
   patchId(params) {
-    let id = params._id || params.id
+    const id = params._id || params.id
     delete params._id
     delete params.id
     return this.axios.patch(`${this.url}/${id}`, params)
@@ -48,7 +48,7 @@ export default class Connections extends Http {
   }
   create(params: unknown, urlParams: any) {
     let url = this.url
-    for (let key in urlParams) {
+    for (const key in urlParams) {
       url += `?${key}=${urlParams[key]}`
     }
     return this.axios.post(url, params)

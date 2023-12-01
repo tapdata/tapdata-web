@@ -10,7 +10,7 @@
       {{ $t('public_button_edit') }}
     </ElLink>
     <List ref="list" :isMetaData="true" :readOnly="true" :updateList="updateList"></List>
-    <Dialog v-if="dialogVisible" :visible.sync="dialogVisible"></Dialog>
+    <Dialog v-if="dialogVisible" v-model:visible="dialogVisible"></Dialog>
   </section>
 </template>
 
@@ -25,16 +25,17 @@ export default {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       dialogVisible: false,
-      updateList: false
+      updateList: false,
     }
   },
   watch: {
     dialogVisible() {
       this.updateList = !this.dialogVisible
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .btn-refresh {
   padding: 0;

@@ -10,7 +10,7 @@
         >
           <div v-if="item.type === 'selection'" class="cell">
             <ElCheckbox
-              v-model="checkAll"
+              v-model:value="checkAll"
               :indeterminate="isIndeterminate"
               @change="handleCheckAll(arguments[0])"
             ></ElCheckbox>
@@ -38,17 +38,17 @@
                   'column-item',
                   'column-' + (colItem.prop || colItem.type),
                   colItem.class,
-                  ...getColClass(colItem)
+                  ...getColClass(colItem),
                 ]"
                 :style="{ width: getColWidth(colItem) }"
               >
                 <div
                   :class="['cell', { 'el-tooltip': colItem.showOverflowTooltip }]"
-                  @mouseenter="event => handleCellMouseEnter(event, colItem)"
-                  @mouseleave="event => handleCellMouseLeave(event)"
+                  @mouseenter="(event) => handleCellMouseEnter(event, colItem)"
+                  @mouseleave="(event) => handleCellMouseLeave(event)"
                 >
                   <template v-if="colItem.slot">
-                    <slot :name="colItem.slot" :row="item" v-bind="{ row: item }"></slot>
+                    <slot v-bind="{ row: item }" :name="colItem.slot" :row="item"></slot>
                   </template>
                   <template v-else-if="colItem.type === 'index'">{{ index + 1 }}</template>
 
@@ -71,31 +71,30 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { cloneDeep, debounce } from 'lodash'
 
 export default {
   name: 'Main',
-
   components: { DynamicScroller, DynamicScrollerItem },
-
   props: {
     columns: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     data: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     remoteMethod: Function,
     itemKey: {
       type: String,
-      default: 'id'
+      default: 'id',
     },
     border: {
       type: Boolean,
-      default: false
+      default: false,
     },
     itemSize: [Number],
     rowClassName: [String, Function],
@@ -103,10 +102,9 @@ export default {
     highlightCurrentRow: Boolean,
     tooltipEffect: {
       type: String,
-      default: 'dark'
-    }
+      default: 'dark',
+    },
   },
-
   data() {
     return {
       list: [],
@@ -118,55 +116,50 @@ export default {
       tooltipContent: '',
       widthMap: {
         index: 50,
-        selection: 40
-      }
+        selection: 40,
+      },
     }
   },
-
   computed: {
     cols() {
       let result = cloneDeep(this.columns)
 
       const usedWidth = result
-        .map(t => t.width || 0)
+        .map((t) => t.width || 0)
         .reduce((pre, cur) => {
           return cur + pre
         }, 0)
 
       const obligateWidth = result
-        .filter(t => ['index', 'selection'].includes(t.type))
-        .map(t => this.widthMap[t.type])
+        .filter((t) => ['index', 'selection'].includes(t.type))
+        .map((t) => this.widthMap[t.type])
         .reduce((pre, cur) => {
           return cur + pre
         }, 0)
 
       const exWidth = this.layoutWidth - usedWidth - obligateWidth
-      let noWidthArr = result.filter(t => !['index', 'selection'].includes(t.type)).filter(t => !t.width)
-      noWidthArr.forEach(el => {
+      let noWidthArr = result.filter((t) => !['index', 'selection'].includes(t.type)).filter((t) => !t.width)
+      noWidthArr.forEach((el) => {
         el.width = Math.floor(exWidth / noWidthArr.length)
       })
       return result
-    }
+    },
   },
-
   watch: {
     data: {
       deep: true,
       handler(v) {
         v && this.fetch()
-      }
-    }
+      },
+    },
   },
-
   created() {
-    this.activateTooltip = debounce(tooltip => tooltip.handleShowPopper(), 50)
+    this.activateTooltip = debounce((tooltip) => tooltip.handleShowPopper(), 50)
   },
-
   mounted() {
     this.layoutWidth = this.$el.offsetWidth
     this.fetch()
   },
-
   methods: {
     fetch() {
       if (!this.remoteMethod) {
@@ -176,7 +169,7 @@ export default {
     },
 
     toggleRowSelection(row = {}, selected) {
-      const index = this.selections.findIndex(t => t === row)
+      const index = this.selections.findIndex((t) => t === row)
 
       index > -1 && this.selections.splice(index, 1)
       if (selected) {
@@ -187,14 +180,14 @@ export default {
       const dataLen = this.data.length
       this.isIndeterminate = !!selectionsLen && selectionsLen < dataLen
       this.checkAll = !!selectionsLen && selectionsLen === dataLen
-      this.$emit('selection-change', this.selections)
+      $emit(this, 'selection-change', this.selections)
     },
 
     handleCheckAll(val) {
       this.checkAll = val
       this.selections = val ? [...this.list] : []
       this.isIndeterminate = false
-      this.$emit('selection-change', this.selections)
+      $emit(this, 'selection-change', this.selections)
     },
 
     // 选中所有
@@ -205,7 +198,7 @@ export default {
     // 清空所有选中
     clearSelection() {
       this.handleCheckAll(false)
-      this.$emit('clear-selection')
+      $emit(this, 'clear-selection')
     },
 
     getCheckboxValue(item) {
@@ -226,8 +219,8 @@ export default {
         classes.push(
           rowClassName.call(null, {
             row,
-            rowIndex
-          })
+            rowIndex,
+          }),
         )
       }
 
@@ -263,7 +256,7 @@ export default {
     getColWidth(item) {
       const map = {
         index: 50,
-        selection: 40
+        selection: 40,
       }
 
       return (item.width || map[item.type] || 100) + 'px'
@@ -274,14 +267,15 @@ export default {
       const map = {
         left: 'text-start',
         center: 'text-center',
-        right: 'text-end'
+        right: 'text-end',
       }
 
       classes.push(map[item.align] || '')
 
       return classes
-    }
-  }
+    },
+  },
+  emits: ['selection-change', 'clear-selection'],
 }
 </script>
 
@@ -290,7 +284,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-
   &.is-border {
     .column-item {
       border-right: 1px solid #ebeef5;
@@ -307,35 +300,28 @@ export default {
     }
   }
 }
-
 .header__list {
   background-color: #fafafa;
   color: #333c4a;
   font-weight: 500;
 }
-
 .body-wrapper {
   flex: 1;
   height: 0;
 }
-
 .vue-recycle-scroller {
   height: 100%;
 }
-
 .body__row {
   color: #535f72;
-
   &:hover {
     background-color: #f2f3f5;
   }
 }
-
 .column-item {
   padding: 8px 0;
   width: 110px;
   flex-shrink: 0;
-
   &.column-index {
     width: 60px;
   }
@@ -344,7 +330,6 @@ export default {
     width: 40px;
   }
 }
-
 .cell {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -355,7 +340,6 @@ export default {
   overflow-wrap: break-word;
   word-break: normal;
   box-sizing: border-box;
-
   &.el-tooltip {
     white-space: nowrap;
     min-width: 50px;

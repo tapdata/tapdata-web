@@ -1,5 +1,5 @@
 <template>
-  <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
+  <section class="connection-list-wrap px-4">
     <TablePage
       ref="table"
       row-key="id"
@@ -9,7 +9,7 @@
               authority: 'datasource_catalog_management',
               types: ['database'],
               viewPage: 'connections',
-              title: $t('packages_business_connections_list_lianjiefenlei')
+              title: $t('packages_business_connections_list_lianjiefenlei'),
             }
           : null
       "
@@ -18,15 +18,10 @@
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
+      <template v-slot:search>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)">
           <template #connectionType>
-            <ElRadioGroup
-              :class="{ 'ml-2': isDaas }"
-              v-model="searchParams.databaseModel"
-              size="mini"
-              @change="table.fetch(1)"
-            >
+            <ElRadioGroup class="button-style-outline" v-model="searchParams.databaseModel" @change="table.fetch(1)">
               <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
               <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
               <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
@@ -34,34 +29,34 @@
           </template>
         </FilterBar>
       </template>
-      <div slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-          $t('packages_business_permissionse_settings_create_quanxianshezhi')
-        }}</ElButton>
-        <ElButton
-          v-if="isDaas"
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'datasource_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('public_button_bulk_tag') }}</span>
-        </ElButton>
-        <ElButton
-          v-if="buttonShowMap.create"
-          id="connection-list-create"
-          v-readonlybtn="'datasource_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @click="checkTestConnectionAvailable"
-        >
-          <span> {{ $t('public_button_create') }}</span>
-        </ElButton>
-      </div>
+      <template v-slot:operation>
+        <div>
+          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
+            $t('packages_business_permissionse_settings_create_quanxianshezhi')
+          }}</ElButton>
+          <ElButton
+            v-if="isDaas"
+            v-show="multipleSelection.length > 0"
+            v-readonlybtn="'datasource_category_application'"
+            class="btn"
+            @click="$refs.table.showClassify(handleSelectTag())"
+          >
+            <i class="iconfont icon-biaoqian back-btn-icon"></i>
+            <span> {{ $t('public_button_bulk_tag') }}</span>
+          </ElButton>
+          <ElButton
+            v-if="buttonShowMap.create"
+            id="connection-list-create"
+            v-readonlybtn="'datasource_creation'"
+            class="btn btn-create"
+            type="primary"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="checkTestConnectionAvailable"
+          >
+            <span> {{ $t('public_button_create') }}</span>
+          </ElButton>
+        </div>
+      </template>
       <ElTableColumn v-if="isDaas" type="selection" width="45" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
         <template #default="{ row }">
@@ -77,13 +72,15 @@
               {{ row.name }}
             </ElLink>
             <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags"> {{ item.value }} </span>
+              <span class="tag inline-block" v-for="item in row.listtags">
+                {{ item.value }}
+              </span>
             </span>
           </span>
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
@@ -97,20 +94,22 @@
         </template>
       </ElTableColumn>
       <ElTableColumn width="125" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ getType(scope.row.connection_type) }}
         </template>
       </ElTableColumn>
       <ElTableColumn min-width="125">
-        <div slot="header" class="flex align-center">
-          <span>{{ $t('public_connection_schema_status') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
-        <template v-else slot-scope="scope">
-          <SchemaProgress :data="scope.row"></SchemaProgress>
+        <template v-slot:header>
+          <div class="flex align-center">
+            <span>{{ $t('public_connection_schema_status') }}</span>
+            <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+        <template v-slot="scope">
+          <div v-if="isFileSource(scope.row)">-</div>
+          <SchemaProgress v-else :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
       <ElTableColumn
@@ -119,20 +118,24 @@
         min-width="180"
         :label="$t('public_connection_table_structure_update_time')"
       >
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.loadSchemaTimeLabel }}
         </template>
       </ElTableColumn>
       <ElTableColumn width="320" :label="$t('public_operation')">
-        <div v-if="isDaas" slot="header" class="flex align-center">
-          <span>{{ $t('public_operation_available') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <template slot-scope="scope">
-          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+        <template v-slot:header>
+          <div v-if="isDaas" class="flex align-center">
+            <span>{{ $t('public_operation_available') }}</span>
+            <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+        <template v-slot="scope">
+          <ElButton link type="primary" @click="testConnection(scope.row)"
+            >{{ $t('public_connection_button_test') }}
+          </ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElTooltip
             :disabled="!isFileSource(scope.row)"
             :content="$t('packages_business_connections_list_wenjianleixingde')"
@@ -140,18 +143,20 @@
           >
             <span>
               <ElButton
-                type="text"
+                link
+                type="primary"
                 :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
                 @click="handleLoadSchema(scope.row)"
                 >{{ $t('public_connection_button_load_schema') }}
               </ElButton>
             </span>
           </ElTooltip>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElButton
             v-if="havePermission(scope.row.permissionActions, 'Edit')"
             v-readonlybtn="'datasource_edition'"
-            type="text"
+            link
+            type="primary"
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
@@ -161,6 +166,7 @@
             >{{ $t('public_button_edit') }}
           </ElButton>
           <ElDivider
+            class="mx-1"
             v-if="havePermission(scope.row.permissionActions, 'Edit')"
             direction="vertical"
             v-readonlybtn="'datasource_edition'"
@@ -168,17 +174,24 @@
           <ElButton
             v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
-            type="text"
+            link
+            type="primary"
             :loading="scope.row.copyLoading"
             :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
             >{{ $t('public_button_copy') }}
           </ElButton>
-          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+          <ElDivider
+            class="mx-1"
+            v-if="buttonShowMap.copy"
+            direction="vertical"
+            v-readonlybtn="'datasource_creation'"
+          ></ElDivider>
           <ElButton
             v-if="havePermission(scope.row.permissionActions, 'Delete')"
             v-readonlybtn="'datasource_delete'"
-            type="text"
+            link
+            type="primary"
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
@@ -192,20 +205,21 @@
     </TablePage>
     <Preview ref="preview" @test="testConnection"></Preview>
     <!--    <DatabaseTypeDialog
-      :dialogVisible="dialogDatabaseTypeVisible"
-      @dialogVisible="handleDialogDatabaseTypeVisible"
-      @databaseType="handleDatabaseType"
-    ></DatabaseTypeDialog>-->
+          :dialogVisible="dialogDatabaseTypeVisible"
+          @dialogVisible="handleDialogDatabaseTypeVisible"
+          @databaseType="handleDatabaseType"
+        ></DatabaseTypeDialog>-->
     <SceneDialog
-      :visible.sync="dialogDatabaseTypeVisible"
+      v-model:visible="dialogDatabaseTypeVisible"
       selector-type="source_and_target"
       @selected="handleDatabaseType"
     ></SceneDialog>
-    <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
+    <Test ref="test" v-model:visible="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
+    <UsedTaskDialog v-model:value="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
     <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
   </section>
 </template>
+
 <script>
 import i18n from '@tap/i18n'
 
@@ -215,13 +229,13 @@ import { connectionsApi, databaseTypesApi } from '@tap/api'
 import { VIcon, FilterBar } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
-
-import { TablePage, SchemaProgress } from '../../components'
+import TablePage from '../../components/TablePage'
+import SchemaProgress from '../../components/SchemaProgress'
+import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import Preview from './Preview'
 import Test from './Test'
 import { defaultModel, verify, getConnectionIcon } from './util'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
-import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
 
 let timeout = null
@@ -236,12 +250,12 @@ export default {
     SchemaProgress,
     FilterBar,
     UsedTaskDialog,
-    PermissionseSettingsCreate
+    PermissionseSettingsCreate,
   },
   inject: ['checkAgent', 'buried'],
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
 
       filterItems: [],
       user_id: Cookie.get('user_id'),
@@ -255,55 +269,55 @@ export default {
       databaseModelOptions: [
         {
           label: this.$t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('public_connection_type_source'),
-          value: 'source'
+          value: 'source',
         },
         {
           label: this.$t('public_connection_type_target'),
-          value: 'target'
+          value: 'target',
         },
         {
           label: this.$t('public_connection_type_source_and_target'),
-          value: 'source_and_target'
-        }
+          value: 'source_and_target',
+        },
       ],
       databaseStatusOptions: [
         {
           label: this.$t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('public_status_ready'),
-          value: 'ready'
+          value: 'ready',
         },
         {
           label: this.$t('public_status_invalid'),
-          value: 'invalid'
+          value: 'invalid',
         },
         {
           label: this.$t('public_status_testing'),
-          value: 'testing'
-        }
+          value: 'testing',
+        },
       ],
       databaseTypeOptions: [],
       searchParams: {
-        databaseType: '',
+        databaseType: null,
         keyword: '',
         databaseModel: '',
         status: '',
         panelFlag: true,
-        sourceType: ''
+        sourceType: '',
       },
       testData: null,
       dialogTestVisible: false, // 连接测试框
       connectionTaskData: {
         items: [],
-        total: 0
+        total: 0,
       },
-      connectionTaskDialog: false
+      connectionTaskDialog: false,
     }
   },
   computed: {
@@ -313,14 +327,14 @@ export default {
     buttonShowMap() {
       return {
         create: this.$has('v2_datasource_creation'),
-        copy: this.$has('v2_datasource_copy')
+        copy: this.$has('v2_datasource_copy'),
       }
-    }
+    },
   },
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
   },
   created() {
     let helpUrl = 'https://docs.tapdata.net'
@@ -340,10 +354,10 @@ export default {
     console.log('baidu-cookie')
     Cookie.set('ken_bd_vid', 'kennen')
     Cookie.set('ken_bd_vid', 'kennen', {
-      domain: 'cloud.tapdata.net'
+      domain: 'cloud.tapdata.net',
     })
     Cookie.set('ken_bd_vid', 'kennen', {
-      domain: 'tapdata.net'
+      domain: 'tapdata.net',
     })
   },
   mounted() {
@@ -359,21 +373,21 @@ export default {
       }
     }
   },
-  destroyed() {
+  unmounted() {
     clearInterval(timeout)
   },
   methods: {
     // 存在测试中，重新加载数据
     reloadDataOnTesting(data) {
       let flag = false
-      data.forEach(el => {
+      data.forEach((el) => {
         if (el.status === 'testing') {
           flag = true
         }
       })
       flag &&
         setTimeout(() => {
-          this.table.fetch(null, 0, true, value => {
+          this.table.fetch(null, 0, true, (value) => {
             this.reloadDataOnTesting(value)
           })
         }, 3000)
@@ -382,11 +396,11 @@ export default {
     handleGuide() {
       let item = {
         visible: true,
-        step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0
+        step: this.$route.query.step ? Number(this.$route.query.step) + 1 : 0,
       }
       window.parent && window.parent.noviceGuideChange && window.parent.noviceGuideChange(item)
       this.$router.push({
-        name: 'connections'
+        name: 'connections',
       })
     },
     //筛选条件
@@ -400,8 +414,8 @@ export default {
       let { keyword, databaseType, databaseModel, status, sourceType } = this.searchParams
       let where = {
         createType: {
-          $ne: 'System'
-        }
+          $ne: 'System',
+        },
       }
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
@@ -411,14 +425,14 @@ export default {
 
       if (databaseModel) {
         where.connection_type = {
-          $ne: databaseModel === 'source' ? 'target' : 'source'
+          $ne: databaseModel === 'source' ? 'target' : 'source',
         }
       }
 
       sourceType && (where.sourceType = sourceType)
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       status && (where.status = status)
@@ -428,13 +442,13 @@ export default {
         noSchema: 1,
         //fields: fields, //传noSchema 过滤schema
         skip: (current - 1) * size,
-        where
+        where,
       }
       return connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let list = data?.items || []
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -449,14 +463,14 @@ export default {
               }
             })
           }
-          list = list.map(item => {
+          list = list.map((item) => {
             if (item.connectionString) {
               item.connectionUrl = item.connectionString
             } else {
               if (item.config?.uri) {
                 const regResult =
                   /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                    item.config.uri
+                    item.config.uri,
                   )
                 if (regResult && regResult.groups && regResult.groups.password) {
                   const { username, host, database, query } = regResult.groups
@@ -486,7 +500,7 @@ export default {
           this.$refs.preview.sync(list)
           return {
             total: data?.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -515,47 +529,47 @@ export default {
           '',
           {
             type: 'warning',
-            showClose: false
-          }
-        ).then(resFlag => {
+            showClose: false,
+          },
+        ).then((resFlag) => {
           if (!resFlag) {
             return
           }
           this.$router.push({
             name: 'connectionsEdit',
             params: {
-              id: id
+              id: id,
             },
             query: {
               pdkHash,
-              pdkId
-            }
+              pdkId,
+            },
           })
         })
       } else {
         this.$router.push({
           name: 'connectionsEdit',
           params: {
-            id: id
+            id: id,
           },
           query: {
             pdkHash,
-            pdkId
-          }
+            pdkId,
+          },
         })
       }
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
-      this.$set(data, 'copyLoading', true)
+      data['copyLoading'] = true
       connectionsApi
         .copy(
           data.id,
           {
             uri: `${data.id}/copy`,
-            headers: headersName
+            headers: headersName,
           },
-          data.name
+          data.name,
         )
         .then(() => {
           this.table.fetch()
@@ -581,23 +595,23 @@ export default {
         h(
           'span',
           {
-            class: 'color-primary'
+            class: 'color-primary',
           },
-          row.name
+          row.name,
         ),
-        strArr[1]
+        strArr[1],
       ])
       this.$confirm(msg, '', {
         type: 'warning',
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         //检查该连接是否被已有任务使用
         connectionsApi.checkConnectionTask(row.id).then((data = {}) => {
           if (data?.items?.length === 0) {
-            connectionsApi.delete(row.id).then(data => {
+            connectionsApi.delete(row.id).then((data) => {
               let jobs = data?.jobs || []
               let modules = data?.modules || []
               if (jobs.length > 0 || modules.length > 0) {
@@ -611,7 +625,7 @@ export default {
             //展示已使用的任务列表
             this.connectionTaskData = {
               items: data.items || [],
-              total: data.total || 0
+              total: data.total || 0,
             }
             this.connectionTaskDialog = true
           }
@@ -624,15 +638,15 @@ export default {
         this.$router.push({
           name: 'migrateList',
           query: {
-            keyword: item.name
-          }
+            keyword: item.name,
+          },
         })
       } else {
         this.$router.push({
           name: 'dataflowList',
           query: {
-            keyword: item.name
-          }
+            keyword: item.name,
+          },
         })
       }
     },
@@ -649,7 +663,7 @@ export default {
     },
     handleSelectTag() {
       let tagList = []
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.listtags) {
           tagList = [...row.listtags, ...tagList]
         }
@@ -666,8 +680,8 @@ export default {
     },
     handleOperationClassify(listtags) {
       let attributes = {
-        id: this.multipleSelection.map(r => r.id),
-        listtags
+        id: this.multipleSelection.map((r) => r.id),
+        listtags,
       }
       connectionsApi.batchUpdateListtags(attributes).then(() => {
         this.table.fetch()
@@ -683,7 +697,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -709,9 +723,9 @@ export default {
             Object.assign(
               {},
               {
-                status: 'testing'
-              }
-            )
+                status: 'testing',
+              },
+            ),
           )
           .then(() => {
             this.dialogTestVisible = true
@@ -737,7 +751,7 @@ export default {
         this.$message.error(this.$t('public_connection_button_test') + this.$t('public_status_invalid'), false)
       }
       this.buried('connectionTest', '', {
-        result: status === 'ready'
+        result: status === 'ready',
       })
       this.table.fetch()
     },
@@ -746,7 +760,7 @@ export default {
         {
           slotName: 'connectionType',
           // label: this.$t('public_connection_type'),
-          key: 'databaseModel'
+          key: 'databaseModel',
           // type: 'select-inner',
           // items: this.databaseModelOptions
         },
@@ -755,13 +769,13 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.databaseStatusOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('packages_business_connection_list_form_database_type'),
           key: 'databaseType',
           type: 'select-inner',
-          menuMinWidth: '250px',
+          dropdownWidth: '250px',
           filterable: true,
           items: async () => {
             let data = await databaseTypesApi.get()
@@ -769,7 +783,7 @@ export default {
             let databaseTypes = []
             databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
-              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
             )
             //默认全部
             // let all = {
@@ -777,19 +791,19 @@ export default {
             //   type: ''
             // }
             // databaseTypeOptions.unshift(all)
-            return databaseTypeOptions.map(item => {
+            return databaseTypeOptions.map((item) => {
               return {
                 label: item.name,
-                value: item.type
+                value: item.type,
               }
             })
-          }
+          },
         },
         {
           placeholder: this.$t('packages_business_connection_list_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
     },
     getConnectionIcon() {
@@ -822,10 +836,11 @@ export default {
     // 显示权限设置
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection)
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .paddingLeft0 {
   padding-left: 0 !important;
@@ -834,12 +849,9 @@ export default {
   height: 100%;
   overflow: hidden;
   background: #fff;
-  padding: 0 24px 24px 24px;
-  ::v-deep {
-    .el-select-dropdown__item {
-      span {
-        font-size: $fontBaseTitle;
-      }
+  :deep(.el-select-dropdown__item) {
+    span {
+      font-size: $fontBaseTitle;
     }
   }
 

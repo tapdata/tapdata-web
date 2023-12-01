@@ -17,7 +17,9 @@
             </div>
 
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_copy') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">
+                {{ $t('new_data_copy') }}
+              </div>
               <div class="fs-8 desc">
                 {{ $t('new_data_copy_desc') }}
               </div>
@@ -33,7 +35,9 @@
               <img src="../assets/images/new/Console_icon_new_data_development.svg" alt="" />
             </div>
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('page_title_data_develop') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">
+                {{ $t('page_title_data_develop') }}
+              </div>
               <div class="fs-8 desc">{{ $t('new_data_development_desc') }}</div>
             </div>
             <div>
@@ -42,7 +46,9 @@
           </div>
         </ElCol>
       </ElRow>
-      <div class="pt-5 fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_more_features') }}</div>
+      <div class="pt-5 fs-7 pb-4 font-color-dark fw-sub">
+        {{ $t('new_more_features') }}
+      </div>
       <ElRow
         :gutter="20"
         v-show="
@@ -92,7 +98,7 @@
     </div>
     <!--创建连接-->
     <SceneDialog
-      :visible.sync="dialogDatabaseTypeVisible"
+      v-model:visible="dialogDatabaseTypeVisible"
       selector-type="source_and_target"
       @selected="handleDatabaseType"
     ></SceneDialog>
@@ -100,18 +106,18 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { SceneDialog } from '@tap/business'
 
 export default {
   name: 'newDataFlow',
   components: { SceneDialog },
-
   props: {
     dialogVisible: {
       required: true,
-      value: Boolean
-    }
+      value: Boolean,
+    },
   },
   data() {
     return {
@@ -149,25 +155,24 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
-        'hazelcast_cloud_cluster'
-      ] //目前白名单,
+        'hazelcast_cloud_cluster',
+      ], //目前白名单,
     }
   },
-
   methods: {
     handleClose() {
-      this.$emit('update:dialogVisible', false)
+      $emit(this, 'update:dialogVisible', false)
     },
     goNew() {
       let routeUrl = this.$router.resolve({
-        name: 'MigrateCreate'
+        name: 'MigrateCreate',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
     },
     goNewCust() {
       let routeUrl = this.$router.resolve({
-        name: 'DataflowNew'
+        name: 'DataflowNew',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -186,7 +191,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        name: 'dataServer'
+        name: 'dataServer',
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()
@@ -202,14 +207,15 @@ export default {
       let query = { pdkHash }
       this.$router.push({
         name: 'connectionCreate',
-        query
+        query,
       })
-    }
-  }
+    },
+  },
+  emits: ['update:dialogVisible'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $color: map-get($fontColor, slight);
 .simple-scene {
   .create {
@@ -248,6 +254,7 @@ $color: map-get($fontColor, slight);
   }
 }
 </style>
+
 <style lang="scss">
 .simple-scene {
   .el-dialog__title {

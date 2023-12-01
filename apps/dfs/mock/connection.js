@@ -12,8 +12,8 @@ module.exports = {
       username: '@name', // 数据库账号
       password: '@cuid', // 数据库密码
       db: '@name', // 数据库名称
-      schema: '@cuid' // 数据库 schema
-    }
+      schema: '@cuid', // 数据库 schema
+    },
   },
   '/tm/api/Connections/:id/customQuery': {
     data: {
@@ -38,7 +38,7 @@ module.exports = {
             sort: 1,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-3100',
@@ -47,7 +47,7 @@ module.exports = {
             sort: 2,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-3400',
@@ -56,7 +56,7 @@ module.exports = {
             sort: 3,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-3200',
@@ -65,10 +65,10 @@ module.exports = {
             sort: 4,
             error_code: null,
             fail_message: null,
-            required: false
-          }
+            required: false,
+          },
         ],
-        retry: 0
+        retry: 0,
       },
       project: '',
       submit: true,
@@ -113,13 +113,13 @@ module.exports = {
         'tables|100-500': [
           {
             id: '@id',
-            table_name: '@name'
-          }
-        ]
-      }
+            table_name: '@name',
+          },
+        ],
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/Connections/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
   '/tm/api/Connections': {
@@ -159,10 +159,10 @@ module.exports = {
           tableCount: 100,
           username: '@name',
           'agentType|1': ['Cloud', ''],
-          loadFieldErrMsg: '@paragraph'
-        }
-      ]
-    }
+          loadFieldErrMsg: '@paragraph',
+        },
+      ],
+    },
   },
   '/tm/api/Connections/:id': {
     data: {
@@ -189,7 +189,7 @@ module.exports = {
             sort: 1,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-2100',
@@ -198,7 +198,7 @@ module.exports = {
             sort: 2,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-2300',
@@ -207,7 +207,7 @@ module.exports = {
             sort: 4,
             error_code: null,
             fail_message: null,
-            required: true
+            required: true,
           },
           {
             stage_code: 'validate-2400',
@@ -216,7 +216,7 @@ module.exports = {
             sort: 5,
             error_code: null,
             fail_message: null,
-            required: false
+            required: false,
           },
           {
             stage_code: 'validate-2500',
@@ -225,7 +225,7 @@ module.exports = {
             sort: 6,
             error_code: null,
             fail_message: null,
-            required: false
+            required: false,
           },
           {
             stage_code: 'validate-2600',
@@ -234,10 +234,10 @@ module.exports = {
             sort: 7,
             error_code: null,
             fail_message: null,
-            required: false
-          }
+            required: false,
+          },
         ],
-        retry: 0
+        retry: 0,
       },
       project: '',
       submit: true,
@@ -304,7 +304,7 @@ module.exports = {
                 columnSize: 10,
                 autoincrement: false,
                 id: '60d59187b1738d1d9a77c0cb',
-                is_deleted: false
+                is_deleted: false,
               },
               {
                 field_name: 'name',
@@ -325,16 +325,16 @@ module.exports = {
                 columnSize: 255,
                 autoincrement: false,
                 id: '60d59187b1738d1d9a77c0cc',
-                is_deleted: false
-              }
+                is_deleted: false,
+              },
             ],
-            indices: []
-          }
-        ]
-      }
+            indices: [],
+          },
+        ],
+      },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DatabaseTypes': {
     reqId: 'fa6593e9-4483-46cf-9a7c-19f202459484',
@@ -346,133 +346,133 @@ module.exports = {
         name: 'MySQL',
         type: 'mysql',
         createTime: '2021-12-14T10:28:29.850+00:00',
-        last_updated: '2021-12-14T10:28:29.850+00:00'
+        last_updated: '2021-12-14T10:28:29.850+00:00',
       },
       {
         id: '61b871ce47697e0012c3e7d3',
         name: 'Oracle',
         type: 'oracle',
         createTime: '2021-12-14T10:28:30.142+00:00',
-        last_updated: '2021-12-14T10:28:30.142+00:00'
+        last_updated: '2021-12-14T10:28:30.142+00:00',
       },
       {
         id: '61b871ce059b0f0019bc467d',
         name: 'MongoDB',
         type: 'mongodb',
         createTime: '2021-12-14T10:28:30.228+00:00',
-        last_updated: '2021-12-14T10:28:30.228+00:00'
+        last_updated: '2021-12-14T10:28:30.228+00:00',
       },
       {
         id: '61b871ce095ae30011087218',
         name: 'SQL Server',
         type: 'sqlserver',
         createTime: '2021-12-14T10:28:30.427+00:00',
-        last_updated: '2021-12-14T10:28:30.427+00:00'
+        last_updated: '2021-12-14T10:28:30.427+00:00',
       },
       {
         id: '61b871ced18b230013072895',
         name: 'Dummy DB',
         type: 'dummy db',
         createTime: '2021-12-14T10:28:30.612+00:00',
-        last_updated: '2021-12-14T10:28:30.612+00:00'
+        last_updated: '2021-12-14T10:28:30.612+00:00',
       },
       {
         id: '61b871ce47697e0012c3e7d4',
         name: 'PostgreSQL',
         type: 'postgres',
         createTime: '2021-12-14T10:28:30.794+00:00',
-        last_updated: '2021-12-14T10:28:30.794+00:00'
+        last_updated: '2021-12-14T10:28:30.794+00:00',
       },
       {
         id: '61b871ce04616e00193aed4b',
         name: 'Greenplum',
         type: 'greenplum',
         createTime: '2021-12-14T10:28:30.815+00:00',
-        last_updated: '2021-12-14T10:28:30.815+00:00'
+        last_updated: '2021-12-14T10:28:30.815+00:00',
       },
       {
         id: '61b871cea42c5b00121c9c3b',
         name: 'Elasticsearch',
         type: 'elasticsearch',
         createTime: '2021-12-14T10:28:30.839+00:00',
-        last_updated: '2021-12-14T10:28:30.839+00:00'
+        last_updated: '2021-12-14T10:28:30.839+00:00',
       },
       {
         id: '61b871cfd18b230013072896',
         name: 'MariaDB',
         type: 'mariadb',
         createTime: '2021-12-14T10:28:31.003+00:00',
-        last_updated: '2021-12-14T10:28:31.003+00:00'
+        last_updated: '2021-12-14T10:28:31.003+00:00',
       },
       {
         id: '61b871cf9da2630011dfa379',
         name: 'Kafka',
         type: 'kafka',
         createTime: '2021-12-14T10:28:31.033+00:00',
-        last_updated: '2021-12-14T10:28:31.033+00:00'
+        last_updated: '2021-12-14T10:28:31.033+00:00',
       },
       {
         id: '61b871cf059b0f0019bc4681',
         name: 'MQ',
         type: 'mq',
         createTime: '2021-12-14T10:28:31.054+00:00',
-        last_updated: '2021-12-14T10:28:31.054+00:00'
+        last_updated: '2021-12-14T10:28:31.054+00:00',
       },
       {
         id: '61b871cf2c82dd00194d946e',
         name: 'DM DB',
         type: 'dameng',
         createTime: '2021-12-14T10:28:31.153+00:00',
-        last_updated: '2021-12-14T10:28:31.153+00:00'
+        last_updated: '2021-12-14T10:28:31.153+00:00',
       },
       {
         id: '61b871cf059b0f0019bc4682',
         name: 'TiDB',
         type: 'tidb',
         createTime: '2021-12-14T10:28:31.474+00:00',
-        last_updated: '2021-12-14T10:28:31.474+00:00'
+        last_updated: '2021-12-14T10:28:31.474+00:00',
       },
       {
         id: '61b871cf004b090011b682d8',
         name: 'ClickHouse',
         type: 'clickhouse',
         createTime: '2021-12-14T10:28:31.498+00:00',
-        last_updated: '2021-12-14T10:28:31.498+00:00'
+        last_updated: '2021-12-14T10:28:31.498+00:00',
       },
       {
         id: '61b871cfd18b230013072898',
         name: 'KunDB',
         type: 'kundb',
         createTime: '2021-12-14T10:28:31.524+00:00',
-        last_updated: '2021-12-14T10:28:31.524+00:00'
+        last_updated: '2021-12-14T10:28:31.524+00:00',
       },
       {
         id: '61b871cf47697e0012c3e7d7',
         name: 'ADB MySQL',
         type: 'adb_mysql',
         createTime: '2021-12-14T10:28:31.553+00:00',
-        last_updated: '2021-12-14T10:28:31.553+00:00'
+        last_updated: '2021-12-14T10:28:31.553+00:00',
       },
       {
         id: '61b871cf095ae3001108721a',
         name: 'ADB PostgreSQL',
         type: 'adb_postgres',
         createTime: '2021-12-14T10:28:31.569+00:00',
-        last_updated: '2021-12-14T10:28:31.569+00:00'
+        last_updated: '2021-12-14T10:28:31.569+00:00',
       },
       {
         id: '61b871cf004b090011b682d9',
         name: 'Hazelcast Cloud',
         type: 'hazelcast_cloud_cluster',
         createTime: '2021-12-14T10:28:31.634+00:00',
-        last_updated: '2021-12-14T10:28:31.634+00:00'
+        last_updated: '2021-12-14T10:28:31.634+00:00',
       },
       {
         id: '623156c1699420a614cb8bfe',
         name: 'Vika',
         type: 'vika',
         createTime: '2022-03-15T12:03:21.098+00:00',
-        last_updated: '2022-03-15T12:03:21.098+00:00'
+        last_updated: '2022-03-15T12:03:21.098+00:00',
       },
       { id: '6232d76c0277a7e119470d97', name: 'Aliyun RDS for MariaDB', type: 'aliyun_mariadb' },
       { id: '6232d76c0277a7e119470dab', name: 'Aliyun MongoDB', type: 'aliyun_mongodb' },
@@ -484,7 +484,7 @@ module.exports = {
       { id: '6232d76c0277a7e119470e66', name: 'TencentDB for MySQL', type: 'tencent_mysql' },
       { id: '6232d76c0277a7e119470e8a', name: 'TencentDB for PG', type: 'tencent_postgres' },
       { id: '6232d76c0277a7e119470ea3', name: 'TencentDB for SQLServer', type: 'tencent_sqlserver' },
-      { id: '6246669b699420a614cb8c00', name: 'apache doris', type: 'doris' }
-    ]
-  }
+      { id: '6246669b699420a614cb8c00', name: 'apache doris', type: 'doris' },
+    ],
+  },
 }

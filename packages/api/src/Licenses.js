@@ -12,8 +12,8 @@ export default class Licenses extends Http {
   getSid(ids) {
     return this.axios.get(`${this.url}/sid`, {
       params: {
-        id: JSON.stringify(ids)
-      }
+        id: JSON.stringify(ids),
+      },
     })
   }
 

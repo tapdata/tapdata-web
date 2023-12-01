@@ -32,7 +32,7 @@ export function createWorkerFunc() {
     const runReq = function () {
       fetch(htmlFileUrl, {
         method: 'HEAD',
-        cache: 'no-cache'
+        cache: 'no-cache',
       }).then(function (response) {
         const etag = response.headers.get('etag')
 
@@ -40,7 +40,7 @@ export function createWorkerFunc() {
           self.postMessage({
             appETagKey,
             lastEtag,
-            etag
+            etag,
           })
         }
       })

@@ -13,6 +13,7 @@
     </header>
   </div>
 </template>
+
 <script>
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
@@ -22,18 +23,19 @@ export default {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: langMenu,
-      lang: getCurrentLanguage()
+      lang: getCurrentLanguage(),
     }
   },
   methods: {
     langChange(lang) {
       setCurrentLanguage(lang, this.$i18n)
       this.lang = lang
-    }
-  }
+    },
+  },
 }
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 header {
   padding: 70px 80px 0 80px;
   margin: 0 auto;

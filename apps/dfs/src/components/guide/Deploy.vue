@@ -20,30 +20,30 @@ export default {
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ],
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
-        docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+        docker: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
       },
-      isCompleted: false
+      isCompleted: false,
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation']),
   },
   mounted() {
     this.getUrl()
   },
   methods: {
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           this.links[el.os] = el.command
         })
         this.$nextTick(() => {
@@ -59,7 +59,7 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest'
+        AliComputenest: 'copyTokenInAliComputenest',
       }
       this.buried(MAP[this.downLoadType])
       this.$emit('behavior', `copy_${this.downLoadType}`)
@@ -77,20 +77,14 @@ export default {
     },
     handleOpenDeployDocs() {
       this.buried('openDeploymentTutorial', {
-        downLoadType: this.downLoadType
+        downLoadType: this.downLoadType,
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/cloud/quick-start/install-agent/`
+      }/cloud/quick-start/install-agent/agent-on-${this.downLoadType.toLowerCase()}`
       window.open(href, '_blank')
     },
-    handleComplete() {
-      this.isCompleted = true
-      this.buried('completedDeployment', {
-        downLoadType: this.downLoadType
-      })
-    }
-  }
+  },
 }
 </script>
 
@@ -154,7 +148,7 @@ export default {
             class="operaKey"
             v-clipboard:copy="links[downLoadType]"
             v-clipboard:success="onCopy"
-            @mouseleave.native="showTooltip = false"
+            @mouseleave="showTooltip = false"
             @click="handleCopy"
           >
             <VIcon class="mr-2">copy</VIcon>
@@ -188,7 +182,7 @@ export default {
           size="default"
           type="primary"
           :disabled="activeKey === 'Scenes' && !scenes.length"
-          @click="handleComplete"
+          @click="isCompleted = true"
           >{{ $t('dfs_guide_index_development_complete') }}
         </ElButton>
       </template>

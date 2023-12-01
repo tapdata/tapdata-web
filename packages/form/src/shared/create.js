@@ -1,9 +1,9 @@
-import { createForm } from '@formily/core'
+// import { createForm } from '@formily/core'
 import { createSchemaField } from '@formily/vue'
 import * as components from '../components'
 
 const { SchemaField } = createSchemaField({
-  components
+  components,
 })
 
-export { createForm, SchemaField }
+export { SchemaField }

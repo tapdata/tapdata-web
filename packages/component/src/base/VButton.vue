@@ -1,29 +1,31 @@
 <script>
-import { Button } from 'element-ui'
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
+import { ElButton as Button } from 'element-plus'
 export default {
   name: 'VButton',
   props: {
     ...Button.props,
     autoLoading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     innerLoading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     loadingColor: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
       comLoading: false,
-      '--my-color': 'red'
+      '--my-color': 'red',
     }
   },
-  render(h) {
+  render() {
     this.$nextTick(() => {
       const $span = this.$el?.querySelector?.('span')
       if ($span) {
@@ -46,22 +48,23 @@ export default {
     if (this.innerLoading) {
       className += ' inner-loading loader-width'
     }
-    return h(
+    return Vue.h(
       'el-button',
-      {
+      plantRenderPara({
         props: {
           ...this.$props,
           loading: this.$props.loading || this.comLoading,
-          size: this.$props.size || 'mini'
+          size: this.$props.size || 'mini',
         },
         on: { ...this.$listeners, click: clickFnc },
-        class: className
-      },
-      [this.$slots.default]
+        class: className,
+      }),
+      [this.$slots.default && this.$slots.default()],
     )
-  }
+  },
 }
 </script>
+
 <style lang="scss">
 .v-button {
   &.el-button--primary,

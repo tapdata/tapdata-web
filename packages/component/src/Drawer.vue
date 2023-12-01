@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 export default {
   name: 'Drawer',
   props: {
@@ -13,13 +14,13 @@ export default {
       type: String,
       default: () => {
         return '304px'
-      }
-    }
+      },
+    },
   },
   watch: {
     visible() {
       this.resize()
-    }
+    },
   },
   mounted() {
     let mainContainer = document.body.getElementsByClassName('layout-main')[0]
@@ -31,7 +32,7 @@ export default {
     this.resize()
     document.getElementById('app').addEventListener('mouseup', this.blur)
   },
-  destroyed() {
+  unmounted() {
     this?.$el?.parentNode?.removeChild(this.$el)
     document.getElementById('app').removeEventListener('mouseup', this.blur)
   },
@@ -46,13 +47,14 @@ export default {
         let drawer = this.$refs.drawer
         if (drawer) {
           if (!drawer.contains(e.target)) {
-            this.$emit('update:visible', false)
-            this.$emit('visible', false)
+            $emit(this, 'update:visible', false)
+            $emit(this, 'visible', false)
           }
         }
       }
-    }
-  }
+    },
+  },
+  emits: ['update:visible', 'visible'],
 }
 </script>
 
@@ -64,7 +66,10 @@ export default {
   z-index: 2001;
   height: 100%;
   background-color: map-get($bgColor, white);
-  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 20%), 0 16px 24px 2px rgb(0 0 0 / 14%), 0 6px 30px 5px rgb(0 0 0 / 12%);
+  box-shadow:
+    0 8px 10px -5px rgb(0 0 0 / 20%),
+    0 16px 24px 2px rgb(0 0 0 / 14%),
+    0 6px 30px 5px rgb(0 0 0 / 12%);
   overflow: auto;
   box-sizing: border-box;
 }

@@ -7,7 +7,6 @@
             <div class="flex">
               <ElInput
                 v-model="searchTable"
-                size="mini"
                 :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
                 suffix-icon="el-icon-search"
                 clearable
@@ -40,7 +39,9 @@
               </li>
             </ul>
             <div class="task-form-left__ul flex flex-column align-items-center" v-else>
-              <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+              <div class="table__empty_img" style="margin-top: 22%">
+                <img style="" :src="noData" />
+              </div>
               <div class="noData">{{ $t('public_data_no_data') }}</div>
             </div>
           </div>
@@ -48,8 +49,8 @@
             small
             class="flex mt-3 din-font"
             layout="total, prev, slot, next"
-            :current-page.sync="page.current"
-            :page-size.sync="page.size"
+            v-model:current-page="page.current"
+            v-model:page-size="page.size"
             :total="page.total"
             :pager-count="5"
             @current-change="getMetadataTransformer"
@@ -65,7 +66,6 @@
           <div class="flex ml-2 text-start" style="margin-bottom: 8px">
             <div class="flex">
               <ElInput
-                size="mini"
                 :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
                 suffix-icon="el-icon-search"
                 v-model="searchField"
@@ -77,7 +77,7 @@
               <ElButton plain class="btn-refresh" @click="rest">
                 <VIcon>refresh</VIcon>
               </ElButton>
-              <ElButton v-if="!readOnly" type="text" class="btn-rest" @click="updateMetaData">
+              <ElButton v-if="!readOnly" text class="btn-rest" @click="updateMetaData">
                 {{ $t('public_button_reset') }}
               </ElButton>
             </div>
@@ -119,22 +119,26 @@
                   <ElTooltip class="item" effect="dark" :content="row.defaultValue" placement="left">
                     <span class="field-mapping-table__default_value">{{ row.defaultValue }}</span>
                   </ElTooltip>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
+                  <el-icon class="field-mapping__icon"><Edit /></el-icon>
                 </div>
                 <div v-else>{{ row.defaultValue }}</div>
               </template>
             </ElTableColumn>
-            <div class="field-mapping-table__empty" slot="empty">
-              <div class="table__empty_img" style="margin-left: 30%"><img style="" :src="noData" /></div>
-              <div class="noData">{{ $t('public_data_no_data') }}</div>
-            </div>
+            <template v-slot:empty>
+              <div class="field-mapping-table__empty">
+                <div class="table__empty_img" style="margin-left: 30%">
+                  <img style="" :src="noData" />
+                </div>
+                <div class="noData">{{ $t('public_data_no_data') }}</div>
+              </div>
+            </template>
           </ElTable>
         </div>
       </div>
     </div>
     <ElDialog
       :title="titleType[currentOperationType]"
-      :visible.sync="dialogVisible"
+      v-model="dialogVisible"
       width="30%"
       append-to-body
       :close-on-click-modal="false"
@@ -151,13 +155,17 @@
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">{{ $t('packages_form_dag_dialog_field_mapping_range_precision') }}</div>
+              <div v-if="index === 0">
+                {{ $t('packages_form_dag_dialog_field_mapping_range_precision') }}
+              </div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
             <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>{{ $t('packages_form_dag_dialog_field_mapping_range_scale') }}</div>
+              <div>
+                {{ $t('packages_form_dag_dialog_field_mapping_range_scale') }}
+              </div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -170,15 +178,18 @@
         v-if="['defaultValue'].includes(currentOperationType)"
         v-model="editValueType[currentOperationType]"
       ></ElInput>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="handleClose()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="editSave()">{{ $t('public_button_confirm') }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
   </section>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
 import { VIcon } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
@@ -191,8 +202,11 @@ import { metadataInstancesApi, taskApi, typeMappingApi } from '@tap/api'
 import { mapState } from 'vuex'
 
 export default {
+  components: {
+    VIcon,
+    OverflowTooltip,
+  },
   name: 'List',
-  components: { VIcon, OverflowTooltip },
   props: ['isMetaData', 'readOnly', 'updateList'],
   data() {
     return {
@@ -209,16 +223,16 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       currentOperationType: '',
       editValueType: {
         sourceFieldType: '',
-        defaultValue: ''
+        defaultValue: '',
       },
       titleType: {
         sourceFieldType: this.$t('packages_form_dag_dialog_field_mapping_tittle_data_type'),
-        defaultValue: this.$t('packages_form_dag_dialog_field_mapping_tittle_value')
+        defaultValue: this.$t('packages_form_dag_dialog_field_mapping_tittle_value'),
       },
       position: 0,
       selectRow: '',
@@ -229,7 +243,7 @@ export default {
       fieldMapping_table_error,
       fieldMapping_table,
       refresh,
-      noData
+      noData,
     }
   },
   mounted() {
@@ -239,7 +253,7 @@ export default {
     this.getMetadataTransformer() //不需要推演 直接拿推演结果
   },
   computed: {
-    ...mapState('dataflow', ['transformLoading'])
+    ...mapState('dataflow', ['transformLoading']),
   },
   watch: {
     updateList() {
@@ -250,7 +264,7 @@ export default {
       if (!v) {
         this.getMetadataTransformer()
       }
-    }
+    },
   },
   methods: {
     getDataFlow() {
@@ -260,7 +274,7 @@ export default {
       return {
         dag,
         editVersion,
-        ...dataflow
+        ...dataflow,
       }
     },
     async select(item, index) {
@@ -289,7 +303,7 @@ export default {
         nodeId: this.dataFlow['nodeId'],
         //todo 返回是否为sinkNodeId
         page: current,
-        pageSize: size
+        pageSize: size,
       }
       if (value && current !== value) {
         where.searchTable = value
@@ -300,7 +314,7 @@ export default {
       this.loadingTable = true
       taskApi
         .getNodeTableInfo(where)
-        .then(res => {
+        .then((res) => {
           let { total, items } = res
           this.page.total = total
           this.page.count = Math.ceil(total / 10) === 0 ? 1 : Math.ceil(total / 10)
@@ -324,7 +338,7 @@ export default {
         delayTrigger(() => {
           if (this.searchField.trim()) {
             this.searchField = this.searchField.trim().toString() //去空格
-            this.viewTableData = this.target.filter(v => {
+            this.viewTableData = this.target.filter((v) => {
               let str = (v.sourceFieldName + '' + v.targetFieldName).toLowerCase()
               return str.indexOf(this.searchField.toLowerCase()) > -1
             })
@@ -370,7 +384,7 @@ export default {
       let id = this.dataFlow?.id || this.dataFlow?.taskId
       let data = {
         taskId: id,
-        nodeId: this.dataFlow?.nodeId
+        nodeId: this.dataFlow?.nodeId,
       }
       this.searchField = ''
       metadataInstancesApi.resetTable(data).then(() => {
@@ -378,7 +392,7 @@ export default {
       })
     },
     updateTargetView(id, key, value) {
-      this.viewTableData.forEach(field => {
+      this.viewTableData.forEach((field) => {
         if (field.sourceFieldName === id) {
           field[key] = value
         }
@@ -389,7 +403,7 @@ export default {
         let field = {
           fieldName: row.sourceFieldName,
           fieldType: type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+          defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue,
         }
         this.editFields.push(field)
       } else {
@@ -405,7 +419,8 @@ export default {
               fieldName: row.sourceFieldName,
               fieldType:
                 type === 'sourceFieldType' ? this.editValueType[this.currentOperationType] : row.sourceFieldType,
-              defaultValue: type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue
+              defaultValue:
+                type === 'defaultValue' ? this.editValueType[this.currentOperationType] : this.editDataValue,
             }
             this.editFields.push(field)
           }
@@ -418,12 +433,12 @@ export default {
         taskId: id,
         nodeId: this.dataFlow?.nodeId,
         tableName: this.selectRow?.sourceObjectName,
-        fields: this.editFields || []
+        fields: this.editFields || [],
       }
       metadataInstancesApi.saveTable(data).then(() => {
         if (val) {
           this.closeDialog()
-          this.$emit('updateVisible')
+          $emit(this, 'updateVisible')
         }
       })
     },
@@ -434,35 +449,36 @@ export default {
     /*更新target 数据*/
     //获取typeMapping
     getTypeMapping() {
-      typeMappingApi.pdkDataType('Mysql').then(res => {
+      typeMappingApi.pdkDataType('Mysql').then((res) => {
         let targetObj = JSON.parse(res || '{}')
         for (let key in targetObj) {
           this.typeMapping.push({
             dbType: key,
-            rules: targetObj[key]
+            rules: targetObj[key],
           })
         }
       })
     },
     initDataType(val) {
-      let target = this.typeMapping.filter(type => type.dbType === val)
+      let target = this.typeMapping.filter((type) => type.dbType === val)
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
     querySearchPdkType(queryString, cb) {
-      let result = this.typeMapping.map(t => {
+      let result = this.typeMapping.map((t) => {
         return {
-          value: t.dbType
+          value: t.dbType,
         }
       })
       cb(result)
     },
     getPdkEditValueType() {
-      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      let findOne = this.typeMapping.find((t) => t.dbType === this.editValueType[this.currentOperationType])
       return findOne?.rules || ''
-    }
-  }
+    },
+  },
+  emits: ['updateVisible'],
 }
 </script>
 
@@ -484,7 +500,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .node-field-mapping {
   flex: 1;
   height: 100%;
@@ -613,38 +630,40 @@ export default {
     }
   }
   .field-mapping-table {
-    ::v-deep {
-      .el-table {
-        border: none;
-      }
-      .el-table__empty-block {
-        height: 100% !important;
-      }
-      .el-table__header {
-        .el-table__cell {
-          border-right: 0;
-          &.is-leaf {
-            border-bottom: 0;
-          }
-          &:hover {
-            border-right: 1px solid map-get($borderColor, light);
-          }
+    :deep(.el-table) {
+      border: none;
+    }
+
+    :deep(.el-table__empty-block) {
+      height: 100% !important;
+    }
+
+    :deep(.el-table__header) {
+      .el-table__cell {
+        border-right: 0;
+        &.is-leaf {
+          border-bottom: 0;
         }
-        th {
-          color: map-get($fontColor, normal);
-          font-weight: 500;
-          white-space: nowrap;
-          background-color: map-get($bgColor, normal);
+        &:hover {
+          border-right: 1px solid map-get($borderColor, light);
         }
       }
-      .el-table__body {
-        td {
-          color: map-get($fontColor, light);
-        }
+      th {
+        color: map-get($fontColor, normal);
+        font-weight: 500;
+        white-space: nowrap;
+        background-color: map-get($bgColor, normal);
       }
-      &:after {
-        width: 0;
+    }
+
+    :deep(.el-table__body) {
+      td {
+        color: map-get($fontColor, light);
       }
+    }
+
+    &:after {
+      width: 0;
     }
   }
 }

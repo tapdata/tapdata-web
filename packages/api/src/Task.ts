@@ -8,6 +8,7 @@ export default class Task extends Http {
     super('/api/Task')
   }
 
+  // @ts-ignore
   get(params: unknown, filter: unknown, headers: unknown) {
     if (Array.isArray(params)) {
       let queryStr = ''
@@ -206,8 +207,8 @@ export default class Task extends Http {
   getParentTaskSign(id, parentId) {
     return this.axios.get(`${this.url}/${id}/parent-task-sign`, {
       params: {
-        parentId
-      }
+        parentId,
+      },
     })
   }
 }

@@ -13,29 +13,23 @@
         v-if="cond.type == 'group'"
         :primaryKeyOptions="primaryKeyOptions"
         :databaseType="databaseType"
-        v-model="value.conditions[idx]"
+        v-model:value="value.conditions[idx]"
         @remove="removeChild(idx)"
       ></queryCond>
       <div v-if="cond.type != 'group'" class="item">
         <div class="field">
-          <el-select v-model="cond.field" filterable size="mini" placeholder="select field">
+          <el-select v-model="cond.field" filterable placeholder="select field">
             <el-option v-for="item in primaryKeyOptions" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </div>
         <div class="field">
-          <el-select v-model="cond.command" size="mini" placeholder="select op">
+          <el-select v-model="cond.command" placeholder="select op">
             <el-option v-for="item in calculationList" :label="item" :value="item" :key="item"></el-option>
           </el-select>
         </div>
 
         <div class="field">
-          <el-input
-            placeholder="enter value"
-            v-if="!cond.isDatetime"
-            type="text"
-            v-model="cond.value"
-            size="mini"
-          ></el-input>
+          <el-input placeholder="enter value" v-if="!cond.isDatetime" text v-model="cond.value"></el-input>
           <el-date-picker
             v-if="cond.isDatetime"
             v-model="cond.value"
@@ -47,15 +41,17 @@
         <div class="field">
           <div class="btn" style="width: 52px">
             <span class="el-icon-close" @click="removeChild(idx)" style="width: 24px"></span>
-            <el-dropdown size="mini" @command="handleCommand">
+            <el-dropdown @command="handleCommand">
               <span class="el-dropdown-link el-icon-plus"></span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="databaseType != 'mongodb'" command="and">+ and</el-dropdown-item>
-                <el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
-                <el-dropdown-item v-if="databaseType == 'mongodb'" command="cond"> + </el-dropdown-item>
-                <el-dropdown-item command="andQ">+ and()</el-dropdown-item>
-                <el-dropdown-item command="orQ">+ or()</el-dropdown-item>
-              </el-dropdown-menu>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-if="databaseType != 'mongodb'" command="and">+ and</el-dropdown-item>
+                  <el-dropdown-item v-if="databaseType != 'mongodb'" command="or">+ or</el-dropdown-item>
+                  <el-dropdown-item v-if="databaseType == 'mongodb'" command="cond"> + </el-dropdown-item>
+                  <el-dropdown-item command="andQ">+ and()</el-dropdown-item>
+                  <el-dropdown-item command="orQ">+ or()</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
             </el-dropdown>
           </div>
         </div>
@@ -66,6 +62,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 export default {
   name: 'queryCond',
   props: {
@@ -73,30 +70,30 @@ export default {
       type: Array,
       default() {
         return []
-      }
+      },
     },
     value: {
       type: Object,
       default() {
         return { conditions: [] }
-      }
+      },
     },
     databaseType: {
-      type: String
+      type: String,
     },
     level: {
       type: Number,
       default() {
         return 1
-      }
-    }
+      },
+    },
   },
   computed: {
     conditions() {
       return this.value.conditions
     },
     isDatetime() {
-      let field = this.fields.filter(v => v.value === this.queryField)[0]
+      let field = this.fields.filter((v) => v.value === this.queryField)[0]
       if (field) {
         let type = field.type
 
@@ -105,12 +102,12 @@ export default {
         }
       }
       return false
-    }
+    },
   },
   data() {
     return {
       calculationList: ['=', '<>', '>', '<', '>=', '<=', 'like'],
-      color: 'level1'
+      color: 'level1',
     }
   },
   mounted() {
@@ -120,9 +117,9 @@ export default {
     value: {
       deep: true,
       handler() {
-        this.$emit('input', this.value)
-      }
-    }
+        $emit(this, 'update:value', this.value)
+      },
+    },
   },
   methods: {
     handleCommand(command) {
@@ -143,9 +140,9 @@ export default {
               type: 'condition',
               field: '',
               command: '',
-              value: ''
-            }
-          ]
+              value: '',
+            },
+          ],
         }
       } else if (type === 'condition') {
         child = {
@@ -153,20 +150,22 @@ export default {
           operator: operator,
           field: '',
           command: '',
-          value: ''
+          value: '',
         }
       }
       this.value.conditions.push(child)
-      this.$emit('input', this.value)
+      $emit(this, 'update:value', this.value)
     },
     removeChild(index) {
       this.value.conditions.splice(index, 1)
       //if (this.value.conditions.length > 0) this.value.conditions[0].operator = '';
-      if (this.value.conditions.length == 0) this.$emit('remove')
-    }
-  }
+      if (this.value.conditions.length == 0) $emit(this, 'remove')
+    },
+  },
+  emits: ['update:value', 'remove'],
 }
 </script>
+
 <style lang="scss">
 .level2 {
   border: 1px solid #dedee4;
@@ -182,6 +181,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss" scoped>
 .item {
   display: flex;
@@ -272,6 +272,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .e-table {
   .fiflter {

@@ -14,9 +14,7 @@
             <p v-if="type === 'registy'">{{ $t('app_signIn_clickBtn') }}</p>
             <p v-else>{{ $t('app_signIn_resetClickBtn') }}</p>
 
-            <el-button class="btn" type="primary" size="mini" @click="goLogin">{{
-              $t('app_signIn_goLogin')
-            }}</el-button>
+            <el-button class="btn" type="primary" @click="goLogin">{{ $t('app_signIn_goLogin') }}</el-button>
           </div>
         </template>
 
@@ -56,7 +54,7 @@ export default {
       timer: null,
       time: 0,
       result: '',
-      queryData: null
+      queryData: null,
     }
   },
   created() {
@@ -111,7 +109,7 @@ export default {
     // 去注册
     backRegisty() {
       this.$router.replace({
-        name: 'registry'
+        name: 'registry',
       })
     },
 
@@ -119,10 +117,10 @@ export default {
     goLogin() {
       this.$router.replace({
         name: 'login',
-        query: { email: this.email }
+        query: { email: this.email },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -132,7 +130,6 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
-
   main {
     position: relative;
     margin-top: 100px;

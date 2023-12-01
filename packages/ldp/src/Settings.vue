@@ -1,26 +1,28 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
     @open="handleOpen"
     @close="handleClose"
   >
-    <div slot="title" class="font-color-dark fs-6 fw-sub">
-      {{ $t('packages_business_data_console_mode') }}
-    </div>
+    <template #header>
+      <div class="font-color-dark fs-6 fw-sub">
+        {{ $t('packages_business_data_console_mode') }}
+      </div>
+    </template>
     <div class="my-n3">
       <!--<div class="fs-6 mb-4 font-color-dark">Product Capability Mode</div>-->
       <!--<div class="font-color-sslight">
-        Tapdata可以作为一个实时的数据同步与加工产品使用,也可以作为一个实时数据服务平台使用,当作为服务平台使用时,除了基基本的数据同步与处理
-        能力之外,通过预置的数据存储中心,您可以通过不同的分层模式式,便捷完成数据模型的构建,并支持通过各种终端服务对数据模型进行发布与展示
-      </div>-->
+            Tapdata可以作为一个实时的数据同步与加工产品使用,也可以作为一个实时数据服务平台使用,当作为服务平台使用时,除了基基本的数据同步与处理
+            能力之外,通过预置的数据存储中心,您可以通过不同的分层模式式,便捷完成数据模型的构建,并支持通过各种终端服务对数据模型进行发布与展示
+          </div>-->
       <!--<div class="font-color-sslight mb-12">
-        Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
-        difference is Data Platform mode requires a storage backend.
-      </div>-->
+            Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
+            difference is Data Platform mode requires a storage backend.
+          </div>-->
       <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
         <div
           class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
@@ -37,9 +39,14 @@
             </ElRadio>
           </div>
           <div class="px-4 py-2 mode-desc">
-            1. {{ $t('packages_business_data_console_mode_integration_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_integration_tooltip_2') }} <br />
-            3. {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
+            1.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_1') }}
+            <br />
+            2.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_2') }}
+            <br />
+            3.
+            {{ $t('packages_business_data_console_mode_integration_tooltip_3') }}
           </div>
         </div>
         <div
@@ -59,70 +66,70 @@
             </ElRadio>
           </div>
           <div class="px-4 py-2 mode-desc">
-            1. {{ $t('packages_business_data_console_mode_service_tooltip_1') }} <br />
-            2. {{ $t('packages_business_data_console_mode_service_tooltip_2') }} <br />
+            1.
+            {{ $t('packages_business_data_console_mode_service_tooltip_1') }}
+            <br />
+            2.
+            {{ $t('packages_business_data_console_mode_service_tooltip_2') }}
+            <br />
             3. {{ $t('packages_business_data_console_mode_service_tooltip_3') }}
           </div>
         </div>
       </div>
 
       <!--<ElRadioGroup v-model="mode" class="block" @change="handleSelectMode">
-        <ElRadio
-          v-for="item in modeItems"
-          :label="item.value"
-          :key="item.value"
-          class="w-50 mr-0 inline-flex align-items-center"
-        >
-          <span>{{ item.label }}</span>
-          <VIcon v-if="item.beta" class="ml-1" size="28">beta</VIcon>
-        </ElRadio>
-      </ElRadioGroup>-->
+            <ElRadio
+              v-for="item in modeItems"
+              :label="item.value"
+              :key="item.value"
+              class="w-50 mr-0 inline-flex align-items-center"
+            >
+              <span>{{ item.label }}</span>
+              <VIcon v-if="item.beta" class="ml-1" size="28">beta</VIcon>
+            </ElRadio>
+          </ElRadioGroup>-->
       <!--<div class="flex">
-        <div class="w-50">
-          <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
-            <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
-            <ul class="mode-ul mt-4">
-              <li>• Database Replication</li>
-              <li>• Move data to cloud</li>
-              <li>• ETL pipelines</li>
-            </ul>
-          </div>
-        </div>
-        <div class="w-50">
-          <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('service')">
-            <ElImage :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"></ElImage>
-            <ul class="mode-ul mt-4">
-              <li>• All the Data Integration capability, plus the storage & services</li>
-              <li>• Data are sync-ed to and cached in centralized data platform</li>
-              <li>
-                • Data are then served to operational applications via API or to the analytical application via reverse
-                ETL
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>-->
+            <div class="w-50">
+              <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
+                <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
+                <ul class="mode-ul mt-4">
+                  <li>• Database Replication</li>
+                  <li>• Move data to cloud</li>
+                  <li>• ETL pipelines</li>
+                </ul>
+              </div>
+            </div>
+            <div class="w-50">
+              <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('service')">
+                <ElImage :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"></ElImage>
+                <ul class="mode-ul mt-4">
+                  <li>• All the Data Integration capability, plus the storage & services</li>
+                  <li>• Data are sync-ed to and cached in centralized data platform</li>
+                  <li>
+                    • Data are then served to operational applications via API or to the analytical application via reverse
+                    ETL
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>-->
       <ElForm :model="form" :rules="rules" ref="form" label-position="top" class="mode-setting-form">
         <div v-if="mode === 'service'" class="mt-4 px-4 py-3 border rounded-4">
           <ElFormItem>
-            <span slot="label" class="inline-flex align-center">
-              <span>{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
-              <ElTooltip
-                class="ml-2"
-                placement="top"
-                :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
-              >
-                <VIcon size="14">info</VIcon>
-              </ElTooltip>
-            </span>
+            <template v-slot:label>
+              <span class="inline-flex align-center">
+                <span>{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
+                <ElTooltip
+                  class="ml-2"
+                  placement="top"
+                  :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
+                >
+                  <VIcon size="14">info</VIcon>
+                </ElTooltip>
+              </span>
+            </template>
             <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
-              <ElRadio
-                v-for="item in options"
-                :label="item.value"
-                :key="'FDM' + item.value"
-                border
-                class="rounded-2 mr-4 ml-0"
-              >
+              <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
                 <span>{{ item.label }}</span>
               </ElRadio>
             </ElRadioGroup>
@@ -139,7 +146,7 @@
             </ElSelect>
             <template v-else>
               <div class="flex align-center gap-4">
-                <span class="preview-text inline-block rounded-2" v-if="fdmConnection">{{ fdmConnection.name }}</span>
+                <span class="preview-text inline-block rounded-4" v-if="fdmConnection">{{ fdmConnection.name }}</span>
                 <ElButton type="primary" @click="handleOrderStorage">{{
                   $t('packages_ldp_order_fully_managed_storage')
                 }}</ElButton>
@@ -148,144 +155,156 @@
           </ElFormItem>
 
           <!--<div class="flex align-items-center">
-            <VIcon class="color-primary mr-2" size="14">info</VIcon>
-            &lt;!&ndash;<span class="font-color-sslight"
-              >If you wish to change this setting later, you must migrate the data to your new database - manually for
-              now</span
-            >&ndash;&gt;
-            <span class="font-color-sslight"
-              >Don't have the connection you want? You can add a connection in Connection Management.
-            </span>
-          </div>-->
+                <VIcon class="color-primary mr-2" size="14">info</VIcon>
+                &lt;!&ndash;<span class="font-color-sslight"
+                  >If you wish to change this setting later, you must migrate the data to your new database - manually for
+                  now</span
+                >&ndash;&gt;
+                <span class="font-color-sslight"
+                  >Don't have the connection you want? You can add a connection in Connection Management.
+                </span>
+              </div>-->
           <div v-if="isDaas" class="flex align-items-center">
             <VIcon class="mr-2" size="14">info</VIcon>
             <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
           </div>
 
           <!--<div class="setting-card__header p-4">
-            <span>FDM/MDM Storage Backend</span>
-            <ElTooltip
-              class="ml-2"
-              placement="top"
-              content="Specify the database connection that will be used for LDP data storage"
-            >
-              <VIcon class="color-primary" size="14">info</VIcon>
-            </ElTooltip>
-          </div>-->
+                <span>FDM/MDM Storage Backend</span>
+                <ElTooltip
+                  class="ml-2"
+                  placement="top"
+                  content="Specify the database connection that will be used for LDP data storage"
+                >
+                  <VIcon class="color-primary" size="14">info</VIcon>
+                </ElTooltip>
+              </div>-->
         </div>
         <!--<div v-if="mode === 'service'" class="setting-card mt-6">
-          <div class="setting-card__header p-4">
-            <span>FDM Storage Backend</span>
-            <ElTooltip
-              class="ml-2"
-              placement="top"
-              content="Specify the database connection that will be used for additional  data layer storage"
-            >
-              <VIcon class="color-primary" size="14">info</VIcon>
-            </ElTooltip>
-          </div>
-          <div class="setting-card__content p-4">
-            <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
-              <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
-                <span>{{ item.label }}</span>
-                <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-                <ElFormItem v-if="form.mdmStorageCluster === item.value" prop="mdmStorageConnectionId">
-                  <ElSelect v-model="form.mdmStorageConnectionId" class="block mt-4">
-                    <ElOption
-                      v-for="op in connectionsList"
-                      :label="op.label"
-                      :value="op.value"
-                      :key="op.value"
-                    ></ElOption>
-                  </ElSelect>
-                </ElFormItem>
-              </ElRadio>
-            </ElRadioGroup>
-            <div class="flex align-items-center">
-              <VIcon class="color-primary mr-2" size="14">info</VIcon>
-              <span class="font-color-sslight"
-                >If you wish to change this setting later, you must migrate the data to your new database - manually for
-                now</span
-              >
-            </div>
-          </div>
-        </div>-->
+              <div class="setting-card__header p-4">
+                <span>FDM Storage Backend</span>
+                <ElTooltip
+                  class="ml-2"
+                  placement="top"
+                  content="Specify the database connection that will be used for additional  data layer storage"
+                >
+                  <VIcon class="color-primary" size="14">info</VIcon>
+                </ElTooltip>
+              </div>
+              <div class="setting-card__content p-4">
+                <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
+                  <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
+                    <span>{{ item.label }}</span>
+                    <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
+                    <ElFormItem v-if="form.mdmStorageCluster === item.value" prop="mdmStorageConnectionId">
+                      <ElSelect v-model="form.mdmStorageConnectionId" class="block mt-4">
+                        <ElOption
+                          v-for="op in connectionsList"
+                          :label="op.label"
+                          :value="op.value"
+                          :key="op.value"
+                        ></ElOption>
+                      </ElSelect>
+                    </ElFormItem>
+                  </ElRadio>
+                </ElRadioGroup>
+                <div class="flex align-items-center">
+                  <VIcon class="color-primary mr-2" size="14">info</VIcon>
+                  <span class="font-color-sslight"
+                    >If you wish to change this setting later, you must migrate the data to your new database - manually for
+                    now</span
+                  >
+                </div>
+              </div>
+            </div>-->
       </ElForm>
     </div>
-    <div slot="footer">
-      <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
-        $t('public_button_save')
-      }}</ElButton>
-    </div>
+    <template v-slot:footer>
+      <div>
+        <ElButton class="ml-4" @click="cancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton v-loading="loading" type="primary" :disabled="disabledBtn" @click="submit">{{
+          $t('public_button_save')
+        }}</ElButton>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { connectionsApi, liveDataPlatformApi } from '@tap/api'
 
 export default {
   name: 'Settings',
-
   props: {
     title: {
       type: String,
       default: () => {
         return 'Product Capability Mode'
-      }
+      },
     },
     visible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
-    fdmConnection: Object
+    fdmConnection: Object,
   },
-
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       mode: '',
       connectionsList: [],
       modeItems: [
         {
           label: 'Data Integration Mode',
-          value: 'integration'
+          value: 'integration',
         },
         {
           label: 'Data Service Platform Mode',
           value: 'service',
-          beta: true
-        }
+          beta: true,
+        },
       ],
       options: [
         {
           label: this.$t('packages_business_mongodb_self_hosted_cluster'),
           value: 'self',
-          tag: 'Add a New Connection'
+          tag: 'Add a New Connection',
         },
         {
           label: this.$t('packages_business_mongodb_full_management_cluster'),
-          value: 'full-management'
-        }
+          value: 'full-management',
+        },
       ],
       form: {
         fdmStorageCluster: '',
         fdmStorageConnectionId: '',
         mdmStorageCluster: '',
-        mdmStorageConnectionId: ''
+        mdmStorageConnectionId: '',
       },
       loading: false,
       rules: {
-        fdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }],
-        mdmStorageConnectionId: [{ required: true, message: i18n.t('public_select_placeholder'), trigger: 'change' }]
+        fdmStorageConnectionId: [
+          {
+            required: true,
+            message: i18n.t('public_select_placeholder'),
+            trigger: 'change',
+          },
+        ],
+        mdmStorageConnectionId: [
+          {
+            required: true,
+            message: i18n.t('public_select_placeholder'),
+            trigger: 'change',
+          },
+        ],
       },
       liveDataPlatformId: '',
 
-      setting: null
+      setting: null,
     }
   },
-
   computed: {
     disabled() {
       return (
@@ -302,20 +321,18 @@ export default {
         ((this.disabled && this.mode === 'service' && this.mode === this.setting?.mode) ||
           (this.mode === 'service' && this.form.fdmStorageCluster === 'full-management'))
       )
-    }
+    },
   },
-
   created() {
     this.init()
   },
-
   methods: {
     async init() {
       this.loadConnections()
       const data = await this.getData()
       this.setting = data
       this.setData(data, true)
-      this.$emit('init', data)
+      $emit(this, 'init', data)
     },
 
     async getData() {
@@ -329,23 +346,23 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target']
+            in: ['source_and_target'],
           },
           database_type: {
-            in: ['MongoDB', 'MongoDB Atlas']
-          }
-        }
+            in: ['MongoDB', 'MongoDB Atlas'],
+          },
+        },
       }
       connectionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.connectionsList =
-            data?.items.map(t => {
+            data?.items.map((t) => {
               return {
                 label: t.name,
-                value: t.id
+                value: t.id,
               }
             }) || []
         })
@@ -364,8 +381,8 @@ export default {
         this.form.mdmStorageConnectionId = this.form.fdmStorageConnectionId
       }
 
-      update && this.$emit('update:mode', this.mode)
-      update && this.$emit('update:fdmStorageConnectionId', this.form.fdmStorageConnectionId)
+      update && $emit(this, 'update:mode', this.mode)
+      update && $emit(this, 'update:fdmStorageConnectionId', this.form.fdmStorageConnectionId)
     },
 
     handleOpen() {
@@ -373,14 +390,13 @@ export default {
     },
 
     handleClose() {
-      this.$emit('visible', false)
       this.$emit('update:visible', false)
     },
 
     handleSelectMode(type) {
       this.setData({
         mode: type,
-        id: this.liveDataPlatformId
+        id: this.liveDataPlatformId,
       })
     },
 
@@ -393,7 +409,7 @@ export default {
     },
 
     submit() {
-      this.$refs.form.validate(v => {
+      this.$refs.form.validate((v) => {
         if (!v) return
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
@@ -407,7 +423,7 @@ export default {
           .then(() => {
             const result = { mode, ...form }
             this.$message.success(this.$t('public_message_save_ok'))
-            this.$emit('success', result)
+            $emit(this, 'success', result)
             this.handleClose()
 
             Object.assign(this.setting, result)
@@ -425,14 +441,15 @@ export default {
 
     handleOrderStorage() {
       this.$router.push({
-        name: 'CreateStorage'
+        name: 'CreateStorage',
       })
-    }
-  }
+    },
+  },
+  emits: ['init', 'update:mode', 'update:fdmStorageConnectionId', 'update:visible', ' success'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .dialog__content {
   padding: 20px 94px;
 }
@@ -448,14 +465,11 @@ export default {
   border: 1px solid #f2f2f2;
   border-top: none;
 }
-
 .mode-card-container {
   background-color: #f5f7fa;
 }
-
 .mode-card {
   transition: box-shadow 0.15s linear 0s;
-
   &-image {
     width: 100%;
     height: auto;
@@ -473,19 +487,17 @@ export default {
   }
 
   &:hover {
-    box-shadow: 0 10px 36px 10px rgba(31, 35, 41, 0.04), 0 8px 24px rgba(31, 35, 41, 0.04),
+    box-shadow:
+      0 10px 36px 10px rgba(31, 35, 41, 0.04),
+      0 8px 24px rgba(31, 35, 41, 0.04),
       0 6px 12px -10px rgba(31, 35, 41, 0.06);
   }
 }
-
 .mode-setting-form.el-form--label-top {
-  ::v-deep {
-    .el-form-item__label {
-      padding-bottom: 0;
-    }
+  :deep(.el-form-item__label) {
+    padding-bottom: 0;
   }
 }
-
 .mode-desc {
   line-height: 2;
   padding-bottom: 10px;
@@ -493,7 +505,6 @@ export default {
 .el-divider--horizontal {
   margin: 5px 5px !important;
 }
-
 .preview-text {
   padding: 0 15px;
   line-height: 32px;

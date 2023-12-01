@@ -6,7 +6,7 @@
     </el-row>
     <div class="section-wrap-box">
       <div class="search-bar">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
       </div>
       <div class="main">
         <div class="content" v-if="waterfallData.length">
@@ -21,13 +21,14 @@
                       <h2 class="name fs-6">
                         {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
                       </h2>
-                      <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
+                      <div class="uuid fs-8 my-1">
+                        {{ item.systemInfo.uuid }}
+                      </div>
                       <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                     </div>
                   </div>
                   <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
                     <ElButton
-                      size="mini"
                       type="danger"
                       v-if="item.canUpdate"
                       @click="updateFn(item, item.management.status, 'management', 'update')"
@@ -56,22 +57,26 @@
                     >
                     <VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>
                     <!-- <i
-                      class="iconfont icon-icon_tianjia"
-                      v-readonlybtn="'Cluster_operation'"
-                      @click="addServeFn(item)"
-                    ></i> -->
+                          class="iconfont icon-icon_tianjia"
+                          v-readonlybtn="'Cluster_operation'"
+                          @click="addServeFn(item)"
+                        ></i> -->
                     <!-- <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i> -->
                     <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
                   </div>
                 </div>
                 <div class="list-box-main" v-if="item.metricValues">
                   <div class="usageRate">
-                    <div class="fs-5 pb-1 fw-bolder">{{ item.metricValues.CpuUsage }}</div>
+                    <div class="fs-5 pb-1 fw-bolder">
+                      {{ item.metricValues.CpuUsage }}
+                    </div>
                     {{ $t('cluster_cpu_usage') }}
                   </div>
                   <div class="line"></div>
                   <div class="usageRate">
-                    <div class="fs-5 pb-1 fw-bolder">{{ item.metricValues.HeapMemoryUsage }}</div>
+                    <div class="fs-5 pb-1 fw-bolder">
+                      {{ item.metricValues.HeapMemoryUsage }}
+                    </div>
                     {{ $t('cluster_heap_memory_usage') }}
                   </div>
                 </div>
@@ -110,22 +115,21 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
                           >{{ $t('public_button_start') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
                           >{{ $t('public_button_close') }}
                         </ElButton>
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
                           >{{ $t('public_button_restart') }}
@@ -150,34 +154,24 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_restart') }}</ElButton
-                        >
-                        <ElDivider v-if="bindWorkerMap[item.systemInfo.process_id]" direction="vertical"></ElDivider>
-                        <ElButton
-                          v-if="bindWorkerMap[item.systemInfo.process_id]"
-                          type="text"
-                          :disabled="item.engine.status == 'stopped' ? false : true"
-                          @click="unbind(item, item.engine.status, 'engine')"
-                          >{{ $t('public_button_unbind') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -199,23 +193,21 @@
                     <el-col :span="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_start') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          size="mini"
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_close') }}</ElButton
                         >
                         <ElDivider direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
                           >{{ $t('public_button_restart') }}</ElButton
@@ -235,11 +227,9 @@
                     </el-col>
                     <el-col :md="8" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
-                        <ElButton type="text" @click="delServe(child, item.status)">{{
-                          $t('public_button_delete')
-                        }}</ElButton>
+                        <ElButton text @click="delServe(child, item.status)">{{ $t('public_button_delete') }}</ElButton>
                         <ElDivider direction="vertical"></ElDivider>
-                        <ElButton type="text" @click="editServe(child, item.status, item)">{{
+                        <ElButton text @click="editServe(child, item.status, item)">{{
                           $t('public_button_edit')
                         }}</ElButton>
                       </div>
@@ -252,7 +242,9 @@
               <div class="list-box">
                 <div class="list-box-header flex justify-content-between align-items-center">
                   <div class="w-75">
-                    <div class="pt-2 mb-2 fs-5">{{ $t('daas_cluster_cluster_yinqingduiwaijian') }}</div>
+                    <div class="pt-2 mb-2 fs-5">
+                      {{ $t('daas_cluster_cluster_yinqingduiwaijian') }}
+                    </div>
                     <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                   </div>
                   <div class="w-25 fs-5">
@@ -293,8 +285,8 @@
 
     <el-dialog
       :title="$t('cluster_add_server_mon')"
-      custom-class="serverDialog"
-      :visible.sync="dialogForm"
+      class="serverDialog"
+      v-model="dialogForm"
       :append-to-body="true"
       :lock-scroll="false"
       :close-on-click-modal="false"
@@ -302,17 +294,17 @@
       @close="closeDialogForm()"
     >
       <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
-      <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <ElButton @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitForm('ruleForm')">{{ $t('public_button_confirm') }}</ElButton>
+        </div>
+      </template>
     </el-dialog>
     <el-dialog
       :title="$t('cluster_agentSetting')"
-      custom-class="serverDialog"
-      :visible.sync="editAgentDialog"
+      class="serverDialog"
+      v-model="editAgentDialog"
       :lock-scroll="false"
       :close-on-click-modal="false"
       width="600px"
@@ -324,29 +316,31 @@
             <el-input
               style="width: 85%"
               v-model="agentName"
-              size="mini"
               show-word-limit
               :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
+            <ElButton text class="rest-btn" @click="editNameRest">{{ $t('public_button_reduction') }}</ElButton>
           </div>
         </el-form-item>
         <el-form-item :label="$t('cluster_ip_display')" prop="command">
-          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" style="width: 85%">
             <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
           <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </div>
+      <template v-slot:footer>
+        <div class="dialog-footer">
+          <ElButton @click="editAgentDialog = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitEditAgent('editAgentForm')">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </div>
+      </template>
     </el-dialog>
   </section>
 </template>
+
 <script>
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
@@ -358,7 +352,7 @@ import { downloadBlob, downloadJson, openUrl } from '@tap/shared'
 export default {
   components: {
     AddServe,
-    FilterBar
+    FilterBar,
   },
   data() {
     return {
@@ -386,34 +380,29 @@ export default {
       delData: '',
       processIdData: [],
       searchParams: {
-        keyword: ''
+        keyword: '',
       },
       accessToken: '',
       filterItems: [
         {
           placeholder: this.$t('modules_name_placeholder'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ],
-      bindWorkerMap: {}
     }
   },
   created() {
-    this.init()
+    this.getDataApi()
     this.accessToken = Cookie.get('access_token')
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.getDataApi()
-    }
+    },
   },
   methods: {
-    init() {
-      this.getAllBindWorker()
-      this.getDataApi()
-    },
     // 提交
     async submitForm() {
       let getFrom = this.$refs.childRules.ruleForm
@@ -425,7 +414,7 @@ export default {
             uuid: this.currentData.uuid,
             name: getFrom.name,
             command: getFrom.command,
-            arguments: getFrom.arguments ? getFrom.arguments : ''
+            arguments: getFrom.arguments ? getFrom.arguments : '',
           }
           if (getFrom.id === '') {
             await clusterApi
@@ -467,13 +456,13 @@ export default {
     delServe(data, status) {
       let params = {
         uuid: data.uuid,
-        id: data.id
+        id: data.id,
       }
 
       if (status === 'running') {
         this.$confirm(this.$t('public_message_delete_confirm') + '?', {
-          type: 'warning'
-        }).then(resFlag => {
+          type: 'warning',
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -495,13 +484,13 @@ export default {
     },
     //下载
     downServeFn(item) {
-      proxyApi.supervisor(item.systemInfo?.process_id).then(data => {
+      proxyApi.supervisor(item.systemInfo?.process_id).then((data) => {
         downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_supervisor_summary`)
       })
     },
     //下载
     downConnectorsFn(item) {
-      proxyApi.connectors(item.systemInfo?.process_id).then(data => {
+      proxyApi.connectors(item.systemInfo?.process_id).then((data) => {
         downloadJson(JSON.stringify(data), `${item.systemInfo?.process_id}_connectors_memory`)
       })
     },
@@ -511,12 +500,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'start'
+          operation: 'start',
         }
         this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -538,12 +527,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'stop'
+          operation: 'stop',
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_closeSever') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -564,12 +553,12 @@ export default {
         let data = {
           uuid: item.uuid,
           server: server,
-          operation: 'restart'
+          operation: 'restart',
         }
         this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
+          closeOnClickModal: false,
+        }).then((resFlag) => {
           if (!resFlag) {
             return
           }
@@ -577,39 +566,11 @@ export default {
         })
       }
     },
-    // 解绑
-    unbind(item, status, server) {
-      let name
-      if (server === 'apiServer') {
-        name = 'API SEVER'
-      } else if (server === 'engine') {
-        name = this.$t('cluster_sync_gover')
-      } else {
-        name = this.$t('cluster_manage_sys')
-      }
-      if (status === 'stopped') {
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_unbind_server') + '?', {
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (!resFlag) {
-            return
-          }
-          const { process_id } = item.systemInfo || {}
-          workerApi.unbindByProcessId(process_id).then(data => {
-            this.init()
-            !!data
-              ? this.$message.success(this.$t('public_message_operation_success'))
-              : this.$message.error(this.$t('public_message_operation_error'))
-          })
-        })
-      }
-    },
     updateFn(item) {
       let data = {
         uuid: item.uuid,
         server: 'agent',
-        operation: 'update:' + this.toVersion
+        operation: 'update:' + this.toVersion,
       }
       this.operationFn(data)
       this.canUpdate = false
@@ -636,20 +597,11 @@ export default {
     getUsageRate(processId) {
       let where = {
         process_id: {
-          inq: processId
+          inq: processId,
         },
-        worker_type: 'connector'
+        worker_type: 'connector',
       }
       return workerApi.get({ filter: JSON.stringify({ where: where }) })
-    },
-    //获取所有 worker
-    async getAllBindWorker() {
-      try {
-        const data = await workerApi.queryAllBindWorker()
-        this.bindWorkerMap = data.reduce((pre, current) => {
-          return { ...pre, [current.processId]: current }
-        }, {})
-      } catch (e) {}
     },
     // 获取数据
     async getDataApi() {
@@ -660,36 +612,36 @@ export default {
             or: [
               {
                 agentName: {
-                  $exists: false
+                  $exists: false,
                 },
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword
-                }
+                  like: this.searchParams.keyword,
+                },
               },
               {
                 agentName: '',
                 'systemInfo.hostname': {
-                  like: this.searchParams.keyword
-                }
+                  like: this.searchParams.keyword,
+                },
               },
               {
                 agentName: {
-                  like: this.searchParams.keyword
-                }
-              }
-            ]
-          }
+                  like: this.searchParams.keyword,
+                },
+              },
+            ],
+          },
         }
       }
       let clusterData = await clusterApi.get(params)
       clusterData = clusterData?.items || []
-      let processId = clusterData.map(it => it?.systemInfo?.process_id)
+      let processId = clusterData.map((it) => it?.systemInfo?.process_id)
       let workerData = await this.getUsageRate(processId)
       //处理worker 数据
       workerData = workerData?.items || []
       let metricValuesData = {}
       if (workerData?.length) {
-        workerData.forEach(item => {
+        workerData.forEach((item) => {
           if (item.metricValues) {
             item.metricValues.CpuUsage = (item.metricValues.CpuUsage * 100).toFixed(2) + '%'
             item.metricValues.HeapMemoryUsage = (item.metricValues.HeapMemoryUsage * 100).toFixed(2) + '%'
@@ -725,7 +677,10 @@ export default {
           ? metricValuesData[clusterData[i].systemInfo?.process_id]
           : { CpuUsage: '-', HeapMemoryUsage: '-' }
         if (clusterData[i]?.engine?.status !== 'running') {
-          clusterData[i]['metricValues'] = { CpuUsage: '-', HeapMemoryUsage: '-' }
+          clusterData[i]['metricValues'] = {
+            CpuUsage: '-',
+            HeapMemoryUsage: '-',
+          }
         }
         if (clusterData[i]?.engine?.netStat) {
           clusterData[i].engine['netStatTotals'] = clusterData[i].engine.netStat.reduce((total, key) => {
@@ -749,8 +704,8 @@ export default {
       const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -788,7 +743,7 @@ export default {
       }
       let data = {
         custIP: this.custIP,
-        agentName: this.agentName
+        agentName: this.agentName,
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
@@ -803,19 +758,20 @@ export default {
     //运行日志
     goDailyRecord() {
       this.$router.push({
-        name: 'dailyRecord'
+        name: 'dailyRecord',
       })
     },
     getStatus(type) {
       return STATUS_MAP[type] || '-'
-    }
+    },
   },
-  destroyed() {
+  unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  }
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .clusterManagement-container {
   height: 100%;
@@ -992,11 +948,9 @@ export default {
 
               .btn {
                 display: inline;
-                ::v-deep {
-                  .el-button {
-                    span {
-                      font-weight: 400;
-                    }
+                :deep(.el-button) {
+                  span {
+                    font-weight: 400;
                   }
                 }
               }
@@ -1083,6 +1037,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .clusterManagement-container {
   .edit-agent-form {

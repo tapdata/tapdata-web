@@ -6,7 +6,9 @@
       <ElBreadcrumbItem>{{ $t('dfs_agent_download_paidupgrade_fuwushengji') }}</ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="card" v-show="!successStatus">
-      <header class="header">{{ $t('dfs_agent_download_paidupgrade_biaozhunban') }}</header>
+      <header class="header">
+        {{ $t('dfs_agent_download_paidupgrade_biaozhunban') }}
+      </header>
       <div class="main">
         <el-form :model="form" ref="paidForm" :rules="rules">
           <el-form-item :label="$t('dfs_agent_download_paidupgrade_xingming')" required prop="contactName">
@@ -16,10 +18,15 @@
             <el-input :max="11" v-model="form.contactTelephone"></el-input>
           </el-form-item>
         </el-form>
-        <div class="currentList paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_goumaifangan') }}</div>
-        <div class="desc paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_shoufeixiangqingmei') }}</div>
+        <div class="currentList paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_goumaifangan') }}
+        </div>
+        <div class="desc paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_shoufeixiangqingmei') }}
+        </div>
         <div class="content mb-2 flex justify-content-between">
-          <span>{{ $t('dfs_agent_download_paidupgrade_jichuyuefeihan') }}</span> <span class="version">¥12000</span>
+          <span>{{ $t('dfs_agent_download_paidupgrade_jichuyuefeihan') }}</span>
+          <span class="version">¥12000</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb8">
           <span
@@ -29,12 +36,7 @@
           <span class="version">¥3600</span>
         </div>
         <div class="content flex justify-content-between paid-upgrade-mb16">
-          <el-input-number
-            size="mini"
-            controls-position="right"
-            v-model="form.extraPipelines"
-            :min="0"
-          ></el-input-number
+          <el-input-number controls-position="right" v-model="form.extraPipelines" :min="0"></el-input-number
           ><span class="desc">× {{ form.extraPipelines || 0 }}</span>
         </div>
         <div class="link paid-upgrade-mb16"></div>
@@ -43,18 +45,24 @@
           <span class="version" v-if="!checked">¥12000</span>
           <span class="version" v-else>¥{{ total }}</span>
         </div>
-        <div class="tip paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_dianjiquerengou') }}</div>
+        <div class="tip paid-upgrade-mb16">
+          {{ $t('dfs_agent_download_paidupgrade_dianjiquerengou') }}
+        </div>
         <el-button class="float-end" type="primary" @click="save">{{
           $t('dfs_agent_download_paidupgrade_queren')
         }}</el-button>
       </div>
     </div>
     <div class="success" v-show="successStatus">
-      <div class="paid-upgrade-mb16 imgBox"><img class="mt-2 block" :src="getImg('complete')" alt="" /></div>
+      <div class="paid-upgrade-mb16 imgBox">
+        <img class="mt-2 block" :src="getImg('complete')" alt="" />
+      </div>
       <div class="version paid-upgrade-mb8">
         {{ $t('dfs_agent_download_paidupgrade_ganxienindinggou') }}{{ (successData.extraPipelines || 0) + 5 }}
       </div>
-      <div class="desc paid-upgrade-mb16">{{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}</div>
+      <div class="desc paid-upgrade-mb16">
+        {{ $t('dfs_agent_download_paidupgrade_womendetongshi') }}
+      </div>
       <el-button type="primary" @click="goBack">{{ $t('dfs_agent_download_paidupgrade_fanhuikongzhitai') }}</el-button>
     </div>
   </div>
@@ -75,33 +83,41 @@ export default {
         contactTelephone: user.telephone,
         paidPlanCode: 'standard',
         count: 1,
-        extraPipelines: 0
+        extraPipelines: 0,
       },
       rules: {
         contactName: [
-          { required: true, message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'), trigger: 'blur' }
+          {
+            required: true,
+            message: i18n.t('dfs_agent_download_paidupgrade_qingshurulianxi'),
+            trigger: 'blur',
+          },
         ],
         contactTelephone: [
-          { required: true, message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'), trigger: 'blur' }
-        ]
+          {
+            required: true,
+            message: i18n.t('dfs_agent_download_paidupgrade_qingxuanzelianxi'),
+            trigger: 'blur',
+          },
+        ],
       },
       successStatus: false,
-      successData: ''
+      successData: '',
     }
   },
   computed: {
     total() {
       return 12000 + this.form.extraPipelines * 3600
-    }
+    },
   },
   methods: {
     handleChecked(val) {
       this.form.extraPipelines = val ? 1 : 0
     },
     save() {
-      this.$refs.paidForm.validate(valid => {
+      this.$refs.paidForm.validate((valid) => {
         if (valid) {
-          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then(data => {
+          this.$axios.post('api/tcm/orders/subscribe/paid/plan', this.form).then((data) => {
             this.successData = data
             this.successStatus = true
           })
@@ -113,14 +129,14 @@ export default {
     },
     goBack() {
       this.$router.push({
-        name: 'Workbench'
+        name: 'Workbench',
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .paid-upgrade-wrap {
   padding-top: 68px;
   height: calc(100% - 0px);
@@ -204,11 +220,10 @@ export default {
     padding-left: 24px;
     border-bottom: 1px solid #e1e3e9;
   }
-  ::v-deep {
-    .el-form-item--small .el-form-item__content,
-    .el-form-item--small .el-form-item__label {
-      line-height: 28px;
-    }
+
+  :deep(.el-form-item--small .el-form-item__content),
+  :deep(.el-form-item--small .el-form-item__label) {
+    line-height: 28px;
   }
 }
 </style>

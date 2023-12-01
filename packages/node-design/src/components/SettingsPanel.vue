@@ -10,15 +10,14 @@
 
 <script>
 export default {
-  name: 'SettingsPanel'
+  name: 'SettingsPanel',
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .settings-panel {
   position: relative;
   width: 300px;
-
   &-header {
     height: 48px;
   }

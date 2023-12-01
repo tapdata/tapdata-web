@@ -1,13 +1,13 @@
 <template>
   <div class="scheme-to-form">
     <Form
+      v-bind="$attrs"
       class-name="form-wrap"
       :form="form"
       :colon="colon"
       :layout="layout"
       :label-align="labelAlign"
       :label-width="labelWidth"
-      v-bind="$attrs"
     >
       <SchemaField v-if="!!objData" :schema="objData" :scope="scope" />
     </Form>
@@ -26,30 +26,30 @@ export default {
   components: { Form, SchemaField },
   props: {
     schema: {
-      type: Object
+      type: Object,
     },
     colon: {
       type: Boolean,
-      default: false
+      default: false,
     },
     layout: {
       type: String,
-      default: 'horizontal'
+      default: 'horizontal',
     },
     labelAlign: {
       type: String,
-      default: 'left'
+      default: 'left',
     },
     labelWidth: {
       type: [String, Number],
-      default: 120
+      default: 120,
     },
     scope: {
-      type: Object
+      type: Object,
     },
     value: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
@@ -57,17 +57,17 @@ export default {
         this.value
           ? {
               values: this.value,
-              effects: this.useEffects
+              effects: this.useEffects,
             }
-          : {}
+          : {},
       ),
-      objData: null
+      objData: null,
     }
   },
   computed: {
     validate() {
       return this.form.validate
-    }
+    },
   },
   watch: {
     schema: {
@@ -77,8 +77,8 @@ export default {
           return
         }
         this.init()
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.init()
@@ -98,52 +98,52 @@ export default {
       return this.form.valid
     },
     useEffects() {
-      onFormValuesChange(form => {
+      onFormValuesChange((form) => {
         Object.assign(this.value, form.values)
       })
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
 
 <style lang="scss" scoped>
 .scheme-to-form {
-  ::v-deep {
-    .formily-element-form-item-label-tooltip {
-      margin-left: 0;
-    }
-    .formily-element-form-item {
-      font-size: $fontBaseTitle;
-      &-label {
-        label {
-          color: map-get($fontColor, light);
-          text-transform: capitalize;
-        }
-      }
-      .el-input-number {
-        width: 180px;
-      }
-      .el-input-number--small {
-        width: 130px;
-      }
+  :deep(.formily-element-plus-form-item-label-tooltip) {
+    margin-left: 0;
+  }
 
-      &-help,
-      &-extra {
-        white-space: pre-wrap;
+  :deep(.formily-element-plus-form-item) {
+    font-size: $fontBaseTitle;
+    .formily-element-plus-form-item-label {
+      label {
+        color: map-get($fontColor, light);
+        text-transform: capitalize;
       }
     }
+    .el-input-number {
+      width: 180px;
+    }
+    .el-input-number--small {
+      width: 130px;
+    }
 
-    .formily-element-form-item-layout-horizontal {
-      .formily-element-form-item-control-content-component > .el-switch {
+    .formily-element-plus-form-item-help,
+    .formily-element-plus-form-item-extra {
+      white-space: pre-wrap;
+    }
+  }
+
+  :deep(.formily-element-plus-form-item-layout-horizontal) {
+    .formily-element-plus-form-item-control-content-component > .el-switch {
+      height: 32px;
+      line-height: 32px;
+      vertical-align: top;
+    }
+    .formily-element-space-horizontal {
+      .el-switch {
         height: 32px;
         line-height: 32px;
-        vertical-align: top;
-      }
-      .formily-element-space-horizontal {
-        .el-switch {
-          height: 32px;
-          line-height: 32px;
-        }
       }
     }
   }

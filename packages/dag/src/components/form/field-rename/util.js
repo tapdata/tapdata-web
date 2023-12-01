@@ -13,7 +13,7 @@ export const convertSchemaToTreeData = function (Schema) {
             field.id ||
             `${field.table_name}${field.original_field_name ? '_' + field.original_field_name : ''}`.replace(
               /\./g,
-              '_'
+              '_',
             ),
           label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
           field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
@@ -28,7 +28,7 @@ export const convertSchemaToTreeData = function (Schema) {
           field: previousFieldName.split('.').pop(),
           previousFieldName,
           previousDataType: field.previousDataType,
-          columnPosition: field.columnPosition
+          columnPosition: field.columnPosition,
         }
         let path = 'children.' + jsonPathForFieldName.join('.children.')
         let partField = get(root, path)
@@ -42,11 +42,11 @@ export const convertSchemaToTreeData = function (Schema) {
     let re = function (field, count) {
       if (field && field.children) {
         count++
-        field.children = Object.values(field.children).map(it => {
+        field.children = Object.values(field.children).map((it) => {
           it.level = count
           return it
         })
-        field.children.forEach(it => {
+        field.children.forEach((it) => {
           re(it, count)
         })
       }
@@ -70,14 +70,14 @@ export const convertSchemaToTreeData = function (Schema) {
 export const getFieldsIds = function (fields) {
   let fieldIds = []
   if (fields) {
-    fieldIds = fields.map(field => field.id)
+    fieldIds = fields.map((field) => field.id)
   }
   return fieldIds
 }
 export const getOperationIds = function (operation) {
   let fieldIds = []
   if (operation) {
-    fieldIds = operation.map(field => field.id)
+    fieldIds = operation.map((field) => field.id)
   }
   return fieldIds
 }
@@ -85,7 +85,7 @@ export const getOperationIds = function (operation) {
 export const getFieldsNames = function (fields) {
   let fieldNames = []
   if (fields) {
-    fieldNames = fields.map(field => field.field_name)
+    fieldNames = fields.map((field) => field.field_name)
   }
   return fieldNames
 }
@@ -93,7 +93,7 @@ export const getFieldsNames = function (fields) {
 export const fieldsNamesMap = function (fields) {
   let fieldsNamesMap = {}
   if (fields) {
-    fields.map(s => (fieldsNamesMap[s.field_name] = s.id))
+    fields.map((s) => (fieldsNamesMap[s.field_name] = s.id))
   }
   return fieldsNamesMap
 }
@@ -101,7 +101,7 @@ export const fieldsNamesMap = function (fields) {
 export const fieldIsDeleted = function (fields) {
   let fieldIsDeleted = []
   if (fields) {
-    fieldIsDeleted = fields.filter(field => field.is_deleted).map(n => n.id)
+    fieldIsDeleted = fields.filter((field) => field.is_deleted).map((n) => n.id)
   }
   return fieldIsDeleted
 }
@@ -171,7 +171,7 @@ export const isValidate = function (operations, schema) {
           data_type: operation[i].data_type,
           level: operation[i].level,
           tableName: operation[i].tableName,
-          triggerFieldId: operation[i].triggerFieldId
+          triggerFieldId: operation[i].triggerFieldId,
         }
       } else {
         node = {
@@ -186,7 +186,7 @@ export const isValidate = function (operations, schema) {
           originalDataType: operation[i].originalDataType || operation[i].type,
           primary_key_position: operation[i].primary_key_position,
           table_name: operation[i].table_name,
-          type: operation[i].type
+          type: operation[i].type,
         }
       }
       if (
@@ -226,14 +226,14 @@ export const isValidate = function (operations, schema) {
   }
   return {
     isValidate: isValidate,
-    errorList: errorList
+    errorList: errorList,
   }
 }
 export const isScript = function (operations, scripts) {
   let fieldIds = []
   let errorList = []
   if (operations) {
-    fieldIds = operations.map(field => field.id)
+    fieldIds = operations.map((field) => field.id)
   }
   if (scripts) {
     for (let i = 0; i < scripts.length; i++) {
@@ -249,7 +249,7 @@ export const isScript = function (operations, scripts) {
           script: scripts[i].script,
           scriptType: scripts[i].scriptType,
           tableName: scripts[i].tableName,
-          type: scripts[i].type
+          type: scripts[i].type,
         }
         errorList.push(node)
       }
@@ -260,7 +260,7 @@ export const isScript = function (operations, scripts) {
 export const delScript = function (operations, scripts, id) {
   let fieldIds = []
   if (operations) {
-    fieldIds = operations.map(field => field.id)
+    fieldIds = operations.map((field) => field.id)
   }
   if (scripts) {
     for (let i = 0; i < scripts.length; i++) {
@@ -278,7 +278,7 @@ export const delScript = function (operations, scripts, id) {
 
 //兼容数据 操作记录改变type => original_type
 export const originalType = function (operations, id) {
-  let data = operations.filter(v => v.id === id && v.op === 'CONVERT')
+  let data = operations.filter((v) => v.id === id && v.op === 'CONVERT')
   let original_type = ''
   if (data.length > 0) {
     original_type = data[0].originalDataType

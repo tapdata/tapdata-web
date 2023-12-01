@@ -2,7 +2,7 @@
   <ElDialog
     :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
     width="1100px"
-    :visible.sync="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('input', false).$emit('load-data')"
@@ -115,7 +115,9 @@
           </div>
         </div>
       </div>
-      <div class="my-4">{{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}</div>
+      <div class="my-4">
+        {{ $t('packages_dag_components_nodedetaildialog_xingnengzhibiao') }}
+      </div>
       <div class="flex justify-content-between">
         <div v-loading="loading" class="chart-box rounded-2">
           <div class="flex justify-content-between align-items-center chart-box__title px-4">
@@ -133,7 +135,7 @@
                 <VIcon class="color-primary">info</VIcon>
               </ElTooltip>
             </div>
-            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
               <ElRadioButton label="count">count</ElRadioButton>
               <ElRadioButton label="size">size</ElRadioButton>
             </ElRadioGroup>
@@ -154,18 +156,36 @@
             <span class="mr-2">{{ delayLineTitle }}</span>
             <ElTooltip transition="tooltip-fade-in" placement="top" class="inline-flex align-items-center">
               <VIcon class="color-primary">info</VIcon>
-              <div v-if="isSource" slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao2') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan2') }}</div>
-              </div>
-              <div v-else-if="isTarget" slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}</div>
-                <div>{{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}</div>
-              </div>
-              <div v-else slot="content">
-                <div>{{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}</div>
-              </div>
+              <template v-if="isSource" v-slot:content>
+                <div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_chulihaoshiyuan') }}
+                  </div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_pingjunduquhao2') }}
+                  </div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_zengliangduquyan2') }}
+                  </div>
+                </div>
+              </template>
+              <template v-else-if="isTarget" v-slot:content>
+                <div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_chulihaoshidang') }}
+                  </div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_xieruhaoshidang') }}
+                  </div>
+                </div>
+              </template>
+              <template v-else v-slot:content>
+                <div>
+                  <div>
+                    {{ $t('packages_dag_components_nodedetaildialog_dangqianjiedianchu') }}
+                  </div>
+                </div>
+              </template>
             </ElTooltip>
           </div>
           <div class="chart-box__content p-4">
@@ -204,25 +224,29 @@ import { cloneDeep } from 'lodash'
 
 export default {
   name: 'NodeDetailDialog',
-
-  components: { NodeIcon, EventChart, LineChart, TimeSelect, Frequency, SharedMiningTable },
-
+  components: {
+    NodeIcon,
+    EventChart,
+    LineChart,
+    TimeSelect,
+    Frequency,
+    SharedMiningTable,
+  },
   props: {
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     nodeId: {
       type: String,
-      required: true
+      required: true,
     },
 
     dataflow: Object,
 
-    getTimeRange: Function
+    getTimeRange: Function,
   },
-
   data() {
     return {
       period: '',
@@ -235,22 +259,21 @@ export default {
       loading: false,
       refreshRate: 5000,
       currentNodeId: '',
-      qpsChartsType: 'count'
+      qpsChartsType: 'count',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     nodeItems() {
       return (
         this.allNodes
-          .filter(t => !['mem_cache'].includes(t.type))
-          .map(t => {
+          .filter((t) => !['mem_cache'].includes(t.type))
+          .map((t) => {
             return {
               node: t,
               label: t.name,
-              value: t.id
+              value: t.id,
             }
           }) || []
       )
@@ -281,21 +304,21 @@ export default {
           value: [[], []],
           markLine: [
             {
-              data: []
-            }
-          ]
+              data: [],
+            },
+          ],
         }
       }
       const { time = [] } = this.quota
-      const inputQps = data.inputQps?.map(t => Math.abs(t))
-      const outputQps = data.outputQps?.map(t => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
+      const inputQps = data.inputQps?.map((t) => Math.abs(t))
+      const outputQps = data.outputQps?.map((t) => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
-      time.forEach(el => {
+      time.forEach((el) => {
         if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
           markLineTime = el
         }
@@ -306,7 +329,7 @@ export default {
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         // value: [inputQps, outputQps],
         value: [],
-        zoomValue: 10
+        zoomValue: 10,
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
@@ -317,24 +340,24 @@ export default {
               {
                 xAxis: markLineTime + '',
                 lineStyle: {
-                  color: '#000'
+                  color: '#000',
                 },
                 label: {
-                  show: false
-                }
-              }
-            ]
-          }
+                  show: false,
+                },
+              },
+            ],
+          },
         ]
       }
 
       return {
         count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps]
+          value: [inputQps, outputQps],
         }),
         size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps]
-        })
+          value: [inputSizeQps, outputSizeQps],
+        }),
       }
     },
 
@@ -366,7 +389,7 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
       const { time = [] } = this.quota
@@ -374,19 +397,19 @@ export default {
       let result = {
         x: time,
         name: [i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi')],
-        value: data.timeCostAvg
+        value: data.timeCostAvg,
       }
       if (isSource) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
           i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
-          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
+          i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan'),
         ]
         result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
       } else if (isTarget) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),
-          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi')
+          i18n.t('packages_dag_components_nodedetaildialog_xieruhaoshi'),
         ]
         result.value = [data.timeCostAvg, data.targetWriteTimeCostAvg]
       }
@@ -403,7 +426,7 @@ export default {
       return {
         tcpPing,
         connectPing,
-        currentEventTimestamp
+        currentEventTimestamp,
       }
     },
 
@@ -417,12 +440,12 @@ export default {
       return {
         tcpPing,
         connectPing,
-        currentEventTimestamp
+        currentEventTimestamp,
       }
     },
 
     node() {
-      return this.allNodes.find(t => this.selected === t.id) || {}
+      return this.allNodes.find((t) => this.selected === t.id) || {}
     },
 
     nodeConnectionId() {
@@ -448,7 +471,7 @@ export default {
         snapshotDoneAt,
         snapshotStartAt,
         replicateLag,
-        lastFiveMinutesQps
+        lastFiveMinutesQps,
       } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
@@ -460,7 +483,7 @@ export default {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         replicateLag: replicateLag,
-        finishDuration: time
+        finishDuration: time,
       }
     },
 
@@ -471,7 +494,7 @@ export default {
         snapshotInsertRowTotal = 0,
         snapshotRowTotal = 0,
         currentSnapshotTableInsertRowTotal = 0,
-        currentSnapshotTableRowTotal = 0
+        currentSnapshotTableRowTotal = 0,
       } = this.quota.samples?.totalData?.[0] || {}
       // 如果分子大于分母，将分母的值调整成跟分子一样
       if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
@@ -483,7 +506,7 @@ export default {
         snapshotInsertRowTotal,
         snapshotRowTotal,
         currentSnapshotTableInsertRowTotal,
-        currentSnapshotTableRowTotal
+        currentSnapshotTableRowTotal,
       }
     },
 
@@ -502,9 +525,8 @@ export default {
     chartBoxWidth100() {
       const { isSource, isTarget } = this
       return !isSource && !isTarget
-    }
+    },
   },
-
   watch: {
     value(v) {
       this.visible = !!v
@@ -514,9 +536,8 @@ export default {
         this.timer && clearInterval(this.timer)
         this.selected = ''
       }
-    }
+    },
   },
-
   methods: {
     init() {
       if (!this.selected) {
@@ -552,7 +573,7 @@ export default {
       let params = {
         startAt,
         endAt,
-        samples: {}
+        samples: {},
       }
       const samples = {
         // 任务事件统计（条）- 任务累计 + 全量信息 + 增量信息
@@ -561,7 +582,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           endAt: Time.now(), // 停止时间 || 当前时间
           fields: [
@@ -592,10 +613,10 @@ export default {
             'replicateLag',
             'snapshotStartAt',
             'snapshotDoneAt',
-            'outputQps'
+            'outputQps',
           ],
           //
-          type: 'instant' // 瞬时值
+          type: 'instant', // 瞬时值
         },
         // 任务事件统计（条）-所选周期累计
         barChartData: {
@@ -603,7 +624,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           fields: [
             'insertTotal',
@@ -620,9 +641,9 @@ export default {
             'outputUpdateTotal',
             'outputDeleteTotal',
             'outputDdlTotal',
-            'outputOthersTotal'
+            'outputOthersTotal',
           ],
-          type: 'difference'
+          type: 'difference',
         },
         // qps + 增量延迟
         lineChartData: {
@@ -630,7 +651,7 @@ export default {
             type: 'node',
             taskId,
             taskRecordId,
-            nodeId
+            nodeId,
           },
           fields: [
             'qps',
@@ -642,10 +663,10 @@ export default {
             'targetWriteTimeCostAvg',
             'inputSizeQps',
             'outputSizeQps',
-            'qpsType'
+            'qpsType',
           ],
-          type: 'continuous' // 连续数据
-        }
+          type: 'continuous', // 连续数据
+        },
       }
       params.samples.data = samples[type]
       return params
@@ -659,27 +680,27 @@ export default {
       const params = {
         totalData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('totalData')
+          param: this.getFilter('totalData'),
         },
         barChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('barChartData')
+          param: this.getFilter('barChartData'),
         },
         lineChartData: {
           uri: '/api/measurement/query/v2',
-          param: this.getFilter('lineChartData')
-        }
+          param: this.getFilter('lineChartData'),
+        },
       }
       measurementApi
         .batch(params)
-        .then(data => {
+        .then((data) => {
           let quota = {
             samples: {},
             time: [],
-            interval: 5000
+            interval: 5000,
           }
           let arr = ['totalData', 'barChartData', 'lineChartData']
-          arr.forEach(el => {
+          arr.forEach((el) => {
             const item = data[el]
             if (item.code === 'ok') {
               quota.samples[el] = item.data?.samples?.data
@@ -701,7 +722,7 @@ export default {
               () => {
                 this.loading = false
               },
-              Time.now() - startStamp < 1000 ? 1000 : 0
+              Time.now() - startStamp < 1000 ? 1000 : 0,
             )
         })
     },
@@ -714,13 +735,13 @@ export default {
       let keyArr = ['insertTotal', 'updateTotal', 'deleteTotal', 'ddlTotal', 'othersTotal']
       let result = {
         input: {},
-        output: {}
+        output: {},
       }
       let newData = {}
       for (let key in data) {
         newData[key.toLowerCase()] = data[key] || 0
       }
-      keyArr.forEach(el => {
+      keyArr.forEach((el) => {
         for (let key in result) {
           result[key][el] = newData[key + el.toLowerCase()] || newData[el.toLowerCase()] || 0
         }
@@ -730,7 +751,7 @@ export default {
 
     changeTimeSelect(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
@@ -745,19 +766,19 @@ export default {
 
     calcTimeUnit() {
       return typeof val === 'number' ? calcTimeUnit(...arguments) : '-'
-    }
-  }
+    },
+  },
+  emits: ['update:value', 'load-data', 'load-data'],
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
+
 .chart-box {
   width: 48%;
   height: 286px;
@@ -777,15 +798,14 @@ export default {
   height: 200px;
 }
 .event-chart {
-  ::v-deep {
-    .chart__radio {
-      .el-radio-button--mini .el-radio-button__inner {
-        padding: 4px 8px;
-      }
+  :deep(.chart__radio) {
+    .el-radio-button--mini .el-radio-button__inner {
+      padding: 4px 8px;
     }
-    .total-line {
-      margin-bottom: 20px !important;
-    }
+  }
+
+  :deep(.total-line) {
+    margin-bottom: 20px !important;
   }
 }
 .pie-chart {
@@ -801,16 +821,15 @@ export default {
   &:hover {
     background: #eef3ff;
   }
-  ::v-deep {
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
   }

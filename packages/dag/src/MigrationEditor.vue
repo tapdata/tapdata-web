@@ -53,7 +53,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               hide-disable-action
               @drag-start="onNodeDragStart"
@@ -123,7 +123,7 @@ export default {
   name: 'MigrationEditor',
 
   directives: {
-    resize
+    resize,
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
@@ -139,7 +139,7 @@ export default {
     TopHeader,
     DFNode,
     LeftSider,
-    TransformLoading
+    TransformLoading,
   },
 
   inject: ['buried'],
@@ -163,11 +163,11 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
       scale: 1,
-      showLeftSider: true
+      showLeftSider: true,
     }
   },
 
@@ -180,7 +180,7 @@ export default {
     },
     'dataflow.id'() {
       this.getTaskPermissions()
-    }
+    },
   },
 
   async mounted() {
@@ -203,7 +203,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.command = null
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
@@ -217,29 +217,29 @@ export default {
       this.addProcessorNode([
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
-          type: 'table_rename_processor'
+          type: 'table_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji'),
-          type: 'migrate_field_rename_processor'
+          type: 'migrate_field_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_migrate_js_processor'
+          type: 'standard_migrate_js_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'migrate_js_processor',
-          beta: true
+          beta: true,
         },
         {
           name: i18n.t('packages_dag_date_processor'),
-          type: 'migrate_date_processor'
+          type: 'migrate_date_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'migrate_field_mod_type_filter_processor'
-        }
+          type: 'migrate_field_mod_type_filter_processor',
+        },
       ])
       this.addResourceIns(allResourceIns)
     },
@@ -272,23 +272,23 @@ export default {
           this.$router.resolve({
             name: 'MigrationMonitor',
             query: {
-              id: this.dataflow.id
+              id: this.dataflow.id,
             },
             params: {
-              id: this.dataflow.id
-            }
+              id: this.dataflow.id,
+            },
           }).href,
-          `MigrateStatistics_${this.dataflow.id}`
+          `MigrateStatistics_${this.dataflow.id}`,
         )
       } else {
         this.$router.push({
           name: 'MigrationMonitor',
           query: {
-            id: this.dataflow.id
+            id: this.dataflow.id,
           },
           params: {
-            id: this.dataflow.id
-          }
+            id: this.dataflow.id,
+          },
         })
       }
     },
@@ -306,7 +306,7 @@ export default {
         this.setTaskInfo(this.dataflow)
         await this.$router.replace({
           name: 'MigrateEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' }
+          params: { id: dataflow.id, action: 'dataflowEdit' },
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -317,7 +317,7 @@ export default {
           await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'migrateList'
+            name: 'migrateList',
           })
         } else {
           this.handleError(e)
@@ -331,15 +331,15 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position }
+          attrs: { position },
         },
-        item
+        item,
       )
 
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
 
       return node
@@ -354,19 +354,19 @@ export default {
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
-          }
-        ).then(res => {
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text'),
+          },
+        ).then((res) => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'migrateList'
+            name: 'migrateList',
           })
         })
       } else {
         this.$router.push({
-          name: 'migrateList'
+          name: 'migrateList',
         })
       }
     },
@@ -374,7 +374,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'MigrateEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' }
+        params: { id: this.dataflow.id, action: 'dataflowEdit' },
       })
     },
 
@@ -382,11 +382,11 @@ export default {
       this.$router.push({
         name: 'MigrationMonitor',
         query: {
-          id: this.dataflow.id
+          id: this.dataflow.id,
         },
         params: {
-          id: this.dataflow.id
-        }
+          id: this.dataflow.id,
+        },
       })
     },
 
@@ -411,7 +411,7 @@ export default {
         this.initWS()
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data, {
-          silenceMessage: true
+          silenceMessage: true,
         })
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
@@ -434,7 +434,7 @@ export default {
     async handleStart() {
       this.buried('migrationStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', v => {
+      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
@@ -500,15 +500,15 @@ export default {
               accessNodeProcessId: '',
               pdkType: 'pdk',
               pdkHash: con.pdkHash,
-              capabilities: con.capabilities
-            }
+              capabilities: con.capabilities,
+            },
           })
         } catch (error) {
           console.error(error) // eslint-disable-line
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -527,12 +527,10 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
-
   &.--right {
     width: 726px;
   }
 }
-
 .layout-wrap {
   display: flex;
   flex: auto;
@@ -543,83 +541,78 @@ $sidebarBg: #fff;
     flex-direction: row;
   }
 }
-
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-  background-color: #f5f8fe;*/
 
-  ::v-deep {
-    .connection-highlight,
-    .connection-selected {
-      path:nth-child(2) {
-        stroke: #2c65ff;
-      }
-      path:nth-child(3) {
-        fill: #2c65ff;
-        stroke: #2c65ff;
-      }
+  :deep(.connection-highlight),
+  :deep(.connection-selected) {
+    path:nth-child(2) {
+      stroke: #2c65ff;
+    }
+    path:nth-child(3) {
+      fill: #2c65ff;
+      stroke: #2c65ff;
+    }
+  }
+
+  :deep(.remove-connection-label) {
+    z-index: 1001;
+    position: relative;
+    padding: 4px;
+    border-radius: 100%;
+    background-color: #fa6303;
+    box-sizing: border-box;
+
+    .remove-connection-btn {
+      width: 1em;
+      height: 1em;
+      font-size: 6px;
+      background: transparent
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
+        center/1em auto no-repeat;
+      transition: font-size 0.15s ease-in-out;
     }
 
-    .remove-connection-label {
-      z-index: 1001;
-      position: relative;
-      padding: 4px;
-      border-radius: 100%;
-      background-color: #fa6303;
-      box-sizing: border-box;
-
+    &:hover {
       .remove-connection-btn {
+        font-size: 10px;
+      }
+    }
+  }
+
+  :deep(.conn-btn__wrap) {
+    z-index: 1002;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.2) !important;
+    }
+  }
+
+  :deep(.conn-btn) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: #9bb6ff;
+    border-radius: 100%;
+    pointer-events: none;
+    .v-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 12px;
+      background-color: #2c65ff;
+      color: #fff;
+      border-radius: 100%;
+      &__svg {
         width: 1em;
         height: 1em;
-        font-size: 6px;
-        background: transparent
-          url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
-          center/1em auto no-repeat;
-        transition: font-size 0.15s ease-in-out;
-      }
-
-      &:hover {
-        .remove-connection-btn {
-          font-size: 10px;
-        }
-      }
-    }
-
-    .conn-btn__wrap {
-      z-index: 1002;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      &:hover {
-        transform: translate(-50%, -50%) scale(1.2) !important;
-      }
-    }
-    .conn-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 20px;
-      height: 20px;
-      background-color: #9bb6ff;
-      border-radius: 100%;
-      pointer-events: none;
-      .v-icon {
-        width: 16px;
-        height: 16px;
-        font-size: 12px;
-        background-color: #2c65ff;
-        color: #fff;
-        border-radius: 100%;
-        &__svg {
-          width: 1em;
-          height: 1em;
-        }
       }
     }
   }
 }
-
 .nav-line {
   position: absolute;
   width: 0;
@@ -629,20 +622,17 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
-
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
-
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
-
 .node-view-background {
   position: absolute;
   width: 10000px;
@@ -650,7 +640,6 @@ $sidebarBg: #fff;
   top: -5000px;
   left: -5000px;
 }
-
 .sider-expand-wrap {
   position: absolute;
   z-index: 2;
@@ -661,7 +650,6 @@ $sidebarBg: #fff;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
-
   &:hover .v-icon {
     color: map-get($color, primary);
   }

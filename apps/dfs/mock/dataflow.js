@@ -10,9 +10,9 @@ module.exports = {
         'statusCount|4': [
           {
             '_id|+1': ['draft', 'error', 'paused', 'running'],
-            count: Random.integer(0, 100)
-          }
-        ]
+            count: Random.integer(0, 100),
+          },
+        ],
       },
       chart2: [
         {
@@ -26,43 +26,43 @@ module.exports = {
           totalUpdate: Random.integer(0, 100),
           totalUpdateSize: Random.integer(0, 100),
           totalDelete: Random.integer(0, 100),
-          totalDeleteSize: Random.integer(0, 100)
-        }
+          totalDeleteSize: Random.integer(0, 100),
+        },
       ],
       chart3: [],
       chart4: {
         initializing: Random.integer(0, 100),
         initialized: Random.integer(0, 100),
         cdc: Random.integer(0, 100),
-        Lag: Random.integer(0, 100)
+        Lag: Random.integer(0, 100),
       },
       chart5: {
         totalDataFlows: Random.integer(0, 100),
         'statusCount|4': [
           {
             '_id|+1': ['draft', 'error', 'paused', 'running'],
-            count: Random.integer(0, 100)
-          }
-        ]
+            count: Random.integer(0, 100),
+          },
+        ],
       },
       chart6: {
         initializing: Random.integer(0, 100),
         initialized: Random.integer(0, 100),
         cdc: Random.integer(0, 100),
-        Lag: Random.integer(0, 100)
+        Lag: Random.integer(0, 100),
       },
       chart7: {
         total: Random.integer(0, 100),
         passed: Random.integer(0, 100),
         countDiff: Random.integer(0, 100),
         valueDiff: Random.integer(0, 100),
-        error: Random.integer(0, 100)
+        error: Random.integer(0, 100),
       },
       chart8: { total: 0, invalid: 0, ready: 0 },
-      chart9: { total: 0, 'initial_sync+cdc': 0, initial_sync: 0, cdc: 0 }
+      chart9: { total: 0, 'initial_sync+cdc': 0, initial_sync: 0, cdc: 0 },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/findOne': {
     data: {
@@ -89,7 +89,7 @@ module.exports = {
             limitLines: '',
             cSql: '',
             editSql: '',
-            conditions: []
+            conditions: [],
           },
           initialOffset: '',
           initialSyncOrder: 0,
@@ -98,7 +98,7 @@ module.exports = {
           name: 'CLAIM',
           dataQualityTag: false,
           joinTables: [],
-          statsStatus: 'cdc'
+          statsStatus: 'cdc',
         },
         {
           id: '9a74cec4-db3e-488f-bd17-ff844f846f50',
@@ -130,8 +130,8 @@ module.exports = {
               'SETTLED_AMOUNT',
               'CLAIM_REASON',
               'LAST_CHANGE',
-              'P2'
-            ]
+              'P2',
+            ],
           },
           initialOffset: '',
           initialSyncOrder: 0,
@@ -149,10 +149,10 @@ module.exports = {
               joinKeys: [{ source: 'CLAIM_ID', target: 'CLAIM_ID' }],
               stageId: '76a33ab1-cb0f-42ac-9240-41bb1f421ff0',
               isArray: false,
-              arrayUniqueKey: ''
-            }
+              arrayUniqueKey: '',
+            },
           ],
-          statsStatus: null
+          statsStatus: null,
         },
         {
           id: 'c44fdef0-a4c7-4f75-964a-8e920b044420',
@@ -162,18 +162,18 @@ module.exports = {
           type: 'js_processor',
           script:
             "function process(record){\n\n\tif (record.CLAIM_ID == 'CL_000000000'){record.CLAIM_ID=null};\n    if (record.CLAIM_ID == 'CL_000000002'){record.CLAIM_ID=null};\n\treturn record; }",
-          statsStatus: null
-        }
-      ]
+          statsStatus: null,
+        },
+      ],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/count': { data: { count: 41 }, code: 'ok', msg: 'ok' },
   '/tm/api/DataFlows/:id/reset': {
     code: 'ok',
     msg: 'ok',
-    data: {}
+    data: {},
   },
   '/tm/api/DataFlows': {
     code: 'ok',
@@ -209,7 +209,7 @@ module.exports = {
               dropType: 'no_drop',
               readBatchSize: 1000,
               readCdcInterval: 500,
-              statsStatus: 'cdc'
+              statsStatus: 'cdc',
             },
             {
               connectionId: '6087c2ee0786e30010d4c882',
@@ -229,8 +229,8 @@ module.exports = {
               readCdcInterval: 500,
               dropType: 'no_drop',
               database_type: 'mysql',
-              statsStatus: null
-            }
+              statsStatus: null,
+            },
           ],
           setting: {
             name: 'sudu 8',
@@ -246,8 +246,8 @@ module.exports = {
                 time: '',
                 date: '',
                 name: '',
-                timezone: '+8'
-              }
+                timezone: '+8',
+              },
             ],
             readBatchSize: 25000,
             notificationWindow: 0,
@@ -262,8 +262,8 @@ module.exports = {
               edited: false,
               started: false,
               error: true,
-              paused: true
-            }
+              paused: true,
+            },
           },
           platformInfo: { region: '', zone: '' },
           user_id: '@id',
@@ -289,40 +289,40 @@ module.exports = {
                 transmissionTime: Random.integer(0, 100000),
                 transTimeAvg: Random.integer(0, 100000),
                 replicationLag: Random.integer(0, 10000),
-                status: 'cdc'
-              }
+                status: 'cdc',
+              },
             ],
-            totalCount: null
+            totalCount: null,
           },
           user: {
             email: '60718c178fbae2c47bc294b3@custom.com',
             username: '小瓶套',
-            emailVerified: true
+            emailVerified: true,
           },
           errorEvents: [],
           tcm: {
             agentId: '@id',
-            agentName: '@name'
-          }
-        }
-      ]
-    }
+            agentName: '@name',
+          },
+        },
+      ],
+    },
   },
   '/tm/api/DataFlows/update': {
     data: {
       success: [{ id: '@id', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/resetAll': {
     data: {
       success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/metadata': {
     data: [
@@ -339,7 +339,7 @@ module.exports = {
         sinkDbType: 'mysql',
         sinkStageId: 'd832dec3-a42c-4c39-ac7a-86fff95bebb7',
         userDeletedNum: 0,
-        sinkTableId: '6130a1f31b3c6200548d5c70'
+        sinkTableId: '6130a1f31b3c6200548d5c70',
       },
       {
         invalid: false,
@@ -354,7 +354,7 @@ module.exports = {
         sourceObjectName: 'CAR_POLICY',
         sourceQualifiedName: 'T_mysql_source_CAR_POLICY_6130a1f21b3c6200548d5c45',
         sourceTableId: '6130a1f31b3c6200548d5c69',
-        userDeletedNum: 0
+        userDeletedNum: 0,
       },
       {
         invalid: false,
@@ -369,11 +369,11 @@ module.exports = {
         sourceObjectName: 'CAR_POLICY',
         sourceQualifiedName: 'T_mysql_source_CAR_POLICY_6130a1f21b3c6200548d5c45w',
         sourceTableId: '6130a1f31b3c6200548d5c69',
-        userDeletedNum: 0
-      }
+        userDeletedNum: 0,
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/MetadataInstances/originalData': {
     data: [
@@ -418,7 +418,7 @@ module.exports = {
           tableCount: 12,
           everLoadSchema: true,
           id: '6130a1f21b3c6200548d5c45',
-          _id: '6130a1f21b3c6200548d5c45'
+          _id: '6130a1f21b3c6200548d5c45',
         },
         dev_version: 1,
         last_user_id: '61306d94725cec27ed3401e3',
@@ -448,7 +448,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ce5',
-            tapType: 'String'
+            tapType: 'String',
           },
           {
             field_name: 'POLICY_ID',
@@ -471,7 +471,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ce6',
-            tapType: 'String'
+            tapType: 'String',
           },
           {
             field_name: 'CLAIM_DATE',
@@ -494,7 +494,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ce7',
-            tapType: 'Datetime'
+            tapType: 'Datetime',
           },
           {
             field_name: 'SETTLED_DATE',
@@ -517,7 +517,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ce8',
-            tapType: 'Datetime'
+            tapType: 'Datetime',
           },
           {
             field_name: 'CLAIM_AMOUNT',
@@ -540,7 +540,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ce9',
-            tapType: 'Number'
+            tapType: 'Number',
           },
           {
             field_name: 'SETTLED_AMOUNT',
@@ -563,7 +563,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5cea',
-            tapType: 'Number'
+            tapType: 'Number',
           },
           {
             field_name: 'CLAIM_REASON',
@@ -586,7 +586,7 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5ceb',
-            tapType: 'String'
+            tapType: 'String',
           },
           {
             field_name: 'LAST_CHANGE',
@@ -609,8 +609,8 @@ module.exports = {
             source: 'auto',
             is_deleted: false,
             id: '6130a1f51b3c6200548d5cec',
-            tapType: 'Datetime'
-          }
+            tapType: 'Datetime',
+          },
         ],
         indices: [],
         schemaVersion: '9355c4f6-246f-4fc4-87e1-1f6ff6e0ea82',
@@ -659,7 +659,7 @@ module.exports = {
               loadFieldErrMsg:
                 'java.lang.RuntimeException: Load schema fields error, connection name: auto_mysql, message: Communications link failure\n\nThe last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.\n  io.tapdata.Runnable.LoadSchemaRunner.run(LoadSchemaRunner.java:121)\nio.tapdata.websocket.handler.TestConnectionHandler.lambda$handle$3(TestConnectionHandler.java:288)\njava.lang.Thread.run(Thread.java:748)\n',
               id: '6130a1f21b3c6200548d5c45',
-              _id: '6130a1f21b3c6200548d5c45'
+              _id: '6130a1f21b3c6200548d5c45',
             },
             dev_version: 1,
             last_user_id: '61306d94725cec27ed3401e3',
@@ -688,7 +688,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ce5'
+                id: '6130a1f51b3c6200548d5ce5',
               },
               {
                 field_name: 'POLICY_ID',
@@ -710,7 +710,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ce6'
+                id: '6130a1f51b3c6200548d5ce6',
               },
               {
                 field_name: 'CLAIM_DATE',
@@ -732,7 +732,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ce7'
+                id: '6130a1f51b3c6200548d5ce7',
               },
               {
                 field_name: 'SETTLED_DATE',
@@ -754,7 +754,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ce8'
+                id: '6130a1f51b3c6200548d5ce8',
               },
               {
                 field_name: 'CLAIM_AMOUNT',
@@ -776,7 +776,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ce9'
+                id: '6130a1f51b3c6200548d5ce9',
               },
               {
                 field_name: 'SETTLED_AMOUNT',
@@ -798,7 +798,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5cea'
+                id: '6130a1f51b3c6200548d5cea',
               },
               {
                 field_name: 'CLAIM_REASON',
@@ -820,7 +820,7 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5ceb'
+                id: '6130a1f51b3c6200548d5ceb',
               },
               {
                 field_name: 'LAST_CHANGE',
@@ -842,8 +842,8 @@ module.exports = {
                 is_auto_allowed: true,
                 source: 'auto',
                 is_deleted: true,
-                id: '6130a1f51b3c6200548d5cec'
-              }
+                id: '6130a1f51b3c6200548d5cec',
+              },
             ],
             indices: [],
             schemaVersion: '1529f73c-6c85-4944-89e2-ea927e5fd447',
@@ -853,7 +853,7 @@ module.exports = {
             createTime: '2021-09-02T10:05:39.924Z',
             __properties: {
               name: 'CAR_CLAIM',
-              comment: ''
+              comment: '',
             },
             comment: '',
             name: 'CAR_CLAIM',
@@ -862,13 +862,13 @@ module.exports = {
             create_source: 'auto',
             version_user_id: '61306d94725cec27ed3401e3',
             version_user_name: 'admin@admin.com',
-            version_description: 'Add.new.field'
-          }
-        ]
-      }
+            version_description: 'Add.new.field',
+          },
+        ],
+      },
     ],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/:id': {
     data: {
@@ -899,7 +899,7 @@ module.exports = {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          statsStatus: 'cdc'
+          statsStatus: 'cdc',
         },
         {
           connectionId: '6087c2ee0786e30010d4c882',
@@ -919,8 +919,8 @@ module.exports = {
           readCdcInterval: 500,
           dropType: 'no_drop',
           database_type: 'mysql',
-          statsStatus: null
-        }
+          statsStatus: null,
+        },
       ],
       setting: {
         name: 'sudu 8',
@@ -936,8 +936,8 @@ module.exports = {
             time: '',
             date: '',
             name: '',
-            timezone: '+8'
-          }
+            timezone: '+8',
+          },
         ],
         readBatchSize: 25000,
         notificationWindow: 0,
@@ -952,8 +952,8 @@ module.exports = {
           edited: false,
           started: false,
           error: true,
-          paused: true
-        }
+          paused: true,
+        },
       },
       dataFlowType: 'normal',
       dataSourceModel: {
@@ -962,7 +962,7 @@ module.exports = {
         source_connectionId: '60803202ddc0f40343b87e35',
         target_connectionId: '6087c2ee0786e30010d4c882',
         source_connectionName: 'local_179',
-        target_connectionName: 'DRS-ALI-DEST'
+        target_connectionName: 'DRS-ALI-DEST',
       },
       platformInfo: { region: '', zone: '' },
       agentTags: ['', ''],
@@ -989,78 +989,78 @@ module.exports = {
           status: 'finish',
           errorMessage: '',
           start: 1620633333182,
-          end: 1620633333221
+          end: 1620633333221,
         },
         {
           code: 'INIT_CONNECTOR',
           status: 'finish',
           errorMessage: '',
           start: 1620633334786,
-          end: 1620633334998
+          end: 1620633334998,
         },
         {
           code: 'INIT_TRANSFORMER',
           status: 'running',
           errorMessage: '',
           start: 1620633336474,
-          end: 0
+          end: 0,
         },
         {
           code: 'CONNECT_TO_SOURCE',
           status: 'finish',
           errorMessage: '',
           start: 1620633335270,
-          end: 1620633336835
+          end: 1620633336835,
         },
         {
           code: 'CONNECT_TO_TARGET',
           status: 'waiting',
           errorMessage: '',
           start: 0,
-          end: 0
+          end: 0,
         },
         {
           code: 'READ_SOURCE_DDL',
           status: 'finish',
           errorMessage: '',
           start: 1619608272305,
-          end: 1619608272507
+          end: 1619608272507,
         },
         {
           code: 'CREATE_TARGET_TABLE',
           status: 'finish',
           errorMessage: '',
           start: 1619608277704,
-          end: 1619608462662
+          end: 1619608462662,
         },
         {
           code: 'READ_SNAPSHOT',
           status: 'finish',
           errorMessage: '',
           start: 1619608272891,
-          end: 1619608461742
+          end: 1619608461742,
         },
         {
           code: 'WRITE_SNAPSHOT',
           status: 'finish',
           errorMessage: '',
           start: 1619608277671,
-          end: 1619608466755
+          end: 1619608466755,
         },
         {
           code: 'READ_CDC_EVENT',
           status: 'finish',
           errorMessage: '',
           start: 1620633335037,
-          end: 1620633337825
+          end: 1620633337825,
         },
         {
           code: 'WRITE_CDC_EVENT',
           status: 'waiting',
           errorMessage: '',
           start: 0,
-          end: 0
-        }
+          end: 0,
+        },
       ],
       stats: {
         input: { rows: 4990000, dataSize: 239520000 },
@@ -1082,7 +1082,7 @@ module.exports = {
             transmissionTime: 0,
             transTimeAvg: 0,
             replicationLag: 26874,
-            status: 'cdc'
+            status: 'cdc',
           },
           {
             stageId: '76dfca82-f8d1-4909-b6e4-d341fb310bb2',
@@ -1094,10 +1094,10 @@ module.exports = {
             transmissionTime: 662899,
             transTimeAvg: 0,
             replicationLag: 26874,
-            status: null
-          }
+            status: null,
+          },
         ],
-        totalCount: null
+        totalCount: null,
       },
       cdcLastTimes: [
         {
@@ -1105,20 +1105,20 @@ module.exports = {
           sourceConnectionName: 'local_179',
           targetConnectionId: '6087c2ee0786e30010d4c882',
           targetConnectionName: 'DRS-ALI-DEST',
-          cdcTime: 1619608271000
-        }
+          cdcTime: 1619608271000,
+        },
       ],
       executionTime: 1.5743833333333332,
       errorEvents: [],
-      user: { email: '60718c178fbae2c47bc294b3@custom.com', username: '小瓶套' }
+      user: { email: '60718c178fbae2c47bc294b3@custom.com', username: '小瓶套' },
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/TypeMappings/dataType': {
     data: [{ dbType: 'mysql', rules: [] }],
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/:id/copy': {
     data: {
@@ -1147,7 +1147,7 @@ module.exports = {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          statsStatus: 'cdc'
+          statsStatus: 'cdc',
         },
         {
           connectionId: '6087c2ee0786e30010d4c882',
@@ -1167,8 +1167,8 @@ module.exports = {
           readCdcInterval: 500,
           dropType: 'no_drop',
           database_type: 'mysql',
-          statsStatus: null
-        }
+          statsStatus: null,
+        },
       ],
       setting: {
         name: 'sudu 8',
@@ -1186,8 +1186,8 @@ module.exports = {
             time: '',
             date: '',
             name: '',
-            timezone: '+8'
-          }
+            timezone: '+8',
+          },
         ],
         readBatchSize: 25000,
         notificationWindow: 0,
@@ -1202,8 +1202,8 @@ module.exports = {
           edited: false,
           started: false,
           error: true,
-          paused: true
-        }
+          paused: true,
+        },
       },
       dataFlowType: 'normal',
       dataSourceModel: {
@@ -1212,7 +1212,7 @@ module.exports = {
         source_connectionId: '60803202ddc0f40343b87e35',
         target_connectionId: '6087c2ee0786e30010d4c882',
         source_connectionName: 'local_179',
-        target_connectionName: 'DRS-ALI-DEST'
+        target_connectionName: 'DRS-ALI-DEST',
       },
       platformInfo: { region: '', zone: '' },
       agentTags: ['', ''],
@@ -1223,18 +1223,18 @@ module.exports = {
       scheduleTime: 1620633332823,
       scheduleTimes: 1,
       pingTime: 1620633379338,
-      stats: {}
+      stats: {},
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/DataFlows/removeAll': {
     data: {
       success: [{ id: '6098e7a2c66ab70010981c53', code: 1, msg: 'ok' }],
-      fail: []
+      fail: [],
     },
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
   },
   '/tm/api/UserLogs': {
     code: 'ok',
@@ -1255,7 +1255,7 @@ module.exports = {
             'inspect',
             'differenceInspect',
             'message',
-            'userNotification'
+            'userNotification',
           ],
           'operation|1': [
             'create',
@@ -1269,7 +1269,7 @@ module.exports = {
             'rename',
             'read',
             'readAll',
-            'deleteAll'
+            'deleteAll',
           ],
           parameter1: '@name',
           parameter2: '@name',
@@ -1278,18 +1278,18 @@ module.exports = {
           oldName: '@name', //原名称
           type: 'userOperation',
           user_id: '60cc0c5887e32100106b6a17',
-          username: '@name'
-        }
-      ]
-    }
+          username: '@name',
+        },
+      ],
+    },
   },
   '/tm/api/DataFlows/tranModelVersionControl': {
     reqId: '5e7a40a3-da6d-4940-aace-54c471e4f6b4',
     ts: 1641364647570,
     code: 'ok',
-    data: { '0b173e70-82b5-46b7-bb48-7a99e2fb4e44': true }
+    data: { '0b173e70-82b5-46b7-bb48-7a99e2fb4e44': true },
   },
-  '/tm/api/DataFlowInsights/runtimeMonitor': req => {
+  '/tm/api/DataFlowInsights/runtimeMonitor': (req) => {
     const query = req.req?.query || {}
     const { statsType } = query
     console.log('statsType', query, statsType)
@@ -1317,9 +1317,9 @@ module.exports = {
               updateSize: Random.integer(0, 100),
               insertCount: Random.integer(0, 100),
               insertSize: Random.integer(0, 100),
-              inputCount: Random.integer(0, 100)
-            }
-          }
+              inputCount: Random.integer(0, 100),
+            },
+          },
         }
         break
       case 'throughput':
@@ -1353,8 +1353,8 @@ module.exports = {
               // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:04', inputSize: 0.0, inputCount: 0.0 },
               // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:09', inputSize: 0.0, inputCount: 0.0 },
               // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:15', inputSize: 0.0, inputCount: 0.0 }
-            ]
-          }
+            ],
+          },
         }
         result.data.statsData = new Array(20).fill().map((t, i) => {
           let obj = {
@@ -1362,7 +1362,7 @@ module.exports = {
             outputCount: Random.integer(0, 100),
             t: dayjs(currentTime + i * 5000).format('YYYY-MM-DD HH:mm:ss'),
             inputSize: Random.integer(0, 100),
-            inputCount: Random.integer(0, 100)
+            inputCount: Random.integer(0, 100),
           }
           return obj
         })
@@ -1397,13 +1397,13 @@ module.exports = {
             sourceDbName: 'INSURANCE',
             targetDbName: 'tap122c',
             sourceDatabaseType: 'mysql',
-            targetDatabaseType: 'oracle'
+            targetDatabaseType: 'oracle',
           },
           createTime: '2022-01-05T09:27:15.838+00:00',
-          user_id: '61408608c4e5c40012663090'
-        }
-      ]
-    }
+          user_id: '61408608c4e5c40012663090',
+        },
+      ],
+    },
   },
   '/tm/api/DataFlowInsights/statistics': {
     reqId: '77b5587a-fe9c-4ccc-b970-81b45f6f865f',
@@ -1441,10 +1441,10 @@ module.exports = {
         { time: '2022-02-27', count: '@integer(0, 10)' },
         { time: '2022-02-28', count: '@integer(0, 10)' },
         { time: '2022-02-29', count: '@integer(0, 10)' },
-        { time: '2022-02-30', count: '@integer(0, 10)' }
+        { time: '2022-02-30', count: '@integer(0, 10)' },
       ],
-      totalInputDataCount: '@integer(0, 100)'
-    }
+      totalInputDataCount: '@integer(0, 100)',
+    },
   },
   '/tm/api/DataFlowRecord': {
     reqId: 'd8c5f1bb-e617-4e2e-93ab-24c248eccef1',
@@ -1463,16 +1463,16 @@ module.exports = {
           'startType|1': ['manual', 'auto'],
           'dataFlowStatus|1': ['running', 'completed', 'paused', 'error'],
           createTime: '2022-03-05T10:31:25.787+00:00',
-          user_id: '60cc0c5887e32100106b6a17'
-        }
-      ]
-    }
+          user_id: '60cc0c5887e32100106b6a17',
+        },
+      ],
+    },
   },
   '/tm/api/DataFlows/cron/isValidExpression': {
     reqId: '2d2ef280-ca64-443a-9d74-51c1d89de1a4',
     ts: 1646646169872,
     code: 'ok',
-    data: { isValid: false }
+    data: { isValid: false },
   },
   'tm/api/Logs': {
     reqId: 'ce13dd7b-9522-422a-9fb6-f9660f3c5d24',
@@ -1494,7 +1494,7 @@ module.exports = {
           thrown: {
             type: 'com.microsoft.sqlserver.jdbc.SQLServerException',
             message:
-              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n'
+              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n',
           },
           threadName: 'pool-2684-thread-3',
           contextMap: {
@@ -1503,7 +1503,7 @@ module.exports = {
             jobId: '626a0bab5d7d220bcedc6a85',
             jobName: '无效日期验证_1',
             threadName: 'pool-2684-thread-3',
-            userId: '611618fe86fa6c0011e999d6'
+            userId: '611618fe86fa6c0011e999d6',
           },
           contextStack: [],
           threadId: 14611,
@@ -1511,7 +1511,7 @@ module.exports = {
           millis: 1651116978568,
           createTime: '2022-04-28T03:36:18.572+00:00',
           last_updated: '2022-04-28T03:36:18.572+00:00',
-          user_id: '611618fe86fa6c0011e999d6'
+          user_id: '611618fe86fa6c0011e999d6',
         },
         {
           id: '626a0bb29247b74dbe466a9d',
@@ -1526,7 +1526,7 @@ module.exports = {
           thrown: {
             type: 'com.microsoft.sqlserver.jdbc.SQLServerException',
             message:
-              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n'
+              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n',
           },
           threadName: 'pool-2684-thread-3',
           contextMap: {
@@ -1535,7 +1535,7 @@ module.exports = {
             jobId: '626a0bab5d7d220bcedc6a85',
             jobName: '无效日期验证_1',
             threadName: 'pool-2684-thread-3',
-            userId: '611618fe86fa6c0011e999d6'
+            userId: '611618fe86fa6c0011e999d6',
           },
           contextStack: [],
           threadId: 14611,
@@ -1543,9 +1543,9 @@ module.exports = {
           millis: 1651116978518,
           createTime: '2022-04-28T03:36:18.521+00:00',
           last_updated: '2022-04-28T03:36:18.521+00:00',
-          user_id: '611618fe86fa6c0011e999d6'
-        }
-      ]
-    }
-  }
+          user_id: '611618fe86fa6c0011e999d6',
+        },
+      ],
+    },
+  },
 }

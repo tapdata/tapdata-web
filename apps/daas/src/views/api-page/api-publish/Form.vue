@@ -2,12 +2,11 @@
   <section class="module-warp" v-loading="loadingFrom">
     <div class="module-warp-box section-wrap-box">
       <div class="module-form">
-        <ElForm :model="createForm" ref="form" size="small">
+        <ElForm :model="createForm" ref="form">
           <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
             <ElSelect
               v-model="createForm.datasource"
               filterable
-              size="mini"
               :placeholder="$t('public_select_placeholder')"
               :disabled="!!$route.query.id"
             >
@@ -18,7 +17,6 @@
           <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules.tablename" required>
             <VirtualSelect
               v-model="createForm.tablename"
-              size="mini"
               filterable
               clearable
               :item-size="34"
@@ -31,7 +29,7 @@
             <!-- @change="handleFieldFilterType" -->
           </ElFormItem>
         </ElForm>
-        <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+        <FormBuilder ref="form" v-model:value="createForm" :config="createFormConfig"></FormBuilder>
         <div class="url-tip pb-5">
           <span>{{ $t('module_form_path') }}</span>
           <span>
@@ -48,19 +46,18 @@
             <div class="module-path-button">
               <el-button
                 v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
-                size="mini"
                 type="primary"
                 @click="customeApiPath"
                 >{{ $t('module_form_customer_Api') }}</el-button
               >
-              <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
-                $t('module_form_security')
-              }}</el-button>
-              <el-button size="mini" v-else @click="updateAuthority">{{ $t('public_button_edit') }}</el-button> -->
-              <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
+              <!-- <el-button  v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
+                    $t('module_form_security')
+                  }}</el-button>
+                  <el-button  v-else @click="updateAuthority">{{ $t('public_button_edit') }}</el-button> -->
+              <el-button v-if="createForm.status === 'active'" @click="openDocument">{{
                 $t('module_form_document')
               }}</el-button>
-              <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
+              <el-button v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
             </div>
           </div>
           <div class="module-path-content">
@@ -74,23 +71,23 @@
                 <div class="module-path-button-box">
                   <div class="module-path-item-role fw-sub">
                     <span>{{ $t('module_form_permission') }}: </span>
-                    <el-select v-model="item.acl" multiple size="mini" :placeholder="$t('public_select_placeholder')">
+                    <el-select v-model="item.acl" multiple :placeholder="$t('public_select_placeholder')">
                       <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
                       </el-option>
                     </el-select>
                   </div>
                   <div style="margin-left: 10px">
                     <el-tooltip class="item" effect="dark" :content="$t('public_button_delete')" placement="bottom">
-                      <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
+                      <ElButton text title="remove" @click="removeApiPath(index)">
                         <!-- <i class="fa fa-times el-icon-delete"></i> -->
                         {{ $t('public_button_delete') }}
                       </ElButton>
                     </el-tooltip>
                     <!-- <el-tooltip class="item" effect="dark" :content="$t('public_button_edit')" placement="left">
-                      <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                        ><i class="fa fa-edit el-icon-edit-outline"></i
-                      ></span>
-                    </el-tooltip> -->
+                          <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                            ><i class="fa fa-edit el-icon-edit-outline"></i
+                          ></span>
+                        </el-tooltip> -->
                   </div>
                 </div>
               </div>
@@ -110,15 +107,15 @@
       <div class="module-tags py-5">
         <span>{{ $t('module_form_tags') }}</span>
         <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
-        <el-button type="text" size="small" class="pl-5" @click="handleOpenTag()">
+        <el-button text class="pl-5" @click="handleOpenTag()">
           {{ $t('module_form_choose') }}
         </el-button>
       </div>
       <div class="module-form-footer">
-        <el-button class="cancel" @click="handleBack()" size="mini">
+        <el-button class="cancel" @click="handleBack()">
           {{ $t('public_button_back') }}
         </el-button>
-        <el-button type="primary" @click="submit()" size="mini"> {{ $t('public_button_save') }}</el-button>
+        <el-button type="primary" @click="submit()"> {{ $t('public_button_save') }}</el-button>
       </div>
     </div>
   </section>
@@ -155,7 +152,7 @@ export default {
         status: 'pending',
         createType: '',
         paths: [],
-        listtags: []
+        listtags: [],
       },
       roles: [],
       fields: [],
@@ -172,12 +169,24 @@ export default {
         allowCreate: false,
         defaultFirstOption: false,
         clearable: true,
-        disabled: false
+        disabled: false,
       },
       rules: {
-        datasource: [{ required: true, trigger: 'blur', message: `Please select database` }],
-        tablename: [{ required: true, trigger: 'blur', message: `Please select tablename` }]
-      }
+        datasource: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: `Please select database`,
+          },
+        ],
+        tablename: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: `Please select tablename`,
+          },
+        ],
+      },
     }
   },
   created() {
@@ -215,7 +224,7 @@ export default {
     },
     'createForm.prefix'() {
       this.updatePath()
-    }
+    },
   },
   methods: {
     // 表名称改变
@@ -229,11 +238,11 @@ export default {
           where: {
             'source.id': this.createForm.datasource,
             original_name: this.createForm.tablename,
-            is_deleted: false
-          }
-        })
+            is_deleted: false,
+          },
+        }),
       }
-      metadataInstancesApi.get(params).then(data => {
+      metadataInstancesApi.get(params).then((data) => {
         let table = data?.items?.[0]
         this.createForm.fields = this.fields = table.fields
       })
@@ -261,7 +270,7 @@ export default {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
       this.createForm.path =
         '/api/' + this.createForm.apiVersion.toLowerCase() + '/' + prefix + this.createForm.basePath
-      this.createForm.paths.forEach(v => {
+      this.createForm.paths.forEach((v) => {
         let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
         if (['findById', 'updateById', 'deleteById'].indexOf(v.name) !== -1) {
           v.path = '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}'
@@ -275,7 +284,7 @@ export default {
     // 获取api数据
     getDetail() {
       let _this = this
-      modulesApi.get([this.$route.query.id]).then(data => {
+      modulesApi.get([this.$route.query.id]).then((data) => {
         if (data) {
           Object.assign(_this.createForm, data)
           _this.fields = data?.fields
@@ -290,21 +299,21 @@ export default {
         name: true,
         connection_type: true,
         status: true,
-        user_id: true
+        user_id: true,
       }
       let where = {
-        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }]
+        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }],
       }
       let params = {
         fields: fields,
-        where
+        where,
       }
-      connectionsApi.listAll(params).then(data => {
+      connectionsApi.listAll(params).then((data) => {
         let options = data || []
-        options = options.map(db => {
+        options = options.map((db) => {
           return {
             label: db.name,
-            value: db.id
+            value: db.id,
           }
         })
         this.databaseOptions = options
@@ -314,14 +323,14 @@ export default {
     getTableData() {
       metadataInstancesApi
         .getTables(this.createForm.datasource)
-        .then(result => {
+        .then((result) => {
           let schemas = result || []
           if (schemas?.length) {
             let tableList = schemas
               .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-              .map(item => ({
+              .map((item) => ({
                 label: item,
-                value: item
+                value: item,
               }))
             this.tableNameSelectConfig.options = tableList
           }
@@ -342,7 +351,7 @@ export default {
         name: 'create',
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
@@ -350,21 +359,35 @@ export default {
         method: 'GET',
         description: this.$t('module_form_get_record_by_id'),
         name: 'findById',
-        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        params: [
+          {
+            name: 'id',
+            type: 'string',
+            defaultvalue: 1,
+            description: 'document id',
+          },
+        ],
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
         path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath + '/{id}',
         method: 'PATCH',
         name: 'updateById',
-        params: [{ name: 'id', type: 'string', defaultvalue: 1, description: 'document id' }],
+        params: [
+          {
+            name: 'id',
+            type: 'string',
+            defaultvalue: 1,
+            description: 'document id',
+          },
+        ],
         description: this.$t('module_form_update_record_by_id'),
         result: 'Document',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
@@ -374,7 +397,7 @@ export default {
         params: [{ name: 'id', type: 'string', description: 'document id' }],
         description: this.$t('module_form_delete_record_by_id'),
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
       preset = {
@@ -382,15 +405,33 @@ export default {
         method: 'GET',
         name: 'findPage',
         params: [
-          { name: 'page', type: 'int', defaultvalue: 1, description: 'page number' },
-          { name: 'limit', type: 'int', defaultvalue: 20, description: 'max records per page' },
-          { name: 'sort', type: 'object', description: "sort setting,Array ,format like [{'propertyName':'ASC'}]" },
-          { name: 'filter', type: 'object', description: 'search filter object,Array' }
+          {
+            name: 'page',
+            type: 'int',
+            defaultvalue: 1,
+            description: 'page number',
+          },
+          {
+            name: 'limit',
+            type: 'int',
+            defaultvalue: 20,
+            description: 'max records per page',
+          },
+          {
+            name: 'sort',
+            type: 'object',
+            description: "sort setting,Array ,format like [{'propertyName':'ASC'}]",
+          },
+          {
+            name: 'filter',
+            type: 'object',
+            description: 'search filter object,Array',
+          },
         ],
         description: this.$t('module_form_get_record_list_by_page_and_limit'),
         result: 'Page<Document>',
         type: 'preset',
-        acl: ['admin']
+        acl: ['admin'],
       }
       this.createForm.paths.push(preset)
     },
@@ -404,7 +445,7 @@ export default {
         availableQueryField: [],
         requiredQueryField: [],
         type: 'custom',
-        acl: ['admin']
+        acl: ['admin'],
       }
       // if (this.apiData?.field?.length) {
       //   this.apiData.fields.forEach(v => (v.visible = true))
@@ -420,7 +461,7 @@ export default {
     // 打开api文档
     openDocument() {
       this.apiClient = new ApiClient()
-      apiServerApi.get({ 'filter[limit]': 1 }).then(data => {
+      apiServerApi.get({ 'filter[limit]': 1 }).then((data) => {
         let servers = data?.items || []
         let apiServer = servers[0] || {}
         let apiServerUri = apiServer.clientURI || ''
@@ -433,8 +474,8 @@ export default {
           query: {
             id: api,
             openApi: openApiUri,
-            token: token
-          }
+            token: token,
+          },
         })
       })
       // .catch(() => {
@@ -445,13 +486,13 @@ export default {
     getRoles() {
       let filter = {
         limit: 500,
-        skip: 0
+        skip: 0,
       }
-      roleApi.get({ filter: JSON.stringify(filter) }).then(data => {
+      roleApi.get({ filter: JSON.stringify(filter) }).then((data) => {
         this.roles = data?.items || []
         this.roles.push({
           name: this.$t('module_form_public_api'),
-          id: '$everyone'
+          id: '$everyone',
         })
       })
     },
@@ -518,11 +559,11 @@ export default {
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.createForm.paths?.length) {
             let publicPermission = this.$t('module_form_public_api')
-            this.createForm.paths.forEach(item => {
+            this.createForm.paths.forEach((item) => {
               if (item.cal) {
                 if (item.cal.indexOf(publicPermission) !== -1 && item.cal.index('$everyone') === -1)
                   item.acl.push('$everyone')
@@ -532,7 +573,7 @@ export default {
           modulesApi[method](this.createForm)
             .then(() => {
               this.$router.push({
-                name: 'apiPublish'
+                name: 'apiPublish',
               })
               this.$message.success(this.$t('public_message_save_ok'))
             })
@@ -551,7 +592,7 @@ export default {
       this.createFormConfig = {
         form: {
           labelPosition: 'left',
-          labelWidth: '100px'
+          labelWidth: '100px',
         },
         items: [
           // {
@@ -578,8 +619,8 @@ export default {
               { label: 'primaryPreferred', value: 'primaryPreferred' },
               { label: 'secondary', value: 'secondary' },
               { label: 'secondaryPreferred', value: 'secondaryPreferred' },
-              { label: 'nearest', value: 'nearest' }
-            ]
+              { label: 'nearest', value: 'nearest' },
+            ],
           },
           {
             type: 'input',
@@ -591,25 +632,25 @@ export default {
                 triggerOptions: [
                   {
                     field: 'readPreference',
-                    value: 'primary'
-                  }
+                    value: 'primary',
+                  },
                 ],
                 triggerConfig: {
-                  show: false
-                }
+                  show: false,
+                },
               },
               {
                 triggerOptions: [
                   {
                     field: 'readPreference',
-                    value: ''
-                  }
+                    value: '',
+                  },
                 ],
                 triggerConfig: {
-                  show: false
-                }
-              }
-            ]
+                  show: false,
+                },
+              },
+            ],
           },
           {
             type: 'select',
@@ -621,14 +662,14 @@ export default {
               { label: 'available', value: 'available' },
               { label: 'majority', value: 'majority' },
               { label: 'linearizable', value: 'linearizable' },
-              { label: 'snapshot', value: 'snapshot' }
-            ]
+              { label: 'snapshot', value: 'snapshot' },
+            ],
           },
           {
             type: 'input',
             label: this.$t('public_version'),
             field: 'apiVersion',
-            required: true
+            required: true,
           },
           {
             type: 'input',
@@ -644,9 +685,9 @@ export default {
                     return callback(new Error(this.$t('module_form_validator_name')))
                   }
                   return callback()
-                }
-              }
-            ]
+                },
+              },
+            ],
           },
           {
             type: 'input',
@@ -654,14 +695,14 @@ export default {
             field: 'describtion',
             domType: 'textarea',
             maxlength: 100,
-            showWordLimit: true
+            showWordLimit: true,
           },
           {
             type: 'input',
             label: this.$t('module_form_prefix'),
             field: 'prefix',
             maxlength: 100,
-            showWordLimit: true
+            showWordLimit: true,
           },
           {
             type: 'input',
@@ -679,10 +720,10 @@ export default {
                     return callback(new Error(this.$t('module_form_validator_name')))
                   }
                   return callback()
-                }
-              }
-            ]
-          }
+                },
+              },
+            ],
+          },
           // {
           //   type: 'input',
           //   label: this.$t('module_form_path'),
@@ -691,14 +732,14 @@ export default {
           //   maxlength: 100,
           //   showWordLimit: true
           // }
-        ]
+        ],
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .module-warp {
   box-sizing: border-box;
   overflow: hidden;
@@ -711,24 +752,22 @@ export default {
       margin: 0 auto;
       box-sizing: border-box;
       // overflow: hidden;
-      ::v-deep {
-        .el-form-item {
-          width: 640px;
-          .el-form-item__label {
-            width: 140px !important;
-            text-align: left;
+      :deep(.el-form-item) {
+        width: 640px;
+        .el-form-item__label {
+          width: 140px !important;
+          text-align: left;
+        }
+        .el-form-item__content {
+          margin-left: 140px !important;
+          .el-select,
+          .el-input__inner,
+          .el-textarea__inner {
+            width: 500px;
+            background-color: rgba(239, 241, 244, 0.2);
           }
-          .el-form-item__content {
-            margin-left: 140px !important;
-            .el-select,
-            .el-input__inner,
-            .el-textarea__inner {
-              width: 500px;
-              background-color: rgba(239, 241, 244, 0.2);
-            }
-            .el-radio--mini.is-bordered {
-              padding: 0 15px 0 10px;
-            }
+          .el-radio--mini.is-bordered {
+            padding: 0 15px 0 10px;
           }
         }
       }
@@ -820,12 +859,10 @@ export default {
                 width: 60px;
                 line-height: 28px;
               }
-              ::v-deep {
-                .el-select {
-                  width: 100%;
-                  .el-select__tags {
-                    max-width: 100%;
-                  }
+              :deep(.el-select) {
+                width: 100%;
+                .el-select__tags {
+                  max-width: 100%;
                 }
               }
             }

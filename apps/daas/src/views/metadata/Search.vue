@@ -12,18 +12,15 @@
             class="input-with"
             maxlength="100"
           >
-            <el-select
-              v-model="meta_type"
-              slot="prepend"
-              :placeholder="$t('public_select_placeholder')"
-              class="input-with-select"
-            >
-              <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
-              <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
-            </el-select>
-            <el-button type="primary" slot="append" @click="handleSearch">{{
-              $t('metadata_metadataSearch_search')
-            }}</el-button>
+            <template v-slot:prepend>
+              <el-select v-model="meta_type" :placeholder="$t('public_select_placeholder')" class="input-with-select">
+                <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
+                <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
+              </el-select>
+            </template>
+            <template v-slot:append>
+              <el-button type="primary" @click="handleSearch">{{ $t('metadata_metadataSearch_search') }}</el-button>
+            </template>
           </el-input>
           <div class="desc">
             {{ $t('metadata_metadataSearch_desc') }}
@@ -40,20 +37,19 @@
               v-model="keyword"
               ref="searchInput"
               maxlength="100"
-              @keyup.native.13="handleSearch('')"
+              @keyup.Enter="handleSearch('')"
             >
-              <el-select
-                v-model="meta_type"
-                slot="prepend"
-                :placeholder="$t('public_select_placeholder')"
-                class="input-with-select"
-              >
-                <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
-                <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
-              </el-select>
-              <el-button type="primary" slot="append" @click="handleSearch('')">{{
-                $t('metadata_metadataSearch_search')
-              }}</el-button>
+              <template v-slot:prepend>
+                <el-select v-model="meta_type" :placeholder="$t('public_select_placeholder')" class="input-with-select">
+                  <el-option :label="$t('metadata_metadataSearch_table')" value="table"></el-option>
+                  <el-option :label="$t('metadata_metadataSearch_column')" value="column"></el-option>
+                </el-select>
+              </template>
+              <template v-slot:append>
+                <el-button type="primary" @click="handleSearch('')">{{
+                  $t('metadata_metadataSearch_search')
+                }}</el-button>
+              </template>
             </el-input>
           </div>
           <div class="no-result" v-if="searchData.length === 0 && firstSearch === 0">
@@ -123,11 +119,13 @@ export default {
       originalData: [],
       firstSearch: 0,
       lastId: '',
-      loading: true
+      loading: true,
     }
   },
   watch: {
     keyword: {
+      deep: true,
+
       handler() {
         if (this.keyword !== '') {
           this.showNoSearch = false
@@ -135,8 +133,8 @@ export default {
             this.$refs.searchInput.focus()
           })
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     handleSearch(id) {
@@ -154,7 +152,7 @@ export default {
       this.loading = true
       metadataInstancesApi
         .search(params)
-        .then(result => {
+        .then((result) => {
           let data = result || []
           this.noMore = false
           if (data.length === 0 || (data.length < data.pageSize && !this.first)) {
@@ -182,21 +180,21 @@ export default {
         type: this.meta_type,
         keyword: this.keyword,
         pageSize: 16,
-        lastId: id || ''
+        lastId: id || '',
       }
       return params
     },
     handleKeywords(data) {
       let targetData = data || []
       if (targetData.length === 0) return
-      targetData.forEach(item => {
+      targetData.forEach((item) => {
         if (item.table) {
           item.table.name = this.markKeyword(this.keyword, item.table.name ? item.table.name : '')
           item.table.original_name = this.markKeyword(this.keyword, item.table.original_name)
           if (item.table.comment) item.table.comment = this.markKeyword(this.keyword, item.table.comment)
         }
         if (item.columns && item.columns.length > 0) {
-          item.columns.forEach(field => {
+          item.columns.forEach((field) => {
             field.field_name = this.markKeyword(this.keyword, field.field_name)
             field.original_field_name = this.markKeyword(this.keyword, field.original_field_name)
             if (field.comment) field.comment = this.markKeyword(this.keyword, field.comment)
@@ -214,11 +212,11 @@ export default {
       this.$router.push({
         name: 'metadataDetails',
         params: {
-          id: id
-        }
+          id: id,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -247,7 +245,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .metadata-change-background {
   // background: map-get($bgColor, normal);
   display: flex;
@@ -263,11 +262,9 @@ export default {
   }
   .input-with {
     width: 605px;
-    ::v-deep {
-      .el-input-group__prepend {
-        .el-input__inner {
-          color: map-get($color, primary);
-        }
+    :deep(.el-input-group__prepend) {
+      .el-input__inner {
+        color: map-get($color, primary);
       }
     }
   }

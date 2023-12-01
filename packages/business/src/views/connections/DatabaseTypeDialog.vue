@@ -1,10 +1,10 @@
 <template>
   <el-dialog
     :title="$t('public_connection_button_create')"
-    :visible="dialogVisible"
+    :model-value="dialogVisible"
     :append-to-body="true"
     width="848px"
-    custom-class="connection-dialog"
+    class="connection-dialog"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { databaseTypesApi } from '@tap/api'
 
 import { ConnectionTypeSelector } from '../../components'
@@ -25,25 +26,25 @@ import { ConnectionTypeSelector } from '../../components'
 export default {
   name: 'DatasourceDialog',
   components: {
-    ConnectionTypeSelector
+    ConnectionTypeSelector,
   },
   props: {
     dialogVisible: {
       required: true,
-      value: Boolean
+      value: Boolean,
     },
     allwoType: {
       value: Array,
       default: () => {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       database: [],
       otherType: [],
-      loading: true
+      loading: true,
     }
   },
   watch: {
@@ -51,25 +52,27 @@ export default {
       if (v) {
         this.getDatabaseType()
       }
-    }
+    },
   },
   created() {
     this.getDatabaseType()
   },
   methods: {
     handleClose() {
-      this.$emit('dialogVisible', false)
-      this.$emit('update:dialogVisible', false)
+      $emit(this, 'dialogVisible', false)
+      $emit(this, 'update:dialogVisible', false)
     },
     databaseType(item) {
-      this.$emit('databaseType', item)
+      $emit(this, 'databaseType', item)
     },
     getDatabaseType() {
       databaseTypesApi
         .get()
-        .then(data => {
+        .then((data) => {
           if (data) {
-            let items = data?.filter(t => !this.database.length || !this.database.some(d => d.pdkHash === t.pdkHash))
+            let items = data?.filter(
+              (t) => !this.database.length || !this.database.some((d) => d.pdkHash === t.pdkHash),
+            )
             if (!items.length) {
               return
             }
@@ -79,12 +82,13 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
+  emits: ['dialogVisible', 'update:dialogVisible', 'databaseType'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .database {
   .title {
     color: map-get($fontColor, slight);
@@ -155,11 +159,10 @@ export default {
     *zoom: 1;
   }
 }
-::v-deep {
-  .connection-dialog {
-    .el-dialog__body {
-      padding: 0 20px 30px 20px;
-    }
+
+:deep(.connection-dialog) {
+  .el-dialog__body {
+    padding: 0 20px 30px 20px;
   }
 }
 </style>

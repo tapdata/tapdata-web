@@ -52,7 +52,7 @@ const InlineLayoutTagNames = new Set([
   'VIDEO',
   'WBR',
   'INPUT',
-  'SPAN'
+  'SPAN',
 ])
 
 export const calcElementOuterWidth = (innerWidth, style) => {
@@ -67,7 +67,7 @@ export const calcElementOuterWidth = (innerWidth, style) => {
   )
 }
 
-export const calcElementLayout = element => {
+export const calcElementLayout = (element) => {
   if (!element) return 'vertical'
   const parent = element.parentElement
   const tagName = element.tagName
@@ -104,7 +104,7 @@ export const calcElementLayout = element => {
 }
 
 export function makePageTitle(title) {
-  const base = process.env.VUE_APP_PAGE_TITLE || 'Tapdata'
+  const base = import.meta.env.VITE_PAGE_TITLE || 'Tapdata'
   return title ? `${title} - ${base}` : base
 }
 

@@ -1,6 +1,8 @@
 <template>
-  <ElDialog :visible.sync="visible" width="480px" :close-on-click-modal="false" @close="cancel">
-    <span slot="title" class="fs-6 fw-sub font-color-dark">{{ $t('dfs_alarm_setting_tour_title') }}</span>
+  <ElDialog v-model="visible" width="480px" :close-on-click-modal="false" @close="cancel">
+    <template #header>
+      <span class="fs-6 fw-sub font-color-dark">{{ $t('dfs_alarm_setting_tour_title') }}</span>
+    </template>
 
     <el-alert
       v-if="noEmail"
@@ -25,19 +27,22 @@
       </div>
     </div>
 
-    <div slot="footer">
-      <el-button @click="cancel">{{ $t('public_button_cancel') }}</el-button>
-      <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">{{
-        $t('operation_log_List_bangDingYouXiang')
-      }}</el-button>
-      <el-button v-else type="primary" @click="gotoSettings">{{
-        $t('dfs_components_taskalarmtour_qushezhi')
-      }}</el-button>
-    </div>
+    <template v-slot:footer>
+      <div>
+        <el-button @click="cancel">{{ $t('public_button_cancel') }}</el-button>
+        <el-button v-if="noEmail" type="primary" @click="gotoBindEmail">{{
+          $t('operation_log_List_bangDingYouXiang')
+        }}</el-button>
+        <el-button v-else type="primary" @click="gotoSettings">{{
+          $t('dfs_components_taskalarmtour_qushezhi')
+        }}</el-button>
+      </div>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { driver } from 'driver.js'
@@ -45,34 +50,30 @@ import { driver } from 'driver.js'
 export default {
   name: 'TaskAlarmTour',
   props: {
-    value: Boolean
+    value: Boolean,
   },
-
   data() {
     return {
-      visible: this.value
+      visible: this.value,
     }
   },
-
   computed: {
     userId() {
       return this.$store.state.user.id
     },
     noEmail() {
       return !this.$store.state.user.email
-    }
+    },
   },
-
   watch: {
     visible(v) {
-      this.$emit('input', v)
+      $emit(this, 'update:value', v)
     },
 
     value(v) {
       this.visible = v
-    }
+    },
   },
-
   methods: {
     cancel() {
       localStorage[`completeAlarm-${this.userId}`] = Date.now()
@@ -97,8 +98,8 @@ export default {
             element.removeEventListener('click', destroy)
           },
           popover: {
-            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe')
-          }
+            description: i18n.t('dfs_components_taskalarmtour_dianjicichushe'),
+          },
         })
 
         const unwatch = this.$watch('$route', () => {
@@ -113,15 +114,16 @@ export default {
       this.$router.push({
         name: 'userCenter',
         query: {
-          bind: 'email'
-        }
+          bind: 'email',
+        },
       })
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .alert-primary {
   background: #e8f3ff;
 }

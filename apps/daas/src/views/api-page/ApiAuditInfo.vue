@@ -1,7 +1,9 @@
 <template>
   <section v-loading="loading" class="apiaudit-info-wrap">
     <div class="details-box bg-white p-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
+      <div class="title fs-7 fw-sub font-color-dark">
+        {{ $t('apiaudit_log_info') }}
+      </div>
       <ElRow class="pt-4" v-if="auditData">
         <ElCol class="font-color-normal pb-4" :span="12">
           <span class="font-text"> API ID:</span>
@@ -52,7 +54,9 @@
     </div>
 
     <div class="details-box flex-1 bg-white p-6 mt-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_parameter') }}</div>
+      <div class="title fs-7 fw-sub font-color-dark">
+        {{ $t('apiaudit_parameter') }}
+      </div>
       <div class="pt-4 editor-box" v-if="auditData">
         <pre class="editor-pre">{{ auditData.reqParams }}</pre>
       </div>
@@ -73,11 +77,23 @@ export default {
       auditData: null,
       loading: true,
       list: [
-        { label: this.$t('apiaudit_access_records'), key: 'visitTotalCount', value: 0 },
-        { label: this.$t('apiaudit_average_access_rate'), key: 'speed', value: 0 },
+        {
+          label: this.$t('apiaudit_access_records'),
+          key: 'visitTotalCount',
+          value: 0,
+        },
+        {
+          label: this.$t('apiaudit_average_access_rate'),
+          key: 'speed',
+          value: 0,
+        },
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
-        { label: this.$t('apiaudit_average_response_time'), key: 'averResponseTime', value: 0 }
-      ]
+        {
+          label: this.$t('apiaudit_average_response_time'),
+          key: 'averResponseTime',
+          value: 0,
+        },
+      ],
     }
   },
   created() {
@@ -90,12 +106,12 @@ export default {
       this.loading = true
       apiCallsApi
         .get([id])
-        .then(data => {
+        .then((data) => {
           if (data) {
             this.auditData = data
             this.auditData.createAt = data['createAt'] ? dayjs(data['createAt']).format('YYYY-MM-DD HH:mm:ss') : '-'
 
-            this.list.forEach(item => {
+            this.list.forEach((item) => {
               for (let el in data) {
                 if (item.key === el) {
                   item.value = data[el]
@@ -126,10 +142,11 @@ export default {
     },
     calcUnit() {
       return calcUnit(...arguments)
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .apiaudit-info-wrap {
   .details-box-item {

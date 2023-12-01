@@ -1,6 +1,10 @@
 <template>
-  <ElDialog :title="$t('public_message_title_prompt')" width="40%" :visible.sync="visible" @close="handleClose">
-    <span>{{ $t('packages_business_connections_list_gailianjieyibei', { val1: data.total }) }}</span>
+  <ElDialog :title="$t('public_message_title_prompt')" width="40%" v-model="visible" @close="handleClose">
+    <span>{{
+      $t('packages_business_connections_list_gailianjieyibei', {
+        val1: data.total,
+      })
+    }}</span>
     <el-table class="mt-4" height="250px" :data="data.items">
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
@@ -21,9 +25,9 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 export default {
   name: 'UsedTaskDialog',
-
   props: {
     value: Boolean,
     data: {
@@ -31,28 +35,25 @@ export default {
       default: () => {
         return {
           items: [],
-          total: 0
+          total: 0,
         }
-      }
-    }
+      },
+    },
   },
-
   data() {
     return {
-      visible: false
+      visible: false,
     }
   },
-
   watch: {
     value(v) {
       this.visible = v
-    }
+    },
   },
-
   methods: {
     handleClose() {
       this.visible = false
-      this.$emit('input', this.visible)
+      $emit(this, 'update:value', this.visible)
     },
 
     goTaskList(item = {}) {
@@ -60,11 +61,11 @@ export default {
         migrate: 'migrateList',
         sync: 'dataflowList',
         logCollector: 'sharedMiningList',
-        mem_cache: 'sharedCacheList'
+        mem_cache: 'sharedCacheList',
       }
       let routeUrl = this.$router.resolve({
         name: map[item.syncType],
-        query: { keyword: item.name }
+        query: { keyword: item.name },
       })
       window.open(routeUrl.href, '_blank')
       // if (item?.syncType === 'migrate') {
@@ -82,9 +83,8 @@ export default {
       //     }
       //   })
       // }
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>
-
-<style lang="scss" scoped></style>

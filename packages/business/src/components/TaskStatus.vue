@@ -18,13 +18,13 @@
         :visible-arrow="false"
         effect="light"
       >
-        <VIcon size="16" class="color-warning">warning</VIcon>
+        <VIcon size="16" class="color-warning ssss">warning</VIcon>
         <template #content>
           <div class="flex flex-wrap align-center font-color-dark">
-            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
+            <VIcon size="16" class="mr-2 color-warning">warning</VIcon>
             {{
               $t('packages_business_task_status_agent_tooltip_time', {
-                time: pingTime
+                time: pingTime,
               })
             }}<template v-if="agentStatus"
               >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
@@ -45,7 +45,7 @@
     <!--错误解读-->
     <template v-if="errorCause && task.status === 'error'">
       <VIcon @click="showErrorCause = true" size="16" class="color-danger">question-circle</VIcon>
-      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" :visible.sync="showErrorCause">
+      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" v-model="showErrorCause">
         <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
           {{ errorCause }}
         </div>
@@ -78,13 +78,13 @@ export default {
     task: Object,
     agentMap: Object,
     errorCause: String,
-    reverse: Boolean
+    reverse: Boolean,
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       STATUS_MAP,
-      showErrorCause: false
+      showErrorCause: false,
     }
   },
   computed: {
@@ -134,9 +134,9 @@ export default {
 
     taskRetryStartTimeTip() {
       return this.$t('packages_business_task_status_retrying_tooltip', {
-        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss')
+        val: dayjs(this.task.taskRetryStartTime).format('YYYY-MM-DD HH:mm:ss'),
       })
-    }
+    },
   },
 
   methods: {
@@ -144,14 +144,14 @@ export default {
       let route
       if (this.isDaas) {
         route = {
-          name: 'clusterManagement'
+          name: 'clusterManagement',
         }
       } else {
         route = {
           name: 'Instance',
           query: {
-            keyword: this.agentInfo?.itemId
-          }
+            keyword: this.agentInfo?.itemId,
+          },
         }
       }
       this.$router.push(route)
@@ -162,13 +162,13 @@ export default {
         if (!this.task.crontabExpression) return
         const interval = cronParse.parseExpression(this.task.crontabExpression)
         return this.$t('packages_business_task_status_next_run_time', {
-          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss')
+          val: dayjs(interval.next()).format('YYYY-MM-DD HH:mm:ss'),
         })
       } catch (err) {
         console.log('Error: ' + err.message)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -222,6 +222,8 @@ export default {
 <style>
 .agent-tooltip__popper {
   border: none !important;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1), 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+    0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 </style>

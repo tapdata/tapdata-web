@@ -8,7 +8,7 @@
       <div class="left-table">
         <el-table border :data="properties" class="table-page-table" height="100%">
           <el-table-column :label="$t('metadata_details_attrName')" prop="key">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <div v-if="scope.row.result !== 'del'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
                   $t('metadata_details_' + scope.row.key)
@@ -19,7 +19,7 @@
           </el-table-column>
           <el-table-column :label="$t('metadata_details_attrKey')" prop="baseValue"> </el-table-column>
           <el-table-column :label="$t('metadata_details_attrName')" prop="key">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <div v-if="scope.row.result !== 'add'">
                 <span :class="{ activeColor: scope.row.result !== 'eq' }" v-if="!scope.row.isCustom">{{
                   $t('metadata_details_' + scope.row.key)
@@ -29,10 +29,10 @@
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_attrKey')" prop="compareValue">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 :class="{
-                  activeColor: scope.row.baseValue != scope.row.compareValue
+                  activeColor: scope.row.baseValue != scope.row.compareValue,
                 }"
               >
                 {{ scope.row.compareValue }}
@@ -44,97 +44,97 @@
       <div class="field-table">
         <el-table border :data="fieldsItems" class="table-page-table" height="100%">
           <el-table-column :label="$t('metadata_details_alias')" prop="base_alias_name">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.alias_name_result !== 'eq' }">
                 {{ scope.row.base_alias_name }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('public_name')" prop="base_field_name">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.base_field_name }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_data_type')" prop="base_java_type">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.java_type_result !== 'eq' }">
                 {{ scope.row.base_java_type }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_precision')" prop="base_precision">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.base_precision }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_columnSize')" prop="base_columnSize">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.base_columnSize }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_scale')" prop="base_scale">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.scale_result !== 'eq' }">
                 {{ scope.row.base_scale }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_autoincrement')" prop="base_autoincrement">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.base_autoincrement"
                 :class="{
-                  checkedActive: scope.row.autoincrement_result !== 'eq'
+                  checkedActive: scope.row.autoincrement_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_primary_key_position')" prop="base_primary_key_position">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.base_primary_key_position"
                 :class="{
-                  checkedActive: scope.row.primary_key_position_result !== 'eq'
+                  checkedActive: scope.row.primary_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_foreign_key_position')" prop="base_foreign_key_position">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.base_foreign_key_position"
                 :class="{
-                  checkedActive: scope.row.foreign_key_position_result !== 'eq'
+                  checkedActive: scope.row.foreign_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_is_nullable')" prop="base_is_nullable">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.base_is_nullable"
                 :class="{
-                  checkedActive: scope.row.is_nullable_result !== 'eq'
+                  checkedActive: scope.row.is_nullable_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_unique')" prop="base_unique">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.base_unique"
                 :class="{
-                  checkedActive: scope.row.unique_result !== 'eq'
+                  checkedActive: scope.row.unique_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -143,97 +143,97 @@
         </el-table>
         <el-table border :data="fieldsItems" class="table-page-table" height="100%">
           <el-table-column :label="$t('metadata_details_alias')" prop="compare_field_name">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.alias_name_result !== 'eq' }">
                 {{ scope.row.compare_alias_name }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('public_name')" prop="compare_field_name">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.field_name_result !== 'eq' }">
                 {{ scope.row.compare_field_name }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_data_type')" prop="compare_java_type">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.java_type_result !== 'eq' }">
                 {{ scope.row.compare_java_type }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_precision')" prop="compare_precision">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.compare_precision }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_columnSize')" prop="compare_columnSize">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.precision_result !== 'eq' }">
                 {{ scope.row.compare_columnSize }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_scale')" prop="compare_scale">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span :class="{ activeColor: scope.row.scale_result !== 'eq' }">
                 {{ scope.row.compare_scale }}
               </span>
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_autoincrement')" prop="compare_autoincrement">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.compare_autoincrement"
                 :class="{
-                  checkedActive: scope.row.autoincrement_result !== 'eq'
+                  checkedActive: scope.row.autoincrement_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_primary_key_position')" prop="compare_primary_key_position">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.compare_primary_key_position"
                 :class="{
-                  checkedActive: scope.row.primary_key_position_result !== 'eq'
+                  checkedActive: scope.row.primary_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_foreign_key_position')" prop="compare_foreign_key_position">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.compare_foreign_key_position"
                 :class="{
-                  checkedActive: scope.row.foreign_key_position_result !== 'eq'
+                  checkedActive: scope.row.foreign_key_position_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_is_nullable')" prop="compare_is_nullable">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.compare_is_nullable"
                 :class="{
-                  checkedActive: scope.row.is_nullable_result !== 'eq'
+                  checkedActive: scope.row.is_nullable_result !== 'eq',
                 }"
                 >✔</span
               >
             </template>
           </el-table-column>
           <el-table-column :label="$t('metadata_details_unique')" prop="compare_unique">
-            <template slot-scope="scope">
+            <template v-slot="scope">
               <span
                 v-if="scope.row.compare_unique"
                 :class="{
-                  checkedActive: scope.row.unique_result !== 'eq'
+                  checkedActive: scope.row.unique_result !== 'eq',
                 }"
                 >✔</span
               >
@@ -244,6 +244,7 @@
     </div>
   </section>
 </template>
+
 <script>
 import { metadataInstancesApi } from '@tap/api'
 export default {
@@ -253,19 +254,19 @@ export default {
   props: {
     comparedData: {
       type: Object,
-      required: true
+      required: true,
     },
     currentVersion: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       properties: [],
       fieldsItems: [],
       versionNum: '',
-      currentVersionNum: ''
+      currentVersionNum: '',
     }
   },
   computed: {
@@ -279,7 +280,7 @@ export default {
       } else {
         return this.$route.meta.types || []
       }
-    }
+    },
   },
   created() {
     this.currentVersionNum = this.currentVersion
@@ -289,13 +290,13 @@ export default {
   methods: {
     getData() {
       let params = {
-        historyVersion: this.comparedData.version
+        historyVersion: this.comparedData.version,
       }
-      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then(data => {
+      metadataInstancesApi.compareHistory([this.comparedData.id], { params: params }).then((data) => {
         this.properties = data?.properties
         this.fieldsItems = data?.fields
 
-        this.fieldsItems.forEach(tableItem => {
+        this.fieldsItems.forEach((tableItem) => {
           if (tableItem.base_field_name) {
             tableItem.base_is_nullable = !tableItem.base_is_nullable
           } else {
@@ -314,10 +315,11 @@ export default {
           if (tableItem.compare_foreign_key_position > 0) tableItem.compare_foreign_key_position = true
         })
       })
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .history-list-wrap {
   height: calc(100% - 20px);
@@ -365,6 +367,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .history-list-wrap {
   .table-page-table {

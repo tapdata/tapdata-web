@@ -6,7 +6,9 @@
       <p class="title-text box link-line my-2">
         {{ $t('agent_deploy_select_tip') }}
       </p>
-      <div class="text-style mt-6">{{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}</div>
+      <div class="text-style mt-6">
+        {{ $t('dfs_agent_download_agentdownloadmodal_yaoanzhuangAg') }}
+      </div>
       <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" class="flex gap-4 mt-4 mb-4">
         <ElRadio
           v-for="(item, index) in downType"
@@ -23,7 +25,9 @@
           <el-collapse-item :title="$t('dfs_agent_download_fastdownload_shiyongpeizhiwen')" name="1">
             <ul class="pt-5 ul-style">
               <li>
-                <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+                <div class="my-5 text-style">
+                  {{ $t('agent_deploy_start_install') }}
+                </div>
               </li>
               <li class="flex align-items-center">
                 <span class="mr-2">{{ $t('agent_deploy_start_install_windows_first') }}</span>
@@ -33,8 +37,12 @@
                 <span class="mx-2">{{ $t('dfs_agent_download_fastdownload_he') }}</span>
                 <ElLink type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
               </li>
-              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
-              <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+              <li class="mt-3">
+                {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
+              </li>
+              <li class="mt-3">
+                {{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}
+              </li>
             </ul>
           </el-collapse-item>
           <el-collapse-item :title="$t('dfs_agent_download_fastdownload_fuzhiTok')" name="2">
@@ -43,7 +51,7 @@
               <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->
               <!--            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{-->
               <!--              $t('agent_deploy_before_prepare_windows_first_link')-->
-              <!--            }}</ElLink>-->
+              <!--            }}-->
               <!--          </li>-->
               <!--          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>-->
               <!--          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>-->
@@ -51,10 +59,12 @@
               <!--          <li>-->
               <!--            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{-->
               <!--              $t('agent_deploy_before_prepare_windows_second_download')-->
-              <!--            }}</ElButton>-->
+              <!--            }}-->
               <!--          </li>-->
               <li>
-                <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+                <div class="my-5 text-style">
+                  {{ $t('agent_deploy_start_install') }}
+                </div>
               </li>
               <li>
                 {{ $t('agent_deploy_start_install_windows_first') }}
@@ -117,7 +127,9 @@
         </el-collapse>
       </template>
       <template v-if="downLoadType === 'Linux'">
-        <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
+        <div class="text-style">
+          {{ $t('agent_deploy_before_prepare_title') }}
+        </div>
         <ul class="pt-5 ul-style">
           <li>
             <span>{{ $t('agent_deploy_before_prepare_linux_first') }}</span>
@@ -128,7 +140,9 @@
           <li>{{ $t('agent_deploy_before_prepare_linux_second') }}</li>
           <li>{{ $t('agent_deploy_before_prepare_linux_third') }}</li>
           <li>
-            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+            <div class="my-5 text-style">
+              {{ $t('agent_deploy_start_install') }}
+            </div>
           </li>
           <li>
             {{ $t('agent_deploy_start_install_linux_first') }}
@@ -183,7 +197,9 @@
         </ul>
       </template>
       <template v-if="downLoadType === 'Docker'">
-        <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
+        <div class="text-style">
+          {{ $t('agent_deploy_before_prepare_title') }}
+        </div>
         <ul class="pt-5 ul-style">
           <li>{{ $t('agent_deploy_before_prepare_docker_first') }}</li>
           <li>
@@ -194,7 +210,9 @@
             <span>{{ $t('agent_deploy_before_prepare_docker_second_install') }}</span>
           </li>
           <li>
-            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+            <div class="my-5 text-style">
+              {{ $t('agent_deploy_start_install') }}
+            </div>
           </li>
           <li>
             {{ $t('agent_deploy_start_install_docker_first') }}
@@ -254,26 +272,40 @@
             <span>{{ $t('dfs_agent_download_fastdownload_jisuanchaoCo') }}</span>
           </li>
           <li>
-            <div class="my-5 text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
+            <div class="my-5 text-style">
+              {{ $t('agent_deploy_before_prepare_title') }}
+            </div>
           </li>
-          <li>{{ $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun') }}</li>
           <li>
-            <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
+            {{ $t('dfs_agent_download_agentdownloadmodal_zhunbeiguanliyun') }}
+          </li>
+          <li>
+            <div class="my-5 text-style">
+              {{ $t('agent_deploy_start_install') }}
+            </div>
           </li>
           <li>
             {{ $t('dfs_agent_download_fastdownload_ninkeyixuanze') }}
             <div class="my-4">
               <el-link :href="trialUrl" target="_blank" class="mr-4 url-btn"
-                ><div>{{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}</div></el-link
+                ><div>
+                  {{ $t('dfs_agent_download_agentdownloadmodal_santianshiyong') }}
+                </div></el-link
               >
               <el-link :href="url" target="_blank" class="url-btn"
-                ><div>{{ $t('dfs_agent_download_agentdownloadmodal_fufeibushu') }}</div></el-link
+                ><div>
+                  {{ $t('dfs_agent_download_agentdownloadmodal_fufeibushu') }}
+                </div></el-link
               >
             </div>
           </li>
-          <li>{{ $t('dfs_agent_download_agentdownloadmodal_womenyijingwei') }}</li>
           <li>
-            <div class="my-2 text-style">{{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}</div>
+            {{ $t('dfs_agent_download_agentdownloadmodal_womenyijingwei') }}
+          </li>
+          <li>
+            <div class="my-2 text-style">
+              {{ $t('dfs_agent_download_agentdownloadmodal_shilibanben') }}
+            </div>
           </li>
           <li class="box title-text my-2">
             <span class="link-line">{{ version }}</span>
@@ -337,11 +369,15 @@
             <VIcon class="mr-2 fast-icon">arrow-down-fill</VIcon
             >{{ $t('dfs_agent_download_fastdownload_yincangwanzhengming') }}
           </div>
-          <li>{{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}</li>
+          <li>
+            {{ $t('dfs_agent_download_agentdownloadmodal_querenjisuanchao') }}
+          </li>
           <li>
             <el-image :src="getImg('alicomputenest_instance')" alt="" />
           </li>
-          <li class="my-2">{{ $t('dfs_agent_download_fastdownload_bushuwanchenghou') }}</li>
+          <li class="my-2">
+            {{ $t('dfs_agent_download_fastdownload_bushuwanchenghou') }}
+          </li>
           <li>
             <el-image :src="getImg('alicomputenest_agent')" alt="" />
           </li>
@@ -353,6 +389,7 @@
     </footer>
   </section>
 </template>
+
 <script>
 import i18n from '@/i18n'
 
@@ -368,7 +405,10 @@ export default {
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
-        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
+        {
+          name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
+          value: 'AliComputenest',
+        },
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -383,7 +423,7 @@ export default {
       agentId: '',
       timer: null,
       activeName: '1',
-      showAllCode: true
+      showAllCode: true,
     }
   },
   created() {
@@ -395,12 +435,12 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ]
     }
     this.getInstance()
   },
-  destroyed() {
+  unmounted() {
     this.timer = null
     clearTimeout(this.timer)
   },
@@ -409,7 +449,7 @@ export default {
     getInstance() {
       this.timer = null
       clearTimeout(this.timer)
-      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then(data => {
+      this.$axios.get('api/tcm/agent/' + this.$route.query?.id).then((data) => {
         if (data?.status !== 'Creating') {
           this.timer = null
           clearTimeout(this.timer)
@@ -430,19 +470,19 @@ export default {
           confirmButtonText: this.$t('dfs_agent_down_goback'),
           type: 'warning',
           showClose: false,
-          showCancelButton: false
-        }
+          showCancelButton: false,
+        },
       ).then(() => {
         this.$router.push('/instance')
       })
     },
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.$route.query?.id).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           if (el?.os === 'AliComputenest') {
             this.trialUrl = el?.trialUrl
             this.url = el?.url
@@ -486,7 +526,7 @@ export default {
     windowsToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#MjqcX',
-        '_blank'
+        '_blank',
       )
     },
     windowsToAgent() {
@@ -495,7 +535,7 @@ export default {
     linuxToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
-        '_blank'
+        '_blank',
       )
     },
     linuxToAgent() {
@@ -523,7 +563,7 @@ export default {
       $zoho.salesiq = $zoho.salesiq || {
         widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
         values: {},
-        ready: function () {}
+        ready: function () {},
       }
       window.$zoho = $zoho
       let d = document
@@ -542,7 +582,7 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email
+          tapdata_email: user.email,
         })
       }
     },
@@ -551,13 +591,14 @@ export default {
         Linux: 'copyTokenInLinux',
         Docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest'
+        AliComputenest: 'copyTokenInAliComputenest',
       }
       this.buried(MAP[this.downLoadType])
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .fast-download {
   display: flex;
@@ -716,10 +757,9 @@ export default {
     border: 1px solid #f3f3f3;
     border-top: none;
   }
-  ::v-deep {
-    .el-collapse-item__header {
-      font-size: $fontSubtitle;
-    }
+
+  :deep(.el-collapse-item__header) {
+    font-size: $fontSubtitle;
   }
 }
 </style>

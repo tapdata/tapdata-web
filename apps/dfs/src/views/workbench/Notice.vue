@@ -12,7 +12,9 @@
     </div>
     <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-3 fw-bolder">{{ $t('workbench_Notice_buDuanYouHuaTi') }}</div>
+        <div class="mb-3 fw-bolder">
+          {{ $t('workbench_Notice_buDuanYouHuaTi') }}
+        </div>
       </div>
     </div>
   </div>
@@ -20,7 +22,7 @@
 
 <script>
 export default {
-  name: 'Notice'
+  name: 'Notice',
 }
 </script>
 
@@ -236,8 +238,15 @@ export default {
 }
 .number-title-box__number {
   color: rgb(255, 255, 255);
-  text-shadow: rgb(53 119 177) 0px 1.4px, rgb(69 104 188) 1px 1px, rgb(69 104 188) 1.4px 0px, rgb(69 104 188) 1px -1px,
-    rgb(69 104 188) 0px -1.4px, rgb(69 104 188) -1px -1px, rgb(69 104 188) -1.4px 0px, rgb(69 104 188) -1px 1px;
+  text-shadow:
+    rgb(53 119 177) 0px 1.4px,
+    rgb(69 104 188) 1px 1px,
+    rgb(69 104 188) 1.4px 0px,
+    rgb(69 104 188) 1px -1px,
+    rgb(69 104 188) 0px -1.4px,
+    rgb(69 104 188) -1px -1px,
+    rgb(69 104 188) -1.4px 0px,
+    rgb(69 104 188) -1px 1px;
   font-size: 51px;
   font-style: italic;
 }

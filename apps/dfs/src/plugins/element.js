@@ -1,80 +1,10 @@
-import i18n from '@/i18n'
-import Vue from 'vue'
-import {
-  Alert,
-  Card,
-  Container,
-  Header,
-  Main,
-  Aside,
-  Menu,
-  MenuItem,
-  Button,
-  Drawer,
-  Form,
-  FormItem,
-  Checkbox,
-  Image,
-  Radio,
-  RadioGroup,
-  RadioButton,
-  Select,
-  Option,
-  OptionGroup,
-  Input,
-  InputNumber,
-  Tooltip,
-  Link,
-  Table,
-  TableColumn,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-  Pagination,
-  Tag,
-  Breadcrumb,
-  BreadcrumbItem,
-  Message as _Message,
-  MessageBox,
-  Loading,
-  Dialog,
-  Row,
-  Col,
-  DatePicker,
-  TimePicker,
-  Progress,
-  Footer,
-  Switch,
-  Popover,
-  Tabs,
-  TabPane,
-  Transfer,
-  Steps,
-  Step,
-  Badge,
-  Cascader,
-  ButtonGroup,
-  Upload,
-  Autocomplete,
-  Collapse,
-  CollapseItem,
-  Notification,
-  Divider,
-  Tree,
-  CheckboxGroup,
-  Skeleton,
-  SkeletonItem,
-  Submenu,
-  InfiniteScroll,
-  Empty,
-  Slider,
-  Timeline,
-  TimelineItem,
-} from 'element-ui'
-import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
-import 'element-ui/lib/theme-chalk/index.css'
+import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import 'element-plus/theme-chalk/src/message.scss'
 
-const showMessage = Symbol('showMessage')
+import i18n from '@/i18n'
+
+// TODO 可能需要重写适配
+/*const showMessage = Symbol('showMessage')
 
 class MessageConstructor {
   constructor() {
@@ -106,85 +36,24 @@ class MessageConstructor {
   }
 }
 
-export const Message = new MessageConstructor()
+export const Message = new MessageConstructor()*/
 
-Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
-Vue.prototype.$message = Message
+export const install = (app) => {
+  // app.use(ElementPlus, { i18n: i18n.global.t })
+  app.use(ElLoading)
+  app.use(ElMessage)
+  app.use(ElMessageBox)
+}
 
-Vue.prototype.$msgbox = MessageBox
-Vue.prototype.$alert = MessageBox.alert
+// TODO 可能需要重写适配
+/*
+window.$vueApp.config.globalProperties.$message = Message
 
-Vue.prototype.$prompt = MessageBox.prompt
-Vue.prototype.$loading = Loading.service
-Vue.prototype.$notify = Notification
+window.$vueApp.config.globalProperties.$msgbox = MessageBox
+window.$vueApp.config.globalProperties.$alert = MessageBox.alert
+
+window.$vueApp.config.globalProperties.$prompt = MessageBox.prompt
+window.$vueApp.config.globalProperties.$loading = Loading.service
+window.$vueApp.config.globalProperties.$notify = Notification
 window.loading = Loading.service
-
-Vue.use(Loading.directive)
-
-Vue.use(Card)
-Vue.use(Container)
-Vue.use(Header)
-Vue.use(Main)
-Vue.use(Aside)
-Vue.use(Drawer)
-Vue.use(Menu)
-Vue.use(MenuItem)
-Vue.use(Button)
-Vue.use(Form)
-Vue.use(FormItem)
-Vue.use(Checkbox)
-Vue.use(Image)
-Vue.use(Radio)
-Vue.use(RadioGroup)
-Vue.use(RadioButton)
-Vue.use(Select)
-Vue.use(Option)
-Vue.use(OptionGroup)
-Vue.use(Input)
-Vue.use(InputNumber)
-Vue.use(Tooltip)
-Vue.use(Link)
-Vue.use(Table)
-Vue.use(TableColumn)
-Vue.use(TableColumn)
-Vue.use(Dropdown)
-Vue.use(DropdownMenu)
-Vue.use(DropdownItem)
-Vue.use(Pagination)
-Vue.use(Tag)
-Vue.use(Breadcrumb)
-Vue.use(BreadcrumbItem)
-Vue.use(Dialog)
-Vue.use(Row)
-Vue.use(Col)
-Vue.use(DatePicker)
-Vue.use(TimePicker)
-Vue.use(Progress)
-Vue.use(Footer)
-Vue.use(Switch)
-Vue.use(Popover)
-Vue.use(Tabs)
-Vue.use(TabPane)
-Vue.use(Transfer)
-Vue.use(Badge)
-Vue.use(Steps)
-Vue.use(Step)
-Vue.use(Cascader)
-Vue.use(ButtonGroup)
-Vue.use(Upload)
-Vue.use(Autocomplete)
-Vue.use(Collapse)
-Vue.use(CollapseItem)
-Vue.use(Divider)
-Vue.use(Tree)
-Vue.use(CheckboxGroup)
-Vue.use(Skeleton)
-Vue.use(SkeletonItem)
-Vue.use(Submenu)
-Vue.use(InfiniteScroll)
-Vue.use(Alert)
-Vue.use(Empty)
-Vue.use(Slider)
-Vue.use(Timeline)
-Vue.use(TimelineItem)
-Vue.component(CollapseTransition.name, CollapseTransition)
+window.$vueApp.use(Loading.directive)*/

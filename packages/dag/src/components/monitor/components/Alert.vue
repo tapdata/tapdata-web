@@ -24,7 +24,6 @@
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"
-            size="mini"
             ref="select"
             @change="getList"
           >
@@ -43,7 +42,6 @@
             :popper-append-to-body="false"
             popper-class="time-select__popper"
             class="ml-2 dark"
-            size="mini"
             ref="select"
             @change="getList"
           >
@@ -60,30 +58,24 @@
         :columns="columns"
         :data="list"
         :page-options="{
-          layout: 'total, ->, prev, pager, next, sizes, jumper'
+          layout: 'total, ->, prev, pager, next, sizes, jumper',
         }"
         ref="table"
         height="100"
         class="table-list"
         hide-on-single-page
       >
-        <template slot="levelSlot" slot-scope="scope">
+        <template v-slot:levelSlot="scope">
           <span :class="['status-' + scope.row.levelType, 'status-block']">
             {{ scope.row.levelLabel }}
           </span>
         </template>
-        <template slot="operation" slot-scope="scope">
+        <template #operation="scope">
           <div class="operate-columns">
-            <ElButton
-              size="mini"
-              type="text"
-              :disabled="scope.row.status === 'CLOESE'"
-              @click="handleClose(scope.row)"
-              >{{ $t('public_button_close') }}</ElButton
-            >
-            <ElButton size="mini" type="text" @click="handleLog(scope.row)">{{
-              $t('packages_dag_monitor_bottompanel_rizhi')
+            <ElButton text :disabled="scope.row.status === 'CLOESE'" @click="handleClose(scope.row)">{{
+              $t('public_button_close')
             }}</ElButton>
+            <ElButton text @click="handleLog(scope.row)">{{ $t('packages_dag_monitor_bottompanel_rizhi') }}</ElButton>
           </div>
         </template>
       </VTable>
@@ -92,6 +84,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { mapGetters } from 'vuex'
@@ -102,66 +95,63 @@ import { alarmApi } from '@tap/api'
 
 export default {
   name: 'Alert',
-
   components: { VIcon, VTable, OverflowTooltip },
-
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     alarmData: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
-
   data() {
     return {
       activeNodeId: 'all',
       form: {
         level: '',
-        status: ''
+        status: '',
       },
       columns: [
         {
           label: i18n.t('packages_dag_components_alert_gaojingjibie'),
           prop: 'level',
           slotName: 'levelSlot',
-          width: 120
+          width: 120,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzhuangtai'),
           prop: 'statusLabel',
-          width: 100
+          width: 100,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingmiaoshu'),
           prop: 'summary',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingshoucifa'),
           prop: 'firstOccurrenceTime',
           dataType: 'time',
-          minWidth: 180
+          minWidth: 180,
         },
         {
           label: i18n.t('packages_dag_components_alert_gaojingzuijinfa'),
           prop: 'lastOccurrenceTime',
           dataType: 'time',
-          minWidth: 180
+          minWidth: 180,
         },
         // {
         //   label: i18n.t('packages_dag_components_alert_gaojingfashengci'),
@@ -172,13 +162,12 @@ export default {
           label: i18n.t('public_operation'),
           slotName: 'operation',
           // fixed: 'right',
-          width: 150
-        }
+          width: 150,
+        },
       ],
-      list: []
+      list: [],
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
@@ -186,13 +175,13 @@ export default {
       let result = [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
-        }
+          value: '',
+        },
       ]
       for (let key in ALARM_LEVEL_MAP) {
         result.push({
           label: ALARM_LEVEL_MAP[key].text,
-          value: key
+          value: key,
         })
       }
       return result
@@ -202,13 +191,13 @@ export default {
       let result = [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
-        }
+          value: '',
+        },
       ]
       for (let key in ALARM_STATUS_MAP) {
         result.push({
           label: ALARM_STATUS_MAP[key].text,
-          value: key
+          value: key,
         })
       }
       return result
@@ -222,7 +211,7 @@ export default {
         }, {}) || {}
       const alarmList = this.alarmData?.alarmList || []
       const totals = alarmList.length
-      alarmList.forEach(el => {
+      alarmList.forEach((el) => {
         if (el.nodeId) {
           nodeMap[el.nodeId].num++
         }
@@ -231,52 +220,49 @@ export default {
         {
           label: i18n.t('packages_dag_components_alert_quanbugaojing'),
           value: 'all',
-          num: totals
+          num: totals,
         },
         ...this.allNodes
-          .map(t => {
+          .map((t) => {
             return {
               label: t.name,
               value: t.id,
               source: t.$outputs.length > 0,
               target: t.$inputs.length > 0,
-              num: nodeMap[t.id]?.num || 0
+              num: nodeMap[t.id]?.num || 0,
             }
           })
-          .filter(t => t.num)
+          .filter((t) => t.num),
       ]
-    }
+    },
   },
-
   watch: {
     alarmData: {
       deep: true,
       handler() {
         this.getList()
-      }
-    }
+      },
+    },
   },
-
   mounted() {
     this.getList()
   },
-
   methods: {
     getList() {
       let data = this.alarmData?.alarmList || []
       const { activeNodeId } = this
       const { level, status } = this.form
       if (activeNodeId !== 'all') {
-        data = data.filter(t => t.nodeId === activeNodeId)
+        data = data.filter((t) => t.nodeId === activeNodeId)
       }
       if (level) {
-        data = data.filter(t => t.level === level)
+        data = data.filter((t) => t.level === level)
       }
       if (status) {
-        data = data.filter(t => t.status === status)
+        data = data.filter((t) => t.status === status)
       }
       this.list =
-        data.map(t => {
+        data.map((t) => {
           t.levelLabel = ALARM_LEVEL_MAP[t.level].text
           t.levelType = ALARM_LEVEL_MAP[t.level].type
           t.statusLabel = ALARM_STATUS_MAP[t.status].text
@@ -295,18 +281,19 @@ export default {
     handleClose(row = {}) {
       alarmApi.close([row.id]).then(() => {
         this.$message.success(i18n.t('packages_dag_components_alert_guanbichenggong'))
-        this.$emit('load-data')
+        $emit(this, 'load-data')
       })
     },
 
     handleLog(row = {}) {
       const params = {
         start: row.lastOccurrenceTime,
-        nodeId: row.nodeId
+        nodeId: row.nodeId,
       }
-      this.$emit('change-tab', 'log', params)
-    }
-  }
+      $emit(this, 'change-tab', 'log', params)
+    },
+  },
+  emits: ['change-tab', 'load-data'],
 }
 </script>
 
@@ -332,20 +319,20 @@ export default {
 .white-space-nowrap {
   white-space: nowrap;
 }
-
 .log-list {
   border-radius: 1px;
   background-color: rgba(229, 236, 255, 0.22);
-  ::v-deep {
-    .log-line {
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    }
-    .highlight-bg-color {
-      background-color: #ff0;
-    }
-    .empty-wrap {
-      margin: 24px 0;
-    }
+
+  :deep(.log-line) {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  }
+
+  :deep(.highlight-bg-color) {
+    background-color: #ff0;
+  }
+
+  :deep(.empty-wrap) {
+    margin: 24px 0;
   }
 }
 .no-more__alert {
@@ -353,10 +340,9 @@ export default {
   top: 4px;
   left: 50%;
   width: 140px;
-  ::v-deep {
-    .el-alert__closebtn {
-      top: 7px;
-    }
+
+  :deep(.el-alert__closebtn) {
+    top: 7px;
   }
 }
 </style>

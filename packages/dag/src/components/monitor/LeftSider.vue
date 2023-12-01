@@ -65,20 +65,22 @@
                 />
                 <span class="ml-2">{{ totalData.snapshotTableTotal + '/' + totalData.tableTotal }}</span>
               </div>
-              <div slot="content" class="fs-8">
-                <div>
-                  <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
-                  <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
+              <template v-slot:content>
+                <div class="fs-8">
+                  <div>
+                    <span>{{ $t('packages_dag_monitor_leftsider_quanliangwanchenghao') }}:</span>
+                    <span class="ml-2">{{ calcTimeUnit(totalData.snapshotDoneCost) }}</span>
+                  </div>
+                  <div>
+                    <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
+                    <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
+                  </div>
+                  <div>
+                    <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
+                    <span class="ml-2">{{ totalData.outputQpsMax }}</span>
+                  </div>
                 </div>
-                <div>
-                  <span>{{ $t('packages_dag_monitor_leftsider_pingjunQps') }}:</span>
-                  <span class="ml-2">{{ totalData.outputQpsAvg }}</span>
-                </div>
-                <div>
-                  <span>{{ $t('packages_dag_monitor_leftsider_zuidaQps') }}:</span>
-                  <span class="ml-2">{{ totalData.outputQpsMax }}</span>
-                </div>
-              </div>
+              </template>
             </ElTooltip>
           </div>
           <div
@@ -182,7 +184,7 @@
                 <VIcon size="14" class="color-primary">info</VIcon>
               </span>
             </ElTooltip>
-            <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+            <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
               <ElRadioButton label="count">count</ElRadioButton>
               <ElRadioButton label="size">size</ElRadioButton>
             </ElRadioGroup>
@@ -218,24 +220,24 @@
         </div>
         <!--指标不准确，暂时隐藏-->
         <!--<div class="line-chart__box mb-2">
-          <ElTooltip
-            transition="tooltip-fade-in"
-            placement="top"
-            :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
-          >
-            <span>
-              <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
-              <VIcon size="14" class="color-primary">info</VIcon>
-            </span>
-          </ElTooltip>
-          <LineChart
-            :data="delayData"
-            :color="['#2C65FF']"
-            :time-format="timeFormat"
-            time-value
-            class="line-chart"
-          ></LineChart>
-        </div>-->
+                <ElTooltip
+                  transition="tooltip-fade-in"
+                  placement="top"
+                  :content="$t('packages_dag_monitor_leftsider_renwuchuliwan')"
+                >
+                  <span>
+                    <span class="mr-2 font-color-dark fw-sub">{{ $t('packages_dag_monitor_leftsider_chulihaoshim') }}</span>
+                    <VIcon size="14" class="color-primary">info</VIcon>
+                  </span>
+                </ElTooltip>
+                <LineChart
+                  :data="delayData"
+                  :color="['#2C65FF']"
+                  :time-format="timeFormat"
+                  time-value
+                  class="line-chart"
+                ></LineChart>
+              </div>-->
       </div>
       <div v-if="!hideTotalData" class="info-box py-2 px-4">
         <div class="flex justify-content-between mb-2">
@@ -318,7 +320,7 @@
     <ElDialog
       :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
       width="774px"
-      :visible.sync="lineChartDialog"
+      v-model="lineChartDialog"
       :close-on-click-modal="false"
       :modal-append-to-body="false"
     >
@@ -338,7 +340,7 @@
               <VIcon size="14" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
-          <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
+          <ElRadioGroup v-model="qpsChartsType" class="chart__radio">
             <ElRadioButton label="count">count</ElRadioButton>
             <ElRadioButton label="size">size</ElRadioButton>
           </ElRadioGroup>
@@ -372,11 +374,12 @@
       ></LineChart>
     </ElDialog>
 
-    <InitialList v-model="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
+    <InitialList v-model:value="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
   </aside>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
 
@@ -403,33 +406,31 @@ export default {
           diffRecords: 0,
           diffTables: 0,
           totals: 0,
-          ignore: 0
+          ignore: 0,
         }
-      }
+      },
     },
-    timeFormat: String
+    timeFormat: String,
   },
   components: {
     LineChart,
     TimeSelect,
     Frequency,
     VIcon,
-    InitialList
+    InitialList,
   },
-
   data() {
     return {
       lineChartDialog: false,
       initialListDialog: false,
       timeSelectLabel: '',
       collectorData: {
-        externalStorage: {}
+        externalStorage: {},
       },
       infoList: [],
-      qpsChartsType: 'count'
+      qpsChartsType: 'count',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
@@ -442,24 +443,24 @@ export default {
           value: [[], []],
           markLine: [
             {
-              data: []
-            }
-          ]
+              data: [],
+            },
+          ],
         }
       }
       const { time = [] } = this.quota
       // const { inputQps = [], outputQps = [], inputSizeQps = [], outputSizeQps = [] } = data
       // const
       // this.labelUnitType = data.inputSizeQps ? 'byte' : ''
-      const inputQps = data.inputQps?.map(t => Math.abs(t))
-      const outputQps = data.outputQps?.map(t => Math.abs(t))
-      const inputSizeQps = data.inputSizeQps?.map(t => Math.abs(t))
-      const outputSizeQps = data.outputSizeQps?.map(t => Math.abs(t))
+      const inputQps = data.inputQps?.map((t) => Math.abs(t))
+      const outputQps = data.outputQps?.map((t) => Math.abs(t))
+      const inputSizeQps = data.inputSizeQps?.map((t) => Math.abs(t))
+      const outputSizeQps = data.outputSizeQps?.map((t) => Math.abs(t))
       // 计算距离增量时间点，最近的时间点
       const milestone = this.dataflow.attrs?.milestone || {}
       const snapshotDoneAt = milestone.SNAPSHOT?.end
       let markLineTime = 0
-      time.forEach(el => {
+      time.forEach((el) => {
         if (Math.abs(el - snapshotDoneAt) < 2000 && Math.abs(el - snapshotDoneAt) < Math.abs(el - markLineTime)) {
           markLineTime = el
         }
@@ -470,7 +471,7 @@ export default {
         name: [i18n.t('public_time_input'), i18n.t('public_time_output')],
         // value: [inputQps, outputQps],
         value: [],
-        zoomValue: 10
+        zoomValue: 10,
       }
 
       if (this.dataflow.type === 'initial_sync+cdc') {
@@ -481,24 +482,24 @@ export default {
               {
                 xAxis: markLineTime + '',
                 lineStyle: {
-                  color: '#000'
+                  color: '#000',
                 },
                 label: {
-                  show: false
-                }
-              }
-            ]
-          }
+                  show: false,
+                },
+              },
+            ],
+          },
         ]
       }
 
       return {
         count: Object.assign(cloneDeep(opt), {
-          value: [inputQps, outputQps]
+          value: [inputQps, outputQps],
         }),
         size: Object.assign(cloneDeep(opt), {
-          value: [inputSizeQps, outputSizeQps]
-        })
+          value: [inputSizeQps, outputSizeQps],
+        }),
       }
     },
 
@@ -509,12 +510,12 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
       return {
         x: time,
-        value: data.timeCostAvg
+        value: data.timeCostAvg,
       }
     },
     // 增量延迟
@@ -524,17 +525,17 @@ export default {
       if (!data) {
         return {
           x: [],
-          value: []
+          value: [],
         }
       }
 
-      const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
-      const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
+      const open = this.dataflow.alarmSettings?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.open
+      const delay = open ? this.dataflow.alarmRules?.find((t) => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
       const max = Math.max(...data.replicateLag)
       return {
         x: time,
         value: data.replicateLag,
-        yAxisMax: Math.max(delay, max)
+        yAxisMax: Math.max(delay, max),
       }
     },
 
@@ -547,7 +548,7 @@ export default {
         snapshotDoneAt,
         snapshotStartAt,
         replicateLag,
-        lastFiveMinutesQps
+        lastFiveMinutesQps,
       } = data
       let time
       if (!snapshotInsertRowTotal || !snapshotRowTotal || !lastFiveMinutesQps) {
@@ -559,7 +560,7 @@ export default {
         snapshotDoneAt: snapshotDoneAt ? dayjs(snapshotDoneAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         snapshotStartAt: snapshotStartAt ? dayjs(snapshotStartAt).format('YYYY-MM-DD HH:mm:ss.SSS') : '',
         replicateLag: replicateLag,
-        finishDuration: time
+        finishDuration: time,
       }
     },
 
@@ -571,7 +572,7 @@ export default {
         currentSnapshotTableRowTotal = 0,
         snapshotDoneCost,
         outputQpsMax = 0,
-        outputQpsAvg = 0
+        outputQpsAvg = 0,
       } = this.quota.samples?.totalData?.[0] || {}
       // 如果分子大于分母，将分母的值调整成跟分子一样
       if (currentSnapshotTableInsertRowTotal > currentSnapshotTableRowTotal) {
@@ -584,7 +585,7 @@ export default {
         currentSnapshotTableRowTotal,
         snapshotDoneCost,
         outputQpsMax: Math.ceil(outputQpsMax),
-        outputQpsAvg: Math.ceil(outputQpsAvg)
+        outputQpsAvg: Math.ceil(outputQpsAvg),
       }
     },
 
@@ -624,7 +625,7 @@ export default {
       const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
       const fileType = ['CSV', 'EXCEL', 'JSON', 'XML']
-      return allNodes.some(node => fileType.includes(node.databaseType))
+      return allNodes.some((node) => fileType.includes(node.databaseType))
     },
 
     hideTotalData() {
@@ -633,27 +634,24 @@ export default {
 
     showToInitialList() {
       return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
-    }
+    },
   },
-
   watch: {
     'dataflow.syncType'(v) {
       v && this.getBasicInformation()
-    }
+    },
   },
-
   mounted() {
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
   },
-
   methods: {
     changeTimeSelect(val, isTime, source) {
-      this.$emit('changeTimeSelect', val, isTime, source)
+      $emit(this, 'changeTimeSelect', val, isTime, source)
       this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
     },
 
     changeFrequency(val) {
-      this.$emit('changeFrequency', val)
+      $emit(this, 'changeFrequency', val)
     },
 
     toFullscreen() {
@@ -672,9 +670,9 @@ export default {
         'outputUpdateTotal',
         'outputDeleteTotal',
         'outputDdlTotal',
-        'outputOthersTotal'
+        'outputOthersTotal',
       ]
-      ;[...inputArr, ...outputArr].forEach(el => {
+      ;[...inputArr, ...outputArr].forEach((el) => {
         result[el] = data?.[el] || 0
       })
       result.inputTotals = inputArr.reduce((total, key) => {
@@ -699,19 +697,19 @@ export default {
     getReplicateLag(val) {
       return typeof val === 'number' && val >= 0
         ? calcTimeUnit(val, 2, {
-            autoHideMs: true
+            autoHideMs: true,
           })
         : i18n.t('public_data_no_data')
     },
 
     getCollectorData() {
-      logcollectorApi.getDetail(this.dataflow.id).then(data => {
+      logcollectorApi.getDetail(this.dataflow.id).then((data) => {
         const { externalStorage = {}, logTime, name } = data
         let uriInfo = externalStorage.uri
         if (externalStorage.type === 'mongodb') {
           const regResult =
             /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-              externalStorage.uri
+              externalStorage.uri,
             )
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
@@ -720,34 +718,34 @@ export default {
           this.infoList = [
             {
               label: this.$t('packages_business_relation_details_rizhiwajueshi'),
-              value: this.formatTime(logTime)
-            }
+              value: this.formatTime(logTime),
+            },
           ]
           return
         }
         this.infoList = [
           {
             label: this.$t('packages_business_relation_details_rizhiwajueshi'),
-            value: this.formatTime(logTime)
+            value: this.formatTime(logTime),
           },
           {
             label: this.$t('public_external_memory_name'),
-            value: externalStorage.name
+            value: externalStorage.name,
           },
           {
             label: this.$t('public_external_memory_type'),
-            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type]
+            value: EXTERNAL_STORAGE_TYPE_MAP[externalStorage.type],
           },
           {
             label: this.$t('public_external_memory_table'),
-            value: externalStorage.table
+            value: externalStorage.table,
           },
           {
             label: this.$t('public_external_memory_info'),
             value: uriInfo,
             block: true,
-            class: 'text-break'
-          }
+            class: 'text-break',
+          },
         ]
       })
     },
@@ -757,7 +755,7 @@ export default {
     },
 
     getSharedCacheData(id) {
-      sharedCacheApi.findOne(id).then(data => {
+      sharedCacheApi.findOne(id).then((data) => {
         externalStorageApi.get(data.externalStorageId).then((ext = {}) => {
           if (!ext.name) {
             this.infoList = []
@@ -770,20 +768,20 @@ export default {
             // },
             {
               label: i18n.t('public_external_memory_name'),
-              value: ext.name
+              value: ext.name,
             },
             {
               label: i18n.t('public_external_memory_type'),
-              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type]
+              value: EXTERNAL_STORAGE_TYPE_MAP[ext.type],
             },
             {
               label: i18n.t('public_external_memory_table'),
-              value: ext.table
+              value: ext.table,
             },
             {
               label: i18n.t('public_external_memory_info'),
-              value: ext.uri
-            }
+              value: ext.uri,
+            },
           ]
         })
       })
@@ -792,71 +790,60 @@ export default {
     async getBasicInformation() {
       const map = {
         SharedMiningMonitor: this.getCollectorData,
-        SharedCacheMonitor: this.getSharedCacheData
+        SharedCacheMonitor: this.getSharedCacheData,
       }
       map[this.$route.name]?.(this.dataflow.id)
-    }
-  }
+    },
+  },
+  emits: ['load-data', 'verifyDetails', 'changeTimeSelect', 'changeFrequency', 'verifyDetails'],
 }
 </script>
 
-<style scoped lang="scss">
-::v-deep {
-  .el-dialog {
-    .el-dialog__body {
-      padding-top: 6px;
-    }
+<style lang="scss" scoped>
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding-top: 6px;
   }
 }
 
 .layout-sidebar.--left {
-  z-index: unset; // 防止侧边栏出现的dialog被节点覆盖
+  z-index: unset;
   overflow: visible;
   will-change: width;
   $headerH: 34px;
+  :deep(.el-collapse) {
+    border-top: 0;
 
-  ::v-deep {
-    .el-collapse {
-      border-top: 0;
+    .el-collapse-item {
+      &.is-active [role='tab'] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
 
-      &-item {
-        &.is-active [role='tab'] {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
+      &__header {
+        position: relative;
+        padding-left: 16px;
+        padding-right: 16px;
+        height: $headerH;
+        font-size: 14px;
 
-        &__header {
-          position: relative;
-          padding-left: 16px;
-          padding-right: 16px;
-          height: $headerH;
-          font-size: 14px;
-
-          &:hover {
-            background-color: rgba(47, 46, 63, 0.05);
-          }
-        }
-
-        &__wrap {
-          padding-top: 16px;
-        }
-
-        &__arrow {
-          order: -1;
-          &:before {
-            content: '\e791';
-          }
-        }
-
-        &__content {
-          padding-bottom: 0;
+        &:hover {
+          background-color: rgba(47, 46, 63, 0.05);
         }
       }
-    }
 
-    .el-scrollbar {
-      height: 100%;
+      &__wrap {
+        padding-top: 16px;
+      }
+
+      &__arrow {
+        order: -1;
+      }
+
+      &__content {
+        padding-bottom: 0;
+      }
     }
 
     .chart__radio {
@@ -865,8 +852,11 @@ export default {
       }
     }
   }
-}
 
+  :deep(.el-scrollbar) {
+    height: 100%;
+  }
+}
 .info-box {
   padding: 8px 16px;
   border-bottom: 1px solid #f2f2f2;

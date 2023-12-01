@@ -16,7 +16,7 @@
     >
       <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
       <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-      <ElTag v-if="showType" class="ml-2" effect="plain" size="mini">{{ typeMap[node.nodeType] }}</ElTag>
+      <ElTag v-if="showType" class="ml-2" effect="plain">{{ typeMap[node.nodeType] }}</ElTag>
       <slot name="right"></slot>
     </div>
   </div>
@@ -24,62 +24,57 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
-import i18n from '@tap/i18n'
-import NodeIcon from '@tap/dag/src/components/NodeIcon'
 import { OverflowTooltip } from '@tap/component'
+import i18n from '@tap/i18n'
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { NodeIcon } from '../DatabaseIcon'
 
 export default {
   name: 'List',
-
   components: { NodeIcon, OverflowTooltip },
-
   props: {
     value: {
-      type: String
+      type: String,
     },
     label: {
       type: String,
       default: () => {
         return i18n.t('public_select_option_all')
-      }
+      },
     },
     showType: {
       type: Boolean,
-      default: false
+      default: false,
     },
     customClass: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
-
   data() {
     return {
       activeNodeId: this.value,
       typeMap: {
         source: i18n.t('packages_business_nodes_list_laiyuan'),
         target: i18n.t('public_connection_type_target'),
-        processor: i18n.t('public_node_processor')
-      }
+        processor: i18n.t('public_node_processor'),
+      },
     }
   },
-
   watch: {
     value(v) {
       this.activeNodeId = v
-    }
+    },
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     items() {
       return this.allNodes
-        .filter(node => {
+        .filter((node) => {
           return !node.disabled && !node.attrs.disabled
         })
-        .map(t => {
+        .map((t) => {
           const { type, $inputs, $outputs } = t
           const isSource = (type === 'database' || type === 'table') && !$inputs.length
           const isTarget = (type === 'database' || type === 'table') && !$outputs.length
@@ -88,22 +83,23 @@ export default {
           return t
         })
         .sort((a, b) => a.index - b.index)
-    }
+    },
   },
-
   methods: {
     changeItem(itemId = '') {
       if (this.activeNodeId === itemId) {
         return
       }
       this.activeNodeId = itemId
-      this.$emit('input', this.activeNodeId).$emit(
+      $emit(
+        this.$emit('update:value', this.activeNodeId),
         'change',
         this.activeNodeId,
-        this.items.find(t => t.id === this.activeNodeId)
+        this.items.find((t) => t.id === this.activeNodeId),
       )
-    }
-  }
+    },
+  },
+  emits: ['change', 'update:value'],
 }
 </script>
 
@@ -112,7 +108,6 @@ export default {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
-
   &:hover {
     background-color: #f2f3f5;
   }

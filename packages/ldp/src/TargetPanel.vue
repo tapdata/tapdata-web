@@ -10,22 +10,14 @@
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model="search"
-          size="mini"
-          clearable
-          @keydown.native.stop
-          @keyup.native.stop
-          @click.native.stop
-        >
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop>
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-4 position-relative" @scroll="handleScroll">
+      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
@@ -45,7 +37,9 @@
                 <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
                 <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
               </div>
-              <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
+              <div v-if="item.desc" class="mt-2 font-color-light">
+                {{ item.desc }}
+              </div>
             </div>
             <div class="item__content position-relative p-2">
               <div class="task-list">
@@ -92,12 +86,9 @@
                   class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
                   :title="item.name"
                   ><span class="ellipsis">{{ item.name }}</span>
-                  <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
-                    $t('public_status_invalid')
-                  }}</ElTag>
+                  <ElTag v-if="item.disabled" class="ml-1" type="info">{{ $t('public_status_invalid') }}</ElTag>
                   <ElTag
                     v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                    size="small"
                     class="ml-1 px-1 flex align-center clickable"
                     @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
                     ><VIcon class="mr-1" size="14">open-in-new</VIcon
@@ -110,14 +101,14 @@
                 </span>
                 <!--                <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>-->
                 <!--                <IconButton
-                  v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                  @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                  >open-in-new</IconButton
-                >-->
+                      v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                      @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                      >open-in-new</IconButton
+                    >-->
               </div>
               <!--              <div class="mt-2 font-color-light">
-                {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
-              </div>-->
+                    {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                  </div>-->
             </div>
             <TaskList
               ref="taskList"
@@ -138,8 +129,10 @@
         <!--</draggable>-->
       </div>
 
-      <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-        <span slot="title" class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
+      <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+        <template #header>
+          <span class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
+        </template>
         <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
           <!--          <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">{{ taskDialogConfig.desc }}</div>-->
           <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
@@ -147,7 +140,7 @@
               $t(
                 taskDialogConfig.tableName
                   ? 'packages_business_target_create_task_dialog_desc_prefix_sync'
-                  : 'packages_business_target_create_task_dialog_desc_prefix_clone'
+                  : 'packages_business_target_create_task_dialog_desc_prefix_clone',
               )
             }}</span
             ><span v-if="taskDialogConfig.from" class="inline-flex align-center px-1 font-color-dark fw-sub align-top"
@@ -174,7 +167,7 @@
             >
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
-            <ElInput size="small" v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
             <ElRadioGroup v-model="taskDialogConfig.task.type">
@@ -202,7 +195,7 @@
                 @change="handleChangeCronType"
                 class="flex-1"
               >
-                <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+                <ElOption v-bind="opt" v-for="(opt, i) in cronOptions" :key="i"></ElOption>
               </ElSelect>
             </ElFormItem>
             <ElFormItem
@@ -214,15 +207,17 @@
             </ElFormItem>
           </div>
         </ElForm>
-        <span slot="footer" class="dialog-footer">
-          <ElButton size="mini" @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton :disabled="highlightBoard" :loading="creating" size="mini" @click="dialogSubmit(false)">{{
-            $t('packages_business_save_only')
-          }}</ElButton>
-          <ElButton :loading="creating" size="mini" type="primary" @click="dialogSubmit(true)">
-            {{ $t('packages_business_save_and_run_now') }}
-          </ElButton>
-        </span>
+        <template v-slot:footer>
+          <span class="dialog-footer">
+            <ElButton @click="hideDialog">{{ $t('public_button_cancel') }}</ElButton>
+            <ElButton :disabled="highlightBoard" :loading="creating" @click="dialogSubmit(false)">{{
+              $t('packages_business_save_only')
+            }}</ElButton>
+            <ElButton :loading="creating" type="primary" @click="dialogSubmit(true)">
+              {{ $t('packages_business_save_and_run_now') }}
+            </ElButton>
+          </span>
+        </template>
       </ElDialog>
       <CreateRestApi
         v-model="apiDialog.visible"
@@ -235,10 +230,11 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent, ref } from 'vue'
 
 import {
   apiServerApi,
@@ -248,7 +244,7 @@ import {
   modulesApi,
   proxyApi,
   taskApi,
-  workerApi
+  workerApi,
 } from '@tap/api'
 import { uuid, generateId, Time, calcTimeUnit } from '@tap/shared'
 import { VIcon, IconButton, VEmpty } from '@tap/component'
@@ -258,7 +254,7 @@ import {
   TaskStatus,
   DataServerDrawer as ApiPreview,
   makeStatusAndDisabled,
-  TASK_SETTINGS
+  TASK_SETTINGS,
 } from '@tap/business'
 import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
@@ -273,7 +269,7 @@ const TaskList = defineComponent({
       const list = isLimit.value ? props.list.slice(0, limit) : props.list
 
       return (
-        <div staticClass="item__content position-relative">
+        <div class="item__content position-relative">
           {props.list.length ? (
             <div class="task-list">
               <div class="task-list-content">
@@ -333,7 +329,7 @@ const TaskList = defineComponent({
                         {i18n.t(
                           ['edit', 'wait_start'].includes(task.status)
                             ? 'public_button_edit'
-                            : 'packages_business_task_list_button_monitor'
+                            : 'packages_business_task_list_button_monitor',
                         )}
                       </ElLink>
                     </div>
@@ -347,7 +343,7 @@ const TaskList = defineComponent({
                         open-in-new
                       </IconButton>
                       /*<ElTag
-                        size="small"
+
                         class="ml-1 px-1 flex align-center clickable"
                         onClick={() => {
                           window.open(task.website)
@@ -368,10 +364,8 @@ const TaskList = defineComponent({
                     onClick={() => {
                       isLimit.value = !isLimit.value
                     }}
-                    size="mini"
                     round
-                    staticClass="task-list-item-more fs-8"
-                    class={{ 'is-reverse': !isLimit.value }}
+                    class={['task-list-item-more fs-8', { 'is-reverse': !isLimit.value }]}
                   >
                     {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
                     <VIcon class="ml-1">arrow-down</VIcon>
@@ -385,7 +379,7 @@ const TaskList = defineComponent({
         </div>
       )
     }
-  }
+  },
 })
 
 export default {
@@ -394,7 +388,7 @@ export default {
   props: {
     dragState: Object,
     fdmAndMdmId: Array,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
 
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon, VEmpty },
@@ -403,7 +397,7 @@ export default {
 
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       dragging: false,
       list: [],
       appList: [],
@@ -419,12 +413,12 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       connectionTaskMap: {},
       apiDialog: {
-        visible: false
+        visible: false,
       },
       apiServerHost: '',
       searchIng: false,
@@ -435,11 +429,11 @@ export default {
       apiStatusMap: {
         active: this.$t('public_status_published'),
         pending: this.$t('public_status_unpublished'),
-        generating: this.$t('public_status_to_be_generated')
+        generating: this.$t('public_status_to_be_generated'),
       },
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
-      searchKeywordList: []
+      searchKeywordList: [],
     }
   },
 
@@ -456,14 +450,14 @@ export default {
     filterList() {
       if (this.showParentLineage) {
         let result = []
-        this.searchKeywordList.forEach(item => {
+        this.searchKeywordList.forEach((item) => {
           if (item.type === 'apiserverLineage') {
             // item的数据结构：appName,serverName,table,type
-            const appList = cloneDeep(this.list.filter(item => item.LDP_TYPE === 'app'))
-            const findApp = appList.find(t => t.value === item.appName)
-            const findServer = findApp?.modules?.find(t => t.name === item.serverName)
+            const appList = cloneDeep(this.list.filter((item) => item.LDP_TYPE === 'app'))
+            const findApp = appList.find((t) => t.value === item.appName)
+            const findServer = findApp?.modules?.find((t) => t.name === item.serverName)
             if (!findServer) return
-            const findOne = result.find(t => t.value === item.appName)
+            const findOne = result.find((t) => t.value === item.appName)
             if (findOne) {
               findOne.modules.push(findServer)
             } else {
@@ -473,12 +467,12 @@ export default {
         })
         return result
       }
-      if (!this.search) return this.list.filter(item => !this.fdmAndMdmId.includes(item.id))
+      if (!this.search) return this.list.filter((item) => !this.fdmAndMdmId.includes(item.id))
 
       return this.list.filter(
-        item =>
+        (item) =>
           !this.fdmAndMdmId?.includes(item.id) &&
-          (item.name?.includes(this.search) || item.value?.includes(this.search))
+          (item.name?.includes(this.search) || item.value?.includes(this.search)),
       )
     },
 
@@ -496,7 +490,7 @@ export default {
 
     nonSupportApi() {
       return this.dragDatabaseType && !this.apiSupportTypes.includes(this.dragDatabaseType)
-    }
+    },
   },
 
   mounted() {
@@ -504,7 +498,7 @@ export default {
     this.isDaas && this.getApiServerHost()
   },
 
-  destroyed() {
+  unmounted() {
     this.destroyed = true
     clearTimeout(this.loadTaskTimer)
   },
@@ -516,14 +510,14 @@ export default {
 
       if (this.isDaas) {
         appList = await this.getApiAppList()
-        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then(list => {
+        Promise.all(appList.map(({ id }) => this.loadApiModule(id))).then((list) => {
           appList.forEach((app, i) => {
-            this.$set(app, 'modules', list[i])
+            app['modules'] = list[i]
           })
         })
       }
 
-      this.connectionIds = connectionList.map(item => item.id)
+      this.connectionIds = connectionList.map((item) => item.id)
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -531,7 +525,7 @@ export default {
     },
 
     handleAdd() {
-      this.$emit('create-connection', 'target')
+      $emit(this, 'create-connection', 'target')
     },
 
     async getData() {
@@ -539,15 +533,15 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', 'target']
+            in: ['source_and_target', 'target'],
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
       return res.items.map(this.mapConnection)
@@ -580,45 +574,41 @@ export default {
     async loadConnectionTaskMap() {
       const data = await taskApi.getTaskByConnection({
         connectionIds: this.connectionIds.join(','),
-        position: 'target'
+        position: 'target',
       })
 
       const taskMap = {}
 
-      Object.keys(data).forEach(key => {
-        this.$set(
-          this.connectionTaskMap,
-          key,
-          data[key]
-            .filter(task => {
-              if (task.status === 'running') {
-                taskMap[task.id] = {
-                  uri: '/api/measurement/query/v2',
-                  param: {
-                    startAt: new Date(task.startTime).getTime(),
-                    endAt: Time.now(),
-                    samples: {
-                      data: {
-                        tags: {
-                          type: 'task',
-                          taskId: task.id,
-                          taskRecordId: task.taskRecordId
-                        },
-                        endAt: Time.now(),
-                        fields: ['replicateLag'],
-                        type: 'instant'
-                      }
-                    }
-                  }
-                }
+      Object.keys(data).forEach((key) => {
+        this.connectionTaskMap[key] = data[key]
+          .filter((task) => {
+            if (task.status === 'running') {
+              taskMap[task.id] = {
+                uri: '/api/measurement/query/v2',
+                param: {
+                  startAt: new Date(task.startTime).getTime(),
+                  endAt: Time.now(),
+                  samples: {
+                    data: {
+                      tags: {
+                        type: 'task',
+                        taskId: task.id,
+                        taskRecordId: task.taskRecordId,
+                      },
+                      endAt: Time.now(),
+                      fields: ['replicateLag'],
+                      type: 'instant',
+                    },
+                  },
+                },
               }
-              return (
-                !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.syncType === 'migrate'
-              )
-            })
-            .reverse()
-            .map(this.mapTask)
-        )
+            }
+            return (
+              !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.syncType === 'migrate'
+            )
+          })
+          .reverse()
+          .map(this.mapTask)
       })
 
       const taskDataMap = await measurementApi.batch(taskMap)
@@ -670,7 +660,7 @@ export default {
           }
         })
 
-        const targetNode = dag.nodes.find(node => {
+        const targetNode = dag.nodes.find((node) => {
           return node.type === 'table' && inputsMap[node.id] && !outputsMap[node.id]
         })
 
@@ -683,16 +673,16 @@ export default {
         limit: 999,
         order: 'createTime DESC',
         where: {
-          item_type: 'app'
-        }
+          item_type: 'app',
+        },
       }
 
       return appApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
-          return items.map(item => {
+          return items.map((item) => {
             item.LDP_TYPE = 'app'
             return item
           })
@@ -704,13 +694,13 @@ export default {
         limit: 999,
         order: 'createAt DESC',
         where: {
-          'listtags.id': appId
-        }
+          'listtags.id': appId,
+        },
       }
 
       return modulesApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
         .then(({ items }) => {
           return items.map(this.mapApi)
@@ -727,10 +717,10 @@ export default {
         .call({
           className: 'PDKConnectionService',
           method: 'getConnectorWebsite',
-          args: [connectionId]
+          args: [connectionId],
         })
-        .then(data => {
-          data?.url && this.$set(this.connectionWebsiteMap, connectionId, data.url)
+        .then((data) => {
+          data?.url && (this.connectionWebsiteMap[connectionId] = data.url)
           return data?.url
         })
     },
@@ -741,10 +731,10 @@ export default {
           className: 'PDKConnectionService',
           method: 'getTableWebsite',
           args: [connectionId, [table]],
-          _: generateId(4)
+          _: generateId(4),
         })
-        .then(data => {
-          data?.url && this.$set(task, 'website', data.url)
+        .then((data) => {
+          data?.url && (task['website'] = data.url)
           return data?.url
         })
     },
@@ -841,8 +831,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -859,8 +849,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -872,12 +862,12 @@ export default {
         tableName
           ? {
               migrateTableSelectType: 'custom',
-              tableNames: [tableName]
+              tableNames: [tableName],
             }
           : {
               migrateTableSelectType: 'expression',
-              tableExpression: '.*'
-            }
+              tableExpression: '.*',
+            },
       )
 
       return source
@@ -898,8 +888,8 @@ export default {
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
           capabilities: db.capabilities || [],
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       }
     },
 
@@ -911,8 +901,8 @@ export default {
         name: this.taskDialogConfig.taskName,
         dag: {
           edges: [{ source: source.id, target: target.id }],
-          nodes: [source, target]
-        }
+          nodes: [source, target],
+        },
       }
     },
 
@@ -930,7 +920,7 @@ export default {
     },
 
     async dialogSubmit(ifStart) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           const { syncType, from, to, tableName, task: settings } = this.taskDialogConfig
           let task
@@ -953,8 +943,8 @@ export default {
 
               taskInfo = await taskApi.saveAndStart(taskInfo, {
                 params: {
-                  confirm: true
-                }
+                  confirm: true,
+                },
               })
             }
           } catch (e) {
@@ -979,7 +969,7 @@ export default {
           if (this.connectionTaskMap[to.id]) {
             this.connectionTaskMap[to.id].unshift(mapTask)
           } else {
-            this.$set(this.connectionTaskMap, to.id, [mapTask])
+            this.connectionTaskMap[to.id] = [mapTask]
           }
 
           const h = this.$createElement
@@ -991,11 +981,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(taskInfo)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
 
           if (this.startingTour) {
@@ -1014,9 +1004,9 @@ export default {
         this.$router.resolve({
           name: task.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
           params: {
-            id: task.id
-          }
-        }).href
+            id: task.id,
+          },
+        }).href,
       )
     },
 
@@ -1029,8 +1019,8 @@ export default {
     mapConnection(item) {
       item.disabled = item.status !== 'ready'
       item.LDP_TYPE = 'connection'
-      item.showConnectorWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
-      item.showTableWebsite = item?.capabilities.some(c => c.id === 'connector_website_function')
+      item.showConnectorWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
+      item.showTableWebsite = item?.capabilities.some((c) => c.id === 'connector_website_function')
 
       if (item.showConnectorWebsite) {
         this.getWebsite(item.id)
@@ -1079,7 +1069,7 @@ export default {
     handleAddApi(data, app) {
       data = this.mapApi(data)
 
-      if (!app.modules) this.$set(app, 'modules', [data])
+      if (!app.modules) app['modules'] = [data]
       else app.modules.unshift(data)
     },
 
@@ -1095,7 +1085,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      $emit(this, 'handle-connection')
     }, 200),
 
     searchByKeywordList(val = []) {
@@ -1131,12 +1121,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -1149,12 +1139,12 @@ export default {
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.autoLoadTaskById()
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -1173,23 +1163,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-all;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary',
             },
-            name
+            name,
           ),
-          strArr[1]
-        ]
+          strArr[1],
+        ],
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title)
+        title: this.$t('packages_business_dataFlow_' + title),
       }
     },
 
@@ -1198,18 +1188,17 @@ export default {
 
       if (replicateLag != undefined) {
         return calcTimeUnit(replicateLag, 2, {
-          autoHideMs: true
+          autoHideMs: true,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .wrap__item {
   border: 1px solid #e1e3e9;
-
   &:hover {
     //background-color: #f2f3f5;
   }
@@ -1218,22 +1207,21 @@ export default {
     background-color: #d0deff;
   }
 
-  ::v-deep {
-    .task-list-content {
-      .task-list-item:not(:last-child) {
-        border-bottom: 1px solid #ececec;
-      }
+  :deep(.task-list-content) {
+    .task-list-item:not(:last-child) {
+      border-bottom: 1px solid #ececec;
     }
-    .task-list-item-more {
-      .v-icon {
-        vertical-align: -0.125em;
-        transition: transform 0.3s;
-        transform: rotate(0deg);
-      }
+  }
 
-      &.is-reverse .v-icon {
-        transform: rotate(180deg);
-      }
+  :deep(.task-list-item-more) {
+    .v-icon {
+      vertical-align: -0.125em;
+      transition: transform 0.3s;
+      transform: rotate(0deg);
+    }
+
+    &.is-reverse .v-icon {
+      transform: rotate(180deg);
     }
   }
 }
@@ -1255,8 +1243,5 @@ export default {
     line-height: 1;
     vertical-align: baseline;
   }
-}
-.item__icon {
-  //border: 1px solid #4e5969;
 }
 </style>

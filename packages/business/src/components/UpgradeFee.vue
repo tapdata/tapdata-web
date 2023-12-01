@@ -1,10 +1,11 @@
 <template>
   <el-dialog
     :title="$t('dfs_subscribe_to_professional_plan')"
-    :visible.sync="visible"
+    :model-value="visible"
+    @input="$emit('update:visible', $event)"
     :append-to-body="true"
     width="880px"
-    custom-class="paid-upgrade-dialog"
+    class="paid-upgrade-dialog"
     :before-close="handleClose"
   >
     <div v-if="tooltip" class="py-2 px-4 bg-warning-light flex align-items-center">
@@ -14,8 +15,12 @@
     <ul class="flex paid-upgrade-ul mt-6 mx-4">
       <li class="paid-upgrade-left flex flex-column disabled">
         <div class="px-4 py-4 flex-1">
-          <div class="version mb-2">{{ $t('packages_component_src_upgradefee_jichuban') }}</div>
-          <div class="desc mt-6">{{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}</div>
+          <div class="version mb-2">
+            {{ $t('packages_component_src_upgradefee_jichuban') }}
+          </div>
+          <div class="desc mt-6">
+            {{ $t('packages_component_src_upgradefee_tigongmianfeishi') }}
+          </div>
           <div class="paid-upgrade-l-height flex align-items-center">
             <span class="free">{{ $t('packages_component_src_upgradefee_mianfei') }}</span>
           </div>
@@ -63,7 +68,9 @@
                     $t('packages_component_src_upgradefee_xianshiyouhui')
                   }}</span>
                 </div>
-                <div class="desc_professional mt-6">{{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}</div>
+                <div class="desc_professional mt-6">
+                  {{ $t('packages_component_src_upgradefee_tigongzhuanyehua') }}
+                </div>
                 <div
                   class="paid-upgrade-height flex align-items-center"
                   :class="[{ 'paid-upgrade-cn-height': this.$i18n.locale === 'zh-CN' }]"
@@ -103,11 +110,11 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 export default {
   name: 'UpgradeFeeDialog',
   components: { VIcon },
-
   props: ['visible', 'tooltip', 'goPage'],
   methods: {
     goPaidUpgrade() {
@@ -117,18 +124,19 @@ export default {
         return
       }
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       this.handleClose()
     },
     handleClose() {
-      this.$emit('update:visible', false)
-    }
-  }
+      $emit(this, 'update:visible', false)
+    },
+  },
+  emits: ['update:visible'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .paid-upgrade-dialog {
   .paid-upgrade-desc {
     font-weight: 400;
@@ -278,13 +286,11 @@ export default {
   transform: scale(1.28);
   transition-duration: 0.3s;
 }
-
 .copilot-pricing-card-container .copilot-pricing-card-bg-glow {
   opacity: 1;
   transform: scale(1);
   transition-duration: 0.5s;
 }
-
 .copilot-pricing-card-bg-glow {
   opacity: 0.4;
   transform: scale(1.2);
@@ -314,9 +320,8 @@ export default {
   background: -webkit-linear-gradient(135deg, #a3e4d7, #a77bf3);
   background: linear-gradient(135deg, #a3e4d7, #a77bf3);
 }
-::v-deep {
-  .el-dialog__body {
-    padding: 0 20px 30px 20px;
-  }
+
+:deep(.el-dialog__body) {
+  padding: 0 20px 30px 20px;
 }
 </style>

@@ -1,14 +1,5 @@
-<script>
-import bindsAttrs from '../mixins/bindsAttrs'
-
-const SIZE_MAP = {
-  xSmall: '12px',
-  small: '16px',
-  default: '24px',
-  medium: '28px',
-  large: '36px',
-  xLarge: '40px'
-}
+<script lang="jsx">
+import { defineComponent, Fragment, Text, ref } from 'vue'
 
 function convertToUnit(str, unit = 'px') {
   if (str == null || str === '') {
@@ -20,7 +11,19 @@ function convertToUnit(str, unit = 'px') {
   }
 }
 
-const VIcon = {
+function flattenFragments(nodes) {
+  return nodes
+    .map((node) => {
+      if (node.type === Fragment) {
+        return flattenFragments(node.children)
+      } else {
+        return node
+      }
+    })
+    .flat()
+}
+
+export default defineComponent({
   name: 'VIcon',
 
   props: {
@@ -34,141 +37,71 @@ const VIcon = {
     tag: {
       type: String,
       required: false,
-      default: 'svg'
-    }
+      default: 'svg',
+    },
   },
 
-  mixins: [bindsAttrs],
+  setup(props, { attrs, slots }) {
+    const slotIcon = ref()
 
-  computed: {
-    hasClickListener() {
-      return Boolean(this.listeners$.click || this.listeners$['!click'])
-    }
-  },
+    return () => {
+      const slotValue = slots.default?.()
+      const size = convertToUnit(props.size)
 
-  methods: {
-    getIcon() {
-      let iconName = ''
-      if (this.$slots.default) iconName = this.$slots.default[0].text.trim()
-
-      return `icon-${iconName}`
-    },
-
-    getSize() {
-      const sizes = {
-        xSmall: this.xSmall,
-        small: this.small,
-        medium: this.medium,
-        large: this.large,
-        xLarge: this.xLarge
+      if (slotValue) {
+        slotIcon.value = flattenFragments(slotValue)
+          .filter((node) => node.type === Text && node.children && typeof node.children === 'string')[0]
+          ?.children?.trim()
       }
 
-      const explicitSize = Object.keys(sizes).find(key => sizes[key])
-
-      return (explicitSize && SIZE_MAP[explicitSize]) || convertToUnit(this.size)
-    },
-
-    getDefaultData() {
-      return {
-        staticClass: 'iconfont',
-        class: {
-          'v-icon--disabled': this.disabled,
-          'v-icon--link': this.hasClickListener,
-          'v-icon--dense': this.dense
-        },
-        attrs: {
-          'aria-hidden': !this.hasClickListener,
-          disabled: this.hasClickListener && this.disabled,
-          type: this.hasClickListener ? 'button' : undefined,
-          ...this.attrs$
-        },
-        on: this.listeners$
-      }
-    },
-
-    getSvgWrapperData() {
-      const fontSize = this.getSize()
-      const sizeData = fontSize
+      const sizeData = size
         ? {
-            fontSize,
-            height: fontSize,
-            width: fontSize
+            fontSize: size,
+            height: size,
+            width: size,
           }
         : {}
 
-      return {
-        ...this.getDefaultData(),
-        staticClass: 'v-icon',
-        style: {
-          ...sizeData,
-          color: this.color,
-          'caret-color': this.color
-        }
-      }
-    },
-
-    renderSvgIcon(icon, h) {
-      const svgData = {
-        class: 'v-icon__svg',
-        attrs: {
-          xmlns: 'http://www.w3.org/2000/svg',
-          viewBox: '0 0 24 24',
-          role: 'img',
-          'aria-hidden': true
-        }
-      }
-
-      const size = this.getSize()
-      if (size) {
-        svgData.style = {
-          fontSize: size,
-          height: size,
-          width: size
-        }
-      }
-      return h('span', this.getSvgWrapperData(), [
-        h('svg', svgData, [
-          h('use', {
-            attrs: {
-              'xlink:href': `#${icon}`
-            }
-          })
-        ])
-      ])
+      return (
+        <span
+          {...{
+            class: [
+              'v-icon',
+              {
+                'v-icon--disabled': props.disabled,
+                'v-icon--link': !!attrs.onClick,
+                'v-icon--dense': props.dense,
+              },
+            ],
+            style: {
+              ...sizeData,
+              color: props.color,
+              'caret-color': props.color,
+            },
+          }}
+          disabled={!!attrs.onClick && props.disabled}
+          role={attrs.onClick ? 'button' : undefined}
+          aria-hidden={!attrs.onClick}
+        >
+          <svg
+            {...{
+              class: 'v-icon__svg',
+              style: { ...sizeData },
+              attrs: {
+                xmlns: 'http://www.w3.org/2000/svg',
+                viewBox: '0 0 24 24',
+                role: 'img',
+                'aria-hidden': true,
+              },
+            }}
+          >
+            <use xlink:href={`#icon-${slotIcon.value}`}></use>
+          </svg>
+        </span>
+      )
     }
   },
-
-  render(h) {
-    const icon = this.getIcon()
-    if (this.tag === 'svg') {
-      return this.renderSvgIcon(icon, h)
-    }
-    const data = this.getDefaultData()
-    data.class[icon] = true
-    const fontSize = this.getSize()
-    if (fontSize) data.style = { fontSize, color: this.color }
-    return h(this.tag, data)
-  }
-}
-
-export default {
-  name: 'VIcon',
-
-  functional: true,
-
-  render(h, { data, children }) {
-    let iconName = ''
-
-    // 支持 v-text 和 v-html
-    if (data.domProps) {
-      iconName = data.domProps.textContent || data.domProps.innerHTML || iconName
-      delete data.domProps.textContent
-      delete data.domProps.innerHTML
-    }
-
-    return h(VIcon, data, iconName ? [iconName] : children)
-  }
-}
+})
 </script>
 
 <style lang="scss">
@@ -186,7 +119,9 @@ svg.iconfont {
   vertical-align: -0.15em !important;
   fill: currentColor;
   overflow: hidden;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  transition:
+    0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+    visibility 0s;
 }
 .v-icon {
   position: relative;
@@ -200,7 +135,9 @@ svg.iconfont {
   letter-spacing: normal;
   line-height: 1;
   text-indent: 0;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  transition:
+    0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+    visibility 0s;
   vertical-align: middle;
   user-select: none;
 

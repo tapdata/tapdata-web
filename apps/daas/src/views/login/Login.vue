@@ -1,44 +1,46 @@
 <template>
   <LoginPage>
-    <section class="page-sign-in" slot="main">
-      <div class="sign-in-panel">
-        <div class="title">
-          {{ $t('app_signIn_signIn') }}
-          <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
-        </div>
-        <div class="error-tips align-center justify-content-start" v-show="errorMessage">
-          <i class="el-icon-warning-outline mr-2"></i>
-          {{ errorMessage }}
-        </div>
-        <form>
-          <input
-            class="input"
-            type="email"
-            autocomplete="username"
-            :placeholder="$t('app_signIn_email_placeholder')"
-            v-model="form.email"
-          />
-          <input
-            class="input"
-            type="password"
-            autocomplete="current-password"
-            :placeholder="$t('app_signIn_password_placeholder')"
-            v-model="form.password"
-            @keyup.13="submit"
-          />
-        </form>
-        <el-checkbox class="keep-sign-in" v-model="keepSignIn">
-          {{ $t('app_signIn_keepSignIn') }}
-        </el-checkbox>
-        <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
-          {{ $t('app_signIn_signIn') }}
-        </ElButton>
+    <template v-slot:main>
+      <section class="page-sign-in">
+        <div class="sign-in-panel">
+          <div class="title">
+            {{ $t('app_signIn_signIn') }}
+            <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app_signIn_Registration') }}</span>
+          </div>
+          <div class="error-tips align-center justify-content-start" v-show="errorMessage">
+            <el-icon class="mr-2"><el-icon-warning /></el-icon>
+            {{ errorMessage }}
+          </div>
+          <form>
+            <input
+              class="input"
+              type="email"
+              autocomplete="username"
+              :placeholder="$t('app_signIn_email_placeholder')"
+              v-model="form.email"
+            />
+            <input
+              class="input"
+              type="password"
+              autocomplete="current-password"
+              :placeholder="$t('app_signIn_password_placeholder')"
+              v-model="form.password"
+              @keyup.Enter="submit"
+            />
+          </form>
+          <el-checkbox class="keep-sign-in" v-model="keepSignIn">
+            {{ $t('app_signIn_keepSignIn') }}
+          </el-checkbox>
+          <ElButton class="btn-sign-in" type="primary" :loading="loading" @click="submit">
+            {{ $t('app_signIn_signIn') }}
+          </ElButton>
 
-        <div class="remember">
-          <ElButton type="text" @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
+          <div class="remember">
+            <ElButton text @click="forgetPassword">{{ $t('app_signIn_forgetPassword') }}</ElButton>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </template>
   </LoginPage>
 </template>
 
@@ -52,17 +54,19 @@ import { usersApi, timeStampApi } from '@tap/api'
 import { configUser } from '@/utils/util'
 
 export default {
+  components: {
+    LoginPage,
+  },
   name: 'SignIn',
-  components: { LoginPage },
   data() {
     return {
       loading: false,
       form: {
         email: '',
-        password: ''
+        password: '',
       },
       keepSignIn: true,
-      errorMessage: ''
+      errorMessage: '',
     }
   },
   created() {
@@ -114,7 +118,7 @@ export default {
           }, 50)
         } else {
           this.$router.push({
-            name: 'dashboard'
+            name: 'dashboard',
           })
         }
       } catch (e) {
@@ -125,15 +129,15 @@ export default {
     // 注册账号
     registry() {
       this.$router.push({
-        name: 'registry'
+        name: 'registry',
       })
     },
 
     // 忘记密码
     forgetPassword() {
       this.$router.push({ name: 'passwordReset' })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -141,8 +145,7 @@ export default {
 .page-sign-in {
   display: flex;
   align-items: center;
-  justify-content: center;
-  // background: map-get($bgColor, normal);
+  justify-content: center; /*// background: map-get($bgColor, normal);*/
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -213,11 +216,11 @@ export default {
       width: 100%;
       margin-top: 50px;
     }
-    ::v-deep {
-      .el-checkbox__label {
-        color: map-get($fontColor, light);
-      }
+
+    :deep(.el-checkbox__label) {
+      color: map-get($fontColor, light);
     }
+
     .remember {
       padding-top: 16px;
       font-size: 12px;

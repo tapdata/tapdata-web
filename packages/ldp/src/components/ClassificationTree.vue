@@ -19,13 +19,14 @@
       @node-drop="handleDrop"
       @node-expand="handleNodeExpand"
     />
-    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header>
+        <span style="font-size: 14px">{{ dialogConfig.title }}</span>
+      </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="mini"
-            v-model="dialogConfig.label"
+            v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -35,7 +36,7 @@
           :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
         >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+          <ElSelect v-model:value="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
             <el-option
               :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
               value="resource"
@@ -46,24 +47,27 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model="dialogConfig.desc"
+            v-model:value="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('public_button_confirm') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
 
-<script>
+<script lang="jsx">
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { VIcon, VirtualTree } from '@tap/component'
@@ -71,27 +75,24 @@ import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, me
 import { makeDragNodeImage } from '@tap/business'
 export default {
   name: 'ClassificationTree',
-
   props: {
     types: {
       type: Array,
       default: () => {
         return []
-      }
+      },
     },
     dragState: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     showViewDetails: Boolean,
-    renderIcon: Function
+    renderIcon: Function,
   },
-
   components: { VirtualTree },
-
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
 
       searchFalg: false,
       isExpand: true,
@@ -102,7 +103,7 @@ export default {
       loadingTree: false,
       props: {
         key: 'id',
-        label: 'name'
+        label: 'name',
       },
       isActive: true,
 
@@ -114,7 +115,7 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
 
       nodeName: '',
@@ -123,8 +124,8 @@ export default {
       iconMap: {
         folder: 'folder-o',
         table: 'table',
-        defaultApi: 'apiServer_navbar'
-      }
+        defaultApi: 'apiServer_navbar',
+      },
     }
   },
   mounted() {
@@ -138,7 +139,7 @@ export default {
     },
     filterText(val) {
       this.$refs.tree.filter(val)
-    }
+    },
   },
   methods: {
     renderContent(h, { node, data, store }) {
@@ -152,25 +153,25 @@ export default {
         <div
           class="custom-tree-node"
           on={{
-            dblclick: ev => {
+            dblclick: (ev) => {
               console.log('dblclick', ev) // eslint-disable-line
             },
-            dragenter: ev => {
+            dragenter: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragEnter(ev, data, node)
             },
-            dragover: ev => {
+            dragover: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragOver(ev, data, node)
             },
-            dragleave: ev => {
+            dragleave: (ev) => {
               ev.stopPropagation()
               this.handleTreeDragLeave(ev, data, node)
             },
-            drop: ev => {
+            drop: (ev) => {
               ev.stopPropagation()
               this.handleTreeDrop(ev, data, node)
-            }
+            },
           }}
         >
           <div class="tree-item-icon flex align-center mr-1">{icon}</div>
@@ -182,7 +183,7 @@ export default {
               <VIcon
                 size="14"
                 class="color-primary mr-2"
-                onClick={ev => {
+                onClick={(ev) => {
                   ev.stopPropagation()
                   data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
                 }}
@@ -196,7 +197,7 @@ export default {
                 <VIcon
                   size="14"
                   class="color-primary mr-2"
-                  onClick={ev => {
+                  onClick={(ev) => {
                     ev.stopPropagation()
                     data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
                   }}
@@ -209,10 +210,10 @@ export default {
                   class="inline-flex"
                   placement="bottom"
                   trigger="click"
-                  onCommand={ev => this.handleRowCommand(ev, node)}
+                  onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
                   <VIcon
-                    onClick={ev => {
+                    onClick={(ev) => {
                       ev.stopPropagation()
                     }}
                     size="16"
@@ -234,7 +235,7 @@ export default {
                 <VIcon
                   size="18"
                   onClick={() => {
-                    this.$emit('view-details', data)
+                    $emit(this, 'view-details', data)
                   }}
                 >
                   view-details
@@ -268,39 +269,39 @@ export default {
 
     emitCheckedNodes(data, node) {
       if (!data) return
-      this.$emit('nodeChecked', data, node)
+      $emit(this, 'nodeChecked', data, node)
     },
 
     getData(cb) {
       let where = {}
       where.item_type = {
-        $nin: ['database', 'dataflow', 'api', 'default']
+        $nin: ['database', 'dataflow', 'api', 'default'],
       }
       let filter = {
         where,
         fields: {
           /*id: 1,
-          item_type: 1,
-          last_updated: 1,
-          value: 1,
-          objCount: 1,
-          parent_id: 1,
-          desc: 1,
-          readOnly: 1,
-          user_id: 1*/
-        }
+        item_type: 1,
+        last_updated: 1,
+        value: 1,
+        objCount: 1,
+        parent_id: 1,
+        desc: 1,
+        readOnly: 1,
+        user_id: 1*/
+        },
       }
       this.loadingTree = true
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           const ORDER = {
             source: 1,
             fdm: 2,
             mdm: 3,
-            target: 4
+            target: 4,
           }
           let items = data?.items || []
           let treeData = this.formatData(items)
@@ -324,7 +325,7 @@ export default {
         })
     },
     getDataAll(cb) {
-      metadataDefinitionsApi.get().then(data => {
+      metadataDefinitionsApi.get().then((data) => {
         cb && cb(data?.items || [])
       })
     },
@@ -333,8 +334,8 @@ export default {
       if (items && items.length) {
         const map = {}
         const nodes = []
-        const setChildren = nodes => {
-          return nodes.map(it => {
+        const setChildren = (nodes) => {
+          return nodes.map((it) => {
             let children = map[it.id]
             if (children) {
               it.children = setChildren(children)
@@ -343,7 +344,7 @@ export default {
           })
         }
 
-        items.forEach(it => {
+        items.forEach((it) => {
           it.LDP_TYPE = 'folder'
           it.isLeaf = false
           it.children = []
@@ -357,7 +358,7 @@ export default {
           } else {
             const itemType = it.item_type[0]
             const TYPE2NAME = {
-              target: 'Targets & Services'
+              target: 'Targets & Services',
             }
             it.name = TYPE2NAME[itemType] || it.value
             nodes.push(it)
@@ -401,12 +402,12 @@ export default {
             ? node
               ? this.$t('packages_component_classification_addChildernNode')
               : this.$t('packages_component_classification_addNode')
-            : this.$t('public_button_edit')
+            : this.$t('public_button_edit'),
       }
     },
     hideDialog() {
       this.dialogConfig = {
-        visible: false
+        visible: false,
       }
     },
     async dialogSubmit() {
@@ -428,7 +429,7 @@ export default {
           return this.$message.error(this.$t('packages_component_classification_nameExist'))
         }
         let params = {
-          name: value
+          name: value,
         }
         if (config.type === 'edit') {
           method = 'patch'
@@ -450,7 +451,7 @@ export default {
         let params = {
           item_type: itemType,
           desc: config.desc,
-          value
+          value,
         }
         if (config.type === 'edit') {
           method = 'changeById'
@@ -469,7 +470,7 @@ export default {
             })
             self.hideDialog()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.message)
           })
       }
@@ -480,8 +481,8 @@ export default {
         confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -489,8 +490,8 @@ export default {
           let params = {
             id: id,
             headers: {
-              gid: id
-            }
+              gid: id,
+            },
           }
           userGroupsApi.delete(params).then(() => {
             let self = this
@@ -507,14 +508,14 @@ export default {
       })
     },
     checkName(value) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         if (this.types[0] === 'user') {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.name === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.name === value))
           })
         } else {
-          this.getDataAll(items => {
-            resolve(items.find(it => it.name === value))
+          this.getDataAll((items) => {
+            resolve(items.find((it) => it.name === value))
           })
         }
       })
@@ -532,7 +533,7 @@ export default {
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name
+        draggingNode.data.name,
       )
       let { dataTransfer } = ev
       dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
@@ -550,14 +551,14 @@ export default {
         metadataDefinitionsApi
           .changeById({
             id: draggingNode.data.id,
-            parent_id: dropNode.data.id || ''
+            parent_id: dropNode.data.id || '',
           })
           .then(() => {
             this.$message.success(i18n.t('public_message_operation_success'))
             draggingNode.data.parent_id = dropNode.data.id
             // this.getData()
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err.message)
           })
       } else {
@@ -617,13 +618,13 @@ export default {
     bindTag(tag, objects) {
       discoveryApi
         .postTags({
-          tagBindingParams: objects.map(t => {
+          tagBindingParams: objects.map((t) => {
             return {
               id: t.id,
-              objCategory: t.category
+              objCategory: t.category,
             }
           }),
-          tagIds: [tag.id]
+          tagIds: [tag.id],
         })
         .then(() => {
           this.getData()
@@ -634,29 +635,33 @@ export default {
     async moveTag(from, to, objects) {
       if (from === to) return
 
-      const tagBindingParams = objects.map(t => {
+      const tagBindingParams = objects.map((t) => {
         return {
           id: t.id,
-          objCategory: t.category
+          objCategory: t.category,
         }
       })
       /*await discoveryApi.patchTags({
-        tagBindingParams,
-        tagIds: [from]
-      })*/
+      tagBindingParams,
+      tagIds: [from]
+    })*/
       await discoveryApi.postTags({
         tagBindingParams,
         tagIds: [to],
-        oldTagIds: [from]
+        oldTagIds: [from],
       })
-      objects.forEach(item => (item.parent_id = to))
+      objects.forEach((item) => (item.parent_id = to))
       this.$message.success(i18n.t('public_message_operation_success'))
     },
 
     loadNode(node, resolve) {
       console.log('loadNode', node, node.level) // eslint-disable-line
       if (node.level === 0) {
-        return resolve([{ name: i18n.t('packages_business_components_classificationtree_suoyoumulu') }])
+        return resolve([
+          {
+            name: i18n.t('packages_business_components_classificationtree_suoyoumulu'),
+          },
+        ])
       }
       setTimeout(() => {
         resolve()
@@ -689,7 +694,7 @@ export default {
 
       console.log('handleNodeExpand', objects, data, node) // eslint-disable-line
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
-      objects.forEach(item => {
+      objects.forEach((item) => {
         if (childrenMap[item.id]) return
         item.parent_id = data.id
         this.$refs.tree.append(item, node)
@@ -701,17 +706,17 @@ export default {
         page: 1,
         pageSize: 10000,
         tagId: node.id,
-        range: 'current'
+        range: 'current',
       }
-      return discoveryApi.discoveryList(where).then(res => {
-        return res.items.map(item =>
+      return discoveryApi.discoveryList(where).then((res) => {
+        return res.items.map((item) =>
           Object.assign(item, {
             isLeaf: true,
             isObject: true,
             connectionId: item.sourceConId,
             LDP_TYPE: 'table',
-            SWIM_TYPE: node.item_type?.[0]
-          })
+            SWIM_TYPE: node.item_type?.[0],
+          }),
         )
       })
     },
@@ -721,15 +726,15 @@ export default {
         limit: 999,
         where: {
           connection_type: {
-            in: ['source_and_target', type]
-          }
-        }
+            in: ['source_and_target', type],
+          },
+        },
       }
       const res = await connectionsApi.get({
-        filter: JSON.stringify(filter)
+        filter: JSON.stringify(filter),
       })
 
-      return res.items.map(t => {
+      return res.items.map((t) => {
         const { status, loadCount = 0, tableCount = 0 } = t
         const disabled = status !== 'ready'
         return {
@@ -740,14 +745,16 @@ export default {
           LDP_TYPE: 'connection',
           readOnly: true,
           isLeaf: false,
-          isObject: false
+          isObject: false,
         }
       })
     },
 
     async getTableList(id) {
-      const res = await metadataInstancesApi.getTablesValue({ connectionId: id })
-      return res.map(t => {
+      const res = await metadataInstancesApi.getTablesValue({
+        connectionId: id,
+      })
+      return res.map((t) => {
         return {
           id: t.tableId,
           name: t.tableName,
@@ -755,15 +762,16 @@ export default {
           isLeaf: true,
           isObject: true,
           LDP_TYPE: 'table',
-          SWIM_TYPE: 'source'
+          SWIM_TYPE: 'source',
         }
       })
     },
 
     handleCurrentChange(data, node) {
       console.log('handleCurrentChange', data, node) // eslint-disable-line
-    }
-  }
+    },
+  },
+  emits: ['view-details', 'nodeChecked'],
 }
 </script>
 
@@ -900,5 +908,3 @@ $nodeH: 32px;
   }
 }
 </style>
-
-<style scoped lang="scss"></style>

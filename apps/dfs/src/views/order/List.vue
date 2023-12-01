@@ -36,7 +36,7 @@
                 {{ item.label }}
               </li>
               <li class="px-4 py-1">
-                <ElButton plain class="btn-refresh" @click="remoteMethod">
+                <ElButton text class="btn-refresh" @click="remoteMethod">
                   <VIcon>refresh</VIcon>
                 </ElButton>
               </li>
@@ -125,7 +125,7 @@
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
-                  <ElButton v-if="['active'].includes(item.status)" type="text" @click="goOpenChange(item)">{{
+                  <ElButton v-if="['active'].includes(item.status)" text @click="goOpenChange(item)">{{
                     $t('dfs_change_record')
                   }}</ElButton>
                   <ElButton
@@ -137,7 +137,7 @@
                       )
                     "
                     type="primary"
-                    plain
+                    text
                     @click="openRenew(item)"
                     >{{ $t('public_button_renew') }}</ElButton
                   >
@@ -149,15 +149,14 @@
                       !(!row.amount && row.agentType === 'Cloud')
                     "
                     type="primary"
-                    plain
+                    text
                     @click="openChangeSubscribe(item)"
                     >{{ $t('dfs_order_change') }}</ElButton
                   >
                   <ElButton
                     v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
                     type="danger"
-                    plain
-                    size="mini"
+                    text
                     @click="openUnsubscribe(item, row.productType)"
                     >{{ $t('public_button_unsubscribe') }}</ElButton
                   >
@@ -175,13 +174,13 @@
           <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
           <!--            <el-button type="primary" @click="goLicense">{{-->
           <!--              $t('dfs_aliyun_market_checklicnese_jihuoshouquanma')-->
-          <!--            }}</el-button>-->
+          <!--            }}-->
         </div>
         <VTable
           :columns="codeColumns"
           :remoteMethod="codeRemoteMethod"
           :page-options="{
-            layout: 'total, ->, prev, pager, next, sizes, jumper'
+            layout: 'total, ->, prev, pager, next, sizes, jumper',
           }"
           ref="tableCode"
           class="mt-4"
@@ -196,13 +195,13 @@
             <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
           </template>
           <template #operation="{ row }">
-            <ElButton type="text" @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
+            <ElButton text @click="handleRenewal(row)">{{ $t('public_button_renewal') }}</ElButton>
           </template>
         </VTable>
       </section>
 
       <!--转账{{$t('public_button_pay')}}-->
-      <transferDialog :visible.sync="showTransferDialogVisible" :price="pricePay"></transferDialog>
+      <transferDialog v-model:visible="showTransferDialogVisible" :price="pricePay"></transferDialog>
       <!--退订-->
       <Unsubscribe ref="UnsubscribeDetailDialog" @closeVisible="remoteMethod"></Unsubscribe>
       <!--续订-->
@@ -230,7 +229,16 @@ import Unsubscribe from '../../components/Unsubscribe.vue'
 import Renew from '../../components/Renew.vue'
 
 export default {
-  components: { VEmpty, Unsubscribe, StatusTag, FilterBar, VTable, transferDialog, Renew, Change },
+  components: {
+    VEmpty,
+    Unsubscribe,
+    StatusTag,
+    FilterBar,
+    VTable,
+    transferDialog,
+    Renew,
+    Change,
+  },
   inject: ['buried'],
   data() {
     return {
@@ -248,7 +256,7 @@ export default {
       searchParams: {
         agentDeploy: '',
         productType: '',
-        status: ''
+        status: '',
       },
       search: '',
       filterItems: [],
@@ -259,87 +267,87 @@ export default {
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),
           prop: 'licenseCode',
-          width: 320
+          width: 320,
         },
         {
           label: i18n.t('dfs_user_center_jihuoshijian2'),
-          prop: 'activateTimeLabel'
+          prop: 'activateTimeLabel',
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType'
+          slotName: 'agentType',
         },
         {
           label: i18n.t('dfs_user_center_guoqishijian2'),
-          prop: 'expiredTimeLabel'
+          prop: 'expiredTimeLabel',
         },
         {
           label: i18n.t('dfs_instance_selectlist_bangdingshilizhuang'),
           prop: 'bindAgent',
-          slotName: 'bindAgent'
+          slotName: 'bindAgent',
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
           slotName: 'operation',
-          width: 100
-        }
+          width: 100,
+        },
       ],
       columns: [
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
-          prop: 'productType'
+          prop: 'productType',
         },
         {
           label: i18n.t('dfs_instance_instance_guige'),
           prop: 'specLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_instance_dingyuefangshi'),
           slotName: 'subscriptionMethodLabel',
-          width: 180
+          width: 180,
         },
         {
           label: i18n.t('dfs_instance_createagent_cunchukongjian'),
-          prop: 'storageSize'
+          prop: 'storageSize',
         },
         {
           label: i18n.t('dfs_user_center_jine'),
           prop: 'price',
-          slotName: 'price'
+          slotName: 'price',
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
           prop: 'agentType',
-          slotName: 'agentType'
+          slotName: 'agentType',
         },
         {
           label: i18n.t('task_monitor_status'),
-          slotName: 'statusLabel'
+          slotName: 'statusLabel',
         },
         {
           label: i18n.t('public_operation'),
           prop: 'extendArray',
-          slotName: 'operation'
-        }
+          slotName: 'operation',
+        },
       ],
       //订阅列表
       subscribeList: [],
       page: {
         current: 1,
-        size: 100
+        size: 100,
       },
       loadingRenewSubmit: false,
       currentPrice: 0,
-      isEn: i18n.locale === 'en'
+      isEn: i18n.locale === 'en',
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    }
+    },
   },
   created() {
     this.getFilterItems()
@@ -358,7 +366,7 @@ export default {
         this.page.current = 1
         this.remoteMethod()
       }
-    }
+    },
   },
   methods: {
     getFilterItems() {
@@ -370,42 +378,42 @@ export default {
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: ''
+              value: '',
             },
             {
               label: this.$t('packages_business_shared_const_weizhifu'),
-              value: 'incomplete'
+              value: 'incomplete',
             },
             {
               label: this.$t('packages_business_shared_const_yizhifu'),
-              value: 'active'
+              value: 'active',
             },
             {
               label: this.$t('packages_business_shared_const_zhifushibai'),
-              value: 'payFail'
+              value: 'payFail',
             },
             {
               label: this.$t('packages_business_shared_const_yituikuan'),
-              value: 'refund'
+              value: 'refund',
             },
             {
               label: this.$t('packages_business_payment_timeout'),
-              value: 'past_due'
+              value: 'past_due',
             },
             {
               label: this.$t('packages_business_shared_const_tuikuanzhong'),
-              value: 'refunding'
+              value: 'refunding',
             },
             {
               label: this.$t('packages_business_shared_const_shixiao'),
-              value: 'incomplete_expired'
+              value: 'incomplete_expired',
             },
             {
               label: this.$t('packages_business_shared_const_yiquxiao'),
-              value: 'canceled'
-            }
+              value: 'canceled',
+            },
           ],
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: i18n.t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
@@ -414,17 +422,17 @@ export default {
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: ''
+              value: '',
             },
             {
               label: this.$t('dfs_instance_utils_quantuoguan'),
-              value: 'Cloud'
+              value: 'Cloud',
             },
             {
               label: this.$t('dfs_instance_utils_bantuoguan'),
-              value: 'Local'
-            }
-          ]
+              value: 'Local',
+            },
+          ],
         },
         {
           label: i18n.t('dfs_order_list_dingyueleixing'),
@@ -433,40 +441,40 @@ export default {
           items: [
             {
               label: this.$t('public_select_option_all'),
-              value: ''
+              value: '',
             },
             {
               label: 'Engine',
-              value: 'Engine'
+              value: 'Engine',
             },
             {
               label: 'MongoDB',
-              value: 'MongoDB'
-            }
-          ]
-        }
+              value: 'MongoDB',
+            },
+          ],
+        },
       ]
       this.filterArray = [
         {
           label: this.$t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: this.$t('packages_business_shared_const_yizhifu'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: this.$t('packages_business_shared_const_weizhifu'),
-          value: 'incomplete'
+          value: 'incomplete',
         },
         {
           label: this.$t('packages_business_shared_const_zhifushibai'),
-          value: 'payFail'
+          value: 'payFail',
         },
         {
           label: this.$t('packages_business_shared_const_shixiao'),
-          value: 'incomplete_expired'
-        }
+          value: 'incomplete_expired',
+        },
       ]
     },
     //我的订阅
@@ -475,8 +483,8 @@ export default {
       let { agentType, status, productType } = this.searchParams
       let where = {
         status: {
-          $ne: 'invalid' //过滤 invild
-        }
+          $ne: 'invalid', //过滤 invild
+        },
       }
       agentType && (where['subscribeItems.agentType'] = agentType)
       productType && (where['subscribeItems.productType'] = productType)
@@ -485,21 +493,21 @@ export default {
         limit: size,
         skip: size * (current - 1),
         sort: ['createAt desc'],
-        where: where
+        where: where,
       }
       this.loadingSubscribe = true
 
-      return this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(data => {
+      return this.$axios.get(`api/tcm/subscribe?filter=${encodeURIComponent(JSON.stringify(filter))}`).then((data) => {
         this.loadingSubscribe = false
         let items = data.items || []
         this.page.total = data.total
-        this.subscribeList = items.map(item => {
+        this.subscribeList = items.map((item) => {
           if (item.totalAmount !== 0) {
             item.isFree = item.subscribeType === 'FreeTier'
             item.subscriptionMethodLabel =
               getPaymentMethod(
                 { periodUnit: item.periodUnit, type: item.subscribeType },
-                item.paymentMethod || 'Stripe'
+                item.paymentMethod || 'Stripe',
               ) || '-'
           } else {
             item.isFree = true
@@ -508,7 +516,7 @@ export default {
 
           if (item.subscribeItems?.length) {
             item.productType = item.subscribeItems[0].productType
-            item.subscribeItems = item.subscribeItems.map(it => {
+            item.subscribeItems = item.subscribeItems.map((it) => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
               it.subscriptionMethodLabel =
@@ -532,7 +540,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -565,8 +573,8 @@ export default {
       this.$router.push({
         name: 'changeList',
         query: {
-          id: item.id
-        }
+          id: item.id,
+        },
       })
     },
     //续订
@@ -579,7 +587,7 @@ export default {
         CURRENCY_SYMBOL_MAP[currency] +
         (price / 100).toLocaleString('zh', {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
+          maximumFractionDigits: 2,
         })
       )
     },
@@ -589,8 +597,8 @@ export default {
       this.$router.push({
         name: 'pay',
         params: {
-          id: row.id
-        }
+          id: row.id,
+        },
       })
       /*if (row.paymentType === 'offline') {
         this.showTransferDialogVisible = true
@@ -611,7 +619,7 @@ export default {
     },
     handleCreateAgent() {
       this.$router.push({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       this.buried('newAgentStripeDialog')
     },
@@ -619,17 +627,17 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.agentId
-        }
+          keyword: row.agentId,
+        },
       })
     },
     codeRemoteMethod() {
-      return this.$axios.get('api/tcm/aliyun/market/license/list').then(data => {
+      return this.$axios.get('api/tcm/aliyun/market/license/list').then((data) => {
         const items = data.items || []
         return {
           total: data.total,
           data:
-            items.map(t => {
+            items.map((t) => {
               let activateTime = new Date(t.activateTime.replace('Z', '+08:00')).toLocaleString()
               let expiredTime = new Date(t.expiredTime.replace('Z', '+08:00')).toLocaleString()
               t.activateTimeLabel = t.activateTime ? dayjs(activateTime).format('YYYY-MM-DD HH:mm:ss') : '-'
@@ -638,13 +646,13 @@ export default {
                 ? i18n.t('dfs_instance_selectlist_yibangding') + t.agentId
                 : i18n.t('user_Center_weiBangDing')
               return t
-            }) || []
+            }) || [],
         }
       })
     },
     goLicense() {
       this.$router.push({
-        name: 'aliyunMarketLicense'
+        name: 'aliyunMarketLicense',
       })
     },
     goReceipt() {
@@ -658,7 +666,7 @@ export default {
     },
     //变更记录
     getChangeList() {
-      this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then(data => {})
+      this.$axios.get(`api/tcm/subscribe/{subscribeId}/change`).then((data) => {})
     },
     changeActivedFilter(item) {
       this.activedFilter = item.value
@@ -669,11 +677,11 @@ export default {
       this.$router.push({
         name: 'Instance',
         query: {
-          keyword: row.resourceId
-        }
+          keyword: row.resourceId,
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -727,41 +735,46 @@ export default {
     display: none;
   }
 }
-::v-deep {
-  .el-dropdown-menu__item.dropdown-item--disabled {
+
+:deep(.el-dropdown-menu__item.dropdown-item--disabled) {
+  color: map-get($color, disable);
+  cursor: default;
+  &:hover {
+    background: unset;
     color: map-get($color, disable);
-    cursor: default;
-    &:hover {
-      background: unset;
-      color: map-get($color, disable);
-    }
   }
-  .el-tabs__content {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
-  .header-tabs .el-tabs__header {
+}
+
+:deep(.el-tabs__content) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+:deep(.header-tabs) {
+  .el-tabs__header {
     margin-bottom: 0;
   }
-  .li-operation {
-    .el-button {
-      padding: 2px 12px;
-      min-width: unset;
-      height: 24px;
-      font-size: 12px;
-      &.el-button--text {
-        padding-left: 0;
-        padding-right: 0;
-      }
+}
+
+:deep(.li-operation) {
+  .el-button {
+    padding: 2px 12px;
+    min-width: unset;
+    height: 24px;
+    font-size: 12px;
+    &.el-button--text {
+      padding-left: 0;
+      padding-right: 0;
     }
   }
-  .list-li {
-    .status-tag {
-      padding: 2px 8px;
-      font-size: 12px;
-      line-height: 24px;
-    }
+}
+
+:deep(.list-li) {
+  .status-tag {
+    padding: 2px 8px;
+    font-size: 12px;
+    line-height: 24px;
   }
 }
 

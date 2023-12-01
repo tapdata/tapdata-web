@@ -7,7 +7,7 @@
     <ElTable :data="tableData" class="table-page-table" height="100%">
       <ElTableColumn :label="$t('metadata_details_version_versionNum')" prop="version"> </ElTableColumn>
       <ElTableColumn :label="$t('public_update_time')" prop="version_time">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           {{ scope.row.versionTimeFmt }}
         </template>
       </ElTableColumn>
@@ -15,20 +15,15 @@
       <ElTableColumn :label="$t('metadata_details_version_modifyDescription')" prop="version_description">
       </ElTableColumn>
       <ElTableColumn :label="$t('public_operation')" width="80">
-        <template slot-scope="scope">
-          <ElButton v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
+        <template v-slot="scope">
+          <ElButton v-readonlybtn="'data_catalog_edition'" text @click="toDetails(scope.row)">
             {{ $t('metadata_details_version_compared') }}
           </ElButton>
         </template>
       </ElTableColumn>
     </ElTable>
     <!-- 数据校验表格 end -->
-    <ElDialog
-      custom-class="history-dialog"
-      :title="histories.name"
-      :close-on-click-modal="false"
-      :visible.sync="showVersionDialog"
-    >
+    <ElDialog class="history-dialog" :title="histories.name" :close-on-click-modal="false" v-model="showVersionDialog">
       <HistoryVersion
         :comparedData="comparedData"
         :currentVersion="currentVersion"
@@ -44,14 +39,14 @@ import dayjs from 'dayjs'
 
 export default {
   components: {
-    HistoryVersion
+    HistoryVersion,
   },
 
   props: {
     histories: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -60,7 +55,7 @@ export default {
       showVersionDialog: false,
       tableData: [],
       comparedData: null,
-      currentVersion: ''
+      currentVersion: '',
     }
   },
   computed: {
@@ -74,7 +69,7 @@ export default {
       } else {
         return this.$route.meta.types || []
       }
-    }
+    },
   },
   created() {
     this.getData()
@@ -85,13 +80,13 @@ export default {
       this.tableData = []
       let histories = self.histories?.histories || []
       if (histories?.length)
-        histories.forEach(item => {
+        histories.forEach((item) => {
           this.tableData.unshift({
             id: this.histories.id,
             version: item.version,
             version_user_id: item.version_user_id,
             version_user_name: item.version_user_name,
-            versionTimeFmt: dayjs(item.version_time).format('YYYY-MM-DD HH:mm:ss')
+            versionTimeFmt: dayjs(item.version_time).format('YYYY-MM-DD HH:mm:ss'),
           })
           this.currentVersion = this.histories.version
         })
@@ -104,10 +99,11 @@ export default {
     toDetails(item) {
       this.comparedData = item
       this.showVersionDialog = true
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .version-list-wrap {
   height: 100%;
@@ -122,6 +118,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .version-list-wrap {
   .table-page-table {

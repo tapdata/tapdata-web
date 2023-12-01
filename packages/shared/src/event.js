@@ -7,7 +7,7 @@ const EVENTS_ONCE_SYMBOL = Symbol('EVENTS_ONCE_SYMBOL')
 const EVENTS_BATCH_SYMBOL = Symbol('EVENTS_BATCH_SYMBOL')
 const DRIVER_INSTANCES_SYMBOL = Symbol('DRIVER_INSTANCES_SYMBOL')
 
-const isOnlyMode = mode => mode === 'onlyOne' || mode === 'onlyChild' || mode === 'onlyParent'
+const isOnlyMode = (mode) => mode === 'onlyOne' || mode === 'onlyChild' || mode === 'onlyParent'
 /**
  * 事件驱动器基类
  */
@@ -116,7 +116,7 @@ export class EventDriver {
     if (!this.engine[DRIVER_INSTANCES_SYMBOL].includes(this)) {
       this.engine[DRIVER_INSTANCES_SYMBOL].push(this)
     }
-    this.engine[DRIVER_INSTANCES_SYMBOL].forEach(driver => {
+    this.engine[DRIVER_INSTANCES_SYMBOL].forEach((driver) => {
       const target = driver.eventTarget(type)
       target[EVENTS_BATCH_SYMBOL] = target[EVENTS_BATCH_SYMBOL] || {}
       if (!target[EVENTS_BATCH_SYMBOL][type]) {
@@ -128,7 +128,7 @@ export class EventDriver {
 
   batchRemoveEventListener(type, listener, options) {
     this.engine[DRIVER_INSTANCES_SYMBOL] = this.engine[DRIVER_INSTANCES_SYMBOL] || []
-    this.engine[DRIVER_INSTANCES_SYMBOL].forEach(driver => {
+    this.engine[DRIVER_INSTANCES_SYMBOL].forEach((driver) => {
       const target = driver.eventTarget(type)
       target[EVENTS_BATCH_SYMBOL] = target[EVENTS_BATCH_SYMBOL] || {}
       target.removeEventListener(type, listener, options)
@@ -145,7 +145,7 @@ export class Event extends Subscribable {
   constructor(props) {
     super()
     if (isArr(props?.effects)) {
-      props.effects.forEach(plugin => {
+      props.effects.forEach((plugin) => {
         plugin(this)
       })
     }
@@ -155,7 +155,7 @@ export class Event extends Subscribable {
   }
 
   subscribeTo(type, subscriber) {
-    return this.subscribe(event => {
+    return this.subscribe((event) => {
       if (type && event instanceof type) {
         return subscriber(event)
       }
@@ -163,7 +163,7 @@ export class Event extends Subscribable {
   }
 
   subscribeWith(type, subscriber) {
-    return this.subscribe(event => {
+    return this.subscribe((event) => {
       if (isArr(type)) {
         if (type.includes(event?.type)) {
           return subscriber(event)
@@ -183,7 +183,7 @@ export class Event extends Subscribable {
     }
     if (container[ATTACHED_SYMBOL]) return
 
-    container[ATTACHED_SYMBOL] = this.#drivers.map(EventDriver => {
+    container[ATTACHED_SYMBOL] = this.#drivers.map((EventDriver) => {
       const driver = new EventDriver(this, context)
       driver.contentWindow = contentWindow
       driver.container = container
@@ -197,7 +197,7 @@ export class Event extends Subscribable {
 
   detachEvents(container) {
     if (!container) {
-      this.#containers.forEach(container => {
+      this.#containers.forEach((container) => {
         this.detachEvents(container)
       })
       return
@@ -206,7 +206,7 @@ export class Event extends Subscribable {
       return this.detachEvents(container.document)
     }
     if (!container[ATTACHED_SYMBOL]) return
-    container[ATTACHED_SYMBOL].forEach(driver => {
+    container[ATTACHED_SYMBOL].forEach((driver) => {
       driver.detach(container)
     })
 
@@ -218,7 +218,7 @@ export class Event extends Subscribable {
       }
       return drivers.concat(driver)
     }, [])
-    this.#containers = this.#containers.filter(item => item !== container)
+    this.#containers = this.#containers.filter((item) => item !== container)
     delete container[ATTACHED_SYMBOL]
     delete container[EVENTS_SYMBOL]
     delete container[EVENTS_ONCE_SYMBOL]

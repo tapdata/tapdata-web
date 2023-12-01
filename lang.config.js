@@ -22,27 +22,27 @@ module.exports = {
   extract: {
     default: {
       input: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
-      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js'
+      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
     },
     // daas目录的路径，如果不是平级，也可以写绝对路径
     daas: {
       input: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
-      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js'
+      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
     },
     // dfs目录的路径，如果不是平级，也可以写绝对路径
     dfs: {
       input: '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js',
-      output: '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js'
+      output: '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js',
     },
     packages: {
       input: '\\src\\locale\\lang\\zh-CN.js',
-      output: '\\src\\locale\\lang\\zh-CN.js'
-    }
+      output: '\\src\\locale\\lang\\zh-CN.js',
+    },
   },
   check: {
     default: {
       input: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
-      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js'
+      output: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
     },
     daas: {
       input: '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
@@ -50,8 +50,8 @@ module.exports = {
       replace: {
         en: '.\\apps\\daas\\src\\i18n\\langs\\en.js',
         'zh-TW': '.\\apps\\daas\\src\\i18n\\langs\\zh-TW.js',
-        'zh-CN': '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js'
-      }
+        'zh-CN': '.\\apps\\daas\\src\\i18n\\langs\\zh-CN.js',
+      },
     },
     dfs: {
       input: '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js',
@@ -59,24 +59,24 @@ module.exports = {
       replace: {
         en: '.\\apps\\dfs\\src\\i18n\\langs\\en.js',
         'zh-TW': '.\\apps\\dfs\\src\\i18n\\langs\\zh-TW.js',
-        'zh-CN': '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js'
-      }
+        'zh-CN': '.\\apps\\dfs\\src\\i18n\\langs\\zh-CN.js',
+      },
     },
     packages: {
       input: '\\src\\locale\\lang\\zh-CN.js',
-      output: '\\src\\locale\\lang\\zh-CN.js'
+      output: '\\src\\locale\\lang\\zh-CN.js',
     },
     ignoreDir: '.idea,i18n,mock,node_modules,public,locales,locale',
     ignoreFile: 'vue.config.js,zh-CN.js,zh-TW.js,en.js',
-    ignoreKeyPrefix: 'packages_'
+    ignoreKeyPrefix: 'packages_',
   },
   replacePublic: {
     input: '.\\packages\\i18n\\src\\locale\\lang\\',
     packages: '\\src\\locale\\lang\\',
-    default: '\\src\\i18n\\langs\\'
+    default: '\\src\\i18n\\langs\\',
   },
   public: {
-    input: '.\\packages\\i18n\\src\\locale\\lang\\zh-CN.js'
+    input: '.\\packages\\i18n\\src\\locale\\lang\\zh-CN.js',
   },
   configFile: 'lang.config.js',
   // 国际化的模板格式 $t('key', {val1, val2})
@@ -85,5 +85,5 @@ module.exports = {
   i18nKeyInJs: 'i18n.t',
   i18nKeyInVueTemplatePackages: '$t',
   i18nKeyInJsPackages: 'i18n.t',
-  inModules: ['component', 'dag', 'field-mapping', 'form'] // 需要处理的公共模块
+  inModules: ['component', 'dag', 'field-mapping', 'form'], // 需要处理的公共模块
 }

@@ -1,4 +1,7 @@
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 /**
  * 表单规则设置
  * @template {
@@ -26,8 +29,8 @@ export default {
     value: Object,
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
@@ -41,7 +44,7 @@ export default {
         labelWidth: '160px',
         size: 'mini',
         inlineMessage: false,
-        disabled: false
+        disabled: false,
       },
       defaultFormItemConfig: {
         show: true,
@@ -52,35 +55,35 @@ export default {
         required: false,
         clearable: true,
         allowSpace: true,
-        on: {}
+        on: {},
       },
       form: null,
       itemsConfig: this.config.items.concat(),
-      oldValue: {}
+      oldValue: {},
     }
   },
   watch: {
     'config.items'(configs) {
       this.itemsConfig = configs.concat()
-    }
+    },
   },
-  render(h) {
+  render() {
     let formConfig = Object.assign(this.defaultFormConfig, this.config.form, {
-      model: this.value
+      model: this.value,
     })
     let formItems = this.itemsConfig || []
 
-    let el = h(
+    let el = Vue.h(
       'ElForm',
-      {
+      plantRenderPara({
         class: 'e-form-builder-container',
         ref: 'form',
 
-        props: Object.assign(formConfig)
-      },
+        props: Object.assign(formConfig),
+      }),
       formItems.map((item, index) => {
-        return this.getFormItem(h, item, formConfig, index)
-      })
+        return this.getFormItem(Vue.h, item, formConfig, index)
+      }),
     )
     if (this.show) {
       return el
@@ -110,10 +113,10 @@ export default {
          *						value: 依赖的值
          *			triggerConfig: 依赖项满足条件后需要更新的配置
          */
-        dependOn.forEach(depend => {
+        dependOn.forEach((depend) => {
           let triggerOptions = depend.triggerOptions
           let triggerConfig = depend.triggerConfig
-          if (triggerOptions.every(opt => opt.value === this.value[opt.field])) {
+          if (triggerOptions.every((opt) => opt.value === this.value[opt.field])) {
             config = Object.assign(config, depend.triggerConfig)
             //需要判断本次渲染是否修改的当前值，如果是，则不走dependOn逻辑，
             //否则会导致本次值永远无法修改的情况，无限被triggerConfig.value的值覆盖
@@ -128,7 +131,7 @@ export default {
         this.oldValue[config.field] = this.value[config.field]
       }
       //改变必填项的默认提示
-      if (config.required && !rules.find(r => r.required)) {
+      if (config.required && !rules.find((r) => r.required)) {
         rules.push({
           required: true,
           validator(rule, value, callback) {
@@ -137,7 +140,7 @@ export default {
             } else {
               callback()
             }
-          }
+          },
         })
       }
 
@@ -150,17 +153,17 @@ export default {
             prop: config.field,
             label: config.label,
             inlineMessage: !!config.inlineMeesage,
-            rules: rules.map(r => {
+            rules: rules.map((r) => {
               let rule = Object.assign({}, r)
               if (rule.validator) {
                 rule.validator = rule.validator.bind(this)
               }
               return rule
-            })
+            }),
           },
-          key: config.field || index
+          key: config.field || index,
         },
-        [this.getLabel(h, config, formConfig), this.getBody(h, config, formConfig)]
+        [this.getLabel(h, config, formConfig), this.getBody(h, config, formConfig)],
       )
       return config.show ? item : ''
     },
@@ -171,7 +174,7 @@ export default {
             'span',
             {
               class: 'e-form-builder-item-label',
-              slot: 'label'
+              slot: 'label',
             },
             [
               formConfig.labelColon ? config.label + '：' : config.label,
@@ -183,30 +186,30 @@ export default {
                     props: {
                       trigger: 'hover',
                       placement: 'top',
-                      popperClass: 'e-popover'
-                    }
+                      popperClass: 'e-popover',
+                    },
                   },
                   [
                     h('div', {
                       domProps: {
-                        innerHTML: config.tips
-                      }
+                        innerHTML: config.tips,
+                      },
                     }),
                     h(
                       'span',
                       {
                         class: 'color-primary',
-                        slot: 'reference'
+                        slot: 'reference',
                       },
                       [
                         h('i', {
-                          class: 'el-icon-info e-form-builder-item-tips'
-                        })
-                      ]
-                    )
-                  ]
-                )
-            ]
+                          class: 'el-icon-info e-form-builder-item-tips',
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
+            ],
           )
     },
     getBody(h, config, formConfig) {
@@ -218,14 +221,14 @@ export default {
         config.fileName = fileName
       }
       if (config.type === 'slot') {
-        el = this.$slots[config.slot]
+        el = this.$slots[config.slot] && this.$slots[config.slot]()
       } else if (formConfig.mode === 'text' || config.mode === 'text') {
         el = self.value[config.field]
       } else {
         el = h(TYPE_MAPPING[config.type], {
           props: {
             value: self.value[config.field],
-            config: config
+            config: config,
           },
           on: {
             input(val) {
@@ -243,29 +246,29 @@ export default {
               self.value[config.field] = val
               let influences = config.influences
               if (influences && influences.length) {
-                influences.forEach(it => {
+                influences.forEach((it) => {
                   if (it.byValue === val) {
                     self.value[it.field] = it.value
                   }
                 })
               }
               config.on.input && config.on.input(val)
-              self.$emit('value-change', {
+              $emit(self, 'value-change', {
                 field: config.field,
-                value: val
+                value: val,
               })
             },
             change(...args) {
               config.on.change && config.on.change(...args)
-            }
-          }
+            },
+          },
         })
       }
 
       if (appendSlot) {
         return h('div', { class: { 'fb-item-group': true } }, [
           el,
-          h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot])
+          h('div', { class: { 'fb-form-item-append-slot': true } }, [appendSlot]),
         ])
       } else {
         return [el]
@@ -276,14 +279,15 @@ export default {
       for (let i = 0; i < configs.length; i++) {
         const c = configs[i]
         if (c.field === field) {
-          this.$set(this.itemsConfig, i, Object.assign({}, c, config))
+          this.itemsConfig[i] = Object.assign({}, c, config)
         }
       }
     },
     initConfig() {
       this.itemsConfig = this.config.items.concat()
-    }
-  }
+    },
+  },
+  emits: ['value-change', 'update:value', , 'update:value'],
 }
 </script>
 

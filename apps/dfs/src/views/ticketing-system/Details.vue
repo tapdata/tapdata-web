@@ -1,9 +1,9 @@
 <template>
   <Drawer
+    v-bind="$attrs"
     v-loading="loading"
     class="shared-cache-details"
-    :visible.sync="visible"
-    v-bind="$attrs"
+    v-model:visible="visible"
     @visible="handleVisible"
   >
     <div v-if="details.id" class="shared-cache-details--header flex pb-3 flex-column">
@@ -47,7 +47,9 @@
         </li>
         <li class="border-top">
           <span class="label font-color-sslight inline-block mb-2">{{ $t('dfs_ticketing_system_details_wenti') }}</span>
-          <div class="font-color-dark fw-normal lh-base">{{ details.description }}</div>
+          <div class="font-color-dark fw-normal lh-base">
+            {{ details.description }}
+          </div>
         </li>
         <li>
           <span class="label color-primary inline-block mb-2">
@@ -62,7 +64,7 @@
               :type="index === 0 ? 'primary' : ''"
               :timestamp="formatter(item.commentedTime)"
             >
-              <span class="font-color-dark fw-normal lh-base" v-html="item.content"> {{ item.content }}</span>
+              <span class="font-color-dark fw-normal lh-base" v-html="item.content"></span>
             </el-timeline-item>
           </el-timeline>
         </li>
@@ -89,16 +91,16 @@ export default {
         id: '',
         name: '',
         cacheKeysArr: [],
-        fields: []
+        fields: [],
       },
-      info: []
+      info: [],
     }
   },
 
   methods: {
     getData(id) {
       this.visible = true
-      this.$axios.get(`api/ticket/${id}`).then(data => {
+      this.$axios.get(`api/ticket/${id}`).then((data) => {
         this.details = data
         //格式化时间
         this.details.createdTime = this.details.createdTime
@@ -111,8 +113,8 @@ export default {
     },
     handleVisible() {
       this.visible = false
-    }
-  }
+    },
+  },
 }
 </script>
 

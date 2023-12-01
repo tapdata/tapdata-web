@@ -1,12 +1,12 @@
 <template>
   <div class="database">
     <div class="inline-flex align-items-center mt-2 mb-4">
-      <ElCheckbox v-model="settings.showBeta" class="m-0"></ElCheckbox>
+      <ElCheckbox v-model:value="settings.showBeta" class="m-0"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho2') }}</span>
-      <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
+      <ElCheckbox v-model:value="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
     </div>
-    <ElTabs v-model="active" @tab-click="handleChangeTab">
+    <ElTabs v-model:value="active" @tab-click="handleChangeTab">
       <ElTabPane v-for="item in comTabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
@@ -19,7 +19,7 @@
             { active: item.pdkId === selected.pdkId },
             activeTabData.display === 'card'
               ? 'api-item inline-flex flex-column align-items-center p-6 mr-13 mb-12'
-              : 'database-item'
+              : 'database-item',
           ]"
           @click="handleSelect(item)"
         >
@@ -35,7 +35,9 @@
               <ElImage v-else :src="getConnectionTypeDialogImg(item)" />
             </div>
             <ElTooltip class="mt-2" effect="dark" :content="item.name" placement="bottom">
-              <div class="ellipsis text-center font-color-normal">{{ item.name }}</div>
+              <div class="ellipsis text-center font-color-normal">
+                {{ item.name }}
+              </div>
             </ElTooltip>
           </template>
         </li>
@@ -46,6 +48,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import { databaseTypesApi } from '@tap/api'
 import { EmptyItem } from '@tap/component'
@@ -56,12 +59,12 @@ export default {
   components: { EmptyItem },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     selectorType: {
       type: String,
-      default: 'source'
-    }
+      default: 'source',
+    },
   },
   data() {
     return {
@@ -73,13 +76,13 @@ export default {
       timer: null,
       settings: {
         showBeta: true,
-        showAlpha: true
-      }
+        showAlpha: true,
+      },
     }
   },
   computed: {
     activeTabData() {
-      return this.comTabs.find(t => this.active === t.value) || {}
+      return this.comTabs.find((t) => this.active === t.value) || {}
     },
 
     comTabs() {
@@ -90,11 +93,11 @@ export default {
             value: 'Recommended',
             filter: (item = {}) => {
               return ['BigQuery', 'SelectDB', 'Tablestore', 'MongoDB', 'Doris', 'Clickhouse'].includes(item.type)
-            }
+            },
           },
           {
             label: 'All Targets & Services',
-            value: 'All'
+            value: 'All',
           },
           {
             label: 'Cloud Platforms',
@@ -106,81 +109,81 @@ export default {
             map: (item = {}) => {
               const map = {
                 MongoDB: {
-                  desc: 'Fully managed MongoDB as a Service offered by MongoDB'
+                  desc: 'Fully managed MongoDB as a Service offered by MongoDB',
                 },
                 Tablestore: {
-                  desc: 'Fully managed, reliable, and cost effective NoSQL database service'
+                  desc: 'Fully managed, reliable, and cost effective NoSQL database service',
                 },
                 SelectDB: {
-                  desc: 'Cloud based analytical paltform powered by Apache Doris'
+                  desc: 'Cloud based analytical paltform powered by Apache Doris',
                 },
                 BigQuery: {
-                  desc: 'Cloud data warehouse with petabytes scale & fast performance.'
-                }
+                  desc: 'Cloud data warehouse with petabytes scale & fast performance.',
+                },
               }
               return map[item.type]
-            }
+            },
           },
           {
             label: 'Databases Connectors',
-            value: 'Database'
+            value: 'Database',
           },
           /*{
-            label: 'Application Services',
-            value: 'apiServices',
-            display: 'card',
-            items: [
-              {
-                icon: 'deploy',
-                name: 'API Publish',
-                desc: 'Public Data APIs for application use.'
-              }
-            ]
-          },*/
+          label: 'Application Services',
+          value: 'apiServices',
+          display: 'card',
+          items: [
+            {
+              icon: 'deploy',
+              name: 'API Publish',
+              desc: 'Public Data APIs for application use.'
+            }
+          ]
+        },*/
           {
             label: 'My Custom Target',
-            value: 'Custom'
-          }
+            value: 'Custom',
+          },
         ]
       }
       return [
         {
           label: 'All Connectors',
-          value: 'All'
+          value: 'All',
         },
         {
           label: 'Databases Connectors',
-          value: 'Database'
+          value: 'Database',
         },
         {
           label: 'SaaS Connectors',
-          value: 'SaaS'
+          value: 'SaaS',
         },
         {
           label: 'File Connectors',
-          value: 'File'
+          value: 'File',
         },
         {
           label: 'My Connectors',
-          value: 'Custom'
-        }
+          value: 'Custom',
+        },
       ]
     },
 
     filterDatabase() {
       const { showAlpha, showBeta } = this.settings
-      if (!showAlpha && !showBeta) return this.database.filter(t => t.qcType !== 'Alpha' && t.qcType !== 'Beta')
+      if (!showAlpha && !showBeta) return this.database.filter((t) => t.qcType !== 'Alpha' && t.qcType !== 'Beta')
 
       if (!showAlpha) {
-        return this.database.filter(t => t.qcType !== 'Alpha')
+        return this.database.filter((t) => t.qcType !== 'Alpha')
       }
 
       if (!showBeta) {
-        return this.database.filter(t => t.qcType !== 'Beta')
+        return this.database.filter((t) => t.qcType !== 'Beta')
       }
 
       return this.database
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -190,7 +193,7 @@ export default {
       } else {
         this.database = []
       }
-    }
+    },
   },
   created() {
     this.active = this.comTabs[0].value
@@ -211,18 +214,20 @@ export default {
       const params = {
         where: {
           tag,
-          authentication
-        }
+          authentication,
+        },
       }
       if (!noLoading) this.loading = true
-      const res = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
-      const data = res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
+      const res = await databaseTypesApi.getDatabases({
+        filter: JSON.stringify(params),
+      })
+      const data = res?.filter((t) => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
       if (this.activeTabData.items) {
         this.database = this.activeTabData.items
       } else if (this.activeTabData.filter) {
         this.database = data
-          ?.filter(t => this.activeTabData.filter(t))
-          .map(t => {
+          ?.filter((t) => this.activeTabData.filter(t))
+          .map((t) => {
             return Object.assign(t, this.activeTabData.map?.(t))
           })
       } else {
@@ -237,15 +242,16 @@ export default {
 
     handleSelect(item) {
       this.selected = Object.assign(item, {
-        activeTab: this.active
+        activeTab: this.active,
       })
-      this.$emit('select', this.selected)
+      $emit(this, 'select', this.selected)
     },
 
     handleChangeTab() {
       this.getData(false)
-    }
-  }
+    },
+  },
+  emits: ['select'],
 }
 </script>
 
@@ -283,15 +289,15 @@ export default {
 .my-database__desc {
   background: #f2f2f2;
 }
-::v-deep {
-  .el-tabs__nav-wrap.is-top {
-    padding: 0;
-  }
-  .el-tabs__nav-scroll {
-    display: flex;
-    justify-content: center;
-  }
+:deep(.el-tabs__nav-wrap.is-top) {
+  padding: 0;
 }
+
+:deep(.el-tabs__nav-scroll) {
+  display: flex;
+  justify-content: center;
+}
+
 .api-item {
   width: 180px;
   height: 200px;

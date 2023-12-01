@@ -8,7 +8,7 @@
     @row-click="rowClickHandler"
   >
     <ElTableColumn :label="$t('packages_business_verification_sourceTable')">
-      <template slot-scope="scope">
+      <template v-slot="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
         <div class="font-color-slight">
           {{ scope.row.source ? scope.row.source.connectionName : '' }}
@@ -16,7 +16,7 @@
       </template>
     </ElTableColumn>
     <ElTableColumn :label="$t('packages_business_verification_targetTable')">
-      <template slot-scope="scope">
+      <template v-slot="scope">
         <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
         <div class="font-color-slight">
           {{ scope.row.target ? scope.row.target.connectionName : 0 }}
@@ -24,7 +24,7 @@
       </template>
     </ElTableColumn>
     <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('packages_business_verification_sourceRows')">
-      <template slot-scope="scope">
+      <template v-slot="scope">
         <span>{{ scope.row.source_total || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.target_total || 0 }}-->
@@ -32,7 +32,7 @@
       </template>
     </ElTableColumn>
     <ElTableColumn v-else :label="$t('packages_business_verification_sourceRows')">
-      <template slot-scope="scope">
+      <template v-slot="scope">
         <span>{{ scope.row.source_total || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.firstTargetTotal || 0 }}-->
@@ -40,31 +40,29 @@
       </template>
     </ElTableColumn>
     <ElTableColumn prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
-      <template slot-scope="scope">
+      <template v-slot="scope">
         <div>
-          <span>{{
-            `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%`
-          }}</span>
+          <span>{{ `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%` }}</span>
         </div>
       </template>
     </ElTableColumn>
     <ElTableColumn prop="status" :label="$t('packages_business_verification_result_title')">
-      <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
+      <template v-if="['waiting', 'done'].includes(scope.row.status)" v-slot="scope">
         <div class="inspect-result-status">
           <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
             <span class="error">
-              <i class="verify-icon el-icon-error color-danger"></i>
+              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
           <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
             <span class="error">
-              <i class="verify-icon el-icon-error color-danger"></i>
+              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
               <span>{{ scope.row.contentResultText }}</span>
             </span>
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
-            <i class="verify-icon el-icon-success color-success"></i>
+            <el-icon class="verify-icon color-success"><SuccessFilled /></el-icon>
             <span>{{ $t('packages_business_verification_consistent') }}</span>
           </span>
         </div>
@@ -72,13 +70,9 @@
     </ElTableColumn>
   </el-table>
 </template>
-<style lang="scss" scoped>
-.verify-icon {
-  margin: 0 4px;
-  font-size: 14;
-}
-</style>
+
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 export default {
   props: {
     type: String,
@@ -86,17 +80,17 @@ export default {
       type: Array,
       default: () => {
         return []
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      current: 0
+      current: 0,
     }
   },
   computed: {
     list() {
-      let list = this.data.map(item => {
+      let list = this.data.map((item) => {
         if (item.result === 'failed') {
           let countResultText = ''
           let contentResultText = ''
@@ -128,7 +122,7 @@ export default {
           return 0
         }
       })
-    }
+    },
   },
   methods: {
     setCurrentRow(row) {
@@ -137,8 +131,16 @@ export default {
     },
     rowClickHandler(row) {
       this.current = row.taskId
-      this.$emit('row-click', row)
-    }
-  }
+      $emit(this, 'row-click', row)
+    },
+  },
+  emits: ['row-click'],
 }
 </script>
+
+<style lang="scss" scoped>
+.verify-icon {
+  margin: 0 4px;
+  font-size: 14;
+}
+</style>

@@ -18,15 +18,15 @@ for (const url in service) {
   })
 }
 app.ws(config.publicPath + '/tm/ws/agent', (ws, req) => {
-  ws.on('message', msg => {
+  ws.on('message', (msg) => {
     console.log('ws:', msg)
     ws.send(
       JSON.stringify({
         type: 'aaa',
         data: {
-          a: 111
-        }
-      })
+          a: 111,
+        },
+      }),
     )
   })
   console.log('socket', req.testing)

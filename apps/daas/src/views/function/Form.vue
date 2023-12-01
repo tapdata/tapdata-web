@@ -1,14 +1,7 @@
 <template>
   <section v-loading="loading" class="custom-form-wrapper">
     <div class="section-wrap-box overflow-auto">
-      <ElForm
-        v-if="!$route.params.id || details.id"
-        ref="form"
-        label-position="left"
-        label-width="160px"
-        size="small"
-        :model="form"
-      >
+      <ElForm v-if="!$route.params.id || details.id" ref="form" label-position="left" label-width="160px" :model="form">
         <template v-if="$route.params.id && details.type === 'jar'">
           <ElFormItem :label="$t('function_jar_file_label') + ':'">
             <span class="details-value">{{ details.fileName }}</span>
@@ -25,7 +18,10 @@
           <ElFormItem
             prop="function_name"
             :label="$t('function_name_label') + ':'"
-            :rules="{ required: true, message: $t('function_name_placeholder') }"
+            :rules="{
+              required: true,
+              message: $t('function_name_placeholder'),
+            }"
           >
             <ElInput
               v-model="form.function_name"
@@ -41,7 +37,7 @@
           :rules="scriptRules"
         >
           <div class="script-editor">
-            <JsEditor v-model="form.script" ref="editor" height="200"></JsEditor>
+            <JsEditor v-model:value="form.script" ref="editor" height="200"></JsEditor>
           </div>
         </ElFormItem>
         <ElFormItem prop="describe" :label="$t('public_description') + ':'">
@@ -74,12 +70,12 @@
       </ElForm>
     </div>
     <div class="footer p-6">
-      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
+      <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+      <ElButton class="btn" type="primary" @click="save">{{ $t('public_button_save') }}</ElButton>
     </div>
 
     <!-- </div>
-    </div> -->
+        </div> -->
   </section>
 </template>
 
@@ -88,7 +84,7 @@ import { JsEditor } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 import { javascriptFunctionsApi } from '@tap/api'
 
-const getScriptObj = script => {
+const getScriptObj = (script) => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
   let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=}\s*$)/g)
@@ -99,7 +95,7 @@ const getScriptObj = script => {
     name,
     body,
     params,
-    bodyLength: matchArr2?.length || 0
+    bodyLength: matchArr2?.length || 0,
   }
 }
 export default {
@@ -115,7 +111,7 @@ export default {
         format: '',
         parameters_desc: '',
         return_value: '',
-        script: 'function functionName (record) {\n\treturn record\n}'
+        script: 'function functionName (record) {\n\treturn record\n}',
       },
       scriptRules: {
         validator: (rule, value, callback) => {
@@ -126,15 +122,15 @@ export default {
             callback(new Error(this.$t('function_script_missing_function_name')))
           } else if (!obj.body.trim()) {
             callback(new Error(this.$t('function_script_missing_function_body')))
-          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type === 'error')) {
+          } else if (self.$refs.editor.editor.session.$annotations.some((item) => item.type === 'error')) {
             callback(new Error(this.$t('function_script_format_error')))
           } else if (obj.bodyLength.length > 1) {
             callback(new Error(this.$t('function_script_only_one')))
           } else {
             callback()
           }
-        }
-      }
+        },
+      },
     }
   },
   created() {
@@ -150,11 +146,11 @@ export default {
         .findOne({
           filter: JSON.stringify({
             where: {
-              id
-            }
-          })
+              id,
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let details = data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
@@ -173,11 +169,11 @@ export default {
     save() {
       this.$refs?.editor?.format()
       this.$nextTick(() => {
-        this.$refs.form.validate(valid => {
+        this.$refs.form.validate((valid) => {
           if (valid) {
             let format = this.form.format
             let params = {
-              format
+              format,
             }
             let method = 'post'
             let id = this.$route.params.id
@@ -187,7 +183,7 @@ export default {
                 function_body: `{${obj.body}}`,
                 function_name: obj.name,
                 parameters: obj.params,
-                format
+                format,
               }
             }
             if (id) {
@@ -201,8 +197,8 @@ export default {
             javascriptFunctionsApi[method](
               Object.assign({}, this.form, params, {
                 last_updated: new Date(),
-                user_id: Cookie.get('user_id')
-              })
+                user_id: Cookie.get('user_id'),
+              }),
             )
               .then(() => {
                 this.$message.success(this.$t('public_message_save_ok'))
@@ -214,12 +210,12 @@ export default {
           }
         })
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .details-value {
   color: map-get($fontColor, dark);
   font-size: 12px;
@@ -233,14 +229,13 @@ export default {
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
 
-  ::v-deep {
-    .el-form-item__label {
-      font-size: 12px;
-    }
-    .el-form-item--mini.el-form-item,
-    .el-form-item--small.el-form-item {
-      margin-bottom: 30px;
-    }
+  :deep(.el-form-item__label) {
+    font-size: 12px;
+  }
+
+  :deep(.el-form-item--mini.el-form-item),
+  :deep(.el-form-item--small.el-form-item) {
+    margin-bottom: 30px;
   }
   .script-editor {
     width: 940px;

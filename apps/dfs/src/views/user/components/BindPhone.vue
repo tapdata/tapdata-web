@@ -7,18 +7,20 @@
     :close-on-click-modal="!!$props.closeOnClickModal"
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
-    :visible.sync="dialogVisible"
-    custom-class="bind-phone-dialog"
+    v-model="dialogVisible"
+    class="bind-phone-dialog"
   >
-    <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
+    <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.prevent>
       <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
         <ElInput v-model="phoneForm.current" :placeholder="$t('components_BindPhone_qingShuRuShouJi')" maxlength="50">
-          <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
-            <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
-              <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-            >
-          </el-select>
+          <template v-slot:prepend>
+            <el-select v-model="phoneForm.countryCode" style="width: 110px" filterable>
+              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+                <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+              >
+            </el-select>
+          </template>
         </ElInput>
       </ElFormItem>
       <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
@@ -28,25 +30,28 @@
           :disabled="!phoneForm.current"
           :style="{ width: '180px', textAlign: 'center' }"
           class="ml-6"
-          type="text"
+          text
         ></VerificationCode>
       </ElFormItem>
     </ElForm>
 
-    <span slot="footer" class="dialog-footer">
-      <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</VButton>
-      <VButton
-        type="primary"
-        :disabled="!phoneForm.current || !phoneForm.oldCode"
-        auto-loading
-        @click="bindPhoneConfirm(arguments[0])"
-        >{{ $t('public_button_confirm') }}</VButton
-      >
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</VButton>
+        <VButton
+          type="primary"
+          :disabled="!phoneForm.current || !phoneForm.oldCode"
+          auto-loading
+          @click="bindPhoneConfirm(arguments[0])"
+          >{{ $t('public_button_confirm') }}</VButton
+        >
+      </span>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import VerificationCode from './VerificationCode'
@@ -57,17 +62,17 @@ export default {
   components: { VerificationCode },
   props: {
     visible: {
-      type: Boolean
+      type: Boolean,
     },
     showLabel: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   watch: {
     visible(v) {
       this.dialogVisible = !!v
-    }
+    },
   },
   data() {
     return {
@@ -78,8 +83,8 @@ export default {
         oldCode: '',
         newPhone: '',
         newCode: '',
-        countryCode: '86'
-      }
+        countryCode: '86',
+      },
     }
   },
   mounted() {
@@ -94,42 +99,41 @@ export default {
         .post('api/tcm/user/phone', {
           phone: phoneForm.current,
           code: phoneForm.oldCode,
-          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86'
+          countryCode: phoneForm.countryCode ? phoneForm.countryCode.replace('-', '') : '86',
         })
         .then(() => {
           this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
-          this.$emit('success', phoneForm.current)
+          $emit(this, 'success', phoneForm.current)
           this.dialogVisible = false
         })
-        .catch(e => {
-          this.$emit('error', phoneForm.current, e)
+        .catch((e) => {
+          $emit(this, 'error', phoneForm.current, e)
         })
         .finally(() => {
           resetLoading?.()
         })
     },
     getCountryCode() {
-      this.$axios.get('config/countryCode.json').then(res => {
+      this.$axios.get('config/countryCode.json').then((res) => {
         let countryCode = res.data
         this.countryCode = countryCode?.countryCode
       })
-    }
-  }
+    },
+  },
+  emits: ['success', 'error'],
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
-  .el-form-item__label {
-    text-align: left;
-  }
-  .el-form-item__content {
-    display: flex;
-  }
-  .inline-input {
-    .inline-input-body {
-      justify-content: space-between;
-    }
+:deep(.el-form-item__label) {
+  text-align: left;
+}
+:deep(.el-form-item__content) {
+  display: flex;
+}
+:deep(.inline-input) {
+  .inline-input-body {
+    justify-content: space-between;
   }
 }
 </style>

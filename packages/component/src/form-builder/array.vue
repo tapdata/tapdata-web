@@ -9,8 +9,8 @@ export default {
     value: [String, Array],
     config: {
       require: true,
-      type: Object
-    }
+      type: Object,
+    },
   },
   render(h) {
     let self = this
@@ -23,68 +23,68 @@ export default {
     return h(
       'div',
       {
-        class: 'fb-array'
+        class: 'fb-array',
       },
       [
         ...items.map((it, index) => {
           return h(
             'div',
             {
-              style: 'display:flex;'
+              style: 'display:flex;',
             },
             [
               h(TYPE_MAPPING[config.type], {
                 class: 'fb-array-item',
                 props: {
                   value: it,
-                  config
+                  config,
                 },
                 on: Object.assign({}, this.on, {
-                  input: val => {
+                  input: (val) => {
                     this.$set(items, index, val)
                     let value = items
                     this.on.input(value)
-                  }
-                })
+                  },
+                }),
               }),
               h('ElButton', {
                 style: {
                   height: '28px',
                   padding: '7px',
-                  marginLeft: '10px'
+                  marginLeft: '10px',
                 },
                 props: {
                   icon: 'el-icon-close',
-                  size: 'mini'
+                  size: 'mini',
                 },
                 on: {
                   click: () => {
                     items.splice(index, 1)
                     self.on.input(items)
-                  }
-                }
-              })
-            ]
+                  },
+                },
+              }),
+            ],
           )
         }),
         h('ElButton', {
           style: {
             height: '28px',
-            padding: '7px'
+            padding: '7px',
           },
           props: {
-            icon: 'el-icon-plus'
+            icon: 'el-icon-plus',
           },
           on: {
             click: () => {
               items.push('')
               self.on.input(items)
-            }
-          }
-        })
-      ]
+            },
+          },
+        }),
+      ],
     )
-  }
+  },
 }
 </script>
 

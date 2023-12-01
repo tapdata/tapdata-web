@@ -1,9 +1,9 @@
-<template functional>
+<template>
   <div
     class="v-empty-wrap"
     :class="{
-      'empty-small': props.small,
-      'empty-large': props.large
+      'empty-small': small,
+      'empty-large': large,
     }"
   >
     <div class="empty-image">
@@ -11,7 +11,7 @@
         <ElImage :src="require('./empty.svg')"></ElImage>
       </slot>
     </div>
-    <p class="empty-desc">{{ props.description }}</p>
+    <p class="empty-desc">{{ description }}</p>
   </div>
 </template>
 
@@ -27,9 +27,9 @@ export default {
       type: String,
       default: () => {
         return i18n.t('public_data_no_data')
-      }
-    }
-  }
+      },
+    },
+  },
 }
 </script>
 
@@ -40,7 +40,6 @@ export default {
   line-height: 1.5715;
   text-align: center;
   color: rgba(0, 0, 0, 0.25);
-
   &.empty-small {
     margin: 8px 0;
     font-size: 12px;

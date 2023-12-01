@@ -1,11 +1,13 @@
 <template>
-  <ElPopover placement="bottom" popper-class="notive-popove" trigger="hover" @show="activeTab = 'system'">
-    <div class="btn" slot="reference" @click="toCenter()">
-      <ElBadge class="item-badge flex align-center gap-1 rounded-4" :value="unRead" :max="99" :hidden="!unRead">
-        <VIcon size="16">lingdang</VIcon>
-        <span>{{ $t('header_notify') }}</span>
-      </ElBadge>
-    </div>
+  <ElPopover placement="bottom" popper-class="notive-popove" width="380" trigger="hover" @show="activeTab = 'system'">
+    <template #reference>
+      <div class="btn" @click="toCenter()">
+        <ElBadge class="item-badge flex align-center gap-1 rounded-4" :value="unRead" :max="99" :hidden="!unRead">
+          <VIcon size="16">lingdang</VIcon>
+          <span>{{ $t('header_notify') }}</span>
+        </ElBadge>
+      </div>
+    </template>
     <div class="notification-popover-wrap">
       <div class="tab-item-container">
         <div class="notice-header">
@@ -44,6 +46,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { debounce, uniqBy } from 'lodash'
 
 import { TYPEMAP } from './tyepMap'
@@ -64,7 +67,7 @@ export default {
       colorMap: {
         ERROR: 'red',
         WARN: 'orangered',
-        INFO: '#409EFF'
+        INFO: '#409EFF',
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -73,11 +76,11 @@ export default {
         dataFlow: this.$t('notify_task'),
         agent: this.$t('notify_agent'),
         inspect: this.$t('notify_inspect'),
-        JobDDL: this.$t('notify_jobDDL')
+        JobDDL: this.$t('notify_jobDDL'),
       },
       userOperations: [],
       visible: false,
-      form: {}
+      form: {},
     }
   },
   created() {
@@ -86,13 +89,13 @@ export default {
   methods: {
     init() {
       let msg = {
-        type: 'notification'
+        type: 'notification',
       }
       this.getUnreadData()
       if (this.$ws) {
         this.$ws.on(
           'notification',
-          debounce(res => {
+          debounce((res) => {
             let data = res?.data
             if (data?.msg !== 'alarm') {
               this.getUnreadData(false)
@@ -102,7 +105,7 @@ export default {
               data.levelType = ALARM_LEVEL_MAP[data.level]?.type
               this.listData = uniqBy([data, ...this.listData])
             }
-          }, 800)
+          }, 800),
         )
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -115,9 +118,9 @@ export default {
     // 获取未读的消息数量
     getUnReadNum() {
       let where = {
-        read: false
+        read: false,
       }
-      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then((res) => {
         this.unRead = res
       })
     },
@@ -126,13 +129,13 @@ export default {
         msgType: 'ALARM',
         page: 1,
         size: 20,
-        read: false
+        read: false,
       }
-      notificationApi.list(where).then(data => {
+      notificationApi.list(where).then((data) => {
         let list = data?.items || []
         this.unRead = data?.total
         loadData &&
-          (this.listData = list.map(item => {
+          (this.listData = list.map((item) => {
             item.levelLabel = ALARM_LEVEL_MAP[item.level].text
             item.levelType = ALARM_LEVEL_MAP[item.level].type
             return item
@@ -143,7 +146,7 @@ export default {
     handleRead(id) {
       notificationApi.patch({ read: true, id: id }).then(() => {
         this.getUnreadData()
-        this.$root.$emit('notificationUpdate')
+        $emit(this.$root, 'notificationUpdate')
       })
     },
     // 跳转消息详情
@@ -152,14 +155,13 @@ export default {
         return
       }
       this.$router.push({ name: 'SystemNotice' })
-    }
-  }
+    },
+  },
+  emits: ['notificationUpdate'],
 }
 </script>
+
 <style lang="scss">
-.notive-popove {
-  overflow: hidden;
-}
 .el-popover__reference-wrapper {
   .btn {
     cursor: pointer;
@@ -186,6 +188,7 @@ export default {
   }
 }
 </style>
+
 <style lang="scss" scoped>
 .notive-popove {
   .notification-popover-wrap {
@@ -202,7 +205,6 @@ export default {
       height: 50px;
       line-height: 50px;
       color: #000;
-      border-top: 1px solid rgba(222, 222, 228, 1);
       border-bottom: 1px solid #f2f2f2;
 
       .notice-header-text {

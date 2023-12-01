@@ -4,22 +4,25 @@
     @mouseenter="mouseEnterFnc"
     @mouseleave="mouseLeaveFnc"
   >
-    <div v-if="title" class="filter-datetime__title" @click="focusFnc">{{ title }}</div>
+    <div v-if="title" class="filter-datetime__title" @click="focusFnc">
+      {{ title }}
+    </div>
     <ElDatePicker
-      v-model="time"
       v-bind="$attrs"
+      v-model="time"
       type="datetime"
       :clearable="false"
       :class="['date-picker', { 'empty-time': !this.time }]"
       ref="datepicker"
       @change="emitFnc"
     ></ElDatePicker>
-    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.native.stop="clear">close</VIcon>
-    <VIcon v-else size="10" class="icon-btn ml-1" @click.native="focusFnc">arrow-down-fill</VIcon>
+    <VIcon v-if="showClose" size="12" class="icon-btn ml-1" @click.stop="clear">close</VIcon>
+    <VIcon v-else size="10" class="icon-btn ml-1" @click="focusFnc">arrow-down-fill</VIcon>
   </div>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
 
 export default {
@@ -29,17 +32,17 @@ export default {
     value: [String, Array, Number, Object],
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     clearable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
       time: '',
-      showClose: false
+      showClose: false,
     }
   },
   watch: {
@@ -47,7 +50,7 @@ export default {
       if (v) {
         this.time = v
       }
-    }
+    },
   },
   mounted() {},
   methods: {
@@ -65,12 +68,13 @@ export default {
     },
     emitFnc() {
       const { time } = this
-      this.$emit('input', time).$emit('change', time)
+      $emit($emit(this, 'update:value', time), 'change', time)
     },
     focusFnc() {
       this.$refs.datepicker?.focus()
-    }
-  }
+    },
+  },
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
 
@@ -83,41 +87,36 @@ export default {
   }
   .el-date-editor {
     max-width: 150px;
-    ::v-deep {
-      input::placeholder {
-        color: map-get($fontColor, main);
-      }
-      input {
-        color: map-get($fontColor, main);
-      }
+    :deep(input::placeholder) {
+      color: map-get($fontColor, main);
+    }
+
+    :deep(input) {
+      color: map-get($fontColor, main);
     }
     &.empty-time {
       width: auto;
-      ::v-deep {
-        .el-input__inner {
-          width: 80px;
-        }
+
+      :deep(.el-input__inner) {
+        width: 80px;
       }
     }
   }
   &.none-boder {
-    ::v-deep {
-      .el-input__inner {
-        padding: 0;
-        border-color: transparent;
-      }
-      .el-input__prefix {
-        display: none;
-      }
+    :deep(.el-input__inner) {
+      padding: 0;
+      border-color: transparent;
+    }
+
+    :deep(.el-input__prefix) {
+      display: none;
     }
   }
   &:hover {
     background-color: #eff1f4;
-    ::v-deep {
-      .el-input__inner {
-        background-color: #eff1f4;
-        cursor: pointer;
-      }
+    :deep(.el-input__inner) {
+      background-color: #eff1f4;
+      cursor: pointer;
     }
     .icon-btn {
       color: map-get($fontColor, main);

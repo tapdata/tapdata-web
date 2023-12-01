@@ -58,5 +58,5 @@ export default {
   packages_component_src_upgradefee_mianfei: 'Free',
   packages_component_src_upgradefee_tigongmianfeishi: 'For personal use or testing purposes',
   packages_component_src_upgradefee_jichuban: 'Basic Plan',
-  packages_component_src_upgradefee_dingyueshengji: 'Professional Plan'
+  packages_component_src_upgradefee_dingyueshengji: 'Professional Plan',
 }

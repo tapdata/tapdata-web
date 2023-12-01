@@ -1,10 +1,11 @@
-import i18n from '@tap/i18n'
+import i18n, { t } from '@tap/i18n'
 import dayjs from '../plugins/dayjs'
-// elementUI
-import locale from 'element-ui/lib/locale'
-import enLocale from 'element-ui/lib/locale/lang/en'
-import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
+
+// element-plus
+import elementEnLocale from 'element-plus/dist/locale/en.mjs'
+import elementZhLocale from 'element-plus/dist/locale/zh-cn.mjs'
+import elementTwLocale from 'element-plus/dist/locale/zh-tw.mjs'
+
 // 公共模块
 import formLangs from '@tap/form/src/locale'
 import componentLangs from '@tap/component/src/locale'
@@ -22,23 +23,23 @@ const localLangModifyEn = localStorage.getItem('localLangModifyEn') || '{}'
 const localStorageLangs = {
   'zh-CN': JSON.parse(localLangModifyZhCN),
   'zh-TW': JSON.parse(localLangModifyZhTW),
-  en: JSON.parse(localLangModifyEn)
+  en: JSON.parse(localLangModifyEn),
 }
 
 const eleLangs = {
-  'zh-CN': zhLocale,
-  'zh-TW': tcLocale,
-  en: enLocale
+  'zh-CN': elementZhLocale,
+  'zh-TW': elementTwLocale,
+  en: elementEnLocale,
 }
 const localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
-  en: en
+  en: en,
 }
 const current = i18n.locale
 
 dayjs.locale(current)
-locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
+
 i18n.merge(eleLangs)
 i18n.merge(formLangs)
 i18n.merge(componentLangs)
@@ -51,3 +52,4 @@ i18n.merge(localLangs)
 i18n.merge(localStorageLangs)
 
 export default i18n
+export { t }

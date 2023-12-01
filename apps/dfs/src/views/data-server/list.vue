@@ -2,9 +2,15 @@
   <div class="data-server-wrap">
     <section class="header-box flex justify-content-end">
       <div class="header-content-box">
-        <header class="header mb-4">{{ $t('dfs_data_server_demo_title_edition') }}</header>
-        <div class="data-server-desc mb-2">{{ $t('dfs_data_server_demo_title_desc') }}</div>
-        <div class="data-server-desc mb-4">{{ $t('dfs_data_server_On_Prem') }}</div>
+        <header class="header mb-4">
+          {{ $t('dfs_data_server_demo_title_edition') }}
+        </header>
+        <div class="data-server-desc mb-2">
+          {{ $t('dfs_data_server_demo_title_desc') }}
+        </div>
+        <div class="data-server-desc mb-4">
+          {{ $t('dfs_data_server_On_Prem') }}
+        </div>
         <el-button class="data-server-btn" type="primary" @click="goDemo()">{{
           $t('dfs_data_server_apply_for_trial')
         }}</el-button>
@@ -14,23 +20,33 @@
       </div>
     </section>
     <section>
-      <div class="title text-center mt-8mul mb-4">{{ $t('dfs_data_server_demo_title') }}</div>
+      <div class="title text-center mt-8mul mb-4">
+        {{ $t('dfs_data_server_demo_title') }}
+      </div>
       <div class="data-server-desc text-center">
         {{ $t('dfs_data_server_demo_desc') }}
       </div>
-      <div class="mt-7mul mb-4 text-center"><img src="../../assets/image/data-server.svg" alt="" /></div>
+      <div class="mt-7mul mb-4 text-center">
+        <img src="../../assets/image/data-server.svg" alt="" />
+      </div>
     </section>
     <section class="central-storage">
       <section class="content-item-storage">
-        <div class="title mb-4 mt-8mul">{{ $t('dfs_data_server_storage') }}</div>
+        <div class="title mb-4 mt-8mul">
+          {{ $t('dfs_data_server_storage') }}
+        </div>
         <div class="data-server-desc">
           {{ $t('dfs_data_server_collection') }}
         </div>
       </section>
       <section class="flex justify-content-center align-items-center">
-        <div class="mt-7mul mb-4 text-center"><img src="../../assets/image/data-server-feature.svg" alt="" /></div>
+        <div class="mt-7mul mb-4 text-center">
+          <img src="../../assets/image/data-server-feature.svg" alt="" />
+        </div>
         <div class="content-item-real-time">
-          <div class="title mb-4 mt-8mul">{{ $t('dfs_data_server_real_time') }}</div>
+          <div class="title mb-4 mt-8mul">
+            {{ $t('dfs_data_server_real_time') }}
+          </div>
           <div class="data-server-desc">
             {{ $t('dfs_data_server_data_service_mode') }}
           </div>
@@ -39,7 +55,9 @@
     </section>
     <section class="feature flex justify-content-center align-items-center">
       <div class="title mr-8mul">{{ $t('dfs_data_server_feature') }}</div>
-      <div class="ml-4"><img src="../../assets/image/data-server-api-time.svg" alt="" /></div>
+      <div class="ml-4">
+        <img src="../../assets/image/data-server-api-time.svg" alt="" />
+      </div>
     </section>
   </div>
 </template>
@@ -52,12 +70,12 @@ export default {
     goDemo() {
       this.buried('dataServerTrial')
       window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .data-server-wrap {
   background: #ebeef3;
   .header-box {

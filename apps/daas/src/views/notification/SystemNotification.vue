@@ -1,14 +1,16 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-dark fs-7">{{ $t('notify_system_notice') }}</div>
+      <div class="title font-color-dark fs-7">
+        {{ $t('notify_system_notice') }}
+      </div>
     </div>
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="operation">
-        <ElButton type="primary" size="mini" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
-        <ElButton size="mini" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
-        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+        <ElButton type="primary" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
+        <ElButton @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
+        <ElButton v-readonlybtn="'home_notice_settings'" @click="handleSetting">
           {{ $t('notify_setting') }}
         </ElButton>
       </div>
@@ -24,7 +26,7 @@
         none-border
         last-page-text=""
         clearable
-        menu-min-width="240px"
+        dropdown-width="240px"
         @change="getData()"
       ></SelectList>
       <SelectList
@@ -35,7 +37,7 @@
         none-border
         last-page-text=""
         clearable
-        menu-min-width="240px"
+        dropdown-width="240px"
         @change="getData()"
       ></SelectList>
     </div>
@@ -102,7 +104,9 @@
     <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
       <div>
         <VIcon size="140">no-notice</VIcon>
-        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">
+          {{ $t('notify_no_notice') }}
+        </div>
       </div>
     </div>
     <el-pagination
@@ -112,7 +116,7 @@
       :page-sizes="[20, 30, 50, 100]"
       :page-size="pagesize"
       :total="total"
-      :current-page.sync="currentPage"
+      v-model:current-page="currentPage"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
     >
@@ -121,6 +125,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { TYPEMAP } from './tyepMap'
 import { SelectList } from '@tap/component'
 import dayjs from 'dayjs'
@@ -137,7 +142,7 @@ export default {
       loading: false,
       searchParams: {
         search: '',
-        msg: ''
+        msg: '',
       },
 
       currentPage: 1,
@@ -146,7 +151,7 @@ export default {
       colorMap: {
         ERROR: '#D44D4D',
         WARN: '#FF7D00',
-        INFO: '#2c65ff'
+        INFO: '#2c65ff',
       },
       systemMap: {
         sync: this.$t('notify_sync'),
@@ -155,80 +160,80 @@ export default {
         agent: this.$t('notify_manage_sever'),
         inspect: this.$t('notify_inspect'),
         JobDDL: this.$t('notify_ddl_deal'),
-        system: this.$t('notify_system')
+        system: this.$t('notify_system'),
       },
       options: [
         {
           value: 'ERROR',
-          label: 'ERROR'
+          label: 'ERROR',
         },
         {
           value: 'WARN',
-          label: 'WARN'
+          label: 'WARN',
         },
         {
           value: 'INFO',
-          label: 'INFO'
-        }
+          label: 'INFO',
+        },
       ],
       msgOptions: [
         {
           value: 'deleted',
-          label: this.$t('notification_jobDeleted')
+          label: this.$t('notification_jobDeleted'),
         },
         {
           value: 'paused',
-          label: this.$t('notification_jobPaused')
+          label: this.$t('notification_jobPaused'),
         },
         {
           value: 'stoppedByError',
-          label: this.$t('notification_stoppedByError')
+          label: this.$t('notification_stoppedByError'),
         },
         {
           value: 'jobStateError',
-          label: this.$t('notification_jobStateError')
+          label: this.$t('notification_jobStateError'),
         },
         {
           value: 'jobEncounterError',
-          label: this.$t('notification_jobEncounterError')
+          label: this.$t('notification_jobEncounterError'),
         },
         {
           value: 'CDCLag',
-          label: this.$t('notification_CDCLag')
+          label: this.$t('notification_CDCLag'),
         },
         {
           value: 'JobDDL',
-          label: this.$t('notification_DDL')
+          label: this.$t('notification_DDL'),
         },
         {
           value: 'connectionInterrupted',
-          label: this.$t('notification_serverDisconnected')
+          label: this.$t('notification_serverDisconnected'),
         },
         {
           value: 'manageSeverStartedSuccessfully',
-          label: this.$t('notification_agentStarted')
+          label: this.$t('notification_agentStarted'),
         },
         {
           value: 'manageSeverStoppedSuccessfully',
-          label: this.$t('notification_agentStopped')
+          label: this.$t('notification_agentStopped'),
         },
         {
           value: 'newSeverCreatedSuccessfully',
-          label: this.$t('notification_agentCreated')
+          label: this.$t('notification_agentCreated'),
         },
         {
           value: 'newSeverDeletedSuccessfully',
-          label: this.$t('notification_agentDeleted')
-        }
+          label: this.$t('notification_agentDeleted'),
+        },
       ],
       typeMap: TYPEMAP,
-      count: ''
+      count: '',
     }
   },
   created() {
     this.getData()
     this.getFilterItems()
-    this.$root.$on('notificationUpdate', () => {
+    $on(this.$root, 'notificationUpdate', () => {
       this.getData()
     })
   },
@@ -252,18 +257,18 @@ export default {
         where,
         order: 'createTime DESC',
         limit: this.pagesize,
-        skip: (this.currentPage - 1) * this.pagesize
+        skip: (this.currentPage - 1) * this.pagesize,
       }
 
       this.loading = true
       notificationApi
         .get({ filter: JSON.stringify(filter) })
-        .then(data => {
+        .then((data) => {
           this.listData = data?.items || []
           this.total = data?.total || 0
           //格式化日期
           if (this.listData && this.listData.length > 0) {
-            this.listData.map(item => {
+            this.listData.map((item) => {
               item['createTime'] = item.createTime ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
             })
           }
@@ -294,7 +299,7 @@ export default {
       }
       notificationApi
         .count({ where: JSON.stringify(where) })
-        .then(data => {
+        .then((data) => {
           this.total = data?.count
         })
         .finally(() => {
@@ -306,9 +311,9 @@ export default {
       if (!item.read) {
         notificationApi.patch({ read: true, id: item.id }).then(() => {
           this.read = read
-          this.$root.$emit('notificationUpdate')
+          $emit(this.$root, 'notificationUpdate')
           let msg = {
-            type: 'notification'
+            type: 'notification',
           }
           this.$ws.ready(() => {
             this.$ws.send(msg)
@@ -319,25 +324,25 @@ export default {
     // 标记本页已读
     handlePageRead() {
       let ids = []
-      this.listData.map(item => {
+      this.listData.map((item) => {
         ids.push(item.id)
       })
       let id = {
-        inq: ids
+        inq: ids,
       }
 
       let data = {
         read: true,
-        id
+        id,
       }
       let read = this.read
       notificationApi.pageRead(data).then(() => {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        this.$root.$emit('notificationUpdate')
+        $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -357,9 +362,9 @@ export default {
         // this.getUnreadNum() //未读消息数量
         this.getData()
         this.read = read
-        this.$root.$emit('notificationUpdate')
+        $emit(this.$root, 'notificationUpdate')
         let msg = {
-          type: 'notification'
+          type: 'notification',
         }
         this.$ws.ready(() => {
           this.$ws.send(msg)
@@ -381,8 +386,8 @@ export default {
           this.$router.push({
             name: 'MigrateEditor',
             params: {
-              id: item.sourceId
-            }
+              id: item.sourceId,
+            },
           })
           break
         case 'sync':
@@ -391,13 +396,13 @@ export default {
             query: {
               id: item.sourceId,
               isMoniting: true,
-              mapping: item.mappingTemplate
-            }
+              mapping: item.mappingTemplate,
+            },
           })
           break
         case 'agent':
           this.$router.push({
-            name: 'clusterManagement'
+            name: 'clusterManagement',
           })
           break
       }
@@ -409,21 +414,22 @@ export default {
           key: 'search',
           type: 'select-inner',
           items: this.options,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('notify_notice_type'),
           key: 'msg',
           type: 'select-inner',
-          items: this.msgOptions
-        }
+          items: this.msgOptions,
+        },
       ]
-    }
-  }
+    },
+  },
+  emits: ['notificationUpdate'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $unreadColor: #ee5353;
 .system-notification {
   display: flex;
@@ -522,6 +528,7 @@ $unreadColor: #ee5353;
   padding: 10px 0 20px 0;
 }
 </style>
+
 <style lang="scss">
 .system-notification {
   .el-tabs {

@@ -4,20 +4,18 @@
       :remoteMethod="remoteMethod"
       :columns="columns"
       :page-options="{
-        layout: 'total, ->, prev, pager, next, sizes, jumper'
+        layout: 'total, ->, prev, pager, next, sizes, jumper',
       }"
       ref="table"
       height="100%"
       hide-on-single-page
     >
-      <template slot="status" slot-scope="scope">
+      <template v-slot:status="scope">
         <TaskStatus :task="scope.row" />
       </template>
-      <template slot="operation" slot-scope="scope">
+      <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-            $t('public_button_details')
-          }}</ElButton>
+          <ElButton text @click="handleDetail(scope.row)">{{ $t('public_button_details') }}</ElButton>
         </div>
       </template>
     </VTable>
@@ -41,17 +39,17 @@ export default {
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     taskRecord: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
-    }
+      },
+    },
   },
 
   data() {
@@ -61,42 +59,42 @@ export default {
           label: i18n.t('packages_dag_components_record_yunxingkaishishi'),
           prop: 'startDate',
           width: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieshushi'),
           prop: 'endDate',
           width: 170,
-          dataType: 'time'
+          dataType: 'time',
         },
         {
           label: i18n.t('packages_dag_components_record_caozuoren'),
           prop: 'operator',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_record_yunxingjieguo'),
           prop: 'status',
           slotName: 'status',
-          minWidth: 140
+          minWidth: 140,
         },
         {
           label: i18n.t('packages_dag_components_record_shurushijianzong'),
           prop: 'inputTotal',
           dataType: 'number',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('packages_dag_components_record_shuchushijianzong'),
           prop: 'outputTotal',
           dataType: 'number',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('public_operation'),
-          slotName: 'operation'
-        }
-      ]
+          slotName: 'operation',
+        },
+      ],
     }
   },
 
@@ -111,8 +109,8 @@ export default {
         ) {
           this.fetch()
         }
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -121,12 +119,12 @@ export default {
       const { id: taskId } = this.dataflow || {}
       let filter = {
         page: current,
-        size: size
+        size: size,
       }
-      return taskApi.records(taskId, filter).then(data => {
+      return taskApi.records(taskId, filter).then((data) => {
         return {
           total: data.total,
-          data: data.items || []
+          data: data.items || [],
         }
       })
     },
@@ -138,13 +136,13 @@ export default {
       const routeUrl = this.$router.resolve({
         name: 'MigrationMonitorViewer',
         params: {
-          id: taskId
+          id: taskId,
         },
         query: {
           taskRecordId,
           start,
-          end
-        }
+          end,
+        },
       })
       openUrl(routeUrl.href)
     },
@@ -159,8 +157,8 @@ export default {
 
     getTableData() {
       return this.$refs.table?.getData()
-    }
-  }
+    },
+  },
 }
 </script>
 

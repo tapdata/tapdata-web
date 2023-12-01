@@ -6,5 +6,5 @@ export default {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
   'en-US': en,
-  en: en
+  en: en,
 }

@@ -1,6 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-import { AllLocales } from './locales'
 
 export class JavaScript extends NodeType {
   constructor() {
@@ -20,7 +19,7 @@ export class JavaScript extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       tabs: {
@@ -28,14 +27,14 @@ export class JavaScript extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -44,12 +43,12 @@ export class JavaScript extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -58,13 +57,13 @@ export class JavaScript extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -73,10 +72,10 @@ export class JavaScript extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               script: {
                 title: i18n.t('packages_dag_nodes_javascript_jiaoben'),
@@ -100,20 +99,18 @@ context = {
                   before: `import json, random, time, datetime, uuid, types, yaml\nimport urllib, urllib2, requests\nimport math, hashlib, base64\ndef process(record, context):`,
                   beforeRegexp: '^[^]*def\\s+process\\s*\\(record\\,\\s+context\\)\\:',
                   param: 'tapTable',
-                  handleAddCompleter: '{{addDeclaredCompleterForSync}}'
-                }
+                  handleAddCompleter: '{{addDeclaredCompleterForSync}}',
+                },
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
-
-  locales = AllLocales.JavaScript
 }

@@ -1,10 +1,10 @@
 <template>
   <ElDialog
     width="600px"
-    custom-class="import-upload-dialog"
+    class="import-upload-dialog"
     :title="$t('packages_business_modules_dialog_import_title')"
     :close-on-click-modal="false"
-    :visible.sync="dialogVisible"
+    v-model="dialogVisible"
     :before-close="handleClose"
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
@@ -17,7 +17,7 @@
         }}</el-radio>
       </ElFormItem>
       <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
+        <ElSelect v-model:value="importForm.tag" multiple class="w-75">
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>
@@ -33,37 +33,43 @@
           :on-change="handleChange"
           :on-remove="handleRemove"
         >
-          <ElLink class="align-top" type="primary" plain slot="trigger" size="mini">
-            <VIcon class="mr-1 link-primary">upload</VIcon>
-            {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
-          >
+          <template v-slot:trigger>
+            <ElLink class="align-top" type="primary" plain>
+              <VIcon class="mr-1 link-primary">upload</VIcon>
+              {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
+            >
+          </template>
         </ElUpload>
       </ElFormItem>
     </ElForm>
-    <span slot="footer" class="dialog-footer">
-      <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('public_button_confirm') }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="submitUpload()">{{ $t('public_button_confirm') }}</ElButton>
+      </span>
+    </template>
   </ElDialog>
 </template>
+
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi } from '@tap/api'
 export default {
   name: 'Upload',
   components: {
-    VIcon
+    VIcon,
   },
   props: {
     type: {
       required: true,
-      value: String
+      value: String,
     },
     showTag: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -75,8 +81,8 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz'
-      }
+        accept: '.gz',
+      },
     }
   },
   created() {
@@ -103,10 +109,10 @@ export default {
     // 上传文件成功失败钩子
     handleChange(file) {
       /*if (!file.name.endsWith('.json.gz')) {
-        this.$message.warning('请选择名称以[.json.gz]结尾的文件')
-        this.$refs.upload.clearFiles()
-        return
-      }*/
+      this.$message.warning('请选择名称以[.json.gz]结尾的文件')
+      this.$refs.upload.clearFiles()
+      return
+    }*/
       this.importForm.fileList = [file]
       const originPath = window.location.origin + window.location.pathname
       const upsert = `upsert=${this.importForm.upsert}`
@@ -117,7 +123,7 @@ export default {
       const map = {
         api: originPath + `api/MetadataInstances/upload?${upsert}&${listtags}&${downType}&${accessToken}`,
         Javascript_functions: originPath + `api/Javascript_functions/batch/import?${listtags}&${accessToken}&${cover}`,
-        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`
+        Modules: originPath + `api/Modules/batch/import?${listtags}&${accessToken}&${cover}`,
       }
       this.importForm.action =
         map[this.type] || originPath + `api/Task/batch/import?${listtags}&${accessToken}&${cover}`
@@ -126,13 +132,13 @@ export default {
     // 获取分类
     getClassify() {
       let filter = {
-        where: { or: [{ item_type: this.type }] }
+        where: { or: [{ item_type: this.type }] },
       }
       metadataDefinitionsApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           this.classifyList = data?.items || []
         })
     },
@@ -142,7 +148,7 @@ export default {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
-        this.$emit('success')
+        $emit(this, 'success')
       }
       this.$refs.upload.clearFiles()
     },
@@ -164,10 +170,12 @@ export default {
     handleClose() {
       this.dialogVisible = false
       this.$refs.upload.clearFiles()
-    }
-  }
+    },
+  },
+  emits: ['success'],
 }
 </script>
+
 <style lang="scss">
 .import-upload-dialog {
   .el-upload-list {

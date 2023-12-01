@@ -4,7 +4,6 @@
       <div v-if="!hideNav" class="field-inference__nav flex flex-column">
         <ElInput
           v-model="searchTable"
-          size="mini"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
@@ -26,7 +25,9 @@
             </li>
           </ul>
           <div v-else class="task-form-left__ul flex flex-column align-items-center">
-            <div class="table__empty_img" style="margin-top: 22%"><img style="" :src="noData" /></div>
+            <div class="table__empty_img" style="margin-top: 22%">
+              <img style="" :src="noData" />
+            </div>
             <div class="noData">{{ $t('public_data_no_data') }}</div>
           </div>
         </div>
@@ -34,8 +35,8 @@
           small
           class="flex mt-3 p-0 din-font mx-auto"
           layout="total, prev, slot, next"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
           :total="page.total"
           :pager-count="5"
           @current-change="loadData"
@@ -52,12 +53,11 @@
           <ElInput
             v-model="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            size="mini"
             suffix-icon="el-icon-search"
             clearable
             @input="handleSearchField"
           ></ElInput>
-          <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+          <ElButton plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
           </ElButton>
         </div>
@@ -84,16 +84,16 @@ export default {
 
   props: {
     nodeId: {
-      require: true
+      require: true,
     },
     hideNav: {
       type: Boolean,
-      default: false
+      default: false,
     },
     includesDataTypes: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
 
   data() {
@@ -106,16 +106,16 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
-      noData
+      noData,
     }
   },
 
   computed: {
-    ...mapState('dataflow', ['transformLoading'])
+    ...mapState('dataflow', ['transformLoading']),
   },
 
   mounted() {
@@ -128,7 +128,7 @@ export default {
       if (!nodeId) return
       let data = {
         items: [],
-        total: 0
+        total: 0,
       }
       try {
         const params = Object.assign(
@@ -136,9 +136,9 @@ export default {
             nodeId,
             fields: ['original_name', 'fields', 'qualified_name'],
             page: 1,
-            pageSize: 20
+            pageSize: 20,
           },
-          op
+          op,
         )
         data = await metadataInstancesApi.nodeSchemaPage(params)
       } catch (e) {
@@ -154,13 +154,13 @@ export default {
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       if (this.includesDataTypes.length) {
-        const types = this.includesDataTypes.map(t => t.split(/[[(]/)?.[0])
-        items.forEach(el => {
-          el.fields = el.fields.filter(t => types.includes(t.data_type.split(/[[(]/)?.[0]))
+        const types = this.includesDataTypes.map((t) => t.split(/[[(]/)?.[0])
+        items.forEach((el) => {
+          el.fields = el.fields.filter((t) => types.includes(t.data_type.split(/[[(]/)?.[0]))
         })
       }
       this.navList = items
@@ -184,7 +184,7 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
     },
@@ -200,8 +200,8 @@ export default {
 
     handleSearchField: debounce(function () {
       this.filterFields()
-    }, 200)
-  }
+    }, 200),
+  },
 }
 </script>
 

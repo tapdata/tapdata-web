@@ -1,4 +1,4 @@
-.formily-element-form-item-label-tooltip {
+.#{$formNamespace}-form-item-label-tooltip {
   * {
     cursor: pointer;
   }
@@ -8,31 +8,32 @@
   }
 }
 
-.formily-element-form-collapse.el-collapse.inset {
+.#{$formNamespace}-form-collapse.el-collapse.inset {
   .el-collapse-item__header {
     padding-left: 16px;
   }
+
   .el-collapse-item__content {
     padding-left: 16px;
     padding-right: 16px;
   }
 }
 
-.formily-element-form-item.item-control-horizontal {
-  .formily-element-form-item-control {
+.#{$formNamespace}-form-item.item-control-horizontal {
+  .#{$formNamespace}-plus-form-item-control {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 }
 
-.formily-element-form-item.danger-description {
-  .formily-element-form-item-extra {
+.#{$formNamespace}-form-item.danger-description {
+  .#{$formNamespace}-form-item-extra {
     color: map-get($color, danger);
   }
 }
 
-.formily-element-form-collapse {
+.#{$formNamespace}-form-collapse {
   .el-collapse-item {
     .el-collapse-item__header {
       font-size: 14px;
@@ -40,7 +41,7 @@
   }
 }
 
-.formily-element-form-collapse.advanced-collapse {
+.#{$formNamespace}-form-collapse.advanced-collapse {
   padding-bottom: 16px;
   border-top: 0;
   border-bottom: 0;
@@ -49,27 +50,68 @@
     .el-collapse-item__header {
       font-size: 14px;
     }
+
     .el-collapse-item__wrap {
       padding: 8px 12px;
       border: 1px solid #ebeef5;
       border-radius: 8px;
     }
+
     .el-collapse-item__content {
       padding-bottom: 0;
     }
   }
 }
 
-.formily-element-space-horizontal {
-  > .formily-element-space-item > .formily-element-form-item-layout-horizontal > .formily-element-form-item-label {
+.#{$formNamespace}-space-horizontal {
+  > .#{$formNamespace}-space-item > .#{$formNamespace}-form-item-layout-horizontal > .#{$formNamespace}-form-item-label {
     * {
       line-height: 32px;
     }
-    >.formily-element-form-item-label-content {
+
+    > .#{$formNamespace}-form-item-label-content {
       min-height: 32px;
     }
-    > .formily-element-form-item-label-tooltip {
-      height: 32px !important;
+
+    //> .#{$formNamespace}-form-item-label-tooltip {
+    //  height: 32px !important;
+    //}
+  }
+}
+
+// TODO 需要观察全局范围的影响
+.#{$formNamespace}-form-item-layout-horizontal {
+  > .#{$formNamespace}-form-item-label {
+    * {
+      line-height: 32px;
+    }
+
+    > .#{$formNamespace}-form-item-label-content {
+      min-height: 32px;
+    }
+
+    //> .#{$formNamespace}-form-item-label-tooltip {
+    //  height: 32px !important;
+    //}
+  }
+}
+
+.#{$formNamespace}-form-item-layout-vertical {
+  > .#{$formNamespace}-form-item-label {
+    > .#{$formNamespace}-form-item-label-tooltip {
+      height: 40px;
     }
   }
+}
+
+.#{$formNamespace}-form-item-control-content-component {
+  font-size: 0;
+  > * {
+    font-size: 14px;
+    vertical-align: middle;
+  }
+}
+
+.#{$formNamespace}-space-item {
+  display: contents;
 }

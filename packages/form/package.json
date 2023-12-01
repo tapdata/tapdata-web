@@ -2,16 +2,16 @@
   "name": "@tap/form",
   "version": "1.0.0",
   "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@formily/core": "^2.0.9",
-    "@formily/element": "^2.0.9",
+    "@formily/element-plus": "^2.0.9",
     "@formily/json-schema": "^2.0.9",
     "@formily/reactive": "^2.0.9",
     "@formily/reactive-vue": "^2.0.9",
@@ -21,12 +21,16 @@
     "@tap/assets": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
-    "@vue/composition-api": "^1.2.4",
+    "@tap/shared": "workspace:^",
+    "@vueuse/core": "^10.5.0",
     "ace-builds": "^1.4.13",
+    "core-js": "^3.8.3",
     "cron-parser": "^4.6.0",
-    "highlight.js": "^11.0.1",
+    "element-plus": "^2.4.1",
+    "highlight.js": "^11.9.0",
+    "lodash": "^4.17.15",
     "resize-observer-polyfill": "^1.5.1",
-    "vue": "^2.6.14",
-    "vue-demi": "^0.12.1"
+    "tiny-emitter": "^2.1.0",
+    "vue": "^3.0.0"
   }
 }

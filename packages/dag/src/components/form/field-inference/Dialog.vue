@@ -3,8 +3,8 @@
     width="600px"
     append-to-body
     :title="$t('packages_form_field_inference_dialog_mubiaoleixingpi')"
-    custom-class="batch-field-type-maping-table-dialog"
-    :visible.sync="ruleForm.visible"
+    class="batch-field-type-maping-table-dialog"
+    v-model="ruleForm.visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     @close="handleCancel"
@@ -63,16 +63,19 @@
       <img width="120px" :src="noData" />
       <div class="noData">{{ $t('public_data_no_data') }}</div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <ElButton size="mini" @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton size="mini" type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
-        $t('public_button_confirm')
-      }}</ElButton>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <ElButton @click="handleCancel">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="getSubmitDisabled()" :loading="editBtnLoading" @click="submit">{{
+          $t('public_button_confirm')
+        }}</ElButton>
+      </span>
+    </template>
   </ElDialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 
@@ -82,49 +85,44 @@ import noData from '@tap/assets/images/noData.png'
 
 export default {
   name: 'FieldInferenceDialog',
-
   props: {
     form: {
-      type: Object
+      type: Object,
     },
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     fieldChangeRules: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     readonly: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion'])
+    ...mapState('dataflow', ['editVersion']),
   },
-
   data() {
     return {
       ruleForm: {
         visible: false,
         list: [],
-        options: []
+        options: [],
       },
       editBtnLoading: false,
-      noData
+      noData,
     }
   },
-
   watch: {
     visible(v) {
       this.ruleForm.visible = v
       v && this.loadData()
-    }
+    },
   },
-
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties']),
     ...mapActions('dataflow', ['updateDag']),
@@ -135,33 +133,33 @@ export default {
         namespace: [this.activeNode?.id],
         type: 'DataType',
         accept: '',
-        result: { dataType: '', tapType: '' }
+        result: { dataType: '', tapType: '' },
       }
     },
     handleAdd(index = 0) {
       this.ruleForm.list.splice(index + 1, 0, this.getItem())
     },
     loadData() {
-      this.ruleForm.list = cloneDeep(this.fieldChangeRules.filter(t => t.scope === 'Node'))
+      this.ruleForm.list = cloneDeep(this.fieldChangeRules.filter((t) => t.scope === 'Node'))
     },
     handleCancel() {
       this.loadData()
       this.ruleForm.visible = false
-      this.$emit('update:visible', this.ruleForm.visible)
+      $emit(this, 'update:visible', this.ruleForm.visible)
     },
     getSubmitDisabled() {
       return (
         this.readonly ||
-        this.ruleForm.list.some(t => !t.accept || !t.result?.dataType) ||
+        this.ruleForm.list.some((t) => !t.accept || !t.result?.dataType) ||
         JSON.stringify(this.nodeRules) === JSON.stringify(this.ruleForm.list)
       )
     },
     handleUpdate() {
       this.form.setValuesIn('fieldChangeRules', this.ruleForm.list)
       this.ruleForm.visible = false
-      const result = [...this.fieldChangeRules.filter(t => t.scope === 'Field'), ...this.ruleForm.list]
-      this.$emit('update:fieldChangeRules', result)
-      this.$emit('update:visible', this.ruleForm.visible)
+      const result = [...this.fieldChangeRules.filter((t) => t.scope === 'Field'), ...this.ruleForm.list]
+      $emit(this, 'update:fieldChangeRules', result)
+      $emit(this, 'update:visible', this.ruleForm.visible)
     },
     submit() {
       const { activeNode = {} } = this
@@ -170,21 +168,21 @@ export default {
         this.handleUpdate()
         return
       }
-      const dataTypes = list.map(t => t.result.dataType)
+      const dataTypes = list.map((t) => t.result.dataType)
       const params = {
         databaseType: activeNode.databaseType,
-        dataTypes
+        dataTypes,
       }
       this.editBtnLoading = true
       metadataInstancesApi
         .dataType2TapType(params)
-        .then(data => {
-          const result = list.map(t => {
+        .then((data) => {
+          const result = list.map((t) => {
             const val = data[t.result.dataType]
             t.result.tapType = val && val.type !== 7 ? JSON.stringify(val) : null
             return t
           })
-          if (result.some(t => !t.result?.tapType)) {
+          if (result.some((t) => !t.result?.tapType)) {
             this.$message.error(i18n.t('packages_form_field_inference_list_geshicuowu'))
             this.editBtnLoading = false
             return
@@ -195,7 +193,8 @@ export default {
         .finally(() => {
           this.editBtnLoading = false
         })
-    }
-  }
+    },
+  },
+  emits: ['update:visible', 'update:fieldChangeRules'],
 }
 </script>

@@ -16,7 +16,9 @@
       </div>
       <!--	windowns  -->
       <div v-if="downLoadType === 'windows'" class="content-container">
-        <div class="py-2 text-style">{{ $t('agent_upgrade_before_title') }}</div>
+        <div class="py-2 text-style">
+          {{ $t('agent_upgrade_before_title') }}
+        </div>
         <div>{{ $t('agent_upgrade_before_windows_first') }}</div>
         <div>
           {{ $t('agent_upgrade_before_windows_second')
@@ -91,9 +93,13 @@
             >{{ $t('dfs_agent_download_upgradeversion_jisuanchaodenglu') }}</el-link
           >
         </div>
-        <div class="ml-2">{{ $t('dfs_agent_download_upgradeversion_ruguoninbushu') }}</div>
+        <div class="ml-2">
+          {{ $t('dfs_agent_download_upgradeversion_ruguoninbushu') }}
+        </div>
         <div>{{ $t('dfs_agent_download_upgradeversion_dianjishiliming') }}</div>
-        <div>{{ $t('dfs_agent_download_upgradeversion_dengluchenggonghou') }}</div>
+        <div>
+          {{ $t('dfs_agent_download_upgradeversion_dengluchenggonghou') }}
+        </div>
         <div class="box title-text">
           <div>sudo su</div>
           <div>cd /data/tapdata</div>
@@ -127,14 +133,24 @@
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
         <div>{{ $t('agent_upgrade_step_docker_first') }}</div>
         <div class="box docker-command">
-          <div class="desc">{{ $t('agent_upgrade_step_docker_first_one') }}</div>
+          <div class="desc">
+            {{ $t('agent_upgrade_step_docker_first_one') }}
+          </div>
           <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}'</div>
-          <div class="desc">{{ $t('agent_upgrade_step_docker_first_two') }}</div>
+          <div class="desc">
+            {{ $t('agent_upgrade_step_docker_first_two') }}
+          </div>
           <div>{{ $t('agent_download_UpgradeVersion_dOCKE') }}</div>
-          <div class="desc">{{ $t('agent_upgrade_step_docker_first_three') }}</div>
-          <div class="desc">{{ $t('agent_upgrade_step_docker_first_four') }}</div>
+          <div class="desc">
+            {{ $t('agent_upgrade_step_docker_first_three') }}
+          </div>
+          <div class="desc">
+            {{ $t('agent_upgrade_step_docker_first_four') }}
+          </div>
           <div>{{ $t('agent_download_UpgradeVersion_dOCKE2') }}</div>
-          <div class="desc">{{ $t('agent_upgrade_step_docker_first_five') }}</div>
+          <div class="desc">
+            {{ $t('agent_upgrade_step_docker_first_five') }}
+          </div>
           <div>{{ $t('agent_download_UpgradeVersion_dOCKE') }}</div>
         </div>
         <div>
@@ -169,6 +185,7 @@
     </footer>
   </section>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import i18n from '@/i18n'
@@ -185,13 +202,16 @@ export default {
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
         { name: 'Windows (64 bit)', value: 'windows' },
-        { name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'), value: 'AliComputenest' }
+        {
+          name: i18n.t('dfs_agent_download_agentdownloadmodal_aliyunjisuan'),
+          value: 'AliComputenest',
+        },
       ],
       showTooltip: false,
       agentId: '',
       downloadUrl: '',
       token: '',
-      version: ''
+      version: '',
       // user: window.__USER_INFO__ || {}
     }
   },
@@ -204,10 +224,10 @@ export default {
         windows: `tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         Linux: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
         AliComputenest: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
-        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`
+        Docker: `./tapdata stop agent && rm -f tapdata-bak && mv tapdata tapdata-bak && rm -f .tapdata-agent && wget "${downloadUrl}tapdata" && chmod +x tapdata && ./tapdata start backend --downloadUrl ${downloadUrl} --token ${token}`,
       }
       return map[this.downLoadType]
-    }
+    },
   },
   created() {
     this.loadData()
@@ -218,7 +238,7 @@ export default {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ]
     }
   },
@@ -226,10 +246,10 @@ export default {
     loadData() {
       let agentId = this.$route.query.agentId
       this.agentId = agentId
-      this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
+      this.$axios.get('api/tcm/config/version/latest/' + agentId).then((data) => {
         this.token = data.token
         this.version = data.version
-        this.$axios.get(`api/tcm/productRelease/${data.version}`).then(downloadUrl => {
+        this.$axios.get(`api/tcm/productRelease/${data.version}`).then((downloadUrl) => {
           this.downloadUrl = downloadUrl
         })
       })
@@ -271,7 +291,7 @@ export default {
           ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
           : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
         values: {},
-        ready: function () {}
+        ready: function () {},
       }
       window.$zoho = $zoho
       let d = document
@@ -290,13 +310,14 @@ export default {
         $zoho.salesiq.visitor.info({
           tapdata_username: user.nickname || user.username,
           tapdata_phone: user.telephone,
-          tapdata_email: user.email
+          tapdata_email: user.email,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .upgrade-version {
   display: flex;

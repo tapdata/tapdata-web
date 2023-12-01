@@ -497,9 +497,9 @@ export default {
   packages_dag_js_declare_index_shiyongbangzhu: '使用帮助',
   packages_dag_js_declare_index_xianshishengminglai: '显式声明来定义和修改模型',
   packages_dag_js_declare_index_zengjiayigezi:
-    "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+    "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
-    "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+    "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_js_processor_index_duibi: '对比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -599,8 +599,9 @@ export default {
   packages_dag_date_processor_method: '请选择运算方式',
   packages_dag_date_processor_increase: '增加',
   packages_dag_date_processor_decrease: '减少',
-  packages_dag_nodes_table_shiligro: '示例: {"$group": { "_id": "$name", totalQuantity: { $sum: "$quantity" } }}',
-  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: { "_id": "apples", "qty": 5 }',
+  packages_dag_nodes_table_shiligro:
+    '示例: {\'{\'}"$group": {\'{\'} "_id": "$name", totalQuantity: {\'{\'} $sum: "$quantity" {\'} }}\'}',
+  packages_dag_nodes_table_jinzhichiqu: '仅支持query, 例如: {\'{\'} "_id": "apples", "qty": 5 {\'}\'}',
   packages_dag_migration_settingpanel_shirenwubaocuo: '时，任务报错停止',
   packages_dag_migration_settingpanel_dangtiaoguoshijian: '当跳过事件数超过',
   packages_dag_migration_settingpanel_dangtiaoguoshijian2: '当跳过事件占已同步事件的百分比超过',
@@ -646,11 +647,6 @@ export default {
   packages_dag_model_generation: '模型生成中',
   packages_dag_materialized_view: '物化视图',
   packages_dag_build_materialized_view: '构建物化视图',
-  packages_dag_materialized_view_help_title: '怎么构建物化视图？',
-  packages_dag_materialized_view_help_desc:
-    '物化视图是一种特殊的数据库视图，能提升数据读取速度。使用 Tapdata Cloud 可创建实时物化视图，简化数据管理和应用开发过程。',
-  packages_dag_materialized_view_help_tutorial_btn: '详细教程',
-  packages_dag_materialized_view_help_video_desc: '以下视频教程讲解了，如何使用 Tapdata Cloud 构建物化视图...',
   packages_dag_select_database_tips: '请选择数据库',
   packages_dag_select_table_tips: '请选择表',
   packages_dag_join_table: '关联表',
@@ -671,6 +667,4 @@ export default {
     '如果为true，数组为null或为空数组时输出文档。\n如果为false，数组为null或为空数组时不会输出文档。',
   packages_dag_btn_disable_node: '禁用节点',
   packages_dag_only_mongodb: '仅支持 MongoDB 数据库',
-  packages_dag_field_inference_list_zidingyileixing: '自定义类型',
-  packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:'
 }

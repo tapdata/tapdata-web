@@ -19,8 +19,8 @@ module.exports = {
           { count: 0, _id: 'pausing' },
           { count: 267, _id: 'error' },
           { count: 98, _id: 'complete' },
-          { count: 232, _id: 'stop' }
-        ]
+          { count: 232, _id: 'stop' },
+        ],
       },
       chart2: { Lag: 40, cdc: 133, initialized: 0, initializing: 1 },
       chart1: {
@@ -36,17 +36,17 @@ module.exports = {
           { count: 0, _id: 'paused' },
           { count: 157, _id: 'error' },
           { count: 158, _id: 'complete' },
-          { count: 189, _id: 'stop' }
-        ]
+          { count: 189, _id: 'stop' },
+        ],
       },
       chart6: {
         inputTotal: 417641008,
         insertedTotal: 239155393,
         updatedTotal: 33905439,
         deletedTotal: 8350087,
-        outputTotal: 417668247
-      }
-    }
+        outputTotal: 417668247,
+      },
+    },
   },
   '/api/verify': {
     reqId: '@id',
@@ -61,9 +61,9 @@ module.exports = {
           diff: '@integer(1000, 5500)',
           id: '@id',
           progress: '@integer(0, 100)',
-          connectionName: '@name'
-        }
-      ]
-    }
-  }
+          connectionName: '@name',
+        },
+      ],
+    },
+  },
 }

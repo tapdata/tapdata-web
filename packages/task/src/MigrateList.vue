@@ -22,7 +22,7 @@
     <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
       v-else
-      class="overflow-hidden bg-white rounded-lg pr-4 pb-4"
+      class="overflow-hidden bg-white rounded-lg px-4"
       :route="route"
       :task-buried="taskBuried"
       :sync-type="syncType"
@@ -46,13 +46,13 @@ export default {
       taskBuried: {
         new: 'migrationCreate',
         newFail: 'migrationCreateAgentFail',
-        start: 'migrationStart'
+        start: 'migrationStart',
       },
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor'
-      }
+        monitor: 'MigrationMonitor',
+      },
     }
   },
 
@@ -66,29 +66,27 @@ export default {
       },
       set(value) {
         this.$store.commit('setReplicationView', value)
-      }
-    }
+      },
+    },
   },
 
   watch: {
     viewType() {
       if (!this.startingTour) {
         this.$axios.post('api/tcm/user_guide', {
-          tour: this.$store.state.replicationTour
+          tour: this.$store.state.replicationTour,
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .view-radio-group {
-  ::v-deep {
-    .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-      background-color: map-get($color, primary);
-      color: #fff;
-    }
+  :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
+    background-color: map-get($color, primary);
+    color: #fff;
   }
 }
 </style>

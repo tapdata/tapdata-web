@@ -1,13 +1,16 @@
+const { defineConfig } = require('@vue/cli-service')
+
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const crypto = require('crypto')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   test: 'https://dev.cloud.tapdata.net:8443',
   local: 'https://v3.test.cloud.tapdata.net',
-  localTm: 'http://127.0.0.1:3030'
+  localTm: 'http://127.0.0.1:3030',
 }
 // const userId = '60b60af1147bce7705727188' // zed?
 // const userId = '60b064e9a65d8e852c8523bc' // lemon
@@ -26,7 +29,7 @@ if (~argv.indexOf('--origin')) {
 }
 const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
-  changeOrigin: true
+  changeOrigin: true,
 }
 
 //sass变量
@@ -34,39 +37,39 @@ let varUrl = '~@tap/assets/styles/var.scss'
 let pages = {
   index: {
     entry: 'src/pages/main.js',
-    title: 'Tapdata Cloud'
+    title: 'Tapdata Cloud',
   },
   license_code_activation: {
     entry: 'src/pages/licenseCodeActivation.js',
-    title: 'Tapdata Cloud'
-  }
+    title: 'Tapdata Cloud',
+  },
 }
 
 let prodProxyConfig = {
   '/api/tcm/': Object.assign(
     {
       pathRewrite: {
-        '^/': '/console/v3/'
-      }
+        '^/': '/console/v3/',
+      },
     },
-    proxy
+    proxy,
   ),
   '/tm/': {
     ws: true,
     target: proxy.target,
     changeOrigin: true,
     pathRewrite: {
-      '^/': '/console/v3/'
-    }
+      '^/': '/console/v3/',
+    },
   },
   '/api/gw/': Object.assign(
     {
       pathRewrite: {
-        '^/': '/console/v3/'
-      }
+        '^/': '/console/v3/',
+      },
     },
-    proxy
-  )
+    proxy,
+  ),
 }
 let localTmProxy = {
   target: serveUrlMap.localTm,
@@ -74,7 +77,7 @@ let localTmProxy = {
   ws: true,
   secure: false,
   pathRewrite: {
-    '^/tm/': '/'
+    '^/tm/': '/',
   },
   onProxyReq: function (proxyReq, req, res, opts) {
     proxyReq.setHeader('user_id', userId)
@@ -82,16 +85,23 @@ let localTmProxy = {
   onProxyReqWs: function (proxyReq, req, socket, options, head) {
     proxyReq.setHeader('user_id', userId)
     console.log(req.url)
-  }
+  },
 }
 
-module.exports = {
+module.exports = defineConfig({
   pages,
   lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
   publicPath: './',
   productionSourceMap: false,
 
   devServer: {
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+        runtimeErrors: false,
+      },
+    },
     proxy:
       SERVE_ENV === 'PROD'
         ? prodProxyConfig
@@ -106,21 +116,29 @@ module.exports = {
                 : Object.assign(
                     {
                       ws: true,
-                      secure: false
+                      secure: false,
                     },
-                    proxy
-                  )
-          }
+                    proxy,
+                  ),
+          },
   },
   transpileDependencies: [
     // 按需添加需要babel处理的模块
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]table[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?element-ui(.*)[/\\]packages[/\\]tooltip[/\\]src/,
     /[/\\]node_modules[/\\](.+?)?@figmania[/\\]webcomponent(.*)[/\\]/,
-    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/
+    /[/\\]node_modules[/\\](.+?)?driver\.js(.*)[/\\]/,
   ],
-  configureWebpack: config => {
-    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json', '.ts', '.tsx']
+  configureWebpack: (config) => {
+    config.resolve.extensions = ['.js', '.jsx', '.vue', '.json', '.ts', '.tsx', '.mjs']
+    config.plugins.push(
+      require('unplugin-vue-components/webpack')({
+        resolvers: [ElementPlusResolver()],
+      }),
+      require('unplugin-auto-import/webpack')({
+        resolvers: [ElementPlusResolver()],
+      }),
+    )
 
     if (process.env.NODE_ENV === 'production') {
       // gzip
@@ -129,25 +147,25 @@ module.exports = {
           // 正在匹配需要压缩的文件后缀
           test: /\.(js|css|svg|woff|ttf|json|html)$/,
           // 大于10kb的会压缩
-          threshold: 10240
+          threshold: 10240,
           // 其余配置查看compression-webpack-plugin
-        })
+        }),
       )
 
       config['performance'] = {
         //打包文件大小配置
         maxEntrypointSize: 10000000,
-        maxAssetSize: 30000000
+        maxAssetSize: 30000000,
       }
 
       const sassLoader = require.resolve('sass-loader')
       config.module.rules
-        .filter(rule => {
+        .filter((rule) => {
           return rule.test.toString().indexOf('scss') !== -1
         })
-        .forEach(rule => {
-          rule.oneOf.forEach(oneOfRule => {
-            const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+        .forEach((rule) => {
+          rule.oneOf.forEach((oneOfRule) => {
+            const sassLoaderIndex = oneOfRule.use.findIndex((item) => item.loader === sassLoader)
             oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
           })
         })
@@ -182,7 +200,7 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: 'icon-[name]',
       })
       .end()
       .use('svgo-loader')
@@ -195,17 +213,17 @@ module.exports = {
             name: 'removeAttributesBySelector',
             params: {
               selector: ":not(path[fill='none'])",
-              attributes: ['fill']
-            }
+              attributes: ['fill'],
+            },
           },
           {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id']
-            }
-          }
-        ]
+              attrs: ['class', 'p-id'],
+            },
+          },
+        ],
       })
       .end()
 
@@ -218,7 +236,7 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: 'icon-[name]',
       })
       .end()
       .use('svgo-loader')
@@ -231,10 +249,10 @@ module.exports = {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id']
-            }
-          }
-        ]
+              attrs: ['class', 'p-id'],
+            },
+          },
+        ],
       })
       .end()
 
@@ -252,47 +270,51 @@ module.exports = {
     config.resolve.alias.set('@', resolve('src'))
     config.plugins.delete('prefetch-index')
 
-    // ============ ts处理 ============
+    /*// ============ ts处理 ============
     config.module
       .rule('compile')
       .test(/\.(jsx|tsx|ts)$/)
       .use('babel')
       .loader('babel-loader')
-      .end()
+      .end()*/
   },
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@use "${varUrl}" as *;`
-      }
-    }
-  }
-}
+        additionalData: `@use "${varUrl}" as *;`,
+      },
+    },
+  },
+})
 // 设置本地环境的token
-const getToken = userId => {
+const getToken = (userId) => {
   const secret = 'Q3HraAbDkmKoPzaBEYzPXB1zJXmWlQ169'
+
   function __encrypt(string) {
     return crypto
       .createHmac('sha256', secret)
       .update(string + secret)
       .digest('hex')
   }
+
   function encodeBase64(string) {
     if (typeof string !== 'string') return null
     return Buffer.from(string || '').toString('base64')
   }
+
   function encodeStaticTokenByUserId(userId) {
     let token = __encrypt(userId)
     return encodeBase64(userId) + '.' + encodeBase64(token)
   }
+
   const token = encodeStaticTokenByUserId(userId)
   return token
 }
 if (process.env.NODE_ENV === 'development') {
   let _userId = process.env.USER_ID || userId
-  process.env.VUE_APP_ACCESS_TOKEN = getToken(_userId)
+  process.env.VITE_ACCESS_TOKEN = getToken(_userId)
 
   console.log('本地用户调试ID: ' + _userId)
-  console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
+  console.log('本地用户调试Token: ' + process.env.VITE_ACCESS_TOKEN)
   console.log('Proxy server: ' + proxy.target)
 }

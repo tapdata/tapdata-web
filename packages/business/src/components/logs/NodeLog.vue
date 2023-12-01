@@ -2,7 +2,7 @@
   <div class="log-container flex justify-content-between" :class="{ fullscreen: fullscreen }">
     <NodeList
       v-show="!hideFilter"
-      v-model="activeNodeId"
+      v-model:value="activeNodeId"
       :label="$t('packages_dag_migration_consolepanel_quanburizhi')"
       class="node-list border-end flex-shrink-0"
       @change="changeItem"
@@ -18,18 +18,17 @@
           ></TimeSelect>
           <ElInput
             class="search-input ml-4"
-            v-model="keyword"
+            v-model:value="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
-            size="mini"
             clearable
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+          <ElButton :loading="downloadLoading" text class="ml-4" @click="handleDownload">{{
             $t('public_button_download')
           }}</ElButton>
-          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
+          <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
           <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
         </div>
         <div class="pt-3">
@@ -42,14 +41,7 @@
         </div>
       </div>
       <div class="level-line mb-2">
-        <ElCheckboxGroup
-          v-model="checkList"
-          :disabled="loading"
-          :min="1"
-          size="mini"
-          class="inline-flex"
-          @change="searchFnc"
-        >
+        <ElCheckboxGroup v-model:value="checkList" :disabled="loading" :min="1" class="inline-flex" @change="searchFnc">
           <ElCheckbox
             v-for="item in checkItems"
             :label="item.label"
@@ -66,7 +58,7 @@
           key-field="id"
           :min-item-size="30"
           class="scroller px-2 py-1 h-100"
-          @scroll.native="scrollFnc"
+          @scroll="scrollFnc"
         >
           <template #before>
             <div
@@ -74,7 +66,7 @@
               class="before-scroll-content text-center font-color-light pb-2"
             >
               <div v-show="preLoading">
-                <i class="el-icon-loading"></i>
+                <el-icon><el-icon-loading /></el-icon>
               </div>
               <ElAlert
                 v-show="showNoMore"
@@ -98,7 +90,9 @@
               <div class="log-line pr-6 font-color-light">
                 <div
                   class="log-item"
-                  :class="{ 'hide-content cursor-pointer': handleHideContent(arguments[0], item) }"
+                  :class="{
+                    'hide-content cursor-pointer': handleHideContent(arguments[0], item),
+                  }"
                   :ref="'icon' + item.id"
                   @click="handleLog(item)"
                 >
@@ -138,44 +132,48 @@
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="437px"
-      :visible.sync="dialog"
+      v-model="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ElForm label-width="120px">
         <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
-          <ElSelect v-model="form.level" style="width: 275px">
+          <ElSelect v-model:value="form.level" style="width: 275px">
             <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
           <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model:value="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
-            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model:value="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :disabled="saveLoading" size="mini" type="primary" @click="handleSave">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :disabled="saveLoading" type="primary" @click="handleSave">{{
+            $t('public_button_confirm')
+          }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
 
     <ElDialog
       width="1200px"
-      :visible.sync="codeDialog.visible"
+      v-model="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
-      custom-class="error-code-dialog"
+      class="error-code-dialog"
     >
-      <div slot="title">
-        <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
-      </div>
+      <template #header>
+        <div>
+          <span class="ml-4 fw-bold fs-5">{{ codeDialog.data.fullErrorCode || codeDialog.data.errorCode }}</span>
+        </div>
+      </template>
 
       <div
         v-if="codeDialog.data.describe"
@@ -197,7 +195,7 @@
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+            <ElButton type="primary">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
           </span>
         </ElTooltip>
       </div>
@@ -227,6 +225,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -243,35 +242,39 @@ import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
 import NodeList from '../nodes/List'
 
 export default {
+  components: {
+    VIcon,
+    TimeSelect,
+    DynamicScroller,
+    DynamicScrollerItem,
+    VEmpty,
+    NodeList,
+  },
   name: 'NodeLog',
-
-  components: { VIcon, TimeSelect, DynamicScroller, DynamicScrollerItem, VEmpty, NodeList },
-
   props: {
     dataflow: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     logsData: {
       type: Object,
       default: () => {
         return {
           total: 0,
-          items: []
+          items: [],
         }
-      }
+      },
     },
     hideFilter: {
       type: Boolean,
-      default: false
+      default: false,
     },
     logTotals: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
-    nodeId: String
+    nodeId: String,
   },
-
   data() {
     return {
       activeNodeId: this.nodeId,
@@ -280,20 +283,20 @@ export default {
       checkItems: [
         {
           label: 'DEBUG',
-          text: 'DEBUG'
+          text: 'DEBUG',
         },
         {
           label: 'INFO',
-          text: 'INFO'
+          text: 'INFO',
         },
         {
           label: 'WARN',
-          text: 'WARN'
+          text: 'WARN',
         },
         {
           label: 'ERROR',
-          text: 'ERROR'
-        }
+          text: 'ERROR',
+        },
       ],
       timer: null,
       downloadLoading: false,
@@ -307,54 +310,54 @@ export default {
         WARN: 'warning',
         ERROR: 'error',
         FATAL: 'error',
-        DEBUG: 'debug'
+        DEBUG: 'debug',
       },
       colorMap: {
         INFO: 'color-info',
         WARN: 'color-warning',
         ERROR: 'color-danger',
         FATAL: 'color-danger',
-        DEBUG: 'color-disable'
+        DEBUG: 'color-disable',
       },
       newPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       oldPageObj: {
         page: 0,
         pageSize: 50,
-        total: 0
+        total: 0,
       },
       isScrollBottom: false,
       form: {
         level: 'INFO',
         intervalCeiling: 500,
-        recordCeiling: 500
+        recordCeiling: 500,
       },
       dialog: false,
       timeOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: 'full'
+          value: 'full',
         },
         {
           label: i18n.t('public_time_Last_six_hours'),
-          value: '6h'
+          value: '6h',
         },
         {
           label: i18n.t('public_time_last_day'),
-          value: '1d'
+          value: '1d',
         },
         {
           label: i18n.t('public_time_last_three_days'),
-          value: '3d'
+          value: '3d',
         },
         {
           label: i18n.t('public_time_custom_time'),
           type: 'custom',
-          value: 'custom'
-        }
+          value: 'custom',
+        },
       ],
       quotaTimeType: 'full',
       quotaTime: [],
@@ -363,24 +366,23 @@ export default {
       extraEnterCount: 0,
       codeDialog: {
         visible: false,
-        data: {}
+        data: {},
       },
       showCols: [],
       switchData: {
-        timestamp: false
+        timestamp: false,
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS'
+      isIKAS: import.meta.env.VITE_PAGE_TITLE === 'IKAS',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['allNodes']),
 
     nodeLogCountMap() {
       return this.logTotals
-        .filter(t => t.nodeId)
+        .filter((t) => t.nodeId)
         .reduce((cur, next) => {
           const count = cur[next.nodeId] || 0
           return { ...cur, [next.nodeId]: count + next.count }
@@ -388,7 +390,7 @@ export default {
     },
 
     items() {
-      return this.allNodes.filter(t => !!this.nodeLogCountMap[t.id])
+      return this.allNodes.filter((t) => !!this.nodeLogCountMap[t.id])
     },
 
     firstStartTime() {
@@ -421,9 +423,8 @@ export default {
 
     logSetting() {
       return this.dataflow?.logSetting || {}
-    }
+    },
   },
-
   watch: {
     dataflow: {
       deep: true,
@@ -432,38 +433,34 @@ export default {
         if (v1.taskRecordId + v1.startTime !== v2.taskRecordId + v2.startTime) {
           this.init()
         }
-      }
+      },
     },
     nodeId(v) {
       this.activeNodeId = v
-    }
+    },
   },
-
   created() {
     this.checkList = ['error'].includes(this.dataflow.status) ? ['WARN', 'ERROR'] : ['INFO', 'WARN', 'ERROR']
   },
-
   mounted() {
     this.init()
   },
-
-  destroyed() {
+  unmounted() {
     this.clearTimer()
   },
-
   methods: {
     init: debounce(function () {
       if (this.$route.name === 'MigrationMonitorViewer') {
         this.timeOptions = [
           {
             label: i18n.t('public_select_option_all'),
-            value: 'full'
+            value: 'full',
           },
           {
             label: i18n.t('public_time_custom_time'),
             type: 'custom',
-            value: 'custom'
-          }
+            value: 'custom',
+          },
         ]
       }
       this.extraEnterCount = 0
@@ -484,7 +481,7 @@ export default {
       this.oldPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -492,7 +489,7 @@ export default {
       this.newPageObj = {
         page: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
       }
     },
 
@@ -516,13 +513,13 @@ export default {
     },
 
     changeItem(val) {
-      this.$emit('update:nodeId', val)
+      $emit(this, 'update:nodeId', val)
       this.init()
     },
 
     changeTime(val, isTime, source) {
       this.quotaTimeType = source?.type ?? val
-      this.quotaTime = isTime ? val?.split(',')?.map(t => Number(t)) : this.getTimeRange(val)
+      this.quotaTime = isTime ? val?.split(',')?.map((t) => Number(t)) : this.getTimeRange(val)
       this.init()
     },
 
@@ -590,7 +587,7 @@ export default {
       } else {
         this.newFilter.page++
         filter = Object.assign({}, this.newFilter, {
-          page: this.newFilter.page
+          page: this.newFilter.page,
         })
       }
       if (!filter.start || !filter.end) {
@@ -618,7 +615,7 @@ export default {
 
     getFormatRow(rowData = []) {
       let result = cloneDeep(rowData)
-      result.forEach(row => {
+      result.forEach((row) => {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
@@ -656,7 +653,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       return params
     },
@@ -679,7 +676,7 @@ export default {
         taskRecordId,
         nodeId: this.activeNodeId === '' ? null : this.activeNodeId,
         search: this.keyword,
-        levels: this.checkList
+        levels: this.checkList,
       }
       this.newFilter = params
       return params
@@ -714,12 +711,12 @@ export default {
         start,
         end,
         taskId,
-        taskRecordId
+        taskRecordId,
       }
       this.downloadLoading = true
       monitoringLogsApi
         .export(filter)
-        .then(data => {
+        .then((data) => {
           downloadBlob(data)
         })
         .catch(() => {
@@ -737,14 +734,14 @@ export default {
         this.form = {
           level,
           intervalCeiling,
-          recordCeiling
+          recordCeiling,
         }
       }
       this.dialog = true
     },
 
     handleClose() {
-      const index = this.checkList.findIndex(t => t === 'DEBUG')
+      const index = this.checkList.findIndex((t) => t === 'DEBUG')
       this.checkList.splice(index, 1)
       this.searchFnc()
       this.dialog = false
@@ -753,7 +750,7 @@ export default {
     handleSave() {
       const { form } = this
       let params = {
-        level: form.level
+        level: form.level,
       }
       if (form.level === 'DEBUG') {
         params.intervalCeiling = form.intervalCeiling
@@ -822,7 +819,7 @@ export default {
       const params = {
         className: 'ErrorCodeService',
         method: 'getErrorCode',
-        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn']
+        args: [item.errorCode, i18n.locale === 'en' ? 'en' : 'cn'],
       }
 
       this.codeDialog.data.errorStack = item.errorStack
@@ -830,7 +827,7 @@ export default {
       this.codeDialog.data.fullErrorCode = item.fullErrorCode
       proxyApi
         .call(params)
-        .then(data => {
+        .then((data) => {
           this.codeDialog.data.describe = data.describe
           this.codeDialog.data.hasDescribe = data.hasDescribe
           this.codeDialog.data.seeAlso = data.seeAlso || []
@@ -846,7 +843,7 @@ export default {
     },
 
     command(command) {
-      const index = this.showCols.findIndex(t => t === command)
+      const index = this.showCols.findIndex((t) => t === command)
       index > -1 ? this.showCols.splice(index, 1) : this.showCols.push(command)
     },
 
@@ -874,8 +871,9 @@ export default {
 
     onCopy() {
       this.showTooltip = true
-    }
-  }
+    },
+  },
+  emits: ['action', 'update:nodeId'],
 }
 </script>
 
@@ -914,68 +912,68 @@ export default {
 }
 .node-list {
   width: 224px;
-  ::v-deep {
+  :deep(.error-icon) {
+    display: none;
+  }
+
+  :deep(.error-node) {
     .error-icon {
-      display: none;
-    }
-    .error-node {
-      .error-icon {
-        display: inline-flex;
-      }
+      display: inline-flex;
     }
   }
 }
-
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
-  ::v-deep {
-    .log-line {
-      padding: 8px 16px;
-      background-color: #fff;
-      border-bottom: 1px solid #ebeef5;
-      width: 100%;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-      .log-item {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+  :deep(.log-line) {
+    padding: 8px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #ebeef5;
+    width: 100%;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    .log-item {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      .expand-icon {
+        display: none;
+      }
+      &.hide-content {
         .expand-icon {
-          display: none;
-        }
-        &.hide-content {
-          .expand-icon {
-            display: inline-flex;
-          }
+          display: inline-flex;
         }
       }
-      .info-level {
-        color: #c9cdd4;
-      }
-      .warn-level {
-        color: #d5760e;
-      }
-      .error-level,
-      .fatal-level {
-        color: #d44d4d;
-      }
-      .debug-level {
-        color: #178061;
-      }
     }
-    .highlight-bg-color {
-      background-color: #ff0;
+    .info-level {
+      color: #c9cdd4;
     }
-    .empty-wrap {
-      margin: 24px 0;
+    .warn-level {
+      color: #d5760e;
     }
-    .vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper {
-      overflow: visible;
+    .error-level,
+    .fatal-level {
+      color: #d44d4d;
     }
-    .log__label {
-      white-space: nowrap;
+    .debug-level {
+      color: #178061;
     }
+  }
+
+  :deep(.highlight-bg-color) {
+    background-color: #ff0;
+  }
+
+  :deep(.empty-wrap) {
+    margin: 24px 0;
+  }
+
+  :deep(.vue-recycle-scroller.direction-vertical .vue-recycle-scroller__item-wrapper) {
+    overflow: visible;
+  }
+
+  :deep(.log__label) {
+    white-space: nowrap;
   }
 }
 .no-more__alert {
@@ -984,36 +982,31 @@ export default {
   left: 50%;
   width: 140px;
   z-index: 2;
-  ::v-deep {
-    .el-alert__closebtn {
-      top: 7px;
-    }
+
+  :deep(.el-alert__closebtn) {
+    top: 7px;
   }
 }
 .node-list-item {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
-
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
   }
 }
-
 .icon-btn {
   &:hover {
     background-color: map-get($bgColor, hover);
   }
 }
-
 .error-stack-wrap {
   height: 465px;
   &.has-describe {
     height: 280px;
   }
 }
-
 .clipboard-button {
   right: 18px;
   top: 30px;

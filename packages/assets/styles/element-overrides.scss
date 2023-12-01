@@ -1,4 +1,4 @@
-@import '~@tap/assets/styles/var';
+//@import 'var';
 
 // 改变主题色变量
 
@@ -273,7 +273,7 @@ $--alert-icon-large-size: 28px !default;
 /* Message Box
 -------------------------- */
 $--msgbox-width: 420px !default;
-$--msgbox-border-radius:$--border-radius-base !default;
+$--msgbox-border-radius: $--border-radius-base !default;
 $--msgbox-font-size: $--font-size-large !default;
 $--msgbox-content-font-size: $--font-size-base !default;
 $--msgbox-content-color: $--color-text-regular !default;
@@ -699,9 +699,6 @@ $--transfer-item-height: 30px !default;
 $--transfer-item-hover-background: $--color-text-secondary !default;
 $--transfer-filter-height: 32px !default;
 
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
-@import '~element-ui/packages/theme-chalk/src/index';
 
 /* Button
 --------------------------*/
@@ -911,6 +908,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 .el-icon-error {
   color: map-get($color, danger);
 }
+
 .el-menu {
   border-right: none;
   list-style: none;
@@ -918,7 +916,13 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   margin: 0;
   padding-left: 0;
   background-color: map-get($bgColor, disable);
+
+  .el-menu-item * {
+    vertical-align: middle;
+  }
 }
+
+
 
 /* Input
 --------------------------*/
@@ -935,8 +939,9 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .el-input-group__append {
     padding: 0 12px;
 
-    .el-button, .el-select {
-			margin: -10px -12px;
+    .el-button,
+    .el-select {
+      margin: -10px -12px;
     }
   }
 }

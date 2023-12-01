@@ -7,7 +7,6 @@
         :popper-append-to-body="false"
         popper-class="time-select__popper"
         class="ml-2 dark"
-        size="mini"
         ref="select"
         @change="changeFnc"
       >
@@ -18,108 +17,104 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 export default {
   name: 'Frequency',
-
   props: {
     value: String,
     title: {
       type: String,
       default: () => {
         return i18n.t('packages_dag_components_frequency_shuaxinpinlu')
-      }
+      },
     },
     options: {
       type: Array,
       default: () => [
         {
           label: '5s',
-          value: 5 * 1000
+          value: 5 * 1000,
         },
         {
           label: '10s',
-          value: 10 * 1000
+          value: 10 * 1000,
         },
         {
           label: '30s',
-          value: 30 * 1000
+          value: 30 * 1000,
         },
         {
           label: '1m',
-          value: 60 * 1000
+          value: 60 * 1000,
         },
         {
           label: '5m',
-          value: 5 * 60 * 1000
+          value: 5 * 60 * 1000,
         },
         {
           label: '15m',
-          value: 15 * 60 * 1000
+          value: 15 * 60 * 1000,
         },
         {
           label: '30m',
-          value: 30 * 60 * 1000
+          value: 30 * 60 * 1000,
         },
         {
           label: '1h',
-          value: 60 * 60 * 1000
+          value: 60 * 60 * 1000,
         },
         {
           label: '2h',
-          value: 2 * 60 * 60 * 1000
+          value: 2 * 60 * 60 * 1000,
         },
         {
           label: '1d',
-          value: 24 * 60 * 60 * 1000
-        }
-      ]
-    }
+          value: 24 * 60 * 60 * 1000,
+        },
+      ],
+    },
   },
-
   data() {
     return {
       period: '',
-      items: []
+      items: [],
     }
   },
-
   mounted() {
     this.items = JSON.parse(JSON.stringify(this.options))
     this.period = this.items[0]?.value
   },
-
   methods: {
     changeFnc(value) {
-      this.$emit('change', value)
+      $emit(this, 'change', value)
     },
 
     openSelect() {
       this.$refs.select?.$el?.click()
-    }
-  }
+    },
+  },
+  emits: ['change', 'update:value', , 'update:value'],
 }
 </script>
 
 <style lang="scss" scoped>
 .time-select__picker {
   position: relative;
-  ::v-deep {
-    .time-select__popper {
-      width: 270px;
-      transform: translateX(-40px);
-    }
-    // 灰色风格下拉框
-    .el-select {
-      &.dark {
-        .el-input__inner {
-          border: none;
-          background-color: inherit;
-        }
-        .el-icon-arrow-up:before {
-          content: '\e78f';
-        }
+  :deep(.time-select__popper) {
+    width: 270px;
+    transform: translateX(-40px);
+  }
+
+  :deep(.el-select) {
+    &.dark {
+      .el-input__inner {
+        border: none;
+        background-color: inherit;
+      }
+      .el-icon-arrow-up:before {
+        content: '\e78f';
       }
     }
   }

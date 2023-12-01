@@ -22,7 +22,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     data: {
       type: Object,
@@ -30,36 +30,36 @@ export default {
         return {
           x: [],
           name: [i18n.t('public_title')],
-          value: []
+          value: [],
         }
-      }
+      },
     },
     color: {
       type: Array,
-      default: () => ['#26CF6C']
+      default: () => ['#26CF6C'],
     },
     limit: {
-      type: Number
+      type: Number,
     },
     timeFormat: {
       type: String,
-      default: 'YYYY-MM-DD HH:mm:ss'
+      default: 'YYYY-MM-DD HH:mm:ss',
     },
     options: {
-      type: Object
+      type: Object,
     },
     timeValue: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 不支持存在负数的情况
     autoScale: {
       type: Boolean,
-      default: false
+      default: false,
     },
     labelUnitType: {
-      type: String
-    }
+      type: String,
+    },
   },
 
   data() {
@@ -68,7 +68,7 @@ export default {
       end: 100,
       max: 0,
       min: 0,
-      minNotZero: 0
+      minNotZero: 0,
     }
   },
 
@@ -76,7 +76,7 @@ export default {
     canScale() {
       const { max, minNotZero } = this
       return this.autoScale && Math.ceil(max / minNotZero / 100) > 1
-    }
+    },
   },
 
   watch: {
@@ -84,8 +84,8 @@ export default {
       deep: true,
       handler() {
         this.init()
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -111,7 +111,7 @@ export default {
       }
       let options = this.getOptions()
       options.series = series
-      const seriesNoData = series.every(t => !t.data.filter(d => !!d).length)
+      const seriesNoData = series.every((t) => !t.data.filter((d) => !!d).length)
       if (seriesNoData) {
         options.yAxis.max = isNumber(yAxisMax) ? yAxisMax : 1
         options.yAxis.min = 0
@@ -138,20 +138,20 @@ export default {
             zoomOnMouseWheel: false,
             moveOnMouseWheel: false,
             startValue: x[len - 1 - limit] + '',
-            endValue: x[len - 1] + ''
-          }
+            endValue: x[len - 1] + '',
+          },
         ]
         this.$refs.chart.chart?.chart.on(
           'datazoom',
-          debounce(params => {
+          debounce((params) => {
             const { end } = params?.batch?.[0] || {}
             this.end = end
-          }, 100)
+          }, 100),
         )
       }
 
       if (this.end === 100) {
-        const isEmptyData = options.series.every(t => !t.data.length)
+        const isEmptyData = options.series.every((t) => !t.data.length)
         this.extend = Object.assign(
           {},
           {
@@ -161,14 +161,14 @@ export default {
                 color: '#86909c',
                 fontSize: 14,
                 fontWeight: '500',
-                opacity: 0.7
+                opacity: 0.7,
               },
               text: i18n.t('public_data_no_data'),
               left: 'center',
-              top: 'center'
-            }
+              top: 'center',
+            },
           },
-          options
+          options,
         )
       }
     },
@@ -180,9 +180,9 @@ export default {
           backgroundColor: 'rgba(54, 66, 82, 0.9)',
           textStyle: {
             color: '#fff',
-            fontSize: 12
+            fontSize: 12,
           },
-          formatter: params => {
+          formatter: (params) => {
             let result = ''
             params.forEach((item, index) => {
               const { axisValue, marker, seriesName, data } = item
@@ -194,14 +194,14 @@ export default {
               if (![null, undefined].includes(data)) {
                 if (this.timeValue) {
                   val = calcTimeUnit(val, 2, {
-                    digits: 2
+                    digits: 2,
                   })
                 } else if (this.labelUnitType) {
                   val = calcUnit(val, this.labelUnitType)
                 } else {
                   val = val.toLocaleString('zh', {
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                   })
                 }
               }
@@ -209,7 +209,7 @@ export default {
               result += `<div class="flex justify-content-between"><div>${markerStr}${seriesName}</div><div class="din-font">${val}</div></div>`
             })
             return result
-          }
+          },
         },
         grid: {
           top: '8px',
@@ -218,7 +218,7 @@ export default {
           right: 0,
           // bottom: '24px',
           bottom: 0,
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           type: 'category',
@@ -227,43 +227,43 @@ export default {
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed'
-            }
+              type: 'dashed',
+            },
           },
           axisTick: {
-            show: false
+            show: false,
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: canScale ? '#fff' : '#E9E9E9'
-            }
+              color: canScale ? '#fff' : '#E9E9E9',
+            },
           },
           axisLabel: {
             color: '#535F72',
-            formatter: val => {
+            formatter: (val) => {
               return dayjs(Number(val)).format(this.timeFormat)
-            }
-          }
+            },
+          },
         },
         yAxis: {
           min: !canScale ? null : 0 - Math.ceil(max / minNotZero / 100),
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#E9E9E9'
-            }
+              color: '#E9E9E9',
+            },
           },
           splitLine: {
             show: true,
             lineStyle: {
-              type: 'dashed'
-            }
+              type: 'dashed',
+            },
           },
           axisLabel: {
             show: true,
             color: '#535F72',
-            formatter: val => {
+            formatter: (val) => {
               if (canScale) {
                 if (val < 0) {
                   val = 0
@@ -274,15 +274,15 @@ export default {
 
               return this.timeValue
                 ? calcTimeUnit(val || 0, 2, {
-                    digits: 2
+                    digits: 2,
                   })
                 : calcUnit(val, this.labelUnitType)
             },
             // showMaxLabel: false,
-            showMinLabel: canScale ? true : null
-          }
+            showMinLabel: canScale ? true : null,
+          },
         },
-        series: []
+        series: [],
       }
       const op = this.options
       if (op) {
@@ -314,7 +314,7 @@ export default {
       }
 
       // 非零的最小值
-      const minNotZero = Math.min(...myData.filter(t => !!t))
+      const minNotZero = Math.min(...myData.filter((t) => !!t))
       if (!this.minNotZero || minNotZero < this.minNotZero) {
         this.minNotZero = minNotZero
       }
@@ -322,7 +322,7 @@ export default {
       if (this.canScale) {
         // 0改成负数，按照比例计算
         const { max, minNotZero } = this
-        myData = myData.map(el => {
+        myData = myData.map((el) => {
           el = el ? el : 0 - Math.ceil(max / minNotZero / 100)
           return el
         })
@@ -335,18 +335,18 @@ export default {
         smooth: true,
         symbol: 'none',
         label: {
-          show: false
+          show: false,
         },
         lineStyle: {
           color: this.color[index],
-          width: 1
+          width: 1,
         },
         areaStyle: {
           color: this.color[index],
           opacity: 0.1,
-          origin: 'start'
+          origin: 'start',
         },
-        markLine: markLine
+        markLine: markLine,
       }
     },
     reset() {
@@ -354,7 +354,7 @@ export default {
     },
     clear() {
       this.$refs.chart.chart?.chart?.clear()
-    }
-  }
+    },
+  },
 }
 </script>

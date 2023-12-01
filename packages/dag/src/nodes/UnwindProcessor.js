@@ -18,21 +18,21 @@ export class UnwindProcessor extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        display: 'none'
+        display: 'none',
       },
       tabs: {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -41,12 +41,12 @@ export class UnwindProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -55,13 +55,13 @@ export class UnwindProcessor extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -70,10 +70,10 @@ export class UnwindProcessor extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               path: {
                 type: 'string',
@@ -81,13 +81,13 @@ export class UnwindProcessor extends NodeType {
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-component': 'FieldSelect',
-                'x-reactions': `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`
+                'x-reactions': `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
               },
               includeArrayIndex: {
                 type: 'string',
                 title: i18n.t('packages_dag_unwind_includeArrayIndex'),
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
               },
               preserveNullAndEmptyArrays: {
                 type: 'boolean',
@@ -95,18 +95,18 @@ export class UnwindProcessor extends NodeType {
                 'x-component': 'Switch',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  tooltip: i18n.t('packages_dag_unwind_preserveNullAndEmptyArrays_tips')
-                }
+                  tooltip: i18n.t('packages_dag_unwind_preserveNullAndEmptyArrays_tips'),
+                },
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
 }

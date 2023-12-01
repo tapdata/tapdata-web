@@ -4,14 +4,13 @@
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
-          v-model="keyword"
+          v-model:value="keyword"
           prefix-icon="el-icon-search"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
-          size="mini"
           clearable
           @input="searchFnc(800)"
         ></ElInput>
-        <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
+        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -27,17 +26,21 @@
         key-field="id"
         :min-item-size="30"
         class="scroller"
-        @scroll.native="scrollFnc"
+        @scroll="scrollFnc"
       >
         <template #before>
           <div v-if="keyword" class="before-scroll-content text-center font-color-light pb-2">
-            <div>{{ $t('packages_business_customer_logs_no_search_data') }}</div>
+            <div>
+              {{ $t('packages_business_customer_logs_no_search_data') }}
+            </div>
           </div>
           <div v-else class="before-scroll-content text-center font-color-light pb-2">
-            <div v-if="isNoMore">{{ $t('packages_business_customer_logs_no_more_data') }}</div>
+            <div v-if="isNoMore">
+              {{ $t('packages_business_customer_logs_no_more_data') }}
+            </div>
             <div v-else-if="!list.length">{{ $t('public_data_no_data') }}</div>
             <div v-show="preLoading">
-              <i class="el-icon-loading"></i>
+              <el-icon><el-icon-loading /></el-icon>
             </div>
           </div>
         </template>
@@ -61,11 +64,11 @@
                 }}</span>
                 <!--产品决定临时屏蔽-->
                 <!--<span
-                  v-if="item.params.errorCode"
-                  class="color-primary cursor-pointer ml-2"
-                  @click="toSolutions(item.params.errorCode)"
-                  >{{ $t('packages_business_customer_logs_to_solutions') }}</span
-                >-->
+                      v-if="item.params.errorCode"
+                      class="color-primary cursor-pointer ml-2"
+                      @click="toSolutions(item.params.errorCode)"
+                      >{{ $t('packages_business_customer_logs_to_solutions') }}</span
+                    >-->
               </div>
             </div>
           </DynamicScrollerItem>
@@ -74,6 +77,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import dayjs from 'dayjs'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
@@ -82,13 +86,13 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { customerJobLogsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
 export default {
-  name: 'Normal',
   components: {
     DynamicScroller,
-    DynamicScrollerItem
+    DynamicScrollerItem,
   },
+  name: 'Normal',
   props: {
-    id: String
+    id: String,
   },
   data() {
     return {
@@ -106,21 +110,20 @@ export default {
       colorMap: {
         FATAL: 'color-red',
         ERROR: 'color-danger',
-        WARN: 'color-warning'
+        WARN: 'color-warning',
       },
       itemSize: 20,
       pageObj: {
         page: 1,
-        size: 20
+        size: 20,
       },
       isScrollBottom: false,
-      isNoMore: false
+      isNoMore: false,
     }
   },
   mounted() {
     this.init()
   },
-
   methods: {
     init() {
       this.pollingData()
@@ -138,10 +141,10 @@ export default {
         filter: {
           where: { dataFlowId: this.id },
           order: 'id DESC',
-          limit: 20
-        }
+          limit: 20,
+        },
       }
-      this.$ws.on('logs', data => {
+      this.$ws.on('logs', (data) => {
         data && this.resetData()
       })
 
@@ -159,7 +162,7 @@ export default {
     toSolutions(code) {
       let routeUrl = this.$router.resolve({
         name: 'Solutions',
-        query: { code: code }
+        query: { code: code },
       })
       window.open(routeUrl.href)
     },
@@ -177,7 +180,7 @@ export default {
 
       if (checkList.length) {
         filter.where.level = {
-          in: checkList
+          in: checkList,
         }
       }
       return filter
@@ -188,14 +191,14 @@ export default {
       }
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       if (this.firstLogsId) {
         filter.where.id = {
-          lt: this.firstLogsId
+          lt: this.firstLogsId,
         }
       }
       this.addFilter(filter)
@@ -205,14 +208,14 @@ export default {
       // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       if (this.lastLogsId) {
         filter.where.id = {
-          gt: this.lastLogsId
+          gt: this.lastLogsId,
         }
       }
       this.addFilter(filter)
@@ -226,10 +229,10 @@ export default {
       this.preLoading = false
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
         },
         order: 'id DESC',
-        limit: 20
+        limit: 20,
       }
       this.addFilter(filter)
 
@@ -249,7 +252,7 @@ export default {
       }
       customerJobLogsApi
         .get({ filter: JSON.stringify(filter) })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
           items = items.reverse()
           if (!items.length) {
@@ -263,11 +266,11 @@ export default {
             return
           }
           const { keyword } = this
-          items.forEach(el => {
+          items.forEach((el) => {
             let { template, params, templateKeys } = el
             let content = template || ''
             if (templateKeys) {
-              templateKeys.forEach(t => {
+              templateKeys.forEach((t) => {
                 for (let key in params) {
                   let re = new RegExp(`{${key}}`, 'ig')
                   params[t] = params[t].replace(re, params[key])
@@ -348,25 +351,24 @@ export default {
         this.$message.success(this.$t('packages_business_customer_logs_copy_result'))
         window.open(link, '_blank')
       })
-    }
+    },
   },
-
-  destroyed() {
+  unmounted() {
     clearInterval(this.timer)
     this.timer = null
-  }
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .customer-logs {
   font-size: 12px;
-  ::v-deep {
-    .tap-span {
-      padding-left: 16px;
-    }
-    .color-red {
-      color: red;
-    }
+  :deep(.tap-span) {
+    padding-left: 16px;
+  }
+
+  :deep(.color-red) {
+    color: red;
   }
 }
 .e-debug-log {
@@ -376,7 +378,6 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
-
   .el-form {
     position: relative;
 
@@ -392,19 +393,16 @@ export default {
     font-size: 12px;
     color: map-get($fontColor, dark);
   }
-  ::v-deep {
-    .keyword {
-      color: map-get($color, danger);
-    }
+  :deep(.keyword) {
+    color: map-get($color, danger);
   }
 }
 .el-checkbox {
   margin-left: 4px;
   margin-right: 8px;
-  ::v-deep {
-    .el-checkbox__label {
-      font-size: 12px;
-    }
+
+  :deep(.el-checkbox__label) {
+    font-size: 12px;
   }
 }
 .white-space-nowrap {

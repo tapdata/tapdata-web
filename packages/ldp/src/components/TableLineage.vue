@@ -2,7 +2,7 @@
   <div
     class="table-lineage h-100 position-relative"
     :class="{
-      fullscreen: isFullscreen
+      fullscreen: isFullscreen,
     }"
     v-loading="loading"
     :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
@@ -17,9 +17,9 @@
         :id="NODE_PREFIX + node.id"
         :js-plumb-ins="jsPlumbIns"
         :class="{
-          active: node.table === tableName && node.connectionId === connectionId
+          active: node.table === tableName && node.connectionId === connectionId,
         }"
-        @dblclick.native="handleNodeDblClick(node)"
+        @dblclick="handleNodeDblClick(node)"
         @drag-stop="onNodeDragStop"
       ></TableNode>
     </PaperScroller>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters, mapMutations } from 'vuex'
 import dagre from 'dagre'
 import { config, PaperScroller, jsPlumb, NODE_PREFIX, NODE_WIDTH, NODE_HEIGHT } from '@tap/dag'
@@ -74,15 +75,12 @@ import TableNode from './TableNode'
 import LinePopover from './LinePopover'
 export default {
   name: 'TableLineage',
-
   props: {
     connectionId: String,
     tableName: String,
-    isShow: Boolean
+    isShow: Boolean,
   },
-
   components: { VIcon, PaperScroller, TableNode, IconButton, LinePopover },
-
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
@@ -97,40 +95,35 @@ export default {
         reference: null,
         data: null,
         connectionData: {},
-        tasks: []
+        tasks: [],
       },
       loading: false,
       isFullscreen: false,
       fullscreenDisabled: false,
-      fullscreenTip: this.$t('packages_form_js_editor_fullscreen')
+      fullscreenTip: this.$t('packages_form_js_editor_fullscreen'),
     }
   },
-
   computed: {
-    ...mapGetters('dataflow', ['allNodes', 'allEdges', 'nodeById'])
+    ...mapGetters('dataflow', ['allNodes', 'allEdges', 'nodeById']),
   },
-
   watch: {},
-
   mounted() {
     this.initView()
     this.unwatch = this.$watch(
       () => [this.connectionId, this.tableName, this.isShow],
       () => {
         this.initView()
-      }
+      },
     )
     // this.initNodeView()
     // this.loadLineage()
   },
-
-  destroyed() {
+  unmounted() {
     this.unwatch?.()
     this.jsPlumbIns?.destroy()
     this.resetState()
     this.cancelSource?.cancel()
   },
-
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
@@ -169,7 +162,7 @@ export default {
       'addProcessorNode',
       'toggleConsole',
       'setPdkPropertiesMap',
-      'setPdkSchemaFreeMap'
+      'setPdkSchemaFreeMap',
     ]),
 
     initView() {
@@ -198,21 +191,21 @@ export default {
         const connectionIns = info.connection
 
         /*info.connection.bind('click', async () => {
-          const rect = info.connection.canvas.getBoundingClientRect()
-          this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
-          await this.showNodePopover('connection', connection, info.connection.canvas)
-        })*/
+        const rect = info.connection.canvas.getBoundingClientRect()
+        this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+        await this.showNodePopover('connection', connection, info.connection.canvas)
+      })*/
 
         /*info.connection.bind('mouseover', async () => {
-          const rect = info.connection.canvas.getBoundingClientRect()
-          this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
-          await this.showNodePopover('connection', connection, info.connection.canvas)
-        })
+        const rect = info.connection.canvas.getBoundingClientRect()
+        this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
+        await this.showNodePopover('connection', connection, info.connection.canvas)
+      })
 
-        info.connection.bind('mouseout', async () => {
-          console.log('mouseout') // eslint-disable-line
-          this.nodeMenu.show = false
-        })*/
+      info.connection.bind('mouseout', async () => {
+        console.log('mouseout') // eslint-disable-line
+        this.nodeMenu.show = false
+      })*/
       })
     },
 
@@ -233,7 +226,7 @@ export default {
       this.cancelSource = CancelToken.source()
       try {
         const result = await lineageApi.findByTable(this.connectionId, this.tableName, {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
         dag = result.dag || {}
         this.setEdges(dag.edges)
@@ -258,12 +251,18 @@ export default {
       const nodePositionMap = {}
       const dg = new dagre.graphlib.Graph()
 
-      dg.setGraph({ nodesep: 220, ranksep: 220, marginx: 0, marginy: 0, rankdir: 'LR' /*, ranker: 'tight-tree' */ })
+      dg.setGraph({
+        nodesep: 220,
+        ranksep: 220,
+        marginx: 0,
+        marginy: 0,
+        rankdir: 'LR' /*, ranker: 'tight-tree' */,
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         let { width = NODE_WIDTH, height = NODE_HEIGHT } =
           document.getElementById(NODE_PREFIX + n.id)?.getBoundingClientRect() || {}
         width /= scale
@@ -271,7 +270,7 @@ export default {
         dg.setNode(NODE_PREFIX + n.id, { width, height })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs?.position || [0, 0]
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
@@ -279,7 +278,7 @@ export default {
 
       this.jsPlumbIns.setSuspendDrawing(true)
 
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -289,9 +288,9 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
@@ -325,13 +324,13 @@ export default {
         }
       })
 
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []
 
         // 数据兼容
         const defaultAttrs = {
-          position: [0, 0]
+          position: [0, 0],
         }
 
         if (!node.attrs) node.attrs = defaultAttrs
@@ -368,7 +367,7 @@ export default {
                   div.innerHTML = `<span title="${taskName}" class="overflow-hidden clickable ellipsis px-1 el-tag el-tag--small el-tag--light rounded-4">${taskName}</span>`
 
                   if (size > 1) {
-                    const handleClick = ev => {
+                    const handleClick = (ev) => {
                       ev.stopPropagation()
                       this.showNodePopover(ev.target, tasks.slice(1))
                     }
@@ -389,24 +388,24 @@ export default {
                 },
                 events: {
                   click: () => {
-                    this.$emit('click-task', tasks[0])
-                  }
-                }
-              }
-            ]
+                    $emit(this, 'click-task', tasks[0])
+                  },
+                },
+              },
+            ],
           ]
         }
 
         this.jsPlumbIns.connect({
           uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`],
-          overlays
+          overlays,
         })
       })
     },
 
     reset() {
       // 解绑overlay事件
-      this.jsPlumbIns.getConnections().forEach(connection => {
+      this.jsPlumbIns.getConnections().forEach((connection) => {
         const taskTag = connection.getOverlay('taskTag')
 
         if (taskTag) {
@@ -422,7 +421,7 @@ export default {
     onNodeDragStop(isNotMove, oldProperties, newProperties) {
       this.$refs.paperScroller.autoResizePaper()
       !isNotMove &&
-        newProperties.forEach(prop => {
+        newProperties.forEach((prop) => {
           this.updateNodeProperties(prop)
         })
     },
@@ -453,15 +452,15 @@ export default {
         id: node.metadata.id,
         name: node.table,
         LDP_TYPE: 'table',
-        isObject: true
+        isObject: true,
       }
       const connection = {
         id: node.connectionId,
         name: node.connectionName,
-        pdkHash: node.pdkHash
+        pdkHash: node.pdkHash,
       }
 
-      this.$emit('node-dblclick', table)
+      $emit(this, 'node-dblclick', table)
     },
 
     toggleFullscreen() {
@@ -475,16 +474,17 @@ export default {
         this.$nextTick(() => {
           this.fullscreenDisabled = false
           this.fullscreenTip = this.$t(
-            this.isFullscreen ? 'packages_form_js_editor_exit_fullscreen' : 'packages_form_js_editor_fullscreen'
+            this.isFullscreen ? 'packages_form_js_editor_exit_fullscreen' : 'packages_form_js_editor_fullscreen',
           )
         })
       }, 15)
-    }
-  }
+    },
+  },
+  emits: ['click-task', 'node-dblclick'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .paper-toolbar {
   right: 16px;
   top: 16px;
@@ -499,31 +499,29 @@ export default {
     z-index: 10;
   }
 
-  ::v-deep {
-    .table-lineage-connection-label {
-      max-width: 180px;
-      z-index: 1001;
-      .el-tag {
-        background-color: inherit;
-        color: inherit;
-        border-color: currentColor;
+  :deep(.table-lineage-connection-label) {
+    max-width: 180px;
+    z-index: 1001;
+    .el-tag {
+      background-color: inherit;
+      color: inherit;
+      border-color: currentColor;
+    }
+    &.compact-tag {
+      .el-tag:first-child {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
       }
-      &.compact-tag {
-        .el-tag:first-child {
-          border-top-right-radius: 0 !important;
-          border-bottom-right-radius: 0 !important;
-        }
-        .el-tag:last-child {
-          margin-left: -1px;
-          border-top-left-radius: 0 !important;
-          border-bottom-left-radius: 0 !important;
-        }
+      .el-tag:last-child {
+        margin-left: -1px;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
       }
     }
+  }
 
-    .el-loading-text {
-      white-space: pre-wrap;
-    }
+  :deep(.el-loading-text) {
+    white-space: pre-wrap;
   }
 }
 </style>

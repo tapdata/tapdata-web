@@ -1,7 +1,7 @@
 <template>
   <section
     v-resize.top="{
-      minHeight: 40
+      minHeight: 40,
     }"
     class="console-panel border-top"
     :class="showConsole ? 'flex' : 'none'"
@@ -30,7 +30,7 @@
     </div>
     <div class="flex-1 flex flex-column">
       <div class="flex p-2">
-        <ElCheckboxGroup v-model="levels" :min="1" size="mini" class="inline-flex flex-1" @change="autoLoad">
+        <ElCheckboxGroup v-model:value="levels" :min="1" class="inline-flex flex-1" @change="autoLoad">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -45,23 +45,23 @@
             v-for="(item, i) in logList"
             :key="i"
             class="log-list-item m-0 px-1"
-          ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{item.grade}}]</span><span>{{item.log}}</span></pre>
+          ><span class="log-list-item-level mr-1" :class="`log-${item.grade}`">[{{ item.grade }}]</span><span>{{ item.log }}</span></pre>
 
           <pre v-if="warnNum || errorNum" class="flex m-0 px-1">
-            <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
-            <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('public_unit_ge') }}<span class="ml-1">WARN</span></span>
-            <span v-if="warnNum && errorNum" class="mr-1">{{ $t('public_and') }}</span>
-            <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('public_unit_ge') }}<span class="ml-1">ERROR,</span></span>
-            <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
-          </pre>
+                  <span class="mr-1">{{ $t('packages_dag_migration_consolepanel_dangqianjiancefaxian') }}</span>
+                  <span v-if="warnNum" class="color-warning mr-1">{{ warnNum + $t('public_unit_ge') }}<span class="ml-1">WARN</span></span>
+                  <span v-if="warnNum && errorNum" class="mr-1">{{ $t('public_and') }}</span>
+                  <span v-if="errorNum" class="color-danger mr-1">{{ errorNum + $t('public_unit_ge') }}<span class="ml-1">ERROR,</span></span>
+                  <span>{{ $t('packages_dag_migration_consolepanel_qingguanzhu') }}</span>
+                </pre>
 
           <pre
             class="justify-content-center align-center m-0 p-1"
             :class="ifAuto || loading ? 'flex' : 'none'"
           ><svg viewBox="25 25 50 50" class="circular">
-              <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
-            </svg><span class="ml-1 font-color-light">{{$t('packages_dag_loading')}}</span>
-          </pre>
+                    <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                  </svg><span class="ml-1 font-color-light">{{ $t('packages_dag_loading') }}</span>
+                </pre>
         </code>
       </div>
     </div>
@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
@@ -82,13 +83,10 @@ import NodeIcon from '../NodeIcon'
 
 export default {
   name: 'ConsolePanel',
-
   directives: {
-    resize
+    resize,
   },
-
   components: { VEmpty, NodeIcon, VIcon },
-
   data() {
     return {
       levels: ['INFO', 'WARN', 'ERROR'],
@@ -100,39 +98,35 @@ export default {
       type: '',
       over: false,
       warnNum: 0,
-      errorNum: 0
+      errorNum: 0,
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId'])
+    ...mapState('dataflow', ['editVersion', 'showConsole', 'taskId']),
   },
-
   watch: {
     showConsole(v) {
       if (v) {
         // this.loadData()
       }
-    }
+    },
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.stopAuto()
   },
-
   methods: {
     ...mapMutations('dataflow', [
       'updateNodeProperties',
       'setNodeError',
       'clearNodeError',
       'setActiveType',
-      'toggleConsole'
+      'toggleConsole',
     ]),
     ...mapActions('dataflow', ['updateDag']),
 
     sleep(time) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => resolve(), time)
       })
     },
@@ -144,10 +138,10 @@ export default {
         taskId: taskId || this.$route.params.id,
         nodeId,
         type: this.type,
-        grade: this.levels.join(',')
+        grade: this.levels.join(','),
       })
-      const list = data.list?.filter(t => !t.describe) || []
-      const resetList = data.list?.filter(t => t.describe) || []
+      const list = data.list?.filter((t) => !t.describe) || []
+      const resetList = data.list?.filter((t) => t.describe) || []
       const modelList = data.modelList || []
       this.loading = false
       this.logList = list.concat(modelList).concat(this.getResetList(resetList)) || []
@@ -157,7 +151,7 @@ export default {
       this.over = data.over
 
       const nodeList = []
-      Object.keys(data.nodes).forEach(id => {
+      Object.keys(data.nodes).forEach((id) => {
         let node = this.nodeById(id)
         node && nodeList.push(node)
       })
@@ -184,7 +178,7 @@ export default {
 
     stopAuto() {
       this.ifAuto = false
-      this.$emit('stopAuto')
+      $emit(this, 'stopAuto')
       clearTimeout(this.timerId)
     },
 
@@ -208,10 +202,10 @@ export default {
         SUCCEED: 'packages_dag_console_log_status_success',
         TASK_SUCCEED: 'packages_dag_console_log_status_success',
         FAILED: 'packages_dag_console_log_status_fail',
-        TASK_FAILED: 'packages_dag_console_log_status_fail'
+        TASK_FAILED: 'packages_dag_console_log_status_fail',
       }
       let result = []
-      data.forEach(el => {
+      data.forEach((el) => {
         el.st = el.status
         el.status = i18n.t(I18N_MAP[el.status])
         const time = dayjs(el.time).format('YYYY-MM-DD HH:mm:ss')
@@ -259,8 +253,9 @@ export default {
     getData() {
       const { warnNum = 0, errorNum = 0, over, logList } = this
       return { warnNum, errorNum, over, logList }
-    }
-  }
+    },
+  },
+  emits: ['stopAuto'],
 }
 </script>
 
@@ -276,7 +271,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .console-panel {
   position: relative;
   z-index: 10;

@@ -5,37 +5,34 @@
         <ElCollapseItem name="db">
           <template #title>
             <div class="flex align-center flex-1 overflow-hidden">
-              <template>
-                <span class="flex-1 user-select-none text-truncate flex align-center">
-                  <!--连接-->
-                  {{ $t('packages_dag_dag_connection') }}
-                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
-                </span>
-                <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
-                  >search-outline</VIcon
-                >
-                <VIcon
-                  size="20"
-                  class="click-btn"
-                  :class="{ 'click-btn-disabled': stateIsReadonly }"
-                  @mousedown.stop
-                  @click.stop="creat"
-                  >add-outline</VIcon
-                >
-              </template>
+              <span class="flex-1 user-select-none text-truncate flex align-center">
+                <!--连接-->
+                {{ $t('packages_dag_dag_connection') }}
+                <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
+              </span>
+              <VIcon size="18" class="click-btn mr-1" :class="{ active: showDBInput }" @click.stop="handleShowDBInput"
+                >search-outline
+              </VIcon>
+              <VIcon
+                size="20"
+                class="click-btn"
+                :class="{ 'click-btn-disabled': stateIsReadonly }"
+                @mousedown.stop
+                @click.stop="creat"
+                >add-outline
+              </VIcon>
             </div>
           </template>
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-model="dbSearchTxt"
+                v-model:value="dbSearchTxt"
                 ref="dbInput"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
-                size="mini"
                 clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
+                @keydown.stop
+                @keyup.stop
+                @click.stop
                 @input="handleDBInput"
               >
                 <template #prefix>
@@ -66,7 +63,7 @@
                       onStart,
                       onMove,
                       onDrop,
-                      onStop
+                      onStop,
                     }"
                     :key="db.id"
                     class="db-item flex align-center px-1 user-select-none rounded-2"
@@ -108,7 +105,7 @@
       </ElCollapse>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" model-value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -129,7 +126,7 @@
               onStart: onProcessorStart,
               onMove,
               onDrop,
-              onStop
+              onStop,
             }"
             class="node-item flex align-center px-2 user-select-none rounded-2"
             :class="{ grabbable: !stateIsReadonly }"
@@ -161,7 +158,7 @@
 
     <!--创建连接-->
     <SceneDialog
-      :visible.sync="connectionDialog"
+      v-model:visible="connectionDialog"
       selector-type="source_and_target"
       @selected="handleDatabaseType"
     ></SceneDialog>
@@ -169,6 +166,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import '@tap/assets/icons/svg/magnify.svg'
 import '@tap/assets/icons/svg/table.svg'
 import '@tap/assets/icons/svg/javascript.svg'
@@ -192,9 +190,9 @@ import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { OverflowTooltip } from '@tap/component'
-import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import { getScrollBarWidth } from 'element-plus/es/utils/dom/scroll'
 import NodeIcon from '../NodeIcon'
 import { escapeRegExp } from 'lodash'
 import ConnectionType from '../ConnectionType'
@@ -210,10 +208,8 @@ export default {
     BaseNode,
     VIcon,
     ConnectionTypeSelector,
-    ElScrollbar: Select.components.ElScrollbar,
-    ConnectionType
+    ConnectionType,
   },
-
   data() {
     return {
       collapseMode: 'db',
@@ -241,15 +237,13 @@ export default {
       comingAllowDatabase: [], // 即将上线
       otherType: [],
       automationType: '', //插件化数据源
-      connectionType: 'source'
+      connectionType: 'source',
     }
   },
-
   directives: {
     mouseDrag,
-    resize
+    resize,
   },
-
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor', 'stateIsReadonly']),
 
@@ -263,23 +257,14 @@ export default {
     },
 
     scrollbarWrapStyle() {
-      let gutter = scrollbarWidth()
+      let gutter = getScrollBarWidth()
       return `height: calc(100% + ${gutter}px);`
-    }
+    },
   },
-
   async created() {
     await this.getDatabaseType()
 
     this.init()
-  },
-
-  mounted() {
-    // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
-  },
-
-  beforeDestroy() {
-    // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   methods: {
@@ -288,7 +273,7 @@ export default {
       this.connectionDialog = !this.stateIsReadonly
     },
     async getDatabaseType() {
-      await databaseTypesApi.get().then(res => {
+      await databaseTypesApi.get().then((res) => {
         if (res) {
           this.getPdkData(res)
         }
@@ -303,7 +288,7 @@ export default {
 
     getDbFilter() {
       const databaseTypeList =
-        this.database?.map(t => t.type).filter(t => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
+        this.database?.map((t) => t.type).filter((t) => !['CSV', 'EXCEL', 'JSON', 'XML'].includes(t)) || []
       const filter = {
         page: this.dbPage,
         size: 20,
@@ -331,17 +316,17 @@ export default {
           capabilities: 1,
           config: 1,
           connectionString: 1,
-          encryptConfig: 1
+          encryptConfig: 1,
         },
         order: ['status DESC', 'name ASC'],
         where: {
           database_type: {
-            in: databaseTypeList
+            in: databaseTypeList,
           },
           createType: {
-            $ne: 'System'
-          }
-        }
+            $ne: 'System',
+          },
+        },
       }
       const txt = escapeRegExp(this.dbSearchTxt.trim())
 
@@ -366,7 +351,7 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => {
+      const dbList = data.items.map((item) => {
         item.databaseType = item.database_type
         if (item.connectionString) {
           item.connectionUrl = item.connectionString
@@ -391,7 +376,7 @@ export default {
 
       if (loadMore) {
         // 防止重复push
-        dbList.forEach(item => {
+        dbList.forEach((item) => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -436,7 +421,7 @@ export default {
       const ins = getResourceIns(node)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
       this.dragNode = node
       this.dragStarting = true
@@ -452,7 +437,7 @@ export default {
         // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
           value: ins,
-          enumerable: false
+          enumerable: false,
         })
       }
       this.dragNode = node
@@ -462,11 +447,11 @@ export default {
 
     onMove() {
       this.dragMoving = true
-      this.$emit('move-node', ...arguments)
+      $emit(this, 'move-node', ...arguments)
     },
 
     onDrop(item, position, rect) {
-      this.$emit('drop-node', this.dragNode, position, rect)
+      $emit(this, 'drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -475,7 +460,7 @@ export default {
     },
 
     scrollTopOfDBList() {
-      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.setScrollTop(0)
     },
 
     handleDBInput: debounce(function () {
@@ -500,19 +485,19 @@ export default {
             properties: {
               $inputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               $outputs: {
                 default: [],
-                type: 'array'
+                type: 'array',
               },
               wrap: {
                 ...pdkProperties,
-                type: 'void'
-              }
-            }
+                type: 'void',
+              },
+            },
           },
-          {}
+          {},
         )
         delete nodeConfig.$inputs
         delete nodeConfig.$outputs
@@ -531,8 +516,8 @@ export default {
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
-          capabilities: item.capabilities || []
-        }
+          capabilities: item.capabilities || [],
+        },
       }
     },
 
@@ -556,7 +541,7 @@ export default {
       const { pdkHash, pdkId } = item
       this.$router.push({
         name: 'connectionCreate',
-        query: { pdkHash, pdkId }
+        query: { pdkHash, pdkId },
       })
     },
 
@@ -567,7 +552,7 @@ export default {
     onDoubleClickDB(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', this.getNodeProps(item))
+      $emit(this, 'add-node', this.getNodeProps(item))
     },
 
     /**
@@ -577,13 +562,14 @@ export default {
     onDoubleClickProcessor(item) {
       if (this.stateIsReadonly) return
 
-      this.$emit('add-node', item)
-    }
-  }
+      $emit(this, 'add-node', item)
+    },
+  },
+  emits: ['move-node', 'drop-node', 'add-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $hoverBg: #eef3ff;
 
 .drag-node {
@@ -607,11 +593,14 @@ $hoverBg: #eef3ff;
       position: relative;
       height: 40px;
       cursor: pointer;
+
       &:hover {
         color: map-get($color, primary);
       }
+
       &.active {
         color: map-get($color, primary);
+
         &:before {
           position: absolute;
           content: '';
@@ -625,79 +614,85 @@ $hoverBg: #eef3ff;
     }
   }
 
-  ::v-deep {
-    .type-tabs {
-      .el-tabs__header {
-        margin-bottom: 0;
-      }
-      .el-tabs__nav-wrap {
-        padding: 0 4px;
-      }
-      .el-tabs__item {
-        padding: 0 12px;
-      }
+  :deep(.type-tabs) {
+    .el-tabs__header {
+      margin-bottom: 0;
     }
 
-    .db-list-container {
-      max-height: 50%;
-      .el-collapse-item:last-child {
-        margin-bottom: -2px;
-      }
+    .el-tabs__nav-wrap {
+      padding: 0 4px;
     }
 
-    .click-btn {
-      width: 24px !important;
-      height: 24px !important;
-      z-index: 2;
-      border-radius: 4px;
+    .el-tabs__item {
+      padding: 0 12px;
+    }
+  }
+
+  :deep(.db-list-container) {
+    max-height: 50%;
+
+    .el-collapse-item:last-child {
+      margin-bottom: -2px;
+    }
+  }
+
+  :deep(.click-btn) {
+    width: 24px !important;
+    height: 24px !important;
+    z-index: 2;
+    border-radius: 4px;
+
+    .click-btn-disabled {
+      color: currentColor;
+      cursor: not-allowed;
 
       &:hover {
-        color: map-get($color, primary);
-        background: $hoverBg;
-      }
-
-      &-disabled {
         color: currentColor;
-        cursor: not-allowed;
-        &:hover {
-          color: currentColor;
-          background: rgba(242, 243, 245);
-        }
+        background: rgba(242, 243, 245);
       }
     }
+  }
 
-    .badge {
-      display: inline-block;
-      margin-left: 4px;
-      padding: 2px 6px;
-      border-radius: 18px;
-      background: #f2f4f6;
-      color: rgba(0, 0, 0, 0.4);
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1;
-      vertical-align: baseline;
+  :deep(.click-btn:hover) {
+    color: map-get($color, primary);
+    background: $hoverBg;
+  }
+
+  :deep(.badge) {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 6px;
+    border-radius: 18px;
+    background: #f2f4f6;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    vertical-align: baseline;
+  }
+
+  :deep(.tb-header) {
+    position: relative;
+    height: $headerH;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+
+    .tb-header-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
     }
+  }
 
-    .tb-header {
-      position: relative;
-      height: $headerH;
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 1px solid transparent;
-      &-icon {
-        flex-shrink: 0;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
+  :deep(*) {
     .db-item,
     .node-item {
       height: 42px;
       margin-bottom: 4px;
       font-size: $fontBaseTitle;
       line-height: normal;
+
       &.active {
         background-color: #eef3ff;
       }
@@ -720,6 +715,7 @@ $hoverBg: #eef3ff;
 
       &-content {
         overflow: hidden;
+
         > :not(:last-child) {
           margin-bottom: 4px;
           font-size: $fontBaseTitle;
@@ -734,35 +730,41 @@ $hoverBg: #eef3ff;
         margin-bottom: 0;
       }
     }
+  }
 
-    .node-item {
-      height: 30px;
+  :deep(.node-item) {
+    height: 30px;
 
-      .el-image {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .tb-item-icon {
+    .el-image {
       width: 20px;
       height: 20px;
-      background-color: #6236ff;
-      text-align: center;
-      border-radius: 100%;
     }
+  }
 
+  :deep(.tb-item-icon) {
+    width: 20px;
+    height: 20px;
+    background-color: #6236ff;
+    text-align: center;
+    border-radius: 100%;
+  }
+
+  :deep(*) {
     .el-collapse {
       border-top: 0;
+
       &.processor-collapse {
         max-height: 30%;
       }
+
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {
           height: 100%;
+
           .el-collapse-item__wrap {
             height: calc(100% - #{$headerH - 1});
           }
+
           .el-collapse-item__content {
             height: 100%;
           }
@@ -790,9 +792,6 @@ $hoverBg: #eef3ff;
 
         &__arrow {
           order: -1;
-          &:before {
-            content: '\e791';
-          }
         }
 
         &__content {
@@ -800,37 +799,37 @@ $hoverBg: #eef3ff;
         }
       }
     }
+  }
 
-    .el-scrollbar {
+  :deep(.el-scrollbar) {
+    height: 100%;
+  }
+
+  :deep(.header__input) {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin-bottom: -1px;
+
+    input {
+      width: 100%;
       height: 100%;
+      border-width: 0 0 1px;
+      border-radius: 0;
     }
 
-    .header__input {
-      position: absolute;
-      z-index: 3;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      margin-bottom: -1px;
+    input,
+    .v-icon,
+    .el-input__icon {
+      vertical-align: top;
+    }
 
-      input {
-        width: 100%;
-        height: 100%;
-        border-width: 0 0 1px;
-        border-radius: 0;
-      }
-
-      input,
-      .v-icon,
-      .el-input__icon {
-        vertical-align: top;
-      }
-
-      input,
-      .el-input__icon {
-        line-height: $headerH;
-      }
+    input,
+    .el-input__icon {
+      line-height: $headerH;
     }
   }
 }

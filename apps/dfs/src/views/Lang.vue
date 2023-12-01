@@ -15,7 +15,7 @@
       </ElCollapseItem>
     </ElCollapse>
     <div class="flex justify-content-between mt-4">
-      <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
+      <FilterBar v-model:value="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
         <UploadFile :upload="uploadModifyZhCN" accept="text/javascript" class="inline-block mr-4">
           <ElButton>{{ $t('button_upload') + $t('lang_zh_cn') }}</ElButton>
@@ -41,20 +41,20 @@
       :isPage="true"
       @sort-change="handleSortTable"
     >
-      <template slot="operation" slot-scope="scope">
+      <template v-slot:operation="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
+          <ElButton text @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
         </div>
       </template>
-      <template slot="name" slot-scope="scope">
+      <template v-slot:name="scope">
         <div v-if="scope.row[scope.prop + '-modify']" class="color-success">
           {{ scope.row[scope.prop + '-modify'] }}
         </div>
         <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
     </VTable>
-    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" :visible.sync="dialog.visible">
-      <ElForm :model="dialog.form" label-width="120px" @submit.native.prevent>
+    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" v-model="dialog.visible">
+      <ElForm :model="dialog.form" label-width="120px" @submit.prevent>
         <ElFormItem label="key">
           <div>{{ dialog.form.key }}</div>
         </ElFormItem>
@@ -83,10 +83,12 @@
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="dialog.visible = false">{{ $t('button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="confirm">{{ $t('button_confirm') }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
@@ -109,13 +111,13 @@ export default {
     let langMap = {
       'zh-CN': i18n.t('lang_zh_cn'),
       'zh-TW': i18n.t('lang_zh_tw'),
-      en: i18n.t('lang_en')
+      en: i18n.t('lang_en'),
     }
     // 原有的文案
     let sourceObject = {
       en: enSource,
       'zh-CN': zhCN,
-      'zh-TW': zhTWSource
+      'zh-TW': zhTWSource,
     }
     let localLangModifyZhCN = localStorage.getItem('localLangModifyZhCN')
     let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
@@ -124,35 +126,35 @@ export default {
     let modifyObject = {
       en: localLangModifyEn ? JSON.parse(localLangModifyEn) : {},
       'zh-TW': localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {},
-      'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {}
+      'zh-CN': localLangModifyZhCN ? JSON.parse(localLangModifyZhCN) : {},
     }
     let columns = [
       {
         label: 'key',
         prop: 'key',
         minWidth: 100,
-        sortable: true
-      }
+        sortable: true,
+      },
     ]
     for (let key in langMap) {
       columns.push({
         label: langMap[key],
         prop: key,
         slotName: 'name',
-        sortable: true
+        sortable: true,
       })
     }
     columns.push({
       label: i18n.t('list_operation'),
       prop: 'operation',
-      slotName: 'operation'
+      slotName: 'operation',
     })
     let list = []
     for (let key in sourceObject['zh-CN']) {
       let obj = {}
       if (typeof sourceObject['zh-CN'][key] === 'string') {
         obj.key = key
-        Object.keys(langMap).forEach(el => {
+        Object.keys(langMap).forEach((el) => {
           obj[el] = sourceObject[el][key]
           obj[el + '-modify'] = modifyObject[el]?.[key] || ''
         })
@@ -169,7 +171,7 @@ export default {
       searchParams: {
         status: '',
         key: '',
-        value: ''
+        value: '',
       },
       filterItems: [
         {
@@ -179,31 +181,31 @@ export default {
           items: [
             {
               label: 'modify',
-              value: 'modify'
+              value: 'modify',
             },
             {
               label: 'no-modify',
-              value: 'no-modify'
-            }
-          ]
+              value: 'no-modify',
+            },
+          ],
         },
         {
           placeholder: 'key',
           key: 'key',
           type: 'input',
-          debounce: 300
+          debounce: 300,
         },
         {
           placeholder: 'value',
           key: 'value',
           type: 'input',
-          debounce: 300
-        }
+          debounce: 300,
+        },
       ],
       dialog: {
         visible: false,
-        form: {}
-      }
+        form: {},
+      },
     }
   },
   mounted() {
@@ -226,17 +228,17 @@ export default {
         let data = this.list
         if (status) {
           if (status === 'modify') {
-            data = this.list.filter(t => t['zh-CN-modify'] || t['zh-TW-modify'] || t['en-modify'])
+            data = this.list.filter((t) => t['zh-CN-modify'] || t['zh-TW-modify'] || t['en-modify'])
           } else if (status === 'no-modify') {
-            data = this.list.filter(t => !t['zh-CN-modify'] && !t['zh-TW-modify'] && !t['en-modify'])
+            data = this.list.filter((t) => !t['zh-CN-modify'] && !t['zh-TW-modify'] && !t['en-modify'])
           }
         }
         if (key) {
-          data = this.list.filter(t => t.key.toLowerCase().includes(key.trim().toLowerCase() || ''))
+          data = this.list.filter((t) => t.key.toLowerCase().includes(key.trim().toLowerCase() || ''))
         }
         if (value) {
           let iVal = value.trim().toLowerCase()
-          data = this.list.filter(t => ['zh-CN', 'zh-TW', 'en'].some(s => t[s]?.toLowerCase().includes(iVal || '')))
+          data = this.list.filter((t) => ['zh-CN', 'zh-TW', 'en'].some((s) => t[s]?.toLowerCase().includes(iVal || '')))
         }
 
         this.data = data
@@ -249,7 +251,7 @@ export default {
     confirm() {
       this.dialog.visible = false
       let { form } = this.dialog
-      let findOne = this.list.find(t => t.key === form.key)
+      let findOne = this.list.find((t) => t.key === form.key)
       findOne['zh-CN-modify'] = form['zh-CN-modify']
       findOne['zh-TW-modify'] = form['zh-TW-modify']
       findOne['en-modify'] = form['en-modify']
@@ -260,7 +262,7 @@ export default {
       let zhCN = {}
       let zhTW = {}
       let en = {}
-      this.list.forEach(el => {
+      this.list.forEach((el) => {
         if (el['zh-CN-modify']) {
           zhCN[el.key] = el['zh-CN-modify']
         }
@@ -274,7 +276,7 @@ export default {
       return {
         zhCN,
         zhTW,
-        en
+        en,
       }
     },
     updateLocalStorage() {
@@ -303,8 +305,11 @@ export default {
     },
     downloadBlob(obj = {}, name = '') {
       downloadBlob(
-        { data: 'export default ' + JSON.stringify(obj), headers: { 'content-type': 'text/plain;charset=utf-8' } },
-        name
+        {
+          data: 'export default ' + JSON.stringify(obj),
+          headers: { 'content-type': 'text/plain;charset=utf-8' },
+        },
+        name,
       )
     },
     upload(evt, callback) {
@@ -318,7 +323,7 @@ export default {
       }
     },
     uploadModifyEn(evt) {
-      this.upload(evt, data => {
+      this.upload(evt, (data) => {
         let res = localStorage.getItem('localLangModifyEn')
         if (res) {
           Object.assign(data, JSON.parse(res))
@@ -327,7 +332,7 @@ export default {
       })
     },
     uploadModifyZhTW(evt) {
-      this.upload(evt, data => {
+      this.upload(evt, (data) => {
         let res = localStorage.getItem('localLangModifyZhTW')
         if (res) {
           Object.assign(data, JSON.parse(res))
@@ -336,7 +341,7 @@ export default {
       })
     },
     uploadModifyZhCN(evt) {
-      this.upload(evt, data => {
+      this.upload(evt, (data) => {
         let res = localStorage.getItem('localLangModifyZhCN')
         if (res) {
           Object.assign(data, JSON.parse(res))
@@ -351,7 +356,7 @@ export default {
         }
         return a[prop] > b[prop] ? -1 : 1
       })
-    }
-  }
+    },
+  },
 }
 </script>

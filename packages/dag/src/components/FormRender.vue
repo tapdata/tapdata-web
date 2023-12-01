@@ -1,7 +1,7 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto pt-1">
-      <Form class-name="form-wrap" :form="form" v-bind="formProps">
+      <Form v-bind="formProps" class-name="form-wrap" :form="form">
         <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
@@ -15,8 +15,8 @@ import * as _components from '../components/form'
 const { SchemaField } = createSchemaField({
   components: {
     ...components,
-    ..._components
-  }
+    ..._components,
+  },
 })
 
 export default {
@@ -32,12 +32,12 @@ export default {
         colon: false,
         shallow: false,
         layout: 'vertical',
-        feedbackLayout: 'terse'
-      })
-    }
+        feedbackLayout: 'terse',
+      }),
+    },
   },
 
-  components: { Form, SchemaField }
+  components: { Form, SchemaField },
 }
 </script>
 
@@ -99,94 +99,101 @@ $headerBg: #fff;
     }
   }
 
-  ::v-deep {
-    .form-wrap {
-      flex: 1;
-      > form {
-        height: 100%;
+  :deep(.form-wrap) {
+    flex: 1;
+
+    > form {
+      height: 100%;
+    }
+  }
+
+  :deep(.#{$formNamespace}-form-item) {
+    font-size: $fontBaseTitle;
+
+    .#{$formNamespace}-form-item-label {
+      label {
+        color: map-get($fontColor, light);
       }
     }
 
-    // 覆盖数字输入框的宽度
-    .formily-element-form-item {
-      font-size: $fontBaseTitle;
-      &-label {
-        label {
-          color: map-get($fontColor, light);
-        }
-      }
-      .el-input-number {
-        width: 180px;
-      }
-      .el-input-number--small {
-        width: 130px;
-      }
+    .el-input-number {
+      width: 180px;
+    }
 
-      &-help,
-      &-extra {
-        white-space: pre-wrap;
+    .el-input-number--small {
+      width: 130px;
+    }
+
+    .#{$formNamespace}-form-item-help,
+    .#{$formNamespace}-form-item-extra {
+      white-space: pre-wrap;
+    }
+  }
+
+  /*:deep(.#{$formNamespace}-form-item-layout-horizontal) {
+    .#{$formNamespace}-form-item-control-content-component > .el-switch {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .#{$formNamespace}-space-horizontal {
+      .el-switch {
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+  }*/
+
+  /*:deep(.#{$formNamespace}-form-item-layout-vertical) {
+    .#{$formNamespace}-form-item-label-tooltip {
+      height: 40px;
+
+      i {
+        line-height: 1;
       }
     }
 
-    .formily-element-form-item-layout-horizontal {
-      .formily-element-form-item-control-content-component > .el-switch {
+    !*.#{$formNamespace}-space-horizontal {
+      .el-switch {
         height: 40px;
         line-height: 40px;
       }
-      .formily-element-space-horizontal {
-        .el-switch {
-          height: 32px;
-          line-height: 32px;
-        }
-      }
+    }*!
+  }*/
+
+  /*:deep(.#{$formNamespace}-form-item-control) {
+    .#{$formNamespace}-space-horizontal {
+      vertical-align: top;
+    }
+  }*/
+
+  :deep(.#{$formNamespace}-form-item:not(.form-item-text) + .form-item-text) {
+    margin-top: 16px;
+  }
+
+  :deep(
+      .form-item-dense
+        .#{$formNamespace}-form-item-control
+        .#{$formNamespace}-form-item-control-content
+        .#{$formNamespace}-form-item-control-content-component
+    ) {
+    min-height: unset;
+    line-height: normal;
+  }
+
+  :deep(.form-item-text) {
+    & + .form-item-text {
+      margin-top: 8px;
     }
 
-    .formily-element-form-item-layout-vertical {
-      .formily-element-form-item-label-tooltip {
-        height: 40px;
+    margin-bottom: 0;
 
-        i {
-          line-height: 1;
-        }
-      }
-
-      .formily-element-space-horizontal {
-        .el-switch {
-          height: 40px;
-          line-height: 40px;
-        }
-      }
-    }
-
-    .formily-element-form-item-control {
-      .formily-element-space-horizontal {
-        vertical-align: top;
-      }
-    }
-
-    .formily-element-form-item:not(.form-item-text) + .form-item-text {
-      margin-top: 16px;
-    }
-
-    .form-item-dense
-      .formily-element-form-item-control
-      .formily-element-form-item-control-content
-      .formily-element-form-item-control-content-component {
+    .#{$formNamespace}-form-item-label-content {
       min-height: unset;
-      line-height: normal;
-    }
+      line-height: 1;
 
-    .form-item-text {
-      & + .form-item-text {
-        margin-top: 8px;
-      }
-      margin-bottom: 0;
-      .formily-element-form-item-label-content {
-        min-height: unset;
+      label {
         line-height: 1;
-        label {
-          line-height: 1;
-        }
       }
     }
   }

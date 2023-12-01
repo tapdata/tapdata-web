@@ -18,7 +18,9 @@
       </div>
 
       <div class="mb-4">
-        <div class="fw-sub mb-2 text-label font-color-dark">1. {{ $t('dfs_agent_download_type') }}</div>
+        <div class="fw-sub mb-2 text-label font-color-dark">
+          {{ $t('dfs_agent_download_type') }}
+        </div>
         <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
           <ElRadio
             v-for="(item, index) in downType"
@@ -35,9 +37,8 @@
         </ElRadioGroup>
       </div>
 
-      <div class="text-label fw-sub font-color-dark mb-2 flex align-center">
-        2. {{ $t('agent_deploy_start_install') }}:
-        <ElLink @click="handleOpenDeployDocs" class="ml-1" type="primary">{{ $t('agent_deploy_tutorial') }}</ElLink>
+      <div class="text-label fw-sub font-color-dark mb-2">
+        {{ $t('agent_deploy_start_install') }}
       </div>
       <ul v-if="downLoadType === 'windows'" class="ul-style">
         <li class="flex justify-content-start align-items-center">
@@ -48,11 +49,17 @@
           {{ $t('dfs_agent_download_fastdownload_he')
           }}<ElLink class="mx-2" type="primary" @click="handleDownLoadApplication">application.yml </ElLink>
         </li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}</li>
-        <li class="mt-3">{{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}</li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_jiangwenjianta') }}
+        </li>
+        <li class="mt-3">
+          {{ $t('dfs_agent_download_fastdownload_shuangjizhixingt') }}
+        </li>
       </ul>
       <section v-else>
-        <div class="font-color-light fw-normal mb-4">{{ textMap[downLoadType] }}</div>
+        <div class="font-color-light fw-normal mb-4">
+          {{ textMap[downLoadType] }}
+        </div>
         <ElTooltip
           placement="top"
           manual
@@ -65,42 +72,42 @@
             class="operaKey mb-4"
             v-clipboard:copy="links[downLoadType]"
             v-clipboard:success="onCopy"
-            @mouseleave.native="showTooltip = false"
+            @mouseleave="showTooltip = false"
             @click="handleCopy"
           >
             <VIcon class="mr-2">copy</VIcon>
             <i>{{ $t('public_button_copy') }}</i>
           </el-button>
         </ElTooltip>
-        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all" @copy="handleCopy">
+        <div
+          class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all"
+          @copy="handleCopy"
+          @copy="handleCopy"
+        >
           {{ links[downLoadType] }}
         </div>
       </section>
       <div class="box-card rounded-lg mt-4 flex flex-column justify-content-center align-items-center">
         <template v-if="success">
           <VIcon size="64" class="text-primary">check-circle-fill</VIcon>
-          <div class="fs-5 font-color-dark mt-4 mb-2">{{ $t('dfs_agent_deploy_success') }}</div>
-          <div class="text-label font-color-light mb-2">{{ $t('dfs_agent_deploy_success_subtitle') }}</div>
-        </template>
-        <template v-else-if="isCompleted">
-          <div class="dot-pulse mt-2 mb-6"></div>
-          <!--检测提示-->
-          <div class="font-color-light">{{ $t('dfs_guide_index_zhengzaijianceyin') }}</div>
+          <div class="fs-5 font-color-dark mt-4 mb-2">
+            {{ $t('dfs_agent_deploy_success') }}
+          </div>
+          <div class="text-label font-color-light mb-2">
+            {{ $t('dfs_agent_deploy_success_subtitle') }}
+          </div>
         </template>
         <template v-else>
-          <!--等待部署-->
-          <div class="fs-5 font-color-dark mb-2">{{ $t('dfs_guide_index_dengdaibushu') }}</div>
-          <!--等待提示-->
-          <div class="font-color-light">{{ $t('dfs_guide_index_waiting_for_deployment_tip') }}</div>
-
-          <ElButton class="mt-4" plain size="default" type="primary" @click="handleComplete"
-            >{{ $t('dfs_guide_index_development_complete') }}
-          </ElButton>
+          <div class="dot-pulse mt-2 mb-6"></div>
+          <div class="fs-5 font-color-dark mb-2">
+            {{ $t('dfs_guide_index_dengdaibushu') }}
+          </div>
         </template>
       </div>
     </main>
   </section>
 </template>
+
 <script>
 import i18n from '@/i18n'
 
@@ -113,13 +120,13 @@ export default {
     return {
       links: {
         linux: '',
-        docker: ''
+        docker: '',
       },
       downLoadType: 'linux',
       downType: [
         { name: 'Linux (64 bit)', value: 'linux' },
         { name: 'Docker', value: 'docker' },
-        { name: 'Windows (64 bit)', value: 'windows' }
+        { name: 'Windows (64 bit)', value: 'windows' },
       ],
       showTooltip: false,
       showTooltipVersion: false,
@@ -137,10 +144,9 @@ export default {
       textMap: {
         linux: i18n.t('dfs_guide_deploy_qingfuzhixiafang2'),
         docker: i18n.t('dfs_guide_deploy_wanchengdoc'),
-        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang')
+        windows: i18n.t('dfs_guide_deploy_qingfuzhixiafang'),
       },
       success: false,
-      isCompleted: false
     }
   },
 
@@ -149,7 +155,7 @@ export default {
     this.getUrl()
     this.getInstance()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.isDestroyed = true
     clearTimeout(this.timer)
   },
@@ -160,7 +166,7 @@ export default {
 
       if (this.isDestroyed) return
 
-      this.$axios.get('api/tcm/agent/' + this.agentId).then(data => {
+      this.$axios.get('api/tcm/agent/' + this.agentId).then((data) => {
         if (data?.status !== 'Creating') {
           clearTimeout(this.timer)
           this.open(data?.status)
@@ -174,17 +180,17 @@ export default {
     },
     open() {
       this.success = true
-      setTimeout(() => {
-        this.$router.push('/instance')
-      }, 5000)
+      // setTimeout(() => {
+      //   this.$router.push('/instance')
+      // }, 5000)
     },
     getUrl() {
-      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async data => {
+      this.$axios.get('api/tcm/productRelease/deploy/' + this.agentId).then(async (data) => {
         this.downloadUrl = data.downloadUrl || ''
         this.token = data.token || ''
         this.version = data.version || ''
         let links = data.links || []
-        links.forEach(el => {
+        links.forEach((el) => {
           this.links[el.os] = el.command
         })
       })
@@ -192,9 +198,7 @@ export default {
     // windows下载
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
-      this.buried('downloadTapdataExe', {
-        notGuide: true
-      })
+      this.buried('downloadTapdataExe')
     },
     //windows 下载
     handleDownLoadApplication() {
@@ -226,7 +230,7 @@ export default {
     windowsToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_windows-huan-jing-xia-zai-yu-an-zhuang#MjqcX',
-        '_blank'
+        '_blank',
       )
     },
     windowsToAgent() {
@@ -235,7 +239,7 @@ export default {
     linuxToJava() {
       window.open(
         'https://www.yuque.com/tapdata/cloud/chan-pin-shou-ce_shi-li-guan-li_xia-zai-an-zhuang_linux-huan-jing-xia-zai-yu-an-zhuang#46215ffa',
-        '_blank'
+        '_blank',
       )
     },
     linuxToAgent() {
@@ -262,32 +266,14 @@ export default {
       const MAP = {
         linux: 'copyTokenInLinux',
         docker: 'copyTokenInDocker',
-        windows: 'copyTokenInWindows'
+        windows: 'copyTokenInWindows',
       }
-      this.buried(MAP[this.downLoadType], {
-        notGuide: true
-      })
+      this.buried(MAP[this.downLoadType])
     },
-    handleOpenDeployDocs() {
-      this.buried('openDeploymentTutorial', {
-        notGuide: true,
-        downLoadType: this.downLoadType
-      })
-      let href = `https://docs.tapdata.${
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/cloud/quick-start/install-agent/`
-      window.open(href, '_blank')
-    },
-    handleComplete() {
-      this.isCompleted = true
-      this.buried('completedDeployment', {
-        notGuide: true,
-        downLoadType: this.downLoadType
-      })
-    }
-  }
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .text-label {
   font-size: 0.875rem;
@@ -416,10 +402,8 @@ export default {
     border: 1px solid #f3f3f3;
     border-top: none;
   }
-  ::v-deep {
-    .el-collapse-item__header {
-      font-size: $fontSubtitle;
-    }
+  :deep(.el-collapse-item__header) {
+    font-size: $fontSubtitle;
   }
 }
 </style>

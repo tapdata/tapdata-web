@@ -1,8 +1,8 @@
 <template>
   <section class="bottom-panel border-top flex-column">
     <NodeLog
-      v-if="onlyLog"
       v-bind="$attrs"
+      v-if="onlyLog"
       :currentTab="currentTab"
       ref="log"
       @action="$emit('action', arguments[0])"
@@ -11,30 +11,30 @@
       <ElTabs v-model="currentTab" class="setting-tabs h-100 flex-1 flex flex-column w-100" key="bottomPanel">
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_renwujindu')" name="milestone">
           <MilestoneList
-            v-if="currentTab === 'milestone'"
             v-bind="$attrs"
+            v-if="currentTab === 'milestone'"
             :currentTab="currentTab"
-            :nodeId.sync="nodeId"
+            v-model:nodeId="nodeId"
             ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
         <ElTabPane :label="$t('public_task_log')" name="log">
           <NodeLog
-            v-if="currentTab === 'log'"
-            :nodeId.sync="nodeId"
             v-bind="$attrs"
+            v-if="currentTab === 'log'"
+            v-model:nodeId="nodeId"
             :currentTab="currentTab"
             ref="log"
             @action="$emit('action', arguments[0])"
           ></NodeLog>
         </ElTabPane>
         <ElTabPane :label="$t('packages_dag_monitor_bottompanel_yunxingjilu')" name="record">
-          <Record v-if="currentTab === 'record'" v-bind="$attrs" :currentTab="currentTab"></Record>
+          <Record v-bind="$attrs" v-if="currentTab === 'record'" :currentTab="currentTab"></Record>
         </ElTabPane>
         <ElTabPane v-if="showAlert" :label="$t('packages_dag_monitor_bottompanel_gaojingliebiao')" name="alert">
           <Alert
-            v-if="currentTab === 'alert'"
             v-bind="$attrs"
+            v-if="currentTab === 'alert'"
             :currentTab="currentTab"
             @change-tab="changeTab"
             @load-data="$emit('load-data')"
@@ -72,56 +72,48 @@ import { taskApi } from '@tap/api'
 
 export default {
   name: 'ConfigPanel',
-
   components: { Record, Alert, RelationList, NodeLog, MilestoneList },
-
   directives: {
     resize,
-    focusSelect
+    focusSelect,
   },
-
   props: {
     onlyLog: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-
   data() {
     return {
       currentTab: 'milestone',
       name: this.activeNode?.name,
       relationCount: 0,
-      nodeId: ''
+      nodeId: '',
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     showAlert() {
       return !['SharedCacheMonitor'].includes(this.$route.name)
-    }
+    },
   },
-
   watch: {
     'activeNode.name'(v) {
       this.name = v
-    }
+    },
   },
-
   mounted() {
     if (['MigrationMonitorViewer'].includes(this.$route.name)) {
       this.currentTab = 'log'
       const { start, end } = this.$route.query
       this.changeTab(this.currentTab, {
         start: start * 1,
-        end: end * 1
+        end: end * 1,
       })
     }
     this.getRelationData()
   },
-
   methods: {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
     ...mapActions('dataflow', ['updateDag']),
@@ -131,8 +123,8 @@ export default {
         this.updateNodeProperties({
           id: this.activeNode.id,
           properties: {
-            name
-          }
+            name,
+          },
         })
         this.updateDag({ vm: this })
       } else {
@@ -170,18 +162,19 @@ export default {
       const { taskRecordId } = this.$route.query || {}
       let filter = {
         taskId: this.$route.params.id || id,
-        taskRecordId
+        taskRecordId,
       }
       if (['logCollector'].includes(syncType)) {
         filter.type = 'task_by_collector'
       } else if (['sync'].includes(syncType)) {
         // filter.type = 'task_by_collector'
       }
-      taskApi.taskConsoleRelations(filter).then(data => {
+      taskApi.taskConsoleRelations(filter).then((data) => {
         this.relationCount = data?.length || 0
       })
-    }
-  }
+    },
+  },
+  emits: ['action', 'load-data', 'showBottomPanel', 'load-data', 'showBottomPanel'],
 }
 </script>
 
@@ -201,18 +194,16 @@ $headerHeight: 40px;
   will-change: width;
   box-sizing: border-box;
   z-index: 11;
-  ::v-deep {
-    .el-tabs__content {
+  :deep(.el-tabs__content) {
+    > div {
+      max-width: 100%;
+      overflow-x: auto;
       > div {
-        max-width: 100%;
-        overflow-x: auto;
-        > div {
-          min-width: 1200px;
-        }
-        //.milestone-main, .node-log-main, .record-wrap, .alert-main {
-        //  width: 0;
-        //}
+        min-width: 1200px;
       }
+      //.milestone-main, .node-log-main, .record-wrap, .alert-main {
+      //  width: 0;
+      //}
     }
   }
   &.show-record {
@@ -223,16 +214,16 @@ $headerHeight: 40px;
   }
 
   .el-tabs {
-    ::v-deep {
-      .el-tabs__header {
-        margin: 0;
-      }
-      .el-tabs__content {
-        flex: 1;
-      }
-      .el-tab-pane {
-        height: 100%;
-      }
+    :deep(.el-tabs__header) {
+      margin: 0;
+    }
+
+    :deep(.el-tabs__content) {
+      flex: 1;
+    }
+
+    :deep(.el-tab-pane) {
+      height: 100%;
     }
   }
 
@@ -270,39 +261,37 @@ $headerHeight: 40px;
     background: #fff;
   }
 
-  ::v-deep {
-    .config-tabs.el-tabs {
-      height: 100%;
+  :deep(.config-tabs.el-tabs) {
+    height: 100%;
 
-      > .el-tabs__header {
-        margin: 0;
-        .el-tabs__nav-wrap {
-          padding-left: $tabsHeaderWidth + 32px;
-          padding-right: 16px;
+    > .el-tabs__header {
+      margin: 0;
+      .el-tabs__nav-wrap {
+        padding-left: $tabsHeaderWidth + 32px;
+        padding-right: 16px;
 
-          &::after {
-            height: 1px;
-          }
-        }
-        .el-tabs__active-bar {
-          background-color: $color;
-        }
-
-        .el-tabs__item {
-          font-weight: 400;
-
-          &.is-active,
-          &:hover {
-            color: $color;
-          }
+        &::after {
+          height: 1px;
         }
       }
+      .el-tabs__active-bar {
+        background-color: $color;
+      }
 
-      > .el-tabs__content {
-        height: calc(100% - 40px);
-        .el-tab-pane {
-          height: 100%;
+      .el-tabs__item {
+        font-weight: 400;
+
+        &.is-active,
+        &:hover {
+          color: $color;
         }
+      }
+    }
+
+    > .el-tabs__content {
+      height: calc(100% - 40px);
+      .el-tab-pane {
+        height: 100%;
       }
     }
   }
@@ -313,10 +302,8 @@ $headerHeight: 40px;
   top: 10px;
 }
 .tabs-header__hidden {
-  ::v-deep {
-    .el-tabs__header {
-      display: none;
-    }
+  :deep(.el-tabs__header) {
+    display: none;
   }
 }
 </style>

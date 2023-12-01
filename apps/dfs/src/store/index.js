@@ -1,16 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import * as Vue from 'vue'
+import * as Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
+const store = Vuex.createStore({
   modules: {
     dataflow,
     classification,
-    overView
+    overView,
   },
 
   state: {
@@ -26,7 +24,7 @@ const store = new Vuex.Store({
       wx: '',
       email: '',
       enableLicense: false,
-      licenseCodes: []
+      licenseCodes: [],
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -37,7 +35,7 @@ const store = new Vuex.Store({
       activeIndex: null,
       behavior: '', // add-source, add-target, add-task
       status: '', // starting, completed, paused
-      view: 'list' // board, list
+      view: 'list', // board, list
     },
     // 新人引导
     guide: {
@@ -54,7 +52,6 @@ const store = new Vuex.Store({
       steps: [],
       behavior: '',
       behaviorAt: null,
-      expand: {}
     },
     agentCount: {
       agentTotalCount: 0,
@@ -64,22 +61,22 @@ const store = new Vuex.Store({
       subscriptionAgentCount: 0,
       agentSummery: {
         FreeTier: 0,
-        Stripe: 0
-      }
+        Stripe: 0,
+      },
     },
 
     config: {
       onlyEnglishLanguage: false,
       slackLink: '',
-      station: '' //标记国际站international 国内站 domestic
-    }
+      station: '', //标记国际站international 国内站 domestic
+    },
   },
 
   getters: {
-    isDomesticStation: state => state.config.station === 'domestic',
-    startingTour: state => state.replicationTour.status === 'starting',
-    pausedTour: state => state.replicationTour.status === 'paused',
-    completedTour: state => state.replicationTour.status === 'completed'
+    isDomesticStation: (state) => state.config.station === 'domestic',
+    startingTour: (state) => state.replicationTour.status === 'starting',
+    pausedTour: (state) => state.replicationTour.status === 'paused',
+    completedTour: (state) => state.replicationTour.status === 'completed',
   },
 
   mutations: {
@@ -148,8 +145,8 @@ const store = new Vuex.Store({
 
     setReplicationConnectionDialog(state, visible) {
       state.replicationConnectionDialog = visible
-    }
-  }
+    },
+  },
 })
 
 export default store

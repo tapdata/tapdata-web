@@ -13,13 +13,14 @@
         <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
           statusMap[tableStatus]
         }}</span>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" type="danger" plain @click="handleDelete"
           ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
         >
       </div>
       <div class="flex align-center gap-8">
         <span class="inline-flex align-center text-uppercase text-nowrap">
-          <VIcon class="mr-1" size="18">table</VIcon> {{ $t('public_table') }}</span
+          <VIcon class="mr-1" size="18">table</VIcon>
+          {{ $t('public_table') }}</span
         >
         <span class="inline-flex align-center">
           <VIcon class="mr-1" size="18">database</VIcon>
@@ -58,19 +59,27 @@
               </div>
               <el-row>
                 <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
+                  <div class="table-dec-label">
+                    {{ $t('packages_business_rows') }}
+                  </div>
                   <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
                 </el-col>
                 <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
+                  <div class="table-dec-label">
+                    {{ $t('packages_business_columns') }}
+                  </div>
                   <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
                 </el-col>
                 <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
+                  <div class="table-dec-label">
+                    {{ $t('packages_business_storage_size') }}
+                  </div>
                   <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
                 </el-col>
                 <el-col :span="12">
-                  <div class="table-dec-label">{{ $t('public_connection') }}</div>
+                  <div class="table-dec-label">
+                    {{ $t('public_connection') }}
+                  </div>
                   <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
                     <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" /><span
                       class="min-w-0"
@@ -90,10 +99,12 @@
                     max-height="381px"
                     :has-pagination="false"
                   >
-                    <div slot="empty">{{ $t('public_data_no_data') }}</div>
-                    <template slot="businessDesc" slot-scope="scope">
+                    <template v-slot:empty>
+                      <div>{{ $t('public_data_no_data') }}</div>
+                    </template>
+                    <template v-slot:businessDesc="scope">
                       <ElInput
-                        v-model="scope.row.businessDesc"
+                        v-model:value="scope.row.businessDesc"
                         @input="handleChangeBusinessDesc(arguments[0], scope.row.id)"
                       ></ElInput>
                     </template>
@@ -112,7 +123,11 @@
                         :height="360"
                         :value="sampleDataJson"
                         lang="json"
-                        :options="{ readOnly: true, highlightActiveLine: false, highlightGutterLine: false }"
+                        :options="{
+                          readOnly: true,
+                          highlightActiveLine: false,
+                          highlightGutterLine: false,
+                        }"
                         theme="chrome"
                       ></VCodeEditor>
                       <el-table v-else :data="sampleData" max-height="360px">
@@ -161,7 +176,9 @@
               :has-pagination="false"
               v-loading="loading"
             >
-              <div slot="empty">{{ $t('public_data_no_data') }}</div>
+              <template v-slot:empty>
+                <div>{{ $t('public_data_no_data') }}</div>
+              </template>
               <template #primaryKey="{ row }">
                 <VIcon v-if="row.primaryKey" class="font-color-light">check</VIcon>
                 <span v-else>-</span>
@@ -185,7 +202,7 @@
           <div class="p-4">
             <div class="rounded-lg bg-white border border-gray-200 overflow-hidden">
               <div class="flex align-center p-3">
-                <ElRadioGroup v-model="asTaskType" size="mini">
+                <ElRadioGroup v-model:value="asTaskType">
                   <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
                   <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
                   <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
@@ -261,7 +278,6 @@
                     </ElLink>
                     <template v-else>
                       <ElLink
-                        key="forceStop"
                         v-if="row.status === 'stopping'"
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -271,7 +287,6 @@
                         {{ $t('public_button_force_stop') }}
                       </ElLink>
                       <ElLink
-                        key="stop"
                         v-else
                         v-readonlybtn="'SYNC_job_operation'"
                         type="primary"
@@ -297,18 +312,18 @@
           </div>
         </el-tab-pane>
         <!--<el-tab-pane label="APIs" name="apis">
-          <VTable
-            v-if="activeName === 'apis'"
-            ref="table"
-            :columns="apisColumns"
-            :remoteMethod="getApisData"
-            class="mt-4"
-          >
-            <template #status="{ row }">
-              <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-            </template>
-          </VTable>
-        </el-tab-pane>-->
+              <VTable
+                v-if="activeName === 'apis'"
+                ref="table"
+                :columns="apisColumns"
+                :remoteMethod="getApisData"
+                class="mt-4"
+              >
+                <template #status="{ row }">
+                  <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
+                </template>
+              </VTable>
+            </el-tab-pane>-->
         <el-tab-pane :label="$t('packages_ldp_lineage')" name="lineage">
           <TableLineage
             :is-show="activeName === 'lineage'"
@@ -324,6 +339,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
 
@@ -337,7 +353,7 @@ import {
   metadataInstancesApi,
   modulesApi,
   workerApi,
-  CancelToken
+  CancelToken,
 } from '@tap/api'
 import { TaskStatus, DatabaseIcon, TASK_TYPE_MAP, makeStatusAndDisabled } from '@tap/business'
 import i18n from '@tap/i18n'
@@ -348,10 +364,19 @@ export default {
   props: {
     tag: {
       type: String,
-      default: 'Drawer'
-    }
+      default: 'Drawer',
+    },
   },
-  components: { Drawer, VTable, TaskStatus, VEmpty, DatabaseIcon, TableLineage, VCodeEditor, IconButton },
+  components: {
+    Drawer,
+    VTable,
+    TaskStatus,
+    VEmpty,
+    DatabaseIcon,
+    TableLineage,
+    VCodeEditor,
+    IconButton,
+  },
   data() {
     return {
       visible: false,
@@ -369,52 +394,52 @@ export default {
           label: i18n.t('public_name'),
           prop: 'name',
           className: 'text-nowrap',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('public_type'),
           prop: 'dataType',
-          minWidth: 120
+          minWidth: 120,
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
           slotName: 'primaryKey',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey',
           slotName: 'foreignKey',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
           prop: 'index',
           slotName: 'index',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('meta_table_not_null'),
           prop: 'notNull',
           slotName: 'notNull',
-          align: 'center'
+          align: 'center',
         },
         {
           label: i18n.t('meta_table_default'),
-          prop: 'defaultValue'
+          prop: 'defaultValue',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
-          prop: 'businessName'
+          prop: 'businessName',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
-          prop: 'businessType'
+          prop: 'businessType',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc'
-        }
+          prop: 'businessDesc',
+        },
       ],
       taskData: [],
       storageSize: '',
@@ -425,67 +450,66 @@ export default {
       statusMap: {
         error: i18n.t('packages_business_table_status_error'), // 异常
         draft: i18n.t('packages_business_table_status_draft'), // 草稿
-        normal: i18n.t('packages_business_table_status_normal') // 正常
+        normal: i18n.t('packages_business_table_status_normal'), // 正常
       },
       apisColumns: [
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apifuwu'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('packages_business_data_server_list_fuwuzhuangtai'),
           prop: 'status',
-          slotName: 'status'
+          slotName: 'status',
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_fangwencishu'),
           prop: 'visitCount',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apIfangwen'),
           prop: 'visitLine',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_apIchuanshu'),
           prop: 'transitQuantityLabel',
-          default: 0
+          default: 0,
         },
         {
           label: i18n.t('packages_business_swimlane_tablepreview_zuihoufangwenshi'),
           prop: 'last_updated',
           dataType: 'time',
-          width: 160
-        }
+          width: 160,
+        },
       ],
       statusOptions: [
         {
           label: i18n.t('public_select_option_all'),
-          value: ''
+          value: '',
         },
         {
           label: i18n.t('modules_active'),
-          value: 'active'
+          value: 'active',
         },
         {
           label: i18n.t('modules_pending'),
-          value: 'pending'
+          value: 'pending',
         },
         {
           label: i18n.t('api_monitor_total_api_list_status_generating'),
-          value: 'generating'
-        }
+          value: 'generating',
+        },
       ],
       selected: {},
       swimType: '', // source/fdm/mdm/target
       asTaskType: 'all',
       connection: null,
       taskLoading: false,
-      isTableView: false
+      isTableView: false,
     }
   },
-
   computed: {
     filterTask() {
       if (this.asTaskType === 'all') return this.taskData
@@ -494,10 +518,10 @@ export default {
       return this.taskData
     },
     sourceTask() {
-      return this.taskData.filter(task => task.isAsSource)
+      return this.taskData.filter((task) => task.isAsSource)
     },
     targetTask() {
-      return this.taskData.filter(task => !task.isAsSource)
+      return this.taskData.filter((task) => !task.isAsSource)
     },
     databaseName() {
       if (!this.connection) return this.detailData.sourceType
@@ -507,7 +531,7 @@ export default {
       if (config.uri && config.isUri !== false) {
         const regResult =
           /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-            config.uri
+            config.uri,
           )
         if (regResult && regResult.groups) {
           config.database = regResult.groups.database
@@ -522,35 +546,32 @@ export default {
         ? {
             taskType: 130,
             status: 145,
-            operation: 340
+            operation: 340,
           }
         : {
             taskType: 80,
             status: 110,
-            operation: 280
+            operation: 280,
           }
     },
 
     sampleDataJson() {
       return JSON.stringify(this.sampleData.slice(0, 10), null, 2)
-    }
+    },
   },
-
   watch: {
     visible(v) {
       if (v) {
         this.cancelSource?.cancel()
         clearTimeout(this.loadTaskTimer)
       }
-    }
+    },
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.destroyed = true
     this.cancelSource?.cancel()
     clearTimeout(this.loadTaskTimer)
   },
-
   methods: {
     init() {
       this.detailData = {}
@@ -568,23 +589,23 @@ export default {
       let result = [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'dataType'
-        }
+          prop: 'dataType',
+        },
       ]
       if (sourceType !== 'MongoDB') {
         result.push({
           label: i18n.t('packages_form_field_inference_list_ziduanzhushi'),
-          prop: 'comment'
+          prop: 'comment',
         })
       }
       result.push({
         label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
         prop: 'businessDesc',
-        slotName: 'businessDesc'
+        slotName: 'businessDesc',
       })
       this.columnsPreview = result
     },
@@ -609,7 +630,7 @@ export default {
       this.loading = true
       discoveryApi
         .overViewStorage(row.id)
-        .then(res => {
+        .then((res) => {
           this.detailData = res
           this.detailData['lastUpdAt'] = this.detailData['lastUpdAt']
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
@@ -635,16 +656,16 @@ export default {
       this.taskLoading = !silenceLoading
       let params = {
         connectionId: this.connectionId,
-        tableName: this.detailData.name
+        tableName: this.detailData.name,
       }
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
       return taskApi
         .getTaskByTableName(params, {
-          cancelToken: this.cancelSource.token
+          cancelToken: this.cancelSource.token,
         })
-        .then(taskList => {
-          this.taskData = taskList.filter(task => {
+        .then((taskList) => {
+          this.taskData = taskList.filter((task) => {
             if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted) return false
 
             const { dag } = task
@@ -672,7 +693,7 @@ export default {
                 }
               })
 
-              task.isAsSource = dag.nodes.some(node => {
+              task.isAsSource = dag.nodes.some((node) => {
                 if (!inputsMap[node.id] && outputsMap[node.id] && node.connectionId === this.connectionId) {
                   if (node.type === 'database') return true
                   return node.tableName === params.tableName
@@ -691,15 +712,15 @@ export default {
       let params = {
         className: 'QueryDataBaseDataService',
         method: 'getData',
-        args: [this.connectionId, this.detailData.name]
+        args: [this.connectionId, this.detailData.name],
       }
       this.loadingSampleData = true
       proxyApi
         .call(params)
-        .then(res => {
+        .then((res) => {
           this.sampleData = res?.sampleData
           //schema返回的数据组装数据
-          this.sampleHeader = this.tableFields.map(it => it.name)
+          this.sampleHeader = this.tableFields.map((it) => it.name)
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
@@ -715,17 +736,17 @@ export default {
     saveTableDesc() {
       metadataInstancesApi.updateTableDesc({
         id: this.detailData.id,
-        description: this.detailData.description
+        description: this.detailData.description,
       })
     },
     //获取表状态
     getTaskStatus() {
-      taskApi.tableStatus(this.connectionId, this.detailData.name).then(res => {
+      taskApi.tableStatus(this.connectionId, this.detailData.name).then((res) => {
         this.tableStatus = res?.status
         this.cdcDelayTime =
           isNum(res?.cdcDelayTime) && res.cdcDelayTime >= 0
             ? calcTimeUnit(res.cdcDelayTime, 2, {
-                autoHideMs: true
+                autoHideMs: true,
               })
             : '-'
         this.lastDataChangeTime = res?.lastDataChangeTime
@@ -736,21 +757,21 @@ export default {
     getApisData() {
       const { connectionId, name } = this.selected || {}
 
-      return modulesApi.apiList({ connectionId, tableName: name }).then(data => {
+      return modulesApi.apiList({ connectionId, tableName: name }).then((data) => {
         return {
           total: data.total || 0,
           data:
-            data.items?.map(t => {
-              t.statusFmt = this.statusOptions.find(it => it.value === t.status)?.label || '-'
+            data.items?.map((t) => {
+              t.statusFmt = this.statusOptions.find((it) => it.value === t.status)?.label || '-'
               t.transitQuantityLabel = calcUnit(t.transitQuantity, 1)
               return t
-            }) || []
+            }) || [],
         }
       })
     },
 
     handleCreateTask() {
-      this.$emit('create-single-task', this.selected, this.swimType)
+      $emit(this, 'create-single-task', this.selected, this.swimType)
     },
 
     getTaskType(type) {
@@ -778,8 +799,8 @@ export default {
       this.openRoute({
         name: routeName,
         params: {
-          id: row.id
-        }
+          id: row.id,
+        },
       })
     },
 
@@ -797,15 +818,15 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(data => {
+      taskApi.batchStart(ids).then((data) => {
         this.getTasks(true)
-        if (data.every(t => t.code === 'ok')) {
+        if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
         } else {
-          const findManuallyScheduleLimit = data.find(t => t.code === 'Task.ManuallyScheduleLimit')
-          const findScheduleLimit = data.find(t => t.code === 'Task.ScheduleLimit')
+          const findManuallyScheduleLimit = data.find((t) => t.code === 'Task.ManuallyScheduleLimit')
+          const findScheduleLimit = data.find((t) => t.code === 'Task.ScheduleLimit')
           if (findScheduleLimit) {
-            this.$emit('handle-show-upgrade', findScheduleLimit)
+            $emit(this, 'handle-show-upgrade', findScheduleLimit)
             return
           } else if (findManuallyScheduleLimit) {
             this.$message.error(findManuallyScheduleLimit.message)
@@ -825,12 +846,12 @@ export default {
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -843,12 +864,12 @@ export default {
       this.$confirm(message, '', {
         type: 'warning',
         showClose: false,
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -859,12 +880,12 @@ export default {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
-        zIndex: 999999
-      }).then(resFlag => {
+        zIndex: 999999,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchDelete(ids).then(data => {
+        taskApi.batchDelete(ids).then((data) => {
           this.getTasks(true)
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
         })
@@ -883,23 +904,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-all;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary',
             },
-            name
+            name,
           ),
-          strArr[1]
-        ]
+          strArr[1],
+        ],
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title)
+        title: this.$t('packages_business_dataFlow_' + title),
       }
     },
 
@@ -907,7 +928,7 @@ export default {
       metadataInstancesApi
         .updateTableFieldDesc(this.selected.id, {
           id,
-          businessDesc: val
+          businessDesc: val,
         })
         .catch(() => {
           this.$message.error(this.$t('public_message_save_fail'))
@@ -917,7 +938,11 @@ export default {
     handleDelete() {
       if (this.taskData.length) {
         this.activeName = 'tasks'
-        this.$message.warning(i18n.t('packages_ldp_src_tablepreview_jiancedaoyouren', { val1: this.selected.name }))
+        this.$message.warning(
+          i18n.t('packages_ldp_src_tablepreview_jiancedaoyouren', {
+            val1: this.selected.name,
+          }),
+        )
         return
       }
 
@@ -927,9 +952,9 @@ export default {
         {
           type: 'warning',
           showClose: false,
-          zIndex: 999999
-        }
-      ).then(resFlag => {
+          zIndex: 999999,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -942,32 +967,31 @@ export default {
 
     toggleSampleData() {
       this.isTableView = !this.isTableView
-    }
-  }
+    },
+  },
+  emits: ['create-single-task', 'handle-show-upgrade'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .sw-table-drawer {
-  ::v-deep {
-    .el-tabs__nav-wrap {
-      padding: 0 24px;
-    }
+  :deep(.el-tabs__nav-wrap) {
+    padding: 0 24px;
+  }
 
-    .tabs-as-card {
-      .el-tabs__item {
-        height: 44px;
-        line-height: 44px;
-      }
+  :deep(.tabs-as-card) {
+    .el-tabs__item {
+      height: 44px;
+      line-height: 44px;
     }
+  }
 
-    .table-preview-tabs > .el-tabs__content > .el-tab-pane {
-      background-color: rgb(245, 248, 254);
-    }
+  :deep(.table-preview-tabs > .el-tabs__content > .el-tab-pane) {
+    background-color: rgb(245, 248, 254);
+  }
 
-    th .cell {
-      white-space: nowrap;
-    }
+  :deep(th .cell) {
+    white-space: nowrap;
   }
 
   .table-name {

@@ -3,8 +3,7 @@
     <div class="field-inference__main flex h-100">
       <div class="field-inference__nav flex flex-column">
         <ElInput
-          v-model="searchTable"
-          size="mini"
+          v-model:value="searchTable"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
           suffix-icon="el-icon-search"
           clearable
@@ -33,8 +32,8 @@
           small
           class="flex p-2 din-font mx-auto"
           layout="total, prev, slot, next"
-          :current-page.sync="page.current"
-          :page-size.sync="page.size"
+          v-model:current-page="page.current"
+          v-model:page-size="page.size"
           :total="page.total"
           :pager-count="5"
           @current-change="loadData"
@@ -49,14 +48,13 @@
       <div class="field-inference__content flex-fill flex flex-column">
         <div class="flex align-items-center p-2">
           <ElInput
-            v-model="searchField"
+            v-model:value="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            size="mini"
             suffix-icon="el-icon-search"
             clearable
             @input="handleSearchField"
           ></ElInput>
-          <ElButton size="mini" plain class="btn-refresh ml-2" @click="refresh">
+          <ElButton plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
           </ElButton>
         </div>
@@ -64,7 +62,7 @@
           ref="list"
           :data="selected"
           :show-columns="['index', 'field_name', 'data_type', 'operation']"
-          :fieldChangeRules.sync="fieldChangeRules"
+          v-model:fieldChangeRules="fieldChangeRules"
           readonly
           :ignore-error="!isTarget"
           class="content__list flex-fill"
@@ -98,7 +96,7 @@ export default {
   props: {
     form: Object,
     isShow: Boolean,
-    readOnly: Boolean
+    readOnly: Boolean,
   },
 
   data() {
@@ -111,7 +109,7 @@ export default {
         size: 10,
         current: 1,
         total: 0,
-        count: 1
+        count: 1,
       },
       searchTable: '',
       searchField: '',
@@ -124,21 +122,21 @@ export default {
         {
           type: '',
           title: i18n.t('packages_dag_field_inference_main_quanbubiao'),
-          total: 0
+          total: 0,
         },
         {
           type: 'updateEx',
           title: i18n.t('packages_dag_field_inference_main_gengxintiaojianyi'),
-          total: 0
+          total: 0,
         },
         {
           type: 'transformEx',
           title: i18n.t('packages_dag_field_inference_main_tuiyanyichang'),
-          total: 0
-        }
+          total: 0,
+        },
       ],
       transformExNum: 0,
-      updateExNum: 0
+      updateExNum: 0,
     }
   },
 
@@ -147,7 +145,7 @@ export default {
     ...mapGetters('dataflow', ['activeNode', 'stateIsReadonly']),
 
     batchRuleCounts() {
-      return this.fieldChangeRules.filter(t => t.scope === 'Node').length
+      return this.fieldChangeRules.filter((t) => t.scope === 'Node').length
     },
 
     readonly() {
@@ -162,7 +160,7 @@ export default {
     isTarget() {
       const { type, $outputs } = this.activeNode || {}
       return (type === 'database' || type === 'table') && !$outputs.length
-    }
+    },
   },
 
   watch: {
@@ -196,7 +194,7 @@ export default {
         this.page.size = Math.max(10, Math.ceil(height / 41))
         this.loadData()
       }
-    }
+    },
   },
 
   methods: {
@@ -210,33 +208,33 @@ export default {
         page: current,
         pageSize: size,
         tableFilter: this.searchTable,
-        filterType: this.activeClassification
+        filterType: this.activeClassification,
       })
       const { items, total } = res
       this.updateExNum = res.updateExNum
       this.transformExNum = res.transformExNum
-      this.navList = items.map(t => {
+      this.navList = items.map((t) => {
         const { fields = [], findPossibleDataTypes = {} } = t
-        fields.forEach(el => {
+        fields.forEach((el) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
           el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           el.matchedDataTypeLevel = getMatchedDataTypeLevel(
             el,
             el.canUseDataTypes,
             this.fieldChangeRules,
-            findPossibleDataTypes
+            findPossibleDataTypes,
           )
         })
-        t.matchedDataTypeLevel = fields.some(f => f.matchedDataTypeLevel === 'error')
+        t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
           ? 'error'
-          : fields.some(f => f.matchedDataTypeLevel === 'warning')
+          : fields.some((f) => f.matchedDataTypeLevel === 'warning')
           ? 'warning'
           : ''
         return t
       })
 
       this.page.total = total
-      this.tableClassification.forEach(el => {
+      this.tableClassification.forEach((el) => {
         if (!el.type) {
           el.total = res.wholeNum
         } else {
@@ -261,7 +259,7 @@ export default {
       let fields = item?.fields
       const findPossibleDataTypes = item?.findPossibleDataTypes || {}
       if (this.searchField) {
-        fields = item.fields.filter(t => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
+        fields = item.fields.filter((t) => t.field_name.toLowerCase().includes(this.searchField?.toLowerCase()))
       }
       this.selected = Object.assign({}, item, { fields, findPossibleDataTypes })
       this.updateList = this.updateConditionFieldMap[this.selected.name] || []
@@ -275,8 +273,8 @@ export default {
     rollbackAll() {
       this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (resFlag) {
           this.fieldChangeRules = []
           this.handleUpdate()
@@ -319,8 +317,8 @@ export default {
     handleUpdateRules(val = []) {
       this.fieldChangeRules = val
       this.handleUpdate()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -330,7 +328,6 @@ export default {
   z-index: 1;
   height: 30px;
 }
-
 .field-inference__nav {
   width: 210px;
   border-right: 1px solid #f2f2f2;
@@ -402,13 +399,10 @@ export default {
     background: map-get($bgColor, disactive);
   }
 }
-
 .update-list-select {
   &.error {
-    ::v-deep {
-      .el-input__inner {
-        border-color: map-get($color, danger);
-      }
+    :deep(.el-input__inner) {
+      border-color: map-get($color, danger);
     }
   }
 }

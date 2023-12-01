@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import ResizeObserver from 'resize-observer-polyfill'
 import { on, off } from '@tap/shared'
@@ -49,7 +50,6 @@ export default {
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
   props: { navLines: Array },
-
   data() {
     return {
       showSelectBox: false,
@@ -58,31 +58,31 @@ export default {
       scalePosition: [],
       options: {
         width: 800,
-        height: 800
+        height: 800,
       },
       // 记录画布的初始状态
       visibleArea: {
         width: 0,
-        height: 0
+        height: 0,
       },
       // 跟visibleArea的区别就是，会跟随resize改变
       windowArea: {
         width: 0,
-        height: 0
+        height: 0,
       },
       translate: {
         x: 0,
-        y: 0
+        y: 0,
       },
       // Paper反向尺寸
       paperReverseSize: {
         w: 0,
-        h: 0
+        h: 0,
       },
       // Paper正向尺寸
       paperForwardSize: {
         w: 0,
-        h: 0
+        h: 0,
       },
       // 按下空格键
       // spaceKeyPressed: false,
@@ -92,12 +92,11 @@ export default {
       zoomFactor: 1.1,
       scrollPosition: {
         x: 0,
-        y: 0
+        y: 0,
       },
-      showMiniView: false
+      showMiniView: false,
     }
   },
-
   computed: {
     ...mapGetters('dataflow', ['getCtor', 'isActionActive', 'stateIsReadonly']),
     ...mapState('dataflow', ['spaceKeyPressed', 'shiftKeyPressed']),
@@ -109,7 +108,7 @@ export default {
             left: attr.x + 'px',
             top: attr.y + 'px',
             width: attr.w + 'px',
-            height: attr.h + 'px'
+            height: attr.h + 'px',
           }
         : null
     },
@@ -138,19 +137,19 @@ export default {
       return {
         width: parseInt(paper.left) * 2 + parseInt(paper.width) * scale + 'px',
         height: parseInt(paper.top) * 2 + parseInt(paper.height) * scale + 'px',
-        backgroundImage: `url("data:image/svg+xml;base64,${window.btoa(svgStr)}")`
+        backgroundImage: `url("data:image/svg+xml;base64,${window.btoa(svgStr)}")`,
       }
     },
     paperOffset() {
       return {
         left: this.visibleArea.width - 50,
-        top: this.visibleArea.height - 50
+        top: this.visibleArea.height - 50,
       }
     },
     paperSize() {
       return {
         width: Math.max(this.options.width, this.paperForwardSize.w) + this.paperReverseSize.w,
-        height: Math.max(this.options.height, this.paperForwardSize.h) + this.paperReverseSize.h
+        height: Math.max(this.options.height, this.paperForwardSize.h) + this.paperReverseSize.h,
       }
     },
     paperStyle() {
@@ -159,25 +158,23 @@ export default {
         top: this.paperOffset.top + 'px',
         width: this.paperSize.width + 'px',
         height: this.paperSize.height + 'px',
-        transform: `scale(${this.paperScale})`
+        transform: `scale(${this.paperScale})`,
         // transform: `scale(${this.paperScale}) translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
     },
     contentWrapStyle() {
       const style = {
-        transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
+        transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`,
       }
       if (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {
         style.position = 'relative'
       }
       return style
-    }
+    },
   },
-
   created() {
     this.bindEvent()
   },
-
   async mounted() {
     // 监听画布的尺寸变化
     this.resizeObserver = new ResizeObserver(this.observerHandler)
@@ -187,19 +184,17 @@ export default {
     await this.$nextTick()
     this.center()
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.offEvent()
     this.resizeObserver.unobserve(this.$el)
   },
-
   methods: {
     ...mapMutations('dataflow', [
       'addNode',
       'setActiveType',
       'setPaperSpaceKeyPressed',
       'removeActiveAction',
-      'toggleShiftKeyPressed'
+      'toggleShiftKeyPressed',
     ]),
 
     observerHandler() {
@@ -244,22 +239,22 @@ export default {
       on(document, 'keyup', this.keyUp)
 
       // 放大
-      Mousetrap.bind('mod+=', e => {
+      Mousetrap.bind('mod+=', (e) => {
         e.preventDefault()
         this.zoomIn()
       })
       // 缩小
-      Mousetrap.bind('mod+-', e => {
+      Mousetrap.bind('mod+-', (e) => {
         e.preventDefault()
         this.zoomOut()
       })
       // 画布实际大小
-      Mousetrap.bind('mod+0', e => {
+      Mousetrap.bind('mod+0', (e) => {
         e.preventDefault()
         this.zoomTo(1)
       })
       // 画布适应内容区
-      Mousetrap.bind('shift+1', e => {
+      Mousetrap.bind('shift+1', (e) => {
         e.preventDefault()
         this.centerContent()
       })
@@ -279,11 +274,11 @@ export default {
         left: rect.left,
         right: rect.right,
         top: rect.top,
-        bottom: rect.bottom
+        bottom: rect.bottom,
       }
       if (isFirst) {
         this.visibleArea = {
-          ...area
+          ...area,
         }
       }
       // 窗口保持最新的区域数据
@@ -305,7 +300,7 @@ export default {
       ifZoomToFit,
       paddingX = 0,
       allNodes = this.$store.getters['dataflow/allNodes'],
-      nodeIdPrefix = NODE_PREFIX
+      nodeIdPrefix = NODE_PREFIX,
     ) {
       // const allNodes = this.$store.getters['dataflow/allNodes']
       if (!allNodes.length) return
@@ -436,13 +431,13 @@ export default {
         onMouseDownAt: Time.now(),
         startEvent: e,
         position: this.getMousePosition(e),
-        inScrollerPosition: this.getMousePositionWithinScroller(e)
+        inScrollerPosition: this.getMousePositionWithinScroller(e),
       }
     },
 
     checkDistanceChange(e) {
       const distance = Math.sqrt(
-        Math.pow(e.pageX - this.state.startEvent.pageX, 2) + Math.pow(e.pageY - this.state.startEvent.pageY, 2)
+        Math.pow(e.pageX - this.state.startEvent.pageX, 2) + Math.pow(e.pageY - this.state.startEvent.pageY, 2),
       )
       const timeDelta = Time.now() - this.state.onMouseDownAt
       if (timeDelta > 10 && e !== this.state.startEvent && distance > 4) {
@@ -499,9 +494,9 @@ export default {
       // this.showSelectBox(e)
 
       /*on(document, 'mousemove', this.mouseMoveSelect, {
-        capture: false,
-        passive: false
-      })*/
+      capture: false,
+      passive: false
+    })*/
     },
 
     mouseMoveSelect(e) {
@@ -533,7 +528,7 @@ export default {
       off(window, 'mouseup', this.mouseUp)
       const ifMoved = this.checkDistanceChange(event)
       if (!ifMoved && [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target)) {
-        this.$emit('click-blank')
+        $emit(this, 'click-blank')
       }
       this.mouseUpMouseSelect(ifMoved)
       this.removeActiveAction('dragActive')
@@ -554,7 +549,7 @@ export default {
         boxAttr = { x, y, right, bottom }
       }
 
-      this.$emit('mouse-select', ifMoved, this.showSelectBox, boxAttr)
+      $emit(this, 'mouse-select', ifMoved, this.showSelectBox, boxAttr)
       this.hideSelectBox()
     },
 
@@ -568,7 +563,7 @@ export default {
       let { x, y } = this.$refs.scrollerBg.getBoundingClientRect()
       return {
         x: e.pageX - x,
-        y: e.pageY - y
+        y: e.pageY - y,
       }
     },
 
@@ -632,7 +627,7 @@ export default {
      */
     changeScale(scale) {
       this.paperScale = scale
-      this.$emit('change-scale', scale)
+      $emit(this, 'change-scale', scale)
       this.cumulativeZoomFactor = 1
     },
 
@@ -646,7 +641,7 @@ export default {
       const paper = this.$refs.paper.getBoundingClientRect()
       return {
         x: (e.x - paper.left) / scale - this.paperReverseSize.w,
-        y: (e.y - paper.top) / scale - this.paperReverseSize.h
+        y: (e.y - paper.top) / scale - this.paperReverseSize.h,
       }
     },
 
@@ -655,7 +650,7 @@ export default {
       const paper = this.$refs.paper.getBoundingClientRect()
       return {
         x: (e.x - paper.left) / scale,
-        y: (e.y - paper.top) / scale
+        y: (e.y - paper.top) / scale,
       }
     },
 
@@ -703,7 +698,10 @@ export default {
      */
     getScaleAbsolutePoint() {
       const area = this.windowArea
-      return { x: Math.round(area.width / 2) + area.left, y: Math.round(area.height / 2) + area.top }
+      return {
+        x: Math.round(area.width / 2) + area.left,
+        y: Math.round(area.height / 2) + area.top,
+      }
     },
 
     /**
@@ -724,12 +722,13 @@ export default {
 
     getPaperScale() {
       return this.paperScale
-    }
-  }
+    },
+  },
+  emits: ['mouse-select', 'change-scale', 'click-blank'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .paper-scroller {
   width: 100%;
   height: 100%;
@@ -744,24 +743,20 @@ export default {
     }
   }
 }
-
 .move-active {
   cursor: grab;
   touch-action: none;
 }
-
 .move-in-process {
   cursor: grabbing;
   touch-action: none;
 }
-
 .select-box {
   position: absolute;
   background: rgba(44, 101, 255, 0.07);
   border: 1px solid #2c65ff;
   border-radius: 2px;
 }
-
 .nav-line {
   position: absolute;
   width: 0;

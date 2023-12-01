@@ -10,18 +10,16 @@ export default {
   name: 'UploadFile',
   props: {
     accept: {
-      type: String
+      type: String,
     },
     upload: {
-      type: Function
-    }
+      type: Function,
+    },
   },
   methods: {
     clickItem() {
       this.$refs.file.click()
-    }
-  }
+    },
+  },
 }
 </script>
-
-<style scoped></style>

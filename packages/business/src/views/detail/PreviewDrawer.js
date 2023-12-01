@@ -1,5 +1,6 @@
+import * as Vue from 'vue'
 import i18n from '@/i18n'
-import { defineComponent, reactive, ref, computed } from '@vue/composition-api'
+import { defineComponent, reactive, ref, computed } from 'vue'
 import { VTable, OverflowTooltip } from '@tap/component'
 import { discoveryApi } from '@tap/api'
 import NodeViewer from '@tap/dag/src/nodeView'
@@ -20,100 +21,100 @@ export const PreviewDrawer = defineComponent({
       columns: [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'dataType'
+          prop: 'dataType',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
-          prop: 'primaryKey'
+          prop: 'primaryKey',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
-          prop: 'foreignKey'
+          prop: 'foreignKey',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
-          prop: 'index'
+          prop: 'index',
         },
         {
           label: i18n.t('meta_table_not_null'),
-          prop: 'notNull'
+          prop: 'notNull',
         },
         {
           label: i18n.t('meta_table_default'),
-          prop: 'defaultValue'
+          prop: 'defaultValue',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumingcheng'),
-          prop: 'businessName'
+          prop: 'businessName',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewuleixing'),
-          prop: 'businessType'
+          prop: 'businessType',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'businessDesc'
-        }
+          prop: 'businessDesc',
+        },
       ],
       nodeColumns: [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'type'
+          prop: 'type',
         },
         {
           label: i18n.t('daas_data_discovery_previewdrawer_jiedianmiaoshu'),
-          prop: 'connectionInfo'
+          prop: 'connectionInfo',
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_yewumiaoshu'),
-          prop: 'serviceDesc'
-        }
+          prop: 'serviceDesc',
+        },
       ],
       apiColumns: [
         {
           label: i18n.t('public_name'),
-          prop: 'name'
+          prop: 'name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'type'
+          prop: 'type',
         },
         {
           label: i18n.t('meta_table_default'),
-          prop: 'defaultvalue'
+          prop: 'defaultvalue',
         },
         {
           label: i18n.t('public_description'),
-          prop: 'description'
-        }
+          prop: 'description',
+        },
       ],
       apiInputColumns: [
         {
           label: i18n.t('public_name'),
-          prop: 'field_name'
+          prop: 'field_name',
         },
         {
           label: i18n.t('public_type'),
-          prop: 'data_type'
+          prop: 'data_type',
         },
         {
           label: i18n.t('public_description'),
-          prop: 'description'
-        }
+          prop: 'description',
+        },
       ],
       params: [],
-      urls: []
+      urls: [],
     })
 
-    const format = data => {
+    const format = (data) => {
       for (let i = 0; i < data?.length; i++) {
         data[i].primaryKey = !data[i].primaryKey ? '' : data[i].primaryKey
         data[i].foreignKey = !data[i].foreignKey ? '' : data[i].foreignKey
@@ -123,7 +124,7 @@ export const PreviewDrawer = defineComponent({
       return data
     }
 
-    const formatTask = data => {
+    const formatTask = (data) => {
       for (let i = 0; i < data?.length; i++) {
         if (data[i].type === 'calculate') {
           data[i].connectionInfo = `${i18n.t('daas_data_discovery_previewdrawer_shurujiedian')}: ${
@@ -133,7 +134,7 @@ export const PreviewDrawer = defineComponent({
       }
       return data
     }
-    const loadData = row => {
+    const loadData = (row) => {
       data.currentRow = row
       if (data.activeName === 'first') {
         switch (row.category || row.type) {
@@ -141,7 +142,7 @@ export const PreviewDrawer = defineComponent({
             data.loading = true
             discoveryApi
               .overViewStorage(row.id)
-              .then(res => {
+              .then((res) => {
                 let newData = res
                 newData['fields'] = format(res.fields)
                 preview.value = newData || ''
@@ -155,7 +156,7 @@ export const PreviewDrawer = defineComponent({
             data.loading = true
             discoveryApi
               .overViewApi(row.id)
-              .then(res => {
+              .then((res) => {
                 let newData = res
                 newData['fields'] = format(res.fields)
                 oldData.value = JSON.parse(JSON.stringify(newData)) //前端搜索用
@@ -164,16 +165,16 @@ export const PreviewDrawer = defineComponent({
                 data.urls = [
                   {
                     method: 'POST',
-                    path: `http://${res.sourceInfo}${baseUrl}/find`
+                    path: `http://${res.sourceInfo}${baseUrl}/find`,
                   },
                   {
                     method: 'GET',
-                    path: `http://${res.sourceInfo}${baseUrl}`
+                    path: `http://${res.sourceInfo}${baseUrl}`,
                   },
                   {
                     method: 'TOKEN',
-                    path: `${location.origin + location.pathname}oauth/token`
-                  }
+                    path: `${location.origin + location.pathname}oauth/token`,
+                  },
                 ]
 
                 preview.value = newData || ''
@@ -186,7 +187,7 @@ export const PreviewDrawer = defineComponent({
             data.loading = true
             discoveryApi
               .overViewTask(row.id)
-              .then(res => {
+              .then((res) => {
                 let newData = res
                 //数据格式化
                 newData['taskConnections'] = formatTask(res?.taskConnections)
@@ -203,7 +204,7 @@ export const PreviewDrawer = defineComponent({
       const txt = data.search.trim().toLowerCase()
       if (txt) {
         let fields = preview.value['fields'] || []
-        preview.value['fields'] = fields.filter(n => n.name.toLowerCase().includes(txt))
+        preview.value['fields'] = fields.filter((n) => n.name.toLowerCase().includes(txt))
         return preview.value
       }
       preview.value['fields'] = oldData.value['fields'] || []
@@ -213,7 +214,7 @@ export const PreviewDrawer = defineComponent({
       const txt = data.searchApi.trim().toLowerCase()
       if (txt) {
         let fields = preview.value['fields'] || []
-        preview.value['fields'] = fields.filter(n => n.field_name.toLowerCase().includes(txt))
+        preview.value['fields'] = fields.filter((n) => n.field_name.toLowerCase().includes(txt))
         return preview.value
       }
       preview.value['fields'] = oldData.value['fields'] || []
@@ -224,7 +225,7 @@ export const PreviewDrawer = defineComponent({
       previewData: preview,
       filterNames,
       filterNamesApi,
-      loadData
+      loadData,
     }
   },
   render() {
@@ -246,7 +247,7 @@ export const PreviewDrawer = defineComponent({
               <div
                 class={[
                   this.previewData.category === 'storage' ? 'overflow-hidden' : 'overflow-auto',
-                  'discovery-page-right'
+                  'discovery-page-right',
                 ]}
                 v-loading={this.data.tableLoading}
               >
@@ -464,7 +465,7 @@ export const PreviewDrawer = defineComponent({
                         {i18n.t('daas_data_server_drawer_fuwufangwen')}
                       </span>
                       <ul class="data-api-path">
-                        {this.data.urls.map(path => (
+                        {this.data.urls.map((path) => (
                           <li class="data-api-path__item">
                             <div class={['method--' + path.method, 'data-api-path__method']}>{path.method}</div>
                             <div class="data-api-path__value line-height">{path.path}</div>
@@ -576,6 +577,6 @@ export const PreviewDrawer = defineComponent({
         )}
       </div>
     )
-  }
+  },
 })
 export default PreviewDrawer

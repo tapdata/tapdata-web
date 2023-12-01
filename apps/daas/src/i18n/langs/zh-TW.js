@@ -1812,5 +1812,5 @@ export default {
   daas_role_role_yemianquanxian: '頁面權限',
   daas_role_role_gongnengmokuai: '功能模塊',
   daas_role_role_gouxuanxiangyingmo:
-    '勾選相應模塊表示此導航對當前角色下用戶可見，開啟【查看全部數據】則表示角色可以查看和操作該模塊下所有的數據，不勾選則只能查看和操作自己創建和被授權的數據。 '
+    '勾選相應模塊表示此導航對當前角色下用戶可見，開啟【查看全部數據】則表示角色可以查看和操作該模塊下所有的數據，不勾選則只能查看和操作自己創建和被授權的數據。 ',
 }

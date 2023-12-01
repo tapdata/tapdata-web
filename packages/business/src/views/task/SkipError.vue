@@ -1,7 +1,11 @@
 <template>
-  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" :visible.sync="dialogVisible" width="60%">
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_tip') }}</div>
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_attention') }}</div>
+  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" v-model="dialogVisible" width="60%">
+    <div class="skip-tip">
+      {{ $t('packages_business_dataFlow_skipError_tip') }}
+    </div>
+    <div class="skip-tip">
+      {{ $t('packages_business_dataFlow_skipError_attention') }}
+    </div>
     <div class="skip-name">
       {{ `${$t('packages_business_dataFlow_skipError_taskName')}:` }}
       <span class="link-primary">{{ task.name }}</span>
@@ -26,16 +30,19 @@
       {{ errorTotal }} {{ checkedData.length }}
       {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{
-        $t('packages_business_dataFlow_skipError_startJob')
-      }}</el-button>
-    </span>
+    <template v-slot:footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" @click="skipErrorData">{{
+          $t('packages_business_dataFlow_skipError_startJob')
+        }}</el-button>
+      </span>
+    </template>
   </el-dialog>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { dataFlowsApi } from '@tap/api'
 export default {
   name: 'SkipError',
@@ -47,7 +54,7 @@ export default {
       checkAll: false,
       checkedData: [],
       task: {},
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
     }
   },
   methods: {
@@ -85,19 +92,21 @@ export default {
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
-        this.checkedData.forEach(item => {
+        this.checkedData.forEach((item) => {
           data.push(this.errorEvents[item])
         })
         this.checkedData = data
       } else {
         this.checkedData = []
       }
-      this.$emit('skip', this.task.id, this.checkedData)
+      $emit(this, 'skip', this.task.id, this.checkedData)
       this.dialogVisible = false
-    }
-  }
+    },
+  },
+  emits: ['skip'],
 }
 </script>
+
 <style lang="scss">
 .error-list {
   .el-checkbox__input {
@@ -105,7 +114,8 @@ export default {
   }
 }
 </style>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
 .error-list {
   background: #fefefe;
   border: 1px solid #dedee4;

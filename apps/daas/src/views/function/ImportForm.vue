@@ -2,11 +2,11 @@
   <section class="import-form-wrapper">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
-        {{ $t('function_button_import_jar') }}
-      </div> -->
+            {{ $t('function_button_import_jar') }}
+          </div> -->
       <!-- <div class="import-form__body">
-        <div class="main px-6 py-4"> -->
-      <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
+            <div class="main px-6 py-4"> -->
+      <ElForm ref="form" label-position="left" label-width="120px" :model="form" :rules="rules">
         <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
           <div class="flex align-center">
             <ElUpload
@@ -18,9 +18,7 @@
               :on-change="fileChange"
               :on-remove="fileRemove"
             >
-              <ElButton style="margin-right: 10px" size="small" type="primary">{{
-                $t('function_button_file_upload')
-              }}</ElButton>
+              <ElButton style="margin-right: 10px" type="primary">{{ $t('function_button_file_upload') }}</ElButton>
             </ElUpload>
             <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
           </div>
@@ -32,14 +30,16 @@
               class="form-input"
               :placeholder="$t('function_package_name_placeholder')"
             ></ElInput>
-            <ElButton class="btn ml-4" type="primary" size="small" :loading="loading" @click="loadFunction">
+            <ElButton class="btn ml-4" type="primary" :loading="loading" @click="loadFunction">
               <span>{{ $t('function_button_load_function') }}</span>
             </ElButton>
           </div>
         </ElFormItem>
       </ElForm>
       <div class="flex flex-column flex-1 overflow-hidden">
-        <div class="mb-4" style="font-size: 14px">{{ $t('function_import_list_title') }}</div>
+        <div class="mb-4" style="font-size: 14px">
+          {{ $t('function_import_list_title') }}
+        </div>
         <ElTable :data="funcList" height="100%">
           <ElTableColumn :label="$t('function_name_label')">
             <template #default="{ row, $index }">
@@ -52,12 +52,12 @@
                     placement="top"
                     :content="$t('function_tips_name_repeat')"
                   >
-                    <i class="el-icon-warning mr-2 color-danger"></i>
+                    <el-icon class="mr-2 color-danger"><el-icon-warning /></el-icon>
                   </ElTooltip>
                   <span class="ellipsis">{{ row.function_name }}</span>
                   <ElButton
                     class="ml-2"
-                    type="text"
+                    text
                     icon="el-icon-edit-outline"
                     @click="
                       editIndex = $index
@@ -66,15 +66,11 @@
                   ></ElButton>
                 </template>
                 <template v-else>
-                  <ElInput v-model="editName" size="mini" class="mr-2"></ElInput>
-                  <ElButton size="mini" @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
-                  <ElButton
-                    type="primary"
-                    size="mini"
-                    :disabled="!editName || !editName.trim()"
-                    @click="changeName($index)"
-                    >{{ $t('public_button_save') }}</ElButton
-                  >
+                  <ElInput v-model="editName" class="mr-2"></ElInput>
+                  <ElButton @click="editIndex = null">{{ $t('public_button_cancel') }}</ElButton>
+                  <ElButton type="primary" :disabled="!editName || !editName.trim()" @click="changeName($index)">{{
+                    $t('public_button_save')
+                  }}</ElButton>
                 </template>
               </div>
             </template>
@@ -84,30 +80,28 @@
           <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
           <ElTableColumn width="120px" :label="$t('public_operation')">
             <template #default="{ row, $index }">
-              <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{
-                $t('public_button_setting')
-              }}</ElButton>
-              <ElButton size="mini" type="text" @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
+              <ElButton text @click="openSetting(row, $index)">{{ $t('public_button_setting') }}</ElButton>
+              <ElButton text @click="remove($index)">{{ $t('public_button_delete') }}</ElButton>
             </template>
           </ElTableColumn>
         </ElTable>
         <!-- </div>
-        </div> -->
+            </div> -->
       </div>
       <div class="footer mt-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('public_button_save') }}</ElButton>
+        <ElButton class="btn" @click="$router.back()">{{ $t('public_button_back') }}</ElButton>
+        <ElButton class="btn" type="primary" @click="save">{{ $t('public_button_save') }}</ElButton>
       </div>
     </div>
 
     <ElDialog
       width="694px"
-      custom-class="create-dialog"
+      class="create-dialog"
       :title="$t('function_dialog_setting_title')"
       :close-on-click-modal="false"
       :visible="!!settingData"
     >
-      <ElForm v-if="settingData" label-position="left" label-width="120px" size="small" :model="settingData">
+      <ElForm v-if="settingData" label-position="left" label-width="120px" :model="settingData">
         <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
           <ElInput
             v-model="settingData.describe"
@@ -133,12 +127,12 @@
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton class="btn" size="mini" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="submitSetting">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton class="btn" @click="settingData = null">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton class="btn" type="primary" @click="submitSetting">{{ $t('public_button_confirm') }}</ElButton>
+        </span>
+      </template>
     </ElDialog>
   </section>
 </template>
@@ -159,16 +153,21 @@ export default {
       form: {
         fileId: '',
         fileName: '',
-        packageName: ''
+        packageName: '',
       },
       rules: {
         fileId: [{ required: true, message: this.$t('function_file_upload_tips') }],
-        packageName: [{ required: true, message: this.$t('function_package_name_placeholder') }]
+        packageName: [
+          {
+            required: true,
+            message: this.$t('function_package_name_placeholder'),
+          },
+        ],
       },
       settingData: null,
       editIndex: null,
       editName: '',
-      repeatNames: []
+      repeatNames: [],
     }
   },
   watch: {
@@ -177,12 +176,12 @@ export default {
     },
     'form.packageName'() {
       this.clearFunctionList()
-    }
+    },
   },
   created() {
     this?.$ws?.on('loadJarLibResult', this.hanlderResult)
   },
-  destroyed() {
+  unmounted() {
     this?.$ws?.off('loadJarLibResult', this.hanlderResult)
     clearTimeout(timer)
   },
@@ -191,7 +190,7 @@ export default {
       let map = {}
       let names = []
 
-      list.forEach(item => {
+      list.forEach((item) => {
         let name = item.function_name
         if (map[name]) {
           names.push(name)
@@ -205,16 +204,16 @@ export default {
             fields: { function_name: 1 },
             where: {
               function_name: {
-                inq: Object.keys(map)
-              }
-            }
-          })
+                inq: Object.keys(map),
+              },
+            },
+          }),
         })
-        .then(data => {
+        .then((data) => {
           let items = data?.items || []
-          names = names.concat(items.map(item => item.function_name))
+          names = names.concat(items.map((item) => item.function_name))
           this.repeatNames = Array.from(new Set(names))
-          this.funcList.forEach(item => {
+          this.funcList.forEach((item) => {
             item.isRepeat = this.repeatNames.includes(item.function_name)
           })
         })
@@ -233,7 +232,7 @@ export default {
     setFormat(item) {
       let params = item?.parameters?.sort((a, b) => a.index < b.index) || []
       let arr = []
-      params.forEach(p => {
+      params.forEach((p) => {
         arr.push(`${p.name}:${p.type}`)
       })
       return `${item.function_name}(${arr.join(', ')})`
@@ -244,7 +243,7 @@ export default {
       }
       let result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
-        this.funcList = result.map(item => {
+        this.funcList = result.map((item) => {
           item.function_name = item.methodName
           item.classNameFmt = item.className?.split(this.form.packageName + '.')?.[1] || ''
           item = Object.assign(item, {
@@ -252,7 +251,7 @@ export default {
             format: '',
             parameters_desc: '',
             return_value: '',
-            isRepeat: false
+            isRepeat: false,
           })
           item.format = this.setFormat(item)
           return item
@@ -269,7 +268,7 @@ export default {
       clearTimeout(timer)
     },
     loadFunction() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.$ws) {
             this.loading = true
@@ -278,8 +277,8 @@ export default {
               type: 'loadJar',
               data: {
                 fileId,
-                packageName
-              }
+                packageName,
+              },
             })
             // 设置10秒超时
             timer = setTimeout(() => {
@@ -292,7 +291,11 @@ export default {
     selectFile(file) {
       let maxFileSize = 10
       if (file.size > maxFileSize * 1024 * 1024) {
-        this.$message.error(i18n.t('daas_function_importform_shangchuanwenjianda', { val1: maxFileSize }))
+        this.$message.error(
+          i18n.t('daas_function_importform_shangchuanwenjianda', {
+            val1: maxFileSize,
+          }),
+        )
         return false
       }
       return true
@@ -326,7 +329,7 @@ export default {
     },
     submitSetting() {
       let data = this.settingData
-      this.$set(this.funcList, data.index, Object.assign({}, data))
+      this.funcList[data.index] = Object.assign({}, data)
       this.settingData = null
     },
     remove(index) {
@@ -334,20 +337,20 @@ export default {
       this.getRepeatNames(this.funcList)
     },
     save() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           let list = this.funcList
           if (!list?.length) {
             return this.$message.error(this.$t('function_message_function_empty'))
           }
-          if (list.some(item => item.isRepeat)) {
+          if (list.some((item) => item.isRepeat)) {
             return this.$message.error(this.$t('function_name_repeat'))
           }
           let loading = this.$loading()
           let { fileId, fileName, packageName } = this.form
           let useId = Cookie.get('user_id')
           let now = new Date()
-          let params = list.map(item => {
+          let params = list.map((item) => {
             let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
             return {
               type: 'jar',
@@ -362,7 +365,7 @@ export default {
               parameters_desc,
               return_value,
               last_updated: now,
-              user_id: useId
+              user_id: useId,
             }
           })
           javascriptFunctionsApi
@@ -376,12 +379,12 @@ export default {
             })
         }
       })
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .import-form-wrapper {
   display: flex;
   flex-direction: column;
@@ -399,22 +402,23 @@ export default {
   background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
-
-  ::v-deep {
-    .el-form-item__label {
-      font-size: 12px;
-    }
-    .el-form-item--mini.el-form-item,
-    .el-form-item--small.el-form-item {
-      margin-bottom: 24px;
-    }
-    .el-upload-list__item:first-child {
-      margin-top: 0;
-    }
-    .el-upload-list__item-name {
-      width: 250px;
-    }
+  :deep(.el-form-item__label) {
+    font-size: 12px;
   }
+
+  :deep(.el-form-item--mini.el-form-item),
+  :deep(.el-form-item--small.el-form-item) {
+    margin-bottom: 24px;
+  }
+
+  :deep(.el-upload-list__item:first-child) {
+    margin-top: 0;
+  }
+
+  :deep(.el-upload-list__item-name) {
+    width: 250px;
+  }
+
   .form-input {
     max-width: 384px;
   }

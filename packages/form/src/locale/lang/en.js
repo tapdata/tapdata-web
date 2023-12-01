@@ -189,5 +189,5 @@ export default {
   packages_form_batch_add_field_prefix: 'Prefix',
   packages_form_batch_add_field_type: 'Type',
   packages_form_batch_add_field_count: 'Count',
-  packages_form_batch_add_field_start: 'Start Number'
+  packages_form_batch_add_field_start: 'Start Number',
 }

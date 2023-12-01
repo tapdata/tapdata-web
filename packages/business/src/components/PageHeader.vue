@@ -6,42 +6,49 @@
       </ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="flex align-items-center px-4" v-else>
-      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
+      <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title || '') }}</span>
       <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-      <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$t($route.meta.desc)"></Desciption>
+      <Desciption
+        class="flex align-items-center fs-7 font-color-sslight"
+        :desc="$t($route.meta.desc || '')"
+      ></Desciption>
     </div>
   </div>
 </template>
 
 <script>
+import { plantRenderPara } from '../../utils/gogocodeTransfer'
+import * as Vue from 'vue'
 export default {
   components: {
     Desciption: {
       props: {
-        desc: [String, Function]
+        desc: [String, Function],
       },
-      render(h) {
+      render() {
         if (this.desc) {
           if (Object.prototype.toString.call(this.desc) === '[object Function]') {
-            return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
+            return Vue.h('span', plantRenderPara({ class: 'flex align-items-center' }), [
+              this.desc(Vue.h, this.$t.bind(this)),
+            ])
           } else {
-            return h('span', this.desc)
+            return Vue.h('span', this.desc)
           }
         }
         return null
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       breadcrumbData: [],
-      isHidden: false
+      isHidden: false,
     }
   },
   watch: {
     '$route.name'() {
       this.getBreadcrumb(this.$route)
-    }
+    },
   },
   created() {
     this.getBreadcrumb(this.$route)
@@ -52,7 +59,7 @@ export default {
       let data = []
       let isHidden = false
       if (matched.length) {
-        matched.forEach(route => {
+        matched.forEach((route) => {
           isHidden = route.meta?.hideTitle
           if (/^\/.*\/$/.test(route.path)) {
             data.pop()
@@ -63,23 +70,24 @@ export default {
                 ? null
                 : ['settingCenter', 'notification'].includes(route.name)
                 ? 'layout'
-                : route.name
+                : route.name,
           }
           if (route.meta?.doNotJump) {
             to = null
           }
           data.push({
-            name: this.$t(route.meta?.title),
-            to
+            name: this.$t(route.meta?.title || ''),
+            to,
           })
         })
       }
       this.isHidden = !!isHidden
       this.breadcrumbData = data
-    }
-  }
+    },
+  },
 }
 </script>
+
 <style lang="scss" scoped>
 .breadcrumb {
   height: 50px;

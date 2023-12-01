@@ -1,7 +1,9 @@
 <template>
   <section class="license-warp flex justify-content-center align-items-center flex-column">
     <main class="main">
-      <header class="header header-wrap pl-4">{{ $t('dfs_aliyun_market_license_jihuoaliyun') }}</header>
+      <header class="header header-wrap pl-4">
+        {{ $t('dfs_aliyun_market_license_jihuoaliyun') }}
+      </header>
       <main style="padding: 24px">
         <div class="flex justify-content-center align-items-center">
           <img class="text-center" :src="getImg('aliyun-license-code')" />
@@ -47,7 +49,7 @@ export default {
     return {
       licenseCode: '',
       showGoDashboard: false,
-      saveLoading: false
+      saveLoading: false,
     }
   },
   mounted() {
@@ -59,29 +61,31 @@ export default {
       this.saveLoading = true
       this.buried('activateAliyunCode')
       this.$axios
-        .post('api/tcm/aliyun/market/license/activate', { licenseCode: this.licenseCode })
-        .then(data => {
+        .post('api/tcm/aliyun/market/license/activate', {
+          licenseCode: this.licenseCode,
+        })
+        .then((data) => {
           if (data.licenseStatus === 'ACTIVATED') {
             this.$message.success(i18n.t('dfs_aliyun_market_license_jihuochenggongS'))
             this.showGoDashboard = true
-            this.$axios.get('api/tcm/user').then(data => {
+            this.$axios.get('api/tcm/user').then((data) => {
               window.__USER_INFO__ = data
             })
             this.buried('activateAliyunCode', '', {
-              result: true
+              result: true,
             })
             setTimeout(() => {
               window.location.href = 'index.html'
             }, 30000)
           } else {
             this.buried('activateAliyunCode', '', {
-              result: false
+              result: false,
             })
           }
         })
         .catch(() => {
           this.buried('activateAliyunCode', '', {
-            result: false
+            result: false,
           })
         })
         .finally(() => {
@@ -89,13 +93,13 @@ export default {
         })
     },
     getImg(name) {
-      return require(`../../../public/images/dashboard/${name}.svg`)
-    }
-  }
+      return require(`/images/dashboard/${name}.svg`)
+    },
+  },
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .license-warp {
   height: 100%;
 }

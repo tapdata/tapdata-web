@@ -9,10 +9,9 @@
     <div ref="container" class="h-100 flex flex-column" v-loading="loading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
-        <div class="fs-6 font-color-dark ml-1">{{ $t('packages_dag_materialized_view') }}</div>
-        <ElButton type="text" class="ml-4 color-warning" @click="handleOpenHelp"
-          ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
-        >
+        <div class="fs-6 font-color-dark ml-1">
+          {{ $t('packages_dag_materialized_view') }}
+        </div>
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
           <ElTooltip v-if="!disabled" transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
@@ -44,7 +43,9 @@
           </ElTooltip>
           <div class="choose-size mx-2">
             <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
-              <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+              <template v-slot:reference>
+                <div class="size-wrap">{{ scaleTxt }}</div>
+              </template>
               <div class="choose-list p-2">
                 <div @click="handleZoomOut" class="choose-item pl-4 flex justify-content-between align-center">
                   <span class="title">{{ $t('packages_dag_button_zoom_out') }}</span>
@@ -79,7 +80,6 @@
           :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start) || transformLoading"
           :loading="isSaving"
           class="ml-auto"
-          size="medium"
           type="primary"
           @click="$emit('start')"
         >
@@ -92,7 +92,7 @@
           v-for="node in nodes"
           :key="node.id"
           :class="{
-            active: selectedNodeId === node.id
+            active: selectedNodeId === node.id,
           }"
           :node="node"
           :id="node.id"
@@ -113,7 +113,7 @@
           :has-target-node="!!targetNode"
           :schemaLoading="loadingSchemaNodeId === node.id"
           :getNodeById="getNodeById"
-          @click.native="onClickNode(node)"
+          @click="onClickNode(node)"
           @change-parent="handleChangeParent"
           @change-path="handleChangePath"
           @add-node="$emit('add-node', node, $event)"
@@ -134,31 +134,11 @@
         ></TargetNode>
       </PaperScroller>
     </div>
-
-    <ElDialog append-to-body :visible.sync="helpVisible" width="52%" @closed="onClosedDialog">
-      <template #title>
-        <span class="fs-6 fw-sub font-color-dark">
-          {{ $t('packages_dag_materialized_view_help_title') }}
-        </span>
-      </template>
-
-      <div class="mt-n4">
-        <p class="mb-2">
-          {{ $t('packages_dag_materialized_view_help_desc') }}
-        </p>
-        <p class="mb-2">
-          <ElLink type="primary" class="text-decoration-underline" @click="handleOpenHelpDoc"
-            >{{ $t('packages_dag_materialized_view_help_tutorial_btn') }} &gt;&gt;</ElLink
-          >
-        </p>
-        <p class="mb-2 font-color-dark fw-sub">{{ $t('packages_dag_materialized_view_help_video_desc') }}</p>
-        <div v-html="iframeHtml"></div>
-      </div>
-    </ElDialog>
   </el-drawer>
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import dagre from 'dagre'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import Mousetrap from 'mousetrap'
@@ -171,9 +151,6 @@ import { config, jsPlumb } from '../../instance'
 
 export default {
   name: 'MaterializedView',
-
-  inject: ['buried'],
-
   props: {
     visible: Boolean,
     disabled: Boolean,
@@ -183,12 +160,10 @@ export default {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
-
   components: { VIcon, VDivider, PaperScroller, TargetNode, Node, IconButton },
-
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
 
@@ -208,14 +183,9 @@ export default {
       targetNodeSchemaLoading: false,
       selectedNodeId: '',
       loadingSchemaNodeId: '',
-      helpVisible: false,
-      docUrl: '',
-      iframeHtml: ''
     }
   },
-
   computed: {
-    ...mapGetters(['isDomesticStation']),
     ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
@@ -240,9 +210,9 @@ export default {
     },
 
     tableOptions() {
-      return this.nodes.map(node => ({
+      return this.nodes.map((node) => ({
         label: node.tableNode.tableName,
-        value: node.id
+        value: node.id,
       }))
     },
 
@@ -260,9 +230,8 @@ export default {
         }
         return map
       }, {})
-    }
+    },
   },
-
   watch: {
     async visible(val) {
       if (!val) {
@@ -278,36 +247,17 @@ export default {
       this.loading = false
       this.handleAutoLayout()
       this.watchMergeProperties()
-    }
+    },
   },
-
   mounted() {
     Mousetrap(this.$refs.container).bind(['backspace', 'del'], () => {
       this.visible && !this.disabled && this.handleDelete()
     })
-    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], e => {
+    Mousetrap(this.$refs.container).bind(['option+command+l', 'ctrl+alt+l'], (e) => {
       e.preventDefault()
       this.visible && this.handleAutoLayout()
     })
-
-    if (!this.isDomesticStation) {
-      this.docUrl = 'https://docs.tapdata.io/cloud/user-guide/data-development/create-materialized-view/'
-      this.iframeHtml = `<iframe
-            class="block"
-            width="100%"
-            height="360"
-            src="https://www.youtube.com/embed/gcJew9u2uxY?si=zpvhZIjI8A9A9O5y"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>`
-    } else {
-      this.docUrl = 'https://docs.tapdata.net/cloud/user-guide/data-development/create-materialized-view/'
-      this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
-    }
   },
-
   methods: {
     ...mapActions('dataflow', ['updateDag']),
 
@@ -320,21 +270,21 @@ export default {
           console.log('watchMergeProperties')
           this.updateDag({ vm: this })
         },
-        { deep: true }
+        { deep: true },
       )
     },
 
     handleUpdateVisible(val) {
-      this.$emit('update:visible', val)
+      $emit(this, 'update:visible', val)
     },
 
     handleCenterContent() {
-      const allNodes = this.viewNodes.map(node => {
+      const allNodes = this.viewNodes.map((node) => {
         return {
           id: node.id,
           attrs: {
-            position: this.nodePositionMap[node.id]
-          }
+            position: this.nodePositionMap[node.id],
+          },
         }
       })
       this.$refs.paperScroller.centerContent(false, 24, allNodes, '')
@@ -356,11 +306,11 @@ export default {
       const childrenNodes = node.children
       const parentNode = this.nodeMap[node.parentId]
       const { parentId = this.targetNode?.id } = node
-      const index = this.nodes.findIndex(n => n.id === id)
+      const index = this.nodes.findIndex((n) => n.id === id)
       ~index && this.nodes.splice(index, 1)
 
       if (parentNode) {
-        const indexOfParent = parentNode.children.findIndex(n => n.id === id)
+        const indexOfParent = parentNode.children.findIndex((n) => n.id === id)
         ~indexOfParent && parentNode.children.splice(indexOfParent, 1)
         parentNode.children.push(...childrenNodes)
 
@@ -369,15 +319,15 @@ export default {
         this.inputsMap[parentNode.id].splice(oldIndex, 1)
       } else {
         const { mergeProperties } = this.activeNode
-        const index = mergeProperties.findIndex(n => n.id === id)
+        const index = mergeProperties.findIndex((n) => n.id === id)
         ~index && mergeProperties.splice(index, 1)
         mergeProperties.push(...childrenNodes)
       }
 
-      this.$delete(this.nodePositionMap, id)
-      this.$delete(this.nodeSchemaMap, id)
-      this.$delete(this.inputsMap, id)
-      this.$delete(this.outputsMap, id)
+      delete this.nodePositionMap
+      delete this.nodeSchemaMap
+      delete this.inputsMap
+      delete this.outputsMap
 
       for (const childrenNode of childrenNodes) {
         const childId = childrenNode.id
@@ -386,13 +336,15 @@ export default {
 
         if (parentId) {
           this.inputsMap[parentId].push(childId)
-          this.jsPlumbIns.connect({ uuids: [childId + '_source', parentId + '_target'] })
+          this.jsPlumbIns.connect({
+            uuids: [childId + '_source', parentId + '_target'],
+          })
         }
 
         childrenNode.parentId = parentId
       }
 
-      this.$emit('delete-node', id)
+      $emit(this, 'delete-node', id)
 
       await this.afterTaskSaved()
       await this.onLoadTargetSchema(this.targetNode.id)
@@ -417,11 +369,11 @@ export default {
 
       if (ifMyself && !parentIds.length) return [node]
 
-      parentIds.forEach(pid => {
+      parentIds.forEach((pid) => {
         let parent = this.nodeById(pid)
         if (parent) {
           if (parent.$inputs?.length) {
-            parent.$inputs.forEach(ppid => {
+            parent.$inputs.forEach((ppid) => {
               parents.push(...this.findParentNodes(ppid, true))
             })
           } else {
@@ -457,7 +409,7 @@ export default {
             item.parentId = target
             item.tableNode = tableNode
             nodes.push(item)
-            this.$set(this.nodePositionMap, item.id, [0, 0]) // 初始化坐标
+            this.nodePositionMap[item.id] = [0, 0] // 初始化坐标
 
             if (item.targetPath) {
               const arr = item.targetPath.split('.')
@@ -503,7 +455,9 @@ export default {
         this.outputsMap = outputsMap
         await this.$nextTick()
         edges.forEach(({ source, target }) => {
-          this.jsPlumbIns.connect({ uuids: [`${source}_source`, `${target}_target`] })
+          this.jsPlumbIns.connect({
+            uuids: [`${source}_source`, `${target}_target`],
+          })
         })
       }
 
@@ -513,14 +467,15 @@ export default {
     initMainNode() {
       let mergeProperties = this.activeNode.mergeProperties
 
-      this.$emit(
+      $emit(
+        this,
         'add-node',
         {
-          children: mergeProperties
+          children: mergeProperties,
         },
         {
-          mergeType: 'updateOrInsert' // 主表默认是更新已存在或插入新数据
-        }
+          mergeType: 'updateOrInsert', // 主表默认是更新已存在或插入新数据
+        },
       )
     },
 
@@ -529,7 +484,7 @@ export default {
 
       this.inputsMap[this.targetNode.id] = []
       this.outputsMap[this.targetNode.id] = []
-      this.$set(this.nodePositionMap, this.targetNode.id, [0, 0]) // 初始化坐标
+      this.nodePositionMap[this.targetNode.id] = [0, 0] // 初始化坐标
     },
 
     /**
@@ -546,19 +501,25 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 60, ranksep: 120, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({
+        nodesep: 60,
+        ranksep: 120,
+        marginx: 50,
+        marginy: 50,
+        rankdir: 'LR',
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         let { width, height } = document.getElementById(n.id)?.getBoundingClientRect() || {}
         width /= scale
         height /= scale
         dg.setNode(n.id, { width, height })
       })
 
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
@@ -566,7 +527,7 @@ export default {
 
       this.jsPlumbIns.setSuspendDrawing(true)
 
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -578,12 +539,12 @@ export default {
       this.$nextTick(() => {
         this.jsPlumbIns.setSuspendDrawing(false, true)
         // this.$refs.paperScroller.initVisibleArea()
-        const allNodes = this.viewNodes.map(node => {
+        const allNodes = this.viewNodes.map((node) => {
           return {
             id: node.id,
             attrs: {
-              position: this.nodePositionMap[node.id]
-            }
+              position: this.nodePositionMap[node.id],
+            },
           }
         })
         this.$refs.paperScroller.autoResizePaper(allNodes, '')
@@ -603,8 +564,8 @@ export default {
     async loadSchema() {
       this.schemaLoading = true
       const params = {
-        nodeIds: this.viewNodes.map(node => node.id).join(','),
-        fields: ['original_name', 'fields', 'qualified_name']
+        nodeIds: this.viewNodes.map((node) => node.id).join(','),
+        fields: ['original_name', 'fields', 'qualified_name'],
       }
       const data = await metadataInstancesApi.getNodeSchemaMapByIds(params)
 
@@ -622,34 +583,30 @@ export default {
         return map
       }, {})
 
-      this.$set(
-        this.nodeSchemaMap,
-        nodeId,
-        fields
-          .map(item => {
-            item.dataType = item.data_type.replace(/\(.+\)/, '')
-            item.indicesUnique = !!columnsMap[item.field_name]
-            item.isPrimaryKey = item.primary_key_position > 0
-            return item
-          })
-          .sort((a, b) => {
-            let aVal, bVal
+      this.nodeSchemaMap[nodeId] = fields
+        .map((item) => {
+          item.dataType = item.data_type.replace(/\(.+\)/, '')
+          item.indicesUnique = !!columnsMap[item.field_name]
+          item.isPrimaryKey = item.primary_key_position > 0
+          return item
+        })
+        .sort((a, b) => {
+          let aVal, bVal
 
-            if (a.isPrimaryKey) aVal = 1
-            else if (a.indicesUnique) aVal = 2
-            else aVal = 3
+          if (a.isPrimaryKey) aVal = 1
+          else if (a.indicesUnique) aVal = 2
+          else aVal = 3
 
-            if (b.isPrimaryKey) bVal = 1
-            else if (b.indicesUnique) bVal = 2
-            else bVal = 3
+          if (b.isPrimaryKey) bVal = 1
+          else if (b.indicesUnique) bVal = 2
+          else bVal = 3
 
-            if (aVal === bVal) {
-              return a.field_name.localeCompare(b.field_name)
-            }
+          if (aVal === bVal) {
+            return a.field_name.localeCompare(b.field_name)
+          }
 
-            return aVal - bVal
-          })
-      )
+          return aVal - bVal
+        })
     },
 
     async loadNodeSchema(nodeId) {
@@ -657,10 +614,10 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: 1,
-        pageSize: 20
+        pageSize: 20,
       }
       const {
-        items: [schema = {}]
+        items: [schema = {}],
       } = await metadataInstancesApi.nodeSchemaPage(params)
       this.setNodeSchema(nodeId, schema)
     },
@@ -703,7 +660,7 @@ export default {
     },
 
     async handleChangePath(node, path) {
-      this.$set(node, 'targetPath', path)
+      node['targetPath'] = path
       const arr = path.split('.')
       const outputs = this.outputsMap[node.id]
       let { parentId } = node
@@ -711,7 +668,7 @@ export default {
       if (!this.checkMainTable(node)) {
         if (arr.length > 1) {
           const parentPath = arr.slice(0, arr.length - 1).join('.')
-          const parentNode = this.nodes.find(node => node.targetPath === parentPath)
+          const parentNode = this.nodes.find((node) => node.targetPath === parentPath)
           parentId = parentNode?.id || parentId
         }
 
@@ -735,11 +692,11 @@ export default {
       let newTargetInputs = this.inputsMap[newTarget]
       const connectionIns = this.jsPlumbIns.getConnections({
         source,
-        target
+        target,
       })[0]
 
       if (!newTargetInputs) {
-        this.$set(this.inputsMap, newTarget, [])
+        this.inputsMap[newTarget] = []
         newTargetInputs = this.inputsMap[newTarget]
       }
 
@@ -748,7 +705,9 @@ export default {
       outputs.push(newTarget)
       newTargetInputs.push(source)
       this.jsPlumbIns.deleteConnection(connectionIns)
-      this.jsPlumbIns.connect({ uuids: [source + '_source', newTarget + '_target'] })
+      this.jsPlumbIns.connect({
+        uuids: [source + '_source', newTarget + '_target'],
+      })
       this.handleAutoLayout()
     },
 
@@ -759,21 +718,23 @@ export default {
     addNode(node) {
       const { id: source, parentId: target } = node
       this.nodes.push(node)
-      this.$set(this.nodePositionMap, source, [0, 0]) // 初始化坐标
+      this.nodePositionMap[source] = [0, 0] // 初始化坐标
 
       if (target) {
         let inputs = this.inputsMap[target]
 
         if (!inputs) {
-          this.$set(this.inputsMap, target, [])
+          this.inputsMap[target] = []
           inputs = this.inputsMap[target]
         }
 
         inputs.push(source)
-        this.$set(this.outputsMap, source, [target])
+        this.outputsMap[source] = [target]
 
         this.$nextTick(() => {
-          this.jsPlumbIns.connect({ uuids: [node.id + '_source', node.parentId + '_target'] })
+          this.jsPlumbIns.connect({
+            uuids: [node.id + '_source', node.parentId + '_target'],
+          })
           this.handleAutoLayout()
         })
       }
@@ -782,15 +743,17 @@ export default {
     async addTargetNode(node) {
       console.log('addTargetNode', node)
       let mergeProperties = this.activeNode.mergeProperties
-      this.$set(this.inputsMap, node.id, [])
+      this.inputsMap[node.id] = []
       let inputs = this.inputsMap[node.id]
-      this.$set(this.nodePositionMap, node.id, [0, 0]) // 初始化坐标
+      this.nodePositionMap[node.id] = [0, 0] // 初始化坐标
       await this.$nextTick()
-      mergeProperties.forEach(item => {
+      mergeProperties.forEach((item) => {
         item.parentId = node.id
         inputs.push(item.id)
         this.outputsMap[item.id] = [node.id]
-        this.jsPlumbIns.connect({ uuids: [item.id + '_source', node.id + '_target'] })
+        this.jsPlumbIns.connect({
+          uuids: [item.id + '_source', node.id + '_target'],
+        })
       })
       this.handleAutoLayout()
       await this.afterTaskSaved()
@@ -825,7 +788,7 @@ export default {
     },
 
     afterTaskSaved() {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           if (this.taskSaving) {
             let unwatch = this.$watch('taskSaving', () => {
@@ -840,23 +803,12 @@ export default {
     },
 
     getNodeById() {},
-
-    handleOpenHelp() {
-      this.helpVisible = true
-      this.buried('openMaterializedViewHelp')
-    },
-
-    handleOpenHelpDoc() {
-      window.open(this.docUrl, '_blank')
-      this.buried('openMaterializedViewDoc')
-    },
-
-    onClosedDialog() {}
-  }
+  },
+  emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node'],
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
 $radius: 6px;
@@ -875,25 +827,20 @@ $sidebarBg: #fff;
   outline: none;
   border: 1px solid transparent;
   border-radius: $radius;
-  transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  transition:
+    background,
+    color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   cursor: pointer;
-
   &.active,
   &:hover {
     color: map-get($color, primary);
     background: $hoverBg;
   }
 }
-
 .icon-btn + .icon-btn {
   margin-left: 12px;
 }
 .h-48 {
   height: 48px;
-}
-</style>
-<style>
-.materialized-view-help-dialog {
-  z-index: 10000;
 }
 </style>

@@ -13,12 +13,12 @@ export default {
   props: {
     value: {
       type: [String, Blob],
-      require: true
-    }
+      require: true,
+    },
   },
   data() {
     return {
-      html: ''
+      html: '',
     }
   },
   watch: {
@@ -26,7 +26,7 @@ export default {
       if (v1 !== v2) {
         this.init()
       }
-    }
+    },
   },
   mounted() {
     this.value && this.init()
@@ -43,7 +43,8 @@ export default {
         // a标签，新窗口打开
         this.html = md.render(reader.result).replace(/<a href=/g, `<a target="_blank" href=`)
       }
-    }
-  }
+    },
+  },
+  emits: ['update:value'],
 }
 </script>

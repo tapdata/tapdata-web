@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap position-relative px-4" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
@@ -8,123 +8,116 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei')
+        title: $t('packages_business_task_migratelist_renwufenlei'),
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
       @selection-change="
-        val => {
+        (val) => {
           multipleSelection = val
         }
       "
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
+      <template v-slot:search>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
-      <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
-          >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
-        </ElButton>
-        <el-button
-          v-readonlybtn="'SYNC_category_application'"
-          :disabled="$disabledReadonlyUserBtn()"
-          size="mini"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
-          <span> {{ $t('public_button_bulk_tag') }}</span>
-        </el-button>
-        <el-dropdown
-          class="btn"
-          @command="handleCommand($event)"
-          v-show="multipleSelection.length > 0 && bulkOperation"
-        >
-          <el-button class="btn-dropdowm" size="mini">
-            <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              command="start"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkScheuled') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_bulkStopping') }}
-            </el-dropdown-item>
-            <el-dropdown-item
-              command="initialize"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchRest') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
-              >{{ $t('packages_business_dataFlow_batchDelete') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <template>
+      <template v-slot:operation>
+        <div class="buttons">
+          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+            >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+          </ElButton>
           <el-button
-            v-if="buttonShowMap.export"
-            v-show="multipleSelection.length > 0 && isDaas"
+            v-readonlybtn="'SYNC_category_application'"
             :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            size="mini"
-            class="btn message-button-cancel"
-            @click="handleCommand('export')"
-          >
-            <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-if="isDaas && buttonShowMap.import"
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
             class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
+            v-show="multipleSelection.length > 0"
+            @click="$refs.table.showClassify(handleSelectTag())"
           >
-            <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
+            <span> {{ $t('public_button_bulk_tag') }}</span>
           </el-button>
-        </template>
-        <ElButton
-          v-if="$route.name === 'dataflowList'"
-          class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-          size="mini"
-          :loading="createBtnLoading"
-          @click="handleCreateMaterializedView"
-        >
-          <VIcon size="28">beta</VIcon>
-          {{ $t('packages_dag_build_materialized_view') }}</ElButton
-        >
-        <el-button
-          v-if="buttonShowMap.create"
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          id="task-list-create"
-          :disabled="$disabledReadonlyUserBtn()"
-          :loading="createBtnLoading"
-          @click="create()"
-        >
-          {{ $t('public_button_create') }}
-        </el-button>
-      </div>
+          <el-dropdown
+            class="btn"
+            @command="handleCommand($event)"
+            v-show="multipleSelection.length > 0 && bulkOperation"
+          >
+            <el-button class="btn-dropdowm">
+              <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
+              <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="start" :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="stop" :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_bulkStopping') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="initialize" :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_batchRest') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="del" :disabled="$disabledReadonlyUserBtn()"
+                  >{{ $t('packages_business_dataFlow_batchDelete') }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <template>
+            <el-button
+              v-if="buttonShowMap.export"
+              v-show="multipleSelection.length > 0 && isDaas"
+              :disabled="$disabledReadonlyUserBtn()"
+              v-readonlybtn="'SYNC_job_export'"
+              class="btn message-button-cancel"
+              @click="handleCommand('export')"
+            >
+              <!--<i class="iconfont icon-export back-btn-icon"></i>-->
+              <span> {{ $t('public_button_export') }}</span>
+            </el-button>
+            <el-button
+              v-if="isDaas && buttonShowMap.import"
+              v-readonlybtn="'SYNC_job_import'"
+              class="btn"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="handleImport"
+            >
+              <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
+              <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            </el-button>
+          </template>
+          <ElButton
+            v-if="$route.name === 'dataflowList'"
+            class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+            :loading="createBtnLoading"
+            @click="handleCreateMaterializedView"
+          >
+            <VIcon size="28">beta</VIcon>
+            {{ $t('packages_dag_build_materialized_view') }}</ElButton
+          >
+          <el-button
+            v-if="buttonShowMap.create"
+            v-readonlybtn="'SYNC_job_creation'"
+            class="btn btn-create"
+            type="primary"
+            id="task-list-create"
+            :disabled="$disabledReadonlyUserBtn()"
+            :loading="createBtnLoading"
+            @click="create()"
+          >
+            {{ $t('public_button_create') }}
+          </el-button>
+        </div>
+      </template>
 
       <el-table-column
         reserve-selection
         type="selection"
         width="45"
         align="center"
-        :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+        :selectable="(row) => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
@@ -169,12 +162,14 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
-        <div v-if="isDaas" slot="header" class="flex align-center">
-          <span>{{ $t('public_operation_available') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
+        <template v-slot:header>
+          <div v-if="isDaas" class="flex align-center">
+            <span>{{ $t('public_operation_available') }}</span>
+            <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -281,14 +276,16 @@
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
-      :visible.sync="dialogDelMsgVisible"
+      v-model="dialogDelMsgVisible"
       width="52%"
-      custom-class="dialogDelMsgDialog"
+      class="dialogDelMsgDialog"
     >
       <span> {{ $t('packages_business_task_status_error_tip') }}</span>
       <div class="box mt-4">
         <div class="mb-4">{{ $t('packages_business_task_list_sqLyuju') }}</div>
-        <div class="mt-2">{{ $t('packages_business_task_list_diyibuchaxun') }}</div>
+        <div class="mt-2">
+          {{ $t('packages_business_task_list_diyibuchaxun') }}
+        </div>
         <div class="mb-4">
           {{ copySelectSql }}
           <ElTooltip
@@ -308,7 +305,9 @@
             </span>
           </ElTooltip>
         </div>
-        <div class="mt-2">{{ $t('packages_business_task_list_dierbushanchu') }}</div>
+        <div class="mt-2">
+          {{ $t('packages_business_task_list_dierbushanchu') }}
+        </div>
         <div>
           {{ copyDelSql }}
           <ElTooltip
@@ -332,20 +331,22 @@
       <div class="mt-2" v-for="item in failList" :key="item.id">
         {{ $t('packages_business_task_list_lianjieming') }}{{ item.message }}
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="dialogDelMsgVisible = false">{{ $t('public_button_close') }}</el-button>
+        </span>
+      </template>
     </el-dialog>
     <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
 
     <UpgradeFee
-      :visible.sync="upgradeFeeVisible"
+      v-model:visible="upgradeFeeVisible"
       :tooltip="upgradeFeeVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeFee>
 
     <UpgradeCharges
-      :visible.sync="upgradeChargesVisible"
+      v-model:visible="upgradeChargesVisible"
       :tooltip="upgradeChargesVisibleTips || $t('packages_business_task_list_nindekeyunxing')"
       :go-page="upgradeFeeGoPage"
     ></UpgradeCharges>
@@ -372,7 +373,7 @@ export default {
   props: {
     route: {},
     taskBuried: {},
-    syncType: String
+    syncType: String,
   },
 
   inject: ['checkAgent', 'buried'],
@@ -385,7 +386,7 @@ export default {
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
-    UpgradeFee
+    UpgradeFee,
   },
 
   mixins: [syncTaskAgent],
@@ -393,7 +394,7 @@ export default {
   data() {
     return {
       STATUS_MAP,
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
@@ -408,27 +409,27 @@ export default {
       taskType: {
         initial_sync: this.$t('public_task_type_initial_sync'),
         cdc: this.$t('public_task_type_cdc'),
-        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc')
+        'initial_sync+cdc': this.$t('public_task_type_initial_sync_and_cdc'),
       },
       typeOptions: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
           label: this.$t('public_task_type_initial_sync'),
-          value: 'initial_sync'
+          value: 'initial_sync',
         },
         {
           label: this.$t('public_task_type_cdc'),
-          value: 'cdc'
+          value: 'cdc',
         },
         {
           label: this.$t('public_task_type_initial_sync_and_cdc'),
-          value: 'initial_sync+cdc'
-        }
+          value: 'initial_sync+cdc',
+        },
       ],
       searchParams: {
         keyword: '',
         status: '',
-        type: ''
+        type: '',
       },
       //删除任务 pg数据源 slot 删除失败 自定义dialog 提示
       dialogDelMsgVisible: false,
@@ -441,7 +442,7 @@ export default {
       upgradeFeeVisible: false,
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: ''
+      upgradeChargesVisibleTips: '',
     }
   },
 
@@ -454,7 +455,7 @@ export default {
       const options = Object.entries(this.STATUS_MAP).map(([status, item]) => {
         return {
           label: this.$t(item.i18n),
-          value: item.in ? item.in.join(',') : status
+          value: item.in ? item.in.join(',') : status,
         }
       })
       options.unshift({ label: this.$t('packages_business_task_list_status_all'), value: '' })
@@ -467,12 +468,12 @@ export default {
         ? {
             taskType: 140,
             status: 145,
-            operation: 340
+            operation: 340,
           }
         : {
             taskType: 80,
             status: 110,
-            operation: 280
+            operation: 280,
           }
     },
 
@@ -482,7 +483,7 @@ export default {
           create: this.$has('v2_data_flow_creation'),
           copy: this.$has('v2_data_flow_copy'),
           import: this.$has('v2_data_flow_import'),
-          export: this.$has('v2_data_flow_export')
+          export: this.$has('v2_data_flow_export'),
         }
       }
 
@@ -490,16 +491,16 @@ export default {
         create: this.$has('v2_data_replication_creation'),
         copy: this.$has('v2_data_replication_copy'),
         import: this.$has('v2_data_replication_import'),
-        export: this.$has('v2_data_replication_export')
+        export: this.$has('v2_data_replication_export'),
       }
-    }
+    },
   },
 
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.table.fetch(1)
-    }
+    },
   },
 
   created() {
@@ -513,7 +514,7 @@ export default {
     this.loop(this.isDaas ? this.getClusterStatus : this.getAgentStatus, 30000)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.timeout)
   },
 
@@ -548,24 +549,24 @@ export default {
         taskRetryStatus: true,
         shareCdcStop: true,
         shareCdcStopMessage: true,
-        taskRetryStartTime: true
+        taskRetryStartTime: true,
       }
       let where = {
-        syncType
+        syncType,
       }
       if (keyword && keyword.trim()) {
         where.name = { like: escapeRegExp(keyword), options: 'i' }
       }
       if (tags && tags.length) {
         where['listtags.id'] = {
-          in: tags
+          in: tags,
         }
       }
       type && (where['type'] = type)
       if (status) {
         if (status.includes(',')) {
           where.status = {
-            $in: status.split(',')
+            $in: status.split(','),
           }
         } else {
           where.status = status
@@ -579,20 +580,20 @@ export default {
         limit: size,
         fields: fields,
         skip: (current - 1) * size,
-        where
+        where,
       }
       return taskApi
         .get({
-          filter: JSON.stringify(filter)
+          filter: JSON.stringify(filter),
         })
-        .then(data => {
+        .then((data) => {
           let errorTaskIds = []
-          let list = (data?.items || []).map(item => {
+          let list = (data?.items || []).map((item) => {
             makeStatusAndDisabled(item)
             if (item.status === 'error') {
               errorTaskIds.push(item.id)
             } else if (this.taskErrorCause[item.id]) {
-              this.$delete(this.taskErrorCause, item.id)
+              delete this.taskErrorCause
             }
             return item
           })
@@ -617,7 +618,7 @@ export default {
 
           return {
             total: data.total,
-            data: list
+            data: list,
           }
         })
     },
@@ -633,19 +634,19 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           label: this.$t('packages_business_task_list_sync_type'),
           key: 'type',
           type: 'select-inner',
-          items: this.typeOptions
+          items: this.typeOptions,
         },
         {
           placeholder: this.$t('public_task_name'),
           key: 'keyword',
-          type: 'input'
-        }
+          type: 'input',
+        },
       ]
 
       if (!this.isDaas) {
@@ -657,18 +658,18 @@ export default {
           items: async () => {
             let filter = {
               where: {
-                status: { $in: ['Running'] }
+                status: { $in: ['Running'] },
               },
-              size: 100
+              size: 100,
             }
             let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
-            return data.items.map(item => {
+            return data.items.map((item) => {
               return {
                 label: item.name,
-                value: item.tmInfo.agentId
+                value: item.tmInfo.agentId,
               }
             })
-          }
+          },
         })
       }
     },
@@ -713,27 +714,27 @@ export default {
     },
 
     responseHandler(data, msg, canNotList = []) {
-      let failList = data?.filter(t => t.code !== 'ok') || []
+      let failList = data?.filter((t) => t.code !== 'ok') || []
       failList = [...failList, ...canNotList]
       if (failList.length) {
-        const findErr = failList.find(t => ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(t.code))
+        const findErr = failList.find((t) => ['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(t.code))
         if (findErr) {
           this.handleShowUpgradeDialog(findErr)
           return
         }
         let nameMapping = {}
-        this.table.list.forEach(item => {
+        this.table.list.forEach((item) => {
           nameMapping[item.id] = item.name
         })
         this.$message.warning({
           dangerouslyUseHTMLString: true,
           message: failList
-            .map(item => {
+            .map((item) => {
               return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
               }</span> : <span style="color: #F56C6C">${item.message}</span></div>`
             })
-            .join('')
+            .join(''),
         })
       } else if (msg) {
         this.$message.success(msg, false)
@@ -752,14 +753,14 @@ export default {
     changeStatus(ids, { status, errorEvents }) {
       let where = {
         _id: {
-          in: ids
-        }
+          in: ids,
+        },
       }
       let attributes = {
-        status
+        status,
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      taskApi.update(where, attributes).then(data => {
+      taskApi.update(where, attributes).then((data) => {
         this.table.fetch()
         this.responseHandler(data, this.$t('public_message_operation_success'))
       })
@@ -774,11 +775,11 @@ export default {
       if (this.dataFlowId) {
         ids = [this.dataFlowId]
       } else {
-        ids = this.multipleSelection.map(r => r.id)
+        ids = this.multipleSelection.map((r) => r.id)
       }
       let attributes = {
         id: ids,
-        listtags
+        listtags,
       }
       taskApi.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
@@ -788,7 +789,7 @@ export default {
 
     handleSelectTag() {
       let tagList = []
-      this.multipleSelection.forEach(row => {
+      this.multipleSelection.forEach((row) => {
         if (row.listtags) {
           tagList = [...row.listtags, ...tagList]
         }
@@ -810,7 +811,7 @@ export default {
       this.checkAgent(() => {
         this.$router.push({
           name: this.route.new,
-          query
+          query,
         })
       }).catch(() => {
         this.createBtnLoading = false
@@ -820,7 +821,7 @@ export default {
 
     handleCreateMaterializedView() {
       this.create({
-        by: 'materialized-view'
+        by: 'materialized-view',
       })
     },
 
@@ -828,8 +829,8 @@ export default {
       this.openRoute({
         name: this.route.editor,
         params: {
-          id
-        }
+          id,
+        },
       })
     },
 
@@ -837,7 +838,7 @@ export default {
       this.buried(this.taskBuried.start)
       taskApi
         .batchStart(ids)
-        .then(data => {
+        .then((data) => {
           this.buried(this.taskBuried.start, '', { result: true })
           this.table.fetch()
           this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
@@ -857,15 +858,15 @@ export default {
     initialize(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         this.restLoading = true
         taskApi
           .batchRenew(ids)
-          .then(data => {
+          .then((data) => {
             this.table.fetch()
             this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
           })
@@ -878,20 +879,20 @@ export default {
     del(ids, item = {}, canNotList) {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, '', {
-        type: 'warning'
-      }).then(resFlag => {
+        type: 'warning',
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
         taskApi.batchDelete(ids).then((data = []) => {
           const selected = this.multipleSelection.filter(({ id }) => ids.includes(id))
           const { toggleRowSelection } = this.table.$refs.table
-          data.forEach(item => {
-            const { name, permissionActions = [] } = selected.find(t => t.id === item.id) || {}
+          data.forEach((item) => {
+            const { name, permissionActions = [] } = selected.find((t) => t.id === item.id) || {}
             item.name = name
             item.permissionActions = permissionActions
           })
-          selected.forEach(row => toggleRowSelection(row, false))
+          selected.forEach((row) => toggleRowSelection(row, false))
           this.table.fetch()
           this.responseDelHandler(data, this.$t('public_message_delete_ok'), canNotList)
         })
@@ -899,21 +900,21 @@ export default {
     },
     //删除任务单独提示
     responseDelHandler(data, msg, canNotList = []) {
-      this.failList = [...(data?.filter(t => t.code !== 'ok') || []), ...canNotList]
+      this.failList = [...(data?.filter((t) => t.code !== 'ok') || []), ...canNotList]
       if (this.failList.length) {
-        if (this.failList.some(t => t.code === 'Clear.Slot')) {
+        if (this.failList.some((t) => t.code === 'Clear.Slot')) {
           this.dialogDelMsgVisible = true
         } else {
           let message = ''
           const { isDaas } = this
-          this.failList.forEach(el => {
+          this.failList.forEach((el) => {
             message += `${el.name || el.id}: ${
               isDaas && !el.permissionActions.includes('Delete') ? this.$t('public_no_permissions') : el.message
             }<br/>`
           })
           this.$message.info({
             dangerouslyUseHTMLString: true,
-            message
+            message,
           })
         }
       } else if (msg) {
@@ -930,12 +931,12 @@ export default {
       }
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.forceStop(ids).then(data => {
+        taskApi.forceStop(ids).then((data) => {
           this.$message.success(data?.message || this.$t('public_message_operation_success'), false)
           this.table.fetch()
         })
@@ -947,12 +948,12 @@ export default {
       let message = msgObj.msg
       this.$confirm(message, '', {
         type: 'warning',
-        showClose: false
-      }).then(resFlag => {
+        showClose: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
-        taskApi.batchStop(ids).then(data => {
+        taskApi.batchStop(ids).then((data) => {
           this.table.fetch()
           this.responseHandler(data, this.$t('public_message_operation_success'), canNotList)
         })
@@ -963,8 +964,8 @@ export default {
       this.openRoute({
         name: this.route.monitor,
         params: {
-          id
-        }
+          id,
+        },
       })
     },
 
@@ -985,11 +986,11 @@ export default {
       let canNotList = []
       const disabledMap = {
         initialize: 'reset',
-        del: 'delete'
+        del: 'delete',
       }
       if (commandFilter.includes(command)) {
         let op = disabledMap[command] || command
-        taskList.forEach(task => {
+        taskList.forEach((task) => {
           if (task.btnDisabled?.[op]) {
             canNotList.push(task)
           } else {
@@ -1000,18 +1001,18 @@ export default {
         canList = taskList
       }
 
-      const canNotResult = canNotList.map(t => {
+      const canNotResult = canNotList.map((t) => {
         return {
           code: 'error',
           id: t?.id,
-          message: i18n.t('packages_business_task_list_renwubuzhichi')
+          message: i18n.t('packages_business_task_list_renwubuzhichi'),
         }
       })
       if (!canList.length) {
         this.responseHandler(canList, '', canNotResult)
         return
       }
-      ids = canList.map(item => item.id)
+      ids = canList.map((item) => item.id)
       this[command](ids, node, canNotResult)
     },
 
@@ -1027,23 +1028,23 @@ export default {
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-all;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary',
             },
-            name
+            name,
           ),
-          strArr[1]
-        ]
+          strArr[1],
+        ],
       )
       return {
         msg,
-        title: this.$t('packages_business_dataFlow_' + title)
+        title: this.$t('packages_business_dataFlow_' + title),
       }
     },
 
@@ -1072,11 +1073,11 @@ export default {
           // baseUrl: null,
           url: '/private_ask',
           data: {
-            task_id
+            task_id,
           },
           params: {
-            _: Date.now()
-          }
+            _: Date.now(),
+          },
         })
         cause = data?.resp
       } catch (e) {
@@ -1087,7 +1088,7 @@ export default {
 
       cause &&
         cause !== i18n.t('packages_business_task_list_meiyoufaxiannin') &&
-        this.$set(this.taskErrorCause, task_id, cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
+        (this.taskErrorCause[task_id] = cause.replace(/\\n/g, '\n').replace(/(\n)+$/g, ''))
     },
 
     // 显示权限设置
@@ -1103,7 +1104,7 @@ export default {
 
     upgradeFeeGoPage() {
       const routeUrl = this.$router.resolve({
-        name: 'createAgent'
+        name: 'createAgent',
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -1128,33 +1129,31 @@ export default {
               encodeURIComponent(
                 JSON.stringify({
                   size: 100,
-                  page: 1
-                })
-              )
+                  page: 1,
+                }),
+              ),
           )
-          .then(async data => {
+          .then(async (data) => {
             const { items = [] } = data
 
-            if (items.some(t => t.status === 'Stopped')) {
+            if (items.some((t) => t.status === 'Stopped')) {
               this.$message.error(this.$t('public_task_error_schedule_limit'))
               return
             }
 
-            items.length <= 1 && items.some(t => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
+            items.length <= 1 && items.some((t) => t.orderInfo?.chargeProvider === 'FreeTier' || !t.orderInfo?.amount)
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
-  padding: 0 24px 24px 0;
   background: #fff;
-
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -1231,10 +1230,8 @@ export default {
     }
 
     .el-table {
-      ::v-deep {
-        .el-table__cell {
-          padding: 10px 0;
-        }
+      :deep(.el-table__cell) {
+        padding: 10px 0;
       }
     }
   }

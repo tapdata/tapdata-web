@@ -34,7 +34,7 @@
         v-if="dataflow.id"
         v-resize.right="{
           minWidth: 260,
-          maxWidth: 400
+          maxWidth: 400,
         }"
         ref="leftSidebar"
         @move-node="handleDragMoveNode"
@@ -59,7 +59,7 @@
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
               :class="{
-                'options-active': nodeMenu.typeId === n.id
+                'options-active': nodeMenu.typeId === n.id,
               }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
@@ -98,8 +98,8 @@
 
       <MaterializedView
         ref="materializedView"
-        :is-saving="isSaving"
-        :visible.sync="materializedViewVisible"
+        v-model:is-saving="isSaving"
+        :visible="materializedViewVisible"
         :buttonShowMap="buttonShowMap"
         :dataflow="dataflow"
         @start="handleStart"
@@ -156,7 +156,7 @@ export default {
     LeftSidebar,
     TransformLoading,
     ConsolePanel,
-    PaperEmpty
+    PaperEmpty,
   },
 
   inject: ['buried'],
@@ -180,11 +180,11 @@ export default {
         typeId: '',
         reference: null,
         data: null,
-        connectionData: {}
+        connectionData: {},
       },
 
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
-      scale: 1
+      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      scale: 1,
     }
   },
 
@@ -206,7 +206,7 @@ export default {
     },
     'dataflow.id'() {
       this.getTaskPermissions()
-    }
+    },
   },
 
   // created 换成 mounted，等上一个实例destroy走完
@@ -237,7 +237,7 @@ export default {
     })
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.command = null
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
@@ -249,29 +249,29 @@ export default {
       let nodes = [
         {
           name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-          type: 'merge_table_processor'
+          type: 'merge_table_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_zhuijiahebing'),
-          type: 'union_processor'
+          type: 'union_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli_standard'),
-          type: 'standard_js_processor'
+          type: 'standard_js_processor',
         },
         {
           name: i18n.t('packages_dag_src_migrationeditor_jSchuli'),
           type: 'js_processor',
-          beta: true
+          beta: true,
         },
         {
           name: 'Python',
           type: 'python_processor',
-          beta: true
+          beta: true,
         },
         {
           name: 'Row Filter',
-          type: 'row_filter_processor'
+          type: 'row_filter_processor',
         },
         // {
         //   name: i18n.t('packages_dag_src_editor_juhe'),
@@ -279,41 +279,41 @@ export default {
         // }
         {
           name: i18n.t('packages_dag_src_editor_ziduanjisuan'),
-          type: 'field_calc_processor'
+          type: 'field_calc_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingxiugai'),
-          type: 'field_mod_type_processor'
+          type: 'field_mod_type_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_ziduangaiming'),
-          type: 'field_rename_processor'
+          type: 'field_rename_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_zengshanziduan'),
-          type: 'field_add_del_processor'
+          type: 'field_add_del_processor',
         },
         {
           name: i18n.t('packages_dag_date_processor'),
-          type: 'date_processor'
+          type: 'date_processor',
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'field_mod_type_filter_processor'
+          type: 'field_mod_type_filter_processor',
         },
         {
           // name: i18n.t('packages_dag_unwind_name'),
           name: 'Unwind',
-          type: 'unwind_processor'
-        }
+          type: 'unwind_processor',
+        },
       ]
       //仅企业版有的节点
       if (this.isDaas) {
         let isDaasNode = [
           {
             name: i18n.t('packages_dag_src_editor_join'),
-            type: 'join_processor' //join 节点
-          }
+            type: 'join_processor', //join 节点
+          },
         ]
         nodes = [...isDaasNode, ...nodes]
       }
@@ -350,8 +350,8 @@ export default {
         .push({
           name: 'TaskMonitor',
           params: {
-            id: this.dataflow.id
-          }
+            id: this.dataflow.id,
+          },
         })
         .catch(() => {
           console.log('Current route: DataflowViewer') // eslint-disable-line
@@ -396,7 +396,7 @@ export default {
         this.initWS()
         // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         const result = await taskApi.save(data, {
-          silenceMessage: true
+          silenceMessage: true,
         })
         this.reformDataflow(result)
         !needStart && this.$message.success(this.$t('public_message_save_ok'))
@@ -427,7 +427,7 @@ export default {
         this.setTaskInfo(this.dataflow)
         await this.$router.replace({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowEdit' }
+          params: { id: dataflow.id, action: 'dataflowEdit' },
         })
         this.$nextTick(() => {
           this.$refs.paperScroller.initVisibleArea()
@@ -441,7 +441,7 @@ export default {
           await this.newDataflow(newName)
         } else if (e?.data?.code === 'InvalidPaidPlan') {
           this.$router.push({
-            name: 'dataflowList'
+            name: 'dataflowList',
           })
         } else {
           this.handleError(e)
@@ -463,21 +463,30 @@ export default {
       const newProperties = []
       const oldProperties = []
 
-      dg.setGraph({ nodesep: 60, ranksep: 120, marginx: 50, marginy: 50, rankdir: 'LR' })
+      dg.setGraph({
+        nodesep: 60,
+        ranksep: 120,
+        marginx: 50,
+        marginy: 50,
+        rankdir: 'LR',
+      })
       dg.setDefaultEdgeLabel(function () {
         return {}
       })
 
-      nodes.forEach(n => {
-        dg.setNode(NODE_PREFIX + n.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
+      nodes.forEach((n) => {
+        dg.setNode(NODE_PREFIX + n.id, {
+          width: NODE_WIDTH,
+          height: NODE_HEIGHT,
+        })
         nodePositionMap[NODE_PREFIX + n.id] = n.attrs.position
       })
-      this.jsPlumbIns.getAllConnections().forEach(edge => {
+      this.jsPlumbIns.getAllConnections().forEach((edge) => {
         dg.setEdge(edge.source.id, edge.target.id)
       })
 
       dagre.layout(dg)
-      dg.nodes().forEach(n => {
+      dg.nodes().forEach((n) => {
         const node = dg.node(n)
         const top = Math.round(node.y - node.height / 2)
         const left = Math.round(node.x - node.width / 2)
@@ -488,17 +497,17 @@ export default {
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: nodePositionMap[n]
-              }
-            }
+                position: nodePositionMap[n],
+              },
+            },
           })
           newProperties.push({
             id: this.getRealId(n),
             properties: {
               attrs: {
-                position: [left, top]
-              }
-            }
+                position: [left, top],
+              },
+            },
           })
         }
       })
@@ -513,15 +522,15 @@ export default {
       const node = merge(
         {
           id: uuid(),
-          attrs: { position }
+          attrs: { position },
         },
-        item
+        item,
       )
 
       const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
-        enumerable: false
+        enumerable: false,
       })
 
       return node
@@ -548,19 +557,19 @@ export default {
             type: 'warning',
             closeOnClickModal: false,
             confirmButtonText: this.$t('packages_dag_page_return_confirm_ok_text'),
-            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text')
-          }
-        ).then(res => {
+            cancelButtonText: this.$t('packages_dag_page_return_confirm_cancel_text'),
+          },
+        ).then((res) => {
           if (res) {
             taskApi.delete(this.dataflow.id)
           }
           this.$router.push({
-            name: 'dataflowList'
+            name: 'dataflowList',
           })
         })
       } else {
         this.$router.push({
-          name: 'dataflowList'
+          name: 'dataflowList',
         })
       }
     },
@@ -568,7 +577,7 @@ export default {
     handleEdit() {
       this.$router.push({
         name: 'DataflowEditor',
-        params: { id: this.dataflow.id, action: 'dataflowEdit' }
+        params: { id: this.dataflow.id, action: 'dataflowEdit' },
       })
     },
 
@@ -576,15 +585,15 @@ export default {
       this.$router.push({
         name: 'TaskMonitor',
         params: {
-          id: this.dataflow.id
-        }
+          id: this.dataflow.id,
+        },
       })
     },
 
     async handleStart() {
       this.buried('taskStart')
       this.unWatchStatus?.()
-      this.unWatchStatus = this.$watch('dataflow.status', v => {
+      this.unWatchStatus = this.$watch('dataflow.status', (v) => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
           this.$refs.console?.loadData()
           if (v !== 'running') {
@@ -640,8 +649,8 @@ export default {
         connectionId: '',
         tableName: '',
         attrs: {
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       })
       const viewNode = {
         ...props,
@@ -650,7 +659,7 @@ export default {
         tableName: newNode.name,
         tableNode: newNode,
         // joinKeys: [],
-        children: []
+        children: [],
       }
 
       parentNode.children.push(viewNode)
@@ -667,9 +676,9 @@ export default {
         tableName: '',
         attrs: {
           capabilities: [{ id: 'master_slave_merge' }], // 允许作为主从合并的目标
-          hasCreated: false
-        }
-      }
+          hasCreated: false,
+        },
+      },
     ) {
       const newNode = this.quickAddNode(activeNode, nodeType)
 
@@ -684,14 +693,14 @@ export default {
 
       await this.$router.replace({
         params: {
-          action: 'dataflowEdit'
+          action: 'dataflowEdit',
         },
         query: {
           ...query,
           by: undefined,
           connectionId: undefined,
-          tableName: undefined
-        }
+          tableName: undefined,
+        },
       })
 
       if (connectionId) {
@@ -707,13 +716,13 @@ export default {
         connectionId: '',
         tableName: '',
         attrs: {
-          hasCreated: false
-        }
+          hasCreated: false,
+        },
       })
       // 添加主从合并节点
       const mergeTableNode = this.quickAddNode(sourceNode, {
         name: i18n.t('packages_dag_src_editor_zhuconghebing'),
-        type: 'merge_table_processor'
+        type: 'merge_table_processor',
       })
       // 添加目标节点
       if (connection) {
@@ -733,8 +742,8 @@ export default {
         // 显示物化视图
         this.setMaterializedViewVisible(true)
       }, 50)
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -752,12 +761,10 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
-
   &.--right {
     width: 726px;
   }
 }
-
 .layout-wrap {
   display: flex;
   flex: auto;
@@ -768,83 +775,78 @@ $sidebarBg: #fff;
     flex-direction: row;
   }
 }
-
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
-  /*background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJ2LTc2IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48ZGVmcyBpZD0idi03NSI+PHBhdHRlcm4gaWQ9InBhdHRlcm5fMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeD0iMCIgeT0iMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIj48cmVjdCBpZD0idi03NyIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iI0FBQUFBQSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgaWQ9InYtNzkiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==);
-  background-color: #f5f8fe;*/
 
-  ::v-deep {
-    .connection-highlight,
-    .connection-selected {
-      path:nth-child(2) {
-        stroke: #2c65ff;
-      }
-      path:nth-child(3) {
-        fill: #2c65ff;
-        stroke: #2c65ff;
-      }
+  :deep(.connection-highlight),
+  :deep(.connection-selected) {
+    path:nth-child(2) {
+      stroke: #2c65ff;
+    }
+    path:nth-child(3) {
+      fill: #2c65ff;
+      stroke: #2c65ff;
+    }
+  }
+
+  :deep(.remove-connection-label) {
+    z-index: 1001;
+    position: relative;
+    padding: 4px;
+    border-radius: 100%;
+    background-color: #fa6303;
+    box-sizing: border-box;
+
+    .remove-connection-btn {
+      width: 1em;
+      height: 1em;
+      font-size: 6px;
+      background: transparent
+        url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
+        center/1em auto no-repeat;
+      transition: font-size 0.15s ease-in-out;
     }
 
-    .remove-connection-label {
-      z-index: 1001;
-      position: relative;
-      padding: 4px;
-      border-radius: 100%;
-      background-color: #fa6303;
-      box-sizing: border-box;
-
+    &:hover {
       .remove-connection-btn {
+        font-size: 10px;
+      }
+    }
+  }
+
+  :deep(.conn-btn__wrap) {
+    z-index: 1002;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.2) !important;
+    }
+  }
+
+  :deep(.conn-btn) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    background-color: #9bb6ff;
+    border-radius: 100%;
+    pointer-events: none;
+    .v-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 12px;
+      background-color: #2c65ff;
+      color: #fff;
+      border-radius: 100%;
+      &__svg {
         width: 1em;
         height: 1em;
-        font-size: 6px;
-        background: transparent
-          url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e")
-          center/1em auto no-repeat;
-        transition: font-size 0.15s ease-in-out;
-      }
-
-      &:hover {
-        .remove-connection-btn {
-          font-size: 10px;
-        }
-      }
-    }
-
-    .conn-btn__wrap {
-      z-index: 1002;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      &:hover {
-        transform: translate(-50%, -50%) scale(1.2) !important;
-      }
-    }
-    .conn-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 20px;
-      height: 20px;
-      background-color: #9bb6ff;
-      border-radius: 100%;
-      pointer-events: none;
-      .v-icon {
-        width: 16px;
-        height: 16px;
-        font-size: 12px;
-        background-color: #2c65ff;
-        color: #fff;
-        border-radius: 100%;
-        &__svg {
-          width: 1em;
-          height: 1em;
-        }
       }
     }
   }
 }
-
 .nav-line {
   position: absolute;
   width: 0;
@@ -854,20 +856,17 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
-
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
-
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
-
 .node-view-background {
   position: absolute;
   width: 10000px;

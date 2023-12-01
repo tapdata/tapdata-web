@@ -1,6 +1,5 @@
 import i18n from '@tap/i18n'
 import { NodeType } from './extends/NodeType'
-import { AllLocales } from './locales'
 
 export class Join extends NodeType {
   constructor() {
@@ -34,10 +33,10 @@ export class Join extends NodeType {
                   $values.rightNodeId = nodeIds[0] || ''
                 }
                 // console.log('$inputs_$values', $values)
-              `
-            }
-          }
-        ]
+              `,
+            },
+          },
+        ],
       },
 
       tabs: {
@@ -45,14 +44,14 @@ export class Join extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -61,12 +60,12 @@ export class Join extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
                   gap: 8,
-                  align: 'start'
+                  align: 'start',
                 },
                 properties: {
                   name: {
@@ -75,13 +74,13 @@ export class Join extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex: 1
-                      }
+                        flex: 1,
+                      },
                     },
                     'x-component': 'Input',
                     'x-component-props': {
-                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                    }
+                      onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                    },
                   },
 
                   clipboardButton: {
@@ -90,18 +89,18 @@ export class Join extends NodeType {
                     'x-component-props': {
                       tooltip: i18n.t('packages_dag_copy_node_id'),
                       finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                      content: '{{$values.id}}'
-                    }
-                  }
-                }
+                      content: '{{$values.id}}',
+                    },
+                  },
+                },
               },
               leftNodeId: {
                 type: 'string',
-                display: 'none'
+                display: 'none',
               },
               rightNodeId: {
                 type: 'string',
-                display: 'none'
+                display: 'none',
               },
 
               joinType: {
@@ -112,7 +111,7 @@ export class Join extends NodeType {
                 enum: [
                   {
                     label: i18n.t('packages_dag_nodes_join_zuolianjie'),
-                    value: 'left'
+                    value: 'left',
                   } /*,
                   {
                     label: '右连接',
@@ -125,10 +124,10 @@ export class Join extends NodeType {
                   {
                     label: '全连接',
                     value: 'full'
-                  }*/
+                  }*/,
                 ],
                 'x-decorator': 'FormItem',
-                'x-component': 'Select'
+                'x-component': 'Select',
               },
 
               joinExpressions: {
@@ -146,13 +145,13 @@ export class Join extends NodeType {
                       'x-decorator': 'FormItem',
                       'x-decorator-props': {
                         labelStyle: {
-                          display: 'none'
-                        }
+                          display: 'none',
+                        },
                       },
                       'x-component': 'FieldSelect',
                       'x-component-props': {
-                        filterable: true
-                      }
+                        filterable: true,
+                      },
                     },
                     right: {
                       title: i18n.t('packages_dag_nodes_join_youce'),
@@ -161,43 +160,43 @@ export class Join extends NodeType {
                       'x-decorator': 'FormItem',
                       'x-decorator-props': {
                         labelStyle: {
-                          display: 'none'
-                        }
+                          display: 'none',
+                        },
                       },
                       'x-component': 'FieldSelect',
                       'x-component-props': {
-                        filterable: true
-                      }
-                    }
-                  }
+                        filterable: true,
+                      },
+                    },
+                  },
                 },
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  layout: 'vertical'
+                  layout: 'vertical',
                 },
                 'x-component': 'JoinExpression',
                 'x-component-props': {
                   findNodeById: '{{findNodeById}}',
-                  loadNodeFieldNamesById: '{{loadNodeFieldOptions}}'
+                  loadNodeFieldNamesById: '{{loadNodeFieldOptions}}',
                 },
                 'x-reactions': [
                   {
                     dependencies: ['leftNodeId'],
                     fulfill: {
                       schema: {
-                        'x-component-props.leftNodeId': '{{$deps[0]}}'
-                      }
-                    }
+                        'x-component-props.leftNodeId': '{{$deps[0]}}',
+                      },
+                    },
                   },
                   {
                     dependencies: ['rightNodeId'],
                     fulfill: {
                       schema: {
-                        'x-component-props.rightNodeId': '{{$deps[0]}}'
-                      }
-                    }
-                  }
-                ]
+                        'x-component-props.rightNodeId': '{{$deps[0]}}',
+                      },
+                    },
+                  },
+                ],
               },
               externalStorageId: {
                 title: i18n.t('packages_dag_nodes_aggregate_waicunpeizhi'), //外存配置
@@ -209,23 +208,21 @@ export class Join extends NodeType {
                   {
                     fulfill: {
                       state: {
-                        value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}'
-                      }
-                    }
-                  }
-                ]
+                        value: '{{$self.value || $self.dataSource?.find(item => item.isDefault)?.value }}',
+                      },
+                    },
+                  },
+                ],
               },
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
-              }
-            }
-          }
-        }
-      }
-    }
+                'x-component': 'SchemaPreview',
+              },
+            },
+          },
+        },
+      },
+    },
   }
-
-  locales = AllLocales.Join
 }

@@ -1,1 +1,1 @@
-export const stylePrefix = 'formily-element'
+export const stylePrefix = 'formily-element-plus'

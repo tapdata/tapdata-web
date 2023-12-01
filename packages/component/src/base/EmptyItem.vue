@@ -1,8 +1,8 @@
-<template functional>
+<template>
   <div
     class="empty-wrap"
     :class="{
-      'empty-small': props.small
+      'empty-small': props.small,
     }"
   >
     <div class="empty-image">
@@ -29,8 +29,8 @@
 export default {
   name: 'EmptyItem',
   props: {
-    small: Boolean
-  }
+    small: Boolean,
+  },
 }
 </script>
 
@@ -41,7 +41,6 @@ export default {
   line-height: 1.5715;
   text-align: center;
   color: rgba(0, 0, 0, 0.25);
-
   &.empty-small {
     margin: 8px 0;
     font-size: 12px;

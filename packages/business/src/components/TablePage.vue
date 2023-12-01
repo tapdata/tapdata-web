@@ -11,22 +11,31 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify">
-          <Classification
-            :authority="classify.authority"
-            :viewPage="classify.viewPage"
-            :types="classify.types"
-            :title="classify.title"
-            :kai-title="classify.title"
-            @nodeChecked="nodeChecked"
-          ></Classification>
-        </div>
+        <!--<div class="table-page-left" v-if="classify && !hideClassify"></div>-->
+        <Classification
+          v-if="classify && !hideClassify"
+          v-model:visible="classificationVisible"
+          ref="classification"
+          :comTitle="classify.comTitle"
+          :authority="classify.authority"
+          :viewPage="classify.viewPage"
+          :types="classify.types"
+          :title="classify.title"
+          :kai-title="classify.title"
+          @nodeChecked="nodeChecked"
+        ></Classification>
         <div class="table-page-body">
           <div class="table-page-nav">
             <slot name="nav"></slot>
           </div>
-          <div class="table-page-topbar">
-            <div class="table-page-search-bar">
+          <div class="table-page-topbar py-3" :class="{ 'pl-3': classificationVisible }">
+            <div class="table-page-search-bar flex align-center">
+              <IconButton
+                v-if="classify && !hideClassify && !classificationVisible"
+                class="mr-2 rotate-180"
+                @click="handleToggleClassify"
+                >expand-list</IconButton
+              >
               <slot name="search"></slot>
             </div>
             <div class="table-page-operation-bar">
@@ -34,6 +43,7 @@
             </div>
           </div>
           <ProTable
+            v-bind="$attrs"
             ref="table"
             v-loading="loading"
             class="table-page-table"
@@ -46,24 +56,25 @@
             :draggable="draggable"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
-            v-on="$listeners"
           >
             <slot></slot>
-            <div slot="empty" class="empty">
-              <VIcon size="140">no-data-color</VIcon>
-              <slot name="noDataText"></slot>
-            </div>
+            <template v-slot:empty>
+              <div class="empty">
+                <VIcon size="140">no-data-color</VIcon>
+                <slot name="noDataText"></slot>
+              </div>
+            </template>
           </ProTable>
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
           <el-pagination
             background
-            class="table-page-pagination mt-3"
+            class="table-page-pagination my-3"
             layout="->,total, sizes,  prev, pager, next, jumper"
-            :current-page.sync="page.current"
+            v-model:current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
+            v-model:page-size="page.size"
             :total="page.total"
             @size-change="fetch(1)"
             @current-change="handleCurrent"
@@ -82,8 +93,9 @@
 </template>
 
 <script>
+import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification, ProTable } from '@tap/component'
+import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
 
 import SelectClassify from './SelectClassify'
 
@@ -92,28 +104,29 @@ export default {
     Classification,
     SelectClassify,
     VIcon,
-    ProTable
+    ProTable,
+    IconButton,
   },
   props: {
     title: String,
     desc: String,
     defaultPageSize: {
       type: Number,
-      default: 20
+      default: 20,
     },
     hideClassify: {
       // 是否隐藏左侧栏
       type: Boolean,
-      default: false
+      default: false,
     },
     classify: {
-      type: Object
+      type: Object,
     },
     remoteMethod: Function,
     rowKey: [String, Function],
     spanMethod: [Function],
     defaultSort: Object,
-    draggable: Boolean
+    draggable: Boolean,
   },
   data() {
     return {
@@ -121,12 +134,12 @@ export default {
       page: {
         current: 1,
         size: this.defaultPageSize,
-        total: 0
+        total: 0,
       },
       list: [],
       multipleSelection: [],
       tags: [],
-      classifyDialogVisible: false
+      classificationVisible: false,
     }
   },
   mounted() {
@@ -137,7 +150,7 @@ export default {
       let timer = null
       if (pageNum === 1) {
         this.multipleSelection = []
-        this.$emit('selection-change', [])
+        $emit(this, 'selection-change', [])
         this.$refs?.table?.clearSelection()
       }
       this.page.current = pageNum || this.page.current
@@ -150,7 +163,7 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list
+              data: this.list,
             })
               .then(({ data, total }) => {
                 this.page.total = total
@@ -179,7 +192,7 @@ export default {
     },
     handleCurrent(val) {
       this.multipleSelection = []
-      this.$emit('selection-change', [])
+      $emit(this, 'selection-change', [])
       this.$refs?.table?.clearSelection()
       this.fetch(val) //主要为了换页 清空选中数据
     },
@@ -189,7 +202,7 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.$emit('selection-change', val)
+      $emit(this, 'selection-change', val)
     },
     showClassify(tagList) {
       this.$refs.classify.show(tagList)
@@ -199,8 +212,12 @@ export default {
     },
     clearSelection() {
       this.$refs?.table?.clearSelection()
-    }
-  }
+    },
+    handleToggleClassify() {
+      this.$refs.classification.toggle()
+    },
+  },
+  emits: ['sort-change', 'classify-submit', 'selection-change'],
 }
 </script>
 
@@ -213,7 +230,6 @@ export default {
   min-width: 720px;
   flex: 1;
   width: 100%;
-
   .table-page-header {
     padding: 20px;
     background: #eff1f4;
@@ -255,7 +271,7 @@ export default {
   }
 
   .table-page-left {
-    border-right: 1px solid #ebeef5;
+    //border-right: 1px solid #ebeef5;
     // margin-right: 10px;
   }
 
@@ -264,9 +280,6 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 8px 0 0 0;
-    // background-color: map-get($bgColor, white);
-    border-radius: 4px;
     .el-table--border {
       border: none;
     }
@@ -275,12 +288,8 @@ export default {
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
-      .table-page-search-bar {
-        margin: 0 5px 12px 0;
-      }
 
       .table-page-operation-bar {
-        margin-bottom: 10px;
         text-align: right;
       }
     }

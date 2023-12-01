@@ -7,11 +7,11 @@
         >search-outline</IconButton
       >
       <!--<ElDropdown trigger="click" @command="handleCommand">
-        <IconButton class="ml-3">more</IconButton>
-        <ElDropdownMenu slot="dropdown">
-          <ElDropdownItem command="config"> Configure </ElDropdownItem>
-        </ElDropdownMenu>
-      </ElDropdown>-->
+            <IconButton class="ml-3">more</IconButton>
+            <ElDropdownMenu slot="dropdown">
+              <ElDropdownItem command="config"> Configure </ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>-->
     </div>
     <div
       ref="treeWrap"
@@ -24,12 +24,11 @@
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model="search"
-          size="mini"
+          v-model:value="search"
           clearable
-          @keydown.native.stop
-          @keyup.native.stop
-          @click.native.stop
+          @keydown.stop
+          @keyup.stop
+          @click.stop
           @input="handleSearch"
         >
           <template #prefix>
@@ -127,8 +126,10 @@
         {{ $t('packages_ldp_connection_expired') }}
       </div>
     </div>
-    <ElDialog :visible.sync="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
-      <span slot="title" class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
+    <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+      <template #header>
+        <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
+      </template>
       <ElForm ref="form" :model="taskDialogConfig" label-width="180px" @submit.prevent :rules="formRules">
         <div class="pipeline-desc p-4 mb-4 text-preline rounded-4">
           <span>{{ $t('packages_business_fdm_create_task_dialog_desc_prefix') }}</span
@@ -142,13 +143,12 @@
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
           <ElInput
-            size="small"
-            v-model="taskDialogConfig.prefix"
+            v-model:value="taskDialogConfig.prefix"
             :maxlength="maxPrefixLength"
             class="inline-flex inline-flex-input"
           >
-            <template slot="prepend">{{ fixedPrefix }}</template>
-            <template slot="append">
+            <template v-slot:prepend>{{ fixedPrefix }}</template>
+            <template v-slot:append>
               <span v-if="taskDialogConfig.tableName" :title="taskDialogConfig.tableName">
                 _{{ taskDialogConfig.tableName }}
               </span>
@@ -158,7 +158,7 @@
         </ElFormItem>
 
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model="taskDialogConfig.task.type">
+          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
@@ -176,11 +176,11 @@
         <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
           <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
             <ElSelect
-              v-model="taskDialogConfig.task.crontabExpressionType"
+              v-model:value="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
-              <ElOption v-for="(opt, i) in cronOptions" :key="i" v-bind="opt"></ElOption>
+              <ElOption v-bind="opt" v-for="(opt, i) in cronOptions" :key="i"></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem
@@ -188,71 +188,76 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
+            <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="creating" size="mini" @click="taskDialogSubmit(false)">{{
-          $t('packages_business_save_only')
-        }}</ElButton>
-        <ElButton
-          :loading="creating || checkCanStartIng"
-          :disabled="!taskDialogConfig.canStart"
-          size="mini"
-          type="primary"
-          @click="taskDialogSubmit(true)"
-        >
-          {{ $t('packages_business_save_and_run_now') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="taskDialogConfig.visible = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton :loading="creating" @click="taskDialogSubmit(false)">{{
+            $t('packages_business_save_only')
+          }}</ElButton>
+          <ElButton
+            :loading="creating || checkCanStartIng"
+            :disabled="!taskDialogConfig.canStart"
+            type="primary"
+            @click="taskDialogSubmit(true)"
+          >
+            {{ $t('packages_business_save_and_run_now') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
-    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+      <template #header>
+        <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
+      </template>
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            size="mini"
-            v-model="dialogConfig.label"
+            v-model:value="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
         <!--<ElFormItem
-          :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
-          v-if="dialogConfig.isParent"
-        >
-          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
-            <el-option
-              :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
-              value="resource"
-            ></el-option>
-            &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
-          </ElSelect>
-        </ElFormItem>-->
+              :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
+              v-if="dialogConfig.isParent"
+            >
+              <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+                <el-option
+                  :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
+                  value="resource"
+                ></el-option>
+                &lt;!&ndash;            <el-option label="任务目录" value="task"></el-option>&ndash;&gt;
+              </ElSelect>
+            </ElFormItem>-->
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model="dialogConfig.desc"
+            v-model:value="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('public_button_confirm') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
 
-<script>
+<script lang="jsx">
+import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
 import { merge, debounce, cloneDeep } from 'lodash'
@@ -265,7 +270,6 @@ import commonMix from './mixins/common'
 
 export default {
   name: 'FDM',
-
   props: {
     dragState: Object,
     settings: Object,
@@ -274,13 +278,10 @@ export default {
     directory: Object,
     eventDriver: Object,
     mapCatalog: Function,
-    showParentLineage: Boolean
+    showParentLineage: Boolean,
   },
-
   components: { VirtualTree, IconButton, DatabaseIcon, VExpandXTransition },
-
   mixins: [commonMix],
-
   data() {
     return {
       fixedPrefix: 'FDM_',
@@ -299,8 +300,8 @@ export default {
           type: 'initial_sync+cdc',
           crontabExpressionFlag: false,
           crontabExpression: '',
-          crontabExpressionType: 'once'
-        }
+          crontabExpressionType: 'once',
+        },
       },
       creating: false,
       expandedKeys: [],
@@ -316,14 +317,13 @@ export default {
         title: '',
         itemType: 'resource',
         desc: '',
-        visible: false
+        visible: false,
       },
       checkCanStartIng: false,
       startedTags: [],
-      prefixMap: {}
+      prefixMap: {},
     }
   },
-
   computed: {
     showSearch() {
       return this.search || this.searchIng
@@ -341,21 +341,18 @@ export default {
     },
     treeMap() {
       return this.treeData.reduce((obj, item) => ((obj[item.id] = item), obj), {})
-    }
+    },
   },
-
   watch: {
     loadingDirectory(v) {
       if (!v) {
         this.loadTask()
       }
-    }
+    },
   },
-
   created() {
     this.debouncedSearch = debounce(this.searchObject, 300)
   },
-
   mounted() {
     if (!this.loadingDirectory) {
       this.$nextTick(() => {
@@ -364,17 +361,15 @@ export default {
     }
     this.autoUpdateObjects()
   },
-
-  beforeDestroy() {
+  beforeUnmount() {
     this.eventDriver.off('source-drag-end')
     clearInterval(this.autoUpdateObjectsTimer)
   },
-
   methods: {
     autoUpdateObjects() {
       this.autoUpdateObjectsTimer = setInterval(() => {
         if (this.showSearch) return
-        this.expandedKeys.forEach(id => {
+        this.expandedKeys.forEach((id) => {
           this.updateObject(id)
         })
         this.loadTask()
@@ -418,7 +413,7 @@ export default {
       let actions = []
 
       if (!data.isObject) {
-        if (data.children.some(child => child.isVirtual)) {
+        if (data.children.some((child) => child.isVirtual)) {
           actions.push(
             <IconButton
               sm
@@ -428,7 +423,7 @@ export default {
               }}
             >
               play-circle
-            </IconButton>
+            </IconButton>,
           )
         }
         actions.push(
@@ -436,10 +431,10 @@ export default {
             class="inline-flex"
             placement="bottom"
             trigger="click"
-            onCommand={command => this.handleMoreCommand(command, data)}
+            onCommand={(command) => this.handleMoreCommand(command, data)}
           >
             <IconButton
-              onClick={ev => {
+              onClick={(ev) => {
                 ev.stopPropagation()
               }}
               sm
@@ -449,7 +444,7 @@ export default {
             <ElDropdownMenu slot="dropdown">
               <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
             </ElDropdownMenu>
-          </ElDropdown>
+          </ElDropdown>,
         )
       }
 
@@ -459,7 +454,7 @@ export default {
         <div
           class={className}
           onClick={() => {
-            data.isObject && this.$emit('preview', data, this.fdmConnection)
+            data.isObject && $emit(this, 'preview', data, this.fdmConnection)
           }}
           onDrop={this.handleTreeNodeDrop}
         >
@@ -468,8 +463,8 @@ export default {
             class={[
               'w-0 flex-1 overflow-hidden flex align-center',
               {
-                'opacity-50': data.isObject && data.isVirtual
-              }
+                'opacity-50': data.isObject && data.isVirtual,
+              },
             ]}
           >
             {!data.isObject && (
@@ -515,8 +510,8 @@ export default {
             database_type: 'MongoDB',
             connection_type: 'source_and_target',
             createType: {
-              $ne: 'System'
-            }
+              $ne: 'System',
+            },
           },
           fields: {
             name: 1,
@@ -529,15 +524,15 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1
+            capabilities: 1,
           },
-          order: ['status DESC', 'name ASC']
+          order: ['status DESC', 'name ASC'],
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter))
+          filter: JSON.stringify(merge(filter, _filter)),
         })
 
-        result.items = result.items.map(item => {
+        result.items = result.items.map((item) => {
           return {
             id: item.id,
             name: item.name,
@@ -545,7 +540,7 @@ export default {
             value: item.id,
             databaseType: item.database_type,
             connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
+            accessNodeProcessId: item.accessNodeProcessId,
           }
         })
 
@@ -559,7 +554,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case 'config':
-          this.$emit('show-settings')
+          $emit(this, 'show-settings')
           break
       }
     },
@@ -605,7 +600,7 @@ export default {
     async checkCanStart() {
       this.taskDialogConfig.canStart = false
       this.checkCanStartIng = true
-      const tag = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const tag = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
 
       if (tag) {
         const task = this.tag2Task[tag.id]
@@ -622,7 +617,7 @@ export default {
     },
 
     async taskDialogSubmit(start) {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) return
 
         const { tableName, from = {}, task: settings, prefix } = this.taskDialogConfig
@@ -634,7 +629,7 @@ export default {
         try {
           const result = await ldpApi.createFDMTask(task, {
             silenceMessage: true,
-            params: { start }
+            params: { start },
           })
           this.taskDialogConfig.visible = false
           const h = this.$createElement
@@ -646,11 +641,11 @@ export default {
                 on: {
                   click: () => {
                     this.handleClickName(result)
-                  }
-                }
+                  },
+                },
               },
-              this.$t('packages_business_task_created_success')
-            )
+              this.$t('packages_business_task_created_success'),
+            ),
           })
         } catch (error) {
           console.log(error) // eslint-disable-line
@@ -676,22 +671,22 @@ export default {
         filter: JSON.stringify({
           where: {
             item_type: { $nin: ['database', 'dataflow', 'api'] },
-            parent_id: this.directory.id
-          }
-        })
+            parent_id: this.directory.id,
+          },
+        }),
       })
 
       /*items.forEach(item => {
-        item = this.mapCatalog(item)
-        const children = this.treeMap[item.id]?.children
-        if (children.length) {
-          this.$refs.tree.remove()
-          item.children = children
-        }
-        return item
-      })*/
+      item = this.mapCatalog(item)
+      const children = this.treeMap[item.id]?.children
+      if (children.length) {
+        this.$refs.tree.remove()
+        item.children = children
+      }
+      return item
+    })*/
 
-      this.directory.children = items.map(item => {
+      this.directory.children = items.map((item) => {
         item = this.mapCatalog(item)
         const children = this.treeMap[item.id]?.children
 
@@ -777,10 +772,10 @@ export default {
         dag: {
           edges: [
             { source: source.id, target: tableReNameNode.id },
-            { source: tableReNameNode.id, target: target.id }
+            { source: tableReNameNode.id, target: target.id },
           ],
-          nodes: [source, tableReNameNode, target]
-        }
+          nodes: [source, tableReNameNode, target],
+        },
       }
     },
 
@@ -792,12 +787,12 @@ export default {
         tableName
           ? {
               migrateTableSelectType: 'custom',
-              tableNames: [tableName]
+              tableNames: [tableName],
             }
           : {
               migrateTableSelectType: 'expression',
-              tableExpression: '.*'
-            }
+              tableExpression: '.*',
+            },
       )
 
       return source
@@ -820,8 +815,8 @@ export default {
           accessNodeProcessId: db.accessNodeProcessId,
           pdkType: db.pdkType,
           pdkHash: db.pdkHash,
-          capabilities: db.capabilities || []
-        }
+          capabilities: db.capabilities || [],
+        },
       }
     },
 
@@ -830,7 +825,7 @@ export default {
         id: uuid(),
         type: 'table_rename_processor',
         name: i18n.t('packages_business_swimlane_fdm_biaobianji'),
-        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`
+        prefix: `${this.fixedPrefix}${this.taskDialogConfig.prefix}_`,
       }
     },
 
@@ -859,13 +854,13 @@ export default {
       draggingNode = {
         ...draggingNode,
         parent: {
-          data: this.fdmConnection
-        }
+          data: this.fdmConnection,
+        },
       }
       this.draggingNode = draggingNode
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
-        draggingNode.data.name
+        draggingNode.data.name,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 4, 4)
       ev.dataTransfer.effectAllowed = 'copy'
@@ -875,18 +870,18 @@ export default {
     },
 
     handleDragEnd() {
-      this.$emit('node-drag-end')
+      $emit(this, 'node-drag-end')
     },
 
     setNodeExpand() {
-      const target = this.treeData.find(item => item.linkId === this.taskDialogConfig.from.id)
+      const target = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
       if (target) {
         const node = this.$refs.tree.getNode(target.id)
         node && (node.loading = true)
         setTimeout(async () => {
           this.setExpand(target.id, true)
           let objects = await this.loadObjects(target)
-          objects = objects.map(item => {
+          objects = objects.map((item) => {
             item.parent_id = target.id
             item.isObject = true
             item.connectionId = item.sourceConId
@@ -896,7 +891,7 @@ export default {
           node && (node.loading = false)
         }, 1000)
       } else {
-        this.$emit('load-directory')
+        $emit(this, 'load-directory')
       }
       // this.taskDialogConfig.from
     },
@@ -946,7 +941,7 @@ export default {
         isParent: true,
         desc: type === 'edit' ? data?.desc : '',
         title:
-          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit')
+          type === 'add' ? this.$t('packages_component_classification_addChildernNode') : this.$t('public_button_edit'),
       }
     },
 
@@ -962,9 +957,9 @@ export default {
           confirmButtonText: this.$t('public_button_delete'),
           cancelButtonText: this.$t('packages_component_message_cancel'),
           type: 'warning',
-          closeOnClickModal: false
-        }
-      ).then(resFlag => {
+          closeOnClickModal: false,
+        },
+      ).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -989,7 +984,7 @@ export default {
       let params = {
         item_type: itemType,
         desc: config.desc,
-        value
+        value,
       }
 
       if (config.type === 'edit') {
@@ -1018,11 +1013,11 @@ export default {
     async loadTask() {
       if (!this.treeData.length) return
 
-      const map = await ldpApi.getTaskByTag(this.treeData.map(item => item.id).join(','))
+      const map = await ldpApi.getTaskByTag(this.treeData.map((item) => item.id).join(','))
       const newMap = {}
       for (let tagId in map) {
         let task = map[tagId].find(
-          task => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain
+          (task) => !['deleting', 'delete_failed'].includes(task.status) && !task.is_deleted && task.fdmMain,
         )
         if (task) {
           task = makeStatusAndDisabled(task)
@@ -1033,7 +1028,7 @@ export default {
             crontabExpressionFlag: task.crontabExpressionFlag,
             crontabExpression: task.crontabExpression,
             status: task.status,
-            disabledData: task.disabledData
+            disabledData: task.disabledData,
           }
         }
       }
@@ -1042,7 +1037,7 @@ export default {
     },
 
     checkStartedTag() {
-      this.startedTags = this.startedTags.filter(tagId => {
+      this.startedTags = this.startedTags.filter((tagId) => {
         const task = this.tag2Task[tagId]
         const node = this.$refs.tree.getNode(tagId)
         if (node && task && ['running', 'complete', 'stop', 'error'].includes(task.status)) {
@@ -1070,7 +1065,7 @@ export default {
 
     async searchByKeywordList(val = []) {
       let searchExpandedKeys = []
-      this.filterTreeData = val.map(t => {
+      this.filterTreeData = val.map((t) => {
         searchExpandedKeys.push(t.connectionId)
         return {
           LDP_TYPE: 'connection',
@@ -1088,9 +1083,9 @@ export default {
               isLeaf: true,
               isObject: true,
               type: 'table',
-              LDP_TYPE: 'table'
-            }
-          ]
+              LDP_TYPE: 'table',
+            },
+          ],
         }
       })
       this.searchExpandedKeys = searchExpandedKeys
@@ -1105,8 +1100,9 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
-    }
-  }
+    },
+  },
+  emits: ['preview', 'show-settings', 'node-drag-end', 'load-directory'],
 }
 </script>
 
@@ -1124,7 +1120,6 @@ export default {
     list-style-type: circle;
   }
 }
-
 .inline-flex-input {
   .el-input-group__prepend {
     flex-shrink: 0;

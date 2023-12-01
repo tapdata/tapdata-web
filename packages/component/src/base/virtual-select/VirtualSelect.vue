@@ -26,7 +26,7 @@
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+      <transition-group tag="span" @after-leave="resetInputHeight" v-if="!collapseTags">
         <el-tag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -42,7 +42,7 @@
       </transition-group>
 
       <input
-        type="text"
+        text
         class="el-select__input"
         :class="[selectSize ? `is-${selectSize}` : '']"
         :disabled="selectDisabled"
@@ -63,15 +63,19 @@
         v-model="query"
         @input="debouncedQueryChange"
         v-if="filterable"
-        :style="{ 'flex-grow': '1', width: inputLength / (inputWidth - 32) + '%', 'max-width': inputWidth - 42 + 'px' }"
+        :style="{
+          'flex-grow': '1',
+          width: inputLength / (inputWidth - 32) + '%',
+          'max-width': inputWidth - 42 + 'px',
+        }"
         ref="input"
       />
     </div>
     <ElInput
       ref="reference"
-      v-model="selectedLabel"
+      v-model:value="selectedLabel"
       :id="id"
-      type="text"
+      text
       :name="name"
       :placeholder="currentPlaceholder"
       :autocomplete="autoComplete || autocomplete"
@@ -83,20 +87,20 @@
       :tabindex="multiple && filterable ? '-1' : null"
       @focus="handleFocus"
       @blur="handleBlur"
-      @keyup.native="debouncedOnInputChange"
-      @keydown.native.down.stop.prevent="navigateOptions('next')"
-      @keydown.native.up.stop.prevent="navigateOptions('prev')"
-      @keydown.native.enter.prevent="selectOption"
-      @keydown.native.esc.stop.prevent="visible = false"
-      @keydown.native.tab.stop.prevent="visible = false"
-      @paste.native="debouncedOnInputChange"
-      @mouseenter.native="inputHovering = true"
-      @mouseleave.native="inputHovering = false"
+      @keyup="debouncedOnInputChange"
+      @keydown.down.stop.prevent="navigateOptions('next')"
+      @keydown.up.stop.prevent="navigateOptions('prev')"
+      @keydown.enter.prevent="selectOption"
+      @keydown.esc.stop.prevent="visible = false"
+      @keydown.tab.stop.prevent="visible = false"
+      @paste="debouncedOnInputChange"
+      @mouseenter="inputHovering = true"
+      @mouseleave="inputHovering = false"
     >
-      <template slot="prefix" v-if="$slots.prefix">
+      <template v-if="$slots.prefix" v-slot:prefix>
         <slot name="prefix" />
       </template>
-      <template slot="suffix">
+      <template v-slot:suffix>
         <span v-if="loading" class="el-select__loading">
           <svg
             viewBox="0 0 1024 1024"
@@ -114,7 +118,7 @@
         </span>
         <template v-else>
           <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick" />
+          <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
         </template>
       </template>
     </ElInput>
@@ -160,46 +164,41 @@
 </template>
 
 <script>
-import { Select } from 'element-ui'
+import { ElSelect as Select } from 'element-plus'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 
 export default {
-  name: 'VirtualSelect',
-
   components: {
-    RecycleScroller
+    RecycleScroller,
   },
-
+  name: 'VirtualSelect',
   extends: Select,
-
   props: {
     items: {
       type: Array,
-      required: true
+      required: true,
     },
     buffer: {
       type: Number,
-      default: 30
+      default: 30,
     },
     itemSize: {
       type: Number,
-      default: null
+      default: null,
     },
     filterDelay: {
       type: Number,
-      default: 200
-    }
+      default: 200,
+    },
   },
-
   data() {
     return {
       lazySearch: '',
-      filteredItems: this.items
+      filteredItems: this.items,
     }
   },
-
   computed: {
     scrollerStyle() {
       const count = Math.min(this.filteredItems.length, 5)
@@ -224,9 +223,8 @@ export default {
         }
       }
       return null
-    }
+    },
   },
-
   watch: {
     items(val) {
       this.filteredItems = val
@@ -235,9 +233,8 @@ export default {
       if (val) {
         this.filteredItems = this.items
       }
-    }
+    },
   },
-
   methods: {
     handleQueryChange(val) {
       if (this.previousQuery === val || this.isOnComposition) return
@@ -269,7 +266,7 @@ export default {
         this.broadcast('ElOptionGroup', 'queryChange')
       } else {
         if (val) {
-          this.filteredItems = this.items.filter(item => {
+          this.filteredItems = this.items.filter((item) => {
             return item.label.toLowerCase().includes(val.toLowerCase())
           })
         } else {
@@ -286,7 +283,7 @@ export default {
       const $option = Array.isArray(option) ? option[0] : option
       if ($option) {
         const { value } = $option
-        const index = this.items.findIndex(item => item.value === value)
+        const index = this.items.findIndex((item) => item.value === value)
         this.$refs.virtualScroller.scrollToItem(index)
       }
     },
@@ -311,14 +308,14 @@ export default {
       const label = !isObject && !isNull && !isUndefined ? String(value) : ''
       let newOption = {
         value: value,
-        currentLabel: label
+        currentLabel: label,
       }
       if (this.multiple) {
         newOption.hitState = false
       }
       return newOption
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <ElTableColumn v-bind="item" :key="item.prop" :sortable="item.sortable ? 'custom' : false">
     <!--  列表头  -->
-    <template v-if="item.headerSlot" slot="header">
+    <template v-if="item.headerSlot" v-slot:header>
       <slot :name="item.headerSlot"></slot>
     </template>
     <!--  表体  -->
@@ -12,30 +12,30 @@
       {{ getValue(scope.row, item) }}
     </template>
     <!--  多表头  -->
-    <template v-for="temp in children">
-      <Column :item="temp" v-bind="temp" :key="temp.prop"></Column>
+    <template v-for="temp in children" :key="temp.prop">
+      <Column v-bind="temp" :item="temp"></Column>
     </template>
   </ElTableColumn>
 </template>
 
 <script>
-import Column from './Column'
 import dayjs from 'dayjs'
+import { defineAsyncComponent } from 'vue'
 export default {
   name: 'Column',
-  components: { Column },
+  components: { Column: defineAsyncComponent(() => import('./Column')) },
   props: {
     item: {
       type: Object,
       default: () => {
         return {}
-      }
-    }
+      },
+    },
   },
   computed: {
     children() {
       return this.item?.children
-    }
+    },
   },
   methods: {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
@@ -51,13 +51,13 @@ export default {
       }
       const map = {
         time: this.formatTime,
-        number: this.formatNumber
+        number: this.formatNumber,
       }
       if (map[item.dataType]) {
         return map[item.dataType]?.(val, item.format) || item.default
       }
       return val
-    }
-  }
+    },
+  },
 }
 </script>

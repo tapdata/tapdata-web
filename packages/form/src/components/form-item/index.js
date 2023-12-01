@@ -1,13 +1,13 @@
-import { ref, defineComponent, onMounted, onBeforeUnmount, watch, provide } from '@vue/composition-api'
+import { ref, defineComponent, onMounted, onBeforeUnmount, watch, provide } from 'vue'
 import { isVoidField } from '@formily/core'
 import { connect, mapProps, h } from '@formily/vue'
-import { useFormLayout, FormLayoutShallowContext } from '@formily/element'
-import { composeExport, resolveComponent } from '@formily/element/lib/__builtins__/shared'
-import { stylePrefix } from '@formily/element/lib/__builtins__/configs'
-import { Tooltip } from 'element-ui'
+import { useFormLayout, FormLayoutShallowContext } from '@formily/element-plus'
+import { composeExport, resolveComponent } from '@formily/element-plus/lib/__builtins__/shared'
+import { stylePrefix } from '@formily/element-plus/lib/__builtins__/configs'
+import { ElTooltip as Tooltip } from 'element-plus'
 import ResizeObserver from 'resize-observer-polyfill'
 
-const useOverflow = containerRef => {
+const useOverflow = (containerRef) => {
   const overflow = ref(false)
   let resizeObserver
 
@@ -35,7 +35,7 @@ const useOverflow = containerRef => {
 
   const stopWatch = watch(
     () => containerRef.value,
-    el => {
+    (el) => {
       cleanup()
 
       if (el) {
@@ -43,7 +43,7 @@ const useOverflow = containerRef => {
         resizeObserver.observe(el)
       }
     },
-    { immediate: true, flush: 'post' }
+    { immediate: true, flush: 'post' },
   )
 
   onBeforeUnmount(() => {
@@ -57,10 +57,10 @@ const useOverflow = containerRef => {
 const ICON_MAP = {
   error: () => h('i', { class: 'el-icon-circle-close' }, {}),
   success: () => h('i', { class: 'el-icon-circle-check' }, {}),
-  warning: () => h('i', { class: 'el-icon-warning-outline' }, {})
+  warning: () => h('i', { class: 'el-icon-warning-outline' }, {}),
 }
 
-const takeUnitVal = val => (val === 'auto' ? undefined : isNaN(val) ? val : `${val}px`)
+const takeUnitVal = (val) => (val === 'auto' ? undefined : isNaN(val) ? val : `${val}px`)
 
 export const FormBaseItem = defineComponent({
   name: 'FormItem',
@@ -94,7 +94,7 @@ export const FormBaseItem = defineComponent({
     asterisk: {},
     gridSpan: {},
     bordered: { default: true },
-    inset: { default: false }
+    inset: { default: false },
   },
   setup(props, { slots, refs }) {
     const active = ref(false)
@@ -140,7 +140,7 @@ export const FormBaseItem = defineComponent({
         feedbackIcon,
         asterisk,
         bordered = deepLayout.bordered,
-        inset = deepLayout.inset
+        inset = deepLayout.inset,
       } = props
       const labelAlign =
         deepLayout.layout === 'vertical'
@@ -176,8 +176,8 @@ export const FormBaseItem = defineComponent({
               {
                 props: {
                   disabled: !feedbackText,
-                  placement: 'top'
-                }
+                  placement: 'top',
+                },
               },
               {
                 reference: () => h('div', {}, { default: () => slots.default?.() }),
@@ -187,20 +187,20 @@ export const FormBaseItem = defineComponent({
                     {
                       class: {
                         [`${prefixCls}-${feedbackStatus}-help`]: !!feedbackStatus,
-                        [`${prefixCls}-help`]: true
-                      }
+                        [`${prefixCls}-help`]: true,
+                      },
                     },
                     {
                       default: () => [
                         feedbackStatus && ['error', 'success', 'warning'].includes(feedbackStatus)
                           ? ICON_MAP[feedbackStatus]()
                           : '',
-                        resolveComponent(feedbackText)
-                      ]
-                    }
-                  )
-                ]
-              }
+                        resolveComponent(feedbackText),
+                      ],
+                    },
+                  ),
+                ],
+              },
             )
           : slots.default?.()
 
@@ -209,14 +209,14 @@ export const FormBaseItem = defineComponent({
           'div',
           {
             class: `${prefixCls}-label-content`,
-            ref: 'labelContainer'
+            ref: 'labelContainer',
           },
           {
             default: () => [
               asterisk && h('span', { class: `${prefixCls}-asterisk` }, { default: () => ['*'] }),
-              h('label', {}, { default: () => [resolveComponent(label)] })
-            ]
-          }
+              h('label', {}, { default: () => [resolveComponent(label)] }),
+            ],
+          },
         )
         const isTextTooltip = tooltip && tooltipLayout === 'text'
         if (isTextTooltip || overflow.value) {
@@ -224,8 +224,8 @@ export const FormBaseItem = defineComponent({
             Tooltip,
             {
               props: {
-                placement: 'top'
-              }
+                placement: 'top',
+              },
             },
             {
               default: () => [labelChildren],
@@ -236,11 +236,11 @@ export const FormBaseItem = defineComponent({
                   {
                     default: () => [
                       overflow.value && resolveComponent(label),
-                      isTextTooltip && resolveComponent(tooltip)
-                    ]
-                  }
-                )
-            }
+                      isTextTooltip && resolveComponent(tooltip),
+                    ],
+                  },
+                ),
+            },
           )
         } else {
           return labelChildren
@@ -251,7 +251,7 @@ export const FormBaseItem = defineComponent({
           return h(
             'span',
             {
-              class: `${prefixCls}-label-tooltip`
+              class: `${prefixCls}-label-tooltip`,
             },
             {
               default: () => [
@@ -259,8 +259,8 @@ export const FormBaseItem = defineComponent({
                   Tooltip,
                   {
                     props: {
-                      placement: 'top'
-                    }
+                      placement: 'top',
+                    },
                   },
                   {
                     default: () => [h('i', { class: 'el-icon-info' }, {})],
@@ -268,16 +268,16 @@ export const FormBaseItem = defineComponent({
                       h(
                         'div',
                         {
-                          class: `${prefixCls}-label-tooltip-content`
+                          class: `${prefixCls}-label-tooltip-content`,
                         },
                         {
-                          default: () => [resolveComponent(tooltip)]
-                        }
-                      )
-                  }
-                )
-              ]
-            }
+                          default: () => [resolveComponent(tooltip)],
+                        },
+                      ),
+                  },
+                ),
+              ],
+            },
           )
         }
       }
@@ -289,9 +289,9 @@ export const FormBaseItem = defineComponent({
             class: {
               [`${prefixCls}-label`]: true,
               [`${prefixCls}-label-tooltip`]: (tooltip && tooltipLayout === 'text') || overflow.value,
-              [`${prefixCls}-item-col-${labelCol}`]: enableCol && !!labelCol
+              [`${prefixCls}-item-col-${labelCol}`]: enableCol && !!labelCol,
             },
-            style: labelStyle
+            style: labelStyle,
           },
           {
             default: () => [
@@ -304,12 +304,12 @@ export const FormBaseItem = defineComponent({
                 h(
                   'span',
                   {
-                    class: `${prefixCls}-colon`
+                    class: `${prefixCls}-colon`,
                   },
-                  { default: () => [colon ? ':' : ''] }
-                )
-            ]
-          }
+                  { default: () => [colon ? ':' : ''] },
+                ),
+            ],
+          },
         )
 
       const renderFeedback =
@@ -323,10 +323,10 @@ export const FormBaseItem = defineComponent({
               [`${prefixCls}-${feedbackStatus}-help`]: !!feedbackStatus,
               [`${prefixCls}-help`]: true,
               [`${prefixCls}-help-enter`]: true,
-              [`${prefixCls}-help-enter-active`]: true
-            }
+              [`${prefixCls}-help-enter-active`]: true,
+            },
           },
-          { default: () => [resolveComponent(feedbackText)] }
+          { default: () => [resolveComponent(feedbackText)] },
         )
 
       const renderExtra = extra && h('div', { class: `${prefixCls}-extra` }, { default: () => [extra] })
@@ -335,8 +335,8 @@ export const FormBaseItem = defineComponent({
         {
           class: {
             [`${prefixCls}-control`]: true,
-            [`${prefixCls}-item-col-${wrapperCol}`]: enableCol && !!wrapperCol
-          }
+            [`${prefixCls}-item-col-${wrapperCol}`]: enableCol && !!wrapperCol,
+          },
         },
         {
           default: () => [
@@ -350,17 +350,17 @@ export const FormBaseItem = defineComponent({
                       'div',
                       { class: `${prefixCls}-addon-before` },
                       {
-                        default: () => [resolveComponent(addonBefore)]
-                      }
+                        default: () => [resolveComponent(addonBefore)],
+                      },
                     ),
                   h(
                     'div',
                     {
                       class: {
                         [`${prefixCls}-control-content-component`]: true,
-                        [`${prefixCls}-control-content-component-has-feedback-icon`]: !!feedbackIcon
+                        [`${prefixCls}-control-content-component-has-feedback-icon`]: !!feedbackIcon,
                       },
-                      style: wrapperStyle
+                      style: wrapperStyle,
                     },
                     {
                       default: () => [
@@ -373,37 +373,37 @@ export const FormBaseItem = defineComponent({
                               default: () => [
                                 typeof feedbackIcon === 'string'
                                   ? h('i', { class: feedbackIcon }, {})
-                                  : resolveComponent(feedbackIcon)
-                              ]
-                            }
-                          )
-                      ]
-                    }
+                                  : resolveComponent(feedbackIcon),
+                              ],
+                            },
+                          ),
+                      ],
+                    },
                   ),
                   addonAfter &&
                     h(
                       'div',
                       { class: `${prefixCls}-addon-after` },
                       {
-                        default: () => [resolveComponent(addonAfter)]
-                      }
-                    )
-                ]
-              }
+                        default: () => [resolveComponent(addonAfter)],
+                      },
+                    ),
+                ],
+              },
             ),
             renderFeedback,
-            renderExtra
-          ]
-        }
+            renderExtra,
+          ],
+        },
       )
       return h(
         'div',
         {
           style: {
-            ...gridStyles
+            ...gridStyles,
           },
           attrs: {
-            'data-grid-span': props.gridSpan
+            'data-grid-span': props.gridSpan,
           },
           class: {
             [`${prefixCls}`]: true,
@@ -421,7 +421,7 @@ export const FormBaseItem = defineComponent({
             [`${prefixCls}-label-wrap`]: !!labelWrap,
             [`${prefixCls}-control-wrap`]: !!wrapperWrap,
             [`${prefixCls}-bordered-none`]: bordered === false || !!inset || !!feedbackIcon,
-            [`${props.className}`]: !!props.className
+            [`${props.className}`]: !!props.className,
           },
           on: {
             focus: () => {
@@ -433,15 +433,15 @@ export const FormBaseItem = defineComponent({
               if (feedbackIcon || inset) {
                 active.value = false
               }
-            }
-          }
+            },
+          },
         },
         {
-          default: () => [renderLabel, renderContent]
-        }
+          default: () => [renderLabel, renderContent],
+        },
       )
     }
-  }
+  },
 })
 
 const Item = connect(
@@ -461,7 +461,7 @@ const Item = connect(
       const errorMessages = takeMessage()
       return {
         feedbackText: Array.isArray(errorMessages) ? errorMessages.join(', ') : errorMessages,
-        extra: props.extra || field.description
+        extra: props.extra || field.description,
       }
     },
     (props, field) => {
@@ -471,7 +471,7 @@ const Item = connect(
         feedbackStatus:
           field.validateStatus === 'validating'
             ? 'pending'
-            : (Array.isArray(field.decorator) && field.decorator[1]?.feedbackStatus) || field.validateStatus
+            : (Array.isArray(field.decorator) && field.decorator[1]?.feedbackStatus) || field.validateStatus,
       }
     },
     (props, field) => {
@@ -486,14 +486,14 @@ const Item = connect(
         asterisk = props.asterisk
       }
       return {
-        asterisk
+        asterisk,
       }
-    }
-  )
+    },
+  ),
 )
 
 export const FormItem = composeExport(Item, {
-  BaseItem: FormBaseItem
+  BaseItem: FormBaseItem,
 })
 
 export default FormItem

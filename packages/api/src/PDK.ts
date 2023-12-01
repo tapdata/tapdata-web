@@ -7,7 +7,7 @@ export default class PDK extends Http {
   doc(pdkHash) {
     const url = `${this.url}/doc?pdkHash=${pdkHash}`
     return this.axios.get(url, {
-      responseType: 'blob'
+      responseType: 'blob',
     })
   }
 }
