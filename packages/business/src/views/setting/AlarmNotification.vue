@@ -71,7 +71,7 @@
       class="notice-setting-dialog"
       :title="$t('notify_setting')"
       width="1024px"
-      v-model:visible="dialogVisible"
+      v-model="dialogVisible"
       :close-on-click-modal="false"
       destroy-on-close
     >

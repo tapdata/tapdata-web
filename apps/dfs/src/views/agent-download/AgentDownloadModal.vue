@@ -2,7 +2,7 @@
   <ElDialog
     class="agent-download-dialog"
     width="1000px"
-    v-model:visible="dialogVisible"
+    v-model="dialogVisible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="false"

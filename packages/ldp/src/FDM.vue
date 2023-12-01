@@ -126,7 +126,7 @@
         {{ $t('packages_ldp_connection_expired') }}
       </div>
     </div>
-    <ElDialog v-model:visible="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+    <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
       <template #header>
         <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       </template>
@@ -209,7 +209,7 @@
         </span>
       </template>
     </ElDialog>
-    <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header>
         <span class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
       </template>

@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    v-model:visible="visible"
+    v-model="visible"
     width="812px"
     :show-close="false"
     :close-on-click-modal="false"

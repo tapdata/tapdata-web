@@ -65,7 +65,7 @@
     </TablePage>
     <ElDialog
       append-to-body
-      v-model:visible="dialogVisible"
+      v-model="dialogVisible"
       :title="
         form.id
           ? $t('packages_business_external_storage_list_bianjiwaicun')

@@ -46,7 +46,7 @@
     <ElDialog
       :before-close="closeDialog"
       :title="$t('dfs_ticketing_system_list_xinjiangongdan')"
-      v-model:visible="createDialog"
+      v-model="createDialog"
       width="620px"
     >
       <span>
@@ -105,14 +105,14 @@
         </span>
       </template>
     </ElDialog>
-    <Details ref="details" width="380px"></Details>
+    <TicketDetails ref="details" width="380px"></TicketDetails>
   </section>
   <RouterView v-else></RouterView>
 </template>
 
 <script>
 import { FilterBar, VTable } from '@tap/component'
-import Details from './Details'
+import TicketDetails from './Details.vue'
 
 import i18n from '@/i18n'
 import { isEmpty } from 'lodash'
@@ -124,7 +124,7 @@ import StatusTag from '../../components/StatusTag'
 import { connectionsApi, taskApi } from '@tap/api'
 
 export default {
-  components: { FilterBar, VTable, Details, StatusTag },
+  components: { FilterBar, VTable, TicketDetails, StatusTag },
   inject: ['buried'],
   data() {
     return {

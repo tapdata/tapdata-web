@@ -41,7 +41,7 @@
             {{ $t('packages_component_classification_creatDataClassification') }}
           </ElButton>-->
     </div>
-    <ElDialog v-model:visible="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header>
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
       </template>

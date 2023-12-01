@@ -53,7 +53,7 @@
         <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
     </VTable>
-    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" v-model:visible="dialog.visible">
+    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" v-model="dialog.visible">
       <ElForm :model="dialog.form" label-width="120px" @submit.prevent>
         <ElFormItem label="key">
           <div>{{ dialog.form.key }}</div>

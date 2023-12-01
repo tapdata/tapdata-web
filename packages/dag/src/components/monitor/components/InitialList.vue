@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     width="774px"
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('input', false)"

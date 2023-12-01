@@ -320,7 +320,7 @@
     <ElDialog
       :title="$t('packages_dag_components_nodedetaildialog_xingnengzhibiao')"
       width="774px"
-      v-model:visible="lineChartDialog"
+      v-model="lineChartDialog"
       :close-on-click-modal="false"
       :modal-append-to-body="false"
     >

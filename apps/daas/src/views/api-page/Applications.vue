@@ -83,7 +83,7 @@
       class="create-dialog"
       :title="$t('application_create')"
       :close-on-click-modal="false"
-      v-model:visible="createDialogVisible"
+      v-model="createDialogVisible"
     >
       <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
         <ElFormItem :label="$t('application_header_client_name')" required prop="clientName">

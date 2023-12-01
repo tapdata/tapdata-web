@@ -2,7 +2,7 @@
   <ElDialog
     width="1000px"
     append-to-body
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     @close="handleCancel"

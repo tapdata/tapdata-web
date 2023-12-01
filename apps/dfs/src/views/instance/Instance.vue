@@ -339,7 +339,7 @@
             </div>
           </li>
         </ul>
-        <ElDialog v-model:visible="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
+        <ElDialog v-model="upgradeDialog" width="562px" top="20vh" :title="$t('dfs_instance_instance_agent')">
           <div>
             <div class="flex upgrade-mb24">
               <div class="imgBox flex justify-content-center align-items-center">
@@ -391,7 +391,7 @@
           <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
         </ElDialog>
         <!--   {{$t('dfs_instance_instance_shengji')}}失败   -->
-        <ElDialog v-model:visible="upgradeErrorDialog" width="450px" top="30vh" center>
+        <ElDialog v-model="upgradeErrorDialog" width="450px" top="30vh" center>
           <div class="dialog-content text-center">
             {{ $t('agent_dialog_upgrade_fail') }}
           </div>

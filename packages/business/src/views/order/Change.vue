@@ -1,5 +1,5 @@
 <template>
-  <ElDialog v-if="visible" v-model:visible="visible" :title="$t('dfs_change_instance_title')" width="60%">
+  <ElDialog v-if="visible" v-model="visible" :title="$t('dfs_change_instance_title')" width="60%">
     <section class="change-container">
       <el-alert
         class="alert-primary mb-4 text-primary"

@@ -1,5 +1,5 @@
 <template>
-  <ElDialog v-model:visible="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
+  <ElDialog v-model="showRenewDetailVisible" :title="$t('dfs_user_center_xudingfuwu')" width="60%">
     <section>
       <div v-if="renewList.length > 0">
         <VTable

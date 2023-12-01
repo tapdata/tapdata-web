@@ -2,7 +2,7 @@
   <ElDialog
     :title="$t('packages_dag_components_nodedetaildialog_jiedianxiangqing')"
     width="1100px"
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     @close="$emit('input', false).$emit('load-data')"

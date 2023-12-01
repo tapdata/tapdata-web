@@ -65,7 +65,7 @@
       :title="$t('packages_form_field_inference_list_ziduanleixingtiao')"
       append-to-body
       :close-on-click-modal="false"
-      v-model:visible="editDataTypeVisible"
+      v-model="editDataTypeVisible"
       width="35%"
     >
       <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>

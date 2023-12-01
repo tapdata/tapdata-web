@@ -45,7 +45,7 @@
     <!--错误解读-->
     <template v-if="errorCause && task.status === 'error'">
       <VIcon @click="showErrorCause = true" size="16" class="color-danger">question-circle</VIcon>
-      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" v-model:visible="showErrorCause">
+      <ElDialog append-to-body :title="$t('public_task_reasons_for_error')" v-model="showErrorCause">
         <div class="p-4 rounded-4 bg-subtle mt-n4 text-preline font-color-dark">
           {{ errorCause }}
         </div>

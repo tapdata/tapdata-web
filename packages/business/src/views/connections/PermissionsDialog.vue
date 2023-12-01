@@ -2,7 +2,7 @@
   <ElDialog
     :title="$t('packages_business_connections_permissionsdialog_lianjiequanxianshe')"
     width="700px"
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     append-to-body
     @close="handleClose"

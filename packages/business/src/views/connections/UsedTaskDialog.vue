@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :title="$t('public_message_title_prompt')" width="40%" v-model:visible="visible" @close="handleClose">
+  <ElDialog :title="$t('public_message_title_prompt')" width="40%" v-model="visible" @close="handleClose">
     <span>{{
       $t('packages_business_connections_list_gailianjieyibei', {
         val1: data.total,

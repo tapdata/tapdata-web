@@ -18,7 +18,7 @@
       <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
       <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
     </TablePage>
-    <ElDialog append-to-body :title="$t('license_renew_dialog')" v-model:visible="dialogVisible">
+    <ElDialog append-to-body :title="$t('license_renew_dialog')" v-model="dialogVisible">
       <ElInput v-model.trim="license" type="textarea"></ElInput>
       <template v-slot:footer>
         <div>

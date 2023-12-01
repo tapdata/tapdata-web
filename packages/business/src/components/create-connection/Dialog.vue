@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    v-model:visible="showDialog"
+    v-model="showDialog"
     :append-to-body="true"
     width="80%"
     top="10vh"

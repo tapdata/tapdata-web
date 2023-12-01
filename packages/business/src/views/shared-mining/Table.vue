@@ -71,7 +71,7 @@
     </VTable>
 
     <ElDialog
-      v-model:visible="visible"
+      v-model="visible"
       :title="$t('packages_business_shared_mining_table_tingzhiwajueti')"
       width="600px"
       :close-on-click-modal="false"

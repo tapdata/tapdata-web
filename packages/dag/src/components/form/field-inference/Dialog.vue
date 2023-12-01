@@ -4,7 +4,7 @@
     append-to-body
     :title="$t('packages_form_field_inference_dialog_mubiaoleixingpi')"
     class="batch-field-type-maping-table-dialog"
-    v-model:visible="ruleForm.visible"
+    v-model="ruleForm.visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     @close="handleCancel"

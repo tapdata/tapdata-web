@@ -132,7 +132,7 @@
     <ElDialog
       :title="$t('packages_dag_components_log_rizhidengjishe')"
       width="437px"
-      v-model:visible="dialog"
+      v-model="dialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
@@ -164,7 +164,7 @@
 
     <ElDialog
       width="1200px"
-      v-model:visible="codeDialog.visible"
+      v-model="codeDialog.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
       class="error-code-dialog"

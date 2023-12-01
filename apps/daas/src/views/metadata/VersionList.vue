@@ -23,12 +23,7 @@
       </ElTableColumn>
     </ElTable>
     <!-- 数据校验表格 end -->
-    <ElDialog
-      class="history-dialog"
-      :title="histories.name"
-      :close-on-click-modal="false"
-      v-model:visible="showVersionDialog"
-    >
+    <ElDialog class="history-dialog" :title="histories.name" :close-on-click-modal="false" v-model="showVersionDialog">
       <HistoryVersion
         :comparedData="comparedData"
         :currentVersion="currentVersion"

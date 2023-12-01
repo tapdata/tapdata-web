@@ -4,7 +4,7 @@
     append-to-body
     :title="dialog.title"
     :close-on-click-modal="false"
-    v-model:visible="dialog.visible"
+    v-model="dialog.visible"
     @close="closeDialogForm"
   >
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" @submit.prevent>

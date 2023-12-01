@@ -176,7 +176,7 @@
     <ElDialog
       :title="$t('public_message_title_prompt')"
       :close-on-click-modal="false"
-      v-model:visible="showUsingTaskDialog.visible"
+      v-model="showUsingTaskDialog.visible"
       class="create-role"
       width="600px"
     >

@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     v-if="showUnsubscribeDetailVisible"
-    v-model:visible="showUnsubscribeDetailVisible"
+    v-model="showUnsubscribeDetailVisible"
     :title="$t('dfs_instance_instance_tuidingshili')"
     width="60%"
   >

@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     class="t-dialog"
-    v-model:visible="visible"
+    v-model="visible"
     @update:visible="handleVisible"
     width="600"
     :close-on-click-modal="false"

@@ -2,7 +2,7 @@
   <ElDialog
     class="agent-guide-dialog"
     :width="style['dialog']"
-    v-model:visible="visible"
+    v-model="visible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :show-close="false"

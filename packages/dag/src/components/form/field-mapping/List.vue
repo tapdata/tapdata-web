@@ -138,7 +138,7 @@
     </div>
     <ElDialog
       :title="titleType[currentOperationType]"
-      v-model:visible="dialogVisible"
+      v-model="dialogVisible"
       width="30%"
       append-to-body
       :close-on-click-modal="false"

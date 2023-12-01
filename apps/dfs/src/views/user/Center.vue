@@ -237,7 +237,7 @@
       append-to-body
       :title="$t('user_Center_shangChuanTouXiang')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.avatar"
+      v-model="dialogObj.avatar"
     >
       <div class="text-center">
         <UploadFile :upload="upload" accept="image/*">
@@ -263,7 +263,7 @@
       :title="$t('operation_log_List_xiuGaiMiMa')"
       label-width="120px"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.password"
+      v-model="dialogObj.password"
     >
       <ElForm :model="passwordForm" label-width="120px" @submit.prevent label-position="top">
         <ElFormItem v-if="!isDomesticStation" prop="email" :label="$t('user_Center_youXiang')">
@@ -364,7 +364,7 @@
       append-to-body
       :title="$t('operation_log_List_bangDingShouJiHao')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.bindPhone"
+      v-model="dialogObj.bindPhone"
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
@@ -410,7 +410,7 @@
       append-to-body
       :title="$t('operation_log_List_xiuGaiShouJiHao')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.editPhone"
+      v-model="dialogObj.editPhone"
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.prevent label-position="top">
         <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
@@ -488,7 +488,7 @@
       append-to-body
       :title="$t('user_Center_bangDingWeiXin')"
       :close-on-click-modal="true"
-      v-model:visible="dialogObj.bindWx"
+      v-model="dialogObj.bindWx"
     >
       <div class="text-center">
         <img src="../../../public/images/user/bindWx.png" alt="" style="width: 200px" />
@@ -503,7 +503,7 @@
       append-to-body
       :title="$t('operation_log_List_bangDingYouXiang')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.bindEmail"
+      v-model="dialogObj.bindEmail"
     >
       <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
@@ -549,7 +549,7 @@
       append-to-body
       :title="$t('operation_log_List_xiuGaiYouXiang')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.editEmail"
+      v-model="dialogObj.editEmail"
     >
       <ElForm class="mt-n4" :model="emailForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
@@ -612,7 +612,7 @@
       </template>
     </ElDialog>
     <!--  订阅记录  -->
-    <ElDialog width="618px" append-to-body :close-on-click-modal="false" v-model:visible="recordData.visible">
+    <ElDialog width="618px" append-to-body :close-on-click-modal="false" v-model="recordData.visible">
       <div class="mt-n11 mx-n2 mb-4 p-4 bg-color-normal text-center rounded-4">
         <div class="font-color-dark text-center fs-5">
           {{ recordData.content }}
@@ -635,7 +635,7 @@
       append-to-body
       :title="$t('public_button_revise')"
       :close-on-click-modal="false"
-      v-model:visible="dialogObj.firstName"
+      v-model="dialogObj.firstName"
     >
       <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.prevent>
         <ElFormItem prop="email" label="FirstName">

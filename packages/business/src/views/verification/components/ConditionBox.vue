@@ -212,7 +212,7 @@
     <ElDialog
       width="60%"
       :title="$t('packages_business_verification_JSVerifyLogic')"
-      v-model:visible="dialogAddScriptVisible"
+      v-model="dialogAddScriptVisible"
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">

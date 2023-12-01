@@ -1,5 +1,5 @@
 <template>
-  <ElDialog v-model:visible="visible" width="480px" :close-on-click-modal="false" @close="cancel">
+  <ElDialog v-model="visible" width="480px" :close-on-click-modal="false" @close="cancel">
     <template #header>
       <span class="fs-6 fw-sub font-color-dark">{{ $t('dfs_alarm_setting_tour_title') }}</span>
     </template>

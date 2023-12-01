@@ -4,7 +4,7 @@
     class="import-upload-dialog"
     :title="$t('packages_business_modules_dialog_import_title')"
     :close-on-click-modal="false"
-    v-model:visible="dialogVisible"
+    v-model="dialogVisible"
     :before-close="handleClose"
   >
     <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">

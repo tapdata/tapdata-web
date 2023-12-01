@@ -89,7 +89,7 @@
     <ElDialog
       :title="roleId ? $t('role_list_edit') : $t('role_list_create')"
       :close-on-click-modal="false"
-      v-model:visible="dialogFormVisible"
+      v-model="dialogFormVisible"
       class="create-role"
       width="600px"
     >
@@ -141,7 +141,7 @@
     <ElDialog
       :title="$t('role_list_associat_users')"
       :close-on-click-modal="false"
-      v-model:visible="dialogUserVisible"
+      v-model="dialogUserVisible"
       width="600px"
     >
       <div class="userBox">

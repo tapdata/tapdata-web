@@ -41,7 +41,7 @@
     </div>
 
     <ElDialog
-      v-model:visible="visible"
+      v-model="visible"
       :title="$t('packages_business_shared_mining_table_wajuebiaoxinxi')"
       width="1000px"
       :close-on-click-modal="false"

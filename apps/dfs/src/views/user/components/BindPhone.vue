@@ -7,7 +7,7 @@
     :close-on-click-modal="!!$props.closeOnClickModal"
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
-    v-model:visible="dialogVisible"
+    v-model="dialogVisible"
     class="bind-phone-dialog"
   >
     <ElForm :model="phoneForm" label-position="top" :label-width="showLabel ? '120px' : null" @submit.prevent>

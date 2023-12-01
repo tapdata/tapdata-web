@@ -49,13 +49,7 @@
       </div>
     </div>
     <!-- 日志上传   -->
-    <ElDialog
-      v-model:visible="downloadDialog"
-      :show-close="false"
-      width="1250px"
-      class="download-dialog"
-      append-to-body
-    >
+    <ElDialog v-model="downloadDialog" :show-close="false" width="1250px" class="download-dialog" append-to-body>
       <div class="flex justify-content-between">
         <div>{{ $t('dfs_instance_instance_bendirizhixia') }}</div>
         <div>
