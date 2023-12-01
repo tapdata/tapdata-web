@@ -37,7 +37,7 @@
           :data-index="index"
           :size-dependencies="[item.id, item.source, item.target]"
         >
-          <div class="joint-table-item" :class="['joint-table-item']" :key="item.id + index">
+          <div class="joint-table-item" :key="item.id + index">
             <div class="joint-table-setting overflow-hidden">
               <div class="flex justify-content-between">
                 <div class="cond-item__title flex align-items-center">
@@ -166,11 +166,10 @@
                   ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
                 >
               </div>
-              <div class="setting-item mt-4">
+              <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
                 <ElCheckbox
                   v-model="item.showAdvancedVerification"
-                  v-show="inspectMethod === 'field'"
-                  @input="handleChangeAdvanced(item)"
+                  @change="handleChangeAdvanced(item, arguments[0])"
                   >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
                 >
               </div>
@@ -1117,10 +1116,6 @@ export default {
     },
 
     addItem() {
-      // const validateMsg = this.validate()
-      // if (validateMsg) {
-      //   return this.$message.error(validateMsg)
-      // }
       this.list.push(this.getItemOptions())
     },
 
@@ -1420,9 +1415,12 @@ export default {
       })
     },
 
-    handleChangeAdvanced(item) {
-      item.target.targeFilterFalg = false
-      item.target.where = ''
+    handleChangeAdvanced(item, val) {
+      Object.assign(item.target, {
+        targeFilterFalg: false,
+        where: ''
+      })
+      item.showAdvancedVerification = val
     },
 
     addScript(index) {
