@@ -100,4 +100,25 @@
     padding-inline: 24px !important;
     padding-top: 0 !important;
   }
+  &__headerbtn {
+    top: 16px !important;
+    right: 16px !important;
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+    font-size: 20px;
+    border-radius: map-get($border-radius, base);
+    &:hover {
+      color: rgba(0, 0, 0, 0.88);
+      background-color: rgba(0, 0, 0, 0.06);
+      text-decoration: none;
+      > * {
+        color: inherit !important;
+      }
+    }
+  }
+  &__close {
+    display: flex;
+    width: 100%;
+  }
 }

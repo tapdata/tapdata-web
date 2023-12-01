@@ -72,3 +72,5 @@ export * from './virtual-tree'
 export * from './pro-table'
 
 export * from './icon-button'
+
+export * from './CloseIcon'

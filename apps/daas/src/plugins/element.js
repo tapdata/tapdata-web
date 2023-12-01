@@ -1,5 +1,6 @@
-import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { ElDialog, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
+import { CloseIcon } from '@tap/component'
 
 // TODO 可能需要重写适配
 /*const showMessage = Symbol('showMessage')
@@ -41,6 +42,7 @@ export const install = (app) => {
   app.use(ElLoading)
   app.use(ElMessage)
   app.use(ElMessageBox)
+  ElDialog.props.closeIcon.default = CloseIcon
 }
 
 // TODO 可能需要重写适配
