@@ -1,7 +1,8 @@
 <template>
   <el-drawer
-    :visible="visible"
+    :model-value="visible"
     size="100%"
+    class="materialized-view-drawer"
     :with-header="false"
     :close-on-press-escape="false"
     @update:visible="handleUpdateVisible"
@@ -842,5 +843,9 @@ $sidebarBg: #fff;
 }
 .h-48 {
   height: 48px;
+}
+
+:global(.materialized-view-drawer .el-drawer__body) {
+  padding: 0 !important;
 }
 </style>

@@ -34,7 +34,8 @@
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import ResizeObserver from 'resize-observer-polyfill'
+// import ResizeObserver from 'resize-observer-polyfill'
+import { useResizeObserver } from '@vueuse/core'
 import { on, off } from '@tap/shared'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -177,16 +178,15 @@ export default {
   },
   async mounted() {
     // 监听画布的尺寸变化
-    this.resizeObserver = new ResizeObserver(this.observerHandler)
-    this.resizeObserver.observe(this.$el)
-
+    this.stopResizeObserver = useResizeObserver(this.$el, this.observerHandler).stop
+    await this.$nextTick()
     this.initVisibleArea(true)
     await this.$nextTick()
     this.center()
   },
   beforeUnmount() {
     this.offEvent()
-    this.resizeObserver.unobserve(this.$el)
+    this.stopResizeObserver()
   },
   methods: {
     ...mapMutations('dataflow', [
@@ -198,7 +198,6 @@ export default {
     ]),
 
     observerHandler() {
-      console.log('observerHandler') // eslint-disable-line
       this.initVisibleArea()
     },
 
@@ -265,6 +264,7 @@ export default {
     },
 
     initVisibleArea(isFirst) {
+      console.log('initVisibleArea', this.$el.clientWidth, isFirst)
       const rect = this.$el.getBoundingClientRect()
       const area = {
         width: this.$el.clientWidth,

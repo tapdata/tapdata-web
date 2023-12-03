@@ -21,7 +21,7 @@ export default function render(_props, { attrs }) {
     <div
       {...{
         class: 'inline-block',
-        ..._data,
+        ...props,
       }}
     ></div>
   )

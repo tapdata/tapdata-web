@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue'
+import { defineComponent, ref, watch, onMounted, nextTick } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -16,7 +16,8 @@ export const MergeTableTree = observer(
       findNodeById: Function,
       loadFieldsMethod: Function,
     },
-    setup(props, { emit, refs, root }) {
+    setup(props, { emit, root }) {
+      const tree = ref(null)
       const formRef = useForm()
       const form = formRef.value
       const schemaRef = useFieldSchema()
@@ -92,7 +93,7 @@ export const MergeTableTree = observer(
         }
 
         nextTick(() => {
-          refs.tree?.setCurrentKey(currentKey.value)
+          tree.value?.setCurrentKey(currentKey.value)
         })
       }
 
@@ -119,7 +120,7 @@ export const MergeTableTree = observer(
 
       const updatePath = (node) => {
         const temp = []
-        const nodePath = refs.tree.getNodePath(node)
+        const nodePath = tree.value.getNodePath(node)
         nodePath.reduce((parent, item) => {
           if (parent) {
             temp.push(parent.findIndex((p) => p.id === item.id))
@@ -183,9 +184,9 @@ export const MergeTableTree = observer(
       }
 
       const handleNodeDrop = () => {
-        refs.tree.setCurrentKey(currentKey.value)
+        tree.value.setCurrentKey(currentKey.value)
         const oldPath = currentPath.value
-        const path = updatePath(refs.tree.getNode(currentKey.value))
+        const path = updatePath(tree.value.getNode(currentKey.value))
         if (path !== oldPath) {
           loadField(currentKey.value, path, true)
         }
@@ -193,13 +194,13 @@ export const MergeTableTree = observer(
 
       onMounted(() => {
         if (currentKey.value) {
-          refs.tree.setCurrentKey(currentKey.value)
+          tree.value.setCurrentKey(currentKey.value)
         }
       })
 
       return () => {
         return (
-          <div class="merge-table-tree-space flex overflow-hidden">
+          <div class="merge-table-tree-space flex overflow-hidden rounded-4">
             <FormItem.BaseItem
               wrapperWidth={240}
               feedbackLayout="none"
@@ -208,7 +209,7 @@ export const MergeTableTree = observer(
               tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
               <ElTree
-                ref="tree"
+                ref={tree}
                 data={treeRef.value}
                 nodeKey="id"
                 defaultExpandAll={true}

@@ -98,8 +98,8 @@
 
       <MaterializedView
         ref="materializedView"
-        v-model:is-saving="isSaving"
-        :visible="materializedViewVisible"
+        :is-saving="isSaving"
+        v-model:visible="materializedViewVisible"
         :buttonShowMap="buttonShowMap"
         :dataflow="dataflow"
         @start="handleStart"
