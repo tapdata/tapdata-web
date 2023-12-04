@@ -84,8 +84,8 @@
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
-          <div class="username flex align-items-center outline-0">
+        <ElDropdown placement="bottom" :show-timeout="0" @command="command">
+          <div class="username flex align-items-center outline-0 command-item menu-user rounded-4">
             <img
               v-if="user.avatar"
               :src="user.avatar"

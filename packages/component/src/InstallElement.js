@@ -1,6 +1,6 @@
-import { ElLoading, ElMessage, ElMessageBox, ElDialog } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElDropdown } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
-import { CloseIcon } from '@tap/component'
+import { CloseIcon } from './CloseIcon'
 
 // TODO 可能需要重写适配
 /*const showMessage = Symbol('showMessage')
@@ -37,24 +37,33 @@ class MessageConstructor {
 
 export const Message = new MessageConstructor()*/
 
-export const install = (app) => {
-  // app.use(ElementPlus, { i18n: i18n.global.t })
+export const installElement = (app) => {
   app.use(ElLoading)
   app.use(ElMessage)
   app.use(ElMessageBox)
 
   ElDialog.props.closeIcon.default = CloseIcon
+
+  // 隐藏箭头后的offset
+  ElSelect.props.popperOptions.default = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 4],
+        },
+      },
+    ],
+  }
+  // 隐藏箭头后的offset
+  ElDropdown.props.popperOptions.default = {
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, 4],
+        },
+      },
+    ],
+  }
 }
-
-// TODO 可能需要重写适配
-/*
-window.$vueApp.config.globalProperties.$message = Message
-
-window.$vueApp.config.globalProperties.$msgbox = MessageBox
-window.$vueApp.config.globalProperties.$alert = MessageBox.alert
-
-window.$vueApp.config.globalProperties.$prompt = MessageBox.prompt
-window.$vueApp.config.globalProperties.$loading = Loading.service
-window.$vueApp.config.globalProperties.$notify = Notification
-window.loading = Loading.service
-window.$vueApp.use(Loading.directive)*/

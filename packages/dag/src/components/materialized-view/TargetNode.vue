@@ -11,7 +11,7 @@
       <div class="flex gap-1 p-1">
         <AsyncSelect
           :disabled="disabled"
-          v-model:value="node.connectionId"
+          v-model="node.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
           :params="params"
@@ -30,7 +30,7 @@
           </template>
         </AsyncSelect>
         <TableSelect
-          v-model:value="node.tableName"
+          v-model="node.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!node.connectionId || disabled"
           :method="loadTable"
@@ -599,6 +599,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import 'style';
 </style>

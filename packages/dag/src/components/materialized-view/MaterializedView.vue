@@ -140,13 +140,13 @@
     </div>
 
     <ElDialog append-to-body v-model="helpVisible" width="52%" @closed="onClosedDialog">
-      <template #title>
-        <span class="fs-6 fw-sub font-color-dark">
+      <template #header="{ titleClass }">
+        <span :class="titleClass">
           {{ $t('packages_dag_materialized_view_help_title') }}
         </span>
       </template>
 
-      <div class="mt-n4">
+      <div>
         <p class="mb-2">
           {{ $t('packages_dag_materialized_view_help_desc') }}
         </p>
@@ -156,7 +156,7 @@
           >
         </p>
         <p class="mb-2 font-color-dark fw-sub">{{ $t('packages_dag_materialized_view_help_video_desc') }}</p>
-        <div v-html="iframeHtml"></div>
+        <div class="pb-5" v-html="iframeHtml"></div>
       </div>
     </ElDialog>
   </el-drawer>
@@ -272,6 +272,7 @@ export default {
         return
       }
 
+      await this.$nextTick()
       this.initView()
       this.loading = true
       await this.transformToDag()
@@ -603,7 +604,7 @@ export default {
 
     initView() {
       const { jsPlumbIns } = this
-      jsPlumbIns.setContainer('#node-view')
+      jsPlumbIns.setContainer(this.$refs.paperScroller.$el.querySelector('.paper-content-wrap'))
     },
 
     resetView() {
@@ -863,7 +864,7 @@ export default {
       this.buried('openMaterializedViewDoc')
     },
 
-    onClosedDialog() {}
+    onClosedDialog() {},
   },
   emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node'],
 }

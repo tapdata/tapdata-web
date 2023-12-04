@@ -10,7 +10,7 @@ import store from '@/store'
 import { errorConfirmFnc } from '@/util'
 import VConfirm from '@/components/v-confirm'
 import { startTimeOnSite, startTimeOnPage } from '@/plugins/buried'
-import { VIcon, VButton } from '@tap/component'
+import { VIcon, VButton, installElement } from '@tap/component'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
@@ -64,6 +64,7 @@ export default ({ routes }) => {
 
     installAllPlugins(app)
     installDirectives(app)
+    installElement(app)
 
     window.$vueApp.use(i18n)
     window.$vueApp.use(store)

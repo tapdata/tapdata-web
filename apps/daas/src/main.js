@@ -7,7 +7,7 @@ import router from './router'
 import Cookie from '@tap/shared/src/cookie'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
-import { VIcon } from '@tap/component'
+import { VIcon, installElement } from '@tap/component'
 import { settingsApi, usersApi, timeStampApi } from '@tap/api'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
@@ -101,6 +101,7 @@ let init = (settings) => {
 
   installAllPlugins(app)
   installDirectives(app)
+  installElement(app)
 
   // TODO 废弃，后续替换
   // window.$vueApp.use(VueClipboard)

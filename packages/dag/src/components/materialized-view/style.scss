@@ -99,42 +99,43 @@
       max-height: 400px;
     }
   }
-}
-.color-success-light-5 {
-  color: #009a29;
-}
-.el-form-item {
-  margin-bottom: 8px;
 
-  .el-form-item__label {
-    width: 100%;
-    font-size: 12px;
-    line-height: 20px;
-    padding-bottom: 0;
-    margin-bottom: 6px;
+  .color-success-light-5 {
+    color: #009a29;
+  }
+  .el-form-item {
+    margin-bottom: 8px;
+
+    .el-form-item__label {
+      width: 100%;
+      font-size: 12px;
+      line-height: 20px;
+      padding-bottom: 0;
+      margin-bottom: 6px;
+    }
+
+    .el-button--ghost {
+      border: 1px dashed #dcdfe6;
+    }
   }
 
-  .el-button--ghost {
-    border: 1px dashed #dcdfe6;
-  }
-}
+  .el-input {
+    .el-input__inner {
+      //padding-right: 24px;
+      font-size: 12px;
+    }
+    .el-input__suffix {
+      right: 0;
+    }
 
-.el-input {
-  .el-input__inner {
-    padding-right: 24px;
-    font-size: 12px;
-  }
-  .el-input__suffix {
-    right: 0;
+    &:not(.el-input--prefix) .el-input__inner {
+      padding-left: 8px;
+    }
   }
 
-  &:not(.el-input--prefix) .el-input__inner {
-    padding-left: 8px;
-  }
-}
-
-.table-select {
-  .el-input__inner {
-    height: 32px !important;
+  .table-select {
+    .el-input__inner {
+      height: 32px !important;
+    }
   }
 }

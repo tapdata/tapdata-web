@@ -25,7 +25,7 @@
       <div class="flex gap-1 p-1">
         <AsyncSelect
           :disabled="disabled"
-          v-model:value="dagNode.connectionId"
+          v-model="dagNode.connectionId"
           :placeholder="$t('packages_dag_select_database_tips')"
           :method="loadDatabases"
           :params="{ isSource: true }"
@@ -44,7 +44,7 @@
         </AsyncSelect>
         <TableSelect
           class="table-select"
-          v-model:value="dagNode.tableName"
+          v-model="dagNode.tableName"
           :placeholder="$t('packages_dag_select_table_tips')"
           :disabled="!dagNode.connectionId || disabled"
           collapse-tags
@@ -88,14 +88,14 @@
               <div class="flex align-center gap-1" v-for="(keys, i) in node.joinKeys" :key="i">
                 <!--<div class="flex flex-column">-->
                 <FieldSelect
-                  v-model:value="keys.source"
+                  v-model="keys.source"
                   itemLabel="field_name"
                   itemValue="field_name"
                   :options="schema"
                 ></FieldSelect>
                 <span>=</span>
                 <FieldSelect
-                  v-model:value="keys.target"
+                  v-model="keys.target"
                   :options="targetFields"
                   @visible-change="handleFieldSelectVisible"
                 ></FieldSelect>
@@ -108,12 +108,12 @@
 
         <template v-if="node.parentId || hasTargetNode">
           <ElFormItem :label="$t('packages_dag_materialized_view_field_type')">
-            <ElSelect v-model:value="fieldType" class="w-100" @change="onChangeType">
+            <ElSelect v-model="fieldType" class="w-100" @change="onChangeType">
               <ElOption v-bind="option" v-for="(option, i) in fieldTypeOptions" :key="i"></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_nodes_mergetable_guanlianhouxieru')">
-            <ElInput v-model:value="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
+            <ElInput v-model="targetPath" @change="$emit('change-path', node, $event)"></ElInput>
           </ElFormItem>
         </template>
 
@@ -123,7 +123,7 @@
         >
           <FieldSelect
             class="w-100"
-            v-model:value="node.arrayKeys"
+            v-model="node.arrayKeys"
             itemLabel="field_name"
             itemValue="field_name"
             :options="schema"
@@ -136,16 +136,10 @@
     <div class="p-2 node-body" v-loading="schemaLoading">
       <div class="flex align-center">
         <code class="color-success-light-5 mr-2">{</code>
-        <ElPopover
-          v-if="displaySchema && !disabled"
-          placement="top"
-          width="240"
-          v-model:value="fieldNameVisible"
-          trigger="manual"
-        >
+        <ElPopover v-if="displaySchema && !disabled" placement="top" width="240" :visible="fieldNameVisible">
           <div ref="fieldPopover">
             <ElInput
-              v-model:value="fieldName"
+              v-model="fieldName"
               autofocus
               :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
               @keydown.enter="onSaveFieldName"
@@ -762,7 +756,7 @@ export default {
     },
 
     include() {
-      return [this.$refs.dropDownMenu.$el, this.$refs.fieldPopover]
+      return [this.$refs.dropDownMenu?.$el, this.$refs.fieldPopover]
     },
 
     onClickOutside() {
@@ -775,6 +769,7 @@ export default {
     },
 
     onConnectionSelect(connection) {
+      console.log('onConnectionSelect', connection)
       const nodeAttrs = {
         connectionName: connection.name,
         connectionType: connection.connection_type,
@@ -904,6 +899,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import 'style';
 </style>

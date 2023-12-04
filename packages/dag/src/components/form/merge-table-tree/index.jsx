@@ -108,9 +108,14 @@ export const MergeTableTree = observer(
         if (!dagNode) return
 
         return (
-          <div class="flex flex-1 align-center ml-n2 overflow-hidden merge-table-tree-node cursor-pointer">
+          <div class="flex flex-1 align-center overflow-hidden merge-table-tree-node cursor-pointer">
             <NodeIcon size={20} node={dagNode}></NodeIcon>
-            <OverflowTooltip class="text-truncate flex-1 lh-1" placement="left" text={dagNode.name} open-delay={300} />
+            <OverflowTooltip
+              class="ml-1 text-truncate flex-1 lh-1"
+              placement="left"
+              text={dagNode.name}
+              open-delay={300}
+            />
             <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
               location
             </IconButton>
@@ -219,9 +224,12 @@ export const MergeTableTree = observer(
                 scopedSlots={{
                   default: renderNode,
                 }}
+                indent={8}
                 vOn:current-change={handleCurrentChange}
                 vOn:node-drop={handleNodeDrop}
-              />
+              >
+                {{ default: renderNode }}
+              </ElTree>
             </FormItem.BaseItem>
             <div class="border-start flex-1 px-2 overflow-y-auto">
               {currentPath.value &&

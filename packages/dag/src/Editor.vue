@@ -681,8 +681,9 @@ export default {
       },
     ) {
       const newNode = this.quickAddNode(activeNode, nodeType)
-
-      this.$refs.materializedView.addTargetNode(newNode)
+      this.$nextTick(() => {
+        this.$refs.materializedView.addTargetNode(newNode)
+      })
     },
 
     async checkMaterializedView(query = {}) {

@@ -74,3 +74,5 @@ export * from './pro-table'
 export * from './icon-button'
 
 export * from './CloseIcon'
+
+export * from './InstallElement'

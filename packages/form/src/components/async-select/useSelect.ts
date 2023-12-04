@@ -295,6 +295,10 @@ export const useSelect: Function = (props, states: States, ctx) => {
             triggerRef(groupQueryChange)
           }
         }
+
+        if (props.lazy && !states.items.length) {
+          loadData()
+        }
       }
       ctx.emit('visible-change', val)
     },
@@ -450,16 +454,12 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
   const setSelected = async () => {
     if (!props.multiple) {
-      const option = await getOption(props.modelValue)
+      const option = await getOption(props.modelValue, false, props.onSetSelected && states.hoverIndex > -1)
 
-      if (props.onSetSelected && states.hoverIndex) {
-        if (!option.$el) {
-          props.onSetSelected(option)
-        } else {
-          const item = states.items.find((item) => item[props.itemValue] === props.modelValue)
-          item && props.onSetSelected(item)
-        }
-      }
+      /*if (props.onSetSelected && states.hoverIndex) {
+        const item = states.items.find((item) => item[props.itemValue] === props.modelValue)
+        item && props.onSetSelected(item)
+      }*/
 
       if (option.props?.created) {
         states.createdLabel = option.props.value
@@ -475,6 +475,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
       if (option.currentLabel === option.value && props.itemType === 'object' && props.currentLabel) {
         states.selectedLabel = props.currentLabel
+        option.currentLabel = props.currentLabel
       }
       return
     } else {
@@ -505,7 +506,7 @@ export const useSelect: Function = (props, states: States, ctx) => {
     })
   }
 
-  const getOption = async (value, notNew?: boolean) => {
+  const getOption = async (value, notNew?: boolean, setSelect?: boolean) => {
     let option, optionData
     const isObjectValue = isObject(value)
     const isValidValue = isValid(value)
@@ -528,6 +529,10 @@ export const useSelect: Function = (props, states: States, ctx) => {
 
     optionData && props.onLoadOption?.(optionData)
 
+    if (setSelect && optionData) {
+      props.onSetSelected?.(optionData)
+    }
+
     if (option || notNew) return option
 
     const label = isObjectValue ? value.label : isValidValue ? value : ''
@@ -545,6 +550,11 @@ export const useSelect: Function = (props, states: States, ctx) => {
     if (props.multiple) {
       ;(newOption as any).hitState = false
     }
+
+    if (setSelect) {
+      props.onSetSelected?.(newOption)
+    }
+
     return newOption
   }
 
@@ -997,15 +1007,6 @@ export const useSelect: Function = (props, states: States, ctx) => {
       }
     },
     { deep: true },
-  )
-
-  watch(
-    () => states.visible,
-    (v) => {
-      if (props.lazy && !states.items.length && v) {
-        loadData()
-      }
-    },
   )
 
   onMounted(async () => {

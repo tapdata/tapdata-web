@@ -59,6 +59,9 @@
       border-radius: map-get($border-radius, base);
     }
   }
+  .el-popper__arrow {
+    display: none;
+  }
 }
 
 // Dropdown
@@ -66,6 +69,11 @@
   padding: 4px !important;
   &__item {
     border-radius: map-get($border-radius, base);
+  }
+}
+.el-dropdown__popper {
+  .el-popper__arrow {
+    display: none;
   }
 }
 
@@ -94,19 +102,23 @@
   &__body {
     padding-block: 0 !important;
     padding-inline: 24px !important;
-    margin-bottom: var(--el-dialog-padding-primary);
+    //margin-bottom: var(--el-dialog-padding-primary);
   }
   &__footer {
     padding-inline: 24px !important;
     padding-top: 0 !important;
+    margin-top: var(--el-dialog-padding-primary);
   }
   &__headerbtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     top: 16px !important;
     right: 16px !important;
-    width: 28px;
-    height: 28px;
+    width: 28px !important;
+    height: 28px !important;
     line-height: 1;
-    font-size: 20px;
+    font-size: 20px !important;
     border-radius: map-get($border-radius, base);
     &:hover {
       color: rgba(0, 0, 0, 0.88);
