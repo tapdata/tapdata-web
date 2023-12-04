@@ -24,7 +24,7 @@ export const JsDebug = observer(
       const logLoading = ref(false)
       const connForm = props.getForm()
       const form = createForm({
-        values: connForm.values,
+        values: connForm?.values,
       })
       const params = reactive({
         connectType: '',

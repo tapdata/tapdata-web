@@ -212,7 +212,6 @@ export default {
       jsDebugParamsMethod: null,
       jsDebugDataMethod: null,
       schemaScope: null,
-      pdkFormModel: {},
       doc: '',
       pathUrl: '',
       showDebug: false,
@@ -225,12 +224,10 @@ export default {
         total: 0,
       },
       showAgentIpAlert: false,
+      schemaFormInstance: null
     }
   },
   computed: {
-    schemaFormInstance() {
-      return this.$refs.schemaToForm.getForm?.()
-    },
     connectionId() {
       return this.model?.id || this.commandCallbackFunctionId
     },
@@ -241,9 +238,6 @@ export default {
     },
   },
   async created() {
-    this.id = this.$route.params.id || ''
-    this.getPdkForm()
-
     if (!this.isDaas) {
       const { items: agentData } = await this.$axios.get(
         'api/tcm/agent?filter=' +
@@ -268,10 +262,13 @@ export default {
     })
   },
   mounted() {
+    this.schemaFormInstance = this.$refs.schemaToForm?.form // 获取表单的 form
+    this.id = this.$route.params.id || ''
     const { fromPath } = this.$route.query
     if (fromPath) {
       this.pathUrl = fromPath
     }
+    this.getPdkForm()
   },
   methods: {
     goBack() {
@@ -307,7 +304,6 @@ export default {
     },
     submit() {
       this.buried('connectionSubmit')
-      this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
         // 保存数据源
