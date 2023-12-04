@@ -1,6 +1,6 @@
 $formily-prefix: 'formily-element';
 $namespace: 'el';
-@import '~element-ui/packages/theme-chalk/src/common/var.scss';
+@import '~element-plus/theme-chalk/src/common/var.scss';
 
 @mixin active {
   border-color: $--color-primary;

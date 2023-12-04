@@ -91,7 +91,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
-import MsgBox from 'element-ui/packages/message-box/src/main.vue'
+import MsgBox from 'element-plus/lib/components/message-box/index'
 import i18n from '@/i18n'
 
 export default {

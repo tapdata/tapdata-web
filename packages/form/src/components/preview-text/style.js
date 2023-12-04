@@ -1,1 +1,1 @@
-import 'element-ui/packages/theme-chalk/src/tag.scss'
+import 'element-plus/theme-chalk/src/tag.scss'
