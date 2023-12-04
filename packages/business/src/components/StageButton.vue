@@ -1,5 +1,5 @@
 <template>
-  <ElButton type="text" :loading="loading" @click="loadSchema">
+  <ElButton type="text" :loading="loading" :disabled="disabled" @click="loadSchema">
     <template v-if="loading">
       <span>{{ progress }}</span>
     </template>
@@ -31,6 +31,10 @@ export default {
       default: () => {
         return i18n.t('public_button_reload')
       }
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -66,6 +70,7 @@ export default {
     },
 
     loadSchema() {
+      if (this.disabled) return
       connectionsApi
         .updateById(this.connectionId, {
           loadCount: 0,
@@ -80,6 +85,7 @@ export default {
     },
 
     getProgress(check = false) {
+      if (this.disabled) return
       if (this.destroyStatus) return
       if (!this.connectionId) return
       if (!check) {
@@ -95,7 +101,7 @@ export default {
           const { taskId, nodeId } = this
           if (!check && taskId && nodeId) {
             metadataInstancesApi
-              .logicSchema(taskId, {
+              .deleteLogicSchema(taskId, {
                 nodeId
               })
               .then(this.updateDag)
