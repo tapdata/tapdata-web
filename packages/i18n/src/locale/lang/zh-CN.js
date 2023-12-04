@@ -32,6 +32,8 @@ export default {
   public_list_view: '列表',
   public_all: '全部',
   public_no_permissions: '没有权限',
+  public_yes: '是',
+  public_no: '否',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -66,6 +68,7 @@ export default {
   public_status_init: '初始化',
   public_status_waiting_delete: '等待删除',
   public_status_deleting: '删除中',
+  public_status_delete_failed: '删除失败',
   public_status_deleted: '已删除',
 
   // 按钮
@@ -121,6 +124,7 @@ export default {
   public_button_stop_recover: '恢复挖掘',
   public_button_execute: '执行',
   public_button_obtain: '获取',
+  public_button_help: '帮助',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否删除',
@@ -133,6 +137,7 @@ export default {
   public_message_delete_fail: '删除失败',
   public_message_deleting: '删除中',
   public_message_operation_success: '操作成功',
+  public_message_operation_failed: '操作失败',
   public_message_request_error: '请求数据失败',
   public_message_loading: '正在加载',
   public_message_401: '登录过期，请重新登录',

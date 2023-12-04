@@ -32,6 +32,8 @@ export default {
   public_list_view: '列表',
   public_all: '全部',
   public_no_permissions: '沒有權限',
+  public_yes: '是',
+  public_no: '否',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -66,6 +68,7 @@ export default {
   public_status_init: '初始化',
   public_status_waiting_delete: '等待删除',
   public_status_deleting: '删除中',
+  public_status_delete_failed: '刪除失敗',
   public_status_deleted: '已删除',
   // 按鈕
   public_button_edit: '編輯',
@@ -120,6 +123,7 @@ export default {
   public_button_stop_recover: '恢復挖掘',
   public_button_execute: '執行',
   public_button_obtain: '獲取',
+  public_button_help: '幫助',
   // 消息
   public_message_title_prompt: '提示',
   public_message_delete_confirm: '是否刪除',
@@ -132,6 +136,7 @@ export default {
   public_message_delete_fail: '刪除失敗',
   public_message_deleting: '刪除中',
   public_message_operation_success: '操作成功',
+  public_message_operation_failed: '操作失敗',
   public_message_request_error: '請求數據失敗',
   public_message_loading: '正在加載',
   public_message_401: '登錄過期，請重新登錄',

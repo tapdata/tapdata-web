@@ -402,7 +402,12 @@ export default defineComponent({
           ) : data.isEmpty ? (
             <div class="flex align-items-center">
               <span class="mr-1">{this.$t('public_data_no_data')}</span>
-              <StageButton connection-id={this.getConnectionId(node)}> </StageButton>
+              <StageButton
+                connection-id={this.getConnectionId(node)}
+                onComplete={() => {
+                  this.handleNodeExpand(node.parent.data, node.parent)
+                }}
+              />
             </div>
           ) : (
             <VIcon class="tree-item-icon mr-2" size="18">
@@ -433,10 +438,11 @@ export default defineComponent({
 
       if (this.startingTour && this.newConnectionId) {
         const connection = this.connectionMap[this.newConnectionId]
+
         if (
           connection &&
-          connection.status !== 'testing' &&
-          connection.loadFieldsStatus !== 'loading' &&
+          connection.status === 'ready' &&
+          connection.loadFieldsStatus === 'finished' &&
           !connection.children.length
         ) {
           const node = this.$refs.tree.getNode(this.newConnectionId)

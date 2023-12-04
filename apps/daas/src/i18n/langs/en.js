@@ -631,8 +631,9 @@ export default {
   cluster_ip_tip:
     'Switching the network card only changes the display of IP under the server on the cluster management page, and does not affect any functions',
   cluster_confirm_text: 'Confirm',
-  cluster_restart_server: 'Restart service',
-  cluster_start_server: 'Start service',
+  cluster_restart_server: 'Restart Service',
+  cluster_unbind_server: 'Unbind Server',
+  cluster_start_server: 'Start Service',
   cluster_startup_after_add: 'Please add after startup',
   cluster_startup_after_delete: 'Please delete after startup',
   cluster_del_message: 'OK to delete the server',

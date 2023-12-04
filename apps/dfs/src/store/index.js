@@ -1,4 +1,3 @@
-import * as Vue from 'vue'
 import * as Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
@@ -52,6 +51,7 @@ const store = Vuex.createStore({
       steps: [],
       behavior: '',
       behaviorAt: null,
+      expand: {},
     },
     agentCount: {
       agentTotalCount: 0,

@@ -13,6 +13,9 @@
         <div class="fs-6 font-color-dark ml-1">
           {{ $t('packages_dag_materialized_view') }}
         </div>
+        <ElButton type="text" class="ml-4 color-warning" @click="handleOpenHelp"
+          ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
+        >
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
           <!--删除-->
           <ElTooltip v-if="!disabled" transition="tooltip-fade-in" :content="$t('public_button_delete') + '(Del)'">
@@ -135,6 +138,27 @@
         ></TargetNode>
       </PaperScroller>
     </div>
+
+    <ElDialog append-to-body v-model="helpVisible" width="52%" @closed="onClosedDialog">
+      <template #title>
+        <span class="fs-6 fw-sub font-color-dark">
+          {{ $t('packages_dag_materialized_view_help_title') }}
+        </span>
+      </template>
+
+      <div class="mt-n4">
+        <p class="mb-2">
+          {{ $t('packages_dag_materialized_view_help_desc') }}
+        </p>
+        <p class="mb-2">
+          <ElLink type="primary" class="text-decoration-underline" @click="handleOpenHelpDoc"
+            >{{ $t('packages_dag_materialized_view_help_tutorial_btn') }} &gt;&gt;</ElLink
+          >
+        </p>
+        <p class="mb-2 font-color-dark fw-sub">{{ $t('packages_dag_materialized_view_help_video_desc') }}</p>
+        <div v-html="iframeHtml"></div>
+      </div>
+    </ElDialog>
   </el-drawer>
 </template>
 
@@ -152,6 +176,9 @@ import { config, jsPlumb } from '../../instance'
 
 export default {
   name: 'MaterializedView',
+
+  inject: ['buried'],
+
   props: {
     visible: Boolean,
     disabled: Boolean,
@@ -184,9 +211,13 @@ export default {
       targetNodeSchemaLoading: false,
       selectedNodeId: '',
       loadingSchemaNodeId: '',
+      helpVisible: false,
+      docUrl: '',
+      iframeHtml: '',
     }
   },
   computed: {
+    ...mapGetters(['isDomesticStation']),
     ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
@@ -258,6 +289,23 @@ export default {
       e.preventDefault()
       this.visible && this.handleAutoLayout()
     })
+
+    if (!this.isDomesticStation) {
+      this.docUrl = 'https://docs.tapdata.io/cloud/user-guide/data-development/create-materialized-view/'
+      this.iframeHtml = `<iframe
+            class="block"
+            width="100%"
+            height="360"
+            src="https://www.youtube.com/embed/gcJew9u2uxY?si=zpvhZIjI8A9A9O5y"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>`
+    } else {
+      this.docUrl = 'https://docs.tapdata.net/cloud/user-guide/data-development/create-materialized-view/'
+      this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
+    }
   },
   methods: {
     ...mapActions('dataflow', ['updateDag']),
@@ -804,6 +852,18 @@ export default {
     },
 
     getNodeById() {},
+
+    handleOpenHelp() {
+      this.helpVisible = true
+      this.buried('openMaterializedViewHelp')
+    },
+
+    handleOpenHelpDoc() {
+      window.open(this.docUrl, '_blank')
+      this.buried('openMaterializedViewDoc')
+    },
+
+    onClosedDialog() {}
   },
   emits: ['add-node', 'add-target-node', 'update:visible', 'delete-node', 'add-target-node'],
 }
@@ -847,5 +907,10 @@ $sidebarBg: #fff;
 
 :global(.materialized-view-drawer .el-drawer__body) {
   padding: 0 !important;
+}
+</style>
+<style>
+.materialized-view-help-dialog {
+  z-index: 10000;
 }
 </style>

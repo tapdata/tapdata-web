@@ -1093,9 +1093,22 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(() => {
+      taskApi.batchStart(ids).then(data => {
         this.autoLoadTaskById()
-        this.$message.success(this.$t('public_message_operation_success'))
+        if (data.every(t => t.code === 'ok')) {
+          this.$message.success(this.$t('public_message_operation_success'))
+        } else {
+          const findManuallyScheduleLimit = data.find(t => t.code === 'Task.ManuallyScheduleLimit')
+          const findScheduleLimit = data.find(t => t.code === 'Task.ScheduleLimit')
+          if (findScheduleLimit) {
+            this.$emit('handle-show-upgrade', findScheduleLimit)
+            return
+          } else if (findManuallyScheduleLimit) {
+            this.$message.error(findManuallyScheduleLimit.message)
+            return
+          }
+          this.$message.error(data[0]?.message)
+        }
       })
     },
 

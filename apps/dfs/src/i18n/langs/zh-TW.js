@@ -1517,7 +1517,9 @@ export default {
   dfs_guide_index_quedingshiyongchang: '確定使用場景',
   dfs_guide_index_zhanghaoanquanbang: '賬號安全綁定',
   dfs_guide_index_zhengzaijianceyin: '正在檢測引擎部署狀態，檢測完成之後自動進入任務引導頁面。 ',
+  dfs_guide_index_waiting_for_deployment_tip: '完成本地部署後，請點擊「我已部署完成按鈕」以結束新手引導。',
   dfs_guide_index_dengdaibushu: '等待手動部署',
+  dfs_guide_index_development_complete: '我已部署完成',
   dfs_guide_index_tapda:
     'Tapdata Cloud 是專業的數據集成與服務平台, 為了讓您更流暢地使用產品, 請跟隨我們的引導, 開始一步步操作吧',
   dfs_guide_index_huanyingshiyongT: '歡迎使用 Tapdata Cloud 數據服務',
@@ -1602,6 +1604,11 @@ export default {
   dfs_replication_tour_dialog_start: '開始',
   dfs_replication_tour_dialog_success_title: '恭喜您已經完成複製任務的引導',
   dfs_replication_tour_dialog_finish: '完成',
+  dfs_replication_tour_dialog_finished: '恭喜你完成引導',
+  dfs_replication_tour_dialog_finished_subtitle: '接下來可以免費體驗我們的產品進行數據庫的複製、遷移等工作啦',
+  dfs_replication_tour_dialog_finished_survey_title:
+    '通過新手引導，您現在對Tapdata有了一定的瞭解。您還會繼續使用Tapdata嗎？',
+  dfs_replication_tour_dialog_finished_survey_placeholder: '輸入您的意見或者建議...',
   dfs_subscribe_to_professional_plan: '訂閱專業版',
   dfs_order_change: '變更',
   dfs_change_record: '變更記錄',

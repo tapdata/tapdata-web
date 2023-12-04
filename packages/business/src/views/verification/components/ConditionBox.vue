@@ -37,7 +37,7 @@
           :data-index="index"
           :size-dependencies="[item.id, item.source, item.target]"
         >
-          <div class="joint-table-item" :class="['joint-table-item']" :key="item.id + index">
+          <div class="joint-table-item" :key="item.id + index">
             <div class="joint-table-setting overflow-hidden">
               <div class="flex justify-content-between">
                 <div class="cond-item__title flex align-items-center">
@@ -114,7 +114,7 @@
                 >
                 </AsyncSelect>
               </div>
-              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id">
+              <div class="setting-item mt-4" :key="'SchemaToForm' + item.id + index + inspectMethod">
                 <SchemaToForm
                   :ref="`schemaToForm_${item.id}`"
                   :value="item"
@@ -167,11 +167,10 @@
                   ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
                 >
               </div>
-              <div class="setting-item mt-4">
+              <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
                 <ElCheckbox
                   v-model:value="item.showAdvancedVerification"
-                  v-show="inspectMethod === 'field'"
-                  @input="handleChangeAdvanced(item)"
+                  @change="handleChangeAdvanced(item, arguments[0])"
                   >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
                 >
               </div>
@@ -1126,10 +1125,6 @@ export default {
     },
 
     addItem() {
-      // const validateMsg = this.validate()
-      // if (validateMsg) {
-      //   return this.$message.error(validateMsg)
-      // }
       this.list.push(this.getItemOptions())
     },
 
@@ -1147,7 +1142,7 @@ export default {
         tableNames.push(...m.objectNames)
       })
       // 加载数据源的Capabilities
-      const capabilitiesMap = await this.getCapabilities(connectionIds)
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
       if (!matchNodeList.length) {
         this.autoAddTableLoading = false
         this.updateAutoAddTableLoading()
@@ -1393,6 +1388,10 @@ export default {
       item.target.currentLabel = `${targetName} / ${targetConnectionName}`
       item.target.table = tableName ? tableName : tableNameRelation[val]
 
+      // 加载数据源的Capabilities
+      const capabilitiesMap = this.getMatchCapabilitiesMap()
+      item.target.capabilities = capabilitiesMap[targetConnectionId]
+
       const key = [target || '', targetConnectionId, item.target.table].join()
       if (this.fieldsMap[key]) {
         item.target.fields = this.fieldsMap[key]
@@ -1425,9 +1424,12 @@ export default {
       })
     },
 
-    handleChangeAdvanced(item) {
-      item.target.targeFilterFalg = false
-      item.target.where = ''
+    handleChangeAdvanced(item, val) {
+      Object.assign(item.target, {
+        targeFilterFalg: false,
+        where: ''
+      })
+      item.showAdvancedVerification = val
     },
 
     addScript(index) {
@@ -1791,6 +1793,15 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 
       return data.reduce((cur, pre) => {
         cur[pre.id] = pre.capabilities
+        return cur
+      }, {})
+    },
+
+    // 获取匹配节点的Capabilities
+    getMatchCapabilitiesMap() {
+      const list = cloneDeep(this.allStages)
+      return list.reduce((cur, pre) => {
+        cur[pre.connectionId] = pre.attrs?.capabilities
         return cur
       }, {})
     },

@@ -2,7 +2,7 @@ import { defineComponent, ref } from 'vue'
 import i18n from '@tap/i18n'
 import { useForm } from '@tap/form'
 import { IconButton } from '@tap/component'
-import { metadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
 import FieldList from '../field-inference/List'
@@ -81,6 +81,14 @@ export const SchemaPreview = defineComponent({
       loading.value = false
     }
 
+    // 加载dataTypesJson
+    const dataTypesJson = ref({})
+    const loadDatatypesjson = async () => {
+      const pdkHashData = await databaseTypesApi.pdkHash(form.values.attrs?.pdkHash)
+      dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+    }
+
+
     const mapSchema = (schema) => {
       const { fields = [], findPossibleDataTypes = {} } = schema
       //如果findPossibleDataTypes = {}，不做类型校验
@@ -136,6 +144,8 @@ export const SchemaPreview = defineComponent({
 
     loadSchema()
 
+    loadDatatypesjson()
+
     const handleUpdate = (rules) => {
       form.setValuesIn('fieldChangeRules', rules)
       fieldChangeRules = rules
@@ -187,6 +197,7 @@ export const SchemaPreview = defineComponent({
               class="w-100 border rounded-lg overflow-hidden"
               data={schemaData.value}
               readonly={readonly.value}
+              dataTypesJson={dataTypesJson.value}
               fieldChangeRules={fieldChangeRules}
               type={isTarget ? 'target' : isSource ? 'source' : ''}
               single-table

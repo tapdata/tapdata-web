@@ -434,14 +434,18 @@ export default {
       })
     },
     goEdit(id, flowId) {
+      const query = {
+        taskMode: flowId ? 'pipeline' : 'random'
+      }
+      if (flowId) {
+        query['flowId'] = flowId
+      }
       this.$router.push({
         name: 'dataVerificationEdit',
         params: {
           id: id,
         },
-        query: {
-          taskMode: flowId ? 'pipeline' : 'random',
-        },
+        query,
       })
     },
     getFilterItems() {

@@ -987,7 +987,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  label: '权限设置',
+                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
                 },
                 properties: {
                   permissions: {
@@ -1001,7 +1001,7 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            title: '授权角色',
+                            title: i18n.t('packages_business_connections_permissionsdialog_shouquanjuese'),
                             align: 'center',
                             asterisk: false,
                             width: 200,
@@ -1025,7 +1025,7 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            title: '功能权限',
+                            title: i18n.t('packages_business_connections_permissionsdialog_gongnengquanxian'),
                             align: 'center',
                             asterisk: false,
                           },
@@ -1075,7 +1075,7 @@ export default observer({
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
                             width: 80,
-                            title: '操作',
+                            title: i18n.t('public_operation'),
                             align: 'center',
                           },
                           properties: {
@@ -1093,7 +1093,7 @@ export default observer({
                     properties: {
                       addition: {
                         type: 'void',
-                        title: '添加授权',
+                        title: i18n.t('packages_business_connections_permissionsdialog_tianjiashouquan'),
                         'x-component': 'ArrayTable.Addition',
                       },
                     },

@@ -948,7 +948,7 @@ export default {
                   },
                 },
               },
-              ssl: this.pdkOptions.tags.includes('ssl')
+              ssl: this.pdkOptions.tags?.includes('ssl')
                 ? {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
@@ -1010,7 +1010,7 @@ export default {
                     },
                   }
                 : undefined,
-              ssh: this.pdkOptions.tags.includes('ssh')
+              ssh: this.pdkOptions.tags?.includes('ssh')
                 ? {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',

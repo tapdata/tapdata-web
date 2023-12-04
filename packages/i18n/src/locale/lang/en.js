@@ -32,6 +32,8 @@ export default {
   public_list_view: 'List',
   public_all: 'All',
   public_no_permissions: 'No Permissions',
+  public_yes: 'Yes',
+  public_no: 'No',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -66,6 +68,7 @@ export default {
   public_status_init: 'Init',
   public_status_waiting_delete: 'Waiting Delete',
   public_status_deleting: 'Deleting',
+  public_status_delete_failed: 'Delete Failed',
   public_status_deleted: 'Deleted',
 
   // button
@@ -121,6 +124,7 @@ export default {
   public_button_stop_recover: 'Resume Mining',
   public_button_execute: 'Execute',
   public_button_obtain: 'Obtain',
+  public_button_help: 'Help',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -133,6 +137,7 @@ export default {
   public_message_delete_fail: 'Delete Failed',
   public_message_deleting: 'Deleting',
   public_message_operation_success: 'Operation Succeeded',
+  public_message_operation_failed: 'Operation Failed',
   public_message_request_error: 'Failed to request data',
   public_message_loading: 'Loading',
   public_message_401: 'Login expired, Please login again',

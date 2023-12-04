@@ -41,7 +41,7 @@
           <span v-if="readonly">{{ getDataType(scope.row) }}</span>
           <div v-else class="cursor-pointer inline-block" @click="openEditDataTypeVisible(scope.row)">
             <span>{{ getDataType(scope.row) }}</span>
-            <VIcon class="ml-2">arrow-down</VIcon>
+            <VIcon class="ml-2">edit-outline</VIcon>
           </div>
         </div>
       </template>
@@ -49,7 +49,9 @@
         {{ nullableMap[!scope.row.is_nullable] }}
       </template>
       <template v-slot:operationHeader>
-        <VIcon :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'" @click="revokeAll()">revoke</VIcon>
+        <ElButton type="text" :class="!revokeTableDisabled ? 'color-primary' : 'color-disable'" @click="revokeAll()">{{
+          $t('public_button_revoke')
+        }}</ElButton>
       </template>
       <template v-slot:operation="scope">
         <ElTooltip
@@ -57,7 +59,9 @@
           :content="$t('packages_form_field_inference_main_gepiliangxiugai')"
           placement="top"
         >
-          <VIcon :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">revoke</VIcon>
+          <ElButton type="text" :class="getRevokeColorClass(scope.row)" @click="revoke(scope.row)">{{
+            $t('public_button_revoke')
+          }}</ElButton>
         </ElTooltip>
       </template>
     </VTable>
@@ -66,32 +70,75 @@
       append-to-body
       :close-on-click-modal="false"
       v-model="editDataTypeVisible"
-      width="35%"
+      width="820px"
     >
-      <ElForm ref="dataTypeForm" label-width="140px" label-position="left" :model="currentData" @submit.prevent>
+      <div class="mb-6 px-4 py-2" style="background-color: #f4f4f5">
+        <span class="mr-3">{{ $t('packages_form_field_inference_list_tuiyanchudelei') }}</span>
+        <span v-if="modeType === 'custom'">{{ currentData.dataTypeTemp }}</span>
+        <span v-else>{{ originType + ' (n)' }}</span>
+      </div>
+      <ElForm ref="dataTypeForm" label-width="140px" label-position="top" :model="currentData" @submit.prevent>
         <ElRadioGroup v-if="!!originType" v-model="modeType" class="mb-3">
           <ElRadio label="custom">{{ $t('packages_dag_field_inference_list_zidingyitiaozheng') }}</ElRadio>
           <ElRadio label="coefficient">{{ $t('packages_dag_field_inference_list_anxishutiaozheng') }}</ElRadio>
         </ElRadioGroup>
         <template v-if="modeType === 'custom'">
-          <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
-            <span>{{ currentData.dataTypeTemp }}</span>
-          </ElFormItem>
-          <ElFormItem
-            :label="$t('packages_form_field_inference_list_yaotiaozhengweide')"
-            prop="newDataType"
-            :error="currentData.errorMessage"
-            inline-message
-            required
-          >
-            <ElAutocomplete
-              class="inline-input"
-              v-model:value="currentData.newDataType"
-              :fetch-suggestions="querySearch"
-              :placeholder="$t('public_input_placeholder')"
-              @select="handleAutocomplete"
-            ></ElAutocomplete>
-          </ElFormItem>
+          <div class="flex">
+            <ElFormItem
+              :label="$t('packages_dag_field_inference_list_xuanzetiaozhengde')"
+              prop="selectedDataType"
+              inline-message
+            >
+              <ElSelect
+                v-model="currentData.selectedDataType"
+                filterable
+                :placeholder="$t('public_input_placeholder')"
+                @change="handleAutocomplete"
+              >
+                <ElOption
+                  v-for="item in computedDataTypes"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="item.value"
+                ></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem
+              v-if="!currentData.selectedDataType"
+              :label="$t('packages_dag_field_inference_list_zidingyileixing')"
+              prop="newDataType"
+              :error="currentData.errorMessage"
+              inline-message
+              required
+              class="ml-6"
+            >
+              <ElInput
+                class="inline-input"
+                v-model:value="currentData.newDataType"
+                :placeholder="$t('public_input_placeholder')"
+              ></ElInput>
+            </ElFormItem>
+            <template v-else>
+              <ElFormItem
+                v-for="(customInput, customInputKey) in currentData.customInputData"
+                :key="customInputKey"
+                :label="customInput.label"
+                :prop="`customInputData.${customInputKey}.value`"
+                required
+                class="ml-6"
+              >
+                <ElInputNumber
+                  v-model="customInput.value"
+                  controls-position="right"
+                  :min="customInput.min"
+                  :max="customInput.max"
+                  class="coefficient-input custom-input"
+                  step-strictly
+                  @change="handleChangeCustomInput"
+                ></ElInputNumber>
+              </ElFormItem>
+            </template>
+          </div>
           <div>
             <ElCheckbox v-model:value="currentData.useToAll">{{
               $t('packages_form_field_inference_list_duidangqiantuiyan')
@@ -102,10 +149,7 @@
           </div>
         </template>
         <template v-else>
-          <ElFormItem :label="$t('packages_form_field_inference_list_tuiyanchudelei')">
-            <span>{{ originType + ' (n)' }}</span>
-          </ElFormItem>
-          <ElFormItem :label="$t('packages_dag_field_inference_list_anzhaoxishu')">
+          <ElFormItem :label="$t('packages_dag_field_inference_list_anzhaoxishu') + ':'">
             <div class="flex align-items-center">
               <span>{{ originType }}</span>
               <span>(</span>
@@ -184,6 +228,12 @@ export default {
       default: 'target',
     },
     ignoreError: Boolean,
+    dataTypesJson: {
+      type: Object,
+      default: () => {
+        return {}
+      },
+    },
   },
   data() {
     return {
@@ -242,6 +292,15 @@ export default {
         source: {},
         canUseDataTypes: [],
         coefficient: 1,
+        customInputData: {},
+        selectedDataType: '',
+      },
+      customInputDataValue: '',
+      customInputLabelMap: {
+        precision: i18n.t('packages_dag_meta_table_precision'),
+        scale: i18n.t('packages_dag_meta_table_scale'),
+        byte: i18n.t('packages_dag_meta_table_precision'),
+        fraction: i18n.t('packages_dag_meta_table_precision')
       },
       editBtnLoading: false,
       rules: [],
@@ -278,6 +337,16 @@ export default {
       const { qualified_name } = this.data
       if (this.singleTable) return !this.rules.length
       return this.rules.every((t) => t.namespace?.[1] !== qualified_name)
+    },
+
+    computedDataTypes() {
+      return [
+        {
+          label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
+          value: '',
+        },
+        ...this.currentData.canUseDataTypes
+      ]
     },
   },
   watch: {
@@ -319,7 +388,7 @@ export default {
       this.currentData.useToAll = false
       this.currentData.errorMessage = ''
       this.currentData.source = source
-      this.currentData.canUseDataTypes = canUseDataTypes
+      this.currentData.canUseDataTypes = await this.getTypeJson()
       const findRule = this.rules.find((t) => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
@@ -586,8 +655,42 @@ export default {
       )
     },
 
-    handleAutocomplete(item) {
-      this.currentData.selectDataType = item.value
+    handleAutocomplete(itemValue) {
+      if (!itemValue) {
+        this.currentData.newDataType = this.currentData.dataTypeTemp
+        return
+      }
+      const item = this.computedDataTypes.find(t => t.value === itemValue)
+      this.currentData.customInputData = {}
+
+      /**
+       * 1.选中选项后，检查选项是否有变量；有变量向下走
+       * 2.把括号内字符串提取出来，并进行分割
+       * 3.根据多个变量名（$开头的），获取输入框的范围；默认最小值
+       * 4.每次修改输入框都会改变最终结果
+       * */
+      this.customInputDataValue = itemValue // 记录原始值
+      this.currentData.selectDataType = itemValue
+      const contentStr = item.value.match(/\(([^)]+)\)/)?.[1]
+      if (contentStr) {
+        const contentArr = contentStr.split(',')
+        contentArr.forEach(el => {
+          const key = el.replace(/^\$/, '')
+          console.log('key', key)
+          this.currentData.customInputData[key] = {
+            min: item.attrs[key]?.[0] ? item.attrs[key]?.[0] * 1 : undefined,
+            max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
+            label: this.customInputLabelMap[key] || key
+          }
+          const defaultValue =
+            item.attrs['default'] ??
+            item.attrs['default' + key.charAt(0).toUpperCase() + key.slice(1)] ??
+            item.attrs[key]?.[0] ??
+            null
+          this.currentData.customInputData[key].value = defaultValue ? defaultValue * 1 : null
+        })
+      }
+      this.handleChangeCustomInput()
     },
 
     getDataType(row = {}) {
@@ -596,6 +699,30 @@ export default {
         return row.dataTypeTemp || row.data_type
       return row.data_type
     },
+
+    async getTypeJson() {
+      const dataTypes = this.dataTypesJson
+      let result = []
+      for (let key in dataTypes) {
+        const item = dataTypes[key]
+        result.push({
+          label: key.replace(/[([]([^)]+)[)]]/, ''),
+          value: key,
+          attrs: item
+        })
+      }
+      return result
+    },
+
+    handleChangeCustomInput() {
+      const { customInputData } = this.currentData
+      this.currentData.newDataType = this.customInputDataValue
+        .replace('[', '')
+        .replace(']', '')
+        .replace(/\$[^,]*\b/g, function (val) {
+          return '' + customInputData[val.replace(/^\$/, '')]?.value || val
+        })
+    }
   },
   emits: ['update-rules'],
 }
@@ -617,7 +744,20 @@ export default {
   top: 3px;
   left: 0;
 }
+
+.custom-input,
+.el-input-number {
+  width: 240px;
+}
+
 .coefficient-input {
   width: 100px;
+}
+
+::v-deep {
+  .el-dialog__body {
+    padding-top: 24px;
+    border-top: 1px solid #e5e6eb;
+  }
 }
 </style>

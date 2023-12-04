@@ -31,7 +31,7 @@
           <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
           <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
         </div>
-        <div>
+        <div class="pt-3">
           <span class="color-primary cursor-pointer" @click="handleFullScreen">
             <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
             <span>{{

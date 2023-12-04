@@ -337,7 +337,7 @@ export default {
   packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
-  packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
+  packages_dag_nodes_database_tuiyanjieguo: 'Target Table Structure',
   packages_dag_nodes_database_guolvjieguo: 'Filter Results',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node has the capability to process DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
@@ -652,6 +652,7 @@ export default {
   packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_default_js: 'Default JS',
   packages_dag_standardization_js: 'Standardized JS',
+  packages_dag_mixins_formscope_gaiziduanshibi: 'This field is required!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
   packages_dag_table_not_exist: 'Table not exist, will be automatically created',
   packages_dag_field_inference_list_anxishutiaozheng: 'Adjust by coefficient',
@@ -687,6 +688,12 @@ export default {
   packages_dag_model_generation: 'Schema Generating',
   packages_dag_materialized_view: 'Materialized View',
   packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_materialized_view_help_title: 'How to build materialized views?',
+  packages_dag_materialized_view_help_desc:
+    'A materialized view is a special type of database view that enhances data retrieval speed. With Tapdata Cloud, you can create real-time materialized views, simplifying data management and application development processes.',
+  packages_dag_materialized_view_help_tutorial_btn: 'Detailed tutorial',
+  packages_dag_materialized_view_help_video_desc:
+    'The following video tutorial explains how to build materialized views using Tapdata Cloud...',
   packages_dag_select_database_tips: 'Select a Database',
   packages_dag_select_table_tips: 'Select a Table',
   packages_dag_join_table: 'Join Table',
@@ -707,4 +714,6 @@ export default {
     'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
   packages_dag_btn_disable_node: 'Disable Node',
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
+  packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
+  packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:'
 }

@@ -1667,7 +1667,10 @@ export default {
   dfs_guide_index_zhanghaoanquanbang: 'Account Security Binding',
   dfs_guide_index_zhengzaijianceyin:
     'The engine deployment status is being detected, and the task guide page will be entered automatically after the detection is completed. ',
+  dfs_guide_index_waiting_for_deployment_tip:
+    "After completing the local deployment, please click the 'I have completed deployment' button to finish the onboarding process",
   dfs_guide_index_dengdaibushu: 'Waiting for manual deployment',
+  dfs_guide_index_development_complete: 'I have completed the deployment',
   dfs_guide_index_tapda: 'Please follow these simple steps to get started. ',
   dfs_guide_index_huanyingshiyongT: 'Welcome to Tapdata Cloud',
   dfs_guide_scenes_meiyoutedingde: 'Just exploring, don’t have specific project yet',
@@ -1765,7 +1768,13 @@ export default {
   dfs_replication_tour_dialog_start: 'Start',
   dfs_replication_tour_dialog_success_title:
     'Congratulations! You have successfully completed the guided tour for the replication task.',
-  dfs_replication_tour_dialog_finish: 'Finish',
+  dfs_replication_tour_dialog_finish: 'Done',
+  dfs_replication_tour_dialog_finished: 'Congratulations on completing the beginner tutorial!',
+  dfs_replication_tour_dialog_finished_subtitle:
+    'Next, you can enjoy a free trial of our product for tasks such as database replication and migration',
+  dfs_replication_tour_dialog_finished_survey_title:
+    'Through the onboarding guide, you now have a certain understanding of Tapdata. Will you continue to use Tapdata?',
+  dfs_replication_tour_dialog_finished_survey_placeholder: 'Enter your feedback or suggestions...',
   dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
   dfs_order_change: 'Change',
   dfs_change_record: 'Change Record',

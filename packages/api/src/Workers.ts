@@ -10,5 +10,13 @@ export default class Worker extends Http {
   taskUsedAgent(id) {
     return this.axios.get(this.url + '/available/taskUsedAgent?taskId=' + id)
   }
+
+  queryAllBindWorker() {
+    return this.axios.get(`${this.url}/queryAllBindWorker`)
+  }
+
+  unbindByProcessId(id) {
+    return this.axios.post(`${this.url}/unbindByProcessId?processId=${id}`)
+  }
 }
 export { Worker }

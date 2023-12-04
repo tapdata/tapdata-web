@@ -608,6 +608,7 @@ export default {
   cluster_ip_tip: '切換網卡僅改變集群管理頁服務器下IP的展示，不影響任何功能',
   cluster_confirm_text: '確認',
   cluster_restart_server: '重啟服務',
+  cluster_unbind_server: '解綁服務',
   cluster_start_server: '啟動服務',
   cluster_startup_after_add: '請啟動後添加',
   cluster_startup_after_delete: '請啟動後刪除',

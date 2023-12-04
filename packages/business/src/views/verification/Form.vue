@@ -509,6 +509,7 @@ export default {
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
+      const self = this
       let id = this.$route.params.id
       let where = {
         status: {
@@ -559,12 +560,19 @@ export default {
           }),
         })
         if (data) {
+          const _self = this
+          const haveTaskId = data.tasks.some(t => !!t.taskId)
           // 加载数据源的Capabilities
-          const capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
-            ...data.tasks.map((t) => t.source.connectionId),
-            ...data.tasks.map((t) => t.target.connectionId),
-          ])
-          data.tasks = data.tasks.map((t) => {
+          let capabilitiesMap = {}
+          if (haveTaskId) {
+            capabilitiesMap = _self.$refs.conditionBox.getMatchCapabilitiesMap()
+          } else {
+            capabilitiesMap = await _self.$refs.conditionBox.getCapabilities([
+              ...data.tasks.map(t => t.source.connectionId),
+              ...data.tasks.map(t => t.target.connectionId)
+            ])
+          }
+          data.tasks = data.tasks.map(t => {
             t.source = Object.assign({}, TABLE_PARAMS, t.source)
             t.target = Object.assign({}, TABLE_PARAMS, t.target)
             t.source.capabilities = capabilitiesMap[t.source.connectionId]
@@ -613,6 +621,14 @@ export default {
           })
         }
         if (!edges.length) {
+          if (cb) {
+            setTimeout(() => {
+              cb()
+              this.loading = false
+            }, 800)
+          } else {
+            this.loading = false
+          }
           return { items: [], total: 0 }
         }
         let stages = []
@@ -749,6 +765,8 @@ export default {
                   let newTarget = cloneDeep(target)
                   newSource.fields = []
                   newTarget.fields = []
+                  newSource.capabilities = []
+                  newTarget.capabilities = []
                   return {
                     taskId,
                     source: newSource,

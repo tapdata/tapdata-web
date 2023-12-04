@@ -173,6 +173,14 @@
                           @click="restartFn(item, item.engine.status, 'engine')"
                           >{{ $t('public_button_restart') }}</ElButton
                         >
+                        <ElDivider v-if="bindWorkerMap[item.systemInfo.process_id]" direction="vertical"></ElDivider>
+                        <ElButton
+                          v-if="bindWorkerMap[item.systemInfo.process_id]"
+                          text
+                          :disabled="item.engine.status == 'stopped' ? false : true"
+                          @click="unbind(item, item.engine.status, 'engine')"
+                          >{{ $t('public_button_unbind') }}</ElButton
+                        >
                       </div>
                     </el-col>
                   </el-row>
@@ -390,10 +398,11 @@ export default {
           type: 'input',
         },
       ],
+      bindWorkerMap: {},
     }
   },
   created() {
-    this.getDataApi()
+    this.init()
     this.accessToken = Cookie.get('access_token')
   },
   watch: {
@@ -403,6 +412,10 @@ export default {
     },
   },
   methods: {
+    init() {
+      this.getAllBindWorker()
+      this.getDataApi()
+    },
     // 提交
     async submitForm() {
       let getFrom = this.$refs.childRules.ruleForm
@@ -529,7 +542,7 @@ export default {
           server: server,
           operation: 'stop',
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_closeSever') + '?', {
           type: 'warning',
           closeOnClickModal: false,
         }).then((resFlag) => {
@@ -563,6 +576,34 @@ export default {
             return
           }
           this.operationFn(data)
+        })
+      }
+    },
+    // 解绑
+    unbind(item, status, server) {
+      let name
+      if (server === 'apiServer') {
+        name = 'API SEVER'
+      } else if (server === 'engine') {
+        name = this.$t('cluster_sync_gover')
+      } else {
+        name = this.$t('cluster_manage_sys')
+      }
+      if (status === 'stopped') {
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_unbind_server') + '?', {
+          type: 'warning',
+          closeOnClickModal: false,
+        }).then((resFlag) => {
+          if (!resFlag) {
+            return
+          }
+          const { process_id } = item.systemInfo || {}
+          workerApi.unbindByProcessId(process_id).then((data) => {
+            this.init()
+            data
+              ? this.$message.success(this.$t('public_message_operation_success'))
+              : this.$message.error(this.$t('public_message_operation_error'))
+          })
         })
       }
     },
@@ -602,6 +643,15 @@ export default {
         worker_type: 'connector',
       }
       return workerApi.get({ filter: JSON.stringify({ where: where }) })
+    },
+    //获取所有 worker
+    async getAllBindWorker() {
+      try {
+        const data = await workerApi.queryAllBindWorker()
+        this.bindWorkerMap = data.reduce((pre, current) => {
+          return { ...pre, [current.processId]: current }
+        }, {})
+      } catch (e) {}
     },
     // 获取数据
     async getDataApi() {

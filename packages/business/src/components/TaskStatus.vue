@@ -128,8 +128,8 @@ export default {
     },
 
     showRetrying() {
-      const { functionRetryStatus, taskRetryStatus } = this.task
-      return functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying'
+      const { functionRetryStatus, taskRetryStatus, status } = this.task
+      return status === 'running' && (functionRetryStatus === 'Retrying' || taskRetryStatus === 'Retrying')
     },
 
     taskRetryStartTimeTip() {
@@ -192,7 +192,10 @@ export default {
   background-color: #b4edd8;
 }
 .task-status-renew_failed,
-.task-status-error {
+.task-status-error,
+.task-status-deleting,
+.task-status-delete_failed,
+.task-status-deleted {
   color: #d44d4d;
   background-color: #ffecec;
 }

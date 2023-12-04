@@ -324,7 +324,7 @@ export default {
   packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構和數據',
   packages_dag_nodes_database_qingchumubiaoduan: '清除目標端原有表結構及數據',
   packages_dag_nodes_database_chongfuchulice: '如果目標表存在',
-  packages_dag_nodes_database_tuiyanjieguo: '推演結果',
+  packages_dag_nodes_database_tuiyanjieguo: '目標表結構',
   packages_dag_nodes_database_guolvjieguo: '過濾結果',
   packages_dag_nodes_database_dangqianjiedianzhi: '當前節點支持處理的DDL事件',
   packages_dag_nodes_database_ddLshijian: 'DDL事件採集',
@@ -633,6 +633,11 @@ export default {
   packages_dag_model_generation: '模型生成中',
   packages_dag_materialized_view: '物化視圖',
   packages_dag_build_materialized_view: '構建物化視圖',
+  packages_dag_materialized_view_help_title: '怎麼構建物化視圖？',
+  packages_dag_materialized_view_help_desc:
+    '物化視圖是一種特殊的數據庫視圖，能提升數據讀取速度。使用 Tapdata Cloud 可創建實時物化視圖，簡化數據管理和應用開發過程。',
+  packages_dag_materialized_view_help_tutorial_btn: '詳細教程',
+  packages_dag_materialized_view_help_video_desc: '以下視頻教程講解了，如何使用 Tapdata Cloud 構建物化視圖...',
   packages_dag_select_database_tips: '請選擇數據庫',
   packages_dag_select_table_tips: '請選擇表',
   packages_dag_join_table: '關聯表',
@@ -653,4 +658,6 @@ export default {
     '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。',
   packages_dag_btn_disable_node: '禁用節點',
   packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
+  packages_dag_field_inference_list_zidingyileixing: '自訂類型',
+  packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:',
 }
