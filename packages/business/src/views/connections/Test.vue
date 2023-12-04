@@ -9,35 +9,42 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
-    <div class="test-result">
-      <div
-        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
-        style="color: #d54e21"
-        class="flex align-items-start"
-      >
-        <el-icon style="color: #d54e21"><el-icon-warning /></el-icon>
-        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0 text-prewrap"></pre>
-        <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
+    <template #header="{ titleClass }">
+      <div class="test-result" :class="titleClass">
+        <div
+          v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
+          :style="{ color: colorMap.failed }"
+        >
+          <el-icon class="align-top mr-2" style="height: 24px; color: inherit" size="20"><el-icon-warning /></el-icon>
+          <pre
+            v-if="wsError"
+            v-html="wsError"
+            class="test-title overflow-auto mt-0 text-prewrap inline-block align-top"
+          ></pre>
+          <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
+        </div>
+        <div v-else>
+          <div class="test-status flex align-items-center" v-if="['invalid', 'ERROR'].includes(status)">
+            <VIcon class="mr-2" :color="colorMap[status]" size="20">error</VIcon>
+            <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
+          </div>
+          <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
+            <el-icon class="mr-2" :color="colorMap[status]" size="20"><ElIconSuccessFilled /></el-icon>
+            <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
+          </div>
+          <div class="test-status flex align-items-center" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
+            <el-image
+              class="mr-2"
+              style="width: 20px; height: 20px; vertical-align: top"
+              :src="require('@tap/assets/images/loading.gif')"
+            ></el-image>
+            <span v-if="testData.testLogs.length === 0">{{ $t('packages_business_dataForm_primaryTest') }}</span>
+            <span v-else>{{ $t('packages_business_dataForm_testing') }}</span>
+          </div>
+        </div>
       </div>
-      <div v-else>
-        <div class="test-status flex align-items-center" v-if="['invalid', 'ERROR'].includes(status)">
-          <VIcon :style="{ color: colorMap[status] }" size="16">error</VIcon>
-          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
-        </div>
-        <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
-          <el-icon><SuccessFilled /></el-icon>
-          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
-        </div>
-        <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
-          <el-image
-            style="width: 20px; height: 20px; vertical-align: bottom"
-            :src="require('@tap/assets/images/loading.gif')"
-          ></el-image>
-          <span v-if="testData.testLogs.length === 0">{{ $t('packages_business_dataForm_primaryTest') }}</span>
-          <span v-else>{{ $t('packages_business_dataForm_testing') }}</span>
-        </div>
-      </div>
-    </div>
+    </template>
+
     <div v-show="showProgress && fileInfo.progress">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
@@ -363,21 +370,21 @@ export default {
 .connection-test-dialog {
   .test-result {
     .test-status {
-      margin-bottom: 20px;
+      //margin-bottom: 20px;
     }
 
     .test-title {
-      font-size: 14px;
-      font-weight: bold;
-      vertical-align: bottom;
-      margin-left: 10px;
+      //font-size: 14px;
+      //font-weight: bold;
+      //vertical-align: bottom;
+      //margin-left: 10px;
     }
 
-    i {
-      font-size: 18px;
-    }
+    //i {
+    //  font-size: 18px;
+    //}
 
-    margin-bottom: 10px;
+    //margin-bottom: 10px;
   }
 }
 </style>

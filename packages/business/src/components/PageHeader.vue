@@ -1,6 +1,6 @@
 <template>
   <div v-show="!isHidden">
-    <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
+    <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" :separator-icon="ArrowRight">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
@@ -19,6 +19,7 @@
 <script>
 import { plantRenderPara } from '../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
+import { ArrowRight } from '@element-plus/icons-vue'
 export default {
   components: {
     Desciption: {
@@ -43,6 +44,7 @@ export default {
     return {
       breadcrumbData: [],
       isHidden: false,
+      ArrowRight,
     }
   },
   watch: {
@@ -58,20 +60,21 @@ export default {
       let matched = route.matched.slice(1)
       let data = []
       let isHidden = false
+
+      matched = matched.filter((item) => !item.redirect)
+
       if (matched.length) {
         matched.forEach((route) => {
           isHidden = route.meta?.hideTitle
           if (/^\/.*\/$/.test(route.path)) {
             data.pop()
           }
-          let to = {
-            name:
-              route.name === this.$route.name
-                ? null
-                : ['settingCenter', 'notification'].includes(route.name)
-                ? 'layout'
-                : route.name,
-          }
+          let to =
+            route.name === this.$route.name
+              ? null
+              : {
+                  name: ['settingCenter', 'notification'].includes(route.name) ? 'layout' : route.name,
+                }
           if (route.meta?.doNotJump) {
             to = null
           }
@@ -81,8 +84,10 @@ export default {
           })
         })
       }
+
       this.isHidden = !!isHidden
       this.breadcrumbData = data
+      console.log('data', data)
     },
   },
 }

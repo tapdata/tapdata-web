@@ -134,3 +134,12 @@
     width: 100%;
   }
 }
+
+// Breadcrumb
+.el-breadcrumb {
+  .el-breadcrumb__item {
+    .el-breadcrumb__inner.is-link {
+      font-weight: 500;
+    }
+  }
+}
