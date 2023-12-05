@@ -5,7 +5,7 @@
     :title="$t('dfs_instance_instance_tuidingshili')"
     width="60%"
   >
-    <section class="mt-n4">
+    <section>
       <el-alert
         class="alert-primary mb-4 text-primary"
         type="info"
@@ -108,7 +108,7 @@
       </el-form>
     </section>
     <template v-slot:footer>
-      <span class="dialog-footer">
+      <div class="flex justify-content-end align-center">
         <span class="mr-4"
           ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_instance_instance_ketuidingjine') }}</span
           ><span class="color-primary fs-4"> {{ refundAmount }}</span></span
@@ -117,7 +117,7 @@
         <el-button :disabled="!form.refundReason" type="primary" :loading="loadingCancelSubmit" @click="cancelSubmit">{{
           $t('public_button_unsubscribe')
         }}</el-button>
-      </span>
+      </div>
     </template>
   </ElDialog>
 </template>

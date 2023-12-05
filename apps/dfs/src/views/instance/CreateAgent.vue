@@ -63,8 +63,8 @@
                   <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
-              <template>
-                <ElRadioGroup v-model="provider" @input="changeProvider" class="flex gap-4">
+              <template #default>
+                <ElRadioGroup v-model="provider" @change="changeProvider" class="flex gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
                     :key="index"
@@ -94,7 +94,7 @@
                   <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
-              <template>
+              <template #default>
                 <ElRadioGroup v-model="region" class="flex gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
@@ -125,7 +125,7 @@
                 <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
-            <template>
+            <template #default>
               <el-row type="flex" class="flex-wrap lh-base" :gutter="16" style="row-gap: 16px">
                 <el-col :span="8" v-for="(item, i) in specificationItems" :key="i">
                   <div
@@ -175,8 +175,8 @@
                 <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
-            <template>
-              <ElRadioGroup v-model="currentPackage" @input="handleChange" class="flex gap-4">
+            <template #default>
+              <ElRadioGroup v-model="currentPackage" @change="handleChange" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in packageItems"
                   :key="index"

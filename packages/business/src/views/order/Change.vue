@@ -106,7 +106,7 @@
       </el-form>
     </section>
     <template v-slot:footer>
-      <span class="dialog-footer">
+      <span class="dialog-footer flex justify-content-end align-center">
         <span class="mr-4"
           ><span class="fs-6 font-color-dark font-weight-light">{{ $t('dfs_change_instance_price') }}：</span
           ><span class="color-primary fs-4"> {{ formatPrice(currency) }}</span></span
