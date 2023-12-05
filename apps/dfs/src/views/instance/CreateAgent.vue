@@ -20,7 +20,7 @@
               {{ $t('dfs_components_taskalarmtour_deployment_qingwen') }}
             </div>
           </template>
-          <div class="flex gap-6 lh-base">
+          <div class="flex gap-6 lh-base w-100">
             <div
               v-for="item in platformOptions"
               :key="item.name"
