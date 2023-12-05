@@ -715,5 +715,5 @@ export default {
   packages_dag_btn_disable_node: 'Disable Node',
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
   packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
-  packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:'
+  packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:',
 }

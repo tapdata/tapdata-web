@@ -18,9 +18,7 @@
       </div>
 
       <div class="mb-4">
-        <div class="fw-sub mb-2 text-label font-color-dark">
-          1.{{ $t('dfs_agent_download_type') }}
-        </div>
+        <div class="fw-sub mb-2 text-label font-color-dark">1.{{ $t('dfs_agent_download_type') }}</div>
         <ElRadioGroup v-model="downLoadType" @input="chooseDownLoadType" size="default" class="flex gap-4 mb-4">
           <ElRadio
             v-for="(item, index) in downType"
@@ -40,7 +38,7 @@
       <div class="text-label fw-sub font-color-dark mb-2 flex align-center">
         2.
         {{ $t('agent_deploy_start_install') }}
-      :
+        :
         <ElLink @click="handleOpenDeployDocs" class="ml-1" type="primary">{{ $t('agent_deploy_tutorial') }}</ElLink>
       </div>
       <ul v-if="downLoadType === 'windows'" class="ul-style">
@@ -82,10 +80,7 @@
             <i>{{ $t('public_button_copy') }}</i>
           </el-button>
         </ElTooltip>
-        <div
-          class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all"
-          @copy="handleCopy"
-        >
+        <div class="box px-4 py-3 rounded-4 text-white text-label ellipsis user-select-all" @copy="handleCopy">
           {{ links[downLoadType] }}
         </div>
       </section>
@@ -213,7 +208,7 @@ export default {
     handleDownLoad() {
       window.location = `${this.downloadUrl}tapdata.exe`
       this.buried('downloadTapdataExe', {
-        notGuide: true
+        notGuide: true,
       })
     },
     //windows 下载
@@ -285,13 +280,13 @@ export default {
         windows: 'copyTokenInWindows',
       }
       this.buried(MAP[this.downLoadType], {
-        notGuide: true
+        notGuide: true,
       })
     },
     handleOpenDeployDocs() {
       this.buried('openDeploymentTutorial', {
         notGuide: true,
-        downLoadType: this.downLoadType
+        downLoadType: this.downLoadType,
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
@@ -302,7 +297,7 @@ export default {
       this.isCompleted = true
       this.buried('completedDeployment', {
         notGuide: true,
-        downLoadType: this.downLoadType
+        downLoadType: this.downLoadType,
       })
     },
   },

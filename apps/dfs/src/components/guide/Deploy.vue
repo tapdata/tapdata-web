@@ -87,9 +87,9 @@ export default {
     handleComplete() {
       this.isCompleted = true
       this.buried('completedDeployment', {
-        downLoadType: this.downLoadType
+        downLoadType: this.downLoadType,
       })
-    }
+    },
   },
 }
 </script>

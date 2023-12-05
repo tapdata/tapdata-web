@@ -148,13 +148,13 @@ export const STATUS_MAP = {
     i18n: 'public_status_renew_failed',
   },
   deleting: {
-    i18n: 'public_status_deleting'
+    i18n: 'public_status_deleting',
   },
   delete_failed: {
-    i18n: 'public_status_delete_failed'
+    i18n: 'public_status_delete_failed',
   },
   deleted: {
-    i18n: 'public_status_deleted'
+    i18n: 'public_status_deleted',
   },
 }
 

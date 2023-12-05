@@ -167,8 +167,7 @@ export default {
   packages_form_field_inference_list_tuiyanchudelei: 'Inference type:',
   packages_form_field_inference_list_ziduanleixingtiao: 'Field type adjustment',
   packages_form_field_inference_main_quanbuhuifumo: 'Restore all defaults',
-  packages_form_field_inference_main_gepiliangxiugai:
-    'The modified batch rule is now active.',
+  packages_form_field_inference_main_gepiliangxiugai: 'The modified batch rule is now active.',
   packages_form_field_inference_main_dangqianyou: 'There is currently',
   packages_form_field_type_rules_main_shijikeyongchang:
     'The precise length available will vary depending on the definition of the target database type, so please adjust it accordingly to meet your requirements.',

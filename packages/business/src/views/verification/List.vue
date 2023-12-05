@@ -435,7 +435,7 @@ export default {
     },
     goEdit(id, flowId) {
       const query = {
-        taskMode: flowId ? 'pipeline' : 'random'
+        taskMode: flowId ? 'pipeline' : 'random',
       }
       if (flowId) {
         query['flowId'] = flowId

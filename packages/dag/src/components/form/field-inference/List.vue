@@ -300,7 +300,7 @@ export default {
         precision: i18n.t('packages_dag_meta_table_precision'),
         scale: i18n.t('packages_dag_meta_table_scale'),
         byte: i18n.t('packages_dag_meta_table_precision'),
-        fraction: i18n.t('packages_dag_meta_table_precision')
+        fraction: i18n.t('packages_dag_meta_table_precision'),
       },
       editBtnLoading: false,
       rules: [],
@@ -345,7 +345,7 @@ export default {
           label: i18n.t('packages_dag_field_inference_list_zidingyileixing'),
           value: '',
         },
-        ...this.currentData.canUseDataTypes
+        ...this.currentData.canUseDataTypes,
       ]
     },
   },
@@ -660,7 +660,7 @@ export default {
         this.currentData.newDataType = this.currentData.dataTypeTemp
         return
       }
-      const item = this.computedDataTypes.find(t => t.value === itemValue)
+      const item = this.computedDataTypes.find((t) => t.value === itemValue)
       this.currentData.customInputData = {}
 
       /**
@@ -674,13 +674,13 @@ export default {
       const contentStr = item.value.match(/\(([^)]+)\)/)?.[1]
       if (contentStr) {
         const contentArr = contentStr.split(',')
-        contentArr.forEach(el => {
+        contentArr.forEach((el) => {
           const key = el.replace(/^\$/, '')
           console.log('key', key)
           this.currentData.customInputData[key] = {
             min: item.attrs[key]?.[0] ? item.attrs[key]?.[0] * 1 : undefined,
             max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
-            label: this.customInputLabelMap[key] || key
+            label: this.customInputLabelMap[key] || key,
           }
           const defaultValue =
             item.attrs['default'] ??
@@ -708,7 +708,7 @@ export default {
         result.push({
           label: key.replace(/[([]([^)]+)[)]]/, ''),
           value: key,
-          attrs: item
+          attrs: item,
         })
       }
       return result
@@ -722,7 +722,7 @@ export default {
         .replace(/\$[^,]*\b/g, function (val) {
           return '' + customInputData[val.replace(/^\$/, '')]?.value || val
         })
-    }
+    },
   },
   emits: ['update-rules'],
 }

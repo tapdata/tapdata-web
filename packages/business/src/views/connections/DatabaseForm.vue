@@ -224,7 +224,7 @@ export default {
         total: 0,
       },
       showAgentIpAlert: false,
-      schemaFormInstance: null
+      schemaFormInstance: null,
     }
   },
   computed: {

@@ -5,8 +5,6 @@ import { Radio } from './radio'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 
 export { Space, Input, FormCollapse, FormCollapseItem, Radio }
-// export * from './preview-text'
-// export * from './space'
 export * from './js-editor'
 export * from './python-editor'
 export * from './sql-editor'

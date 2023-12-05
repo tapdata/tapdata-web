@@ -220,13 +220,6 @@ export function downloadJson(data, name = '') {
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
 
-export const getConnectionTypeImg = function (type) {
-  try {
-    return require(`./assets/icons/node/${type}.svg`)
-  } catch (e) {
-    return null
-  }
-}
 export const getConnectionTypeDialogImg = function (type) {
   try {
     return require(`./assets/icons/node/${type}.svg`)

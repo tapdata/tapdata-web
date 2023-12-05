@@ -88,7 +88,6 @@ export const SchemaPreview = defineComponent({
       dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
     }
 
-
     const mapSchema = (schema) => {
       const { fields = [], findPossibleDataTypes = {} } = schema
       //如果findPossibleDataTypes = {}，不做类型校验

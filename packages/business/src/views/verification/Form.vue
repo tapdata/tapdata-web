@@ -561,18 +561,18 @@ export default {
         })
         if (data) {
           const _self = this
-          const haveTaskId = data.tasks.some(t => !!t.taskId)
+          const haveTaskId = data.tasks.some((t) => !!t.taskId)
           // 加载数据源的Capabilities
           let capabilitiesMap = {}
           if (haveTaskId) {
             capabilitiesMap = _self.$refs.conditionBox.getMatchCapabilitiesMap()
           } else {
             capabilitiesMap = await _self.$refs.conditionBox.getCapabilities([
-              ...data.tasks.map(t => t.source.connectionId),
-              ...data.tasks.map(t => t.target.connectionId)
+              ...data.tasks.map((t) => t.source.connectionId),
+              ...data.tasks.map((t) => t.target.connectionId),
             ])
           }
-          data.tasks = data.tasks.map(t => {
+          data.tasks = data.tasks.map((t) => {
             t.source = Object.assign({}, TABLE_PARAMS, t.source)
             t.target = Object.assign({}, TABLE_PARAMS, t.target)
             t.source.capabilities = capabilitiesMap[t.source.connectionId]

@@ -1,4 +1,3 @@
-import * as Vue from 'vue'
 let MyPlugin = {}
 // 定义全局指令
 export default MyPlugin.install = function () {

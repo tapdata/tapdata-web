@@ -987,7 +987,7 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
+                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi'),
                 },
                 properties: {
                   permissions: {

@@ -113,18 +113,18 @@
               v-model:value="searchField"
               :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
               suffix-icon="el-icon-search"
-            clearable
-            @input="handleSearchField"
-          ></ElInput>
-          <ElButton plain class="btn-refresh ml-2" @click="refresh">
-            <VIcon>refresh</VIcon>
-          </ElButton>
-        </div>
-        <List
-          ref="list"
-          :data="selected"
-          :show-columns="['index', 'field_name', 'data_type', 'operation']"
-          v-model:fieldChangeRules="fieldChangeRules"
+              clearable
+              @input="handleSearchField"
+            ></ElInput>
+            <ElButton plain class="btn-refresh ml-2" @click="refresh">
+              <VIcon>refresh</VIcon>
+            </ElButton>
+          </div>
+          <List
+            ref="list"
+            :data="selected"
+            :show-columns="['index', 'field_name', 'data_type', 'operation']"
+            v-model:fieldChangeRules="fieldChangeRules"
             :dataTypesJson="dataTypesJson"
             :readonly="readonly"
             ignore-error

@@ -1093,13 +1093,13 @@ export default {
     },
 
     startTask(ids) {
-      taskApi.batchStart(ids).then(data => {
+      taskApi.batchStart(ids).then((data) => {
         this.autoLoadTaskById()
-        if (data.every(t => t.code === 'ok')) {
+        if (data.every((t) => t.code === 'ok')) {
           this.$message.success(this.$t('public_message_operation_success'))
         } else {
-          const findManuallyScheduleLimit = data.find(t => t.code === 'Task.ManuallyScheduleLimit')
-          const findScheduleLimit = data.find(t => t.code === 'Task.ScheduleLimit')
+          const findManuallyScheduleLimit = data.find((t) => t.code === 'Task.ManuallyScheduleLimit')
+          const findScheduleLimit = data.find((t) => t.code === 'Task.ScheduleLimit')
           if (findScheduleLimit) {
             this.$emit('handle-show-upgrade', findScheduleLimit)
             return
