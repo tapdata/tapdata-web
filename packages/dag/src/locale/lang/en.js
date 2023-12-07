@@ -344,8 +344,10 @@ export default {
   packages_dag_nodes_database_kaiqihourenwu:
     'Upon opening, the task will automatically gather the chosen source DDL events.',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
-  packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
+  packages_dag_nodes_database_quanliangmeipici:
+    'The number of records read per batch in full load should typically be kept at the default value. If your downstream system is slower and you encounter issues with the loss of the source cursor during tasks, please reduce this value.',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
+  packages_dag_nodes_database_zengliangmeipici: 'Incremental batch size',
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',

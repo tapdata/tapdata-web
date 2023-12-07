@@ -332,7 +332,8 @@ export default {
   packages_dag_nodes_database_dongtaixinzengbiao: '动态新增表',
   packages_dag_nodes_database_quanliangmeipici:
     '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
-  packages_dag_nodes_database_piliangduqutiao: '每批读取条数',
+  packages_dag_nodes_database_piliangduqutiao: '全量每批读取条数',
+  packages_dag_nodes_database_zengliangmeipici: '增量每批读取条数',
   packages_dag_nodes_database_zidingyi: '自定义',
   packages_dag_nodes_database_xuanzebiao: '选择表',
   packages_dag_nodes_database_suoshuage: '所属agent',
