@@ -2,9 +2,10 @@
 import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'
+import { Checkbox } from './checkbox'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 
-export { Space, Input, FormCollapse, FormCollapseItem, Radio }
+export { Space, Input, FormCollapse, FormCollapseItem, Radio, Checkbox }
 export * from './js-editor'
 export * from './python-editor'
 export * from './sql-editor'
