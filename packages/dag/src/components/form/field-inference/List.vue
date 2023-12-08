@@ -399,6 +399,7 @@ export default {
       const findRule = this.rules.find(t => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
+      this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
 
       const dataTypeCheckMultiple = await metadataInstancesApi.dataTypeCheckMultiple({
         databaseType: this.activeNode.databaseType,
