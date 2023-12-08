@@ -1,7 +1,7 @@
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
 import { debounce, cloneDeep } from 'lodash'
 import { defineComponent, ref, reactive, onMounted, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { observer } from '@formily/reactive-vue'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi, taskApi } from '@tap/api'
@@ -9,6 +9,7 @@ import { FormItem, useForm } from '@tap/form'
 import { VIcon, EmptyItem, OverflowTooltip, VirtualList } from '@tap/component'
 import { toUpperCase, toLowerCase, camelToSnake, snakeToCamel } from '@tap/shared'
 import './style.scss'
+import { useStore } from 'vuex'
 
 const InnerInput = {
   name: 'InnerInput',
@@ -67,7 +68,9 @@ const FormInput = defineComponent({
 export const FieldRenameProcessor = observer(
   defineComponent({
     props: ['value', 'nodeId', 'disabled'],
-    setup(props, { emit, refs, root }) {
+    setup(props, { emit, refs }) {
+      const store = useStore()
+      const route = useRoute()
       const formRef = useForm()
       const form = formRef.value
       const list = ref([])
@@ -104,7 +107,7 @@ export const FieldRenameProcessor = observer(
           total: 0,
           count: 1,
         },
-        transformLoading: root.$store.state.dataflow.transformLoading,
+        transformLoading: store.state.dataflow.transformLoading,
       })
       const updateDeletedNum = (item) => {
         item.userDeletedNum = item.fieldsMapping.filter((field) => !field.isShow).length
@@ -121,8 +124,8 @@ export const FieldRenameProcessor = observer(
         config.loadingTable = !silence
 
         const where = {
-          taskId: root.$route.params.id,
-          taskRecordId: root.$route.query?.taskRecordId,
+          taskId: route.params.id,
+          taskRecordId: route.query?.taskRecordId,
           nodeId: props.nodeId,
           searchTable: config.searchTable,
           page: config.page.current,
@@ -370,7 +373,7 @@ export const FieldRenameProcessor = observer(
         Object.assign(fieldsOperation, defaultOperation)
         metadataInstancesApi
           .resetTable({
-            taskId: root.$route.params.id,
+            taskId: route.params.id,
             nodeId: props.nodeId,
           })
           .then(() => {
@@ -528,9 +531,9 @@ export const FieldRenameProcessor = observer(
       }
 
       watch(
-        () => root.$store.state.dataflow.transformLoading,
+        () => store.state.dataflow.transformLoading,
         (v) => {
-          config.transformLoading = root.$store.state.dataflow.transformLoading
+          config.transformLoading = store.state.dataflow.transformLoading
           if (!v) {
             loadData()
           }

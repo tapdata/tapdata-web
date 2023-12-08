@@ -1,12 +1,14 @@
 import FiledMapping from '../field-mapping'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, onBeforeUnmount } from 'vue'
+import { watch, defineComponent, onBeforeUnmount } from 'vue'
 import { observe } from '@formily/reactive'
 import { useForm } from '@tap/form'
+import { useStore } from 'vuex'
 
 export const SchemaFiledMapping = observer(
   defineComponent({
-    setup(props, { attrs, listeners, refs, root }) {
+    setup(props, { attrs, listeners, refs }) {
+      const store = useStore()
       const formRef = useForm()
       let unwatch
       let timer
@@ -16,8 +18,8 @@ export const SchemaFiledMapping = observer(
       }
       observe(formRef.value.values.$inputs, () => {
         clearWatch()
-        unwatch = root.$watch(
-          () => root.$store.state.dataflow.editVersion,
+        unwatch = watch(
+          () => store.state.dataflow.editVersion,
           () => {
             clearWatch()
             // setTimeout 只是兜底，目前没有准确的机制告诉前端可以加载

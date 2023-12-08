@@ -1,37 +1,39 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { useForm } from '@tap/form'
-import { onMounted, onUnmounted } from 'vue'
+import i18n from '@tap/i18n'
 
 import { metadataInstancesApi, proxyApi, taskApi, connectionsApi } from '@tap/api'
 
 import './style.scss'
+import { useStore } from 'vuex'
 
 export const loadSchemaTree = observer(
   defineComponent({
     props: ['findParentNode', 'value', 'tableNameField'],
-    setup(props, { root }) {
+    setup(props) {
+      const store = useStore()
       const formRef = useForm()
       const form = formRef.value
       const loading = ref(false)
       const fieldList = ref()
       fieldList.value = form.getValuesIn('loadSchemaTree')
-      const title = root.$t('packages_form_load_schema_tree_button_title')
+      const title = i18n.t('packages_form_load_schema_tree_button_title')
       const nodeId = form.getValuesIn('id')
       const errorMsg = ref('')
       const loadStatus = ref('')
       const isTransformed = ref(true)
       const formIsChange = ref(false)
 
-      root.$watch(
-        () => root.$store.state.dataflow.editVersion,
+      watch(
+        () => store.state.dataflow.editVersion,
         () => {
           formIsChange.value = true
         },
       )
 
       async function getTask() {
-        const taskId = root.$store.state.dataflow?.taskId
+        const taskId = store.state.dataflow?.taskId
         const { parent_task_sign } = this.$route.query || {}
         return await taskApi.get(taskId, {}, { parent_task_sign })
       }
@@ -112,8 +114,8 @@ export const loadSchemaTree = observer(
                         setTimeout(() => {
                           form.setValuesIn(tableNameField || 'tableName', table)
                           isTransformed.value = false
-                          let unwatchSaving = root.$watch(
-                            () => root.$store.state.dataflow.taskSaving,
+                          let unwatchSaving = watch(
+                            () => store.state.dataflow.taskSaving,
                             (v) => {
                               if (!v) {
                                 getSchemaData(true)
@@ -134,12 +136,12 @@ export const loadSchemaTree = observer(
                 loadStatus.value = true
                 const msg = err?.data?.message
                 errorMsg.value = msg
-                root.$message.error(msg)
+                ElMessage.error(msg)
                 loading.value = false
               })
           })
           .catch(() => {
-            root.$message.error(root.$t('packages_form_qingjianchajiedian'))
+            ElMessage.error(i18n.t('packages_form_qingjianchajiedian'))
             loading.value = false
           })
       }
@@ -160,7 +162,7 @@ export const loadSchemaTree = observer(
               <VIcon size="16" class="mr-1 color-danger" style="padding-bottom: 2px">
                 info
               </VIcon>
-              <span class="color-danger">{root.$t('packages_form_load_schema_tree_load_fail')}</span>
+              <span class="color-danger">{i18n.t('packages_form_load_schema_tree_load_fail')}</span>
             </span>
           </el-tooltip>
         ) : (
@@ -170,7 +172,7 @@ export const loadSchemaTree = observer(
 
       const formValuesChangeDom = () => {
         return formIsChange.value ? (
-          <span class="ml-2 color-warning">{root.$t('packages_form_load_schema_tree_form_values_change')}</span>
+          <span class="ml-2 color-warning">{i18n.t('packages_form_load_schema_tree_form_values_change')}</span>
         ) : (
           ''
         )

@@ -7,11 +7,11 @@ import SchemaFieldList from './List.vue'
 
 export const fieldList = observer(
   defineComponent({
-    setup(props, { attrs, listeners, refs, root }) {
+    setup(props, { attrs, listeners, refs }) {
       const formRef = useForm()
       const form = formRef.value
 
-      useAfterTaskSaved(root, formRef.value.values.$inputs, () => {
+      useAfterTaskSaved(formRef.value.values.$inputs, () => {
         refs.fieldList?.loadData(true)
       })
 

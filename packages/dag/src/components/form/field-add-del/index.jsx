@@ -17,7 +17,7 @@ export const FieldAddDel = connect(
   observer(
     defineComponent({
       props: ['disabled'],
-      setup(props, { root }) {
+      setup() {
         const formRef = useForm()
         const form = formRef.value
         const options = ref([])
@@ -36,7 +36,7 @@ export const FieldAddDel = connect(
 
         loadSchema()
 
-        useAfterTaskSaved(root, formRef.value.values.$inputs, loadSchema)
+        useAfterTaskSaved(formRef.value.values.$inputs, loadSchema)
 
         return {
           loading,

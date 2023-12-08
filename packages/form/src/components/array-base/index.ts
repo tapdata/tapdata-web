@@ -154,7 +154,6 @@ const ArrayBaseItem = defineComponent({
   setup(props: IArrayBaseItemProps, { slots }) {
     provide(ItemSymbol, props)
     return () => {
-      console.log('ExpressionScope', { value: { $record: props.record, $index: props.index } }, slots)
       return h(
         ExpressionScope,
         { value: { $record: props.record, $index: props.index } },

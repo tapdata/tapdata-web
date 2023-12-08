@@ -6,11 +6,13 @@ import { VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useStore } from 'vuex'
 
 export const FieldRename = observer(
   defineComponent({
     props: ['loading', 'disabled', 'getFields', 'value'],
-    setup(props, { root, emit }) {
+    setup(props) {
+      const store = useStore()
       const formRef = useForm()
       const fieldRef = useField()
       const fieldModel = fieldRef.value
@@ -43,7 +45,7 @@ export const FieldRename = observer(
         })
       }
       const transformLoading = computed(() => {
-        return root.$store.state.dataflow.transformLoading
+        return store.state.dataflow.transformLoading
       })
       const searchFiledName = ref('')
       const capitalized = ref('') // 字段名处理
@@ -160,7 +162,7 @@ export const FieldRename = observer(
         if (node && node.parent && node.parent.childNodes) {
           let parentNode = node.parent.childNodes.filter((v) => data.field_name === v.data.field_name)
           if (parentNode && parentNode.length === 2) {
-            root.$message.error(data.field_name + i18n.t('packages_form_message_exists_name'))
+            ElMessage.error(data.field_name + i18n.t('packages_form_message_exists_name'))
             exist = true
           }
         }
@@ -221,7 +223,7 @@ export const FieldRename = observer(
       }
 
       loadFields()
-      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+      useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
       return () => {
         let fields = options.value || []

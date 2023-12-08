@@ -79,13 +79,13 @@ export const FieldValue = connect(
               <ElInput
                 placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
                 v-model={this.searchFiledName}
-                suffix-icon="el-icon-search"
+                suffix-icon={ElIconSearch}
               ></ElInput>
               <ElButton
                 class={['ml-2']}
                 type={'default'}
                 onClick={() => this.handleInput('')}
-                icon="el-icon-refresh"
+                icon={ElIconRefresh}
               ></ElButton>
             </div>
             <div class="field-processor-operation flex">

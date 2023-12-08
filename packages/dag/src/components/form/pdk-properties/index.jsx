@@ -1,10 +1,12 @@
 import { defineComponent, ref } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { RecursionField, useField, useForm } from '@tap/form'
+import { useStore } from 'vuex'
 
 export const PdkProperties = observer(
   defineComponent({
-    setup(props, { root }) {
+    setup() {
+      const store = useStore()
       const form = useForm()
       const field = useField()
       const schema = ref({})
@@ -12,7 +14,7 @@ export const PdkProperties = observer(
       // const gridField = form.value.query('grid').take()
       // console.log('gridField', gridField) // eslint-disable-line
       if (pdkHash) {
-        const properties = root.$store.state.dataflow.pdkPropertiesMap[pdkHash]
+        const properties = store.state.dataflow.pdkPropertiesMap[pdkHash]
         schema.value = properties
       }
 

@@ -10,7 +10,7 @@ import './style.scss'
 export const StageButtonLabel = observer(
   defineComponent({
     props: ['value', 'disabled', 'connectionId', 'title', 'target'],
-    setup(props, { emit, root, attrs, refs, slots }) {
+    setup(props, { attrs, slots }) {
       const store = useStore()
       const { taskId, activeNodeId } = store.state?.dataflow || {}
 

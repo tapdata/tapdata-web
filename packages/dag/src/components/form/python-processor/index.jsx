@@ -13,6 +13,7 @@ import Time from '@tap/shared/src/time'
 import { PythonDeclare } from '../python-declare'
 import './style.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { useStore } from 'vuex'
 
 export const PythonProcessor = observer(
   defineComponent({
@@ -20,8 +21,9 @@ export const PythonProcessor = observer(
     directives: {
       resize,
     },
-    setup(props, { emit, root, attrs, refs }) {
-      const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
+    setup(props, { emit, attrs, refs }) {
+      const store = useStore()
+      const { id: taskId, syncType } = store.state.dataflow.taskInfo
       const formRef = useForm()
       const form = formRef.value
       const tableLoading = ref(false)
@@ -85,7 +87,7 @@ export const PythonProcessor = observer(
 
       const queryLog = async () => {
         const logData = await monitoringLogsApi.query({
-          taskId: root.$store.state.dataflow.taskInfo.testTaskId,
+          taskId: store.state.dataflow.taskInfo.testTaskId,
           type: 'testRun',
           order: 'asc',
           page: 1,
@@ -140,7 +142,7 @@ export const PythonProcessor = observer(
 
         if (queryTimes > 40) {
           resetQuery()
-          root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
+          ElMessage.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return
         }
         handleQuery()
@@ -349,7 +351,7 @@ export const PythonProcessor = observer(
       // 加载模型字段
       loadFields()
       // 模型自动改变
-      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+      useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
       return () => {
         const editorProps = { ...attrs }

@@ -7,7 +7,7 @@ import { VIcon } from '@tap/component'
 export const IconLabel = observer(
   defineComponent({
     props: ['title', 'icon', 'iconSize'],
-    setup(props, { emit, root, attrs, refs, slots }) {
+    setup(props, { attrs, slots }) {
       const formRef = useForm()
 
       return () => {

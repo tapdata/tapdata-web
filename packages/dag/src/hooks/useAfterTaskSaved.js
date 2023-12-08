@@ -6,11 +6,10 @@ import { useStore } from 'vuex'
 /**
  * 场景：源节点发生变化，需要任务保存后调用
  * use callback after task saved when source change
- * @param root
  * @param obs
  * @param callback
  */
-export const useAfterTaskSaved = (root, obs, callback) => {
+export const useAfterTaskSaved = (obs, callback) => {
   const store = useStore()
 
   const dispose = observe(obs, (...args) => {

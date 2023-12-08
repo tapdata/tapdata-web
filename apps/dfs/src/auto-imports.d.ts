@@ -6,6 +6,8 @@
 export {}
 declare global {
   const ElIconArrowRight: typeof import('@element-plus/icons-vue')['ArrowRight']
+  const ElIconRefresh: typeof import('@element-plus/icons-vue')['Refresh']
+  const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
   const ElInput: typeof import('element-plus/es')['ElInput']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElOption: typeof import('element-plus/es')['ElOption']

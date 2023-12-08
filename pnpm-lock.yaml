@@ -23,6 +23,9 @@ importers:
       element-plus:
         specifier: ^2.4.3
         version: 2.4.3(vue@3.3.4)
+      vue-router:
+        specifier: ^4.0.8
+        version: 4.0.8(vue@3.3.4)
     devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.3.3

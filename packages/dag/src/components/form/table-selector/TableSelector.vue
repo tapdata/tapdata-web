@@ -31,12 +31,11 @@
 
       <div class="selector-panel__body">
         <div class="selector-panel__search">
-          <ElInput
-            v-model="table.searchKeyword"
-            clearable
-            suffix-icon="el-icon-search"
-            :placeholder="$t('public_input_placeholder_search')"
-          ></ElInput>
+          <ElInput v-model="table.searchKeyword" clearable :placeholder="$t('public_input_placeholder_search')">
+            <template #suffix>
+              <ElIcon><ElIconSearch /></ElIcon>
+            </template>
+          </ElInput>
         </div>
         <ElCheckboxGroup
           v-model="table.checked"
@@ -142,12 +141,11 @@
       </div>
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
-          <ElInput
-            v-model="selected.searchKeyword"
-            clearable
-            suffix-icon="el-icon-search"
-            :placeholder="$t('public_input_placeholder_search')"
-          ></ElInput>
+          <ElInput v-model="selected.searchKeyword" clearable :placeholder="$t('public_input_placeholder_search')">
+            <template #suffix>
+              <ElIcon><ElIconSearch /></ElIcon>
+            </template>
+          </ElInput>
         </div>
         <ElCheckboxGroup
           v-model="selected.checked"

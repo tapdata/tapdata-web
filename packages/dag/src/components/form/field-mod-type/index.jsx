@@ -14,7 +14,7 @@ export const FieldModType = observer(
   defineComponent({
     props: ['loading', 'disabled', 'getFields'],
 
-    setup(props, { root }) {
+    setup(props) {
       const formRef = useForm()
       const form = formRef.value
       const fieldRef = useField()
@@ -42,7 +42,7 @@ export const FieldModType = observer(
       }
 
       loadFields()
-      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+      useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
       return {
         options,
@@ -134,13 +134,13 @@ export const FieldModType = observer(
             <ElInput
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               v-model={this.searchFiledName}
-              suffix-icon="el-icon-search"
+              suffix-icon={ElIconSearch}
             ></ElInput>
             <ElButton
               class={['ml-2']}
               type={'default'}
               onClick={() => this.handleInput('')}
-              icon="el-icon-refresh"
+              icon={ElIconRefresh}
             ></ElButton>
           </div>
           <div class="field-processor-operation flex">

@@ -10,6 +10,7 @@ import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import List from './List.vue'
 import './style.scss'
 import { debounce } from 'lodash'
+import { useStore } from 'vuex'
 
 // 源节点改变，表编辑按照批量配置重新应用，重新应用的场景如下：
 // 1. 记录源节点id，表编辑节点渲染时进行判断，如果源节点和上次记录的不同，重新应用批量规则
@@ -18,7 +19,8 @@ import { debounce } from 'lodash'
 export const TableRename = observer(
   defineComponent({
     props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
-    setup(props, { emit, root, refs }) {
+    setup(props, { emit, refs }) {
+      const store = useStore()
       const itemSize = 38
       const formRef = useForm()
       const form = formRef.value
@@ -47,14 +49,14 @@ export const TableRename = observer(
         prefix: form.values.prefix || '', // 前缀
         suffix: form.values.suffix || '', // 后缀
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
-        transformLoading: root.$store.state.dataflow.transformLoading,
+        transformLoading: store.state.dataflow.transformLoading,
       })
 
       let prevMap = {}
 
       const makeTable = (...args) => {
         if (form.values.$inputs?.length) {
-          const { taskId } = root.$store.state.dataflow
+          const { taskId } = store.state.dataflow
           loading.value = true
           taskApi
             .getNodeTableInfo({
@@ -116,7 +118,7 @@ export const TableRename = observer(
       makeTable()
 
       // 源节点发生变化，任务保存后加载模型
-      useAfterTaskSaved(root, formRef.value.values.$inputs, makeTable)
+      useAfterTaskSaved(formRef.value.values.$inputs, makeTable)
 
       const updateName = (val, name) => {
         if (val !== name) {

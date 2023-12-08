@@ -7,6 +7,8 @@ import { OverflowTooltip, IconButton } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
 import NodeIcon from '../../NodeIcon'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -16,7 +18,9 @@ export const MergeTableTree = observer(
       findNodeById: Function,
       loadFieldsMethod: Function,
     },
-    setup(props, { emit, root }) {
+    setup(props, { emit }) {
+      const store = useStore()
+      const route = useRoute()
       const tree = ref(null)
       const formRef = useForm()
       const form = formRef.value
@@ -140,7 +144,7 @@ export const MergeTableTree = observer(
         form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
           loading: true,
         })
-        metadataInstancesApi.getMergerNodeParentFields(root.$route.params.id, selfId).then((fields) => {
+        metadataInstancesApi.getMergerNodeParentFields(route.params.id, selfId).then((fields) => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
             dataSource: fields.map((item) => ({
@@ -167,8 +171,8 @@ export const MergeTableTree = observer(
             loading: true,
           })
           // 等待自动保存接口响应后查询
-          let unwatch = root.$watch(
-            () => root.$store.state.dataflow.editVersion,
+          let unwatch = watch(
+            () => store.state.dataflow.editVersion,
             () => {
               unwatch()
               loadTargetField(selfId, selfPath)

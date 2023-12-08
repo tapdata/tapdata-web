@@ -5,11 +5,14 @@
         <ElInput
           v-model:value="searchTable"
           :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-          suffix-icon="el-icon-search"
           clearable
           class="p-2"
           @input="handleSearchTable"
-        ></ElInput>
+        >
+          <template #suffix>
+            <ElIcon><ElIconSearch /></ElIcon>
+          </template>
+        </ElInput>
         <div v-loading="navLoading" ref="navList" class="nav-list flex-fill font-color-normal">
           <ul v-if="navList.length">
             <li
@@ -50,10 +53,13 @@
           <ElInput
             v-model:value="searchField"
             :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-            suffix-icon="el-icon-search"
             clearable
             @input="handleSearchField"
-          ></ElInput>
+          >
+            <template #suffix>
+              <ElIcon><ElIconSearch /></ElIcon>
+            </template>
+          </ElInput>
           <ElButton plain class="btn-refresh ml-2" @click="refresh">
             <VIcon>refresh</VIcon>
           </ElButton>

@@ -21,7 +21,7 @@ export const JsProcessor = observer(
     directives: {
       resize,
     },
-    setup(props, { emit, root, attrs, refs }) {
+    setup(props, { emit, attrs, refs }) {
       const store = useStore()
       const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
       const { id: taskId, syncType } = store.state.dataflow.taskInfo
@@ -146,7 +146,7 @@ export const JsProcessor = observer(
 
         if (queryTimes > 40) {
           resetQuery()
-          root.$message.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
+          ElMessage.error(i18n.t('packages_form_js_processor_index_qingqiuchaoshiqing'))
           return
         }
         handleQuery()
@@ -364,7 +364,7 @@ export const JsProcessor = observer(
       // 加载模型字段
       loadFields()
       // 模型自动改变
-      useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
+      useAfterTaskSaved(formRef.value.values.$inputs, loadFields)
 
       return () => {
         const editorProps = { ...attrs }

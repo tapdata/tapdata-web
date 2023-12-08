@@ -8,10 +8,13 @@
               <ElInput
                 v-model="searchTable"
                 :placeholder="$t('packages_form_field_mapping_list_qingshurubiaoming')"
-                suffix-icon="el-icon-search"
                 clearable
                 @input="getMetadataTransformer(searchTable, 'search')"
-              ></ElInput>
+              >
+                <template #suffix>
+                  <ElIcon><ElIconSearch /></ElIcon>
+                </template>
+              </ElInput>
             </div>
           </div>
           <div class="flex bg-main justify-content-between mb-2 pl-2">
@@ -67,11 +70,14 @@
             <div class="flex">
               <ElInput
                 :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
-                suffix-icon="el-icon-search"
                 v-model="searchField"
                 clearable
                 @input="search()"
-              ></ElInput>
+              >
+                <template #suffix>
+                  <ElIcon><ElIconSearch /></ElIcon>
+                </template>
+              </ElInput>
             </div>
             <div class="item ml-2">
               <ElButton plain class="btn-refresh" @click="rest">
