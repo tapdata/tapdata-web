@@ -3,9 +3,11 @@ import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'
 import { Checkbox } from './checkbox'
+import { ArrayBase } from './array-base'
+import { ArrayItems } from './array-items'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 
-export { Space, Input, FormCollapse, FormCollapseItem, Radio, Checkbox }
+export { Space, Input, FormCollapse, FormCollapseItem, Radio, Checkbox, ArrayBase, ArrayItems }
 export * from './js-editor'
 export * from './python-editor'
 export * from './sql-editor'

@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@formily/core": "^2.0.9",
     "@formily/element-plus": "^2.0.9",
     "@formily/json-schema": "^2.0.9",
@@ -31,6 +32,7 @@
     "lodash": "^4.17.15",
     "resize-observer-polyfill": "^1.5.1",
     "tiny-emitter": "^2.1.0",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "vuedraggable": "^4.1.0"
   }
 }

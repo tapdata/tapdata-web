@@ -39,6 +39,6 @@ const DefineFieldSelect = defineComponent({
 
 export const FieldSelect = connect(
   DefineFieldSelect,
-  mapProps({ dataSource: 'options', loading: true }),
+  mapProps({ dataSource: 'options', loading: true, value: 'modelValue' }),
   mapReadPretty(PreviewText.Select),
 )
