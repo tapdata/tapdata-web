@@ -3,7 +3,7 @@
     <!-- 候选区 -->
     <div class="candidate-panel selector-panel rounded-4">
       <div class="selector-panel__header">
-        <div class="flex-1">
+        <div class="flex-1 flex align-center">
           <ElCheckbox
             v-if="table.tables.length"
             v-model="table.isCheckAll"
@@ -118,7 +118,7 @@
     <!-- 已选择区 -->
     <div class="checked-panel selector-panel rounded-4">
       <div class="selector-panel__header">
-        <div class="flex-1">
+        <div class="flex-1 flex align-center">
           <ElCheckbox
             v-if="selected.tables.length && !isOpenClipMode"
             v-model="selected.isCheckAll"
