@@ -1173,6 +1173,7 @@ export default {
       if (this.deployBtnDisabled(row)) {
         return
       }
+      this.showDetails = false
       this.buried('agentDeploy')
       this.$router.push({
         name: 'installAgent',

@@ -559,7 +559,7 @@ export default {
               const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
               if (!check && taskId && activeNodeId) {
                 metadataInstancesApi
-                  .logicSchema(taskId, {
+                  .deleteLogicSchema(taskId, {
                     nodeId: activeNodeId,
                   })
                   .then(() => {
