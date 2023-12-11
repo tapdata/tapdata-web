@@ -521,13 +521,6 @@ export class Database extends NodeType {
                     'x-component-props': {
                       title: i18n.t('packages_dag_config_data_read')
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                        }
-                      }
-                    },
                     properties: {
                       sizeSpace: {
                         type: 'void',
