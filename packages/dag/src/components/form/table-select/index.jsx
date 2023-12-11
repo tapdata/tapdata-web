@@ -64,21 +64,26 @@ const useTableExist = (attrs, selectRef, connectionId) => {
 
   let $input
   let inputStyle
-  let baseLeftPosition = 0
+  let baseLeftPosition
   let leftPosition = ref('')
 
   watch(() => attrs.value, handleChange)
 
   onMounted(() => {
     $input = selectRef.value.$el.querySelector('input')
-    const { fontSize, fontFamily, fontWeight, borderLeftWidth, paddingLeft } = getComputedStyle($input)
+    const { fontSize, fontFamily, fontWeight } = getComputedStyle($input)
+
     inputStyle = {
       fontSize,
       fontFamily,
       fontWeight,
       visibility: 'hidden',
     }
-    baseLeftPosition = parseInt(borderLeftWidth) + parseInt(paddingLeft)
+
+    // 8: .el-input__prefix-inner > :last-child {margin-right: 8px;}
+    // 4: 间距
+    baseLeftPosition = parseInt($input.offsetLeft) + 4
+
     checkTableExist(attrs.value)
   })
 
@@ -112,7 +117,7 @@ export const TableSelect = observer(
       return () => {
         const scopedSlots = {
           'created-option': ({ value }) => (
-            <span>
+            <span class="flex align-center gap-1">
               {value}
               <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
             </span>
@@ -139,8 +144,9 @@ export const TableSelect = observer(
             itemType={attrs.itemType || 'string'}
             itemQuery={attrs.itemQuery || 'original_name'}
             params={params.value}
-            scopedSlots={scopedSlots}
-          ></AsyncSelect>
+          >
+            {scopedSlots}
+          </AsyncSelect>
         )
       }
     },

@@ -35,6 +35,11 @@
 }
 
 // Select
+.el-select {
+  .el-select__tags .el-tag {
+    --el-tag-text-color: var(--el-text-color-primary);
+  }
+}
 .el-select-v2__popper {
   .el-select-dropdown {
     &__list {

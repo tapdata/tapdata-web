@@ -191,7 +191,7 @@
             @keydown.esc="handleKeydownEscape"
             @keydown.tab="visible = false"
           >
-            <template v-if="$slots.prefix" #prefix>
+            <template #prefix>
               <div style="height: 100%; display: flex; justify-content: center; align-items: center">
                 <slot name="prefix" />
               </div>
@@ -248,7 +248,9 @@
             aria-orientation="vertical"
           >
             <div v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled">
-              <el-option v-if="showNewOption" :value="query" :created="true" />
+              <el-option v-if="showNewOption" :value="query" :created="true">
+                <slot name="created-option" :value="query"></slot>
+              </el-option>
               <el-options @update-options="onOptionsRendered">
                 <template v-if="itemType === 'string'">
                   <ElOption v-for="item in items" :key="item" :value="item" />
@@ -458,6 +460,9 @@ export default defineComponent({
       }
       if (props.disabled) {
         classList.push(nsSelect.m('disabled'))
+      }
+      if (dropMenuVisible.value) {
+        classList.push('is-drop-menu-visible')
       }
       return classList
     })
