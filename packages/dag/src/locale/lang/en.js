@@ -344,8 +344,10 @@ export default {
   packages_dag_nodes_database_kaiqihourenwu:
     'Upon opening, the task will automatically gather the chosen source DDL events.',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
-  packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
+  packages_dag_nodes_database_quanliangmeipici:
+    'The number of records read per batch in full load should typically be kept at the default value. If your downstream system is slower and you encounter issues with the loss of the source cursor during tasks, please reduce this value.',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
+  packages_dag_nodes_database_zengliangmeipici: 'Incremental batch size',
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',
@@ -680,7 +682,7 @@ export default {
   packages_dag_src_editor_date_processor_field_list: 'Fields affected by operations',
   packages_dag_dynamicAdjustMemoryUsage_title: 'Dynamic Adjustment Memory Usage',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.',
+    'In the full synchronization phase, if identified data consumes significant memory, the system will automatically proportionally reduce memory queue usage to prevent memory overflow errors. This may result in a reduction in synchronization speed. It is advisable to enable this feature when machine resources are limited for stable synchronization. When machine resources are sufficient, it is recommended to disable it.',
   packages_dag_mergeMode: 'Merge Mode',
   packages_dag_main_table_first: 'Snapshot read primary table priority',
   packages_dag_sub_table_first: 'Snaphost read child table priority',

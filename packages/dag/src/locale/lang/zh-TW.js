@@ -330,8 +330,10 @@ export default {
   packages_dag_nodes_database_ddLshijian: 'DDL事件採集',
   packages_dag_nodes_database_kaiqihourenwu: '開啟後任務將會自動採集選中的源端DDL事件',
   packages_dag_nodes_database_dongtaixinzengbiao: '動態新增表',
-  packages_dag_nodes_database_quanliangmeipici: '全量每批次讀取的條數',
-  packages_dag_nodes_database_piliangduqutiao: '批量讀取條數',
+  packages_dag_nodes_database_quanliangmeipici:
+    '全量每批次讀取的條數, 一般保持默認值即可, 如果你的下游較慢, 任務出現源的游標丟失的情況, 請調小此值',
+  packages_dag_nodes_database_piliangduqutiao: '全量每批讀取條數',
+  packages_dag_nodes_database_zengliangmeipici: '增量每批讀取條數',
   packages_dag_nodes_database_zidingyi: '自定義',
   packages_dag_nodes_database_xuanzebiao: '選擇表',
   packages_dag_nodes_database_suoshuage: '所屬agent',
@@ -625,7 +627,7 @@ export default {
   packages_dag_src_editor_date_processor_field_list: '受運算影響的字段',
   packages_dag_dynamicAdjustMemoryUsage_title: '動態調整記憶體使用',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    '全量同步階段，當識別到同步的數據佔用記憶體較大時，自動按照比例降低記憶體佇列的使用，以防止出現記憶體溢出的錯誤，但次操作會導致同步速度的下降。當確認機器資源较小時，建議啟用，可以有效的保障同步任務的穩定運行。當機器資源充足時，建議關閉。',
+    '全量同步階段，當識別到同步的數據佔用記憶體較大時，自動按照比例降低記憶體佇列的使用，以防止出現記憶體溢出的錯誤，但此操作會導致同步速度的下降。當確認機器資源较小時，建議啟用，可以有效的保障同步任務的穩定運行。當機器資源充足時，建議關閉。',
   packages_dag_mergeMode: '合併模式',
   packages_dag_main_table_first: '全量主表優先',
   packages_dag_sub_table_first: '全量子表優先',
