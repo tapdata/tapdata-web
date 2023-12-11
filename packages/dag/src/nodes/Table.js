@@ -404,32 +404,6 @@ export class Table extends NodeType {
                       },
                     },
                   },
-                  concurrentWritePartitionMap: {
-                    type: 'object',
-                    title: i18n.t('packages_dag_nodes_database_duoxianchengfenqujian'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'TableFieldSelect',
-                    'x-component-props': {
-                      nodeId: `{{ $values.id }}`,
-                      tableName: `{{ $values.tableName }}`,
-                      defaultFields: `{{ $values.updateConditionFields }}`,
-                      refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`,
-                    },
-                    'x-reactions': [
-                      {
-                        dependencies: ['.initialConcurrent', '.cdcConcurrent'],
-                        fulfill: {
-                          state: {
-                            display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}',
-                          },
-                        },
-                      },
-                    ],
-                    'x-validator': {
-                      triggerType: 'onBlur',
-                      validator: `{{validateConcurrentWritePartitionMap}}`,
-                    },
-                  },
                   cdcConcurrentSpace: {
                     type: 'void',
                     title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
@@ -462,6 +436,32 @@ export class Table extends NodeType {
                           min: 0,
                         },
                       },
+                    },
+                  },
+                  concurrentWritePartitionMap: {
+                    type: 'object',
+                    title: i18n.t('packages_dag_nodes_database_duoxianchengfenqujian'),
+                    'x-decorator': 'FormItem',
+                    'x-component': 'TableFieldSelect',
+                    'x-component-props': {
+                      nodeId: `{{ $values.id }}`,
+                      tableName: `{{ $values.tableName }}`,
+                      defaultFields: `{{ $values.updateConditionFields }}`,
+                      refresh: `{{ 'refresh' + $values.initialConcurrent + $values.cdcConcurrent }}`,
+                    },
+                    'x-reactions': [
+                      {
+                        dependencies: ['.initialConcurrent', '.cdcConcurrent'],
+                        fulfill: {
+                          state: {
+                            display: '{{($deps[0] || $deps[1]) ? "visible":"hidden"}}',
+                          },
+                        },
+                      },
+                    ],
+                    'x-validator': {
+                      triggerType: 'onBlur',
+                      validator: `{{validateConcurrentWritePartitionMap}}`,
                     },
                   },
                 },
