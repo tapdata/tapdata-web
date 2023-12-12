@@ -90,11 +90,11 @@
           </template>
           <ElButton
             v-if="$route.name === 'dataflowList'"
-            class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+            class="--with-icon inline-flex align-center px-2 py-0 align-top"
             :loading="createBtnLoading"
             @click="handleCreateMaterializedView"
           >
-            <VIcon size="28">beta</VIcon>
+            <VIcon class="mr-1" size="28">beta</VIcon>
             {{ $t('packages_dag_build_materialized_view') }}</ElButton
           >
           <el-button
