@@ -56,10 +56,9 @@ export default {
     },
     handleCopy() {
       const MAP = {
-        Linux: 'copyTokenInLinux',
-        Docker: 'copyTokenInDocker',
-        windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest'
+        linux: 'copyTokenInLinux',
+        docker: 'copyTokenInDocker',
+        windows: 'copyTokenInWindows'
       }
       this.buried(MAP[this.downLoadType])
       this.$emit('behavior', `copy_${this.downLoadType}`)
