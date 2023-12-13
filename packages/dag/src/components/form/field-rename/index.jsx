@@ -351,12 +351,10 @@ export const FieldRename = observer(
                   // show-checkbox={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"
-                  scopedSlots={{
+                >
+                  {{
                     default: ({ node, data }) => (
-                      <span
-                        class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
-                        slot-scope="{ node, data }"
-                      >
+                      <span class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden">
                         <span class="flex-1 text__inner inline-block ellipsis">
                           {data.field}
                           {data.primary_key_position > 0 ? (
@@ -417,7 +415,7 @@ export const FieldRename = observer(
                       </span>
                     ),
                   }}
-                />
+                </ElTree>
               </div>
             </div>
           </div>

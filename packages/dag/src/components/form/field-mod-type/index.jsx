@@ -172,7 +172,8 @@ export const FieldModType = observer(
               default-expand-all={true}
               expand-on-click-node={false}
               class="field-processor-tree"
-              scopedSlots={{
+            >
+              {{
                 default: ({ node, data }) => (
                   <span
                     class="tree-node flex flex-1 justify-content-center align-items flex-row"
@@ -212,7 +213,7 @@ export const FieldModType = observer(
                   </span>
                 ),
               }}
-            />
+            </ElTree>
           </div>
         </div>
       )

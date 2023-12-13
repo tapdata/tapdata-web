@@ -112,7 +112,8 @@ export const FieldValue = connect(
                 default-expand-all={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
-                scopedSlots={{
+              >
+                {{
                   default: ({ node, data }) => (
                     <span
                       class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
@@ -150,7 +151,7 @@ export const FieldValue = connect(
                     </span>
                   ),
                 }}
-              />
+              </ElTree>
             </div>
             <ElDialog
               title={

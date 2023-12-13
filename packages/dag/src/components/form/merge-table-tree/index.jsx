@@ -225,9 +225,6 @@ export const MergeTableTree = observer(
                 highlightCurrent={true}
                 expandOnClickNode={false}
                 draggable={!props.disabled}
-                scopedSlots={{
-                  default: renderNode,
-                }}
                 indent={8}
                 vOn:current-change={handleCurrentChange}
                 vOn:node-drop={handleNodeDrop}

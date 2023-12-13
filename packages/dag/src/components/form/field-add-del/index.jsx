@@ -155,7 +155,8 @@ export const FieldAddDel = connect(
                   default-expand-all={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"
-                  scopedSlots={{
+                >
+                  {{
                     default: ({ node, data }) => (
                       <span
                         class={[
@@ -274,7 +275,7 @@ export const FieldAddDel = connect(
                       </span>
                     ),
                   }}
-                />
+                </VirtualTree>
               </div>
             </div>
           </div>

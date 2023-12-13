@@ -740,17 +740,18 @@ export const FieldRenameProcessor = observer(
                   data={filterFieldList.value}
                   columns={columns}
                   item-key="sourceFieldName"
-                  scopedSlots={{
-                    sourceFieldName: renderSourceNode,
-                    targetFieldName: renderNode,
-                    operation: renderOpNode,
-                  }}
                   row-class-name={tableRowClassName}
                   on-selection-change={doSelectionField}
                   on-clear-selection={doClearSelection}
                   border
                   class="flex-fill h-0"
-                ></VirtualList>
+                >
+                  {{
+                    sourceFieldName: renderSourceNode,
+                    targetFieldName: renderNode,
+                    operation: renderOpNode,
+                  }}
+                </VirtualList>
               </div>
             </div>
 
