@@ -92,7 +92,10 @@ export default {
     }
   },
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const accept = isDaas ? '.gz,.relmig' : '.relmig' // 云版仅支持 .relmig
     return {
+      isDaas,
       dialogVisible: false,
       classifyList: [],
       downType: '',
@@ -101,7 +104,7 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept: '.gz,.relmig',
+        accept,
         source: '',
         sink: ''
       },

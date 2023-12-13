@@ -83,7 +83,7 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="isDaas && buttonShowMap.import"
+            v-if="buttonShowMap.import"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
@@ -277,7 +277,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
