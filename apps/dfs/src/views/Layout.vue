@@ -184,7 +184,8 @@ export default {
         {
           name: 'dataConsole',
           title: this.$t('page_title_data_hub'),
-          icon: 'datastore'
+          icon: 'datastore',
+          beta: true
         }
         // {
         //   name: 'customNodeList',
