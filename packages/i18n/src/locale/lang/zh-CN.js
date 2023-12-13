@@ -229,6 +229,8 @@ export default {
   public_connection_form_other_connection_string: '其他连接串参数',
   public_connection_form_time_zone_of_time_type: '时间类型的时区',
   public_connection_form_link_plugin_source: '链接插件来源',
+  public_source_database: '源数据库',
+  public_target_database: '目标数据库',
   // 任务
   public_task: '任务',
   public_task_name: '任务名称',

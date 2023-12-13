@@ -183,10 +183,13 @@ export default {
 
         // 数据兼容
         const defaultAttrs = {
-          position: [0, 0]
+          position: [0, 0],
+          capabilities: []
         }
         if (!node.attrs) node.attrs = defaultAttrs
         else if (!node.attrs.position) Object.assign(node.attrs, defaultAttrs)
+
+        if (!node.attrs.capabilities) node.attrs.capabilities = []
 
         const ins = getResourceIns(node)
         Object.defineProperty(node, '__Ctor', {
