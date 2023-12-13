@@ -77,10 +77,9 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { cloneDeep, debounce } from 'lodash'
-import { nextTick } from 'vue'
 
 export default {
   name: 'Main',
