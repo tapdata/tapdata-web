@@ -65,7 +65,13 @@
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
-      <el-tooltip placement="top" ref="tooltip" :effect="tooltipEffect" :content="tooltipContent"></el-tooltip>
+      <el-tooltip
+        :referenceEl="referenceEl"
+        placement="top"
+        ref="tooltip"
+        :effect="tooltipEffect"
+        :content="tooltipContent"
+      ></el-tooltip>
     </div>
   </div>
 </template>
@@ -74,6 +80,7 @@
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { cloneDeep, debounce } from 'lodash'
+import { nextTick } from 'vue'
 
 export default {
   name: 'Main',
@@ -118,6 +125,7 @@ export default {
         index: 50,
         selection: 40,
       },
+      referenceEl: null,
     }
   },
   computed: {
@@ -154,7 +162,7 @@ export default {
     },
   },
   created() {
-    this.activateTooltip = debounce((tooltip) => tooltip.handleShowPopper(), 50)
+    this.activateTooltip = debounce((tooltip) => tooltip.onOpen(), 50)
   },
   mounted() {
     this.layoutWidth = this.$el.offsetWidth
@@ -236,10 +244,7 @@ export default {
       if (cellChild.scrollWidth > cellChild.offsetWidth && this.$refs.tooltip) {
         const tooltip = this.$refs.tooltip
         this.tooltipContent = cell.innerText || cell.textContent || cell.querySelector('input')?.value
-        tooltip.referenceElm = cell
-        tooltip.$refs.popper && (tooltip.$refs.popper.style.display = 'none')
-        tooltip.doDestroy()
-        tooltip.setExpectedState(true)
+        this.referenceEl = cell
         this.activateTooltip(tooltip)
       }
     },
@@ -248,8 +253,7 @@ export default {
       const tooltip = this.$refs.tooltip
 
       if (tooltip) {
-        tooltip.setExpectedState(false)
-        tooltip.handleClosePopper()
+        tooltip.hide()
       }
     },
 

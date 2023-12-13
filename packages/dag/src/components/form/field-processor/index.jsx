@@ -6,7 +6,7 @@ import { observer } from '@formily/reactive-vue'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem, useForm } from '@tap/form'
-import { VIcon, EmptyItem, OverflowTooltip, VirtualList } from '@tap/component'
+import { VIcon, VEmpty, OverflowTooltip, VirtualList } from '@tap/component'
 import { toUpperCase, toLowerCase, camelToSnake, snakeToCamel } from '@tap/shared'
 import './style.scss'
 import { useStore } from 'vuex'
@@ -69,6 +69,7 @@ export const FieldRenameProcessor = observer(
   defineComponent({
     props: ['value', 'nodeId', 'disabled'],
     setup(props, { emit, refs }) {
+      const tableRef = ref(null)
       const store = useStore()
       const route = useRoute()
       const formRef = useForm()
@@ -306,7 +307,7 @@ export const FieldRenameProcessor = observer(
       }
 
       const updateView = (index) => {
-        refs.table?.clearSelection()
+        tableRef.value?.clearSelection()
         config.position = index
         config.selectTableRow = list.value[index]
         config.target = config.selectTableRow?.fieldsMapping || []
@@ -665,7 +666,7 @@ export const FieldRenameProcessor = observer(
                     </ul>
                   ) : (
                     <div class="task-form-left__ul flex flex-column align-items-center">
-                      <EmptyItem></EmptyItem>
+                      <VEmpty></VEmpty>
                     </div>
                   )}
                 </div>
@@ -736,7 +737,7 @@ export const FieldRenameProcessor = observer(
                   </div>
                 </div>
                 <VirtualList
-                  ref="table"
+                  ref={tableRef}
                   data={filterFieldList.value}
                   columns={columns}
                   item-key="sourceFieldName"
