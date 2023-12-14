@@ -41,7 +41,7 @@
     margin-right: 24px;
   }
   .tree-node {
-    line-height: 43px;
+    //line-height: 43px;
   }
   .field-processor-operation {
     height: 40px;
@@ -62,20 +62,21 @@
     //  border: 1px solid;
     //  border-color: #eceef1
     //}
-    .tree-field-input .el-input__inner:focus {
-      border: 1px solid;
-      border-color: map-get($color, primary);
-    }
-    .el-input__inner {
-      border: none;
-      background-color: transparent;
-      padding: 0 5px;
+    .tree-field-input .el-input__wrapper {
+      box-shadow: none;
+      &:focus-within {
+        box-shadow: 0 0 0 1px var(--el-input-focus-border-color) inset;
+      }
     }
     .el-tree-node__content {
       height: 50px;
       cursor: pointer;
       border-top: 1px solid;
       border-color: #eceef1;
+      border-radius: 0;
+    }
+    .el-tree-node__expand-icon {
+      height: 38px;
     }
     .el-input__prefix,
     .el-input__suffix .el-select__caret {

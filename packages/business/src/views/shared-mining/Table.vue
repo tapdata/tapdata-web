@@ -15,19 +15,24 @@
         <ElInput
           class="search-input"
           v-model:value="keyword"
-          prefix-icon="el-icon-search"
           :placeholder="$t('public_input_placeholder')"
           clearable
           @input="handleSearch"
-        ></ElInput>
+        >
+          <template #prefix>
+            <ElIcon>
+              <ElIconSearch />
+            </ElIcon>
+          </template>
+        </ElInput>
         <ElButton
           v-if="currentTab === 'running'"
           :disabled="!multipleSelection.length"
           type="primary"
           class="ml-4"
           @click="handleStop"
-          >{{ $t('public_button_stop_mining') }}</ElButton
-        >
+          >{{ $t('public_button_stop_mining') }}
+        </ElButton>
         <ElButton
           v-else
           :loading="recoverLoading"
@@ -35,8 +40,8 @@
           type="primary"
           class="ml-4"
           @click="handleRecover"
-          >{{ $t('public_button_stop_recover') }}</ElButton
-        >
+          >{{ $t('public_button_stop_recover') }}
+        </ElButton>
       </div>
     </div>
     <VTable
@@ -91,9 +96,9 @@
       </VTable>
       <div class="text-end mt-10">
         <ElButton @click="visible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop">{{
-          $t('public_button_confirm')
-        }}</ElButton>
+        <ElButton :loading="submitLoading" type="primary" @click="handleSubmitStop"
+          >{{ $t('public_button_confirm') }}
+        </ElButton>
       </div>
     </ElDialog>
   </div>

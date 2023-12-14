@@ -102,6 +102,6 @@ export default {
       })
     })
   },
-  emits: ['init', 'initOptions', 'update:value', , , 'update:value'],
+  emits: ['init', 'initOptions', 'update:value', ...ACTION_EVENTS],
 }
 </script>

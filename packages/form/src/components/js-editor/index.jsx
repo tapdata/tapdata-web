@@ -7,6 +7,7 @@ import './style.scss'
 
 export const JsEditor = connect(
   {
+    emits: ['change', 'init'],
     props: {
       value: String,
       before: {
@@ -58,7 +59,8 @@ export const JsEditor = connect(
       onFocus() {
         this.bindEvent()
       },
-      onBlur(val) {
+      onBlur(val, ...args) {
+        console.log('args', val, ...args)
         if (val !== this.code) {
           if (this.includeBeforeAndAfter) {
             val = `${this.before}${val}${this.after}`

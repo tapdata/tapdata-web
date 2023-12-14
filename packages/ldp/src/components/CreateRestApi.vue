@@ -22,7 +22,7 @@
     >
       <div class="flex gap-4">
         <ElFormItem :label="$t('public_name')" class="flex-1 form-item-name" prop="name">
-          <ElInput v-if="isEdit" v-model:value="form.name" :placeholder="$t('public_input_placeholder_name')"></ElInput>
+          <ElInput v-if="isEdit" v-model="form.name" :placeholder="$t('public_input_placeholder_name')"></ElInput>
           <div v-else class="fw-sub fs-7 font-color-normal">
             {{ data.name }}
           </div>
@@ -55,7 +55,7 @@
         </li>
         <li class="data-server-form-base__item px-2">
           <ElFormItem :label="$t('packages_business_jiekouleixing')" label-width="86px">
-            <ElSelect v-if="isEdit" v-model:value="form.apiType" @change="apiTypeChanged">
+            <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged">
               <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
             </ElSelect>
             <div v-else class="text">{{ apiTypeMap[data.apiType] }}</div>

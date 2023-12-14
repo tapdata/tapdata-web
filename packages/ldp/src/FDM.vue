@@ -22,15 +22,7 @@
       @drop.stop="handleDrop"
     >
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model:value="search"
-          clearable
-          @keydown.stop
-          @keyup.stop
-          @click.stop
-          @input="handleSearch"
-        >
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop @input="handleSearch">
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -142,11 +134,7 @@
         </div>
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
-          <ElInput
-            v-model:value="taskDialogConfig.prefix"
-            :maxlength="maxPrefixLength"
-            class="inline-flex inline-flex-input"
-          >
+          <ElInput v-model="taskDialogConfig.prefix" :maxlength="maxPrefixLength" class="inline-flex inline-flex-input">
             <template v-slot:prepend>{{ fixedPrefix }}</template>
             <template v-slot:append>
               <span v-if="taskDialogConfig.tableName" :title="taskDialogConfig.tableName">
@@ -158,7 +146,7 @@
         </ElFormItem>
 
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"

@@ -4,7 +4,7 @@ import i18n from '@tap/i18n'
 import { connect, JsEditor, mapProps, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue'
-import { VIcon } from '@tap/component'
+import { IconButton, VIcon } from '@tap/component'
 import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'
 
@@ -93,15 +93,10 @@ export const FieldValue = connect(
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
               </span>
               <span class="flex-1 text inline-block ml-7">{i18n.t('packages_form_field_value_index_ziduanfuzhi')}</span>
-              <span class="field-ops inline-block ml-10">
-                <VIcon
-                  class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                  disabled={this.disabled}
-                  size="12"
-                  onClick={() => this.handleAllReset()}
-                >
+              <span class="flex align-center gap-2 px-2">
+                <IconButton sm disabled={this.disabled} onClick={() => this.handleAllReset()}>
                   revoke
-                </VIcon>
+                </IconButton>
               </span>
             </div>
             <div class="field-processors-tree-warp">
@@ -115,10 +110,7 @@ export const FieldValue = connect(
               >
                 {{
                   default: ({ node, data }) => (
-                    <span
-                      class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
-                      slot-scope="{ node, data }"
-                    >
+                    <span class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden">
                       <span class="field-name inline-block ellipsis">
                         {data.previousFieldName}
                         {data.primary_key_position > 0 ? (
@@ -130,23 +122,17 @@ export const FieldValue = connect(
                         )}
                       </span>
                       <span class="field-name inline-block ellipsis">{data.script}</span>
-                      <span class="e-ops">
-                        <ElButton
-                          text
-                          class="ml-5"
-                          disabled={this.disabled}
-                          onClick={() => this.handleScript(node, data)}
-                        >
-                          <VIcon>js</VIcon>
-                        </ElButton>
-                        <ElButton
-                          text
-                          class="ml-5"
+                      <span class="flex align-center gap-2 px-2">
+                        <IconButton sm disabled={this.disabled} onClick={() => this.handleScript(node, data)}>
+                          js
+                        </IconButton>
+                        <IconButton
+                          sm
                           onClick={() => this.handleReset(node, data)}
                           disabled={!this.isScript(data.id) || this.disabled}
                         >
-                          <VIcon size="12">revoke</VIcon>
-                        </ElButton>
+                          revoke
+                        </IconButton>
                       </span>
                     </span>
                   ),
@@ -161,40 +147,51 @@ export const FieldValue = connect(
                 this.scriptDialog.fieldName +
                 '])'
               }
-              visible={this.scriptDialog.open}
+              modelValue={this.scriptDialog.open}
               append-to-body
               class="scriptDialog"
               close-on-click-modal={false}
               before-close={() => (this.scriptDialog.open = false)}
             >
-              <ElForm>
-                <ElFormItem>
-                  <JsEditor
-                    ref="jsEditor"
-                    value={this.scriptDialog.script}
-                    onChange={(val) => (this.scriptDialog.script = val)}
-                    onInit={(editor) => {
-                      $emit(this, 'editor-init', editor)
-                    }}
-                    height={80}
-                    showFullscreen={false}
-                    before="var result = "
-                  />
-                </ElFormItem>
-              </ElForm>
-              <div class="example">
-                <div>{i18n.t('packages_form_field_value_index_shili')}</div>
-                <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
-                <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
-                <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
-                <div>{i18n.t('packages_form_field_value_index_varre')}</div>
-              </div>
-              <div slot="footer" class="dialog-footer">
-                <ElButton onClick={() => (this.scriptDialog.open = false)}>{i18n.t('public_button_cancel')}</ElButton>
-                <ElButton type="primary" onClick={() => this.scriptDialog.fn()}>
-                  {i18n.t('packages_form_dataVerify_confirm')}
-                </ElButton>
-              </div>
+              {{
+                default: () => (
+                  <>
+                    <ElForm>
+                      <ElFormItem>
+                        <JsEditor
+                          class="w-100"
+                          ref="jsEditor"
+                          value={this.scriptDialog.script}
+                          onChange={(val) => (this.scriptDialog.script = val)}
+                          onInit={(editor) => {
+                            $emit(this, 'editor-init', editor)
+                          }}
+                          height={80}
+                          showFullscreen={false}
+                          before="var result = "
+                        />
+                      </ElFormItem>
+                    </ElForm>
+                    <div class="example">
+                      <div>{i18n.t('packages_form_field_value_index_shili')}</div>
+                      <div>var result = "a" + "b" // 字符串拼接, result的结果为 "ab"</div>
+                      <div>var result = 1 + 2 // 数字计算, result 的结果为 3</div>
+                      <div>var result = fn("1") // 调用自定义函数或内置函数, result的结果为 fn 函数的返回值</div>
+                      <div>{i18n.t('packages_form_field_value_index_varre')}</div>
+                    </div>
+                  </>
+                ),
+                footer: () => (
+                  <div class="dialog-footer">
+                    <ElButton onClick={() => (this.scriptDialog.open = false)}>
+                      {i18n.t('public_button_cancel')}
+                    </ElButton>
+                    <ElButton type="primary" onClick={() => this.scriptDialog.fn()}>
+                      {i18n.t('packages_form_dataVerify_confirm')}
+                    </ElButton>
+                  </div>
+                ),
+              }}
             </ElDialog>
           </div>
         )

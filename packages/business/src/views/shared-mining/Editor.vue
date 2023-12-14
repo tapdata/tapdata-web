@@ -18,7 +18,7 @@
       class="my-n6"
     >
       <ElFormItem :label="$t('packages_business_shared_form_edit_name')" prop="name">
-        <ElInput clearable v-model:value="editForm.name"></ElInput>
+        <ElInput clearable v-model="editForm.name"></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_shared_form_setting_log_time')">
         <ElInputNumber v-model:value="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>

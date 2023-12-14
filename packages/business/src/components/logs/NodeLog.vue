@@ -18,17 +18,22 @@
           ></TimeSelect>
           <ElInput
             class="search-input ml-4"
-            v-model:value="keyword"
-            prefix-icon="el-icon-search"
+            v-model="keyword"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
             clearable
             style="width: 240px"
             @input="searchFnc"
-          ></ElInput>
-          <ElButton :loading="downloadLoading" text class="ml-4" @click="handleDownload">{{
-            $t('public_button_download')
-          }}</ElButton>
-          <ElSwitch v-model:value="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
+          >
+            <template #prefix>
+              <ElIcon>
+                <ElIconSearch />
+              </ElIcon>
+            </template>
+          </ElInput>
+          <ElButton :loading="downloadLoading" text class="ml-4" @click="handleDownload"
+            >{{ $t('public_button_download') }}
+          </ElButton>
+          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
           <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
         </div>
         <div class="pt-3">
@@ -41,14 +46,14 @@
         </div>
       </div>
       <div class="level-line mb-2">
-        <ElCheckboxGroup v-model:value="checkList" :disabled="loading" :min="1" class="inline-flex" @change="searchFnc">
+        <ElCheckboxGroup v-model="checkList" :disabled="loading" :min="1" class="inline-flex" @change="searchFnc">
           <ElCheckbox
             v-for="item in checkItems"
             :label="item.label"
             :key="item.label"
             @change="handleCheckbox(arguments[0], item.label)"
-            >{{ item.text }}</ElCheckbox
-          >
+            >{{ item.text }}
+          </ElCheckbox>
         </ElCheckboxGroup>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
@@ -66,7 +71,9 @@
               class="before-scroll-content text-center font-color-light pb-2"
             >
               <div v-show="preLoading">
-                <el-icon><el-icon-loading /></el-icon>
+                <el-icon>
+                  <el-icon-loading />
+                </el-icon>
               </div>
               <ElAlert
                 v-show="showNoMore"
@@ -138,17 +145,17 @@
     >
       <ElForm label-width="120px">
         <ElFormItem :label="$t('packages_dag_components_log_rizhijibie')" prop="level">
-          <ElSelect v-model:value="form.level" style="width: 275px">
+          <ElSelect v-model="form.level" style="width: 275px">
             <ElOption v-for="item in checkItems" :label="item.text" :value="item.label" :key="item.label"></ElOption>
           </ElSelect>
         </ElFormItem>
         <template v-if="form.level === 'DEBUG'">
-          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"> </ElFormItem>
+          <ElFormItem :label="$t('packages_dag_components_log_debug')" prop="param"></ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_kaiqishichangmiao')" prop="start">
-            <ElInput v-model:value="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model="form.intervalCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_components_log_zuidashijianshu')" prop="max">
-            <ElInput v-model:value="form.recordCeiling" type="number" style="width: 275px"></ElInput>
+            <ElInput v-model="form.recordCeiling" type="number" style="width: 275px"></ElInput>
           </ElFormItem>
         </template>
       </ElForm>
@@ -880,6 +887,7 @@ export default {
 <style lang="scss" scoped>
 .log-container {
   height: inherit;
+
   &.fullscreen {
     position: fixed;
     top: 0;
@@ -890,28 +898,35 @@ export default {
     background: #fff;
   }
 }
+
 .filter-items {
   width: 200px;
   user-select: none;
   overflow-y: auto;
 }
+
 .filter-items__item {
   padding: 0 16px;
   height: 40px;
   cursor: pointer;
+
   &.active {
     background: rgba(44, 101, 255, 0.05);
   }
 }
+
 .main {
   width: 0;
 }
+
 .white-space-pre {
   white-space: pre-wrap;
   word-break: break-all;
 }
+
 .node-list {
   width: 224px;
+
   :deep(.error-icon) {
     display: none;
   }
@@ -922,39 +937,48 @@ export default {
     }
   }
 }
+
 .log-list {
   background-color: rgba(229, 236, 255, 0.22);
+
   :deep(.log-line) {
     padding: 8px 16px;
     background-color: #fff;
     border-bottom: 1px solid #ebeef5;
     width: 100%;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+
     .log-item {
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+
       .expand-icon {
         display: none;
       }
+
       &.hide-content {
         .expand-icon {
           display: inline-flex;
         }
       }
     }
+
     .info-level {
       color: #c9cdd4;
     }
+
     .warn-level {
       color: #d5760e;
     }
+
     .error-level,
     .fatal-level {
       color: #d44d4d;
     }
+
     .debug-level {
       color: #178061;
     }
@@ -976,6 +1000,7 @@ export default {
     white-space: nowrap;
   }
 }
+
 .no-more__alert {
   margin-left: -70px;
   top: 4px;
@@ -987,26 +1012,32 @@ export default {
     top: 7px;
   }
 }
+
 .node-list-item {
   line-height: 32px;
   border-radius: 6px;
   cursor: pointer;
+
   &:hover,
   &.active {
     background-color: rgba(229, 236, 255, 0.3);
   }
 }
+
 .icon-btn {
   &:hover {
     background-color: map-get($bgColor, hover);
   }
 }
+
 .error-stack-wrap {
   height: 465px;
+
   &.has-describe {
     height: 280px;
   }
 }
+
 .clipboard-button {
   right: 18px;
   top: 30px;

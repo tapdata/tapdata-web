@@ -624,14 +624,21 @@ export const FieldRenameProcessor = observer(
                 <div class="flex p-2">
                   <ElInput
                     placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
-                    prefix-icon="el-icon-search"
                     clearable
                     value={config.searchTable}
                     onInput={(val) => {
                       config.searchTable = val
                       doSearchTables()
                     }}
-                  ></ElInput>
+                  >
+                    {{
+                      prefix: () => (
+                        <ElIcon>
+                          <ElIconSearch />
+                        </ElIcon>
+                      ),
+                    }}
+                  </ElInput>
                 </div>
                 <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
                   <span>
@@ -702,14 +709,21 @@ export const FieldRenameProcessor = observer(
                   <div class="flex field-search-input-wrap">
                     <ElInput
                       placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                      prefix-icon="el-icon-search"
                       clearable
                       value={config.searchField}
                       onInput={(val) => {
                         config.searchField = val
                         doSearchField()
                       }}
-                    ></ElInput>
+                    >
+                      {{
+                        prefix: () => (
+                          <ElIcon>
+                            <ElIconSearch />
+                          </ElIcon>
+                        ),
+                      }}
+                    </ElInput>
                   </div>
                   <div class="item px-2">
                     <ElButton

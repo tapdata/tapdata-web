@@ -6,12 +6,17 @@
           <ElInput
             class="search-input"
             v-model:value="keyword"
-            prefix-icon="el-icon-search"
             :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
             clearable
             style="width: 240px"
             @input="searchFnc(800)"
-          ></ElInput>
+          >
+            <template #prefix>
+              <ElIcon>
+                <ElIconSearch />
+              </ElIcon>
+            </template>
+          </ElInput>
           <div>
             <el-tooltip
               class="item"
@@ -36,8 +41,8 @@
                 isChecking
                   ? $t('packages_business_verification_details_jiaoyanzhong')
                   : $t('packages_business_verification_details_jiaoyan')
-              }}</ElButton
-            >
+              }}
+            </ElButton>
           </div>
         </div>
         <VTable
@@ -398,27 +403,34 @@ export default {
 .verify-details {
   height: 100%;
 }
+
 .verify-details__wrap {
   border-radius: 4px;
   background-color: #fff;
   box-sizing: border-box;
+
   .icon {
     color: map-get($color, danger);
     font-size: 16px;
   }
 }
+
 .verify-list {
   width: 534px;
 }
+
 .verify-result {
 }
+
 .line__label {
   display: inline-block;
   width: 100px;
 }
+
 .disable-color {
   color: #86909c;
 }
+
 .table__body {
   height: 0;
   overflow-y: auto;

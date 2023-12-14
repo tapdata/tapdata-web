@@ -84,7 +84,7 @@
         <header class="header flex align-center mb-4">
           <div class="table-info-name">{{ $t('packages_business_tasks') }}</div>
           <ElDivider class="mx-3" direction="vertical"></ElDivider>
-          <ElRadioGroup v-model:value="asTaskType">
+          <ElRadioGroup v-model="asTaskType">
             <ElRadioButton label="all">{{ $t('public_select_option_all') }}</ElRadioButton>
             <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
             <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>

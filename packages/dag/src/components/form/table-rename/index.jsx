@@ -310,10 +310,17 @@ export const TableRename = observer(
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
-              prefixIcon="el-icon-search"
               clearable
               placeholder={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
-            ></ElInput>
+            >
+              {{
+                prefix: () => (
+                  <ElIcon>
+                    <ElIconSearch />
+                  </ElIcon>
+                ),
+              }}
+            </ElInput>
           </div>
 
           <div

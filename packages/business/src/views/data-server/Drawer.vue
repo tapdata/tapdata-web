@@ -98,7 +98,7 @@
           </li>
           <li class="data-server-form-base__item">
             <ElFormItem :label="$t('packages_business_data_server_drawer_jiekouleixing')" label-width="86px">
-              <ElSelect v-if="isEdit" v-model:value="form.apiType" @change="apiTypeChanged">
+              <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged">
                 <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
               </ElSelect>
               <div v-else class="text">{{ apiTypeMap[data.apiType] }}</div>
@@ -278,7 +278,7 @@
                 :step="1"
                 :min="0"
               />
-              <ElInput v-else v-model:value="debugParams[row.name]"></ElInput>
+              <ElInput v-else v-model="debugParams[row.name]"></ElInput>
             </template>
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">

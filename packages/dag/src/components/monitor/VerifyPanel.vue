@@ -34,13 +34,15 @@
       <ElInput
         v-model="keyword"
         :placeholder="$t('packages_dag_monitor_verifypanel_qingshurusousuo')"
-        prefix-icon="el-icon-search"
         clearable
         @keydown.stop
         @keyup.stop
         @click.stop
         @input="search"
       >
+        <template #prefix>
+          <ElIcon><ElIconSearch /></ElIcon>
+        </template>
       </ElInput>
     </div>
 
