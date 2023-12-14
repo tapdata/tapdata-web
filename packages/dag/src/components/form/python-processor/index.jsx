@@ -478,13 +478,8 @@ export const PythonProcessor = observer(
               modal={false}
               title={i18n.t('packages_dag_api_docs')}
               size={600}
-              visible={showDoc.value}
-              on={{
-                ['update:visible']: (v) => {
-                  console.log('update:visible', v) // eslint-disable-line
-                  showDoc.value = v
-                },
-              }}
+              v-model={showDoc.value}
+              class="python-api-drawer"
             >
               <div class="px-4 js-doc-content">
                 {Object.keys(functionGroup.value).map((className) => {

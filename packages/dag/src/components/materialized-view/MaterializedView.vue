@@ -5,7 +5,7 @@
     class="materialized-view-drawer"
     :with-header="false"
     :close-on-press-escape="false"
-    @update:visible="handleUpdateVisible"
+    @update:modelValue="handleUpdateVisible"
   >
     <div ref="container" class="h-100 flex flex-column" v-loading="loading" element-loading-background="#fff">
       <header class="px-4 h-48 flex align-center position-relative">

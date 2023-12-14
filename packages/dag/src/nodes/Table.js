@@ -61,7 +61,7 @@ export class Table extends NodeType {
         },
         'x-component': 'FormTab',
         'x-component-props': {
-          class: 'config-tabs',
+          'config-tabs': true,
           formTab: '{{formTab}}',
         },
         properties: {

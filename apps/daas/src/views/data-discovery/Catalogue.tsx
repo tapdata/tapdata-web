@@ -301,7 +301,7 @@ export default defineComponent({
           size="58%"
           title={i18n.t('datadiscovery_catalogue_ziyuanbangding')}
           modelValue={this.data.isShowSourceDrawer}
-          on={{ ['update:visible']: this.closeSourceDrawer }}
+          onUpdate:modelValue={this.closeSourceDrawer}
         >
           <ObjectTable
             ref={'objectTable'}

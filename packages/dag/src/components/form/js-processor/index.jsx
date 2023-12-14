@@ -491,15 +491,9 @@ export const JsProcessor = observer(
               append-to-body
               modal={false}
               title={i18n.t('packages_dag_api_docs')}
-              with-header={isDaas}
               size={680}
-              visible={showDoc.value}
-              on={{
-                ['update:visible']: (v) => {
-                  console.log('update:visible', v) // eslint-disable-line
-                  showDoc.value = v
-                },
-              }}
+              v-model={showDoc.value}
+              class="js-api-drawer"
             >
               {isDaas ? (
                 <div class="px-4 js-doc-content">
