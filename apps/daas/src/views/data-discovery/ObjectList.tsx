@@ -163,15 +163,9 @@ export default defineComponent({
               {...{ on: { fetch: this.rest } }}
             ></FilterBar>
           </template>
-          <el-table-column
-            label={this.$t('object_list_name')}
-            prop="name"
-            show-overflow-tooltip
-            width="350px"
-            scopedSlots={{
-              default: this.renderNode,
-            }}
-          ></el-table-column>
+          <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">
+            {this.renderNode}
+          </el-table-column>
           <el-table-column
             width="145px"
             label={this.$t('object_list_classification')}

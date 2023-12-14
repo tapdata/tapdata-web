@@ -282,15 +282,9 @@ export default defineComponent({
             )}
           </template>
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column
-            label={i18n.t('public_name')}
-            prop="name"
-            show-overflow-tooltip
-            width="350px"
-            scopedSlots={{
-              default: this.renderNode,
-            }}
-          ></el-table-column>
+          <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
+            {this.renderNode}
+          </el-table-column>
           <el-table-column label={i18n.t('public_type')} prop="type"></el-table-column>
           <el-table-column label={i18n.t('public_description')} prop="desc"></el-table-column>
         </TablePage>
