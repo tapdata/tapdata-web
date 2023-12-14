@@ -789,7 +789,8 @@ export default {
         accessNodeProcessId: connection.accessNodeProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
-        capabilities: connection.capabilities || []
+        capabilities: connection.capabilities || [],
+        db_version: connection.db_version
       }
       this.dagNode.databaseType = connection.databaseType
       Object.keys(nodeAttrs).forEach(key => {

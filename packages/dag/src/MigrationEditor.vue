@@ -500,7 +500,8 @@ export default {
               accessNodeProcessId: '',
               pdkType: 'pdk',
               pdkHash: con.pdkHash,
-              capabilities: con.capabilities
+              capabilities: con.capabilities,
+              db_version: con.db_version
             }
           })
         } catch (error) {
