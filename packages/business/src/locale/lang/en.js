@@ -656,6 +656,7 @@ export default {
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
+  packages_business_connections_databaseform_system: 'Follow System Settings',
   packages_business_custom_node_placeholder: 'Please enter the node name to search',
   packages_business_custom_node_edit_confirm:
     'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',

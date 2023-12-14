@@ -625,6 +625,7 @@ export default {
   packages_business_notify_no_webchat_notification:
     '您的賬戶還沒有進行微信綁定，如需通過微信接收通知信息，請先退出登錄後通過微信掃碼完成綁定',
   packages_business_connections_databaseform_bujiazai: '不加載',
+  packages_business_connections_databaseform_system: '跟隨系統設置',
   packages_business_custom_node_placeholder: '請輸入節點名稱搜索',
   packages_business_custom_node_edit_confirm: '檢測到以下運行中的任務調用了該節點，如需配置生效請重新啓動任務',
   packages_business_task_list_sqLyuju: 'SQL語句:',
