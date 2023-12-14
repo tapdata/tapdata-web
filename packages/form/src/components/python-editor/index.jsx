@@ -100,7 +100,7 @@ export const PythonEditor = connect(
       return this.before || this.after ? (
         <div
           class={[
-            'form-js-editor-wrap form-python-editor-wrap flex flex-column border rounded-2',
+            'form-js-editor-wrap form-python-editor-wrap flex flex-column border rounded-4 overflow-hidden',
             { 'full-mode': this.fullscreen },
           ]}
           style={{ height: this.height + 'px' }}
@@ -145,7 +145,7 @@ export const PythonEditor = connect(
       ) : (
         <_PythonEditor
           ref="pythonEditor"
-          class="border rounded-2 py-0"
+          class="border rounded-4 py-0 overflow-hidden"
           style={{
             background: '#fff',
           }}
