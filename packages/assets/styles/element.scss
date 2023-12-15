@@ -52,6 +52,9 @@
       font-size: var(--el-font-size-base);
     }
   }
+  .el-popper__arrow {
+    display: none;
+  }
 }
 
 .el-select__popper {
