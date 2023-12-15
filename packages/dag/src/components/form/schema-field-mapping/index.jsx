@@ -1,15 +1,16 @@
 import FiledMapping from '../field-mapping'
 import { observer } from '@formily/reactive-vue'
-import { watch, defineComponent, onBeforeUnmount } from 'vue'
+import { ref, watch, defineComponent, onBeforeUnmount } from 'vue'
 import { observe } from '@formily/reactive'
 import { useForm } from '@tap/form'
 import { useStore } from 'vuex'
 
 export const SchemaFiledMapping = observer(
   defineComponent({
-    setup(props, { attrs, listeners, refs }) {
+    setup() {
       const store = useStore()
       const formRef = useForm()
+      const fieldMappingRef = ref()
       let unwatch
       let timer
       const clearWatch = () => {
@@ -24,7 +25,7 @@ export const SchemaFiledMapping = observer(
             clearWatch()
             // setTimeout 只是兜底，目前没有准确的机制告诉前端可以加载
             timer = setTimeout(() => {
-              refs.fieldMapping.$refs.list.getMetadataTransformer()
+              fieldMappingRef.value.$refs.list.getMetadataTransformer()
             }, 500)
           },
         )
@@ -34,9 +35,7 @@ export const SchemaFiledMapping = observer(
       })
 
       return () => {
-        return (
-          <FiledMapping ref="fieldMapping" attrs={attrs} on={listeners} itemType="string" itemQuery="original_name" />
-        )
+        return <FiledMapping ref={fieldMappingRef} itemType="string" itemQuery="original_name" />
       }
     },
   }),

@@ -7,6 +7,7 @@ import DrawerContent from '@/views/data-discovery/PreviewDrawer'
 import ObjectTable from '@/views/data-discovery/ObjectTable'
 import './index.scss'
 import resize from '@tap/component/src/directives/resize'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   props: [''],
@@ -14,8 +15,14 @@ export default defineComponent({
     resize,
   },
   setup(props, { refs, root }) {
+    const route = useRoute()
+    const classifyRef = ref()
+    const tableRef = ref()
+    const drawerContentRef = ref()
+    const objectTableRef = ref()
+
     const list = ref([])
-    const { sourceType, queryKey } = root.$route.query || {}
+    const { sourceType, queryKey } = route.query || {}
     const data = reactive({
       isShowDetails: false,
       isShowSourceDrawer: false, //资源绑定
@@ -52,8 +59,7 @@ export default defineComponent({
       })
     }
     const rest = () => {
-      // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const loadFilterList = () => {
       const filterType = ['objType']
@@ -89,7 +95,7 @@ export default defineComponent({
       data.isShowDetails = true
       nextTick(() => {
         // @ts-ignore
-        refs?.drawerContent?.loadData(row)
+        drawerContentRef.value?.loadData(row)
       })
     }
     const closeDrawer = (val) => {
@@ -101,27 +107,27 @@ export default defineComponent({
       nextTick(() => {
         // @ts-ignore
         //请求筛选条件-下拉列表
-        refs?.objectTable?.loadFilterList()
+        objectTableRef.value?.loadFilterList()
         // @ts-ignore
         //请求资源绑定目录
-        refs?.objectTable?.loadTableData()
+        objectTableRef.value?.loadTableData()
       })
     }
     const closeSourceDrawer = (val) => {
       data.isShowSourceDrawer = val
       nextTick(() => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
         // @ts-ignore
         //关闭资源绑定抽屉 刷新数据目录分类树 主要是统计
-        refs?.classify?.getData()
+        classifyRef.value?.getData()
       })
     }
     //切换目录
     const getNodeChecked = (node) => {
       data.currentNode = node
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     const renderNode = ({ row }) => {
       return (
@@ -148,12 +154,12 @@ export default defineComponent({
       () => root.$route.query,
       (val) => {
         // @ts-ignore
-        refs.table.fetch(1)
+        tableRef.value.fetch(1)
       },
     )
     onMounted(() => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     })
 
     const dragState = reactive({
@@ -215,11 +221,14 @@ export default defineComponent({
       handleDragEnd,
       handleSelectionChange,
       dragState,
+      classifyRef,
+      tableRef,
+      drawerContentRef,
     }
   },
   render() {
     return (
-      <section ref="root" class="discovery-page-wrap flex">
+      <section class="discovery-page-wrap flex">
         <div
           {...{
             directives: [
@@ -239,13 +248,13 @@ export default defineComponent({
         >
           <DiscoveryClassification
             v-model={this.data.searchParams}
-            ref="classify"
+            ref="classifyRef"
             dragState={this.dragState}
             onNodeChecked={this.getNodeChecked}
           ></DiscoveryClassification>
         </div>
         <TablePage
-          ref="table"
+          ref="tableRef"
           row-key="id"
           remoteMethod={this.loadData}
           draggable
@@ -294,7 +303,7 @@ export default defineComponent({
           visible={this.data.isShowDetails}
           on={{ ['update:visible']: this.closeDrawer }}
         >
-          <DrawerContent ref={'drawerContent'}></DrawerContent>
+          <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>
         <el-drawer
           class="object-drawer-wrap"
@@ -304,7 +313,7 @@ export default defineComponent({
           onUpdate:modelValue={this.closeSourceDrawer}
         >
           <ObjectTable
-            ref={'objectTable'}
+            ref="objectTableRef"
             parentNode={this.data.currentNode}
             {...{ on: { fetch: this.closeSourceDrawer } }}
           ></ObjectTable>
