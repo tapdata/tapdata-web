@@ -93,7 +93,7 @@
           <span>:</span>
         </template>
         <ElInputNumber
-          v-model:value="form.maxMemory"
+          v-model="form.maxMemory"
           style="width: 200px"
           controls-position="right"
           :min="1"
@@ -102,7 +102,7 @@
         <span class="ml-1">M</span>
       </ElFormItem>
       <ElFormItem prop="externalStorageId" :label="$t('public_external_memory_configuration')">
-        <ElSelect v-model:value="form.externalStorageId" filterable :loading="!externalStorageOptions">
+        <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
           <ElOption
             v-for="opt in externalStorageOptions"
             :key="opt.value"

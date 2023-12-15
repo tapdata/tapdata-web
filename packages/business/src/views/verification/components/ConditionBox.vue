@@ -150,7 +150,7 @@
               <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
                 <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
                 <ElRadioGroup
-                  v-model:value="item.modeType"
+                  v-model="item.modeType"
                   :disabled="getModeTypeDisabled(item)"
                   @change="handleChangeModeType(arguments[0], item, index)"
                 >
@@ -169,7 +169,7 @@
               </div>
               <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
                 <ElCheckbox
-                  v-model:value="item.showAdvancedVerification"
+                  v-model="item.showAdvancedVerification"
                   @change="handleChangeAdvanced(item, arguments[0])"
                   >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
                 >

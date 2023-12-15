@@ -17,7 +17,7 @@
         }}</el-radio>
       </ElFormItem>
       <ElFormItem v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect v-model:value="importForm.tag" multiple class="w-75">
+        <ElSelect v-model="importForm.tag" multiple class="w-75">
           <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
         </ElSelect>
       </ElFormItem>

@@ -11,12 +11,12 @@
   >
     <ElForm ref="form" label-position="left" label-width="150px" :model="form" class="my-n6">
       <ElFormItem :label="$t('packages_business_permissionse_settings_create_xuanzeshouquanjiao')" prop="roleId">
-        <ElSelect v-model:value="form.roleId" @change="getData">
+        <ElSelect v-model="form.roleId" @change="getData">
           <ElOption v-for="item in roleList" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_permissionse_settings_create_shezhiquanxian')" prop="checked">
-        <ElCheckboxGroup v-model:value="form.checked" class="inline-flex ml-4" @change="handleChange">
+        <ElCheckboxGroup v-model="form.checked" class="inline-flex ml-4" @change="handleChange">
           <ElCheckbox
             v-for="item in items"
             :label="item.value"

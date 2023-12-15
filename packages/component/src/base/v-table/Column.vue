@@ -12,8 +12,8 @@
       {{ getValue(scope.row, item) }}
     </template>
     <!--  多表头  -->
-    <template v-for="temp in children" :key="temp.prop">
-      <Column v-bind="temp" :item="temp"></Column>
+    <template v-if="!item.type">
+      <Column v-for="temp in children" :key="temp.prop" v-bind="temp" :item="temp"></Column>
     </template>
   </ElTableColumn>
 </template>

@@ -720,7 +720,7 @@ const mutations = {
    * @param id
    */
   clearNodeError(state, id) {
-    delete state.nodeErrorState
+    delete state.nodeErrorState.id
   },
 
   /**

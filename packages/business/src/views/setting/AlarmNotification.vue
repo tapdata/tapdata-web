@@ -20,7 +20,7 @@
     <div class="py-2 pl-4">
       <ElSelectV2
         v-if="options.length"
-        v-model:value="searchParams.search"
+        v-model="searchParams.search"
         :items="options"
         :inner-label="$t('packages_business_notify_notice_level')"
         none-border

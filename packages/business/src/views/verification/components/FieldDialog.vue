@@ -12,7 +12,7 @@
       <div class="mb-4">
         <ElInput
           class="search-input"
-          v-model:value="keyword"
+          v-model="keyword"
           :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
           clearable
         >

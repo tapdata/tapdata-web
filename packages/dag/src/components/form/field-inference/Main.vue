@@ -91,7 +91,7 @@
             <VIcon size="16" class="color-primary">info</VIcon>
           </ElTooltip>
           <ElSelect
-            v-model:value="updateList"
+            v-model="updateList"
             :disabled="navLoading"
             allowCreate
             multiple
@@ -113,7 +113,7 @@
           <div class="flex align-items-center p-2 font-color-dark">
             <span style="width: 120px">{{ selected.name }}</span>
             <ElInput
-              v-model:value="searchField"
+              v-model="searchField"
               :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
               clearable
               @input="handleSearchField"
@@ -501,7 +501,7 @@ export default {
 }
 .nav-filter__list {
   background-color: #e5e6eb;
-  .el-select {
+  /*.el-select {
     :deep(.el-input) {
       .el-input__inner {
         background-color: #e5e6eb;
@@ -517,7 +517,7 @@ export default {
         color: map-get($fontColor, dark);
       }
     }
-  }
+  }*/
 }
 .nav-filter__item {
   &.active {

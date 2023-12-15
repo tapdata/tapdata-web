@@ -14,7 +14,7 @@
       <div>
         <ElInput
           class="search-input"
-          v-model:value="keyword"
+          v-model="keyword"
           :placeholder="$t('public_input_placeholder')"
           clearable
           @input="handleSearch"

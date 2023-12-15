@@ -54,7 +54,7 @@ export const TableRename = observer(
 
       let prevMap = {}
 
-      const makeTable = (...args) => {
+      const makeTable = () => {
         if (form.values.$inputs?.length) {
           const { taskId } = store.state.dataflow
           loading.value = true

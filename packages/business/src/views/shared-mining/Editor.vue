@@ -21,17 +21,17 @@
         <ElInput clearable v-model="editForm.name"></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_shared_form_setting_log_time')">
-        <ElInputNumber v-model:value="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
+        <ElInputNumber v-model="editForm.storageTime" :precision="0" :step="1" :min="1"></ElInputNumber>
         <span class="ml-2">{{ $t('public_time_d') }}</span>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_shared_list_edit_title_start_time')">
         <div v-for="(item, index) in editForm.syncPoints" :key="index">
-          <ElSelect v-model:value="item.pointType" :placeholder="$t('public_select_placeholder')">
+          <ElSelect v-model="item.pointType" :placeholder="$t('public_select_placeholder')">
             <ElOption v-for="op in pointTypeOptions" :key="op.value" :label="op.label" :value="op.value"></ElOption>
           </ElSelect>
           <ElDatePicker
             v-if="item.pointType !== 'current'"
-            v-model:value="item.dateTime"
+            v-model="item.dateTime"
             :picker-options="getPickerOptions(item.dateTime, item)"
             popperClass="hide-current__dateTime"
             type="datetime"
@@ -42,10 +42,10 @@
         </div>
       </ElFormItem>
       <ElFormItem :label="$t('packages_dag_nodes_database_zengliangduoxiancheng')">
-        <ElSwitch v-model:value="dagForm.cdcConcurrent"></ElSwitch>
+        <ElSwitch v-model="dagForm.cdcConcurrent"></ElSwitch>
         <ElInputNumber
           v-if="dagForm.cdcConcurrent"
-          v-model:value="dagForm.cdcConcurrentWriteNum"
+          v-model="dagForm.cdcConcurrentWriteNum"
           class="ml-4"
           :min="0"
         ></ElInputNumber>

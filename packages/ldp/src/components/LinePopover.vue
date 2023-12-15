@@ -3,7 +3,7 @@
     v-bind="$attrs"
     v-if="popover.reference"
     ref="nodeMenu"
-    v-model:value="popover.show"
+    v-model="popover.show"
     placement="bottom"
     popper-class="rounded-lg p-0 line-popover"
     :reference="popover.reference"

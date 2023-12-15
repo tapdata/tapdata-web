@@ -26,15 +26,7 @@
       @drop.stop="handleDrop"
     >
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model:value="search"
-          clearable
-          @keydown.stop
-          @keyup.stop
-          @click.stop
-          @input="handleSearch"
-        >
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop @input="handleSearch">
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -137,12 +129,12 @@
           </div>
         </div>
         <ElFormItem :label="$t('public_table_name')">
-          <ElInput v-model:value="taskDialogConfig.newTableName">
+          <ElInput v-model="taskDialogConfig.newTableName">
             <template v-slot:prepend>{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
@@ -160,7 +152,7 @@
         <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
           <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
             <ElSelect
-              v-model:value="taskDialogConfig.task.crontabExpressionType"
+              v-model="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
@@ -172,7 +164,7 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
@@ -196,7 +188,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -217,7 +209,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
@@ -240,7 +232,7 @@
       </template>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
-          <ElInput v-model:value="materializedTableName">
+          <ElInput v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>

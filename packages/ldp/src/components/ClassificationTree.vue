@@ -26,7 +26,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -36,7 +36,7 @@
           :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
         >
-          <ElSelect v-model:value="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
             <el-option
               :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
               value="resource"
@@ -47,7 +47,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit

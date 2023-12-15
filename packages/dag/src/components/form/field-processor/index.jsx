@@ -68,7 +68,7 @@ const FormInput = defineComponent({
 export const FieldRenameProcessor = observer(
   defineComponent({
     props: ['value', 'nodeId', 'disabled'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit }) {
       const tableRef = ref(null)
       const store = useStore()
       const route = useRoute()
@@ -756,8 +756,8 @@ export const FieldRenameProcessor = observer(
                   columns={columns}
                   item-key="sourceFieldName"
                   row-class-name={tableRowClassName}
-                  on-selection-change={doSelectionField}
-                  on-clear-selection={doClearSelection}
+                  onSelectionChange={doSelectionField}
+                  onClearSelection={doClearSelection}
                   border
                   class="flex-fill h-0"
                 >

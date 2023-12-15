@@ -13,7 +13,7 @@
       <div v-if="enableSearch" class="px-2 pt-2">
         <ElInput
           ref="search"
-          v-model:value="search"
+          v-model="search"
           clearable
           autofocus
           @keydown.stop

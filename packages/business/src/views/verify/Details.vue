@@ -5,7 +5,7 @@
         <div class="verify-list__header flex justify-content-between mb-2">
           <ElInput
             class="search-input"
-            v-model:value="keyword"
+            v-model="keyword"
             :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
             clearable
             style="width: 240px"
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
-          <ElRadioGroup v-model:value="showType" :disabled="detailLoading" @change="fetch(page.current)">
+          <ElRadioGroup v-model="showType" :disabled="detailLoading" @change="fetch(page.current)">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>

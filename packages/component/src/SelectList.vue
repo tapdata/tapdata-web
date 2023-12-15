@@ -74,7 +74,7 @@
     <ElInput
       v-if="!innerLabel"
       ref="reference"
-      v-model:value="selectedLabel"
+      v-model="selectedLabel"
       :id="id"
       text
       :name="name"
@@ -143,7 +143,7 @@
             :disabled="selectDisabled"
             :autocomplete="autoComplete || autocomplete"
             :placeholder="$t('public_button_search')"
-            v-model:value="keyword"
+            v-model="keyword"
             @input="handleSearch"
             ref="input"
             clearable

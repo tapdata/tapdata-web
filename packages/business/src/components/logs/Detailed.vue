@@ -4,7 +4,7 @@
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
-          v-model:value="keyword"
+          v-model="keyword"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
           @input="searchFnc(800)"
         >
@@ -14,7 +14,7 @@
             </ElIcon>
           </template>
         </ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
+        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>

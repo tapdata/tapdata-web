@@ -53,10 +53,11 @@ const InnerInput = {
   created() {
     this.val = this.value
   },
+  emits: ['change'],
   render() {
     return (
       <input
-        class="name-list-item-input px-2"
+        class="name-list-item-input px-2 rounded-4"
         readOnly={this.readOnly}
         value={this.val}
         onChange={(ev) => $emit(this, 'change', ev)}

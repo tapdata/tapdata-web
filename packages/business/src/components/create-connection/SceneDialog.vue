@@ -17,7 +17,7 @@
         <template v-if="!showForm">
           <span>{{ title }}</span>
           <ElInput
-            v-model:value="search"
+            v-model="search"
             class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
             clearable
             :placeholder="$t('public_input_placeholder_search')"

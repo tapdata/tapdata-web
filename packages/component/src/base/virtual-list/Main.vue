@@ -10,7 +10,7 @@
         >
           <div v-if="item.type === 'selection'" class="cell">
             <ElCheckbox
-              v-model:value="checkAll"
+              v-model="checkAll"
               :indeterminate="isIndeterminate"
               @change="handleCheckAll(arguments[0])"
             ></ElCheckbox>
@@ -55,7 +55,7 @@
                   <template v-else-if="colItem.type === 'selection'">
                     <ElCheckbox
                       :value="selections.includes(item)"
-                      @change="toggleRowSelection(item, arguments[0])"
+                      @change="toggleRowSelection(item, $event)"
                     ></ElCheckbox>
                   </template>
                   <template v-else>{{ item[colItem.prop] }}</template>
@@ -176,7 +176,7 @@ export default {
     },
 
     toggleRowSelection(row = {}, selected) {
-      const index = this.selections.findIndex((t) => t === row)
+      const index = this.selections.findIndex((t) => t[this.itemKey] === row[this.itemKey])
 
       index > -1 && this.selections.splice(index, 1)
       if (selected) {

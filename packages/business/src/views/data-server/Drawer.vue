@@ -17,7 +17,7 @@
               : $t('packages_business_data_server_drawer_chuangjianfuwu')
           }}
         </div>
-        <ElTabs v-model:value="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
+        <ElTabs v-model="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
           <ElTabPane :label="$t('packages_business_data_server_drawer_peizhi')" name="form"></ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
@@ -40,7 +40,7 @@
           <ElFormItem class="flex-1 form-item-name" prop="name">
             <ElInput
               v-if="isEdit"
-              v-model:value="form.name"
+              v-model="form.name"
               text
               maxlength="50"
               :placeholder="$t('public_input_placeholder') + $t('public_name')"
@@ -59,14 +59,14 @@
         </div>
         <div class="flex-1 mt-4">
           <ElInput
-            v-model:value="form.description"
+            v-model="form.description"
             type="textarea"
             :placeholder="$t('public_input_placeholder') + $t('public_description')"
             :disabled="!isEdit"
           ></ElInput>
         </div>
         <ElFormItem class="flex-1 mt-4" :label="$t('packages_business_data_server_drawer_quanxianfanwei')" prop="acl">
-          <ElSelect v-model:value="form.acl" multiple @change="aclChanged">
+          <ElSelect v-model="form.acl" multiple @change="aclChanged">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
@@ -108,7 +108,7 @@
             <ElFormItem :label="$t('public_connection_type')" label-width="86px" prop="connectionType">
               <ElSelect
                 v-if="isEdit"
-                v-model:value="form.connectionType"
+                v-model="form.connectionType"
                 filterable
                 :loading="!databaseTypes"
                 @change="connectionTypeChanged"
@@ -122,7 +122,7 @@
             <ElFormItem :label="$t('public_connection_name')" label-width="86px" prop="connectionId">
               <ElSelect
                 v-if="isEdit"
-                v-model:value="form.connectionName"
+                v-model="form.connectionName"
                 filterable
                 :loading="!connectionOptions"
                 @change="connectionNameChanged"
@@ -141,7 +141,7 @@
             <ElFormItem :label="$t('object_list_name')" label-width="86px" prop="tableName">
               <ElSelect
                 v-if="isEdit"
-                v-model:value="form.tableName"
+                v-model="form.tableName"
                 filterable
                 :loading="!tableOptions"
                 @change="tableChanged"
@@ -184,7 +184,7 @@
               :rules="rules.apiVersion"
               v-if="form.pathAccessMethod === 'customize'"
             >
-              <ElInput v-model:value="form.apiVersion" :disabled="!isEdit"></ElInput>
+              <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
             </ElFormItem>
             <ElFormItem
               class="flex-1 mt-4"
@@ -192,7 +192,7 @@
               prop="prefix"
               v-if="form.pathAccessMethod === 'customize'"
             >
-              <ElInput v-model:value="form.prefix" :disabled="!isEdit"></ElInput>
+              <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
             </ElFormItem>
             <ElFormItem
               class="flex-1 mt-4"
@@ -200,14 +200,14 @@
               prop="basePath"
               v-if="form.pathAccessMethod === 'customize'"
             >
-              <ElInput v-model:value="form.basePath" :disabled="!isEdit"></ElInput>
+              <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
             </ElFormItem>
             <ElFormItem
               class="flex-1 mt-4"
               :label="$t('packages_business_data_server_drawer_path')"
               v-if="form.pathAccessMethod === 'customize'"
             >
-              <ElInput v-model:value="customizePath" :disabled="true"></ElInput>
+              <ElInput v-model="customizePath" :disabled="true"></ElInput>
             </ElFormItem>
           </template>
         </section>
@@ -233,7 +233,7 @@
                   :show-message="false"
                   :rules="rules.param"
                 >
-                  <ElInput v-model:value="form.params[$index].name"></ElInput>
+                  <ElInput v-model="form.params[$index].name"></ElInput>
                 </ElFormItem>
               </div>
               <div v-else>{{ row.name }}</div>
@@ -242,7 +242,7 @@
           <ElTableColumn :label="$t('public_type')" prop="type">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'" min-width="60">
-                <ElSelect v-model:value="form.params[$index].type">
+                <ElSelect v-model="form.params[$index].type">
                   <ElOption v-for="type in typeOptions" :key="type" :value="type" :label="type"></ElOption>
                 </ElSelect>
               </div>
@@ -252,7 +252,7 @@
           <ElTableColumn v-if="tab === 'form'" :label="$t('public_data_default')" prop="defaultvalue" min-width="60">
             <template #default="{ row, $index }">
               <div v-if="isEdit && row.defaultvalue !== undefined">
-                <ElInput v-model:value="form.params[$index].defaultvalue"></ElInput>
+                <ElInput v-model="form.params[$index].defaultvalue"></ElInput>
               </div>
               <div v-else>{{ row.defaultvalue }}</div>
             </template>
@@ -260,7 +260,7 @@
           <ElTableColumn :label="$t('public_description')" prop="description" min-width="100">
             <template #default="{ row, $index }">
               <div v-if="isEdit && $index > 1 && form.apiType === 'customerQuery'">
-                <ElInput v-model:value="form.params[$index].description"></ElInput>
+                <ElInput v-model="form.params[$index].description"></ElInput>
               </div>
               <div v-else>{{ row.description }}</div>
             </template>
@@ -273,7 +273,7 @@
             <template #default="{ row }">
               <ElInputNumber
                 v-if="row.type === 'number'"
-                v-model:value="debugParams[row.name]"
+                v-model="debugParams[row.name]"
                 :precision="0"
                 :step="1"
                 :min="0"
@@ -298,7 +298,7 @@
           </div>
           <ul v-if="isEdit">
             <li v-for="(item, index) in form.where" class="flex align-items-center" :key="index">
-              <ElSelect v-model:value="form.where[index].fieldName" class="mr-4">
+              <ElSelect v-model="form.where[index].fieldName" class="mr-4">
                 <ElOption
                   v-for="opt in allFields"
                   :key="opt.id"
@@ -306,10 +306,10 @@
                   :label="opt.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model:value="form.where[index].operator" class="mr-4">
+              <ElSelect v-model="form.where[index].operator" class="mr-4">
                 <ElOption v-for="item in operatorOptions" :key="item" :value="item" :label="item"></ElOption>
               </ElSelect>
-              <ElSelect v-model:value="form.where[index].parameter" class="mr-4">
+              <ElSelect v-model="form.where[index].parameter" class="mr-4">
                 <ElOption
                   v-for="opt in parameterOptions"
                   :key="opt.name"
@@ -317,7 +317,7 @@
                   :label="opt.name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model:value="form.where[index].condition" class="mr-4">
+              <ElSelect v-model="form.where[index].condition" class="mr-4">
                 <template v-for="item in conditionOptions">
                   <ElOption
                     v-if="item !== 'null' || index === form.where.length - 1"
@@ -347,7 +347,7 @@
           </div>
           <ul v-if="isEdit">
             <li v-for="(item, index) in form.sort" class="flex align-items-center" :key="index">
-              <ElSelect v-model:value="form.sort[index].fieldName" class="mr-4">
+              <ElSelect v-model="form.sort[index].fieldName" class="mr-4">
                 <ElOption
                   v-for="opt in allFields"
                   :key="opt.id"
@@ -355,7 +355,7 @@
                   :label="opt.field_name"
                 ></ElOption>
               </ElSelect>
-              <ElSelect v-model:value="form.sort[index].type" class="mr-4">
+              <ElSelect v-model="form.sort[index].type" class="mr-4">
                 <ElOption value="asc" label="ASC"></ElOption>
                 <ElOption value="desc" label="DESC"></ElOption>
               </ElSelect>
@@ -395,7 +395,7 @@
           </div>
           <div class="flex">
             <div class="data-server-debug__url flex-1 flex align-center mr-4">
-              <ElSelect v-model:value="debugMethod" class="data-server-debug__method mr-4" style="width: 100px">
+              <ElSelect v-model="debugMethod" class="data-server-debug__method mr-4" style="width: 100px">
                 <ElOption v-for="(url, method) in urls" :key="method" :value="method"></ElOption>
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
@@ -423,7 +423,7 @@
             <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
               {{ $t('packages_business_data_server_drawer_shilidaima') }}
             </div>
-            <ElTabs v-model:value="templateType" class="data-server__tabs flex-1">
+            <ElTabs v-model="templateType" class="data-server__tabs flex-1">
               <ElTabPane label="JAVA" name="java"></ElTabPane>
               <ElTabPane label="JS" name="javascript"></ElTabPane>
               <ElTabPane label="PYTHON" name="python"></ElTabPane>

@@ -114,7 +114,7 @@
             >
               <ElInput
                 class="inline-input"
-                v-model:value="currentData.newDataType"
+                v-model="currentData.newDataType"
                 :placeholder="$t('public_input_placeholder')"
               ></ElInput>
             </ElFormItem>
@@ -140,7 +140,7 @@
             </template>
           </div>
           <div>
-            <ElCheckbox v-model:value="currentData.useToAll">{{
+            <ElCheckbox v-model="currentData.useToAll">{{
               $t('packages_form_field_inference_list_duidangqiantuiyan')
             }}</ElCheckbox>
             <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
@@ -154,7 +154,7 @@
               <span>{{ originType }}</span>
               <span>(</span>
               <ElInputNumber
-                v-model:value="currentData.coefficient"
+                v-model="currentData.coefficient"
                 controls-position="right"
                 :min="0.1"
                 class="coefficient-input mx-2"
@@ -169,12 +169,10 @@
         </template>
       </ElForm>
       <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
-            $t('public_button_confirm')
-          }}</ElButton>
-        </span>
+        <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </template>
     </ElDialog>
   </div>
@@ -242,7 +240,7 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          minWidth: '40px',
+          minWidth: '42px',
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -322,7 +320,7 @@ export default {
       }
       return showColumns
         .map((t) => {
-          return result.find((f) => f.prop === t)
+          return result.find((f) => f.prop === t || f.type === t)
         })
         .filter((t) => t)
     },

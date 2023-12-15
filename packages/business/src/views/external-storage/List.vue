@@ -48,7 +48,7 @@
           <span class="mr-2">{{ $t('packages_business_external_storage_list_sheweimoren') }}</span>
           <ElSwitch
             text
-            v-model:value="row.defaultStorage"
+            v-model="row.defaultStorage"
             :disabled="row.defaultStorage"
             @change="handleDefault(row)"
           ></ElSwitch>
@@ -74,10 +74,10 @@
     >
       <ElForm class="" ref="form" label-position="left" :label-width="labelWidth" :model="form" :rules="rules">
         <ElFormItem :label="$t('public_external_memory_name')" prop="name">
-          <ElInput v-model:value="form.name"></ElInput>
+          <ElInput v-model="form.name"></ElInput>
         </ElFormItem>
         <ElFormItem required :label="$t('public_external_memory_type')">
-          <ElSelect v-model:value="form.type" :disabled="!!form.id">
+          <ElSelect v-model="form.type" :disabled="!!form.id">
             <ElOption label="MongoDB" value="mongodb"></ElOption>
             <ElOption label="RocksDB" value="rocksdb"></ElOption>
           </ElSelect>
@@ -108,7 +108,7 @@
         ></SchemaToForm>
 
         <ElFormItem :label="$t('packages_business_external_storage_list_sheweimoren')">
-          <ElSwitch v-model:value="form.defaultStorage"></ElSwitch>
+          <ElSwitch v-model="form.defaultStorage"></ElSwitch>
         </ElFormItem>
       </ElForm>
       <template v-slot:footer>

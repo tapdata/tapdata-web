@@ -1,12 +1,12 @@
 <template>
   <div class="database">
     <div class="inline-flex align-items-center mt-2 mb-4">
-      <ElCheckbox v-model:value="settings.showBeta" class="m-0"></ElCheckbox>
+      <ElCheckbox v-model="settings.showBeta" class="m-0"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho2') }}</span>
-      <ElCheckbox v-model:value="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
+      <ElCheckbox v-model="settings.showAlpha" class="ml-8 mr-0" @change="getData(false)"></ElCheckbox>
       <span class="ml-2">{{ $t('packages_business_create_connection_dialog_neirongSho') }}</span>
     </div>
-    <ElTabs v-model:value="active" @tab-click="handleChangeTab">
+    <ElTabs v-model="active" @tab-click="handleChangeTab">
       <ElTabPane v-for="item in comTabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-loading="loading">
