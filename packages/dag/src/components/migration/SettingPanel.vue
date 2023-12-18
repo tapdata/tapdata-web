@@ -29,12 +29,20 @@ export default observer({
     let values = this.settings
     const { id } = values
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
+    let checkCrontabExpressionFlagMessage = this.$t('packages_dag_task_form_error_can_not_open_crontab_expression_flag')
     const handleCheckName = debounce(function (resolve, value) {
       taskApi
         .checkName({
           name: value,
           id
         })
+        .then(data => {
+          resolve(data)
+        })
+    }, 500)
+    const handleCheckCrontabExpressionFlag = debounce(function (resolve, value) {
+      taskApi
+        .checkCheckCloudTaskLimit(id)
         .then(data => {
           resolve(data)
         })
@@ -48,6 +56,11 @@ export default observer({
         checkName: value => {
           return new Promise(resolve => {
             handleCheckName(resolve, value)
+          })
+        },
+        checkCrontabExpressionFlag: value => {
+          return new Promise(resolve => {
+            handleCheckCrontabExpressionFlag(resolve, value)
           })
         },
         useAsyncOptions: (service, ...serviceParams) => {
@@ -405,7 +418,19 @@ export default observer({
                                       display: '{{$deps[0] !== "cdc" ? "visible" : "hidden"}}'
                                     }
                                   }
-                                }
+                                },
+                                'x-validator': `{{(value) => {
+                                if ($isDaas) { return true }
+                    return new Promise((resolve) => {
+                      checkCrontabExpressionFlag(value).then(data => {
+                        if(data === false) {
+                          resolve('${checkCrontabExpressionFlagMessage}')
+                        } else {
+                          resolve()
+                        }
+                      })
+                    })
+                  }}}`
                               },
                               crontabExpression: {
                                 type: 'string',
