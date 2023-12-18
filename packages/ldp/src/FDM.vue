@@ -35,7 +35,7 @@
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
           v-loading="searchIng"
         >
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -51,10 +51,10 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
-          ></VirtualTree>
+          ></ElTree>
         </div>
         <template v-else>
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -73,7 +73,7 @@
             @node-drag-end="handleDragEnd"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"
-          ></VirtualTree>
+          ></ElTree>
           <div
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
@@ -84,7 +84,7 @@
       </div>
       <div v-else class="flex-1 min-h-0 position-relative">
         <div class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white">
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -100,7 +100,7 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
-          ></VirtualTree>
+          ></ElTree>
         </div>
       </div>
 
@@ -421,17 +421,18 @@ export default {
             trigger="click"
             onCommand={(command) => this.handleMoreCommand(command, data)}
           >
-            <IconButton
-              onClick={(ev) => {
-                ev.stopPropagation()
-              }}
-              sm
-            >
-              more
-            </IconButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-            </ElDropdownMenu>
+            {{
+              default: () => (
+                <IconButton sm class="ml-2">
+                  more
+                </IconButton>
+              ),
+              dropdown: () => (
+                <ElDropdownMenu>
+                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                </ElDropdownMenu>
+              ),
+            }}
           </ElDropdown>,
         )
       }

@@ -162,29 +162,30 @@ export const FieldAddDel = connect(
                         ]}
                       >
                         {node.level === 1 && (
-                          <el-dropdown
-                            placement="top-start"
-                            on={{
-                              command: (val) => this.handleCommand(val, node),
+                          <el-dropdown placement="top-start" onCommand={(val) => this.handleCommand(val, node)}>
+                            {{
+                              default: () => (
+                                <span class="el-dropdown-link">
+                                  <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
+                                </span>
+                              ),
+                              dropdown: () => (
+                                <el-dropdown-menu>
+                                  <el-dropdown-item command="top">
+                                    {i18n.t('packages_dag_field_add_del_index_zhiding')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="prev">
+                                    {i18n.t('packages_dag_field_add_del_index_shangyi')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="next">
+                                    {i18n.t('packages_dag_field_add_del_index_xiayi')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="bottom">
+                                    {i18n.t('packages_dag_field_add_del_index_zhidi')}
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              ),
                             }}
-                          >
-                            <span class="el-dropdown-link">
-                              <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
-                            </span>
-                            <el-dropdown-menu slot="dropdown">
-                              <el-dropdown-item command="top">
-                                {i18n.t('packages_dag_field_add_del_index_zhiding')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="prev">
-                                {i18n.t('packages_dag_field_add_del_index_shangyi')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="next">
-                                {i18n.t('packages_dag_field_add_del_index_xiayi')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="bottom">
-                                {i18n.t('packages_dag_field_add_del_index_zhidi')}
-                              </el-dropdown-item>
-                            </el-dropdown-menu>
                           </el-dropdown>
                         )}
 

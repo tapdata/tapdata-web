@@ -39,7 +39,7 @@
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
           v-loading="searchIng"
         >
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -57,10 +57,10 @@
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
             @handle-scroll="handleScroll"
-          ></VirtualTree>
+          ></ElTree>
         </div>
         <template v-else>
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -79,7 +79,7 @@
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
             @handle-scroll="handleScroll"
-          ></VirtualTree>
+          ></ElTree>
           <div
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
@@ -374,18 +374,24 @@ export default {
             trigger="click"
             onCommand={(command) => this.handleMoreCommand(command, data)}
           >
-            <IconButton
-              onClick={(ev) => {
-                ev.stopPropagation()
-              }}
-              sm
-            >
-              more
-            </IconButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-              <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-            </ElDropdownMenu>
+            {{
+              default: () => (
+                <IconButton
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                  }}
+                  sm
+                >
+                  more
+                </IconButton>
+              ),
+              dropdown: () => (
+                <ElDropdownMenu>
+                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                </ElDropdownMenu>
+              ),
+            }}
           </ElDropdown>,
         ]
       }
@@ -401,32 +407,30 @@ export default {
       return (
         <div
           class="custom-tree-node grabbable flex justify-content-between"
-          on={{
-            click: () => {
-              data.isObject &&
-                $emit(this, 'preview', data, this.mdmConnection, {
-                  onDelete: (tagId) => {
-                    // this.setNodeExpand(tagId)
-                    this.$refs.tree.remove(data.id)
-                  },
-                })
-            },
-            dragenter: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            },
+          onClick={() => {
+            data.isObject &&
+              $emit(this, 'preview', data, this.mdmConnection, {
+                onDelete: (tagId) => {
+                  // this.setNodeExpand(tagId)
+                  this.$refs.tree.remove(data.id)
+                },
+              })
+          }}
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="flex align-center flex-fill mr-2">

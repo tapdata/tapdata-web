@@ -91,7 +91,7 @@
                   grabbable: data.isObject,
                   'opacity-50': data.disabled,
                 }"
-                @click="$emit('preview', data, node.parent.data)"
+                @click="$emit('preview', data, node.parent?.data)"
               >
                 <VIcon
                   v-if="node.data.loadFieldsStatus === 'loading'"
@@ -328,7 +328,7 @@ export default defineComponent({
   methods: {
     renderContent(h, { node, data }) {
       let className = ['custom-tree-node']
-
+      console.log('renderContent', data)
       if (data.isObject) {
         className.push('grabbable')
       }
@@ -377,7 +377,6 @@ export default defineComponent({
     },
 
     renderDefaultContent(h, { node, data }) {
-      console.log('node', node)
       const schemaLoading = data.loadFieldsStatus === 'loading'
       // 引导时特殊处理，添加的连接等加载完schema后方可展开
       // node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)
@@ -450,9 +449,9 @@ export default defineComponent({
         }
       }
 
-      /*this.treeTimer = setTimeout(() => {
+      this.treeTimer = setTimeout(() => {
         this.initTree()
-      }, 5000)*/
+      }, 5000)
     },
 
     async getConnectionList() {

@@ -74,7 +74,7 @@ export default ({ routes }) => {
     window.$vueApp.component(VButton.name, VButton)
 
     window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
-    window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
+    /*window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
       return new Promise((resolve, reject) => {
         VConfirm.confirm(message, title, options)
           .then(() => {
@@ -84,7 +84,7 @@ export default ({ routes }) => {
             reject(false)
           })
       }).catch(() => {})
-    }
+    }*/
 
     app.mount('#app')
 

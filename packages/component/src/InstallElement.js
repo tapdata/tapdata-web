@@ -1,5 +1,6 @@
 import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElSelectV2, ElDropdown } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
+import 'element-plus/theme-chalk/src/message-box.scss'
 import { CloseIcon } from './CloseIcon'
 
 // TODO 可能需要重写适配

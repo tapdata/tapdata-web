@@ -179,18 +179,20 @@ export default {
             {data.name}
           </span>
           {data.isRoot ? (
-            <span class="btn-menu">
-              <VIcon
-                size="14"
-                class="color-primary mr-2"
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
-                }}
-              >
-                add
-              </VIcon>
-            </span>
+            (
+              <span class="btn-menu">
+                <VIcon
+                  size="14"
+                  class="color-primary mr-2"
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                  }}
+                >
+                  add
+                </VIcon>
+              </span>
+            )``
           ) : !data.readOnly && !data.isObject ? (
             <span class="btn-menu">
               {data.item_type[0] !== 'fdm' && (
@@ -212,19 +214,25 @@ export default {
                   trigger="click"
                   onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
-                  <VIcon
-                    onClick={(ev) => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
                 </ElDropdown>
               )}
             </span>

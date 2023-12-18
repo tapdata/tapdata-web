@@ -218,19 +218,25 @@ export default {
                   trigger="click"
                   onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
-                  <VIcon
-                    onClick={(ev) => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
                 </ElDropdown>
               )}
             </span>
