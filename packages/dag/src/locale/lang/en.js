@@ -31,7 +31,9 @@ export default {
   packages_dag_meta_table_false: 'False',
   packages_dag_meta_table_comment: 'Comment',
   packages_dag_connection_name_search_placeholder: 'Please enter the connection name to search',
-  packages_dag_task_form_error_name_duplicate: '',
+  packages_dag_task_form_error_name_duplicate: 'Task name already exists, please re-enter it',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    'The maximum number of running tasks has been reached. Unable to add new scheduled tasks. Please deactivate scheduling for some tasks or stop running tasks.',
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full and Incremental Sync',
   packages_dag_task_stetting_desc: 'Task Description',

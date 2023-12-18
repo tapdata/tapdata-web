@@ -31,6 +31,8 @@ export default {
   packages_dag_meta_table_comment: '字段注释',
   packages_dag_connection_name_search_placeholder: '请输入连接名称搜索',
   packages_dag_task_form_error_name_duplicate: '任务名称已存在，请重新输入',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    '您的可运行任务数已达到上限，无法添加新的定时调度任务，请先关闭一些任务的定时调度或停止一些运行中的任务',
   packages_dag_task_setting_sync_type: '同步类型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量',
   packages_dag_task_stetting_desc: '任务描述',

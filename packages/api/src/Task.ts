@@ -210,5 +210,9 @@ export default class Task extends Http {
       }
     })
   }
+
+  checkCheckCloudTaskLimit(taskId) {
+    return this.axios.get(`${this.url}/checkCloudTaskLimit/${taskId}`)
+  }
 }
 export { Task }

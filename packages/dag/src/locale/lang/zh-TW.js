@@ -31,6 +31,8 @@ export default {
   packages_dag_meta_table_comment: '字段注釋',
   packages_dag_connection_name_search_placeholder: '請輸入連接名稱搜索',
   packages_dag_task_form_error_name_duplicate: '任務名稱已存在，請重新輸入',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    '您的可運行任務數已達到上限，無法新增新的定時調度任務，請先關閉一些任務的定時調度或停止一些運行中的任務',
   packages_dag_task_setting_sync_type: '同步類型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量同步',
   packages_dag_task_stetting_desc: '任務描述',
@@ -661,5 +663,4 @@ export default {
   packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
   packages_dag_field_inference_list_zidingyileixing: '自訂類型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:'
-
 }
