@@ -420,7 +420,7 @@ export default observer({
                                   }
                                 },
                                 'x-validator': `{{(value) => {
-                                if ($isDaas) { return true }
+                                if (!value || $isDaas) { return true }
                     return new Promise((resolve) => {
                       checkCrontabExpressionFlag(value).then(data => {
                         if(data === false) {
