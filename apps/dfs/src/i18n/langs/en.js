@@ -1773,8 +1773,16 @@ export default {
   dfs_replication_tour_dialog_finished_subtitle:
     'Next, you can enjoy a free trial of our product for tasks such as database replication and migration',
   dfs_replication_tour_dialog_finished_survey_title:
-    'Through the onboarding guide, you now have a certain understanding of Tapdata. Will you continue to use Tapdata?',
+    'Will you continue to use Tapdata? Please help us to improve our product by providing quick feedback:',
   dfs_replication_tour_dialog_finished_survey_placeholder: 'Enter your feedback or suggestions...',
+  dfs_replication_tour_dialog_finished_option_yes:
+    "Yes, Tapdata appears to meet my expectations for the tool I'm looking for.",
+  dfs_replication_tour_dialog_finished_option_no_plan_1:
+    'No plan to use, as I am not sure how or where I can use Tapdata.',
+  dfs_replication_tour_dialog_finished_option_no_plan_2:
+    "No plan to use, as I don't have a real project at this moment.",
+  dfs_replication_tour_dialog_finished_option_no_plan_3: 'No plan to use, I have concerns over data security.',
+  dfs_replication_tour_dialog_finished_option_other: 'Other, please specify',
   dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
   dfs_order_change: 'Change',
   dfs_change_record: 'Change Record',
