@@ -170,8 +170,8 @@ export const EXTERNAL_STORAGE_TYPE_MAP = {
 }
 
 export const PERIOD_MAP = {
-  recurring_month: { order: 1, label: i18n.t('dfs_instance_utils_baoyue') },
-  recurring_year: { order: 2, label: i18n.t('dfs_instance_utils_baonian') },
-  one_time_month: { order: 3, label: i18n.t('dfs_instance_utils_one_month_only') },
-  one_time_year: { order: 4, label: i18n.t('dfs_instance_utils_one_year_only') }
+  recurring_month: { order: 1, label: 'dfs_instance_utils_baoyue' },
+  recurring_year: { order: 2, label: 'dfs_instance_utils_baonian' },
+  one_time_month: { order: 3, label: 'dfs_instance_utils_one_month_only' },
+  one_time_year: { order: 4, label: 'dfs_instance_utils_one_year_only' }
 }

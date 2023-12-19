@@ -1490,7 +1490,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
   dfs_agent_specification_description:
-    'Memory requirement: <strong>{mem}</strong>, Synchronous performance: <strong>{tps}TPS</strong>',
+    'Memory requirement: <strong>{mem}</strong>, Replication performance: <strong>{tps}TPS</strong>',
   dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
   dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
   dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
