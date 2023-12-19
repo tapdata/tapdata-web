@@ -368,12 +368,7 @@ export default {
           >
             add
           </IconButton>,
-          <ElDropdown
-            class="inline-flex"
-            placement="bottom"
-            trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
-          >
+          <ElDropdown placement="bottom" trigger="click" onCommand={(command) => this.handleMoreCommand(command, data)}>
             {{
               default: () => (
                 <IconButton

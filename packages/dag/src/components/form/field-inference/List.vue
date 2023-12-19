@@ -753,10 +753,10 @@ export default {
   width: 100px;
 }
 
-::v-deep {
+/*::v-deep {
   .el-dialog__body {
     padding-top: 24px;
     border-top: 1px solid #e5e6eb;
   }
-}
+}*/
 </style>

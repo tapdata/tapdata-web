@@ -1,6 +1,7 @@
-<script>
+<script lang="jsx">
 import { plantRenderPara } from '../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
+import { defineComponent } from 'vue'
+
 function upperFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -10,7 +11,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   const offsetProperty = `offset${upperFirst(sizeProperty)}`
 
   return {
-    beforeEnter(el) {
+    onBeforeEnter(el) {
       el._parent = el.parentNode
       el._initialStyle = {
         transition: el.style.transition,
@@ -20,7 +21,7 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       console.log('beforeEnter', el._initialStyle) // eslint-disable-line
     },
 
-    enter(el) {
+    onEnter(el) {
       const initialStyle = el._initialStyle
 
       el.style.setProperty('transition', 'none', 'important')
@@ -42,10 +43,10 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       })
     },
 
-    afterEnter: resetStyles,
-    enterCancelled: resetStyles,
+    onAfterEnter: resetStyles,
+    onEnterCancelled: resetStyles,
 
-    leave(el) {
+    onLeave(el) {
       el._initialStyle = {
         transition: '',
         overflow: el.style.overflow,
@@ -58,11 +59,11 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
       requestAnimationFrame(() => (el.style[sizeProperty] = '0'))
     },
 
-    afterLeave,
-    leaveCancelled: afterLeave,
+    onAfterLeave,
+    onLeaveCancelled: onAfterLeave,
   }
 
-  function afterLeave(el) {
+  function onAfterLeave(el) {
     if (expandedParentClass && el._parent) {
       el._parent.classList.remove(expandedParentClass)
     }
@@ -77,30 +78,13 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   }
 }
 
-export default function render(_props, _context) {
-  const context = {
-    ..._context,
-    props: _props,
-    data: _context.attr,
-    children: _context.slots,
-  }
-  const { attrs, children } = context
-  const data = {
-    on: new ExpandTransitionGenerator('', true),
-  }
-
-  return Vue.h(
-    'transition',
-    plantRenderPara({
-      ...data,
-      props: {
-        ...attrs,
-        name: 'expand-x-transition',
-      },
-    }),
-    children,
+export default defineComponent((props, context) => {
+  return (
+    <Transition name="expand-x-transition" {...ExpandTransitionGenerator('', true)}>
+      {context.children}
+    </Transition>
   )
-}
+})
 </script>
 
 <style lang="scss">

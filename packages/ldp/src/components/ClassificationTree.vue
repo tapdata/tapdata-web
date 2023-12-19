@@ -78,6 +78,7 @@ import i18n from '@tap/i18n'
 import { VIcon, VirtualTree } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
 import { makeDragNodeImage } from '@tap/business'
+
 export default {
   name: 'ClassificationTree',
   props: {
@@ -895,6 +896,7 @@ $nodeH: 32px;
   &.el-tree.is-dragging .el-tree-node__content {
     cursor: grabbing;
   }
+
   &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
     cursor: default;
   }
@@ -929,12 +931,14 @@ $nodeH: 32px;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: $nodeH;
+
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
       color: map-get($color, primary);
       // color: map-get($color, lprimary);
     }
+
     .table-label {
       flex: 1;
       vertical-align: middle;
@@ -943,17 +947,32 @@ $nodeH: 32px;
       font-weight: 400;
       color: map-get($fontColor, normal);
     }
+
     .count-label {
       color: map-get($fontColor, sslight);
     }
+
     .btn-menu {
+      display: flex;
+    }
+
+    .btn-menu > *:not(.el-dropdown) {
       display: none;
     }
-    &:hover .btn-menu {
-      display: flex;
+
+    .btn-menu > .el-dropdown > :not([aria-expanded='true']) {
+      visibility: hidden;
+    }
+
+    &:hover .btn-menu > * {
+      display: unset;
+      > * {
+        visibility: visible !important;
+      }
     }
   }
 }
+
 .drag-node-image {
   $h: 36px;
   position: absolute;
@@ -965,6 +984,7 @@ $nodeH: 32px;
   height: $h;
   z-index: 103;
   background-color: rgba(0, 0, 0, 0);
+
   .drag-preview-container {
     position: absolute;
     top: 0;
