@@ -45,7 +45,6 @@
           wrapper-class-name="p-2"
           :default-expanded-keys="searchExpandedKeys"
           :data="filterTreeData"
-          :render-content="renderContent"
           :expand-on-click-node="false"
           :allow-drag="(node) => node.data.isObject"
           :allow-drop="() => false"
@@ -53,7 +52,38 @@
           @node-drag-end="handleDragEnd"
           @node-expand="handleNodeExpand"
           @handle-scroll="handleScroll"
-        />
+        >
+          <template #default="{ node, data }">
+            <!--<NodeContent :render-content="renderDefaultContent" :node="node" :data="data"></NodeContent>-->
+            <span
+              class="custom-tree-node flex align-items-center position-relative"
+              :class="{
+                grabbable: data.isObject,
+                'opacity-50': data.disabled,
+              }"
+              @click="$emit('preview', data, node.parent?.data)"
+            >
+              <VIcon
+                v-if="node.data.loadFieldsStatus === 'loading'"
+                class="v-icon animation-rotate"
+                size="14"
+                color="rgb(61, 156, 64)"
+                >loading-circle</VIcon
+              >
+              <NodeIcon v-if="!node.data.isLeaf" :node="node.data" :size="18" class="tree-item-icon mr-2" />
+              <div v-else-if="node.data.isEmpty" class="flex align-items-center">
+                <span class="mr-1">{{ $t('public_data_no_data') }}</span>
+                <StageButton :connection-id="getConnectionId(node)"> </StageButton>
+              </div>
+              <VIcon v-else class="tree-item-icon mr-2" size="18">table</VIcon>
+              <span class="table-label" :title="data.name">
+                {{ data.name }}
+                <span v-if="data.comment" class="font-color-sslight">{{ `(${data.comment})` }}</span>
+                <ElTag v-if="data.disabled" type="info">{{ $t('public_status_invalid') }}</ElTag>
+              </span>
+            </span>
+          </template>
+        </VirtualTree>
         <template v-else>
           <VirtualTree
             key="tree"
@@ -61,7 +91,6 @@
             class="ldp-tree h-100"
             empty-text=""
             ref="tree"
-            :render-content="renderDefaultContent"
             :height="treeHeight"
             :item-size="32"
             :indent="0"
@@ -327,8 +356,9 @@ export default defineComponent({
   },
   methods: {
     renderContent(h, { node, data }) {
-      let className = ['custom-tree-node']
       console.log('renderContent', data)
+      let className = ['custom-tree-node']
+
       if (data.isObject) {
         className.push('grabbable')
       }
@@ -377,6 +407,7 @@ export default defineComponent({
     },
 
     renderDefaultContent(h, { node, data }) {
+      console.log('renderDefaultContent', data)
       const schemaLoading = data.loadFieldsStatus === 'loading'
       // 引导时特殊处理，添加的连接等加载完schema后方可展开
       // node.isLeaf = data.LDP_TYPE !== 'connection' || (this.startingTour && schemaLoading && !data.children?.length)

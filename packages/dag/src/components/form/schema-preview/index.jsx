@@ -201,9 +201,7 @@ export const SchemaPreview = defineComponent({
               type={isTarget ? 'target' : isSource ? 'source' : ''}
               single-table
               ignore-error={!isTarget}
-              on={{
-                'update-rules': handleUpdate,
-              }}
+              onUpdateRules={handleUpdate}
             ></FieldList>
           )}
         </div>

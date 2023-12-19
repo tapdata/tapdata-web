@@ -6,12 +6,12 @@ import SchemaFieldList from './List.vue'
 
 export const fieldInference = observer(
   defineComponent({
-    setup(props, { attrs, listeners }) {
+    setup() {
       const formRef = useForm()
       const form = formRef.value
 
       return () => {
-        return <Main ref="fieldMapping" form={form} attrs={attrs} on={listeners} />
+        return <Main ref="fieldMapping" form={form} />
       }
     },
   }),

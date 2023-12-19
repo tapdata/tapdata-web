@@ -258,11 +258,9 @@ export default defineComponent({
           row-key="id"
           remoteMethod={this.loadData}
           draggable
-          on={{
-            'row-dragstart': this.handleDragStart,
-            'row-dragend': this.handleDragEnd,
-            'selection-change': this.handleSelectionChange,
-          }}
+          onRowDragstart={this.handleDragStart}
+          onRowDragend={this.handleDragEnd}
+          onSelectionChange={this.handleSelectionChange}
         >
           <template slot="search">
             <div class="flex flex-row align-items-center mb-2">
@@ -301,7 +299,7 @@ export default defineComponent({
           class="object-drawer-wrap overflow-hidden"
           width="850px"
           visible={this.data.isShowDetails}
-          on={{ ['update:visible']: this.closeDrawer }}
+          onUpdate:visible={this.closeDrawer}
         >
           <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>

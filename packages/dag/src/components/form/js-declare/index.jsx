@@ -54,10 +54,7 @@ export const JsDeclare = defineComponent({
 
                   <el-dialog
                     title={i18n.t('packages_dag_nodes_javascript_moxingshengming')}
-                    visible={dialogVisible.value}
-                    on={{
-                      'update:visible': (v) => (dialogVisible.value = v),
-                    }}
+                    v-model={dialogVisible.value}
                     append-to-body
                     width="800"
                   >

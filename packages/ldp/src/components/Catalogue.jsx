@@ -212,12 +212,10 @@ export default defineComponent({
                 draggable
                 data={currentNode.value.children}
                 treeProps={{ children: 'no_children' }}
-                on={{
-                  'row-click': setTreeCurrent,
-                  'row-dragstart': handleDragStart,
-                  'row-dragend': handleDragEnd,
-                  'selection-change': handleSelectionChange,
-                }}
+                onRowClick={setTreeCurrent}
+                onRowDragstart={handleDragStart}
+                onRowDragend={handleDragEnd}
+                onSelectionChange={handleSelectionChange}
               >
                 <el-table-column type="selection" width="24" class-name="ck-cell-wrap"></el-table-column>
                 <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">

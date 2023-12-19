@@ -129,7 +129,7 @@
         <!--</draggable>-->
       </div>
 
-      <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+      <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
         <template #header>
           <span class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
         </template>

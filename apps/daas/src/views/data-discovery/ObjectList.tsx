@@ -187,7 +187,7 @@ export default defineComponent({
           class="object-drawer-wrap"
           width="850px"
           visible={this.data.isShowDetails}
-          on={{ ['update:visible']: this.closeDrawer }}
+          onUpdate:visible={this.closeDrawer}
         >
           <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>

@@ -175,23 +175,21 @@ export default {
       return (
         <div
           class="custom-tree-node"
-          on={{
-            dragenter: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            },
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
