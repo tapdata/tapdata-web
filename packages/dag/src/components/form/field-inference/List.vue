@@ -130,7 +130,7 @@
                   controls-position="right"
                   :min="customInput.min"
                   :max="customInput.max"
-                  class="coefficient-input custom-input"
+                  class="custom-input"
                   step-strictly
                   @change="handleChangeCustomInput"
                 ></ElInputNumber>
@@ -674,10 +674,16 @@ export default {
         const contentArr = contentStr.split(',')
         contentArr.forEach(el => {
           const key = el.replace(/^\$/, '')
-          console.log('key', key)
+          let min,max
+          if (typeof item.attrs[key] === 'number') {
+            max = typeof item.attrs[key]
+          } else if (item.attrs[key] instanceof Array) {
+            min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
+            max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
+          }
           this.currentData.customInputData[key] = {
-            min: item.attrs[key]?.[0] ? item.attrs[key]?.[0] * 1 : undefined,
-            max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
+            min,
+            max,
             label: this.customInputLabelMap[key] || key
           }
           const defaultValue =
@@ -745,7 +751,10 @@ export default {
   left: 0;
 }
 
-.custom-input,
+.custom-input {
+  width: 180px;
+}
+
 .el-input-number {
   width: 240px;
 }
