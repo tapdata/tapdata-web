@@ -6,6 +6,7 @@ import { FormCollapse, FormCollapseItem } from './form-collapse'
 
 export { Space, Input, FormCollapse, FormCollapseItem, Radio }
 export * from './js-editor'
+export * from './js-editor-dialog'
 export * from './python-editor'
 export * from './sql-editor'
 export * from './slider'
@@ -25,5 +26,6 @@ export * from './batch-add-field'
 export * from './json-editor'
 // export * from './form-collapse'
 export * from './table-field-select'
+export * from './verify-fields-dialog'
 
 export * from '@formily/element-plus'
