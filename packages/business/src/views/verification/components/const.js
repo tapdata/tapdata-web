@@ -4,6 +4,7 @@ export const TABLE_PARAMS = {
   connectionName: '',
   table: '',
   databaseType: '',
+  enableCustomCommand: false,
   sortColumn: '',
   fields: [],
   columns: null,
