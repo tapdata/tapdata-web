@@ -10,12 +10,25 @@
     <header class="px-6 pt-3">
       <div class="mb-2 flex align-center">
         <span class="table-name inline-block">{{ selected.name }}</span>
-        <span v-if="swimType !== 'source'" :class="['status', 'ml-4', 'status-' + tableStatus]">{{
-          statusMap[tableStatus]
-        }}</span>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete"
-          ><VIcon class="mr-1">delete</VIcon>{{ $t('public_button_delete') }}</ElButton
+        <ElTooltip
+          v-if="swimType !== 'source'"
+          :disabled="!canClickStatus"
+          :content="$t('packages_ldp_view_task_monitor')"
+          placement="top"
         >
+          <span
+            class="flex align-center justify-center py-1"
+            :class="['status', 'ml-4', 'status-' + tableStatus, { clickable: canClickStatus }]"
+            @click="handleClickStatus"
+          >
+            <VIcon v-if="canClickStatus" class="mr-1">question-circle</VIcon
+            ><span class="lh-1">{{ statusMap[tableStatus] }}</span></span
+          >
+        </ElTooltip>
+        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete">
+          <VIcon class="mr-1">delete</VIcon>
+          {{ $t('public_button_delete') }}
+        </ElButton>
       </div>
       <div class="flex align-center gap-8">
         <span class="inline-flex align-center text-uppercase text-nowrap">
@@ -47,8 +60,8 @@
                 <span class="font-color-sslight">{{ detailData.comment || '-' }}</span>
               </div>
               <div class="mb-4">
-                <span class="table-dec-label mb-4">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}：</span
-                ><el-input
+                <span class="table-dec-label mb-4">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}：</span>
+                <el-input
                   type="textarea"
                   row="4"
                   class="table-dec-txt mt-2"
@@ -72,10 +85,8 @@
                 <el-col :span="12">
                   <div class="table-dec-label">{{ $t('public_connection') }}</div>
                   <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
-                    <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" /><span
-                      class="min-w-0"
-                      >{{ detailData.connectionName }}</span
-                    >
+                    <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" />
+                    <span class="min-w-0">{{ detailData.connectionName }}</span>
                   </div>
                 </el-col>
               </el-row>
@@ -103,9 +114,9 @@
                   <div class="position-relative" v-loading="loadingSampleData">
                     <VEmpty v-if="!sampleHeader.length"></VEmpty>
                     <template v-else>
-                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn shadow-sm">{{
-                        !isTableView ? 'table-grid' : 'code-json'
-                      }}</IconButton>
+                      <IconButton @click="toggleSampleData" class="position-absolute toggle-sample-btn shadow-sm"
+                        >{{ !isTableView ? 'table-grid' : 'code-json' }}
+                      </IconButton>
                       <VCodeEditor
                         v-if="!isTableView"
                         class="py-0"
@@ -248,7 +259,7 @@
                     {{ formatTime(row.lastStartDate) }}
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('public_operation')" width="100" fixed="right" align="center">
+                <el-table-column :label="$t('public_operation')" width="180" fixed="right" align="center">
                   <template #default="{ row }">
                     <ElLink
                       v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
@@ -283,6 +294,24 @@
                     </template>
                     <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
                     <ElLink
+                      v-readonlybtn="'SYNC_job_operation'"
+                      v-if="!row.btnDisabled.monitor || row.lastStartDate"
+                      type="primary"
+                      @click="openMonitor(row)"
+                    >
+                      {{ $t('packages_business_task_list_button_monitor') }}
+                    </ElLink>
+                    <ElLink
+                      v-readonlybtn="'SYNC_job_operation'"
+                      v-else-if="!row.btnDisabled.edit"
+                      type="primary"
+                      :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
+                      @click="openEditor(row)"
+                    >
+                      {{ $t('public_button_edit') }}
+                    </ElLink>
+                    <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+                    <ElLink
                       v-readonlybtn="'SYNC_job_edition'"
                       type="danger"
                       :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
@@ -297,18 +326,18 @@
           </div>
         </el-tab-pane>
         <!--<el-tab-pane label="APIs" name="apis">
-          <VTable
-            v-if="activeName === 'apis'"
-            ref="table"
-            :columns="apisColumns"
-            :remoteMethod="getApisData"
-            class="mt-4"
-          >
-            <template #status="{ row }">
-              <span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
-            </template>
-          </VTable>
-        </el-tab-pane>-->
+					<VTable
+						v-if="activeName === 'apis'"
+						ref="table"
+						:columns="apisColumns"
+						:remoteMethod="getApisData"
+						class="mt-4"
+					>
+						<template #status="{ row }">
+							<span class="status-block" :class="'status-' + row.status">{{ row.statusFmt }}</span>
+						</template>
+					</VTable>
+				</el-tab-pane>-->
         <el-tab-pane :label="$t('packages_ldp_lineage')" name="lineage">
           <TableLineage
             :is-show="activeName === 'lineage'"
@@ -533,6 +562,10 @@ export default {
 
     sampleDataJson() {
       return JSON.stringify(this.sampleData.slice(0, 10), null, 2)
+    },
+
+    canClickStatus() {
+      return this.tableStatus === 'error' && this.targetTask.length > 0
     }
   },
 
@@ -645,7 +678,7 @@ export default {
         })
         .then(taskList => {
           this.taskData = taskList.filter(task => {
-            if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted) return false
+            if (['deleting', 'delete_failed'].includes(task.status) || task.is_deleted || task._deleted) return false
 
             const { dag } = task
 
@@ -777,6 +810,24 @@ export default {
 
       this.openRoute({
         name: routeName,
+        params: {
+          id: row.id
+        }
+      })
+    },
+
+    openEditor(row) {
+      this.openRoute({
+        name: row.syncType === 'migrate' ? 'MigrateEditor' : 'DataflowEditor',
+        params: {
+          id: row.id
+        }
+      })
+    },
+
+    openMonitor(row) {
+      this.openRoute({
+        name: row.syncType === 'migrate' ? 'MigrationMonitor' : 'TaskMonitor',
         params: {
           id: row.id
         }
@@ -942,6 +993,13 @@ export default {
 
     toggleSampleData() {
       this.isTableView = !this.isTableView
+    },
+
+    handleClickStatus() {
+      if (this.tableStatus === 'error' && this.targetTask.length) {
+        const errorTask = this.targetTask.find(task => task.status === 'error')
+        errorTask && this.handleClickName(errorTask)
+      }
     }
   }
 }
@@ -976,19 +1034,23 @@ export default {
     line-height: 26px;
     color: #1d2129;
   }
+
   .table-dec-label {
     font-weight: 400;
     color: #535f72;
   }
+
   .table-dec-txt {
     font-weight: 500;
     color: #1d2129;
   }
+
   .change-history {
     font-weight: 500;
     font-size: 18px;
     color: #1d2129;
   }
+
   .status {
     display: inline-block;
     min-width: 60px;
@@ -998,14 +1060,17 @@ export default {
     border-radius: 4px;
     box-sizing: border-box;
   }
+
   .status-draft {
     color: #c39700;
     background-color: #fdf1c8;
   }
+
   .status-normal {
     color: #008b58;
     background-color: #b4edd8;
   }
+
   .status-error {
     color: #d44d4d;
     background-color: #ffecec;
@@ -1016,6 +1081,7 @@ export default {
     right: 16px;
     z-index: 10;
     background-color: #fff;
+
     &:hover {
       background-color: rgb(239, 240, 241);
     }
