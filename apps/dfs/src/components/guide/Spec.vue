@@ -290,9 +290,16 @@ export default {
         .sort((a, b) => {
           const aType = a.type === 'recurring' ? 1 : 2
           const bType = b.type === 'recurring' ? 1 : 2
-          const aOrder = a.order
-          const bOrder = b.order
-          return aType + aOrder - (bType + bOrder)
+          const aOrder = a.periodUnit === 'month' ? 1 : 2
+          const bOrder = b.periodUnit === 'month' ? 1 : 2
+
+          if (aType < bType) {
+            return -1
+          } else if (aType > bType) {
+            return 1
+          } else {
+            return aOrder - bOrder
+          }
         })
       //不显示订购一年
       if (specification?.chargeProvider !== 'FreeTier') {
