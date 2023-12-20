@@ -31,11 +31,24 @@
         <div class="mt-4 fs-5 color-primary">{{ $t('dfs_replication_tour_dialog_finished') }}</div>
         <div class="mt-2">{{ $t('dfs_replication_tour_dialog_finished_subtitle') }}</div>
         <div class="mt-12 fw-sub">{{ $t('dfs_replication_tour_dialog_finished_survey_title') }}</div>
-        <ElRadioGroup v-model="continueUse" class="inline-flex gap-4 mt-4">
-          <ElRadio label="yes" class="m-0 bg-white" border>{{ $t('public_yes') }}</ElRadio>
-          <ElRadio label="no" class="m-0 bg-white" border>{{ $t('public_no') }}</ElRadio>
+        <ElRadioGroup v-model="continueUse" class="flex flex-column gap-2 mt-4 text-start px-6">
+          <ElRadio label="yes" class="m-0 bg-white" border>{{
+            $t('dfs_replication_tour_dialog_finished_option_yes')
+          }}</ElRadio>
+          <ElRadio label="no_plan_no_sure" class="m-0 bg-white" border>{{
+            $t('dfs_replication_tour_dialog_finished_option_no_plan_1')
+          }}</ElRadio>
+          <ElRadio label="no_plan_no_project" class="m-0 bg-white" border>{{
+            $t('dfs_replication_tour_dialog_finished_option_no_plan_2')
+          }}</ElRadio>
+          <ElRadio label="no_plan_data_security" class="m-0 bg-white" border>{{
+            $t('dfs_replication_tour_dialog_finished_option_no_plan_3')
+          }}</ElRadio>
+          <ElRadio label="other" class="m-0 bg-white" border>{{
+            $t('dfs_replication_tour_dialog_finished_option_other')
+          }}</ElRadio>
         </ElRadioGroup>
-        <div class="px-6 mt-4">
+        <div class="px-6 mt-2" v-if="continueUse === 'other'">
           <ElInput
             v-model="suggestion"
             type="textarea"
@@ -48,7 +61,9 @@
       </div>
 
       <div slot="footer" class="text-center">
-        <el-button @click="handleDone" type="primary">{{ $t('dfs_replication_tour_dialog_finish') }}</el-button>
+        <el-button :disabled="!continueUse" @click="handleDone" type="primary">{{
+          $t('dfs_replication_tour_dialog_finish')
+        }}</el-button>
       </div>
     </template>
   </ElDialog>

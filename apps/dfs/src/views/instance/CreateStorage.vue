@@ -274,7 +274,7 @@ export default {
 
       if (!item) return
 
-      return PERIOD_MAP[`${item.type}_${item.periodUnit}`]?.label
+      return this.$t(PERIOD_MAP[`${item.type}_${item.periodUnit}`]?.label)
     },
 
     clusterTierMap() {
@@ -331,7 +331,7 @@ export default {
         )
         .map(item => {
           return {
-            label: PERIOD_MAP[`${item.type}_${item.periodUnit}`].label,
+            label: this.$t(PERIOD_MAP[`${item.type}_${item.periodUnit}`].label),
             value: item.priceId
           }
         })
