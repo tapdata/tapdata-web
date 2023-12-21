@@ -208,7 +208,12 @@ export default {
 
     dataflow: Object,
 
-    getTimeRange: Function
+    getTimeRange: Function,
+
+    systemSettings: {
+      type: Array,
+      default: () => []
+    }
   },
 
   data() {
@@ -352,7 +357,15 @@ export default {
           i18n.t('packages_dag_components_nodedetaildialog_pingjunduquhao'),
           i18n.t('packages_dag_components_nodedetaildialog_zengliangduquyan')
         ]
-        result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg, data.incrementalSourceReadTimeCostAvg]
+        const INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT = this.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT')?.value || 1
+        const INCREMENTAL_DELAY_LINE_DATA_MAX = this.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_MAX')?.value || 5
+
+        result.value = [data.timeCostAvg, data.snapshotSourceReadTimeCostAvg?.map(t => {
+          if (t <= (INCREMENTAL_DELAY_LINE_DATA_MAX * 1000)) {
+            return t * INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT
+          }
+          return t
+        }) || [], data.incrementalSourceReadTimeCostAvg]
       } else if (isTarget) {
         result.name = [
           i18n.t('packages_dag_components_nodedetaildialog_chulihaoshi'),

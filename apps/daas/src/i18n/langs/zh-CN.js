@@ -554,6 +554,8 @@ export default {
   setting_share_cdc_persistence_mongodb_collection_doc: '该项配置只有模式选择MongoDB时生效，输入存储的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
   setting_share_cdc_persistence_rocksdb_path_doc: '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
+  setting_INCREMENTAL_DELAY_LINE_DATA_MAX: '监控增量延迟的阈值（单位：s）',
+  setting_INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT: '监控增量延迟数值的系数，支持小数',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
   user_list_creat_user: '创建用户',

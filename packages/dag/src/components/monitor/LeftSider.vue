@@ -371,7 +371,11 @@ export default {
         }
       }
     },
-    timeFormat: String
+    timeFormat: String,
+    systemSettings: {
+      type: Array,
+      default: () => []
+    }
   },
   components: {
     LineChart,
@@ -481,10 +485,20 @@ export default {
 
       const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
       const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
-      const max = Math.max(...data.replicateLag)
+      const INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT = this.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT')?.value || 1
+      const INCREMENTAL_DELAY_LINE_DATA_MAX = this.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_MAX')?.value || 5
+      const replicateLag = data.replicateLag.map(t => {
+        if (t <= (INCREMENTAL_DELAY_LINE_DATA_MAX * 1000)) {
+          return t * INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT
+        }
+        return t
+      })
+
+      const max = Math.max(...replicateLag)
+
       return {
         x: time,
-        value: data.replicateLag,
+        value: replicateLag,
         yAxisMax: Math.max(delay, max)
       }
     },
