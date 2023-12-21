@@ -61,6 +61,10 @@ export default defineComponent({
       default: () => {
         return {}
       }
+    },
+    systemSettings: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -261,11 +265,21 @@ export default defineComponent({
           ? i18n.t('packages_dag_monitor_node_popover_targetWriteTime_title')
           : i18n.t('packages_dag_monitor_node_per_deal_need_time')
         const replicateLagProps = props.sample.replicateLag
+        const INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT =
+            props.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT')?.value || 1
+        const INCREMENTAL_DELAY_LINE_DATA_MAX =
+            props.systemSettings.find(t => t.key === 'INCREMENTAL_DELAY_LINE_DATA_MAX')?.value || 5
         const replicateLagVal =
           isNumber(replicateLagProps) && replicateLagProps >= 0
-            ? calcTimeUnit(replicateLagProps, 2, {
-                autoHideMs: true
-              })
+            ? calcTimeUnit(
+                replicateLagProps <= INCREMENTAL_DELAY_LINE_DATA_MAX * 1000
+                  ? replicateLagProps * INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT
+                  : replicateLagProps,
+                2,
+                {
+                  autoHideMs: true
+                }
+              )
             : null
         const val = getVal(
           isSource.value ? replicateLagVal : isTarget.value ? targetWriteTimeCostAvg.value : timeCostAvg.value
