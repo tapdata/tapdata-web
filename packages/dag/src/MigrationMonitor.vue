@@ -302,7 +302,8 @@ export default {
         items: []
       },
       upgradeFeeVisible: false,
-      upgradeChargesVisible: false
+      upgradeChargesVisible: false,
+      systemSettings: []
     }
   },
 
