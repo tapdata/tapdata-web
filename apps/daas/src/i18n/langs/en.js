@@ -577,6 +577,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
+  setting_INCREMENTAL_DELAY_LINE_DATA_MAX: 'Threshold for monitoring incremental delay (unit: s)',
+  setting_INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT: 'Coefficient for monitoring the value of incremental delay, supports decimals',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',
   user_list_creat_user: 'Create user',
