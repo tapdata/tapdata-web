@@ -49,6 +49,7 @@
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="timeSelectRange"
+          :systemSettings="systemSettings"
           @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
@@ -154,6 +155,7 @@
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
+        :systemSettings="systemSettings"
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
@@ -192,7 +194,7 @@ import { debounce } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { VExpandXTransition, VEmpty, VIcon } from '@tap/component'
-import { databaseTypesApi, measurementApi, taskApi } from '@tap/api'
+import {databaseTypesApi, measurementApi, settingsApi, taskApi} from '@tap/api'
 import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers'
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
@@ -375,6 +377,7 @@ export default {
   created() {
     // 进入监控只读
     this.setStateReadonly(true)
+    this.loadSystemSettings()
   },
 
   async mounted() {
@@ -1274,6 +1277,18 @@ export default {
       if (data.type === 'ScheduleLimit') {
         this.handleShowUpgradeDialog()
       }
+    },
+
+    loadSystemSettings() {
+      const filter = {
+        where: {
+          key: { in: ['share_cdc_persistence_mode', 'share_cdc_ttl_day'] }
+        }
+      }
+      settingsApi.get({ filter: JSON.stringify(filter) }).then(data => {
+        this.systemSettings = data || []
+      })
+
     }
   }
 }
