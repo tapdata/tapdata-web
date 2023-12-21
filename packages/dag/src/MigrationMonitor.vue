@@ -95,6 +95,7 @@
               :sample="dagData ? dagData[n.id] : {}"
               :quota="quota"
               :alarm="alarmData ? alarmData.nodes[n.id] : undefined"
+              :systemSettings="systemSettings"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
