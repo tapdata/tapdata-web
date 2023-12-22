@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, watch, onMounted, computed, nextTick } from '@vue/composition-api'
+import { defineComponent, ref, watch, onMounted, nextTick } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
@@ -75,7 +75,8 @@ export const MergeTableTree = observer(
               targetPath: null,
               tableName: node.name,
               // joinKeys: [],
-              children: []
+              children: [],
+              enableUpdateJoinKeyValue: false // 关联条件变更
             })
           }
         })

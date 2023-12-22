@@ -363,6 +363,7 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: '目標表字段',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '當前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '關聯條件',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: '關聯條件變更',
   packages_dag_nodes_mergetable_neiqianshuzupi: '內嵌數組匹配條件',
   packages_dag_nodes_mergetable_guanlianhouxieru: '關聯後寫入路徑',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新進內嵌數組',
