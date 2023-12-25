@@ -96,6 +96,11 @@
             >{{ $t('public_button_next') }}
           </ElButton>
         </div>
+        <div v-else-if="isUnDeploy" class="guide-footer flex my-5 justify-content-between">
+          <ElButton :loading="unsubscribeIng" size="default" @click="handleUnsubscribe"
+            >{{ $t('public_button_previous') }}
+          </ElButton>
+        </div>
       </div>
     </div>
   </ElDialog>
@@ -139,6 +144,7 @@ export default {
       }
     }
   },
+  inject: ['buried'],
   data() {
     return {
       timer: null,
@@ -158,7 +164,8 @@ export default {
       //是否有支付页面
       isPay: false,
       behavior: [],
-      behaviorAt: null
+      behaviorAt: null,
+      unsubscribeIng: false
     }
   },
   mounted() {
@@ -216,7 +223,7 @@ export default {
         behaviorAt: this.behaviorAt,
         tour: this.$store.state.replicationTour
       }
-      this.$axios.post('api/tcm/user_guide', params)
+      return this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
       this.activeStep++
@@ -277,7 +284,7 @@ export default {
         this.$axios.get('api/tcm/agent').then(data => {
           let items = data?.items || []
           this.agentStatus = items.find(i => i.id === this.agentId)?.status
-          if (this.agentStatus === 'Creating') {
+          if (this.agentStatus !== 'Running') {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
               this.checkAgentStatus()
@@ -494,6 +501,33 @@ export default {
       this.behavior.push(behavior)
       this.behaviorAt = Date.now()
       this.postGuide()
+    },
+
+    async handleUnsubscribe() {
+      this.buried('unsubscribeAgentStripe', '', {
+        isGuide: true
+      })
+      this.unsubscribeIng = true
+
+      await this.$axios.post('api/tcm/subscribe/cancel', {
+        subscribeId: this.subscribeId,
+        resourceId: this.agentId,
+        refundReason: '',
+        refundDescribe: ''
+      })
+
+      this.buried('unsubscribeAgentStripe', '', {
+        result: true
+      })
+
+      this.agentId = ''
+      this.subscribeId = ''
+      await this.postGuide()
+
+      this.$emit('changeIsUnDeploy', false)
+      this.unsubscribeIng = false
+      // 退回到部署方式
+      this.activeStep = this.steps.findIndex(step => step.key === 'DeploymentMethod') + 1
     }
   }
 }
