@@ -33,6 +33,11 @@
 }
 
 // zoho 客服插件样式
+// 浮动客服图标
+.zsiq_custommain, #zsiq_float > img {
+  width: 60px !important;
+  height: 60px !important;
+}
 .botactions em {
   white-space: nowrap;
 }
