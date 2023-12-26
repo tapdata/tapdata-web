@@ -3,6 +3,7 @@
     class="connection-test-dialog"
     :visible="visible"
     width="770px"
+    :title="$t('public_connection_button_connection_test')"
     :show-close="false"
     append-to-body
     :before-close="handleClose"
@@ -38,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div v-show="showProgress && fileInfo.progress">
+    <div class="mb-4">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
         <span>{{ fileInfo.progress + '%' }}</span>

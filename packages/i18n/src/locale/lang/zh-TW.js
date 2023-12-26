@@ -217,6 +217,7 @@ export default {
   public_connection_button_create: '創建連接',
   public_connection_button_copy: '複製連接',
   public_connection_button_test: '連接測試',
+  public_connection_button_connection_test: '連接測試',
   public_connection_button_load_schema: '加載Schema',
   public_connection_form_database_name: '數據庫名稱',
   public_connection_form_database_type: '數據庫類型',

@@ -218,6 +218,7 @@ export default {
   public_connection_button_create: '创建连接',
   public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',
+  public_connection_button_connection_test: '连接测试',
   public_connection_button_load_schema: '加载Schema',
   public_connection_form_database_name: '数据库名称',
   public_connection_form_database_type: '数据库类型',

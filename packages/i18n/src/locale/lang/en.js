@@ -218,6 +218,7 @@ export default {
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
   public_connection_button_test: 'Test',
+  public_connection_button_connection_test: 'Connection Test',
   public_connection_button_load_schema: 'Load Schema',
   public_connection_form_database_name: 'Database Name',
   public_connection_form_database_type: 'Database Type',
