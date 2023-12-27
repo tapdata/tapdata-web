@@ -117,12 +117,6 @@
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
-    <ReplicationTour
-      v-model="showReplicationTour"
-      :finish="replicationTourFinish"
-      @start="handleStartTour"
-      @finish="handleFinishTour"
-    ></ReplicationTour>
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
   </ElContainer>

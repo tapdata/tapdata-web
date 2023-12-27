@@ -1,11 +1,21 @@
 <template>
   <div id="app" :class="[$route.name]">
     <RouterView />
+
+    <ReplicationTour
+      :value="showReplicationTour"
+      @input="setShowReplicationTour"
+      :finish="replicationTourFinish"
+      @start="handleStartTour"
+      @finish="handleFinishTour"
+    ></ReplicationTour>
   </div>
 </template>
 
 <script>
+import ReplicationTour from '@/components/ReplicationTour'
 import { buried } from '@/plugins/buried'
+import { mapMutations, mapState } from 'vuex'
 export default {
   name: 'app',
   provide: {
@@ -19,6 +29,44 @@ export default {
       }
     },
     buried
+  },
+  components: { ReplicationTour },
+  computed: {
+    ...mapState(['showReplicationTour', 'replicationTourFinish'])
+  },
+  mounted() {
+    const unwatch = this.$watch('$route', () => {
+      unwatch()
+      this.$nextTick(async () => {
+        if (this.$route.query?.tour) {
+          const guide = await this.$axios.get('api/tcm/user_guide')
+          // 查询是否有查看监控的行为
+          const behavior = guide?.tour?.behavior
+          if (behavior && behavior !== 'view-monitor') {
+            this.openCompleteReplicationTour()
+            this.$axios.post('api/tcm/user_guide', {
+              tour: {
+                ...guide.tour,
+                behavior: 'view-monitor',
+                behaviorAt: Date.now()
+              }
+            })
+          }
+        }
+      })
+    })
+  },
+  methods: {
+    ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
+
+    async handleStartTour() {
+      this.setShowReplicationTour(false)
+      await this.$router.push({ name: 'migrateList' })
+      this.startTour()
+    },
+    handleFinishTour() {
+      this.setShowReplicationTour(false)
+    }
   }
 }
 </script>

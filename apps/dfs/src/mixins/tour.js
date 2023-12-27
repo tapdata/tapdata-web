@@ -16,8 +16,6 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      showReplicationTour: false,
-      replicationTourFinish: false,
       guideLoading: false
     }
   },
@@ -52,7 +50,7 @@ export default {
     Mousetrap.bind('up up down down left right left right', () => {
       unwatch?.()
       if (this.startingTour) {
-        this.showReplicationTour = false
+        this.setShowReplicationTour(false)
         this.completeTour()
         this.destroyDriver()
       } else {
@@ -74,7 +72,9 @@ export default {
       'completeTour',
       'pauseTour',
       'pauseGuide',
-      'startGuide'
+      'startGuide',
+      'setShowReplicationTour',
+      'openCompleteReplicationTour'
     ]),
 
     handleDestroy() {
@@ -461,7 +461,7 @@ export default {
 
         if (!tour.status) {
           // 没有进入过
-          this.showReplicationTour = true
+          this.setShowReplicationTour(true)
         } else this.$router.push({ name: 'migrateList' }) // 没有完成引导，继续进入数据复制
       }
     },
@@ -516,6 +516,23 @@ export default {
             showButtons: [],
             description: i18n.t('dfs_mixins_tour_drag_source_table')
           }
+        },
+        {
+          element: `#task-${this.replicationTour.taskId} [name="monitor"]`,
+          elementClick: () => {
+            this.setCompleted()
+          },
+          onHighlightStarted: (element, step, { state }) => {
+            this.setTourIndex(state.activeIndex)
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_view_monitor')
+          }
         }
       ]
       this.replicationDriverObj = driver({
@@ -539,17 +556,28 @@ export default {
         }
       })
 
-      const unwatch = this.$watch('replicationTour.behavior', behavior => {
+      const unwatch = this.$watch('replicationTour.behavior', async behavior => {
         if (!this.startingTour || !this.replicationDriverObj) {
           unwatch()
           return
         }
 
-        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
-
         if (behavior === 'add-task') {
-          this.setCompleted()
+          // this.setCompleted()
+          // 设置进入任务监控的引导
+          // 设置step的element
+          const { steps } = this.replicationDriverObj.getConfig()
+          steps[steps.length - 1].element = `#task-${this.replicationTour.taskId} [name="monitor"]`
+          console.log(this.replicationDriverObj)
+          await this.$nextTick()
         }
+        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
+      })
+
+      this.unwatchTourStatus = this.$watch('replicationTour.status', (status, oldStatus) => {
+        if (status === 'complete') this.unwatchTourStatus?.()
+        // 从开始窗口点击开始任务引导
+        if (status === 'starting' && !oldStatus) this.replicationDriverObj.drive(0)
       })
 
       this.unwatchTourRoute = this.$watch(
@@ -590,21 +618,9 @@ export default {
     },
 
     setCompleted() {
-      this.showReplicationTour = true
-      this.replicationTourFinish = true
+      // this.openCompleteReplicationTour()
       this.completeTour()
       this.destroyDriver()
-    },
-
-    async handleStartTour() {
-      this.showReplicationTour = false
-      await this.$router.push({ name: 'migrateList' })
-      this.startTour()
-      this.replicationDriverObj.drive(0)
-    },
-
-    handleFinishTour() {
-      this.showReplicationTour = false
     },
 
     pauseGuideAndTour() {

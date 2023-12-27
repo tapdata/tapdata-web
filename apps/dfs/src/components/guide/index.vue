@@ -210,7 +210,7 @@ export default {
       if (v) {
         if (this.pausedGuide) {
           const icon = document.getElementById('user-guide-icon')
-          const iconRect = icon.$el.getBoundingClientRect()
+          const iconRect = icon.getBoundingClientRect()
           const iconX = iconRect.x + iconRect.width / 2
           const iconY = iconRect.y + iconRect.height / 2
           const dialog = this.$refs.dialogWrapper.$refs.dialog

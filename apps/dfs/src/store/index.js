@@ -80,7 +80,10 @@ const store = new Vuex.Store({
       onlyEnglishLanguage: false,
       slackLink: '',
       station: '' //标记国际站international 国内站 domestic
-    }
+    },
+
+    showReplicationTour: false,
+    replicationTourFinish: false
   },
 
   getters: {
@@ -176,6 +179,15 @@ const store = new Vuex.Store({
 
     completeGuide(state) {
       state.guide.expand.guideStatus = 'completed'
+    },
+
+    setShowReplicationTour(state, flag) {
+      state.showReplicationTour = flag
+    },
+
+    openCompleteReplicationTour(state) {
+      state.showReplicationTour = true
+      state.replicationTourFinish = true
     }
   }
 })
