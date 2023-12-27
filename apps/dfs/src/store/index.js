@@ -147,6 +147,7 @@ const store = new Vuex.Store({
 
     completeTour(state) {
       state.replicationTour.status = 'completed'
+      state.guide.expand.guideStatus = 'completed'
     },
 
     setUpgradeFeeVisible(state, flag) {
