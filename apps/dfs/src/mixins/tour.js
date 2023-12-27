@@ -17,13 +17,14 @@ export default {
       isUnDeploy: false,
       subscribes: {},
       showReplicationTour: false,
-      replicationTourFinish: false
+      replicationTourFinish: false,
+      guideLoading: false
     }
   },
 
   computed: {
     ...mapState(['replicationTour']),
-    ...mapGetters(['startingTour', 'completedTour', 'pausedTour']),
+    ...mapGetters(['startingTour', 'completedTour', 'pausedTour', 'pausedGuide', 'guideExpand']),
     userId() {
       return this.$store.state.user.id
     }
@@ -32,6 +33,11 @@ export default {
   watch: {
     $route(to, from) {
       console.log('$route', to) // eslint-disable-line
+    },
+    '$store.state.guide.expand.guideStatus'() {
+      this.$axios.post('api/tcm/user_guide', {
+        expand: this.$store.state.guide.expand
+      })
     }
   },
 
@@ -52,17 +58,31 @@ export default {
       } else {
         this.subscriptionModelVisible = !this.subscriptionModelVisible
       }
+      console.log('this.subscriptionModelVisible', this.subscriptionModelVisible)
     })
   },
 
   destroyed() {
-    this.unwatchTourRoute?.()
-    this.unwatchTour?.()
-    this.destroyDriver()
+    this.handleDestroy()
   },
 
   methods: {
-    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'completeTour', 'pauseTour']),
+    ...mapMutations([
+      'startTour',
+      'setTourIndex',
+      'setHighlightBoard',
+      'completeTour',
+      'pauseTour',
+      'pauseGuide',
+      'startGuide'
+    ]),
+
+    handleDestroy() {
+      this.unwatchTourRoute?.()
+      this.unwatchTour?.()
+      this.destroyDriver()
+    },
+
     // 检查是否有安装过agent
     async checkGuide() {
       this.guideLoading = true
@@ -74,7 +94,7 @@ export default {
       let items = data?.items || []
       let subItems = subscribe?.items || []
 
-      items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
+      // items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
 
       //是否有未支付的订阅
       if (!items.length && !subItems.length) {
@@ -85,7 +105,7 @@ export default {
       //是否有运行中的实例
       let isRunning = items.find(i => i.status === 'Running')
       if (isRunning) {
-        return
+        return { isRunning }
       }
 
       //是否有支付成功的订阅
@@ -371,7 +391,8 @@ export default {
         this.driverObj ||
         this.showAlarmTour ||
         this.beTouring ||
-        this.enterReplicationTour
+        this.enterReplicationTour ||
+        this.pausedGuide
       ) {
         return
       }
@@ -493,26 +514,30 @@ export default {
           popover: {
             side: 'top',
             showButtons: [],
-            description: i18n.t('dfs_mixins_tour_drag_source_table'),
-            onPopoverRender: (popover, { state }) => {
-              console.log('popover', popover) // eslint-disable-line
-            }
+            description: i18n.t('dfs_mixins_tour_drag_source_table')
           }
         }
       ]
       this.replicationDriverObj = driver({
         allowClose: false,
-        // allowClose: process.env.NODE_ENV === 'development',
         allowKeyboardControl: false,
         showProgress: true,
         steps,
+        popoverClass: 'replication-driver-popover p-3',
+        onPopoverRender: (popover, { config, state }) => {
+          const closeBtn = document.createElement('button')
+          closeBtn.innerText = this.$t('public_button_close')
+          popover.footerButtons.appendChild(closeBtn)
+
+          closeBtn.addEventListener('click', () => {
+            this.pauseGuideAndTour()
+          })
+        },
         onHighlightStarted: (element, step, { state }) => {
           console.log('设置Index', state.activeIndex) // eslint-disable-line
           this.setTourIndex(state.activeIndex)
         }
       })
-
-      console.log('this.replicationDriverObj', this.replicationDriverObj)
 
       const unwatch = this.$watch('replicationTour.behavior', behavior => {
         if (!this.startingTour || !this.replicationDriverObj) {
@@ -532,6 +557,7 @@ export default {
         to => {
           if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
             this.startTour()
+            this.startGuide()
             if (!this.$store.state.replicationConnectionDialog) {
               this.$nextTick(() => {
                 this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
@@ -553,6 +579,7 @@ export default {
         tour => {
           this.$axios.post('api/tcm/user_guide', {
             tour
+            // expand: this.$store.state.guide.expand // 带上 expand 保存上 guideStatus
           })
           if (this.completedTour) this.unwatchTour?.()
         },
@@ -578,6 +605,24 @@ export default {
 
     handleFinishTour() {
       this.showReplicationTour = false
+    },
+
+    pauseGuideAndTour() {
+      this.pauseGuide()
+      this.handleDestroy()
+    },
+
+    async handleOpenGuide() {
+      const result = await this.checkGuide()
+
+      if (!this.subscriptionModelVisible) {
+        // 继续判断任务引导
+        if (result?.isRunning) {
+          this.checkReplicationTour()
+        } else {
+          this.$message.info(this.$t('agent_tip_no_running'))
+        }
+      }
     }
   }
 }

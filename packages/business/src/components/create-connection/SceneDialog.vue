@@ -1,14 +1,15 @@
 <template>
   <ElDialog
+    ref="dialogWrapper"
     :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="!startingTour"
     width="80%"
     top="10vh"
+    class="dialog-zoom-transition"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
-    destroy-on-close
+    :beforeClose="beforeClose"
     @open="handleOpen"
     @close="handleClose"
   >
@@ -394,6 +395,7 @@ export default {
       this.showForm = false
       Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
+        this.$refs.dialogWrapper.$refs.dialog.style.transformOrigin = 'center center'
         this.search = ''
         this.currentScene = 'recommend'
 
@@ -551,6 +553,34 @@ export default {
       })
       this.loading = false
       return data?.[0]
+    },
+
+    beforeClose(done) {
+      if (this.startingTour) {
+        const icon = document.getElementById('user-guide-icon')
+        if (icon) {
+          const windowWidth = document.documentElement.clientWidth
+          const windowHeight = document.documentElement.clientHeight
+          const iconStyle = window.getComputedStyle(icon)
+          const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
+          const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+          const dialog = this.$refs.dialogWrapper.$refs.dialog
+          const computedStyle = window.getComputedStyle(dialog)
+          let width = computedStyle.width
+          if (width.endsWith('px')) {
+            width = parseInt(width)
+          } else if (width.endsWith('%')) {
+            width = (parseInt(width) / 100) * windowWidth
+          }
+          const transformOriginX = iconX - (windowWidth - width) / 2
+          const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+          dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+        }
+        this.$store.commit('pauseTour')
+        this.$store.commit('pauseGuide')
+      }
+
+      done()
     }
   }
 }
@@ -660,5 +690,63 @@ export default {
 }
 .form__content {
   height: 640px;
+}
+</style>
+<style>
+@keyframes dialog-open {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialog-close {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+// 遮罩层动画
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+// 遮罩层动画
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.dialog-zoom-transition {
+  &.dialog-fade-enter-active {
+    animation: fade-in 0.3s;
+    .el-dialog {
+      animation: dialog-open 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
+    }
+  }
+
+  &.dialog-fade-leave-active {
+    animation: fade-out 0.3s;
+    .el-dialog {
+      animation: dialog-close 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+  }
 }
 </style>
