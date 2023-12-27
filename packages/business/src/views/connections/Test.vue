@@ -99,6 +99,10 @@
 
 <script>
 import { VIcon } from '@tap/component'
+import { connectorRecordApi } from '@tap/api'
+import { uuid } from '@tap/shared'
+import {cloneDeep} from "lodash";
+
 export default {
   name: 'Test',
   components: { VIcon },
@@ -125,6 +129,7 @@ export default {
       wsErrorMsg: '',
       status: '',
       timer: null,
+      connectDownloadTimer: null,
       isTimeout: true,
       // hideTableInfo: false,
       colorMap: {
@@ -245,7 +250,7 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
-      this.startDownLoadConnector(data, updateSchema, editTest)
+      this.startDownLoadConnector(cloneDeep(data), updateSchema, editTest)
     },
 
     startByConnection(connection, updateSchema, editTest) {
@@ -285,6 +290,8 @@ export default {
       })
     },
     clearInterval() {
+      // 取消下载器的轮询
+      clearInterval(this.connectDownloadTimer)
       // 取消长连接
       this.$ws.off('testConnection')
       this.$ws.off('downloadPdkFileFlag')
@@ -293,55 +300,59 @@ export default {
       this.status = ''
     },
 
-    startDownLoadConnector(connection, updateSchema, editTest) {
+    async startDownLoadConnector(connection, updateSchema, editTest) {
       this.fileInfo = {
         fileSize: 0,
         progress: 0,
         status: ''
       }
-      let msg = {
+
+      let isUid = false
+      // 检查下载器
+      let obj = {
         type: 'downLoadConnector',
         data: connection
       }
+      if (!connection.id) {
+        connection.id = uuid()
+        isUid = true
+      }
+      const downloadConnector = await connectorRecordApi.downloadConnector(obj)
+      if (downloadConnector === 'ok') {
 
-      this.showProgress = true
-      this.$ws.ready(() => {
-        this.$ws.send(msg)
-        // 连接测试时出现access_token过期,重发消息
-        this.$ws.once('401', () => {
-          this.$ws.send(msg)
+        const checkConnectionDownload = await connectorRecordApi.get({
+          connectionId: connection.id
         })
-
-        // 检查下载器
-        this.$ws.on('downloadPdkFileFlag', data => {
-          this.showProgress = !!data.result
-          if (!this.showProgress) {
-            this.$ws.off('downloadPdkFileFlag')
-            this.startLoadTestItems(connection, updateSchema, editTest)
-            this.fileInfo.progress = 100
-          }
-        })
-        // 下载器进度
-        this.$ws.on('progressReporting', data => {
-          const { fileSize = 0, progress = 0, status } = data.result || {}
-          if (status === 'finish') {
-            this.$ws.off('progressReporting')
-            this.startLoadTestItems(connection, updateSchema, editTest)
-            this.fileInfo.progress = 100
-          } else {
-            this.fileInfo = {
-              fileSize,
-              progress,
-              status
-            }
-          }
-        })
-        // 检查不到下载器
-        this.$ws.on('unknown_event_result', () => {
-          this.$ws.off('unknown_event_result')
+        if (!checkConnectionDownload?.flag) {
           this.startLoadTestItems(connection, updateSchema, editTest)
-        })
-      })
+          this.fileInfo.progress = 100
+          // 删除脏数据
+          isUid && connectorRecordApi.delete(connection.id)
+          return
+        }
+        // 轮询获取进度
+        clearInterval(this.connectDownloadTimer)
+        this.connectDownloadTimer = setInterval(() => {
+          connectorRecordApi.get({
+            connectionId: connection.id
+          }).then(data => {
+              const { fileSize = 0, progress = 0, status } = data || {}
+              if (status === 'finish') {
+                clearInterval(this.connectDownloadTimer)
+                this.startLoadTestItems(connection, updateSchema, editTest)
+                this.fileInfo.progress = 100
+                // 删除脏数据
+                isUid && connectorRecordApi.delete(connection.id)
+              } else {
+                this.fileInfo = {
+                  fileSize,
+                  progress,
+                  status
+                }
+              }
+          })
+        }, 2000)
+      }
     },
 
     startLoadTestItems() {

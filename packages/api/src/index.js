@@ -177,6 +177,9 @@ const lineageApi = new Lineage()
 import DataPermission from './DataPermission'
 const dataPermissionApi = new DataPermission()
 
+import ConnectorRecord from './ConnectorRecord'
+const connectorRecordApi = new ConnectorRecord()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -236,7 +239,8 @@ export {
   ldpApi,
   appApi,
   lineageApi,
-  dataPermissionApi
+  dataPermissionApi,
+  connectorRecordApi
 }
 export * from './ApiClient'
 
