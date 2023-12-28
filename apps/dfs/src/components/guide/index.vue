@@ -207,26 +207,26 @@ export default {
   },
   watch: {
     visible(v) {
-      if (v) {
-        if (this.pausedGuide) {
-          const icon = document.getElementById('user-guide-icon')
-          const iconRect = icon.getBoundingClientRect()
-          const iconX = iconRect.x + iconRect.width / 2
-          const iconY = iconRect.y + iconRect.height / 2
-          const dialog = this.$refs.dialogWrapper.$refs.dialog
-          const computedStyle = window.getComputedStyle(dialog)
-          const windowWidth = document.documentElement.clientWidth
-          let width = computedStyle.width
-          if (width.endsWith('px')) {
-            width = parseInt(width)
-          } else if (width.endsWith('%')) {
-            width = (parseInt(width) / 100) * windowWidth
-          }
-          const transformOriginX = iconX - (windowWidth - width) / 2
-          const transformOriginY = iconY - parseInt(computedStyle.marginTop)
-          dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+      if (this.pausedGuide) {
+        const icon = document.getElementById('user-guide-icon')
+        const windowWidth = document.documentElement.clientWidth
+        const windowHeight = document.documentElement.clientHeight
+        const iconStyle = window.getComputedStyle(icon)
+        const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
+        const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+        const dialog = this.$refs.dialogWrapper.$refs.dialog
+        const computedStyle = window.getComputedStyle(dialog)
+        let width = computedStyle.width
+        if (width.endsWith('px')) {
+          width = parseInt(width)
+        } else if (width.endsWith('%')) {
+          width = (parseInt(width) / 100) * windowWidth
         }
-
+        const transformOriginX = iconX - (windowWidth - width) / 2
+        const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+        dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+      }
+      if (v) {
         this.initGuide()
       }
     },
@@ -260,8 +260,8 @@ export default {
         this.$message.info(this.$t('dfs_components_taskalarmtour_account_zhuanghao'))
         return
       }
-      done()
       this.pauseGuide()
+      done()
       this.$axios.post('api/tcm/user_guide', {
         expand: this.$store.state.guide.expand
       })
@@ -280,6 +280,12 @@ export default {
         behaviorAt: this.behaviorAt,
         tour: this.$store.state.replicationTour
       }
+      this.$store.commit('setGuide', {
+        installStep: this.activeStep,
+        steps: this.steps,
+        subscribeId: this.subscribeId,
+        agentId: this.agentId
+      })
       return this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
@@ -479,10 +485,22 @@ export default {
 
         if (step) {
           let { key } = step
-          if (key === 'Pay' && !guide.subscribeId) {
+
+          if (
+            key === 'Pay' &&
+            (!guide.subscribeId || (this.subscribes?.status && this.subscribes?.status !== 'incomplete'))
+          ) {
             // 走到支付，但是没有提交订阅
-            guide.installStep = --this.activeStep
-            this.postGuide()
+            if (guide.spec) {
+              try {
+                this.orderInfo = JSON.parse(guide.spec)
+              } catch (e) {
+                guide.installStep = --this.activeStep
+                this.postGuide()
+              }
+            }
+            // guide.installStep = --this.activeStep
+            // this.postGuide()
           } else if (this.isUnDeploy && key !== 'Deploy') {
             guide.installStep = this.activeStep = guide.steps.findIndex(step => step.key === 'Deploy') + 1
             this.postGuide()
@@ -542,12 +560,12 @@ export default {
             }
           }
 
-          this.$store.commit('setGuide', {
-            installStep: this.activeStep,
-            steps: this.steps,
-            subscribeId: this.subscribeId,
-            agentId: this.agentId
-          })
+          // this.$store.commit('setGuide', {
+          //   installStep: this.activeStep,
+          //   steps: this.steps,
+          //   subscribeId: this.subscribeId,
+          //   agentId: this.agentId
+          // })
         })
         .catch(() => {
           this.submitLoading = false
@@ -579,12 +597,14 @@ export default {
 
       this.agentId = ''
       this.subscribeId = ''
-      await this.postGuide()
 
       this.$emit('changeIsUnDeploy', false)
       this.unsubscribeIng = false
       // 退回到部署方式
       this.activeStep = this.steps.findIndex(step => step.key === 'DeploymentMethod') + 1
+
+      // 后端其实清不了agentId/subscribeId
+      await this.postGuide()
     },
 
     handleVisible(val) {

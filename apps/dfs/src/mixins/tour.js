@@ -41,7 +41,11 @@ export default {
 
   async created() {
     await this.loadGuide()
-    await this.checkGuide()
+
+    if (!this.pausedGuide) {
+      await this.checkGuide()
+    }
+
     this.loopLoadAgentCount()
     this.setUrlParams() // url携带的自定义参数
     let unwatch
@@ -118,10 +122,11 @@ export default {
       //未支付
 
       if (subscribeId) {
-        let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
+        let subscribe = subItems.find(i => guide.subscribeId === i.id)
+        // let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
 
-        if (isUnPay) {
-          this.subscribes = isUnPay
+        if (['incomplete', 'canceled'].includes(subscribe.status)) {
+          this.subscribes = subscribe
           this.subscriptionModelVisible = true
           //是否有未支付的订阅
           return
@@ -140,6 +145,10 @@ export default {
           this.subscriptionModelVisible = true
           return
         }
+      }
+
+      if (!subscribeId || !agentId) {
+        this.subscriptionModelVisible = true
       }
     },
 
@@ -635,9 +644,12 @@ export default {
         // 继续判断任务引导
         if (result?.isRunning) {
           this.checkReplicationTour()
+          this.startGuide()
         } else {
           this.$message.info(this.$t('agent_tip_no_running'))
         }
+      } else {
+        this.startGuide()
       }
     }
   }
