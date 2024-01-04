@@ -1023,7 +1023,7 @@ export default {
         message = 'bulk_' + message
       }
       const h = this.$createElement
-      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let strArr = this.$t('packages_business_dataFlow_' + message).split(/xxx/i)
       let msg = h(
         'p',
         {
