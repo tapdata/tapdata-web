@@ -122,9 +122,7 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
-          >{{ $t('public_connection_button_test') }}
-        </ElButton>
+        <ElButton @click="handleEditorTest()">{{ $t('public_connection_button_test') }} </ElButton>
         <ElButton size="mini" @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
         <ElButton type="primary" size="mini" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
       </span>
