@@ -1023,18 +1023,18 @@ export default {
         message = 'bulk_' + message
       }
       const h = this.$createElement
-      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let strArr = this.$t('packages_business_dataFlow_' + message).split(/xxx/i)
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;'
+          style: 'width: calc(100% - 28px);word-break: break-word;'
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary'
+              class: 'color-primary ml-1'
             },
             name
           ),
