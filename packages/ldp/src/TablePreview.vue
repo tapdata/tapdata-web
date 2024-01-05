@@ -697,7 +697,7 @@ export default {
       proxyApi
         .call(params)
         .then(res => {
-          this.sampleData = res?.sampleData
+          this.sampleData = res?.sampleData || []
           //schema返回的数据组装数据
           this.sampleHeader = this.tableFields.map(it => it.name)
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
