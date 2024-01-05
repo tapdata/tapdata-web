@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div class="mb-4">
+    <div class="mb-4" v-show="showProgress">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
         <span>{{ fileInfo.progress + '%' }}</span>
@@ -101,7 +101,7 @@
 import { VIcon } from '@tap/component'
 import { connectorRecordApi } from '@tap/api'
 import { uuid } from '@tap/shared'
-import {cloneDeep} from "lodash";
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'Test',
@@ -319,7 +319,6 @@ export default {
       }
       const downloadConnector = await connectorRecordApi.downloadConnector(obj)
       if (downloadConnector === 'ok') {
-
         const checkConnectionDownload = await connectorRecordApi.get({
           connectionId: connection.id
         })
@@ -333,9 +332,11 @@ export default {
         // 轮询获取进度
         clearInterval(this.connectDownloadTimer)
         this.connectDownloadTimer = setInterval(() => {
-          connectorRecordApi.get({
-            connectionId: connection.id
-          }).then(data => {
+          connectorRecordApi
+            .get({
+              connectionId: connection.id
+            })
+            .then(data => {
               const { fileSize = 0, progress = 0, status } = data || {}
               if (status === 'finish') {
                 clearInterval(this.connectDownloadTimer)
@@ -350,7 +351,7 @@ export default {
                   status
                 }
               }
-          })
+            })
         }, 2000)
       }
     },
