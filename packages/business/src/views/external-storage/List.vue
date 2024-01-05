@@ -529,31 +529,36 @@ export default {
     handleEditorTest() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
-          schemaFormInstance?.validate().then(async () => {
-            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+          let formValues
+          if (this.$refs.schemaToForm) {
+            const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+            const feedback = await schemaFormInstance?.validate().catch(e => e)
 
-            this.loading = true
-            let { id, name, type, uri, defaultStorage } = this.form
-            let params = Object.assign(
-              {
-                id,
-                name,
-                type,
-                uri,
-                defaultStorage
-              },
-              formValues
-            )
-            let result = { id }
-            for (let key in params) {
-              if (params[key] !== this.dialogForm[key]) {
-                result[key] = params[key]
-              }
+            if (feedback) return
+
+            formValues = this.$refs.schemaToForm?.getFormValues?.()
+          }
+
+          this.loading = true
+          let { id, name, type, uri, defaultStorage } = this.form
+          let params = Object.assign(
+            {
+              id,
+              name,
+              type,
+              uri,
+              defaultStorage
+            },
+            formValues
+          )
+          let result = { id }
+          for (let key in params) {
+            if (params[key] !== this.dialogForm[key]) {
+              result[key] = params[key]
             }
+          }
 
-            this.startTest(result)
-          })
+          this.startTest(result)
         }
       })
     },
