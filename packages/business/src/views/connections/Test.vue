@@ -317,6 +317,11 @@ export default {
         connection.id = uuid()
         isUid = true
       }
+
+      // 初始化状态
+      this.showProgress = false
+      this.fileInfo.progress = 0
+
       const downloadConnector = await connectorRecordApi.downloadConnector(obj)
       if (downloadConnector === 'ok') {
         const checkConnectionDownload = await connectorRecordApi.get({
@@ -331,7 +336,6 @@ export default {
         }
         // 准备下载显示进度
         this.showProgress = true
-        this.fileInfo.progress = 0
         // 轮询获取进度
         clearInterval(this.connectDownloadTimer)
         this.connectDownloadTimer = setInterval(() => {
@@ -361,7 +365,6 @@ export default {
 
     startLoadTestItems() {
       this.startByConnection(...arguments)
-      this.showProgress = false
     }
   }
 }
