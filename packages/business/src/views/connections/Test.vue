@@ -329,6 +329,9 @@ export default {
           isUid && connectorRecordApi.delete(connection.id)
           return
         }
+        // 准备下载显示进度
+        this.showProgress = true
+        this.fileInfo.progress = 0
         // 轮询获取进度
         clearInterval(this.connectDownloadTimer)
         this.connectDownloadTimer = setInterval(() => {
@@ -345,11 +348,11 @@ export default {
                 // 删除脏数据
                 isUid && connectorRecordApi.delete(connection.id)
               } else {
-                this.fileInfo = {
+                Object.assign(this.fileInfo, {
                   fileSize,
                   progress,
                   status
-                }
+                })
               }
             })
         }, 2000)
