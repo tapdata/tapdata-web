@@ -11,7 +11,7 @@
     </div>
     <ElDialog
       ref="dialogWrapper"
-      class="guide-dialog"
+      class="guide-dialog dialog-zoom-transition"
       :visible="visible"
       :top="'10vh'"
       width="1000px"
@@ -675,63 +675,6 @@ export default {
 </style>
 
 <style>
-@keyframes dialog-open {
-  0% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes dialog-close {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0);
-  }
-}
-
-// 遮罩层动画
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-// 遮罩层动画
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.guide-dialog {
-  &.dialog-fade-enter-active {
-    animation: fade-in 0.3s;
-    .el-dialog {
-      animation: dialog-open 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
-    }
-  }
-
-  &.dialog-fade-leave-active {
-    animation: fade-out 0.3s;
-    .el-dialog {
-      animation: dialog-close 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-  }
-}
-
 @keyframes guideIconZoomIn {
   from {
     opacity: 0;
