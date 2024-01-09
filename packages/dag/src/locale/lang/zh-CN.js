@@ -675,5 +675,7 @@ export default {
   packages_dag_btn_disable_node: '禁用节点',
   packages_dag_only_mongodb: '仅支持 MongoDB 数据库',
   packages_dag_field_inference_list_zidingyileixing: '自定义类型',
-  packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:'
+  packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:',
+  packages_dag_enableSyncMetricCollector_title: '同步指标收集',
+  packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析'
 }

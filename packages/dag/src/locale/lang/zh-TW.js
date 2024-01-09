@@ -662,5 +662,7 @@ export default {
   packages_dag_btn_disable_node: '禁用節點',
   packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
   packages_dag_field_inference_list_zidingyileixing: '自訂類型',
-  packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:'
+  packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:',
+  packages_dag_enableSyncMetricCollector_title: '同步指標收集',
+  packages_dag_enableSyncMetricCollector_tip: '啟用後會自動收集任務的同步指標，任務停止後會輸出對應的指標資訊供分析'
 }

@@ -41,11 +41,9 @@ export default observer({
         })
     }, 500)
     const handleCheckCrontabExpressionFlag = debounce(function (resolve, value) {
-      taskApi
-        .checkCheckCloudTaskLimit(id)
-        .then(data => {
-          resolve(data)
-        })
+      taskApi.checkCheckCloudTaskLimit(id).then(data => {
+        resolve(data)
+      })
     }, 500)
     return {
       isDaas: isDaas,
@@ -660,6 +658,16 @@ export default observer({
                                     }
                                   }
                                 }
+                              },
+                              enableSyncMetricCollector: {
+                                title: this.$t('packages_dag_enableSyncMetricCollector_title'), // 同步指标收集
+                                type: 'boolean',
+                                default: false,
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  tooltip: i18n.t('packages_dag_enableSyncMetricCollector_tip')
+                                },
+                                'x-component': 'Switch'
                               },
                               accessNodeType: {
                                 type: 'string',
