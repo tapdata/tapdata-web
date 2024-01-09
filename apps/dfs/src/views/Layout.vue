@@ -110,17 +110,13 @@
       :agent="agent"
       :subscribes="subscribes"
       :isUnDeploy="isUnDeploy"
+      :guideLoading="guideLoading"
       @changeIsUnDeploy="changeIsUnDeploy"
+      @open-guide="handleOpenGuide"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
-    <ReplicationTour
-      v-model="showReplicationTour"
-      :finish="replicationTourFinish"
-      @start="handleStartTour"
-      @finish="handleFinishTour"
-    ></ReplicationTour>
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
   </ElContainer>
@@ -569,5 +565,10 @@ export default {
 }
 .driver-popover {
   max-width: 520px;
+}
+.replication-driver-popover {
+  .driver-popover-footer {
+    margin-top: 8px;
+  }
 }
 </style>

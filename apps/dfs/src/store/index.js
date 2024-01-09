@@ -59,7 +59,10 @@ const store = new Vuex.Store({
       steps: [],
       behavior: '',
       behaviorAt: null,
-      expand: {}
+      expand: {
+        enableGuide: null,
+        guideStatus: '' // starting, completed, paused
+      }
     },
     agentCount: {
       agentTotalCount: 0,
@@ -77,14 +80,20 @@ const store = new Vuex.Store({
       onlyEnglishLanguage: false,
       slackLink: '',
       station: '' //标记国际站international 国内站 domestic
-    }
+    },
+
+    showReplicationTour: false,
+    replicationTourFinish: false
   },
 
   getters: {
     isDomesticStation: state => state.config.station === 'domestic',
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',
-    completedTour: state => state.replicationTour.status === 'completed'
+    completedTour: state => state.replicationTour.status === 'completed',
+    pausedGuide: state => state.guide.expand.guideStatus === 'paused',
+    startingGuide: state => state.guide.expand.guideStatus === 'starting',
+    guideExpand: state => state.guide.expand
   },
 
   mutations: {
@@ -141,6 +150,7 @@ const store = new Vuex.Store({
 
     completeTour(state) {
       state.replicationTour.status = 'completed'
+      state.guide.expand.guideStatus = 'completed'
     },
 
     setUpgradeFeeVisible(state, flag) {
@@ -153,6 +163,31 @@ const store = new Vuex.Store({
 
     setReplicationConnectionDialog(state, visible) {
       state.replicationConnectionDialog = visible
+    },
+
+    setExpand(state, expand) {
+      Object.assign(state.guide.expand, expand)
+    },
+
+    startGuide(state) {
+      state.guide.expand.guideStatus = 'starting'
+    },
+
+    pauseGuide(state) {
+      state.guide.expand.guideStatus = 'paused'
+    },
+
+    completeGuide(state) {
+      state.guide.expand.guideStatus = 'completed'
+    },
+
+    setShowReplicationTour(state, flag) {
+      state.showReplicationTour = flag
+    },
+
+    openCompleteReplicationTour(state) {
+      state.showReplicationTour = true
+      state.replicationTourFinish = true
     }
   }
 })
