@@ -223,7 +223,7 @@ $x3: $dotLeft + $dotSpace;
   max-width: 357px;
 }
 
-@keyframes dialog-open {
+@keyframes dialog-zoom-in {
   0% {
     opacity: 0;
     transform: scale(0.2);
@@ -234,18 +234,16 @@ $x3: $dotLeft + $dotSpace;
   }
 }
 
-@keyframes dialog-close {
+@keyframes dialog-zoom-out {
   0% {
-    opacity: 1;
     transform: scale(1);
   }
   100% {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.2);
   }
 }
 
-// 遮罩层动画
 @keyframes fade-out {
   0% {
     opacity: 1;
@@ -254,7 +252,7 @@ $x3: $dotLeft + $dotSpace;
     opacity: 0;
   }
 }
-// 遮罩层动画
+
 @keyframes fade-in {
   0% {
     opacity: 0;
@@ -264,18 +262,20 @@ $x3: $dotLeft + $dotSpace;
   }
 }
 
+@keyframes empty-keyframes {}
+
 .dialog-zoom-transition {
   &.dialog-fade-enter-active {
     animation: fade-in 0.3s;
     .el-dialog {
-      animation: dialog-open 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
+      animation: dialog-zoom-in 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
     }
   }
 
   &.dialog-fade-leave-active {
-    animation: fade-out 0.3s;
+    animation: empty-keyframes 0.2s both; // 只是为了让vue transition 的 duration 生效
     .el-dialog {
-      animation: dialog-close 0.35s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+      animation: dialog-zoom-out 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86) both;
     }
   }
 }
