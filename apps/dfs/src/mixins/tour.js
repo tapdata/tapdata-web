@@ -598,13 +598,15 @@ export default {
             if (!this.$store.state.replicationConnectionDialog) {
               this.$nextTick(() => {
                 // 判断任务的监控按钮是否渲染
-                if (this.replicationTour.activeIndex === 3 && !document.getElementById(taskMonitorId)) {
+                let index = this.replicationTour.activeIndex
+                if (this.replicationTour.behavior === 'add-task') index = 3
+                if (index === 3 && !document.querySelector(taskMonitorId)) {
                   // 如果没有渲染，监听任务列表的加载时间
                   const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
                     this.$nextTick(() => {
-                      if (document.getElementById(taskMonitorId)) {
+                      if (document.querySelector(taskMonitorId)) {
                         unwatch()
-                        this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                        this.replicationDriverObj.drive(index)
                       }
                     })
                   })
