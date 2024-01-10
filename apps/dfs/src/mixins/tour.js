@@ -475,6 +475,7 @@ export default {
     },
 
     initReplicationTour() {
+      const taskMonitorId = `#task-${this.replicationTour.taskId} [name="monitor"]`
       const steps = [
         {
           element: '#btn-add-source',
@@ -526,7 +527,7 @@ export default {
           }
         },
         {
-          element: `#task-${this.replicationTour.taskId} [name="monitor"]`,
+          element: taskMonitorId,
           elementClick: () => {
             this.setCompleted()
           },
@@ -596,7 +597,20 @@ export default {
             this.startGuide()
             if (!this.$store.state.replicationConnectionDialog) {
               this.$nextTick(() => {
-                this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                // 判断任务的监控按钮是否渲染
+                if (this.replicationTour.activeIndex === 3 && !document.getElementById(taskMonitorId)) {
+                  // 如果没有渲染，监听任务列表的加载时间
+                  const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
+                    this.$nextTick(() => {
+                      if (document.getElementById(taskMonitorId)) {
+                        unwatch()
+                        this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                      }
+                    })
+                  })
+                } else {
+                  this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                }
               })
             }
           } else {

@@ -83,7 +83,8 @@ const store = new Vuex.Store({
     },
 
     showReplicationTour: false,
-    replicationTourFinish: false
+    replicationTourFinish: false,
+    taskLoadedTime: null // 记录TargetPanel任务列表加载时间
   },
 
   getters: {
@@ -188,6 +189,10 @@ const store = new Vuex.Store({
     openCompleteReplicationTour(state) {
       state.showReplicationTour = true
       state.replicationTourFinish = true
+    },
+
+    setTaskLoadedTime(state) {
+      state.taskLoadedTime = new Date().getTime()
     }
   }
 })
