@@ -289,8 +289,10 @@ export default {
       return this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
-      this.activeStep++
-      this.postGuide()
+      if (this.activeStep < this.steps.length) {
+        this.activeStep++
+        this.postGuide()
+      }
     },
     previous() {
       let step = this.steps[this.activeStep - 1]
@@ -595,8 +597,8 @@ export default {
         result: true
       })
 
-      this.agentId = ''
-      this.subscribeId = ''
+      this.agentId = '-'
+      this.subscribeId = '-'
 
       this.$emit('changeIsUnDeploy', false)
       this.unsubscribeIng = false

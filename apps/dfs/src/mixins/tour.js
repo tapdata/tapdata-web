@@ -89,46 +89,43 @@ export default {
 
     // 检查是否有安装过agent
     async checkGuide() {
+      const { guide } = this.$store.state
+
+      // 进入过任务引导
+      if (guide.tour.status) return
+
       this.guideLoading = true
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       const data = await this.$axios.get('api/tcm/agent')
       this.guideLoading = false
-      const { guide } = this.$store.state
+
       const { subscribeId, agentId } = guide
       let items = data?.items || []
       let subItems = subscribe?.items || []
 
-      // items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
-
-      //是否有未支付的订阅
+      // 没有订阅和实例
       if (!items.length && !subItems.length) {
         this.subscriptionModelVisible = true
         return
       }
 
-      //是否有运行中的实例
+      // 是否有运行中的实例
       let isRunning = items.find(i => i.status === 'Running')
       if (isRunning) {
         return { isRunning }
       }
 
-      //是否有支付成功的订阅
-      // if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
-
-      //订阅0 Agent 0  完全新人引导
-      //订阅不为0 查找是否有待部署状态
-      //Agent不为0 查找是否有待部署状态
-      //优先未支付判定
-      //未支付
-
       if (subscribeId) {
         let subscribe = subItems.find(i => guide.subscribeId === i.id)
-        // let isUnPay = subItems.find(i => i.status === 'incomplete' && guide.subscribeId === i.id)
 
-        if (['incomplete', 'canceled'].includes(subscribe.status)) {
+        if (
+          (subscribe && subscribe.status === 'incomplete') ||
+          // agent 引导过程中退订: subscribeId === '-', 所有订阅都是canceled按引导退订处理，能开启引导
+          (subscribeId === '-' && subItems.every(item => item.status === 'canceled'))
+        ) {
+          // 引导订阅的agent未支付
           this.subscribes = subscribe
           this.subscriptionModelVisible = true
-          //是否有未支付的订阅
           return
         }
       }
@@ -638,15 +635,15 @@ export default {
     },
 
     async handleOpenGuide() {
-      const result = await this.checkGuide()
+      await this.checkGuide()
 
       if (!this.subscriptionModelVisible) {
         // 继续判断任务引导
-        if (result?.isRunning) {
+        if (this.agentRunningCount) {
           this.checkReplicationTour()
           this.startGuide()
         } else {
-          this.$message.info(this.$t('agent_tip_no_running'))
+          this.$message.warning(this.$t('agent_tip_no_running'))
         }
       } else {
         this.startGuide()
