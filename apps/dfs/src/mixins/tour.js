@@ -116,13 +116,15 @@ export default {
       }
 
       if (subscribeId) {
+        if (subscribeId === '-') {
+          // agent 引导过程中退订: subscribeId === '-', 所有订阅都是canceled按引导退订处理，能开启引导
+          this.subscriptionModelVisible = subItems.every(item => item.status === 'canceled')
+          return
+        }
+
         let subscribe = subItems.find(i => guide.subscribeId === i.id)
 
-        if (
-          (subscribe && subscribe.status === 'incomplete') ||
-          // agent 引导过程中退订: subscribeId === '-', 所有订阅都是canceled按引导退订处理，能开启引导
-          (subscribeId === '-' && subItems.every(item => item.status === 'canceled'))
-        ) {
+        if (subscribe && subscribe.status === 'incomplete') {
           // 引导订阅的agent未支付
           this.subscribes = subscribe
           this.subscriptionModelVisible = true
