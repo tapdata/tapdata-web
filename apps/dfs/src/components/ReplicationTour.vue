@@ -61,7 +61,7 @@
       </div>
 
       <div slot="footer" class="text-center">
-        <el-button :disabled="!continueUse" @click="handleDone" type="primary">{{
+        <el-button key="doneBtn" :disabled="!continueUse" @click="handleDone" type="primary">{{
           $t('dfs_replication_tour_dialog_finish')
         }}</el-button>
       </div>

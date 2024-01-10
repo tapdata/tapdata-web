@@ -1699,6 +1699,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
   dfs_mixins_tour_drag_source_table:
     'Please drag a table from the source connection to the target connection to start creating a replication task.',
+  dfs_mixins_tour_view_monitor: 'Click here to view task monitoring.',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
   dfs_instance_instance_perce_minute: '{val1} Minute Ago',

@@ -271,7 +271,6 @@
               >
               <ElButton
                 v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
-                class="mr-2"
                 size="mini"
                 type="primary"
                 @click="openRenew(item)"
@@ -282,7 +281,6 @@
               <template v-if="showUpgradeIcon(item)">
                 <ElTooltip
                   v-if="upgradingFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item, 'upgrading')"
@@ -310,7 +308,6 @@
                 </ElTooltip>
                 <ElTooltip
                   v-else-if="upgradeFailedFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item, 'fail')"
@@ -329,7 +326,6 @@
                 </ElTooltip>
                 <ElTooltip
                   v-else-if="!upgradeFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item)"
