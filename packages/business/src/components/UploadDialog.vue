@@ -170,14 +170,15 @@ export default {
       const originPath = window.location.origin + window.location.pathname
       const accessToken = this.accessToken ? `?access_token=${this.accessToken}` : ''
       const map = {
-        api: `/api/MetadataInstances/upload${accessToken}`,
-        Javascript_functions: `/api/Javascript_functions/batch/import${accessToken}`,
-        Modules: `/api/Modules/batch/import${accessToken}`
+        api: `api/MetadataInstances/upload${accessToken}`,
+        Javascript_functions: `api/Javascript_functions/batch/import${accessToken}`,
+        Modules: `api/Modules/batch/import${accessToken}`
       }
-      this.importForm.action =
-        originPath +
-        axios.defaults.baseURL.replace('./', '') +
-        (map[this.type] || `/api/Task/batch/import${accessToken}`)
+
+      let apiBaseURL = axios.defaults.baseURL.replace(/^\.?\//, '')
+      if (apiBaseURL) apiBaseURL += '/'
+
+      this.importForm.action = originPath + apiBaseURL + (map[this.type] || `api/Task/batch/import${accessToken}`)
     },
 
     // 获取分类
