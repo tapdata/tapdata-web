@@ -725,12 +725,18 @@ export default {
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
+          const pdkType = form.getValuesIn('attrs.pdkType')
+          const pdkHash = form.getValuesIn('attrs.pdkHash')
+          const db_version = form.getValuesIn('attrs.db_version')
 
+          pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
+          pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
             form.setValuesIn('attrs.connectionType', connection.connectionType)
           accessNodeProcessId !== connection.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
           connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
+          db_version !== connection.db_version && form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
         },

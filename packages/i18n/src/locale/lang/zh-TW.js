@@ -217,6 +217,7 @@ export default {
   public_connection_button_create: '創建連接',
   public_connection_button_copy: '複製連接',
   public_connection_button_test: '連接測試',
+  public_connection_button_connection_test: '連接測試',
   public_connection_button_load_schema: '加載Schema',
   public_connection_form_database_name: '數據庫名稱',
   public_connection_form_database_type: '數據庫類型',
@@ -228,6 +229,8 @@ export default {
   public_connection_form_other_connection_string: '其他連接串參數',
   public_connection_form_time_zone_of_time_type: '時間類型的時區',
   public_connection_form_link_plugin_source: '鏈接插件來源',
+  public_source_database: '源數據庫',
+  public_target_database: '目標數據庫',
   // 任務
   public_task: '任務',
   public_task_name: '任務名稱',

@@ -56,7 +56,7 @@
           decoding="async"
           aria-hidden="true"
           style="z-index：0"
-          src="https://github.githubassets.com/images/modules/site/copilot/copilot-pricing-card-glow.png"
+          :src="require('@tap/assets/images/pricing-card-glow.png')"
         />
         <div class="copilot-pricing-card-glow-border1">
           <div class="px-4 pb-4 flex-1 bg-white paid-upgrade-right-border">

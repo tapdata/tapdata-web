@@ -31,7 +31,9 @@ export default {
   packages_dag_meta_table_false: 'False',
   packages_dag_meta_table_comment: 'Comment',
   packages_dag_connection_name_search_placeholder: 'Please enter the connection name to search',
-  packages_dag_task_form_error_name_duplicate: '',
+  packages_dag_task_form_error_name_duplicate: 'Task name already exists, please re-enter it',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    'The maximum number of running tasks has been reached. Unable to add new scheduled tasks. Please deactivate scheduling for some tasks or stop running tasks.',
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full and Incremental Sync',
   packages_dag_task_stetting_desc: 'Task Description',
@@ -529,6 +531,7 @@ export default {
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: 'Python nodes are currently only supported on Linux Agents, not Windows.',
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
   packages_dag_js_processor_index_zuoyong: 'Function:',
@@ -718,4 +721,7 @@ export default {
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
   packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
   packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:',
+  packages_dag_enableSyncMetricCollector_title: 'Sync Metrics Collection',
+  packages_dag_enableSyncMetricCollector_tip:
+    'If enabled, the sync metrics of the task will be automatically collected. After the task stops, the corresponding metric information will be output for analysis.',
 }

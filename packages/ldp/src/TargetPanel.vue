@@ -5,8 +5,8 @@
       <div class="flex-grow-1"></div>
       <IconButton :disabled="highlightBoard" id="btn-add-target" @click="handleAdd">add</IconButton>
       <IconButton :disabled="highlightBoard" :class="{ active: enableSearch }" @click="toggleEnableSearch"
-        >search-outline</IconButton
-      >
+        >search-outline
+      </IconButton>
     </div>
     <div class="flex-fill min-h-0 flex flex-column">
       <div v-if="enableSearch" class="px-2 pt-2">
@@ -17,7 +17,7 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
+      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative ldp-list-item-wrapper" @scroll="handleScroll">
         <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
         <div
           v-for="item in filterList"
@@ -274,7 +274,7 @@ const TaskList = defineComponent({
             <div class="task-list">
               <div class="task-list-content">
                 {list.map((task, i) => (
-                  <div key={i} class="task-list-item flex align-center p-2 gap-4">
+                  <div key={i} class="task-list-item flex align-center p-2 gap-4" id={`task-${task.id}`}>
                     <div class="ellipsis flex-1 align-center flex gap-4">
                       <a
                         class="el-link el-link--primary justify-content-start"
@@ -325,7 +325,7 @@ const TaskList = defineComponent({
                         </ElLink>
                       )}
                       <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-                      <ElLink type="primary" onClick={() => emit('edit-in-dag', task)}>
+                      <ElLink name="monitor" type="primary" onClick={() => emit('edit-in-dag', task)}>
                         {i18n.t(
                           ['edit', 'wait_start'].includes(task.status)
                             ? 'public_button_edit'
@@ -394,6 +394,8 @@ export default {
   components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon, VEmpty },
 
   mixins: [commonMix],
+
+  inject: ['buried'],
 
   data() {
     return {
@@ -623,6 +625,8 @@ export default {
       }
 
       this.taskMeasurementMap = map
+
+      this.$store.commit('setTaskLoadedTime')
     },
 
     async autoLoadTaskById() {
@@ -989,9 +993,14 @@ export default {
           })
 
           if (this.startingTour) {
-            this.$store.commit('setTourBehavior', 'add-task')
+            this.$store.commit('setReplicationTour', {
+              behavior: 'add-task',
+              taskId: taskInfo.id,
+            })
             // 上报引导创任务
-            this.buried(`guideCreateTask`, '')
+            this.buried(`guideCreateTask`, {
+              taskId: taskInfo.id,
+            })
           }
         }
       })
@@ -1199,6 +1208,7 @@ export default {
 <style lang="scss" scoped>
 .wrap__item {
   border: 1px solid #e1e3e9;
+
   &:hover {
     //background-color: #f2f3f5;
   }
@@ -1225,8 +1235,10 @@ export default {
     }
   }
 }
+
 .item__header {
   border-bottom: 1px solid #e1e3e9;
+
   &:hover {
     background-color: #f2f3f5;
   }
@@ -1243,5 +1255,13 @@ export default {
     line-height: 1;
     vertical-align: baseline;
   }
+}
+
+.item__icon {
+  //border: 1px solid #4e5969;
+}
+
+.ldp-list-item-wrapper:has(.driver-active-element) {
+  overflow: hidden !important;
 }
 </style>

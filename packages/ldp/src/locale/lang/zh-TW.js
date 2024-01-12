@@ -41,4 +41,5 @@ export default {
   packages_ldp_run_every_hour: '每1小時運行一次',
   packages_ldp_run_every_day: '每天運行一次',
   packages_ldp_custom_cron_expression: '自定義cron表達式',
+  packages_ldp_view_task_monitor: '查看任務監控',
 }

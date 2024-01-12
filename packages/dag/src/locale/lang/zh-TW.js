@@ -31,6 +31,8 @@ export default {
   packages_dag_meta_table_comment: '字段注釋',
   packages_dag_connection_name_search_placeholder: '請輸入連接名稱搜索',
   packages_dag_task_form_error_name_duplicate: '任務名稱已存在，請重新輸入',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    '您的可運行任務數已達到上限，無法新增新的定時調度任務，請先關閉一些任務的定時調度或停止一些運行中的任務',
   packages_dag_task_setting_sync_type: '同步類型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量同步',
   packages_dag_task_stetting_desc: '任務描述',
@@ -498,6 +500,7 @@ export default {
     "// 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# 增加一個字段，如果字段已存在則不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一個已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一個已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在則新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 設置字段為主鍵\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主鍵\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: '目前Python節點僅支持在Linux下部署的Agent上使用，不支持Windows。',
   packages_dag_js_processor_index_duibi: '對比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -662,4 +665,6 @@ export default {
   packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
   packages_dag_field_inference_list_zidingyileixing: '自訂類型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '選擇調整的類型:',
+  packages_dag_enableSyncMetricCollector_title: '同步指標收集',
+  packages_dag_enableSyncMetricCollector_tip: '啟用後會自動收集任務的同步指標，任務停止後會輸出對應的指標資訊供分析',
 }

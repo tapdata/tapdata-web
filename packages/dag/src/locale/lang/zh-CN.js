@@ -31,6 +31,8 @@ export default {
   packages_dag_meta_table_comment: '字段注释',
   packages_dag_connection_name_search_placeholder: '请输入连接名称搜索',
   packages_dag_task_form_error_name_duplicate: '任务名称已存在，请重新输入',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    '您的可运行任务数已达到上限，无法添加新的定时调度任务，请先关闭一些任务的定时调度或停止一些运行中的任务',
   packages_dag_task_setting_sync_type: '同步类型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量',
   packages_dag_task_stetting_desc: '任务描述',
@@ -501,6 +503,7 @@ export default {
     "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: '目前Python节点仅支持在Linux下部署的Agent上使用，不支持Windows。',
   packages_dag_js_processor_index_duibi: '对比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -675,4 +678,6 @@ export default {
   packages_dag_only_mongodb: '仅支持 MongoDB 数据库',
   packages_dag_field_inference_list_zidingyileixing: '自定义类型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:',
+  packages_dag_enableSyncMetricCollector_title: '同步指标收集',
+  packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析',
 }

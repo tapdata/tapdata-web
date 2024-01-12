@@ -515,6 +515,7 @@ export default {
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
           capabilities: item.capabilities || [],
+          db_version: item.db_version,
         },
       }
     },

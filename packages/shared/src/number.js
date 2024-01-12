@@ -112,11 +112,16 @@ export function calcTimeUnit(val, fix = 2, op) {
     },
   ]
   let results = []
+  let prefix = ''
+  if (val < 0) {
+    val = Math.abs(val)
+    prefix = '-'
+  }
   if (typeof val !== 'number' || val === 0) {
     return '0'
   } else if (val > 0 && val < 1) {
     const p = Math.pow(10, options.digits)
-    return Math.ceil(val * p) / p + units[0].unit
+    return prefix + Math.ceil(val * p) / p + units[0].unit
   }
   const ts = Math.floor(val)
 
@@ -141,7 +146,10 @@ export function calcTimeUnit(val, fix = 2, op) {
     results = results.slice(0, fix)
   }
 
-  return results.reduce((pre, current) => {
-    return pre + (pre ? options.separator : '') + current.value + current.util
-  }, '')
+  return (
+    prefix +
+    results.reduce((pre, current) => {
+      return pre + (pre ? options.separator : '') + current.value + current.util
+    }, '')
+  )
 }

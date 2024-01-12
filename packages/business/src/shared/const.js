@@ -7,13 +7,22 @@ export const INSTANCE_STATUS_MAP = {
   },
   Running: { text: i18n.global.t('public_status_running'), type: 'success' },
   Stopping: { text: i18n.global.t('public_status_stopping'), type: 'danger' },
-  Stopped: { text: i18n.global.t('public_agent_status_offline'), type: 'disable' },
+  Stopped: {
+    text: i18n.global.t('public_agent_status_offline'),
+    type: 'disable',
+  },
   WaitingRestart: {
     text: i18n.global.t('public_status_to_be_restart'),
     type: 'disable',
   },
-  Restarting: { text: i18n.global.t('public_status_restarting'), type: 'disable' },
-  Deploying: { text: i18n.global.t('public_status_deploying'), type: 'disable' },
+  Restarting: {
+    text: i18n.global.t('public_status_restarting'),
+    type: 'disable',
+  },
+  Deploying: {
+    text: i18n.global.t('public_status_deploying'),
+    type: 'disable',
+  },
 }
 export const CONNECTION_STATUS_MAP = {
   ready: { text: i18n.global.t('public_status_ready'), type: 'success' },
@@ -105,7 +114,10 @@ export const ETL_STATUS_MAP = {
 export const ETL_SUB_STATUS_MAP = {
   ready: { text: i18n.global.t('public_status_wait_run'), type: 'ready' },
   edit: { text: i18n.global.t('public_status_edit'), type: 'edit' },
-  scheduling: { text: i18n.global.t('public_status_starting'), type: 'scheduling' },
+  scheduling: {
+    text: i18n.global.t('public_status_starting'),
+    type: 'scheduling',
+  },
   schedule_failed: {
     text: i18n.global.t('public_status_error'),
     type: 'schedule_failed',
@@ -253,14 +265,8 @@ export const EXTERNAL_STORAGE_TYPE_MAP = {
 }
 
 export const PERIOD_MAP = {
-  recurring_month: { order: 1, label: i18n.global.t('dfs_instance_utils_baoyue') },
-  recurring_year: { order: 2, label: i18n.global.t('dfs_instance_utils_baonian') },
-  one_time_month: {
-    order: 3,
-    label: i18n.global.t('dfs_instance_utils_one_month_only'),
-  },
-  one_time_year: {
-    order: 4,
-    label: i18n.global.t('dfs_instance_utils_one_year_only'),
-  },
+  recurring_month: { order: 1, label: 'dfs_instance_utils_baoyue' },
+  recurring_year: { order: 2, label: 'dfs_instance_utils_baonian' },
+  one_time_month: { order: 3, label: 'dfs_instance_utils_one_month_only' },
+  one_time_year: { order: 4, label: 'dfs_instance_utils_one_year_only' },
 }

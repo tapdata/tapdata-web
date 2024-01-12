@@ -544,6 +544,7 @@ export default {
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || [],
+        db_version: connection.db_version,
       }
 
       Object.keys(nodeAttrs).forEach((key) => {

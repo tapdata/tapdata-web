@@ -99,17 +99,13 @@
       :agent="agent"
       :subscribes="subscribes"
       :isUnDeploy="isUnDeploy"
+      :guideLoading="guideLoading"
       @changeIsUnDeploy="changeIsUnDeploy"
+      @open-guide="handleOpenGuide"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>
-    <ReplicationTour
-      v-model:value="showReplicationTour"
-      :finish="replicationTourFinish"
-      @start="handleStartTour"
-      @finish="handleFinishTour"
-    ></ReplicationTour>
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
   </ElContainer>
@@ -175,6 +171,7 @@ export default {
           name: 'dataConsole',
           title: this.$t('page_title_data_hub'),
           icon: 'datastore',
+          beta: true,
         },
         // {
         //   name: 'customNodeList',
@@ -554,5 +551,10 @@ export default {
 }
 .driver-popover {
   max-width: 520px;
+}
+.replication-driver-popover {
+  .driver-popover-footer {
+    margin-top: 8px;
+  }
 }
 </style>

@@ -1,14 +1,14 @@
 <template>
   <ElDialog
+    ref="dialogWrapper"
     :model-value="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="!startingTour"
     width="80%"
     top="10vh"
-    class="ldp-connection-dialog flex flex-column"
-    destroy-on-close
+    class="dialog-zoom-transition ldp-connection-dialog flex flex-column"
+    :beforeClose="beforeClose"
     @open="handleOpen"
     @close="handleClose"
   >
@@ -198,6 +198,7 @@ export default {
         pdkHash: null,
         pdkId: null,
         md: null,
+        isDemo: false,
       },
       selected: {},
       showForm: false,
@@ -391,6 +392,7 @@ export default {
       this.showForm = false
       Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
+        this.$refs.dialogWrapper.$refs.dialog.style.transformOrigin = 'center center'
         this.search = ''
         this.currentScene = 'recommend'
 
@@ -454,6 +456,7 @@ export default {
         pdkHash: item.pdkHash,
         pdkId: item.pdkId,
         pdkOptions: item,
+        isDemo,
       })
       this.selected = item
       this.showForm = true
@@ -553,6 +556,34 @@ export default {
       this.loading = false
       return data?.[0]
     },
+
+    beforeClose(done) {
+      if (this.startingTour) {
+        const icon = document.getElementById('user-guide-icon')
+        if (icon) {
+          const windowWidth = document.documentElement.clientWidth
+          const windowHeight = document.documentElement.clientHeight
+          const iconStyle = window.getComputedStyle(icon)
+          const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
+          const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+          const dialog = this.$refs.dialogWrapper.$refs.dialog
+          const computedStyle = window.getComputedStyle(dialog)
+          let width = computedStyle.width
+          if (width.endsWith('px')) {
+            width = parseInt(width)
+          } else if (width.endsWith('%')) {
+            width = (parseInt(width) / 100) * windowWidth
+          }
+          const transformOriginX = iconX - (windowWidth - width) / 2
+          const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+          dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+        }
+        this.$store.commit('pauseTour')
+        this.$store.commit('pauseGuide')
+      }
+
+      done()
+    }
   },
   emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
 }

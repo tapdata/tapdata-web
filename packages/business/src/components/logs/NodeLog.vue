@@ -238,7 +238,7 @@ import i18n from '@tap/i18n'
 import dayjs from 'dayjs'
 import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce, cloneDeep, uniqBy } from 'lodash'
+import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
 
 import { downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
@@ -626,6 +626,7 @@ export default {
         row.timestampLabel = this.formatTime(row.date)
         row.expand = false
         row.hideContent = false
+        row.message = escape(row.message)
         if (row.fullErrorCode === 'Task.ScheduleLimit') {
           row.message = i18n.t('packages_business_logs_nodelog_yinqingkeyibei')
         }

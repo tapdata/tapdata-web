@@ -56,10 +56,9 @@ export default {
     },
     handleCopy() {
       const MAP = {
-        Linux: 'copyTokenInLinux',
-        Docker: 'copyTokenInDocker',
+        linux: 'copyTokenInLinux',
+        docker: 'copyTokenInDocker',
         windows: 'copyTokenInWindows',
-        AliComputenest: 'copyTokenInAliComputenest',
       }
       this.buried(MAP[this.downLoadType])
       this.$emit('behavior', `copy_${this.downLoadType}`)
@@ -182,13 +181,7 @@ export default {
         <!--等待提示-->
         <div class="font-color-light">{{ $t('dfs_guide_index_waiting_for_deployment_tip') }}</div>
 
-        <ElButton
-          class="mt-4"
-          plain
-          size="default"
-          type="primary"
-          :disabled="activeKey === 'Scenes' && !scenes.length"
-          @click="handleComplete"
+        <ElButton class="mt-4" plain size="default" type="primary" @click="handleComplete"
           >{{ $t('dfs_guide_index_development_complete') }}
         </ElButton>
       </template>

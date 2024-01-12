@@ -272,7 +272,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -1024,18 +1024,18 @@ export default {
         message = 'bulk_' + message
       }
       const h = this.$createElement
-      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let strArr = this.$t('packages_business_dataFlow_' + message).split(/xxx/i)
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'width: calc(100% - 28px);word-break: break-word;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary',
+              class: 'color-primary ml-1',
             },
             name,
           ),

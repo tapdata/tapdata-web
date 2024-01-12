@@ -1,4 +1,5 @@
 // export * from './select'
+import { Alert } from 'element-plus'
 import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'

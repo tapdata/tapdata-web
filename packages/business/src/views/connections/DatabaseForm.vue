@@ -816,6 +816,15 @@ export default {
           },
         },
       })
+
+      if (this.isDaas) {
+        endProperties.schemaUpdateHour.default = 'default'
+        endProperties.schemaUpdateHour.enum.unshift({
+          label: i18n.t('packages_business_connections_databaseform_system'),
+          value: 'default'
+        })
+      }
+
       const connectionProperties = data?.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS

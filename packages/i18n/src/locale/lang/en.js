@@ -218,6 +218,7 @@ export default {
   public_connection_button_create: 'Create Connection',
   public_connection_button_copy: 'Copy Connection',
   public_connection_button_test: 'Test',
+  public_connection_button_connection_test: 'Connection Test',
   public_connection_button_load_schema: 'Load Schema',
   public_connection_form_database_name: 'Database Name',
   public_connection_form_database_type: 'Database Type',
@@ -229,6 +230,8 @@ export default {
   public_connection_form_other_connection_string: 'Other connection string parameters',
   public_connection_form_time_zone_of_time_type: 'Time zone of time type',
   public_connection_form_link_plugin_source: 'Link Plugin Source',
+  public_source_database: 'Source Database',
+  public_target_database: 'Target Database',
   // Task
   public_task: 'Task',
   public_task_name: 'Task Name',

@@ -585,9 +585,9 @@ export default {
       this.taskDialogConfig.canStart = false
       this.checkCanStartIng = true
       const tag = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
+      const task = this.tag2Task[tag?.id]
 
-      if (tag) {
-        const task = this.tag2Task[tag.id]
+      if (task) {
         this.taskDialogConfig.task.type = task.type
         this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
         this.taskDialogConfig.task.crontabExpression = task.crontabExpression

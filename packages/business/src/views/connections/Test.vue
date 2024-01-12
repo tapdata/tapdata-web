@@ -258,6 +258,8 @@ export default {
       let data = Object.assign({}, this.formData)
       delete data.schema
       delete data.response_body
+      this.wsError = ''
+      this.testData.testLogs = []
       this.startDownLoadConnector(data, updateSchema, editTest)
     },
 
@@ -271,14 +273,14 @@ export default {
       }
       msg.data['updateSchema'] = false //默认值
       msg.data['editTest'] = false //默认值
-      this.wsError = ''
-      this.testData.testLogs = []
+
       if (updateSchema) {
         msg.data['updateSchema'] = updateSchema //是否需要更新Schema
       }
       if (editTest) {
         msg.data['editTest'] = editTest //是否编辑测试
       }
+
       this.$ws.ready(() => {
         this.$ws.send(msg)
         // 连接测试时出现access_token过期,重发消息

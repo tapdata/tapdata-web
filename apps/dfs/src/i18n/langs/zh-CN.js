@@ -1577,6 +1577,7 @@ export default {
   dfs_mixins_tour_dianjicichuchuang3: '点击此处创建您的源数据库',
   dfs_mixins_tour_qingchuangjianninde3: '请创建您的源数据库',
   dfs_mixins_tour_drag_source_table: '请拖动源连接的一个表到目标连接，开始创建复制任务',
+  dfs_mixins_tour_view_monitor: '点击此处查看任务监控',
   dfs_router_index_zhifuqingdan: '支付清单',
   dfs_instance_instance_perce: '{val1} 秒前',
   dfs_instance_instance_perce_minute: '{val1} 分钟前',
@@ -1638,8 +1639,14 @@ export default {
   dfs_replication_tour_dialog_finished: '恭喜你完成引导',
   dfs_replication_tour_dialog_finished_subtitle: '接下来可以免费体验我们的产品进行数据库的复制、迁移等工作啦',
   dfs_replication_tour_dialog_finished_survey_title:
-    '通过新手引导，您现在对Tapdata有了一定的了解。您还会继续使用Tapdata吗？',
+    '您会继续使用 Tapdata 吗？请通过提供快速反馈来帮助我们改进我们的产品：',
   dfs_replication_tour_dialog_finished_survey_placeholder: '输入您的意见或者建议...',
+  dfs_replication_tour_dialog_finished_option_yes: '是的，Tapdata 似乎符合我对所寻找工具的期望。',
+  dfs_replication_tour_dialog_finished_option_no_plan_1:
+    '暂时没有使用的计划，因为我不确定如何或在哪里可以使用 Tapdata。',
+  dfs_replication_tour_dialog_finished_option_no_plan_2: '暂时没有使用的计划，因为我目前没有一个实际的项目。',
+  dfs_replication_tour_dialog_finished_option_no_plan_3: '暂时没有使用的计划，我对数据安全有一些顾虑。',
+  dfs_replication_tour_dialog_finished_option_other: '其他，请具体说明',
   dfs_subscribe_to_professional_plan: '订阅专业版',
   dfs_order_change: '变更',
   dfs_change_record: '变更记录',

@@ -208,10 +208,17 @@ export default {
       if (this.startingTour) {
         let type = this.selectorType
         type = type.charAt(0).toUpperCase() + type.slice(1)
-        this.$store.commit('setTourBehavior', 'add-' + this.selectorType)
+
+        this.$store.commit('setReplicationTour', {
+          behavior: 'add-' + this.selectorType,
+          [`${this.selectorType}ConnectionId`]: connection.id,
+          [`isDemo${type}`]: connection.isDemo
+        })
+
         // 上报引导创建源/目标连接
         this.buried(`guideCreate${type}Connection`, '', {
           result: true,
+          connectionId: connection.id,
         })
       }
 
