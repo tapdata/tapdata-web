@@ -392,6 +392,15 @@ const routes = [
         }
       },
       {
+        path: '/shared-mining/monitor/:id',
+        name: 'SharedMiningMonitor',
+        component: MigrationMonitor,
+        meta: {
+          title: 'page_title_run_monitor',
+          code: 'v2_data_replication_monitor'
+        }
+      },
+      {
         path: '/user/center',
         name: 'userCenter',
         component: UserCenter,
