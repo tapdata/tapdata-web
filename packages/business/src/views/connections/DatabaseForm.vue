@@ -495,7 +495,7 @@ export default {
       const endProperties = {}
 
       // 是否支持共享挖掘
-      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
+      if (this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',
@@ -683,6 +683,29 @@ export default {
             { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
           ],
           'x-reactions': [
+            {
+              dependencies: ['__TAPDATA.shareCdcEnable'],
+              fulfill: {
+                state: {
+                  value: `{{!$isDaas && $deps[0] ? 'MANUALLY_SPECIFIED_BY_THE_USER' : $self.value}}`,
+                  dataSource: `{{!$isDaas && $deps[0] ? [
+                    { label: '${this.$t(
+                      'packages_business_connection_form_automatic'
+                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
+                    { label: '${this.$t(
+                      'packages_business_connection_form_manual'
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ] : [
+                    { label: '${this.$t(
+                      'packages_business_connection_form_automatic'
+                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                    { label: '${this.$t(
+                      'packages_business_connection_form_manual'
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ]}}`
+                }
+              }
+            },
             {
               target: '__TAPDATA.accessNodeProcessId',
               fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
@@ -1069,6 +1092,7 @@ export default {
       this.setConnectionConfig()
 
       this.schemaScope = {
+        $isDaas: this.isDaas,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {

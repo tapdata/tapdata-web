@@ -92,6 +92,17 @@ const VerificationResult = async () => {
   return VerificationResult
 }
 
+const SharedMiningList = async () => {
+  const { SharedMiningList } = await import('@tap/business')
+  return SharedMiningList
+}
+
+// 外存管理
+const ExternalStorageList = async () => {
+  const { ExternalStorageList } = await import('@tap/business')
+  return ExternalStorageList
+}
+
 const routes = [
   {
     path: '/',
@@ -249,6 +260,25 @@ const routes = [
           }
         ]
       },
+      /* ---------- 共享挖掘  ----------*/
+      {
+        path: '/shared-mining',
+        name: 'sharedMining',
+        component: Parent,
+        redirect: 'shared-mining/',
+        meta: {},
+        children: [
+          {
+            path: '',
+            name: 'sharedMiningList',
+            component: SharedMiningList,
+            meta: {
+              title: 'public_shared_mining',
+              code: 'v2_log_collector'
+            }
+          }
+        ]
+      },
       /* ---------- 数据校验  ----------*/
       {
         path: '/dataVerification',
@@ -350,6 +380,15 @@ const routes = [
         meta: {
           title: 'tap_operation_log',
           icon: 'operation-log'
+        }
+      },
+      {
+        path: '/external-storage',
+        name: 'externalStorage',
+        component: ExternalStorageList,
+        meta: {
+          title: 'public_external_storage',
+          code: 'v2_external-storage_menu'
         }
       },
       {

@@ -173,6 +173,11 @@ export default {
           icon: 'task'
         },
         {
+          name: 'sharedMining',
+          title: $t('public_shared_mining'),
+          icon: 'table-grid'
+        },
+        {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
           icon: 'data-validation'
@@ -255,6 +260,11 @@ export default {
         name: 'order',
         title: this.$t('dfs_the_header_header_dingyuezhongxin'),
         icon: 'icon_subscription'
+      },
+      {
+        name: 'externalStorage',
+        title: this.$t('public_external_storage'),
+        icon: 'object-storage-alt'
       },
       {
         name: 'OperationLog',

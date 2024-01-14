@@ -1,5 +1,5 @@
 <template>
-  <section class="external-storage-wrapper">
+  <section class="external-storage-wrapper px-4 pb-4 bg-white">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>

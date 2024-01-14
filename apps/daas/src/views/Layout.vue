@@ -134,7 +134,9 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult'
+                  'dataVerifyResult',
+                  'sharedMiningList',
+                  'externalStorage'
                 ].includes($route.name)
               },
               {
@@ -155,7 +157,9 @@
                   'dataVerifyDetails',
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult'
+                  'dataVerifyResult',
+                  'sharedMiningList',
+                  'externalStorage'
                 ].includes($route.name)
               }
             ]"
