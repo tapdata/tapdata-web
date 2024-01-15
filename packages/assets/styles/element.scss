@@ -48,6 +48,10 @@
   }
 }
 
+// Popper
+.el-popper.is-dark {
+  --el-text-color-primary: #303133;
+}
 
 // Tooltip
 .el-popper[role='tooltip']:not(.el-popover):not(.el-select__popper) {
