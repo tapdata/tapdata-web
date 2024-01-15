@@ -954,6 +954,7 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusItems,
+          dropdownWidth: '180px',
         },
         {
           placeholder: i18n.t('instance_Instance_anIDShiLi'),
