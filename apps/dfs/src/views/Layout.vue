@@ -24,9 +24,9 @@
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >-->
               <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-              <span class="flex-fill">
+              <span class="flex-fill flex align-center gap-1">
                 {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+                <VIcon v-if="menu.beta" size="30">beta</VIcon>
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">

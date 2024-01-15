@@ -182,6 +182,7 @@ export default {
 
   .el-dialog__header {
     padding: 0 !important;
+    margin-right: 0;
   }
 
   .el-dialog__body {
