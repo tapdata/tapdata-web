@@ -123,6 +123,10 @@
   &__header {
     padding-inline: 24px !important;
     padding-block: 20px !important;
+
+    &:has(.el-dialog__title:empty) {
+      display: none;
+    }
   }
   &__title {
     font-weight: 500;

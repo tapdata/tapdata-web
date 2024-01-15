@@ -1,11 +1,12 @@
 // export * from './select'
-import { Alert } from 'element-plus'
+import { ElAlert as Alert } from 'element-plus'
 import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'
 import { FormTab } from './form-tab'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 
+export { Alert }
 export { Space, Input, FormCollapse, FormCollapseItem, Radio, FormTab }
 export * from './js-editor'
 export * from './python-editor'

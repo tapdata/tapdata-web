@@ -272,7 +272,7 @@ $x3: $dotLeft + $dotSpace;
   }
 
   &.dialog-fade-leave-active {
-    animation: empty-keyframes 0.2s both; // 只是为了让vue transition 的 duration 生效
+    animation: fade-out 0.2s both;
     .el-dialog {
       animation: dialog-zoom-out 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86) both;
     }

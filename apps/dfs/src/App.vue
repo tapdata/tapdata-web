@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, provide, getCurrentInstance } from 'vue'
+import { watch, computed, onMounted, provide, getCurrentInstance, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
@@ -22,7 +22,7 @@ import en from 'element-plus/dist/locale/en.mjs'
 import { buried } from '@/plugins/buried'
 import i18n from '@tap/i18n'
 import axios from '@/plugins/axios'
-import ReplicationTour from '@/components/ReplicationTour'
+import ReplicationTour from '@/components/ReplicationTour.vue'
 
 const langMap = {
   'zh-CN': zhCn,
@@ -65,7 +65,7 @@ const handleFinishTour = () => {
 onMounted(() => {
   const vm = getCurrentInstance()
   const route = useRoute()
-  const unwatch = watch(route, () => {
+  const unwatch = watch(route, async () => {
     unwatch()
     await nextTick()
     if (route.query?.tour) {

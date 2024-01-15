@@ -450,7 +450,7 @@ export default {
 
     submit() {
       const { type, priceId, currency, periodUnit, label, specification } = this.selected
-      const agentUrl = window.App.$router.resolve({
+      const agentUrl = this.$router.resolve({
         name: 'Instance',
         query: {
           id: '',

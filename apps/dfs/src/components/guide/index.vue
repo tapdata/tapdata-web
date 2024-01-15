@@ -11,7 +11,7 @@
     </div>
     <ElDialog
       class="guide-dialog"
-      :value="visible"
+      :model-value="visible"
       @input="$emit('update:visible', $event)"
       width="1000px"
       :top="'10vh'"
@@ -36,9 +36,7 @@
             direction="vertical"
           >
             <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
-              <template v-slot:icon>
-                <span>{{ i + 1 }}</span>
-              </template>
+              <span>{{ i + 1 }}</span>
             </el-step>
           </el-steps>
         </div>
@@ -660,22 +658,17 @@ export default {
   margin-bottom: 60px;
 }
 
-.guide-footer {
-  //height: 30px;
-}
-
-.guide-dialog {
-  :deep(.el-dialog__body),
-  :deep(.el-dialog__header) {
-    padding: 0;
+:deep(.guide-dialog) {
+  .el-dialog__body {
+    padding: 0 !important;
   }
 
-  :deep(.el-step__title.is-process) {
+  .el-step__title.is-process {
     color: #c9cdd4;
     font-weight: normal;
   }
 
-  :deep(.el-step__head.is-process) {
+  .el-step__head.is-process {
     color: #c9cdd4;
     border-color: #c9cdd4;
   }

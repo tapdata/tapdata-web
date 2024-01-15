@@ -7,7 +7,8 @@
     :close-on-press-escape="false"
     width="80%"
     top="10vh"
-    class="dialog-zoom-transition ldp-connection-dialog flex flex-column"
+    :modal-class="modalClass"
+    class="ldp-connection-dialog flex flex-column"
     :beforeClose="beforeClose"
     @open="handleOpen"
     @close="handleClose"
@@ -331,6 +332,7 @@ export default {
           },
         ],
       },
+      modalClass: '',
     }
   },
   computed: {
@@ -392,7 +394,7 @@ export default {
       this.showForm = false
       Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
-        this.$refs.dialogWrapper.$refs.dialog.style.transformOrigin = 'center center'
+        this.modalClass = ''
         this.search = ''
         this.currentScene = 'recommend'
 
@@ -559,6 +561,7 @@ export default {
 
     beforeClose(done) {
       if (this.startingTour) {
+        this.modalClass = 'dialog-zoom-transition' // 暂停引导让 dialog 有缩放动画
         const icon = document.getElementById('user-guide-icon')
         if (icon) {
           const windowWidth = document.documentElement.clientWidth
@@ -566,7 +569,7 @@ export default {
           const iconStyle = window.getComputedStyle(icon)
           const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
           const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
-          const dialog = this.$refs.dialogWrapper.$refs.dialog
+          const dialog = this.$refs.dialogWrapper.dialogContentRef.$el
           const computedStyle = window.getComputedStyle(dialog)
           let width = computedStyle.width
           if (width.endsWith('px')) {
@@ -583,7 +586,7 @@ export default {
       }
 
       done()
-    }
+    },
   },
   emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
 }

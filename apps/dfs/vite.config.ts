@@ -13,7 +13,7 @@ const serveUrlMap = {
   mock: 'http://localhost:3000',
   dev: 'http://backend:3030',
   // test: 'https://dev.cloud.tapdata.net/',
-  test: 'https://test3.cloud.tapdata.net/',
+  test: 'https://test.cloud.tapdata.net:1443/',
 }
 
 // const userId = '60b60af1147bce7705727188' // zed?
