@@ -204,6 +204,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import i18n from '@/i18n'
 
 import dayjs from 'dayjs'
@@ -861,7 +862,6 @@ export default {
     },
     // 移除
     async remove(item) {
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.clientName])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',

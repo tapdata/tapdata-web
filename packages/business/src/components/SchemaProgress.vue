@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import dayjs from 'dayjs'
 
 export default {
@@ -57,7 +58,6 @@ export default {
   },
   methods: {
     showErrorMsg() {
-      const h = this.$createElement
       this.$alert(
         h(
           'pre',

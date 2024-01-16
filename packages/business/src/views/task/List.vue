@@ -354,6 +354,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
@@ -1023,7 +1024,6 @@ export default {
         title = 'bulk_' + title
         message = 'bulk_' + message
       }
-      const h = this.$createElement
       let strArr = this.$t('packages_business_dataFlow_' + message).split(/xxx/i)
       let msg = h(
         'p',

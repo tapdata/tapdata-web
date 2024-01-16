@@ -250,6 +250,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
@@ -556,7 +557,6 @@ export default {
         const { tableName, from, newTableName, tagId, task: settings } = this.taskDialogConfig
         let task = Object.assign(this.makeTask(from, tableName, this.tablePrefix + newTableName), settings)
         this.creating = true
-        const h = this.$createElement
         try {
           const result = await ldpApi.createMDMTask(task, {
             silenceMessage: true,

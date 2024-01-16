@@ -245,6 +245,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
@@ -616,7 +617,6 @@ export default {
             params: { start },
           })
           this.taskDialogConfig.visible = false
-          const h = this.$createElement
           this.$message.success({
             message: h(
               'span',

@@ -377,6 +377,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import VersionList from './VersionList'
 import FormPage from './Form'
 import IndexManager from './IndexManager'
@@ -556,7 +557,6 @@ export default {
     // 删除字段
     remove(item, index) {
       let primary_key_position_mum = item.primary_key_position
-      const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.field_name),
@@ -658,7 +658,6 @@ export default {
     },
     // 删除业务属性
     delBusiness(item, key) {
-      const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
         h('span', { style: { color: '#409EFF' } }, key),

@@ -368,6 +368,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import { cloneDeep, debounce } from 'lodash'
 import dayjs from 'dayjs'
@@ -950,7 +951,6 @@ export default {
         title = 'bulk_' + title
         message = 'bulk_' + message
       }
-      const h = this.$createElement
       let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
       let msg = h(
         'p',

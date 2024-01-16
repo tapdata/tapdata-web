@@ -178,6 +178,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 
@@ -465,7 +466,6 @@ export default {
     },
     // 删除列表
     remove(item) {
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, {
         type: 'warning',
@@ -485,7 +485,7 @@ export default {
     // 批量取消和批量发布
     batch(action) {
       if (!action) return
-      const h = this.$createElement
+
       let text = action === 'active' ? this.$t('modules_releasefb') : this.$t('modules_releasecancel')
       let jobs = action === 'active' ? this.selectedStopped : this.selectedRunning
       let tableNameData = jobs.map((item) => {

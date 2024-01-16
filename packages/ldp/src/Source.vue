@@ -619,16 +619,11 @@ export default defineComponent({
       const connection = this.mapConnection(data)
       this.newConnectionId = data.id
       this.connectionMap[data.id] = connection
-      const { root = {} } = this.$refs.tree
-      const firstChildKey = root.childNodes[0]?.key
 
       if (this.showSearch && !connection.name.includes(this.search)) return
 
-      if (firstChildKey) {
-        this.$refs.tree.insertBefore(connection, firstChildKey)
-      } else {
-        this.$refs.tree.append(connection, 0)
-      }
+      this.treeData.unshift(connection)
+      this.$refs.tree.setData(this.treeData)
     },
 
     async handleNodeExpand(data, node, nodeInstance) {

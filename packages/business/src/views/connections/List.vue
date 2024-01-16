@@ -221,6 +221,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -584,7 +585,6 @@ export default {
       // })
     },
     remove(row) {
-      const h = this.$createElement
       let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
       if (row.agentType === 'Local') {
         let str = i18n.t('packages_business_connections_list_dangqianlianjiex')

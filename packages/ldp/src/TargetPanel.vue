@@ -231,6 +231,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
@@ -976,7 +977,6 @@ export default {
             this.connectionTaskMap[to.id] = [mapTask]
           }
 
-          const h = this.$createElement
           this.$message.success({
             message: h(
               'span',
@@ -1167,7 +1167,6 @@ export default {
         title = 'bulk_' + title
         message = 'bulk_' + message
       }
-      const h = this.$createElement
       let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
       let msg = h(
         'p',

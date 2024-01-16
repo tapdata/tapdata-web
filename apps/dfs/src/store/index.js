@@ -86,7 +86,7 @@ const store = Vuex.createStore({
 
   getters: {
     isDomesticStation: (state) => state.config.station === 'domestic',
-    startingTour: (state) => state.replicationTour.status === 'starting',
+    startingTour: (state) => state.replicationTour.status === 'starting' && state.guide.expand.guideStatus !== 'paused',
     pausedTour: (state) => state.replicationTour.status === 'paused',
     completedTour: (state) => state.replicationTour.status === 'completed',
     pausedGuide: (state) => state.guide.expand.guideStatus === 'paused',

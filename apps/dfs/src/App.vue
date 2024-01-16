@@ -63,18 +63,18 @@ const handleFinishTour = () => {
 }
 
 onMounted(() => {
-  const vm = getCurrentInstance()
+  const root = getCurrentInstance().appContext.config.globalProperties
   const route = useRoute()
   const unwatch = watch(route, async () => {
     unwatch()
     await nextTick()
     if (route.query?.tour) {
-      const guide = await vm.$axios.get('api/tcm/user_guide')
+      const guide = await root.$axios.get('api/tcm/user_guide')
       // 查询是否有查看监控的行为
       const behavior = guide?.tour?.behavior
       if (behavior && behavior !== 'view-monitor') {
         store.commit('openCompleteReplicationTour')
-        vm.$axios.post('api/tcm/user_guide', {
+        root.$axios.post('api/tcm/user_guide', {
           tour: {
             ...guide.tour,
             behavior: 'view-monitor',

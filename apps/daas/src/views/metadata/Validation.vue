@@ -234,6 +234,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { dataRuleApi, metadataInstancesApi } from '@tap/api'
 export default {
   props: {
@@ -554,7 +555,6 @@ export default {
     },
     // 删除验证规则
     remove(item) {
-      const h = this.$createElement
       let _this = this
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.field_name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {

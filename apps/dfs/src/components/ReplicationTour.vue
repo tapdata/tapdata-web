@@ -25,7 +25,7 @@
       <div class="mt-4 fs-5 color-primary">{{ $t('dfs_replication_tour_dialog_finished') }}</div>
       <div class="mt-2">{{ $t('dfs_replication_tour_dialog_finished_subtitle') }}</div>
       <div class="mt-12 fw-sub">{{ $t('dfs_replication_tour_dialog_finished_survey_title') }}</div>
-      <ElRadioGroup v-model="continueUse" class="flex flex-column gap-2 mt-4 text-start px-10">
+      <ElRadioGroup v-model="continueUse" class="flex flex-column gap-2 mt-4 text-start px-10 align-items-stretch">
         <ElRadio label="yes" class="m-0 bg-white" border>{{
           $t('dfs_replication_tour_dialog_finished_option_yes')
         }}</ElRadio>

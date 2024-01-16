@@ -491,8 +491,8 @@ export default {
       this.showForm = true
     },
 
-    handleSuccess() {
-      $emit(this, 'success', ...arguments)
+    handleSuccess(...args) {
+      this.$emit('success', ...args)
       this.init()
       this.handleClose()
     },
