@@ -34,7 +34,7 @@
             style="height: 300px"
             direction="vertical"
           >
-            <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
+            <el-step v-for="(step, i) in steps" :key="i" :title="keyLabelMap[step.key]">
               <span slot="icon">{{ i + 1 }}</span>
             </el-step>
           </el-steps>
@@ -161,7 +161,6 @@ export default {
   inject: ['buried'],
   data() {
     return {
-      ok: true,
       timer: null,
       activeStep: this.step ? this.step : 1,
       scenes: [], //使用场景
@@ -180,7 +179,15 @@ export default {
       isPay: false,
       behavior: [],
       behaviorAt: null,
-      unsubscribeIng: false
+      unsubscribeIng: false,
+      keyLabelMap: {
+        Account: i18n.t('dfs_guide_index_zhanghaoanquanbang'),
+        Scenes: i18n.t('dfs_guide_index_quedingshiyongchang'),
+        DeploymentMethod: i18n.t('dfs_guide_index_shezhishujuku'),
+        Spec: i18n.t('dfs_guide_index_xuanzejisuanyin'),
+        Pay: i18n.t('public_payment'),
+        Deploy: i18n.t('dfs_guide_index_bushujisuanyin')
+      }
     }
   },
   mounted() {
@@ -688,6 +695,7 @@ export default {
     transform: scale(1);
   }
 }
+
 .user-guide-icon {
   position: fixed;
   left: 94px;
@@ -697,8 +705,10 @@ export default {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-origin: center center;
   animation: 0.3s guideIconZoomIn;
+
   .el-loading-spinner {
     margin-top: -12px;
+
     .circular {
       width: 24px;
       height: 24px;
