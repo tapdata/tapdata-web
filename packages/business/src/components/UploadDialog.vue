@@ -69,12 +69,14 @@
   </ElDialog>
 </template>
 <script>
+import axios from 'axios'
 import Cookie from '@tap/shared/src/cookie'
 import { VIcon } from '@tap/component'
 import { connectionsApi, metadataDefinitionsApi } from '@tap/api'
 import { AsyncSelect } from '@tap/form'
 import { merge } from 'lodash'
 import { CONNECTION_STATUS_MAP } from '../shared'
+
 export default {
   name: 'Upload',
   components: {
@@ -166,13 +168,17 @@ export default {
 
       this.importForm.fileList = [file]
       const originPath = window.location.origin + window.location.pathname
-      const accessToken = `access_token=${this.accessToken}`
+      const accessToken = this.accessToken ? `?access_token=${this.accessToken}` : ''
       const map = {
-        api: originPath + `api/MetadataInstances/upload?${accessToken}`,
-        Javascript_functions: originPath + `api/Javascript_functions/batch/import?${accessToken}`,
-        Modules: originPath + `api/Modules/batch/import?${accessToken}`
+        api: `api/MetadataInstances/upload${accessToken}`,
+        Javascript_functions: `api/Javascript_functions/batch/import${accessToken}`,
+        Modules: `api/Modules/batch/import${accessToken}`
       }
-      this.importForm.action = map[this.type] || originPath + `api/Task/batch/import?${accessToken}`
+
+      let apiBaseURL = axios.defaults.baseURL.replace(/^\.?\//, '')
+      if (apiBaseURL) apiBaseURL += '/'
+
+      this.importForm.action = originPath + apiBaseURL + (map[this.type] || `api/Task/batch/import${accessToken}`)
     },
 
     // 获取分类

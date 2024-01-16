@@ -83,7 +83,7 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="isDaas && buttonShowMap.import"
+            v-if="buttonShowMap.import"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
