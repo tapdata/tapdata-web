@@ -154,7 +154,7 @@
                     >{{ $t('dfs_order_change') }}</ElButton
                   >
                   <ElButton
-                    v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
+                    v-if="!(disableUnsubscribe(row) || ['incomplete', 'past_due'].includes(item.status))"
                     type="danger"
                     plain
                     size="mini"
