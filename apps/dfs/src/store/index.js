@@ -26,7 +26,8 @@ const store = new Vuex.Store({
       wx: '',
       email: '',
       enableLicense: false,
-      licenseCodes: []
+      licenseCodes: [],
+      gcpAccount: null
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -88,6 +89,7 @@ const store = new Vuex.Store({
   },
 
   getters: {
+    isGCPMarketplaceUser: state => state.user.gcpAccount !== null,
     isDomesticStation: state => state.config.station === 'domestic',
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',

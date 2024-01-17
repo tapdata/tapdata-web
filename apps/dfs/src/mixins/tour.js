@@ -16,13 +16,22 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      guideLoading: false
+      guideLoading: false,
+      marketplaceGuideVisible: false,
+      agentCountLoading: false
     }
   },
 
   computed: {
     ...mapState(['replicationTour']),
-    ...mapGetters(['startingTour', 'completedTour', 'pausedTour', 'pausedGuide', 'guideExpand']),
+    ...mapGetters([
+      'startingTour',
+      'completedTour',
+      'pausedTour',
+      'pausedGuide',
+      'guideExpand',
+      'isGCPMarketplaceUser'
+    ]),
     userId() {
       return this.$store.state.user.id
     }
@@ -42,7 +51,14 @@ export default {
   async created() {
     await this.loadGuide()
 
-    if (!this.pausedGuide) {
+    if (this.isGCPMarketplaceUser) {
+      // GCP Marketplace 用户，直接跳过引导
+      let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
+      if (total === 0) {
+        // 显示正在创建实例的提示
+        this.marketplaceGuideVisible = true
+      }
+    } else if (!this.pausedGuide) {
       await this.checkGuide()
     }
 
@@ -60,7 +76,6 @@ export default {
       } else {
         this.subscriptionModelVisible = !this.subscriptionModelVisible
       }
-      console.log('this.subscriptionModelVisible', this.subscriptionModelVisible)
     })
   },
 
@@ -157,7 +172,9 @@ export default {
       this.$store.commit('setReplicationTour', guide?.tour)
     },
 
-    loopLoadAgentCount() {
+    loopLoadAgentCount(showLoading) {
+      clearTimeout(this.loopLoadAgentCountTimer)
+      this.agentCountLoading = showLoading
       return this.$axios
         .get('api/tcm/agent/agentCount')
         .then(data => {
@@ -168,6 +185,7 @@ export default {
           this.initTour()
         })
         .finally(() => {
+          this.agentCountLoading = false
           this.loopLoadAgentCountTimer = setTimeout(() => {
             this.loopLoadAgentCount()
           }, 10000)
@@ -406,6 +424,7 @@ export default {
       }
       if (this.agentRunningCount) {
         // 有可用的agent
+        this.marketplaceGuideVisible = false
         this.checkReplicationTour()
       } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
@@ -666,6 +685,10 @@ export default {
       } else {
         this.startGuide()
       }
+    },
+
+    updateMarketplaceGuide(val) {
+      this.marketplaceGuideVisible = false
     }
   }
 }
