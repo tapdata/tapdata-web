@@ -89,10 +89,10 @@ export default {
 
     // 检查是否有安装过agent
     async checkGuide() {
-      const { guide } = this.$store.state
+      const { guide, replicationTour } = this.$store.state
 
       // 进入过任务引导
-      if (guide.tour.status) return
+      if (replicationTour.status) return
 
       this.guideLoading = true
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
