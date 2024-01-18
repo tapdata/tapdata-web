@@ -305,7 +305,7 @@ export default {
         data: connection
       }
 
-      this.showProgress = true
+      this.showProgress = false
       this.$ws.ready(() => {
         this.$ws.send(msg)
         // 连接测试时出现access_token过期,重发消息
@@ -347,7 +347,6 @@ export default {
 
     startLoadTestItems() {
       this.startByConnection(...arguments)
-      this.showProgress = false
     }
   }
 }
