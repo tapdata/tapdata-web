@@ -1046,8 +1046,9 @@ export default {
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
-              let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
-              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime
+                ? dayjs(new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()).format('YY-MM-DD HH:mm:ss')
+                : '-'
             } else if (chargeProvider === 'Stripe') {
               item.expiredTime = endAt
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
