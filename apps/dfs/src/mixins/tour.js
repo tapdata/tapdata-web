@@ -16,13 +16,22 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      guideLoading: false
+      guideLoading: false,
+      marketplaceGuideVisible: false,
+      agentCountLoading: false
     }
   },
 
   computed: {
     ...mapState(['replicationTour']),
-    ...mapGetters(['startingTour', 'completedTour', 'pausedTour', 'pausedGuide', 'guideExpand']),
+    ...mapGetters([
+      'startingTour',
+      'completedTour',
+      'pausedTour',
+      'pausedGuide',
+      'guideExpand',
+      'isGCPMarketplaceUser'
+    ]),
     userId() {
       return this.$store.state.user.id
     }
@@ -42,7 +51,28 @@ export default {
   async created() {
     await this.loadGuide()
 
-    if (!this.pausedGuide) {
+    if (this.isGCPMarketplaceUser) {
+      // GCP Marketplace 用户，直接跳过引导
+      let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
+      if (total === 0) {
+        // 显示正在创建实例的提示
+        this.marketplaceGuideVisible = true
+      }
+
+      if (!this.replicationTour.enable) {
+        this.$store.commit('setReplicationTour', {
+          enable: true,
+          activeIndex: null,
+          behavior: '',
+          status: '',
+          view: 'board'
+        })
+
+        this.$axios.post('api/tcm/user_guide', {
+          tour: this.replicationTour
+        })
+      }
+    } else if (!this.pausedGuide) {
       await this.checkGuide()
     }
 
@@ -60,7 +90,6 @@ export default {
       } else {
         this.subscriptionModelVisible = !this.subscriptionModelVisible
       }
-      console.log('this.subscriptionModelVisible', this.subscriptionModelVisible)
     })
   },
 
@@ -82,6 +111,8 @@ export default {
     ]),
 
     handleDestroy() {
+      this.unwatchTourBehavior?.()
+      this.unwatchTourStatus?.()
       this.unwatchTourRoute?.()
       this.unwatchTour?.()
       this.destroyDriver()
@@ -157,7 +188,9 @@ export default {
       this.$store.commit('setReplicationTour', guide?.tour)
     },
 
-    loopLoadAgentCount() {
+    loopLoadAgentCount(showLoading) {
+      clearTimeout(this.loopLoadAgentCountTimer)
+      this.agentCountLoading = showLoading
       return this.$axios
         .get('api/tcm/agent/agentCount')
         .then(data => {
@@ -168,6 +201,7 @@ export default {
           this.initTour()
         })
         .finally(() => {
+          this.agentCountLoading = false
           this.loopLoadAgentCountTimer = setTimeout(() => {
             this.loopLoadAgentCount()
           }, 10000)
@@ -406,6 +440,7 @@ export default {
       }
       if (this.agentRunningCount) {
         // 有可用的agent
+        this.marketplaceGuideVisible = false
         this.checkReplicationTour()
       } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
@@ -565,9 +600,11 @@ export default {
         }
       })
 
-      const unwatch = this.$watch('replicationTour.behavior', async behavior => {
+      // 监听任务引导行为
+      this.unwatchTourBehavior?.()
+      this.unwatchTourBehavior = this.$watch('replicationTour.behavior', async behavior => {
         if (!this.startingTour || !this.replicationDriverObj) {
-          unwatch()
+          this.unwatchTourBehavior()
           return
         }
 
@@ -583,12 +620,16 @@ export default {
         this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
       })
 
+      // 监听任务引导状态
+      this.unwatchTourStatus?.()
       this.unwatchTourStatus = this.$watch('replicationTour.status', (status, oldStatus) => {
         if (status === 'complete') this.unwatchTourStatus?.()
         // 从开始窗口点击开始任务引导
         if (status === 'starting' && !oldStatus) this.replicationDriverObj.drive(0)
       })
 
+      // 监听路由变化
+      this.unwatchTourRoute?.()
       this.unwatchTourRoute = this.$watch(
         '$route',
         to => {
@@ -599,7 +640,16 @@ export default {
               this.$nextTick(() => {
                 // 判断任务的监控按钮是否渲染
                 let index = this.replicationTour.activeIndex
+                if (this.replicationTour.behavior === 'add-target') {
+                  if (index !== 2) {
+                    debugger
+                  }
+                  index = 2
+                }
                 if (this.replicationTour.behavior === 'add-task') index = 3
+
+                this.setTourIndex(index)
+
                 if (index === 3 && !document.querySelector(taskMonitorId)) {
                   // 如果没有渲染，监听任务列表的加载时间
                   const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
@@ -611,7 +661,7 @@ export default {
                     })
                   })
                 } else {
-                  this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                  this.replicationDriverObj.drive(index || 0)
                 }
               })
             }
@@ -626,6 +676,8 @@ export default {
         }
       )
 
+      // 监听任务引导对象
+      this.unwatchTour?.()
       this.unwatchTour = this.$watch(
         'replicationTour',
         tour => {
@@ -666,6 +718,10 @@ export default {
       } else {
         this.startGuide()
       }
+    },
+
+    updateMarketplaceGuide(val) {
+      this.marketplaceGuideVisible = false
     }
   }
 }
