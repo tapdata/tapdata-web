@@ -19,11 +19,6 @@
           <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
-        <!--有奖问卷-->
-        <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
-          <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
-          <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-        </div>
         <!--线下部署-->
         <div
           v-if="isDomesticStation"
@@ -128,10 +123,7 @@ export default {
       domain: document.domain,
       mockUserId: null,
       openUpgradeFee: false,
-      isFeeUser: true,
-      //用户注册时间
-      registrationTime: '',
-      showQuestionnaire: false
+      isFeeUser: true
     }
   },
 
@@ -163,12 +155,6 @@ export default {
           type: 'handbook'
         }
       ]
-    }
-    //获取用户注册时间
-    if (this.user?.id) {
-      this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      // 国内站 && 注册时间7天大于的用户
-      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
   },
   methods: {
@@ -271,9 +257,6 @@ export default {
     },
     openUpgrade() {
       this.openUpgradeFee = true
-    },
-    goQuestionnaire() {
-      window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
     goSlack() {
       window.open(this.$store.state.config.slackLink, '_blank')
