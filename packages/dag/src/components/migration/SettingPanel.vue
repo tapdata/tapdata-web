@@ -599,7 +599,7 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync" && $isDaas}}' // 只有增量或全量+增量支持
+                                      visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
                                     }
                                   }
                                 }

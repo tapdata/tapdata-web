@@ -51,9 +51,7 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton :disabled="row.type !== 'mongodb'" type="text" @click="handleTest(row)"
-            >{{ $t('public_connection_button_test') }}
-          </ElButton>
+          <ElButton type="text" @click="handleTest(row)">{{ $t('public_connection_button_test') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElButton type="text" :disabled="!row.canEdit" @click="handleEdit(row)">{{
             $t('public_button_edit')
