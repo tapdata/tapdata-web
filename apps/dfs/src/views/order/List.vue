@@ -121,7 +121,13 @@
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
                 </div>
-                <div class="li-operation flex">
+                <div v-if="item.paymentMethod === 'GCPMarketplace'" class="li-operation flex">
+                  <ElButton @click="goMarketplace" type="primary" plain>
+                    <VIcon>open-in-new</VIcon>
+                    Google Cloud Marketplace</ElButton
+                  >
+                </div>
+                <div v-else class="li-operation flex">
                   <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
                     $t('public_button_pay')
                   }}</ElButton>
@@ -672,6 +678,9 @@ export default {
           keyword: row.resourceId
         }
       })
+    },
+    goMarketplace() {
+      window.open('https://console.cloud.google.com/marketplace/details/tapdata-public/tapdata')
     }
   }
 }
