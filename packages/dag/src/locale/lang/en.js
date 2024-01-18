@@ -377,6 +377,7 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: 'Target table field',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
   packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
@@ -531,6 +532,7 @@ export default {
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: 'Python nodes are currently only supported on Linux Agents, not Windows.',
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
   packages_dag_js_processor_index_zuoyong: 'Function:',

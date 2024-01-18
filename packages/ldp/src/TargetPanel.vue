@@ -635,6 +635,8 @@ export default {
       }
 
       this.taskMeasurementMap = map
+
+      this.$store.commit('setTaskLoadedTime')
     },
 
     async autoLoadTaskById() {

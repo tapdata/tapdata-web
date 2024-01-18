@@ -1678,5 +1678,11 @@ export default {
   dfs_user_contactus_weinintigongzhuan: '为您提供专业的服务支持',
   dfs_system_update: '系统更新',
   dfs_system_description: '系统已升级, 点击刷新，立即体验新功能!',
-  dfs_order_list_bianhao: '编号'
+  dfs_order_list_bianhao: '编号',
+  dfs_marketplace_guide_title: '您的Agent正在自动创建中，预计需要5～10分钟，创建完成后会有邮件通知，请耐心等待。',
+  dfs_marketplace_guide_step_1: '全托管Agent引擎自动创建中...',
+  dfs_marketplace_guide_step_2: '新手【数据复制任务】教学引导',
+  dfs_marketplace_guide_step_3: '敬请体验完整功能',
+  dfs_marketplace_guide_cancel: '随便看看',
+  dfs_marketplace_guide_ok: '刷新一下'
 }

@@ -119,6 +119,12 @@
     <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
+    <MarketplaceGuide
+      :visible="marketplaceGuideVisible"
+      :loading="agentCountLoading"
+      @update:visible="updateMarketplaceGuide"
+      @refresh="loopLoadAgentCount(true)"
+    ></MarketplaceGuide>
   </ElContainer>
 </template>
 
@@ -135,7 +141,7 @@ import Cookie from '@tap/shared/src/cookie'
 import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
-import ReplicationTour from '@/components/ReplicationTour'
+import MarketplaceGuide from '@/components/MarketplaceGuide'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -148,7 +154,7 @@ export default {
     AgentGuide,
     PageHeader,
     TaskAlarmTour,
-    ReplicationTour
+    MarketplaceGuide
   },
   mixins: [tour],
   data() {
