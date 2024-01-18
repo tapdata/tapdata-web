@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
+import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 
 Vue.use(Vuex)
 
@@ -89,8 +90,14 @@ const store = new Vuex.Store({
   },
 
   getters: {
+    language: state => {
+      return getCurrentLanguage()
+    },
     isGCPMarketplaceUser: state => state.user.gcpAccount !== null,
-    isDomesticStation: state => state.config.station === 'domestic',
+    isDomesticStation: (state, getters) => {
+      console.log('isDomesticStation', getters.language)
+      return getters.language !== 'en'
+    },
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',
     completedTour: state => state.replicationTour.status === 'completed',

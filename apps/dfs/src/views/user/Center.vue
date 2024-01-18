@@ -11,6 +11,18 @@
             </div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
+          <ElCol :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              显示语言{{ $t('symbol_colon') }}
+            </div>
+            <div class="user-item__value">
+              <ElSelect value="zh-cn">
+                <ElOption label="中文" value="zh-cn"></ElOption>
+                <ElOption label="繁体" value="zh-tw"></ElOption>
+                <ElOption label="英文" value="en"></ElOption>
+              </ElSelect>
+            </div>
+          </ElCol>
         </ElRow>
         <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
@@ -44,7 +56,7 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_phone_number') }}
+              {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
@@ -68,7 +80,7 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_avatar') }}
+              {{ $t('user_avatar') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value position-relative">
               <img
