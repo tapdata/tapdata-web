@@ -58,6 +58,20 @@ export default {
         // 显示正在创建实例的提示
         this.marketplaceGuideVisible = true
       }
+
+      if (!this.replicationTour.enable) {
+        this.$store.commit('setReplicationTour', {
+          enable: true,
+          activeIndex: null,
+          behavior: '',
+          status: '',
+          view: 'board'
+        })
+
+        this.$axios.post('api/tcm/user_guide', {
+          tour: this.replicationTour
+        })
+      }
     } else if (!this.pausedGuide) {
       await this.checkGuide()
     }
@@ -618,7 +632,11 @@ export default {
               this.$nextTick(() => {
                 // 判断任务的监控按钮是否渲染
                 let index = this.replicationTour.activeIndex
+                if (this.replicationTour.behavior === 'add-target') index = 2
                 if (this.replicationTour.behavior === 'add-task') index = 3
+
+                this.setTourIndex(index)
+
                 if (index === 3 && !document.querySelector(taskMonitorId)) {
                   // 如果没有渲染，监听任务列表的加载时间
                   const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
@@ -630,7 +648,7 @@ export default {
                     })
                   })
                 } else {
-                  this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                  this.replicationDriverObj.drive(index || 0)
                 }
               })
             }
