@@ -680,7 +680,7 @@ export default {
       })
     },
     goMarketplace() {
-      window.open('https://console.cloud.google.com/marketplace/details/tapdata-public/tapdata')
+      window.open('https://console.cloud.google.com/marketplace/product/tapdata-public/detail')
     }
   }
 }

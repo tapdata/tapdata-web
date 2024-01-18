@@ -111,6 +111,8 @@ export default {
     ]),
 
     handleDestroy() {
+      this.unwatchTourBehavior?.()
+      this.unwatchTourStatus?.()
       this.unwatchTourRoute?.()
       this.unwatchTour?.()
       this.destroyDriver()
@@ -598,9 +600,11 @@ export default {
         }
       })
 
-      const unwatch = this.$watch('replicationTour.behavior', async behavior => {
+      // 监听任务引导行为
+      this.unwatchTourBehavior?.()
+      this.unwatchTourBehavior = this.$watch('replicationTour.behavior', async behavior => {
         if (!this.startingTour || !this.replicationDriverObj) {
-          unwatch()
+          this.unwatchTourBehavior()
           return
         }
 
@@ -616,12 +620,16 @@ export default {
         this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
       })
 
+      // 监听任务引导状态
+      this.unwatchTourStatus?.()
       this.unwatchTourStatus = this.$watch('replicationTour.status', (status, oldStatus) => {
         if (status === 'complete') this.unwatchTourStatus?.()
         // 从开始窗口点击开始任务引导
         if (status === 'starting' && !oldStatus) this.replicationDriverObj.drive(0)
       })
 
+      // 监听路由变化
+      this.unwatchTourRoute?.()
       this.unwatchTourRoute = this.$watch(
         '$route',
         to => {
@@ -632,7 +640,12 @@ export default {
               this.$nextTick(() => {
                 // 判断任务的监控按钮是否渲染
                 let index = this.replicationTour.activeIndex
-                if (this.replicationTour.behavior === 'add-target') index = 2
+                if (this.replicationTour.behavior === 'add-target') {
+                  if (index !== 2) {
+                    debugger
+                  }
+                  index = 2
+                }
                 if (this.replicationTour.behavior === 'add-task') index = 3
 
                 this.setTourIndex(index)
@@ -663,6 +676,8 @@ export default {
         }
       )
 
+      // 监听任务引导对象
+      this.unwatchTour?.()
       this.unwatchTour = this.$watch(
         'replicationTour',
         tour => {
