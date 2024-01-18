@@ -193,7 +193,7 @@ export default {
   packages_business_task_monitor_mining_task_name: 'Mining task name',
   packages_business_task_monitor_mining_task_point_time: 'Mining time point',
   packages_business_task_monitor_mining_task_status: 'Mining Status',
-  packages_business_button_bulk_import: 'Bulk Import',
+  packages_business_button_bulk_import: 'Import',
   packages_business_message_save_fail: 'Save Failed',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
