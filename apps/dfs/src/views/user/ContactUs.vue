@@ -1,12 +1,12 @@
 <template>
-  <div class="flex-fill p-4 bg-white rounded-4">
-    <div class="bg-box pt-10 pl-10">
+  <div class="flex-fill p-4 bg-white rounded-lg">
+    <div class="bg-box pt-10 pl-10 rounded-lg">
       <span class="fs-4 fw-bold font-color-dark">{{ $t('dfs_user_contactus_weinintigongzhuan') }}</span>
     </div>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_lianxifangshi') }}</div>
     <ul class="flex justify-content-between mt-6 fs-8">
-      <li class="p-4 border rounded-2 flex-grow-1">
-        <div class="fs-7 flex align-items-center">
+      <li class="p-4 border rounded-lg flex-grow-1">
+        <div class="fs-6 font-color-dark flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">consultation-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_zaixianzixun') }}</span>
         </div>
@@ -15,31 +15,31 @@
         }}</ElButton>
         <!--        <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_gongzuorijiejia') }}</div>-->
       </li>
-      <li v-if="!isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
-        <div class="fs-7 flex align-items-center">
+      <li v-if="!isDomesticStation" class="p-4 border rounded-lg ml-4 flex-grow-1">
+        <div class="fs-6 flex align-items-center">
           <ElImage class="slack-image mr-2" :src="require('@/assets/image/slack.svg')" />
           <span>Slack</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini" @click="goSlack">Join Slack</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-grow-1">
-        <div class="fs-7 flex align-items-center">
+      <li class="p-4 border rounded-lg ml-4 flex-grow-1">
+        <div class="fs-6 flex align-items-center">
           <VIcon size="20" class="mr-2 color-primary">email-fill</VIcon>
           <span>{{ $t('dfs_user_contactus_youxiang') }}</span>
         </div>
         <ElButton type="text" class="mt-2" size="mini">team@tapdata.io</ElButton>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
-        <div class="fs-7 flex align-items-center">
+      <li v-if="isDomesticStation" class="p-4 border rounded-lg ml-4 flex-grow-1">
+        <div class="fs-6 flex align-items-center">
           <VIcon size="20" class="mr-2">enterprise-wechat</VIcon>
           <span>{{ $t('dfs_user_contactus_qiyeweixin') }}</span>
         </div>
         <ElTooltip placement="top" effect="light" popper-class="contact-us-enterprise-wechat shadow p-0">
           <ElButton type="primary" class="mt-2" size="mini">{{ $t('tap_contact_us') }}</ElButton>
           <template #content>
-            <div class="px-4 py-5 text-center rounded-4">
+            <div class="px-4 py-5 text-center rounded-lg">
               <ElImage :src="require('@/assets/image/enterprise-wechat-code.png')" class="code-image mb-2"></ElImage>
               <div>{{ $t('dfs_user_contactus_saomatianjiake') }}</div>
             </div>
@@ -47,8 +47,8 @@
         </ElTooltip>
         <div class="mt-2 font-color-sslight">{{ $t('dfs_user_contactus_weinintigongchan') }}</div>
       </li>
-      <li v-if="isDomesticStation" class="p-4 border rounded-2 ml-4 flex-grow-1">
-        <div class="fs-7 flex align-items-center">
+      <li v-if="isDomesticStation" class="p-4 border rounded-lg ml-4 flex-grow-1">
+        <div class="fs-6 flex align-items-center">
           <VIcon size="18" class="mr-2 color-primary">phone</VIcon>
           <span>{{ $t('dfs_user_contactus_dianhuazixun') }}</span>
         </div>
@@ -58,8 +58,8 @@
     </ul>
     <div class="mt-6 fs-5 fw-bold font-color-dark">{{ $t('dfs_user_contactus_gengduofuwu') }}</div>
     <ul class="flex justify-content-between mt-6">
-      <li class="p-4 border rounded-2 flex-grow-1">
-        <div class="font-color-dark">{{ $t('dfs_user_contactus_wodegongdan') }}</div>
+      <li class="p-4 border rounded-lg flex-grow-1">
+        <div class="fs-6 font-color-dark">{{ $t('dfs_user_contactus_wodegongdan') }}</div>
         <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
           {{ $t('dfs_user_contactus_tijiaogongdanjie') }}
         </div>
@@ -67,8 +67,8 @@
           $t('dfs_user_contactus_chuangjiangongdan')
         }}</ElLink>
       </li>
-      <li class="p-4 border rounded-2 ml-4 flex-grow-1">
-        <div class="font-color-dark">{{ $t('workbench_guide_documentation') }}</div>
+      <li class="p-4 border rounded-lg ml-4 flex-grow-1">
+        <div class="fs-6 font-color-dark">{{ $t('workbench_guide_documentation') }}</div>
         <div type="primary" class="mt-2 fs-8 font-color-sslight" size="mini">
           {{ $t('dfs_user_contactus_tigongchanpinjie') }}
         </div>
