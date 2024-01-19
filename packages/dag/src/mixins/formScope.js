@@ -1001,6 +1001,37 @@ export default {
             this.nodeSelectedById(nodeId, false, true)
           }, 300)
         },
+
+        /**
+         * 关联条件变更开关联动
+         * @param val
+         * @param field
+         */
+        changeEnableUpdateJoinKeyValue(val, field) {
+          let enableRecord = field.form.values.attrs.enableRecord
+          if (!enableRecord) {
+            enableRecord = field.form.values.attrs.enableRecord = {}
+          }
+          // 如果是一级开关
+          if (/mergeProperties\.\d+\.enableUpdateJoinKeyValue/.test(field.path.entire)) {
+            const children = field.query('.children').value()
+            const toggleChildrenEnable = (children, val) => {
+              for (const child of children) {
+                let enable = val
+                if (!enable && child.id in enableRecord) {
+                  enable = enableRecord[child.id]
+                }
+                child.enableUpdateJoinKeyValue = enable
+                if (child.children.length) {
+                  toggleChildrenEnable(child.children, val)
+                }
+              }
+            }
+            toggleChildrenEnable(children, val)
+          } else {
+            enableRecord[field.query('.id').value()] = val
+          }
+        },
       },
     }
   },

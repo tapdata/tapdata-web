@@ -78,7 +78,7 @@
               <span> {{ $t('public_button_export') }}</span>
             </el-button>
             <el-button
-              v-if="isDaas && buttonShowMap.import"
+              v-if="buttonShowMap.import && (isDaas || $route.name === 'dataflowList')"
               v-readonlybtn="'SYNC_job_import'"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"

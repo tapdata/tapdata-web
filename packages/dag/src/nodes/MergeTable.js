@@ -217,6 +217,19 @@ export class MergeTable extends NodeType {
                                 },
                               ],
                             },
+                            children: {
+                              type: 'array',
+                              'x-display': 'hidden'
+                            },
+                            enableUpdateJoinKeyValue: {
+                              type: 'boolean',
+                              title: i18n.t('packages_dag_nodes_mergetable_gengxinjianguanlian'),
+                              'x-decorator': 'FormItem',
+                              'x-component': 'Switch',
+                              'x-component-props': {
+                                onChange: '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}'
+                              }
+                            },
                             joinKeys: {
                               type: 'array',
                               title: i18n.t('packages_dag_nodes_mergetable_guanliantiaojian'),

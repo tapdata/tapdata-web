@@ -1817,4 +1817,11 @@ export default {
   dfs_system_update: 'System Update',
   dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!",
   dfs_order_list_bianhao: 'Number',
+  dfs_marketplace_guide_title:
+    'Your Agent is currently being created automatically, and it is expected to take 5 to 10 minutes. You will receive an email notification once the creation is complete. Please be patient.',
+  dfs_marketplace_guide_step_1: 'Fully managed Agent is being created automatically...',
+  dfs_marketplace_guide_step_2: `Beginner's guide to [Data Replication Task]`,
+  dfs_marketplace_guide_step_3: 'Please enjoy the full functionality',
+  dfs_marketplace_guide_cancel: 'Close',
+  dfs_marketplace_guide_ok: 'Refresh',
 }

@@ -35,7 +35,7 @@
             style="height: 300px"
             direction="vertical"
           >
-            <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
+            <el-step v-for="(step, i) in steps" :key="i" :title="keyLabelMap[step.key]">
               <span>{{ i + 1 }}</span>
             </el-step>
           </el-steps>
@@ -186,6 +186,14 @@ export default {
       behavior: [],
       behaviorAt: null,
       unsubscribeIng: false,
+      keyLabelMap: {
+        Account: i18n.t('dfs_guide_index_zhanghaoanquanbang'),
+        Scenes: i18n.t('dfs_guide_index_quedingshiyongchang'),
+        DeploymentMethod: i18n.t('dfs_guide_index_shezhishujuku'),
+        Spec: i18n.t('dfs_guide_index_xuanzejisuanyin'),
+        Pay: i18n.t('public_payment'),
+        Deploy: i18n.t('dfs_guide_index_bushujisuanyin'),
+      },
     }
   },
   mounted() {

@@ -24,6 +24,7 @@ const store = Vuex.createStore({
       email: '',
       enableLicense: false,
       licenseCodes: [],
+      gcpAccount: null,
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -85,6 +86,7 @@ const store = Vuex.createStore({
   },
 
   getters: {
+    isGCPMarketplaceUser: (state) => state.user.gcpAccount !== null,
     isDomesticStation: (state) => state.config.station === 'domestic',
     startingTour: (state) => state.replicationTour.status === 'starting' && state.guide.expand.guideStatus !== 'paused',
     pausedTour: (state) => state.replicationTour.status === 'paused',

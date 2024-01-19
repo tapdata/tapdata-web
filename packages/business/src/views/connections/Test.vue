@@ -15,7 +15,9 @@
           v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
           :style="{ color: colorMap.failed }"
         >
-          <el-icon class="align-top mr-2" style="height: 24px; color: inherit" size="20"><el-icon-warning /></el-icon>
+          <el-icon class="align-top mr-2" style="height: 24px; color: inherit" size="20">
+            <el-icon-warning />
+          </el-icon>
           <pre
             v-if="wsError"
             v-html="wsError"
@@ -29,7 +31,9 @@
             <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
           </div>
           <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
-            <el-icon class="mr-2" :color="colorMap[status]" size="20"><ElIconSuccessFilled /></el-icon>
+            <el-icon class="mr-2" :color="colorMap[status]" size="20">
+              <ElIconSuccessFilled />
+            </el-icon>
             <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
           </div>
           <div class="test-status flex align-items-center" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
@@ -108,6 +112,7 @@
 <script>
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { VIcon } from '@tap/component'
+
 export default {
   components: {
     VIcon,
@@ -319,7 +324,7 @@ export default {
         data: connection,
       }
 
-      this.showProgress = true
+      this.showProgress = false
       this.$ws.ready(() => {
         this.$ws.send(msg)
         // 连接测试时出现access_token过期,重发消息
@@ -361,7 +366,6 @@ export default {
 
     startLoadTestItems() {
       this.startByConnection(...arguments)
-      this.showProgress = false
     },
   },
   emits: ['update:visible', 'returnTestData'],

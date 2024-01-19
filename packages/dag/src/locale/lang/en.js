@@ -377,6 +377,7 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: 'Target table field',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
   packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',

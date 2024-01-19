@@ -75,8 +75,8 @@
                       type="primary"
                       class="li-item__value text-decoration-underline"
                       @click="goInstance(row)"
-                      >{{ row.resourceId }}</ElLink
-                    >
+                      >{{ row.resourceId }}
+                    </ElLink>
                   </div>
                 </div>
                 <div class="w-50">
@@ -121,13 +121,19 @@
                     <span class="li-item__value font-color-dark">{{ item.id }}</span>
                   </div>
                 </div>
-                <div class="li-operation flex">
-                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)">{{
-                    $t('public_button_pay')
-                  }}</ElButton>
-                  <ElButton v-if="['active'].includes(item.status)" text @click="goOpenChange(item)">{{
-                    $t('dfs_change_record')
-                  }}</ElButton>
+                <div v-if="item.paymentMethod === 'GCPMarketplace'" class="li-operation flex">
+                  <ElButton @click="goMarketplace" type="primary" plain>
+                    <VIcon>open-in-new</VIcon>
+                    Google Cloud Marketplace
+                  </ElButton>
+                </div>
+                <div v-else class="li-operation flex">
+                  <ElButton v-if="['incomplete'].includes(item.status)" type="text" @click="handlePay(item)"
+                    >{{ $t('public_button_pay') }}
+                  </ElButton>
+                  <ElButton v-if="['active'].includes(item.status)" text @click="goOpenChange(item)"
+                    >{{ $t('dfs_change_record') }}
+                  </ElButton>
                   <ElButton
                     v-if="
                       !(
@@ -139,8 +145,8 @@
                     type="primary"
                     text
                     @click="openRenew(item)"
-                    >{{ $t('public_button_renew') }}</ElButton
-                  >
+                    >{{ $t('public_button_renew') }}
+                  </ElButton>
                   <ElButton
                     v-if="
                       !disableUnsubscribe(row) &&
@@ -151,15 +157,15 @@
                     type="primary"
                     text
                     @click="openChangeSubscribe(item)"
-                    >{{ $t('dfs_order_change') }}</ElButton
-                  >
+                    >{{ $t('dfs_order_change') }}
+                  </ElButton>
                   <ElButton
-                    v-if="!(disableUnsubscribe(row) || ['incomplete'].includes(item.status))"
+                    v-if="!(disableUnsubscribe(row) || ['incomplete', 'past_due'].includes(item.status))"
                     type="danger"
                     text
                     @click="openUnsubscribe(item, row.productType)"
-                    >{{ $t('public_button_unsubscribe') }}</ElButton
-                  >
+                    >{{ $t('public_button_unsubscribe') }}
+                  </ElButton>
                 </div>
               </div>
             </template>
@@ -189,9 +195,9 @@
             <span>{{ agentTypeMap[row.agentType || 'local'] }}</span>
           </template>
           <template #bindAgent="{ row }">
-            <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)">{{
-              $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId
-            }}</ElLink>
+            <ElLink v-if="row.agentId" type="primary" @click="handleAgent(row)"
+              >{{ $t('dfs_instance_selectlist_yibangding') + ' ' + $t('public_agent') + ' : ' + row.agentId }}
+            </ElLink>
             <span v-else>{{ $t('user_Center_weiBangDing') }}</span>
           </template>
           <template #operation="{ row }">
@@ -681,6 +687,9 @@ export default {
         },
       })
     },
+    goMarketplace() {
+      window.open('https://console.cloud.google.com/marketplace/product/tapdata-public/detail')
+    },
   },
 }
 </script>
@@ -689,6 +698,7 @@ export default {
 .order-flex {
   display: flex;
 }
+
 .operation-logs-wrapper {
   display: flex;
   width: 100%;
@@ -696,9 +706,11 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
+
   .pointer {
     cursor: pointer;
   }
+
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -706,30 +718,36 @@ export default {
     width: 32px;
     font-size: 16px;
   }
+
   .main {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
+
   .operation-logs-table {
     flex: 1;
     overflow: auto;
     border-bottom: none;
   }
 }
+
 .sub-li {
   border: 1px solid #ebeef5;
   //border-bottom: none;
 }
+
 .color-subscribe {
   color: map-get($color, warning);
 }
+
 .sub-li-header {
   padding: 10px;
   border-bottom: 1px solid #ebeef5;
   background: #f7f8fa;
 }
+
 .subscribe-header-action {
   .el-divider:last-child {
     display: none;
@@ -739,6 +757,7 @@ export default {
 :deep(.el-dropdown-menu__item.dropdown-item--disabled) {
   color: map-get($color, disable);
   cursor: default;
+
   &:hover {
     background: unset;
     color: map-get($color, disable);
@@ -763,6 +782,7 @@ export default {
     min-width: unset;
     height: 24px;
     font-size: 12px;
+
     &.el-button--text {
       padding-left: 0;
       padding-right: 0;
@@ -780,9 +800,11 @@ export default {
 
 .list-li {
   border: 1px solid map-get($bgColor, hover);
+
   &.primary {
     border-left: 8px solid map-get($color, primary);
   }
+
   &.warning {
     border-left: 8px solid map-get($color, warning);
   }
@@ -809,6 +831,7 @@ export default {
 .filter-li {
   line-height: 32px;
   height: 32px;
+
   &.active,
   &:hover {
     background-color: #e8f3ff;
