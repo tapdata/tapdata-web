@@ -197,6 +197,23 @@
             </template>
           </el-skeleton>
         </ElFormItem>
+
+        <!--选择币种-->
+        <ElFormItem v-if="currencyOption && currencyOption.length > 0">
+          <div slot="label" class="font-color-dark fw-sub">
+            {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
+          </div>
+          <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">
+            <ElRadio
+              v-for="(item, index) in currencyOption"
+              :key="index"
+              :label="item.currency"
+              border
+              class="rounded-4 m-0"
+              >{{ CURRENCY_MAP[item.currency] }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
       </ElForm>
     </div>
 
@@ -226,7 +243,7 @@ import { uniqBy } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { IconButton, VTable } from '@tap/component'
-import { isObj } from '@tap/shared'
+import { isObj, isStr } from '@tap/shared'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
@@ -264,7 +281,10 @@ export default {
       packageItems: [],
       currency: '',
       selected: {},
-      hasFreeAgent: false
+      hasFreeAgent: false,
+      currencyType: '',
+      currencyOption: [],
+      CURRENCY_MAP
     }
   },
 
@@ -277,6 +297,9 @@ export default {
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
+    },
+    defaultCurrencyType() {
+      return this.$store.getters.isDomesticStation ? 'cny' : 'usd'
     }
     // freeAgentCount() {
     //   return this.$store.state.agentCount.freeTierAgentCount
@@ -284,12 +307,7 @@ export default {
   },
 
   async created() {
-    const currencyType = window.__config__?.currencyType
-
-    if (currencyType) {
-      this.currencyType = currencyType
-      this.defaultCurrencyType = currencyType
-    }
+    this.currencyType = this.defaultCurrencyType
 
     await this.loadAgentCount()
 
@@ -492,6 +510,19 @@ export default {
         this.currency = item
       }
       this.buried('changeSubscriptionMethod')
+    },
+
+    //切换币种
+    changeCurrency(item) {
+      if (isStr(item)) {
+        this.currencyType = item
+        this.currency = this.currencyOption.find(it => it.currency === item)
+      } else {
+        this.currencyType = item.currency
+        this.currency = item
+      }
+      //更新存储资源价格
+      // this.changeMongodbMemory()
     },
 
     changeCurrencyOption(item) {
