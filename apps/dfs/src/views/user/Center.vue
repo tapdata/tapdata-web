@@ -1,5 +1,5 @@
 <template>
-  <div class="user-center g-panel-container flex-fill">
+  <div class="user-center g-panel-container flex-fill overflow-x-hidden">
     <div class="fs-6 fw-sub">{{ $t('user_Center_geRenXinXi') }}</div>
     <ElDivider></ElDivider>
     <div>
@@ -13,13 +13,11 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              显示语言{{ $t('symbol_colon') }}
+              {{ $t('dfs_settings_language') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">
-              <ElSelect value="zh-cn">
-                <ElOption label="中文" value="zh-cn"></ElOption>
-                <ElOption label="繁体" value="zh-tw"></ElOption>
-                <ElOption label="英文" value="en"></ElOption>
+              <ElSelect :value="language" @change="handleUpdateLanguage">
+                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
               </ElSelect>
             </div>
           </ElCol>
@@ -643,6 +641,7 @@ import { AGENT_TYPE_MAP } from '../instance/utils'
 import { NUMBER_MAP } from '@tap/business'
 import { openUrl, urlToBase64 } from '@tap/shared'
 import { mapGetters } from 'vuex'
+import { langMenu } from '@tap/i18n/src/shared/util'
 
 export default {
   name: 'Center',
@@ -650,6 +649,7 @@ export default {
   components: { InlineInput, VerificationCode, UploadFile, VTable },
   data() {
     return {
+      langMenu,
       agentTypeMap: AGENT_TYPE_MAP,
       userData: {
         username: '',
@@ -783,7 +783,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    ...mapGetters(['isDomesticStation', 'language'])
   },
   mounted() {
     this.init()
@@ -1245,6 +1245,14 @@ export default {
             })
         }
       })
+    },
+
+    async handleUpdateLanguage(val) {
+      await this.$axios.patch('api/tcm/user', {
+        locale: val
+      })
+      this.$store.commit('setLanguage', val)
+      location.reload()
     }
   }
 }

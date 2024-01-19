@@ -447,6 +447,7 @@ export default {
     //检查是否有手机号
     checkWechatPhone() {
       // 国内微信注册的用户绑定手机号
+      const { user } = this.$store.state
       this.bindPhoneVisible = 'social:wechatmp-qrcode' === user?.registerSource && !user?.telephone
 
       if (this.steps?.length === 0) {

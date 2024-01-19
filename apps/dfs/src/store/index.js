@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
-import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
+import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import i18n from '../i18n'
 
 Vue.use(Vuex)
 
@@ -28,7 +29,8 @@ const store = new Vuex.Store({
       email: '',
       enableLicense: false,
       licenseCodes: [],
-      gcpAccount: null
+      gcpAccount: null,
+      locale: ''
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -91,7 +93,7 @@ const store = new Vuex.Store({
 
   getters: {
     language: state => {
-      return getCurrentLanguage()
+      return state.user.locale
     },
     isGCPMarketplaceUser: state => state.user.gcpAccount !== null,
     isDomesticStation: (state, getters) => {
@@ -117,7 +119,14 @@ const store = new Vuex.Store({
 
     setUser(state, user = {}) {
       Object.assign(state.user, user)
-      console.log('state.user', state.user) // eslint-disable-line
+    },
+
+    setLanguage(state, lang) {
+      if (!lang) {
+        lang = getCurrentLanguage()
+      }
+      state.user.locale = lang
+      setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {
