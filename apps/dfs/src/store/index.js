@@ -83,7 +83,8 @@ const store = new Vuex.Store({
     config: {
       onlyEnglishLanguage: false,
       slackLink: '',
-      station: '' //标记国际站international 国内站 domestic
+      station: '', //标记国际站international 国内站 domestic
+      pagePermissions: [] // dataHub
     },
 
     showReplicationTour: false,

@@ -34,8 +34,14 @@ export default {
     }
   },
 
+  computed: {
+    onlyIntro() {
+      return !this.$store.state.config.pagePermissions?.includes('dataHub')
+    }
+  },
+
   async created() {
-    if (this.$store.getters.isDomesticStation) {
+    if (this.onlyIntro) {
       this.loading = false
       return
     }

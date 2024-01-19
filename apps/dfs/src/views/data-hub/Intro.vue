@@ -80,7 +80,7 @@
       </div>
 
       <div class="text-center">
-        <p v-if="isDomesticStation" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
+        <p v-if="onlyIntro" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
           <VIcon>info</VIcon>{{ $t('dfs_offline_deployment_tip') }}
         </p>
         <p v-else class="mb-2">
@@ -92,13 +92,9 @@
             >Feel free to Book a Demo with us</ElLink
           >
         </p>
-        <ElButton
-          v-if="!isDomesticStation"
-          @click="$router.push({ name: 'CreateStorage' })"
-          type="primary"
-          size="large"
-          >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
-        >
+        <ElButton v-if="!onlyIntro" @click="$router.push({ name: 'CreateStorage' })" type="primary" size="large">{{
+          $t('packages_ldp_data_hub_subscribe')
+        }}</ElButton>
         <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
           $t('dfs_offline_deployment_get')
         }}</ElButton>
@@ -114,7 +110,9 @@ export default {
   name: 'Intro',
 
   computed: {
-    ...mapGetters(['isDomesticStation'])
+    onlyIntro() {
+      return !this.$store.state.config.pagePermissions?.includes('dataHub')
+    }
   },
 
   methods: {
