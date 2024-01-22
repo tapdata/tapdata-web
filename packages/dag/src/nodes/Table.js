@@ -256,7 +256,8 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      asterisk: true
+                      asterisk: true,
+                      tooltip: i18n.t('packages_dag_update_conditions_tip')
                     },
                     'x-component': 'FieldSelect',
                     'x-component-props': {
@@ -326,7 +327,7 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc'
-                          )}':''}}`
+                          )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
@@ -630,6 +631,9 @@ export class Table extends NodeType {
                         required: true,
                         default: [{ field: '', defaultValue: '' }],
                         'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_cdcPollingFields_tip')
+                        },
                         'x-component': 'ArrayItems',
                         items: {
                           type: 'object',
@@ -695,7 +699,8 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_data_filter')
+                      title: i18n.t('packages_dag_config_data_filter'),
+                      tooltip: i18n.t('packages_dag_config_data_filter_tip')
                     },
                     properties: {
                       enableCustomCommand: {
@@ -1267,7 +1272,8 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_nodes_database_ddLshijian')
+                      title: i18n.t('packages_dag_nodes_database_ddLshijian'),
+                      tooltip: i18n.t('packages_dag_ddl_events_collapse_tip')
                     },
                     properties: {
                       ddlEvents: {

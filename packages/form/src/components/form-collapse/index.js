@@ -1,8 +1,8 @@
-import { Collapse, CollapseItem, Badge } from 'element-ui'
+import { Collapse, CollapseItem, Badge, Tooltip } from 'element-ui'
 import { model } from '@formily/reactive'
 import { useField, useFieldSchema, RecursionField, h, Fragment } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { composeExport, stylePrefix } from '@formily/element/lib/__builtins__'
+import { composeExport, stylePrefix, resolveComponent } from '@formily/element/lib/__builtins__'
 import { toArr } from '@formily/shared'
 import { computed, defineComponent } from '@vue/composition-api'
 
@@ -87,6 +87,41 @@ const FormCollapse = observer(
         return panels.map(item => item.name)
       }
 
+      const renderTooltipIcon = tooltip => {
+        return h(
+          'span',
+          {
+            class: 'ml-1',
+            style: { color: '#909399' }
+          },
+          {
+            default: () => [
+              h(
+                Tooltip,
+                {
+                  props: {
+                    placement: 'top'
+                  }
+                },
+                {
+                  default: () => [h('i', { class: 'el-icon-info' }, {})],
+                  content: () =>
+                    h(
+                      'div',
+                      {
+                        class: `${prefixCls}-label-tooltip-content`
+                      },
+                      {
+                        default: () => [resolveComponent(tooltip)]
+                      }
+                    )
+                }
+              )
+            ]
+          }
+        )
+      }
+
       const badgedHeader = (key, props) => {
         const errors = field.value.form.queryFeedbacks({
           type: 'error',
@@ -140,7 +175,14 @@ const FormCollapse = observer(
                   },
                   {
                     default: () => [h(RecursionField, { props: { schema, name } }, {})],
-                    title: () => h('span', {}, { default: () => badgedHeader(name, props) })
+                    title: () =>
+                      h(
+                        'span',
+                        {},
+                        {
+                          default: () => [badgedHeader(name, props), props.tooltip && renderTooltipIcon(props.tooltip)]
+                        }
+                      )
                   }
                 )
               })

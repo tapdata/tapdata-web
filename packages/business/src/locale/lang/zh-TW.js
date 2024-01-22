@@ -497,9 +497,9 @@ export default {
   packages_business_verification_fastCountTip:
     '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。',
   packages_business_verification_contentVerifyTip:
-    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
+    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_jointFieldTip:
-    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
+    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
@@ -935,6 +935,8 @@ export default {
   packages_business_shared_cache_column_table: '所屬表',
   packages_business_shared_cache_cache_key_message: '所選緩存鍵無索引',
   packages_business_shared_cache_cache_key_auto_create: '自動建立索引',
+  packages_business_shared_cache_cache_key_auto_create_tip:
+    '開啓該能力後，會自動在源表為緩存鍵創建索引，可能會對源庫造成影響，請謹慎開啓',
   packages_business_relation_list_gongxianghuancun: '共享緩存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1110,6 +1112,8 @@ export default {
   packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
   packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_components_conditionbox_enableCustomCommand_tip:
+    '需要保證查詢條件有索引，如果沒索引會產生全表掃描導致數據庫壓力變大',
   packages_business_data_server_list_apIwendang: 'API文檔導出',
   packages_business_verification_form_gaojipeizhi: '高級配置',
   packages_business_verification_form_validate_table_is_empty: '源表和目標表不能為空，請修改校驗表配置',

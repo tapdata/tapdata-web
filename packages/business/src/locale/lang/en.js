@@ -512,9 +512,9 @@ export default {
   packages_business_verification_fastCountTip:
     'The fast count mode, which only verifies the number of rows in the source and target tables, is extremely fast, but it does not display the differential field values',
   packages_business_verification_contentVerifyTip:
-    "Table Field Value Verify Mode' is a thorough method that checks all fields in both the source and target tables row by row, enabling the detection of any discrepancies; however, due to its comprehensive nature, it may operate at a slower pace.",
+    'Table full-field validation checks all fields of the source and target tables row by row, identifying differences in all fields but with a slower speed. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_jointFieldTip:
-    "The 'Joint Fields Value Verify Mode' compares only the joint field value between the source and target tables, resulting in a faster validation process when compared to the 'Table Field Value Verify Mode'.",
+    'Associative field value validation compares only the values of associated fields in the source and target tables, providing faster results compared to full-field validation. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_waiting: 'To be verified',
   packages_business_verification_scheduling: 'Scheduling',
   packages_business_verification_error: 'Error',
@@ -982,6 +982,8 @@ export default {
   packages_business_shared_cache_column_table: 'From Table',
   packages_business_shared_cache_cache_key_message: 'The selected cache key is not indexed.',
   packages_business_shared_cache_cache_key_auto_create: 'Automatic Index Creation',
+  packages_business_shared_cache_cache_key_auto_create_tip:
+    'Enabling this feature will automatically create indexes for cache keys in the source table, potentially impacting the source database. Please enable with caution.',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
   packages_business_application_delete_shanchuyingyong: 'Delete Application',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1166,6 +1168,8 @@ export default {
   packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
   packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
+  packages_business_components_conditionbox_enableCustomCommand_tip:
+    'Ensure that the query conditions have indexes; without indexes, it may result in a full table scan, causing increased database pressure.',
   packages_business_data_server_list_apIwendang: 'API Document Export',
   packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
   packages_business_verification_form_validate_table_is_empty:

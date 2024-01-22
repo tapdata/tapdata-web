@@ -540,6 +540,7 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: '轮询间隔(ms)',
   packages_dag_nodes_table_lunxunziduanmo: '轮询字段默认值',
   packages_dag_nodes_table_zhidinglunxunzi: '指定轮询字段',
+  packages_dag_nodes_cdcPollingFields_tip: '请确保所选择的轮询字段具有索引，否则可能会因为查询性能问题对源库造成影响',
   packages_dag_nodes_table_lunxun: '字段轮询',
   packages_dag_nodes_table_rizhicdc: '实时日志解析',
   packages_dag_nodes_table_tedingziduande:
@@ -636,6 +637,7 @@ export default {
   packages_dag_config_data_write: '数据写入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
   packages_dag_config_data_filter: '数据过滤配置',
+  packages_dag_config_data_filter_tip: '数据过滤配置可能会因为查询过滤性能问题对源库造成影响，请谨慎使用',
   packages_dag_field_add_del_index_zhidi: '置底',
   packages_dag_field_add_del_index_xiayi: '下移',
   packages_dag_field_add_del_index_shangyi: '上移',
@@ -679,5 +681,10 @@ export default {
   packages_dag_field_inference_list_zidingyileixing: '自定义类型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:',
   packages_dag_enableSyncMetricCollector_title: '同步指标收集',
-  packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析'
+  packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析',
+  packages_dag_update_conditions_tip:
+    '注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
+  packages_dag_existDataProcessMode_desc: '该行为会直接删除目标表和数据，可能会对数据库造成影响，请谨慎使用。',
+  packages_dag_ddl_events_collapse_tip:
+    '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启'
 }
