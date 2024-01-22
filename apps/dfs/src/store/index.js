@@ -25,10 +25,15 @@ const store = new Vuex.Store({
       nickname: '',
       avatar: '',
       telephone: '',
+      phoneCountryCode: '',
       wx: '',
       email: '',
       enableLicense: false,
       licenseCodes: [],
+      customData: {
+        firstName: '',
+        lastName: ''
+      },
       gcpAccount: null,
       locale: ''
     },
@@ -98,7 +103,6 @@ const store = new Vuex.Store({
     },
     isGCPMarketplaceUser: state => state.user.gcpAccount !== null,
     isDomesticStation: (state, getters) => {
-      console.log('isDomesticStation', getters.language)
       return getters.language !== 'en'
     },
     startingTour: state => state.replicationTour.status === 'starting',

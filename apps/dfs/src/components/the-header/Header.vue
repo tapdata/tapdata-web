@@ -92,7 +92,7 @@
   </ElHeader>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
@@ -104,7 +104,6 @@ export default {
   components: { VIcon, NotificationPopover },
   data() {
     return {
-      user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
       officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
@@ -119,6 +118,7 @@ export default {
 
   computed: {
     ...mapGetters(['isDomesticStation']),
+    ...mapState(['user']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
     }
