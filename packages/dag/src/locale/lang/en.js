@@ -31,7 +31,9 @@ export default {
   packages_dag_meta_table_false: 'False',
   packages_dag_meta_table_comment: 'Comment',
   packages_dag_connection_name_search_placeholder: 'Please enter the connection name to search',
-  packages_dag_task_form_error_name_duplicate: '',
+  packages_dag_task_form_error_name_duplicate: 'Task name already exists, please re-enter it',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    'The maximum number of running tasks has been reached. Unable to add new scheduled tasks. Please deactivate scheduling for some tasks or stop running tasks.',
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full and Incremental Sync',
   packages_dag_task_stetting_desc: 'Task Description',
@@ -58,6 +60,7 @@ export default {
   packages_dag_dag_data_setting_runMinute: 'Run every minute',
   packages_dag_dag_data_setting_runDay: "Run at 2 o'clock every day",
   packages_dag_connection_form_access_node: 'Agent Settings',
+  packages_dag_agent_setting_from: 'Agent settings derive from the following',
   packages_dag_connection_form_automatic: 'Platform automatic allocation',
   packages_dag_connection_form_manual: 'User specified manually',
   packages_dag_task_setting_automatic_ddl: 'Automatic DDL',
@@ -333,19 +336,20 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',
   packages_dag_nodes_database_shujuxieruce: 'Data write strategy',
-  packages_dag_nodes_database_baochimubiaoduan:
-    'To maintain the original table structure on the target side, please clear the data.',
+  packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
   packages_dag_nodes_database_qingchumubiaoduan: 'Clear the original table structure and data on the target side',
   packages_dag_nodes_database_chongfuchulice: 'If the target table exists',
-  packages_dag_nodes_database_tuiyanjieguo: 'Deduction Results',
+  packages_dag_nodes_database_tuiyanjieguo: 'Target Table Structure',
   packages_dag_nodes_database_guolvjieguo: 'Filter Results',
   packages_dag_nodes_database_dangqianjiedianzhi: 'The current node has the capability to process DDL events',
   packages_dag_nodes_database_ddLshijian: 'DDL event collection',
   packages_dag_nodes_database_kaiqihourenwu:
     'Upon opening, the task will automatically gather the chosen source DDL events.',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
-  packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
+  packages_dag_nodes_database_quanliangmeipici:
+    'The number of records read per batch in full load should typically be kept at the default value. If your downstream system is slower and you encounter issues with the loss of the source cursor during tasks, please reduce this value.',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
+  packages_dag_nodes_database_zengliangmeipici: 'Incremental batch size',
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',
@@ -373,8 +377,9 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: 'Target table field',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
-  packages_dag_nodes_mergetable_guanlianhouxieru: 'Write path after association',
+  packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
   packages_dag_nodes_mergetable_shujuxierumo: 'Data write mode',
   packages_dag_nodes_rowfilter_tiaojianbiaodashi: 'Conditional expression',
@@ -392,6 +397,7 @@ export default {
   packages_dag_nodes_table_fuzhibiaoming: 'Copy table name',
   packages_dag_nodes_table_qingxuanzebiao: 'Please select a table',
   packages_dag_nodes_table_fuzhishujuku: 'Copy database name',
+  packages_dag_copy_node_id: 'Copy Node ID',
   packages_dag_nodes_table_shujuku: 'Database',
   packages_dag_nodes_targetdatabase_mubiaocunzaishi: 'Update when target exists',
   packages_dag_nodes_targetdatabase_baochimubiaoduan:
@@ -439,12 +445,16 @@ export default {
   packages_dag_components_nodedetaildialog_dangqianjiedianchu: "The current node's average event processing time",
   packages_dag_components_nodedetaildialog_dangqianjiedianping:
     'The average number of input events and output events per second processed by the current node',
+  packages_dag_components_nodedetaildialog_dangqianjiedianping2:
+    'The average input event size and output event size processed by the current node per second',
   packages_dag_monitor_leftsider_renwuchuliwan:
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
+  packages_dag_monitor_leftsider_qpSshizhi2:
+    'QPS refers to the average input event size and output event size processed by the task per second',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
     "Incremental read delay: the delay time from the time the incremental event is generated to the time it is read to the start of the task's processing in the incremental phase",
   packages_dag_components_nodedetaildialog_pingjunduquhao2:
@@ -522,6 +532,7 @@ export default {
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: 'Python nodes are currently only supported on Linux Agents, not Windows.',
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
   packages_dag_js_processor_index_zuoyong: 'Function:',
@@ -531,7 +542,7 @@ export default {
   packages_dag_js_processor_index_riqichuli: 'Date Processing',
   packages_dag_merge_table_tree_index_biaozhijianketong:
     'Tables can be nested by dragging and dropping to determine the master-slave relationship',
-  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name (support drag and drop)',
+  packages_dag_merge_table_tree_index_biaomingchengzhichi: 'Table Name',
   packages_dag_migration_settingpanel_cronbiao: 'Cron expression format error',
   packages_dag_hooks_useaftertasksaved_moxingyishengcheng: 'The model has been generated, execute callback',
   packages_dag_mixins_editor_wsshoudaole: 'Ws received the return of other tasks',
@@ -563,6 +574,8 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: 'Polling Interval (ms)',
   packages_dag_nodes_table_lunxunziduanmo: 'Polling field default value',
   packages_dag_nodes_table_zhidinglunxunzi: 'Specify the polling field',
+  packages_dag_nodes_cdcPollingFields_tip:
+    'Please ensure that the selected polling fields have indexes; otherwise, it may impact the source database due to query performance issues.',
   packages_dag_nodes_table_lunxun: 'Polling',
   packages_dag_nodes_table_rizhicdc: 'Log CDC',
   packages_dag_nodes_table_tedingziduande:
@@ -646,6 +659,7 @@ export default {
   packages_dag_mixins_formscope_gaizduanshibi: 'This field is required!',
   packages_dag_default_js: 'Default JS',
   packages_dag_standardization_js: 'Standardized JS',
+  packages_dag_mixins_formscope_gaiziduanshibi: 'This field is required!',
   packages_dag_shared_mining_table_info_index_wajuebiaoxinxi: 'Mining table information',
   packages_dag_table_not_exist: 'Table not exist, will be automatically created',
   packages_dag_field_inference_list_anxishutiaozheng: 'Adjust by coefficient',
@@ -666,6 +680,8 @@ export default {
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
   packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_config_data_filter_tip:
+    'Data filter configuration may impact the source database due to query filter performance issues. Please use with caution.',
   packages_dag_field_add_del_index_zhidi: 'To Bottom',
   packages_dag_field_add_del_index_xiayi: 'Move down',
   packages_dag_field_add_del_index_shangyi: 'Move Up',
@@ -674,9 +690,48 @@ export default {
   packages_dag_src_editor_date_processor_field_list: 'Fields affected by operations',
   packages_dag_dynamicAdjustMemoryUsage_title: 'Dynamic Adjustment Memory Usage',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.',
+    'In the full synchronization phase, if identified data consumes significant memory, the system will automatically proportionally reduce memory queue usage to prevent memory overflow errors. This may result in a reduction in synchronization speed. It is advisable to enable this feature when machine resources are limited for stable synchronization. When machine resources are sufficient, it is recommended to disable it.',
   packages_dag_mergeMode: 'Merge Mode',
   packages_dag_main_table_first: 'Snapshot read primary table priority',
   packages_dag_sub_table_first: 'Snaphost read child table priority',
-  packages_dag_model_generation: 'Schema Generating'
+  packages_dag_model_generation: 'Schema Generating',
+  packages_dag_materialized_view: 'Materialized View',
+  packages_dag_build_materialized_view: 'Build Materialized View',
+  packages_dag_materialized_view_help_title: 'How to build materialized views?',
+  packages_dag_materialized_view_help_desc:
+    'A materialized view is a special type of database view that enhances data retrieval speed. With Tapdata Cloud, you can create real-time materialized views, simplifying data management and application development processes.',
+  packages_dag_materialized_view_help_tutorial_btn: 'Detailed tutorial',
+  packages_dag_materialized_view_help_video_desc:
+    'The following video tutorial explains how to build materialized views using Tapdata Cloud...',
+  packages_dag_select_database_tips: 'Select a Database',
+  packages_dag_select_table_tips: 'Select a Table',
+  packages_dag_join_table: 'Join Table',
+  packages_dag_write_target: 'Write Target',
+  packages_dag_materialized_view_field_type: 'Field Type',
+  packages_dag_materialized_view_main_talbe_tips: 'Please select a main table',
+  packages_dag_materialized_view_field_flatten: 'Flatten',
+  packages_dag_materialized_view_field_document: 'Embedded Document',
+  packages_dag_materialized_view_field_array: 'Embedded Array',
+  packages_dag_materialized_view_storage_table: 'Materialized View Storage Table',
+  packages_dag_add_field: 'Add Field',
+  packages_dag_search_node: 'Search Node',
+  packages_dag_unwind_name: 'Unwinding Arrays',
+  packages_dag_unwind_path: 'Array Field Path',
+  packages_dag_unwind_includeArrayIndex: 'Array Index Field Name',
+  packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
+  packages_dag_unwind_preserveNullAndEmptyArrays_tips:
+    'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
+  packages_dag_btn_disable_node: 'Disable Node',
+  packages_dag_only_mongodb: 'Supports MongoDB databases only.',
+  packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
+  packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:',
+  packages_dag_enableSyncMetricCollector_title: 'Sync Metrics Collection',
+  packages_dag_enableSyncMetricCollector_tip:
+    'If enabled, the sync metrics of the task will be automatically collected. After the task stops, the corresponding metric information will be output for analysis.',
+  packages_dag_update_conditions_tip:
+    'Note: Tapdata will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
+  packages_dag_existDataProcessMode_desc:
+    'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
+  packages_dag_ddl_events_collapse_tip:
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.'
 }

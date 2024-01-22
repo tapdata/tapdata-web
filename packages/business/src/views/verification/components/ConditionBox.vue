@@ -122,7 +122,7 @@
                   :scope="schemaScope"
                   :colon="true"
                   class="w-100"
-                  label-width="120"
+                  label-width="130"
                 />
               </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
@@ -407,7 +407,7 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: ''
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip')
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -601,7 +601,8 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: ''
+                      labelWrap: true,
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip')
                     },
                     'x-component': 'Switch',
                     default: false,
