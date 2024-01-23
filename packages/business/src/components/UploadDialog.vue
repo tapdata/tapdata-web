@@ -2,13 +2,32 @@
   <ElDialog
     width="600px"
     custom-class="import-upload-dialog"
-    :title="$t('packages_business_modules_dialog_import_title')"
+    :title="title"
     :close-on-click-modal="false"
     :visible.sync="dialogVisible"
     :before-close="handleClose"
   >
-    <ElForm ref="form" :rules="rules" :model="importForm" class="applications-form" label-width="100px">
-      <ElFormItem prop="upsert" :label="$t('packages_business_modules_dialog_condition') + ':'">
+    <ElForm
+      ref="form"
+      :rules="rules"
+      :model="importForm"
+      class="applications-form mt-n4"
+      label-position="top"
+      label-width="100px"
+    >
+      <ElAlert
+        v-if="isRelmig"
+        class="bg-color-primary-light-9 my-2 text-primary"
+        type="info"
+        show-icon
+        :closable="false"
+      >
+        <span slot="title" class="inline-block lh-sm align-middle">
+          {{ $t('packages_business_relmig_import_desc') }}
+        </span>
+      </ElAlert>
+
+      <ElFormItem v-if="!isRelmig" prop="upsert" :label="$t('packages_business_modules_dialog_condition')">
         <el-radio v-model="importForm.upsert" :label="1">{{
           $t('packages_business_modules_dialog_overwrite_data')
         }}</el-radio>
@@ -16,12 +35,7 @@
           $t('packages_business_modules_dialog_skip_data')
         }}</el-radio>
       </ElFormItem>
-      <ElFormItem prop="tag" v-show="showTag" :label="$t('packages_business_modules_dialog_group') + ':'">
-        <ElSelect v-model="importForm.tag" multiple class="w-100">
-          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem prop="fileList" :label="$t('packages_business_modules_dialog_file') + ':'">
+      <ElFormItem prop="fileList" :label="$t('packages_business_modules_dialog_file')">
         <ElUpload
           class="w-75"
           ref="upload"
@@ -35,17 +49,22 @@
           :on-remove="handleRemove"
           :data="uploadData"
         >
-          <ElLink class="align-top" type="primary" plain slot="trigger" size="mini">
-            <VIcon class="mr-1 link-primary">upload</VIcon>
-            {{ $t('packages_business_modules_dialog_upload_files') }}</ElLink
+          <ElButton class="align-top" type="primary" slot="trigger" size="mini">
+            <VIcon class="mr-1">upload</VIcon>
+            {{ uploadText }}</ElButton
           >
         </ElUpload>
       </ElFormItem>
-      <template v-if="isRelmig">
+      <ElFormItem prop="tag" v-show="showTag" :label="$t('public_tags')">
+        <ElSelect v-model="importForm.tag" multiple class="w-100">
+          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
+        </ElSelect>
+      </ElFormItem>
+      <template v-if="isRelmig && importForm.fileList.length">
         <ElFormItem
           :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
           required
-          :label="$t('public_source_database') + ':'"
+          :label="$t('public_source_connection')"
           prop="source"
         >
           <AsyncSelect class="w-100" v-model="importForm.source" :method="getSourceDatabase" itemQuery="name" lazy />
@@ -53,7 +72,7 @@
         <ElFormItem
           :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
           required
-          :label="$t('public_target_database') + ':'"
+          :label="$t('public_target_connection')"
           prop="sink"
         >
           <AsyncSelect class="w-100" v-model="importForm.sink" :method="getTargetDatabase" itemQuery="name" lazy />
@@ -84,6 +103,10 @@ export default {
     VIcon
   },
   props: {
+    showCondition: {
+      type: Boolean,
+      default: true
+    },
     type: {
       required: true,
       value: String
@@ -98,6 +121,8 @@ export default {
     const accept = isDaas ? '.gz,.relmig' : '.relmig' // 云版仅支持 .relmig
     return {
       isDaas,
+      // title: '',
+      // uploadText: '',
       dialogVisible: false,
       classifyList: [],
       downType: '',
@@ -110,7 +135,6 @@ export default {
         source: '',
         sink: ''
       },
-      isRelmig: false,
       rules: {
         source: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }],
         sink: [{ required: true, message: this.$t('public_select_placeholder'), trigger: 'blur' }]
@@ -119,6 +143,19 @@ export default {
     }
   },
   computed: {
+    title() {
+      return this.$t(
+        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title'
+      )
+    },
+    uploadText() {
+      return this.$t(
+        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files'
+      )
+    },
+    isRelmig() {
+      return this.type === 'relmig'
+    },
     uploadData() {
       const data = {
         upsert: this.importForm.upsert,

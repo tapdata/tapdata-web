@@ -34,6 +34,7 @@ export default {
   public_no_permissions: 'No Permissions',
   public_yes: 'Yes',
   public_no: 'No',
+  public_tags: 'Tags',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -232,6 +233,8 @@ export default {
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   public_source_database: 'Source Database',
   public_target_database: 'Target Database',
+  public_source_connection: 'Source Connection',
+  public_target_connection: 'Target Connection',
   // Task
   public_task: 'Task',
   public_task_name: 'Task Name',

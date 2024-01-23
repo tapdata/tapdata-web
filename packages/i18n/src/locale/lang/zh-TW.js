@@ -34,6 +34,7 @@ export default {
   public_no_permissions: '沒有權限',
   public_yes: '是',
   public_no: '否',
+  public_tags: '標籤',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -231,6 +232,8 @@ export default {
   public_connection_form_link_plugin_source: '鏈接插件來源',
   public_source_database: '源數據庫',
   public_target_database: '目標數據庫',
+  public_source_connection: '源連接',
+  public_target_connection: '目標連接',
   // 任務
   public_task: '任務',
   public_task_name: '任務名稱',

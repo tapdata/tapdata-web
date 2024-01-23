@@ -34,6 +34,7 @@ export default {
   public_no_permissions: '没有权限',
   public_yes: '是',
   public_no: '否',
+  public_tags: '标签',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -232,6 +233,8 @@ export default {
   public_connection_form_link_plugin_source: '链接插件来源',
   public_source_database: '源数据库',
   public_target_database: '目标数据库',
+  public_source_connection: '源连接',
+  public_target_connection: '目标连接',
   // 任务
   public_task: '任务',
   public_task_name: '任务名称',

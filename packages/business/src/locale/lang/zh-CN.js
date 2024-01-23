@@ -1169,5 +1169,9 @@ export default {
   packages_business_ssh_username: '用户名',
   packages_business_ssh_password: '密码',
   packages_business_connections_test_xiazaijindu: '下载进度',
-  packages_business_connections_test_xiazaishibai: '下载失败'
+  packages_business_connections_test_xiazaishibai: '下载失败',
+  packages_business_relmig_import: 'MongoDB Relmig 导入',
+  packages_business_relmig_import_desc:
+    '这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 Tapdata。在 relmig 文件被导入后，Tapdata 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。',
+  packages_business_relmig_upload: '上传 relmig 文件'
 }
