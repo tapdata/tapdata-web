@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    width="600px"
+    width="680px"
     custom-class="import-upload-dialog"
     :title="title"
     :close-on-click-modal="false"
@@ -55,11 +55,6 @@
           >
         </ElUpload>
       </ElFormItem>
-      <ElFormItem prop="tag" v-show="showTag" :label="$t('public_tags')">
-        <ElSelect v-model="importForm.tag" multiple class="w-100">
-          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
-        </ElSelect>
-      </ElFormItem>
       <template v-if="isRelmig && importForm.fileList.length">
         <ElFormItem
           :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
@@ -67,7 +62,14 @@
           :label="$t('public_source_connection')"
           prop="source"
         >
-          <AsyncSelect class="w-100" v-model="importForm.source" :method="getSourceDatabase" itemQuery="name" lazy />
+          <AsyncSelect
+            :placeholder="$t('packages_business__relmig_import_source_connection_placeholder')"
+            class="w-100"
+            v-model="importForm.source"
+            :method="getSourceDatabase"
+            itemQuery="name"
+            lazy
+          />
           <div>
             <ElLink @click="goCreateConnection" type="primary">{{
               $t('packages_business__relmig_import_connection_tip')
@@ -80,7 +82,14 @@
           :label="$t('public_target_connection')"
           prop="sink"
         >
-          <AsyncSelect class="w-100" v-model="importForm.sink" :method="getTargetDatabase" itemQuery="name" lazy />
+          <AsyncSelect
+            :placeholder="$t('packages_business__relmig_import_target_connection_placeholder')"
+            class="w-100"
+            v-model="importForm.sink"
+            :method="getTargetDatabase"
+            itemQuery="name"
+            lazy
+          />
           <div>
             <ElLink @click="goCreateConnection" type="primary">{{
               $t('packages_business__relmig_import_connection_tip')
@@ -88,6 +97,16 @@
           </div>
         </ElFormItem>
       </template>
+      <ElFormItem prop="tag" v-show="showTag" :label="$t('public_tags')">
+        <ElSelect
+          v-model="importForm.tag"
+          multiple
+          class="w-100"
+          :placeholder="$t('packages_business_task_tag_placeholder')"
+        >
+          <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
+        </ElSelect>
+      </ElFormItem>
     </ElForm>
     <span slot="footer" class="dialog-footer">
       <ElButton @click="handleClose" size="mini">{{ $t('public_button_cancel') }}</ElButton>

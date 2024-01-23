@@ -1174,5 +1174,8 @@ export default {
   packages_business_relmig_import_desc:
     '这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 Tapdata。在 relmig 文件被导入后，Tapdata 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。',
   packages_business_relmig_upload: '上传 relmig 文件',
-  packages_business__relmig_import_connection_tip: '如果您还没有创建，请点击这里'
+  packages_business__relmig_import_connection_tip: '如果您还没有创建，请点击这里',
+  packages_business__relmig_import_source_connection_placeholder: '请选择包含您在 relmig 项目中使用的源表的源连接',
+  packages_business__relmig_import_target_connection_placeholder: '请选择您希望数据同步到的目标连接',
+  packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它'
 }

@@ -97,7 +97,7 @@ export default {
   public_button_download: 'Download',
   public_button_add: 'New',
   public_button_bulk_operation: 'Batch Operation',
-  public_button_bulk_tag: 'Set Category',
+  public_button_bulk_tag: 'Set Tag',
   public_button_revise: 'Revise',
   public_button_refresh: 'Refresh',
   public_button_public: 'Publish',

@@ -96,7 +96,7 @@ export default {
   public_button_download: '下載',
   public_button_add: '新增',
   public_button_bulk_operation: '批量操作',
-  public_button_bulk_tag: '設置分類',
+  public_button_bulk_tag: '設置標籤',
   public_button_revise: '修改',
   public_button_refresh: '刷新',
   public_button_public: '發布',

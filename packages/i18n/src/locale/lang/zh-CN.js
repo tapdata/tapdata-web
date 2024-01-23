@@ -97,7 +97,7 @@ export default {
   public_button_download: '下载',
   public_button_add: '新增',
   public_button_bulk_operation: '批量操作',
-  public_button_bulk_tag: '设置分类',
+  public_button_bulk_tag: '设置标签',
   public_button_revise: '修改',
   public_button_refresh: '刷新',
   public_button_public: '发布',
