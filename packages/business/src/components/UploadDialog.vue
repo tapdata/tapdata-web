@@ -68,6 +68,11 @@
           prop="source"
         >
           <AsyncSelect class="w-100" v-model="importForm.source" :method="getSourceDatabase" itemQuery="name" lazy />
+          <div>
+            <ElLink @click="goCreateConnection" type="primary">{{
+              $t('packages_business__relmig_import_connection_tip')
+            }}</ElLink>
+          </div>
         </ElFormItem>
         <ElFormItem
           :label-width="`${this.$i18n.locale === 'en' ? 150 : 100}px`"
@@ -76,6 +81,11 @@
           prop="sink"
         >
           <AsyncSelect class="w-100" v-model="importForm.sink" :method="getTargetDatabase" itemQuery="name" lazy />
+          <div>
+            <ElLink @click="goCreateConnection" type="primary">{{
+              $t('packages_business__relmig_import_connection_tip')
+            }}</ElLink>
+          </div>
         </ElFormItem>
       </template>
     </ElForm>
@@ -357,6 +367,15 @@ export default {
         }
       })
       return this.loadDatabases(filter)
+    },
+
+    goCreateConnection() {
+      this.$router.push({
+        name: 'connections',
+        query: {
+          create: true
+        }
+      })
     }
   }
 }

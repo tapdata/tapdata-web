@@ -347,7 +347,11 @@ export default {
     })
   },
   mounted() {
-    const { action } = this.$route.query || {}
+    const { action, create } = this.$route.query || {}
+
+    if (create) {
+      this.dialogDatabaseTypeVisible = true
+    }
 
     if (action === 'create') {
       this.checkTestConnectionAvailable()

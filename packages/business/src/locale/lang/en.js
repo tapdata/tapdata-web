@@ -1233,5 +1233,6 @@ export default {
   packages_business_relmig_import: 'MongoDB Relmig Import',
   packages_business_relmig_import_desc:
     'This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into Tapdata. After the relmig file is imported, Tapdata will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.',
-  packages_business_relmig_upload: 'Upload relmig file'
+  packages_business_relmig_upload: 'Upload relmig file',
+  packages_business__relmig_import_connection_tip: "Click here to create one if you haven't done so already."
 }
