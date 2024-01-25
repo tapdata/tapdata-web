@@ -1,21 +1,20 @@
 <template>
-  <div class="time-select__picker">
-    <div class="picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
+  <div class="time-select__picker flex align-center">
+    <div class="w-100 picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model="period"
         :class="{ 'is-time': isTime }"
-        :popper-append-to-body="false"
         popper-class="time-select__popper"
-        class="ml-2 dark"
+        class="ml-2 dark flex-1"
         size="mini"
         ref="select"
         @change="changeFnc"
       >
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
-      <VIcon size="14" class="color-primary ml-1" @click="openPicker">timer</VIcon>
     </div>
+    <IconButton class="color-primary ml-1" @click.stop="openPicker">timer</IconButton>
     <ElDatePicker
       v-model="time"
       :picker-options="pickerOptions"
@@ -38,12 +37,12 @@ import dayjs from 'dayjs'
 
 import i18n from '@tap/i18n'
 import Time from '@tap/shared/src/time'
-import { VIcon } from '@tap/component'
+import { IconButton } from './icon-button'
 
 export default {
   name: 'TimeSelect',
 
-  components: { VIcon },
+  components: { IconButton },
 
   props: {
     value: String,
@@ -194,8 +193,8 @@ export default {
       }
 
       const { rangeSeparator, formatToString } = this.$refs.datetime
-      console.log('formatToString(val)', formatToString(val))
-      const label = formatToString(val)?.join?.(rangeSeparator) || ''
+
+      const label = formatToString(val)?.join?.(` ${rangeSeparator} `) || ''
       const valJoin = val?.map(t => new Date(t).getTime()).join()
       if (!valJoin) {
         return
@@ -342,8 +341,8 @@ export default {
   //width: 260px;
 }
 .picker__item {
-  padding: 0 4px;
-  border-radius: 2px;
+  padding: 0 8px;
+  border-radius: 4px;
   &:hover {
     background: #eef3ff;
   }

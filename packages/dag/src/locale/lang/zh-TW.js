@@ -207,6 +207,7 @@ export default {
   packages_dag_components_record_yunxingjieshushi: '運行結束時間',
   packages_dag_components_record_yunxingkaishishi: '運行開始時間',
   packages_dag_components_timeselect_renwuquanzhouqi: '任務全週期',
+  packages_dag_components_timeselect_incremental_phase: '增量階段',
   packages_dag_components_timeselect_zuijintian: '最近1天',
   packages_dag_components_timeselect_zuixinxiaoshi: '最新1小時',
   packages_dag_components_timeselect_zuijinfenzhong: '最近5分鐘',

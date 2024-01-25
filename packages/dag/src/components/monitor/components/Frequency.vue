@@ -4,7 +4,6 @@
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model="period"
-        :popper-append-to-body="false"
         popper-class="time-select__popper"
         class="ml-2 dark"
         size="mini"
@@ -129,8 +128,8 @@ export default {
   line-height: 1.5;
 }
 .picker__item {
-  padding: 0 4px;
-  border-radius: 2px;
+  padding: 0 8px;
+  border-radius: 4px;
   &:hover {
     background: #eef3ff;
   }

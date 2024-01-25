@@ -1,19 +1,18 @@
 <template>
   <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0 overflow-y-auto">
-      <div class="info-box flex justify-content-between align-items-center">
-        <TimeSelect :range="$attrs.range" ref="timeSelect" class="mb-1" @change="changeTimeSelect"></TimeSelect>
-        <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')" class="mt-n1">
-          <VIcon size="16" class="color-primary" @click="$emit('load-data')">refresh</VIcon>
-        </ElTooltip>
-        <ElDivider direction="vertical" class="mx-1"></ElDivider>
-        <Frequency
+      <div class="info-box flex justify-content-between align-items-center flex-wrap">
+        <TimeSelect
+          :options="timeOptions"
           :range="$attrs.range"
-          style="width: 136px"
-          class="flex-shrink-0"
-          @change="changeFrequency"
-        ></Frequency>
+          ref="timeSelect"
+          class="mb-1 w-100"
+          @change="changeTimeSelect"
+        ></TimeSelect>
+        <Frequency :range="$attrs.range" class="flex-1 mr-1" @change="changeFrequency"></Frequency>
+        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
+          <IconButton class="color-primary" @click="$emit('load-data')"> refresh </IconButton>
+        </ElTooltip>
       </div>
       <div v-if="dataflow.type !== 'cdc'" class="info-box sync-info">
         <div class="flex justify-content-between mb-2">
@@ -382,7 +381,7 @@ import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
 import LineChart from './components/LineChart'
-import { VIcon, TimeSelect } from '@tap/component'
+import { VIcon, TimeSelect, IconButton } from '@tap/component'
 import Frequency from './components/Frequency'
 import InitialList from './components/InitialList'
 import dayjs from 'dayjs'
@@ -414,7 +413,8 @@ export default {
     TimeSelect,
     Frequency,
     VIcon,
-    InitialList
+    InitialList,
+    IconButton
   },
 
   data() {
@@ -633,6 +633,51 @@ export default {
 
     showToInitialList() {
       return !(this.dataflow.syncType === 'sync' && !this.dataflow.shareCache)
+    },
+
+    // 进入增量阶段
+    startingIncremental() {
+      return this.dataflow.type !== 'initial_sync' && !!this.initialData.snapshotDoneAt
+    },
+
+    timeOptions() {
+      const options = [
+        {
+          label: i18n.t('packages_dag_components_timeselect_zuijinfenzhong'),
+          value: '5m'
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_zuixinxiaoshi'),
+          value: '1h'
+        },
+        {
+          label: i18n.t('public_time_last_day'),
+          value: '1d'
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_renwuzuijinyi'),
+          value: 'lastStart'
+        },
+        {
+          label: i18n.t('packages_dag_components_timeselect_renwuquanzhouqi'),
+          value: 'full'
+        }
+      ]
+
+      if (this.startingIncremental) {
+        options.push({
+          label: i18n.t('packages_dag_components_timeselect_incremental_phase'),
+          value: 'incremental'
+        })
+      }
+
+      options.push({
+        label: i18n.t('public_time_custom_time'),
+        type: 'custom',
+        value: 'custom'
+      })
+
+      return options
     }
   },
 

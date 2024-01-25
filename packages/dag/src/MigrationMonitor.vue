@@ -800,7 +800,7 @@ export default {
             taskId,
             taskRecordId
           },
-          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag', 'inputSizeQps',  'outputSizeQps', 'qpsType'],
+          fields: ['inputQps', 'outputQps', 'timeCostAvg', 'replicateLag', 'inputSizeQps', 'outputSizeQps', 'qpsType'],
           type: 'continuous' // 连续数据
         },
         // dag数据
@@ -1130,6 +1130,9 @@ export default {
           break
         case 'full':
           result = [this.firstStartTime, endTimestamp]
+          break
+        case 'incremental':
+          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 3000, endTimestamp]
           break
         default:
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]

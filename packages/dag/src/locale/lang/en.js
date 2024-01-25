@@ -218,6 +218,7 @@ export default {
   packages_dag_components_record_yunxingjieshushi: 'Operation end time',
   packages_dag_components_record_yunxingkaishishi: 'Operation start time',
   packages_dag_components_timeselect_renwuquanzhouqi: 'Task full cycle',
+  packages_dag_components_timeselect_incremental_phase: 'Incremental Phase',
   packages_dag_components_timeselect_zuijintian: 'Last 1 day',
   packages_dag_components_timeselect_zuixinxiaoshi: 'Latest 1 hour',
   packages_dag_components_timeselect_zuijinfenzhong: 'last 5 minutes',
