@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
+import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import i18n from '../i18n'
 
 Vue.use(Vuex)
 
@@ -23,11 +25,17 @@ const store = new Vuex.Store({
       nickname: '',
       avatar: '',
       telephone: '',
+      phoneCountryCode: '',
       wx: '',
       email: '',
       enableLicense: false,
       licenseCodes: [],
-      gcpAccount: null
+      customData: {
+        firstName: '',
+        lastName: ''
+      },
+      gcpAccount: null,
+      locale: ''
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -80,7 +88,8 @@ const store = new Vuex.Store({
     config: {
       onlyEnglishLanguage: false,
       slackLink: '',
-      station: '' //标记国际站international 国内站 domestic
+      station: '', //标记国际站international 国内站 domestic
+      pagePermissions: [] // dataHub
     },
 
     showReplicationTour: false,
@@ -89,8 +98,13 @@ const store = new Vuex.Store({
   },
 
   getters: {
+    language: state => {
+      return state.user.locale
+    },
     isGCPMarketplaceUser: state => state.user.gcpAccount !== null,
-    isDomesticStation: state => state.config.station === 'domestic',
+    isDomesticStation: (state, getters) => {
+      return getters.language !== 'en'
+    },
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',
     completedTour: state => state.replicationTour.status === 'completed',
@@ -110,7 +124,14 @@ const store = new Vuex.Store({
 
     setUser(state, user = {}) {
       Object.assign(state.user, user)
-      console.log('state.user', state.user) // eslint-disable-line
+    },
+
+    setLanguage(state, lang) {
+      if (!lang) {
+        lang = getCurrentLanguage()
+      }
+      state.user.locale = lang
+      setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {

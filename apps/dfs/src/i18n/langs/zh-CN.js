@@ -1684,5 +1684,6 @@ export default {
   dfs_marketplace_guide_step_2: '新手【数据复制任务】教学引导',
   dfs_marketplace_guide_step_3: '敬请体验完整功能',
   dfs_marketplace_guide_cancel: '随便看看',
-  dfs_marketplace_guide_ok: '刷新一下'
+  dfs_marketplace_guide_ok: '刷新一下',
+  dfs_settings_language: '显示语言'
 }

@@ -19,11 +19,6 @@
           <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
-        <!--有奖问卷-->
-        <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
-          <span class="cursor-pointer"> {{ $t('dfs_the_header_header_prize_questionnaire') }} </span>
-          <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-        </div>
         <!--线下部署-->
         <div
           v-if="isDomesticStation"
@@ -67,16 +62,6 @@
         </div>
 
         <NotificationPopover class="command-item flex align-items-center rounded-4"></NotificationPopover>
-        <ElDropdown placement="bottom" :show-timeout="0" @command="changeLanguage" v-if="!onlyEnglishLanguage">
-          <span class="cursor-pointer command-item rounded-4 icon-btn">
-            <VIcon size="20">{{ 'language-' + lang }}</VIcon>
-          </span>
-          <ElDropdownMenu slot="dropdown" class="no-triangle">
-            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
-              {{ value }}
-            </ElDropdownItem>
-          </ElDropdownMenu>
-        </ElDropdown>
         <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
           <div class="username flex align-items-center">
             <img
@@ -107,7 +92,7 @@
   </ElHeader>
 </template>
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
@@ -119,7 +104,6 @@ export default {
   components: { VIcon, NotificationPopover },
   data() {
     return {
-      user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
       officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
@@ -128,15 +112,13 @@ export default {
       domain: document.domain,
       mockUserId: null,
       openUpgradeFee: false,
-      isFeeUser: true,
-      //用户注册时间
-      registrationTime: '',
-      showQuestionnaire: false
+      isFeeUser: true
     }
   },
 
   computed: {
     ...mapGetters(['isDomesticStation']),
+    ...mapState(['user']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
     }
@@ -163,12 +145,6 @@ export default {
           type: 'handbook'
         }
       ]
-    }
-    //获取用户注册时间
-    if (this.user?.id) {
-      this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      // 国内站 && 注册时间7天大于的用户
-      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
   },
   methods: {
@@ -271,9 +247,6 @@ export default {
     },
     openUpgrade() {
       this.openUpgradeFee = true
-    },
-    goQuestionnaire() {
-      window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
     },
     goSlack() {
       window.open(this.$store.state.config.slackLink, '_blank')

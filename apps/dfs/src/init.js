@@ -18,7 +18,6 @@ import FormBuilder from '@tap/component/src/form-builder'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
-import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
 
@@ -88,6 +87,7 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
+    store.commit('setLanguage', window.__USER_INFO__.locale)
 
     window.App = new Vue({
       router,
@@ -115,7 +115,10 @@ export default ({ routes }) => {
               class: 'flex align-items-start gap-2 ml-n3 mr-n2'
             },
             [
-              h('ElImage', { class: 'flex-shrink-0', attrs: { src: require('@/assets/image/version-rocket.svg') } }),
+              h('ElImage', {
+                class: 'flex-shrink-0',
+                attrs: { src: require('@/assets/image/version-rocket.svg') }
+              }),
               h('div', { class: 'flex flex-column align-items-start gap-2 text-start' }, [
                 h('span', { class: 'text-primary fs-6 fw-sub' }, i18n.t('dfs_system_update')),
                 h('span', { class: '' }, i18n.t('dfs_system_description')),
@@ -219,10 +222,6 @@ export default ({ routes }) => {
     .then(res => {
       store.commit('setConfig', res.data)
       window.__config__ = res.data
-
-      if (res.data.onlyEnglishLanguage) {
-        setCurrentLanguage('en', i18n)
-      }
 
       getData()
     })

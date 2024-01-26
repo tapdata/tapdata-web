@@ -1823,5 +1823,6 @@ export default {
   dfs_marketplace_guide_step_2: `Beginner's guide to [Data Replication Task]`,
   dfs_marketplace_guide_step_3: 'Please enjoy the full functionality',
   dfs_marketplace_guide_cancel: 'Close',
-  dfs_marketplace_guide_ok: 'Refresh'
+  dfs_marketplace_guide_ok: 'Refresh',
+  dfs_settings_language: 'Language'
 }
