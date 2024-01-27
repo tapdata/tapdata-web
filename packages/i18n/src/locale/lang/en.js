@@ -289,5 +289,6 @@ export default {
   public_external_memory_connection: 'External memory connection',
   public_external_memory_info: 'External storage information',
 
-  public_shared_mining: 'CDC Log Cache'
+  public_shared_mining: 'CDC Log Cache',
+  public_external_storage: 'External Storage'
 }
