@@ -41,6 +41,7 @@
             <span v-if="isFileSource" class="flex-1 text-end">{{
               $t('packages_dag_components_node_zanbuzhichi')
             }}</span>
+            <span v-else-if="initialData.finishDuration < 0">{{ $t('packages_business_task_info_calculating') }}</span>
             <ElTooltip
               v-else
               transition="tooltip-fade-in"
