@@ -724,6 +724,9 @@ export default {
         },
         accessNodeProcessId: {
           type: 'string',
+          description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
+            'packages_business_agent_select_not_found_for_rocksdb'
+          )}' : ''}}`,
           'x-decorator': 'FormItem',
           'x-decorator-props': {
             colon: false
@@ -749,7 +752,14 @@ export default {
           // 校验下拉数据判断是否存在已选的agent
           'x-validator': `{{(value, rule, ctx)=> {
             if (!value) {
-              return '${this.$t('packages_business_agent_select_placeholder')}'
+              let msg = '${this.$t('packages_business_agent_select_placeholder')}'
+              const {shareCDCExternalStorageId} = $values.__TAPDATA
+              if (shareCDCExternalStorageId) {
+                const dataSource = $form.query('__TAPDATA.shareCDCExternalStorageId').get('dataSource')
+                const type = dataSource.find(item => item.value === shareCDCExternalStorageId)?.type
+                if (type === 'rocksdb') msg = '${this.$t('packages_business_agent_select_not_found_for_rocksdb')}'
+              }
+              return msg
             } else if (value && ctx.field.dataSource?.length) {
               const current = ctx.field.dataSource.find(item => item.value === value)
               if (!current) {
@@ -1236,6 +1246,7 @@ export default {
             })
             return items.map(item => {
               return {
+                type: item.type,
                 label: item.name,
                 value: item.id,
                 isDefault: item.defaultStorage

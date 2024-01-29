@@ -347,6 +347,7 @@ export default {
   packages_business_relation_details_renwu: '任务',
   packages_business_agent_select_placeholder: '请选择agent',
   packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent',
+  packages_business_agent_select_not_found_for_rocksdb: '选用RocksDB作为共享挖掘外存时，需要手动指定一个Agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的数据源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     '交由Tapdata进行全面的质量测试，以保证插件的稳定性和质量',

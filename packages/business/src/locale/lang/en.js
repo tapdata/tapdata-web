@@ -353,6 +353,8 @@ export default {
   packages_business_relation_details_renwu: 'Tasks',
   packages_business_agent_select_placeholder: 'Please select an agent',
   packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
+  packages_business_agent_select_not_found_for_rocksdb:
+    'When using RocksDB as the shared mining storage, you need to manually specify an agent.',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
