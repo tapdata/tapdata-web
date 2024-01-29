@@ -930,6 +930,11 @@ export default {
 .sync-info-item__title {
   display: inline-block;
   width: 110px;
+
+  & + span {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
 }
 .line-chart__box {
   .line-chart {
