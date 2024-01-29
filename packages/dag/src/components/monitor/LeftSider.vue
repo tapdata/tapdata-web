@@ -9,7 +9,7 @@
           class="mb-1 w-100"
           @change="changeTimeSelect"
         ></TimeSelect>
-        <Frequency :range="$attrs.range" class="flex-1 mr-1" @change="changeFrequency"></Frequency>
+        <Frequency :range="$attrs.range" class="flex-1" @change="changeFrequency"></Frequency>
         <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
           <IconButton class="color-primary" @click="$emit('load-data')"> refresh </IconButton>
         </ElTooltip>

@@ -14,7 +14,7 @@
         <ElOption v-for="(item, index) in items" :key="index" :label="item.label" :value="item.value"></ElOption>
       </ElSelect>
     </div>
-    <IconButton class="color-primary ml-1" @click.stop="openPicker">timer</IconButton>
+    <IconButton class="color-primary" @click.stop="openPicker">timer</IconButton>
     <ElDatePicker
       v-model="time"
       :picker-options="pickerOptions"
