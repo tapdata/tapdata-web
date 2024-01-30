@@ -521,19 +521,13 @@ export default {
             color: map-get($color, primary);
           }
         }
+
+        .submenu-item {
+          padding-left: 12px;
+        }
       }
     }
 
-    //.el-submenu {
-    //  ::v-deep {
-    //    .el-submenu__title {
-    //      font-size: 12px;
-    //    }
-    //  }
-    //  .submenu-item {
-    //    padding-left: 8px;
-    //  }
-    //}
     .product-name {
       padding-left: 20px;
       font-size: 14px;
