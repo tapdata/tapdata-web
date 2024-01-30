@@ -284,7 +284,14 @@ export default {
       hasFreeAgent: false,
       currencyType: '',
       currencyOption: [],
-      CURRENCY_MAP
+      CURRENCY_MAP,
+      lang: {
+        en: {
+          AliCloud: 'Alibaba Cloud',
+          'cn-beijing': 'Beijing',
+          'cn-hongkong': 'Hong Kong'
+        }
+      }
     }
   },
 
@@ -389,7 +396,11 @@ export default {
     async getCloudProvider() {
       const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
 
-      this.cloudProviderList = data?.items || []
+      this.cloudProviderList = (data?.items || []).map(item => {
+        item.cloudProviderName = this.lang[this.$i18n.locale]?.[item.cloudProvider] || item.cloudProviderName
+        return item
+      })
+
       this.provider = this.cloudProviderList?.[0].cloudProvider
       this.changeProvider()
       await this.getPrice()
@@ -411,7 +422,10 @@ export default {
     changeProvider() {
       let cloudProvider = this.cloudProviderList.filter(it => it.cloudProvider === this.provider) || []
       this.cloudProviderName = cloudProvider?.[0]?.cloudProviderName
-      this.cloudDetail = cloudProvider?.[0].cloudDetail || []
+      this.cloudDetail = (cloudProvider?.[0].cloudDetail || []).map(item => {
+        item.regionName = this.lang[this.$i18n.locale]?.[item.region] || item.regionName
+        return item
+      })
       this.region = this.cloudDetail?.[0]?.region
       this.changeRegion()
       //数据初始化
