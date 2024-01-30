@@ -290,5 +290,7 @@ export default {
   public_external_memory_info: 'External storage information',
 
   public_shared_mining: 'CDC Log Cache',
-  public_external_storage: 'External Storage'
+  public_external_storage: 'External Storage',
+
+  public_page_title_advanced_features: 'Advanced'
 }

@@ -289,5 +289,7 @@ export default {
   public_external_memory_info: '外存信息',
 
   public_shared_mining: '共享挖掘',
-  public_external_storage: '外存管理'
+  public_external_storage: '外存管理',
+
+  public_page_title_advanced_features: '高级功能'
 }

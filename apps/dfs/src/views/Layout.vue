@@ -179,12 +179,6 @@ export default {
           icon: 'task'
         },
         {
-          name: 'sharedMining',
-          title: $t('public_shared_mining'),
-          icon: 'cdc-log',
-          beta: true
-        },
-        {
           name: 'dataVerification',
           title: $t('page_title_data_verify'),
           icon: 'data-validation'
@@ -269,15 +263,29 @@ export default {
         icon: 'icon_subscription'
       },
       {
-        name: 'externalStorage',
-        title: this.$t('public_external_storage'),
-        icon: 'wcgl',
-        beta: true
-      },
-      {
         name: 'OperationLog',
         title: this.$t('operation_log_manage'),
         icon: 'operation-log'
+      },
+      {
+        name: 'advancedFeatures',
+        title: this.$t('public_page_title_advanced_features'),
+        icon: 'vip-one',
+        code: 'v2_advanced_features',
+        children: [
+          {
+            name: 'sharedMining',
+            title: this.$t('public_shared_mining'),
+            icon: 'cdc-log',
+            beta: true
+          },
+          {
+            name: 'externalStorage',
+            title: this.$t('public_external_storage'),
+            icon: 'wcgl',
+            beta: true
+          }
+        ]
       }
     ]
     this.subMenu = subMenu.map(el => {
@@ -493,35 +501,39 @@ export default {
     .el-menu {
       background-color: map-get($color, submenu);
     }
-    .el-menu-item {
-      height: 50px;
-      line-height: 50px;
-      ::v-deep .v-icon {
-        color: map-get($iconFillColor, normal);
-      }
-      &.is-active,
-      &:hover {
-        background-color: map-get($color, white);
-        color: map-get($color, primary);
-        border-radius: 8px;
-      }
-      &.is-active,
-      &:hover {
-        ::v-deep .v-icon {
+    ::v-deep {
+      .el-menu-item,
+      .el-submenu__title {
+        height: 50px;
+        line-height: 50px;
+        .v-icon {
+          color: map-get($iconFillColor, normal);
+        }
+        &.is-active,
+        &:hover {
+          background-color: map-get($color, white);
           color: map-get($color, primary);
+          border-radius: 8px;
+        }
+        &.is-active,
+        &:hover {
+          ::v-deep .v-icon {
+            color: map-get($color, primary);
+          }
         }
       }
     }
-    .el-submenu {
-      ::v-deep {
-        .el-submenu__title {
-          font-size: 12px;
-        }
-      }
-      .submenu-item {
-        padding-left: 8px;
-      }
-    }
+
+    //.el-submenu {
+    //  ::v-deep {
+    //    .el-submenu__title {
+    //      font-size: 12px;
+    //    }
+    //  }
+    //  .submenu-item {
+    //    padding-left: 8px;
+    //  }
+    //}
     .product-name {
       padding-left: 20px;
       font-size: 14px;
