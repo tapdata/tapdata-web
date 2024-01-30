@@ -181,7 +181,8 @@ export default {
         {
           name: 'sharedMining',
           title: $t('public_shared_mining'),
-          icon: 'cdc-log'
+          icon: 'cdc-log',
+          beta: true
         },
         {
           name: 'dataVerification',
@@ -270,7 +271,8 @@ export default {
       {
         name: 'externalStorage',
         title: this.$t('public_external_storage'),
-        icon: 'wcgl'
+        icon: 'wcgl',
+        beta: true
       },
       {
         name: 'OperationLog',
