@@ -180,6 +180,9 @@ const dataPermissionApi = new DataPermission()
 import ConnectorRecord from './ConnectorRecord'
 const connectorRecordApi = new ConnectorRecord()
 
+import AlarmMail from './AlarmMail'
+const alarmMailApi = new AlarmMail()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -240,7 +243,8 @@ export {
   appApi,
   lineageApi,
   dataPermissionApi,
-  connectorRecordApi
+  connectorRecordApi,
+  alarmMailApi
 }
 export * from './ApiClient'
 

@@ -612,6 +612,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+  packages_business_setting_alarmnotification_recipient_setting: '任务默认告警接收人设置',
+  packages_business_setting_alarmnotification_recipient_desc:
+    '此处设置为系统全局告警接收人设置，设置的所有的接收人都可以收到当前系统已开启的告警',
+  packages_business_setting_alarmnotification_recipient_default: '默认告警接收人',
+  packages_business_setting_alarmnotification_recipient: '告警接收人',
+  packages_business_setting_alarmnotification_recipient_tip: '支持设置多个告警接收人邮箱，多个邮箱以逗号分隔',
+  packages_business_setting_alarmnotification_channel: '告警通知渠道',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',

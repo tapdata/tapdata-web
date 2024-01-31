@@ -655,6 +655,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
   packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
+  packages_business_setting_alarmnotification_recipient_setting: 'Task Default Alarm Recipient Setting',
+  packages_business_setting_alarmnotification_recipient_desc: `Set here as the system's global alarm recipient configuration. All configured recipients will receive alerts for the currently active system alarms.`,
+  packages_business_setting_alarmnotification_recipient_default: 'Default Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient: 'Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient_tip:
+    'Supports configuring multiple alarm recipient emails, with multiple emails separated by commas.',
+  packages_business_setting_alarmnotification_channel: 'Alarm Notification Channel',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
