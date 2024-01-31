@@ -5,6 +5,7 @@
       row-key="id"
       class="metadata-list"
       :classify="{
+        title: $t('public_tags'),
         authority: 'data_catalog_category_management',
         types: metaType
       }"

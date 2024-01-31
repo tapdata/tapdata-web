@@ -9,7 +9,7 @@
               authority: 'datasource_catalog_management',
               types: ['database'],
               viewPage: 'connections',
-              title: $t('packages_business_connections_list_lianjiefenlei')
+              title: $t('public_tags')
             }
           : null
       "
@@ -347,7 +347,11 @@ export default {
     })
   },
   mounted() {
-    const { action } = this.$route.query || {}
+    const { action, create } = this.$route.query || {}
+
+    if (create) {
+      this.dialogDatabaseTypeVisible = true
+    }
 
     if (action === 'create') {
       this.checkTestConnectionAvailable()

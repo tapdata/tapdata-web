@@ -8,7 +8,7 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei')
+        title: $t('public_tags')
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
@@ -83,15 +83,24 @@
             <span> {{ $t('public_button_export') }}</span>
           </el-button>
           <el-button
-            v-if="buttonShowMap.import && (isDaas || $route.name === 'dataflowList')"
+            v-if="buttonShowMap.import && isDaas"
             v-readonlybtn="'SYNC_job_import'"
             size="mini"
             class="btn"
             :disabled="$disabledReadonlyUserBtn()"
             @click="handleImport"
           >
-            <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
             <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+          <el-button
+            v-if="buttonShowMap.import && $route.name === 'dataflowList'"
+            v-readonlybtn="'SYNC_job_import'"
+            size="mini"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImportRelmig"
+          >
+            <span> {{ $t('packages_business_relmig_import') }}</span>
           </el-button>
         </template>
         <ElButton
@@ -277,7 +286,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload :type="uploadType" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -441,7 +450,8 @@ export default {
       upgradeFeeVisible: false,
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: ''
+      upgradeChargesVisibleTips: '',
+      uploadType: 'dataflow'
     }
   },
 
@@ -1048,8 +1058,15 @@ export default {
     },
 
     handleImport() {
+      this.uploadType = 'dataflow'
       this.$refs.upload.show()
     },
+
+    handleImportRelmig() {
+      this.uploadType = 'relmig'
+      this.$refs.upload.show()
+    },
+
     onCopy() {
       this.showTooltip = true
     },

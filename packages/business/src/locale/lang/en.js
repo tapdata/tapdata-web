@@ -193,7 +193,7 @@ export default {
   packages_business_task_monitor_mining_task_name: 'Mining task name',
   packages_business_task_monitor_mining_task_point_time: 'Mining time point',
   packages_business_task_monitor_mining_task_status: 'Mining Status',
-  packages_business_button_bulk_import: 'Bulk Import',
+  packages_business_button_bulk_import: 'Import',
   packages_business_message_save_fail: 'Save Failed',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
@@ -1235,5 +1235,15 @@ export default {
   packages_business_ssh_username: 'Username',
   packages_business_ssh_password: 'Password',
   packages_business_connections_test_xiazaijindu: 'Download Progress',
-  packages_business_connections_test_xiazaishibai: 'Download Failed'
+  packages_business_connections_test_xiazaishibai: 'Download Failed',
+  packages_business_relmig_import: 'MongoDB Relmig Import',
+  packages_business_relmig_import_desc:
+    'This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into Tapdata. After the relmig file is imported, Tapdata will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.',
+  packages_business_relmig_upload: 'Upload relmig file',
+  packages_business__relmig_import_connection_tip: "Click here to create one if you haven't done so already.",
+  packages_business__relmig_import_source_connection_placeholder:
+    'Please select the source connection that includes the source tables you used in your relmig project',
+  packages_business__relmig_import_target_connection_placeholder:
+    'Please select the destination connection you want the data to be synchronized to',
+  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it'
 }

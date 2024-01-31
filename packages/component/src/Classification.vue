@@ -148,9 +148,7 @@ export default {
     comTitle() {
       return (
         this.title ||
-        (this.types[0] === 'user'
-          ? this.$t('packages_component_classification_userTitle')
-          : this.$t('packages_component_classification_title'))
+        (this.types[0] === 'user' ? this.$t('packages_component_classification_userTitle') : this.$t('public_tags'))
       )
     }
   },
