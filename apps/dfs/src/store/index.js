@@ -2,6 +2,8 @@ import * as Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
+import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import i18n from '../i18n'
 
 const store = Vuex.createStore({
   modules: {
@@ -20,10 +22,17 @@ const store = Vuex.createStore({
       nickname: '',
       avatar: '',
       telephone: '',
+      phoneCountryCode: '',
       wx: '',
       email: '',
       enableLicense: false,
       licenseCodes: [],
+      customData: {
+        firstName: '',
+        lastName: '',
+      },
+      gcpAccount: null,
+      locale: '',
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -35,6 +44,11 @@ const store = Vuex.createStore({
       behavior: '', // add-source, add-target, add-task
       status: '', // starting, completed, paused
       view: 'list', // board, list
+      sourceConnectionId: '',
+      targetConnectionId: '',
+      isDemoSource: null,
+      isDemoTarget: null,
+      taskId: '',
     },
     // 新人引导
     guide: {
@@ -51,7 +65,10 @@ const store = Vuex.createStore({
       steps: [],
       behavior: '',
       behaviorAt: null,
-      expand: {},
+      expand: {
+        enableGuide: null,
+        guideStatus: '', // starting, completed, paused
+      },
     },
     agentCount: {
       agentTotalCount: 0,
@@ -69,14 +86,28 @@ const store = Vuex.createStore({
       onlyEnglishLanguage: false,
       slackLink: '',
       station: '', //标记国际站international 国内站 domestic
+      pagePermissions: [], // dataHub
     },
+
+    showReplicationTour: false,
+    replicationTourFinish: false,
+    taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
   },
 
   getters: {
-    isDomesticStation: (state) => state.config.station === 'domestic',
+    language: (state) => {
+      return state.user.locale
+    },
+    isGCPMarketplaceUser: (state) => state.user.gcpAccount !== null,
+    isDomesticStation: (state, getters) => {
+      return getters.language !== 'en'
+    },
     startingTour: (state) => state.replicationTour.status === 'starting',
     pausedTour: (state) => state.replicationTour.status === 'paused',
     completedTour: (state) => state.replicationTour.status === 'completed',
+    pausedGuide: (state) => state.guide.expand.guideStatus === 'paused',
+    startingGuide: (state) => state.guide.expand.guideStatus === 'starting',
+    guideExpand: (state) => state.guide.expand,
   },
 
   mutations: {
@@ -89,8 +120,17 @@ const store = Vuex.createStore({
     },
 
     setUser(state, user = {}) {
+      user.phoneCountryCode = user.phoneCountryCode?.replace(/[+-]/g, '')
       Object.assign(state.user, user)
-      console.log('state.user', state.user) // eslint-disable-line
+    },
+
+    setLanguage(state, lang) {
+      if (!lang) {
+        lang = getCurrentLanguage()
+      }
+      lang = lang.replace('_', '-')
+      state.user.locale = lang
+      setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {
@@ -133,6 +173,7 @@ const store = Vuex.createStore({
 
     completeTour(state) {
       state.replicationTour.status = 'completed'
+      state.guide.expand.guideStatus = 'completed'
     },
 
     setUpgradeFeeVisible(state, flag) {
@@ -145,6 +186,35 @@ const store = Vuex.createStore({
 
     setReplicationConnectionDialog(state, visible) {
       state.replicationConnectionDialog = visible
+    },
+
+    setExpand(state, expand) {
+      Object.assign(state.guide.expand, expand)
+    },
+
+    startGuide(state) {
+      state.guide.expand.guideStatus = 'starting'
+    },
+
+    pauseGuide(state) {
+      state.guide.expand.guideStatus = 'paused'
+    },
+
+    completeGuide(state) {
+      state.guide.expand.guideStatus = 'completed'
+    },
+
+    setShowReplicationTour(state, flag) {
+      state.showReplicationTour = flag
+    },
+
+    openCompleteReplicationTour(state) {
+      state.showReplicationTour = true
+      state.replicationTourFinish = true
+    },
+
+    setTaskLoadedTime(state) {
+      state.taskLoadedTime = new Date().getTime()
     },
   },
 })

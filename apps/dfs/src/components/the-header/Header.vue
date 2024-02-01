@@ -22,13 +22,6 @@
           <ElImage class="slack-logo" :src="require('@/assets/image/slack.svg')" />
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
-        <!--有奖问卷-->
-        <div v-if="showQuestionnaire" class="command-item position-relative rounded-4" @click="goQuestionnaire">
-          <span class="cursor-pointer">
-            {{ $t('dfs_the_header_header_prize_questionnaire') }}
-          </span>
-          <VIcon class="position-absolute discount-hot-icon">hot-o</VIcon>
-        </div>
         <!--线下部署-->
         <div
           v-if="isDomesticStation"
@@ -72,20 +65,8 @@
         </div>
 
         <NotificationPopover class="command-item flex align-items-center rounded-4"></NotificationPopover>
-        <ElDropdown placement="bottom" :show-timeout="0" @command="changeLanguage" v-if="!onlyEnglishLanguage">
-          <span class="cursor-pointer command-item rounded-4 icon-btn outline-0">
-            <VIcon size="20">{{ 'language-' + lang }}</VIcon>
-          </span>
-          <template #dropdown>
-            <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
-                {{ value }}
-              </ElDropdownItem>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
-        <ElDropdown placement="bottom" :show-timeout="0" @command="command">
-          <div class="username flex align-items-center outline-0 command-item menu-user rounded-4">
+        <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
+          <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
               :src="user.avatar"
@@ -100,9 +81,9 @@
           <template #dropdown>
             <ElDropdownMenu>
               <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-              <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
-                $t('the_header_Header_yongHuZhongXin')
-              }}</ElDropdownItem>
+              <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()"
+                >{{ $t('the_header_Header_yongHuZhongXin') }}
+              </ElDropdownItem>
               <ElDropdownItem command="order">{{ $t('dfs_the_header_header_dingyuezhongxin') }}</ElDropdownItem>
               <ElDropdownItem command="home">
                 {{ $t('header_official_website') }}
@@ -119,7 +100,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { VIcon } from '@tap/component'
 import { langMenu, getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { daysdifference, extractTimeFromObjectId } from '../../util'
@@ -131,7 +112,6 @@ export default {
   components: { VIcon, NotificationPopover },
   data() {
     return {
-      user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
       topBarLinks: window.__config__?.topBarLinks,
       officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
@@ -141,14 +121,12 @@ export default {
       mockUserId: null,
       openUpgradeFee: false,
       isFeeUser: true,
-      //用户注册时间
-      registrationTime: '',
-      showQuestionnaire: false,
     }
   },
 
   computed: {
     ...mapGetters(['isDomesticStation']),
+    ...mapState(['user']),
     onlyEnglishLanguage() {
       return this.$store.state.config.onlyEnglishLanguage
     },
@@ -175,12 +153,6 @@ export default {
           type: 'handbook',
         },
       ]
-    }
-    //获取用户注册时间
-    if (this.user?.id) {
-      this.registrationTime = extractTimeFromObjectId(this.user?.id)
-      // 国内站 && 注册时间7天大于的用户
-      this.showQuestionnaire = this.isDomesticStation && daysdifference(this.registrationTime) > 7
     }
   },
   methods: {
@@ -284,9 +256,6 @@ export default {
     openUpgrade() {
       this.openUpgradeFee = true
     },
-    goQuestionnaire() {
-      window.open('https://tapdata.feishu.cn/share/base/form/shrcnImdl8BDtEOxki50Up9OJTg', '_blank')
-    },
     goSlack() {
       window.open(this.$store.state.config.slackLink, '_blank')
     },
@@ -307,12 +276,14 @@ export default {
 .isMockUser {
   background: red !important;
 }
+
 .discount-hot-icon {
   color: #ff7d00;
   right: -12px;
   top: -12px;
   font-size: 24px;
 }
+
 .dfs-header {
   position: absolute;
   top: 0;
@@ -322,6 +293,7 @@ export default {
   padding: 0 7px;
   background: map-get($color, submenu);
   box-sizing: border-box;
+
   .current {
     font-weight: 400;
     font-size: 10px;
@@ -330,14 +302,17 @@ export default {
     border-radius: 2px;
     padding: 4px;
   }
+
   .pointer {
     cursor: pointer;
   }
+
   .logo {
     display: block;
     width: 177px;
     height: 30px;
     margin-left: -12px;
+
     img {
       display: block;
       height: 100%;
@@ -345,22 +320,27 @@ export default {
       object-fit: contain;
     }
   }
+
   .button-bar {
     display: flex;
     align-items: center;
+
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
       color: map-get($fontColor, light);
+
       &:hover {
         color: map-get($color, primary);
         background-color: map-get($color, white);
         border-radius: 4px;
+
         &.icon {
           color: map-get($color, primary);
         }
       }
     }
+
     .agent-status {
       display: flex;
       align-items: center;
@@ -374,6 +354,7 @@ export default {
       border-radius: 20px;
       cursor: pointer;
       background-color: rgba(255, 255, 255, 0.1);
+
       i.status-color {
         display: inline-block;
         width: 12px;
@@ -383,13 +364,16 @@ export default {
         border-radius: 50%;
       }
     }
+
     .btn-create {
       margin-right: 20px;
     }
+
     .btn {
       margin-left: 8px;
       color: #999;
       cursor: pointer;
+
       i {
         display: inline-block;
         line-height: 28px;
@@ -398,10 +382,12 @@ export default {
         width: 28px;
         font-size: 18px;
       }
+
       &:hover {
         color: #fff;
       }
     }
+
     .menu-user {
       .menu-button {
         color: rgba(204, 204, 204, 1);
@@ -409,12 +395,14 @@ export default {
         border: none;
       }
     }
+
     .img {
       width: 17px;
       height: 17px;
     }
   }
 }
+
 .dfs-header__body {
   display: flex;
   align-items: center;
@@ -422,6 +410,7 @@ export default {
   width: 100%;
   height: 52px !important;
 }
+
 .dfs-header__dialog {
   .fixed-novice-guide-dialog {
     position: fixed;
@@ -437,15 +426,18 @@ export default {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 3004;
     box-sizing: border-box;
+
     &.active {
       transform: scale(1);
     }
+
     .guide-mark {
       img {
         width: 67px;
         height: 67px;
       }
     }
+
     .guide-operation {
       img {
         width: 195px;
@@ -453,20 +445,24 @@ export default {
         cursor: pointer;
       }
     }
+
     .no-show-checkbox {
       top: 30px;
       right: 0;
     }
   }
 }
+
 .marquee-container {
   width: 400px;
   height: 40px;
   line-height: 40px;
+
   .marquee-box {
     position: absolute;
     width: 400px;
     height: 40px;
+
     span {
       position: absolute;
       right: 0;
@@ -478,11 +474,13 @@ export default {
     }
   }
 }
+
 .block {
   width: 170px;
   white-space: nowrap;
   overflow: hidden;
 }
+
 .words {
   position: relative;
   width: fit-content;
@@ -490,20 +488,24 @@ export default {
   padding-left: 10px;
   color: rgba(255, 255, 255, 0.7);
 }
+
 .words::after {
   position: absolute;
   right: -100%;
   content: attr(text);
 }
+
 .vip-btn {
   position: relative;
   color: #fff;
   padding: 4px 8px;
   background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
 }
+
 .slack-logo {
   height: 14px;
 }
+
 @keyframes move {
   0% {
     transform: translateX(0);
@@ -512,6 +514,7 @@ export default {
     transform: translateX(-100%);
   }
 }
+
 @keyframes marquee {
   0% {
   }

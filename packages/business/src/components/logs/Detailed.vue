@@ -4,12 +4,17 @@
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
-          v-model:value="keyword"
-          prefix-icon="el-icon-search"
+          v-model="keyword"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
           @input="searchFnc(800)"
-        ></ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
+        >
+          <template #prefix>
+            <ElIcon>
+              <ElIconSearch />
+            </ElIcon>
+          </template>
+        </ElInput>
+        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -20,7 +25,9 @@
     </div>
     <div ref="logs" class="log-container flex-fit py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
-        <el-icon><el-icon-loading /></el-icon>
+        <el-icon>
+          <el-icon-loading />
+        </el-icon>
       </div>
       <div v-show="noMore" class="font-color-light text-center pb-4">
         {{ $t('packages_business_task_info_no_more') }}
@@ -203,23 +210,29 @@ export default {
   display: flex;
   //max-height: 450px;
   font-size: 14px;
+
   .search-input {
     width: 343px;
   }
+
   .log-container {
     background: rgba(229, 236, 255, 0.22);
     box-sizing: border-box;
   }
+
   .log-item {
     word-break: break-word;
   }
+
   .log-message {
     box-sizing: border-box;
   }
+
   .log-keyword-block {
     background: map-get($color, warning);
   }
 }
+
 .filter-row {
   .el-checkbox {
     margin-right: 16px;

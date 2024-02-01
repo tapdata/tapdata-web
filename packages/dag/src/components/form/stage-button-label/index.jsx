@@ -31,7 +31,8 @@ export const StageButtonLabel = observer(
               connection-id={props.connectionId}
               task-id={taskId}
               node-id={activeNodeId}
-              on={{ complete: trigger }}
+              disabled={formRef.value.disabled}
+              onComplete={trigger}
             ></StageButton>
           </div>
         )

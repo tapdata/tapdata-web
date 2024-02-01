@@ -160,21 +160,16 @@
                 </span>
                 <!--到期时间-->
                 <span v-else-if="col.value === 'expiredTimeLabel'" class="font-color-dark flex align-center">
-                  <ElTooltip :disabled="!getExpiredTimeLevel(item)" placement="top" :visible-arrow="false">
+                  <ElTooltip :disabled="!item.expiredLevel" placement="top" :visible-arrow="false">
                     <div class="flex align-center">
-                      <span>{{ item.expiredTimeLabel.split(' ')[0] }}</span>
-                      <VIcon v-if="getExpiredTimeLevel(item) === 'expired'" size="16" class="ml-1 color-danger"
-                        >warning</VIcon
-                      >
-                      <VIcon
-                        v-else-if="getExpiredTimeLevel(item) === 'expiringSoon'"
-                        size="16"
-                        class="ml-1 color-warning"
+                      <span>{{ item.expiredTimeLabel }}</span>
+                      <VIcon v-if="item.expiredLevel === 'expired'" size="16" class="ml-1 color-danger">warning</VIcon>
+                      <VIcon v-else-if="item.expiredLevel === 'expiringSoon'" size="16" class="ml-1 color-warning"
                         >warning-circle</VIcon
                       >
                     </div>
                     <template #content>
-                      <div v-if="getExpiredTimeLevel(item) === 'expired'">
+                      <div v-if="item.expiredLevel === 'expired'">
                         <p>{{ $t('dfs_instance_expired_time_tip1') }}</p>
                         <div v-if="item.agentType === 'Cloud'">
                           <p>
@@ -272,7 +267,6 @@
               </ElButton>
               <ElButton
                 v-if="(item.orderInfo || item.orderInfo.chargeProvider === 'Stripe') && !disableRenew(item)"
-                class="mr-2"
                 type="primary"
                 @click="openRenew(item)"
                 >{{ $t('public_button_renew') }}
@@ -282,7 +276,6 @@
               <template v-if="showUpgradeIcon(item)">
                 <ElTooltip
                   v-if="upgradingFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item, 'upgrading')"
@@ -309,7 +302,6 @@
                 </ElTooltip>
                 <ElTooltip
                   v-else-if="upgradeFailedFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item, 'fail')"
@@ -326,7 +318,6 @@
                 </ElTooltip>
                 <ElTooltip
                   v-else-if="!upgradeFlag(item)"
-                  class="ml-1"
                   effect="dark"
                   placement="top"
                   :content="getTooltipContent(item)"
@@ -958,6 +949,7 @@ export default {
           key: 'status',
           type: 'select-inner',
           items: this.statusItems,
+          dropdownWidth: '180px',
         },
         {
           placeholder: i18n.t('instance_Instance_anIDShiLi'),
@@ -1038,8 +1030,9 @@ export default {
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
-              let time = new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()
-              item.expiredTimeLabel = item.expiredTime ? dayjs(time).format('YY-MM-DD HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime
+                ? dayjs(new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()).format('YY-MM-DD HH:mm:ss')
+                : '-'
             } else if (chargeProvider === 'Stripe') {
               item.expiredTime = endAt
               item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
@@ -1047,6 +1040,8 @@ export default {
               item.expiredTime = ''
               item.expiredTimeLabel = '-'
             }
+            // 过期等级
+            item.expiredLevel = this.getExpiredTimeLevel(item)
             //心跳时间
             item.pingTimeLabel = this.handlePingTime(item)
             //数据开发任务个数
@@ -1173,6 +1168,7 @@ export default {
       if (this.deployBtnDisabled(row)) {
         return
       }
+      this.showDetails = false
       this.buried('agentDeploy')
       this.$router.push({
         name: 'installAgent',
@@ -1623,10 +1619,23 @@ export default {
     },
     getExpiredTimeLevel(row = {}) {
       const { expiredTime } = row
-      if (!expiredTime) return ''
+      if (!expiredTime) {
+        row.expiredTimeLabel = '-'
+        return ''
+      }
+
+      row.expiredTimeLabel = dayjs(expiredTime).format('YY-MM-DD')
+
       const t = new Date(expiredTime).getTime()
       if (Time.now() > t) return 'expired'
-      if (Time.now() > t - 7 * 24 * 3600) return 'expiringSoon'
+      if (Time.now() > t - 7 * 24 * 3600000) {
+        // 过期前24h，显示详细时间
+        if (Time.now() > t - 24 * 3600000) {
+          row.expiredTimeLabel = dayjs(expiredTime).format('YY-MM-DD HH:mm')
+        }
+        return 'expiringSoon'
+      }
+
       return ''
     },
     async handleFreeAgent() {

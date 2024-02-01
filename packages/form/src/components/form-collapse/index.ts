@@ -3,11 +3,11 @@ import { computed, defineComponent, PropType } from 'vue'
 import { useField, useFieldSchema, RecursionField, h, Fragment } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { Schema, SchemaKey } from '@formily/json-schema'
-import { ElCollapse, ElCollapseItem, ElBadge } from 'element-plus'
+import { ElCollapse, ElCollapseItem, ElBadge, ElTooltip } from 'element-plus'
 import { toArr } from '@formily/shared'
 import { GeneralField } from '@formily/core'
 
-import { composeExport, stylePrefix } from '@formily/element-plus/esm/__builtins__'
+import { composeExport, stylePrefix, resolveComponent } from '@formily/element-plus/esm/__builtins__'
 import { Log } from '@tap/business'
 
 type ActiveKeys = string | number | Array<string | number>
@@ -18,10 +18,15 @@ type Panels = { name: SchemaKey; props: any; schema: Schema }[]
 
 export interface IFormCollapse {
   activeKeys: ActiveKeys
+
   hasActiveKey(key: ActiveKey): boolean
+
   setActiveKeys(key: ActiveKeys): void
+
   addActiveKey(key: ActiveKey): void
+
   removeActiveKey(key: ActiveKey): void
+
   toggleActiveKey(key: ActiveKey): void
 }
 
@@ -112,6 +117,39 @@ const FormCollapse = observer(
         return panels.map((item) => item.name)
       }
 
+      const renderTooltipIcon = (tooltip) => {
+        return h(
+          'span',
+          {
+            class: 'ml-1',
+            style: { color: '#909399' },
+          },
+          {
+            default: () => [
+              h(
+                ElTooltip,
+                {
+                  placement: 'top',
+                },
+                {
+                  default: () => [h('i', { class: 'el-icon-info' }, {})],
+                  content: () =>
+                    h(
+                      'div',
+                      {
+                        class: `${prefixCls}-label-tooltip-content`,
+                      },
+                      {
+                        default: () => [resolveComponent(tooltip)],
+                      },
+                    ),
+                },
+              ),
+            ],
+          },
+        )
+      }
+
       const badgedHeader = (key: SchemaKey, props: any) => {
         const errors = field.value.form.queryFeedbacks({
           type: 'error',
@@ -138,7 +176,7 @@ const FormCollapse = observer(
           {
             class: [prefixCls, attrs.class],
             modelValue: activeKey,
-            onChange: (key: string | string[]) => {
+            onChange: (key) => {
               emit('input', key)
               formCollapseRef.value.setActiveKeys(key)
             },
@@ -155,8 +193,15 @@ const FormCollapse = observer(
                     name,
                   },
                   {
-                    default: () => h(RecursionField, { schema, name }, {}),
-                    title: () => h('span', {}, { default: () => [badgedHeader(name, props)] }),
+                    default: () => [h(RecursionField, { schema, name }, {})],
+                    title: () =>
+                      h(
+                        'span',
+                        {},
+                        {
+                          default: () => [badgedHeader(name, props), props.tooltip && renderTooltipIcon(props.tooltip)],
+                        },
+                      ),
                   },
                 )
               })

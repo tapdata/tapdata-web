@@ -298,6 +298,7 @@ export default {
         }
         promise
           .then((data) => {
+            data.isDemo = this.params.isDemo // 标记是否是demo数据源
             this.buried('connectionSubmit', '', {
               result: true,
             })
@@ -786,6 +787,15 @@ export default {
           },
         },
       })
+
+      if (this.isDaas) {
+        endProperties.schemaUpdateHour.default = 'default'
+        endProperties.schemaUpdateHour.enum.unshift({
+          label: i18n.t('packages_business_connections_databaseform_system'),
+          value: 'default',
+        })
+      }
+
       const connectionProperties = this.pdkOptions.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS

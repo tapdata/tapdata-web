@@ -1,14 +1,15 @@
 <template>
   <ElDialog
+    ref="dialogWrapper"
     :model-value="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="!startingTour"
     width="80%"
     top="10vh"
+    :modal-class="modalClass"
     class="ldp-connection-dialog flex flex-column"
-    destroy-on-close
+    :beforeClose="beforeClose"
     @open="handleOpen"
     @close="handleClose"
   >
@@ -17,7 +18,7 @@
         <template v-if="!showForm">
           <span>{{ title }}</span>
           <ElInput
-            v-model:value="search"
+            v-model="search"
             class="position-absolute start-50 top-50 translate-middle ldp-connection-search-input"
             clearable
             :placeholder="$t('public_input_placeholder_search')"
@@ -198,6 +199,7 @@ export default {
         pdkHash: null,
         pdkId: null,
         md: null,
+        isDemo: false,
       },
       selected: {},
       showForm: false,
@@ -330,6 +332,7 @@ export default {
           },
         ],
       },
+      modalClass: '',
     }
   },
   computed: {
@@ -391,6 +394,7 @@ export default {
       this.showForm = false
       Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
       if (v) {
+        this.modalClass = ''
         this.search = ''
         this.currentScene = 'recommend'
 
@@ -454,6 +458,7 @@ export default {
         pdkHash: item.pdkHash,
         pdkId: item.pdkId,
         pdkOptions: item,
+        isDemo,
       })
       this.selected = item
       this.showForm = true
@@ -486,8 +491,8 @@ export default {
       this.showForm = true
     },
 
-    handleSuccess() {
-      $emit(this, 'success', ...arguments)
+    handleSuccess(...args) {
+      this.$emit('success', ...args)
       this.init()
       this.handleClose()
     },
@@ -552,6 +557,35 @@ export default {
       })
       this.loading = false
       return data?.[0]
+    },
+
+    beforeClose(done) {
+      if (this.startingTour) {
+        this.modalClass = 'dialog-zoom-transition' // 暂停引导让 dialog 有缩放动画
+        const icon = document.getElementById('user-guide-icon')
+        if (icon) {
+          const windowWidth = document.documentElement.clientWidth
+          const windowHeight = document.documentElement.clientHeight
+          const iconStyle = window.getComputedStyle(icon)
+          const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
+          const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+          const dialog = this.$refs.dialogWrapper.dialogContentRef.$el
+          const computedStyle = window.getComputedStyle(dialog)
+          let width = computedStyle.width
+          if (width.endsWith('px')) {
+            width = parseInt(width)
+          } else if (width.endsWith('%')) {
+            width = (parseInt(width) / 100) * windowWidth
+          }
+          const transformOriginX = iconX - (windowWidth - width) / 2
+          const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+          dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+        }
+        this.$store.commit('pauseTour')
+        this.$store.commit('pauseGuide')
+      }
+
+      done()
     },
   },
   emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],

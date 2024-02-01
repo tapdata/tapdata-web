@@ -123,7 +123,7 @@
         <!--</draggable>-->
       </div>
 
-      <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+      <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
         <template #header>
           <span class="font-color-dark fs-6 fw-sub">{{ taskDialogConfig.title }}</span>
         </template>
@@ -164,10 +164,10 @@
             </div>
           </div>
           <ElFormItem prop="taskName" :label="$t('public_task_name')">
-            <ElInput v-model:value="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
+            <ElInput v-model="taskDialogConfig.taskName" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-            <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+            <ElRadioGroup v-model="taskDialogConfig.task.type">
               <ElTooltip :disabled="!taskDialogConfig.notSupportedCDC" content="当前源数据不支持增量">
                 <ElRadio label="initial_sync+cdc" :disabled="taskDialogConfig.notSupportedCDC">
                   {{ $t('packages_dag_task_setting_initial_sync_cdc') }}
@@ -185,7 +185,7 @@
               prop="task.crontabExpressionType"
             >
               <ElSelect
-                v-model:value="taskDialogConfig.task.crontabExpressionType"
+                v-model="taskDialogConfig.task.crontabExpressionType"
                 @change="handleChangeCronType"
                 class="flex-1"
               >
@@ -197,7 +197,7 @@
               prop="task.crontabExpression"
               label-width="0"
             >
-              <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
+              <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
             </ElFormItem>
           </div>
         </ElForm>
@@ -225,6 +225,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
@@ -848,7 +849,6 @@ export default {
             this.connectionTaskMap[to.id] = [mapTask]
           }
 
-          const h = this.$createElement
           this.$message.success({
             message: h(
               'span',

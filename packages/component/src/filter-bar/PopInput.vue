@@ -1,14 +1,14 @@
 <template>
   <ElPopover
     v-bind="$attrs"
-    v-model:value="visible"
+    v-model="visible"
     :class="['v-pop-input', { dark: dark }, { overflow: overflow }]"
     @show="show"
     @mouseenter="mouseEnterFnc"
     @mouseleave="mouseLeaveFnc"
   >
     <div>
-      <ElInput v-model:value="current"></ElInput>
+      <ElInput v-model="current"></ElInput>
       <div class="btn-row">
         <ElButton type="primary" @click="confirm">{{ $t('packages_component_gl_button_confirm') }}</ElButton>
         <ElButton @click="cancel">{{ $t('packages_component_gl_button_cancel') }}</ElButton>

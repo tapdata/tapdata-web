@@ -12,18 +12,24 @@
       <div class="mb-4">
         <ElInput
           class="search-input"
-          v-model:value="keyword"
-          prefix-icon="el-icon-search"
+          v-model="keyword"
           :placeholder="$t('packages_business_components_fieldbox_qingshuruziduan')"
           clearable
-        ></ElInput>
+        >
+          <template #prefix>
+            <ElIcon>
+              <ElIconSearch />
+            </ElIcon>
+          </template>
+        </ElInput>
       </div>
       <div class="position-relative">
         <div class="list-table__header flex justify-content-between">
           <span>{{ $t('packages_business_components_fieldbox_ziduan') }}</span>
           <ElButton text class="ml-4 color-primary" @click="handleAdd">
-            <VIcon> plus</VIcon>{{ $t('packages_business_components_fieldbox_tianjiahang') }}</ElButton
-          >
+            <VIcon> plus</VIcon>
+            {{ $t('packages_business_components_fieldbox_tianjiahang') }}
+          </ElButton>
         </div>
         <div v-loading="loading">
           <DynamicScroller
@@ -320,9 +326,11 @@ export default {
     }
   }
 }
+
 .list-table__content {
   max-height: 450px;
 }
+
 .line__index {
   width: 36px;
 }

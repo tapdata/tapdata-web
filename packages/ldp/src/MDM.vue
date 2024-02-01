@@ -26,15 +26,7 @@
       @drop.stop="handleDrop"
     >
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model:value="search"
-          clearable
-          @keydown.stop
-          @keyup.stop
-          @click.stop
-          @input="handleSearch"
-        >
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop @input="handleSearch">
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -47,7 +39,7 @@
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
           v-loading="searchIng"
         >
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -65,10 +57,10 @@
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
             @handle-scroll="handleScroll"
-          ></VirtualTree>
+          ></ElTree>
         </div>
         <template v-else>
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -87,7 +79,7 @@
             @node-drop="handleSelfDrop"
             @node-expand="handleNodeExpand"
             @handle-scroll="handleScroll"
-          ></VirtualTree>
+          ></ElTree>
           <div
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
@@ -111,7 +103,7 @@
       </div>
     </div>
 
-    <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+    <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
       <template #header>
         <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_sync_task') }}</span>
       </template>
@@ -137,12 +129,12 @@
           </div>
         </div>
         <ElFormItem :label="$t('public_table_name')">
-          <ElInput v-model:value="taskDialogConfig.newTableName">
+          <ElInput v-model="taskDialogConfig.newTableName">
             <template v-slot:prepend>{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
@@ -160,7 +152,7 @@
         <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
           <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
             <ElSelect
-              v-model:value="taskDialogConfig.task.crontabExpressionType"
+              v-model="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
@@ -172,7 +164,7 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
@@ -196,7 +188,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -217,7 +209,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
@@ -240,7 +232,7 @@
       </template>
       <ElForm ref="form" label-width="90px" label-position="top" class="my-n6" @submit.prevent>
         <ElFormItem :label="$t('packages_dag_materialized_view_storage_table')">
-          <ElInput v-model:value="materializedTableName">
+          <ElInput v-model="materializedTableName">
             <template #prepend>{{ tablePrefix }}</template>
           </ElInput>
         </ElFormItem>
@@ -258,6 +250,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
@@ -376,24 +369,25 @@ export default {
           >
             add
           </IconButton>,
-          <ElDropdown
-            class="inline-flex"
-            placement="bottom"
-            trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
-          >
-            <IconButton
-              onClick={(ev) => {
-                ev.stopPropagation()
-              }}
-              sm
-            >
-              more
-            </IconButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-              <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-            </ElDropdownMenu>
+          <ElDropdown placement="bottom" trigger="click" onCommand={(command) => this.handleMoreCommand(command, data)}>
+            {{
+              default: () => (
+                <IconButton
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                  }}
+                  sm
+                >
+                  more
+                </IconButton>
+              ),
+              dropdown: () => (
+                <ElDropdownMenu>
+                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                  <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                </ElDropdownMenu>
+              ),
+            }}
           </ElDropdown>,
         ]
       }
@@ -409,32 +403,30 @@ export default {
       return (
         <div
           class="custom-tree-node grabbable flex justify-content-between"
-          on={{
-            click: () => {
-              data.isObject &&
-                $emit(this, 'preview', data, this.mdmConnection, {
-                  onDelete: (tagId) => {
-                    // this.setNodeExpand(tagId)
-                    this.$refs.tree.remove(data.id)
-                  },
-                })
-            },
-            dragenter: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            },
+          onClick={() => {
+            data.isObject &&
+              $emit(this, 'preview', data, this.mdmConnection, {
+                onDelete: (tagId) => {
+                  // this.setNodeExpand(tagId)
+                  this.$refs.tree.remove(data.id)
+                },
+              })
+          }}
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="flex align-center flex-fill mr-2">
@@ -565,7 +557,6 @@ export default {
         const { tableName, from, newTableName, tagId, task: settings } = this.taskDialogConfig
         let task = Object.assign(this.makeTask(from, tableName, this.tablePrefix + newTableName), settings)
         this.creating = true
-        const h = this.$createElement
         try {
           const result = await ldpApi.createMDMTask(task, {
             silenceMessage: true,

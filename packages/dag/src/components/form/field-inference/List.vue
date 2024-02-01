@@ -114,7 +114,7 @@
             >
               <ElInput
                 class="inline-input"
-                v-model:value="currentData.newDataType"
+                v-model="currentData.newDataType"
                 :placeholder="$t('public_input_placeholder')"
               ></ElInput>
             </ElFormItem>
@@ -132,7 +132,7 @@
                   controls-position="right"
                   :min="customInput.min"
                   :max="customInput.max"
-                  class="coefficient-input custom-input"
+                  class="custom-input"
                   step-strictly
                   @change="handleChangeCustomInput"
                 ></ElInputNumber>
@@ -140,7 +140,7 @@
             </template>
           </div>
           <div>
-            <ElCheckbox v-model:value="currentData.useToAll">{{
+            <ElCheckbox v-model="currentData.useToAll">{{
               $t('packages_form_field_inference_list_duidangqiantuiyan')
             }}</ElCheckbox>
             <div v-show="currentData.useToAll" class="mt-2 color-danger fs-8">
@@ -154,7 +154,7 @@
               <span>{{ originType }}</span>
               <span>(</span>
               <ElInputNumber
-                v-model:value="currentData.coefficient"
+                v-model="currentData.coefficient"
                 controls-position="right"
                 :min="0.1"
                 class="coefficient-input mx-2"
@@ -169,12 +169,10 @@
         </template>
       </ElForm>
       <template v-slot:footer>
-        <span class="dialog-footer">
-          <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
-            $t('public_button_confirm')
-          }}</ElButton>
-        </span>
+        <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
+          $t('public_button_confirm')
+        }}</ElButton>
       </template>
     </ElDialog>
   </div>
@@ -242,7 +240,7 @@ export default {
           label: i18n.t('packages_form_field_mapping_list_xuhao'),
           type: 'index',
           prop: 'index',
-          minWidth: '40px',
+          minWidth: '42px',
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -322,7 +320,7 @@ export default {
       }
       return showColumns
         .map((t) => {
-          return result.find((f) => f.prop === t)
+          return result.find((f) => f.prop === t || f.type === t)
         })
         .filter((t) => t)
     },
@@ -392,6 +390,7 @@ export default {
       const findRule = this.rules.find((t) => t.id === this.currentData.changeRuleId)
       this.currentData.selectDataType = findRule?.result?.selectDataType || ''
       this.currentData.coefficient = findRule?.multiple || 1
+      this.currentData.selectedDataType = '' // 下拉框选择的类型，仅前端使用
 
       const dataTypeCheckMultiple = await metadataInstancesApi.dataTypeCheckMultiple({
         databaseType: this.activeNode.databaseType,
@@ -676,10 +675,16 @@ export default {
         const contentArr = contentStr.split(',')
         contentArr.forEach((el) => {
           const key = el.replace(/^\$/, '')
-          console.log('key', key)
+          let min, max
+          if (typeof item.attrs[key] === 'number') {
+            max = typeof item.attrs[key]
+          } else if (item.attrs[key] instanceof Array) {
+            min = item.attrs[key][0] ? item.attrs[key][0] * 1 : undefined
+            max = item.attrs[key][1] ? item.attrs[key][1] * 1 : undefined
+          }
           this.currentData.customInputData[key] = {
-            min: item.attrs[key]?.[0] ? item.attrs[key]?.[0] * 1 : undefined,
-            max: item.attrs[key]?.[1] ? item.attrs[key]?.[1] * 1 : undefined,
+            min,
+            max,
             label: this.customInputLabelMap[key] || key,
           }
           const defaultValue =
@@ -745,7 +750,10 @@ export default {
   left: 0;
 }
 
-.custom-input,
+.custom-input {
+  width: 180px;
+}
+
 .el-input-number {
   width: 240px;
 }
@@ -754,10 +762,10 @@ export default {
   width: 100px;
 }
 
-::v-deep {
+/*::v-deep {
   .el-dialog__body {
     padding-top: 24px;
     border-top: 1px solid #e5e6eb;
   }
-}
+}*/
 </style>

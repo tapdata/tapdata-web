@@ -66,7 +66,13 @@
           {{ $t('packages_business_shared_cache_cache_key_message') }}
         </div>
       </ElFormItem>
-      <ElFormItem prop="autoCreateIndex" :label="$t('packages_business_shared_cache_cache_key_auto_create') + ':'">
+      <ElFormItem prop="autoCreateIndex">
+        <template #label>
+          <span>{{ $t('packages_business_shared_cache_cache_key_auto_create') }}</span>
+          <el-tooltip placement="top" :content="$t('packages_business_shared_cache_cache_key_auto_create_tip')">
+            <i class="el-icon-info color-primary ml-1"></i>
+          </el-tooltip>
+        </template>
         <ElSwitch v-model="form.autoCreateIndex"></ElSwitch>
       </ElFormItem>
       <ElFormItem prop="fields" :label="$t('packages_business_shared_cache_fields') + ':'">
@@ -93,7 +99,7 @@
           <span>:</span>
         </template>
         <ElInputNumber
-          v-model:value="form.maxMemory"
+          v-model="form.maxMemory"
           style="width: 200px"
           controls-position="right"
           :min="1"
@@ -102,7 +108,7 @@
         <span class="ml-1">M</span>
       </ElFormItem>
       <ElFormItem prop="externalStorageId" :label="$t('public_external_memory_configuration')">
-        <ElSelect v-model:value="form.externalStorageId" filterable :loading="!externalStorageOptions">
+        <ElSelect v-model="form.externalStorageId" filterable :loading="!externalStorageOptions">
           <ElOption
             v-for="opt in externalStorageOptions"
             :key="opt.value"

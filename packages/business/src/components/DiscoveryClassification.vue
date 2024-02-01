@@ -9,7 +9,7 @@
           </div>-->
       <!-- v-if="searchFalg" -->
       <div class="search-box">
-        <ElInput v-model:value="filterText">
+        <ElInput v-model="filterText">
           <template v-slot:suffix>
             <span class="el-input__icon h-100 ml-1">
               <VIcon size="14">search</VIcon>
@@ -48,7 +48,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="80px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -58,7 +58,7 @@
           :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
         >
-          <ElSelect v-model:value="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
             <el-option
               :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
               value="resource"
@@ -69,7 +69,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
@@ -175,23 +175,21 @@ export default {
       return (
         <div
           class="custom-tree-node"
-          on={{
-            dragenter: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            },
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="tree-item-icon flex align-center mr-2">{icon && <VIcon size="16">{icon}</VIcon>}</div>
@@ -218,19 +216,25 @@ export default {
                   trigger="click"
                   onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
-                  <VIcon
-                    onClick={(ev) => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
                 </ElDropdown>
               )}
             </span>

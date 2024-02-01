@@ -1,5 +1,5 @@
 <template>
-  <div class="user-center g-panel-container flex-fill">
+  <div class="user-center g-panel-container flex-fill overflow-x-hidden">
     <div class="fs-6 fw-sub">{{ $t('user_Center_geRenXinXi') }}</div>
     <ElDivider></ElDivider>
     <div>
@@ -10,6 +10,16 @@
               {{ $t('user_name') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">{{ userData.username }}</div>
+          </ElCol>
+          <ElCol :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('dfs_settings_language') }}{{ $t('symbol_colon') }}
+            </div>
+            <div class="user-item__value">
+              <ElSelect :value="language" @change="handleUpdateLanguage">
+                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
+              </ElSelect>
+            </div>
           </ElCol>
         </ElRow>
         <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
@@ -44,7 +54,7 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_phone_number') }}
+              {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">
               {{ userData.telephone || $t('user_Center_weiBangDing') }}
@@ -70,7 +80,7 @@
           </ElCol>
           <ElCol :span="12" class="user-item">
             <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_avatar') }}
+              {{ $t('user_avatar') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value position-relative">
               <img
@@ -265,70 +275,71 @@
       :close-on-click-modal="false"
       v-model="dialogObj.password"
     >
-      <ElForm :model="passwordForm" label-width="120px" @submit.prevent label-position="top">
-        <ElFormItem v-if="!isDomesticStation" prop="email" :label="$t('user_Center_youXiang')">
-          <ElInput
-            v-model="emailForm.email"
-            disabled
-            :placeholder="$t('user_Center_qingShuRuYouXiang')"
-            maxlength="50"
-          ></ElInput>
-        </ElFormItem>
-        <ElFormItem v-else prop="current" :label="$t('user_Center_dangQianShouJi')">
-          <ElInput
-            v-model="passwordForm.telephone"
-            :placeholder="$t('user_Center_qingShuRuDangQian')"
-            maxlength="50"
-            disabled
-          >
-            <template v-slot:prepend>
-              <el-select v-model="passwordForm.countryCode" style="width: 110px" filterable>
-                <el-option
-                  v-for="item in countryCode"
-                  :key="item.dial_code"
-                  :label="'+ ' + item.dial_code"
-                  :value="item.dial_code"
-                >
-                  <span style="float: left">{{ '+ ' + item.dial_code }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
-                >
-              </el-select>
-            </template>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem
-          v-if="!isDomesticStation"
-          prop="emailCode"
-          :label="$t('user_Center_dangQianYouXiangYan')"
-          class="inline-form-item"
-        >
-          <ElInput
-            v-model="passwordForm.emailCode"
-            :placeholder="$t('user_Center_qingShuRuYanZheng')"
-            maxlength="50"
-          ></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')"
-            :disabled="!emailForm.email"
-            :style="{ width: '180px', textAlign: 'center' }"
-            class="ml-6"
-            text
-          ></VerificationCode>
-        </ElFormItem>
-        <ElFormItem v-else prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
-          <ElInput
-            v-model="passwordForm.code"
-            :placeholder="$t('user_Center_qingShuRuShouJi')"
-            maxlength="50"
-          ></ElInput>
-          <VerificationCode
-            :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
-            :disabled="!passwordForm.telephone"
-            :style="{ width: '180px', textAlign: 'center' }"
-            class="ml-6"
-            text
-          ></VerificationCode>
-        </ElFormItem>
+      <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent label-position="top">
+        <!--优先使用手机验证-->
+        <template v-if="showPhone">
+          <ElFormItem prop="telephone" :label="$t('user_Center_dangQianShouJi')">
+            <ElInput
+              v-model="passwordForm.telephone"
+              :placeholder="$t('user_Center_qingShuRuDangQian')"
+              maxlength="50"
+              disabled
+            >
+              <template v-slot:prepend>
+                <el-select v-model="passwordForm.countryCode" disabled style="width: 110px" filterable>
+                  <el-option
+                    v-for="item in countryCode"
+                    :key="item.dial_code"
+                    :label="'+ ' + item.dial_code"
+                    :value="item.dial_code"
+                  >
+                    <span style="float: left">{{ '+ ' + item.dial_code }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
+                  >
+                </el-select>
+              </template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem prop="code" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
+            <ElInput
+              v-model="passwordForm.code"
+              :placeholder="$t('user_Center_qingShuRuShouJi')"
+              maxlength="50"
+            ></ElInput>
+            <VerificationCode
+              :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
+              :disabled="!passwordForm.telephone"
+              :style="{ width: '180px', textAlign: 'center' }"
+              class="ml-6"
+              text
+            ></VerificationCode>
+          </ElFormItem>
+        </template>
+        <template v-else>
+          <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
+            <ElInput
+              v-model="emailForm.email"
+              disabled
+              :placeholder="$t('user_Center_qingShuRuYouXiang')"
+              maxlength="50"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem prop="emailCode" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
+            <ElInput
+              v-model="passwordForm.emailCode"
+              :placeholder="$t('user_Center_qingShuRuYanZheng')"
+              maxlength="50"
+            ></ElInput>
+            <VerificationCode
+              :request-options="getCodeOptions(emailForm.email, 'RESET_PASSWORD', 'email')"
+              :disabled="!emailForm.email"
+              :style="{ width: '180px', textAlign: 'center' }"
+              class="ml-6"
+              text
+            ></VerificationCode>
+          </ElFormItem>
+        </template>
+
         <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
           <ElInput
             v-model="passwordForm.newPassword"
@@ -671,7 +682,8 @@ import { VTable } from '@tap/component'
 import { AGENT_TYPE_MAP } from '../instance/utils'
 import { NUMBER_MAP } from '@tap/business'
 import { openUrl, urlToBase64 } from '@tap/shared'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import { langMenu } from '@tap/i18n/src/shared/util'
 
 export default {
   components: {
@@ -684,21 +696,8 @@ export default {
   inject: ['buried'],
   data() {
     return {
+      langMenu,
       agentTypeMap: AGENT_TYPE_MAP,
-      userData: {
-        username: '',
-        nickname: '',
-        avatar: '',
-        telephone: '',
-        wx: '',
-        email: '',
-        enableLicense: false,
-        licenseCodes: [],
-        customData: {
-          firstName: '',
-          lastName: '',
-        },
-      },
       nameForm: {
         nickname: '',
         firstName: '',
@@ -817,7 +816,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    ...mapGetters(['isDomesticStation', 'language']),
+    ...mapState({
+      userData: 'user',
+    }),
+    showPhone() {
+      return !!this.userData.telephone
+    },
   },
   mounted() {
     this.init()
@@ -830,11 +835,7 @@ export default {
   methods: {
     init() {
       let { userData, nameForm } = this
-      for (let key in userData) {
-        userData[key] = window.__USER_INFO__[key]
-      }
 
-      userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
       this.getAkAndSk()
@@ -1279,6 +1280,14 @@ export default {
             })
         }
       })
+    },
+
+    async handleUpdateLanguage(val) {
+      await this.$axios.patch('api/tcm/user', {
+        locale: val,
+      })
+      this.$store.commit('setLanguage', val)
+      location.reload()
     },
   },
   emits: ['get-user'],

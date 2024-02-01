@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { metadataInstancesApi } from '@tap/api'
 export default {
   // components: {
@@ -166,7 +167,6 @@ export default {
     },
     // 删除数据集
     remove(item) {
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.name])
       this.$confirm(message, this.$t('public_message_title_prompt'), {
         type: 'warning',

@@ -4,7 +4,7 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { EmptyItem } from '@tap/component'
+import { VEmpty } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 import List from './List.vue'
@@ -19,7 +19,7 @@ import { useStore } from 'vuex'
 export const TableRename = observer(
   defineComponent({
     props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit }) {
       const store = useStore()
       const itemSize = 38
       const formRef = useForm()
@@ -54,7 +54,7 @@ export const TableRename = observer(
 
       let prevMap = {}
 
-      const makeTable = (...args) => {
+      const makeTable = () => {
         if (form.values.$inputs?.length) {
           const { taskId } = store.state.dataflow
           loading.value = true
@@ -228,8 +228,10 @@ export const TableRename = observer(
       }
 
       const scrollToItem = (index) => {
-        refs.nameList.scrollTop = index * itemSize
+        nameListRef.value.scrollTop = index * itemSize
       }
+
+      const nameListRef = ref()
 
       return {
         config,
@@ -245,6 +247,7 @@ export const TableRename = observer(
         loading,
         countByName,
         itemSize,
+        nameListRef,
       }
     },
 
@@ -310,10 +313,17 @@ export const TableRename = observer(
             <ElInput
               v-model={this.config.search}
               disabled={this.disabled}
-              prefixIcon="el-icon-search"
               clearable
               placeholder={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
-            ></ElInput>
+            >
+              {{
+                prefix: () => (
+                  <ElIcon>
+                    <ElIconSearch />
+                  </ElIcon>
+                ),
+              }}
+            </ElInput>
           </div>
 
           <div
@@ -325,7 +335,7 @@ export const TableRename = observer(
               <div class="name-list-title px-4">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
               <div class="name-list-title pl-5 pr-4">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
             </div>
-            <div ref="nameList" class="name-list-content font-color-light overflow-auto">
+            <div ref="nameListRef" class="name-list-content font-color-light overflow-auto">
               {this.filterNames.length ? (
                 <List
                   disabled={this.disabled}
@@ -339,7 +349,7 @@ export const TableRename = observer(
                   emitChange={this.emitChange}
                 ></List>
               ) : (
-                <EmptyItem></EmptyItem>
+                <VEmpty></VEmpty>
               )}
             </div>
           </div>

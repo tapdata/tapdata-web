@@ -1,6 +1,6 @@
 <template>
   <div class="database">
-    <ElTabs v-model:value="active">
+    <ElTabs v-model="active">
       <ElTabPane v-for="item in tabs" :key="item.value" :name="item.value" :label="item.label"></ElTabPane>
     </ElTabs>
     <div v-if="active === 'GA'">

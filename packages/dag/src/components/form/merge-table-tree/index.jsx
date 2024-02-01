@@ -42,13 +42,16 @@ export const MergeTableTree = observer(
         return path
       }
 
-      watch(
-        treeRef,
-        (val) => {
-          emit('change', JSON.parse(JSON.stringify(val)))
-        },
-        { deep: true },
-      )
+      const flattenTree = (datas, map) => {
+        return datas.reduce((result, data) => {
+          result[data.id] = data
+
+          if (data.children.length) {
+            flattenTree(data.children, map)
+          }
+          return result
+        }, map)
+      }
 
       const makeTree = () => {
         const $inputs = formRef.value.values.$inputs
@@ -81,10 +84,12 @@ export const MergeTableTree = observer(
               tableName: node.name,
               // joinKeys: [],
               children: [],
+              enableUpdateJoinKeyValue: false, // 关联条件变更
             })
           }
         })
         treeRef.value = newTree
+        emit('change', JSON.parse(JSON.stringify(newTree)))
 
         if (newTree.length) {
           if (!currentKey.value || !$inputs.includes(currentKey.value)) {
@@ -112,10 +117,10 @@ export const MergeTableTree = observer(
         if (!dagNode) return
 
         return (
-          <div class="flex flex-1 align-center overflow-hidden merge-table-tree-node cursor-pointer">
+          <div class="flex flex-1 align-center ml-n1 overflow-hidden merge-table-tree-node cursor-pointer">
             <NodeIcon size={20} node={dagNode}></NodeIcon>
             <OverflowTooltip
-              class="ml-1 text-truncate flex-1 lh-1"
+              class="text-truncate flex-1 lh-1 ml-1"
               placement="left"
               text={dagNode.name}
               open-delay={300}
@@ -192,7 +197,64 @@ export const MergeTableTree = observer(
         }
       }
 
-      const handleNodeDrop = () => {
+      // 拖拽节点的原父节点
+      let draggingNodeParent = null
+
+      const handleNodeDragOver = (dragNode) => {
+        draggingNodeParent = dragNode.parent
+      }
+
+      const handleNodeDrop = (dragNode, dropNode, dropType) => {
+        const nodeMap = {
+          value: flattenTree(props.value || [], {}),
+        }
+
+        const dragNodeId = dragNode.data.id
+        const dragNodePath = refs.tree.getNodePath(dragNodeId)
+        const topParentNode = dragNodePath[0]
+        const node = nodeMap.value[dragNodeId]
+        const targetNode = nodeMap.value[dropNode.key]
+        let targetIndex
+
+        if (dropType !== 'none') {
+          // 从父级删除
+          let parent
+          if (!draggingNodeParent.key) {
+            parent = props.value
+          } else {
+            parent = nodeMap.value[draggingNodeParent.key].children
+          }
+
+          const index = parent.indexOf(node)
+          if (index > -1) {
+            parent.splice(index, 1)
+          }
+        }
+
+        if (dropType === 'before') {
+          const parent = dropNode.parent?.key ? nodeMap.value[dropNode.parent.key].children : props.value
+          targetIndex = parent.indexOf(targetNode)
+          parent.splice(targetIndex, 0, node)
+        } else if (dropType === 'after') {
+          const parent = dropNode.parent?.key ? nodeMap.value[dropNode.parent.key].children : props.value
+          targetIndex = parent.indexOf(targetNode)
+          parent.splice(targetIndex + 1, 0, node)
+        } else if (dropType === 'inner') {
+          nodeMap.value[dropNode.key].children.push(node)
+        }
+
+        if (topParentNode.id !== dragNodeId) {
+          // 跟随顶级父节点联动
+          let parentFlag = nodeMap.value[topParentNode.id].enableUpdateJoinKeyValue
+          const { enableRecord = {} } = formRef.value.values.attrs
+
+          if (!parentFlag && dragNodeId in enableRecord) {
+            parentFlag = enableRecord[dragNodeId]
+          }
+
+          node.enableUpdateJoinKeyValue = parentFlag
+        }
+
         tree.value.setCurrentKey(currentKey.value)
         const oldPath = currentPath.value
         const path = updatePath(tree.value.getNode(currentKey.value))
@@ -219,18 +281,17 @@ export const MergeTableTree = observer(
             >
               <ElTree
                 ref={tree}
+                indent={8}
                 data={treeRef.value}
                 nodeKey="id"
                 defaultExpandAll={true}
                 highlightCurrent={true}
                 expandOnClickNode={false}
                 draggable={!props.disabled}
-                scopedSlots={{
-                  default: renderNode,
-                }}
                 indent={8}
-                vOn:current-change={handleCurrentChange}
-                vOn:node-drop={handleNodeDrop}
+                onCurrentChange={handleCurrentChange}
+                onNodeDrop={handleNodeDrop}
+                onNodeDragOver={handleNodeDragOver}
               >
                 {{ default: renderNode }}
               </ElTree>

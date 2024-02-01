@@ -5,6 +5,7 @@
       row-key="id"
       class="metadata-list"
       :classify="{
+        title: $t('public_tags'),
         authority: 'data_catalog_category_management',
         types: metaType,
       }"
@@ -176,6 +177,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import dayjs from 'dayjs'
 import { escapeRegExp } from 'lodash'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
@@ -504,7 +506,6 @@ export default {
       this.changeNameValue = item.name || item.original_name
     },
     remove(item) {
-      const h = this.$createElement
       let message = h('p', [
         this.$t('public_message_delete_confirm') + ' ',
         h('span', { style: { color: '#2C65FF' } }, item.original_name),

@@ -53,7 +53,7 @@
       </div>
       <template v-if="statsInfo.result !== 'passed'">
         <div v-if="inspectMethod !== 'jointField'" class="flex justify-content-between pt-4 px-4">
-          <ElRadioGroup v-model:value="showType">
+          <ElRadioGroup v-model="showType">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>

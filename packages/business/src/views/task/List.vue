@@ -8,7 +8,7 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei'),
+        title: $t('public_tags'),
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
@@ -78,25 +78,34 @@
               <span> {{ $t('public_button_export') }}</span>
             </el-button>
             <el-button
-              v-if="isDaas && buttonShowMap.import"
+              v-if="buttonShowMap.import && isDaas"
               v-readonlybtn="'SYNC_job_import'"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
             >
-              <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
               <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            </el-button>
+            <el-button
+              v-if="buttonShowMap.import && $route.name === 'dataflowList'"
+              v-readonlybtn="'SYNC_job_import'"
+              size="mini"
+              class="btn"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="handleImportRelmig"
+            >
+              <span> {{ $t('packages_business_relmig_import') }}</span>
             </el-button>
           </template>
           <ElButton
             v-if="$route.name === 'dataflowList'"
-            class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
+            class="--with-icon inline-flex align-center px-2 py-0 align-top"
             :loading="createBtnLoading"
             @click="handleCreateMaterializedView"
           >
-            <VIcon size="28">beta</VIcon>
-            {{ $t('packages_dag_build_materialized_view') }}</ElButton
-          >
+            <VIcon class="mr-1" size="28">beta</VIcon>
+            {{ $t('packages_dag_build_materialized_view') }}
+          </ElButton>
           <el-button
             v-if="buttonShowMap.create"
             v-readonlybtn="'SYNC_job_creation'"
@@ -272,7 +281,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload v-if="isDaas" :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload :type="uploadType" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -354,6 +363,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
@@ -443,6 +453,7 @@ export default {
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
       upgradeChargesVisibleTips: '',
+      uploadType: 'dataflow',
     }
   },
 
@@ -599,8 +610,8 @@ export default {
           })
 
           /*if (!this.isDaas) {
-            this.loadTaskErrorCause(errorTaskIds)
-          }*/
+          this.loadTaskErrorCause(errorTaskIds)
+        }*/
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -1023,19 +1034,18 @@ export default {
         title = 'bulk_' + title
         message = 'bulk_' + message
       }
-      const h = this.$createElement
-      let strArr = this.$t('packages_business_dataFlow_' + message).split('xxx')
+      let strArr = this.$t('packages_business_dataFlow_' + message).split(/xxx/i)
       let msg = h(
         'p',
         {
-          style: 'width: calc(100% - 28px);word-break: break-all;',
+          style: 'width: calc(100% - 28px);word-break: break-word;',
         },
         [
           strArr[0],
           h(
             'span',
             {
-              class: 'color-primary',
+              class: 'color-primary ml-1',
             },
             name,
           ),
@@ -1049,8 +1059,15 @@ export default {
     },
 
     handleImport() {
+      this.uploadType = 'dataflow'
       this.$refs.upload.show()
     },
+
+    handleImportRelmig() {
+      this.uploadType = 'relmig'
+      this.$refs.upload.show()
+    },
+
     onCopy() {
       this.showTooltip = true
     },
@@ -1154,6 +1171,7 @@ export default {
 .data-flow-wrap {
   height: 100%;
   background: #fff;
+
   .btn-refresh {
     padding: 0;
     height: 32px;

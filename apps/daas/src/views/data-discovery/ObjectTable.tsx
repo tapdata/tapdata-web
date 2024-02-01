@@ -9,6 +9,7 @@ import './index.scss'
 export default defineComponent({
   props: ['parentNode'],
   setup(props, { root, emit, refs }) {
+    const multipleTableRef = ref()
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
     const list = ref([])
     const { error, success } = useMessage()
@@ -60,7 +61,7 @@ export default defineComponent({
             if (usedRow?.length > 0) {
               nextTick(() => {
                 // @ts-ignore
-                refs.multipleTable?.toggleRowSelection(t, true)
+                multipleTableRef.value?.toggleRowSelection(t, true)
               })
             }
           }
@@ -180,13 +181,12 @@ export default defineComponent({
     watch(
       () => root.$route.query,
       (val) => {
-        // @ts-ignore
-        refs.multipleTable.fetch(1)
+        multipleTableRef.value.fetch(1)
       },
     )
     onMounted(() => {
       // @ts-ignore
-      refs.multipleTable.fetch(1)
+      multipleTableRef.value.fetch(1)
     })
     return {
       data,
@@ -196,13 +196,14 @@ export default defineComponent({
       handleSelectionChange,
       saveTags,
       saveAllTags,
+      multipleTableRef,
     }
   },
   render() {
     return (
       <section class="discovery-page-wrap catalogue-drawer-resource-wrap">
         <TablePage
-          ref="multipleTable"
+          ref="multipleTableRef"
           row-key="id"
           remoteMethod={this.loadTableData}
           onselect={this.saveTags}
@@ -217,15 +218,9 @@ export default defineComponent({
             ></FilterBar>
           </template>
           <el-table-column width="55" type="selection"></el-table-column>
-          <el-table-column
-            label={this.$t('object_list_name')}
-            prop="name"
-            show-overflow-tooltip
-            width="350px"
-            scopedSlots={{
-              default: this.renderNode,
-            }}
-          ></el-table-column>
+          <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">
+            {this.renderNode}
+          </el-table-column>
           <el-table-column
             width="145px"
             label={this.$t('object_list_classification')}

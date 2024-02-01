@@ -47,7 +47,7 @@ export class Database extends NodeType {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
-          class: 'config-tabs',
+          'config-tabs': true,
           formTab: '{{formTab}}',
         },
         properties: {
@@ -530,32 +530,37 @@ export class Database extends NodeType {
                     'x-component-props': {
                       title: i18n.t('packages_dag_config_data_read'),
                     },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{$settings.type === "cdc" ? "hidden":"visible"}}',
-                        },
-                      },
-                    },
                     properties: {
-                      readBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
-                        },
+                      sizeSpace: {
+                        type: 'void',
+                        'x-component': 'Space',
                         'x-component-props': {
-                          min: 1,
-                          max: 100000,
+                          size: 'middle',
                         },
-                        default: 100,
-                        'x-reactions': {
-                          fulfill: {
-                            state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                        properties: {
+                          readBatchSize: {
+                            title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //全量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-decorator-props': {
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
                             },
+                            'x-component-props': {
+                              min: 1,
+                              max: 100000,
+                            },
+                            default: 100,
+                          },
+                          increaseReadSize: {
+                            title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1,
+                            },
+                            default: 1,
                           },
                         },
                       },

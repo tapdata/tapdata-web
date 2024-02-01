@@ -725,12 +725,18 @@ export default {
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
+          const pdkType = form.getValuesIn('attrs.pdkType')
+          const pdkHash = form.getValuesIn('attrs.pdkHash')
+          const db_version = form.getValuesIn('attrs.db_version')
 
+          pdkType !== connection.pdkType && form.setValuesIn('attrs.pdkType', connection.pdkType)
+          pdkHash !== connection.pdkHash && form.setValuesIn('attrs.pdkHash', connection.pdkHash)
           connectionType !== connection.connection_type &&
             form.setValuesIn('attrs.connectionType', connection.connectionType)
           accessNodeProcessId !== connection.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
           connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
+          db_version !== connection.db_version && form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
             form.setValuesIn('attrs.capabilities', connection.capabilities)
         },
@@ -994,6 +1000,37 @@ export default {
           setTimeout(() => {
             this.nodeSelectedById(nodeId, false, true)
           }, 300)
+        },
+
+        /**
+         * 关联条件变更开关联动
+         * @param val
+         * @param field
+         */
+        changeEnableUpdateJoinKeyValue(val, field) {
+          let enableRecord = field.form.values.attrs.enableRecord
+          if (!enableRecord) {
+            enableRecord = field.form.values.attrs.enableRecord = {}
+          }
+          // 如果是一级开关
+          if (/mergeProperties\.\d+\.enableUpdateJoinKeyValue/.test(field.path.entire)) {
+            const children = field.query('.children').value()
+            const toggleChildrenEnable = (children, val) => {
+              for (const child of children) {
+                let enable = val
+                if (!enable && child.id in enableRecord) {
+                  enable = enableRecord[child.id]
+                }
+                child.enableUpdateJoinKeyValue = enable
+                if (child.children.length) {
+                  toggleChildrenEnable(child.children, val)
+                }
+              }
+            }
+            toggleChildrenEnable(children, val)
+          } else {
+            enableRecord[field.query('.id').value()] = val
+          }
         },
       },
     }

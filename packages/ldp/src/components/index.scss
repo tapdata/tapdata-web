@@ -195,7 +195,7 @@
     font-weight: 500;
   }
   .ck-cell-wrap .cell {
-    padding: 0 !important;
+    padding: 0 8px !important;
     text-align: center;
   }
 
@@ -230,6 +230,6 @@
 
 .catalog-container {
   .object-preview-wrap {
-    z-index: 1;
+    z-index: 10;
   }
 }

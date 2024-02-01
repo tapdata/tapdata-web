@@ -1,6 +1,6 @@
 <template>
   <div class="event-chart">
-    <ElRadioGroup v-if="showAll" v-model:value="dataType" class="event-chart__radio" @change="loadBarData">
+    <ElRadioGroup v-if="showAll" v-model="dataType" class="event-chart__radio" @change="loadBarData">
       <ElRadioButton :label="0">{{ $t('packages_dag_components_eventchart_renwuyunxinglei') }}</ElRadioButton>
       <ElRadioButton :label="1">{{ $t('packages_dag_components_eventchart_suoxuanzhouqilei') }}</ElRadioButton>
     </ElRadioGroup>

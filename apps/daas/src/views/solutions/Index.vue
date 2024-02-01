@@ -8,7 +8,9 @@
           </ElSelect>
         </template>
         <template v-slot:append>
-          <ElButton icon="el-icon-search" @click="search"> </ElButton>
+          <ElButton @click="search">
+            <ElIcon><ElIconSearch /></ElIcon>
+          </ElButton>
         </template>
       </ElInput>
     </div>

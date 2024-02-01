@@ -73,7 +73,7 @@
     </div>
     <ElInput
       ref="reference"
-      v-model:value="selectedLabel"
+      v-model="selectedLabel"
       :id="id"
       text
       :name="name"

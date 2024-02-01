@@ -64,7 +64,8 @@ export const TableListCard = observer(
               items={list.value}
               itemSize={32}
               buffer={50}
-              scopedSlots={{
+            >
+              {{
                 default: ({ item: name }) => (
                   <OverflowTooltip
                     class="w-100 text-truncate source table-list-item font-color-light rounded-2 px-2"
@@ -87,7 +88,7 @@ export const TableListCard = observer(
                   </OverflowTooltip>
                 ),
               }}
-            />
+            </RecycleScroller>
           )
         } else {
           listDom = (

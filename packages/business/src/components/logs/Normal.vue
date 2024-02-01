@@ -4,13 +4,18 @@
       <div class="flex align-items-center">
         <ElInput
           class="search-input mt-2"
-          v-model:value="keyword"
-          prefix-icon="el-icon-search"
+          v-model="keyword"
           :placeholder="$t('packages_business_task_info_log_placeholder')"
           clearable
           @input="searchFnc(800)"
-        ></ElInput>
-        <ElCheckboxGroup v-model:value="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
+        >
+          <template #prefix>
+            <ElIcon>
+              <ElIconSearch />
+            </ElIcon>
+          </template>
+        </ElInput>
+        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-flex ml-4" @change="searchFnc">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
@@ -40,7 +45,9 @@
             </div>
             <div v-else-if="!list.length">{{ $t('public_data_no_data') }}</div>
             <div v-show="preLoading">
-              <el-icon><el-icon-loading /></el-icon>
+              <el-icon>
+                <el-icon-loading />
+              </el-icon>
             </div>
           </div>
         </template>
@@ -85,6 +92,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 import { customerJobLogsApi } from '@tap/api'
 import { delayTrigger } from '@tap/shared'
+
 export default {
   components: {
     DynamicScroller,
@@ -363,6 +371,7 @@ export default {
 <style lang="scss" scoped>
 .customer-logs {
   font-size: 12px;
+
   :deep(.tap-span) {
     padding-left: 16px;
   }
@@ -371,6 +380,7 @@ export default {
     color: red;
   }
 }
+
 .e-debug-log {
   display: flex;
   flex-direction: column;
@@ -378,6 +388,7 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
+
   .el-form {
     position: relative;
 
@@ -386,17 +397,21 @@ export default {
     }
   }
 }
+
 .logs-list {
   overflow: auto;
   background: rgba(229, 236, 255, 0.22);
+
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
     color: map-get($fontColor, dark);
   }
+
   :deep(.keyword) {
     color: map-get($color, danger);
   }
 }
+
 .el-checkbox {
   margin-left: 4px;
   margin-right: 8px;
@@ -405,6 +420,7 @@ export default {
     font-size: 12px;
   }
 }
+
 .white-space-nowrap {
   white-space: nowrap;
 }

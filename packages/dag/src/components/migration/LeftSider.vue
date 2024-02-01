@@ -26,7 +26,7 @@
           <div class="flex flex-column h-100">
             <div v-show="showDBInput" class="p-2">
               <ElInput
-                v-model:value="dbSearchTxt"
+                v-model="dbSearchTxt"
                 ref="dbInput"
                 :placeholder="$t('packages_dag_connection_name_search_placeholder')"
                 clearable
@@ -108,11 +108,9 @@
     <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" model-value="process">
       <ElCollapseItem name="process">
         <template #title>
-          <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">
-              <!--处理节点-->
-              {{ $t('public_node_processor') }}
-            </span>
+          <div class="flex align-center flex-1 user-select-none">
+            <!--处理节点-->
+            {{ $t('public_node_processor') }}
           </div>
         </template>
         <ElScrollbar ref="processorList" tag="div" wrap-class="px-3 pb-3" :wrap-style="scrollbarWrapStyle">
@@ -517,6 +515,7 @@ export default {
           pdkType: item.pdkType,
           pdkHash: item.pdkHash,
           capabilities: item.capabilities || [],
+          db_version: item.db_version,
         },
       }
     },

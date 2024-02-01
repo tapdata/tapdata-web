@@ -22,15 +22,7 @@
       @drop.stop="handleDrop"
     >
       <div v-if="enableSearch" class="px-2 pt-2">
-        <ElInput
-          ref="search"
-          v-model:value="search"
-          clearable
-          @keydown.stop
-          @keyup.stop
-          @click.stop
-          @input="handleSearch"
-        >
+        <ElInput ref="search" v-model="search" clearable @keydown.stop @keyup.stop @click.stop @input="handleSearch">
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">search-outline</VIcon>
           </template>
@@ -43,7 +35,7 @@
           class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white"
           v-loading="searchIng"
         >
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -59,10 +51,10 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
-          ></VirtualTree>
+          ></ElTree>
         </div>
         <template v-else>
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -81,7 +73,7 @@
             @node-drag-end="handleDragEnd"
             @node-expand="handleNodeExpand"
             @node-collapse="handeNodeCollapse"
-          ></VirtualTree>
+          ></ElTree>
           <div
             v-if="!treeData.length"
             class="flex justify-center align-center absolute-fill fs-7 font-color-light px-3"
@@ -92,7 +84,7 @@
       </div>
       <div v-else class="flex-1 min-h-0 position-relative">
         <div class="search-view position-absolute top-0 left-0 w-100 h-100 bg-white">
-          <VirtualTree
+          <ElTree
             class="ldp-tree h-100"
             ref="tree"
             node-key="id"
@@ -108,7 +100,7 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
-          ></VirtualTree>
+          ></ElTree>
         </div>
       </div>
 
@@ -126,7 +118,7 @@
         {{ $t('packages_ldp_connection_expired') }}
       </div>
     </div>
-    <ElDialog v-model="taskDialogConfig.visible" width="600" :close-on-click-modal="false">
+    <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
       <template #header>
         <span class="font-color-dark fs-6 fw-sub">{{ $t('packages_business_create_clone_task') }}</span>
       </template>
@@ -142,11 +134,7 @@
         </div>
 
         <ElFormItem :label="$t('packages_business_table_prefix')" prop="prefix">
-          <ElInput
-            v-model:value="taskDialogConfig.prefix"
-            :maxlength="maxPrefixLength"
-            class="inline-flex inline-flex-input"
-          >
+          <ElInput v-model="taskDialogConfig.prefix" :maxlength="maxPrefixLength" class="inline-flex inline-flex-input">
             <template v-slot:prepend>{{ fixedPrefix }}</template>
             <template v-slot:append>
               <span v-if="taskDialogConfig.tableName" :title="taskDialogConfig.tableName">
@@ -158,7 +146,7 @@
         </ElFormItem>
 
         <ElFormItem :label="$t('packages_dag_task_setting_sync_type')" prop="task.type">
-          <ElRadioGroup v-model:value="taskDialogConfig.task.type">
+          <ElRadioGroup v-model="taskDialogConfig.task.type">
             <ElTooltip
               :disabled="!taskDialogConfig.notSupportedCDC"
               :content="$t('packages_ldp_not_support_increments')"
@@ -176,7 +164,7 @@
         <div class="flex align-center gap-3" v-if="taskDialogConfig.task.type === 'initial_sync'">
           <ElFormItem :label="$t('packages_dag_task_setting_crontabExpressionFlag')" prop="task.crontabExpressionType">
             <ElSelect
-              v-model:value="taskDialogConfig.task.crontabExpressionType"
+              v-model="taskDialogConfig.task.crontabExpressionType"
               @change="handleChangeCronType"
               class="flex-1"
             >
@@ -188,7 +176,7 @@
             prop="task.crontabExpression"
             label-width="0"
           >
-            <ElInput v-model:value="taskDialogConfig.task.crontabExpression"></ElInput>
+            <ElInput v-model="taskDialogConfig.task.crontabExpression"></ElInput>
           </ElFormItem>
         </div>
       </ElForm>
@@ -216,7 +204,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -237,7 +225,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
@@ -257,6 +245,7 @@
 </template>
 
 <script lang="jsx">
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 
@@ -362,7 +351,7 @@ export default {
     this.autoUpdateObjects()
   },
   beforeUnmount() {
-    this.eventDriver.off('source-drag-end')
+    // this.eventDriver.off('source-drag-end')
     clearInterval(this.autoUpdateObjectsTimer)
   },
   methods: {
@@ -427,23 +416,19 @@ export default {
           )
         }
         actions.push(
-          <ElDropdown
-            class="inline-flex"
-            placement="bottom"
-            trigger="click"
-            onCommand={(command) => this.handleMoreCommand(command, data)}
-          >
-            <IconButton
-              onClick={(ev) => {
-                ev.stopPropagation()
-              }}
-              sm
-            >
-              more
-            </IconButton>
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-            </ElDropdownMenu>
+          <ElDropdown placement="bottom" trigger="click" onCommand={(command) => this.handleMoreCommand(command, data)}>
+            {{
+              default: () => (
+                <IconButton sm class="ml-2">
+                  more
+                </IconButton>
+              ),
+              dropdown: () => (
+                <ElDropdownMenu>
+                  <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                </ElDropdownMenu>
+              ),
+            }}
           </ElDropdown>,
         )
       }
@@ -601,9 +586,9 @@ export default {
       this.taskDialogConfig.canStart = false
       this.checkCanStartIng = true
       const tag = this.treeData.find((item) => item.linkId === this.taskDialogConfig.from.id)
+      const task = this.tag2Task[tag?.id]
 
-      if (tag) {
-        const task = this.tag2Task[tag.id]
+      if (task) {
         this.taskDialogConfig.task.type = task.type
         this.taskDialogConfig.task.crontabExpressionFlag = task.crontabExpressionFlag
         this.taskDialogConfig.task.crontabExpression = task.crontabExpression
@@ -632,7 +617,6 @@ export default {
             params: { start },
           })
           this.taskDialogConfig.visible = false
-          const h = this.$createElement
           this.$message.success({
             message: h(
               'span',

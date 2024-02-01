@@ -15,11 +15,11 @@
           :disabled="!list.length"
           class="mr-4"
           @click="handleClearIndexEmpty"
-          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
-        >
-        <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
-          $t('packages_business_verification_clear')
-        }}</ElLink>
+          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
+        </ElLink>
+        <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+          >{{ $t('packages_business_verification_clear') }}
+        </ElLink>
       </div>
     </div>
     <DynamicScroller
@@ -122,7 +122,7 @@
                   :scope="schemaScope"
                   :colon="true"
                   class="w-100"
-                  label-width="120"
+                  label-width="130"
                   @input="(value) => (item = value)"
                 />
               </div>
@@ -150,7 +150,7 @@
               <div v-if="inspectMethod === 'field'" class="setting-item align-items-center mt-4">
                 <label class="item-label">{{ $t('packages_business_components_fieldbox_daijiaoyanmoxing') }}:</label>
                 <ElRadioGroup
-                  v-model:value="item.modeType"
+                  v-model="item.modeType"
                   :disabled="getModeTypeDisabled(item)"
                   @change="handleChangeModeType(arguments[0], item, index)"
                 >
@@ -164,26 +164,24 @@
                   @click="handleCustomFields(item, index)"
                 >
                   {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
-                  ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
-                >
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})
+                </ElLink>
               </div>
               <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-                <ElCheckbox
-                  v-model:value="item.showAdvancedVerification"
-                  @change="handleChangeAdvanced(item, arguments[0])"
-                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
-                >
+                <ElCheckbox v-model="item.showAdvancedVerification" @change="handleChangeAdvanced(item, arguments[0])"
+                  >{{ $t('packages_business_verification_advanceVerify') }}
+                </ElCheckbox>
               </div>
               <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
                 <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('packages_business_verification_addJS')
-                }}</ElButton>
+                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)"
+                  >{{ $t('packages_business_verification_addJS') }}
+                </ElButton>
                 <template v-else>
                   <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{
-                    $t('public_button_delete')
-                  }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)"
+                    >{{ $t('public_button_delete') }}
+                  </ElLink>
                 </template>
               </div>
               <div
@@ -205,8 +203,8 @@
         :disabled="!!list.length"
         :loading="autoAddTableLoading"
         @click="autoAddTable"
-        >{{ $t('packages_business_verification_button_auto_add_table') }}</ElButton
-      >
+        >{{ $t('packages_business_verification_button_auto_add_table') }}
+      </ElButton>
     </div>
     <ElDialog
       width="60%"
@@ -406,7 +404,7 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: '',
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip'),
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -600,7 +598,8 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: '',
+                      labelWrap: true,
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip'),
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -1828,10 +1827,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 .joint-table {
   border-radius: 4px;
   border: 1px solid #e8e8e8;
+
   &.error {
     border-color: map-get($color, danger);
   }
 }
+
 .joint-table-header {
   padding: 16px 24px;
   display: flex;
@@ -1840,35 +1841,43 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
+
 .joint-table-footer {
   padding: 16px 24px;
 }
+
 .joint-table-main {
   max-height: 500px;
   overflow-y: auto;
+
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid map-get($borderColor, light);
   }
+
   .joint-table-setting {
     flex: 1;
     background-color: map-get($bgColor, white);
   }
+
   .setting-item {
     display: flex;
     margin-bottom: 0;
+
     .el-form-item__content {
       display: flex;
       align-items: center;
       line-height: 1;
     }
+
     .item-label {
       width: 120px;
       line-height: 32px;
       text-align: left;
       color: map-get($fontColor, light);
     }
+
     .item-icon {
       margin: 0 10px;
       width: 120px;
@@ -1876,6 +1885,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       color: map-get($fontColor, light);
       text-align: center;
     }
+
     .item-time-picker,
     .item-input,
     .item-select,
@@ -1885,16 +1895,19 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .item-filter-body {
       padding: 16px;
       background: map-get($fontColor, normal);
       border-radius: 2px;
       color: map-get($fontColor, slight);
+
       .filter-example-label {
         margin-top: 8px;
         color: #bfd0ff;
         line-height: 17px;
       }
+
       .filter-example {
         margin-top: 8px;
         padding: 8px;
@@ -1903,11 +1916,13 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
         color: #82b290;
       }
     }
+
     .item-value-text {
       flex: 1;
       line-height: 32px;
       padding: 0 16px;
     }
+
     .item-script {
       margin: 0;
       padding: 16px 24px;
@@ -1927,9 +1942,11 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     }
   }
 }
+
 .FieldList {
   height: 280px;
 }
+
 .empty-data {
   :deep(.el-select) {
     .el-input__inner {
@@ -1937,6 +1954,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     }
   }
 }
+
 .scheme-to-form {
   :deep(
       .formily-element-plus-form-item-layout-horizontal

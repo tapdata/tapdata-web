@@ -338,10 +338,17 @@ export const PreviewDrawer = defineComponent({
                           class="mb-3"
                           style="width:200px"
                           placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
-                          suffix-icon="el-icon-search"
                           v-model={this.data.search}
                           onChange={this.filterNames}
-                        ></el-input>
+                        >
+                          {{
+                            prefix: () => (
+                              <ElIcon>
+                                <ElIconSearch />
+                              </ElIcon>
+                            ),
+                          }}
+                        </el-input>
                       </div>
                       <VTable
                         class="discovery-page-table"
@@ -446,10 +453,17 @@ export const PreviewDrawer = defineComponent({
                           class="mb-3"
                           style="width:200px"
                           placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
-                          suffix-icon="el-icon-search"
                           v-model={this.data.searchApi}
                           onChange={this.filterNamesApi}
-                        ></el-input>
+                        >
+                          {{
+                            prefix: () => (
+                              <ElIcon>
+                                <ElIconSearch />
+                              </ElIcon>
+                            ),
+                          }}
+                        </el-input>
                       </div>
                       <VTable
                         class="discovery-page-table"

@@ -34,6 +34,7 @@ export default {
   public_no_permissions: '沒有權限',
   public_yes: '是',
   public_no: '否',
+  public_tags: '標籤',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -95,7 +96,7 @@ export default {
   public_button_download: '下載',
   public_button_add: '新增',
   public_button_bulk_operation: '批量操作',
-  public_button_bulk_tag: '設置分類',
+  public_button_bulk_tag: '設置標籤',
   public_button_revise: '修改',
   public_button_refresh: '刷新',
   public_button_public: '發布',
@@ -217,6 +218,7 @@ export default {
   public_connection_button_create: '創建連接',
   public_connection_button_copy: '複製連接',
   public_connection_button_test: '連接測試',
+  public_connection_button_connection_test: '連接測試',
   public_connection_button_load_schema: '加載Schema',
   public_connection_form_database_name: '數據庫名稱',
   public_connection_form_database_type: '數據庫類型',
@@ -228,6 +230,10 @@ export default {
   public_connection_form_other_connection_string: '其他連接串參數',
   public_connection_form_time_zone_of_time_type: '時間類型的時區',
   public_connection_form_link_plugin_source: '鏈接插件來源',
+  public_source_database: '源數據庫',
+  public_target_database: '目標數據庫',
+  public_source_connection: '源連接',
+  public_target_connection: '目標連接',
   // 任務
   public_task: '任務',
   public_task_name: '任務名稱',
@@ -269,7 +275,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
-
+  
   //里程碑
   public_milestone_time_cdc_consuming: '啟動耗時',
   public_milestone_time_consuming: '耗時',
@@ -282,5 +288,11 @@ export default {
   public_external_memory_type: '外存類型',
   public_external_memory_table: '外存表名',
   public_external_memory_connection: '外存連接',
+  public_external_memory_info: '外存信息',
+  
+  public_shared_mining: '共享挖掘',
+  public_external_storage: '外存管理',
+  
+  public_page_title_advanced_features: '高級功能'
   public_external_memory_info: '外存信息',
 }

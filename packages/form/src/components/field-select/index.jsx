@@ -5,7 +5,7 @@ import { PreviewText } from '@formily/element-plus'
 import { VIcon } from '@tap/component'
 
 const DefineFieldSelect = defineComponent({
-  setup: (props, { attrs, listeners }) => {
+  setup: (props, { attrs }) => {
     return () => {
       const newAttrs = { ...attrs }
       if (
@@ -16,10 +16,8 @@ const DefineFieldSelect = defineComponent({
       }
       const itemLabel = newAttrs.itemLabel || 'label'
       return (
-        <Select
-          attrs={newAttrs}
-          on={listeners}
-          scopedSlots={{
+        <Select {...newAttrs}>
+          {{
             option: ({ option }) => (
               <div class="flex align-center">
                 {option[itemLabel]}
@@ -31,7 +29,7 @@ const DefineFieldSelect = defineComponent({
               </div>
             ),
           }}
-        />
+        </Select>
       )
     }
   },

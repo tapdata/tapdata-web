@@ -1490,7 +1490,7 @@ export default {
   dfs_agent_download_subscriptionmodeldialog_cny: 'CNY',
   dfs_agent_download_subscriptionmodeldialog_hkd: 'HKD',
   dfs_agent_specification_description:
-    'Memory requirement: <strong>{mem}</strong>, Synchronous performance: <strong>{tps}TPS</strong>',
+    'Memory requirement: <strong>{mem}</strong>, Replication performance: <strong>{tps}TPS</strong>',
   dfs_instance_instance_qingshurutuiding: 'Please enter the reason for unsubscribing',
   dfs_instance_instance_tuidingjine: 'Unsubscribe Amount',
   dfs_instance_instance_yixiaohaojine: 'Amount Consumed',
@@ -1699,6 +1699,7 @@ export default {
   dfs_mixins_tour_qingchuangjianninde3: 'Please create your source database',
   dfs_mixins_tour_drag_source_table:
     'Please drag a table from the source connection to the target connection to start creating a replication task.',
+  dfs_mixins_tour_view_monitor: 'Click here to view task monitoring.',
   dfs_router_index_zhifuqingdan: 'Payment list',
   dfs_instance_instance_perce: '{val1} Second Ago',
   dfs_instance_instance_perce_minute: '{val1} Minute Ago',
@@ -1773,8 +1774,16 @@ export default {
   dfs_replication_tour_dialog_finished_subtitle:
     'Next, you can enjoy a free trial of our product for tasks such as database replication and migration',
   dfs_replication_tour_dialog_finished_survey_title:
-    'Through the onboarding guide, you now have a certain understanding of Tapdata. Will you continue to use Tapdata?',
+    'Will you continue to use Tapdata? Please help us to improve our product by providing quick feedback:',
   dfs_replication_tour_dialog_finished_survey_placeholder: 'Enter your feedback or suggestions...',
+  dfs_replication_tour_dialog_finished_option_yes:
+    "Yes, Tapdata appears to meet my expectations for the tool I'm looking for.",
+  dfs_replication_tour_dialog_finished_option_no_plan_1:
+    'No plan to use, as I am not sure how or where I can use Tapdata.',
+  dfs_replication_tour_dialog_finished_option_no_plan_2:
+    "No plan to use, as I don't have a real project at this moment.",
+  dfs_replication_tour_dialog_finished_option_no_plan_3: 'No plan to use, I have concerns over data security.',
+  dfs_replication_tour_dialog_finished_option_other: 'Other, please specify',
   dfs_subscribe_to_professional_plan: 'Subscribe to Professional Plan',
   dfs_order_change: 'Change',
   dfs_change_record: 'Change Record',
@@ -1808,4 +1817,12 @@ export default {
   dfs_system_update: 'System Update',
   dfs_system_description: "The system has been upgraded! Click 'Refresh' to experience the new features immediately!",
   dfs_order_list_bianhao: 'Number',
+  dfs_marketplace_guide_title:
+    'Your Agent is currently being created automatically, and it is expected to take 5 to 10 minutes. You will receive an email notification once the creation is complete. Please be patient.',
+  dfs_marketplace_guide_step_1: 'Fully managed Agent is being created automatically...',
+  dfs_marketplace_guide_step_2: `Beginner's guide to [Data Replication Task]`,
+  dfs_marketplace_guide_step_3: 'Please enjoy the full functionality',
+  dfs_marketplace_guide_cancel: 'Close',
+  dfs_marketplace_guide_ok: 'Refresh',
+  dfs_settings_language: 'Language',
 }

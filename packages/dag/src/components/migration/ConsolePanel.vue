@@ -30,7 +30,7 @@
     </div>
     <div class="flex-1 flex flex-column">
       <div class="flex p-2">
-        <ElCheckboxGroup v-model:value="levels" :min="1" class="inline-flex flex-1" @change="autoLoad">
+        <ElCheckboxGroup v-model="levels" :min="1" class="inline-flex flex-1" @change="autoLoad">
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>

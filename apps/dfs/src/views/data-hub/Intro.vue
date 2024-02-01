@@ -98,8 +98,9 @@
       </div>
 
       <div class="text-center">
-        <p v-if="isDomesticStation" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
-          <VIcon>info</VIcon>{{ $t('dfs_offline_deployment_tip') }}
+        <p v-if="onlyIntro" class="font-color-sslight mb-2 flex align-center gap-1 justify-center">
+          <VIcon>info</VIcon>
+          {{ $t('dfs_offline_deployment_tip') }}
         </p>
         <p v-else class="mb-2">
           <ElLink
@@ -107,19 +108,15 @@
             class="text-decoration-underline"
             href="https://calendly.com/umer-tapdata"
             target="_blank"
-            >Feel free to Book a Demo with us</ElLink
-          >
+            >Feel free to Book a Demo with us
+          </ElLink>
         </p>
-        <ElButton
-          v-if="!isDomesticStation"
-          @click="$router.push({ name: 'CreateStorage' })"
-          type="primary"
-          size="large"
-          >{{ $t('packages_ldp_data_hub_subscribe') }}</ElButton
-        >
-        <ElButton v-else @click="openOfflineDeployment" type="primary" size="large">{{
-          $t('dfs_offline_deployment_get')
-        }}</ElButton>
+        <ElButton v-if="!onlyIntro" @click="$router.push({ name: 'CreateStorage' })" type="primary" size="large"
+          >{{ $t('packages_ldp_data_hub_subscribe') }}
+        </ElButton>
+        <ElButton v-else @click="openOfflineDeployment" type="primary" size="large"
+          >{{ $t('dfs_offline_deployment_get') }}
+        </ElButton>
       </div>
     </div>
   </div>
@@ -132,7 +129,9 @@ export default {
   name: 'Intro',
 
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    onlyIntro() {
+      return !this.$store.state.config.pagePermissions?.includes('dataHub')
+    },
   },
 
   methods: {
@@ -148,6 +147,7 @@ export default {
   width: 48px;
   height: 48px;
 }
+
 .step-icon {
   width: 32px;
   height: 32px;

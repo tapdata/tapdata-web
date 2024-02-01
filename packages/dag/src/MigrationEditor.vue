@@ -501,6 +501,7 @@ export default {
               pdkType: 'pdk',
               pdkHash: con.pdkHash,
               capabilities: con.capabilities,
+              db_version: con.db_version,
             },
           })
         } catch (error) {

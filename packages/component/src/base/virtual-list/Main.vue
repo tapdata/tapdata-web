@@ -10,7 +10,7 @@
         >
           <div v-if="item.type === 'selection'" class="cell">
             <ElCheckbox
-              v-model:value="checkAll"
+              v-model="checkAll"
               :indeterminate="isIndeterminate"
               @change="handleCheckAll(arguments[0])"
             ></ElCheckbox>
@@ -55,7 +55,7 @@
                   <template v-else-if="colItem.type === 'selection'">
                     <ElCheckbox
                       :value="selections.includes(item)"
-                      @change="toggleRowSelection(item, arguments[0])"
+                      @change="toggleRowSelection(item, $event)"
                     ></ElCheckbox>
                   </template>
                   <template v-else>{{ item[colItem.prop] }}</template>
@@ -65,13 +65,19 @@
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
-      <el-tooltip placement="top" ref="tooltip" :effect="tooltipEffect" :content="tooltipContent"></el-tooltip>
+      <el-tooltip
+        :referenceEl="referenceEl"
+        placement="top"
+        ref="tooltip"
+        :effect="tooltipEffect"
+        :content="tooltipContent"
+      ></el-tooltip>
     </div>
   </div>
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
+import { $emit } from '../../../utils/gogocodeTransfer'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { cloneDeep, debounce } from 'lodash'
 
@@ -118,6 +124,7 @@ export default {
         index: 50,
         selection: 40,
       },
+      referenceEl: null,
     }
   },
   computed: {
@@ -154,7 +161,7 @@ export default {
     },
   },
   created() {
-    this.activateTooltip = debounce((tooltip) => tooltip.handleShowPopper(), 50)
+    this.activateTooltip = debounce((tooltip) => tooltip.onOpen(), 50)
   },
   mounted() {
     this.layoutWidth = this.$el.offsetWidth
@@ -169,7 +176,7 @@ export default {
     },
 
     toggleRowSelection(row = {}, selected) {
-      const index = this.selections.findIndex((t) => t === row)
+      const index = this.selections.findIndex((t) => t[this.itemKey] === row[this.itemKey])
 
       index > -1 && this.selections.splice(index, 1)
       if (selected) {
@@ -236,10 +243,7 @@ export default {
       if (cellChild.scrollWidth > cellChild.offsetWidth && this.$refs.tooltip) {
         const tooltip = this.$refs.tooltip
         this.tooltipContent = cell.innerText || cell.textContent || cell.querySelector('input')?.value
-        tooltip.referenceElm = cell
-        tooltip.$refs.popper && (tooltip.$refs.popper.style.display = 'none')
-        tooltip.doDestroy()
-        tooltip.setExpectedState(true)
+        this.referenceEl = cell
         this.activateTooltip(tooltip)
       }
     },
@@ -248,8 +252,7 @@ export default {
       const tooltip = this.$refs.tooltip
 
       if (tooltip) {
-        tooltip.setExpectedState(false)
-        tooltip.handleClosePopper()
+        tooltip.hide()
       }
     },
 

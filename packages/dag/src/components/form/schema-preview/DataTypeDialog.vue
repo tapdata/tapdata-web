@@ -63,12 +63,10 @@
       </template>
     </ElForm>
     <template v-slot:footer>
-      <span class="dialog-footer">
-        <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
-          $t('public_button_confirm')
-        }}</ElButton>
-      </span>
+      <ElButton @click="editDataTypeVisible = false">{{ $t('public_button_cancel') }}</ElButton>
+      <ElButton type="primary" :disabled="!currentData.newDataType" :loading="editBtnLoading" @click="submitEdit">{{
+        $t('public_button_confirm')
+      }}</ElButton>
     </template>
   </ElDialog>
 </template>

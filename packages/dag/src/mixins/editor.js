@@ -1,3 +1,4 @@
+import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
@@ -179,9 +180,12 @@ export default {
         // 数据兼容
         const defaultAttrs = {
           position: [0, 0],
+          capabilities: [],
         }
         if (!node.attrs) node.attrs = defaultAttrs
         else if (!node.attrs.position) Object.assign(node.attrs, defaultAttrs)
+
+        if (!node.attrs.capabilities) node.attrs.capabilities = []
 
         const ins = getResourceIns(node)
         Object.defineProperty(node, '__Ctor', {
@@ -2130,8 +2134,6 @@ export default {
 
     getConfirmMessage(operateStr) {
       let message = operateStr + '_confirm_message'
-
-      const h = this.$createElement
       let strArr = this.$t('packages_dag_dataFlow_' + message).split('xxx')
       let msg = h('p', null, [
         strArr[0],

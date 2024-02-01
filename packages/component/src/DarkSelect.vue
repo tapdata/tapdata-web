@@ -3,7 +3,7 @@
     <div class="select__title">{{ label }}</div>
     <ElSelect
       v-bind="$attrs"
-      v-model:value="period"
+      v-model="period"
       :popper-append-to-body="false"
       popper-class="time-select__popper"
       class="ml-2 dark flex-fill"

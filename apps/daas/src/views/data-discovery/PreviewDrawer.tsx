@@ -337,10 +337,17 @@ export default defineComponent({
                           class="mb-3"
                           style="width:200px"
                           placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
-                          suffix-icon="el-icon-search"
                           v-model={this.data.search}
                           onChange={this.filterNames}
-                        ></el-input>
+                        >
+                          {{
+                            prefix: () => (
+                              <ElIcon>
+                                <ElIconSearch />
+                              </ElIcon>
+                            ),
+                          }}
+                        </el-input>
                       </div>
                       <VTable
                         class="discovery-page-table"
@@ -348,7 +355,7 @@ export default defineComponent({
                         data={this.previewData.fields}
                         has-pagination={false}
                       >
-                        <div slot="empty">{i18n.t('public_data_no_data')}</div>
+                        {{ empty: () => <div>{i18n.t('public_data_no_data')}</div> }}
                       </VTable>
                     </div>
                   </div>
@@ -445,10 +452,17 @@ export default defineComponent({
                           class="mb-3"
                           style="width:200px"
                           placeholder={i18n.t('daas_data_discovery_previewdrawer_qingshurumingcheng')}
-                          suffix-icon="el-icon-search"
                           v-model={this.data.searchApi}
                           onChange={this.filterNamesApi}
-                        ></el-input>
+                        >
+                          {{
+                            prefix: () => (
+                              <ElIcon>
+                                <ElIconSearch />
+                              </ElIcon>
+                            ),
+                          }}
+                        </el-input>
                       </div>
                       <VTable
                         class="discovery-page-table"

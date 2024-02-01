@@ -238,14 +238,14 @@ export const useSelect: Function = (props, states: States, ctx) => {
     () => states.visible,
     (val) => {
       if (!val) {
-        if (props.filterable) {
-          if (isFunction(props.filterMethod)) {
-            props.filterMethod('')
-          }
-          if (isFunction(props.remoteMethod)) {
-            props.remoteMethod('')
-          }
-        }
+        // if (props.filterable) {
+        //   if (isFunction(props.filterMethod)) {
+        //     props.filterMethod('')
+        //   }
+        //   if (isFunction(props.remoteMethod)) {
+        //     props.remoteMethod('')
+        //   }
+        // }
         states.query = ''
         states.previousQuery = null
         states.selectedLabel = ''
@@ -405,8 +405,8 @@ export const useSelect: Function = (props, states: States, ctx) => {
     await loadData()
 
     states.lastQuery = val
-    queryChange.value.query = val
-    triggerRef(queryChange)
+    // queryChange.value.query = val
+    // triggerRef(queryChange)
     triggerRef(groupQueryChange)
 
     /*if (props.remote && isFn(props.remoteMethod)) {

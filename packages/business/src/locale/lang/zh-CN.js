@@ -349,6 +349,7 @@ export default {
   packages_business_relation_details_renwu: '任务',
   packages_business_agent_select_placeholder: '请选择agent',
   packages_business_agent_select_not_found: '该agent已不存在，请选择其他agent',
+  packages_business_agent_select_not_found_for_rocksdb: '选用RocksDB作为共享挖掘外存时，需要手动指定一个Agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的数据源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     '交由Tapdata进行全面的质量测试，以保证插件的稳定性和质量',
@@ -500,9 +501,9 @@ export default {
   packages_business_verification_fastCountTip:
     '快速count仅对源表和目标表的行数进行count校验，速度极快，但是不会展示差异的具体字段内容。',
   packages_business_verification_contentVerifyTip:
-    '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。',
+    '表全字段值校验会对源表和目标表的全部字段进行逐行校验，能查出所有字段的差异，但是速度慢。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
   packages_business_verification_jointFieldTip:
-    '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。',
+    '关联字段值校验只对源表和目标表的关联字段的值进行比对校验，速度快于全表字段值校验模式。此操作同时会对源和目标库发起查询，可能会对数据库造成读取压力。',
   packages_business_verification_waiting: '待校验',
   packages_business_verification_scheduling: '校验启动中',
   packages_business_verification_error: '校验失败',
@@ -613,6 +614,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+  packages_business_setting_alarmnotification_recipient_setting: '任务默认告警接收人设置',
+  packages_business_setting_alarmnotification_recipient_desc:
+    '此处设置为系统全局告警接收人设置，设置的所有的接收人都可以收到当前系统已开启的告警',
+  packages_business_setting_alarmnotification_recipient_default: '默认告警接收人',
+  packages_business_setting_alarmnotification_recipient: '告警接收人',
+  packages_business_setting_alarmnotification_recipient_tip: '支持设置多个告警接收人邮箱，多个邮箱以逗号分隔',
+  packages_business_setting_alarmnotification_channel: '告警通知渠道',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',
@@ -627,6 +635,7 @@ export default {
   packages_business_notify_no_webchat_notification:
     '您的账户还没有进行微信绑定，如需通过微信接收通知信息，请先退出登录后通过微信扫码完成绑定',
   packages_business_connections_databaseform_bujiazai: '不加载',
+  packages_business_connections_databaseform_system: '跟随系统设置',
   packages_business_custom_node_placeholder: '请输入节点名称搜索',
   packages_business_custom_node_edit_confirm: '检测到以下运行中的任务调用了该节点，如需配置生效请重新启动任务',
   packages_business_task_list_sqLyuju: 'SQL语句:',
@@ -943,6 +952,8 @@ export default {
   packages_business_shared_cache_column_table: '所属表',
   packages_business_shared_cache_cache_key_message: '所选缓存键无索引',
   packages_business_shared_cache_cache_key_auto_create: '自动创建索引',
+  packages_business_shared_cache_cache_key_auto_create_tip:
+    '开启该能力后，会自动在源表为缓存键创建索引，可能会对源库造成影响，请谨慎开启',
   packages_business_relation_list_gongxianghuancun: '共享缓存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1119,6 +1130,8 @@ export default {
   packages_business_verification_list_biaobufenziduan: '表部分字段校验',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '来源表数据过滤',
   packages_business_components_conditionbox_mubiaobiaoshuju: '目标表数据过滤',
+  packages_business_components_conditionbox_enableCustomCommand_tip:
+    '需要保证查询条件有索引，如果没索引会产生全表扫描导致数据库压力变大',
   packages_business_data_server_list_apIwendang: 'API文档导出',
   packages_business_verification_form_gaojipeizhi: '高级配置',
   packages_business_verification_form_validate_table_is_empty: '源表和目标表不能为空，请修改校验表配置',
@@ -1171,4 +1184,12 @@ export default {
   packages_business_ssh_password: '密码',
   packages_business_connections_test_xiazaijindu: '下载进度',
   packages_business_connections_test_xiazaishibai: '下载失败',
+  packages_business_relmig_import: 'MongoDB Relmig 导入',
+  packages_business_relmig_import_desc:
+    '这个功能旨在无缝导入 MongoDB 关系迁移器导出的 relmig 项目文件到 Tapdata。在 relmig 文件被导入后，Tapdata 将自动创建一个任务来执行源数据库的实时数据同步，并将其转换为 MongoDB 数据库中的 JSON 数据格式。',
+  packages_business_relmig_upload: '上传 relmig 文件',
+  packages_business__relmig_import_connection_tip: '如果您还没有创建，请点击这里',
+  packages_business__relmig_import_source_connection_placeholder: '请选择包含您在 relmig 项目中使用的源表的源连接',
+  packages_business__relmig_import_target_connection_placeholder: '请选择您希望数据同步到的目标连接',
+  packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它',
 }

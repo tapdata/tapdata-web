@@ -2,7 +2,7 @@ import i18n from '@tap/i18n'
 import { connect, mapProps, useForm, useField, FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent, ref, computed } from 'vue'
-import { VIcon } from '@tap/component'
+import { IconButton, VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from './util'
 import './index.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
@@ -313,15 +313,22 @@ export const FieldRename = observer(
             </FormItem.BaseItem>
 
             <ElInput
-              class="my-2"
+              class="mb-2"
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               value={searchFiledName.value}
               onInput={(val) => {
                 searchFiledName.value = val
               }}
               clearable
-              prefix-icon="el-icon-search"
-            />
+            >
+              {{
+                prefix: () => (
+                  <ElIcon>
+                    <ElIconSearch />
+                  </ElIcon>
+                ),
+              }}
+            </ElInput>
 
             <div class="border rounded-4 overflow-hidden">
               <div class="field-processor-operation flex">
@@ -331,15 +338,10 @@ export const FieldRename = observer(
                 <span class="flex-1 text inline-block">
                   {i18n.t('packages_form_field_rename_index_mubiaoziduanming')}
                 </span>
-                <span class="field-ops  inline-block mr-4">
-                  <VIcon
-                    class={[props.disabled || transformLoading.value ? 'disable__btn' : 'clickable', 'ml-5']}
-                    size="12"
-                    disabled={props.disabled || transformLoading.value}
-                    onClick={() => handleAllReset()}
-                  >
+                <span class="flex align-center gap-2 px-2">
+                  <IconButton sm disabled={props.disabled || transformLoading.value} onClick={() => handleAllReset()}>
                     revoke
-                  </VIcon>
+                  </IconButton>
                 </span>
               </div>
               <div class="field-processors-tree-warp">
@@ -351,12 +353,10 @@ export const FieldRename = observer(
                   // show-checkbox={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"
-                  scopedSlots={{
+                >
+                  {{
                     default: ({ node, data }) => (
-                      <span
-                        class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden"
-                        slot-scope="{ node, data }"
-                      >
+                      <span class="tree-node flex flex-1 justify-content-center align-items flex-row overflow-hidden">
                         <span class="flex-1 text__inner inline-block ellipsis">
                           {data.field}
                           {data.primary_key_position > 0 ? (
@@ -371,38 +371,39 @@ export const FieldRename = observer(
                           {data.level === 1 && !data.children?.length ? (
                             <div
                               class={[
-                                'el-input el-input--small tree-field-input text__inner',
+                                'el-input tree-field-input text__inner',
                                 {
                                   'tree-field-input-primary': data.field_name !== data.previousFieldName,
                                   'is-disabled': props.disabled || transformLoading.value,
                                 },
                               ]}
                             >
-                              <input
-                                disabled={props.disabled || transformLoading.value}
-                                text
-                                autocomplete="off"
-                                class="el-input__inner"
-                                value={data.field_name}
-                                onChange={(event) => {
-                                  const val = event.target.value?.trim()
-                                  if (val) {
-                                    data.field_name = val
-                                    handleRename(node, data)
-                                  } else {
-                                    event.target.value = data.field_name
-                                  }
-                                }}
-                              />
+                              <div class="el-input__wrapper" tabindex="-1">
+                                <input
+                                  type="text"
+                                  disabled={props.disabled || transformLoading.value}
+                                  autocomplete="off"
+                                  class="el-input__inner"
+                                  value={data.field_name}
+                                  onChange={(event) => {
+                                    const val = event.target.value?.trim()
+                                    if (val) {
+                                      data.field_name = val
+                                      handleRename(node, data)
+                                    } else {
+                                      event.target.value = data.field_name
+                                    }
+                                  }}
+                                />
+                              </div>
                             </div>
                           ) : (
                             <span class="text__inner">{data.field_name}</span>
                           )}
                         </span>
-                        <span class="e-ops mr-4">
-                          <ElButton
-                            text
-                            class="ml-5"
+                        <span class="flex align-center gap-2 px-2">
+                          <IconButton
+                            sm
                             disabled={
                               (fieldsNameTransforms === '' && !isRename(data.previousFieldName)) ||
                               isReset(data.previousFieldName) ||
@@ -411,13 +412,13 @@ export const FieldRename = observer(
                             }
                             onClick={() => handleReset(node, data)}
                           >
-                            <VIcon size="12">revoke</VIcon>
-                          </ElButton>
+                            revoke
+                          </IconButton>
                         </span>
                       </span>
                     ),
                   }}
-                />
+                </ElTree>
               </div>
             </div>
           </div>

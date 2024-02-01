@@ -1,12 +1,15 @@
 <template>
   <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
-    <header class="flex justify-content-between mb-4 mt-4">
-      <div>
+    <header class="flex mb-4 mt-4 gap-3">
+      <div class="flex-1">
         {{ $t('packages_business_setting_alarmnotification_renwugaojingshe') }}
       </div>
-      <div class="color-primary cursor-pointer" @click="showAlarmRlues">
-        {{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
-      </div>
+      <ElLink type="primary" @click="showAlarmRecipient">{{
+        $t('packages_business_setting_alarmnotification_recipient_default')
+      }}</ElLink>
+      <ElLink type="primary" @click="showAlarmRlues">{{
+        $t('packages_business_setting_alarmnotification_morengaojinggui')
+      }}</ElLink>
     </header>
     <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
       <template v-slot:key="scope">
@@ -157,6 +160,46 @@
         <el-button type="primary" @click="saveAlarmRules()">{{ $t('public_button_save') }}</el-button>
       </footer>
     </el-dialog>
+
+    <el-dialog
+      :title="$t('packages_business_setting_alarmnotification_recipient_setting')"
+      width="70%"
+      append-to-body
+      v-model:visible="alarmRecipientVisible"
+    >
+      <div class="mb-4">{{ $t('packages_business_setting_alarmnotification_recipient_desc') }}</div>
+      <VTable
+        v-loading="loadingRecipient"
+        ref="table"
+        class="table-list"
+        :data="alarmRecipientData"
+        :columns="alarmRecipientColumns"
+        :hasPagination="false"
+      >
+        <template #keySlot="{ row }">
+          <span>{{ channelMap[row.channel] }}</span>
+        </template>
+        <template #valueSlot="{ row }">
+          <ElInput
+            v-model="row.value"
+            :placeholder="$t('packages_business_setting_alarmnotification_recipient_tip')"
+            type="textarea"
+          ></ElInput>
+        </template>
+        <template #valueHeader>
+          <span class="mr-1">{{ $t('packages_business_setting_alarmnotification_recipient') }}</span>
+          <ElTooltip :content="$t('packages_business_setting_alarmnotification_recipient_tip')" placement="top">
+            <i class="el-icon-info"></i>
+          </ElTooltip>
+        </template>
+      </VTable>
+      <footer class="flex justify-content-end mt-4">
+        <el-button size="mini" @click="alarmRecipientVisible = false">{{ $t('public_button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" :loading="savingRecipient" @click="saveAlarmRecipient">{{
+          $t('public_button_save')
+        }}</el-button>
+      </footer>
+    </el-dialog>
   </section>
 </template>
 
@@ -165,7 +208,7 @@ import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
 import { VTable } from '@tap/component'
-import { alarmRuleApi, settingsApi, alarmApi } from '@tap/api'
+import { alarmRuleApi, settingsApi, alarmApi, alarmMailApi } from '@tap/api'
 import { cloneDeep } from 'lodash'
 export default {
   name: 'AlarmNotification',
@@ -216,9 +259,32 @@ export default {
           slotName: 'valueSlot',
         },
       ],
+      alarmRecipientColumns: [
+        {
+          label: i18n.t('packages_business_setting_alarmnotification_channel'),
+          slotName: 'keySlot',
+        },
+        {
+          label: i18n.t('packages_business_setting_alarmnotification_recipient'),
+          slotName: 'valueSlot',
+          headerSlot: 'valueHeader',
+        },
+      ],
+      channelMap: {
+        EMAIL: i18n.t('packages_business_notify_email_notification'),
+      },
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
+      alarmRecipientVisible: false,
+      savingRecipient: false,
+      loadingRecipient: false,
       alarmData: [],
+      alarmRecipientData: [
+        {
+          channel: 'EMAIL',
+          value: '',
+        },
+      ],
       tableData: [],
       isOpenid: false,
       form: {
@@ -286,6 +352,10 @@ export default {
       this.alarmRulesVisible = true
       this.getAlarmData()
     },
+    showAlarmRecipient() {
+      this.alarmRecipientVisible = true
+      this.loadAlarmRecipient()
+    },
     //告警设置 单独请求接口 单独提交数据
     getAlarmData() {
       alarmRuleApi.find().then((data) => {
@@ -295,6 +365,12 @@ export default {
           return item
         })
       })
+    },
+    async loadAlarmRecipient() {
+      this.loadingRecipient = true
+      const { emailAddressList = [] } = await alarmMailApi.get()
+      this.alarmRecipientData[0].value = emailAddressList.join(',')
+      this.loadingRecipient = false
     },
     getPoints(data) {
       //5s一个点 向上取整 ，1分钟12个点
@@ -316,6 +392,20 @@ export default {
         this.alarmRulesVisible = false
         this.$message.success(this.$t('public_message_save_ok'))
       })
+    },
+    async saveAlarmRecipient() {
+      this.savingRecipient = true
+      try {
+        await alarmMailApi.save({
+          type: 'EMAIL',
+          emailAddressList: this.alarmRecipientData[0].value.split(',').map((item) => item.trim()),
+        })
+        this.alarmRecipientVisible = false
+        this.$message.success(this.$t('public_message_save_ok'))
+      } catch (e) {
+        this.$message.error(this.$t('public_message_save_fail'))
+      }
+      this.savingRecipient = false
     },
     handleSettingValue() {
       let data = {

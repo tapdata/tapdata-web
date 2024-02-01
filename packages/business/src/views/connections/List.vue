@@ -9,7 +9,7 @@
               authority: 'datasource_catalog_management',
               types: ['database'],
               viewPage: 'connections',
-              title: $t('packages_business_connections_list_lianjiefenlei'),
+              title: $t('public_tags'),
             }
           : null
       "
@@ -31,9 +31,9 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-            $t('packages_business_permissionse_settings_create_quanxianshezhi')
-          }}</ElButton>
+          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+            >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+          </ElButton>
           <ElButton
             v-if="isDaas"
             v-show="multipleSelection.length > 0"
@@ -221,6 +221,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import i18n from '@tap/i18n'
 
 import dayjs from 'dayjs'
@@ -361,7 +362,11 @@ export default {
     })
   },
   mounted() {
-    const { action } = this.$route.query || {}
+    const { action, create } = this.$route.query || {}
+
+    if (create) {
+      this.dialogDatabaseTypeVisible = true
+    }
 
     if (action === 'create') {
       this.checkTestConnectionAvailable()
@@ -584,7 +589,6 @@ export default {
       // })
     },
     remove(row) {
-      const h = this.$createElement
       let strArr = this.$t('packages_business_connection_deteleDatabaseMsg').split('xxx')
       if (row.agentType === 'Local') {
         let str = i18n.t('packages_business_connections_list_dangqianlianjiex')
@@ -845,10 +849,12 @@ export default {
 .paddingLeft0 {
   padding-left: 0 !important;
 }
+
 .connection-list-wrap {
   height: 100%;
   overflow: hidden;
   background: #fff;
+
   :deep(.el-select-dropdown__item) {
     span {
       font-size: $fontBaseTitle;
@@ -859,6 +865,7 @@ export default {
     display: flex;
     align-items: center;
   }
+
   .tag {
     padding: 2px 5px;
     font-style: normal;
@@ -870,6 +877,7 @@ export default {
     border-radius: 2px;
     margin-left: 5px;
   }
+
   .connection-img {
     width: 18px;
   }

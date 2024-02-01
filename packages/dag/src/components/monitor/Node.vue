@@ -450,17 +450,14 @@ export default defineComponent({
           ref={dfNode}
           {...nodeProps}
           class={alarmCls}
-          on={{
-            ...listeners,
-            'drag-start': (...args) => {
-              ifDragStart.value = true
-              emit('drag-start', ...args)
-            },
-            'drag-stop': (...args) => {
-              ifDragStart.value = false
-              refs.popover?.updatePopper?.() // 更新popover位置
-              emit('drag-stop', ...args)
-            },
+          onDragStart={(...args) => {
+            ifDragStart.value = true
+            emit('drag-start', ...args)
+          }}
+          onDragStop={(...args) => {
+            ifDragStart.value = false
+            refs.popover?.updatePopper?.() // 更新popover位置
+            emit('drag-stop', ...args)
           }}
         >
           <div>

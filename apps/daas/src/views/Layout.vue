@@ -35,12 +35,12 @@
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'">{{
-                $t('page_title_setting')
-              }}</ElDropdownItem>
-              <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
-                $t('notify_setting')
-              }}</ElDropdownItem>
+              <ElDropdownItem command="settings" v-if="settingCode && email === 'admin@admin.com'"
+                >{{ $t('page_title_setting') }}
+              </ElDropdownItem>
+              <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'"
+                >{{ $t('notify_setting') }}
+              </ElDropdownItem>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -116,7 +116,9 @@
           </template>
         </ElMenu>
         <div class="menu-footer" @click="isCollapse = !isCollapse">
-          <el-icon class="btn-collapse"><el-icon-d-arrow-left /></el-icon>
+          <el-icon class="btn-collapse">
+            <el-icon-d-arrow-left />
+          </el-icon>
         </div>
       </ElAside>
       <ElMain class="layout-main">
@@ -147,6 +149,8 @@
                   'dataVerifyHistory',
                   'VerifyDiffDetails',
                   'dataVerifyResult',
+                  'sharedMiningList',
+                  'externalStorage',
                 ].includes($route.name),
               },
               {
@@ -558,17 +562,21 @@ export default {
   line-height: 30px;
   text-align: center;
   cursor: pointer;
+
   [class^='el-icon-'] {
     margin: 0;
     color: map-get($color, danger) !important;
   }
 }
+
 .el-menu--inline .el-menu-item:hover .btn-del-fav-menu {
   display: block;
 }
+
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
+
   .layout-header {
     padding: 0;
     display: flex;
@@ -577,10 +585,12 @@ export default {
     width: 100%;
     background: #212a3b;
     min-width: 1000px;
+
     .logo {
       margin-left: 23px;
       display: block;
       width: 140px;
+
       img {
         display: block;
         height: 100%;
@@ -588,13 +598,16 @@ export default {
         object-fit: contain;
       }
     }
+
     .button-bar {
       margin-right: 23px;
       display: flex;
       align-items: center;
+
       .icon-btn {
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
+
         i {
           display: inline-block;
           line-height: 28px;
@@ -602,15 +615,18 @@ export default {
           height: 28px;
           width: 28px;
         }
+
         &:hover {
           background-color: rgba(239, 241, 244, 0.23);
           border-radius: 6px;
           // color: map-get($color, primary);
         }
       }
+
       .divider {
         height: 2em;
       }
+
       .user-initials {
         display: inline-block;
         width: 30px;
@@ -622,6 +638,7 @@ export default {
         font-size: 14px;
         color: map-get($fontColor, white);
       }
+
       .menu-user {
         color: rgba(255, 255, 255, 0.85);
         // &:hover {
@@ -630,15 +647,18 @@ export default {
       }
     }
   }
+
   .layout-aside {
     position: relative;
     display: flex;
     height: 100%;
     overflow: hidden;
     border: 1px solid #e1e3e9;
+
     .el-menu--popup .submenu-item .btn-del {
       display: none;
     }
+
     .menu {
       width: 220px;
       //flex: 1;
@@ -648,26 +668,31 @@ export default {
       overflow-y: auto;
       user-select: none;
       border-right: none;
+
       .menu-icon {
         font-size: 12px;
       }
+
       .el-menu-item .el-tooltip {
         outline: none;
       }
 
       &.el-menu--collapse {
         width: 64px;
+
         & > .el-menu-item span,
         & > .el-submenu > .el-submenu__title span {
           visibility: visible;
           overflow: initial;
         }
+
         .el-submenu__title {
           span.title {
             display: none;
           }
         }
       }
+
       .el-menu-item,
       .el-submenu__title {
         display: flex;
@@ -676,28 +701,35 @@ export default {
         line-height: 50px;
         // color: map-get($fontColor, normal);
         background: #f7f8fa;
+
         .submenu-item {
           // color: map-get($fontColor, light);
           padding-left: 12px;
         }
+
         &.is-active,
         &:hover {
           // color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
+
       .submenu-item {
         font-weight: 400;
       }
+
       .is-active .el-submenu__title {
         font-weight: 500;
         background: map-get($bgColor, disable);
       }
+
       .el-menu {
         background-color: initial;
+
         .el-menu-item {
           &.is-active {
             background-color: rgba(44, 101, 255, 0.05);
+
             .submenu-item {
               font-weight: 500;
               // color: map-get($color, primary) !important;
@@ -706,6 +738,7 @@ export default {
         }
       }
     }
+
     .menu-footer {
       position: absolute;
       bottom: 0;
@@ -719,13 +752,16 @@ export default {
       overflow: hidden;
       background: map-get($bgColor, white);
       cursor: pointer;
+
       &:hover {
         background: map-get($bgColor, main);
       }
+
       .btn-collapse {
         padding: 10px;
         color: map-get($fontColor, light);
         transition: all 0.4s;
+
         &.is-collapse {
           padding: 10px 24px;
           transform: rotate(-180deg);
@@ -733,6 +769,7 @@ export default {
       }
     }
   }
+
   .item-badge {
     .el-badge__content {
       height: 16px;
@@ -740,6 +777,7 @@ export default {
       border: 0;
     }
   }
+
   .layout-main {
     position: relative;
     height: 100%;
@@ -749,11 +787,13 @@ export default {
     overflow-y: hidden;
     overflow-x: auto;
   }
+
   .layout-main-body {
     display: flex;
     flex-direction: column;
     height: 100%;
   }
+
   .expire-msg {
     margin-right: 25px;
     font-size: $fontBaseTitle;

@@ -215,3 +215,12 @@
     list-style-type: unset;
   }
 }
+
+.python-api-drawer {
+  .el-drawer__header {
+    margin-bottom: 16px;
+  }
+  .el-drawer__body {
+    padding: 0;
+  }
+}

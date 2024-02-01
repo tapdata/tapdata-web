@@ -6,6 +6,7 @@ import TablePreview from '../TablePreview'
 import ClassificationTree from './ClassificationTree'
 import resize from '@tap/component/src/directives/resize'
 import { apiServerApi, modulesApi } from '@tap/api'
+import { useRoute } from 'vue-router'
 import './index.scss'
 
 const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
@@ -19,11 +20,10 @@ export default defineComponent({
   directives: {
     resize,
   },
-  setup(props, { refs, root, listeners }) {
-    const list = ref([])
-    const objectList = ref([])
-    const catalogList = ref([])
-    const { sourceType, queryKey } = root.$route.query || {}
+  setup() {
+    const previewRef = ref()
+    const treeRef = ref()
+    const { sourceType, queryKey } = useRoute() || {}
     const options = reactive({
       isShowDetails: false,
       isShowSourceDrawer: false, //资源绑定
@@ -65,11 +65,11 @@ export default defineComponent({
       if (data.isObject) {
         if (data.type === 'defaultApi') {
           const apiInfo = await modulesApi.get(data.id)
-          refs.preview.open(apiInfo)
+          previewRef.value.open(apiInfo)
         } else {
           nextTick(() => {
             setTimeout(() => {
-              refs.preview.open(data)
+              previewRef.value.open(data)
             }, 100)
           })
         }
@@ -82,7 +82,7 @@ export default defineComponent({
 
     const getApiServerHost = async () => {
       const showError = () => {
-        root.$message.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
+        ElMessage.error(this.$t('packages_business_data_server_list_huoqufuwuyu'))
       }
       const data = await apiServerApi.get().catch(() => {
         showError()
@@ -149,12 +149,12 @@ export default defineComponent({
     }
 
     const setTreeCurrent = (data) => {
-      refs.tree.setCurrent(data)
+      treeRef.value.setCurrent(data)
     }
 
     return () => {
       return (
-        <section ref="root" class="discovery-page-wrap flex catalog-container">
+        <section class="discovery-page-wrap flex catalog-container">
           <div
             {...{
               directives: [
@@ -173,7 +173,7 @@ export default defineComponent({
             class="page-left border-right pt-3 pr-3 overflow-auto"
           >
             <ClassificationTree
-              ref="tree"
+              ref={treeRef}
               renderIcon={renderIcon}
               dragState={dragState}
               onNodeChecked={handleNodeClick}
@@ -207,18 +207,15 @@ export default defineComponent({
             <div class="flex-1 min-h-0 position-relative">
               <ProTable
                 class={['catalog-table']}
-                ref="table"
                 row-key="id"
                 height="100%"
                 draggable
                 data={currentNode.value.children}
                 treeProps={{ children: 'no_children' }}
-                on={{
-                  'row-click': setTreeCurrent,
-                  'row-dragstart': handleDragStart,
-                  'row-dragend': handleDragEnd,
-                  'selection-change': handleSelectionChange,
-                }}
+                onRowClick={setTreeCurrent}
+                onRowDragstart={handleDragStart}
+                onRowDragend={handleDragEnd}
+                onSelectionChange={handleSelectionChange}
               >
                 <el-table-column type="selection" width="24" class-name="ck-cell-wrap"></el-table-column>
                 <el-table-column label={i18n.t('public_name')} prop="name" show-overflow-tooltip width="350px">
@@ -239,16 +236,15 @@ export default defineComponent({
                   {currentNode.value.type === 'defaultApi' ? (
                     <ApiPreview
                       tag="div"
-                      ref="preview"
+                      ref={previewRef}
                       host={apiServerHost.value}
                       class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
                     ></ApiPreview>
                   ) : (
                     <TablePreview
                       tag="div"
-                      ref="preview"
+                      ref={previewRef}
                       class="border rounded-4 sw-table-drawer h-100 overflow-y-auto"
-                      on={{ ...listeners }}
                     ></TablePreview>
                   )}
                 </div>

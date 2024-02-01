@@ -6,7 +6,7 @@ import { observer } from '@formily/reactive-vue'
 import i18n from '@tap/i18n'
 import { metadataInstancesApi, taskApi } from '@tap/api'
 import { FormItem, useForm } from '@tap/form'
-import { VIcon, EmptyItem, OverflowTooltip, VirtualList } from '@tap/component'
+import { VIcon, VEmpty, OverflowTooltip, VirtualList } from '@tap/component'
 import { toUpperCase, toLowerCase, camelToSnake, snakeToCamel } from '@tap/shared'
 import './style.scss'
 import { useStore } from 'vuex'
@@ -68,7 +68,8 @@ const FormInput = defineComponent({
 export const FieldRenameProcessor = observer(
   defineComponent({
     props: ['value', 'nodeId', 'disabled'],
-    setup(props, { emit, refs }) {
+    setup(props, { emit }) {
+      const tableRef = ref(null)
       const store = useStore()
       const route = useRoute()
       const formRef = useForm()
@@ -306,7 +307,7 @@ export const FieldRenameProcessor = observer(
       }
 
       const updateView = (index) => {
-        refs.table?.clearSelection()
+        tableRef.value?.clearSelection()
         config.position = index
         config.selectTableRow = list.value[index]
         config.target = config.selectTableRow?.fieldsMapping || []
@@ -623,14 +624,21 @@ export const FieldRenameProcessor = observer(
                 <div class="flex p-2">
                   <ElInput
                     placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
-                    prefix-icon="el-icon-search"
                     clearable
                     value={config.searchTable}
                     onInput={(val) => {
                       config.searchTable = val
                       doSearchTables()
                     }}
-                  ></ElInput>
+                  >
+                    {{
+                      prefix: () => (
+                        <ElIcon>
+                          <ElIconSearch />
+                        </ElIcon>
+                      ),
+                    }}
+                  </ElInput>
                 </div>
                 <div class="bg-main flex justify-content-between line-height processor-ml-10 table-checkbox-wrap">
                   <span>
@@ -665,7 +673,7 @@ export const FieldRenameProcessor = observer(
                     </ul>
                   ) : (
                     <div class="task-form-left__ul flex flex-column align-items-center">
-                      <EmptyItem></EmptyItem>
+                      <VEmpty></VEmpty>
                     </div>
                   )}
                 </div>
@@ -673,11 +681,9 @@ export const FieldRenameProcessor = observer(
                   small
                   class="flex mt-3 din-font"
                   layout="total, prev, slot, next"
-                  on={{
-                    'current-change': (page) => {
-                      config.page.current = page
-                      loadData()
-                    },
+                  onCurrentChange={(page) => {
+                    config.page.current = page
+                    loadData()
                   }}
                   current-page={config.page.current}
                   total={config.page.total}
@@ -701,14 +707,21 @@ export const FieldRenameProcessor = observer(
                   <div class="flex field-search-input-wrap">
                     <ElInput
                       placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                      prefix-icon="el-icon-search"
                       clearable
                       value={config.searchField}
                       onInput={(val) => {
                         config.searchField = val
                         doSearchField()
                       }}
-                    ></ElInput>
+                    >
+                      {{
+                        prefix: () => (
+                          <ElIcon>
+                            <ElIconSearch />
+                          </ElIcon>
+                        ),
+                      }}
+                    </ElInput>
                   </div>
                   <div class="item px-2">
                     <ElButton
@@ -736,21 +749,22 @@ export const FieldRenameProcessor = observer(
                   </div>
                 </div>
                 <VirtualList
-                  ref="table"
+                  ref={tableRef}
                   data={filterFieldList.value}
                   columns={columns}
                   item-key="sourceFieldName"
-                  scopedSlots={{
+                  row-class-name={tableRowClassName}
+                  onSelectionChange={doSelectionField}
+                  onClearSelection={doClearSelection}
+                  border
+                  class="flex-fill h-0"
+                >
+                  {{
                     sourceFieldName: renderSourceNode,
                     targetFieldName: renderNode,
                     operation: renderOpNode,
                   }}
-                  row-class-name={tableRowClassName}
-                  on-selection-change={doSelectionField}
-                  on-clear-selection={doClearSelection}
-                  border
-                  class="flex-fill h-0"
-                ></VirtualList>
+                </VirtualList>
               </div>
             </div>
 

@@ -24,17 +24,17 @@
                 ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
               >-->
               <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
-              <span class="flex-fill">
+              <span class="flex-fill flex align-center gap-1">
                 {{ menu.title }}
-                <VIcon v-if="menu.beta" size="30" style="margin-bottom: 5px">beta</VIcon>
+                <VIcon v-if="menu.beta" size="30">beta</VIcon>
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
-                      >{{ $t('agent_tip_no_running') }}
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
+                      {{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
                 </ElTooltip>
@@ -66,11 +66,11 @@
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
-                      >{{ $t('agent_tip_no_running') }}
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
+                      {{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
                 </ElTooltip>
@@ -99,19 +99,21 @@
       :agent="agent"
       :subscribes="subscribes"
       :isUnDeploy="isUnDeploy"
+      :guideLoading="guideLoading"
       @changeIsUnDeploy="changeIsUnDeploy"
+      @open-guide="handleOpenGuide"
     ></AgentGuide>
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
     <TaskAlarmTour v-model:value="showAlarmTour"></TaskAlarmTour>
-    <ReplicationTour
-      v-model:value="showReplicationTour"
-      :finish="replicationTourFinish"
-      @start="handleStartTour"
-      @finish="handleFinishTour"
-    ></ReplicationTour>
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
+    <MarketplaceGuide
+      :visible="marketplaceGuideVisible"
+      :loading="agentCountLoading"
+      @update:visible="updateMarketplaceGuide"
+      @refresh="loopLoadAgentCount(true)"
+    ></MarketplaceGuide>
   </ElContainer>
 </template>
 
@@ -129,7 +131,7 @@ import Cookie from '@tap/shared/src/cookie'
 import AgentGuide from '@/components/guide/index'
 import tour from '@/mixins/tour'
 import TaskAlarmTour from '@/components/TaskAlarmTour'
-import ReplicationTour from '@/components/ReplicationTour'
+import MarketplaceGuide from '@/components/MarketplaceGuide'
 
 export default {
   inject: ['checkAgent', 'buried'],
@@ -142,7 +144,7 @@ export default {
     AgentGuide,
     PageHeader,
     TaskAlarmTour,
-    ReplicationTour,
+    MarketplaceGuide,
   },
   mixins: [tour],
   data() {
@@ -175,6 +177,7 @@ export default {
           name: 'dataConsole',
           title: this.$t('page_title_data_hub'),
           icon: 'datastore',
+          beta: true,
         },
         // {
         //   name: 'customNodeList',
@@ -253,6 +256,26 @@ export default {
         name: 'OperationLog',
         title: this.$t('operation_log_manage'),
         icon: 'operation-log',
+      },
+      {
+        name: 'advancedFeatures',
+        title: this.$t('public_page_title_advanced_features'),
+        icon: 'vip-one',
+        code: 'v2_advanced_features',
+        children: [
+          {
+            name: 'sharedMining',
+            title: this.$t('public_shared_mining'),
+            icon: 'cdc-log',
+            beta: true,
+          },
+          {
+            name: 'externalStorage',
+            title: this.$t('public_external_storage'),
+            icon: 'wcgl',
+            beta: true,
+          },
+        ],
       },
     ]
     this.subMenu = subMenu.map((el) => {
@@ -453,49 +476,49 @@ export default {
   justify-content: space-between;
   height: 90%;
 }
+
 .layout-main {
   padding: 0 16px 16px 16px;
 }
+
 .layout-wrap {
   height: 100%;
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
   background: map-get($color, submenu);
+
   .left-aside {
     // border-right: 1px map-get($borderColor, aside) solid;
     background: map-get($color, submenu);
+
     .el-menu {
       background-color: map-get($color, submenu);
     }
-    .el-menu-item {
+
+    :deep(.el-menu-item) {
       height: 50px;
       line-height: 50px;
-      :deep(.v-icon) {
+
+      .v-icon {
         color: map-get($iconFillColor, normal);
       }
+
       &.is-active,
       &:hover {
         background-color: map-get($color, white);
         color: map-get($color, primary);
         border-radius: 8px;
       }
+
       &.is-active,
       &:hover {
-        :deep(.v-icon) {
+        .v-icon {
           color: map-get($color, primary);
         }
       }
     }
-    .el-submenu {
-      :deep(.el-submenu__title) {
-        font-size: 12px;
-      }
 
-      .submenu-item {
-        padding-left: 8px;
-      }
-    }
     .product-name {
       padding-left: 20px;
       font-size: 14px;
@@ -504,11 +527,13 @@ export default {
       color: map-get($fontColor, normal);
     }
   }
+
   .header {
     display: flex;
     align-items: center;
     font-size: 14px;
   }
+
   .main {
     display: flex;
     flex-direction: column;
@@ -517,10 +542,12 @@ export default {
     padding: 0;
     //background: rgba(239, 241, 244, 1);
   }
+
   .breadcrumb {
     padding: 24px 0 24px 24px;
     //height: 40px;
     box-sizing: border-box;
+
     &.one-breadcrumb {
       font-size: 18px;
 
@@ -528,10 +555,12 @@ export default {
         color: #000;
       }
     }
+
     :deep(.el-breadcrumb__separator) {
       color: map-get($fontColor, sub);
     }
   }
+
   .btn-back {
     padding: 0;
     width: 24px;
@@ -552,7 +581,14 @@ export default {
 .siqanim * {
   pointer-events: all;
 }
+
 .driver-popover {
   max-width: 520px;
+}
+
+.replication-driver-popover {
+  .driver-popover-footer {
+    margin-top: 8px;
+  }
 }
 </style>

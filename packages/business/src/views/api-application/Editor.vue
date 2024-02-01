@@ -18,10 +18,10 @@
       class="my-n6"
     >
       <ElFormItem :label="$t('packages_business_application_list_yingyongmingcheng')" prop="value">
-        <ElInput v-model:value="editForm.value" text maxlength="50" clearable></ElInput>
+        <ElInput v-model="editForm.value" text maxlength="50" clearable></ElInput>
       </ElFormItem>
       <ElFormItem :label="$t('packages_business_application_editor_yingyongmiaoshu')" prop="desc">
-        <ElInput v-model:value="editForm.desc" type="textarea"></ElInput>
+        <ElInput v-model="editForm.desc" type="textarea"></ElInput>
       </ElFormItem>
     </ElForm>
     <template v-slot:footer>

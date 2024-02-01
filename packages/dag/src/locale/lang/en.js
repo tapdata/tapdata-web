@@ -31,7 +31,9 @@ export default {
   packages_dag_meta_table_false: 'False',
   packages_dag_meta_table_comment: 'Comment',
   packages_dag_connection_name_search_placeholder: 'Please enter the connection name to search',
-  packages_dag_task_form_error_name_duplicate: '',
+  packages_dag_task_form_error_name_duplicate: 'Task name already exists, please re-enter it',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    'The maximum number of running tasks has been reached. Unable to add new scheduled tasks. Please deactivate scheduling for some tasks or stop running tasks.',
   packages_dag_task_setting_sync_type: 'Sync Type',
   packages_dag_task_setting_initial_sync_cdc: 'Full and Incremental Sync',
   packages_dag_task_stetting_desc: 'Task Description',
@@ -216,6 +218,7 @@ export default {
   packages_dag_components_record_yunxingjieshushi: 'Operation end time',
   packages_dag_components_record_yunxingkaishishi: 'Operation start time',
   packages_dag_components_timeselect_renwuquanzhouqi: 'Task full cycle',
+  packages_dag_components_timeselect_incremental_phase: 'Incremental Phase',
   packages_dag_components_timeselect_zuijintian: 'Last 1 day',
   packages_dag_components_timeselect_zuixinxiaoshi: 'Latest 1 hour',
   packages_dag_components_timeselect_zuijinfenzhong: 'last 5 minutes',
@@ -344,8 +347,10 @@ export default {
   packages_dag_nodes_database_kaiqihourenwu:
     'Upon opening, the task will automatically gather the chosen source DDL events.',
   packages_dag_nodes_database_dongtaixinzengbiao: 'Dynamic new table',
-  packages_dag_nodes_database_quanliangmeipici: 'The number of full reads per batch',
+  packages_dag_nodes_database_quanliangmeipici:
+    'The number of records read per batch in full load should typically be kept at the default value. If your downstream system is slower and you encounter issues with the loss of the source cursor during tasks, please reduce this value.',
   packages_dag_nodes_database_piliangduqutiao: 'Batch read number',
+  packages_dag_nodes_database_zengliangmeipici: 'Incremental batch size',
   packages_dag_nodes_database_zidingyi: 'Custom',
   packages_dag_nodes_database_xuanzebiao: 'Select Table',
   packages_dag_nodes_database_suoshuage: 'Belonging Agent',
@@ -373,6 +378,7 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: 'Target table field',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: 'Current table field',
   packages_dag_nodes_mergetable_guanliantiaojian: 'Association Conditions',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: 'Enable update join key',
   packages_dag_nodes_mergetable_neiqianshuzupi: 'Embedded array matching conditions',
   packages_dag_nodes_mergetable_guanlianhouxieru: 'Field write path',
   packages_dag_nodes_mergetable_gengxinjinneiqian: 'Update into embedded array',
@@ -527,6 +533,7 @@ export default {
     "// Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n// Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n// Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n// Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n// Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# Add a field, do not operate if the field already exists\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# Remove an existing field\nTapModelDeclare.removeField({val2}, 'fieldName')\n//Update an existing field\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n//Update the field, if it does not exist, add it\nTapModelDeclare.upsertField({ val4}, 'fieldName', 'TapString')\n# Set the field as the primary key\nTapModelDeclare.setPk({val5}, 'fieldName')\n# Cancel the primary key\nTapModelDeclare.unSetPk({val6}, 'fieldName' )\n# Add index\nTapModelDeclare.addIndex({val7}, 'indexName', [{'fieldName':'fieldName1', 'order': 'asc'}])\n# Remove index\nTapModelDeclare. removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: 'Python nodes are currently only supported on Linux Agents, not Windows.',
   packages_dag_js_processor_index_duibi: 'Comparison',
   packages_dag_js_processor_index_yongfa: 'Usage:',
   packages_dag_js_processor_index_zuoyong: 'Function:',
@@ -568,6 +575,8 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: 'Polling Interval (ms)',
   packages_dag_nodes_table_lunxunziduanmo: 'Polling field default value',
   packages_dag_nodes_table_zhidinglunxunzi: 'Specify the polling field',
+  packages_dag_nodes_cdcPollingFields_tip:
+    'Please ensure that the selected polling fields have indexes; otherwise, it may impact the source database due to query performance issues.',
   packages_dag_nodes_table_lunxun: 'Polling',
   packages_dag_nodes_table_rizhicdc: 'Log CDC',
   packages_dag_nodes_table_tedingziduande:
@@ -673,6 +682,8 @@ export default {
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
   packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_config_data_filter_tip:
+    'Data filter configuration may impact the source database due to query filter performance issues. Please use with caution.',
   packages_dag_field_add_del_index_zhidi: 'To Bottom',
   packages_dag_field_add_del_index_xiayi: 'Move down',
   packages_dag_field_add_del_index_shangyi: 'Move Up',
@@ -681,7 +692,7 @@ export default {
   packages_dag_src_editor_date_processor_field_list: 'Fields affected by operations',
   packages_dag_dynamicAdjustMemoryUsage_title: 'Dynamic Adjustment Memory Usage',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    'In the full synchronization phase, when the synchronized data occupies a large amount of memory, the system automatically reduces the memory queue usage to prevent memory overflow. However, this operation will slow down the synchronization speed. You are advised to enable this function when the machine resources are low to ensure the stable running of synchronization tasks. When the machine resources are sufficient, it is recommended to shut down.',
+    'In the full synchronization phase, if identified data consumes significant memory, the system will automatically proportionally reduce memory queue usage to prevent memory overflow errors. This may result in a reduction in synchronization speed. It is advisable to enable this feature when machine resources are limited for stable synchronization. When machine resources are sufficient, it is recommended to disable it.',
   packages_dag_mergeMode: 'Merge Mode',
   packages_dag_main_table_first: 'Snapshot read primary table priority',
   packages_dag_sub_table_first: 'Snaphost read child table priority',
@@ -716,4 +727,13 @@ export default {
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
   packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
   packages_dag_field_inference_list_xuanzetiaozhengde: 'Select the type to adjust:',
+  packages_dag_enableSyncMetricCollector_title: 'Sync Metrics Collection',
+  packages_dag_enableSyncMetricCollector_tip:
+    'If enabled, the sync metrics of the task will be automatically collected. After the task stops, the corresponding metric information will be output for analysis.',
+  packages_dag_update_conditions_tip:
+    'Note: Tapdata will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
+  packages_dag_existDataProcessMode_desc:
+    'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
+  packages_dag_ddl_events_collapse_tip:
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
 }

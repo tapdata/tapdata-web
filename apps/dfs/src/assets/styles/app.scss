@@ -32,6 +32,11 @@
 }
 
 // zoho 客服插件样式
+// 浮动客服图标
+.zsiq_custommain, #zsiq_float > img {
+  width: 60px !important;
+  height: 60px !important;
+}
 .botactions em {
   white-space: nowrap;
 }
@@ -215,4 +220,61 @@ $x3: $dotLeft + $dotSpace;
 .version-upgrade-notification {
   width: auto;
   max-width: 357px;
+}
+
+@keyframes dialog-zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialog-zoom-out {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes empty-keyframes {}
+
+.dialog-zoom-transition {
+  &.dialog-fade-enter-active {
+    animation: fade-in 0.3s;
+    .el-dialog {
+      animation: dialog-zoom-in 0.3s cubic-bezier(0.32, 0.14, 0.15, 0.86);
+    }
+  }
+
+  &.dialog-fade-leave-active {
+    animation: fade-out 0.2s both;
+    .el-dialog {
+      animation: dialog-zoom-out 0.2s cubic-bezier(0.78, 0.14, 0.15, 0.86) both;
+    }
+  }
 }

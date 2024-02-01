@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { escapeRegExp } from 'lodash'
 import { apiServerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
@@ -183,7 +184,6 @@ export default {
     },
     // 移除
     remove(item) {
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + item.clientName])
       this.$confirm(message, '', {
         type: 'warning',

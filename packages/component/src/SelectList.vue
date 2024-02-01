@@ -74,7 +74,7 @@
     <ElInput
       v-if="!innerLabel"
       ref="reference"
-      v-model:value="selectedLabel"
+      v-model="selectedLabel"
       :id="id"
       text
       :name="name"
@@ -106,7 +106,9 @@
       </template>
       <template v-slot:suffix>
         <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]" />
-        <el-icon class="el-select__caret el-input__icon"><el-icon-circle-close /></el-icon>
+        <el-icon class="el-select__caret el-input__icon">
+          <el-icon-circle-close />
+        </el-icon>
       </template>
     </ElInput>
     <div
@@ -128,7 +130,9 @@
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>
     </div>
     <div v-if="loading" class="el-select__loading">
-      <el-icon><el-icon-loading /></el-icon>
+      <el-icon>
+        <el-icon-loading />
+      </el-icon>
     </div>
     <transition name="el-zoom-in-top" @before-enter="handleMenuEnter" @after-leave="doDestroy">
       <ElSelectMenu ref="popper" :append-to-body="popperAppendToBody" v-show="visible && emptyText !== false">
@@ -139,13 +143,18 @@
             :disabled="selectDisabled"
             :autocomplete="autoComplete || autocomplete"
             :placeholder="$t('public_button_search')"
-            prefix-icon="el-icon-search"
-            v-model:value="keyword"
+            v-model="keyword"
             @input="handleSearch"
             ref="input"
             clearable
             @click.stop.prevent
-          ></ElInput>
+          >
+            <template #prefix>
+              <ElIcon>
+                <ElIconSearch />
+              </ElIcon>
+            </template>
+          </ElInput>
         </div>
         <div v-if="multiple && filterable && innerLabel" class="py-2 pl-4 border-bottom fs-7">
           <span :class="[!!selectedCount ? 'font-color-light' : 'color-disable']">
@@ -579,13 +588,16 @@ export default {
 <style lang="scss" scoped>
 .v-select-list {
   font-size: 14px;
+
   &.none-border {
     &:hover {
       background-color: map-get($bgColor, normal);
+
       .icon-btn {
         color: map-get($fontColor, dark);
       }
     }
+
     :deep(.inner-select) {
       border-color: transparent;
     }
@@ -597,19 +609,23 @@ export default {
     }
   }
 }
+
 .scroller {
   height: auto;
 }
+
 .el-select__loading {
   position: absolute;
   top: 0;
   right: 30px;
 }
+
 .virtual-scroller-wrap {
   position: relative;
   padding: 6px 0;
   overflow: hidden;
 }
+
 .inner-select {
   padding: 0 8px;
   border: 1px solid #d9d9d9;
@@ -617,16 +633,20 @@ export default {
   cursor: pointer;
   white-space: nowrap;
 }
+
 .inner-select__label {
   color: map-get($fontColor, light);
 }
+
 .inner-select__selected {
   padding-left: 8px;
   color: map-get($fontColor, dark);
 }
+
 .icon-btn {
   color: map-get($fontColor, slight);
 }
+
 .el-select__input {
   &::placeholder {
     color: map-get($color, disable);

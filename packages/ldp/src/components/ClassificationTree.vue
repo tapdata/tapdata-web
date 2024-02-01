@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VirtualTree
+    <ElTree
       class="ldp-tree"
       ref="tree"
       node-key="id"
@@ -14,11 +14,16 @@
       :expand-on-click-node="false"
       :allow-drag="checkAllowDrag"
       :allow-drop="checkAllowDrop"
+      :renderContent="renderContent"
       @node-click="handleNodeClick"
       @node-drag-start="handleDragStart"
       @node-drop="handleDrop"
       @node-expand="handleNodeExpand"
-    />
+    >
+      <!--<template #default="{ node, data }">
+        <NodeContent :renderIcon="renderIcon" :node="node" :data="data" />
+      </template>-->
+    </ElTree>
     <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header>
         <span style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -26,7 +31,7 @@
       <ElForm ref="form" :model="dialogConfig" label-width="90px">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
-            v-model:value="dialogConfig.label"
+            v-model="dialogConfig.label"
             :placeholder="$t('packages_component_classification_nodeName')"
             maxlength="50"
             show-word-limit
@@ -36,7 +41,7 @@
           :label="$t('packages_component_src_discoveryclassification_mulufenlei')"
           v-if="dialogConfig.isParent"
         >
-          <ElSelect v-model:value="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
+          <ElSelect v-model="dialogConfig.itemType" :disabled="dialogConfig.type === 'edit'">
             <el-option
               :label="$t('packages_component_src_discoveryclassification_ziyuanmulu')"
               value="resource"
@@ -47,7 +52,7 @@
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumiaoshu')">
           <ElInput
             type="textarea"
-            v-model:value="dialogConfig.desc"
+            v-model="dialogConfig.desc"
             :placeholder="$t('packages_component_src_discoveryclassification_qingshurumulu')"
             maxlength="50"
             show-word-limit
@@ -73,6 +78,7 @@ import i18n from '@tap/i18n'
 import { VIcon, VirtualTree } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi, discoveryApi, connectionsApi, metadataInstancesApi } from '@tap/api'
 import { makeDragNodeImage } from '@tap/business'
+
 export default {
   name: 'ClassificationTree',
   props: {
@@ -89,7 +95,113 @@ export default {
     showViewDetails: Boolean,
     renderIcon: Function,
   },
-  components: { VirtualTree },
+  components: {
+    VirtualTree,
+    NodeContent: (props) => {
+      const { node, data, renderIcon } = props
+      let icon = renderIcon(data)
+
+      if (!data.parent_id || data.isLeaf === false) {
+        node.isLeaf = false
+      }
+
+      return (
+        <div
+          class="custom-tree-node"
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
+          }}
+        >
+          <div class="tree-item-icon flex align-center mr-1">{icon}</div>
+          <span class="table-label" title={data.name}>
+            {data.name}
+          </span>
+          {data.isRoot ? (
+            (
+              <span class="btn-menu">
+                <VIcon
+                  size="14"
+                  class="color-primary mr-2"
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                  }}
+                >
+                  add
+                </VIcon>
+              </span>
+            )``
+          ) : !data.readOnly && !data.isObject ? (
+            <span class="btn-menu">
+              {data.item_type[0] !== 'fdm' && (
+                <VIcon
+                  size="14"
+                  class="color-primary mr-2"
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                  }}
+                >
+                  add
+                </VIcon>
+              )}
+              {data.parent_id && (
+                <ElDropdown
+                  class="inline-flex"
+                  placement="bottom"
+                  trigger="click"
+                  onCommand={(ev) => this.handleRowCommand(ev, node)}
+                >
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
+                </ElDropdown>
+              )}
+            </span>
+          ) : (
+            data.isObject &&
+            this.showViewDetails && (
+              <span class="btn-menu">
+                <VIcon
+                  size="18"
+                  onClick={() => {
+                    $emit(this, 'view-details', data)
+                  }}
+                >
+                  view-details
+                </VIcon>
+              </span>
+            )
+          )}
+        </div>
+      )
+    },
+  },
   data() {
     return {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
@@ -152,26 +264,21 @@ export default {
       return (
         <div
           class="custom-tree-node"
-          on={{
-            dblclick: (ev) => {
-              console.log('dblclick', ev) // eslint-disable-line
-            },
-            dragenter: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragEnter(ev, data, node)
-            },
-            dragover: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragOver(ev, data, node)
-            },
-            dragleave: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDragLeave(ev, data, node)
-            },
-            drop: (ev) => {
-              ev.stopPropagation()
-              this.handleTreeDrop(ev, data, node)
-            },
+          onDragenter={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragEnter(ev, data, node)
+          }}
+          onDragover={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragOver(ev, data, node)
+          }}
+          onDragleave={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDragLeave(ev, data, node)
+          }}
+          onDrop={(ev) => {
+            ev.stopPropagation()
+            this.handleTreeDrop(ev, data, node)
           }}
         >
           <div class="tree-item-icon flex align-center mr-1">{icon}</div>
@@ -179,18 +286,20 @@ export default {
             {data.name}
           </span>
           {data.isRoot ? (
-            <span class="btn-menu">
-              <VIcon
-                size="14"
-                class="color-primary mr-2"
-                onClick={(ev) => {
-                  ev.stopPropagation()
-                  data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
-                }}
-              >
-                add
-              </VIcon>
-            </span>
+            (
+              <span class="btn-menu">
+                <VIcon
+                  size="14"
+                  class="color-primary mr-2"
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    data.isRoot ? this.showDialog() : this.showDialog(node, 'add')
+                  }}
+                >
+                  add
+                </VIcon>
+              </span>
+            )``
           ) : !data.readOnly && !data.isObject ? (
             <span class="btn-menu">
               {data.item_type[0] !== 'fdm' && (
@@ -212,19 +321,25 @@ export default {
                   trigger="click"
                   onCommand={(ev) => this.handleRowCommand(ev, node)}
                 >
-                  <VIcon
-                    onClick={(ev) => {
-                      ev.stopPropagation()
-                    }}
-                    size="16"
-                    class="color-primary"
-                  >
-                    more-circle
-                  </VIcon>
-                  <ElDropdownMenu slot="dropdown">
-                    <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
-                    <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
-                  </ElDropdownMenu>
+                  {{
+                    default: () => (
+                      <VIcon
+                        onClick={(ev) => {
+                          ev.stopPropagation()
+                        }}
+                        size="16"
+                        class="color-primary"
+                      >
+                        more-circle
+                      </VIcon>
+                    ),
+                    dropdown: () => (
+                      <ElDropdownMenu>
+                        <ElDropdownItem command="edit">{this.$t('public_button_edit')}</ElDropdownItem>
+                        <ElDropdownItem command="delete">{this.$t('public_button_delete')}</ElDropdownItem>
+                      </ElDropdownMenu>
+                    ),
+                  }}
                 </ElDropdown>
               )}
             </span>
@@ -781,6 +896,7 @@ $nodeH: 32px;
   &.el-tree.is-dragging .el-tree-node__content {
     cursor: grabbing;
   }
+
   &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
     cursor: default;
   }
@@ -815,12 +931,14 @@ $nodeH: 32px;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: $nodeH;
+
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
       color: map-get($color, primary);
       // color: map-get($color, lprimary);
     }
+
     .table-label {
       flex: 1;
       vertical-align: middle;
@@ -829,17 +947,32 @@ $nodeH: 32px;
       font-weight: 400;
       color: map-get($fontColor, normal);
     }
+
     .count-label {
       color: map-get($fontColor, sslight);
     }
+
     .btn-menu {
+      display: flex;
+    }
+
+    .btn-menu > *:not(.el-dropdown) {
       display: none;
     }
-    &:hover .btn-menu {
-      display: flex;
+
+    .btn-menu > .el-dropdown > :not([aria-expanded='true']) {
+      visibility: hidden;
+    }
+
+    &:hover .btn-menu > * {
+      display: unset;
+      > * {
+        visibility: visible !important;
+      }
     }
   }
 }
+
 .drag-node-image {
   $h: 36px;
   position: absolute;
@@ -851,6 +984,7 @@ $nodeH: 32px;
   height: $h;
   z-index: 103;
   background-color: rgba(0, 0, 0, 0);
+
   .drag-preview-container {
     position: absolute;
     top: 0;

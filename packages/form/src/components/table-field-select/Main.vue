@@ -89,7 +89,8 @@ export default {
         result[this.tableName] = cloneDeep(this.defaultFields)
       }
 
-      this.$emit('input', result).$emit('change', result)
+      this.$emit('input', result)
+      this.$emit('change', result)
     },
 
     clear() {

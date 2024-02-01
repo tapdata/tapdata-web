@@ -16,14 +16,22 @@ export default {
       agent: {},
       isUnDeploy: false,
       subscribes: {},
-      showReplicationTour: false,
-      replicationTourFinish: false,
+      guideLoading: false,
+      marketplaceGuideVisible: false,
+      agentCountLoading: false,
     }
   },
 
   computed: {
     ...mapState(['replicationTour']),
-    ...mapGetters(['startingTour', 'completedTour', 'pausedTour']),
+    ...mapGetters([
+      'startingTour',
+      'completedTour',
+      'pausedTour',
+      'pausedGuide',
+      'guideExpand',
+      'isGCPMarketplaceUser',
+    ]),
     userId() {
       return this.$store.state.user.id
     },
@@ -33,11 +41,41 @@ export default {
     $route(to, from) {
       console.log('$route', to) // eslint-disable-line
     },
+    '$store.state.guide.expand.guideStatus'() {
+      this.$axios.post('api/tcm/user_guide', {
+        expand: this.$store.state.guide.expand,
+      })
+    },
   },
 
   async created() {
     await this.loadGuide()
-    await this.checkGuide()
+
+    if (this.isGCPMarketplaceUser) {
+      // GCP Marketplace 用户，直接跳过引导
+      let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
+      if (total === 0) {
+        // 显示正在创建实例的提示
+        this.marketplaceGuideVisible = true
+      }
+
+      if (!this.replicationTour.enable) {
+        this.$store.commit('setReplicationTour', {
+          enable: true,
+          activeIndex: null,
+          behavior: '',
+          status: '',
+          view: 'board',
+        })
+
+        this.$axios.post('api/tcm/user_guide', {
+          tour: this.replicationTour,
+        })
+      }
+    } else if (!this.pausedGuide) {
+      await this.checkGuide()
+    }
+
     this.loopLoadAgentCount()
     this.setUrlParams() // url携带的自定义参数
     let unwatch
@@ -46,7 +84,7 @@ export default {
     Mousetrap.bind('up up down down left right left right', () => {
       unwatch?.()
       if (this.startingTour) {
-        this.showReplicationTour = false
+        this.setShowReplicationTour(false)
         this.completeTour()
         this.destroyDriver()
       } else {
@@ -56,54 +94,71 @@ export default {
   },
 
   unmounted() {
-    this.unwatchTourRoute?.()
-    this.unwatchTour?.()
-    this.destroyDriver()
+    this.handleDestroy()
   },
 
   methods: {
-    ...mapMutations(['startTour', 'setTourIndex', 'setHighlightBoard', 'completeTour', 'pauseTour']),
+    ...mapMutations([
+      'startTour',
+      'setTourIndex',
+      'setHighlightBoard',
+      'completeTour',
+      'pauseTour',
+      'pauseGuide',
+      'startGuide',
+      'setShowReplicationTour',
+      'openCompleteReplicationTour',
+    ]),
+
+    handleDestroy() {
+      this.unwatchTourBehavior?.()
+      this.unwatchTourStatus?.()
+      this.unwatchTourRoute?.()
+      this.unwatchTour?.()
+      this.destroyDriver()
+    },
+
     // 检查是否有安装过agent
     async checkGuide() {
+      const { guide, replicationTour } = this.$store.state
+
+      // 进入过任务引导
+      if (replicationTour.status) return
+
       this.guideLoading = true
       let subscribe = await this.$axios.get(`api/tcm/subscribe`)
       const data = await this.$axios.get('api/tcm/agent')
       this.guideLoading = false
-      const { guide } = this.$store.state
+
       const { subscribeId, agentId } = guide
       let items = data?.items || []
       let subItems = subscribe?.items || []
 
-      items = items.filter(({ id }) => !['64a785ada8321f670d2338d1', '64a01d43a1dd0e614a1b7d86'].includes(id))
-
-      //是否有未支付的订阅
+      // 没有订阅和实例
       if (!items.length && !subItems.length) {
         this.subscriptionModelVisible = true
         return
       }
 
-      //是否有运行中的实例
+      // 是否有运行中的实例
       let isRunning = items.find((i) => i.status === 'Running')
       if (isRunning) {
         return
       }
 
-      //是否有支付成功的订阅
-      // if (subItems.find(i => i.status === 'active' && i.totalAmount !== 0)) return
-
-      //订阅0 Agent 0  完全新人引导
-      //订阅不为0 查找是否有待部署状态
-      //Agent不为0 查找是否有待部署状态
-      //优先未支付判定
-      //未支付
-
       if (subscribeId) {
-        let isUnPay = subItems.find((i) => i.status === 'incomplete' && guide.subscribeId === i.id)
+        if (subscribeId === '-') {
+          // agent 引导过程中退订: subscribeId === '-', 所有订阅都是canceled按引导退订处理，能开启引导
+          this.subscriptionModelVisible = subItems.every((item) => item.status === 'canceled')
+          return
+        }
 
-        if (isUnPay) {
-          this.subscribes = isUnPay
+        let subscribe = subItems.find((i) => guide.subscribeId === i.id)
+
+        if (subscribe && subscribe.status === 'incomplete') {
+          // 引导订阅的agent未支付
+          this.subscribes = subscribe
           this.subscriptionModelVisible = true
-          //是否有未支付的订阅
           return
         }
       }
@@ -121,6 +176,10 @@ export default {
           return
         }
       }
+
+      if (!subscribeId || !agentId) {
+        this.subscriptionModelVisible = true
+      }
     },
 
     async loadGuide() {
@@ -129,7 +188,9 @@ export default {
       this.$store.commit('setReplicationTour', guide?.tour)
     },
 
-    loopLoadAgentCount() {
+    loopLoadAgentCount(showLoading) {
+      clearTimeout(this.loopLoadAgentCountTimer)
+      this.agentCountLoading = showLoading
       return this.$axios
         .get('api/tcm/agent/agentCount')
         .then((data) => {
@@ -140,6 +201,7 @@ export default {
           this.initTour()
         })
         .finally(() => {
+          this.agentCountLoading = false
           this.loopLoadAgentCountTimer = setTimeout(() => {
             this.loopLoadAgentCount()
           }, 10000)
@@ -371,12 +433,14 @@ export default {
         this.driverObj ||
         this.showAlarmTour ||
         this.beTouring ||
-        this.enterReplicationTour
+        this.enterReplicationTour ||
+        this.pausedGuide
       ) {
         return
       }
       if (this.agentRunningCount) {
         // 有可用的agent
+        this.marketplaceGuideVisible = false
         this.checkReplicationTour()
       } else if (this.showAgentWarning && !this.enterAgentTour && !this.startingTour) {
         // 存在异常的agent
@@ -440,12 +504,13 @@ export default {
 
         if (!tour.status) {
           // 没有进入过
-          this.showReplicationTour = true
+          this.setShowReplicationTour(true)
         } else this.$router.push({ name: 'migrateList' }) // 没有完成引导，继续进入数据复制
       }
     },
 
     initReplicationTour() {
+      const taskMonitorId = `#task-${this.replicationTour.taskId} [name="monitor"]`
       const steps = [
         {
           element: '#btn-add-source',
@@ -494,47 +559,110 @@ export default {
             side: 'top',
             showButtons: [],
             description: i18n.t('dfs_mixins_tour_drag_source_table'),
-            onPopoverRender: (popover, { state }) => {
-              console.log('popover', popover) // eslint-disable-line
-            },
+          },
+        },
+        {
+          element: taskMonitorId,
+          elementClick: () => {
+            this.setCompleted()
+          },
+          onHighlightStarted: (element, step, { state }) => {
+            this.setTourIndex(state.activeIndex)
+            element?.addEventListener('click', step.elementClick)
+          },
+          onDeselected: (element, step) => {
+            element?.removeEventListener('click', step.elementClick)
+          },
+          popover: {
+            showButtons: [],
+            description: i18n.t('dfs_mixins_tour_view_monitor'),
           },
         },
       ]
       this.replicationDriverObj = driver({
         allowClose: false,
-        // allowClose: process.env.NODE_ENV === 'development',
         allowKeyboardControl: false,
         showProgress: true,
         steps,
+        popoverClass: 'replication-driver-popover p-3',
+        onPopoverRender: (popover, { config, state }) => {
+          const closeBtn = document.createElement('button')
+          closeBtn.innerText = this.$t('public_button_close')
+          popover.footerButtons.appendChild(closeBtn)
+
+          closeBtn.addEventListener('click', () => {
+            this.pauseGuideAndTour()
+          })
+        },
         onHighlightStarted: (element, step, { state }) => {
           console.log('设置Index', state.activeIndex) // eslint-disable-line
           this.setTourIndex(state.activeIndex)
         },
       })
 
-      console.log('this.replicationDriverObj', this.replicationDriverObj)
-
-      const unwatch = this.$watch('replicationTour.behavior', (behavior) => {
+      // 监听任务引导行为
+      this.unwatchTourBehavior?.()
+      this.unwatchTourBehavior = this.$watch('replicationTour.behavior', async (behavior) => {
         if (!this.startingTour || !this.replicationDriverObj) {
-          unwatch()
+          this.unwatchTourBehavior()
           return
         }
 
-        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
-
         if (behavior === 'add-task') {
-          this.setCompleted()
+          // this.setCompleted()
+          // 设置进入任务监控的引导
+          // 设置step的element
+          const { steps } = this.replicationDriverObj.getConfig()
+          steps[steps.length - 1].element = `#task-${this.replicationTour.taskId} [name="monitor"]`
+          console.log(this.replicationDriverObj)
+          await this.$nextTick()
         }
+        this.replicationDriverObj.drive(this.replicationTour.activeIndex + 1)
       })
 
+      // 监听任务引导状态
+      this.unwatchTourStatus?.()
+      this.unwatchTourStatus = this.$watch('replicationTour.status', (status, oldStatus) => {
+        if (status === 'complete') this.unwatchTourStatus?.()
+        // 从开始窗口点击开始任务引导
+        if (status === 'starting' && !oldStatus) this.replicationDriverObj.drive(0)
+      })
+
+      // 监听路由变化
+      this.unwatchTourRoute?.()
       this.unwatchTourRoute = this.$watch(
         '$route',
         (to) => {
           if (to.name === 'migrateList' && (this.pausedTour || this.startingTour)) {
             this.startTour()
+            this.startGuide()
             if (!this.$store.state.replicationConnectionDialog) {
               this.$nextTick(() => {
-                this.replicationDriverObj.drive(this.replicationTour.activeIndex || 0)
+                // 判断任务的监控按钮是否渲染
+                let index = this.replicationTour.activeIndex
+                if (this.replicationTour.behavior === 'add-target') {
+                  if (index !== 2) {
+                    debugger
+                  }
+                  index = 2
+                }
+                if (this.replicationTour.behavior === 'add-task') index = 3
+
+                this.setTourIndex(index)
+
+                if (index === 3 && !document.querySelector(taskMonitorId)) {
+                  // 如果没有渲染，监听任务列表的加载时间
+                  const unwatch = this.$watch('$store.state.taskLoadedTime', () => {
+                    this.$nextTick(() => {
+                      if (document.querySelector(taskMonitorId)) {
+                        unwatch()
+                        this.replicationDriverObj.drive(index)
+                      }
+                    })
+                  })
+                } else {
+                  this.replicationDriverObj.drive(index || 0)
+                }
               })
             }
           } else {
@@ -548,6 +676,8 @@ export default {
         },
       )
 
+      // 监听任务引导对象
+      this.unwatchTour?.()
       this.unwatchTour = this.$watch(
         'replicationTour',
         (tour) => {
@@ -563,21 +693,34 @@ export default {
     },
 
     setCompleted() {
-      this.showReplicationTour = true
-      this.replicationTourFinish = true
+      // this.openCompleteReplicationTour()
       this.completeTour()
       this.destroyDriver()
     },
 
-    async handleStartTour() {
-      this.showReplicationTour = false
-      await this.$router.push({ name: 'migrateList' })
-      this.startTour()
-      this.replicationDriverObj.drive(0)
+    pauseGuideAndTour() {
+      this.pauseGuide()
+      this.handleDestroy()
     },
 
-    handleFinishTour() {
-      this.showReplicationTour = false
+    async handleOpenGuide() {
+      await this.checkGuide()
+
+      if (!this.subscriptionModelVisible) {
+        // 继续判断任务引导
+        if (this.agentRunningCount) {
+          this.checkReplicationTour()
+          this.startGuide()
+        } else {
+          this.$message.warning(this.$t('agent_tip_no_running'))
+        }
+      } else {
+        this.startGuide()
+      }
+    },
+
+    updateMarketplaceGuide() {
+      this.marketplaceGuideVisible = false
     },
   },
 }

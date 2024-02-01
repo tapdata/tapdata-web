@@ -34,6 +34,7 @@ export default {
   public_no_permissions: '没有权限',
   public_yes: '是',
   public_no: '否',
+  public_tags: '标签',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -96,7 +97,7 @@ export default {
   public_button_download: '下载',
   public_button_add: '新增',
   public_button_bulk_operation: '批量操作',
-  public_button_bulk_tag: '设置分类',
+  public_button_bulk_tag: '设置标签',
   public_button_revise: '修改',
   public_button_refresh: '刷新',
   public_button_public: '发布',
@@ -218,6 +219,7 @@ export default {
   public_connection_button_create: '创建连接',
   public_connection_button_copy: '复制连接',
   public_connection_button_test: '连接测试',
+  public_connection_button_connection_test: '连接测试',
   public_connection_button_load_schema: '加载Schema',
   public_connection_form_database_name: '数据库名称',
   public_connection_form_database_type: '数据库类型',
@@ -229,6 +231,10 @@ export default {
   public_connection_form_other_connection_string: '其他连接串参数',
   public_connection_form_time_zone_of_time_type: '时间类型的时区',
   public_connection_form_link_plugin_source: '链接插件来源',
+  public_source_database: '源数据库',
+  public_target_database: '目标数据库',
+  public_source_connection: '源连接',
+  public_target_connection: '目标连接',
   // 任务
   public_task: '任务',
   public_task_name: '任务名称',
@@ -284,4 +290,9 @@ export default {
   public_external_memory_table: '外存表名',
   public_external_memory_connection: '外存连接',
   public_external_memory_info: '外存信息',
+
+  public_shared_mining: '共享挖掘',
+  public_external_storage: '外存管理',
+
+  public_page_title_advanced_features: '高级功能',
 }

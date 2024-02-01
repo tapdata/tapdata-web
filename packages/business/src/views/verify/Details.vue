@@ -5,13 +5,18 @@
         <div class="verify-list__header flex justify-content-between mb-2">
           <ElInput
             class="search-input"
-            v-model:value="keyword"
-            prefix-icon="el-icon-search"
+            v-model="keyword"
             :placeholder="$t('packages_business_verification_details_qingshurubiaoming')"
             clearable
             style="width: 240px"
             @input="searchFnc(800)"
-          ></ElInput>
+          >
+            <template #prefix>
+              <ElIcon>
+                <ElIconSearch />
+              </ElIcon>
+            </template>
+          </ElInput>
           <div>
             <el-tooltip
               class="item"
@@ -36,8 +41,8 @@
                 isChecking
                   ? $t('packages_business_verification_details_jiaoyanzhong')
                   : $t('packages_business_verification_details_jiaoyan')
-              }}</ElButton
-            >
+              }}
+            </ElButton>
           </div>
         </div>
         <VTable
@@ -88,7 +93,7 @@
           </div>
         </div>
         <div class="flex justify-content-between pt-4 px-4">
-          <ElRadioGroup v-model:value="showType" :disabled="detailLoading" @change="fetch(page.current)">
+          <ElRadioGroup v-model="showType" :disabled="detailLoading" @change="fetch(page.current)">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>
@@ -398,27 +403,34 @@ export default {
 .verify-details {
   height: 100%;
 }
+
 .verify-details__wrap {
   border-radius: 4px;
   background-color: #fff;
   box-sizing: border-box;
+
   .icon {
     color: map-get($color, danger);
     font-size: 16px;
   }
 }
+
 .verify-list {
   width: 534px;
 }
+
 .verify-result {
 }
+
 .line__label {
   display: inline-block;
   width: 100px;
 }
+
 .disable-color {
   color: #86909c;
 }
+
 .table__body {
   height: 0;
   overflow-y: auto;

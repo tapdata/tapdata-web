@@ -61,7 +61,7 @@ export class Table extends NodeType {
         },
         'x-component': 'FormTab',
         'x-component-props': {
-          class: 'config-tabs',
+          'config-tabs': true,
           formTab: '{{formTab}}',
         },
         properties: {
@@ -256,6 +256,7 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       asterisk: true,
+                      tooltip: i18n.t('packages_dag_update_conditions_tip'),
                     },
                     'x-component': 'FieldSelect',
                     'x-component-props': {
@@ -325,7 +326,7 @@ export class Table extends NodeType {
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
                             'packages_dag_nodes_database_setting_cdc_changjing_desc',
-                          )}':''}}`,
+                          )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`,
                         },
                         schema: {
                           // 根据capabilities列表如果不存在{"id" : "clear_table_function"}属性，表示不支持“运行前删除已存在数据”，⚠️👇表达式依赖enum的顺序
@@ -495,7 +496,7 @@ export class Table extends NodeType {
                       fulfill: {
                         state: {
                           display:
-                            '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}',
+                            '{{(!$deps[0].length || ($values.attrs.connectionType && $values.attrs.connectionType.includes("source"))) ? "visible":"hidden"}}',
                         },
                       },
                     },
@@ -527,7 +528,7 @@ export class Table extends NodeType {
                   fulfill: {
                     state: {
                       display:
-                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}',
+                        '{{(!$deps[0].length && (!$values.attrs.connectionType || $values.attrs.connectionType.includes("source"))) ? "visible":"hidden"}}',
                     },
                   },
                 },
@@ -635,6 +636,9 @@ export class Table extends NodeType {
                         required: true,
                         default: [{ field: '', defaultValue: '' }],
                         'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_nodes_cdcPollingFields_tip'),
+                        },
                         'x-component': 'ArrayItems',
                         items: {
                           type: 'object',
@@ -701,6 +705,7 @@ export class Table extends NodeType {
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: i18n.t('packages_dag_config_data_filter'),
+                      tooltip: i18n.t('packages_dag_config_data_filter_tip'),
                     },
                     properties: {
                       enableCustomCommand: {
@@ -1037,19 +1042,38 @@ export class Table extends NodeType {
                       title: i18n.t('packages_dag_config_data_read'),
                     },
                     properties: {
-                      readBatchSize: {
-                        title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //增量批次读取条数
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'InputNumber',
-                        'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
-                        },
+                      sizeSpace: {
+                        type: 'void',
+                        'x-component': 'Space',
                         'x-component-props': {
-                          min: 1,
-                          max: 100000,
+                          size: 'middle',
                         },
-                        default: 100,
+                        properties: {
+                          readBatchSize: {
+                            title: i18n.t('packages_dag_nodes_database_piliangduqutiao'), //全量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-decorator-props': {
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
+                            },
+                            'x-component-props': {
+                              min: 1,
+                              max: 100000,
+                            },
+                            default: 100,
+                          },
+                          increaseReadSize: {
+                            title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
+                            type: 'string',
+                            'x-decorator': 'FormItem',
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1,
+                            },
+                            default: 1,
+                          },
+                        },
                       },
                     },
                   },
@@ -1269,6 +1293,7 @@ export class Table extends NodeType {
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
                       title: i18n.t('packages_dag_nodes_database_ddLshijian'),
+                      tooltip: i18n.t('packages_dag_ddl_events_collapse_tip'),
                     },
                     properties: {
                       ddlEvents: {

@@ -19,7 +19,9 @@ export const JsDebug = observer(
     directives: {
       resize,
     },
-    setup(props, { emit, root, refs }) {
+    setup(props, { emit }) {
+      const beforeJsonRef = ref()
+      const afterJsonRef = ref()
       const logList = ref([])
       const logLoading = ref(false)
       const connForm = props.getForm()
@@ -54,12 +56,12 @@ export const JsDebug = observer(
 
       const onTabChange = (current) => {
         if (current == '0') {
-          refs.beforeJson.editor.resize(true)
-          refs.afterJson.editor.resize(true)
+          beforeJsonRef.value.editor.resize(true)
+          afterJsonRef.value.editor.resize(true)
 
           setTimeout(() => {
-            refs.beforeJson.editor.resize(true)
-            refs.afterJson.editor.resize(true)
+            beforeJsonRef.value.editor.resize(true)
+            afterJsonRef.value.editor.resize(true)
           }, 300)
         }
       }
@@ -117,7 +119,7 @@ export const JsDebug = observer(
             <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
               <VCodeEditor
-                ref="beforeJson"
+                ref={beforeJsonRef}
                 class="py-0 json-view-editor flex-1"
                 value={inputRef.value}
                 lang="json"
@@ -132,7 +134,7 @@ export const JsDebug = observer(
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
               <VCodeEditor
-                ref="afterJson"
+                ref={afterJsonRef}
                 class="py-0 json-view-editor flex-1"
                 value={outputRef.value}
                 lang="json"

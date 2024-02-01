@@ -1,5 +1,6 @@
-import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElDropdown } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElSelectV2, ElDropdown } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
+import 'element-plus/theme-chalk/src/message-box.scss'
 import { CloseIcon } from './CloseIcon'
 
 // TODO 可能需要重写适配
@@ -44,26 +45,21 @@ export const installElement = (app) => {
 
   ElDialog.props.closeIcon.default = CloseIcon
 
-  // 隐藏箭头后的offset
-  ElSelect.props.popperOptions.default = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
+  const getDefault = () => {
+    return {
+      modifiers: [
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 4],
+          },
         },
-      },
-    ],
+      ],
+    }
   }
+
   // 隐藏箭头后的offset
-  ElDropdown.props.popperOptions.default = {
-    modifiers: [
-      {
-        name: 'offset',
-        options: {
-          offset: [0, 4],
-        },
-      },
-    ],
-  }
+  ElSelect.props.popperOptions.default = getDefault
+  ElSelectV2.props.popperOptions.default = getDefault
+  ElDropdown.props.popperOptions.default = getDefault
 }

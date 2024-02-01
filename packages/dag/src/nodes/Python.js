@@ -26,7 +26,7 @@ export class JavaScript extends NodeType {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
-          class: 'config-tabs',
+          'config-tabs': true,
           formTab: '{{formTab}}',
         },
         properties: {
@@ -37,6 +37,17 @@ export class JavaScript extends NodeType {
               label: i18n.t('public_basic_settings'),
             },
             properties: {
+              alert: {
+                type: 'void',
+                'x-component': 'Alert',
+                'x-component-props': {
+                  class: 'bg-color-primary-light-9 my-2 text-primary lh-base',
+                  title: i18n.t('packages_dag_python_not_support_windows'),
+                  type: 'info',
+                  showIcon: true,
+                  closable: false,
+                },
+              },
               nameWrap: {
                 type: 'void',
                 title: i18n.t('public_node_name'),

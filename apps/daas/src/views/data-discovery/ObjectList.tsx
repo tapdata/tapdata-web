@@ -9,7 +9,9 @@ import './index.scss'
 
 export default defineComponent({
   props: [''],
-  setup(props, { refs, root }) {
+  setup() {
+    const tableRef = ref()
+    const drawerContentRef = ref()
     const { success } = useMessage()
     const list = ref([])
     const { category, type, sourceCategory, sourceType, queryKey } = root.$route.query || {}
@@ -55,7 +57,7 @@ export default defineComponent({
     }
     const rest = () => {
       // @ts-ignore
-      refs.table.fetch(1)
+      tableRef.value.fetch(1)
     }
     //请求筛选条件-下拉列表
     const loadFilterList = () => {
@@ -110,7 +112,7 @@ export default defineComponent({
     const handlePreview = (row) => {
       data.isShowDetails = true
       // @ts-ignore
-      refs.drawerContent.loadData(row)
+      drawerContentRef.value.loadData(row)
     }
     const closeDrawer = (val) => {
       data.isShowDetails = val
@@ -150,12 +152,13 @@ export default defineComponent({
       renderNode,
       closeDrawer,
       rest,
+      drawerContentRef,
     }
   },
   render() {
     return (
       <section class="discovery-page-wrap">
-        <TablePage ref="table" row-key="id" remoteMethod={this.loadData}>
+        <TablePage ref="tableRef" row-key="id" remoteMethod={this.loadData}>
           <template slot="search">
             <FilterBar
               items={this.data.filterItems}
@@ -163,15 +166,9 @@ export default defineComponent({
               {...{ on: { fetch: this.rest } }}
             ></FilterBar>
           </template>
-          <el-table-column
-            label={this.$t('object_list_name')}
-            prop="name"
-            show-overflow-tooltip
-            width="350px"
-            scopedSlots={{
-              default: this.renderNode,
-            }}
-          ></el-table-column>
+          <el-table-column label={this.$t('object_list_name')} prop="name" show-overflow-tooltip width="350px">
+            {this.renderNode}
+          </el-table-column>
           <el-table-column
             width="145px"
             label={this.$t('object_list_classification')}
@@ -190,9 +187,9 @@ export default defineComponent({
           class="object-drawer-wrap"
           width="850px"
           visible={this.data.isShowDetails}
-          on={{ ['update:visible']: this.closeDrawer }}
+          onUpdate:visible={this.closeDrawer}
         >
-          <DrawerContent ref={'drawerContent'}></DrawerContent>
+          <DrawerContent ref="drawerContentRef"></DrawerContent>
         </Drawer>
       </section>
     )

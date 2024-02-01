@@ -27,6 +27,30 @@
   .el-tabs__item {
     padding: 0 16px;
   }
+
+  &.tabs-fill {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    > .el-tabs__header {
+      margin: 0;
+    }
+    > .el-tabs__content {
+      flex: 1;
+      min-height: 0;
+
+      > .el-tab-pane {
+        height: 100%;
+        //overflow: visible;
+        overflow: auto;
+      }
+    }
+  }
+}
+
+// Popper
+.el-popper.is-dark {
+  --el-text-color-primary: #303133;
 }
 
 // Tooltip
@@ -35,6 +59,11 @@
 }
 
 // Select
+.el-select {
+  .el-select__tags .el-tag {
+    --el-tag-text-color: var(--el-text-color-primary);
+  }
+}
 .el-select-v2__popper {
   .el-select-dropdown {
     &__list {
@@ -46,6 +75,9 @@
       border-radius: map-get($border-radius, base);
       font-size: var(--el-font-size-base);
     }
+  }
+  .el-popper__arrow {
+    display: none;
   }
 }
 
@@ -95,6 +127,10 @@
   &__header {
     padding-inline: 24px !important;
     padding-block: 20px !important;
+
+    &:has(.el-dialog__title:empty) {
+      display: none;
+    }
   }
   &__title {
     font-weight: 500;
@@ -142,4 +178,9 @@
       font-weight: 500;
     }
   }
+}
+
+// Message
+.el-message {
+  --el-border-radius-base: 8px;
 }

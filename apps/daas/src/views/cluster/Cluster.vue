@@ -350,6 +350,7 @@
 </template>
 
 <script>
+import { h } from 'vue'
 import { FilterBar } from '@tap/component'
 import AddServe from './AddServe'
 import { workerApi, clusterApi, proxyApi } from '@tap/api'
@@ -751,7 +752,6 @@ export default {
       // this.delData = data
       // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
       let agentName = item.agentName || item.systemInfo.hostname
-      const h = this.$createElement
       let message = h('p', [this.$t('public_message_delete_confirm') + ' ' + agentName])
       this.$confirm(message, {
         type: 'warning',

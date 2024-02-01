@@ -1,10 +1,10 @@
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
 import * as Vue from 'vue'
 import i18n from '@tap/i18n'
-import { connect, mapProps, useForm, useField } from '@tap/form'
+import { useForm, useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent, ref } from 'vue'
-import { VIcon } from '@tap/component'
+import { IconButton, VIcon } from '@tap/component'
 import { convertSchemaToTreeData } from '../field-rename/util'
 import '../field-rename/index.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
@@ -153,15 +153,10 @@ export const FieldModType = observer(
             <span class="flex-1 text inline-block pl-11">
               {i18n.t('packages_form_field_mod_type_index_mubiaoziduanlei')}
             </span>
-            <span class="field-ops inline-block ml-10">
-              <VIcon
-                class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                size="12"
-                disabled={this.disabled}
-                onClick={() => this.handleAllReset()}
-              >
+            <span class="flex align-center gap-2 px-2">
+              <IconButton sm disabled={this.disabled} onClick={() => this.handleAllReset()}>
                 revoke
-              </VIcon>
+              </IconButton>
             </span>
           </div>
           <div className="field-processors-tree-warp">
@@ -172,7 +167,8 @@ export const FieldModType = observer(
               default-expand-all={true}
               expand-on-click-node={false}
               class="field-processor-tree"
-              scopedSlots={{
+            >
+              {{
                 default: ({ node, data }) => (
                   <span
                     class="tree-node flex flex-1 justify-content-center align-items flex-row"
@@ -199,20 +195,19 @@ export const FieldModType = observer(
                         <ElOption label={op.label} value={op.value} key={op.value} />
                       ))}
                     </ElSelect>
-                    <span class="e-ops">
-                      <ElButton
-                        text
-                        class="ml-5"
+                    <span class="flex align-center gap-2 px-2">
+                      <IconButton
+                        sm
                         disabled={!this.isConvertDataType(data.previousFieldName) || this.disabled}
                         onClick={() => this.handleReset(node, data)}
                       >
-                        <VIcon size="12">revoke</VIcon>
-                      </ElButton>
+                        revoke
+                      </IconButton>
                     </span>
                   </span>
                 ),
               }}
-            />
+            </ElTree>
           </div>
         </div>
       )

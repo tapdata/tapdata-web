@@ -1,5 +1,4 @@
 import { $on, $off, $once, $emit } from '../../../../utils/gogocodeTransfer'
-import * as Vue from 'vue'
 import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
@@ -7,7 +6,7 @@ import { connect, mapProps, useForm } from '@tap/form'
 import { metadataInstancesApi } from '@tap/api'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent, ref } from 'vue'
-import { VIcon, VirtualTree } from '@tap/component'
+import { IconButton, VIcon } from '@tap/component'
 import { convertSchemaToTreeData, uuid } from '../field-rename/util'
 import '../field-rename/index.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
@@ -94,6 +93,7 @@ export const FieldAddDel = connect(
           })
         }
         this.fields = fields
+        console.log('fields', fields)
         //初始化
         let formValues = { ...this.form.values }
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
@@ -104,46 +104,39 @@ export const FieldAddDel = connect(
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               v-model={this.searchFiledName}
               clearable
-              prefix-icon="el-icon-search"
-            />
+            >
+              {{
+                prefix: () => (
+                  <ElIcon>
+                    <ElIconSearch />
+                  </ElIcon>
+                ),
+              }}
+            </ElInput>
             <div class="border rounded-4 overflow-hidden">
               <div class="field-processor-operation flex">
                 <span class="flex-1 text inline-block ml-6">
                   {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
                 </span>
-                <span class="field-ops inline-block ml-10">
-                  <VIcon
-                    class={[
-                      this.deleteAllFieldsData ? 'active__delete' : '',
-                      this.disabled ? 'disable__btn' : 'clickable',
-                      'ml-5',
-                    ]}
-                    size="12"
-                    disabled={this.disabled}
+                <span class="flex align-center gap-2 px-2">
+                  <IconButton sm disabled={fields.length === 0 || this.disabled} onClick={() => this.handleCreate()}>
+                    add
+                  </IconButton>
+                  <IconButton
+                    sm
+                    disabled={this.disabled || this.deleteAllFieldsData}
                     onClick={() => this.handleAllDelete()}
                   >
                     delete
-                  </VIcon>
-                  <VIcon
-                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                    size="12"
-                    disabled={fields.length === 0 || this.disabled}
-                    onClick={() => this.handleCreate()}
-                  >
-                    add
-                  </VIcon>
-                  <VIcon
-                    class={[this.disabled ? 'disable__btn' : 'clickable', 'ml-5']}
-                    size="12"
-                    disabled={this.disabled}
-                    onClick={() => this.handleAllReset()}
-                  >
+                  </IconButton>
+                  <IconButton sm disabled={this.disabled} onClick={() => this.handleAllReset()}>
                     revoke
-                  </VIcon>
+                  </IconButton>
                 </span>
               </div>
               <div class="field-processors-tree-warp">
-                <VirtualTree
+                {/*TODO 目前的虚拟树不支持拖拽，等拖拽实现后，替换成虚拟树*/}
+                <ElTree
                   ref="tree"
                   height="calc(100vh - 240px)"
                   data={fields}
@@ -155,43 +148,44 @@ export const FieldAddDel = connect(
                   default-expand-all={true}
                   expand-on-click-node={false}
                   class="field-processor-tree"
-                  scopedSlots={{
+                >
+                  {{
                     default: ({ node, data }) => (
                       <span
                         class={[
                           'tree-node',
                           'flex flex-1',
                           'justify-content-center',
-                          'align-items',
+                          'align-center',
                           'flex-row',
                           'overflow-hidden',
                         ]}
-                        slot-scope="{ node, data }"
                       >
                         {node.level === 1 && (
-                          <el-dropdown
-                            placement="top-start"
-                            on={{
-                              command: (val) => this.handleCommand(val, node),
+                          <el-dropdown placement="top-start" onCommand={(val) => this.handleCommand(val, node)}>
+                            {{
+                              default: () => (
+                                <span class="el-dropdown-link">
+                                  <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
+                                </span>
+                              ),
+                              dropdown: () => (
+                                <el-dropdown-menu>
+                                  <el-dropdown-item command="top">
+                                    {i18n.t('packages_dag_field_add_del_index_zhiding')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="prev">
+                                    {i18n.t('packages_dag_field_add_del_index_shangyi')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="next">
+                                    {i18n.t('packages_dag_field_add_del_index_xiayi')}
+                                  </el-dropdown-item>
+                                  <el-dropdown-item command="bottom">
+                                    {i18n.t('packages_dag_field_add_del_index_zhidi')}
+                                  </el-dropdown-item>
+                                </el-dropdown-menu>
+                              ),
                             }}
-                          >
-                            <span class="el-dropdown-link">
-                              <VIcon class="color-primary mt-n1 mr-2">drag</VIcon>
-                            </span>
-                            <el-dropdown-menu slot="dropdown">
-                              <el-dropdown-item command="top">
-                                {i18n.t('packages_dag_field_add_del_index_zhiding')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="prev">
-                                {i18n.t('packages_dag_field_add_del_index_shangyi')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="next">
-                                {i18n.t('packages_dag_field_add_del_index_xiayi')}
-                              </el-dropdown-item>
-                              <el-dropdown-item command="bottom">
-                                {i18n.t('packages_dag_field_add_del_index_zhidi')}
-                              </el-dropdown-item>
-                            </el-dropdown-menu>
                           </el-dropdown>
                         )}
 
@@ -245,10 +239,9 @@ export const FieldAddDel = connect(
                             </span>
                           )}
                         </span>
-                        <span class="e-ops">
-                          <ElButton
-                            text
-                            class="ml-5"
+                        <span class="flex align-center gap-2 px-2">
+                          <IconButton
+                            sm
                             disabled={
                               ((this.isRemove(data.previousFieldName) || data.is_deleted) &&
                                 !this.isRest(data.previousFieldName)) ||
@@ -256,11 +249,10 @@ export const FieldAddDel = connect(
                             }
                             onClick={() => this.handleDelete(node, data)}
                           >
-                            <VIcon> delete</VIcon>
-                          </ElButton>
-                          <ElButton
-                            text
-                            class="ml-5"
+                            delete
+                          </IconButton>
+                          <IconButton
+                            sm
                             disabled={
                               (!this.isRemove(data.previousFieldName) && !data.is_deleted) ||
                               this.isRest(data.previousFieldName) ||
@@ -268,13 +260,13 @@ export const FieldAddDel = connect(
                             }
                             onClick={() => this.handleReset(node, data)}
                           >
-                            <VIcon size="12">revoke</VIcon>
-                          </ElButton>
+                            revoke
+                          </IconButton>
                         </span>
                       </span>
                     ),
                   }}
-                />
+                </ElTree>
               </div>
             </div>
           </div>

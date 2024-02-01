@@ -23,7 +23,7 @@ export class FieldModTypeFilter extends NodeType {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
-          class: 'config-tabs',
+          'config-tabs': true,
           formTab: '{{formTab}}',
         },
         properties: {

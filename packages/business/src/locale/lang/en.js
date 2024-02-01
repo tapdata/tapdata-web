@@ -199,7 +199,7 @@ export default {
   packages_business_task_monitor_mining_task_name: 'Mining task name',
   packages_business_task_monitor_mining_task_point_time: 'Mining time point',
   packages_business_task_monitor_mining_task_status: 'Mining Status',
-  packages_business_button_bulk_import: 'Bulk Import',
+  packages_business_button_bulk_import: 'Import',
   packages_business_message_save_fail: 'Save Failed',
   packages_business_task_list_transform_running: 'Field mapping running',
   packages_business_task_list_transform_done: 'Field mapping completed',
@@ -300,10 +300,10 @@ export default {
   packages_business_statistics_schedule_yonghuliulanqi: 'User browser time zone',
   packages_business_statistics_schedule_shijian: 'Time:',
   packages_business_statistics_schedule_leixing: 'Type:',
-  packages_business_dataFlow_delete_confirm_Title: 'Delete the task? ',
-  packages_business_dataFlow_delete_confirm_Message: 'After deleting task XXX, this task cannot be restored',
-  packages_business_dataFlow_bulk_delete_confirm_Title: 'Delete tasks in batch? ',
-  packages_business_dataFlow_bulk_delete_confirm_Message: 'After deleting tasks in batch, tasks cannot be restored',
+  packages_business_dataFlow_delete_confirm_title: 'Delete the task? ',
+  packages_business_dataFlow_delete_confirm_message: 'After deleting task XXX, this task cannot be restored',
+  packages_business_dataFlow_bulk_delete_confirm_title: 'Delete tasks in batch? ',
+  packages_business_dataFlow_bulk_delete_confirm_message: 'After deleting tasks in batch, tasks cannot be restored',
   packages_business_dataFlow_stop_confirm_title: 'Would you like to suspend this task?',
   packages_business_dataFlow_stop_confirm_message:
     'After the task xxx is suspended, when the table in the task that has not been fully synchronized is started again, the full synchronization will be performed again',
@@ -359,6 +359,8 @@ export default {
   packages_business_relation_details_renwu: 'Tasks',
   packages_business_agent_select_placeholder: 'Please select an agent',
   packages_business_agent_select_not_found: 'This agent does not exist. Select another agent',
+  packages_business_agent_select_not_found_for_rocksdb:
+    'When using RocksDB as the shared mining storage, you need to manually specify an agent.',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
@@ -518,9 +520,9 @@ export default {
   packages_business_verification_fastCountTip:
     'The fast count mode, which only verifies the number of rows in the source and target tables, is extremely fast, but it does not display the differential field values',
   packages_business_verification_contentVerifyTip:
-    "Table Field Value Verify Mode' is a thorough method that checks all fields in both the source and target tables row by row, enabling the detection of any discrepancies; however, due to its comprehensive nature, it may operate at a slower pace.",
+    'Table full-field validation checks all fields of the source and target tables row by row, identifying differences in all fields but with a slower speed. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_jointFieldTip:
-    "The 'Joint Fields Value Verify Mode' compares only the joint field value between the source and target tables, resulting in a faster validation process when compared to the 'Table Field Value Verify Mode'.",
+    'Associative field value validation compares only the values of associated fields in the source and target tables, providing faster results compared to full-field validation. This operation simultaneously queries both the source and target databases, potentially causing read pressure on the databases.',
   packages_business_verification_waiting: 'To be verified',
   packages_business_verification_scheduling: 'Scheduling',
   packages_business_verification_error: 'Error',
@@ -659,9 +661,17 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
   packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
+  packages_business_setting_alarmnotification_recipient_setting: 'Task Default Alarm Recipient Setting',
+  packages_business_setting_alarmnotification_recipient_desc: `Set here as the system's global alarm recipient configuration. All configured recipients will receive alerts for the currently active system alarms.`,
+  packages_business_setting_alarmnotification_recipient_default: 'Default Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient: 'Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient_tip:
+    'Supports configuring multiple alarm recipient emails, with multiple emails separated by commas.',
+  packages_business_setting_alarmnotification_channel: 'Alarm Notification Channel',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
+  packages_business_connections_databaseform_system: 'Follow System Settings',
   packages_business_custom_node_placeholder: 'Please enter the node name to search',
   packages_business_custom_node_edit_confirm:
     'The node is detected that the following running task has been invoked, and restart the task if the configuration needs to take effect',
@@ -987,6 +997,8 @@ export default {
   packages_business_shared_cache_column_table: 'From Table',
   packages_business_shared_cache_cache_key_message: 'The selected cache key is not indexed.',
   packages_business_shared_cache_cache_key_auto_create: 'Automatic Index Creation',
+  packages_business_shared_cache_cache_key_auto_create_tip:
+    'Enabling this feature will automatically create indexes for cache keys in the source table, potentially impacting the source database. Please enable with caution.',
   packages_business_relation_list_gongxianghuancun: 'Shared Cache',
   packages_business_application_delete_shanchuyingyong: 'Delete Application',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1171,6 +1183,8 @@ export default {
   packages_business_verification_list_biaobufenziduan: 'Verification of some fields in the table',
   packages_business_components_conditionbox_laiyuanbiaoshuju: 'Source Filter',
   packages_business_components_conditionbox_mubiaobiaoshuju: 'Target Filter',
+  packages_business_components_conditionbox_enableCustomCommand_tip:
+    'Ensure that the query conditions have indexes; without indexes, it may result in a full table scan, causing increased database pressure.',
   packages_business_data_server_list_apIwendang: 'API Document Export',
   packages_business_verification_form_gaojipeizhi: 'Advanced Configuration',
   packages_business_verification_form_validate_table_is_empty:
@@ -1235,4 +1249,14 @@ export default {
   packages_business_ssh_password: 'Password',
   packages_business_connections_test_xiazaijindu: 'Download Progress',
   packages_business_connections_test_xiazaishibai: 'Download Failed',
+  packages_business_relmig_import: 'MongoDB Relmig Import',
+  packages_business_relmig_import_desc:
+    'This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into Tapdata. After the relmig file is imported, Tapdata will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.',
+  packages_business_relmig_upload: 'Upload relmig file',
+  packages_business__relmig_import_connection_tip: "Click here to create one if you haven't done so already.",
+  packages_business__relmig_import_source_connection_placeholder:
+    'Please select the source connection that includes the source tables you used in your relmig project',
+  packages_business__relmig_import_target_connection_placeholder:
+    'Please select the destination connection you want the data to be synchronized to',
+  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
 }

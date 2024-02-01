@@ -21,7 +21,7 @@ export const PythonProcessor = observer(
     directives: {
       resize,
     },
-    setup(props, { emit, attrs, refs }) {
+    setup(props, { emit, attrs }) {
       const store = useStore()
       const { id: taskId, syncType } = store.state.dataflow.taskInfo
       const formRef = useForm()
@@ -33,6 +33,8 @@ export const PythonProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
+      const beforeJsonRef = ref()
+      const afterJsonRef = ref()
 
       let queryStart
       let queryTimes = 0
@@ -253,12 +255,12 @@ export const PythonProcessor = observer(
 
       const onTabChange = (current) => {
         if (current == '1') {
-          refs.beforeJson.editor.resize(true)
-          refs.afterJson.editor.resize(true)
+          beforeJsonRef.value.editor.resize(true)
+          afterJsonRef.value.editor.resize(true)
 
           setTimeout(() => {
-            refs.beforeJson.editor.resize(true)
-            refs.afterJson.editor.resize(true)
+            beforeJsonRef.value.editor.resize(true)
+            afterJsonRef.value.editor.resize(true)
           }, 300)
         }
       }
@@ -441,7 +443,7 @@ export const PythonProcessor = observer(
             <div class="json-view flex-1 mr-4 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_tiaoshishuru')}</div>
               <VCodeEditor
-                ref="beforeJson"
+                ref={beforeJsonRef}
                 class="py-0 json-view-editor flex-1"
                 value={inputRef.value}
                 lang="json"
@@ -456,7 +458,7 @@ export const PythonProcessor = observer(
             <div class="json-view flex-1 border rounded-2 overflow-hidden">
               <div class="json-view-header">{i18n.t('packages_form_js_processor_index_jieguoshuchu')}</div>
               <VCodeEditor
-                ref="afterJson"
+                ref={afterJsonRef}
                 class="py-0 json-view-editor flex-1"
                 value={outputRef.value}
                 lang="json"
@@ -478,13 +480,8 @@ export const PythonProcessor = observer(
               modal={false}
               title={i18n.t('packages_dag_api_docs')}
               size={600}
-              visible={showDoc.value}
-              on={{
-                ['update:visible']: (v) => {
-                  console.log('update:visible', v) // eslint-disable-line
-                  showDoc.value = v
-                },
-              }}
+              v-model={showDoc.value}
+              class="python-api-drawer"
             >
               <div class="px-4 js-doc-content">
                 {Object.keys(functionGroup.value).map((className) => {

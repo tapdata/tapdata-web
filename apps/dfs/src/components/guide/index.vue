@@ -1,107 +1,121 @@
 <template>
-  <ElDialog
-    class="guide-dialog"
-    :value="visible"
-    @input="$emit('update:visible', $event)"
-    width="1000px"
-    :top="'10vh'"
-    :show-close="false"
-    :destroy-on-close="true"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :before-close="postGuide"
-  >
-    <div class="guide-wrap flex justify-content-center">
-      <div class="nav-wrap p-10">
-        <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
-          {{ $t('dfs_guide_index_huanyingshiyongT') }}
-        </div>
-        <div class="guide-desc font-color-dark mb-10">
-          {{ $t('dfs_guide_index_tapda') }}
-        </div>
-        <el-steps
-          class="guide-steps bg-transparent mx-auto"
-          :active="activeStep"
-          style="height: 300px"
-          direction="vertical"
-        >
-          <el-step v-for="(step, i) in steps" :key="i" :title="step.title">
-            <template v-slot:icon>
-              <span>{{ i + 1 }}</span>
-            </template>
-          </el-step>
-        </el-steps>
-      </div>
-      <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
-        <StepGroups :active="activeKey" class="main flex-1 overflow-hidden">
-          <StepItem name="Account">
-            <!--绑定手机号-->
-            <Account ref="bindPhone" @next="next"></Account>
-          </StepItem>
-          <StepItem name="Scenes">
-            <!--使用场景-->
-            <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
-          </StepItem>
-          <StepItem name="DeploymentMethod">
-            <!--部署方式-->
-            <DeploymentMethod
-              ref="deploymentMethod"
-              :platform="platform"
-              @changePlatform="changePlatform"
-            ></DeploymentMethod>
-          </StepItem>
-          <StepItem name="Spec">
-            <!--选择实例规格-->
-            <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
-          </StepItem>
-          <StepItem name="Deploy">
-            <!--部署实例-->
-            <Deploy :agentId="agentId" @behavior="handleBehavior"></Deploy>
-          </StepItem>
-          <StepItem name="Pay">
-            <!--费用清单-->
-            <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
-            <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
-          </StepItem>
-        </StepGroups>
-        <div
-          v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
-          class="guide-footer flex my-5"
-          :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
-        >
-          <ElButton size="default" v-if="activeStep > 1" @click="previous()">{{
-            $t('public_button_previous')
-          }}</ElButton>
-          <ElButton
-            size="default"
-            type="primary"
-            @click="submitConfirm()"
-            v-if="this.activeStep === this.steps.length"
-            :loading="submitLoading"
-            >{{ $t('public_button_next') }}
-          </ElButton>
-
-          <!--绑定手机号单独一个提交按钮 -->
-          <VButton
-            size="default"
-            type="primary"
-            auto-loading
-            @click="submitConfirm(arguments[0])"
-            v-else-if="this.activeStep === 1 && bindPhoneVisible"
-            >{{ $t('public_button_next') }}
-          </VButton>
-          <ElButton
-            size="default"
-            type="primary"
-            :disabled="activeKey === 'Scenes' && !scenes.length"
-            @click="submitConfirm()"
-            v-else
-            >{{ $t('public_button_next') }}
-          </ElButton>
-        </div>
-      </div>
+  <div>
+    <div
+      v-show="showGuideIcon"
+      v-loading="guideLoading"
+      element-loading-background="rgba(255, 255, 255, 0.4)"
+      id="user-guide-icon"
+      class="user-guide-icon clickable"
+    >
+      <ElImage @click="handleOpenGuide" :src="iconSrc"></ElImage>
     </div>
-  </ElDialog>
+    <ElDialog
+      class="guide-dialog"
+      :model-value="visible"
+      @input="$emit('update:visible', $event)"
+      width="1000px"
+      :top="'10vh'"
+      :show-close="false"
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :before-close="postGuide"
+    >
+      <div class="guide-wrap flex justify-content-center">
+        <div class="nav-wrap p-10">
+          <div class="guide-header font-color-dark fw-bold fs-5 mb-4 mt-4">
+            {{ $t('dfs_guide_index_huanyingshiyongT') }}
+          </div>
+          <div class="guide-desc font-color-dark mb-10">
+            {{ $t('dfs_guide_index_tapda') }}
+          </div>
+          <el-steps
+            class="guide-steps bg-transparent mx-auto"
+            :active="activeStep"
+            style="height: 300px"
+            direction="vertical"
+          >
+            <el-step v-for="(step, i) in steps" :key="i" :title="keyLabelMap[step.key]">
+              <span>{{ i + 1 }}</span>
+            </el-step>
+          </el-steps>
+        </div>
+        <div class="guide-main flex-1 flex flex-column overflow-hidden ml-8 mt-4 mr-8">
+          <StepGroups :active="activeKey" class="main flex-1 overflow-hidden">
+            <StepItem name="Account">
+              <!--绑定手机号-->
+              <Account ref="bindPhone" @next="next"></Account>
+            </StepItem>
+            <StepItem name="Scenes">
+              <!--使用场景-->
+              <Scenes ref="scenes" :scenes="scenes" @handleScenes="handleScenes"></Scenes>
+            </StepItem>
+            <StepItem name="DeploymentMethod">
+              <!--部署方式-->
+              <DeploymentMethod
+                ref="deploymentMethod"
+                :platform="platform"
+                @changePlatform="changePlatform"
+              ></DeploymentMethod>
+            </StepItem>
+            <StepItem name="Spec">
+              <!--选择实例规格-->
+              <Spec ref="spec" :platform="platform" @changeSpec="changeSpec"></Spec>
+            </StepItem>
+            <StepItem name="Deploy">
+              <!--部署实例-->
+              <Deploy :agentId="agentId" @behavior="handleBehavior"></Deploy>
+            </StepItem>
+            <StepItem name="Pay">
+              <!--费用清单-->
+              <pay v-if="subscribeStatus === 'incomplete'" refs="pay" :subscribes="subscribes" @refresh="refresh"></pay>
+              <Details v-else ref="details" :orderInfo="orderInfo" :email="email"></Details>
+            </StepItem>
+          </StepGroups>
+          <div
+            v-if="subscribeStatus !== 'incomplete' && !isUnDeploy"
+            class="guide-footer flex my-5"
+            :class="[activeStep === 1 ? 'justify-content-end' : 'justify-content-between']"
+          >
+            <ElButton size="default" v-if="activeStep > 1" @click="previous()"
+              >{{ $t('public_button_previous') }}
+            </ElButton>
+            <ElButton
+              size="default"
+              type="primary"
+              @click="submitConfirm()"
+              v-if="this.activeStep === this.steps.length"
+              :loading="submitLoading"
+              >{{ $t('public_button_next') }}
+            </ElButton>
+
+            <!--绑定手机号单独一个提交按钮 -->
+            <VButton
+              size="default"
+              type="primary"
+              auto-loading
+              @click="submitConfirm(arguments[0])"
+              v-else-if="this.activeStep === 1 && bindPhoneVisible"
+              >{{ $t('public_button_next') }}
+            </VButton>
+            <ElButton
+              size="default"
+              type="primary"
+              :disabled="activeKey === 'Scenes' && !scenes.length"
+              @click="submitConfirm()"
+              v-else
+              >{{ $t('public_button_next') }}
+            </ElButton>
+          </div>
+          <div v-else-if="isUnDeploy" class="guide-footer flex my-5 justify-content-between">
+            <ElButton :loading="unsubscribeIng" size="default" @click="handleUnsubscribe"
+              >{{ $t('public_button_previous') }}
+            </ElButton>
+          </div>
+        </div>
+      </div>
+    </ElDialog>
+  </div>
 </template>
 
 <script lang="jsx">
@@ -116,10 +130,13 @@ import Spec from './Spec.vue'
 import Deploy from './Deploy.vue'
 import Details from './Details.vue'
 import Pay from './Pay.vue'
+import user_guide_cn from '@/assets/image/user_guide_cn.png'
+import user_guide_en from '@/assets/image/user_guide_en.png'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'guide',
-  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDeploy'],
+  props: ['visible', 'agent', 'subscribes', 'step', 'isUnDeploy', 'guideLoading'],
   components: {
     Account,
     Scenes,
@@ -147,6 +164,7 @@ export default {
       },
     },
   },
+  inject: ['buried'],
   data() {
     return {
       timer: null,
@@ -167,6 +185,15 @@ export default {
       isPay: false,
       behavior: [],
       behaviorAt: null,
+      unsubscribeIng: false,
+      keyLabelMap: {
+        Account: i18n.t('dfs_guide_index_zhanghaoanquanbang'),
+        Scenes: i18n.t('dfs_guide_index_quedingshiyongchang'),
+        DeploymentMethod: i18n.t('dfs_guide_index_shezhishujuku'),
+        Spec: i18n.t('dfs_guide_index_xuanzejisuanyin'),
+        Pay: i18n.t('public_payment'),
+        Deploy: i18n.t('dfs_guide_index_bushujisuanyin'),
+      },
     }
   },
   mounted() {
@@ -174,6 +201,7 @@ export default {
     this.checkWechatPhone()
   },
   computed: {
+    ...mapGetters(['startingGuide', 'pausedGuide', 'completedTour']),
     userId() {
       return this.$store.state.user.id
     },
@@ -181,9 +209,36 @@ export default {
     activeKey() {
       return this.steps[this.activeStep - 1]?.key
     },
+
+    iconSrc() {
+      return this.$store.getters.isDomesticStation ? user_guide_cn : user_guide_en
+    },
+
+    showGuideIcon() {
+      return this.pausedGuide && !this.completedTour
+    },
   },
   watch: {
     visible(v) {
+      if (this.pausedGuide) {
+        const icon = document.getElementById('user-guide-icon')
+        const windowWidth = document.documentElement.clientWidth
+        const windowHeight = document.documentElement.clientHeight
+        const iconStyle = window.getComputedStyle(icon)
+        const iconX = parseInt(iconStyle.left) + parseInt(iconStyle.width) / 2
+        const iconY = windowHeight - parseInt(iconStyle.bottom) - parseInt(iconStyle.height) / 2
+        const dialog = this.$refs.dialogWrapper.$refs.dialog
+        const computedStyle = window.getComputedStyle(dialog)
+        let width = computedStyle.width
+        if (width.endsWith('px')) {
+          width = parseInt(width)
+        } else if (width.endsWith('%')) {
+          width = (parseInt(width) / 100) * windowWidth
+        }
+        const transformOriginX = iconX - (windowWidth - width) / 2
+        const transformOriginY = iconY - parseInt(computedStyle.marginTop)
+        dialog.style.transformOrigin = `${transformOriginX}px ${transformOriginY}px`
+      }
       if (v) {
         this.initGuide()
       }
@@ -211,6 +266,20 @@ export default {
     clearTimeout(this.timer)
   },
   methods: {
+    ...mapMutations(['setExpand', 'pauseGuide', 'startGuide']),
+
+    beforeClose(done) {
+      if (this.bindPhoneVisible && this.activeStep === 1) {
+        this.$message.info(this.$t('dfs_components_taskalarmtour_account_zhuanghao'))
+        return
+      }
+      this.pauseGuide()
+      done()
+      this.$axios.post('api/tcm/user_guide', {
+        expand: this.$store.state.guide.expand,
+      })
+      // this.postGuide()
+    },
     postGuide() {
       let params = {
         installStep: this.activeStep,
@@ -224,11 +293,19 @@ export default {
         behaviorAt: this.behaviorAt,
         tour: this.$store.state.replicationTour,
       }
-      this.$axios.post('api/tcm/user_guide', params)
+      this.$store.commit('setGuide', {
+        installStep: this.activeStep,
+        steps: this.steps,
+        subscribeId: this.subscribeId,
+        agentId: this.agentId,
+      })
+      return this.$axios.post('api/tcm/user_guide', params)
     },
     next() {
-      this.activeStep++
-      this.postGuide()
+      if (this.activeStep < this.steps.length) {
+        this.activeStep++
+        this.postGuide()
+      }
     },
     previous() {
       let step = this.steps[this.activeStep - 1]
@@ -285,7 +362,7 @@ export default {
         this.$axios.get('api/tcm/agent').then((data) => {
           let items = data?.items || []
           this.agentStatus = items.find((i) => i.id === this.agentId)?.status
-          if (this.agentStatus === 'Creating') {
+          if (this.agentStatus !== 'Running') {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
               this.checkAgentStatus()
@@ -375,19 +452,14 @@ export default {
     },
     //检查是否有手机号
     checkWechatPhone() {
-      let user = window.__USER_INFO__
-      if (window.__config__?.disabledBindingPhone) {
-        //海外版不强制绑定手机号
-        this.bindPhoneVisible = false
-      } else {
-        this.bindPhoneVisible =
-          ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) &&
-          !user?.telephone
-      }
-      // this.initGuide()
+      // 国内微信注册的用户绑定手机号
+      const { user } = this.$store.state
+      this.bindPhoneVisible = 'social:wechatmp-qrcode' === user?.registerSource && !user?.telephone
+
       if (this.steps?.length === 0) {
         this.getSteps()
       }
+
       return this.bindPhoneVisible
     },
     getOrderInfo() {
@@ -423,10 +495,22 @@ export default {
 
         if (step) {
           let { key } = step
-          if (key === 'Pay' && !guide.subscribeId) {
+
+          if (
+            key === 'Pay' &&
+            (!guide.subscribeId || (this.subscribes?.status && this.subscribes?.status !== 'incomplete'))
+          ) {
             // 走到支付，但是没有提交订阅
-            guide.installStep = --this.activeStep
-            this.postGuide()
+            if (guide.spec) {
+              try {
+                this.orderInfo = JSON.parse(guide.spec)
+              } catch (e) {
+                guide.installStep = --this.activeStep
+                this.postGuide()
+              }
+            }
+            // guide.installStep = --this.activeStep
+            // this.postGuide()
           } else if (this.isUnDeploy && key !== 'Deploy') {
             guide.installStep = this.activeStep = guide.steps.findIndex((step) => step.key === 'Deploy') + 1
             this.postGuide()
@@ -486,12 +570,12 @@ export default {
             }
           }
 
-          this.$store.commit('setGuide', {
-            installStep: this.activeStep,
-            steps: this.steps,
-            subscribeId: this.subscribeId,
-            agentId: this.agentId,
-          })
+          // this.$store.commit('setGuide', {
+          //   installStep: this.activeStep,
+          //   steps: this.steps,
+          //   subscribeId: this.subscribeId,
+          //   agentId: this.agentId,
+          // })
         })
         .catch(() => {
           this.submitLoading = false
@@ -502,6 +586,43 @@ export default {
       this.behavior.push(behavior)
       this.behaviorAt = Date.now()
       this.postGuide()
+    },
+
+    async handleUnsubscribe() {
+      this.buried('unsubscribeAgentStripe', '', {
+        isGuide: true,
+      })
+      this.unsubscribeIng = true
+
+      await this.$axios.post('api/tcm/subscribe/cancel', {
+        subscribeId: this.subscribeId,
+        resourceId: this.agentId,
+        refundReason: '',
+        refundDescribe: '',
+      })
+
+      this.buried('unsubscribeAgentStripe', '', {
+        result: true,
+      })
+
+      this.agentId = '-'
+      this.subscribeId = '-'
+
+      this.$emit('changeIsUnDeploy', false)
+      this.unsubscribeIng = false
+      // 退回到部署方式
+      this.activeStep = this.steps.findIndex((step) => step.key === 'DeploymentMethod') + 1
+
+      // 后端其实清不了agentId/subscribeId
+      await this.postGuide()
+    },
+
+    handleVisible(val) {
+      this.$emit('update:visible', val)
+    },
+
+    handleOpenGuide() {
+      this.$emit('open-guide')
     },
   },
   emits: ['update:visible', 'changeIsUnDeploy'],
@@ -540,24 +661,53 @@ export default {
   margin-bottom: 60px;
 }
 
-.guide-footer {
-  //height: 30px;
-}
-
-.guide-dialog {
-  :deep(.el-dialog__body),
-  :deep(.el-dialog__header) {
-    padding: 0;
+:deep(.guide-dialog) {
+  .el-dialog__body {
+    padding: 0 !important;
   }
 
-  :deep(.el-step__title.is-process) {
+  .el-step__title.is-process {
     color: #c9cdd4;
     font-weight: normal;
   }
 
-  :deep(.el-step__head.is-process) {
+  .el-step__head.is-process {
     color: #c9cdd4;
     border-color: #c9cdd4;
+  }
+}
+</style>
+
+<style>
+@keyframes guideIconZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.user-guide-icon {
+  position: fixed;
+  left: 94px;
+  bottom: 10px;
+  width: 60px;
+  height: 60px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: center center;
+  animation: 0.3s guideIconZoomIn;
+
+  .el-loading-spinner {
+    margin-top: -12px;
+
+    .circular {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>

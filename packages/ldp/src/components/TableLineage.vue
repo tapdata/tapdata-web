@@ -165,10 +165,11 @@ export default {
       'setPdkSchemaFreeMap',
     ]),
 
-    initView() {
+    async initView() {
       if (!this.isShow) return
 
       this.reset()
+      await this.$nextTick()
       this.$refs.paperScroller.initVisibleArea(true)
       this.initNodeView()
       this.loadLineage()

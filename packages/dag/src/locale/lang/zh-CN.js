@@ -31,6 +31,8 @@ export default {
   packages_dag_meta_table_comment: '字段注释',
   packages_dag_connection_name_search_placeholder: '请输入连接名称搜索',
   packages_dag_task_form_error_name_duplicate: '任务名称已存在，请重新输入',
+  packages_dag_task_form_error_can_not_open_crontab_expression_flag:
+    '您的可运行任务数已达到上限，无法添加新的定时调度任务，请先关闭一些任务的定时调度或停止一些运行中的任务',
   packages_dag_task_setting_sync_type: '同步类型',
   packages_dag_task_setting_initial_sync_cdc: '全量 + 增量',
   packages_dag_task_stetting_desc: '任务描述',
@@ -205,6 +207,7 @@ export default {
   packages_dag_components_record_yunxingjieshushi: '运行结束时间',
   packages_dag_components_record_yunxingkaishishi: '运行开始时间',
   packages_dag_components_timeselect_renwuquanzhouqi: '任务全周期',
+  packages_dag_components_timeselect_incremental_phase: '增量阶段',
   packages_dag_components_timeselect_zuijintian: '最近1天',
   packages_dag_components_timeselect_zuixinxiaoshi: '最新1小时',
   packages_dag_components_timeselect_zuijinfenzhong: '最近5分钟',
@@ -332,7 +335,8 @@ export default {
   packages_dag_nodes_database_dongtaixinzengbiao: '动态新增表',
   packages_dag_nodes_database_quanliangmeipici:
     '全量每批次读取的条数, 一般保持默认值即可, 如果你的下游较慢, 任务出现源的游标丢失的情况, 请调小此值',
-  packages_dag_nodes_database_piliangduqutiao: '每批读取条数',
+  packages_dag_nodes_database_piliangduqutiao: '全量每批读取条数',
+  packages_dag_nodes_database_zengliangmeipici: '增量每批读取条数',
   packages_dag_nodes_database_zidingyi: '自定义',
   packages_dag_nodes_database_xuanzebiao: '选择表',
   packages_dag_nodes_database_suoshuage: '所属agent',
@@ -360,6 +364,7 @@ export default {
   packages_dag_nodes_mergetable_mubiaobiaoziduan: '目标表字段',
   packages_dag_nodes_mergetable_dangqianbiaoziduan: '当前表字段',
   packages_dag_nodes_mergetable_guanliantiaojian: '关联条件',
+  packages_dag_nodes_mergetable_gengxinjianguanlian: '关联条件变更',
   packages_dag_nodes_mergetable_neiqianshuzupi: '内嵌数组匹配条件',
   packages_dag_nodes_mergetable_guanlianhouxieru: '字段写入路径',
   packages_dag_nodes_mergetable_gengxinjinneiqian: '更新进内嵌数组',
@@ -500,6 +505,7 @@ export default {
     "// 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n// 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n// 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n// 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n// 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n// 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n// 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n// 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
   packages_dag_python_declare_index_zengjiayigezi:
     "# 增加一个字段，如果字段已存在则不操作\nTapModelDeclare.addField({val1}, 'fieldName', 'TapString')\n# 移除一个已存在字段\nTapModelDeclare.removeField({val2}, 'fieldName')\n# 更新一个已存在的字段\nTapModelDeclare.updateField({val3}, 'fieldName', 'TapString')\n# 更新字段，如果不存在则新增\nTapModelDeclare.upsertField({val4}, 'fieldName', 'TapString')\n# 设置字段为主键\nTapModelDeclare.setPk({val5}, 'fieldName')\n# 取消主键\nTapModelDeclare.unSetPk({val6}, 'fieldName')\n# 增加索引\nTapModelDeclare.addIndex({val7}, 'indexName', [{'{'}'fieldName':'fieldName1', 'order': 'asc'{'}'}])\n# 移除索引\nTapModelDeclare.removeIndex({val8}, 'indexName')\n",
+  packages_dag_python_not_support_windows: '目前Python节点仅支持在Linux下部署的Agent上使用，不支持Windows。',
   packages_dag_js_processor_index_duibi: '对比',
   packages_dag_js_processor_index_yongfa: '用法：',
   packages_dag_js_processor_index_zuoyong: '作用：',
@@ -535,6 +541,7 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: '轮询间隔(ms)',
   packages_dag_nodes_table_lunxunziduanmo: '轮询字段默认值',
   packages_dag_nodes_table_zhidinglunxunzi: '指定轮询字段',
+  packages_dag_nodes_cdcPollingFields_tip: '请确保所选择的轮询字段具有索引，否则可能会因为查询性能问题对源库造成影响',
   packages_dag_nodes_table_lunxun: '字段轮询',
   packages_dag_nodes_table_rizhicdc: '实时日志解析',
   packages_dag_nodes_table_tedingziduande:
@@ -632,6 +639,7 @@ export default {
   packages_dag_config_data_write: '数据写入配置',
   packages_dag_config_incremental_mode: '增量模式配置',
   packages_dag_config_data_filter: '数据过滤配置',
+  packages_dag_config_data_filter_tip: '数据过滤配置可能会因为查询过滤性能问题对源库造成影响，请谨慎使用',
   packages_dag_field_add_del_index_zhidi: '置底',
   packages_dag_field_add_del_index_xiayi: '下移',
   packages_dag_field_add_del_index_shangyi: '上移',
@@ -640,7 +648,7 @@ export default {
   packages_dag_src_editor_date_processor_field_list: '受运算影响的字段',
   packages_dag_dynamicAdjustMemoryUsage_title: '动态调整内存使用',
   packages_dag_dynamicAdjustMemoryUsage_tip:
-    '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但次操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。',
+    '全量同步阶段，当识别到同步的数据占用内存较大时，自动按照比例降低内存队列的使用，以防止出现内存溢出的错误，但此操作会造成同步速度的下降。当确认机器资源较小时，建议开启，可以有效的保障同步任务的稳定运行。当机器资源充足时，建议关闭。',
   packages_dag_mergeMode: '合并模式',
   packages_dag_main_table_first: '全量主表优先',
   packages_dag_sub_table_first: '全量子表优先',
@@ -674,4 +682,11 @@ export default {
   packages_dag_only_mongodb: '仅支持 MongoDB 数据库',
   packages_dag_field_inference_list_zidingyileixing: '自定义类型',
   packages_dag_field_inference_list_xuanzetiaozhengde: '选择调整的类型:',
+  packages_dag_enableSyncMetricCollector_title: '同步指标收集',
+  packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析',
+  packages_dag_update_conditions_tip:
+    '注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
+  packages_dag_existDataProcessMode_desc: '该行为会直接删除目标表和数据，可能会对数据库造成影响，请谨慎使用。',
+  packages_dag_ddl_events_collapse_tip:
+    '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启',
 }

@@ -165,7 +165,7 @@ export default {
       })
     },
   },
-  emits: ['update:value'],
+  // emits: ['update:value'],
 }
 </script>
 

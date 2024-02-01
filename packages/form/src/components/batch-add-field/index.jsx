@@ -126,15 +126,7 @@ export const BatchAddField = defineComponent({
               {i18n.t('packages_form_batch_add_field_title')}
             </ElButton>
           </div>
-          <ElDialog
-            title={i18n.t('packages_form_batch_add_field_title')}
-            visible={visible.value}
-            on={{
-              'update:visible': (v) => {
-                visible.value = v
-              },
-            }}
-          >
+          <ElDialog title={i18n.t('packages_form_batch_add_field_title')} v-model={visible.value}>
             <ElForm ref="form" label-position="right" label-width="80px" props={{ mode: form }}>
               <div class="flex gap-1">
                 <ElFormItem prop="prefix" label={i18n.t('packages_form_batch_add_field_prefix')} class="flex-1">
