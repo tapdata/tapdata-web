@@ -275,7 +275,7 @@ export default {
   public_event_insert: '插入',
   public_event_update: '更新',
   public_event_ddl: 'DDL',
-  
+
   //里程碑
   public_milestone_time_cdc_consuming: '啟動耗時',
   public_milestone_time_consuming: '耗時',
@@ -289,10 +289,9 @@ export default {
   public_external_memory_table: '外存表名',
   public_external_memory_connection: '外存連接',
   public_external_memory_info: '外存信息',
-  
+
   public_shared_mining: '共享挖掘',
   public_external_storage: '外存管理',
-  
-  public_page_title_advanced_features: '高級功能'
-  public_external_memory_info: '外存信息',
+
+  public_page_title_advanced_features: '高級功能',
 }
