@@ -123,6 +123,7 @@ const store = new Vuex.Store({
     },
 
     setUser(state, user = {}) {
+      user.phoneCountryCode = user.phoneCountryCode?.replace(/[+-]/g, '')
       Object.assign(state.user, user)
     },
 
