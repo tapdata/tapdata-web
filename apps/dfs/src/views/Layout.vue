@@ -33,7 +33,7 @@
                   <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon>
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
                       {{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
@@ -69,7 +69,7 @@
                   <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon>
+                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
                       {{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
@@ -256,6 +256,26 @@ export default {
         name: 'OperationLog',
         title: this.$t('operation_log_manage'),
         icon: 'operation-log',
+      },
+      {
+        name: 'advancedFeatures',
+        title: this.$t('public_page_title_advanced_features'),
+        icon: 'vip-one',
+        code: 'v2_advanced_features',
+        children: [
+          {
+            name: 'sharedMining',
+            title: this.$t('public_shared_mining'),
+            icon: 'cdc-log',
+            beta: true,
+          },
+          {
+            name: 'externalStorage',
+            title: this.$t('public_external_storage'),
+            icon: 'wcgl',
+            beta: true,
+          },
+        ],
       },
     ]
     this.subMenu = subMenu.map((el) => {
@@ -476,11 +496,11 @@ export default {
       background-color: map-get($color, submenu);
     }
 
-    .el-menu-item {
+    :deep(.el-menu-item) {
       height: 50px;
       line-height: 50px;
 
-      :deep(.v-icon) {
+      .v-icon {
         color: map-get($iconFillColor, normal);
       }
 
@@ -493,19 +513,9 @@ export default {
 
       &.is-active,
       &:hover {
-        :deep(.v-icon) {
+        .v-icon {
           color: map-get($color, primary);
         }
-      }
-    }
-
-    .el-submenu {
-      :deep(.el-submenu__title) {
-        font-size: 12px;
-      }
-
-      .submenu-item {
-        padding-left: 8px;
       }
     }
 

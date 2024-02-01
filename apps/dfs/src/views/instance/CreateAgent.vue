@@ -207,6 +207,23 @@
             </template>
           </el-skeleton>
         </ElFormItem>
+
+        <!--选择币种-->
+        <ElFormItem v-if="currencyOption && currencyOption.length > 0">
+          <div slot="label" class="font-color-dark fw-sub">
+            {{ $t('dfs_agent_download_subscriptionmodeldialog_xuanzebizhong') }}
+          </div>
+          <ElRadioGroup v-model="currencyType" @input="changeCurrency" class="flex gap-4">
+            <ElRadio
+              v-for="(item, index) in currencyOption"
+              :key="index"
+              :label="item.currency"
+              border
+              class="rounded-4 m-0"
+              >{{ CURRENCY_MAP[item.currency] }}
+            </ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
       </ElForm>
     </div>
 
@@ -240,7 +257,7 @@ import { uniqBy } from 'lodash'
 
 import i18n from '@tap/i18n'
 import { IconButton, VTable } from '@tap/component'
-import { isObj } from '@tap/shared'
+import { isObj, isStr } from '@tap/shared'
 import { CURRENCY_SYMBOL_MAP, TIME_MAP, CURRENCY_MAP } from '@tap/business'
 
 import { getPaymentMethod, getSpec, AGENT_TYPE_MAP } from '../instance/utils'
@@ -279,6 +296,16 @@ export default {
       currency: '',
       selected: {},
       hasFreeAgent: false,
+      currencyType: '',
+      currencyOption: [],
+      CURRENCY_MAP,
+      lang: {
+        en: {
+          AliCloud: 'Alibaba Cloud',
+          'cn-beijing': 'Beijing',
+          'cn-hongkong': 'Hong Kong',
+        },
+      },
     }
   },
 
@@ -292,18 +319,16 @@ export default {
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
     },
+    defaultCurrencyType() {
+      return this.$store.getters.isDomesticStation ? 'cny' : 'usd'
+    },
     // freeAgentCount() {
     //   return this.$store.state.agentCount.freeTierAgentCount
     // }
   },
 
   async created() {
-    const currencyType = window.__config__?.currencyType
-
-    if (currencyType) {
-      this.currencyType = currencyType
-      this.defaultCurrencyType = currencyType
-    }
+    this.currencyType = this.defaultCurrencyType
 
     await this.loadAgentCount()
 
@@ -342,7 +367,7 @@ export default {
               }),
             }
           }),
-          'value',
+          'value'
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
@@ -385,7 +410,11 @@ export default {
     async getCloudProvider() {
       const data = await this.$axios.get('api/tcm/orders/queryCloudProvider')
 
-      this.cloudProviderList = data?.items || []
+      this.cloudProviderList = (data?.items || []).map((item) => {
+        item.cloudProviderName = this.lang[this.$i18n.locale]?.[item.cloudProvider] || item.cloudProviderName
+        return item
+      })
+
       this.provider = this.cloudProviderList?.[0].cloudProvider
       this.changeProvider()
       await this.getPrice()
@@ -407,7 +436,10 @@ export default {
     changeProvider() {
       let cloudProvider = this.cloudProviderList.filter((it) => it.cloudProvider === this.provider) || []
       this.cloudProviderName = cloudProvider?.[0]?.cloudProviderName
-      this.cloudDetail = cloudProvider?.[0].cloudDetail || []
+      this.cloudDetail = (cloudProvider?.[0].cloudDetail || []).map((item) => {
+        item.regionName = this.lang[this.$i18n.locale]?.[item.region] || item.regionName
+        return item
+      })
       this.region = this.cloudDetail?.[0]?.region
       this.changeRegion()
       //数据初始化
@@ -435,7 +467,7 @@ export default {
       let currentItem = this.packageItems[0]
       if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
-          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
+          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
         )
       }
       this.handleChange(currentItem)
@@ -452,7 +484,7 @@ export default {
         .filter(
           (it) =>
             this.specification === it.specification &&
-            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year')),
+            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year'))
         )
         .map((t) => {
           return Object.assign(t, {
@@ -506,6 +538,19 @@ export default {
         this.currency = item
       }
       this.buried('changeSubscriptionMethod')
+    },
+
+    //切换币种
+    changeCurrency(item) {
+      if (isStr(item)) {
+        this.currencyType = item
+        this.currency = this.currencyOption.find((it) => it.currency === item)
+      } else {
+        this.currencyType = item.currency
+        this.currency = item
+      }
+      //更新存储资源价格
+      // this.changeMongodbMemory()
     },
 
     changeCurrencyOption(item) {
@@ -647,7 +692,7 @@ export default {
                 : {
                     name: 'installAgent',
                     params,
-                  },
+                  }
             )
           }
         })

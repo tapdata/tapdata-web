@@ -16,8 +16,8 @@ export default {
   packages_component_classification_creatUserGroup: 'Create user group',
   packages_component_classification_creatDataClassification: 'Create data classification',
   packages_component_classification_nameExist: 'Category name already existed.',
-  packages_component_classification_addNode: 'Add category at the same level',
-  packages_component_classification_addChildernNode: 'Add Child Category',
+  packages_component_classification_addNode: 'Add tag at the same level',
+  packages_component_classification_addChildernNode: 'Add Child Tag',
   packages_component_classification_nodeName: 'Please enter classification',
   packages_component_classification_deteleMessage:
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',

@@ -350,6 +350,7 @@ export default {
   packages_business_relation_details_renwu: '任務',
   packages_business_agent_select_placeholder: '請選擇agent',
   packages_business_agent_select_not_found: '該agent已不存在，請選擇其他agent',
+  packages_business_agent_select_not_found_for_rocksdb: '選用RocksDB作為共享挖掘外存時，需要手動指定一個Agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的數據源',
   packages_business_components_connectiontypeselectorsort_jiaoyouTap:
     '交由Tapdata進行全面的質量測試，以保證插件的穩定性和質量',
@@ -499,9 +500,9 @@ export default {
   packages_business_verification_fastCountTip:
     '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體字段內容。',
   packages_business_verification_contentVerifyTip:
-    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。',
+    '表全字段值校驗會對源表和目標表的全部字段進行逐行校驗，能查出所有字段的差異，但是速度慢。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_jointFieldTip:
-    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。',
+    '關聯字段值校驗只對源表和目標表的關聯字段的值進行比對校驗，速度快於全表字段值校驗模式。此操作同時會對源和目標庫發起查詢，可能會對數據庫造成讀取壓力。',
   packages_business_verification_waiting: '待校驗',
   packages_business_verification_scheduling: '校驗啟動中',
   packages_business_verification_error: '校驗失敗',
@@ -585,11 +586,11 @@ export default {
   packages_business_task_list_lianjieming: '連接名: ',
   packages_business_task_list_dierbushanchu: '// 第二步 刪除 slot_name',
   packages_business_task_list_diyibuchaxun: '//第一步 查詢 slot_name',
-  notify_webchat_notification: '微信通知',
-  notify_sms_notification: '簡訊通知',
-  notify_email_notification: '郵件通知',
-  notify_system_notice: '系统通知',
+  packages_business_notify_webchat_notification: '微信通知',
+  packages_business_notify_sms_notification: '簡訊通知',
+  packages_business_notify_email_notification: '郵件通知',
   packages_business_notify_alarm_title: 'Agent告警设置',
+  packages_business_notify_system_notice: '系统通知',
   packages_business_setting_alarm_notification_notify_noticeInterval: '发送间隔',
   packages_business_setting_notification_alarm_notification_gaojingtongzhi: '告警通知',
   packages_business_setting_alarmnotification_gaojingzhibiao: '告警指標',
@@ -613,6 +614,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任務默認告警規則設置',
   packages_business_setting_alarmnotification_morengaojinggui: '默認告警規則',
   packages_business_setting_alarmnotification_renwugaojingshe: '任務告警設置',
+  packages_business_setting_alarmnotification_recipient_setting: '任務默認告警接收人設置',
+  packages_business_setting_alarmnotification_recipient_desc:
+    '此處設置為系統全局告警接收人設置，設置的所有的接收人都可以收到當前系統已開啓的告警',
+  packages_business_setting_alarmnotification_recipient_default: '默認告警接收人',
+  packages_business_setting_alarmnotification_recipient: '告警接收人',
+  packages_business_setting_alarmnotification_recipient_tip: '支持設置多個告警接收人郵箱，多個郵箱以逗號分隔',
+  packages_business_setting_alarmnotification_channel: '告警通知渠道',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '當校驗任務遇到錯誤時',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '當count校驗結果的差異行數大於閾值時',
   packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '當值校驗結果的表數據差大於閾值時',
@@ -937,6 +945,8 @@ export default {
   packages_business_shared_cache_column_table: '所屬表',
   packages_business_shared_cache_cache_key_message: '所選緩存鍵無索引',
   packages_business_shared_cache_cache_key_auto_create: '自動建立索引',
+  packages_business_shared_cache_cache_key_auto_create_tip:
+    '開啓該能力後，會自動在源表為緩存鍵創建索引，可能會對源庫造成影響，請謹慎開啓',
   packages_business_relation_list_gongxianghuancun: '共享緩存',
   packages_business_application_delete_shanchuyingyong: '删除应用',
   packages_business_application_delete_ninzhengzaishanchu:
@@ -1112,6 +1122,8 @@ export default {
   packages_business_verification_list_biaobufenziduan: '表部分字段校驗',
   packages_business_components_conditionbox_laiyuanbiaoshuju: '來源表數據過濾',
   packages_business_components_conditionbox_mubiaobiaoshuju: '目標表數據過濾',
+  packages_business_components_conditionbox_enableCustomCommand_tip:
+    '需要保證查詢條件有索引，如果沒索引會產生全表掃描導致數據庫壓力變大',
   packages_business_data_server_list_apIwendang: 'API文檔導出',
   packages_business_verification_form_gaojipeizhi: '高級配置',
   packages_business_verification_form_validate_table_is_empty: '源表和目標表不能為空，請修改校驗表配置',
@@ -1164,4 +1176,12 @@ export default {
   packages_business_ssh_password: '密碼',
   packages_business_connections_test_xiazaijindu: '下載進度',
   packages_business_connections_test_xiazaishibai: '下載失敗',
+  packages_business_relmig_import: 'MongoDB Relmig 導入',
+  packages_business_relmig_import_desc:
+    '這個功能旨在無縫導入 MongoDB 關係遷移器導出的 relmig 項目文件到 Tapdata。在 relmig 文件被導入後，Tapdata 將自動創建一個任務來執行源數據庫的實時數據同步，並將其轉換為 MongoDB 數據庫中的 JSON 數據格式。',
+  packages_business_relmig_upload: '上傳 relmig 文件',
+  packages_business__relmig_import_connection_tip: '如果您還沒有創建，請點擊這裡',
+  packages_business__relmig_import_source_connection_placeholder: '請選擇包含您在 relmig 項目中使用的源表的源連接',
+  packages_business__relmig_import_target_connection_placeholder: '請選擇您希望數據同步到的目標連接',
+  packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它',
 }

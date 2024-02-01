@@ -9,7 +9,7 @@
               authority: 'datasource_catalog_management',
               types: ['database'],
               viewPage: 'connections',
-              title: $t('packages_business_connections_list_lianjiefenlei'),
+              title: $t('public_tags'),
             }
           : null
       "
@@ -31,9 +31,9 @@
       </template>
       <template v-slot:operation>
         <div>
-          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-            $t('packages_business_permissionse_settings_create_quanxianshezhi')
-          }}</ElButton>
+          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+            >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+          </ElButton>
           <ElButton
             v-if="isDaas"
             v-show="multipleSelection.length > 0"
@@ -362,7 +362,11 @@ export default {
     })
   },
   mounted() {
-    const { action } = this.$route.query || {}
+    const { action, create } = this.$route.query || {}
+
+    if (create) {
+      this.dialogDatabaseTypeVisible = true
+    }
 
     if (action === 'create') {
       this.checkTestConnectionAvailable()
@@ -471,7 +475,7 @@ export default {
               if (item.config?.uri) {
                 const regResult =
                   /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                    item.config.uri,
+                    item.config.uri
                   )
                 if (regResult && regResult.groups && regResult.groups.password) {
                   const { username, host, database, query } = regResult.groups
@@ -531,7 +535,7 @@ export default {
           {
             type: 'warning',
             showClose: false,
-          },
+          }
         ).then((resFlag) => {
           if (!resFlag) {
             return
@@ -570,7 +574,7 @@ export default {
             uri: `${data.id}/copy`,
             headers: headersName,
           },
-          data.name,
+          data.name
         )
         .then(() => {
           this.table.fetch()
@@ -597,7 +601,7 @@ export default {
           {
             class: 'color-primary',
           },
-          row.name,
+          row.name
         ),
         strArr[1],
       ])
@@ -724,8 +728,8 @@ export default {
               {},
               {
                 status: 'testing',
-              },
-            ),
+              }
+            )
           )
           .then(() => {
             this.dialogTestVisible = true
@@ -783,7 +787,7 @@ export default {
             let databaseTypes = []
             databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
-              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
             )
             //默认全部
             // let all = {
@@ -845,10 +849,12 @@ export default {
 .paddingLeft0 {
   padding-left: 0 !important;
 }
+
 .connection-list-wrap {
   height: 100%;
   overflow: hidden;
   background: #fff;
+
   :deep(.el-select-dropdown__item) {
     span {
       font-size: $fontBaseTitle;
@@ -859,6 +865,7 @@ export default {
     display: flex;
     align-items: center;
   }
+
   .tag {
     padding: 2px 5px;
     font-style: normal;
@@ -870,6 +877,7 @@ export default {
     border-radius: 2px;
     margin-left: 5px;
   }
+
   .connection-img {
     width: 18px;
   }

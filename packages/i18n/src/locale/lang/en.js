@@ -34,6 +34,7 @@ export default {
   public_no_permissions: 'No Permissions',
   public_yes: 'Yes',
   public_no: 'No',
+  public_tags: 'Tags',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -96,8 +97,8 @@ export default {
   public_button_download: 'Download',
   public_button_add: 'New',
   public_button_bulk_operation: 'Batch Operation',
-  public_button_bulk_tag: 'Set Category',
-  public_button_revise: 'Revise',
+  public_button_bulk_tag: 'Set Tag',
+  public_button_revise: 'Change',
   public_button_refresh: 'Refresh',
   public_button_public: 'Publish',
   public_button_revoke: 'Revoke',
@@ -232,6 +233,8 @@ export default {
   public_connection_form_link_plugin_source: 'Link Plugin Source',
   public_source_database: 'Source Database',
   public_target_database: 'Target Database',
+  public_source_connection: 'Source Connection',
+  public_target_connection: 'Target Connection',
   // Task
   public_task: 'Task',
   public_task_name: 'Task Name',
@@ -276,7 +279,7 @@ export default {
   public_event_ddl: 'DDL',
 
   //milestone
-  public_milestone_time_cdcconsuming: 'start time-consuming',
+  public_milestone_time_cdc_consuming: 'start time-consuming',
   public_milestone_time_consuming: 'time-consuming',
   public_milestone_time_table_structure: 'A total of migration {val} table structure',
   public_milestone_time_scheduling: 'Task is scheduled to {val}',
@@ -288,4 +291,9 @@ export default {
   public_external_memory_table: 'External storage table name',
   public_external_memory_connection: 'External memory connection',
   public_external_memory_info: 'External storage information',
+
+  public_shared_mining: 'CDC Log Cache',
+  public_external_storage: 'External Storage',
+
+  public_page_title_advanced_features: 'Advanced',
 }

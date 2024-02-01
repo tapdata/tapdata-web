@@ -10,16 +10,16 @@
       </div>
       <div>
         <ElLink
-          v-if="inspectMethod !== 'row_count' && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
+          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
           type="primary"
           :disabled="!list.length"
           class="mr-4"
           @click="handleClearIndexEmpty"
-          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}</ElLink
-        >
-        <ElLink type="primary" :disabled="!list.length" @click="handleClear">{{
-          $t('packages_business_verification_clear')
-        }}</ElLink>
+          >{{ $t('packages_business_components_conditionbox_yijianqingchusuo') }}
+        </ElLink>
+        <ElLink type="primary" :disabled="!list.length" @click="handleClear"
+          >{{ $t('packages_business_verification_clear') }}
+        </ElLink>
       </div>
     </div>
     <DynamicScroller
@@ -85,7 +85,7 @@
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.source.connectionId,
-                    nodeId: item.source.nodeId,
+                    nodeId: item.source.nodeId
                   }"
                   itemQuery="name"
                   itemType="string"
@@ -102,7 +102,7 @@
                   :method="getTableListMethod"
                   :params="{
                     connectionId: item.target.connectionId,
-                    nodeId: item.target.nodeId,
+                    nodeId: item.target.nodeId
                   }"
                   itemQuery="name"
                   itemType="string"
@@ -122,8 +122,8 @@
                   :scope="schemaScope"
                   :colon="true"
                   class="w-100"
-                  label-width="120"
-                  @input="(value) => (item = value)"
+                  label-width="130"
+                  @input="value => (item = value)"
                 />
               </div>
               <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
@@ -164,26 +164,24 @@
                   @click="handleCustomFields(item, index)"
                 >
                   {{ $t('packages_business_components_conditionbox_chakanzidingyi') }}
-                  ({{ item.source.columns ? item.source.columns.length : 0 }})</ElLink
-                >
+                  ({{ item.source.columns ? item.source.columns.length : 0 }})
+                </ElLink>
               </div>
               <div v-show="inspectMethod === 'field'" class="setting-item mt-4">
-                <ElCheckbox
-                  v-model="item.showAdvancedVerification"
-                  @change="handleChangeAdvanced(item, arguments[0])"
-                  >{{ $t('packages_business_verification_advanceVerify') }}</ElCheckbox
-                >
+                <ElCheckbox v-model="item.showAdvancedVerification" @change="handleChangeAdvanced(item, arguments[0])"
+                  >{{ $t('packages_business_verification_advanceVerify') }}
+                </ElCheckbox>
               </div>
               <div class="setting-item mt-4" v-if="item.showAdvancedVerification && inspectMethod === 'field'">
                 <label class="item-label">{{ $t('packages_business_verification_JSVerifyLogic') }}: </label>
-                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                  $t('packages_business_verification_addJS')
-                }}</ElButton>
+                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)"
+                  >{{ $t('packages_business_verification_addJS') }}
+                </ElButton>
                 <template v-else>
                   <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('public_button_edit') }}</ElLink>
-                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{
-                    $t('public_button_delete')
-                  }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)"
+                    >{{ $t('public_button_delete') }}
+                  </ElLink>
                 </template>
               </div>
               <div
@@ -205,8 +203,8 @@
         :disabled="!!list.length"
         :loading="autoAddTableLoading"
         @click="autoAddTable"
-        >{{ $t('packages_business_verification_button_auto_add_table') }}</ElButton
-      >
+        >{{ $t('packages_business_verification_button_auto_add_table') }}
+      </ElButton>
     </div>
     <ElDialog
       width="60%"
@@ -223,7 +221,7 @@
         <GitBook
           v-resize.left="{
             minWidth: 350,
-            maxWidth: 500,
+            maxWidth: 500
           }"
           :value="doc"
           class="example ml-4 color-primary"
@@ -268,11 +266,11 @@ export default {
     MultiSelection,
     FieldDialog,
     SchemaToForm,
-    ElIconArrowRight,
+    ElIconArrowRight
   },
   name: 'ConditionBox',
   directives: {
-    resize,
+    resize
   },
   props: {
     taskId: String,
@@ -280,16 +278,16 @@ export default {
     inspectMethod: String,
     data: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     allStages: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     edges: {
       type: Array,
-      default: () => [],
-    },
+      default: () => []
+    }
   },
   data() {
     return {
@@ -311,15 +309,15 @@ export default {
             ? 'count_by_partition_filter_function'
             : 'query_by_advance_filter_function',
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-          return (field) => {
+          return field => {
             field.loading = true
             service({ field }, ...serviceParams).then(
-              action.bound((data) => {
+              action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              }),
+              })
             )
           }
         },
@@ -333,16 +331,16 @@ export default {
                   meta_type: 'table',
                   sourceType: 'SOURCE',
                   original_name: item.table,
-                  'source._id': item.connectionId,
+                  'source._id': item.connectionId
                 },
-                limit: 1,
+                limit: 1
               }
               const data = await metadataInstancesApi.tapTables({
-                filter: JSON.stringify(params),
+                filter: JSON.stringify(params)
               })
               fields = Object.values(data.items[0]?.nameFieldMap || {})
             }
-            const result = fields.map((t) => {
+            const result = fields.map(t => {
               return {
                 id: t.id,
                 label: t.fieldName || t.field_name,
@@ -351,7 +349,7 @@ export default {
                 primary_key_position: t.primaryKey,
                 data_type: t.dataType || t.data_type,
                 primaryKey: t.primaryKey,
-                unique: t.unique,
+                unique: t.unique
               }
             })
             if (result.length) {
@@ -361,7 +359,7 @@ export default {
           } catch (e) {
             return []
           }
-        },
+        }
       },
       formSchema: {
         type: 'object',
@@ -372,7 +370,7 @@ export default {
             'x-component-props': {
               minColumns: 2,
               maxColumns: 2,
-              columnGap: 16,
+              columnGap: 16
             },
             properties: {
               source: {
@@ -381,7 +379,7 @@ export default {
                 properties: {
                   databaseType: {
                     type: 'string',
-                    'x-display': 'hidden',
+                    'x-display': 'hidden'
                   },
                   nodeSchema: {
                     type: 'array',
@@ -393,11 +391,11 @@ export default {
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
-                            dataSource: '{{$self.value}}',
-                          },
-                        },
-                      },
-                    ],
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
                   },
                   enableCustomCommand: {
                     title: i18n.t('packages_business_components_conditionbox_laiyuanbiaoshuju'),
@@ -406,7 +404,7 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: '',
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip')
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -414,11 +412,11 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`,
-                          },
-                        },
-                      },
-                    ],
+                            visible: `{{$values.source.capabilities && $values.source.capabilities.some(item => item.id === 'execute_command_function')}}`
+                          }
+                        }
+                      }
+                    ]
                   },
                   customCommand: {
                     type: 'object',
@@ -426,7 +424,7 @@ export default {
                       command: {
                         title: ' ',
                         'x-decorator-props': {
-                          colon: false,
+                          colon: false
                         },
                         type: 'string',
                         default: 'executeQuery',
@@ -434,16 +432,16 @@ export default {
                         'x-component': 'Radio.Group',
                         enum: [
                           { label: i18n.t('public_query'), value: 'executeQuery' },
-                          { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                          { label: i18n.t('public_aggregate'), value: 'aggregate' }
                         ],
                         'x-reactions': {
                           dependencies: ['source.databaseType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}'
+                            }
+                          }
+                        }
                       },
                       params: {
                         type: 'object',
@@ -451,60 +449,60 @@ export default {
                           mongoQuery: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['source.customCommand.command', 'source.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
-                                },
-                              },
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}'
+                                }
+                              }
                             },
                             properties: {
                               op: {
                                 type: 'string',
-                                default: 'find',
+                                default: 'find'
                               },
                               collection: {
                                 type: 'string',
                                 'x-reactions': {
                                   fulfill: {
                                     state: {
-                                      value: '{{$values.tableName}}',
-                                    },
-                                  },
-                                },
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
                               },
                               filter: {
                                 title: ' ',
                                 'x-decorator-props': {
-                                  colon: false,
+                                  colon: false
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                },
-                              },
-                            },
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
                           },
                           mongoAgg: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['source.customCommand.command', 'source.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
-                                },
-                              },
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}'
+                                }
+                              }
                             },
                             properties: {
                               collection: {
@@ -513,61 +511,61 @@ export default {
                                   dependencies: ['source.tableName'],
                                   fulfill: {
                                     state: {
-                                      value: '{{$deps[0]}}',
-                                    },
-                                  },
-                                },
+                                      value: '{{$deps[0]}}'
+                                    }
+                                  }
+                                }
                               },
                               pipeline: {
                                 type: 'string',
                                 title: ' ',
                                 'x-decorator-props': {
-                                  colon: false,
+                                  colon: false
                                 },
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                },
-                              },
-                            },
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
                           },
                           sql: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'string',
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
-                              options: { showPrintMargin: false, useWrapMode: true },
+                              options: { showPrintMargin: false, useWrapMode: true }
                             },
                             'x-reactions': {
                               dependencies: ['source.enableCustomCommand', 'source.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
+                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}'
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     },
                     'x-reactions': [
                       {
                         dependencies: ['source.enableCustomCommand'],
                         fulfill: {
                           state: {
-                            visible: `{{$deps[0]}}`,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
+                            visible: `{{$deps[0]}}`
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
               },
               target: {
                 type: 'object',
@@ -575,7 +573,7 @@ export default {
                 properties: {
                   databaseType: {
                     type: 'string',
-                    'x-display': 'hidden',
+                    'x-display': 'hidden'
                   },
                   nodeSchema: {
                     type: 'array',
@@ -587,11 +585,11 @@ export default {
                         fulfill: {
                           state: {
                             loading: '{{$self.loading}}',
-                            dataSource: '{{$self.value}}',
-                          },
-                        },
-                      },
-                    ],
+                            dataSource: '{{$self.value}}'
+                          }
+                        }
+                      }
+                    ]
                   },
                   enableCustomCommand: {
                     title: i18n.t('packages_business_components_conditionbox_mubiaobiaoshuju'),
@@ -600,7 +598,8 @@ export default {
                     'x-decorator-props': {
                       className: 'item-control-horizontal',
                       layout: 'horizontal',
-                      tooltip: '',
+                      labelWrap: true,
+                      tooltip: i18n.t('packages_business_components_conditionbox_enableCustomCommand_tip')
                     },
                     'x-component': 'Switch',
                     default: false,
@@ -608,11 +607,11 @@ export default {
                       {
                         fulfill: {
                           state: {
-                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === 'execute_command_function')}}`,
-                          },
-                        },
-                      },
-                    ],
+                            visible: `{{$values.target.capabilities && $values.target.capabilities.some(item => item.id === 'execute_command_function')}}`
+                          }
+                        }
+                      }
+                    ]
                   },
                   customCommand: {
                     type: 'object',
@@ -620,7 +619,7 @@ export default {
                       command: {
                         title: ' ',
                         'x-decorator-props': {
-                          colon: false,
+                          colon: false
                         },
                         type: 'string',
                         default: 'executeQuery',
@@ -628,16 +627,16 @@ export default {
                         'x-component': 'Radio.Group',
                         enum: [
                           { label: i18n.t('public_query'), value: 'executeQuery' },
-                          { label: i18n.t('public_aggregate'), value: 'aggregate' },
+                          { label: i18n.t('public_aggregate'), value: 'aggregate' }
                         ],
                         'x-reactions': {
                           dependencies: ['target.databaseType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}',
-                            },
-                          },
-                        },
+                              display: '{{$deps[0].toLowerCase().includes("mongo")?"visible":"hidden"}}'
+                            }
+                          }
+                        }
                       },
                       params: {
                         type: 'object',
@@ -645,60 +644,60 @@ export default {
                           mongoQuery: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['target.customCommand.command', 'target.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}',
-                                },
-                              },
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="executeQuery"}}'
+                                }
+                              }
                             },
                             properties: {
                               op: {
                                 type: 'string',
-                                default: 'find',
+                                default: 'find'
                               },
                               collection: {
                                 type: 'string',
                                 'x-reactions': {
                                   fulfill: {
                                     state: {
-                                      value: '{{$values.tableName}}',
-                                    },
-                                  },
-                                },
+                                      value: '{{$values.tableName}}'
+                                    }
+                                  }
+                                }
                               },
                               filter: {
                                 title: ' ',
                                 'x-decorator-props': {
-                                  colon: false,
+                                  colon: false
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                },
-                              },
-                            },
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
                           },
                           mongoAgg: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'void',
                             'x-reactions': {
                               dependencies: ['target.customCommand.command', 'target.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}',
-                                },
-                              },
+                                  visible: '{{$deps[1].toLowerCase().includes("mongo") && $deps[0]==="aggregate"}}'
+                                }
+                              }
                             },
                             properties: {
                               collection: {
@@ -707,73 +706,73 @@ export default {
                                   dependencies: ['target.tableName'],
                                   fulfill: {
                                     state: {
-                                      value: '{{$deps[0]}}',
-                                    },
-                                  },
-                                },
+                                      value: '{{$deps[0]}}'
+                                    }
+                                  }
+                                }
                               },
                               pipeline: {
                                 title: ' ',
                                 'x-decorator-props': {
-                                  colon: false,
+                                  colon: false
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
                                 description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
-                                  options: { showPrintMargin: false, useWrapMode: true },
-                                },
-                              },
-                            },
+                                  options: { showPrintMargin: false, useWrapMode: true }
+                                }
+                              }
+                            }
                           },
                           sql: {
                             title: ' ',
                             'x-decorator-props': {
-                              colon: false,
+                              colon: false
                             },
                             type: 'string',
                             'x-decorator': 'FormItem',
                             'x-component': 'SqlEditor',
                             'x-component-props': {
-                              options: { showPrintMargin: false, useWrapMode: true },
+                              options: { showPrintMargin: false, useWrapMode: true }
                             },
                             'x-reactions': {
                               dependencies: ['target.enableCustomCommand', 'target.databaseType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}',
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
+                                  visible: '{{!!$deps[0] && !$deps[1].toLowerCase().includes("mongo")}}'
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     },
                     'x-reactions': [
                       {
                         dependencies: ['target.enableCustomCommand'],
                         fulfill: {
                           state: {
-                            visible: `{{$deps[0]}}`,
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+                            visible: `{{$deps[0]}}`
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   computed: {
     flowStages() {
       let types = this.isDB ? ['database'] : ['table']
-      return this.allStages.filter((stg) => types.includes(stg.type))
-    },
+      return this.allStages.filter(stg => types.includes(stg.type))
+    }
   },
   watch: {
     taskId(v1, v2) {
@@ -786,15 +785,15 @@ export default {
       deep: true,
       handler() {
         this.loadList()
-      },
+      }
     },
 
     list: {
       deep: true,
       handler() {
         this.debounceValidate()
-      },
-    },
+      }
+    }
   },
   created() {
     this.loadDoc()
@@ -808,8 +807,8 @@ export default {
         const _filter = {
           where: {
             createType: {
-              $ne: 'System',
-            },
+              $ne: 'System'
+            }
           },
           fields: {
             name: 1,
@@ -822,16 +821,16 @@ export default {
             accessNodeProcessIdList: 1,
             pdkType: 1,
             pdkHash: 1,
-            capabilities: 1,
+            capabilities: 1
           },
-          order: ['status DESC', 'name ASC'],
+          order: ['status DESC', 'name ASC']
         }
         let result = await connectionsApi.get({
-          filter: JSON.stringify(merge(filter, _filter)),
+          filter: JSON.stringify(merge(filter, _filter))
         })
 
-        result.items = result.items.map((item) => {
-          const findDynamicSchema = item.capabilities.find((t) => t.id === 'dynamic_schema')
+        result.items = result.items.map(item => {
+          const findDynamicSchema = item.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[item.id] = true
           }
@@ -846,7 +845,7 @@ export default {
             }`,
             value: connectionId,
             databaseType: databaseType,
-            attrs: { connectionId, connectionName, databaseType },
+            attrs: { connectionId, connectionName, databaseType }
           }
         })
 
@@ -872,27 +871,27 @@ export default {
             meta_type: 'table',
             sourceType: 'SOURCE',
             is_deleted: false,
-            'source.id': connectionId,
+            'source.id': connectionId
           },
           skip: (page - 1) * size,
           limit: size,
-          order: 'createTime DESC',
+          order: 'createTime DESC'
         }
         const keyword = filter.where?.name?.like
         if (keyword) {
           params.where.name = filter.where.name
         }
         const res = await metadataInstancesApi.tapTables({
-          filter: JSON.stringify(params),
+          filter: JSON.stringify(params)
         })
         let result = {}
-        result.items = res.items.map((t) => t.name)
+        result.items = res.items.map(t => t.name)
         result.total = res.total
-        res.items.forEach((el) => {
+        res.items.forEach(el => {
           // 缓存起来
           this.setFieldsByItem(
             [nodeId, connectionId, el.name],
-            Object.values(el.nameFieldMap || {}).map((t) => {
+            Object.values(el.nameFieldMap || {}).map(t => {
               const { id, fieldName, primaryKeyPosition, fieldType, data_type, primaryKey, unique } = t
               return {
                 id,
@@ -901,9 +900,9 @@ export default {
                 fieldType,
                 data_type,
                 primaryKey,
-                unique,
+                unique
               }
-            }),
+            })
           )
         })
         return result
@@ -916,18 +915,18 @@ export default {
       const keyword = filter.where?.name?.like
       let arr
       if (keyword) {
-        arr = this.flowStages.filter((t) => t.attrs?.connectionName.includes(filter.where?.name?.like))
+        arr = this.flowStages.filter(t => t.attrs?.connectionName.includes(filter.where?.name?.like))
       } else {
         arr = this.flowStages
       }
       const result = uniqBy(
-        arr.map((t) => {
+        arr.map(t => {
           const nodeId = t.id
           const nodeName = t.name
           const connectionId = t.connectionId
           const connectionName = t.attrs?.connectionName
           const databaseType = t.databaseType
-          const findDynamicSchema = t.attrs?.capabilities.find((t) => t.id === 'dynamic_schema')
+          const findDynamicSchema = t.attrs?.capabilities.find(t => t.id === 'dynamic_schema')
           if (findDynamicSchema) {
             this.dynamicSchemaMap[t.connectionId] = true
           }
@@ -937,15 +936,15 @@ export default {
               nodeName,
               connectionId,
               connectionName,
-              databaseType,
+              databaseType
             },
             name: `${nodeName} / ${connectionName}`,
             value: connectionId,
             label: `${nodeName} / ${connectionName}`,
-            databaseType: databaseType,
+            databaseType: databaseType
           }
         }),
-        'value',
+        'value'
       )
 
       return { items: result, total: result.length }
@@ -957,7 +956,7 @@ export default {
       }
       const { isDB } = this
 
-      const findNode = this.flowStages.find((t) => t.id === nodeId)
+      const findNode = this.flowStages.find(t => t.id === nodeId)
       if (!findNode) {
         return { items: [], total: 0 }
       }
@@ -966,7 +965,7 @@ export default {
         nodeId,
         fields: ['original_name', 'fields', 'qualified_name'],
         page: filter?.page || 1,
-        pageSize: filter?.size || 20,
+        pageSize: filter?.size || 20
       }
       const keyword = filter.where?.name?.like
       if (keyword) {
@@ -975,12 +974,12 @@ export default {
 
       let res = await metadataInstancesApi.nodeSchemaPage(params)
 
-      const tableList = res.items?.map((t) => t.name) || []
+      const tableList = res.items?.map(t => t.name) || []
       const total = res.total
-      res.items.forEach((el) => {
+      res.items.forEach(el => {
         this.setFieldsByItem(
           [nodeId, connectionId, el.name],
-          el.fields.map((t) => {
+          el.fields.map(t => {
             const { id, field_name, primary_key_position, data_type, primaryKey, unique } = t
             return {
               id,
@@ -988,16 +987,16 @@ export default {
               primary_key_position,
               data_type,
               primaryKey,
-              unique,
+              unique
             }
-          }),
+          })
         )
       })
       let tableNames = tableList
       if (isDB) {
         if (!findNode.outputLanes.length) {
           const { tablePrefix, tableSuffix, tableNameTransform } = findNode
-          tableNames = tableNames.map((t) => {
+          tableNames = tableNames.map(t => {
             let name = (tablePrefix || '') + t + (tableSuffix || '')
             return tableNameTransform ? name[tableNameTransform]() : name
           })
@@ -1005,7 +1004,7 @@ export default {
         return { items: tableNames, total: total }
       }
       if (keyword) {
-        tableNames = tableNames.filter((t) => t.toLowerCase().includes(keyword.toLowerCase()))
+        tableNames = tableNames.filter(t => t.toLowerCase().includes(keyword.toLowerCase()))
       }
       return { items: tableNames, total: tableNames.length }
     },
@@ -1017,7 +1016,7 @@ export default {
      * @param3 flag true连线下游、false连线上游
      * */
     getLinkData(value, data = [], flag = false) {
-      const f = data.find((t) => t[flag ? 'source' : 'target'] === value)
+      const f = data.find(t => t[flag ? 'source' : 'target'] === value)
       return f ? this.getLinkData(f[!flag ? 'source' : 'target'], data, flag) : value
     },
 
@@ -1025,22 +1024,22 @@ export default {
     getMatchNodeList() {
       const edgesList = cloneDeep(this.edges)
       let result = uniqBy(
-        edgesList.map((t) => {
+        edgesList.map(t => {
           const source = this.getLinkData(t.source, edgesList)
           const target = this.getLinkData(t.target, edgesList, true)
           const key = source + '_' + target
           return {
             source,
             target,
-            key,
+            key
           }
         }),
-        'key',
+        'key'
       )
 
-      return result.map((re) => {
-        const el = this.flowStages.find((t) => t.id === re.source)
-        const targetNode = this.flowStages.find((t) => t.id === re.target)
+      return result.map(re => {
+        const el = this.flowStages.find(t => t.id === re.source)
+        const targetNode = this.flowStages.find(t => t.id === re.target)
         let updateConditionFieldMap = {}
         let tableNames = []
         let tableNameRelation = {}
@@ -1071,7 +1070,7 @@ export default {
           tableNames,
           objectNames,
           tableName: targetNode.tableName,
-          tableNameRelation,
+          tableNameRelation
         }
       })
     },
@@ -1081,9 +1080,9 @@ export default {
         i18n.t('packages_business_components_conditionbox_shifouqingkongsuo'),
         i18n.t('public_message_title_prompt'),
         {
-          type: 'warning',
-        },
-      ).then((res) => {
+          type: 'warning'
+        }
+      ).then(res => {
         if (!res) {
           return
         }
@@ -1096,13 +1095,13 @@ export default {
         i18n.t('packages_business_components_conditionbox_shifouquerenqing'),
         i18n.t('public_message_title_prompt'),
         {
-          type: 'warning',
-        },
-      ).then((res) => {
+          type: 'warning'
+        }
+      ).then(res => {
         if (!res) {
           return
         }
-        this.list = this.list.filter((t) => t.source.sortColumn && t.target.sortColumn)
+        this.list = this.list.filter(t => t.source.sortColumn && t.target.sortColumn)
       })
     },
 
@@ -1120,7 +1119,7 @@ export default {
         script: '', //后台使用 需要拼接function头尾
         webScript: '', //前端使用 用于页面展示
         jsEngineName: 'graal.js',
-        modeType: 'all', // 待校验模型的类型
+        modeType: 'all' // 待校验模型的类型
       }
     },
 
@@ -1135,7 +1134,7 @@ export default {
       let connectionIds = []
       let tableNames = []
       const matchNodeList = this.getMatchNodeList()
-      matchNodeList.forEach((m) => {
+      matchNodeList.forEach(m => {
         connectionIds.push(m.sourceConnectionId)
         connectionIds.push(m.targetConnectionId)
         tableNames.push(...m.tableNames)
@@ -1152,25 +1151,25 @@ export default {
       }
       let where = {
         meta_type: {
-          inq: DATA_NODE_TYPES,
+          inq: DATA_NODE_TYPES
         },
         'source.id': {
-          inq: Array.from(new Set(connectionIds)),
+          inq: Array.from(new Set(connectionIds))
         },
         original_name: {
-          inq: Array.from(new Set(tableNames)),
-        },
+          inq: Array.from(new Set(tableNames))
+        }
       }
       // this.autoAddTableLoading = true
       // this.updateAutoAddTableLoading()
       metadataInstancesApi
         .findInspect({
           where,
-          fields: META_INSTANCE_FIELDS,
+          fields: META_INSTANCE_FIELDS
         })
-        .then((data) => {
+        .then(data => {
           let list = []
-          matchNodeList.forEach((m) => {
+          matchNodeList.forEach(m => {
             const {
               source,
               target,
@@ -1183,11 +1182,11 @@ export default {
               sourceDatabaseType,
               targetDatabaseType,
               updateConditionFieldMap,
-              tableNameRelation,
+              tableNameRelation
             } = m
 
             const sourceTableList = Object.keys(tableNameRelation)
-            sourceTableList.forEach((ge) => {
+            sourceTableList.forEach(ge => {
               let item = this.getItemOptions()
               // 填充source
               item.source.nodeId = source
@@ -1209,9 +1208,9 @@ export default {
               item.target.capabilities = capabilitiesMap[targetConnectionId]
 
               const updateList = cloneDeep(updateConditionFieldMap[tableNameRelation[ge]] || [])
-              let findTable = data.find((t) => t.source.id === sourceConnectionId && t.original_name === ge)
+              let findTable = data.find(t => t.source.id === sourceConnectionId && t.original_name === ge)
               let findTargetTable = data.find(
-                (t) => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge],
+                t => t.source.id === targetConnectionId && t.original_name === tableNameRelation[ge]
               )
 
               if (findTable) {
@@ -1220,8 +1219,8 @@ export default {
                   : this.getPrimaryKeyFieldStr(findTable.fields)
                 if (updateList.length && findTargetTable?.fields) {
                   sourceSortColumn = findTargetTable.fields
-                    .filter((t) => updateList.includes(t.field_name))
-                    .map((t) => t.original_field_name)
+                    .filter(t => updateList.includes(t.field_name))
+                    .map(t => t.original_field_name)
                     .join(',')
                 }
                 item.source.fields = findTable.fields
@@ -1263,7 +1262,7 @@ export default {
 
     loadList() {
       let data = cloneDeep(this.data)
-      data.forEach((el) => {
+      data.forEach(el => {
         el.modeType = el.source.columns ? 'custom' : 'all'
       })
       this.list = data
@@ -1272,7 +1271,7 @@ export default {
     getList() {
       let list = cloneDeep(this.list)
       if (this.taskId) {
-        list.forEach((el) => {
+        list.forEach(el => {
           if (el.modeType === 'all') {
             el.source.columns = null
             el.target.columns = null
@@ -1314,7 +1313,7 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        tableName,
+        tableName
       } = data
       return {
         source: target,
@@ -1329,7 +1328,7 @@ export default {
         targetDatabaseType: sourceDatabaseType,
         updateConditionFieldMap,
         tableNames,
-        tableName,
+        tableName
       }
     },
 
@@ -1350,7 +1349,7 @@ export default {
 
       // 获取连线信息
       const matchNodeList = this.getMatchNodeList()
-      let matchNode = matchNodeList.find((t) => [t.source, t.target].includes(item[type].nodeId))
+      let matchNode = matchNodeList.find(t => [t.source, t.target].includes(item[type].nodeId))
       if (!matchNode) {
         return
       }
@@ -1367,7 +1366,7 @@ export default {
         targetDatabaseType,
         updateConditionFieldMap,
         tableName,
-        tableNameRelation = {},
+        tableNameRelation = {}
       } = matchNode
 
       // 自动填充索引字段
@@ -1407,11 +1406,11 @@ export default {
         nodeId: target,
         tableFilter: item.target.table,
         page: 1,
-        pageSize: 1,
+        pageSize: 1
       }
-      metadataInstancesApi.nodeSchemaPage(params).then((data) => {
+      metadataInstancesApi.nodeSchemaPage(params).then(data => {
         item.target.fields =
-          data.items?.[0]?.fields.map((t) => {
+          data.items?.[0]?.fields.map(t => {
             const { id, field_name, primary_key_position, primaryKey, unique } = t
             return { id, field_name, primary_key_position, primaryKey, unique }
           }) || []
@@ -1427,7 +1426,7 @@ export default {
     handleChangeAdvanced(item, val) {
       Object.assign(item.target, {
         targeFilterFalg: false,
-        where: '',
+        where: ''
       })
       item.showAdvancedVerification = val
     },
@@ -1471,9 +1470,9 @@ export default {
         this.$t('packages_business_verification_message_confirm_delete_script'),
         this.$t('public_button_delete'),
         {
-          type: 'warning',
-        },
-      ).then((resFlag) => {
+          type: 'warning'
+        }
+      ).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1482,17 +1481,17 @@ export default {
     },
 
     setFieldsByItem(item = [], data = []) {
-      const key = item.filter((t) => t).join()
+      const key = item.filter(t => t).join()
       this.fieldsMap[key] = data
     },
 
     getFieldsByItem(item, type = 'source') {
       const { nodeId, connectionId, table } = item[type] || {}
-      return this.fieldsMap[[nodeId || '', connectionId, table].filter((t) => t).join()] || []
+      return this.fieldsMap[[nodeId || '', connectionId, table].filter(t => t).join()] || []
     },
 
     getPrimaryKeyFieldStr(data = []) {
-      let sortField = (list) => {
+      let sortField = list => {
         return (
           list?.sort((a, b) => {
             return a.field_name > b.field_name ? -1 : 1
@@ -1500,8 +1499,8 @@ export default {
         )
       }
       return sortField(data)
-        .filter((f) => !!f.primaryKey)
-        .map((t) => t.field_name)
+        .filter(f => !!f.primaryKey)
+        .map(t => t.field_name)
         .join(',')
     },
 
@@ -1522,8 +1521,8 @@ export default {
       // const formDom = document.getElementById('data-verification-form')
 
       // 检查是否选择表
-      const haveTableArr = tasks.filter((c) => c.source.table && c.target.table)
-      const noTableArr = tasks.filter((c) => !c.source.table || !c.target.table)
+      const haveTableArr = tasks.filter(c => c.source.table && c.target.table)
+      const noTableArr = tasks.filter(c => !c.source.table || !c.target.table)
 
       if (!haveTableArr.length) {
         message = this.$t('packages_business_verification_form_validate_table_is_empty')
@@ -1550,8 +1549,8 @@ export default {
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
         // 索引字段为空
-        const haveIndexFieldArr = tasks.filter((c) => c.source.sortColumn && c.target.sortColumn)
-        const noIndexFieldArr = tasks.filter((c) => !c.source.sortColumn || !c.target.sortColumn)
+        const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
+        const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
 
         if (!haveIndexFieldArr.length) {
           message = this.$t('packages_business_verification_form_condition_is_empty')
@@ -1576,7 +1575,7 @@ export default {
 
         // 判断表字段校验时，索引字段是否个数一致
         const countNotArr = tasks.filter(
-          (c) => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length,
+          c => c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
         )
         if (countNotArr.length) {
           //校验条件{val}中源表与目标表的索引字段个数不相等
@@ -1611,8 +1610,8 @@ export default {
           message = this.$t(
             'packages_business_verification_message_error_joint_table_target_or_source_filter_not_set',
             {
-              val: index,
-            },
+              val: index
+            }
           )
           this.updateErrorMsg(message, 'error')
           return message
@@ -1722,7 +1721,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     handleCustomFields(item, index) {
       this.$refs.fieldDialog.open(item, index, {
         source: this.dynamicSchemaMap[item.source.connectionId],
-        target: this.dynamicSchemaMap[item.target.connectionId],
+        target: this.dynamicSchemaMap[item.target.connectionId]
       })
     },
 
@@ -1737,8 +1736,8 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 
     handleChangeFields(data = [], index) {
       let item = this.list[index]
-      item.source.columns = data.map((t) => t.source)
-      item.target.columns = data.map((t) => t.target)
+      item.source.columns = data.map(t => t.source)
+      item.target.columns = data.map(t => t.target)
       // 设置modeType
       this.$refs[`schemaToForm_${item.id}`].form.setValuesIn('modeType', 'custom')
     },
@@ -1753,19 +1752,19 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
           meta_type: 'table',
           sourceType: 'SOURCE',
           original_name: opt.table,
-          'source._id': connectionId,
+          'source._id': connectionId
         },
-        limit: 1,
+        limit: 1
       }
       metadataInstancesApi
         .tapTables({
-          filter: JSON.stringify(params),
+          filter: JSON.stringify(params)
         })
         .then((data = {}) => {
           if (isEmpty(data.items[0]?.nameFieldMap)) {
             return
           }
-          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map((t) => {
+          opt.fields = Object.values(data.items[0]?.nameFieldMap || {}).map(t => {
             return {
               id: t.id,
               label: t.fieldName,
@@ -1774,7 +1773,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
               primary_key_position: t.primaryKey,
               data_type: t.dataType,
               primaryKey: t.primaryKey,
-              unique: t.unique,
+              unique: t.unique
             }
           })
         })
@@ -1783,12 +1782,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     async getCapabilities(connectionIds = []) {
       if (!connectionIds.length) return
       const data = await Promise.all(
-        connectionIds.map(async (id) => {
+        connectionIds.map(async id => {
           return {
             id,
-            capabilities: await this.getConnectionCapabilities(id),
+            capabilities: await this.getConnectionCapabilities(id)
           }
-        }),
+        })
       )
 
       return data.reduce((cur, pre) => {
@@ -1818,9 +1817,9 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 
     updateAutoAddTableLoading() {
       $emit(this, 'update:autoAddTableLoading', this.autoAddTableLoading)
-    },
+    }
   },
-  emits: ['update:jointErrorMessage', 'update:errorMessageLevel', 'update:autoAddTableLoading'],
+  emits: ['update:jointErrorMessage', 'update:errorMessageLevel', 'update:autoAddTableLoading']
 }
 </script>
 
@@ -1828,10 +1827,12 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
 .joint-table {
   border-radius: 4px;
   border: 1px solid #e8e8e8;
+
   &.error {
     border-color: map-get($color, danger);
   }
 }
+
 .joint-table-header {
   padding: 16px 24px;
   display: flex;
@@ -1840,35 +1841,43 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
+
 .joint-table-footer {
   padding: 16px 24px;
 }
+
 .joint-table-main {
   max-height: 500px;
   overflow-y: auto;
+
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
     border-bottom: 1px solid map-get($borderColor, light);
   }
+
   .joint-table-setting {
     flex: 1;
     background-color: map-get($bgColor, white);
   }
+
   .setting-item {
     display: flex;
     margin-bottom: 0;
+
     .el-form-item__content {
       display: flex;
       align-items: center;
       line-height: 1;
     }
+
     .item-label {
       width: 120px;
       line-height: 32px;
       text-align: left;
       color: map-get($fontColor, light);
     }
+
     .item-icon {
       margin: 0 10px;
       width: 120px;
@@ -1876,6 +1885,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       color: map-get($fontColor, light);
       text-align: center;
     }
+
     .item-time-picker,
     .item-input,
     .item-select,
@@ -1885,16 +1895,19 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .item-filter-body {
       padding: 16px;
       background: map-get($fontColor, normal);
       border-radius: 2px;
       color: map-get($fontColor, slight);
+
       .filter-example-label {
         margin-top: 8px;
         color: #bfd0ff;
         line-height: 17px;
       }
+
       .filter-example {
         margin-top: 8px;
         padding: 8px;
@@ -1903,11 +1916,13 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
         color: #82b290;
       }
     }
+
     .item-value-text {
       flex: 1;
       line-height: 32px;
       padding: 0 16px;
     }
+
     .item-script {
       margin: 0;
       padding: 16px 24px;
@@ -1918,18 +1933,18 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       border-left: 5px solid map-get($color, primary);
       background: #eff1f4;
       font-size: 12px;
-      font-family:
-        PingFangSC-Medium,
-        PingFang SC;
+      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 500;
       color: rgba(0, 0, 0, 0.6);
       line-height: 17px;
     }
   }
 }
+
 .FieldList {
   height: 280px;
 }
+
 .empty-data {
   :deep(.el-select) {
     .el-input__inner {
@@ -1937,6 +1952,7 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     }
   }
 }
+
 .scheme-to-form {
   :deep(
       .formily-element-plus-form-item-layout-horizontal

@@ -1648,4 +1648,5 @@ export default {
   dfs_system_update: '系統更新',
   dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!',
   dfs_order_list_bianhao: '編號',
+  dfs_settings_language: '顯示語言',
 }

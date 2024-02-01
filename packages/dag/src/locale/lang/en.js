@@ -218,6 +218,7 @@ export default {
   packages_dag_components_record_yunxingjieshushi: 'Operation end time',
   packages_dag_components_record_yunxingkaishishi: 'Operation start time',
   packages_dag_components_timeselect_renwuquanzhouqi: 'Task full cycle',
+  packages_dag_components_timeselect_incremental_phase: 'Incremental Phase',
   packages_dag_components_timeselect_zuijintian: 'Last 1 day',
   packages_dag_components_timeselect_zuixinxiaoshi: 'Latest 1 hour',
   packages_dag_components_timeselect_zuijinfenzhong: 'last 5 minutes',
@@ -574,6 +575,8 @@ export default {
   packages_dag_nodes_table_lunxunjiangem: 'Polling Interval (ms)',
   packages_dag_nodes_table_lunxunziduanmo: 'Polling field default value',
   packages_dag_nodes_table_zhidinglunxunzi: 'Specify the polling field',
+  packages_dag_nodes_cdcPollingFields_tip:
+    'Please ensure that the selected polling fields have indexes; otherwise, it may impact the source database due to query performance issues.',
   packages_dag_nodes_table_lunxun: 'Polling',
   packages_dag_nodes_table_rizhicdc: 'Log CDC',
   packages_dag_nodes_table_tedingziduande:
@@ -679,6 +682,8 @@ export default {
   packages_dag_config_data_write: 'Data Write',
   packages_dag_config_incremental_mode: 'Incremental Mode',
   packages_dag_config_data_filter: 'Data Filter',
+  packages_dag_config_data_filter_tip:
+    'Data filter configuration may impact the source database due to query filter performance issues. Please use with caution.',
   packages_dag_field_add_del_index_zhidi: 'To Bottom',
   packages_dag_field_add_del_index_xiayi: 'Move down',
   packages_dag_field_add_del_index_shangyi: 'Move Up',
@@ -725,4 +730,10 @@ export default {
   packages_dag_enableSyncMetricCollector_title: 'Sync Metrics Collection',
   packages_dag_enableSyncMetricCollector_tip:
     'If enabled, the sync metrics of the task will be automatically collected. After the task stops, the corresponding metric information will be output for analysis.',
+  packages_dag_update_conditions_tip:
+    'Note: Tapdata will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
+  packages_dag_existDataProcessMode_desc:
+    'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
+  packages_dag_ddl_events_collapse_tip:
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.'
 }

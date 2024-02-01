@@ -2,6 +2,8 @@ import * as Vuex from 'vuex'
 import dataflow from '@tap/dag/src/store'
 import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
+import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
+import i18n from '../i18n'
 
 const store = Vuex.createStore({
   modules: {
@@ -20,11 +22,17 @@ const store = Vuex.createStore({
       nickname: '',
       avatar: '',
       telephone: '',
+      phoneCountryCode: '',
       wx: '',
       email: '',
       enableLicense: false,
       licenseCodes: [],
+      customData: {
+        firstName: '',
+        lastName: '',
+      },
       gcpAccount: null,
+      locale: '',
     },
     highlightBoard: false,
     driverIndex: 0,
@@ -78,6 +86,7 @@ const store = Vuex.createStore({
       onlyEnglishLanguage: false,
       slackLink: '',
       station: '', //标记国际站international 国内站 domestic
+      pagePermissions: [], // dataHub
     },
 
     showReplicationTour: false,
@@ -86,9 +95,14 @@ const store = Vuex.createStore({
   },
 
   getters: {
+    language: (state) => {
+      return state.user.locale
+    },
     isGCPMarketplaceUser: (state) => state.user.gcpAccount !== null,
-    isDomesticStation: (state) => state.config.station === 'domestic',
-    startingTour: (state) => state.replicationTour.status === 'starting' && state.guide.expand.guideStatus !== 'paused',
+    isDomesticStation: (state, getters) => {
+      return getters.language !== 'en'
+    },
+    startingTour: (state) => state.replicationTour.status === 'starting',
     pausedTour: (state) => state.replicationTour.status === 'paused',
     completedTour: (state) => state.replicationTour.status === 'completed',
     pausedGuide: (state) => state.guide.expand.guideStatus === 'paused',
@@ -106,8 +120,17 @@ const store = Vuex.createStore({
     },
 
     setUser(state, user = {}) {
+      user.phoneCountryCode = user.phoneCountryCode?.replace(/[+-]/g, '')
       Object.assign(state.user, user)
-      console.log('state.user', state.user) // eslint-disable-line
+    },
+
+    setLanguage(state, lang) {
+      if (!lang) {
+        lang = getCurrentLanguage()
+      }
+      lang = lang.replace('_', '-')
+      state.user.locale = lang
+      setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {

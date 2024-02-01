@@ -452,19 +452,14 @@ export default {
     },
     //检查是否有手机号
     checkWechatPhone() {
-      let user = window.__USER_INFO__
-      if (window.__config__?.disabledBindingPhone) {
-        //海外版不强制绑定手机号
-        this.bindPhoneVisible = false
-      } else {
-        this.bindPhoneVisible =
-          ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) &&
-          !user?.telephone
-      }
-      // this.initGuide()
+      // 国内微信注册的用户绑定手机号
+      const { user } = this.$store.state
+      this.bindPhoneVisible = 'social:wechatmp-qrcode' === user?.registerSource && !user?.telephone
+
       if (this.steps?.length === 0) {
         this.getSteps()
       }
+
       return this.bindPhoneVisible
     },
     getOrderInfo() {

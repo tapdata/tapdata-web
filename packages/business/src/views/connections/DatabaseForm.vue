@@ -247,8 +247,8 @@ export default {
                 agentType: 'Cloud',
                 status: 'Running',
               },
-            }),
-          ),
+            })
+          )
       )
 
       if (agentData.length) {
@@ -296,7 +296,7 @@ export default {
             ? {
                 name: 'connections',
               }
-            : this.pathUrl,
+            : this.pathUrl
         )
       } else {
         this.$router.back()
@@ -331,7 +331,7 @@ export default {
           },
           {
             config: formValues,
-          },
+          }
         )
         let promise = null
         if (id) {
@@ -372,7 +372,7 @@ export default {
           },
           () => {
             this.$el.querySelector('.formily-element-plus-form-item-error').scrollIntoView()
-          },
+          }
         )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
@@ -500,7 +500,7 @@ export default {
       const endProperties = {}
 
       // 是否支持共享挖掘
-      if (this.isDaas && this.pdkOptions.capabilities?.some((t) => t.id === 'stream_read_function')) {
+      if (this.pdkOptions.capabilities?.some((t) => t.id === 'stream_read_function')) {
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',
@@ -695,6 +695,29 @@ export default {
           ],
           'x-reactions': [
             {
+              dependencies: ['__TAPDATA.shareCdcEnable'],
+              fulfill: {
+                state: {
+                  value: `{{!$isDaas && $deps[0] ? 'MANUALLY_SPECIFIED_BY_THE_USER' : $self.value}}`,
+                  dataSource: `{{!$isDaas && $deps[0] ? [
+                    { label: '${this.$t(
+                      'packages_business_connection_form_automatic'
+                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
+                    { label: '${this.$t(
+                      'packages_business_connection_form_manual'
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ] : [
+                    { label: '${this.$t(
+                      'packages_business_connection_form_automatic'
+                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                    { label: '${this.$t(
+                      'packages_business_connection_form_manual'
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ]}}`,
+                },
+              },
+            },
+            {
               target: '__TAPDATA.accessNodeProcessId',
               fulfill: {
                 state: {
@@ -716,6 +739,9 @@ export default {
         },
         accessNodeProcessId: {
           type: 'string',
+          description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
+            'packages_business_agent_select_not_found_for_rocksdb'
+          )}' : ''}}`,
           'x-decorator': 'FormItem',
           'x-decorator-props': {
             colon: false,
@@ -741,7 +767,14 @@ export default {
           // 校验下拉数据判断是否存在已选的agent
           'x-validator': `{{(value, rule, ctx)=> {
       if (!value) {
-        return '${this.$t('packages_business_agent_select_placeholder')}'
+        let msg = '${this.$t('packages_business_agent_select_placeholder')}'
+              const {shareCDCExternalStorageId} = $values.__TAPDATA
+              if (shareCDCExternalStorageId) {
+                const dataSource = $form.query('__TAPDATA.shareCDCExternalStorageId').get('dataSource')
+                const type = dataSource.find(item => item.value === shareCDCExternalStorageId)?.type
+                if (type === 'rocksdb') msg = '${this.$t('packages_business_agent_select_not_found_for_rocksdb')}'
+              }
+              return msg
       } else if (value && ctx.field.dataSource?.length) {
         const current = ctx.field.dataSource.find(item => item.value === value)
         if (!current) {
@@ -821,7 +854,7 @@ export default {
         endProperties.schemaUpdateHour.default = 'default'
         endProperties.schemaUpdateHour.enum.unshift({
           label: i18n.t('packages_business_connections_databaseform_system'),
-          value: 'default'
+          value: 'default',
         })
       }
 
@@ -1088,6 +1121,7 @@ export default {
       this.setConnectionConfig()
 
       this.schemaScope = {
+        $isDaas: this.isDaas,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return (field) => {
@@ -1098,7 +1132,7 @@ export default {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              }),
+              })
             )
           }
         },
@@ -1114,7 +1148,7 @@ export default {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              }),
+              })
             )
           }
         },
@@ -1231,6 +1265,7 @@ export default {
             })
             return items.map((item) => {
               return {
+                type: item.type,
                 label: item.name,
                 value: item.id,
                 isDefault: item.defaultStorage,
@@ -1299,7 +1334,7 @@ export default {
               subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
               service: 'engine',
             },
-            others,
+            others
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
             const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
@@ -1412,7 +1447,7 @@ export default {
           {
             config: __TAPDATA_CONFIG,
           },
-          trace,
+          trace
         )
         this.schemaFormInstance.setValues({
           __TAPDATA,
@@ -1462,27 +1497,32 @@ export default {
       display: flex;
       flex: 1;
       flex-direction: column;
+
       .connection-from-title {
         font-size: $fontSubtitle;
         font-weight: 500;
         color: map-get($fontColor, dark);
         line-height: 28px;
       }
+
       .connection-from-label {
         display: flex;
         align-items: center;
         margin-bottom: 24px;
+
         .label:before {
           content: '*';
           color: #f56c6c;
           margin-right: 4px;
         }
+
         .label {
           width: 160px;
           font-size: $fontBaseTitle;
           color: map-get($fontColor, light);
           text-transform: capitalize;
         }
+
         .content-box {
           display: flex;
           max-width: 680px;
@@ -1496,6 +1536,7 @@ export default {
           text-overflow: ellipsis;
           overflow: hidden;
         }
+
         .img-box {
           display: flex;
           width: 25px;
@@ -1504,15 +1545,18 @@ export default {
           align-items: center;
           background: map-get($bgColor, white);
           border-radius: 3px;
+
           img {
             width: 100%;
           }
         }
       }
+
       .form-wrap {
         display: flex;
         flex: 1;
         overflow: hidden;
+
         .form {
           width: 100%;
           height: 100%;
@@ -1526,6 +1570,7 @@ export default {
             :deep(.e-form-builder-item) {
               &.large-item {
                 width: 610px;
+
                 .el-form-item__content {
                   padding-right: 20px;
                 }
@@ -1538,27 +1583,33 @@ export default {
               &.mongodb-item {
                 width: 680px;
               }
+
               &.mongodb-tip-item .el-form-item__content {
                 width: 680px;
               }
+
               .url-tip {
                 font-size: 12px;
                 color: map-get($fontColor, light);
+
                 b {
                   font-size: 12px;
                   font-weight: 400;
                   color: map-get($fontColor, light);
                 }
               }
+
               .fb-radio-group {
                 .el-radio--mini.is-bordered {
                   padding-top: 0;
                 }
               }
+
               .el-input .el-input__inner,
               .el-textarea__inner {
                 background-color: rgba(239, 241, 244, 0.2);
               }
+
               .el-textarea__inner {
                 min-height: 70px !important;
               }
@@ -1575,27 +1626,33 @@ export default {
           .el-input-number {
             width: 180px;
           }
+
           .el-input-number--small {
             width: 130px;
           }
         }
       }
     }
+
     .status {
       font-size: 12px;
       margin-top: 2px;
+
       .error {
         color: #f56c6c;
       }
+
       .success {
         color: #67c23a;
       }
+
       .warning {
         color: #e6a23c;
       }
     }
   }
 }
+
 .pdk-schema-form {
   :deep(.formily-element-plus-form-item-feedback-layout-loose) {
     margin-bottom: 20px;
@@ -1609,6 +1666,7 @@ export default {
         min-height: unset;
         height: unset;
       }
+
       .formily-element-plus-form-item-label-tooltip {
         margin-left: 4px;
         height: unset;

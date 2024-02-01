@@ -1141,6 +1141,9 @@ export default {
         case 'full':
           result = [this.firstStartTime, endTimestamp]
           break
+        case 'incremental':
+          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 3000, endTimestamp]
+          break
         default:
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
           break
@@ -1257,7 +1260,7 @@ export default {
             map[item.pdkHash] = properties
           }
           return map
-        }, {}),
+        }, {})
       )
     },
 
@@ -1304,20 +1307,24 @@ $sidebarBg: #fff;
   height: 100%;
   background-color: $sidebarBg;
   overflow: auto;
+
   &.--right {
     width: 726px;
   }
 }
+
 .layout-wrap {
   display: flex;
   flex: auto;
   flex-direction: column;
   min-width: 0;
   min-height: 0;
+
   &.layout-has-sider {
     flex-direction: row;
   }
 }
+
 .layout-content {
   position: relative;
   background-color: #f9f9f9;
@@ -1327,6 +1334,7 @@ $sidebarBg: #fff;
     path:nth-child(2) {
       stroke: #2c65ff;
     }
+
     path:nth-child(3) {
       fill: #2c65ff;
       stroke: #2c65ff;
@@ -1362,6 +1370,7 @@ $sidebarBg: #fff;
     z-index: 1002;
     cursor: pointer;
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
     &:hover {
       transform: translate(-50%, -50%) scale(1.2) !important;
     }
@@ -1376,6 +1385,7 @@ $sidebarBg: #fff;
     background-color: #9bb6ff;
     border-radius: 100%;
     pointer-events: none;
+
     .v-icon {
       width: 16px;
       height: 16px;
@@ -1383,6 +1393,7 @@ $sidebarBg: #fff;
       background-color: #2c65ff;
       color: #fff;
       border-radius: 100%;
+
       &__svg {
         width: 1em;
         height: 1em;
@@ -1390,6 +1401,7 @@ $sidebarBg: #fff;
     }
   }
 }
+
 .nav-line {
   position: absolute;
   width: 0;
@@ -1399,17 +1411,20 @@ $sidebarBg: #fff;
   border-top: 1px dashed #ff5b37;
   border-left: 1px dashed #ff5b37;
 }
+
 .select-box {
   position: absolute;
   background: rgba(23, 159, 251, 0.1);
   border: 1px solid #179ffb;
 }
+
 .node-view {
   position: relative;
   width: 100%;
   height: 100%;
   transform-origin: 0 0;
 }
+
 .node-view-background {
   position: absolute;
   width: 10000px;
@@ -1417,6 +1432,7 @@ $sidebarBg: #fff;
   top: -5000px;
   left: -5000px;
 }
+
 .sider-expand-wrap {
   position: absolute;
   z-index: 2;
@@ -1427,6 +1443,7 @@ $sidebarBg: #fff;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0px 0px 30px rgb(0 0 0 / 6%);
+
   &:hover .v-icon {
     color: map-get($color, primary);
   }

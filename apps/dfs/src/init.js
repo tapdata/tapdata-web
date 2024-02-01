@@ -14,7 +14,6 @@ import { VIcon, VButton, installElement } from '@tap/component'
 import { timeStampApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
-import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
 import * as Vue from 'vue'
@@ -59,6 +58,7 @@ export default ({ routes }) => {
     wsUrl = wsUrl + loc.host + path + `tm/ws/agent?${queryString}`
 
     store.commit('setUser', window.__USER_INFO__)
+    store.commit('setLanguage', window.__USER_INFO__.locale)
 
     const app = (window.App = window.$vueApp = Vue.createApp(App))
 
@@ -123,11 +123,11 @@ export default ({ routes }) => {
                       props: { type: 'primary', size: 'mini' },
                       on: { click: () => self.onRefresh() },
                     },
-                    i18n.t('public_button_refresh'),
+                    i18n.t('public_button_refresh')
                   ),
-                ],
+                ]
               ),
-            ],
+            ]
           ),
           duration: 0,
           position: 'bottom-right',
@@ -220,10 +220,6 @@ export default ({ routes }) => {
     .then((res) => {
       store.commit('setConfig', res.data)
       window.__config__ = res.data
-
-      if (res.data.onlyEnglishLanguage) {
-        setCurrentLanguage('en', i18n)
-      }
 
       getData()
     })

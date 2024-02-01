@@ -1,5 +1,5 @@
 <template>
-  <section class="share-list-wrap h-100">
+  <section class="share-list-wrap h-100 px-4 pb-4 bg-white">
     <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>

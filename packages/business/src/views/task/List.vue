@@ -8,7 +8,7 @@
         authority: 'SYNC_category_management',
         types: ['dataflow'],
         viewPage: syncType,
-        title: $t('packages_business_task_migratelist_renwufenlei'),
+        title: $t('public_tags'),
       }"
       :remoteMethod="getData"
       :default-sort="{ prop: 'last_updated', order: 'descending' }"
@@ -78,14 +78,23 @@
               <span> {{ $t('public_button_export') }}</span>
             </el-button>
             <el-button
-              v-if="buttonShowMap.import && (isDaas || $route.name === 'dataflowList')"
+              v-if="buttonShowMap.import && isDaas"
               v-readonlybtn="'SYNC_job_import'"
               class="btn"
               :disabled="$disabledReadonlyUserBtn()"
               @click="handleImport"
             >
-              <!--<i class="iconfont icon-daoru back-btn-icon"></i>-->
               <span> {{ $t('packages_business_button_bulk_import') }}</span>
+            </el-button>
+            <el-button
+              v-if="buttonShowMap.import && $route.name === 'dataflowList'"
+              v-readonlybtn="'SYNC_job_import'"
+              size="mini"
+              class="btn"
+              :disabled="$disabledReadonlyUserBtn()"
+              @click="handleImportRelmig"
+            >
+              <span> {{ $t('packages_business_relmig_import') }}</span>
             </el-button>
           </template>
           <ElButton
@@ -95,8 +104,8 @@
             @click="handleCreateMaterializedView"
           >
             <VIcon class="mr-1" size="28">beta</VIcon>
-            {{ $t('packages_dag_build_materialized_view') }}</ElButton
-          >
+            {{ $t('packages_dag_build_materialized_view') }}
+          </ElButton>
           <el-button
             v-if="buttonShowMap.create"
             v-readonlybtn="'SYNC_job_creation'"
@@ -272,7 +281,7 @@
     </TablePage>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <!-- 导入 -->
-    <Upload :type="'dataflow'" ref="upload" @success="table.fetch()"></Upload>
+    <Upload :type="uploadType" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
     <el-dialog
       :title="$t('public_message_title_prompt')"
@@ -444,6 +453,7 @@ export default {
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
       upgradeChargesVisibleTips: '',
+      uploadType: 'dataflow',
     }
   },
 
@@ -600,8 +610,8 @@ export default {
           })
 
           /*if (!this.isDaas) {
-            this.loadTaskErrorCause(errorTaskIds)
-          }*/
+          this.loadTaskErrorCause(errorTaskIds)
+        }*/
 
           // 有选中行，列表刷新后无法更新行数据，比如状态
           if (this.multipleSelection.length && list.length) {
@@ -1037,10 +1047,10 @@ export default {
             {
               class: 'color-primary ml-1',
             },
-            name,
+            name
           ),
           strArr[1],
-        ],
+        ]
       )
       return {
         msg,
@@ -1049,8 +1059,15 @@ export default {
     },
 
     handleImport() {
+      this.uploadType = 'dataflow'
       this.$refs.upload.show()
     },
+
+    handleImportRelmig() {
+      this.uploadType = 'relmig'
+      this.$refs.upload.show()
+    },
+
     onCopy() {
       this.showTooltip = true
     },
@@ -1130,8 +1147,8 @@ export default {
                 JSON.stringify({
                   size: 100,
                   page: 1,
-                }),
-              ),
+                })
+              )
           )
           .then(async (data) => {
             const { items = [] } = data
@@ -1154,6 +1171,7 @@ export default {
 .data-flow-wrap {
   height: 100%;
   background: #fff;
+
   .btn-refresh {
     padding: 0;
     height: 32px;

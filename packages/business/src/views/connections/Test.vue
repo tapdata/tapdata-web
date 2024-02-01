@@ -265,6 +265,12 @@ export default {
       delete data.response_body
       this.wsError = ''
       this.testData.testLogs = []
+
+      if (this.testType === 'testExternalStorage') {
+        // 外存测试特殊处理
+        this.startByConnection(data, updateSchema, editTest)
+        return
+      }
       this.startDownLoadConnector(data, updateSchema, editTest)
     },
 

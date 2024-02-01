@@ -1,8 +1,8 @@
 <template>
-  <section class="external-storage-wrapper">
+  <section class="external-storage-wrapper px-4 pb-4 bg-white">
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <template v-slot:search>
-        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
       </template>
       <template v-slot:operation>
         <div>
@@ -53,7 +53,7 @@
             @change="handleDefault(row)"
           ></ElSwitch>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton :disabled="row.type !== 'mongodb'" text @click="handleTest(row)"
+          <ElButton :disabled="row.type === 'memory'" text @click="handleTest(row)"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
@@ -113,9 +113,7 @@
       </ElForm>
       <template v-slot:footer>
         <span class="dialog-footer">
-          <ElButton :disabled="form.type !== 'mongodb'" @click="handleEditorTest()"
-            >{{ $t('public_connection_button_test') }}
-          </ElButton>
+          <ElButton @click="handleEditorTest()">{{ $t('public_connection_button_test') }} </ElButton>
           <ElButton @click="dialogVisible = false">{{ $t('public_button_cancel') }}</ElButton>
           <ElButton type="primary" @click="submit">{{ $t('public_button_confirm') }}</ElButton>
         </span>
@@ -417,7 +415,7 @@ export default {
                 uri,
                 defaultStorage,
               },
-              formValues,
+              formValues
             )
             const catchFunc = () => {
               this.loading = false
@@ -538,31 +536,36 @@ export default {
     handleEditorTest() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
-          const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
-          schemaFormInstance?.validate().then(async () => {
-            let formValues = this.$refs.schemaToForm?.getFormValues?.()
+          let formValues
+          if (this.$refs.schemaToForm) {
+            const schemaFormInstance = this.$refs.schemaToForm.getForm?.()
+            const feedback = await schemaFormInstance?.validate().catch((e) => e)
 
-            this.loading = true
-            let { id, name, type, uri, defaultStorage } = this.form
-            let params = Object.assign(
-              {
-                id,
-                name,
-                type,
-                uri,
-                defaultStorage,
-              },
-              formValues,
-            )
-            let result = { id }
-            for (let key in params) {
-              if (params[key] !== this.dialogForm[key]) {
-                result[key] = params[key]
-              }
+            if (feedback) return
+
+            formValues = this.$refs.schemaToForm?.getFormValues?.()
+          }
+
+          this.loading = true
+          let { id, name, type, uri, defaultStorage } = this.form
+          let params = Object.assign(
+            {
+              id,
+              name,
+              type,
+              uri,
+              defaultStorage,
+            },
+            formValues
+          )
+          let result = { id }
+          for (let key in params) {
+            if (params[key] !== this.dialogForm[key]) {
+              result[key] = params[key]
             }
+          }
 
-            this.startTest(result)
-          })
+          this.startTest(result)
         }
       })
     },
@@ -603,9 +606,11 @@ export default {
   height: 100%;
   overflow: hidden;
 }
+
 .shared-cache-list-wrap {
   overflow: hidden;
 }
+
 .icon-status {
   display: block;
   width: 60px;
@@ -617,45 +622,56 @@ export default {
   box-sizing: border-box;
   overflow: hidden;
   text-align: center;
+
   &.icon-status--success {
     color: #178061;
     background: #c4f3cb;
   }
+
   &.icon-status--warning {
     color: #d5760e;
     background: #ffe9cf;
   }
+
   &.icon-status--danger {
     color: map-get($color, danger);
     background: #ffecec;
   }
 }
+
 .shared-cache-details {
   padding: 16px;
 }
+
 .shared-cache-details--header {
   border-bottom: 1px solid map-get($borderColor, light);
+
   .icon {
     font-size: 18px;
   }
 }
+
 .drawer-info__item {
   display: flex;
+
   .body {
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
     border-bottom: 1px solid map-get($borderColor, light);
+
     .label {
       font-size: $fontBaseTitle;
       color: rgba(0, 0, 0, 0.6);
     }
+
     .value {
       font-size: $fontBaseTitle;
       color: map-get($fontColor, dark);
     }
   }
 }
+
 .scheme-to-form {
   :deep(.formily-element-plus-form-item) {
     margin-bottom: 18px;
