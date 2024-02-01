@@ -165,7 +165,7 @@
       :title="$t('packages_business_setting_alarmnotification_recipient_setting')"
       width="70%"
       append-to-body
-      :visible.sync="alarmRecipientVisible"
+      v-model:visible="alarmRecipientVisible"
     >
       <div class="mb-4">{{ $t('packages_business_setting_alarmnotification_recipient_desc') }}</div>
       <VTable
@@ -262,16 +262,16 @@ export default {
       alarmRecipientColumns: [
         {
           label: i18n.t('packages_business_setting_alarmnotification_channel'),
-          slotName: 'keySlot'
+          slotName: 'keySlot',
         },
         {
           label: i18n.t('packages_business_setting_alarmnotification_recipient'),
           slotName: 'valueSlot',
-          headerSlot: 'valueHeader'
-        }
+          headerSlot: 'valueHeader',
+        },
       ],
       channelMap: {
-        EMAIL: i18n.t('packages_business_notify_email_notification')
+        EMAIL: i18n.t('packages_business_notify_email_notification'),
       },
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
@@ -282,8 +282,8 @@ export default {
       alarmRecipientData: [
         {
           channel: 'EMAIL',
-          value: ''
-        }
+          value: '',
+        },
       ],
       tableData: [],
       isOpenid: false,
@@ -398,7 +398,7 @@ export default {
       try {
         await alarmMailApi.save({
           type: 'EMAIL',
-          emailAddressList: this.alarmRecipientData[0].value.split(',').map(item => item.trim())
+          emailAddressList: this.alarmRecipientData[0].value.split(',').map((item) => item.trim()),
         })
         this.alarmRecipientVisible = false
         this.$message.success(this.$t('public_message_save_ok'))

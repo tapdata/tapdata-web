@@ -140,7 +140,7 @@ export default {
       this.openRoute({
         name: routeName,
         query: {
-          tour: this.startingTour ? true : undefined
+          tour: this.startingTour ? true : undefined,
         },
         params: {
           id: task.id,

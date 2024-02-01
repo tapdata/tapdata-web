@@ -675,7 +675,7 @@ export default {
         const contentArr = contentStr.split(',')
         contentArr.forEach((el) => {
           const key = el.replace(/^\$/, '')
-          let min,max
+          let min, max
           if (typeof item.attrs[key] === 'number') {
             max = typeof item.attrs[key]
           } else if (item.attrs[key] instanceof Array) {

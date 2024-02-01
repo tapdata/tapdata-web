@@ -32,7 +32,7 @@ export default {
   name: 'MarketplaceGuide',
   props: {
     visible: Boolean,
-    loading: Boolean
+    loading: Boolean,
   },
   methods: {
     handleClose() {
@@ -41,8 +41,8 @@ export default {
 
     async handleRefresh() {
       this.$emit('refresh')
-    }
-  }
+    },
+  },
 }
 </script>
 

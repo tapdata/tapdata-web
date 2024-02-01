@@ -367,7 +367,7 @@ export default {
               }),
             }
           }),
-          'value'
+          'value',
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
@@ -467,7 +467,7 @@ export default {
       let currentItem = this.packageItems[0]
       if (this.selected?.type && currentItem?.chargeProvider !== 'FreeTier' && this.selected?.type !== 'FreeTier') {
         currentItem = this.packageItems.find(
-          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit //切换规格不改变原来的订阅方式
+          (it) => it.type === this.selected?.type && it.periodUnit === this.selected?.periodUnit, //切换规格不改变原来的订阅方式
         )
       }
       this.handleChange(currentItem)
@@ -484,7 +484,7 @@ export default {
         .filter(
           (it) =>
             this.specification === it.specification &&
-            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year'))
+            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year')),
         )
         .map((t) => {
           return Object.assign(t, {
@@ -692,7 +692,7 @@ export default {
                 : {
                     name: 'installAgent',
                     params,
-                  }
+                  },
             )
           }
         })

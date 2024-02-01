@@ -68,7 +68,7 @@ export default observer({
               action.bound((data) => {
                 field.dataSource = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
@@ -82,7 +82,7 @@ export default observer({
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
@@ -170,7 +170,7 @@ export default observer({
           const values = Object.values(map)
 
           field.setDescription(
-            values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : ''
+            values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : '',
           )
         },
       },

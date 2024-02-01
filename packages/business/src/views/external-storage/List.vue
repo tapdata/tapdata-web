@@ -415,7 +415,7 @@ export default {
                 uri,
                 defaultStorage,
               },
-              formValues
+              formValues,
             )
             const catchFunc = () => {
               this.loading = false
@@ -556,7 +556,7 @@ export default {
               uri,
               defaultStorage,
             },
-            formValues
+            formValues,
           )
           let result = { id }
           for (let key in params) {

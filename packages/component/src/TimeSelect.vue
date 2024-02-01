@@ -213,8 +213,8 @@ export default {
           this.items.find((t) => t.type === 'custom'),
           {
             value: val,
-          }
-        )
+          },
+        ),
       )
     },
 

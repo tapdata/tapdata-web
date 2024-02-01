@@ -212,7 +212,7 @@ export default {
         this.$store.commit('setReplicationTour', {
           behavior: 'add-' + this.selectorType,
           [`${this.selectorType}ConnectionId`]: connection.id,
-          [`isDemo${type}`]: connection.isDemo
+          [`isDemo${type}`]: connection.isDemo,
         })
 
         // 上报引导创建源/目标连接

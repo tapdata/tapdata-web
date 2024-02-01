@@ -818,11 +818,11 @@ export default {
   computed: {
     ...mapGetters(['isDomesticStation', 'language']),
     ...mapState({
-      userData: 'user'
+      userData: 'user',
     }),
     showPhone() {
       return !!this.userData.telephone
-    }
+    },
   },
   mounted() {
     this.init()
@@ -1284,11 +1284,11 @@ export default {
 
     async handleUpdateLanguage(val) {
       await this.$axios.patch('api/tcm/user', {
-        locale: val
+        locale: val,
       })
       this.$store.commit('setLanguage', val)
       location.reload()
-    }
+    },
   },
   emits: ['get-user'],
 }

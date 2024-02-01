@@ -1260,7 +1260,7 @@ export default {
             map[item.pdkHash] = properties
           }
           return map
-        }, {})
+        }, {}),
       )
     },
 

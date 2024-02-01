@@ -1047,10 +1047,10 @@ export default {
             {
               class: 'color-primary ml-1',
             },
-            name
+            name,
           ),
           strArr[1],
-        ]
+        ],
       )
       return {
         msg,
@@ -1147,8 +1147,8 @@ export default {
                 JSON.stringify({
                   size: 100,
                   page: 1,
-                })
-              )
+                }),
+              ),
           )
           .then(async (data) => {
             const { items = [] } = data

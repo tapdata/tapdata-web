@@ -735,5 +735,5 @@ export default {
   packages_dag_existDataProcessMode_desc:
     'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
   packages_dag_ddl_events_collapse_tip:
-    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.'
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
 }

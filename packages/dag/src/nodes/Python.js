@@ -45,8 +45,8 @@ export class JavaScript extends NodeType {
                   title: i18n.t('packages_dag_python_not_support_windows'),
                   type: 'info',
                   showIcon: true,
-                  closable: false
-                }
+                  closable: false,
+                },
               },
               nameWrap: {
                 type: 'void',

@@ -219,7 +219,7 @@ export class MergeTable extends NodeType {
                             },
                             children: {
                               type: 'array',
-                              'x-display': 'hidden'
+                              'x-display': 'hidden',
                             },
                             enableUpdateJoinKeyValue: {
                               type: 'boolean',
@@ -227,8 +227,8 @@ export class MergeTable extends NodeType {
                               'x-decorator': 'FormItem',
                               'x-component': 'Switch',
                               'x-component-props': {
-                                onChange: '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}'
-                              }
+                                onChange: '{{(val) => { changeEnableUpdateJoinKeyValue(val, $self) }}}',
+                              },
                             },
                             joinKeys: {
                               type: 'array',

@@ -180,12 +180,12 @@ export default {
   computed: {
     title() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title'
+        this.isRelmig ? 'packages_business_relmig_import' : 'packages_business_modules_dialog_import_title',
       )
     },
     uploadText() {
       return this.$t(
-        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files'
+        this.isRelmig ? 'packages_business_relmig_upload' : 'packages_business_modules_dialog_upload_files',
       )
     },
     isRelmig() {

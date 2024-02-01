@@ -275,10 +275,10 @@ const routes = [
             component: SharedMiningList,
             meta: {
               title: 'public_shared_mining',
-              code: 'v2_log_collector'
-            }
-          }
-        ]
+              code: 'v2_log_collector',
+            },
+          },
+        ],
       },
       /* ---------- 数据校验  ----------*/
       {
@@ -389,8 +389,8 @@ const routes = [
         component: ExternalStorageList,
         meta: {
           title: 'public_external_storage',
-          code: 'v2_external-storage_menu'
-        }
+          code: 'v2_external-storage_menu',
+        },
       },
       {
         path: '/user/center',

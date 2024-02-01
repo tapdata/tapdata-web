@@ -141,12 +141,12 @@ const FormCollapse = observer(
                       },
                       {
                         default: () => [resolveComponent(tooltip)],
-                      }
+                      },
                     ),
-                }
+                },
               ),
             ],
-          }
+          },
         )
       }
 
@@ -162,7 +162,7 @@ const FormCollapse = observer(
               class: [`${prefixCls}-errors-badge`],
               value: errors.length,
             },
-            { default: () => props.title }
+            { default: () => props.title },
           )
         }
         return props.title
@@ -200,17 +200,17 @@ const FormCollapse = observer(
                         {},
                         {
                           default: () => [badgedHeader(name, props), props.tooltip && renderTooltipIcon(props.tooltip)],
-                        }
+                        },
                       ),
-                  }
+                  },
                 )
               })
             },
-          }
+          },
         )
       }
     },
-  })
+  }),
 )
 
 export const FormCollapseItem = defineComponent({

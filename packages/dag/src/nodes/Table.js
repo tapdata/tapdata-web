@@ -286,7 +286,7 @@ export class Table extends NodeType {
                         effects: ['onFieldInit'],
                         fulfill: {
                           run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
-                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
+                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb',
                           )}':''`,
                         },
                       },
@@ -325,7 +325,7 @@ export class Table extends NodeType {
                         run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
-                            'packages_dag_nodes_database_setting_cdc_changjing_desc'
+                            'packages_dag_nodes_database_setting_cdc_changjing_desc',
                           )}':$self.value === 'dropTable' ? '${i18n.t('packages_dag_existDataProcessMode_desc')}':''}}`,
                         },
                         schema: {
@@ -565,7 +565,7 @@ export class Table extends NodeType {
                               state: {
                                 disabled: true,
                                 description: `{{$values.databaseType + ' ${i18n.t(
-                                  'packages_dag_nodes_database_value_zanbuzhiciddl'
+                                  'packages_dag_nodes_database_value_zanbuzhiciddl',
                                 )}'}}`,
                               },
                             },
@@ -1115,7 +1115,7 @@ export class Table extends NodeType {
                                   },
                                   state: {
                                     description: `{{!!$deps[0] || !!$deps[1] ? '${i18n.t(
-                                      'packages_dag_nodes_table_depsd'
+                                      'packages_dag_nodes_table_depsd',
                                     )}':''}}`,
                                   },
                                 },
@@ -1447,7 +1447,7 @@ export class Table extends NodeType {
                           },
                           incrementExactlyOnceEnableTimeWindowDay: {
                             title: i18n.t(
-                              'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title'
+                              'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_title',
                             ),
                             type: 'number',
                             'x-decorator': 'FormItem',
@@ -1455,7 +1455,7 @@ export class Table extends NodeType {
                               className: 'item-control-horizontal ml-3',
                               layout: 'horizontal',
                               tooltip: i18n.t(
-                                'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips'
+                                'packages_dag_nodes_database_increment_exactly_once_enable_time_window_day_tips',
                               ),
                             },
                             'x-component': 'Select',

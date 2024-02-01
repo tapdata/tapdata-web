@@ -755,7 +755,7 @@ export default {
         if (externalStorage.type === 'mongodb') {
           const regResult =
             /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-              externalStorage.uri
+              externalStorage.uri,
             )
           const { username, host, database, query } = regResult.groups
           uriInfo = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`

@@ -123,11 +123,11 @@ export default ({ routes }) => {
                       props: { type: 'primary', size: 'mini' },
                       on: { click: () => self.onRefresh() },
                     },
-                    i18n.t('public_button_refresh')
+                    i18n.t('public_button_refresh'),
                   ),
-                ]
+                ],
               ),
-            ]
+            ],
           ),
           duration: 0,
           position: 'bottom-right',

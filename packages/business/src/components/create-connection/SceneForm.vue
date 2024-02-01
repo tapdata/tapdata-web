@@ -792,7 +792,7 @@ export default {
         endProperties.schemaUpdateHour.default = 'default'
         endProperties.schemaUpdateHour.enum.unshift({
           label: i18n.t('packages_business_connections_databaseform_system'),
-          value: 'default'
+          value: 'default',
         })
       }
 

@@ -475,7 +475,7 @@ export default {
               if (item.config?.uri) {
                 const regResult =
                   /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
-                    item.config.uri
+                    item.config.uri,
                   )
                 if (regResult && regResult.groups && regResult.groups.password) {
                   const { username, host, database, query } = regResult.groups
@@ -535,7 +535,7 @@ export default {
           {
             type: 'warning',
             showClose: false,
-          }
+          },
         ).then((resFlag) => {
           if (!resFlag) {
             return
@@ -574,7 +574,7 @@ export default {
             uri: `${data.id}/copy`,
             headers: headersName,
           },
-          data.name
+          data.name,
         )
         .then(() => {
           this.table.fetch()
@@ -601,7 +601,7 @@ export default {
           {
             class: 'color-primary',
           },
-          row.name
+          row.name,
         ),
         strArr[1],
       ])
@@ -728,8 +728,8 @@ export default {
               {},
               {
                 status: 'testing',
-              }
-            )
+              },
+            ),
           )
           .then(() => {
             this.dialogTestVisible = true
@@ -787,7 +787,7 @@ export default {
             let databaseTypes = []
             databaseTypes.push(...data)
             let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
-              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1,
             )
             //默认全部
             // let all = {

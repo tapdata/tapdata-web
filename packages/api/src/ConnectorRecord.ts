@@ -1,5 +1,5 @@
 import Http from './Http'
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from 'axios'
 
 export default class ConnectorRecord extends Http {
   constructor() {
@@ -10,7 +10,7 @@ export default class ConnectorRecord extends Http {
     return this.axios.post(`${this.url}/downloadConnector`, params)
   }
 
-  delete(id: string){
+  delete(id: string) {
     return this.axios.delete(`${this.url}/${id}`)
   }
 }

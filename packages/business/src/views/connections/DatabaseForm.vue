@@ -247,8 +247,8 @@ export default {
                 agentType: 'Cloud',
                 status: 'Running',
               },
-            })
-          )
+            }),
+          ),
       )
 
       if (agentData.length) {
@@ -296,7 +296,7 @@ export default {
             ? {
                 name: 'connections',
               }
-            : this.pathUrl
+            : this.pathUrl,
         )
       } else {
         this.$router.back()
@@ -331,7 +331,7 @@ export default {
           },
           {
             config: formValues,
-          }
+          },
         )
         let promise = null
         if (id) {
@@ -372,7 +372,7 @@ export default {
           },
           () => {
             this.$el.querySelector('.formily-element-plus-form-item-error').scrollIntoView()
-          }
+          },
         )
       }).catch(() => {
         this.buried('connectionTestAgentFail')
@@ -701,17 +701,17 @@ export default {
                   value: `{{!$isDaas && $deps[0] ? 'MANUALLY_SPECIFIED_BY_THE_USER' : $self.value}}`,
                   dataSource: `{{!$isDaas && $deps[0] ? [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ] : [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ]}}`,
                 },
@@ -740,7 +740,7 @@ export default {
         accessNodeProcessId: {
           type: 'string',
           description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
-            'packages_business_agent_select_not_found_for_rocksdb'
+            'packages_business_agent_select_not_found_for_rocksdb',
           )}' : ''}}`,
           'x-decorator': 'FormItem',
           'x-decorator-props': {
@@ -1132,7 +1132,7 @@ export default {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
@@ -1148,7 +1148,7 @@ export default {
                   field.setValue(data)
                 } else field[fieldName] = data
                 field.loading = false
-              })
+              }),
             )
           }
         },
@@ -1334,7 +1334,7 @@ export default {
               subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
               service: 'engine',
             },
-            others
+            others,
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
             const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
@@ -1447,7 +1447,7 @@ export default {
           {
             config: __TAPDATA_CONFIG,
           },
-          trace
+          trace,
         )
         this.schemaFormInstance.setValues({
           __TAPDATA,

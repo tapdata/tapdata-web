@@ -38,7 +38,7 @@ export default {
     onlyIntro() {
       return false
       // return !this.$store.state.config.pagePermissions?.includes('dataHub')
-    }
+    },
   },
 
   async created() {

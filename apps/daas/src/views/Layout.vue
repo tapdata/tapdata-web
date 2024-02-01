@@ -797,7 +797,9 @@ export default {
   .expire-msg {
     margin-right: 25px;
     font-size: $fontBaseTitle;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-family:
+      PingFangSC-Medium,
+      PingFang SC;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;
