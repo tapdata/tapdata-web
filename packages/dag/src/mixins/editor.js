@@ -1533,7 +1533,8 @@ export default {
       let inBlacklist = false
       let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
       this.allNodes.forEach(node => {
-        if (node.enableDDL) {
+        // 开启了DDL
+        if (node.ddlConfiguration === 'SYNCHRONIZATION') {
           hasEnableDDL = true
           if (node.increasePoll === 'customizeSql') {
             hasEnableDDLAndIncreasesql = true

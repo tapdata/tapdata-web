@@ -541,22 +541,31 @@ export class Table extends NodeType {
                       title: i18n.t('packages_dag_config_ddl')
                     },
                     properties: {
-                      enableDDL: {
-                        title: i18n.t('packages_dag_nodes_table_ddLshijian'),
-                        type: 'boolean',
+                      ddlConfiguration: {
+                        type: 'string',
+                        default: 'FILTER',
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_ddl_stopped_on_error'),
+                            value: 'ERROR'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_auto_ignore'),
+                            value: 'FILTER'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_sync_events'),
+                            value: 'SYNCHRONIZATION'
+                          }
+                        ],
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          className: 'item-control-horizontal',
-                          layout: 'horizontal',
-                          tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu')
-                        },
-                        'x-component': 'Switch',
+                        'x-component': 'Radio.Group',
                         'x-reactions': [
                           {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                display: '{{$self.value ? "visible" :"hidden"}}'
+                                visible: '{{$self.value === "SYNCHRONIZATION"}}'
                               }
                             }
                           },

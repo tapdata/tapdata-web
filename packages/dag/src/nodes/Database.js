@@ -474,25 +474,31 @@ export class Database extends NodeType {
                       title: i18n.t('packages_dag_config_ddl')
                     },
                     properties: {
-                      enableDDL: {
-                        title: i18n.t('packages_dag_nodes_table_ddLshijian'),
-                        type: 'boolean',
+                      ddlConfiguration: {
+                        type: 'string',
+                        default: 'FILTER',
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_ddl_stopped_on_error'),
+                            value: 'ERROR'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_auto_ignore'),
+                            value: 'FILTER'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_sync_events'),
+                            value: 'SYNCHRONIZATION'
+                          }
+                        ],
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          // addonAfter: '开启后任务将会自动采集选中的源端DDL事件',
-                          tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu'),
-                          feedbackLayout: 'none'
-                          // wrapperStyle: {
-                          //   width: 'auto'
-                          // }
-                        },
-                        'x-component': 'Switch',
+                        'x-component': 'Radio.Group',
                         'x-reactions': [
                           {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                display: '{{$self.value ? "visible" :"hidden"}}'
+                                visible: '{{$self.value === "SYNCHRONIZATION"}}'
                               }
                             }
                           },
@@ -501,7 +507,7 @@ export class Database extends NodeType {
                             fulfill: {
                               state: {
                                 disabled: true,
-                                description: `{{$values.databaseType + '${i18n.t(
+                                description: `{{$values.databaseType + ' ${i18n.t(
                                   'packages_dag_nodes_database_value_zanbuzhiciddl'
                                 )}'}}`
                               }
