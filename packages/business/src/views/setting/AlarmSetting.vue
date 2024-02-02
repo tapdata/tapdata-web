@@ -397,9 +397,10 @@ export default {
     async saveAlarmRecipient() {
       this.savingRecipient = true
       try {
+        const value = this.alarmRecipientData[0].value?.trim()
         await alarmMailApi.save({
           type: 'EMAIL',
-          emailAddressList: this.alarmRecipientData[0].value.split(',').map(item => item.trim())
+          emailAddressList: value ? value.split(',').map(item => item.trim()) : []
         })
         this.alarmRecipientVisible = false
         this.$message.success(this.$t('public_message_save_ok'))
