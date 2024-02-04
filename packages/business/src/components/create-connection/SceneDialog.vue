@@ -339,6 +339,9 @@ export default {
     startingTour() {
       return this.$store.getters.startingTour
     },
+    pausedGuide() {
+      return this.$store.getters.pausedGuide
+    },
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types
@@ -385,7 +388,7 @@ export default {
     },
 
     showDemoConnection() {
-      return this.startingTour && this.currentScene === 'recommend' && !this.search
+      return this.startingTour && !this.pausedGuide && this.currentScene === 'recommend' && !this.search
     },
   },
   watch: {
