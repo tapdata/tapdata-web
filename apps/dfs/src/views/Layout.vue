@@ -47,9 +47,7 @@
           <template v-for="menu in subMenu">
             <ElSubMenu v-if="menu.children" :index="menu.name">
               <template #title>
-                <span class="mr-4" slot v-if="menu.icon"
-                  ><VIcon class="v-icon" size="17">{{ menu.icon }}</VIcon></span
-                >
+                <VIcon v-if="menu.icon" class="mr-4" size="17">{{ menu.icon }}</VIcon>
                 <span>{{ menu.title }}</span>
               </template>
               <template v-for="cMenu in menu.children" :key="cMenu.title">
@@ -496,7 +494,8 @@ export default {
       background-color: map-get($color, submenu);
     }
 
-    :deep(.el-menu-item) {
+    :deep(.el-menu-item),
+    :deep(.el-sub-menu__title) {
       height: 50px;
       line-height: 50px;
 
@@ -516,6 +515,10 @@ export default {
         .v-icon {
           color: map-get($color, primary);
         }
+      }
+
+      .submenu-item {
+        padding-left: 12px;
       }
     }
 

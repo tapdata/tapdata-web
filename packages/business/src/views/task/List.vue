@@ -65,38 +65,34 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <template>
-            <el-button
-              v-if="buttonShowMap.export"
-              v-show="multipleSelection.length > 0 && isDaas"
-              :disabled="$disabledReadonlyUserBtn()"
-              v-readonlybtn="'SYNC_job_export'"
-              class="btn message-button-cancel"
-              @click="handleCommand('export')"
-            >
-              <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-              <span> {{ $t('public_button_export') }}</span>
-            </el-button>
-            <el-button
-              v-if="buttonShowMap.import && isDaas"
-              v-readonlybtn="'SYNC_job_import'"
-              class="btn"
-              :disabled="$disabledReadonlyUserBtn()"
-              @click="handleImport"
-            >
-              <span> {{ $t('packages_business_button_bulk_import') }}</span>
-            </el-button>
-            <el-button
-              v-if="buttonShowMap.import && $route.name === 'dataflowList'"
-              v-readonlybtn="'SYNC_job_import'"
-              size="mini"
-              class="btn"
-              :disabled="$disabledReadonlyUserBtn()"
-              @click="handleImportRelmig"
-            >
-              <span> {{ $t('packages_business_relmig_import') }}</span>
-            </el-button>
-          </template>
+          <el-button
+            v-if="buttonShowMap.export"
+            v-show="multipleSelection.length > 0 && isDaas"
+            :disabled="$disabledReadonlyUserBtn()"
+            v-readonlybtn="'SYNC_job_export'"
+            class="btn message-button-cancel"
+            @click="handleCommand('export')"
+          >
+            <span> {{ $t('public_button_export') }}</span>
+          </el-button>
+          <el-button
+            v-if="buttonShowMap.import && isDaas"
+            v-readonlybtn="'SYNC_job_import'"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImport"
+          >
+            <span> {{ $t('packages_business_button_bulk_import') }}</span>
+          </el-button>
+          <el-button
+            v-if="buttonShowMap.import && $route.name === 'dataflowList'"
+            v-readonlybtn="'SYNC_job_import'"
+            class="btn"
+            :disabled="$disabledReadonlyUserBtn()"
+            @click="handleImportRelmig"
+          >
+            <span> {{ $t('packages_business_relmig_import') }}</span>
+          </el-button>
           <ElButton
             v-if="$route.name === 'dataflowList'"
             class="--with-icon inline-flex align-center px-2 py-0 align-top"
