@@ -130,7 +130,8 @@ export default {
 
   computed: {
     onlyIntro() {
-      return !this.$store.state.config.pagePermissions?.includes('dataHub')
+      return false
+      // return !this.$store.state.config.pagePermissions?.includes('dataHub')
     },
   },
 

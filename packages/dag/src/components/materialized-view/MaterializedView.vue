@@ -13,7 +13,7 @@
         <div class="fs-6 font-color-dark ml-1">
           {{ $t('packages_dag_materialized_view') }}
         </div>
-        <ElButton type="text" class="ml-4 color-warning" @click="handleOpenHelp"
+        <ElButton v-if="isDaas" type="text" class="ml-4 color-warning" @click="handleOpenHelp"
           ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
         >
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
@@ -196,6 +196,7 @@ export default {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
 
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       nodes: [],
       nodePositionMap: {},
       nodeSchemaMap: {},
