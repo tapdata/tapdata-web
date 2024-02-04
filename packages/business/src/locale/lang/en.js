@@ -582,8 +582,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
   packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',
-  packages_business_task_status_retrying_tooltip:
-    'The current task entered a retry state on {val}. The system will monitor for one hour to confirm if the task has recovered from retry. Please ignore this alert if the task has returned to normal.',
+  packages_business_task_status_retrying_tooltip: 'The current task is being retried. Retry start at: {val}',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
