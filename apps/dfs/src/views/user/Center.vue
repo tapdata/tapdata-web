@@ -17,7 +17,7 @@
             </div>
             <div class="user-item__value">
               <ElSelect :model-value="language" @change="handleUpdateLanguage">
-                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
+                <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" :key="k" />
               </ElSelect>
             </div>
           </ElCol>
