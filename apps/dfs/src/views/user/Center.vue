@@ -16,7 +16,7 @@
               {{ $t('dfs_settings_language') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">
-              <ElSelect :value="language" @change="handleUpdateLanguage">
+              <ElSelect :model-value="language" @change="handleUpdateLanguage">
                 <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
               </ElSelect>
             </div>

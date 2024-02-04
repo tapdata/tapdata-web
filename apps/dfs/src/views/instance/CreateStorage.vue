@@ -48,12 +48,12 @@
             >
 
             <el-skeleton :loading="loading || loadingProvider" animated>
-              <template v-slot:template>
+              <template #template>
                 <div class="flex gap-4">
                   <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
-              <template>
+              <template #default>
                 <ElRadioGroup v-model="provider" @change="changeProvider" class="flex flex-wrap gap-4">
                   <ElRadio
                     v-for="(item, index) in cloudProviderList"
@@ -74,12 +74,12 @@
               $t('dfs_agent_download_subscriptionmodeldialog_diqu')
             }}</span>
             <el-skeleton :loading="loading || loadingProvider" animated>
-              <template v-slot:template>
+              <template #template>
                 <div class="flex gap-4">
                   <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
                 </div>
               </template>
-              <template>
+              <template #default>
                 <ElRadioGroup v-model="region" class="flex flex-wrap gap-4" @change="changeRegion">
                   <ElRadio
                     v-for="(item, index) in cloudDetail"
@@ -107,12 +107,12 @@
             </div>
           </template>
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template v-slot:template>
+            <template #template>
               <div class="flex gap-4">
                 <el-skeleton-item v-for="i in 4" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
-            <template>
+            <template #default>
               <ElRadioGroup v-model="current.clusterTier" @change="handleChangeTier" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in tierOptions"
@@ -142,12 +142,12 @@
             </div>
           </template>
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template v-slot:template>
+            <template #template>
               <div class="flex gap-4">
                 <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
-            <template>
+            <template #default>
               <ElRadioGroup v-model="current.storageSize" @change="handleChangeSize" class="flex flex-wrap gap-4">
                 <ElRadio
                   v-for="(item, index) in sizeOptions"
@@ -172,12 +172,12 @@
             </div>
           </template>
           <el-skeleton :loading="loadingProvider || loadingMongoCluster" animated>
-            <template v-slot:template>
+            <template #template>
               <div class="flex gap-4">
                 <el-skeleton-item v-for="i in 2" :key="i" class="rounded-4 h-32" variant="button" />
               </div>
             </template>
-            <template>
+            <template #default>
               <ElRadioGroup v-model="current.priceId" class="flex gap-4">
                 <ElRadio
                   v-for="(item, index) in periodOptions"
