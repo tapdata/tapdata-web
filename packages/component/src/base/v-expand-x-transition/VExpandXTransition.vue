@@ -78,10 +78,10 @@ function ExpandTransitionGenerator(expandedParentClass = '', x = false) {
   }
 }
 
-export default defineComponent((props, context) => {
-  return (
+export default defineComponent((props, { slots }) => {
+  return () => (
     <Transition name="expand-x-transition" {...ExpandTransitionGenerator('', true)}>
-      {context.children}
+      {slots.default()}
     </Transition>
   )
 })
