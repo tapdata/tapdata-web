@@ -8,7 +8,7 @@
   >
     <div class="empty-image">
       <slot name="image">
-        <ElImage :src="require('./empty.svg')"></ElImage>
+        <ElImage :src="imgSrc"></ElImage>
       </slot>
     </div>
     <p class="empty-desc">{{ description }}</p>
@@ -28,6 +28,11 @@ export default {
       default: () => {
         return i18n.t('public_data_no_data')
       },
+    },
+  },
+  computed: {
+    imgSrc() {
+      return new URL('./empty.svg', import.meta.url).href
     },
   },
 }

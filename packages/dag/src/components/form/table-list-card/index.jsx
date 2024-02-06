@@ -5,7 +5,7 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 import i18n from '@tap/i18n'
 import { defineComponent, ref, watch } from 'vue'
 import { metadataInstancesApi } from '@tap/api'
-import { OverflowTooltip } from '@tap/component'
+import { VEmpty, OverflowTooltip } from '@tap/component'
 import { observer } from '@formily/reactive-vue'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
@@ -92,23 +92,23 @@ export const TableListCard = observer(
           )
         } else {
           listDom = (
-            <div className="flex-1 flex flex-column justify-center">
-              <ElEmpty
-                image-size={111}
-                image={require('@tap/assets/images/img_empty.png')}
-                description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}
-              ></ElEmpty>
+            <div class="flex-1 flex flex-column justify-center">
+              <VEmpty description={i18n.t('packages_dag_table_list_card_index_zanshimeiyoupi')}></VEmpty>
             </div>
           )
         }
 
         return (
           <ElCard class="table-list-card" shadow="never">
-            <div slot="header" class="clearfix">
-              <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
-              {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
-            </div>
-            {listDom}
+            {{
+              header: () => (
+                <div class="clearfix">
+                  <span>{props.title || i18n.t('packages_form_field_mapping_list_biaoming')}</span>
+                  {!loading.value && <span class="font-color-light float-end">{list.value.length}</span>}
+                </div>
+              ),
+              default: () => listDom,
+            }}
           </ElCard>
         )
       }
