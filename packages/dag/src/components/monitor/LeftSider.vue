@@ -179,7 +179,7 @@
             >
               <span class="inline-flex align-items-center">
                 <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
-                <VIcon size="14" class="color-primary">info</VIcon>
+                <VIcon size="16" class="color-primary">info</VIcon>
               </span>
             </ElTooltip>
             <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">
@@ -198,16 +198,27 @@
           ></LineChart>
         </div>
         <div class="line-chart__box mb-2">
-          <ElTooltip
-            transition="tooltip-fade-in"
-            placement="top"
-            :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
-          >
-            <span class="inline-flex align-items-center">
-              <span class="mr-2 font-color-dark fw-sub">{{ $t('public_event_incremental_delay') }}</span>
-              <VIcon size="14" class="color-primary">info</VIcon>
-            </span>
-          </ElTooltip>
+          <div class="flex align-center gap-2">
+            <ElTooltip
+              transition="tooltip-fade-in"
+              placement="top"
+              :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')"
+            >
+              <span class="inline-flex align-items-center">
+                <span class="mr-2 font-color-dark fw-sub">{{ $t('public_event_incremental_delay') }}</span>
+                <VIcon size="16" class="color-primary">info</VIcon>
+              </span>
+            </ElTooltip>
+            <ElTooltip
+              v-if="dataflow.timeDifference > 0"
+              key="retrying"
+              placement="top"
+              :content="$t('packages_dag_monitor_timeDifference', { val: calcTimeUnit(dataflow.timeDifference) })"
+            >
+              <VIcon size="16" class="color-warning">warning</VIcon>
+            </ElTooltip>
+          </div>
+
           <LineChart
             :data="replicateLagData"
             :color="['#2C65FF']"
@@ -335,7 +346,7 @@
           >
             <span class="inline-flex align-items-center">
               <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
-              <VIcon size="14" class="color-primary">info</VIcon>
+              <VIcon size="16" class="color-primary">info</VIcon>
             </span>
           </ElTooltip>
           <ElRadioGroup v-model="qpsChartsType" size="mini" class="chart__radio">

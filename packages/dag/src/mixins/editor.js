@@ -2224,6 +2224,10 @@ export default {
           this.dataflow.pingTime = data.pingTime
           this.dataflow.shareCdcStop = data.shareCdcStop
           this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
+          this.dataflow.timeDifference = data.timeDifference
+          this.dataflow.currentEventTimestamp = data.currentEventTimestamp
+          this.dataflow.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
+
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 

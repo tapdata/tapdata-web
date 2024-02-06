@@ -431,6 +431,7 @@ export default {
     '任務處理完成一條新產生事件需要消耗的總時間，當有多個目標時只統計最大的處理耗時',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
+  packages_dag_monitor_timeDifference: '數據源與引擎時間差過大（{val}）,增量延遲有偏差，請手動對齊時間',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任務平均每秒處理的輸入事件大小和輸出事件大小',
   packages_dag_components_log_zuidashijianshu: '最大事件數（條）',

@@ -69,10 +69,13 @@ import {
   Empty,
   Slider,
   Timeline,
-  TimelineItem,
+  TimelineItem
 } from 'element-ui'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 import 'element-ui/lib/theme-chalk/index.css'
+
+// 提示框默认不显示箭头
+Tooltip.props.visibleArrow.default = false
 
 const showMessage = Symbol('showMessage')
 

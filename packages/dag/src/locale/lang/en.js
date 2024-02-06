@@ -452,6 +452,8 @@ export default {
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
+  packages_dag_monitor_timeDifference:
+    'Significant time difference between data source and engine ({val}), incremental delay is biased, please manually align the time',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
   packages_dag_monitor_leftsider_qpSshizhi2:
