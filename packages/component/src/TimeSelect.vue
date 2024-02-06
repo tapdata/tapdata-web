@@ -1,6 +1,6 @@
 <template>
   <div class="time-select__picker flex align-center">
-    <div class="w-100 picker__item inline-flex align-items-center cursor-pointer" @click="openSelect">
+    <div class="w-100 picker__item inline-flex align-items-center" @click="openSelect">
       <div class="time-select__title">{{ title }}</div>
       <ElSelect
         v-model="period"
@@ -344,8 +344,8 @@ export default {
   padding: 0 8px;
   border-radius: 4px;
 
-  &:hover {
-    background: #eef3ff;
-  }
+  //&:hover {
+  //  background: #eef3ff;
+  //}
 }
 </style>
