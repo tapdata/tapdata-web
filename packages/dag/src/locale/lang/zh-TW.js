@@ -683,5 +683,8 @@ export default {
     '注意：為了保證性能，Tapdata 會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引',
   packages_dag_existDataProcessMode_desc: '該行為會直接刪除目標表和數據，可能會對數據庫造成影響，請謹慎使用。',
   packages_dag_ddl_events_collapse_tip:
-    '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓'
+    '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓',
+  packages_dag_ddl_stopped_on_error: '遇到DDL時任務報錯停止',
+  packages_dag_ddl_auto_ignore: '自動忽略所有DDL',
+  packages_dag_ddl_sync_events: '同步DDL事件'
 }
