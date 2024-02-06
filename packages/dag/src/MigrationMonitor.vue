@@ -38,33 +38,31 @@
     </TopHeader>
     <section class="layout-wrap layout-has-sider position-relative font-color-light">
       <!--左侧边栏-->
-      <VExpandXTransition>
-        <LeftSider
-          v-resize.right="{
-            minWidth: 356,
-            maxWidth: 750,
-          }"
-          :dataflow="dataflow"
-          :quota="quota"
-          :verifyTotals="verifyTotals"
-          :timeFormat="timeFormat"
-          :range="timeSelectRange"
-          @load-data="init"
-          @move-node="handleDragMoveNode"
-          @drop-node="handleAddNodeByDrag"
-          @add-node="handleAddNode"
-          @toggle-expand="handleToggleExpand"
-          @changeTimeSelect="handleChangeTimeSelect"
-          @changeFrequency="handleChangeFrequency"
-          @verifyDetails="handleVerifyDetails"
-        >
-          <template #status="{ result }">
-            <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
-              {{ getTaskStatus(result[0].status) }}
-            </span>
-          </template>
-        </LeftSider>
-      </VExpandXTransition>
+      <LeftSider
+        v-resize.right="{
+          minWidth: 356,
+          maxWidth: 750,
+        }"
+        :dataflow="dataflow"
+        :quota="quota"
+        :verifyTotals="verifyTotals"
+        :timeFormat="timeFormat"
+        :range="timeSelectRange"
+        @load-data="init"
+        @move-node="handleDragMoveNode"
+        @drop-node="handleAddNodeByDrag"
+        @add-node="handleAddNode"
+        @toggle-expand="handleToggleExpand"
+        @changeTimeSelect="handleChangeTimeSelect"
+        @changeFrequency="handleChangeFrequency"
+        @verifyDetails="handleVerifyDetails"
+      >
+        <template #status="{ result }">
+          <span v-if="result && result[0]" :class="['status-' + result[0].status, 'status-block']">
+            {{ getTaskStatus(result[0].status) }}
+          </span>
+        </template>
+      </LeftSider>
       <div v-if="!stateIsReadonly" class="sider-expand-wrap flex justify-center align-center rotate-180">
         <VIcon size="24" class="font-color-light" @click.stop="handleToggleExpand">expand</VIcon>
       </div>
