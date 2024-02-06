@@ -168,10 +168,10 @@
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" text class="pl-0" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
+        <ElButton v-if="!isEdit" text class="pl-0" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</ElButton>
         <template v-else>
-          <VButton text class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
-          <VButton text auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
+          <ElButton text class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton text auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</ElButton>
         </template>
       </div>
     </div>
@@ -252,18 +252,18 @@
       <div class="text-center">
         <UploadFile :upload="upload" accept="image/*">
           <img v-if="avatar" :src="avatar" class="avatar" />
-          <el-icon class="avatar-uploader-icon"><el-icon-plus /></el-icon>
+          <el-icon v-else class="avatar-uploader-icon"><el-icon-plus /></el-icon>
           <div class="my-4 font-color-main">
             {{ $t('user_Center_zhiChiJPG') }}
           </div>
-          <VButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</VButton>
+          <ElButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</ElButton>
         </UploadFile>
       </div>
-      <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
+      <div class="py-6 text-center">
+        <ElButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
           $t('public_button_confirm')
-        }}</VButton>
+        }}</ElButton>
       </div>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
@@ -301,18 +301,19 @@
             </ElInput>
           </ElFormItem>
           <ElFormItem prop="code" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
-            <ElInput
-              v-model="passwordForm.code"
-              :placeholder="$t('user_Center_qingShuRuShouJi')"
-              maxlength="50"
-            ></ElInput>
-            <VerificationCode
-              :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
-              :disabled="!passwordForm.telephone"
-              :style="{ width: '180px', textAlign: 'center' }"
-              class="ml-6"
-              text
-            ></VerificationCode>
+            <div class="flex align-center gap-4">
+              <ElInput
+                v-model="passwordForm.code"
+                :placeholder="$t('user_Center_qingShuRuShouJi')"
+                maxlength="50"
+              ></ElInput>
+              <VerificationCode
+                :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
+                :disabled="!passwordForm.telephone"
+                :style="{ width: '180px', textAlign: 'center' }"
+                text
+              ></VerificationCode>
+            </div>
           </ElFormItem>
         </template>
         <template v-else>
@@ -362,10 +363,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])">{{
+          <ElButton @click="dialogObj.password = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" auto-loading @click="passwordConfirm(arguments[0])">{{
             $t('public_button_confirm')
-          }}</VButton>
+          }}</ElButton>
         </span>
       </template>
     </ElDialog>
@@ -408,10 +409,14 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.bindPhone = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
-            $t('public_button_confirm')
-          }}</VButton>
+          <ElButton @click="dialogObj.bindPhone = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton
+            type="primary"
+            :disabled="!phoneForm.oldCode"
+            auto-loading
+            @click="bindPhoneConfirm(arguments[0])"
+            >{{ $t('public_button_confirm') }}</ElButton
+          >
         </span>
       </template>
     </ElDialog>
@@ -482,13 +487,13 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.editPhone = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton
+          <ElButton @click="dialogObj.editPhone = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton
             type="primary"
             :disabled="editPhoneDisabled()"
             auto-loading
             @click="editPhoneConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
+            >{{ $t('public_button_confirm') }}</ElButton
           >
         </span>
       </template>
@@ -543,13 +548,13 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.bindEmail = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton
+          <ElButton @click="dialogObj.bindEmail = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton
             type="primary"
             :disabled="!emailForm.email || !emailForm.code"
             auto-loading
             @click="bindEmailConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
+            >{{ $t('public_button_confirm') }}</ElButton
           >
         </span>
       </template>
@@ -611,13 +616,13 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.editEmail = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton
+          <ElButton @click="dialogObj.editEmail = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton
             type="primary"
             :disabled="editEmailDisabled()"
             auto-loading
             @click="editEmailConfirm(arguments[0])"
-            >{{ $t('public_button_confirm') }}</VButton
+            >{{ $t('public_button_confirm') }}</ElButton
           >
         </span>
       </template>
@@ -659,10 +664,10 @@
 
       <template v-slot:footer>
         <span class="dialog-footer">
-          <VButton @click="dialogObj.firstName = false">{{ $t('public_button_cancel') }}</VButton>
-          <VButton type="primary" auto-loading @click="updateFirstName(arguments[0])">{{
+          <ElButton @click="dialogObj.firstName = false">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" auto-loading @click="updateFirstName(arguments[0])">{{
             $t('public_button_confirm')
-          }}</VButton>
+          }}</ElButton>
         </span>
       </template>
     </ElDialog>
