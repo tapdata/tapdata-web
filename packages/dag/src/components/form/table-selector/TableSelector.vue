@@ -643,7 +643,7 @@ export default {
   display: flex;
   align-items: center;
   background: #f7f8fa;
-  line-height: 40px;
+  height: 40px;
   color: map-get($fontColor, normal);
   font-size: 13px;
   font-weight: 500;
@@ -749,6 +749,7 @@ export default {
     word-break: break-word;
   }
   .selector-clipboard__view--empty {
+    padding: 5px 11px;
     color: map-get($fontColor, slight);
     font-size: 12px;
     font-weight: normal;
@@ -760,7 +761,7 @@ export default {
   :deep(.el-textarea__inner) {
     height: 100%;
     border: none;
-    padding: 0;
+    //padding: 0;
     font-size: 12px;
     line-height: 20px;
   }
