@@ -23,30 +23,30 @@ jobs:
   Get-Branch:
     runs-on: ubuntu-latest
     outputs:
-      TAPDATA_FRONTEND_BRANCH: ${{ steps.set-outputs.outputs.TAPDATA_FRONTEND_BRANCH }}
+      FRONTEND_BRANCH: ${{ steps.set-outputs.outputs.FRONTEND_BRANCH }}
     steps:
       - name: Get Enterprise Branch Name -- Common
         run: |
-          echo "TAPDATA_FRONTEND_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+          echo "FRONTEND_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - name: Get Enterprise Branch Name -- Pull Request
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          echo "TAPDATA_FRONTEND_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+          echo "FRONTEND_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
       - name: Get Enterprise Branch Name -- Schedule
         if: ${{ github.event_name == 'schedule' }}
         run: |
-          echo "TAPDATA_FRONTEND_BRANCH=develop" >> $GITHUB_ENV
+          echo "FRONTEND_BRANCH=develop" >> $GITHUB_ENV
       - name: Set Output
         id: set-outputs
         run: |
-          echo "::set-output name=TAPDATA_FRONTEND_BRANCH::${TAPDATA_FRONTEND_BRANCH}"
+          echo "::set-output name=FRONTEND_BRANCH::${FRONTEND_BRANCH}"
 
   Get-Stable-Branch:
     needs:
       - Get-Branch
     uses: tapdata/tapdata-application/.github/workflows/get-stable-branch-and-set-tag.yaml@main
     with:
-      tapdata-frontend-branch: ${{ needs.Get-Branch.outputs.TAPDATA_FRONTEND_BRANCH }}
+      tapdata-frontend-branch: ${{ needs.Get-Branch.outputs.FRONTEND_BRANCH }}
     secrets:
       TAPDATA_ENT_CICD_TOKEN: ${{ secrets.TAPDATA_ENT_CICD_TOKEN }}
 
@@ -60,7 +60,7 @@ jobs:
       tapdata-license: main
       tapdata-connectors: main
       tapdata-connectors-enterprise: main
-      tapdata-enterprise-web: ${{ needs.Get-Stable-Branch.outputs.TAPDATA_FRONTEND_BRANCH }}
+      tapdata-enterprise-web: ${{ needs.Get-Stable-Branch.outputs.FRONTEND_BRANCH }}
     secrets:
       TAPDATA_ENT_CICD_TOKEN: ${{ secrets.TAPDATA_ENT_CICD_TOKEN }}
 
@@ -79,7 +79,7 @@ jobs:
           workflow_file_name: sonarqube-scan.yaml
           ref: main
           wait_interval: 10
-          client_payload: '{"tapdata-enterprise-web": "${{ needs.Get-Stable-Branch.outputs.TAPDATA_FRONTEND_BRANCH }}"}'
+          client_payload: '{"tapdata-enterprise-web": "${{ needs.Get-Stable-Branch.outputs.FRONTEND_BRANCH }}"}'
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
@@ -103,7 +103,7 @@ jobs:
           workflow_file_name: build-tapdata-op.yaml
           ref: main
           wait_interval: 10
-          client_payload: '{"FRONTEND_BRANCH": "${{ needs.Get-Stable-Branch.outputs.TAPDATA_FRONTEND_BRANCH }}", "TAG_NAME": "${{ needs.Get-Stable-Branch.outputs.TAG_NAME }}"}'
+          client_payload: '{"FRONTEND_BRANCH": "${{ needs.Get-Stable-Branch.outputs.FRONTEND_BRANCH }}", "TAG_NAME": "${{ needs.Get-Stable-Branch.outputs.TAG_NAME }}"}'
           propagate_failure: true
           trigger_workflow: true
           wait_workflow: true
