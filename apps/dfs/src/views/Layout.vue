@@ -77,12 +77,12 @@
               </template>
             </ElMenuItem>
           </template>
-          <ElMenuItem v-if="!isDemoEnv && isDomesticStation" key="goDemo" index="goDemo" class="flex align-center">
+          <!--<ElMenuItem v-if="!isDemoEnv && isDomesticStation" key="goDemo" index="goDemo" class="flex align-center">
             <span class="mr-4"><VIcon class="v-icon" size="17">open-in-new</VIcon></span>
             <span class="text-decoration-underline">{{
               $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
             }}</span>
-          </ElMenuItem>
+          </ElMenuItem>-->
         </div>
 
         <!--        <ElMenuItem key="goGuide" index="goGuide" class="flex align-center border-top">-->
