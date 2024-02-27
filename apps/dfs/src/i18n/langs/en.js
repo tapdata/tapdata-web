@@ -32,7 +32,7 @@ export default {
   end_time: 'End Time',
   user_name: 'User Name',
   user_password: 'Password',
-  user_phone_number: 'Cell-Phone Number',
+  user_phone_number: 'Phone Number',
   user_avatar: 'Avatar',
   user_wechat: 'WeChat',
   operate_delete_fail: 'Delete Failed',
