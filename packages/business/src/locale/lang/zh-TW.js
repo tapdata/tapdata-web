@@ -815,6 +815,7 @@ export default {
   packages_business_data_console_fdm: '平台緩存層',
   packages_business_data_console_mdm: '平台加工層',
   packages_business_data_console_targets: '數據目標和服務層',
+  packages_business_data_console_goto_ai_chat: 'AI 对话',
   packages_business_create_clone_task: '創建數據複製任務',
   packages_business_create_sync_task: '創建數據開發任務',
   packages_business_table_prefix: '表前綴',

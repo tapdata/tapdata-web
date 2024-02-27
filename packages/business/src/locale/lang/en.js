@@ -853,6 +853,7 @@ export default {
   packages_business_data_console_fdm: 'Foundation Data Model',
   packages_business_data_console_mdm: 'Master Data Model',
   packages_business_data_console_targets: 'Targets & Services',
+  packages_business_data_console_goto_ai_chat: "Ask AI",
   packages_business_create_clone_task: 'Create Cloning Pipeline',
   packages_business_create_sync_task: 'Create Sync Pipeline',
   packages_business_table_prefix: 'Table Prefix',
