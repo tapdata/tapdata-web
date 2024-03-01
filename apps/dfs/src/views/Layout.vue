@@ -28,11 +28,12 @@
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <VIcon size="16" class="agent-warning-icon color-warning">warning </VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
-                      >{{ $t('agent_tip_no_running') }}
+                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon>xxx{{
+                        $t('agent_tip_no_running')
+                      }}
                     </div>
                   </template>
                 </ElTooltip>
@@ -66,10 +67,10 @@
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning </VIcon>
+                  <VIcon size="16" class="agent-warning-icon color-warning">warning </VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning </VIcon
+                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon
                       >{{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
