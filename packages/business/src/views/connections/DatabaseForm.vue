@@ -823,7 +823,11 @@ export default {
                     title: this.$t('public_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Input'
+                    'x-component': 'Input',
+                    'x-validator': {
+                      pattern: /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/,
+                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong')
+                    }
                   },
                   connection_type: {
                     type: 'string',
