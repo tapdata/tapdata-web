@@ -130,9 +130,8 @@ const store = new Vuex.Store({
       if (!lang) {
         lang = getCurrentLanguage()
       }
-      lang = lang.replace('_', '-')
-      state.user.locale = lang
-      setCurrentLanguage(lang, i18n)
+
+      state.user.locale = setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {
