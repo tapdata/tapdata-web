@@ -411,7 +411,7 @@ export default {
   setting_Log: 'Log',
   setting_SMTP: 'SMTP',
   setting_Job: 'Task',
-  setting_license: 'License Control',
+  setting_License: 'License Control',
   setting_expiredate: 'Expiration time',
   setting_import: 'Import',
   setting_apply: 'Apply for license',
@@ -577,6 +577,8 @@ export default {
   setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
     'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
+  setting_task_log_file_save_time: 'Log retention time (days)',
+  setting_task_log_file_save_size: 'Log retention size (MB)',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',
   user_list_creat_user: 'Create user',
