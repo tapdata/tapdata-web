@@ -686,5 +686,7 @@ export default {
     '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓',
   packages_dag_ddl_stopped_on_error: '遇到DDL時任務報錯停止',
   packages_dag_ddl_auto_ignore: '自動忽略所有DDL',
-  packages_dag_ddl_sync_events: '同步DDL事件'
+  packages_dag_ddl_sync_events: '同步DDL事件',
+  packages_dag_dateFieldName: '時間字段名稱',
+  packages_dag_time_field_injection: '時間字段注入'
 }
