@@ -837,9 +837,12 @@ export default {
             : {
                 in: this.databaseTypes
               },
-          connection_type: {
-            in: ['source_and_target', 'target']
-          }
+          connection_type:
+            process.env.VUE_APP_MODE !== 'msa'
+              ? {
+                  in: ['source_and_target', 'target']
+                }
+              : undefined
         }
       }
       let type = this.form.connectionType

@@ -470,7 +470,7 @@ export default {
         .filter(
           it =>
             this.specification === it.specification &&
-            (this.$store.getters.isDomesticStation || !(it.type === 'one_time' && it.periodUnit === 'year'))
+            (it.chargeProvider === 'FreeTier' || !(it.type === 'one_time' && it.periodUnit === 'year'))
         )
         .map(t => {
           return Object.assign(t, {

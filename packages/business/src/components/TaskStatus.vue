@@ -20,17 +20,17 @@
       >
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
-          <div class="flex flex-wrap align-center font-color-dark">
-            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
-            {{
+          <span class="font-color-dark">
+            <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon
+            >{{
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
               })
             }}<template v-if="agentStatus"
               >，{{ $t('packages_business_task_status_agent_tooltip_agent') }}：
-              <ElLink @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
+              <ElLink class="align-top" @click="onClickStatus" type="primary">{{ agentStatus }}</ElLink></template
             >
-          </div>
+          </span>
         </template>
       </ElTooltip>
     </template>
@@ -56,10 +56,10 @@
       <ElTooltip key="retrying" placement="top" popper-class="agent-tooltip__popper" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
-          <div class="flex align-items-start font-color-dark py-2">
-            <VIcon size="16" class="mr-2 color-warning"> warning </VIcon>
+          <span class="font-color-dark py-2">
+            <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon>
             <span class="fs-8">{{ taskRetryStartTimeTip }}</span>
-          </div>
+          </span>
         </template>
       </ElTooltip>
     </template>

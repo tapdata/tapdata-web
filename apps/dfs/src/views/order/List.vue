@@ -160,7 +160,7 @@
                     >{{ $t('dfs_order_change') }}</ElButton
                   >
                   <ElButton
-                    v-if="!(disableUnsubscribe(row) || ['incomplete', 'past_due'].includes(item.status))"
+                    v-if="!disableUnsubscribe(row) && ['active'].includes(item.status)"
                     type="danger"
                     plain
                     size="mini"
@@ -546,15 +546,15 @@ export default {
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
         if (row.agentType === 'Cloud') {
-          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.resource?.status)
         } else {
-          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.resource?.status)
         }
       } else {
         if (row?.resource?.scope === 'Private') {
-          return !['Activated'].includes(row.status)
+          return !['Activated'].includes(row.resource?.status)
         } else {
-          return !['Assigned'].includes(row.status)
+          return !['Assigned'].includes(row.resource?.status)
         }
       }
     },
