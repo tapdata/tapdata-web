@@ -387,6 +387,7 @@ export default {
   packages_business_verification_row_verify: 'Count',
   packages_business_verification_content_verify: 'All Fields',
   packages_business_verification_joint_verify: 'Associated Fields',
+  packages_business_verification_hash_verify: 'Hash',
   packages_business_verification_job_enable: 'Enabled',
   packages_business_verification_job_disable: 'Disabled',
   packages_business_verification_check_same: 'Consistency',
