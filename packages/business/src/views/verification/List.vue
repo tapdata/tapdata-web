@@ -72,7 +72,11 @@
         min-width="140"
         align="center"
         :label="$t('packages_business_verification_history_source_total_rows')"
-      ></el-table-column>
+      >
+        <template slot-scope="scope">
+          {{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.sourceTotal || 0 }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
         <template slot-scope="scope">
           <div class="flex align-center">
@@ -80,7 +84,7 @@
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
                 <i class="data-verify__icon el-icon-error"></i>
 
-                <span v-if="scope.row.inspectMethod === 'row_count'">
+                <span v-if="scope.row.inspectMethod === 'row_count' || scope.row.inspectMethod === 'hash'">
                   {{ $t('packages_business_verification_inconsistent') }}
                 </span>
                 <span v-else>
