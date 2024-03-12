@@ -60,9 +60,18 @@
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count'">
                   {{ $t('packages_business_verification_result_count_inconsistent') }}
                 </span>
-                <span v-else>{{
-                  $t('packages_business_verification_result_content_diff', [scope.row.difference_number])
-                }}</span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'hash'">
+                    {{ $t('packages_business_verification_inconsistent') }}
+                </span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'field'">
+                    {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'jointField'">
+                    {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'cdcCount'">
+                    $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
+                </span>
               </span>
               <span class="success" v-if="scope.row.result === 'passed'">
                 <VIcon class="verify-status-icon mr-1" size="14">success-fill-color</VIcon>
@@ -131,7 +140,8 @@ export default {
       inspectMethod: {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify')
+        jointField: this.$t('packages_business_verification_jointVerify'),
+        hash: this.$t('packages_business_verification_hash_verify'),
       }
     }
   },

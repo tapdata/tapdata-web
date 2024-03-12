@@ -57,10 +57,11 @@
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
-          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
+          <div v-if="scope.row.result === 'failed'">
             <span class="error">
               <i class="verify-icon el-icon-error color-danger"></i>
-              <span>{{ scope.row.contentResultText }}</span>
+              <span v-if="scope.row.contentResultText">{{ scope.row.contentResultText }}</span>
+              <span v-else>{{ $t('packages_business_verification_inconsistent') }}</span>
             </span>
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
@@ -116,6 +117,10 @@ export default {
           }
           item.countResultText = countResultText
           item.contentResultText = contentResultText
+        }
+        if (item.inspectMethod === 'hash') {
+          item.target_total = "-"
+          item.source_total = "-"
         }
         return item
       })

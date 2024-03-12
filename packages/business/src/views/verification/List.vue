@@ -79,11 +79,19 @@
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
                 <i class="data-verify__icon el-icon-error"></i>
-
                 <span v-if="scope.row.inspectMethod === 'row_count'">
                   {{ $t('packages_business_verification_inconsistent') }}
                 </span>
-                <span v-else>
+                <span v-if="scope.row.inspectMethod === 'hash'">
+                    {{ $t('packages_business_verification_inconsistent') }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'field'">
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'jointField'">
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'cdcCount'">
                   {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
                 </span>
               </div>
@@ -347,6 +355,10 @@ export default {
               item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
+              if (item.inspectMethod === "hash") {
+                  item.sourceTotal = "-"
+                  item.targetTotal = "-"
+              }
               return item
             })
           }

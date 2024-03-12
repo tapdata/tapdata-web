@@ -35,7 +35,7 @@
           </div>
         </div>
       </div>
-      <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <div v-if="errorMsg && (type === 'row_count' || type === 'hash')" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
@@ -53,7 +53,7 @@
       >
         <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView v-if="type !== 'row_count' && type !== 'hash'" ref="resultView" :remoteMethod="getResultData"></ResultView>
         <!--        </template>-->
       </div>
     </div>
@@ -114,7 +114,8 @@ export default {
         row_count: this.$t('packages_business_verification_rowVerify'),
         field: this.$t('packages_business_verification_contentVerify'),
         jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan')
+        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
+        hash: this.$t('packages_business_verification_hash_verify'),
       },
       inspect: {},
       resultInfo: {},
@@ -128,7 +129,11 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      let stats = this.resultInfo.stats || []
+      for (let i=0; i<stats.length; i++) {
+          stats[i].inspectMethod = this.resultInfo.inspect.inspectMethod
+      }
+      return stats
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod
@@ -180,7 +185,7 @@ export default {
                   }
                   this.$nextTick(() => {
                     this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count' && showLoading) {
+                    if (this.type !== 'row_count' && showLoading && this.type !== 'hash') {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
                     }
                     if (this.taskId) {
