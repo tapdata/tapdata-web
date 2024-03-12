@@ -104,6 +104,7 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
+import { statusMap as typeMap } from './const'
 
 export default {
   components: { ResultTable, ResultView },

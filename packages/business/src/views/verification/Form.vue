@@ -355,7 +355,7 @@ import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS } from './components/const'
-
+import { statusMap, inspectMethod as inspectMethodMap } from './const'
 const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
@@ -469,12 +469,7 @@ export default {
       allStages: [],
       flowOptions: [],
       notSupport,
-      inspectMethodMap: {
-        row_count: i18n.t('packages_business_verification_row_verify'),
-        field: i18n.t('packages_business_verification_content_verify'),
-        jointField: i18n.t('packages_business_verification_joint_verify'),
-        hash: i18n.t('packages_business_verification_hash_verify')
-      },
+      inspectMethodMap,
       typTipMap: {
         row_count:
           this.$t('packages_business_verification_fastCountTip') +

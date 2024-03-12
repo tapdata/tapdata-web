@@ -36,7 +36,11 @@
             :label="$t('packages_business_verification_history_source_total_rows')"
             prop="firstSourceTotal"
             align="center"
-          ></el-table-column>
+          >
+            <template #default="{ row }">
+              {{ row.inspect.inspectMethod === 'hash' ? '-' : row.firstSourceTotal }}
+            </template>
+          </el-table-column>
         </template>
         <el-table-column prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
           <template slot-scope="scope">
@@ -57,11 +61,13 @@
             <div class="inspect-result">
               <span v-if="scope.row.result !== 'passed'" class="error">
                 <VIcon class="verify-status-icon color-danger mr-1" size="14">error</VIcon>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count'">
+                <span
+                  v-if="
+                    (scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count') ||
+                    scope.row.inspect.inspectMethod === 'hash'
+                  "
+                >
                   {{ $t('packages_business_verification_result_count_inconsistent') }}
-                </span>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'hash'">
-                    {{ $t('packages_business_verification_inconsistent') }}
                 </span>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'field'">
                     {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
@@ -112,6 +118,7 @@
 import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { inspectResultsApi } from '@tap/api'
+import { statusMap, inspectMethod } from './const'
 
 let timeout = null
 export default {
