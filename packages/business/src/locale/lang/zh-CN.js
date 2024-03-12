@@ -377,6 +377,7 @@ export default {
   packages_business_verification_row_verify: '快速count校验',
   packages_business_verification_content_verify: '表全字段值校验',
   packages_business_verification_joint_verify: '关联字段值校验',
+  packages_business_verification_hash_verify: '全表 hash 校验',
   packages_business_verification_job_enable: '已启用',
   packages_business_verification_job_disable: '已禁止',
   packages_business_verification_check_same: '校验一致',
