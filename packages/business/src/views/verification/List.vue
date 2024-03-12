@@ -196,6 +196,7 @@ import { FilterBar } from '@tap/component'
 import { VIcon } from '@tap/component'
 import { TablePage } from '@tap/business'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
+import { statusMap, inspectMethod } from './const'
 
 let timeout = null
 export default {
@@ -216,20 +217,8 @@ export default {
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
       order: 'last_updated DESC',
-      inspectMethod: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
-        hash: i18n.t('packages_business_verification_hash_verify')
-      },
-      statusMap: {
-        waiting: this.$t('packages_business_verification_waiting'),
-        scheduling: this.$t('packages_business_verification_scheduling'),
-        error: this.$t('packages_business_verification_error'),
-        done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running')
-      },
+      inspectMethod,
+      statusMap,
       validList: [
         { label: this.$t('public_select_option_all'), value: '' },
         { label: this.$t('packages_business_verification_check_same'), value: 'passed' },
