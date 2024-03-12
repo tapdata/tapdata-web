@@ -25,7 +25,7 @@
     </ElTableColumn>
     <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('packages_business_verification_sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.source_total || 0 }}</span>
+        <span>{{ type === 'hash' ? '-' : scope.row.source_total || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.target_total || 0 }}-->
         <!--        </div>-->
@@ -33,7 +33,7 @@
     </ElTableColumn>
     <ElTableColumn v-else :label="$t('packages_business_verification_sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.source_total || 0 }}</span>
+        <span>{{ type === 'hash' ? '-' : scope.row.source_total || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.firstTargetTotal || 0 }}-->
         <!--        </div>-->
