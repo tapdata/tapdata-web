@@ -96,6 +96,7 @@
                 </VIcon>
               </template>
               <ElFormItem
+                v-if="form.inspectMethod !== 'hash'"
                 class="form-item"
                 prop="inspectDifferenceMode"
                 :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
@@ -249,6 +250,7 @@
               </ElFormItem>
 
               <ElFormItem
+                v-if="form.inspectMethod !== 'hash'"
                 class="form-item"
                 :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
               >

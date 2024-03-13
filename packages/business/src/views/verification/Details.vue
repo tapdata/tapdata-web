@@ -53,7 +53,11 @@
       >
         <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="type !== 'row_count' && type !== 'hash'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView
+          v-if="type !== 'row_count' && type !== 'hash'"
+          ref="resultView"
+          :remoteMethod="getResultData"
+        ></ResultView>
         <!--        </template>-->
       </div>
     </div>
@@ -111,13 +115,7 @@ export default {
   data() {
     return {
       loading: false,
-      typeMap: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
-        hash: this.$t('packages_business_verification_hash_verify'),
-      },
+      typeMap,
       inspect: {},
       resultInfo: {},
       errorMsg: '',
@@ -130,11 +128,7 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      let stats = this.resultInfo.stats || []
-      for (let i=0; i<stats.length; i++) {
-          stats[i].inspectMethod = this.resultInfo.inspect.inspectMethod
-      }
-      return stats
+      return this.resultInfo.stats || []
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod

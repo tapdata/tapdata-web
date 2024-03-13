@@ -10,7 +10,7 @@
       </div>
       <div>
         <ElLink
-          v-if="inspectMethod !== 'row_count' && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
+          v-if="!isCountOrHash && list.some(t => !t.source.sortColumn || !t.target.sortColumn)"
           type="primary"
           :disabled="!list.length"
           class="mr-4"
@@ -125,7 +125,7 @@
                   label-width="130"
                 />
               </div>
-              <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+              <div v-if="!isCountOrHash" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
                 <MultiSelection
                   v-model="item.source.sortColumn"
@@ -775,6 +775,9 @@ export default {
     flowStages() {
       let types = this.isDB ? ['database'] : ['table']
       return this.allStages.filter(stg => types.includes(stg.type))
+    },
+    isCountOrHash() {
+      return this.inspectMethod === 'row_count' || this.inspectMethod === 'hash'
     }
   },
 
