@@ -266,18 +266,6 @@ const TaskList = defineComponent({
                       </a>
                     </div>
                     <div class="p-1">
-                    <ElButton
-                      size="mini"
-                      round
-                      onClick={() => {
-                        let url = "http://127.0.0.1:5002/ns_" + task.name;
-                        window.open(url);
-                      }}
-                    >
-                    {i18n.t("packages_business_data_console_goto_ai_chat")} 
-                    <VIcon class="color-info ml-1"></VIcon>
-                    </ElButton>
-                    &nbsp;&nbsp;
                       <TaskStatus task={task}></TaskStatus>
                     </div>
                     {task.website && (

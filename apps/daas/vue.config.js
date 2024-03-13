@@ -4,9 +4,9 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
-  dev: 'http://localhost:13030', // TM端本地默认地址
+  dev: 'http://localhost:3030', // TM端本地默认地址
   jet: 'http://jet.devops.tapdata.net:31613',
-  test: 'http://139.198.127.204:30736' // v3.1
+  test: 'http://58.251.34.123:3030' // v3.1
 }
 let origin
 const { argv } = process
