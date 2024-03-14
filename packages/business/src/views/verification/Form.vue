@@ -59,7 +59,7 @@
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
               <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
-              <!--<ElRadioButton label="hash">{{ inspectMethodMap['hash'] }}</ElRadioButton>-->
+              <ElRadioButton label="hash">{{ inspectMethodMap['hash'] }}</ElRadioButton>
               <!-- <ElRadioButton label="cdcCount"
               >动态校验
               <ElTooltip
