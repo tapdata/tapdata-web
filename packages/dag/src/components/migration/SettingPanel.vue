@@ -590,6 +590,14 @@ export default observer({
                                 'x-component-props': {
                                   class: 'flex align-center gap-2'
                                 },
+                                'x-reactions': {
+                                  dependencies: ['type'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}'
+                                    }
+                                  }
+                                },
                                 properties: {
                                   syncPointsDesc: {
                                     type: 'void',
@@ -599,7 +607,9 @@ export default observer({
                                         color: '#909399'
                                       }
                                     },
-                                    'x-content': `{{'最近一次增量所处时间: ' + $values.currentEventTimestampLabel}}`
+                                    'x-content': `{{'${i18n.t(
+                                      'packages_dag_task_setting_syncPoint_recent_increment'
+                                    )}: ' + $values.currentEventTimestampLabel}}`
                                   },
                                   syncPointsDescBtn: {
                                     type: 'void',
@@ -608,7 +618,7 @@ export default observer({
                                       type: 'primary',
                                       onClick: '{{handleQuicklySyncPoints}}'
                                     },
-                                    'x-content': `从此刻开始`
+                                    'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now')
                                   }
                                 }
                               },
