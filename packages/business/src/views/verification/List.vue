@@ -201,7 +201,7 @@ import { FilterBar } from '@tap/component'
 import { VIcon } from '@tap/component'
 import { TablePage } from '@tap/business'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
-import { statusMap, inspectMethod } from './const'
+import { statusMap, inspectMethod, typeList as verifyTypeList } from './const'
 
 let timeout = null
 export default {
@@ -231,12 +231,7 @@ export default {
         { label: this.$t('packages_business_verification_content_difference'), value: 'valueDiff' },
         { label: 'Error', value: 'error' }
       ],
-      verifyTypeList: [
-        { label: this.$t('public_select_option_all'), value: '' },
-        { label: this.$t('packages_business_verification_row_verify'), value: 'row_count' },
-        { label: this.$t('packages_business_verification_content_verify'), value: 'field' },
-        { label: this.$t('packages_business_verification_joint_verify'), value: 'jointField' }
-      ],
+      verifyTypeList,
       multipleSelection: [],
       moreAuthority: this.$has('verify_job_delete_all_data')
     }
@@ -345,9 +340,9 @@ export default {
               item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
-              if (item.inspectMethod === "hash") {
-                  item.sourceTotal = "-"
-                  item.targetTotal = "-"
+              if (item.inspectMethod === 'hash') {
+                item.sourceTotal = '-'
+                item.targetTotal = '-'
               }
               return item
             })

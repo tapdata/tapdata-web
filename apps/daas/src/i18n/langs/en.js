@@ -57,7 +57,7 @@ export default {
   page_title_custom_node: 'User Defined Processors',
   page_title_account: 'Personal settings',
   page_title_external_storage: 'External Storage Settings',
-  page_title_verification_create: 'New verification',
+  page_title_verification_create: 'New Validation',
   page_title_verification_edit: 'Edit Verification',
   page_title_verification_history: 'Verification History',
   page_title_data_console: 'Data Console',
