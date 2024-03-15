@@ -741,5 +741,8 @@ export default {
   packages_dag_ddl_auto_ignore: 'Automatically Ignore All DDLs',
   packages_dag_ddl_sync_events: 'Sync DDL Events',
   packages_dag_dateFieldName: 'Date Field Name',
-  packages_dag_time_field_injection: 'Time Field Injection'
+  packages_dag_time_field_injection: 'Time Field Injection',
+  packages_dag_task_setting_syncPoint_recent_increment: 'Time of the most recent increment',
+  packages_dag_task_setting_syncPoint_from_now: 'Apply',
+  packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`
 }

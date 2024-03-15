@@ -93,7 +93,7 @@ export default {
   notify_migration_task: 'Migration Task',
   notify_task: 'Task',
   notify_agent: 'Agent',
-  notify_inspect: 'Verify Task',
+  notify_inspect: 'Validation Task',
   notify_jobDDL: 'DDL Processing',
   notify_task_longer_exists: 'Your task no longer exists',
   notify_list: 'Notification list',

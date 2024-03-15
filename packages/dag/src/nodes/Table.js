@@ -543,7 +543,7 @@ export class Table extends NodeType {
                     properties: {
                       ddlConfiguration: {
                         type: 'string',
-                        default: 'FILTER',
+                        default: '{{$values.enableDDL ? "SYNCHRONIZATION" : "FILTER"}}', // 兼容老数据
                         enum: [
                           {
                             label: i18n.t('packages_dag_ddl_stopped_on_error'),
@@ -559,6 +559,9 @@ export class Table extends NodeType {
                           }
                         ],
                         'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          className: 'extra-prefix-bar'
+                        },
                         'x-component': 'Radio.Group',
                         'x-reactions': [
                           {
@@ -577,6 +580,14 @@ export class Table extends NodeType {
                                 description: `{{$values.databaseType + ' ${i18n.t(
                                   'packages_dag_nodes_database_value_zanbuzhiciddl'
                                 )}'}}`
+                              }
+                            },
+                            otherwise: {
+                              state: {
+                                description: `{{$self.value === 'ERROR' ? '${i18n.t(
+                                  'packages_dag_feature_agent_version_tips',
+                                  { val: '3.5.12' }
+                                )} ': ''}}`
                               }
                             }
                           }

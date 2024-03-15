@@ -73,3 +73,20 @@
     }
   }
 }
+
+.extra-prefix-bar .formily-element-form-item-extra {
+  position: relative;
+  padding-left: 12px;
+  &::before {
+    --n-bar-width: 3px;
+    content: "";
+    width: var(--n-bar-width);
+    border-radius: calc(var(--n-bar-width) / 2);
+    transition: background-color .3s cubic-bezier(.4, 0, .2, 1);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    background-color: #bcbfc3;
+  }
+}

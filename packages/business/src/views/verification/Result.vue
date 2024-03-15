@@ -32,7 +32,11 @@
       </div>
       <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="type !== 'row_count' && type !== 'hash'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView
+          v-if="type !== 'row_count' && type !== 'hash'"
+          ref="resultView"
+          :remoteMethod="getResultData"
+        ></ResultView>
       </div>
     </div>
   </section>
@@ -85,18 +89,14 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi } from '@tap/api'
+import { inspectMethod as typeMap } from './const'
 
 export default {
   components: { ResultTable, ResultView },
   data() {
     return {
       loading: false,
-      typeMap: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        hash: this.$t('packages_business_verification_hash_verify')
-      },
+      typeMap,
       inspect: {},
       resultInfo: {},
       errorMsg: '',
@@ -113,9 +113,6 @@ export default {
         list = list.filter(item => {
           return item.source_total > 0
         })
-      }
-      for (let i=0; i<list.length; i++) {
-        list[i].inspectMethod = this.resultInfo.inspect.inspectMethod
       }
       return list
     }

@@ -70,13 +70,13 @@
                   {{ $t('packages_business_verification_result_count_inconsistent') }}
                 </span>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'field'">
-                    {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
                 </span>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'jointField'">
-                    {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
                 </span>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'cdcCount'">
-                    $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
+                  $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
                 </span>
               </span>
               <span class="success" v-if="scope.row.result === 'passed'">
@@ -137,19 +137,8 @@ export default {
         order: ''
       },
       selections: [],
-      statusMap: {
-        waiting: this.$t('packages_business_verification_waiting'),
-        scheduling: this.$t('packages_business_verification_scheduling'),
-        error: this.$t('packages_business_verification_error'),
-        done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running')
-      },
-      inspectMethod: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        hash: this.$t('packages_business_verification_hash_verify'),
-      }
+      statusMap,
+      inspectMethod
     }
   },
   created() {
