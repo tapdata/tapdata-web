@@ -695,7 +695,7 @@ export default {
           let tasks = this.$refs.conditionBox.getList()
           // 自动过滤出完整数据，以及索引字段数量不相等的情况
           tasks = tasks.filter(t => {
-            if (this.form.inspectMethod === 'row_count') {
+            if (this.form.inspectMethod === 'row_count' || this.form.inspectMethod === 'hash') {
               return t.source.table && t.target.table
             }
             return (
