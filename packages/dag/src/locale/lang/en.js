@@ -737,7 +737,7 @@ export default {
     'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
   packages_dag_ddl_events_collapse_tip:
     'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
-  packages_dag_ddl_stopped_on_error: 'Stop Task on DDL Error',
+  packages_dag_ddl_stopped_on_error: 'Stop Task Upon Encountering DDL',
   packages_dag_ddl_auto_ignore: 'Automatically Ignore All DDLs',
   packages_dag_ddl_sync_events: 'Sync DDL Events',
   packages_dag_dateFieldName: 'Date Field Name',
