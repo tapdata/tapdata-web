@@ -12,8 +12,8 @@
     "daas": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:test",
     "dfs": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter dfs start:test",
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules",
-    "oos": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:dev --mode oss",
-    "dev:oos": "pnpm --filter daas start:dev --mode oss"
+    "oss": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:dev --mode oss",
+    "dev:oss": "pnpm --filter daas start:dev --mode oss"
   },
   "dependencies": {
     "@vue/composition-api": "^1.6.2",
