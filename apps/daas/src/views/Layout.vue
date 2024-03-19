@@ -539,13 +539,7 @@ export default {
     }
   },
   async created() {
-    let hideMenuMap = {}
-
-    if (process.env.VUE_APP_MODE !== 'community') {
-      hideMenuMap = await this.getHideMenuItem()
-    }
-
-    this.getMenus(hideMenuMap)
+    this.getMenus()
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
@@ -732,28 +726,6 @@ export default {
         }
         this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
-    },
-
-    async getHideMenuItem() {
-      const map = {
-        sharedMiningList: (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total || 0,
-        HeartbeatTableList:
-          (
-            await taskApi.get({
-              filter: JSON.stringify({
-                where: {
-                  syncType: 'connHeartbeat'
-                }
-              })
-            })
-          )?.total || 0
-      }
-      return Object.keys(map).reduce((result, key) => {
-        if (!map[key]) {
-          result[key] = true
-        }
-        return result
-      }, {})
     }
   }
 }
