@@ -680,7 +680,9 @@ export default {
       })
     },
     goMarketplace() {
-      window.open('https://console.cloud.google.com/marketplace/product/tapdata-public/detail')
+      window.open(
+        'https://console.cloud.google.com/marketplace/product/tapdata-public-415506/tapdata-realtime-pipeline'
+      )
     }
   }
 }
