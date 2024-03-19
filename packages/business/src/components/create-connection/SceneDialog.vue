@@ -158,6 +158,13 @@
         @saveAndMore="handleSaveAndMore"
       ></ConnectionForm>
     </div>
+
+    <RequestDialog
+      ref="requestDialog"
+      :visible="requestVisible"
+      :meta="requestMeta"
+      @update:visible="val => (requestVisible = val)"
+    ></RequestDialog>
   </ElDialog>
 </template>
 
@@ -171,10 +178,12 @@ import { VEmpty, IconButton } from '@tap/component'
 import { databaseTypesApi } from '@tap/api'
 import { getIcon } from '@tap/assets'
 import { DatabaseIcon } from '../DatabaseIcon'
+import RequestDialog from './RequestDialog.vue'
 
 export default {
   name: 'SceneDialog',
   components: {
+    RequestDialog,
     ConnectionForm,
     ServeForm,
     VEmpty,
@@ -335,6 +344,12 @@ export default {
             md: this.$t('packages_business_api_application_md')
           }
         ]
+      },
+      requestVisible: false,
+      requestMeta: {
+        type: '',
+        version: '',
+        qcType: ''
       }
     }
   },
@@ -450,6 +465,16 @@ export default {
     },
 
     handleSelect(item, isDemo = false) {
+      if (item.qcType !== 'GA') {
+        Object.assign(this.requestMeta, {
+          qcType: item.qcType,
+          type: item.type,
+          version: item.version
+        })
+        // this.requestVisible = true
+        this.$refs.requestDialog.handleOpen()
+        return
+      }
       if (this.selectorType === 'source_and_target') {
         this.$emit('selected', item)
         return
