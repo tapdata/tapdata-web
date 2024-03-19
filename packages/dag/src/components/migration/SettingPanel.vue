@@ -17,6 +17,7 @@ import { action } from '@formily/reactive'
 
 export default observer({
   name: 'SettingPanel',
+  inject: ['lockedFeature', 'openLocked'],
   components: { FormRender },
   props: {
     settings: Object,
@@ -48,6 +49,7 @@ export default observer({
     return {
       isDaas: isDaas,
       formScope: {
+        lockedFeature: this.lockedFeature,
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
@@ -647,7 +649,7 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+                                      visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}' // 只有增量或全量+增量支持
                                     }
                                   }
                                 }
@@ -770,7 +772,8 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi')
+                  label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
+                  locked: process.env.VUE_APP_MODE === 'community'
                 },
                 properties: {
                   alarmSettings: {
@@ -1057,7 +1060,8 @@ export default observer({
                 type: 'void',
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
-                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi')
+                  label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi'),
+                  locked: process.env.VUE_APP_MODE === 'community'
                 },
                 properties: {
                   permissions: {

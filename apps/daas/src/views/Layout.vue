@@ -92,8 +92,17 @@
                 <span slot="title" class="ml-4 title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
+                <ElMenuItem
+                  v-if="!cMenu.hidden"
+                  :key="cMenu.label"
+                  :index="cMenu.name"
+                  :class="{
+                    'is-locked': lockedFeature[cMenu.name]
+                  }"
+                >
                   <div class="submenu-item">{{ cMenu.label }}</div>
+
+                  <VIcon v-if="lockedFeature[cMenu.name]" class="ml-2" size="24">lock-circle</VIcon>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
@@ -479,6 +488,7 @@ let menuSetting = [
   }
 ]
 export default {
+  inject: ['lockedFeature', 'openLocked'],
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
@@ -688,6 +698,11 @@ export default {
       })
     },
     menuHandler(name) {
+      if (this.lockedFeature[name]) {
+        this.openLocked()
+        return
+      }
+
       if (this.$route.name === name) {
         return
       }
