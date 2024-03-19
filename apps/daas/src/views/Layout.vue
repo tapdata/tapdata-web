@@ -529,7 +529,12 @@ export default {
     }
   },
   async created() {
-    const hideMenuMap = await this.getHideMenuItem()
+    let hideMenuMap = {}
+
+    if (process.env.VUE_APP_MODE !== 'community') {
+      hideMenuMap = await this.getHideMenuItem()
+    }
+
     this.getMenus(hideMenuMap)
     this.getActiveMenu()
 
