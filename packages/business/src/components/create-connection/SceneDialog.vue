@@ -464,17 +464,19 @@ export default {
       this.$emit('update:visible', false)
     },
 
-    handleSelect(item, isDemo = false) {
+    async handleSelect(item, isDemo = false) {
       if (item.qcType !== 'GA') {
         Object.assign(this.requestMeta, {
           qcType: item.qcType,
           type: item.type,
           version: item.version
         })
-        // this.requestVisible = true
-        this.$refs.requestDialog.handleOpen()
-        return
+        const msg = this.$message.info('请稍等...')
+        const ifOpen = await this.$refs.requestDialog.handleOpen()
+        msg.close()
+        if (ifOpen) return
       }
+
       if (this.selectorType === 'source_and_target') {
         this.$emit('selected', item)
         return

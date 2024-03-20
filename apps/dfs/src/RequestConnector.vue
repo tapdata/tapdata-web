@@ -7,7 +7,7 @@
           <img src="./assets/image/logo.svg" alt="" />
         </ElLink>
         <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
-          <div class="command-item menu-user rounded-4">
+          <div class="menu-user rounded-4">
             <div class="username flex align-items-center">
               <img
                 v-if="user.avatar"
@@ -25,26 +25,135 @@
     </ElHeader>
     <ElContainer direction="vertical" class="layout-main position-relative">
       <ElMain class="main rounded-lg">
-        <div class="g-panel-container flex-fill overflow-x-hidden"></div>
+        <div class="g-panel-container flex-fill overflow-x-hidden flex flex-column">
+          <ElTable ref="table" row-key="id" :data="list">
+            <el-table-column label="数据源">
+              <template #default="{ row }">
+                {{ row.metadata.type }}<ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
+              </template>
+            </el-table-column>
+            <el-table-column label="预计使用时间">
+              <template #default="{ row }">
+                {{ dayMap[row.hoursOfAvailability] || row.hoursOfAvailability }}
+              </template>
+            </el-table-column>
+            <el-table-column label="申请人手机" prop="phone"> </el-table-column>
+            <el-table-column label="申请人邮箱" prop="email"> </el-table-column>
+            <el-table-column label="状态" prop="status" width="220">
+              <template #default="{ row }">
+                <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type">{{
+                  statusMap[row.status].text
+                }}</ElTag>
+                <span v-else>{{ row.status }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120">
+              <template #default="{ row }">
+                <div class="flex gap-2">
+                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleApprove(row)" type="primary">通过</ElLink>
+                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row)" type="danger">拒绝</ElLink>
+                </div>
+              </template>
+            </el-table-column>
+          </ElTable>
+          <el-pagination
+            background
+            class="table-page-pagination mt-3"
+            layout="->,total, sizes,  prev, pager, next, jumper"
+            :current-page.sync="page.current"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size.sync="page.size"
+            :total="page.total"
+            @size-change="getData(1)"
+            @current-change="getData"
+          >
+          </el-pagination>
+        </div>
       </ElMain>
     </ElContainer>
   </ElContainer>
 </template>
 
 <script>
-import { PageHeader } from '@tap/business'
+import { TablePage } from '@tap/business'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'RequestConnector',
+  components: { TablePage },
   data() {
     return {
-      mockUserId: null
+      mockUserId: null,
+      list: [],
+      page: {
+        current: 1,
+        size: this.defaultPageSize,
+        total: 0
+      },
+      dayMap: {
+        5: '5天',
+        180: '半年',
+        365: '1年'
+      },
+      statusMap: {
+        PENDING: {
+          text: '待审批',
+          type: 'primary'
+        },
+        APPROVED: {
+          text: '已通过',
+          type: 'success'
+        },
+        REJECTED: {
+          text: '已拒绝',
+          type: 'danger'
+        },
+        EXPIRED: {
+          text: '已过期',
+          type: 'warning'
+        }
+      }
     }
   },
   computed: {
     ...mapGetters(['isDomesticStation']),
     ...mapState(['user'])
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    async getData(current = this.page.current) {
+      let { size } = this.page
+      let filter = {
+        limit: size,
+        skip: size * (current - 1),
+        sort: ['createAt desc'],
+        where: {}
+      }
+      const result = await this.$axios.get(`api/tcm/feature/connector`, {
+        params: {
+          filter: JSON.stringify(filter)
+        }
+      })
+      this.list = result.items
+      this.page.total = result.total
+    },
+
+    async handleApprove({ id }) {
+      await this.$axios.post(`api/tcm/feature/connector/approved`, {
+        id
+      })
+      this.$message.success('已审批')
+      this.getData()
+    },
+    async handleReject({ id }) {
+      await this.$axios.post(`api/tcm/feature/connector/rejected`, {
+        id
+      })
+      this.$message.success('已拒绝')
+      this.getData()
+    }
   }
 }
 </script>
@@ -56,35 +165,43 @@ export default {
   justify-content: space-between;
   height: 90%;
 }
+
 .layout-main {
   padding: 0 16px 16px 16px;
 }
+
 .layout-wrap {
   height: 100%;
   padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
   background: map-get($color, submenu);
+
   .left-aside {
     // border-right: 1px map-get($borderColor, aside) solid;
     background: map-get($color, submenu);
+
     .el-menu {
       background-color: map-get($color, submenu);
     }
+
     ::v-deep {
       .el-menu-item,
       .el-submenu__title {
         height: 50px;
         line-height: 50px;
+
         .v-icon {
           color: map-get($iconFillColor, normal);
         }
+
         &.is-active,
         &:hover {
           background-color: map-get($color, white);
           color: map-get($color, primary);
           border-radius: 8px;
         }
+
         &.is-active,
         &:hover {
           ::v-deep .v-icon {
@@ -106,11 +223,13 @@ export default {
       color: map-get($fontColor, normal);
     }
   }
+
   .header {
     display: flex;
     align-items: center;
     font-size: 14px;
   }
+
   .main {
     display: flex;
     flex-direction: column;
@@ -119,24 +238,29 @@ export default {
     padding: 0;
     //background: rgba(239, 241, 244, 1);
   }
+
   .breadcrumb {
     padding: 24px 0 24px 24px;
     //height: 40px;
     box-sizing: border-box;
+
     &.one-breadcrumb {
       font-size: 18px;
+
       ::v-deep {
         .el-breadcrumb__inner {
           color: #000;
         }
       }
     }
+
     ::v-deep {
       .el-breadcrumb__separator {
         color: map-get($fontColor, sub);
       }
     }
   }
+
   .btn-back {
     padding: 0;
     width: 24px;
@@ -153,12 +277,14 @@ export default {
 .isMockUser {
   background: red !important;
 }
+
 .discount-hot-icon {
   color: #ff7d00;
   right: -12px;
   top: -12px;
   font-size: 24px;
 }
+
 .dfs-header {
   position: absolute;
   top: 0;
@@ -168,6 +294,7 @@ export default {
   padding: 0 7px;
   background: map-get($color, submenu);
   box-sizing: border-box;
+
   .current {
     font-weight: 400;
     font-size: 10px;
@@ -176,14 +303,17 @@ export default {
     border-radius: 2px;
     padding: 4px;
   }
+
   .pointer {
     cursor: pointer;
   }
+
   .logo {
     display: block;
     width: 177px;
     height: 30px;
     margin-left: -12px;
+
     img {
       display: block;
       height: 100%;
@@ -191,22 +321,27 @@ export default {
       object-fit: contain;
     }
   }
+
   .button-bar {
     display: flex;
     align-items: center;
+
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
       color: map-get($fontColor, light);
+
       &:hover {
         color: map-get($color, primary);
         background-color: map-get($color, white);
         border-radius: 4px;
+
         &.icon {
           color: map-get($color, primary);
         }
       }
     }
+
     .agent-status {
       display: flex;
       align-items: center;
@@ -220,6 +355,7 @@ export default {
       border-radius: 20px;
       cursor: pointer;
       background-color: rgba(255, 255, 255, 0.1);
+
       i.status-color {
         display: inline-block;
         width: 12px;
@@ -229,13 +365,16 @@ export default {
         border-radius: 50%;
       }
     }
+
     .btn-create {
       margin-right: 20px;
     }
+
     .btn {
       margin-left: 8px;
       color: #999;
       cursor: pointer;
+
       i {
         display: inline-block;
         line-height: 28px;
@@ -244,10 +383,12 @@ export default {
         width: 28px;
         font-size: 18px;
       }
+
       &:hover {
         color: #fff;
       }
     }
+
     .menu-user {
       .menu-button {
         color: rgba(204, 204, 204, 1);
@@ -255,12 +396,14 @@ export default {
         border: none;
       }
     }
+
     .img {
       width: 17px;
       height: 17px;
     }
   }
 }
+
 .dfs-header__body {
   display: flex;
   align-items: center;
@@ -268,6 +411,7 @@ export default {
   width: 100%;
   height: 52px !important;
 }
+
 .dfs-header__dialog {
   .fixed-novice-guide-dialog {
     position: fixed;
@@ -283,15 +427,18 @@ export default {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 3004;
     box-sizing: border-box;
+
     &.active {
       transform: scale(1);
     }
+
     .guide-mark {
       img {
         width: 67px;
         height: 67px;
       }
     }
+
     .guide-operation {
       img {
         width: 195px;
@@ -299,83 +446,11 @@ export default {
         cursor: pointer;
       }
     }
+
     .no-show-checkbox {
       top: 30px;
       right: 0;
     }
-  }
-}
-.marquee-container {
-  width: 400px;
-  height: 40px;
-  line-height: 40px;
-  .marquee-box {
-    position: absolute;
-    width: 400px;
-    height: 40px;
-    span {
-      position: absolute;
-      right: 0;
-      font-weight: 400;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 38px;
-      animation: marquee 10s linear infinite;
-    }
-  }
-}
-
-.block {
-  width: 170px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.words {
-  position: relative;
-  width: fit-content;
-  animation: move 20s linear infinite;
-  padding-left: 10px;
-  color: rgba(255, 255, 255, 0.7);
-}
-.words::after {
-  position: absolute;
-  right: -100%;
-  content: attr(text);
-}
-.vip-btn {
-  position: relative;
-  color: #fff;
-  padding: 4px 8px;
-  background: linear-gradient(93.39deg, #2c65ff 10.45%, #702cff 98.21%);
-}
-.slack-logo {
-  height: 14px;
-}
-
-@keyframes move {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-@keyframes marquee {
-  /* 开始状态 */
-  0% {
-  }
-  25% {
-    transform: translateX(-30px);
-  }
-  50% {
-    transform: translateX(-60px);
-  }
-  75% {
-    transform: translateX(-90px);
-  }
-  /* 结束状态 */
-  100% {
-    transform: translateX(-120px);
   }
 }
 </style>
