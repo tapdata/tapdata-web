@@ -35,6 +35,8 @@ export default {
   public_yes: 'Yes',
   public_no: 'No',
   public_tags: 'Tags',
+  public_phone: 'Phone Number',
+  public_email: 'Email',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
@@ -295,5 +297,7 @@ export default {
   public_shared_mining: 'CDC Log Cache',
   public_external_storage: 'External Storage',
 
-  public_page_title_advanced_features: 'Advanced'
+  public_page_title_advanced_features: 'Advanced',
+
+  public_please_wait: 'Please wait a moment...'
 }

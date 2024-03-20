@@ -1190,5 +1190,16 @@ export default {
   packages_business__relmig_import_connection_tip: '如果您还没有创建，请点击这里',
   packages_business__relmig_import_source_connection_placeholder: '请选择包含您在 relmig 项目中使用的源表的源连接',
   packages_business__relmig_import_target_connection_placeholder: '请选择您希望数据同步到的目标连接',
-  packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它'
+  packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它',
+  packages_business_request_connector_title: '申请试用 Alpha/Beta 数据源',
+  packages_business_request_connector_pending: '审批中',
+  packages_business_request_connector_pending_desc: '您已提交申请，请等待审批',
+  packages_business_request_connector_alert:
+    '您正在申请使用 {qcType} 版本的 {type} 数据源， 请提供您的联系方式并允许我们的支持人员联系您以帮助您成功运行任务。',
+  packages_business_request_connector_use_plan: '您计划使用此数据源的场景',
+  packages_business_request_connector_use_plan_placeholder: '请填写您的使用场景',
+  packages_business_request_connector_use_time: '预计使用时间',
+  packages_business_request_connector_use_time_option1: '5天',
+  packages_business_request_connector_use_time_option2: '半年',
+  packages_business_request_connector_use_time_option3: '1年'
 }
