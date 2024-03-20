@@ -1252,5 +1252,16 @@ export default {
     'Please select the source connection that includes the source tables you used in your relmig project',
   packages_business__relmig_import_target_connection_placeholder:
     'Please select the destination connection you want the data to be synchronized to',
-  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it'
+  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
+  packages_business_request_connector_title: 'Apply for Alpha/Beta Data Source Trial',
+  packages_business_request_connector_pending: 'Pending Approval',
+  packages_business_request_connector_pending_desc: 'You have submitted your application. Please wait for approval.',
+  packages_business_request_connector_alert:
+    'You are applying to use the {qcType} version of the {type} data source. Please provide your contact information and allow our support team to contact you to assist you in successfully running the task.',
+  packages_business_request_connector_use_plan: 'How do you plan to use this data source?',
+  packages_business_request_connector_use_plan_placeholder: 'Please fill in your use case',
+  packages_business_request_connector_use_time: 'Estimated Time of Use',
+  packages_business_request_connector_use_time_option1: '5 days',
+  packages_business_request_connector_use_time_option2: 'half a year',
+  packages_business_request_connector_use_time_option3: '1 year'
 }

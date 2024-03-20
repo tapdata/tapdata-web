@@ -1,13 +1,18 @@
 <template>
   <ElDialog
-    title="申请试用 Alpha/Beta 数据源"
+    :title="$t('packages_business_request_connector_title')"
     :visible="visible"
     @close="handleClose"
     @closed="afterClose"
     :append-to-body="true"
     width="520px"
   >
-    <el-result v-if="hasRequest" icon="info" title="审批中" subTitle="你已提交申请，请等待审批">
+    <el-result
+      v-if="hasRequest"
+      icon="info"
+      :title="$t('packages_business_request_connector_pending')"
+      :subTitle="$t('packages_business_request_connector_pending_desc')"
+    >
       <template #icon>
         <VIcon class="color-primary" size="48">time</VIcon>
       </template>
@@ -16,28 +21,32 @@
       v-else
       class="alert-primary text-primary mb-4"
       type="info"
-      :title="`您正在申请使用 ${meta.qcType} 版本的 ${meta.type} 数据源， 请提供您的联系方式并允许我们的支持人员联系您以帮助您成功运行任务。`"
+      :title="
+        $t('packages_business_request_connector_alert', {
+          ...meta
+        })
+      "
       :closable="false"
       show-icon
     />
 
-    <ElForm ref="form" :model="form" label-position="top" :disabled="hasRequest">
-      <ElFormItem label="您计划使用此连接器的场景" prop="summary">
+    <ElForm ref="form" :model="form" label-position="top" :disabled="hasRequest" :rules="rules">
+      <ElFormItem :label="$t('packages_business_request_connector_use_plan')" prop="summary" required>
         <ElInput v-model="form.summary" type="textarea"></ElInput>
       </ElFormItem>
       <div class="flex gap-4">
-        <ElFormItem label="手机" class="flex-1" prop="phone">
+        <ElFormItem :label="$t('public_phone')" class="flex-1" prop="phone">
           <ElInput v-model="form.phone" maxlength="50" type="phone"></ElInput>
         </ElFormItem>
-        <ElFormItem label="邮箱" class="flex-1" prop="email">
+        <ElFormItem :label="$t('public_email')" class="flex-1" prop="email">
           <ElInput v-model="form.email" type="email"></ElInput>
         </ElFormItem>
       </div>
-      <ElFormItem label="预计使用时间" prop="hoursOfAvailability">
+      <ElFormItem :label="$t('packages_business_request_connector_use_time')" prop="hoursOfAvailability">
         <ElRadioGroup v-model="form.hoursOfAvailability">
-          <ElRadioButton label="5">5天</ElRadioButton>
-          <ElRadioButton label="180">半年</ElRadioButton>
-          <ElRadioButton label="365">1年</ElRadioButton>
+          <ElRadioButton label="5">{{ $t('packages_business_request_connector_use_time_option1') }}</ElRadioButton>
+          <ElRadioButton label="180">{{ $t('packages_business_request_connector_use_time_option2') }}</ElRadioButton>
+          <ElRadioButton label="365">{{ $t('packages_business_request_connector_use_time_option3') }}</ElRadioButton>
         </ElRadioGroup>
       </ElFormItem>
       <!--<ElFormItem label="您期望什么时间联系您">
@@ -54,9 +63,13 @@
 
     <template #footer>
       <div>
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button v-if="hasRequest" type="primary" :loading="saving" @click="handleClose">确 定</el-button>
-        <el-button v-else type="primary" :loading="saving" @click="handleSubmit">提 交</el-button>
+        <el-button @click="handleClose">{{ $t('public_button_cancel') }}</el-button>
+        <el-button v-if="hasRequest" type="primary" :loading="saving" @click="handleClose">{{
+          $t('public_button_confirm')
+        }}</el-button>
+        <el-button v-else type="primary" :loading="saving" @click="handleSubmit">{{
+          $t('public_button_submit')
+        }}</el-button>
       </div>
     </template>
   </ElDialog>
@@ -82,6 +95,13 @@ export default {
           end: null
         }
       },
+      rules: {
+        summary: {
+          required: true,
+          message: this.$t('packages_business_request_connector_use_plan_placeholder'),
+          trigger: 'blur'
+        }
+      },
 
       saving: false,
       hasRequest: false
@@ -91,7 +111,6 @@ export default {
   methods: {
     async handleOpen() {
       const request = await this.queryRequest()
-      console.log('request', request)
 
       if (request?.status === 'APPROVED') {
         // 审核通过
@@ -153,7 +172,6 @@ export default {
         }
       })
 
-      console.log('result', result)
       return result?.items?.[0]
     }
   }

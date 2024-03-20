@@ -471,7 +471,7 @@ export default {
           type: item.type,
           version: item.version
         })
-        const msg = this.$message.info('请稍等...')
+        const msg = this.$message.info(this.$t('public_please_wait'))
         const ifOpen = await this.$refs.requestDialog.handleOpen()
         msg.close()
         if (ifOpen) return
