@@ -3,24 +3,40 @@
     <template #title>
       <div class="fs-6 fw-sub font-color-dark flex align-center">
         <VIcon class="mr-2" size="24">lock-circle</VIcon>
-        <span>功能暂不可用</span>
+        <span>{{ $t('daas_feature_unavailable') }}</span>
       </div>
     </template>
-    <div class="locked-dialog-content">
-      <p class="mb-4">抱歉，当前版本暂不支持该功能，您可申请升级到企业版本或者直接注册云版使用该功能。</p>
-      <p class="mb-2">升级版本，您将获得：</p>
-      <ul>
-        <li>数据校验（仅企业版）</li>
-        <li>共享挖掘</li>
-        <li>告警设置</li>
-        <li>权限管理（仅企业版）</li>
-        <li>更多数据源</li>
-      </ul>
+    <div class="locked-dialog-content lh-base">
+      <p class="mb-4">{{ $t('daas_feature_unavailable_subtitle') }}</p>
+      <div class="upgrading-content p-3 border rounded-lg bg-subtle">
+        <p class="mb-2">{{ $t('daas_feature_unavailable_upgrade_dec') }}</p>
+        <ul class="font-color-dark">
+          <li class="flex align-center">
+            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li1') }}
+          </li>
+          <li class="flex align-center">
+            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li2') }}
+          </li>
+          <li class="flex align-center">
+            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li3') }}
+          </li>
+          <li class="flex align-center">
+            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li4') }}
+          </li>
+          <li class="flex align-center">
+            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li5') }}
+          </li>
+
+          <li class="mt-2">
+            <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">查看各版本详细功能对比</ElLink>
+          </li>
+        </ul>
+      </div>
     </div>
     <template #footer>
       <div>
-        <ElButton type="primary" @click="goOP">申请企业版</ElButton>
-        <ElButton type="primary" @click="goCloud">免费使用云版</ElButton>
+        <ElButton type="primary" @click="goOP">{{ $t('daas_feature_unavailable_get_enterprise') }}</ElButton>
+        <ElButton type="primary" @click="goCloud">{{ $t('daas_feature_unavailable_get_cloud') }}</ElButton>
       </div>
     </template>
   </ElDialog>
@@ -51,9 +67,9 @@ export default {
 <style lang="scss">
 .locked-dialog-content {
   li {
-    margin-left: 20px;
-    padding-left: 4px;
-    list-style-type: disc;
+    //margin-left: 20px;
+    //padding-left: 4px;
+    //list-style-type: disc;
   }
 }
 </style>

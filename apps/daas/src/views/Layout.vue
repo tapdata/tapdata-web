@@ -557,7 +557,7 @@ export default {
       return self.$store.state[data]
     }
 
-    if (window.getSettingByKey('SHOW_LICENSE')) {
+    if (process.env.VUE_APP_MODE !== 'community' && window.getSettingByKey('SHOW_LICENSE')) {
       this.getLicense()
     }
   },
