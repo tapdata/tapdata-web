@@ -1201,5 +1201,6 @@ export default {
   packages_business_request_connector_use_time: '预计使用时间',
   packages_business_request_connector_use_time_option1: '5天',
   packages_business_request_connector_use_time_option2: '半年',
-  packages_business_request_connector_use_time_option3: '1年'
+  packages_business_request_connector_use_time_option3: '1年',
+  packages_business_view_more_apis: '查看更多API'
 }
