@@ -42,7 +42,9 @@ let pages = {
   },
   requestConnector: {
     entry: 'src/pages/requestConnector.js',
-    title: 'Tapdata Cloud'
+    title: 'Tapdata Cloud',
+    filename: 'admin/requestConnector.html',
+    template: 'public/admin/index.html'
   }
 }
 
@@ -135,7 +137,33 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
-        })
+        }),
+
+        {
+          apply: compiler => {
+            const mapFunc = tag => {
+              if (tag.tagName === 'script' || (tag.tagName === 'link' && tag.attributes.href)) {
+                if (tag.attributes.href) {
+                  tag.attributes.href = '../' + tag.attributes.href
+                }
+                if (tag.attributes.src) {
+                  tag.attributes.src = '../' + tag.attributes.src
+                }
+              }
+              return tag
+            }
+
+            compiler.hooks.compilation.tap('HtmlWebpackPluginAlterAssetTags', function (compilation) {
+              compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync('ChangePath', function (data, cb) {
+                if (data.outputName.includes('admin/requestConnector.html')) {
+                  data.head = data.head.map(mapFunc)
+                  data.body = data.body.map(mapFunc)
+                }
+                cb(null, data)
+              })
+            })
+          }
+        }
       )
 
       config['performance'] = {
