@@ -28,7 +28,9 @@
           </li>
 
           <li class="mt-2">
-            <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">查看各版本详细功能对比</ElLink>
+            <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">{{
+              $t('daas_feature_unavailable_go_to_compare')
+            }}</ElLink>
           </li>
         </ul>
       </div>

@@ -1252,5 +1252,6 @@ export default {
     'Please select the source connection that includes the source tables you used in your relmig project',
   packages_business__relmig_import_target_connection_placeholder:
     'Please select the destination connection you want the data to be synchronized to',
-  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it'
+  packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
+  packages_business_paid_connector: 'Paid Data Source'
 }

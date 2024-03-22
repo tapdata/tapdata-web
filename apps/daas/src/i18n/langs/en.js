@@ -1887,5 +1887,6 @@ export default {
   daas_feature_unavailable_upgrade_dec_li4: 'Permission management (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
   daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
-  daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud'
+  daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
+  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions'
 }

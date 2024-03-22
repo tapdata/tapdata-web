@@ -1182,5 +1182,6 @@ export default {
   packages_business__relmig_import_connection_tip: '如果您還沒有創建，請點擊這裡',
   packages_business__relmig_import_source_connection_placeholder: '請選擇包含您在 relmig 項目中使用的源表的源連接',
   packages_business__relmig_import_target_connection_placeholder: '請選擇您希望數據同步到的目標連接',
-  packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它'
+  packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它',
+  packages_business_paid_connector: '付費數據源'
 }
