@@ -1,3 +1,6 @@
+import { Alert, Link } from 'element-ui'
+
+export { Alert, Link }
 export * from './select'
 export * from './preview-text'
 export * from './space'
