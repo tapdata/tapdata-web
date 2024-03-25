@@ -220,14 +220,14 @@ export default {
   },
 
   created() {
-    if (!window.__config__?.disabledOnlineChat) {
+    if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
     }
-    if (window.__config__?.disabledDataService) {
+    if (this.$store.state.config?.disabledDataService) {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
     }
-    if (window.__config__?.disabledDataVerify) {
+    if (this.$store.state.config?.disabledDataVerify) {
       //生产环境隐藏数据校验
       this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
     }
@@ -370,7 +370,7 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
-      if (window.__config__?.disabledBindingPhone) {
+      if (this.$store.state.config?.disabledBindingPhone) {
         //海外版不强制绑定手机号
         return
       }
