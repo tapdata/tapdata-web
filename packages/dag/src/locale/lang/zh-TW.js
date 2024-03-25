@@ -431,6 +431,7 @@ export default {
     '任務處理完成一條新產生事件需要消耗的總時間，當有多個目標時只統計最大的處理耗時',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件從源庫生成到經任務處理完成寫入目標的延遲時間，當有多個目標時只統計最大的增量延遲時間',
+  packages_dag_monitor_timeDifference: '數據源與引擎時間差過大（{val}）,增量延遲有偏差，請手動對齊時間',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任務平均每秒處理的輸入事件數和輸出事件數',
   packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任務平均每秒處理的輸入事件大小和輸出事件大小',
   packages_dag_components_log_zuidashijianshu: '最大事件數（條）',
@@ -568,7 +569,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa:
     '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
-    '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯',
+    '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯。\n注意：為了保證性能，Tapdata 會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引。',
   packages_dag_nodes_table_zidingyichaxun: '自定義查詢',
   packages_dag_field_inference_main_gaibiaocunzaibu: '該表存在不支持的數據類型',
   packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
@@ -682,5 +683,8 @@ export default {
     '注意：為了保證性能，Tapdata 會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引',
   packages_dag_existDataProcessMode_desc: '該行為會直接刪除目標表和數據，可能會對數據庫造成影響，請謹慎使用。',
   packages_dag_ddl_events_collapse_tip:
-    '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓'
+    '開啓該能力後，會自動將源的DDL操作在目標數據庫應用，可能會對目標數據庫造成影響，請謹慎開啓',
+  packages_dag_ddl_stopped_on_error: '遇到DDL時任務報錯停止',
+  packages_dag_ddl_auto_ignore: '自動忽略所有DDL',
+  packages_dag_ddl_sync_events: '同步DDL事件'
 }

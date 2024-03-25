@@ -163,6 +163,14 @@ export default observer({
           field.setDescription(
             values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : ''
           )
+        },
+
+        handleQuicklySyncPoints: () => {
+          const { currentEventTimestamp } = this.settings
+          this.settings.syncPoints.forEach(point => {
+            point.pointType = 'localTZ' // 用户自定义时间点
+            point.dateTime = currentEventTimestamp
+          })
         }
       },
 
@@ -457,7 +465,8 @@ export default observer({
                                 type: 'array',
                                 default: [{ type: 'current', date: '' }],
                                 'x-decorator-props': {
-                                  tooltip: this.$t('packages_dag_task_setting_syncPoint_tip')
+                                  tooltip: this.$t('packages_dag_task_setting_syncPoint_tip'),
+                                  feedbackLayout: 'none'
                                 },
                                 'x-component': 'ArrayItems',
                                 'x-decorator': 'FormItem',
@@ -575,6 +584,35 @@ export default observer({
                                   }
                                 }
                               },
+                              syncPointsDescWrap: {
+                                type: 'void',
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                properties: {
+                                  syncPointsDesc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': `{{'最近一次增量所处时间: ' + $values.currentEventTimestampLabel}}`
+                                  },
+                                  syncPointsDescBtn: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{handleQuicklySyncPoints}}'
+                                    },
+                                    'x-content': `从此刻开始`
+                                  }
+                                }
+                              },
+
                               // isAutoCreateIndexS: {
                               //   title: this.$t('packages_dag_task_setting_automatic_index'), //自动创建索引
                               //   type: 'boolean',

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
 import { merge } from 'lodash'
 import Mousetrap from 'mousetrap'
@@ -708,6 +709,11 @@ export default {
       this.$set(this.dataflow, 'startTime', data.startTime)
       this.$set(this.dataflow, 'lastStartDate', data.lastStartDate)
       this.$set(this.dataflow, 'pingTime', data.pingTime)
+      this.$set(
+        this.dataflow,
+        'currentEventTimestampLabel',
+        dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
+      )
       // this.$set(this.dataflow, 'shareCdcStop', data.shareCdcStop)
       // this.$set(this.dataflow, 'shareCdcStopMessage', data.shareCdcStopMessage)
       // 前端不关心的属性
@@ -1533,7 +1539,8 @@ export default {
       let inBlacklist = false
       let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
       this.allNodes.forEach(node => {
-        if (node.enableDDL) {
+        // 开启了DDL
+        if (node.ddlConfiguration === 'SYNCHRONIZATION') {
           hasEnableDDL = true
           if (node.increasePoll === 'customizeSql') {
             hasEnableDDLAndIncreasesql = true
@@ -2218,6 +2225,10 @@ export default {
           this.dataflow.pingTime = data.pingTime
           this.dataflow.shareCdcStop = data.shareCdcStop
           this.dataflow.shareCdcStopMessage = data.shareCdcStopMessage
+          this.dataflow.timeDifference = data.timeDifference
+          this.dataflow.currentEventTimestamp = data.currentEventTimestamp
+          this.dataflow.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
+
           if (data.status === 'edit') data.btnDisabled.start = false // 任务编辑中，在编辑页面可以启动
           Object.assign(this.dataflow.disabledData, data.btnDisabled)
 

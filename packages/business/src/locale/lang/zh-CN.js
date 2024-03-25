@@ -557,8 +557,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: '校验任务模式',
   packages_business_task_status_agent_tooltip_time: '距上次状态上报时间已经{time}',
   packages_business_task_status_agent_tooltip_agent: '任务所在的引擎为',
-  packages_business_task_status_retrying_tooltip:
-    '当前任务在{val}进入重试状态，系统将持续观察一小时以确认任务是否退出重试恢复正常，如任务已恢复正常请忽略该提醒。',
+  packages_business_task_status_retrying_tooltip: '当前任务正在重试中，重试开始时间：{val}',
   packages_business_select_placeholder: '请添加或选择',
   packages_business_verification_form_youjiantongzhi: '邮件通知',
   packages_business_verification_form_xitongtongzhi: '系统通知',
@@ -612,6 +611,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: '任务默认告警规则设置',
   packages_business_setting_alarmnotification_morengaojinggui: '默认告警规则',
   packages_business_setting_alarmnotification_renwugaojingshe: '任务告警设置',
+  packages_business_setting_alarmnotification_recipient_setting: '任务默认告警接收人设置',
+  packages_business_setting_alarmnotification_recipient_desc:
+    '此处设置为系统全局告警接收人设置，设置的所有的接收人都可以收到当前系统已开启的告警',
+  packages_business_setting_alarmnotification_recipient_default: '默认告警接收人',
+  packages_business_setting_alarmnotification_recipient: '告警接收人',
+  packages_business_setting_alarmnotification_recipient_tip: '支持设置多个告警接收人邮箱，多个邮箱以逗号分隔',
+  packages_business_setting_alarmnotification_channel: '告警通知渠道',
   packages_business_setting_alarmnotification_dangjiaoyanrenwucuowu: '当校验任务遇到错误时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwushuliangcuowu: '当count校验结果的差异行数大于阈值时',
   packages_business_setting_alarmnotification_dangjiaoyanrenwuzhicuowu: '当值校验结果的表数据差大于阈值时',

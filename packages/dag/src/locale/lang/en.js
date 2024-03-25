@@ -452,6 +452,8 @@ export default {
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
+  packages_dag_monitor_timeDifference:
+    'Significant time difference between data source and engine ({val}), incremental delay is biased, please manually align the time',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
   packages_dag_monitor_leftsider_qpSshizhi2:
@@ -608,7 +610,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa:
     'This field type is not currently supported. To avoid data processing errors, you can use the field editing function to hide this field.',
   packages_dag_field_inference_main_xuanzemorengeng:
-    'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field',
+    'When selecting the default update condition field, the default priority is to associate with the primary key field, if there is no primary key, associate with the unique index field, and if there is no primary key and no unique index, associate with the full field. When the specified field is selected, it will be associated with the specified update condition field.\nNote: Tapdata will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
   packages_dag_nodes_table_zidingyichaxun: 'Fully Customizable Query',
   packages_dag_field_inference_main_gaibiaocunzaibu: 'The table has an unsupported data type',
   packages_dag_validate_customsql_fail:
@@ -734,5 +736,8 @@ export default {
   packages_dag_existDataProcessMode_desc:
     'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
   packages_dag_ddl_events_collapse_tip:
-    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.'
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
+  packages_dag_ddl_stopped_on_error: 'Stop Task on DDL Error',
+  packages_dag_ddl_auto_ignore: 'Automatically Ignore All DDLs',
+  packages_dag_ddl_sync_events: 'Sync DDL Events'
 }

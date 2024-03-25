@@ -431,6 +431,7 @@ export default {
     '任务处理完成一条新产生事件需要消耗的总时间，当有多个目标时只统计最大的处理耗时',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件从源库生成到经任务处理完成写入目标的延迟时间，当有多个目标时只统计最大的增量延迟时间',
+  packages_dag_monitor_timeDifference: '数据源与引擎时间差过大（{val}）,增量延迟有偏差，请手动对齐时间',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任务平均每秒处理的输入事件数和输出事件数',
   packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任务平均每秒处理的输入事件大小和输出事件大小',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
@@ -573,7 +574,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa:
     '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
-    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联',
+    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联。\n注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
   packages_dag_nodes_table_zidingyichaxun: '全量自定义查询',
   packages_dag_field_inference_main_gaibiaocunzaibu: '该表存在不支持的数据类型',
   packages_dag_validate_customsql_fail: '当开启了全量自定义查询后，处理节点仅支持使用JS节点',
@@ -687,5 +688,8 @@ export default {
     '注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
   packages_dag_existDataProcessMode_desc: '该行为会直接删除目标表和数据，可能会对数据库造成影响，请谨慎使用。',
   packages_dag_ddl_events_collapse_tip:
-    '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启'
+    '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启',
+  packages_dag_ddl_stopped_on_error: '遇到DDL时任务报错停止',
+  packages_dag_ddl_auto_ignore: '自动忽略所有DDL',
+  packages_dag_ddl_sync_events: '同步DDL事件'
 }

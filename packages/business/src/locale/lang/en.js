@@ -582,8 +582,7 @@ export default {
   packages_business_verification_form_jiaoyanrenwumo: 'Validation task mode',
   packages_business_task_status_agent_tooltip_time: 'It has been {time} since the previous status report was issued.',
   packages_business_task_status_agent_tooltip_agent: 'The Agent where the task is located is',
-  packages_business_task_status_retrying_tooltip:
-    'The current task entered a retry state on {val}. The system will monitor for one hour to confirm if the task has recovered from retry. Please ignore this alert if the task has returned to normal.',
+  packages_business_task_status_retrying_tooltip: 'The current task is being retried. Retry start at: {val}',
   packages_business_select_placeholder: 'Please add or select',
   packages_business_verification_form_youjiantongzhi: 'Mail Notification',
   packages_business_verification_form_xitongtongzhi: 'System Notification',
@@ -655,6 +654,13 @@ export default {
   packages_business_setting_alarmnotification_renwumorengao: 'Task default alert rule setting',
   packages_business_setting_alarmnotification_morengaojinggui: 'Default Alert Rule',
   packages_business_setting_alarmnotification_renwugaojingshe: 'Task Alert Setting',
+  packages_business_setting_alarmnotification_recipient_setting: 'Task Default Alarm Recipient Setting',
+  packages_business_setting_alarmnotification_recipient_desc: `Set here as the system's global alarm recipient configuration. All configured recipients will receive alerts for the currently active system alarms.`,
+  packages_business_setting_alarmnotification_recipient_default: 'Default Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient: 'Alarm Recipient',
+  packages_business_setting_alarmnotification_recipient_tip:
+    'Supports configuring multiple alarm recipient emails, with multiple emails separated by commas.',
+  packages_business_setting_alarmnotification_channel: 'Alarm Notification Channel',
   packages_business_notify_no_webchat_notification:
     'Your account is not currently linked to WeChat. To receive notification information through WeChat, please log out and log back in, then scan the code to complete the binding process via WeChat',
   packages_business_connections_databaseform_bujiazai: 'Not Loaded',
