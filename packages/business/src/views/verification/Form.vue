@@ -16,16 +16,6 @@
           :rules="rules"
           :validate-on-rule-change="false"
         >
-          <!--          <ElFormItem-->
-          <!--            required-->
-          <!--            class="form-item"-->
-          <!--            :label="$t('packages_business_verification_form_jiaoyanrenwumo') + ': '"-->
-          <!--          >-->
-          <!--            <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">-->
-          <!--              <ElRadio label="pipeline">{{ $t('packages_business_verification_form_weitedingdeP') }}</ElRadio>-->
-          <!--              <ElRadio label="random">{{ $t('packages_business_verification_form_zhidingrenyibiao') }}</ElRadio>-->
-          <!--            </ElRadioGroup>-->
-          <!--          </ElFormItem>-->
           <ElFormItem
             v-if="form.taskMode === 'pipeline'"
             required
@@ -484,7 +474,8 @@ export default {
         jointField:
           this.$t('packages_business_verification_jointFieldTip') +
           this.$t('packages_dag_components_node_zanbuzhichi') +
-          notSupport['jointField'].join()
+          notSupport['jointField'].join(),
+        hash: this.$t('packages_business_verification_hashTip')
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -609,7 +600,8 @@ export default {
     async getFlowStages(id, cb) {
       this.loading = true
       try {
-        const data = await taskApi.getId(id || this.form.flowId)
+        id = id || this.form.flowId
+        const data = await taskApi.getId(id)
         this.isDbClone = data.syncType === 'migrate'
         let edges = data.dag?.edges || []
         let nodes = data.dag?.nodes || []
@@ -706,14 +698,23 @@ export default {
           // 检查校验类型是否支持
           const notSupportList = this.notSupport[this.form.inspectMethod]
           let notSupportStr = ''
-          tasks.forEach(t => {
+
+          for (const t of tasks) {
             if (notSupportList.includes(t.source.databaseType)) {
               notSupportStr = t.source.databaseType
+              break
             }
             if (notSupportList.includes(t.target.databaseType)) {
               notSupportStr = t.target.databaseType
+              break
             }
-          })
+
+            // hash 不支持异构数据库
+            if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
+              notSupportStr = this.$t('packages_business_heterogeneous_database')
+              break
+            }
+          }
 
           if (notSupportStr)
             return this.$message.error(
