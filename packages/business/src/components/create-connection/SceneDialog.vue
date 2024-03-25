@@ -707,7 +707,7 @@ export default {
         return
       }
 
-      if (item.qcType !== 'GA') {
+      if (item.qcType !== 'GA' && !this.isDaas) {
         Object.assign(this.requestMeta, {
           qcType: item.qcType,
           type: item.type,
