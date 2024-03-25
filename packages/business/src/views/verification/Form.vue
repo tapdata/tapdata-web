@@ -16,16 +16,6 @@
           :rules="rules"
           :validate-on-rule-change="false"
         >
-          <!--          <ElFormItem-->
-          <!--            required-->
-          <!--            class="form-item"-->
-          <!--            :label="$t('packages_business_verification_form_jiaoyanrenwumo') + ': '"-->
-          <!--          >-->
-          <!--            <ElRadioGroup v-model="form.taskMode" @change="handleChangeTaskMode">-->
-          <!--              <ElRadio label="pipeline">{{ $t('packages_business_verification_form_weitedingdeP') }}</ElRadio>-->
-          <!--              <ElRadio label="random">{{ $t('packages_business_verification_form_zhidingrenyibiao') }}</ElRadio>-->
-          <!--            </ElRadioGroup>-->
-          <!--          </ElFormItem>-->
           <ElFormItem
             v-if="form.taskMode === 'pipeline'"
             required
@@ -41,7 +31,7 @@
               clearable
               @input="flowChangeHandler"
             >
-              <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"> </ElOption>
+              <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
             </ElSelect>
           </ElFormItem>
 
@@ -59,6 +49,7 @@
               <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
               <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
               <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
+              <ElRadioButton label="hash">{{ inspectMethodMap['hash'] }}</ElRadioButton>
               <!-- <ElRadioButton label="cdcCount"
               >动态校验
               <ElTooltip
@@ -71,24 +62,9 @@
               </ElTooltip>
             </ElRadioButton> -->
             </ElRadioGroup>
-            <div>
+            <div v-if="typTipMap[form.inspectMethod]">
               <i class="el-icon-info color-primary mr-1"></i>
-              <span style="font-size: 12px">{{
-                {
-                  row_count:
-                    $t('packages_business_verification_fastCountTip') +
-                    this.$t('packages_dag_components_node_zanbuzhichi') +
-                    notSupport['row_count'].join(),
-                  field:
-                    $t('packages_business_verification_contentVerifyTip') +
-                    this.$t('packages_dag_components_node_zanbuzhichi') +
-                    notSupport['field'].join(),
-                  jointField:
-                    $t('packages_business_verification_jointFieldTip') +
-                    this.$t('packages_dag_components_node_zanbuzhichi') +
-                    notSupport['jointField'].join()
-                }[form.inspectMethod]
-              }}</span>
+              <span style="font-size: 12px">{{ typTipMap[form.inspectMethod] }}</span>
             </div>
           </ElFormItem>
 
@@ -106,10 +82,11 @@
                   class="ml-2 animation-rotate"
                   size="14"
                   color="rgb(61, 156, 64)"
-                  >loading-circle</VIcon
-                >
+                  >loading-circle
+                </VIcon>
               </template>
               <ElFormItem
+                v-if="form.inspectMethod !== 'hash'"
                 class="form-item"
                 prop="inspectDifferenceMode"
                 :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
@@ -179,9 +156,9 @@
               <ElFormItem class="form-item" :label="$t('packages_business_verification_form_task_alarm') + ': '">
                 <div class="inline-block">
                   <div>
-                    <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)">{{
-                      $t('packages_business_verification_form_task_alarm_when_error')
-                    }}</ElCheckbox>
+                    <ElCheckbox v-model="form.alarmSettings[0].open" @change="handleChangeAlarm(arguments[0], 0)"
+                      >{{ $t('packages_business_verification_form_task_alarm_when_error') }}
+                    </ElCheckbox>
                   </div>
                   <div>
                     <ElCheckbox
@@ -202,10 +179,8 @@
                           }
                         "
                       ></ElInputNumber>
-                      {{
-                        $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2')
-                      }}</ElCheckbox
-                    >
+                      {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}
+                    </ElCheckbox>
                     <ElCheckbox
                       v-show="['field', 'jointField'].includes(form.inspectMethod)"
                       v-model="form.alarmSettings[2].open"
@@ -224,49 +199,48 @@
                           }
                         "
                       ></ElInputNumber>
-                      {{
-                        $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2')
-                      }}</ElCheckbox
-                    >
+                      {{ $t('packages_business_verification_form_task_alarm_when_diff_result_over_count2') }}
+                    </ElCheckbox>
                   </div>
                 </div>
                 <div class="inline-block ml-8">
                   <ElCheckboxGroup v-model="form.alarmSettings[0].notify" @change="handleChangeAlarmItem">
-                    <ElCheckbox label="SYSTEM">{{
-                      $t('packages_business_verification_form_xitongtongzhi')
-                    }}</ElCheckbox>
-                    <ElCheckbox label="EMAIL">{{
-                      $t('packages_business_verification_form_youjiantongzhi')
-                    }}</ElCheckbox>
+                    <ElCheckbox label="SYSTEM"
+                      >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                    </ElCheckbox>
+                    <ElCheckbox label="EMAIL"
+                      >{{ $t('packages_business_verification_form_youjiantongzhi') }}
+                    </ElCheckbox>
                   </ElCheckboxGroup>
                   <ElCheckboxGroup
                     v-show="form.inspectMethod === 'row_count'"
                     v-model="form.alarmSettings[1].notify"
                     @change="handleChangeAlarmItem"
                   >
-                    <ElCheckbox label="SYSTEM">{{
-                      $t('packages_business_verification_form_xitongtongzhi')
-                    }}</ElCheckbox>
-                    <ElCheckbox label="EMAIL">{{
-                      $t('packages_business_verification_form_youjiantongzhi')
-                    }}</ElCheckbox>
+                    <ElCheckbox label="SYSTEM"
+                      >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                    </ElCheckbox>
+                    <ElCheckbox label="EMAIL"
+                      >{{ $t('packages_business_verification_form_youjiantongzhi') }}
+                    </ElCheckbox>
                   </ElCheckboxGroup>
                   <ElCheckboxGroup
                     v-show="['field', 'jointField'].includes(form.inspectMethod)"
                     v-model="form.alarmSettings[2].notify"
                     @change="handleChangeAlarmItem"
                   >
-                    <ElCheckbox label="SYSTEM">{{
-                      $t('packages_business_verification_form_xitongtongzhi')
-                    }}</ElCheckbox>
-                    <ElCheckbox label="EMAIL">{{
-                      $t('packages_business_verification_form_youjiantongzhi')
-                    }}</ElCheckbox>
+                    <ElCheckbox label="SYSTEM"
+                      >{{ $t('packages_business_verification_form_xitongtongzhi') }}
+                    </ElCheckbox>
+                    <ElCheckbox label="EMAIL"
+                      >{{ $t('packages_business_verification_form_youjiantongzhi') }}
+                    </ElCheckbox>
                   </ElCheckboxGroup>
                 </div>
               </ElFormItem>
 
               <ElFormItem
+                v-if="form.inspectMethod !== 'hash'"
                 class="form-item"
                 :label="$t('packages_business_verification_form_label_error_save_count') + ': '"
               >
@@ -286,7 +260,7 @@
                     onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
                     onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                   >
-                    <template slot="append"> {{ $t('public_time_m') }} </template>
+                    <template slot="append"> {{ $t('public_time_m') }}</template>
                   </ElInput>
                 </ElFormItem>
                 <ElFormItem class="setting-item" prop="cdcBeginDate">
@@ -356,9 +330,9 @@
         <!--        <ElButton type="primary" size="mini" @click="save()">{{-->
         <!--          $t('public_button_save') + ' & ' + $t('public_button_execute')-->
         <!--        }}</ElButton>-->
-        <ElButton type="primary" size="mini" :disabled="saveDisabled" @click="save(true)">{{
-          $t('public_button_save')
-        }}</ElButton>
+        <ElButton type="primary" size="mini" :disabled="saveDisabled" @click="save(true)"
+          >{{ $t('public_button_save') }}
+        </ElButton>
       </div>
     </div>
   </section>
@@ -373,7 +347,7 @@ import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS } from './components/const'
-
+import { statusMap, inspectMethod as inspectMethodMap } from './const'
 const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
@@ -392,6 +366,13 @@ export default {
     }
     let checkMode = () => {
       return self.form.mode === 'cron'
+    }
+
+    const notSupport = {
+      row_count: ['Clickhouse', 'Kafka'],
+      field: ['Kafka'],
+      jointField: ['Kafka'],
+      hash: []
     }
     return {
       loading: false,
@@ -479,15 +460,22 @@ export default {
       edges: [],
       allStages: [],
       flowOptions: [],
-      notSupport: {
-        row_count: ['Clickhouse', 'Kafka'],
-        field: ['Kafka'],
-        jointField: ['Kafka']
-      },
-      inspectMethodMap: {
-        row_count: i18n.t('packages_business_verification_row_verify'),
-        field: i18n.t('packages_business_verification_content_verify'),
-        jointField: i18n.t('packages_business_verification_joint_verify')
+      notSupport,
+      inspectMethodMap,
+      typTipMap: {
+        row_count:
+          this.$t('packages_business_verification_fastCountTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['row_count'].join(),
+        field:
+          this.$t('packages_business_verification_contentVerifyTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['field'].join(),
+        jointField:
+          this.$t('packages_business_verification_jointFieldTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['jointField'].join(),
+        hash: this.$t('packages_business_verification_hashTip')
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -612,7 +600,8 @@ export default {
     async getFlowStages(id, cb) {
       this.loading = true
       try {
-        const data = await taskApi.getId(id || this.form.flowId)
+        id = id || this.form.flowId
+        const data = await taskApi.getId(id)
         this.isDbClone = data.syncType === 'migrate'
         let edges = data.dag?.edges || []
         let nodes = data.dag?.nodes || []
@@ -698,7 +687,7 @@ export default {
           let tasks = this.$refs.conditionBox.getList()
           // 自动过滤出完整数据，以及索引字段数量不相等的情况
           tasks = tasks.filter(t => {
-            if (this.form.inspectMethod === 'row_count') {
+            if (this.form.inspectMethod === 'row_count' || this.form.inspectMethod === 'hash') {
               return t.source.table && t.target.table
             }
             return (
@@ -709,14 +698,23 @@ export default {
           // 检查校验类型是否支持
           const notSupportList = this.notSupport[this.form.inspectMethod]
           let notSupportStr = ''
-          tasks.forEach(t => {
+
+          for (const t of tasks) {
             if (notSupportList.includes(t.source.databaseType)) {
               notSupportStr = t.source.databaseType
+              break
             }
             if (notSupportList.includes(t.target.databaseType)) {
               notSupportStr = t.target.databaseType
+              break
             }
-          })
+
+            // hash 不支持异构数据库
+            if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
+              notSupportStr = this.$t('packages_business_heterogeneous_database')
+              break
+            }
+          }
 
           if (notSupportStr)
             return this.$message.error(
@@ -837,6 +835,7 @@ export default {
   height: 100%;
   //padding: 0 24px 24px 24px;
   overflow: hidden;
+
   .section-wrap-box {
     display: flex;
     flex-direction: column;
@@ -849,40 +848,50 @@ export default {
     overflow: auto;
   }
 }
+
 .verify-form-title {
   margin-bottom: 24px;
   line-height: 22px;
   font-size: 14px;
   color: map-get($fontColor, dark);
 }
+
 .form-item {
   margin-bottom: 32px;
 }
+
 .form-select {
   width: 276px;
 }
+
 .form-input {
   width: 505px;
 }
+
 ::v-deep {
   .js-wrap {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
+
     .jsBox {
       display: flex;
       flex-direction: column;
       flex: 1;
+
       .js-fixText {
         line-height: 25px;
       }
+
       .js-fixContent {
         margin-left: 60px;
       }
     }
+
     .example {
       width: 300px;
     }
+
     .js-editor {
       border: 1px solid map-get($borderColor, light);
     }

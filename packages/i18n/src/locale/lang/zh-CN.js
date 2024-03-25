@@ -35,6 +35,8 @@ export default {
   public_yes: '是',
   public_no: '否',
   public_tags: '标签',
+  public_phone: '手机号',
+  public_email: '邮箱',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '无效',
@@ -294,5 +296,7 @@ export default {
   public_shared_mining: '共享挖掘',
   public_external_storage: '外存管理',
 
-  public_page_title_advanced_features: '高级功能'
+  public_page_title_advanced_features: '高级功能',
+
+  public_please_wait: '请稍等...'
 }

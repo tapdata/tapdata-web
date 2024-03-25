@@ -378,6 +378,7 @@ export default {
   packages_business_verification_row_verify: '快速count校驗',
   packages_business_verification_content_verify: '表全字段值校驗',
   packages_business_verification_joint_verify: '關聯字段值校驗',
+  packages_business_verification_hash_verify: '全表 hash 校驗',
   packages_business_verification_job_enable: '已啟用',
   packages_business_verification_job_disable: '已禁止',
   packages_business_verification_check_same: '校驗一致',
@@ -815,6 +816,7 @@ export default {
   packages_business_data_console_fdm: '平台緩存層',
   packages_business_data_console_mdm: '平台加工層',
   packages_business_data_console_targets: '數據目標和服務層',
+  packages_business_data_console_goto_ai_chat: 'AI 对话',
   packages_business_create_clone_task: '創建數據複製任務',
   packages_business_create_sync_task: '創建數據開發任務',
   packages_business_table_prefix: '表前綴',
@@ -1180,5 +1182,20 @@ export default {
   packages_business__relmig_import_connection_tip: '如果您還沒有創建，請點擊這裡',
   packages_business__relmig_import_source_connection_placeholder: '請選擇包含您在 relmig 項目中使用的源表的源連接',
   packages_business__relmig_import_target_connection_placeholder: '請選擇您希望數據同步到的目標連接',
-  packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它'
+  packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它',
+  packages_business_paid_connector: '付費數據源',
+  packages_business_request_connector_title: '申請試用 Alpha/Beta 數據源',
+  packages_business_request_connector_pending: '審批中',
+  packages_business_request_connector_pending_desc: '您已提交申請，請等待審批',
+  packages_business_request_connector_alert:
+    '您正在申請使用 {qcType} 版本的 {type} 數據源， 請提供您的聯繫方式並允許我們的支持人員聯繫您以幫助您成功運行任務。',
+  packages_business_request_connector_use_plan: '您計劃使用此數據源的場景',
+  packages_business_request_connector_use_plan_placeholder: '請填寫您的使用場景',
+  packages_business_request_connector_use_time: '預計使用時間',
+  packages_business_request_connector_use_time_option1: '5天',
+  packages_business_request_connector_use_time_option2: '半年',
+  packages_business_request_connector_use_time_option3: '1年',
+  packages_business_view_more_apis: '查看更多API',
+  packages_business_verification_hashTip: '暫不支持異構數據庫',
+  packages_business_heterogeneous_database: '異構數據庫'
 }

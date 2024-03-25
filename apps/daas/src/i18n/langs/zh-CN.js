@@ -401,7 +401,7 @@ export default {
   setting_Log: '日志',
   setting_SMTP: 'SMTP',
   setting_Job: '任务',
-  setting_license: 'License控制',
+  setting_License: 'License控制',
   setting_expiredate: '到期时间',
   setting_import: '导入',
   setting_apply: '申请 license',
@@ -554,6 +554,12 @@ export default {
   setting_share_cdc_persistence_mongodb_collection_doc: '该项配置只有模式选择MongoDB时生效，输入存储的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
   setting_share_cdc_persistence_rocksdb_path_doc: '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
+  setting_task_log_file_save_time: '任务日志留存时长(天)',
+  setting_task_log_file_save_size: '任务日志留存大小(MB)',
+  setting_task_log_file_save_count: '任务日志保留份数',
+  setting_agent_log_file_save_time: '引擎日志留存时长(天)',
+  setting_agent_log_file_save_size: '引擎日志留存大小(MB)',
+  setting_agent_log_file_save_count: '引擎日志留存份数',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
   user_list_creat_user: '创建用户',
@@ -1816,5 +1822,17 @@ export default {
   daas_role_role_yemianquanxian: '页面权限',
   daas_role_role_gongnengmokuai: '功能模块',
   daas_role_role_gouxuanxiangyingmo:
-    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。'
+    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。',
+
+  daas_feature_unavailable: '功能暂不可用',
+  daas_feature_unavailable_subtitle: '抱歉，当前版本暂不支持该功能，您可申请升级到企业版本或者直接注册云版使用该功能。',
+  daas_feature_unavailable_upgrade_dec: '升级版本，您将获得：',
+  daas_feature_unavailable_upgrade_dec_li1: '数据校验（仅企业版）',
+  daas_feature_unavailable_upgrade_dec_li2: '共享挖掘',
+  daas_feature_unavailable_upgrade_dec_li3: '告警设置',
+  daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
+  daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
+  daas_feature_unavailable_get_enterprise: '申请企业版',
+  daas_feature_unavailable_get_cloud: '免费使用云版',
+  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比'
 }

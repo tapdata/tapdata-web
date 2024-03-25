@@ -69,7 +69,8 @@ import {
   Empty,
   Slider,
   Timeline,
-  TimelineItem
+  TimelineItem,
+  Result
 } from 'element-ui'
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -190,4 +191,5 @@ Vue.use(Empty)
 Vue.use(Slider)
 Vue.use(Timeline)
 Vue.use(TimelineItem)
+Vue.use(Result)
 Vue.component(CollapseTransition.name, CollapseTransition)

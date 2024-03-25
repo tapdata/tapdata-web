@@ -14,7 +14,7 @@ export const langMenu = {
 }
 
 export const getLang = lang => {
-  return Object.keys(langKeyMap).includes(lang) ? lang : 'en'
+  return Object.keys(langKeyMap).includes(lang) ? lang.replace('_', '-') : 'en'
 }
 
 export const getCurrentLanguage = () => {
@@ -25,6 +25,7 @@ export const getCurrentLanguage = () => {
 export const setCurrentLanguage = (lang, $i18n) => {
   const l = getLang(lang)
   localStorage.setItem('lang', l)
-  Cookie.set('lang', langKeyMap[l] || langKeyMap['en'])
+  Cookie.set('lang', langKeyMap[l])
   $i18n.locale = l
+  return l
 }

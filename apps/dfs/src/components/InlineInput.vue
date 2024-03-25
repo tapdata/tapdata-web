@@ -68,6 +68,7 @@
 import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
+
 export default {
   components: { VIcon },
   props: {
@@ -151,26 +152,32 @@ export default {
 <style lang="scss">
 .inline-input-wrap {
   display: inline-block;
+
   .inline-input-body {
     display: flex;
     align-items: center;
+
     .word-break {
       word-wrap: break-word;
       word-break: break-all;
       white-space: pre-wrap;
     }
   }
+
   .inline-input-link {
     font-size: inherit;
   }
+
   .input {
     width: 200px;
+
     &.block {
       .el-input__inner {
         display: block;
       }
     }
   }
+
   .icon-button {
     display: flex;
     justify-content: center;
@@ -179,6 +186,7 @@ export default {
     width: 28px;
     height: 28px;
     line-height: unset;
+
     &:hover {
       border-color: #d9d9d9;
       background-color: #f5f6f7;
@@ -188,9 +196,11 @@ export default {
       display: contents;
     }
   }
+
   .inline-input-button {
     padding: 5px 8px;
   }
+
   .valid-input .el-input__inner {
     border-color: #f04134;
   }

@@ -51,6 +51,20 @@
       >
         <div class="scene-name-list overflow-y-auto">
           <div
+            v-if="lockedTypes.length"
+            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+            :class="{ active: currentScene === 'locked' && !search }"
+            @click="
+              handleSelectScene({
+                key: 'locked'
+              })
+            "
+          >
+            <VIcon size="18" class="mr-1">lock-circle</VIcon>
+            {{ $t('packages_business_paid_connector') }}
+          </div>
+
+          <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
             :class="{ active: (currentScene === item.key || currentScene === item.name) && !search }"
             v-for="(item, i) in options"
@@ -94,8 +108,8 @@
                   <div class="connector-item-title font-color-dark flex align-center">
                     <span class="ellipsis mr-1">{{ item.name }} <span class="color-warning">Demo</span></span>
                     <ElTag size="mini" type="warning" class="text-uppercase ml-auto px-1 connector-item-tag"
-                      >DEMO</ElTag
-                    >
+                      >DEMO
+                    </ElTag>
                   </div>
                 </div>
               </div>
@@ -104,23 +118,28 @@
               </div>
             </div>
           </template>
-
           <div
             v-for="item in sceneDatabases"
-            :key="item.pdkId"
+            :key="item.type"
             class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
             :class="{ active: item.pdkId === selected.pdkId }"
             @click="handleSelect(item)"
           >
             <div class="flex gap-3">
-              <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
+              <DatabaseIcon v-if="!item.locked" :size="38" :item="item"></DatabaseIcon>
+              <ElImage
+                v-else
+                style="width: 38px; height: 38px"
+                :src="require(`@tap/assets/images/connector/${item.icon}`)"
+              ></ElImage>
               <div class="connector-item-content flex-1 overflow-hidden">
                 <div class="connector-item-title font-color-dark flex align-center">
                   <span class="ellipsis mr-1">{{ item.name }}</span>
+                  <VIcon v-if="item.locked" size="24">lock-circle</VIcon>
                   <VIcon v-if="item.qcType === 'GA'" size="24" class="ml-auto color-success">verified</VIcon>
-                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag">{{
-                    item.qcType
-                  }}</ElTag>
+                  <ElTag v-else-if="item.qcType" size="mini" class="text-uppercase ml-auto px-1 connector-item-tag"
+                    >{{ item.qcType }}
+                  </ElTag>
                 </div>
               </div>
             </div>
@@ -158,6 +177,13 @@
         @saveAndMore="handleSaveAndMore"
       ></ConnectionForm>
     </div>
+
+    <RequestDialog
+      ref="requestDialog"
+      :visible="requestVisible"
+      :meta="requestMeta"
+      @update:visible="val => (requestVisible = val)"
+    ></RequestDialog>
   </ElDialog>
 </template>
 
@@ -171,10 +197,13 @@ import { VEmpty, IconButton } from '@tap/component'
 import { databaseTypesApi } from '@tap/api'
 import { getIcon } from '@tap/assets'
 import { DatabaseIcon } from '../DatabaseIcon'
+import RequestDialog from './RequestDialog.vue'
 
 export default {
   name: 'SceneDialog',
+  inject: ['openLocked'],
   components: {
+    RequestDialog,
     ConnectionForm,
     ServeForm,
     VEmpty,
@@ -300,6 +329,219 @@ export default {
         'MongoDB Atlas': i18n.t('packages_business_create_connection_mongodbatlas_desc')
       },
       currentScene: 'recommend',
+      lockedTypes:
+        process.env.VUE_APP_MODE === 'community'
+          ? [
+              {
+                type: 'Aliyun RDS MySQL',
+                name: 'Aliyun RDS MySQL',
+                qcType: 'Alpha',
+                icon: 'aliyun_rds_mssql.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'Dameng',
+                name: 'Aliyun RDS MySQL',
+                qcType: 'Beta',
+                icon: 'dameng.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'DB2',
+                name: 'DB2',
+                qcType: 'Beta',
+                icon: 'db2.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'GBase-8a',
+                name: 'GBase-8a',
+                qcType: 'Alpha',
+                icon: 'gbase8a.png',
+                tags: ['Database'],
+                connectionType: 'target'
+              },
+              {
+                type: 'GBase-8s',
+                name: 'GBase-8s',
+                qcType: 'Alpha',
+                icon: 'gbase8s.png',
+                tags: ['Database'],
+                connectionType: 'target'
+              },
+              {
+                type: 'Informix',
+                name: 'Informix',
+                qcType: 'GA',
+                icon: 'informix.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'KingBaseES-R3',
+                name: 'KingBaseES-R3',
+                qcType: 'Alpha',
+                icon: 'kingbaser3.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'KingBaseES-R6',
+                name: 'KingBaseES-R6',
+                qcType: 'Beta',
+                icon: 'kingbaser6.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'Oracle',
+                name: 'Oracle',
+                qcType: 'GA',
+                icon: 'oracle.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'SQL Server',
+                name: 'SQL Server',
+                qcType: 'GA',
+                icon: 'mssql.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'Sybase',
+                name: 'Sybase',
+                qcType: 'Beta',
+                icon: 'sybase.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'TencentDB SQL Server',
+                name: 'TencentDB SQL Server',
+                qcType: 'Alpha',
+                icon: 'tencent_db_mssql.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'TencentDB TD-SQL',
+                name: 'TencentDB TD-SQL',
+                qcType: 'Alpha',
+                icon: 'tencent_db_mysql.png',
+                tags: ['Database'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'Alibaba 1688',
+                name: 'Alibaba 1688',
+                qcType: 'Alpha',
+                icon: 'alibaba.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'BesChannels',
+                name: 'BesChannels',
+                qcType: 'Alpha',
+                icon: 'bes-channels.png',
+                tags: ['SaaS'],
+                connectionType: 'target'
+              },
+              {
+                type: 'Coding',
+                name: 'Coding',
+                qcType: 'Beta',
+                icon: 'coding.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Feishu-Bitable',
+                name: 'Feishu-Bitable',
+                qcType: 'Alpha',
+                icon: 'bitable.png',
+                tags: ['SaaS'],
+                connectionType: 'source_and_target'
+              },
+              {
+                type: 'HubSpot',
+                name: 'HubSpot',
+                qcType: 'Beta',
+                icon: 'hubspot.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Lark Approval',
+                name: 'Lark Approval',
+                qcType: 'Alpha',
+                icon: 'task.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Lark Doc',
+                name: 'Lark Doc',
+                qcType: 'Alpha',
+                icon: 'lark-doc.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Lark-IM',
+                name: 'Lark-IM',
+                qcType: 'Beta',
+                icon: 'lark.png',
+                tags: ['SaaS'],
+                connectionType: 'target'
+              },
+              {
+                type: 'LarkTask',
+                name: 'LarkTask',
+                qcType: 'Beta',
+                icon: 'task.png',
+                tags: ['SaaS'],
+                connectionType: 'target'
+              },
+              {
+                type: 'Salesforce',
+                name: 'Salesforce',
+                qcType: 'Beta',
+                icon: 'Salesforce-Logo.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Shein',
+                name: 'Shein',
+                qcType: 'Alpha',
+                icon: 'shein.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Zoho-CRM',
+                name: 'Zoho-CRM',
+                qcType: 'Alpha',
+                icon: 'zoho.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              },
+              {
+                type: 'Zoho-Desk',
+                name: 'Zoho-Desk',
+                qcType: 'Beta',
+                icon: 'zoho_desk.png',
+                tags: ['SaaS'],
+                connectionType: 'source'
+              }
+            ]
+          : [],
       tagList: [
         {
           key: 'all',
@@ -335,6 +577,12 @@ export default {
             md: this.$t('packages_business_api_application_md')
           }
         ]
+      },
+      requestVisible: false,
+      requestMeta: {
+        type: '',
+        version: '',
+        qcType: ''
       }
     }
   },
@@ -356,6 +604,10 @@ export default {
 
       if (currentScene === 'all') {
         return this.database
+      }
+
+      if (currentScene === 'locked') {
+        return this.lockedTypes
       }
 
       if (currentScene === 'recommend' || (this.selectorType === 'target' && currentScene !== 'Database')) {
@@ -449,7 +701,24 @@ export default {
       this.$emit('update:visible', false)
     },
 
-    handleSelect(item, isDemo = false) {
+    async handleSelect(item, isDemo = false) {
+      if (item.locked) {
+        this.openLocked()
+        return
+      }
+
+      if (item.qcType !== 'GA' && !this.isDaas) {
+        Object.assign(this.requestMeta, {
+          qcType: item.qcType,
+          type: item.type,
+          version: item.version
+        })
+        const msg = this.$message.info(this.$t('public_please_wait'))
+        const ifOpen = await this.$refs.requestDialog.handleOpen()
+        msg.close()
+        if (ifOpen) return
+      }
+
       if (this.selectorType === 'source_and_target') {
         this.$emit('selected', item)
         return
@@ -524,10 +793,40 @@ export default {
         this.selectorType !== 'source_and_target'
           ? res?.filter(t => t.connectionType.includes(this.selectorType) && !!t.pdkHash) || []
           : res
-      this.database = data.sort((o1, o2) => {
-        return o1.name.localeCompare(o2.name)
-      })
       this.databaseTypeMap = data.reduce((map, db) => ((map[db.type] = db), map), {})
+
+      const sortFn = (o1, o2) => {
+        const qcTypeLevel = {
+          GA: 1,
+          Alpha: 2,
+          Beta: 3
+        }
+        const o1Level = qcTypeLevel[o1.qcType]
+        const o2Level = qcTypeLevel[o2.qcType]
+
+        if (o1Level === o2Level) {
+          return o1.name.localeCompare(o2.name)
+        }
+
+        return o1Level - o2Level
+      }
+
+      // 过滤掉已注册的
+      this.lockedTypes = this.lockedTypes
+        .filter(item => {
+          item.locked = true // 标记上锁
+          return (
+            !this.databaseTypeMap[item.type] &&
+            ((this.selectorType !== 'source_and_target' && item.connectionType.includes(this.selectorType)) ||
+              this.selectorType === 'source_and_target')
+          )
+        })
+        .sort(sortFn)
+
+      // 合并到已注册
+      data.push(...this.lockedTypes)
+
+      this.database = data.sort(sortFn)
 
       if (this.selectorType === 'source') {
         this.demoDatabase = [data.find(t => t.pdkId === 'mysql')]
@@ -622,12 +921,14 @@ export default {
         flex: 1;
         margin-right: 53px;
         margin-bottom: 48px;
+
         &.active,
         &:hover {
           .img-box {
             background: rgba(201, 205, 212, 0.3);
           }
         }
+
         &.disable {
           .img-box {
             background-color: rgba(242, 242, 242, 0.2);
@@ -688,6 +989,7 @@ export default {
     }
   }
 }
+
 .form__content {
   height: 640px;
 }

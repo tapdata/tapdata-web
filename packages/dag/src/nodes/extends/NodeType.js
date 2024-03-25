@@ -47,7 +47,8 @@ export class NodeType {
           type: 'void',
           'x-component': 'FormTab.TabPane',
           'x-component-props': {
-            label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi')
+            label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
+            locked: process.env.VUE_APP_MODE === 'community'
           },
           // 'x-hidden': '{{!$isMonitor}}',
           properties: {

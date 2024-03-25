@@ -57,15 +57,15 @@
               {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
             </div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{
-              $t('public_button_revise')
-            }}</ElLink>
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
+              >{{ $t('public_button_revise') }}
+            </ElLink>
             <ElLink
               v-if="!disabledBindingPhone && !userData.telephone"
               type="primary"
               @click="dialogObj.bindPhone = true"
-              >{{ $t('public_button_bind') }}</ElLink
-            >
+              >{{ $t('public_button_bind') }}
+            </ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
@@ -106,6 +106,22 @@
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
+          </ElCol>
+
+          <ElCol :span="12" class="user-item">
+            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
+              {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
+            </div>
+            <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
+              >{{ $t('public_button_revise') }}
+            </ElLink>
+            <ElLink
+              v-if="!disabledBindingPhone && !userData.telephone"
+              type="primary"
+              @click="dialogObj.bindPhone = true"
+              >{{ $t('public_button_bind') }}
+            </ElLink>
           </ElCol>
         </ElRow>
       </div>
@@ -164,9 +180,9 @@
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{
-          $t('user_Center_qiYeXinXiXiu')
-        }}</VButton>
+        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData"
+          >{{ $t('user_Center_qiYeXinXiXiu') }}
+        </VButton>
         <template v-else>
           <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
           <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
@@ -257,9 +273,9 @@
       </div>
       <div class="mt-6 text-center">
         <VButton @click="dialogObj.avatar = false">{{ $t('public_button_cancel') }}</VButton>
-        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
-          $t('public_button_confirm')
-        }}</VButton>
+        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])"
+          >{{ $t('public_button_confirm') }}
+        </VButton>
       </div>
     </ElDialog>
     <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
@@ -419,8 +435,13 @@
             maxlength="50"
             disabled
           >
-            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable>
-              <el-option v-for="item in countryCode" :label="'+ ' + item.dial_code" :value="item.dial_code">
+            <el-select v-model="phoneForm.countryCode" slot="prepend" style="width: 110px" filterable disabled>
+              <el-option
+                v-for="(item, i) in countryCode"
+                :label="'+ ' + item.dial_code"
+                :value="item.dial_code"
+                :key="i"
+              >
                 <span style="float: left">{{ '+ ' + item.dial_code }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ item.name }}</span></el-option
               >
@@ -1252,20 +1273,25 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .user-item__label {
   width: 80px;
 }
+
 .user-item__label_en {
   width: 180px !important;
 }
+
 .user-item__value {
   width: 180px;
 }
+
 .enterprise-item {
   display: flex;
   align-items: center;
   line-height: 34px;
 }
+
 .enterprise-item__label {
   width: 100px;
 }
@@ -1276,9 +1302,11 @@ export default {
   border-radius: 4px;
   border: 1px solid map-get($color, warning);
 }
+
 .enterprise-item__value {
   width: 240px;
 }
+
 .avatar-uploader-icon {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -1289,27 +1317,33 @@ export default {
   line-height: 100px;
   text-align: center;
 }
+
 .avatar {
   width: 100px;
   height: 100px;
   border-radius: 50%;
 }
+
 ::v-deep {
   .el-divider--horizontal {
     margin: 8px 0 16px 0;
   }
+
   .el-form-item__label {
     text-align: left;
   }
+
   .el-form-item__content {
     display: flex;
   }
+
   .inline-input {
     .inline-input-body {
       justify-content: space-between;
     }
   }
 }
+
 .click-style {
   padding-left: 10px;
   font-style: normal;
@@ -1317,6 +1351,7 @@ export default {
   font-weight: normal;
   cursor: pointer;
 }
+
 .access-key__desc {
   background: #f2f2f2;
 }

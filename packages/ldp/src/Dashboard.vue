@@ -106,7 +106,6 @@ import Settings from './Settings'
 import TablePreview from './TablePreview'
 import ConnectionPreview from './ConnectionPreview'
 import Catalogue from './components/Catalogue'
-import OverView from './components/OverView'
 
 import { jsPlumb } from '@tap/dag'
 
@@ -128,7 +127,6 @@ export default {
     IconButton,
     Catalogue,
     SceneDialog,
-    OverView,
     UpgradeFee,
     UpgradeCharges
   },
@@ -137,7 +135,6 @@ export default {
     return {
       keyword: '',
       visible: false,
-      overViewVisible: true,
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
@@ -228,10 +225,6 @@ export default {
 
   created() {
     this.loadDirectory()
-    //是否 默认打开
-    if (window.__USER_INFO__?.id === this.userId) {
-      this.overViewVisible = this.panelFlag
-    }
   },
 
   mounted() {
@@ -251,14 +244,6 @@ export default {
     ...mapMutations('overView', ['setPanelFlag']),
     toggleView(view) {
       this.currentView = view
-    },
-    //概览
-    toggleOverview(val) {
-      this.overViewVisible = !val
-      this.setPanelFlag({
-        panelFlag: this.overViewVisible,
-        userId: window.__USER_INFO__?.id
-      })
     },
 
     handleAdd(type) {

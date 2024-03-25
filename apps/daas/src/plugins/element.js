@@ -68,7 +68,8 @@ import {
   InfiniteScroll,
   Breadcrumb,
   BreadcrumbItem,
-  Empty
+  Empty,
+  Result
 } from 'element-ui'
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
@@ -229,6 +230,7 @@ Vue.component(BreadcrumbItem.name, BreadcrumbItem)
 Vue.component(Empty.name, Empty)
 Vue.use(Loading.directive)
 Vue.use(InfiniteScroll)
+Vue.use(Result)
 
 const showMessage = Symbol('showMessage')
 

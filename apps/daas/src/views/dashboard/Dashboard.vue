@@ -6,7 +6,7 @@
       </el-row>
       <template v-if="noPermission">
         <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
-          <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
+          <el-col :span="24 / taskList.length" v-for="item in taskList" :key="item.name" class="dashboard-col">
             <div class="dashboard-col-box">
               <div class="fs-7 font-color-normal">{{ item.title }}</div>
               <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
@@ -219,6 +219,7 @@ import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
 export default {
+  inject: ['lockedFeature'],
   components: { Chart },
   data() {
     return {
@@ -299,7 +300,8 @@ export default {
           }
         }
       },
-      syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
+      syncValidFalg:
+        (this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu')) && !this.lockedFeature.dataVerificationList,
       taskList: [
         {
           title: this.$t('dashboard_all_total'),
@@ -494,6 +496,7 @@ export default {
             }
             let result = []
             this.taskList.forEach(el => {
+              if (this.lockedFeature[el.key]) return
               result.push(
                 Object.assign({}, el, {
                   value: total[el.key]

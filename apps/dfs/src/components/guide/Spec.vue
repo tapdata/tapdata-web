@@ -198,7 +198,7 @@ export default {
   mounted() {
     this.getPrice()
     this.checkAgentCount()
-    const currencyType = window.__config__?.currencyType
+    const currencyType = this.$store.state.config?.currencyType
 
     if (currencyType) {
       this.currencyType = currencyType

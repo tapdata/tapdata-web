@@ -39,6 +39,10 @@ let pages = {
   license_code_activation: {
     entry: 'src/pages/licenseCodeActivation.js',
     title: 'Tapdata Cloud'
+  },
+  requestConnector: {
+    entry: 'src/pages/requestConnector.js',
+    title: 'Tapdata Cloud'
   }
 }
 
