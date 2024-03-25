@@ -171,8 +171,6 @@ export default {
   },
 
   computed: {
-    ...mapState('overView', ['panelFlag', 'userId']),
-    ...mapGetters('overView', ['stateFlag', 'stateUserId']),
     laneOptions() {
       const result = [
         {
@@ -241,7 +239,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations('overView', ['setPanelFlag']),
     toggleView(view) {
       this.currentView = view
     },

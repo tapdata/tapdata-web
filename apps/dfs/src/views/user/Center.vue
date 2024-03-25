@@ -60,10 +60,7 @@
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
               >{{ $t('public_button_revise') }}
             </ElLink>
-            <ElLink
-              v-if="!disabledBindingPhone && !userData.telephone"
-              type="primary"
-              @click="dialogObj.bindPhone = true"
+            <ElLink v-if="!userData.telephone" type="primary" @click="dialogObj.bindPhone = true"
               >{{ $t('public_button_bind') }}
             </ElLink>
           </ElCol>
@@ -116,10 +113,7 @@
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
               >{{ $t('public_button_revise') }}
             </ElLink>
-            <ElLink
-              v-if="!disabledBindingPhone && !userData.telephone"
-              type="primary"
-              @click="dialogObj.bindPhone = true"
+            <ElLink v-if="!userData.telephone" type="primary" @click="dialogObj.bindPhone = true"
               >{{ $t('public_button_bind') }}
             </ElLink>
           </ElCol>
@@ -730,7 +724,6 @@ export default {
       isEdit: false,
       accessKeyTooltip: false,
       secretKeyTooltip: false,
-      disabledBindingPhone: window.__config__?.disabledBindingPhone,
       codeColumns: [
         {
           label: i18n.t('dfs_instance_selectlist_shouquanma'),

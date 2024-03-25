@@ -221,8 +221,6 @@ export default ({ routes }) => {
     })
     .then(res => {
       store.commit('setConfig', res.data)
-      window.__config__ = res.data
-
       getData()
     })
 }

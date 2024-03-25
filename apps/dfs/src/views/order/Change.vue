@@ -172,6 +172,9 @@ export default {
     },
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
+    },
+    defaultCurrencyType() {
+      return this.$store.getters.currencyType
     }
   },
   methods: {
@@ -398,7 +401,7 @@ export default {
       if (this.isFree) {
         subscribeType = type
         periodUnit = selectPeriodUnit
-        currency = window.__config__?.currencyType || selectCurrency
+        currency = this.defaultCurrencyType || selectCurrency
       }
 
       let param = {

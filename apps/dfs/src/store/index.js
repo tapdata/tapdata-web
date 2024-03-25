@@ -105,6 +105,7 @@ const store = new Vuex.Store({
     isDomesticStation: (state, getters) => {
       return getters.language !== 'en'
     },
+    currencyType: (state, getters) => (getters.isDomesticStation ? 'cny' : 'usd'),
     startingTour: state => state.replicationTour.status === 'starting',
     pausedTour: state => state.replicationTour.status === 'paused',
     completedTour: state => state.replicationTour.status === 'completed',

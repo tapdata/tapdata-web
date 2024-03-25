@@ -349,7 +349,7 @@ export default {
   },
   created() {
     this.getFilterItems()
-    if (window.__config__?.station === 'international') {
+    if (!this.$store.getters.isDomesticStation) {
       this.refundAmount = 'https://docs.tapdata.io/cloud/billing/refund'
     } else {
       this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
