@@ -1818,5 +1818,16 @@ export default {
   daas_role_role_yemianquanxian: '頁面權限',
   daas_role_role_gongnengmokuai: '功能模塊',
   daas_role_role_gouxuanxiangyingmo:
-    '勾選相應模塊表示此導航對當前角色下用戶可見，開啟【查看全部數據】則表示角色可以查看和操作該模塊下所有的數據，不勾選則只能查看和操作自己創建和被授權的數據。 '
+    '勾選相應模塊表示此導航對當前角色下用戶可見，開啟【查看全部數據】則表示角色可以查看和操作該模塊下所有的數據，不勾選則只能查看和操作自己創建和被授權的數據。 ',
+  daas_feature_unavailable: '功能暫不可用',
+  daas_feature_unavailable_subtitle: '抱歉，當前版本暫不支持該功能，您可申請升級到企業版本或者直接註冊雲版使用該功能。',
+  daas_feature_unavailable_upgrade_dec: '升級版本，您將獲得：',
+  daas_feature_unavailable_upgrade_dec_li1: '數據校驗（僅企業版）',
+  daas_feature_unavailable_upgrade_dec_li2: '共享挖掘',
+  daas_feature_unavailable_upgrade_dec_li3: '告警設置',
+  daas_feature_unavailable_upgrade_dec_li4: '權限管理（僅企業版）',
+  daas_feature_unavailable_upgrade_dec_li5: '更多數據源',
+  daas_feature_unavailable_get_enterprise: '申請企業版',
+  daas_feature_unavailable_get_cloud: '免費使用雲版',
+  daas_feature_unavailable_go_to_compare: '查看各版本詳細功能對比'
 }

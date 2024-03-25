@@ -16,6 +16,7 @@
 import ReplicationTour from '@/components/ReplicationTour'
 import { buried } from '@/plugins/buried'
 import { mapMutations, mapState } from 'vuex'
+import { provide } from '@vue/composition-api'
 export default {
   name: 'app',
   provide: {
@@ -28,7 +29,9 @@ export default {
         throw new Error(this.$t('agent_error_check'))
       }
     },
-    buried
+    buried,
+    lockedFeature: {},
+    openLocked: () => {}
   },
   components: { ReplicationTour },
   computed: {

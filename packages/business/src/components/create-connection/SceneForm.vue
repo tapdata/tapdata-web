@@ -96,7 +96,7 @@ import ConnectorDoc from '../ConnectorDoc'
 export default {
   name: 'SceneForm',
   components: { ConnectorDoc, Test, SchemaToForm },
-  inject: ['checkAgent', 'buried'],
+  inject: ['checkAgent', 'buried', 'lockedFeature'],
   directives: {
     resize
   },
@@ -467,7 +467,11 @@ export default {
       const endProperties = {}
 
       // 是否支持共享挖掘
-      if (this.isDaas && this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')) {
+      if (
+        !this.lockedFeature.sharedMiningList &&
+        this.isDaas &&
+        this.pdkOptions.capabilities?.some(t => t.id === 'stream_read_function')
+      ) {
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',

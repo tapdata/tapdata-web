@@ -1822,5 +1822,17 @@ export default {
   daas_role_role_yemianquanxian: '页面权限',
   daas_role_role_gongnengmokuai: '功能模块',
   daas_role_role_gouxuanxiangyingmo:
-    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。'
+    '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。',
+
+  daas_feature_unavailable: '功能暂不可用',
+  daas_feature_unavailable_subtitle: '抱歉，当前版本暂不支持该功能，您可申请升级到企业版本或者直接注册云版使用该功能。',
+  daas_feature_unavailable_upgrade_dec: '升级版本，您将获得：',
+  daas_feature_unavailable_upgrade_dec_li1: '数据校验（仅企业版）',
+  daas_feature_unavailable_upgrade_dec_li2: '共享挖掘',
+  daas_feature_unavailable_upgrade_dec_li3: '告警设置',
+  daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
+  daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
+  daas_feature_unavailable_get_enterprise: '申请企业版',
+  daas_feature_unavailable_get_cloud: '免费使用云版',
+  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比'
 }

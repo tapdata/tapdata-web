@@ -92,8 +92,17 @@
                 <span slot="title" class="ml-4 title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
+                <ElMenuItem
+                  v-if="!cMenu.hidden"
+                  :key="cMenu.label"
+                  :index="cMenu.name"
+                  :class="{
+                    'is-locked': lockedFeature[cMenu.name]
+                  }"
+                >
                   <div class="submenu-item">{{ cMenu.label }}</div>
+
+                  <VIcon v-if="lockedFeature[cMenu.name]" class="ml-2" size="24">lock-circle</VIcon>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
@@ -479,6 +488,7 @@ let menuSetting = [
   }
 ]
 export default {
+  inject: ['lockedFeature', 'openLocked'],
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
@@ -529,8 +539,7 @@ export default {
     }
   },
   async created() {
-    const hideMenuMap = await this.getHideMenuItem()
-    this.getMenus(hideMenuMap)
+    this.getMenus()
     this.getActiveMenu()
 
     this.userName = Cookie.get('username') || Cookie.get('email')?.split('@')?.[0] || ''
@@ -548,7 +557,7 @@ export default {
       return self.$store.state[data]
     }
 
-    if (window.getSettingByKey('SHOW_LICENSE')) {
+    if (process.env.VUE_APP_MODE !== 'community' && window.getSettingByKey('SHOW_LICENSE')) {
       this.getLicense()
     }
   },
@@ -683,6 +692,11 @@ export default {
       })
     },
     menuHandler(name) {
+      if (this.lockedFeature[name]) {
+        this.openLocked()
+        return
+      }
+
       if (this.$route.name === name) {
         return
       }
@@ -712,28 +726,6 @@ export default {
         }
         this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
-    },
-
-    async getHideMenuItem() {
-      const map = {
-        sharedMiningList: (await logcollectorApi.get({ filter: JSON.stringify({}) }))?.total || 0,
-        HeartbeatTableList:
-          (
-            await taskApi.get({
-              filter: JSON.stringify({
-                where: {
-                  syncType: 'connHeartbeat'
-                }
-              })
-            })
-          )?.total || 0
-      }
-      return Object.keys(map).reduce((result, key) => {
-        if (!map[key]) {
-          result[key] = true
-        }
-        return result
-      }, {})
     }
   }
 }

@@ -1876,5 +1876,17 @@ export default {
   daas_role_role_yemianquanxian: 'Page Permission',
   daas_role_role_gongnengmokuai: 'Function Module',
   daas_role_role_gouxuanxiangyingmo:
-    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. '
+    'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. ',
+  daas_feature_unavailable: 'Feature Locked',
+  daas_feature_unavailable_subtitle:
+    'Sorry, the current version does not support this feature. You can apply for an upgrade to the enterprise version or directly register for the cloud version to use this feature.',
+  daas_feature_unavailable_upgrade_dec: "By upgrading , you'll get:",
+  daas_feature_unavailable_upgrade_dec_li1: 'Data validation (Enterprise edition only)',
+  daas_feature_unavailable_upgrade_dec_li2: 'CDC Log Cache',
+  daas_feature_unavailable_upgrade_dec_li3: 'Alarm settings',
+  daas_feature_unavailable_upgrade_dec_li4: 'Permission management (Enterprise edition only)',
+  daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
+  daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
+  daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
+  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions'
 }
