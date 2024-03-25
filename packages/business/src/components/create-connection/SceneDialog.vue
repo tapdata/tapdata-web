@@ -701,7 +701,7 @@ export default {
       this.$emit('update:visible', false)
     },
 
-    handleSelect(item, isDemo = false) {
+    async handleSelect(item, isDemo = false) {
       if (item.locked) {
         this.openLocked()
         return
