@@ -76,7 +76,7 @@
                   {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
                 </span>
                 <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'cdcCount'">
-                  $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
+                  {{ $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
                 </span>
               </span>
               <span class="success" v-if="scope.row.result === 'passed'">
