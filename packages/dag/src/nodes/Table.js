@@ -1477,6 +1477,22 @@ export class Table extends NodeType {
                             }
                           }
                         ]
+                      },
+                      syncIndexEnable: {
+                        title: i18n.t('packages_dag_syncIndex'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible: '{{$settings.type !== "cdc"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },

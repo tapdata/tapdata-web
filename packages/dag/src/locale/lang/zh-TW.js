@@ -691,5 +691,6 @@ export default {
   packages_dag_time_field_injection: '時間字段注入',
   packages_dag_task_setting_syncPoint_recent_increment: '最近一次增量所處時間',
   packages_dag_task_setting_syncPoint_from_now: '從此刻開始',
-  packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上時該功能才可用`
+  packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上時該功能才可用`,
+  packages_dag_syncIndex: '同步索引'
 }
