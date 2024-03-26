@@ -168,7 +168,7 @@ export default {
     JsDebug,
   },
   name: 'DatabaseForm',
-  inject: ['checkAgent', 'buried'],
+  inject: ['checkAgent', 'buried', 'lockedFeature'],
   directives: {
     resize,
   },
@@ -500,7 +500,10 @@ export default {
       const endProperties = {}
 
       // 是否支持共享挖掘
-      if (this.pdkOptions.capabilities?.some((t) => t.id === 'stream_read_function')) {
+      if (
+        !this.lockedFeature.sharedMiningList &&
+        this.pdkOptions.capabilities?.some((t) => t.id === 'stream_read_function')
+      ) {
         Object.assign(endProperties, {
           shareCdcEnable: {
             type: 'boolean',
@@ -881,6 +884,10 @@ export default {
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
+                    'x-validator': {
+                      pattern: /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/,
+                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong')
+                    }
                   },
                   connection_type: {
                     type: 'string',

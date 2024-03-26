@@ -246,3 +246,21 @@
     }
   }
 }
+
+.tag-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 24px;
+  background: linear-gradient(135deg, #4D505C 0%, #222222 100%);
+  border: 0;
+  color: #EECCAA;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.el-menu-item.is-locked {
+  opacity: 1;
+  cursor: help;
+}

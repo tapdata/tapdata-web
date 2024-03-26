@@ -194,7 +194,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    ...mapGetters(['isDomesticStation', 'currencyType']),
 
     payMethods() {
       const payMethods = [
@@ -304,7 +304,7 @@ export default {
           }),
         )}`,
       )
-      const currency = subscribe.currency || window.__config__?.currencyType
+      const currency = subscribe.currency || this.currencyType
       this.subscribe = subscribe
       this.price = this.formatterPrice(currency, subscribe.totalAmount)
       this.subscriptionMethodLabel =
@@ -359,7 +359,7 @@ export default {
     async loadAlter() {
       const alter = await this.$axios.get(`api/tcm/subscribe/alter/${this.subscribeAlterId}`)
       const { subscribe, subscribeId } = alter
-      const currency = subscribe.currency || window.__config__?.currencyType
+      const currency = subscribe.currency || this.currencyType
 
       this.price = this.formatterPrice(currency, alter.subscribeItems[0].amount)
       this.subscriptionMethodLabel =

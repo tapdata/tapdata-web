@@ -73,19 +73,28 @@
         min-width="140"
         align="center"
         :label="$t('packages_business_verification_history_source_total_rows')"
-      ></el-table-column>
+      >
+        <template slot-scope="scope">
+          {{ scope.row.inspectMethod === 'hash' ? '-' : scope.row.sourceTotal || 0 }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('packages_business_verification_result_title')" min-width="180">
         <template v-slot="scope">
           <div class="flex align-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
               <div v-if="scope.row.result !== 'passed'" class="data-verify__status error">
                 <el-icon class="data-verify__icon"><CircleCloseFilled /></el-icon>
-
-                <span v-if="scope.row.inspectMethod === 'row_count'">
+                <span v-if="scope.row.inspectMethod === 'row_count' || scope.row.inspectMethod === 'hash'">
                   {{ $t('packages_business_verification_inconsistent') }}
                 </span>
-                <span v-else>
-                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                <span v-if="scope.row.inspectMethod === 'field'">
+                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'jointField'">
+                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspectMethod === 'cdcCount'">
+                  {{ $t('packages_business_verification_contConsistent') }} {{ scope.row.difference_number }}
                 </span>
               </div>
               <div v-else class="data-verify__status success">
@@ -193,6 +202,7 @@ import { FilterBar } from '@tap/component'
 import { VIcon } from '@tap/component'
 import { TablePage } from '../../components'
 import { inspectApi, metadataInstancesApi } from '@tap/api'
+import { statusMap, inspectMethod, typeList as verifyTypeList } from './const'
 
 let timeout = null
 export default {
@@ -215,19 +225,8 @@ export default {
       filterItems: [],
       loadingImg: require('@tap/assets/icons/loading.svg'),
       order: 'last_updated DESC',
-      inspectMethod: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-        cdcCount: i18n.t('packages_business_verification_details_dongtaijiaoyan'),
-      },
-      statusMap: {
-        waiting: this.$t('packages_business_verification_waiting'),
-        scheduling: this.$t('packages_business_verification_scheduling'),
-        error: this.$t('packages_business_verification_error'),
-        done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running'),
-      },
+      inspectMethod,
+      statusMap,
       validList: [
         { label: this.$t('public_select_option_all'), value: '' },
         {
@@ -244,21 +243,7 @@ export default {
         },
         { label: 'Error', value: 'error' },
       ],
-      verifyTypeList: [
-        { label: this.$t('public_select_option_all'), value: '' },
-        {
-          label: this.$t('packages_business_verification_row_verify'),
-          value: 'row_count',
-        },
-        {
-          label: this.$t('packages_business_verification_content_verify'),
-          value: 'field',
-        },
-        {
-          label: this.$t('packages_business_verification_joint_verify'),
-          value: 'jointField',
-        },
-      ],
+      verifyTypeList,
       multipleSelection: [],
       moreAuthority: this.$has('verify_job_delete_all_data'),
     }
@@ -367,6 +352,10 @@ export default {
               item.lastStartTime = item.lastStartTime ? dayjs(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
               item.sourceTotal = sourceTotal
               item.targetTotal = targetTotal
+              if (item.inspectMethod === 'hash') {
+                item.sourceTotal = '-'
+                item.targetTotal = '-'
+              }
               return item
             }),
           }

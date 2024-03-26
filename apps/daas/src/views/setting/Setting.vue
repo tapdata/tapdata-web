@@ -77,8 +77,15 @@
                           </el-tooltip>
                         </span>
                       </template>
+                      <ElInputNumber
+                        v-if="'min' in childItem || 'max' in childItem"
+                        v-model="childItem.value"
+                        controls-position="right"
+                        :min="childItem.min"
+                        :max="childItem.max"
+                      ></ElInputNumber>
                       <el-input
-                        v-if="!childItem.enums || childItem.enums.length === 0"
+                        v-else-if="!childItem.enums || childItem.enums.length === 0"
                         :type="childItem.key.match(/password/) ? 'password' : 'text'"
                         v-model="childItem.value"
                         :disabled="item.category === 'license'"

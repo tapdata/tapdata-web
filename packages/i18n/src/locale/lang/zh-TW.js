@@ -35,6 +35,8 @@ export default {
   public_yes: '是',
   public_no: '否',
   public_tags: '標籤',
+  public_phone: '手機號',
+  public_email: '郵箱',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -294,4 +296,6 @@ export default {
   public_external_storage: '外存管理',
 
   public_page_title_advanced_features: '高級功能',
+
+  public_please_wait: '請稍等...',
 }

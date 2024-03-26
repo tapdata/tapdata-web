@@ -431,6 +431,7 @@ export default {
     '任务处理完成一条新产生事件需要消耗的总时间，当有多个目标时只统计最大的处理耗时',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     '事件从源库生成到经任务处理完成写入目标的延迟时间，当有多个目标时只统计最大的增量延迟时间',
+  packages_dag_monitor_timeDifference: '数据源与引擎时间差过大（{val}）,增量延迟有偏差，请手动对齐时间',
   packages_dag_monitor_leftsider_qpSshizhi: 'QPS是指任务平均每秒处理的输入事件数和输出事件数',
   packages_dag_monitor_leftsider_qpSshizhi2: 'QPS是指任务平均每秒处理的输入事件大小和输出事件大小',
   packages_dag_components_nodedetaildialog_zengliangduquyan2:
@@ -689,4 +690,12 @@ export default {
   packages_dag_existDataProcessMode_desc: '该行为会直接删除目标表和数据，可能会对数据库造成影响，请谨慎使用。',
   packages_dag_ddl_events_collapse_tip:
     '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启',
+  packages_dag_ddl_stopped_on_error: '遇到DDL时任务报错停止',
+  packages_dag_ddl_auto_ignore: '自动忽略所有DDL',
+  packages_dag_ddl_sync_events: '同步DDL事件',
+  packages_dag_dateFieldName: '时间字段名称',
+  packages_dag_time_field_injection: '时间字段注入',
+  packages_dag_task_setting_syncPoint_recent_increment: '最近一次增量所处时间',
+  packages_dag_task_setting_syncPoint_from_now: '从此刻开始',
+  packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上时该功能才可用`,
 }

@@ -1,10 +1,11 @@
-import { defineComponent, reactive, computed, PropType } from 'vue'
+import { defineComponent, reactive, computed, PropType, inject } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { model } from '@formily/reactive'
 import { h, useField, useFieldSchema, RecursionField, Fragment } from '@formily/vue'
 import { Schema, SchemaKey } from '@formily/json-schema'
 import { ElTabs, ElTabPane, ElBadge } from 'element-plus'
 import { stylePrefix, composeExport } from '@formily/element-plus/esm/__builtins__'
+import { VIcon } from '@tap/component'
 
 export interface IFormTab {
   activeKey: string
@@ -67,12 +68,29 @@ const FormTab = observer(
       const field = useField()
       const prefixCls = `${stylePrefix}-form-tab`
       const formTabRef = computed(() => props.formTab ?? createFormTab())
+      const openLocked: Function = inject('openLocked')
 
       const takeActiveKey = (tabs: Tabs) => {
         return props?.value || formTabRef.value?.activeKey || tabs?.[0]?.name
       }
 
       const badgedHeader = (key: SchemaKey, props: any) => {
+        if (props.locked) {
+          return () => (
+            <div
+              class="flex align-center"
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                openLocked()
+              }}
+            >
+              <span>{props.label}</span>
+              <VIcon size={18}>lock-circle</VIcon>
+            </div>
+          )
+        }
+
         const errors = field.value.form.queryFeedbacks({
           type: 'error',
           address: `${field.value.address.concat(key)}.*`,

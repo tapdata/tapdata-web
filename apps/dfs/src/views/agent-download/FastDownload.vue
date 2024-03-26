@@ -428,10 +428,10 @@ export default {
   },
   created() {
     this.getUrl()
-    if (!window.__config__?.disabledOnlineChat) {
+    if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
     }
-    if (window.__config__?.disabledAlibabaCloudComputingNest) {
+    if (this.$store.state.config?.disabledAlibabaCloudComputingNest) {
       this.downType = [
         { name: 'Linux (64 bit)', value: 'Linux' },
         { name: 'Docker', value: 'Docker' },

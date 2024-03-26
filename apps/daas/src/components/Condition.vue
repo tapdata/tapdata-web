@@ -311,6 +311,7 @@ export default {
       display: flex;
       justify-content: space-between;
       width: 100%;
+
       .condition-warp-group-button {
         width: 70px;
       }

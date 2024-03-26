@@ -44,7 +44,7 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
+        img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
         <span>{{ $t('packages_business_verification_success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
@@ -200,7 +200,7 @@ export default {
               if (diffCount < 0) {
                 countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
               }
-              if (this.type !== 'row_count') {
+              if (this.type !== 'row_count' && this.type !== 'hash') {
                 let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
                 if (diffContentNum !== 0) {
                   contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])

@@ -7,12 +7,15 @@
             <li
               v-for="item in settingList"
               :key="item.icon"
+              class="flex align-center"
               :class="activePanel === item.key ? 'active' : ''"
               @click="changeName(item.key)"
             >
               <!-- <i :class="['iconfont', item.icon]"></i> -->
               <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon
               ><span>{{ item.name }}</span>
+
+              <VIcon v-if="lockedFeature[item.key]" class="ml-2" size="24">lock-circle</VIcon>
             </li>
           </ul>
         </div>
@@ -30,6 +33,7 @@ import i18n from '@/i18n'
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
 export default {
+  inject: ['lockedFeature', 'openLocked'],
   components: { VIcon },
   data() {
     return {
@@ -82,6 +86,11 @@ export default {
   },
   methods: {
     changeName(name) {
+      if (this.lockedFeature[name]) {
+        this.openLocked()
+        return
+      }
+
       this.activePanel = name
       this.$router.push({
         name,

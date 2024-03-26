@@ -540,22 +540,34 @@ export class Table extends NodeType {
                       title: i18n.t('packages_dag_config_ddl'),
                     },
                     properties: {
-                      enableDDL: {
-                        title: i18n.t('packages_dag_nodes_table_ddLshijian'),
-                        type: 'boolean',
+                      ddlConfiguration: {
+                        type: 'string',
+                        default: '{{$values.enableDDL ? "SYNCHRONIZATION" : "FILTER"}}', // 兼容老数据
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_ddl_stopped_on_error'),
+                            value: 'ERROR'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_auto_ignore'),
+                            value: 'FILTER'
+                          },
+                          {
+                            label: i18n.t('packages_dag_ddl_sync_events'),
+                            value: 'SYNCHRONIZATION'
+                          }
+                        ],
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          className: 'item-control-horizontal',
-                          layout: 'horizontal',
-                          tooltip: i18n.t('packages_dag_nodes_database_kaiqihourenwu'),
+                          className: 'extra-prefix-bar',
                         },
-                        'x-component': 'Switch',
+                        'x-component': 'Radio.Group',
                         'x-reactions': [
                           {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                display: '{{$self.value ? "visible" :"hidden"}}',
+                                visible: '{{$self.value === "SYNCHRONIZATION"}}'
                               },
                             },
                           },
@@ -569,6 +581,14 @@ export class Table extends NodeType {
                                 )}'}}`,
                               },
                             },
+                            otherwise: {
+                              state: {
+                                description: `{{$self.value === 'ERROR' ? '${i18n.t(
+                                  'packages_dag_feature_agent_version_tips',
+                                  { val: '3.5.12' }
+                                )} ': ''}}`
+                              }
+                            }
                           },
                         ],
                       },
@@ -1513,6 +1533,7 @@ export class Table extends NodeType {
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
+              locked: import.meta.env.VUE_APP_MODE === 'community',
             },
             // 'x-hidden': '{{!$isMonitor}}',
             properties: {

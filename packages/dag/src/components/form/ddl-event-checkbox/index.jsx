@@ -74,13 +74,15 @@ export const DdlEventList = observer(
       const fieldRef = useField()
       const form = formRef.value
       const list = ref([])
+      // 开启DDL的源节点
       const parents = props
         .findParentNodes(form.values.id)
-        .filter((parent) => (parent.type === 'database' || parent.type === 'table') && parent.enableDDL)
+        .filter(
+          (parent) =>
+            (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION'
+        )
 
       const parentEnable = ref(!!parents.length)
-
-      console.log('parents', parents) // eslint-disable-line
 
       if (parents.length) {
         const functions = form.values.attrs.capabilities.filter((item) => item.type === 11).map((item) => item.id)

@@ -112,9 +112,8 @@ export default {
   components: { VIcon, NotificationPopover },
   data() {
     return {
-      USER_CENTER: window.__config__.USER_CENTER,
-      topBarLinks: window.__config__?.topBarLinks,
-      officialWebsiteAddress: window.__config__?.officialWebsiteAddress || 'https://tapdata.net',
+      topBarLinks: this.$store.state.config?.topBarLinks,
+      officialWebsiteAddress: this.$store.state.config?.officialWebsiteAddress || 'https://tapdata.net',
       lang: '',
       languages: langMenu,
       domain: document.domain,
@@ -138,7 +137,7 @@ export default {
     this.loadUserMock()
     this.getAgentCount()
     //如果没有配置topBarLinks 给默认值
-    if (!window.__config__?.topBarLinks) {
+    if (!this.$store.state.config?.topBarLinks) {
       this.topBarLinks = [
         {
           text: 'header_technical_support', //技术支持
@@ -180,7 +179,6 @@ export default {
           window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
           break
         case 'userCenter':
-          // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           this.$router.push({
             name: 'userCenter',
           })

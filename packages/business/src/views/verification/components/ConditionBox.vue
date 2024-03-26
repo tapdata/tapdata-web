@@ -10,7 +10,7 @@
       </div>
       <div>
         <ElLink
-          v-if="inspectMethod !== 'row_count' && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
+          v-if="!isCountOrHash && list.some((t) => !t.source.sortColumn || !t.target.sortColumn)"
           type="primary"
           :disabled="!list.length"
           class="mr-4"
@@ -61,6 +61,11 @@
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
+                  :params="
+                    inspectMethod === 'hash'
+                      ? { where: { database_type: item.target.databaseType || undefined } }
+                      : undefined
+                  "
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -74,6 +79,11 @@
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
+                  :params="
+                    inspectMethod === 'hash'
+                      ? { where: { database_type: item.source.databaseType || undefined } }
+                      : undefined
+                  "
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
@@ -126,7 +136,7 @@
                   @input="(value) => (item = value)"
                 />
               </div>
-              <div v-if="inspectMethod !== 'row_count'" class="setting-item mt-4">
+              <div v-if="!isCountOrHash" class="setting-item mt-4">
                 <label class="item-label">{{ $t('packages_business_verification_indexField') }}: </label>
                 <MultiSelection
                   v-model:value="item.source.sortColumn"
@@ -235,6 +245,85 @@
       </template>
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
+
+    <!--API 抽屉-->
+    <ElDrawer
+      append-to-body
+      :modal="false"
+      :title="$t('packages_dag_api_docs')"
+      :size="680"
+      :visible="showDoc"
+      @update:visible="(val) => (showDoc = val)"
+    >
+      <div class="px-4 condition-js-doc-content">
+        <h2>TimeUpdate</h2>
+        <h3>{{ $t('packages_dag_js_processor_index_fangfa') }}</h3>
+        <h4>$dynamicDate</h4>
+        <ul>
+          <li>
+            {{ $t('packages_dag_js_processor_index_zuoyong') }}
+            校验任务过滤条件中时间参数自动根据配置做值更新，目前该函数仅支持Mongo。改属性包含的参数有：
+            <ol>
+              <li>format: 可变时间格式串，用法如示例</li>
+              <li>
+                subtract: 时间相对减少量，单位毫秒,默认值为0，即当前配置时间，如format中使用了占位符则取当前任务时间
+              </li>
+              <li>toString: 是否输出为时间字符串，可不填默认值为false, false表示输出为时日期对象等价于$date</li>
+            </ol>
+          </li>
+          <li>
+            {{ $t('packages_dag_js_processor_index_yongfa') }}
+          </li>
+        </ul>
+        <ol>
+          <li>固定时间</li>
+        </ol>
+        <HighlightCode
+          language="json"
+          :code="
+            JSON.stringify(
+              {
+                field: {
+                  $gt: {
+                    $dynamicDate: {
+                      format: '2023-03-19 05:00:00',
+                      subtract: 3600000,
+                      toString: false
+                    }
+                  }
+                }
+              },
+              null,
+              2
+            )
+          "
+        ></HighlightCode>
+        <p>
+          以上过滤条件的含义为：查询所有字段field时间大于"2023-03-19 04:00:00"的记录，配置中时间为"2023-03-19
+          05:00:00",时间减少的跨度为3600000
+        </p>
+        <ol start="2">
+          <li>动态天数</li>
+        </ol>
+        <HighlightCode
+          language="json"
+          :code="
+            JSON.stringify(
+              {
+                field: { $gt: { $dynamicDate: { format: '%y-%M-%d 00:00:00', subtract: 86400000, toString: false } } }
+              },
+              null,
+              2
+            )
+          "
+        ></HighlightCode>
+        <p>
+          以上过滤条件的含义为：每次任务启动时查询一天前所有字段field时间0点以后的记录，配置中时间为"%y-%M-%d
+          00:00:00",时间减少的跨度为86400000。%y为年份占位符，使用任务启动时间的年份。%M为月份占位符，使用任务启动的月份，依次类推，还支持的占位符有%d,
+          %h, %m, %s, %S
+        </p>
+      </div>
+    </ElDrawer>
   </div>
 </template>
 
@@ -245,7 +334,7 @@ import { merge, cloneDeep, uniqBy, isEmpty, debounce } from 'lodash'
 import { action } from '@formily/reactive'
 
 import i18n from '@tap/i18n'
-import { AsyncSelect, SchemaToForm } from '@tap/form'
+import { AsyncSelect, SchemaToForm, HighlightCode } from '@tap/form'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { uuid } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '../../../shared'
@@ -267,6 +356,7 @@ export default {
     FieldDialog,
     SchemaToForm,
     ElIconArrowRight,
+    HighlightCode,
   },
   name: 'ConditionBox',
   directives: {
@@ -291,6 +381,7 @@ export default {
   },
   data() {
     return {
+      showDoc: false,
       list: [],
       jointErrorMessage: '',
       fieldsMap: {},
@@ -359,6 +450,9 @@ export default {
           } catch (e) {
             return []
           }
+        },
+        openApiDrawer: () => {
+          this.showDoc = true
         },
       },
       formSchema: {
@@ -479,15 +573,49 @@ export default {
                                 title: ' ',
                                 'x-decorator-props': {
                                   colon: false,
+                                  feedbackLayout: 'none',
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true },
                                 },
                               },
+                              descWrap: {
+                                type: 'void',
+                                title: ' ',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  colon: false,
+                                  feedbackLayout: 'none'
+                                },
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                properties: {
+                                  desc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': i18n.t('packages_dag_nodes_table_jinzhichiqu')
+                                  },
+                                  link: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{openApiDrawer}}'
+                                    },
+                                    'x-content': i18n.t('packages_business_view_more_apis')
+                                  }
+                                }
+                              }
                             },
                           },
                           mongoAgg: {
@@ -521,14 +649,48 @@ export default {
                                 title: ' ',
                                 'x-decorator-props': {
                                   colon: false,
+                                  feedbackLayout: 'none',
                                 },
                                 'x-decorator': 'FormItem',
-                                description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true },
                                 },
                               },
+                              descWrap: {
+                                type: 'void',
+                                title: ' ',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  colon: false,
+                                  feedbackLayout: 'none'
+                                },
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                properties: {
+                                  desc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': i18n.t('packages_dag_nodes_table_shiligro')
+                                  },
+                                  link: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{openApiDrawer}}'
+                                    },
+                                    'x-content': i18n.t('packages_business_view_more_apis')
+                                  }
+                                }
+                              }
                             },
                           },
                           sql: {
@@ -674,15 +836,49 @@ export default {
                                 title: ' ',
                                 'x-decorator-props': {
                                   colon: false,
+                                  feedbackLayout: 'none',
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                description: i18n.t('packages_dag_nodes_table_jinzhichiqu'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true },
                                 },
                               },
+                              descWrap: {
+                                type: 'void',
+                                title: ' ',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  colon: false,
+                                  feedbackLayout: 'none'
+                                },
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                properties: {
+                                  desc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': i18n.t('packages_dag_nodes_table_jinzhichiqu')
+                                  },
+                                  link: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{openApiDrawer}}'
+                                    },
+                                    'x-content': i18n.t('packages_business_view_more_apis')
+                                  }
+                                }
+                              }
                             },
                           },
                           mongoAgg: {
@@ -715,15 +911,49 @@ export default {
                                 title: ' ',
                                 'x-decorator-props': {
                                   colon: false,
+                                  feedbackLayout: 'none',
                                 },
                                 type: 'string',
                                 'x-decorator': 'FormItem',
-                                description: i18n.t('packages_dag_nodes_table_shiligro'),
                                 'x-component': 'JsonEditor',
                                 'x-component-props': {
                                   options: { showPrintMargin: false, useWrapMode: true },
                                 },
                               },
+                              descWrap: {
+                                type: 'void',
+                                title: ' ',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  colon: false,
+                                  feedbackLayout: 'none'
+                                },
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                properties: {
+                                  desc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': i18n.t('packages_dag_nodes_table_shiligro')
+                                  },
+                                  link: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{openApiDrawer}}'
+                                    },
+                                    'x-content': i18n.t('packages_business_view_more_apis')
+                                  }
+                                }
+                              }
                             },
                           },
                           sql: {
@@ -772,6 +1002,9 @@ export default {
     flowStages() {
       let types = this.isDB ? ['database'] : ['table']
       return this.allStages.filter((stg) => types.includes(stg.type))
+    },
+    isCountOrHash() {
+      return this.inspectMethod === 'row_count' || this.inspectMethod === 'hash'
     },
   },
   watch: {
@@ -1963,6 +2196,101 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
     ) {
     height: 32px;
     line-height: 32px;
+  }
+}
+</style>
+
+<style lang="scss">
+.condition-js-doc-content {
+  color: rgb(48, 54, 63);
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: subpixel-antialiased;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  hyphens: auto;
+
+  p {
+    margin-block-start: 12px;
+    margin-block-end: 24px;
+    text-align: justify;
+  }
+
+  > :first-child,
+  section > :first-child,
+  td > :first-child {
+    margin-block-start: 0px !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    position: relative;
+    margin-block-start: 24px;
+    margin-block-end: 12px;
+    font-weight: 600;
+    margin: 0px;
+  }
+
+  h1 + h2,
+  h2 + h3,
+  h3 + h4,
+  h4 + h5,
+  h5 + h6 {
+    margin-block-start: 12px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0.05em;
+  }
+
+  h2 {
+    font-size: 24px;
+    line-height: 36px;
+  }
+
+  h3 {
+    font-size: 20px;
+    line-height: 36px;
+  }
+
+  h4 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ul,
+  ol {
+    padding-inline-start: 32px;
+  }
+
+  ul,
+  ol,
+  dl {
+    margin-block-start: 12px;
+    margin-block-end: 24px;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    line-height: 1.8;
+    list-style-type: unset;
   }
 }
 </style>

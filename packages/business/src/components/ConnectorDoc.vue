@@ -138,7 +138,7 @@ export default {
 
   computed: {
     docUrl() {
-      const map = window.__config__?.docLinkDictionary || pdkDocMap
+      const map = this.$store.state.config?.docLinkDictionary || pdkDocMap
       return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {

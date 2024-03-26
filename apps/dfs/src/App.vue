@@ -27,7 +27,7 @@ import ReplicationTour from '@/components/ReplicationTour.vue'
 const langMap = {
   'zh-CN': zhCn,
   'zh-TW': zhTw,
-  en,
+  en
 }
 
 const locale = computed(() => {
@@ -44,6 +44,8 @@ provide('checkAgent', async (callback) => {
   }
 })
 provide('buried', buried)
+provide('lockedFeature', {})
+provide('openLocked', () => {})
 
 const store = useStore()
 const showReplicationTour = computed(() => store.state.showReplicationTour)

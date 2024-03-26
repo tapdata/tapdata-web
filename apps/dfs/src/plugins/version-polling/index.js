@@ -57,8 +57,6 @@ export class VersionPolling {
       return
     }
 
-    console.log('createWorkerFunc', createWorkerFunc)
-
     myWorker = createWorker(createWorkerFunc)
 
     myWorker.postMessage({

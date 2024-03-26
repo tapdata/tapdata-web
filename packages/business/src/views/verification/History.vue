@@ -36,7 +36,11 @@
             :label="$t('packages_business_verification_history_source_total_rows')"
             prop="firstSourceTotal"
             align="center"
-          ></el-table-column>
+          >
+            <template #default="{ row }">
+              {{ row.inspect.inspectMethod === 'hash' ? '-' : row.firstSourceTotal }}
+            </template>
+          </el-table-column>
         </template>
         <el-table-column prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
           <template v-slot="scope">
@@ -57,12 +61,23 @@
             <div class="inspect-result">
               <span v-if="scope.row.result !== 'passed'" class="error">
                 <VIcon class="verify-status-icon color-danger mr-1" size="14">error</VIcon>
-                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count'">
+                <span
+                  v-if="
+                    (scope.row.inspect && scope.row.inspect.inspectMethod === 'row_count') ||
+                    scope.row.inspect.inspectMethod === 'hash'
+                  "
+                >
                   {{ $t('packages_business_verification_result_count_inconsistent') }}
                 </span>
-                <span v-else>{{
-                  $t('packages_business_verification_result_content_diff', [scope.row.difference_number])
-                }}</span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'field'">
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'jointField'">
+                  {{ $t('packages_business_verification_contConsistent') }}{{ scope.row.difference_number }}
+                </span>
+                <span v-if="scope.row.inspect && scope.row.inspect.inspectMethod === 'cdcCount'">
+                  {{ $t('packages_business_verification_result_content_diff', [scope.row.difference_number]) }}
+                </span>
               </span>
               <span class="success" v-if="scope.row.result === 'passed'">
                 <VIcon class="verify-status-icon mr-1" size="14">success-fill-color</VIcon>
@@ -103,6 +118,7 @@
 import { VIcon } from '@tap/component'
 import dayjs from 'dayjs'
 import { inspectResultsApi } from '@tap/api'
+import { statusMap, inspectMethod } from './const'
 
 let timeout = null
 export default {
@@ -121,18 +137,8 @@ export default {
         order: '',
       },
       selections: [],
-      statusMap: {
-        waiting: this.$t('packages_business_verification_waiting'),
-        scheduling: this.$t('packages_business_verification_scheduling'),
-        error: this.$t('packages_business_verification_error'),
-        done: this.$t('packages_business_verification_done'),
-        running: this.$t('packages_business_verification_running'),
-      },
-      inspectMethod: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-      },
+      statusMap,
+      inspectMethod,
     }
   },
   created() {

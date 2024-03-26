@@ -1,11 +1,12 @@
 <template>
   <ElConfigProvider :locale="locale">
     <RouterView />
+    <LockedDialog v-model:visible="showLocked"></LockedDialog>
   </ElConfigProvider>
 </template>
 
 <script lang="ts" setup>
-import { computed, provide } from 'vue'
+import { ref, computed, provide } from 'vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import zhTw from 'element-plus/dist/locale/zh-tw.mjs'
 import en from 'element-plus/dist/locale/en.mjs'
@@ -34,4 +35,21 @@ provide('checkAgent', async (cb) => {
   }
 })
 provide('buried', () => {})
+
+const showLocked = ref(false)
+const lockedFeature =
+  import.meta.env.VUE_APP_MODE === 'community'
+    ? {
+        sharedMiningList: true,
+        dataVerificationList: true,
+        alarmSetting: true,
+        roleList: true,
+        valid_total: true,
+      }
+    : {}
+
+provide('lockedFeature', lockedFeature)
+provide('openLocked', () => {
+  showLocked.value = true
+})
 </script>

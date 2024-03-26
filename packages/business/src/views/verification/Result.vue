@@ -6,7 +6,7 @@
           <span style="font-size: 14px">{{ inspect.name }}</span>
           <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
         </div>
-        <div v-if="inspect.inspectMethod !== 'row_count'">
+        <div v-if="inspect.inspectMethod !== 'row_count' && inspect.inspectMethod !== 'hash'">
           <div class="flex align-items-center">
             <div
               v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
@@ -22,7 +22,7 @@
           </div>
         </div>
       </div>
-      <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <div v-if="errorMsg && (type === 'row_count' || type === 'hash')" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
         <span>
           <ElLink type="danger" @click="showErrorMessage">{{
@@ -33,7 +33,11 @@
       </div>
       <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView
+          v-if="type !== 'row_count' && type !== 'hash'"
+          ref="resultView"
+          :remoteMethod="getResultData"
+        ></ResultView>
       </div>
     </div>
   </section>
@@ -44,17 +48,14 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi } from '@tap/api'
+import { inspectMethod as typeMap } from './const'
 
 export default {
   components: { ResultTable, ResultView },
   data() {
     return {
       loading: false,
-      typeMap: {
-        row_count: this.$t('packages_business_verification_rowVerify'),
-        field: this.$t('packages_business_verification_contentVerify'),
-        jointField: this.$t('packages_business_verification_jointVerify'),
-      },
+      typeMap,
       inspect: {},
       resultInfo: {},
       errorMsg: '',
@@ -102,7 +103,7 @@ export default {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
               this.$refs.resultView.fetch(1)
-              if (this.type !== 'row_count') {
+              if (this.type !== 'row_count' && this.type !== 'hash') {
                 this.$nextTick(() => {
                   this.$refs.singleTable?.setCurrentRow(stats[0])
                 })

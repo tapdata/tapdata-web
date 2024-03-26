@@ -16,6 +16,8 @@ export const DEFAULT_SETTINGS = {
   cronExpression: ' ',
   accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
   isAutoInspect: false,
+  timeDifference: 0,
+  currentEventTimestamp: null,
 
   // readBatchSize: 100,
   // notificationWindow: 0,

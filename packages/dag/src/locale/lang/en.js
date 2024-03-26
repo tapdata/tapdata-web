@@ -452,6 +452,8 @@ export default {
     'The processing time for completing a new event is calculated as the total time required for task processing. In cases where there are multiple targets, only the longest processing time is considered.',
   packages_dag_monitor_leftsider_shijiancongyuanku:
     'The delay time between the event being generated from the source library and the completion of writing to the target after the task is processed, Taking into account the maximum replication delay time when multiple targets are involved.',
+  packages_dag_monitor_timeDifference:
+    'Significant time difference between data source and engine ({val}), incremental delay is biased, please manually align the time',
   packages_dag_monitor_leftsider_qpSshizhi:
     'QPS refers to the average number of input events and output events processed by the task per second',
   packages_dag_monitor_leftsider_qpSshizhi2:
@@ -735,5 +737,14 @@ export default {
   packages_dag_existDataProcessMode_desc:
     'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
   packages_dag_ddl_events_collapse_tip:
+    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
+  packages_dag_ddl_stopped_on_error: 'Stop Task Upon Encountering DDL',
+  packages_dag_ddl_auto_ignore: 'Automatically Ignore All DDLs',
+  packages_dag_ddl_sync_events: 'Sync DDL Events',
+  packages_dag_dateFieldName: 'Date Field Name',
+  packages_dag_time_field_injection: 'Time Field Injection',
+  packages_dag_task_setting_syncPoint_recent_increment: 'Time of the most recent increment',
+  packages_dag_task_setting_syncPoint_from_now: 'Apply',
+  packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`,
     'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
 }

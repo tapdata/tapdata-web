@@ -829,7 +829,7 @@ export default {
   created() {
     this.init()
     this.unsubscribeHelpDocumentation =
-      window.__config__?.unsubscribeHelpDocumentation ||
+      this.$store.state.config?.unsubscribeHelpDocumentation ||
       'https://deploy-preview-75--tapdata.netlify.app/cloud/billing/refund/#%E9%80%80%E6%AC%BE%E8%AF%B4%E6%98%8E'
     timer = setInterval(() => {
       // let list = this.list || []

@@ -23,20 +23,9 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('packages_business_verification_sourceRows')">
-      <template v-slot="scope">
-        <span>{{ scope.row.source_total || 0 }}</span>
-        <!--        <div>-->
-        <!--          {{ scope.row.target_total || 0 }}-->
-        <!--        </div>-->
-      </template>
-    </ElTableColumn>
-    <ElTableColumn v-else :label="$t('packages_business_verification_sourceRows')">
-      <template v-slot="scope">
-        <span>{{ scope.row.source_total || 0 }}</span>
-        <!--        <div>-->
-        <!--          {{ scope.row.firstTargetTotal || 0 }}-->
-        <!--        </div>-->
+    <ElTableColumn :label="$t('packages_business_verification_sourceRows')">
+      <template #default="{ row }">
+        <span>{{ type === 'hash' ? '-' : row.source_total || 0 }}</span>
       </template>
     </ElTableColumn>
     <ElTableColumn prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
@@ -49,18 +38,28 @@
     <ElTableColumn prop="status" :label="$t('packages_business_verification_result_title')">
       <template v-if="['waiting', 'done'].includes(scope.row.status)" v-slot="scope">
         <div class="inspect-result-status">
-          <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
-            <span class="error">
-              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
-              <span>{{ scope.row.countResultText }}</span>
-            </span>
-          </div>
-          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
-            <span class="error">
-              <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
-              <span>{{ scope.row.contentResultText }}</span>
-            </span>
-          </div>
+          <template v-if="scope.row.result === 'failed'">
+            <div v-if="type === 'hash'">
+              <span class="error">
+                <i class="verify-icon el-icon-error color-danger"></i>
+                <span>{{ $t('packages_business_verification_inconsistent') }}</span>
+              </span>
+            </div>
+            <template v-else>
+              <div v-if="scope.row.countResultText">
+                <span class="error">
+                  <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
+                  <span>{{ scope.row.countResultText }}</span>
+                </span>
+              </div>
+              <div v-if="scope.row.contentResultText">
+                <span class="error">
+                  <el-icon class="verify-icon color-danger"><CircleCloseFilled /></el-icon>
+                  <span>{{ scope.row.contentResultText }}</span>
+                </span>
+              </div>
+            </template>
+          </template>
           <span class="success" v-if="scope.row.result === 'passed'">
             <el-icon class="verify-icon color-success"><SuccessFilled /></el-icon>
             <span>{{ $t('packages_business_verification_consistent') }}</span>

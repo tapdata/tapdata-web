@@ -17,6 +17,7 @@ import { action } from '@formily/reactive'
 
 export default observer({
   name: 'SettingPanel',
+  inject: ['lockedFeature', 'openLocked'],
   components: { FormRender },
   props: {
     settings: Object,
@@ -48,6 +49,7 @@ export default observer({
     return {
       isDaas: isDaas,
       formScope: {
+        lockedFeature: this.lockedFeature,
         getPickerOptionsBeforeTime,
         $isDaas: isDaas, //区分云版、企业版
         formTab: FormTab.createFormTab(),
@@ -172,6 +174,14 @@ export default observer({
           field.setDescription(
             values.length ? `${this.$t('packages_dag_agent_setting_from')}: ${values.join(', ')}` : '',
           )
+        },
+
+        handleQuicklySyncPoints: () => {
+          const { currentEventTimestamp } = this.settings
+          this.settings.syncPoints.forEach(point => {
+            point.pointType = 'localTZ' // 用户自定义时间点
+            point.dateTime = currentEventTimestamp
+          })
         },
       },
 
@@ -467,6 +477,7 @@ export default observer({
                                 default: [{ type: 'current', date: '' }],
                                 'x-decorator-props': {
                                   tooltip: this.$t('packages_dag_task_setting_syncPoint_tip'),
+                                  feedbackLayout: 'none',
                                 },
                                 'x-component': 'ArrayItems',
                                 'x-decorator': 'FormItem',
@@ -584,6 +595,45 @@ export default observer({
                                   },
                                 },
                               },
+                              syncPointsDescWrap: {
+                                type: 'void',
+                                'x-component': 'div',
+                                'x-component-props': {
+                                  class: 'flex align-center gap-2'
+                                },
+                                'x-reactions': {
+                                  dependencies: ['type'],
+                                  fulfill: {
+                                    state: {
+                                      visible: '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}'
+                                    }
+                                  }
+                                },
+                                properties: {
+                                  syncPointsDesc: {
+                                    type: 'void',
+                                    'x-component': 'div',
+                                    'x-component-props': {
+                                      style: {
+                                        color: '#909399'
+                                      }
+                                    },
+                                    'x-content': `{{'${i18n.t(
+                                      'packages_dag_task_setting_syncPoint_recent_increment'
+                                    )}: ' + $values.currentEventTimestampLabel}}`
+                                  },
+                                  syncPointsDescBtn: {
+                                    type: 'void',
+                                    'x-component': 'Link',
+                                    'x-component-props': {
+                                      type: 'primary',
+                                      onClick: '{{handleQuicklySyncPoints}}'
+                                    },
+                                    'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now')
+                                  }
+                                }
+                              },
+
                               // isAutoCreateIndexS: {
                               //   title: this.$t('packages_dag_task_setting_automatic_index'), //自动创建索引
                               //   type: 'boolean',
@@ -608,7 +658,7 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] !== "initial_sync"}}', // 只有增量或全量+增量支持
+                                      visible: '{{$deps[0] !== "initial_sync" && !lockedFeature.sharedMiningList}}', // 只有增量或全量+增量支持
                                     },
                                   },
                                 },
@@ -734,6 +784,7 @@ export default observer({
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
                   label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
+                  locked: import.meta.env.VUE_APP_MODE === 'community',
                 },
                 properties: {
                   alarmSettings: {
@@ -1021,6 +1072,7 @@ export default observer({
                 'x-component': 'FormTab.TabPane',
                 'x-component-props': {
                   label: i18n.t('packages_business_permissionse_settings_create_quanxianshezhi'),
+                  locked: process.env.VUE_APP_MODE === 'community',
                 },
                 properties: {
                   permissions: {

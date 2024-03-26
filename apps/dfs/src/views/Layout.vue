@@ -30,11 +30,12 @@
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
+                  <VIcon size="16" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
-                      {{ $t('agent_tip_no_running') }}
+                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon>xxx{{
+                        $t('agent_tip_no_running')
+                      }}
                     </div>
                   </template>
                 </ElTooltip>
@@ -64,10 +65,10 @@
               </span>
               <template v-if="menu.name === 'Instance' && showAgentWarning">
                 <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
-                  <VIcon size="14" class="agent-warning-icon color-warning">warning</VIcon>
+                  <VIcon size="16" class="agent-warning-icon color-warning">warning</VIcon>
                   <template #content>
                     <div class="font-color-dark">
-                      <VIcon size="14" class="mr-2 color-warning" style="vertical-align: -0.125em"> warning</VIcon>
+                      <VIcon size="16" class="mr-1 color-warning align-text-top"> warning</VIcon>
                       {{ $t('agent_tip_no_running') }}
                     </div>
                   </template>
@@ -75,12 +76,12 @@
               </template>
             </ElMenuItem>
           </template>
-          <ElMenuItem v-if="!isDemoEnv && isDomesticStation" index="goDemo" class="flex align-center">
+          <!--<ElMenuItem v-if="!isDemoEnv && isDomesticStation" index="goDemo" class="flex align-center">
             <VIcon class="mr-4" size="17">open-in-new</VIcon>
             <span class="text-decoration-underline">{{
               $t('dfs_agent_download_agentguidedialog_tiyan') + ' Demo'
             }}</span>
-          </ElMenuItem>
+          </ElMenuItem>-->
         </div>
       </ElMenu>
     </ElAside>
@@ -207,14 +208,14 @@ export default {
   },
 
   created() {
-    if (!window.__config__?.disabledOnlineChat) {
+    if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
     }
-    if (window.__config__?.disabledDataService) {
+    if (this.$store.state.config?.disabledDataService) {
       //海外版隐藏数据服务
       this.sortMenus = this.sortMenus.filter((item) => item.name !== 'dataServerList')
     }
-    if (window.__config__?.disabledDataVerify) {
+    if (this.$store.state.config?.disabledDataVerify) {
       //生产环境隐藏数据校验
       this.sortMenus = this.sortMenus.filter((item) => item.name !== 'dataVerification')
     }
@@ -357,7 +358,7 @@ export default {
     // 检查微信用户，是否绑定手机号
     checkWechatPhone() {
       let user = window.__USER_INFO__
-      if (window.__config__?.disabledBindingPhone) {
+      if (this.$store.state.config?.disabledBindingPhone) {
         //海外版不强制绑定手机号
         return
       }

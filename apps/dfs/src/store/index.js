@@ -102,6 +102,7 @@ const store = Vuex.createStore({
     isDomesticStation: (state, getters) => {
       return getters.language !== 'en'
     },
+    currencyType: (state, getters) => (getters.isDomesticStation ? 'cny' : 'usd'),
     startingTour: (state) => state.replicationTour.status === 'starting',
     pausedTour: (state) => state.replicationTour.status === 'paused',
     completedTour: (state) => state.replicationTour.status === 'completed',
@@ -128,9 +129,8 @@ const store = Vuex.createStore({
       if (!lang) {
         lang = getCurrentLanguage()
       }
-      lang = lang.replace('_', '-')
-      state.user.locale = lang
-      setCurrentLanguage(lang, i18n)
+
+      state.user.locale = setCurrentLanguage(lang, i18n)
     },
 
     setUserEmail(state, email) {

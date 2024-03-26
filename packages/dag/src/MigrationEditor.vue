@@ -238,7 +238,11 @@ export default {
         },
         {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
-          type: 'migrate_field_mod_type_filter_processor',
+          type: 'migrate_field_mod_type_filter_processor'
+        },
+        {
+          name: i18n.t('packages_dag_time_field_injection'),
+          type: 'migrate_add_date_field_processor',
         },
       ])
       this.addResourceIns(allResourceIns)

@@ -38,7 +38,7 @@ import Time from '@tap/shared/src/time'
 import { DATA_NODE_TYPES, META_INSTANCE_FIELDS, TABLE_PARAMS } from './components/const'
 import { CONNECTION_STATUS_MAP } from '../../shared'
 import { uuid } from '@tap/shared'
-
+import { statusMap, inspectMethod as inspectMethodMap } from './const'
 const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
@@ -59,6 +59,13 @@ export default {
     }
     let checkMode = () => {
       return self.form.mode === 'cron'
+    }
+
+    const notSupport = {
+      row_count: ['Clickhouse', 'Kafka'],
+      field: ['Kafka'],
+      jointField: ['Kafka'],
+      hash: []
     }
     return {
       loading: false,
@@ -146,15 +153,22 @@ export default {
       edges: [],
       allStages: [],
       flowOptions: [],
-      notSupport: {
-        row_count: ['Clickhouse', 'Kafka'],
-        field: ['Kafka'],
-        jointField: ['Kafka'],
-      },
-      inspectMethodMap: {
-        row_count: i18n.t('packages_business_verification_row_verify'),
-        field: i18n.t('packages_business_verification_content_verify'),
-        jointField: i18n.t('packages_business_verification_joint_verify'),
+      notSupport,
+      inspectMethodMap,
+      typTipMap: {
+        row_count:
+          this.$t('packages_business_verification_fastCountTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['row_count'].join(),
+        field:
+          this.$t('packages_business_verification_contentVerifyTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['field'].join(),
+        jointField:
+          this.$t('packages_business_verification_jointFieldTip') +
+          this.$t('packages_dag_components_node_zanbuzhichi') +
+          notSupport['jointField'].join(),
+        hash: this.$t('packages_business_verification_hashTip')
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -186,20 +200,18 @@ export default {
       const self = this
       this.schemaScope = {
         $t: i18n.t,
-        $inspectMethodMap: {
-          row_count: i18n.t('packages_business_verification_row_verify'),
-          field: i18n.t('packages_business_verification_content_verify'),
-          jointField: i18n.t('packages_business_verification_joint_verify'),
-        },
+        $inspectMethodMap: inspectMethodMap,
         $notSupport: {
           row_count: ['Clickhouse', 'Kafka'],
           field: ['Kafka'],
           jointField: ['Kafka'],
+          hash: [],
         },
         $verifyTypeTip: {
           row_count: i18n.t('packages_business_verification_fastCountTip'),
           field: i18n.t('packages_business_verification_contentVerifyTip'),
           jointField: i18n.t('packages_business_verification_jointFieldTip'),
+          hash: this.$t('packages_business_verification_hashTip'),
         },
         useAsyncDataSourceByConfig: (config, ...serviceParams) => {
           const { service, fieldName = 'dataSource', withoutField = false } = config
@@ -731,6 +743,7 @@ export default {
           }
         },
       }
+      // TODO hash 校验待适配
       this.formSchema = {
         type: 'object',
         properties: {
@@ -844,16 +857,20 @@ export default {
             },
             enum: [
               {
-                label: i18n.t('packages_business_verification_row_verify'),
+                label: inspectMethodMap.row_count,
                 value: 'row_count',
               },
               {
-                label: i18n.t('packages_business_verification_content_verify'),
+                label: inspectMethodMap.field,
                 value: 'field',
               },
               {
-                label: i18n.t('packages_business_verification_joint_verify'),
+                label: inspectMethodMap.jointField,
                 value: 'jointField',
+              },
+              {
+                label: inspectMethodMap.hash,
+                value: 'hash',
               },
             ],
           },
@@ -887,6 +904,13 @@ export default {
                         value: 'OnSourceExists',
                       },
                     ],
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: `{{$values.inspectMethod !== 'hash'?'visible':'hidden'}}`,
+                        },
+                      },
+                    },
                   },
                   mode: {
                     title: i18n.t('packages_business_verification_frequency'),
@@ -1123,6 +1147,13 @@ export default {
                         value: 10000,
                       },
                     ],
+                    'x-reactions': {
+                      fulfill: {
+                        state: {
+                          display: `{{$values.inspectMethod !== 'hash'?'visible':'hidden'}}`,
+                        },
+                      },
+                    },
                   },
                 },
               },
@@ -1936,7 +1967,8 @@ export default {
     async getFlowStages(id, cb) {
       this.loading = true
       try {
-        const data = await taskApi.getId(id || this.form.flowId)
+        id = id || this.form.flowId
+        const data = await taskApi.getId(id)
         this.isDbClone = data.syncType === 'migrate'
         let edges = data.dag?.edges || []
         let nodes = data.dag?.nodes || []
@@ -2014,17 +2046,61 @@ export default {
         delete formValues.tasksOptions
         delete formValues.nodesOptions
         delete formValues.connectionsOptions
-        formValues.tasks.forEach((el) => {
-          if (el.webScript) {
-            el.webScript = 'function validate(sourceRow){' + el.webScript + '}'
+
+        let { tasks } = formValues
+        // 自动过滤出完整数据，以及索引字段数量不相等的情况
+        tasks = tasks.filter(t => {
+          if (t.webScript) {
+            t.webScript = 'function validate(sourceRow){' + t.webScript + '}'
           }
-          delete el.source.capabilities
-          delete el.source.fields
-          delete el.source.sortColumnList
-          delete el.target.capabilities
-          delete el.target.fields
-          delete el.target.sortColumnList
+          delete t.source.capabilities
+          delete t.source.fields
+          delete t.source.sortColumnList
+          delete t.target.capabilities
+          delete t.target.fields
+          delete t.target.sortColumnList
+
+          if (this.form.inspectMethod === 'row_count' || this.form.inspectMethod === 'hash') {
+            return t.source.table && t.target.table
+          }
+
+          return (
+            t.source.sortColumn && t.source.sortColumn.split(',').length === t.target.sortColumn.split(',').length
+          )
         })
+
+        // 检查校验类型是否支持
+        const notSupportList = this.notSupport[this.form.inspectMethod]
+        let notSupportStr = ''
+
+        for (const t of tasks) {
+          if (notSupportList.includes(t.source.databaseType)) {
+            notSupportStr = t.source.databaseType
+            break
+          }
+          if (notSupportList.includes(t.target.databaseType)) {
+            notSupportStr = t.target.databaseType
+            break
+          }
+
+          // hash 不支持异构数据库
+          if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
+            notSupportStr = this.$t('packages_business_heterogeneous_database')
+            break
+          }
+        }
+
+        if (notSupportStr)
+          return this.$message.error(
+            this.inspectMethodMap[this.form.inspectMethod] +
+            ', ' +
+            this.$t('packages_dag_components_node_zanbuzhichi') +
+            notSupportStr
+          )
+
+        if (!tasks.length) {
+          return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
+        }
 
         const alarmSettingsKeys =
           formValues.inspectMethod === 'row_count'
@@ -2086,6 +2162,7 @@ export default {
 .form-input {
   width: 505px;
 }
+
 :deep(.js-wrap) {
   display: flex;
   flex-wrap: nowrap;
@@ -2095,15 +2172,15 @@ export default {
     flex-direction: column;
     flex: 1;
     .js-fixText {
-      line-height: 25px;
-    }
+      line-height: 25px;}
+
     .js-fixContent {
       margin-left: 60px;
     }
   }
   .example {
-    width: 300px;
-  }
+    width: 300px;}
+
   .js-editor {
     border: 1px solid map-get($borderColor, light);
   }

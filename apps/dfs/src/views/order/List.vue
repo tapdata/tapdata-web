@@ -160,7 +160,7 @@
                     >{{ $t('dfs_order_change') }}
                   </ElButton>
                   <ElButton
-                    v-if="!(disableUnsubscribe(row) || ['incomplete', 'past_due'].includes(item.status))"
+                    v-if="!disableUnsubscribe(row) && ['active'].includes(item.status)"
                     type="danger"
                     text
                     @click="openUnsubscribe(item, row.productType)"
@@ -357,7 +357,7 @@ export default {
   },
   created() {
     this.getFilterItems()
-    if (window.__config__?.station === 'international') {
+    if (!this.$store.getters.isDomesticStation) {
       this.refundAmount = 'https://docs.tapdata.io/cloud/billing/refund'
     } else {
       this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
@@ -554,15 +554,15 @@ export default {
     disableUnsubscribe(row) {
       if (row.productType === 'Engine') {
         if (row.agentType === 'Cloud') {
-          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Approving', 'Stopped', 'Error'].includes(row.resource?.status)
         } else {
-          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.status)
+          return !['Running', 'Creating', 'Stopped', 'Error'].includes(row.resource?.status)
         }
       } else {
         if (row?.resource?.scope === 'Private') {
-          return !['Activated'].includes(row.status)
+          return !['Activated'].includes(row.resource?.status)
         } else {
-          return !['Assigned'].includes(row.status)
+          return !['Assigned'].includes(row.resource?.status)
         }
       }
     },
@@ -688,7 +688,9 @@ export default {
       })
     },
     goMarketplace() {
-      window.open('https://console.cloud.google.com/marketplace/product/tapdata-public/detail')
+      window.open(
+        'https://console.cloud.google.com/marketplace/product/tapdata-public-415506/tapdata-realtime-pipeline'
+      )
     },
   },
 }

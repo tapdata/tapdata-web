@@ -20,9 +20,9 @@
 
     <template #footer>
       <el-button @click="handleClose">{{ $t('dfs_marketplace_guide_cancel') }}</el-button>
-      <el-button :loading="loading" @click="handleRefresh" type="primary">{{
-        $t('dfs_marketplace_guide_ok')
-      }}</el-button>
+      <el-button :loading="loading" @click="handleRefresh" type="primary"
+        >{{ $t('dfs_marketplace_guide_ok') }}
+      </el-button>
     </template>
   </ElDialog>
 </template>

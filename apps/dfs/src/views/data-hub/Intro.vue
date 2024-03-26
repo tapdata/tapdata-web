@@ -123,15 +123,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   name: 'Intro',
 
   computed: {
     onlyIntro() {
       return false
-      // return !this.$store.state.config.pagePermissions?.includes('dataHub')
     },
   },
 

@@ -167,7 +167,7 @@ export const os = (function () {
 })()
 
 export function checkConnectionName(name) {
-  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
+  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/.test(name)
 }
 
 export function openUrl(url, target = '_blank', name = '') {

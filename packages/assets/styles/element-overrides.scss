@@ -523,7 +523,7 @@ $--pagination-button-height: 28px !default;
 $--pagination-button-disabled-color: $--color-text-placeholder !default;
 $--pagination-button-disabled-fill: $--color-white !default;
 $--pagination-hover-fill: $--color-primary !default;
-$--pagination-hover-color: $--color-white !default;
+$--pagination-hover-color: $--border-color-hover !default;
 
 /* Popover
 -------------------------- */
@@ -942,6 +942,19 @@ $--transfer-filter-height: 32px !default;
     .el-button,
     .el-select {
       margin: -10px -12px;
+    }
+  }
+}
+
+.el-pagination {
+  .el-select .el-input .el-input__inner {
+    border-radius: $--border-radius-base;
+  }
+  &.is-background {
+    .btn-prev,
+    .btn-next,
+    .el-pager li {
+      border-radius: $--border-radius-base;
     }
   }
 }
