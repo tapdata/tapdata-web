@@ -40,7 +40,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               let { email } = this.orderInfo
-              email = email.trim()
+              email = email?.trim()
               if (!email) {
                 callback(new Error(i18n.t('dfs_instance_create_qingshuruninde')))
                 return

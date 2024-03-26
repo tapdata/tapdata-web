@@ -191,21 +191,26 @@ export default {
     singleYearAmount() {
       return this.singleMonthAmount ? this.singleMonthAmount * 12 : this.singleMonthAmount
     },
-    freeAgentCount() {
-      return this.$store.state.agentCount.freeTierAgentCount
+    hasFreeAgent() {
+      return this.$store.state.agentCount.freeTierAgentCount > 0
+    },
+    defaultCurrencyType() {
+      return this.$store.getters.currencyType
     }
   },
-  mounted() {
+  async mounted() {
+    this.currencyType = this.defaultCurrencyType
     this.getPrice()
-    this.checkAgentCount()
-    const currencyType = this.$store.state.config?.currencyType
-
-    if (currencyType) {
-      this.currencyType = currencyType
-      this.defaultCurrencyType = currencyType
-    }
+    await this.loadAgentCount()
+    await this.getCloudProvider()
   },
   methods: {
+    loadAgentCount() {
+      return this.$axios.get('api/tcm/agent/agentCount').then(data => {
+        this.$store.commit('setAgentCount', data)
+      })
+    },
+
     //检查Agent个数
     async checkAgentCount() {
       await this.getCloudProvider()
@@ -238,9 +243,11 @@ export default {
         ).sort((a, b) => {
           return a.cpu < b.cpu ? -1 : a.memory < b.memory ? -1 : 1
         })
-        if (this.freeAgentCount > 0) {
+
+        if (this.hasFreeAgent) {
           this.specificationItems = this.specificationItems.filter(it => it.chargeProvider !== 'FreeTier')
         }
+
         //新人引导只取前四个规格
         this.specificationItems = this.specificationItems.splice(0, 4)
 
