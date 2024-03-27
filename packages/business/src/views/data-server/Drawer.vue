@@ -216,7 +216,9 @@
         <div class="data-server-panel__title">
           <div>
             <span>{{ $t('packages_business_data_server_drawer_shurucanshu') }}</span>
-            <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
+            <el-icon class="icon-button color-primary ml-4">
+              <el-icon-circle-plus />
+            </el-icon>
           </div>
         </div>
         <ElTable class="flex-1" :data="isEdit ? form.params : data.params">
@@ -283,7 +285,9 @@
           </ElTableColumn>
           <ElTableColumn v-if="isEdit && form.apiType === 'customerQuery'" align="center" width="60">
             <template #default="{ $index }">
-              <el-icon class="icon-button"><el-icon-remove /></el-icon>
+              <el-icon class="icon-button">
+                <el-icon-remove />
+              </el-icon>
             </template>
           </ElTableColumn>
         </ElTable>
@@ -293,7 +297,9 @@
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('packages_business_data_server_drawer_shaixuantiaojian') }}</span>
-              <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
+              <el-icon class="icon-button color-primary ml-4">
+                <el-icon-circle-plus />
+              </el-icon>
             </div>
           </div>
           <ul v-if="isEdit">
@@ -326,7 +332,9 @@
                   ></ElOption>
                 </template>
               </ElSelect>
-              <el-icon class="icon-button"><el-icon-remove /></el-icon>
+              <el-icon class="icon-button">
+                <el-icon-remove />
+              </el-icon>
             </li>
           </ul>
           <ul v-else>
@@ -342,7 +350,9 @@
           <div class="data-server-panel__title">
             <div>
               <span>{{ $t('packages_business_data_server_drawer_pailietiaojian') }}</span>
-              <el-icon class="icon-button color-primary ml-4"><el-icon-circle-plus /></el-icon>
+              <el-icon class="icon-button color-primary ml-4">
+                <el-icon-circle-plus />
+              </el-icon>
             </div>
           </div>
           <ul v-if="isEdit">
@@ -359,7 +369,9 @@
                 <ElOption value="asc" label="ASC"></ElOption>
                 <ElOption value="desc" label="DESC"></ElOption>
               </ElSelect>
-              <el-icon class="icon-button"><el-icon-remove /></el-icon>
+              <el-icon class="icon-button">
+                <el-icon-remove />
+              </el-icon>
             </li>
           </ul>
           <ul v-else>
@@ -400,9 +412,9 @@
               </ElSelect>
               <div>{{ urls[debugMethod] }}</div>
             </div>
-            <ElButton type="primary" :disabled="debugDisabled" @click="debugData">{{
-              $t('public_button_submit')
-            }}</ElButton>
+            <ElButton type="primary" :disabled="debugDisabled" @click="debugData"
+              >{{ $t('public_button_submit') }}
+            </ElButton>
           </div>
         </template>
         <template v-if="tab === 'debug'">
@@ -1015,8 +1027,8 @@ export default {
             process.env.VUE_APP_MODE !== 'msa'
               ? {
                   in: ['source_and_target', 'target'],
-                },
-              : undefined
+                }
+              : undefined,
         },
       }
       let type = this.form.connectionType
@@ -1297,12 +1309,15 @@ export default {
   font-size: 15px;
   cursor: pointer;
 }
+
 .el-icon-remove {
   color: map-get($iconFillColor, normal);
 }
+
 .line-height {
   line-height: 22px;
 }
+
 .data-server__tabs {
   :deep(.el-tabs__nav-wrap.is-top) {
     padding-left: 112px;
@@ -1312,6 +1327,7 @@ export default {
     margin: 0;
   }
 }
+
 .data-server__form {
   :deep(.el-form-item) {
     margin-bottom: 0;
@@ -1321,14 +1337,17 @@ export default {
     line-height: 30px;
   }
 }
+
 .data-server-form-base__item {
   padding: 4px 8px;
   width: 30%;
+
   .text {
     font-size: 12px;
     word-break: break-word;
   }
 }
+
 .data-server-panel__title {
   display: flex;
   justify-content: space-between;
@@ -1342,6 +1361,7 @@ export default {
   color: map-get($fontColor, dark);
   user-select: none;
 }
+
 .data-server-path__item {
   display: flex;
   align-items: center;
@@ -1350,6 +1370,7 @@ export default {
     PingFangSC-Regular,
     PingFang SC;
 }
+
 .data-server-path__method {
   margin-right: 40px;
   width: 62px;
@@ -1358,16 +1379,20 @@ export default {
   text-align: center;
   border-radius: 2px;
   color: map-get($fontColor, white);
+
   &.method--POST {
     background: #478c6c;
   }
+
   &.method--GET {
     background: #09819c;
   }
+
   &.method--TOKEN {
     background: #f2994b;
   }
 }
+
 .data-server-debug__url {
   border: 1px solid map-get($borderColor, form);
   background: map-get($bgColor, form);
@@ -1376,6 +1401,7 @@ export default {
     PingFangSC-Regular,
     PingFang SC;
 }
+
 .data-server__form {
   :deep(.form-item-name) {
     .el-form-item__content {
@@ -1383,6 +1409,7 @@ export default {
     }
   }
 }
+
 .data-server-debug__method {
   :deep(.el-input__inner) {
     border: none;

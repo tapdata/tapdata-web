@@ -1,5 +1,5 @@
 // export * from './select'
-import { ElAlert as Alert, Link } from 'element-plus'
+import { ElAlert as Alert, ElLink as Link } from 'element-plus'
 import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'

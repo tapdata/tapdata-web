@@ -746,5 +746,4 @@ export default {
   packages_dag_task_setting_syncPoint_recent_increment: 'Time of the most recent increment',
   packages_dag_task_setting_syncPoint_from_now: 'Apply',
   packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`,
-    'Enabling this feature will automatically apply DDL operations from the source to the target database, potentially impacting the target database. Please enable with caution.',
 }

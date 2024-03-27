@@ -546,16 +546,16 @@ export class Table extends NodeType {
                         enum: [
                           {
                             label: i18n.t('packages_dag_ddl_stopped_on_error'),
-                            value: 'ERROR'
+                            value: 'ERROR',
                           },
                           {
                             label: i18n.t('packages_dag_ddl_auto_ignore'),
-                            value: 'FILTER'
+                            value: 'FILTER',
                           },
                           {
                             label: i18n.t('packages_dag_ddl_sync_events'),
-                            value: 'SYNCHRONIZATION'
-                          }
+                            value: 'SYNCHRONIZATION',
+                          },
                         ],
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
@@ -567,7 +567,7 @@ export class Table extends NodeType {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value === "SYNCHRONIZATION"}}'
+                                visible: '{{$self.value === "SYNCHRONIZATION"}}',
                               },
                             },
                           },
@@ -585,10 +585,10 @@ export class Table extends NodeType {
                               state: {
                                 description: `{{$self.value === 'ERROR' ? '${i18n.t(
                                   'packages_dag_feature_agent_version_tips',
-                                  { val: '3.5.12' }
-                                )} ': ''}}`
-                              }
-                            }
+                                  { val: '3.5.12' },
+                                )} ': ''}}`,
+                              },
+                            },
                           },
                         ],
                       },
