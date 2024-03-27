@@ -84,8 +84,8 @@
     border-radius: calc(var(--n-bar-width) / 2);
     transition: background-color .3s cubic-bezier(.4, 0, .2, 1);
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 2px;
+    bottom: 2px;
     position: absolute;
     background-color: #bcbfc3;
   }
