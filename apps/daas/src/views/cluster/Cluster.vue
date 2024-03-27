@@ -78,7 +78,7 @@
                 <!-- 监控数据 -->
                 <div class="list-box-footer">
                   <el-row :gutter="16" class="list-box-footer-header">
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
                     <el-col :span="4">
@@ -87,14 +87,14 @@
                     <el-col :span="4">
                       <span class="txt fw-sub">{{ $t('cluster_service_status') }}</span>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="10">
                       <div class="btn txt fw-sub">
                         {{ $t('public_operation') }}
                       </div>
                     </el-col>
                   </el-row>
                   <el-row :gutter="16" class="data-list">
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
                     </el-col>
                     <el-col :span="4">
@@ -107,7 +107,7 @@
                         getStatus(item.management.serviceStatus)
                       }}</span>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="10">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           type="text"
@@ -134,7 +134,7 @@
                     </el-col>
                   </el-row>
                   <el-row :gutter="16" class="data-list">
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
                     </el-col>
                     <el-col :span="4">
@@ -147,7 +147,7 @@
                         getStatus(item.engine.serviceStatus)
                       }}</span>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="10">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -177,13 +177,13 @@
                           type="text"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="unbind(item, item.engine.status, 'engine')"
-                          >{{ $t('public_button_unbind') }}</ElButton
+                          >{{ $t('daas_unbind_license') }}</ElButton
                         >
                       </div>
                     </el-col>
                   </el-row>
                   <el-row :gutter="16" class="data-list">
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <span class="txt fw-normal">API server</span>
                     </el-col>
                     <el-col :span="4">
@@ -196,7 +196,7 @@
                         getStatus(item.apiServer.status)
                       }}</span>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="10">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
@@ -224,7 +224,7 @@
                     </el-col>
                   </el-row>
                   <el-row :gutter="16" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
-                    <el-col :span="8">
+                    <el-col :span="6">
                       <span class="txt">{{ child.name }}</span>
                     </el-col>
                     <el-col :span="4">
@@ -233,7 +233,7 @@
                     <el-col :span="4">
                       <span :class="child.status">{{ child.status }}</span>
                     </el-col>
-                    <el-col :md="8" v-readonlybtn="'Cluster_operation'">
+                    <el-col :md="10" v-readonlybtn="'Cluster_operation'">
                       <div class="btn">
                         <ElButton type="text" @click="delServe(child, item.status)">{{
                           $t('public_button_delete')
@@ -871,7 +871,7 @@ export default {
           background-color: map-get($bgColor, white);
           border-radius: 3px;
           border: 1px solid map-get($bgColor, main);
-          height: 340px;
+          //height: 340px;
           .list-box-header {
             overflow: hidden;
             display: flex;

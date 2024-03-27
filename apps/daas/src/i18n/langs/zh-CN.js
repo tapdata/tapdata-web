@@ -1834,5 +1834,6 @@ export default {
   daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
   daas_feature_unavailable_get_enterprise: '申请企业版',
   daas_feature_unavailable_get_cloud: '免费使用云版',
-  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比'
+  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比',
+  daas_unbind_license: '解绑 License'
 }

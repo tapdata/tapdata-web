@@ -627,7 +627,7 @@ export default {
   cluster_running: 'running',
   cluster_stopped: 'stopped',
   cluster_sync_gover: 'Sync governance',
-  cluster_manage_sys: 'Management background',
+  cluster_manage_sys: 'Management Backend',
   cluster_add_server_mon: 'Add service monitoring',
   cluster_agentSetting: 'Agent server settings',
   cluster_server_name: 'server name',
@@ -1888,5 +1888,6 @@ export default {
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
   daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
   daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
-  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions'
+  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions',
+  daas_unbind_license: 'Unbind License'
 }
