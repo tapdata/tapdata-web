@@ -596,6 +596,26 @@ export class Table extends NodeType {
                       disabledEvents: {
                         type: 'array',
                         'x-component': 'DdlEventCheckbox'
+                      },
+                      ignoredDDLRules: {
+                        title: i18n.t('packages_dag_ddl_ignore_rules'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_ddl_ignore_rules_tip')
+                        },
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: i18n.t('packages_dag_ddl_ignore_rules_placeholder')
+                        },
+                        'x-reactions': {
+                          dependencies: ['ddlConfiguration'],
+                          fulfill: {
+                            state: {
+                              visible: '{{$deps[0] === "ERROR"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },
