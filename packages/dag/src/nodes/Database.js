@@ -914,7 +914,7 @@ export class Database extends NodeType {
                             }
                           }
                         }
-                      },
+                      } /*,
                       syncIndexEnable: {
                         // 同步索引
                         title: i18n.t('packages_dag_syncIndex'),
@@ -931,7 +931,7 @@ export class Database extends NodeType {
                             }
                           }
                         }
-                      }
+                      }*/
                     }
                   },
                   tab3: {
