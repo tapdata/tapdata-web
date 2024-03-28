@@ -237,84 +237,7 @@
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
 
-    <!--API 抽屉-->
-    <ElDrawer
-      append-to-body
-      :modal="false"
-      :title="$t('packages_dag_api_docs')"
-      :size="680"
-      :visible="showDoc"
-      @update:visible="val => (showDoc = val)"
-    >
-      <div class="px-4 condition-js-doc-content">
-        <h2>TimeUpdate</h2>
-        <h3>{{ $t('packages_dag_js_processor_index_fangfa') }}</h3>
-        <h4>$dynamicDate</h4>
-        <ul>
-          <li>
-            {{ $t('packages_dag_js_processor_index_zuoyong') }}
-            校验任务过滤条件中时间参数自动根据配置做值更新，目前该函数仅支持Mongo。改属性包含的参数有：
-            <ol>
-              <li>format: 可变时间格式串，用法如示例</li>
-              <li>
-                subtract: 时间相对减少量，单位毫秒,默认值为0，即当前配置时间，如format中使用了占位符则取当前任务时间
-              </li>
-              <li>toString: 是否输出为时间字符串，可不填默认值为false, false表示输出为时日期对象等价于$date</li>
-            </ol>
-          </li>
-          <li>
-            {{ $t('packages_dag_js_processor_index_yongfa') }}
-          </li>
-        </ul>
-        <ol>
-          <li>固定时间</li>
-        </ol>
-        <HighlightCode
-          language="json"
-          :code="
-            JSON.stringify(
-              {
-                field: {
-                  $gt: {
-                    $dynamicDate: {
-                      format: '2023-03-19 05:00:00',
-                      subtract: 3600000,
-                      toString: false
-                    }
-                  }
-                }
-              },
-              null,
-              2
-            )
-          "
-        ></HighlightCode>
-        <p>
-          以上过滤条件的含义为：查询所有字段field时间大于"2023-03-19 04:00:00"的记录，配置中时间为"2023-03-19
-          05:00:00",时间减少的跨度为3600000
-        </p>
-        <ol start="2">
-          <li>动态天数</li>
-        </ol>
-        <HighlightCode
-          language="json"
-          :code="
-            JSON.stringify(
-              {
-                field: { $gt: { $dynamicDate: { format: '%y-%M-%d 00:00:00', subtract: 86400000, toString: false } } }
-              },
-              null,
-              2
-            )
-          "
-        ></HighlightCode>
-        <p>
-          以上过滤条件的含义为：每次任务启动时查询一天前所有字段field时间0点以后的记录，配置中时间为"%y-%M-%d
-          00:00:00",时间减少的跨度为86400000。%y为年份占位符，使用任务启动时间的年份。%M为月份占位符，使用任务启动的月份，依次类推，还支持的占位符有%d,
-          %h, %m, %s, %S
-        </p>
-      </div>
-    </ElDrawer>
+    <DocsDrawer :visible="showDoc" @update:visible="showDoc = $event"></DocsDrawer>
   </div>
 </template>
 
@@ -334,6 +257,7 @@ import resize from '@tap/component/src/directives/resize'
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
+import DocsDrawer from './DocsDrawer.vue'
 
 export default {
   name: 'ConditionBox',
@@ -343,6 +267,7 @@ export default {
   },
 
   components: {
+    DocsDrawer,
     AsyncSelect,
     DynamicScroller,
     DynamicScrollerItem,
