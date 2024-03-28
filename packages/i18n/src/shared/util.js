@@ -14,7 +14,7 @@ export const langMenu = {
 }
 
 export const getLang = lang => {
-  return Object.keys(langKeyMap).includes(lang) ? lang.replace('_', '-') : 'en'
+  return Object.keys(langKeyMap).includes(lang) ? lang : 'en'
 }
 
 export const getCurrentLanguage = () => {
