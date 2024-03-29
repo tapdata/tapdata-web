@@ -89,7 +89,7 @@
             class="text-decoration-underline"
             href="https://calendly.com/umer-tapdata"
             target="_blank"
-            >Feel free to Book a Demo with us</ElLink
+            >{{ $t('packages_ldp_book_demo') }}</ElLink
           >
         </p>
         <ElButton v-if="!onlyIntro" @click="$router.push({ name: 'CreateStorage' })" type="primary" size="large">{{
