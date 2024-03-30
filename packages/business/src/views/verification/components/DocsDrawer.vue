@@ -30,7 +30,7 @@ export default {
     handleOpen() {
       if (!this.mdContent) {
         axios
-          .get(`static/docs/data-inspect/${this.$i18n.locale || 'en'}.md`, {
+          .get(`static/docs/data-inspect/${this.$i18n.locale?.toLowerCase() || 'en'}.md`, {
             responseType: 'blob',
             headers: {
               Accept: 'application/json',
