@@ -1597,7 +1597,7 @@ export class Table extends NodeType {
                   }
                 }
               },
-              'alarmRules.0.notify': {
+              'alarmSettings.0.notify': {
                 type: 'array',
                 'x-editable': true,
                 'x-decorator': 'FormItem',
