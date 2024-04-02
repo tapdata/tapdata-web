@@ -1131,6 +1131,7 @@ export default {
   dataFlow_view: '查看',
   dataFlow_dataFlowExport: '導出',
   dataFlow_addTag: '添加標籤',
+  dataFlow_editTag: '編輯標籤',
   dataFlow_overWrite: '覆蓋已有數據',
   dataFlow_skipData: '跳過已有數據',
   dataFlow_loadingError: '加載失敗,請',

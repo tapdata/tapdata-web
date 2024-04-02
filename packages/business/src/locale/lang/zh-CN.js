@@ -26,7 +26,7 @@ export default {
   packages_business_schema_progress_status_error: '加载错误',
   packages_business_schema_progress_dialog_error_title: 'Schema加载出错',
   packages_business_schema_progress_load_time: '加载时间：{0}',
-  packages_business_dataFlow_batchSortOperation: '批量分类操作',
+  packages_business_dataFlow_batchSortOperation: '设置标签',
   packages_business_dataFlow_dataLoading: '数据努力加载中...',
   packages_business_message_upload_success: '上传成功',
   packages_business_message_upload_fail: '上传失败',

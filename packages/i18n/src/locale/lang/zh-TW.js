@@ -37,6 +37,7 @@ export default {
   public_tags: '標籤',
   public_phone: '手機號',
   public_email: '郵箱',
+  public_view_details: '查看詳情',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
