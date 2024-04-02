@@ -1685,5 +1685,15 @@ export default {
   dfs_marketplace_guide_step_3: '敬请体验完整功能',
   dfs_marketplace_guide_cancel: '随便看看',
   dfs_marketplace_guide_ok: '刷新一下',
-  dfs_settings_language: '显示语言'
+  dfs_settings_language: '显示语言',
+  dfs_apply_user: '申请人',
+  dfs_apply_time: '申请时间',
+  dfs_apply_auditor: '审核人',
+  dfs_apply_audit_time: '审核时间',
+  dfs_apply_pass: '通过',
+  dfs_apply_reject: '拒绝',
+  dfs_status_to_be_approved: '待审批',
+  dfs_status_approved: '已通过',
+  dfs_status_rejected: '已拒绝',
+  dfs_status_expired: '已过期'
 }

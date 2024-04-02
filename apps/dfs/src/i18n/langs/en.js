@@ -1824,5 +1824,15 @@ export default {
   dfs_marketplace_guide_step_3: 'Please enjoy the full functionality',
   dfs_marketplace_guide_cancel: 'Close',
   dfs_marketplace_guide_ok: 'Refresh',
-  dfs_settings_language: 'Language'
+  dfs_settings_language: 'Language',
+  dfs_apply_user: 'Applicant',
+  dfs_apply_time: 'Application Time',
+  dfs_apply_auditor: 'Auditor',
+  dfs_apply_audit_time: 'Audit Time',
+  dfs_apply_pass: 'Approve',
+  dfs_apply_reject: 'Reject',
+  dfs_status_to_be_approved: 'Pending',
+  dfs_status_approved: 'Approved',
+  dfs_status_rejected: 'Rejected',
+  dfs_status_expired: 'Expired'
 }
