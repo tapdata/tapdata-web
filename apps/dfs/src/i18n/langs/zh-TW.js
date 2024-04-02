@@ -1648,5 +1648,15 @@ export default {
   dfs_system_update: '系統更新',
   dfs_system_description: '系統已升級, 點擊刷新，立即體驗新功能!',
   dfs_order_list_bianhao: '編號',
-  dfs_settings_language: '顯示語言'
+  dfs_settings_language: '顯示語言',
+  dfs_apply_user: '申請人',
+  dfs_apply_time: '申請時間',
+  dfs_apply_auditor: '審核人',
+  dfs_apply_audit_time: '審核時間',
+  dfs_apply_pass: '通過',
+  dfs_apply_reject: '拒絕',
+  dfs_status_to_be_approved: '待審批',
+  dfs_status_approved: '已通過',
+  dfs_status_rejected: '已拒絕',
+  dfs_status_expired: '已過期'
 }

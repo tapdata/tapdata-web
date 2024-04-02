@@ -46,5 +46,6 @@ export default {
   packages_ldp_run_every_hour: 'Run every 1 hour',
   packages_ldp_run_every_day: 'Run every day',
   packages_ldp_custom_cron_expression: 'Custom cron expression',
-  packages_ldp_view_task_monitor: 'View Task Monitor'
+  packages_ldp_view_task_monitor: 'View Task Monitor',
+  packages_ldp_book_demo: 'Feel free to Book a Demo with us'
 }

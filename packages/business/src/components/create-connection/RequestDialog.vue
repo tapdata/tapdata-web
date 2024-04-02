@@ -110,9 +110,9 @@ export default {
 
   methods: {
     async handleOpen() {
-      const request = await this.queryRequest()
+      const requestList = await this.queryRequest()
 
-      if (request?.status === 'APPROVED') {
+      if (requestList.some(item => item.status === 'APPROVED')) {
         // 审核通过
         return false
       }
@@ -123,7 +123,9 @@ export default {
 
       await this.$nextTick()
 
-      if (request?.status === 'PENDING') {
+      const request = requestList.find(item => item.status === 'PENDING')
+
+      if (request) {
         // 审核中
         this.hasRequest = true
         // 填充form
@@ -172,7 +174,7 @@ export default {
         }
       })
 
-      return result?.items?.[0]
+      return result?.items || []
     }
   }
 }

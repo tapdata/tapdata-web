@@ -27,19 +27,31 @@
       <ElMain class="main rounded-lg">
         <div class="g-panel-container flex-fill overflow-x-hidden flex flex-column">
           <ElTable ref="table" row-key="id" :data="list">
-            <el-table-column label="数据源">
+            <el-table-column :label="$t('packages_business_connection_form_data_source')">
               <template #default="{ row }">
                 {{ row.metadata.type }}<ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
               </template>
             </el-table-column>
-            <el-table-column label="预计使用时间">
+            <el-table-column
+              :label="$t('dfs_agent_download_subscriptionmodeldialog_zhuyaoshiyongchang')"
+              prop="summary"
+            >
+            </el-table-column>
+            <el-table-column :label="$t('packages_business_request_connector_use_time')">
               <template #default="{ row }">
                 {{ dayMap[row.hoursOfAvailability] || row.hoursOfAvailability }}
               </template>
             </el-table-column>
-            <el-table-column label="申请人手机" prop="phone"> </el-table-column>
-            <el-table-column label="申请人邮箱" prop="email"> </el-table-column>
-            <el-table-column label="状态" prop="status" width="220">
+            <el-table-column :label="$t('dfs_apply_user')" prop="createUser"></el-table-column>
+            <el-table-column :label="$t('dfs_user_contactus_lianxifangshi')" prop="phone">
+              <template #default="{ row }">
+                {{ row.phone || row.email }}
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('dfs_apply_time')" prop="submitTime"></el-table-column>
+            <el-table-column :label="$t('dfs_apply_auditor')" prop="reviewer"></el-table-column>
+            <el-table-column :label="$t('dfs_apply_audit_time')" prop="approvalTime"></el-table-column>
+            <el-table-column :label="$t('public_status')" prop="status" width="120">
               <template #default="{ row }">
                 <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type">{{
                   statusMap[row.status].text
@@ -47,11 +59,15 @@
                 <span v-else>{{ row.status }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="120">
+            <el-table-column :label="$t('public_operation')" width="120">
               <template #default="{ row }">
                 <div class="flex gap-2">
-                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleApprove(row)" type="primary">通过</ElLink>
-                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row)" type="danger">拒绝</ElLink>
+                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleApprove(row)" type="primary">{{
+                    $t('dfs_apply_pass')
+                  }}</ElLink>
+                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row)" type="danger">{{
+                    $t('dfs_apply_reject')
+                  }}</ElLink>
                 </div>
               </template>
             </el-table-column>
@@ -77,10 +93,11 @@
 <script>
 import { TablePage } from '@tap/business'
 import { mapGetters, mapState } from 'vuex'
+import dayjs from 'dayjs'
+import i18n from '@/i18n'
 
 export default {
   name: 'RequestConnector',
-  components: { TablePage },
   data() {
     return {
       mockUserId: null,
@@ -91,25 +108,25 @@ export default {
         total: 0
       },
       dayMap: {
-        5: '5天',
-        180: '半年',
-        365: '1年'
+        5: i18n.t('packages_business_request_connector_use_time_option1'),
+        180: i18n.t('packages_business_request_connector_use_time_option2'),
+        365: i18n.t('packages_business_request_connector_use_time_option3')
       },
       statusMap: {
         PENDING: {
-          text: '待审批',
+          text: i18n.t('dfs_status_to_be_approved'),
           type: 'primary'
         },
         APPROVED: {
-          text: '已通过',
+          text: i18n.t('dfs_status_approved'),
           type: 'success'
         },
         REJECTED: {
-          text: '已拒绝',
+          text: i18n.t('dfs_status_rejected'),
           type: 'danger'
         },
         EXPIRED: {
-          text: '已过期',
+          text: i18n.t('dfs_status_expired'),
           type: 'warning'
         }
       }
@@ -136,7 +153,12 @@ export default {
           filter: JSON.stringify(filter)
         }
       })
-      this.list = result.items
+      this.list = result.items.map(item => {
+        item.submitTime = item.submitTime ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+        item.approvalTime = item.approvalTime ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+        item.reviewer = item.reviewer || '-'
+        return item
+      })
       this.page.total = result.total
     },
 
