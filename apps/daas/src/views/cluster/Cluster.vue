@@ -15,24 +15,25 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"></FilterBar>
       </div>
       <div class="main">
-        <template v-if="true">
+        <template v-if="waterfallData.length">
           <section v-if="viewType === 'component'">
             <div class="border rounded-lg mb-4">
               <div class="flex align-center justify-content-between p-4 py-3">
                 <span class="section-title font-color-dark fs-6 fw-sub">{{ $t('cluster_sync_gover') }}</span>
-                <ElButton @click="openSetTagDialog" type="primary">{{ $t('dataExplorer_tag_title') }}</ElButton>
+                <ElButton :disabled="!multipleSelection.length" @click="openSetTagDialog" type="primary">{{
+                  $t('dataExplorer_tag_title')
+                }}</ElButton>
               </div>
               <div class="flex border-top">
-                <div class="border-end p-3">
-                  <div class="flex align-center justify-content-between mb-2">
-                    <span class="font-color-dark fw-sub">{{ $t('public_tags') }}</span>
+                <div class="tag-tree-wrapper border-end p-3 pt-0">
+                  <div class="flex align-center mb-2 h-40 gap-0">
+                    <span class="font-color-dark fw-sub flex-1">{{ $t('public_tags') }}</span>
+                    <IconButton @click="handleSearch">magnify</IconButton>
                     <IconButton @click="handleAddTag">add</IconButton>
                   </div>
-                  <ElInput class="search mb-2">
+                  <ElInput v-if="showSearch" v-model="tagSearch" class="search mb-2" clearable>
                     <template #prefix>
-                      <span class="el-input__icon h-100 ml-1">
-                        <VIcon size="14">search</VIcon>
-                      </span>
+                      <VIcon size="14" class="h-100">magnify</VIcon>
                     </template>
                   </ElInput>
                   <ElTree
@@ -41,19 +42,18 @@
                     ref="tree"
                     node-key="groupId"
                     :props="treeProps"
-                    highlight-current
-                    :expand-on-click-node="false"
                     :data="tagData"
-                    :render-after-expand="false"
-                    :indent="0"
                     icon-class="p-0 pl-2"
-                    @node-click="handleNodeClick"
+                    :filter-node-method="handleFilterTag"
+                    @node-click="handleCheckChange"
+                    @check="handleCheck"
+                    class="has-dropdown"
                   >
                     <template #default="{ node, data }">
                       <div class="flex align-center flex-1">
                         <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
                         <span class="flex-1 text-ellipsis">{{ data.name }}</span>
-                        <ElDropdown class="btn-menu" @command="handleCommand($event, node)">
+                        <ElDropdown class="tree-node-dropdown" @command="handleCommand($event, node)">
                           <IconButton sm>more</IconButton>
                           <template #dropdown>
                             <ElDropdownMenu>
@@ -66,12 +66,16 @@
                     </template>
                   </ElTree>
                 </div>
-                <ElTable :data="engineData" @selection-change="handleSelectionChange" row-key="process_id">
+                <ElTable :data="filterEngineData" @selection-change="handleSelectionChange" row-key="process_id">
                   <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
                   <ElTableColumn label="主机名/IP" prop="name">
                     <template #default="{ row }">
-                      <div>{{ row.hostname }}</div>
-                      <span class="ip">{{ row.ip }}</span>
+                      <div>
+                        {{ row.hostname }}<span class="ip ml-1">{{ row.ip }}</span>
+                      </div>
+                      <span v-if="row.tags" class="justify-content-start ellipsis block">
+                        <span class="tag inline-block" v-for="item in row.tags" :key="item.id">{{ item.name }}</span>
+                      </span>
                     </template>
                   </ElTableColumn>
                   <ElTableColumn label="连接数" prop="netStatTotals"></ElTableColumn>
@@ -581,11 +585,13 @@
     <SetTag
       :visible="setTagDialog.visible"
       :tagData="tagData"
-      :treeProps="treeProps"
-      :tagList="setTagDialog.tagList"
       :tagMap="tagMap"
+      :treeProps="treeProps"
+      :selection="setTagDialog.selection"
+      :tagList="setTagDialog.tagList"
       @update:visible="setTagDialog.visible = $event"
       @closed="setTagDialog.tagList = []"
+      @saved="onSavedTag"
     ></SetTag>
   </section>
 </template>
@@ -649,6 +655,7 @@ export default {
       },
       apiServerData: [],
       engineData: [],
+      filterEngineData: [],
       managementData: [],
       tagData: [],
       tagDialog: {
@@ -665,14 +672,17 @@ export default {
       },
       setTagDialog: {
         visible: false,
-        tagList: []
+        tagList: [],
+        selection: []
       },
       treeProps: {
-        label: name
+        label: 'name'
       },
       agentId2Tag: {},
       tagMap: {},
-      multipleSelection: []
+      multipleSelection: [],
+      tagSearch: '',
+      showSearch: false
     }
   },
   computed: {
@@ -685,18 +695,22 @@ export default {
   created() {
     this.init()
     this.accessToken = Cookie.get('access_token')
-    this.loadTags()
   },
   watch: {
     '$route.query'() {
       this.searchParams = this.$route.query
       this.getDataApi()
+    },
+    tagSearch(val) {
+      this.$refs.tree.filter(val)
     }
   },
   methods: {
-    init() {
+    async init() {
       this.getAllBindWorker()
-      this.getDataApi()
+      await this.getDataApi()
+      await this.loadTags()
+      this.handleFilterAgent()
     },
     // 提交
     async submitForm() {
@@ -1033,6 +1047,7 @@ export default {
 
       this.apiServerData = apiServerData
       this.engineData = engineData
+      // this.filterEngineData = engineData
       this.managementData = managementData
     },
     // 关闭弹窗并且清空验证
@@ -1146,8 +1161,22 @@ export default {
 
         return map
       }, {})
-
       this.tagData = items
+      this.mapAgentData()
+    },
+
+    mapAgentData() {
+      this.engineData.map(item => {
+        const tagIds = this.agentId2Tag[item.process_id]
+        if (tagIds?.length) {
+          item.tags = tagIds.map(id => {
+            return {
+              id,
+              name: this.tagMap[id]
+            }
+          })
+        }
+      })
     },
 
     saveTag() {
@@ -1191,10 +1220,15 @@ export default {
       this.$emit('nodeChecked', checkedNodes)
     },
 
-    handleNodeClick(data, node) {
-      this.clear()
-      node.checked = !node.checked
-      this.emitCheckedNodes()
+    handleCheckChange(data, node) {
+      let { checked } = node
+      this.$refs.tree.setCheckedKeys([])
+      node.checked = !checked
+      this.handleFilterAgent()
+    },
+
+    handleCheck() {
+      this.handleFilterAgent()
     },
 
     handleCommand(command, node) {
@@ -1226,9 +1260,10 @@ export default {
 
     openSetTagDialog() {
       this.setTagDialog.visible = true
+      let selection = []
       let list = this.multipleSelection.reduce((acc, item) => {
+        selection.push(item.process_id)
         let list = this.agentId2Tag[item.process_id]
-
         if (list?.length) {
           acc.push(...list)
         }
@@ -1244,10 +1279,37 @@ export default {
       })*/
 
       this.setTagDialog.tagList = list
+      this.setTagDialog.selection = selection
     },
 
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+
+    handleSearch() {
+      this.showSearch = !this.showSearch
+      this.tagSearch = ''
+    },
+
+    handleFilterTag(value, data) {
+      if (!value) return true
+      return data.name.toLowerCase().includes(value.toLowerCase())
+    },
+
+    async onSavedTag() {
+      await this.loadTags()
+      this.handleFilterAgent()
+    },
+
+    handleFilterAgent() {
+      const keys = this.$refs.tree.getCheckedKeys()
+      if (keys.length) {
+        this.filterEngineData = this.engineData.filter(item => {
+          return this.agentId2Tag[item.process_id]?.some(id => keys.includes(id))
+        })
+      } else {
+        this.filterEngineData = this.engineData
+      }
     }
   },
   destroyed() {
@@ -1257,6 +1319,23 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.h-40 {
+  height: 40px;
+}
+.tag-tree-wrapper {
+  width: 228px;
+}
+.tag {
+  padding: 2px 5px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 14px;
+  color: map-get($color, tag);
+  border: 1px solid map-get($bgColor, tag);
+  border-radius: 2px;
+  margin-left: 5px;
+}
 .view-radio-group {
   ::v-deep {
     .el-radio-button__orig-radio:checked + .el-radio-button__inner {
@@ -1614,6 +1693,20 @@ export default {
       .el-form-item__error {
         padding-top: 1px;
         line-height: 12px;
+      }
+    }
+  }
+}
+
+.has-dropdown {
+  .el-tree-node__content {
+    .tree-node-dropdown {
+      display: none;
+    }
+
+    &:hover {
+      .tree-node-dropdown {
+        display: block;
       }
     }
   }

@@ -4,7 +4,8 @@
     :visible="visible"
     width="600px"
     :close-on-click-modal="false"
-    @closed="$emit('closed')"
+    @open="onOpen"
+    @closed="onClosed"
     @update:visible="$emit('update:visible', $event)"
   >
     <div class="flex flex-wrap gap-2 mb-2 rounded-lg p-3" style="background-color: #f5f6f7">
@@ -35,15 +36,19 @@
       </template>
     </ElTree>
     <span slot="footer" class="dialog-footer">
-      <el-button class="message-button-cancel" @click="$emit('update:visible', false)" size="mini">{{
+      <el-button class="message-button-cancel" @click="handleClose" size="mini">{{
         $t('public_button_cancel')
       }}</el-button>
-      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('public_button_save') }}</el-button>
+      <el-button :disabled="saving" type="primary" @click="handleSave" size="mini">{{
+        $t('public_button_save')
+      }}</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+import { agentGroupApi } from '@tap/api'
+
 export default {
   name: 'SetTag',
   props: {
@@ -51,23 +56,16 @@ export default {
     tagData: Array,
     treeProps: Object,
     tagMap: Object,
-    tagList: Array
+    tagList: Array,
+    selection: Array
+  },
+  data() {
+    return {
+      saving: false
+    }
   },
   methods: {
     handleCheckChange(data, isCheck) {
-      // this.tagList = this.tagList || []
-      // if (this.tagList.length > 0) {
-      //   this.tagList.map((k, index) => {
-      //     if (k.id === data.id) {
-      //       this.tagList.splice(index, 1)
-      //     }
-      //   })
-      // }
-      // let node = {
-      //   id: data.id,
-      //   value: data.value
-      // }
-      // this.tagList.push(node)
       const index = this.tagList.indexOf(data.groupId)
 
       if (isCheck) {
@@ -75,21 +73,33 @@ export default {
       } else {
         this.tagList.splice(index, 1)
       }
-
-      // if (~index) {
-      //   this.tagList.splice(index, 1)
-      // } else {
-      //   this.tagList.push(data.groupId)
-      // }
     },
-    handleAdd() {},
-    handleCancel() {},
+    onOpen() {
+      this.$nextTick(() => {
+        this.$refs.tree.setCheckedKeys(this.tagList)
+      })
+    },
+    onClosed() {
+      this.$refs.tree.setCheckedKeys([])
+      this.$emit('closed')
+    },
+    handleClose() {
+      this.$emit('update:visible', false)
+    },
     handleCloseTag(id) {
       this.$refs.tree.setChecked(id, false)
-      /*const index = this.tagList.indexOf(id)
-      if (~index) {
-        this.tagList.splice(index, 1)
-      }*/
+    },
+    async handleSave() {
+      this.saving = true
+      await agentGroupApi
+        .updateAgent({
+          agentId: this.selection,
+          groupId: this.tagList
+        })
+        .finally(() => (this.saving = false))
+      this.$message.success(this.$t('public_message_save_ok'))
+      this.handleClose()
+      this.$emit('saved')
     }
   }
 }

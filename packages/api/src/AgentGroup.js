@@ -12,5 +12,9 @@ export default class AgentGroupAPI extends Http {
   update(params) {
     return this.axios.post(`${this.url}/update-group`, params)
   }
+
+  updateAgent(params) {
+    return this.axios.post(`${this.url}/batch-modify`, params)
+  }
 }
 export { AgentGroupAPI }
