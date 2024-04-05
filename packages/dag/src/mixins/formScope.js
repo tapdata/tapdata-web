@@ -1035,12 +1035,22 @@ export default {
     async loadAccessNode() {
       const data = await clusterApi.findAccessNodeInfo()
       this.scope.$agents = data.map(item => {
+        if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+          return {
+            value: item.processId,
+            label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+              item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+            }）`,
+            accessNodeType: item.accessNodeType
+          }
+        }
         return {
           value: item.processId,
           label: `${item.hostName}（${
             item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
           }）`,
-          disabled: item.status !== 'running'
+          disabled: item.status !== 'running',
+          accessNodeType: item.accessNodeType
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})

@@ -5,8 +5,8 @@
       <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
       <el-col :span="6" class="text-end">
         <el-radio-group v-model="viewType" class="view-radio-group">
-          <el-radio-button label="cluster"> 集群视图</el-radio-button>
-          <el-radio-button label="component"> 组件视图</el-radio-button>
+          <el-radio-button label="cluster">{{ $t('daas_cluster_cluster_view') }}</el-radio-button>
+          <el-radio-button label="component">{{ $t('daas_cluster_component_view') }}</el-radio-button>
         </el-radio-group>
       </el-col>
     </el-row>
@@ -54,7 +54,7 @@
                         <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
                         <span class="flex-1 text-ellipsis">{{ data.name }}</span>
                         <ElDropdown class="tree-node-dropdown" @command="handleCommand($event, node)">
-                          <IconButton sm>more</IconButton>
+                          <IconButton @click.stop sm>more</IconButton>
                           <template #dropdown>
                             <ElDropdownMenu>
                               <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
@@ -66,9 +66,14 @@
                     </template>
                   </ElTree>
                 </div>
-                <ElTable :data="filterEngineData" @selection-change="handleSelectionChange" row-key="process_id">
+                <ElTable
+                  ref="engineTable"
+                  :data="filterEngineData"
+                  @selection-change="handleSelectionChange"
+                  row-key="process_id"
+                >
                   <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-                  <ElTableColumn label="主机名/IP" prop="name">
+                  <ElTableColumn :label="$t('daas_cluster_engine_hostname')" prop="name">
                     <template #default="{ row }">
                       <div>
                         {{ row.hostname }}<span class="ip ml-1">{{ row.ip }}</span>
@@ -78,7 +83,7 @@
                       </span>
                     </template>
                   </ElTableColumn>
-                  <ElTableColumn label="连接数" prop="netStatTotals"></ElTableColumn>
+                  <ElTableColumn :label="$t('daas_cluster_connection_count')" prop="netStatTotals"></ElTableColumn>
                   <ElTableColumn :label="$t('public_status')" prop="status">
                     <template #default="{ row }">
                       <span :class="['status-' + row.status, 'status']">{{ getStatus(row.status) }}</span>
@@ -134,7 +139,7 @@
                   <span class="section-title font-color-dark fs-6 fw-sub">{{ $t('cluster_manage_sys') }}</span>
                 </div>
                 <ElTable :data="managementData">
-                  <ElTableColumn label="主机名/IP" prop="name">
+                  <ElTableColumn :label="$t('daas_cluster_engine_hostname')" prop="name">
                     <template #default="{ row }">
                       <div>{{ row.hostname }}</div>
                       <span class="ip">{{ row.ip }}</span>
@@ -184,7 +189,7 @@
                   <span class="section-title font-color-dark fs-6 fw-sub">API server</span>
                 </div>
                 <ElTable :data="apiServerData">
-                  <ElTableColumn label="主机名/IP" prop="name">
+                  <ElTableColumn :label="$t('daas_cluster_engine_hostname')" prop="name">
                     <template #default="{ row }">
                       <div>{{ row.hostname }}</div>
                       <span class="ip">{{ row.ip }}</span>
@@ -1005,7 +1010,8 @@ export default {
 
         const info = {
           hostname: item.agentName || item.systemInfo.hostname,
-          ip: item.custIP || item.systemInfo.ip
+          ip: item.custIP || item.systemInfo.ip,
+          uuid: item.uuid
         }
 
         engine && engineData.push(Object.assign(engine, info, { process_id: item.systemInfo.process_id }))
@@ -1133,6 +1139,7 @@ export default {
     handleAddTag() {
       this.tagDialog.visible = true
       this.tagDialog.title = this.$t('dataFlow_addTag')
+      this.$refs.tagForm?.clearValidate()
     },
 
     editTag(tag) {
@@ -1168,14 +1175,18 @@ export default {
     mapAgentData() {
       this.engineData.map(item => {
         const tagIds = this.agentId2Tag[item.process_id]
-        if (tagIds?.length) {
-          item.tags = tagIds.map(id => {
-            return {
-              id,
-              name: this.tagMap[id]
-            }
-          })
-        }
+        this.$set(
+          item,
+          'tags',
+          tagIds?.length
+            ? tagIds.map(id => {
+                return {
+                  id,
+                  name: this.tagMap[id]
+                }
+              })
+            : []
+        )
       })
     },
 
@@ -1211,20 +1222,12 @@ export default {
       })
     },
 
-    clear() {
-      this.$refs.tree && this.$refs.tree.setCheckedNodes([])
-    },
-
-    emitCheckedNodes() {
-      let checkedNodes = this.$refs.tree.getCheckedKeys() || []
-      this.$emit('nodeChecked', checkedNodes)
-    },
-
     handleCheckChange(data, node) {
-      let { checked } = node
+      let checked = node.checked
       this.$refs.tree.setCheckedKeys([])
       node.checked = !checked
       this.handleFilterAgent()
+      this.$refs.engineTable.clearSelection()
     },
 
     handleCheck() {
@@ -1302,8 +1305,8 @@ export default {
     },
 
     handleFilterAgent() {
-      const keys = this.$refs.tree.getCheckedKeys()
-      if (keys.length) {
+      const keys = this.$refs.tree?.getCheckedKeys()
+      if (keys?.length) {
         this.filterEngineData = this.engineData.filter(item => {
           return this.agentId2Tag[item.process_id]?.some(id => keys.includes(id))
         })

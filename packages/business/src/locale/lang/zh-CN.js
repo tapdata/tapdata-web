@@ -52,6 +52,7 @@ export default {
   packages_business_connection_form_access_node: 'agent设置',
   packages_business_connection_form_automatic: '平台自动分配',
   packages_business_connection_form_manual: '用户手动指定',
+  packages_business_connection_form_group: '按标签分配',
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   packages_business_connection_form_give_up: '放弃',

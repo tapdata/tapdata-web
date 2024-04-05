@@ -683,7 +683,11 @@ export default {
           'x-component': 'Select',
           enum: [
             { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+            {
+              label: this.$t('packages_business_connection_form_group'),
+              value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+            }
           ],
           'x-reactions': [
             {
@@ -697,32 +701,52 @@ export default {
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
                     { label: '${this.$t(
                       'packages_business_connection_form_manual'
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+                    {
+                      label: '${this.$t('packages_business_connection_form_group')}',
+                      value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+                    }
                   ] : [
                     { label: '${this.$t(
                       'packages_business_connection_form_automatic'
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
                     { label: '${this.$t(
                       'packages_business_connection_form_manual'
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
+                    {
+                      label: '${this.$t('packages_business_connection_form_group')}',
+                      value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+                    }
                   ]}}`
                 }
               }
             },
             {
               target: '__TAPDATA.accessNodeProcessId',
-              fulfill: { state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" } }
-            },
-            {
-              target: '__TAPDATA.accessNodeProcessId',
               effects: ['onFieldInputValueChange'],
               fulfill: {
                 state: {
-                  value:
-                    '{{$target.value || ($target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : null)}}'
+                  value: ''
+                  // value: `{{console.log("$target.dataSource", $target.dataSource), $target.value ? '' : $target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : ''}}`
                 }
               }
             }
+          ]
+        },
+        accessNodeOption: {
+          type: 'string',
+          'x-display': 'hidden',
+          'x-reactions': [
+            {
+              dependencies: ['.accessNodeType'],
+              fulfill: {
+                state: {
+                  visible:
+                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
+                }
+              }
+            },
+            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}'
           ]
         },
         accessNodeProcessId: {
@@ -739,14 +763,26 @@ export default {
             onChange: `{{ () => $self.setSelfErrors('') }}`
           },
           'x-reactions': [
-            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
+            // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
             // 根据下拉数据判断是否存在已选的agent
             {
+              dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
               fulfill: {
-                run: `if ($self.dataSource?.length && $self.value) {
-                const current = $self.dataSource.find(item => item.value === $self.value)
-                if (!current) {
-                  $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
+                state: {
+                  visible:
+                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
+                },
+                run: `
+                console.log('$deps[1]', $deps)
+                if (!$deps[1]) return
+                $self.dataSource = $deps[1].filter(item => item.accessNodeType === $deps[0])
+                if ($self.dataSource?.length) {
+                // $self.dataSource = $deps[1].filter(item => item.accessNodeType === $deps[0])
+                if ($self.value) {
+                  const current = $self.dataSource.find(item => item.value === $self.value)
+                  if (!current) {
+                    $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
+                  }
                 }
               }`
               }
@@ -1145,14 +1181,29 @@ export default {
 
           return (
             data
-              ?.filter(t => t.status === 'running' || t.processId === others.value)
+              ?.filter(
+                t =>
+                  t.status === 'running' ||
+                  t.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
+                  t.processId === others.value
+              )
               ?.map(item => {
+                if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+                  return {
+                    value: item.processId,
+                    label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+                      item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+                    }）`,
+                    accessNodeType: item.accessNodeType
+                  }
+                }
                 return {
                   value: item.processId,
                   label: `${item.hostName}（${
                     item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
                   }）`,
-                  disabled: item.status !== 'running'
+                  disabled: item.status !== 'running',
+                  accessNodeType: item.accessNodeType
                 }
               }) || []
           )

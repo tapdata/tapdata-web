@@ -1831,5 +1831,9 @@ export default {
   daas_feature_unavailable_get_enterprise: '申請企業版',
   daas_feature_unavailable_get_cloud: '免費使用雲版',
   daas_feature_unavailable_go_to_compare: '查看各版本詳細功能對比',
-  daas_unbind_license: '解綁 License'
+  daas_unbind_license: '解綁 License',
+  daas_cluster_cluster_view: '集群視圖',
+  daas_cluster_component_view: '組件視圖',
+  daas_cluster_engine_hostname: '主機名/IP',
+  daas_cluster_connection_count: '連接數'
 }

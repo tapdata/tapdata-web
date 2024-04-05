@@ -1837,5 +1837,9 @@ export default {
   daas_feature_unavailable_get_cloud: '免费使用云版',
   daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比',
   daas_unbind_license: '解绑 License',
-  daas_cluster_cluster_lianjieshuliang_detail: '对外建立链接数详情'
+  daas_cluster_cluster_lianjieshuliang_detail: '对外建立链接数详情',
+  daas_cluster_cluster_view: '集群视图',
+  daas_cluster_component_view: '组件视图',
+  daas_cluster_engine_hostname: '主机名/IP',
+  daas_cluster_connection_count: '连接数'
 }
