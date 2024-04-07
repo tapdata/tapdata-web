@@ -741,6 +741,13 @@ export default observer({
                                 ],
                                 'x-reactions': [
                                   {
+                                    fulfill: {
+                                      state: {
+                                        dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`
+                                      }
+                                    }
+                                  },
+                                  {
                                     target: 'accessNodeProcessId',
                                     fulfill: {
                                       state: {

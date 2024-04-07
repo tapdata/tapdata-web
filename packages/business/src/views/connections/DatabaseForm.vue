@@ -683,11 +683,7 @@ export default {
           'x-component': 'Select',
           enum: [
             { label: this.$t('packages_business_connection_form_automatic'), value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
-            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
-            {
-              label: this.$t('packages_business_connection_form_group'),
-              value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-            }
+            { label: this.$t('packages_business_connection_form_manual'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
           ],
           'x-reactions': [
             {
@@ -701,11 +697,14 @@ export default {
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION', disabled: true },
                     { label: '${this.$t(
                       'packages_business_connection_form_manual'
-                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
-                    {
-                      label: '${this.$t('packages_business_connection_form_group')}',
-                      value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-                    }
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
+                  ] : !$isDaas ? [
+                    { label: '${this.$t(
+                      'packages_business_connection_form_automatic'
+                    )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
+                    { label: '${this.$t(
+                      'packages_business_connection_form_manual'
+                    )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ] : [
                     { label: '${this.$t(
                       'packages_business_connection_form_automatic'
@@ -879,6 +878,10 @@ export default {
         endProperties.schemaUpdateHour.enum.unshift({
           label: i18n.t('packages_business_connections_databaseform_system'),
           value: 'default'
+        })
+        endProperties.accessNodeType.enum.push({
+          label: this.$t('packages_business_connection_form_group'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
         })
       }
 
