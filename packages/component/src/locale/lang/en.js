@@ -18,7 +18,7 @@ export default {
   packages_component_classification_nameExist: 'Category name already existed.',
   packages_component_classification_addNode: 'Add tag at the same level',
   packages_component_classification_addChildernNode: 'Add Child Tag',
-  packages_component_classification_nodeName: 'Please enter classification',
+  packages_component_classification_nodeName: 'Please enter tag name',
   packages_component_classification_deteleMessage:
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
   packages_component_formBuilder_file_placeholder: 'Please select a file',

@@ -733,13 +733,27 @@ export default observer({
                                   {
                                     label: this.$t('packages_dag_connection_form_manual'),
                                     value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                                  },
+                                  {
+                                    label: this.$t('packages_business_connection_form_group'),
+                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
                                   }
                                 ],
                                 'x-reactions': [
                                   {
+                                    fulfill: {
+                                      state: {
+                                        dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`
+                                      }
+                                    }
+                                  },
+                                  {
                                     target: 'accessNodeProcessId',
                                     fulfill: {
-                                      state: { visible: "{{$self.value==='MANUALLY_SPECIFIED_BY_THE_USER'}}" }
+                                      state: {
+                                        visible:
+                                          "{{['MANUALLY_SPECIFIED_BY_THE_USER','MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($self.value)}}"
+                                      }
                                     }
                                   },
                                   {
@@ -747,8 +761,8 @@ export default observer({
                                     effects: ['onFieldInputValueChange'],
                                     fulfill: {
                                       state: {
-                                        value:
-                                          '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
+                                        value: ''
+                                        // '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
                                       }
                                     }
                                   }
@@ -1218,8 +1232,9 @@ export default observer({
     },
 
     accessNodeProcessList() {
-      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
-      return this.scope.$agents.filter(item => !!this.accessNodeProcessIdMap[item.value])
+      const agents = this.scope.$agents.filter(item => item.accessNodeType === this.settings.accessNodeType)
+      if (!this.accessNodeProcessIdArr.length) return agents
+      return agents.filter(item => !!this.accessNodeProcessIdMap[item.value])
     },
 
     sourceNodes() {
@@ -1261,9 +1276,11 @@ export default observer({
       handler(arr) {
         const size = arr.length
         if (size >= 1) {
-          const currentId = this.settings.accessNodeProcessId
-          this.settings.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
-          this.settings.accessNodeProcessId = currentId && arr.includes(currentId) ? currentId : arr[0]
+          let currentId = this.settings.accessNodeProcessId
+          currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
+          this.settings.accessNodeType =
+            this.scope.$agentMap[currentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+          this.settings.accessNodeProcessId = currentId
         }
         if (!this.stateIsReadonly) {
           // 只在编辑模式下禁用或启用

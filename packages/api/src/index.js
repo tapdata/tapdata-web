@@ -183,6 +183,9 @@ const connectorRecordApi = new ConnectorRecord()
 import AlarmMail from './AlarmMail'
 const alarmMailApi = new AlarmMail()
 
+import AgentGroup from './AgentGroup'
+const agentGroupApi = new AgentGroup()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -244,7 +247,8 @@ export {
   lineageApi,
   dataPermissionApi,
   connectorRecordApi,
-  alarmMailApi
+  alarmMailApi,
+  agentGroupApi
 }
 export * from './ApiClient'
 
