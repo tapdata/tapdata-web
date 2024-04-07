@@ -2,9 +2,15 @@
   <section class="verify-details-wrap section-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
       <div class="verify-details-header" v-if="inspect">
-        <div>
+        <div class="flex align-center">
           <span style="font-size: 14px">{{ inspect.name }}</span>
-          <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+          <ElTag type="info" class="ml-3">{{ typeMap[type] }}</ElTag>
+          <ElDivider class="mx-3" direction="vertical" />
+          <ElRadioGroup v-model="resultFilter">
+            <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
+            <ElRadioButton label="passed">{{ $t('packages_business_verification_consistent') }}</ElRadioButton>
+            <ElRadioButton label="failed">{{ $t('packages_business_verification_inconsistent') }}</ElRadioButton>
+          </ElRadioGroup>
         </div>
         <div v-if="inspect.inspectMethod !== 'row_count'">
           <div class="flex align-items-center">
@@ -108,7 +114,7 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
-import { statusMap as typeMap } from './const'
+import { inspectMethod as typeMap } from './const'
 
 export default {
   components: { ResultTable, ResultView },
@@ -120,7 +126,8 @@ export default {
       resultInfo: {},
       errorMsg: '',
       taskId: null,
-      expandErrorMessage: false
+      expandErrorMessage: false,
+      resultFilter: ''
     }
   },
   computed: {
@@ -128,7 +135,11 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      const data = this.resultInfo.stats || []
+      if (!this.resultFilter) {
+        return data
+      }
+      return data.filter(item => item.result === this.resultFilter)
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod
