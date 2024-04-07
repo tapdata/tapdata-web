@@ -1,99 +1,104 @@
 <template>
-  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" :visible.sync="dialogVisible" width="60%">
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_tip') }}</div>
-    <div class="skip-tip">{{ $t('packages_business_dataFlow_skipError_attention') }}</div>
-    <div class="skip-name">
-      {{ `${$t('packages_business_dataFlow_skipError_taskName')}:` }}
-      <span class="link-primary">{{ task.name }}</span>
+  <ElDialog
+    :title="`${$t('packages_business_dataFlow_skipError_title')} - ${taskName}`"
+    :visible="visible"
+    @update:visible="visible = $event"
+    width="60%"
+  >
+    <div class="lh-base mb-3">
+      <ElAlert
+        :title="$t('packages_business_dataFlow_skipError_attention')"
+        :description="$t('packages_business_dataFlow_skipError_tip')"
+        type="warning"
+        :closable="false"
+      ></ElAlert>
     </div>
-    <ul class="error-list">
+
+    <ul class="error-list rounded-lg bg-subtle">
       <span class="check-all"
         ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
           $t('packages_business_dataFlow_selectAll')
         }}</el-checkbox></span
       >
       <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
-        <li v-for="(item, index) in errorEvents" :key="item.index">
-          <el-checkbox :label="index">
-            <div class="error-content">
+        <li v-for="item in errorEvents" :key="item.id">
+          <el-checkbox :label="item.id" class="flex">
+            <div class="error-content rounded-4">
               <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
             </div>
           </el-checkbox>
         </li>
       </el-checkbox-group>
     </ul>
-    <div class="total">
+    <div class="pt-2">
       {{ errorTotal }} {{ checkedData.length }}
       {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
-      <el-button type="primary" size="mini" @click="skipErrorData">{{
+      <el-button @click="visible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
+      <el-button :loading="skipping" type="primary" size="mini" @click="skipErrorData">{{
         $t('packages_business_dataFlow_skipError_startJob')
       }}</el-button>
     </span>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script>
-import { dataFlowsApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 export default {
   name: 'SkipError',
+  props: {
+    // visible: Boolean
+  },
   data() {
     return {
-      dialogVisible: false,
+      skipping: false,
+      taskName: '',
+      visible: false,
       errorEvents: [],
-      isIndeterminate: true,
+      // isIndeterminate: true,
       checkAll: false,
       checkedData: [],
-      task: {},
       errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
     }
   },
+  computed: {
+    isIndeterminate() {
+      return this.checkedData.length > 0 && this.checkedData.length < this.errorEvents.length
+    }
+  },
   methods: {
-    async checkError(task, callback) {
-      let errorEvents = []
-      if (!task.status || task.status === 'error') {
-        let data = await dataFlowsApi.get([task.id])
-        data = data || {}
-        if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
-          this.dialogVisible = true
-          this.task = data
-          errorEvents = data.errorEvents
-          this.errorEvents = errorEvents
-          this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
-          return
-        }
-      }
-      if (callback) {
-        callback()
+    checkError(task) {
+      if (task.status === 'error' && task.errorEvents?.length) {
+        this.visible = true
+        this.checkAll = false
+        this.checkedData = []
+        this.task = task
+        this.taskName = task.name
+        this.errorEvents = task.errorEvents
+        this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
+        return true
       }
     },
     handleCheckAllChange(val) {
-      let ids = this.errorEvents.map((item, index) => {
-        return index
-      })
-      this.checkedData = val ? ids : []
-      this.isIndeterminate = false
+      this.checkedData = val
+        ? this.errorEvents.map(item => {
+            return item.id
+          })
+        : []
     },
     handleCheckedDataChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.errorEvents.length
-      this.checkedData = value
     },
-    skipErrorData() {
-      if (this.checkedData.length > 0) {
-        let data = []
-        this.checkedData.forEach(item => {
-          data.push(this.errorEvents[item])
-        })
-        this.checkedData = data
-      } else {
-        this.checkedData = []
+    async skipErrorData() {
+      if (this.checkedData.length) {
+        this.skipping = true
+        await taskApi.skipErrorEvents(this.task.id, this.checkedData)
       }
-      this.$emit('skip', this.task.id, this.checkedData)
-      this.dialogVisible = false
+      this.skipping = false
+      this.visible = false
+      this.$emit('skip', this.task.id)
     }
   }
 }
@@ -116,12 +121,11 @@ export default {
   overflow-x: hidden;
   li {
     margin-top: 10px;
-    margin-left: 10px;
+    margin-left: 12px;
+    margin-right: 12px;
     .error-content {
-      font-size: 12px;
       background-color: map-get($bgColor, white);
       border: 1px solid #dedee4;
-      width: 96%;
       padding: 5px 10px;
     }
     .error-msg {
@@ -131,6 +135,11 @@ export default {
       word-break: normal;
       white-space: normal;
       user-select: text;
+    }
+    ::v-deep {
+      .el-checkbox__label {
+        flex: 1;
+      }
     }
   }
   li:last-child {
@@ -150,12 +159,18 @@ export default {
   margin-top: 18px;
   margin-bottom: 10px;
 }
-.skip-tip {
-  font-size: 12px;
-  color: map-get($fontColor, slight);
-}
-.total {
-  padding-top: 5px;
-  font-size: 12px;
+.task-name-wrapper {
+  position: relative;
+  padding-left: 12px;
+  &::before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 8px;
+    background-color: map-get($color, primary);
+  }
 }
 </style>

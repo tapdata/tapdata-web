@@ -180,6 +180,8 @@
       ></UpgradeCharges>
 
       <MaterializedView ref="materializedView" :visible.sync="materializedViewVisible" disabled></MaterializedView>
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     </section>
   </section>
 </template>
@@ -197,7 +199,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
-import { ALARM_LEVEL_SORT, TASK_STATUS_MAP, UpgradeFee, UpgradeCharges } from '@tap/business'
+import { ALARM_LEVEL_SORT, TASK_STATUS_MAP, UpgradeFee, UpgradeCharges, SkipError } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
@@ -231,6 +233,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    SkipError,
     MaterializedView,
     UpgradeFee,
     UpgradeCharges,
@@ -705,7 +708,10 @@ export default {
       })
     },
 
-    async handleStart() {
+    async handleStart(skip) {
+      if (!skip && this.$refs.skipError.checkError(this.dataflow)) {
+        return
+      }
       this.isSaving = true
       try {
         this.wsAgentLive()
@@ -721,6 +727,10 @@ export default {
         this.handleError(e)
         this.isSaving = false
       }
+    },
+
+    handleSkipAndRun() {
+      this.handleStart(true)
     },
 
     getQuotaFilter(type) {

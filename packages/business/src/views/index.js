@@ -49,4 +49,5 @@ export {
 }
 
 export * from './connections/util'
+export * from './task'
 // export * from './detail/PreviewDrawer'

@@ -107,6 +107,8 @@
         @add-target-node="onAddMaterializedViewTargetNode()"
         @delete-node="handleDeleteById"
       ></MaterializedView>
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     </section>
   </section>
 </template>
@@ -139,6 +141,7 @@ import ConsolePanel from './components/migration/ConsolePanel'
 import PaperEmpty from './components/PaperEmpty'
 import MaterializedView from './components/materialized-view/MaterializedView.vue'
 import { mapMutations } from 'vuex'
+import { SkipError } from '@tap/business'
 
 export default {
   name: 'Editor',
@@ -156,7 +159,8 @@ export default {
     LeftSidebar,
     TransformLoading,
     ConsolePanel,
-    PaperEmpty
+    PaperEmpty,
+    SkipError
   },
 
   inject: ['buried'],
@@ -587,6 +591,11 @@ export default {
 
     async handleStart() {
       this.buried('taskStart')
+
+      if (this.$refs.skipError.checkError(this.dataflow)) {
+        return
+      }
+
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -620,6 +629,10 @@ export default {
       } else {
         this.buried('taskStart', { result: false })
       }
+    },
+
+    handleSkipAndRun() {
+      this.startTask()
     },
 
     async autoAddNode(query) {
