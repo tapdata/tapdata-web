@@ -592,10 +592,6 @@ export default {
     async handleStart() {
       this.buried('taskStart')
 
-      if (this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
-
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', v => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -616,6 +612,11 @@ export default {
           }
         }
       })
+
+      if (this.$refs.skipError.checkError(this.dataflow)) {
+        return
+      }
+
       const flag = await this.save(true)
 
       if (flag) {
