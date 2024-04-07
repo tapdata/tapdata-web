@@ -1278,10 +1278,6 @@ export default observer({
         if (size >= 1) {
           let currentId = this.settings.accessNodeProcessId
           currentId = currentId && arr.includes(currentId) ? currentId : arr[0]
-          console.log(
-            'this.scope.$agentMap[currentId]?.accessNodeType',
-            this.scope.$agentMap[currentId]?.accessNodeType
-          )
           this.settings.accessNodeType =
             this.scope.$agentMap[currentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
           this.settings.accessNodeProcessId = currentId
