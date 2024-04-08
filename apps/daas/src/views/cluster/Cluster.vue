@@ -253,36 +253,38 @@
                         <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                       </div>
                     </div>
-                    <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
+                    <div class="operation-bar flex gap-1 align-items-start" v-readonlybtn="'Cluster_operation'">
                       <ElButton
                         size="mini"
                         type="danger"
                         v-if="item.canUpdate"
                         @click="updateFn(item, item.management.status, 'management', 'update')"
-                        >{{ $t(' cluster_update') }}
+                        >{{ $t('cluster_update') }}
                       </ElButton>
                       <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
-                        <VIcon
-                          class="mr-2 link-primary"
-                          v-readonlybtn="'Cluster_operation'"
+                        <IconButton
+                          sm
+                          class="text-primary"
                           :disabled="item.management.status !== 'running'"
                           @click="downServeFn(item)"
-                          >connectors
-                        </VIcon>
+                          >connectors</IconButton
+                        >
                       </el-tooltip>
                       <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
-                        <VIcon
-                          class="mr-2 link-primary"
-                          v-readonlybtn="'Cluster_operation'"
+                        <IconButton
+                          sm
+                          class="text-primary"
                           :disabled="item.management.status !== 'running'"
                           @click="downConnectorsFn(item)"
-                          >supervisor
-                        </VIcon>
+                          >supervisor</IconButton
+                        >
                       </el-tooltip>
-                      <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
+                      <IconButton sm class="text-primary" @click="addServeFn(item)">bg-add</IconButton>
+                      <IconButton sm class="text-primary" @click="editAgent(item)">cluster-setting</IconButton>
+                      <!--<VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
                         >bg-add
-                      </VIcon>
-                      <VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>
+                      </VIcon>-->
+                      <!--<VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>-->
                       <!-- <i
                         class="iconfont icon-icon_tianjia"
                         v-readonlybtn="'Cluster_operation'"
@@ -713,7 +715,7 @@ export default {
   methods: {
     async init() {
       this.getAllBindWorker()
-      await this.getDataApi()
+      await this.getDataApi(true)
       await this.loadTags()
       this.handleFilterAgent()
     },
@@ -955,7 +957,7 @@ export default {
       } catch (e) {}
     },
     // 获取数据
-    async getDataApi() {
+    async getDataApi(noFilter) {
       let params = { index: 1 }
       if (this.searchParams.keyword) {
         params['filter'] = {
@@ -1055,6 +1057,10 @@ export default {
       this.engineData = engineData
       // this.filterEngineData = engineData
       this.managementData = managementData
+
+      if (!noFilter) {
+        this.handleFilterAgent()
+      }
     },
     // 关闭弹窗并且清空验证
     closeDialogForm() {
