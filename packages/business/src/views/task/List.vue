@@ -191,7 +191,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
-              @click="start([row.id])"
+              @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
             </ElLink>
@@ -284,7 +284,7 @@
         </template>
       </el-table-column>
     </TablePage>
-    <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     <!-- 导入 -->
     <Upload :type="uploadType" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
@@ -558,7 +558,8 @@ export default {
         taskRetryStatus: true,
         shareCdcStop: true,
         shareCdcStopMessage: true,
-        taskRetryStartTime: true
+        taskRetryStartTime: true,
+        errorEvents: true
       }
       let where = {
         syncType
@@ -843,8 +844,16 @@ export default {
       })
     },
 
-    start(ids, node, canNotList = []) {
+    start(ids, task, canNotList = []) {
       this.buried(this.taskBuried.start)
+      if (ids.length === 1 && task && this.$refs.skipError.checkError(task)) {
+        return
+      }
+
+      this.startTask(ids, canNotList)
+    },
+
+    startTask(ids, canNotList) {
       taskApi
         .batchStart(ids)
         .then(data => {
@@ -855,6 +864,10 @@ export default {
         .catch(() => {
           this.buried(this.taskBuried.start, '', { result: false })
         })
+    },
+
+    handleSkipAndRun(taskId) {
+      this.startTask([taskId])
     },
 
     copy(ids, node) {

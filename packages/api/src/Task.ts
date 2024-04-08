@@ -214,5 +214,9 @@ export default class Task extends Http {
   checkCheckCloudTaskLimit(taskId) {
     return this.axios.get(`${this.url}/checkCloudTaskLimit/${taskId}`)
   }
+
+  skipErrorEvents(taskId, ids) {
+    return this.axios.post(`${this.url}/skipErrorEvents/${taskId}`, ids)
+  }
 }
 export { Task }
