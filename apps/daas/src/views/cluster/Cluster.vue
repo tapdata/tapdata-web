@@ -654,7 +654,7 @@ export default {
         }
       ],
       bindWorkerMap: {},
-      viewType: 'component',
+      viewType: 'cluster',
       netStatDialog: {
         visible: false
       },
