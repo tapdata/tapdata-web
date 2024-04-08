@@ -648,7 +648,7 @@ export default {
       accessToken: '',
       filterItems: [
         {
-          placeholder: this.$t('modules_name_placeholder'),
+          placeholder: this.$t('daas_cluser_keyword_placeholder'),
           key: 'keyword',
           type: 'input'
         }

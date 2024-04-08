@@ -1894,5 +1894,6 @@ export default {
   daas_cluster_cluster_view: 'Cluster View',
   daas_cluster_component_view: 'Component View',
   daas_cluster_engine_hostname: 'Hostname/IP',
-  daas_cluster_connection_count: 'Connection Count'
+  daas_cluster_connection_count: 'Connection Count',
+  daas_cluser_keyword_placeholder: 'Search for hostnames'
 }

@@ -1841,5 +1841,6 @@ export default {
   daas_cluster_cluster_view: '集群视图',
   daas_cluster_component_view: '组件视图',
   daas_cluster_engine_hostname: '主机名/IP',
-  daas_cluster_connection_count: '连接数'
+  daas_cluster_connection_count: '连接数',
+  daas_cluser_keyword_placeholder: '搜索主机名'
 }
