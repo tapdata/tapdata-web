@@ -26,7 +26,7 @@
     <ElContainer direction="vertical" class="layout-main position-relative">
       <ElMain class="main rounded-lg">
         <div class="g-panel-container flex-fill overflow-x-hidden flex flex-column">
-          <ElTable ref="table" row-key="id" :data="list">
+          <ElTable ref="table" row-key="id" :data="list" height="100%">
             <el-table-column :label="$t('packages_business_connection_form_data_source')">
               <template #default="{ row }">
                 {{ row.metadata.type }}<ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
@@ -104,7 +104,7 @@ export default {
       list: [],
       page: {
         current: 1,
-        size: this.defaultPageSize,
+        size: 20,
         total: 0
       },
       dayMap: {
