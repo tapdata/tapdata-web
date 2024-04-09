@@ -411,6 +411,20 @@ export default {
       this.notices = this.isDomesticStation
         ? [
             {
+              id: 23,
+              type: '',
+              name: 'Tapdata Cloud 3.5.12 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-5-12.html',
+              time: '2024-3-18 21:00'
+            },
+            {
+              id: 22,
+              type: '',
+              name: 'Tapdata Cloud 3.5.11 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-5-11.html',
+              time: '2024-2-15 21:00'
+            },
+            {
               id: 21,
               type: '',
               name: 'Tapdata Cloud 3.5.9 Release Notes',
@@ -557,6 +571,20 @@ export default {
             }
           ]
         : [
+            {
+              id: 23,
+              type: '',
+              name: 'Tapdata Cloud 3.5.12 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-5-12/',
+              time: '2024-3-18 21:00'
+            },
+            {
+              id: 22,
+              type: '',
+              name: 'Tapdata Cloud 3.5.11 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-5-11/',
+              time: '2024-2-15 21:00'
+            },
             {
               id: 21,
               type: '',
