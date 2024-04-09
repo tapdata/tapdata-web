@@ -1496,7 +1496,7 @@ export class Table extends NodeType {
                             }
                           }
                         ]
-                      } /*,
+                      },
                       syncIndexEnable: {
                         title: i18n.t('packages_dag_syncIndex'),
                         type: 'boolean',
@@ -1512,7 +1512,7 @@ export class Table extends NodeType {
                             }
                           }
                         }
-                      }*/
+                      }
                     }
                   },
                   tab3: {
