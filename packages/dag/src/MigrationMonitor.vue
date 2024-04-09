@@ -1142,7 +1142,7 @@ export default {
           result = [this.firstStartTime, endTimestamp]
           break
         case 'incremental':
-          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 3000, endTimestamp]
+          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 10000, endTimestamp]
           break
         default:
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
