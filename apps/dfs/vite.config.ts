@@ -163,4 +163,12 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        requestConnector: path.resolve(__dirname, 'requestConnector.html'),
+      },
+    },
+  },
 })

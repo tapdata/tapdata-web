@@ -1,26 +1,32 @@
-import Vue from 'vue'
-import '@/plugins/icon'
-import '../plugins/element'
-import '../plugins/axios'
+import { installAllPlugins } from '@/plugins'
+import { installDirectives } from '@/directive'
+
+import * as Vue from 'vue'
+import axios from '@/plugins/axios'
+// import '@/plugins/icon'
+// import '../plugins/element'
+// import '../plugins/axios'
 import '../directive'
 import i18n from '../i18n'
 import App from '../RequestConnector.vue'
 import '../assets/styles/app.scss'
-
+import 'virtual:svg-icons-register'
 import store from '@/store'
 import { errorConfirmFnc } from '@/util'
-import { VIcon, VButton } from '@tap/component'
+import { ElLoadingService } from 'element-plus'
+import { installElement } from '@tap/component'
+// import { VIcon } from '@tap/component'
 
-Vue.config.productionTip = false
-Vue.component(VIcon.name, VIcon)
+// Vue.config.productionTip = false
+// Vue.component(VIcon.name, VIcon)
 
-let loading = window.loading({ fullscreen: true })
+let loading = ElLoadingService({ fullscreen: true })
 let count = 0
 
 const bootstrap = () => {
-  window.axios
+  axios
     .get('api/tcm/user')
-    .then(data => {
+    .then((data) => {
       loading.close()
       let userInfo = data
       window.__USER_INFO__ = userInfo
@@ -28,13 +34,18 @@ const bootstrap = () => {
       store.commit('setUser', userInfo)
       store.commit('setLanguage', userInfo.locale)
 
-      window.App = new Vue({
-        i18n,
-        store,
-        render: h => h(App)
-      }).$mount('#app')
+      const app = (window.App = window.$vueApp = Vue.createApp(App))
+
+      installAllPlugins(app)
+      installDirectives(app)
+      installElement(app)
+
+      window.$vueApp.use(i18n)
+      window.$vueApp.use(store)
+
+      app.mount('#app')
     })
-    .catch(err => {
+    .catch((err) => {
       // 获取用户信息失败
       if (count < 4) {
         setTimeout(() => {

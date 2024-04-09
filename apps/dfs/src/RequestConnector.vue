@@ -1,24 +1,22 @@
 <template>
   <ElContainer class="layout-wrap">
     <!-- 头部导航 -->
-    <ElHeader class="layout-header dfs-header" :class="{ isMockUser: mockUserId }">
-      <div class="dfs-header__body">
-        <ElLink class="logo" href="/">
-          <img src="./assets/image/logo.svg" alt="" />
-        </ElLink>
-        <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
-          <div class="menu-user rounded-4">
-            <div class="username flex align-items-center">
-              <img
-                v-if="user.avatar"
-                :src="user.avatar"
-                alt=""
-                class="mr-2"
-                style="width: 30px; height: 30px; border-radius: 50%"
-              />
-              <VIcon v-else class="mr-2" size="20">account</VIcon>
-              <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
-            </div>
+    <ElHeader class="layout-header dfs-header__body" :class="{ isMockUser: mockUserId }">
+      <ElLink class="logo" href="/">
+        <img src="./assets/image/logo.svg" alt="" />
+      </ElLink>
+      <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
+        <div class="menu-user rounded-4">
+          <div class="username flex align-items-center">
+            <img
+              v-if="user.avatar"
+              :src="user.avatar"
+              alt=""
+              class="mr-2"
+              style="width: 30px; height: 30px; border-radius: 50%"
+            />
+            <VIcon v-else class="mr-2" size="20">account</VIcon>
+            <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
         </div>
       </div>
@@ -60,9 +58,9 @@
             background
             class="table-page-pagination mt-3"
             layout="->,total, sizes,  prev, pager, next, jumper"
-            :current-page.sync="page.current"
+            v-model:current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
+            v-model:page-size="page.size"
             :total="page.total"
             @size-change="getData(1)"
             @current-change="getData"
@@ -88,36 +86,36 @@ export default {
       page: {
         current: 1,
         size: this.defaultPageSize,
-        total: 0
+        total: 0,
       },
       dayMap: {
         5: '5天',
         180: '半年',
-        365: '1年'
+        365: '1年',
       },
       statusMap: {
         PENDING: {
           text: '待审批',
-          type: 'primary'
+          type: 'primary',
         },
         APPROVED: {
           text: '已通过',
-          type: 'success'
+          type: 'success',
         },
         REJECTED: {
           text: '已拒绝',
-          type: 'danger'
+          type: 'danger',
         },
         EXPIRED: {
           text: '已过期',
-          type: 'warning'
-        }
-      }
+          type: 'warning',
+        },
+      },
     }
   },
   computed: {
     ...mapGetters(['isDomesticStation']),
-    ...mapState(['user'])
+    ...mapState(['user']),
   },
   created() {
     this.getData()
@@ -129,12 +127,12 @@ export default {
         limit: size,
         skip: size * (current - 1),
         sort: ['createAt desc'],
-        where: {}
+        where: {},
       }
       const result = await this.$axios.get(`api/tcm/feature/connector`, {
         params: {
-          filter: JSON.stringify(filter)
-        }
+          filter: JSON.stringify(filter),
+        },
       })
       this.list = result.items
       this.page.total = result.total
@@ -142,19 +140,19 @@ export default {
 
     async handleApprove({ id }) {
       await this.$axios.post(`api/tcm/feature/connector/approved`, {
-        id
+        id,
       })
       this.$message.success('已审批')
       this.getData()
     },
     async handleReject({ id }) {
       await this.$axios.post(`api/tcm/feature/connector/rejected`, {
-        id
+        id,
       })
       this.$message.success('已拒绝')
       this.getData()
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -172,7 +170,6 @@ export default {
 
 .layout-wrap {
   height: 100%;
-  padding-top: 52px;
   word-wrap: break-word;
   word-break: break-word;
   background: map-get($color, submenu);
