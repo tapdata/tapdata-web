@@ -116,31 +116,21 @@ export class Database extends NodeType {
                 }
               },
 
-              layout: {
-                type: 'void',
-                'x-component': 'FormLayout',
-                'x-component-props': {
-                  layout: 'horizontal',
-                  colon: false,
-                  labelAlign: 'left',
-                  labelWidth: 80,
+              'attrs.accessNodeProcessId': {
+                type: 'string',
+                title: i18n.t('packages_dag_nodes_database_suoshuage'),
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
                   feedbackLayout: 'none'
                 },
-                properties: {
-                  'attrs.accessNodeProcessId': {
-                    type: 'string',
-                    title: i18n.t('packages_dag_nodes_database_suoshuage'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input',
-                    'x-component-props': {
-                      content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{!$self.value ? "hidden":"visible"}}'
-                        }
-                      }
+                'x-component': 'PreviewText.Input',
+                'x-component-props': {
+                  content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
                     }
                   }
                 }
