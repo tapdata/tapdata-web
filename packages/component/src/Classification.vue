@@ -1,34 +1,27 @@
 <template>
-  <div class="classification" :class="{ expand: isExpand }">
-    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
-      <VIcon size="16" class="icon">expand-list</VIcon>
-    </ElButton>
-    <div class="classification-header" v-else>
-      <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
-        <VIcon size="16" class="icon">expand-list</VIcon>
-      </ElButton>
-      <ElButton
-        class="btn-addIcon"
-        size="mini"
-        type="text"
-        :disabled="$disabledReadonlyUserBtn()"
-        v-readonlybtn="authority"
-        @click="showDialog()"
-      >
-        <VIcon size="16" class="icon">add-fill</VIcon>
-      </ElButton>
-      <div class="title">
-        <span>{{ comTitle }}</span>
+  <div class="classification py-0 px-3 border-end" v-show="visible">
+    <div class="classification-header">
+      <div class="h-32 flex align-center mt-3">
+        <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
+        <div class="fs-7 fw-sub flex-1">
+          <span>{{ comTitle }}</span>
+        </div>
+        <IconButton :disabled="$disabledReadonlyUserBtn()" v-readonlybtn="authority" @click="showDialog()">
+          add
+        </IconButton>
       </div>
-      <div class="search-box">
-        <ElInput class="search" size="mini" v-model="filterText">
-          <span slot="suffix" class="el-input__icon h-100 ml-1">
-            <VIcon size="14">search</VIcon>
-          </span>
+      <div class="pt-1 pb-2">
+        <ElInput v-model="filterText" clearable>
+          <template v-slot:prefix>
+            <span class="el-input__icon h-100 ml-1">
+              <VIcon size="14">search</VIcon>
+            </span>
+          </template>
         </ElInput>
       </div>
     </div>
-    <div class="tree-block" v-if="isExpand">
+
+    <div v-if="visible">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -42,51 +35,71 @@
         :data="treeData"
         :filter-node-method="filterNode"
         :render-after-expand="false"
+        :indent="8"
         @node-click="nodeClickHandler"
         @check="checkHandler"
       >
-        <span class="custom-tree-node" slot-scope="{ node, data }">
-          <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
-          <!-- <span class="table-label" v-if="types[0] === 'user'">{{ data.name }}</span> -->
-          <span class="table-label">{{ data.value }}</span>
-          <ElDropdown class="btn-menu" size="mini" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
-            <ElButton type="text" :disabled="$disabledReadonlyUserBtn()"
-              ><VIcon size="16" class="color-primary">more-circle</VIcon></ElButton
+        <template v-slot="{ node, data }">
+          <span
+            class="custom-tree-node"
+            @dragenter.stop="handleTreeDragEnter($event, data, node)"
+            @dragover.stop="handleTreeDragOver($event, data, node)"
+            @dragleave.stop="handleTreeDragLeave($event, data, node)"
+            @drop.stop="handleTreeDrop($event, data, node)"
+          >
+            <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
+            <span class="table-label">{{ data.value }}</span>
+            <ElDropdown
+              class="btn-menu flex align-center"
+              @command="handleRowCommand($event, node)"
+              v-readonlybtn="authority"
             >
-            <ElDropdownMenu slot="dropdown">
-              <ElDropdownItem command="add">
-                {{ $t('packages_component_classification_addChildernNode') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
-              <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
-            </ElDropdownMenu>
-          </ElDropdown>
-        </span>
+              <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
+              <template #dropdown>
+                <ElDropdownMenu>
+                  <ElDropdownItem command="add">
+                    {{ $t('packages_component_classification_addChildernNode') }}
+                  </ElDropdownItem>
+                  <ElDropdownItem command="edit">{{ $t('public_button_edit') }}</ElDropdownItem>
+                  <ElDropdownItem command="delete">{{ $t('public_button_delete') }}</ElDropdownItem>
+                </ElDropdownMenu>
+              </template>
+            </ElDropdown>
+          </span>
+        </template>
       </ElTree>
       <ElButton
-        v-if="treeData && treeData.length === 0 && isExpand"
-        type="text"
+        v-if="treeData && treeData.length === 0 && visible"
+        text
         v-readonlybtn="authority"
         @click="showDialog()"
         class="create"
         >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
       >
     </div>
-    <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
-      <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
+    <ElDialog
+      :visible="dialogConfig.visible"
+      @update:visible="dialogConfig.visible = $event"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <template #title>
+        <span>{{ dialogConfig.title }}</span>
+      </template>
       <ElInput
-        size="mini"
         v-model="dialogConfig.label"
         :placeholder="$t('packages_component_classification_nodeName')"
         maxlength="50"
         show-word-limit
       ></ElInput>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('public_button_confirm') }}
-        </ElButton>
-      </span>
+      <template v-slot:footer>
+        <span class="dialog-footer">
+          <ElButton @click="hideDialog()">{{ $t('public_button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="dialogSubmit()">
+            {{ $t('public_button_confirm') }}
+          </ElButton>
+        </span>
+      </template>
     </ElDialog>
   </div>
 </template>
@@ -95,10 +108,13 @@
 import { VIcon } from '@tap/component'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
+import { IconButton } from './icon-button'
+import { meta } from '@typescript-eslint/parser'
 
 export default {
-  components: { VIcon },
+  components: { IconButton, VIcon },
   props: {
+    visible: Boolean,
     types: {
       type: Array,
       default: () => {
@@ -113,12 +129,12 @@ export default {
     },
     viewPage: {
       type: String
-    }
+    },
+    dragState: Object
   },
   data() {
     return {
       searchFalg: false,
-      isExpand: false,
       filterText: '',
       treeData: [],
       default_expanded: false,
@@ -150,6 +166,15 @@ export default {
         this.title ||
         (this.types[0] === 'user' ? this.$t('packages_component_classification_userTitle') : this.$t('public_tags'))
       )
+    },
+
+    isExpand: {
+      get() {
+        return this.visible
+      },
+      set(value) {
+        this.$emit('update:visible', value)
+      }
     }
   },
   mounted() {
@@ -206,9 +231,10 @@ export default {
   methods: {
     ...mapMutations('classification', ['setTag', 'setPanelFlag']),
     toggle() {
-      this.isExpand = !this.isExpand
+      const _isExpand = !this.isExpand
+      this.isExpand = _isExpand
       this.setPanelFlag({
-        panelFlag: this.isExpand,
+        panelFlag: _isExpand,
         type: this.viewPage
       })
     },
@@ -493,6 +519,82 @@ export default {
           })
         }
       })
+    },
+    findParentNodeByClassName(el, cls) {
+      let parent = el.parentNode
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    },
+    handleTreeDragEnter(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly || !this.dragState.isDragging) return
+
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleTreeDragLeave(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly) return
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    async handleTreeDrop(ev, data) {
+      const { draggingObjects } = this.dragState
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+
+      if (!draggingObjects?.length || !dropNode) return
+      dropNode.classList.remove('is-drop-inner')
+
+      const id = draggingObjects
+        .filter(item => {
+          return item.listtags?.length ? item.listtags.every(tag => tag.id !== data.id) : true
+        })
+        .map(item => item.id)
+
+      let tableName
+      switch (this.viewPage) {
+        case 'connections':
+          tableName = 'Connections'
+          break
+        case 'migrate':
+        case 'sync':
+          tableName = 'Task'
+          break
+      }
+
+      if (!tableName) {
+        console.warn('tableName not found')
+        return
+      }
+
+      if (id.length) {
+        await metadataDefinitionsApi.batchPushListtags(tableName, {
+          id,
+          listtags: [
+            {
+              id: data.id,
+              value: data.value
+            }
+          ]
+        })
+        this.$message.success(this.$t('public_message_operation_success'))
+        this.$emit('drop-in-tag')
+      } else {
+        this.$message.info(this.$t('packages_component_data_already_exists'))
+      }
     }
   }
 }
@@ -503,15 +605,11 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 20px;
-  // height: 22px;
+  width: 213px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
   background: map-get($bgColor, white);
-  border-radius: 3px;
-  // overflow: hidden;
-  // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     // padding: 2px 3px;
     // color: map-get($fontColor, light);
@@ -585,17 +683,13 @@ export default {
     }
   }
 
+  .h-32 {
+    height: 32px;
+  }
+
   /*头部样式*/
   .classification-header {
     position: relative;
-    padding: 0 12px;
-    // background: map-get($bgColor, normal);
-    // border-bottom: 1px solid #dedee4;
-    font-size: $fontBaseTitle;
-    line-height: 31px;
-    display: flex;
-    width: 214px;
-    flex-direction: column;
     .title {
       display: flex;
       align-items: center;
@@ -603,33 +697,6 @@ export default {
       padding: 0 8px 0 46px;
       color: map-get($fontColor, light);
       // background-color: #eff1f4;
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 3px;
-      // .iconfont {
-      // 	color: #c0c4cc;
-      // 	font-size: 12px;
-      // 	background-color: map-get($bgColor, white);
-      // 	border: 1px solid #dedee4;
-      // 	display: flex;
-      // 	justify-content: center;
-      // 	align-items: center;
-      // 	height: 66%;
-      // 	padding: 0 4px;
-      // 	padding-right: 6px;
-      // 	padding-left: 5px;
-      // 	margin-top: 0px;
-      // 	border-top-width: 1px;
-      // 	border-radius: 3px;
-      // 	cursor: pointer;
-      // }
-    }
-    .search {
-      margin-left: 7px;
     }
   }
   .tree-block {
@@ -663,10 +730,11 @@ export default {
       max-width: 120px;
     }
     .btn-menu {
-      display: none;
+      display: block;
+      visibility: hidden;
     }
     &:hover .btn-menu {
-      display: block;
+      visibility: visible;
     }
   }
   .create {
@@ -679,9 +747,8 @@ export default {
 </style>
 <style lang="scss">
 .classification-tree {
-  padding-bottom: 50px;
   .el-tree-node__content {
-    height: 26px;
+    height: 32px;
     overflow: hidden;
   }
 }
