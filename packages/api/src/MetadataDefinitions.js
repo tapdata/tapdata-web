@@ -9,5 +9,8 @@ export default class MetadataDefinitions extends Http {
   childAccount(params) {
     return this.axios.get(`${this.url}/and/child_account`, { params })
   }
+  batchPushListtags(tableName, params) {
+    return this.axios.patch(`${this.url}/batchPushListtags/${tableName}`, params)
+  }
 }
 export { MetadataDefinitions }
