@@ -925,7 +925,6 @@ export class Database extends NodeType {
                         }
                       },
                       syncIndexEnable: {
-                        // 同步索引
                         title: i18n.t('packages_dag_syncIndex'),
                         type: 'boolean',
                         'x-decorator': 'FormItem',
@@ -936,7 +935,8 @@ export class Database extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}'
+                              visible: '{{$settings.type !== "cdc"}}',
+                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }
                         }

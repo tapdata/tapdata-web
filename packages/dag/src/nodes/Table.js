@@ -1505,7 +1505,8 @@ export class Table extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}'
+                              visible: '{{$settings.type !== "cdc"}}',
+                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }
                         }

@@ -128,7 +128,7 @@ $headerBg: #fff;
       }
     }
 
-    .formily-element-form-item-layout-horizontal {
+    /*.formily-element-form-item-layout-horizontal {
       .formily-element-form-item-control-content-component > .el-switch {
         height: 40px;
         line-height: 40px;
@@ -139,7 +139,7 @@ $headerBg: #fff;
           line-height: 32px;
         }
       }
-    }
+    }*/
 
     .formily-element-form-item-layout-vertical {
       .formily-element-form-item-label-tooltip {
@@ -150,12 +150,12 @@ $headerBg: #fff;
         }
       }
 
-      .formily-element-space-horizontal {
-        .el-switch {
-          height: 40px;
-          line-height: 40px;
-        }
-      }
+      //.formily-element-space-horizontal {
+      //  .el-switch {
+      //    height: 40px;
+      //    line-height: 40px;
+      //  }
+      //}
     }
 
     .formily-element-form-item-control {
