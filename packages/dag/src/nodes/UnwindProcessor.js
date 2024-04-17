@@ -106,11 +106,11 @@ export class UnwindProcessor extends NodeType {
                 'x-component': 'Select',
                 enum: [
                   {
-                    value: 'embedded',
+                    value: 'EMBEDDED',
                     label: i18n.t('packages_dag_unwind_embedded')
                   },
                   {
-                    value: 'flatten',
+                    value: 'FLATTEN',
                     label: i18n.t('packages_dag_unwind_flatten')
                   }
                 ],
@@ -118,7 +118,7 @@ export class UnwindProcessor extends NodeType {
                   target: '*(arrayModel, joiner)',
                   fulfill: {
                     state: {
-                      visible: '{{$self.value === "flatten"}}'
+                      visible: '{{$self.value === "FLATTEN"}}'
                     }
                   }
                 }
