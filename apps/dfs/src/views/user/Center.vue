@@ -1,252 +1,216 @@
 <template>
-  <div class="user-center g-panel-container flex-fill overflow-x-hidden">
-    <div class="fs-6 fw-sub">{{ $t('user_Center_geRenXinXi') }}</div>
-    <ElDivider></ElDivider>
-    <div>
-      <div>
-        <ElRow :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_name') }}{{ $t('symbol_colon') }}
+  <div class="user-center">
+    <div class="flex gap-6">
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">{{ $t('user_Center_geRenXinXi') }}</div>
+        <ElDivider class="m-0"></ElDivider>
+        <div class="p-4">
+          <div class="user-info-grid">
+            <div class="flex align-center gap-4">
+              <div class="avtar-wrapper flex align-center justify-center overflow-hidden">
+                <ElImage v-if="userData.avatar" :src="userData.avatar" class="w-100 h-100"></ElImage>
+                <VIcon v-else :size="48">database-user-name</VIcon>
+              </div>
+              <ElButton @click="editAvatar">{{ $t('user_Center_shangChuanTouXiang') }}</ElButton>
             </div>
-            <div class="user-item__value">{{ userData.username }}</div>
-          </ElCol>
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('dfs_settings_language') }}{{ $t('symbol_colon') }}
+            <div class="item-wrapper">
+              <div class="user-item__label">{{ $t('user_name') }}</div>
+              <div class="user-item__value">{{ userData.username }}</div>
             </div>
+
+            <template v-if="!isDomesticStation">
+              <div class="item-wrapper">
+                <div class="user-item__label">First Name</div>
+                <span class="user-item__value">
+                  {{ userData.customData.firstName || '-' }}
+                  <IconButton @click="dialogObj.firstName = true">edit</IconButton>
+                </span>
+              </div>
+
+              <div class="item-wrapper">
+                <div class="user-item__label">Last Name</div>
+                <span class="user-item__value">
+                  {{ userData.customData.lastName || '-' }}
+                  <IconButton @click="dialogObj.firstName = true">edit</IconButton>
+                </span>
+              </div>
+            </template>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_yongHuNiCheng') }}
+              </div>
+              <InlineInput
+                class="inline-input"
+                :value="userData.nickname"
+                type="icon"
+                @save="updateName($event)"
+              ></InlineInput>
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_youXiang') }}
+              </div>
+              <div class="user-item__value">
+                {{ userData.email || $t('user_Center_weiBangDing') }}
+                <IconButton v-if="userData.email" @click="editEmail">edit</IconButton>
+                <IconButton v-else @click="dialogObj.bindEmail = true">edit</IconButton>
+              </div>
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_phone_number') }}
+              </div>
+              <div class="user-item__value">
+                {{ userData.telephone || $t('user_Center_weiBangDing') }}
+                <IconButton v-if="userData.telephone" @click="editPhone">edit</IconButton>
+                <IconButton v-else @click="dialogObj.bindPhone = true">edit</IconButton>
+              </div>
+            </div>
+
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('public_connection_form_password') }}
+              </div>
+              <div class="user-item__value">
+                ******
+                <IconButton @click="editPassword">edit</IconButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4 flex align-center gap-3">
+          <span class="flex-1">
+            {{ $t('user_Center_qiYeXinXi') }}
+          </span>
+
+          <ElLink v-if="!isEdit" type="primary" @click="editEnData">
+            {{ $t('public_button_edit') }}
+          </ElLink>
+
+          <template v-else>
+            <ElLink type="primary" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</ElLink>
+            <ElLink type="primary" auto-loading @click="saveEnData(arguments[0])">{{
+              $t('public_button_save')
+            }}</ElLink>
+          </template>
+        </div>
+        <ElDivider class="m-0"></ElDivider>
+        <div class="p-4">
+          <div class="user-info-grid">
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_gongSiMingCheng') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.companyName || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput v-else v-model="enForm.companyName" class="user-item__value"></ElInput>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_gongSiGuanWang') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.website || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput v-else v-model="enForm.website" class="user-item__value"></ElInput>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_suoShuHangYe') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.industry || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput v-else v-model="enForm.industry" class="user-item__value"></ElInput>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">
+                {{ $t('user_Center_suoShuChengShi') }}
+              </div>
+              <div v-if="!isEdit" class="user-item__value">
+                {{ enData.city || $t('user_Center_weiTianXie') }}
+              </div>
+              <ElInput v-else v-model="enForm.city" class="user-item__value"></ElInput>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 mt-6">
+      <div class="flex-1 rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
+        <ElDivider class="m-0"></ElDivider>
+        <div class="p-4">
+          <ElAlert class="mb-4" :closable="false" :title="$t('dfs_user_center_acces')" type="info" show-icon />
+
+          <div class="user-info-grid">
+            <div class="item-wrapper">
+              <div class="user-item__label">Access Key</div>
+              <div class="user-item__value">
+                {{ keyForm.accessKey }}
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :value="accessKeyTooltip"
+                >
+                  <IconButton
+                    v-clipboard:copy="keyForm.accessKey"
+                    v-clipboard:success="handleCopyAccessKey"
+                    @mouseleave.native="accessKeyTooltip = false"
+                    >copy</IconButton
+                  >
+                </ElTooltip>
+              </div>
+            </div>
+            <div class="item-wrapper">
+              <div class="user-item__label">Secret Key</div>
+              <div class="user-item__value">
+                {{ keyForm.secretKey }}
+
+                <ElTooltip
+                  placement="top"
+                  manual
+                  :content="$t('agent_deploy_start_install_button_copied')"
+                  popper-class="copy-tooltip"
+                  :value="secretKeyTooltip"
+                >
+                  <IconButton
+                    v-clipboard:copy="keyForm.decodeSecretKey"
+                    v-clipboard:success="handleCopySecretKey"
+                    @mouseleave="secretKeyTooltip = false"
+                    >copy</IconButton
+                  >
+                </ElTooltip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6 mt-6">
+      <div class="flex-fill rounded-xl overflow-x-hidden bg-white">
+        <div class="fs-6 fw-sub p-4">{{ $t('header_setting') }}</div>
+        <ElDivider class="m-0"></ElDivider>
+        <div class="p-4">
+          <div class="item-wrapper">
+            <div class="user-item__label">{{ $t('dfs_settings_language') }}</div>
             <div class="user-item__value">
               <ElSelect :value="language" @change="handleUpdateLanguage">
                 <ElOption v-for="(v, k) in langMenu" :label="v" :value="k" />
               </ElSelect>
             </div>
-          </ElCol>
-        </ElRow>
-        <ElRow v-if="!isDomesticStation" :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              FirstName:
-            </div>
-            <span class="user-item__value">{{ userData.customData.firstName || '-' }}</span>
-            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
-          </ElCol>
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              LastName:
-            </div>
-            <span class="user-item__value">{{ userData.customData.lastName || '-' }}</span>
-            <ElLink type="primary" @click="dialogObj.firstName = true">{{ $t('public_button_revise') }}</ElLink>
-          </ElCol>
-        </ElRow>
-        <ElRow v-else :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_Center_yongHuNiCheng') }}
-            </div>
-            <InlineInput
-              class="inline-input"
-              :value="userData.nickname"
-              :icon-config="{ class: 'color-primary', size: '14' }"
-              type="text"
-              :inputStyle="{ width: '180px' }"
-              @save="updateName($event)"
-            ></InlineInput>
-          </ElCol>
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
-            </div>
-            <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
-              >{{ $t('public_button_revise') }}
-            </ElLink>
-            <ElLink v-if="!userData.telephone" type="primary" @click="dialogObj.bindPhone = true"
-              >{{ $t('public_button_bind') }}
-            </ElLink>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="40" class="section-header mb-6">
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('public_connection_form_password') }}{{ $t('symbol_colon') }}
-            </div>
-            <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">{{ $t('public_button_revise') }}</ElLink>
-          </ElCol>
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_avatar') }}{{ $t('symbol_colon') }}
-            </div>
-            <div class="user-item__value position-relative">
-              <img
-                v-if="userData.avatar"
-                :src="userData.avatar"
-                alt=""
-                style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
-              />
-              <span v-else>{{ $t('public_data_no') }}</span>
-            </div>
-            <ElLink type="primary" @click="editAvatar">{{ $t('public_button_revise') }}</ElLink>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="40" class="section-header mb-6">
-          <!--          <ElCol :span="12" class="user-item">-->
-          <!--            <div class="user-item__label">{{ $t('user_wechat') + $t('symbol_colon') }}</div>-->
-          <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
-          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">{{ $t('public_button_unbind') }}</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{ $t('public_button_bind') }}</ElLink>-->
-          <!--          </ElCol>-->
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_Center_youXiang') }}
-            </div>
-            <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('public_button_revise') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('public_button_bind') }}</ElLink>
-          </ElCol>
-
-          <ElCol :span="12" class="user-item">
-            <div class="user-item__label font-color-light" :class="{ 'user-item__label_en': $i18n.locale === 'en' }">
-              {{ $t('user_phone_number') }}{{ $t('symbol_colon') }}
-            </div>
-            <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone"
-              >{{ $t('public_button_revise') }}
-            </ElLink>
-            <ElLink v-if="!userData.telephone" type="primary" @click="dialogObj.bindPhone = true"
-              >{{ $t('public_button_bind') }}
-            </ElLink>
-          </ElCol>
-        </ElRow>
-      </div>
-    </div>
-    <div class="mt-12 fs-6 fw-sub">{{ $t('user_Center_qiYeXinXi') }}</div>
-    <ElDivider></ElDivider>
-    <div>
-      <div>
-        <ElRow :gutter="40" class="section-header mb-2">
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              {{ $t('user_Center_gongSiMingCheng') }}
-            </div>
-            <div v-if="!isEdit" class="enterprise-item__value">
-              {{ enData.companyName || $t('user_Center_weiTianXie') }}
-            </div>
-            <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
-          </ElCol>
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              {{ $t('user_Center_gongSiGuanWang') }}
-            </div>
-            <div v-if="!isEdit" class="enterprise-item__value">
-              {{ enData.website || $t('user_Center_weiTianXie') }}
-            </div>
-            <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
-          </ElCol>
-        </ElRow>
-        <ElRow :gutter="40" class="section-header mb-2">
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              {{ $t('user_Center_suoShuHangYe') }}
-            </div>
-            <div v-if="!isEdit" class="enterprise-item__value">
-              {{ enData.industry || $t('user_Center_weiTianXie') }}
-            </div>
-            <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
-          </ElCol>
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              {{ $t('user_Center_suoShuChengShi') }}
-            </div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
-            <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
-          </ElCol>
-        </ElRow>
-        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData"
-          >{{ $t('user_Center_qiYeXinXiXiu') }}
-        </VButton>
-        <template v-else>
-          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('public_button_cancel') }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('public_button_save') }}</VButton>
-        </template>
-      </div>
-    </div>
-    <div class="mt-12 fs-6 fw-sub">{{ $t('dfs_user_center_kaifaxinxi') }}</div>
-    <ElDivider></ElDivider>
-    <div class="access-key__desc py-2 px-4 inline-flex align-items-center">
-      <VIcon class="color-primary">info</VIcon>
-      <span class="ml-1">{{ $t('dfs_user_center_acces') }}</span>
-    </div>
-    <div>
-      <div>
-        <ElRow :gutter="40" class="section-header mb-2">
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              Access Key：
-            </div>
-            <div>
-              {{ keyForm.accessKey }}
-            </div>
-            <ElTooltip
-              placement="top"
-              manual
-              :content="$t('agent_deploy_start_install_button_copied')"
-              popper-class="copy-tooltip"
-              :value="accessKeyTooltip"
-            >
-              <span
-                class="operaKey"
-                v-clipboard:copy="keyForm.accessKey"
-                v-clipboard:success="handleCopyAccessKey"
-                @mouseleave="accessKeyTooltip = false"
-              >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
-            </ElTooltip>
-          </ElCol>
-          <ElCol :span="12" class="enterprise-item">
-            <div
-              class="enterprise-item__label font-color-light"
-              :class="{ 'user-item__label_en': $i18n.locale === 'en' }"
-            >
-              Secret Key：
-            </div>
-            <div>
-              {{ keyForm.secretKey }}
-            </div>
-            <ElTooltip
-              placement="top"
-              manual
-              :content="$t('agent_deploy_start_install_button_copied')"
-              popper-class="copy-tooltip"
-              :value="secretKeyTooltip"
-            >
-              <span
-                class="operaKey"
-                v-clipboard:copy="keyForm.decodeSecretKey"
-                v-clipboard:success="handleCopySecretKey"
-                @mouseleave="secretKeyTooltip = false"
-              >
-                <i class="click-style">{{ $t('public_button_copy') }}</i>
-              </span>
-            </ElTooltip>
-          </ElCol>
-        </ElRow>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -272,7 +236,7 @@
         </VButton>
       </div>
     </ElDialog>
-    <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
+    <!--  修改密码  -->
     <ElDialog
       width="435px"
       append-to-body
@@ -371,7 +335,7 @@
         }}</VButton>
       </span>
     </ElDialog>
-    <!--  {{$t('operation_log_List_bangDingShouJiHao')}}  -->
+    <!-- 绑定手机号 -->
     <ElDialog
       width="435px"
       append-to-body
@@ -626,10 +590,10 @@
       :visible.sync="dialogObj.firstName"
     >
       <ElForm class="mt-n4" :model="nameForm" label-width="120px" label-position="top" @submit.native.prevent>
-        <ElFormItem prop="email" label="FirstName">
+        <ElFormItem prop="email" label="First Name">
           <ElInput v-model="nameForm.firstName" maxlength="50"></ElInput>
         </ElFormItem>
-        <ElFormItem prop="email" label="LastName">
+        <ElFormItem prop="email" label="Last Name">
           <ElInput v-model="nameForm.lastName" maxlength="50"></ElInput>
         </ElFormItem>
       </ElForm>
@@ -652,7 +616,7 @@ import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
 import CryptoJS from 'crypto-js'
 import dayjs from 'dayjs'
-import { VTable } from '@tap/component'
+import { VTable, IconButton } from '@tap/component'
 import { AGENT_TYPE_MAP } from '../instance/utils'
 import { NUMBER_MAP } from '@tap/business'
 import { openUrl, urlToBase64 } from '@tap/shared'
@@ -662,7 +626,7 @@ import { langMenu } from '@tap/i18n/src/shared/util'
 export default {
   name: 'Center',
   inject: ['buried'],
-  components: { InlineInput, VerificationCode, UploadFile, VTable },
+  components: { InlineInput, VerificationCode, UploadFile, VTable, IconButton },
   data() {
     return {
       langMenu,
@@ -1267,16 +1231,8 @@ export default {
   align-items: center;
 }
 
-.user-item__label {
-  width: 80px;
-}
-
 .user-item__label_en {
   width: 180px !important;
-}
-
-.user-item__value {
-  width: 180px;
 }
 
 .enterprise-item {
@@ -1285,19 +1241,11 @@ export default {
   line-height: 34px;
 }
 
-.enterprise-item__label {
-  width: 100px;
-}
-
 .expried {
   padding: 2px 4px;
   color: map-get($color, warning);
   border-radius: 4px;
   border: 1px solid map-get($color, warning);
-}
-
-.enterprise-item__value {
-  width: 240px;
 }
 
 .avatar-uploader-icon {
@@ -1347,5 +1295,32 @@ export default {
 
 .access-key__desc {
   background: #f2f2f2;
+}
+</style>
+
+<style lang="scss" scoped>
+.user-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 16px;
+}
+.avtar-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  border: 1px solid #e5e6eb;
+}
+
+.user-item__label {
+  color: #86909c;
+  line-height: 22px;
+  margin-bottom: 4px;
+}
+
+.user-item__value {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 </style>
