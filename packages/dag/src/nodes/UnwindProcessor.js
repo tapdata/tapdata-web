@@ -131,15 +131,15 @@ export class UnwindProcessor extends NodeType {
                 'x-component': 'Select',
                 enum: [
                   {
-                    value: 'mix',
+                    value: 'MIX',
                     label: i18n.t('packages_dag_unwind_arrayModel_mix')
                   },
                   {
-                    value: 'object',
+                    value: 'OBJECT',
                     label: i18n.t('packages_dag_unwind_arrayModel_object')
                   },
                   {
-                    value: 'basic',
+                    value: 'BASIC',
                     label: i18n.t('packages_dag_unwind_arrayModel_basic')
                   }
                 ]
