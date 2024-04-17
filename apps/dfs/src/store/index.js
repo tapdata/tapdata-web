@@ -116,6 +116,10 @@ const store = new Vuex.Store({
 
   mutations: {
     setConfig(state, config) {
+      if (!config.slackLink) {
+        config.slackLink =
+          'https://join.slack.com/t/tapdata-workspace/shared_invite/zt-27lvv108h-G7aKWUbgZ2Ms~0MPehAhfg'
+      }
       Object.assign(state.config, config)
     },
 
