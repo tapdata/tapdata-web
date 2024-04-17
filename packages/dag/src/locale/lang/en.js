@@ -724,6 +724,14 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
+  packages_dag_unwind_unwindModel: 'Unwind Model',
+  packages_dag_unwind_embedded: 'Embedded Object',
+  packages_dag_unwind_flatten: 'Flatten Fields',
+  packages_dag_unwind_arrayModel: 'Array Element Type',
+  packages_dag_unwind_arrayModel_mix: 'Mixed Type',
+  packages_dag_unwind_arrayModel_basic: 'Basic Type',
+  packages_dag_unwind_arrayModel_object: 'Object Type',
+  packages_dag_unwind_joiner: 'Field Joiner',
   packages_dag_btn_disable_node: 'Disable Node',
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
   packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
@@ -751,5 +759,8 @@ export default {
   packages_dag_ddl_ignore_rules: 'DDL Ignoring Rules',
   packages_dag_ddl_ignore_rules_placeholder: 'Please enter a regular expression to ignore specific DDL',
   packages_dag_ddl_ignore_rules_tip:
-    'When the option to halt the task with an error upon encountering DDL is selected, it is possible to configure which DDLs to ignore through regular expressions.\nExample:\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)'
+    'When the option to halt the task with an error upon encountering DDL is selected, it is possible to configure which DDLs to ignore through regular expressions.\nExample:\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
+  packages_dag_just_insert: 'Insert Only',
+  packages_dag_unwind_validate_error:
+    'When using the Unwind node, the target node write strategy should support "insert-only".'
 }
