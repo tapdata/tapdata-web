@@ -746,6 +746,8 @@ export default {
   packages_dag_task_setting_syncPoint_from_now: 'Apply',
   packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`,
   packages_dag_syncIndex: 'Sync Index',
+  packages_dag_syncIndex_desc:
+    'Currently, only unique indexes and regular indexes are supported, and functions cannot be used in indexes.',
   packages_dag_ddl_ignore_rules: 'DDL Ignoring Rules',
   packages_dag_ddl_ignore_rules_placeholder: 'Please enter a regular expression to ignore specific DDL',
   packages_dag_ddl_ignore_rules_tip:
