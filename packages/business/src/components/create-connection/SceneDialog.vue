@@ -713,9 +713,13 @@ export default {
           type: item.type,
           version: item.version
         })
+        const time = Date.now()
         const msg = this.$message.info(this.$t('public_please_wait'))
         const ifOpen = await this.$refs.requestDialog.handleOpen()
-        msg.close()
+        // 延迟关闭，避免消息一闪而过
+        setTimeout(() => {
+          msg.close()
+        }, Math.max(600 - (Date.now() - time), 0))
         if (ifOpen) return
       }
 

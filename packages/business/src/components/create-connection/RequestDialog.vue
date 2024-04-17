@@ -157,6 +157,7 @@ export default {
             })
             .then(() => {
               this.handleClose()
+              this.$message.success(this.$t('packages_business_request_connector_success'))
             })
             .finally(() => (this.saving = false))
         }
