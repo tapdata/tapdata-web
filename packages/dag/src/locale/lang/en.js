@@ -758,5 +758,7 @@ export default {
   packages_dag_ddl_ignore_rules_placeholder: 'Please enter a regular expression to ignore specific DDL',
   packages_dag_ddl_ignore_rules_tip:
     'When the option to halt the task with an error upon encountering DDL is selected, it is possible to configure which DDLs to ignore through regular expressions.\nExample:\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
-  packages_dag_just_insert: 'Insert Only'
+  packages_dag_just_insert: 'Insert Only',
+  packages_dag_unwind_validate_error:
+    'When using the Unwind node, the target node write strategy should support "insert-only".'
 }

@@ -1598,8 +1598,13 @@ export default {
       const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
       for (let node of nodes) {
         const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
-        if (childNodes.some(node => node.dmlPolicy?.insertPolicy !== 'just_insert')) {
-          return '当使用Unwind节点时，目标节点写入策略需要支持仅插入'
+        // console.log('childNodes', childNodes)
+        if (childNodes.some(childNode => childNode.dmlPolicy?.insertPolicy !== 'just_insert')) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: i18n.t('packages_dag_unwind_validate_error')
+          })
+          return i18n.t('packages_dag_unwind_validate_error')
         }
       }
     },

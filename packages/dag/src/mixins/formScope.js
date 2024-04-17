@@ -679,6 +679,7 @@ export default {
           const updateField = field.query('dmlPolicy.updatePolicy').take()
           // 查找上游是否包含Unwind节点
           const unwindNode = this.scope.findParentNodeByType(field.form.values, 'unwind_processor')
+          const originNodeData = this.scope.findNodeById(field.form.values.id)
 
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives?.length) {
@@ -707,6 +708,8 @@ export default {
                 policyField.setPattern('readPretty')
                 if (alternatives.includes('just_insert')) {
                   policyField.setValue('just_insert')
+                  // 设置源数据，保证未访问过节点配置时，保存任务时校验unwind节点和目标的dmlPolicy.insertPolicy是否等于just_insert的判断通过
+                  originNodeData.dmlPolicy = { ...policyField.form.values.dmlPolicy }
                 }
               }
             }
