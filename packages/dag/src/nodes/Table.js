@@ -1400,6 +1400,10 @@ export class Table extends NodeType {
                               {
                                 label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
                                 value: 'ignore_on_exists'
+                              },
+                              {
+                                label: i18n.t('packages_dag_just_insert'),
+                                value: 'just_insert'
                               }
                             ]
                           },
