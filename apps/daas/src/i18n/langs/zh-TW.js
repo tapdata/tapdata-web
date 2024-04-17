@@ -1131,6 +1131,7 @@ export default {
   dataFlow_view: '查看',
   dataFlow_dataFlowExport: '導出',
   dataFlow_addTag: '添加標籤',
+  dataFlow_editTag: '編輯標籤',
   dataFlow_overWrite: '覆蓋已有數據',
   dataFlow_skipData: '跳過已有數據',
   dataFlow_loadingError: '加載失敗,請',
@@ -1830,5 +1831,10 @@ export default {
   daas_feature_unavailable_get_enterprise: '申請企業版',
   daas_feature_unavailable_get_cloud: '免費使用雲版',
   daas_feature_unavailable_go_to_compare: '查看各版本詳細功能對比',
-  daas_unbind_license: '解綁 License'
+  daas_unbind_license: '解綁 License',
+  daas_cluster_cluster_view: '集群視圖',
+  daas_cluster_component_view: '組件視圖',
+  daas_cluster_engine_hostname: '主機名/IP',
+  daas_cluster_connection_count: '連接數',
+  daas_cluser_keyword_placeholder: '搜索主機名'
 }

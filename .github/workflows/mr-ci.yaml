@@ -1,4 +1,4 @@
-name: Merge Request CI and Nightly Build
+name: Merge Request CI
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -37,6 +37,7 @@ export default {
   public_tags: 'Tags',
   public_phone: 'Phone Number',
   public_email: 'Email',
+  public_view_details: 'View Details',
   // state
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',

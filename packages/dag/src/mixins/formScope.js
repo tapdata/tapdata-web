@@ -719,6 +719,7 @@ export default {
 
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
+          const accessNodeType = form.getValuesIn('attrs.accessNodeType') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
           const pdkType = form.getValuesIn('attrs.pdkType')
@@ -731,6 +732,8 @@ export default {
             form.setValuesIn('attrs.connectionType', connection.connectionType)
           accessNodeProcessId !== connection.accessNodeProcessId &&
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
+          accessNodeType !== connection.accessNodeType &&
+            form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
           connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
           db_version !== connection.db_version && form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
@@ -1035,12 +1038,22 @@ export default {
     async loadAccessNode() {
       const data = await clusterApi.findAccessNodeInfo()
       this.scope.$agents = data.map(item => {
+        if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+          return {
+            value: item.processId,
+            label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
+              item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+            }）`,
+            accessNodeType: item.accessNodeType
+          }
+        }
         return {
           value: item.processId,
           label: `${item.hostName}（${
             item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
           }）`,
-          disabled: item.status !== 'running'
+          disabled: item.status !== 'running',
+          accessNodeType: item.accessNodeType
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})

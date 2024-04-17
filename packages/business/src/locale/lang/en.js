@@ -53,6 +53,7 @@ export default {
   packages_business_connection_form_access_node: 'Agent Settings',
   packages_business_connection_form_automatic: 'Platform automatic allocation',
   packages_business_connection_form_manual: 'User specified manually',
+  packages_business_connection_form_group: 'Assign by tag',
   packages_business_connection_form_access_node_tip:
     'When using the automatic mode, the platform will assign nodes for connection access, while in manual mode, the user is responsible for manually specifying the nodes for access',
   packages_business_connection_form_give_up: 'Give Up',
@@ -1265,6 +1266,8 @@ export default {
   packages_business_request_connector_use_time_option1: '5 days',
   packages_business_request_connector_use_time_option2: 'half a year',
   packages_business_request_connector_use_time_option3: '1 year',
+  packages_business_request_connector_success:
+    'We received your request, someone will get in touch shortly/within 24 hours/within 48 hours.',
   packages_business_view_more_apis: 'View More APIs',
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases'

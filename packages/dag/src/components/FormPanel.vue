@@ -257,7 +257,7 @@ export default {
       })
 
       if (this.scope.$isMonitor) {
-        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*)', (field, form) => {
+        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
           this.lazySaveNodeAlarmConfig()
         })
       }

@@ -61,16 +61,31 @@
 }
 
 .formily-element-space-horizontal {
-  > .formily-element-space-item > .formily-element-form-item-layout-horizontal > .formily-element-form-item-label {
+  > .formily-element-space-item > .el-switch {
+    height: 32px;
+    line-height: 32px;
+    vertical-align: top;
+  }
+}
+
+.formily-element-form-item-layout-horizontal {
+  > .formily-element-form-item-label {
     * {
       line-height: 32px;
     }
-    >.formily-element-form-item-label-content {
+
+    > .formily-element-form-item-label-content {
       min-height: 32px;
     }
+
     > .formily-element-form-item-label-tooltip {
       height: 32px !important;
     }
+  }
+  > .formily-element-form-item-control .formily-element-form-item-control-content .formily-element-form-item-control-content-component .el-switch {
+    height: 32px;
+    line-height: 32px;
+    vertical-align: top;
   }
 }
 
@@ -84,8 +99,8 @@
     border-radius: calc(var(--n-bar-width) / 2);
     transition: background-color .3s cubic-bezier(.4, 0, .2, 1);
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 2px;
+    bottom: 2px;
     position: absolute;
     background-color: #bcbfc3;
   }

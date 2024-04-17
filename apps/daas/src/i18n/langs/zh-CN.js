@@ -1134,7 +1134,8 @@ export default {
   dataFlow_uploadInfo: '点击查看详情',
   dataFlow_view: '查看',
   dataFlow_dataFlowExport: '导出',
-  dataFlow_addTag: '添加标签',
+  dataFlow_addTag: '新增标签',
+  dataFlow_editTag: '编辑标签',
   dataFlow_bulkImport: '批量导入',
   dataFlow_overWrite: '覆盖已有数据',
   dataFlow_skipData: '跳过已有数据',
@@ -1835,5 +1836,11 @@ export default {
   daas_feature_unavailable_get_enterprise: '申请企业版',
   daas_feature_unavailable_get_cloud: '免费使用云版',
   daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比',
-  daas_unbind_license: '解绑 License'
+  daas_unbind_license: '解绑 License',
+  daas_cluster_cluster_lianjieshuliang_detail: '对外建立链接数详情',
+  daas_cluster_cluster_view: '集群视图',
+  daas_cluster_component_view: '组件视图',
+  daas_cluster_engine_hostname: '主机名/IP',
+  daas_cluster_connection_count: '连接数',
+  daas_cluser_keyword_placeholder: '搜索主机名'
 }

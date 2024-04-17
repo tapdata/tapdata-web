@@ -626,7 +626,7 @@ export default {
   cluster_update: 'Update',
   cluster_running: 'running',
   cluster_stopped: 'stopped',
-  cluster_sync_gover: 'Sync governance',
+  cluster_sync_gover: 'Sync Governance',
   cluster_manage_sys: 'Management Backend',
   cluster_add_server_mon: 'Add service monitoring',
   cluster_agentSetting: 'Agent server settings',
@@ -1167,7 +1167,8 @@ export default {
   dataFlow_uploadInfo: 'Click to view details',
   dataFlow_view: 'View',
   dataFlow_dataFlowExport: 'Export',
-  dataFlow_addTag: 'Add tag',
+  dataFlow_addTag: 'Add Tag',
+  dataFlow_editTag: 'Edit Tag',
   dataFlow_overWrite: 'Overwrite existing data',
   dataFlow_skipData: 'Skip existing data',
   dataFlow_loadingError: 'Loading failed, please',
@@ -1889,5 +1890,10 @@ export default {
   daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
   daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
   daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions',
-  daas_unbind_license: 'Unbind License'
+  daas_unbind_license: 'Unbind License',
+  daas_cluster_cluster_view: 'Cluster View',
+  daas_cluster_component_view: 'Component View',
+  daas_cluster_engine_hostname: 'Hostname/IP',
+  daas_cluster_connection_count: 'Connection Count',
+  daas_cluser_keyword_placeholder: 'Search for hostnames'
 }

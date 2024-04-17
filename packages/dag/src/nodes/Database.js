@@ -116,32 +116,21 @@ export class Database extends NodeType {
                 }
               },
 
-              layout: {
-                type: 'void',
-                'x-component': 'FormLayout',
-                'x-component-props': {
-                  layout: 'horizontal',
-                  colon: false,
-                  labelAlign: 'left',
-                  labelWidth: 80,
+              'attrs.accessNodeProcessId': {
+                type: 'string',
+                title: i18n.t('packages_dag_nodes_database_suoshuage'),
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
                   feedbackLayout: 'none'
                 },
-                properties: {
-                  'attrs.accessNodeProcessId': {
-                    type: 'string',
-                    title: i18n.t('packages_dag_nodes_database_suoshuage'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input',
-                    'x-component-props': {
-                      content:
-                        '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}'
-                    },
-                    'x-reactions': {
-                      fulfill: {
-                        state: {
-                          display: '{{!$self.value ? "hidden":"visible"}}'
-                        }
-                      }
+                'x-component': 'PreviewText.Input',
+                'x-component-props': {
+                  content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
                     }
                   }
                 }
@@ -518,6 +507,26 @@ export class Database extends NodeType {
                       disabledEvents: {
                         type: 'array',
                         'x-component': 'DdlEventCheckbox'
+                      },
+                      ignoredDDLRules: {
+                        title: i18n.t('packages_dag_ddl_ignore_rules'),
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_ddl_ignore_rules_tip')
+                        },
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: i18n.t('packages_dag_ddl_ignore_rules_placeholder')
+                        },
+                        'x-reactions': {
+                          dependencies: ['ddlConfiguration'],
+                          fulfill: {
+                            state: {
+                              visible: '{{$deps[0] === "ERROR"}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },
@@ -914,9 +923,8 @@ export class Database extends NodeType {
                             }
                           }
                         }
-                      } /*,
+                      },
                       syncIndexEnable: {
-                        // 同步索引
                         title: i18n.t('packages_dag_syncIndex'),
                         type: 'boolean',
                         'x-decorator': 'FormItem',
@@ -927,11 +935,12 @@ export class Database extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}'
+                              visible: '{{$settings.type !== "cdc"}}',
+                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }
                         }
-                      }*/
+                      }
                     }
                   },
                   tab3: {
@@ -1028,7 +1037,7 @@ export class Database extends NodeType {
                   }
                 }
               },
-              'alarmRules.0.notify': {
+              'alarmSettings.0.notify': {
                 type: 'array',
                 'x-editable': true,
                 'x-decorator': 'FormItem',

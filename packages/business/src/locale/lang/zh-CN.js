@@ -26,7 +26,7 @@ export default {
   packages_business_schema_progress_status_error: '加载错误',
   packages_business_schema_progress_dialog_error_title: 'Schema加载出错',
   packages_business_schema_progress_load_time: '加载时间：{0}',
-  packages_business_dataFlow_batchSortOperation: '批量分类操作',
+  packages_business_dataFlow_batchSortOperation: '设置标签',
   packages_business_dataFlow_dataLoading: '数据努力加载中...',
   packages_business_message_upload_success: '上传成功',
   packages_business_message_upload_fail: '上传失败',
@@ -52,6 +52,7 @@ export default {
   packages_business_connection_form_access_node: 'agent设置',
   packages_business_connection_form_automatic: '平台自动分配',
   packages_business_connection_form_manual: '用户手动指定',
+  packages_business_connection_form_group: '按标签分配',
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   packages_business_connection_form_give_up: '放弃',
@@ -1203,6 +1204,7 @@ export default {
   packages_business_request_connector_use_time_option1: '5天',
   packages_business_request_connector_use_time_option2: '半年',
   packages_business_request_connector_use_time_option3: '1年',
+  packages_business_request_connector_success: '我们收到了您的请求，很快就会有人与您联系。',
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库'
