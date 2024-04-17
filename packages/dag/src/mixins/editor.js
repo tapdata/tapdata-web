@@ -1594,6 +1594,16 @@ export default {
       return error
     },
 
+    validateUnwind() {
+      const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
+      for (let node of nodes) {
+        const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
+        if (childNodes.some(node => node.dmlPolicy?.insertPolicy !== 'just_insert')) {
+          return '当使用Unwind节点时，目标节点写入策略需要支持仅插入'
+        }
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1627,7 +1637,7 @@ export default {
         this.validateLink,
         this.validateDDL,
         this.validateCustomSql,
-        this.validateTaskType
+        this.validateUnwind
       )
     },
 

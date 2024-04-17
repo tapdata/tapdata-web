@@ -667,7 +667,7 @@ export default {
           }
         },
 
-        useDmlPolicy(field) {
+        useDmlPolicy: field => {
           const capabilities = field.query('attrs.capabilities').get('value')
           let insertPolicy
           let updatePolicy
@@ -677,6 +677,8 @@ export default {
           }
           const insertField = field.query('dmlPolicy.insertPolicy').take()
           const updateField = field.query('dmlPolicy.updatePolicy').take()
+          // 查找上游是否包含Unwind节点
+          const unwindNode = this.scope.findParentNodeByType(field.form.values, 'unwind_processor')
 
           const func = (policy, policyField) => {
             if (!policy || !policy.alternatives?.length) {
@@ -700,11 +702,35 @@ export default {
               } else if (!field.form.disabled) {
                 policyField.setPattern('editable')
               }
+
+              if (unwindNode) {
+                policyField.setPattern('readPretty')
+                if (alternatives.includes('just_insert')) {
+                  policyField.setValue('just_insert')
+                }
+              }
             }
           }
 
           insertField && func(insertPolicy, insertField)
           updateField && func(updatePolicy, updateField)
+        },
+
+        findParentNodeByType: (node, type) => {
+          // let node = this.scope.findNodeById(id)
+          let parentIds = node?.$inputs || []
+
+          if (!node || !parentIds.length) return
+
+          for (let pid of parentIds) {
+            let parent = this.scope.findNodeById(pid)
+
+            if (parent.type === type) {
+              return parent
+            }
+
+            return this.scope.findParentNodeByType(parent, type)
+          }
         },
 
         useSyncConnection: async field => {
