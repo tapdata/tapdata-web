@@ -1255,6 +1255,7 @@ export default {
     'Please select the destination connection you want the data to be synchronized to',
   packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
   packages_business_paid_connector: 'Paid Data Source',
+  packages_business_more_free_connector: 'More Free Data Sources',
   packages_business_request_connector_title: 'Apply for Alpha/Beta Data Source Trial',
   packages_business_request_connector_pending: 'Pending Approval',
   packages_business_request_connector_pending_desc: 'You have submitted your application. Please wait for approval.',
