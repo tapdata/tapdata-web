@@ -18,12 +18,13 @@ axios.defaults.baseURL = process.env.BASE_URL || './'
 const getPendingKey = (config: AxiosRequestConfig): string => {
   const { url, method, data, params } = config
   const headers = {}
-  for (const key in config.headers) {
+  // headers 这里，有时候服务端响应的时候会多一些头，造成响应头跟请求头不一致，无法remove，后续的请求都会被cancel
+  /*for (const key in config.headers) {
     const value = config.headers[key]
     if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
       headers[key] = value
     }
-  }
+  }*/
   config.data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
   const key = JSON.stringify({
     url,
