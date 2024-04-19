@@ -101,7 +101,7 @@ export class UnwindProcessor extends NodeType {
               unwindModel: {
                 type: 'string',
                 title: i18n.t('packages_dag_unwind_unwindModel'),
-                default: 'embedded',
+                default: 'EMBEDDED',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
@@ -126,7 +126,7 @@ export class UnwindProcessor extends NodeType {
               arrayModel: {
                 type: 'string',
                 title: i18n.t('packages_dag_unwind_arrayModel'),
-                default: 'object',
+                default: 'OBJECT',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
