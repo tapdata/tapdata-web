@@ -255,8 +255,9 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
+      let checked = node.checked
       this.clear()
-      node.checked = !node.checked
+      node.checked = !checked
       this.emitCheckedNodes()
     },
     emitCheckedNodes() {
