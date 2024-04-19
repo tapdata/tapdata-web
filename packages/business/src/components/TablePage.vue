@@ -48,7 +48,7 @@
             ref="table"
             v-loading="loading"
             class="table-page-table"
-            :class="{ grabbable: classificationVisible }"
+            :row-class-name="classificationVisible ? 'grabbable' : ''"
             height="100%"
             :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"

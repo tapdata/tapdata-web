@@ -47,10 +47,16 @@
                     :filter-node-method="handleFilterTag"
                     @node-click="handleCheckChange"
                     @check="handleCheck"
-                    class="has-dropdown"
+                    class="engine-tag-tree has-dropdown"
                   >
                     <template #default="{ node, data }">
-                      <div class="flex align-center flex-1">
+                      <div
+                        class="flex align-center flex-1"
+                        @dragenter.stop="handleTreeDragEnter($event, data, node)"
+                        @dragover.stop="handleTreeDragOver($event, data, node)"
+                        @dragleave.stop="handleTreeDragLeave($event, data, node)"
+                        @drop.stop="handleTreeDrop($event, data, node)"
+                      >
                         <VIcon size="12" class="color-primary mr-1">folder-fill</VIcon>
                         <span class="flex-1 text-ellipsis">{{ data.name }}</span>
                         <ElDropdown class="tree-node-dropdown" @command="handleCommand($event, node)">
@@ -66,11 +72,15 @@
                     </template>
                   </ElTree>
                 </div>
-                <ElTable
+                <ProTable
                   ref="engineTable"
                   :data="filterEngineData"
+                  row-class-name="grabbable"
                   @selection-change="handleSelectionChange"
+                  @row-dragstart="handleDragStart"
+                  @row-dragend="handleDragEnd"
                   row-key="process_id"
+                  draggable
                 >
                   <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
                   <ElTableColumn :label="$t('daas_cluster_engine_hostname')" prop="name">
@@ -130,7 +140,7 @@
                       </div>
                     </template>
                   </ElTableColumn>
-                </ElTable>
+                </ProTable>
               </div>
             </div>
             <div class="flex gap-4">
@@ -603,7 +613,8 @@
   </section>
 </template>
 <script>
-import { FilterBar, IconButton, VEmpty } from '@tap/component'
+import { FilterBar, IconButton, VEmpty, ProTable } from '@tap/component'
+import { makeDragNodeImage } from '@tap/business'
 import AddServe from './AddServe'
 import { workerApi, clusterApi, proxyApi, agentGroupApi, userGroupsApi, metadataDefinitionsApi } from '@tap/api'
 import { STATUS_MAP } from './const'
@@ -617,7 +628,8 @@ export default {
     AddServe,
     FilterBar,
     IconButton,
-    VEmpty
+    VEmpty,
+    ProTable
   },
   data() {
     return {
@@ -689,7 +701,14 @@ export default {
       tagMap: {},
       multipleSelection: [],
       tagSearch: '',
-      showSearch: false
+      showSearch: false,
+      dragState: {
+        isDragging: false,
+        draggingObjects: [],
+        dropNode: null,
+        allowDrop: true
+      },
+      draggingNodeImage: null
     }
   },
   computed: {
@@ -1059,6 +1078,7 @@ export default {
       this.managementData = managementData
 
       if (!noFilter) {
+        this.mapAgentData()
         this.handleFilterAgent()
       }
     },
@@ -1318,6 +1338,92 @@ export default {
         })
       } else {
         this.filterEngineData = this.engineData
+      }
+    },
+
+    handleDragStart(row, column, ev) {
+      this.dragState.isDragging = true
+      let selection = this.multipleSelection
+
+      if (selection.find(it => it.id === row.id)) {
+        this.dragState.draggingObjects = selection
+      } else {
+        this.dragState.draggingObjects = [row]
+      }
+
+      this.draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        row.hostname,
+        this.dragState.draggingObjects.length
+      )
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+    },
+
+    handleDragEnd() {
+      this.dragState.isDragging = false
+      this.dragState.draggingObjects = []
+      this.dragState.dropNode = null
+      document.body.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage = null
+    },
+
+    findParentNodeByClassName(el, cls) {
+      let parent = el.parentNode
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    },
+
+    handleTreeDragEnter(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly || !this.dragState.isDragging) return
+
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleTreeDragLeave(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly) return
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    async handleTreeDrop(ev, data) {
+      const { draggingObjects } = this.dragState
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+
+      if (!draggingObjects?.length || !dropNode) return
+      dropNode.classList.remove('is-drop-inner')
+
+      const list = []
+      for (let row of draggingObjects) {
+        if (!data.agentIds.includes(row.process_id)) {
+          list.push(
+            agentGroupApi.addAgent({
+              groupId: data.groupId,
+              agentId: row.process_id
+            })
+          )
+        }
+      }
+
+      if (list.length) {
+        await Promise.all(list)
+        this.$message.success(this.$t('public_message_operation_success'))
+        await this.onSavedTag()
+      } else {
+        this.$message.info(this.$t('packages_component_data_already_exists'))
       }
     }
   },
@@ -1718,6 +1824,12 @@ export default {
         display: block;
       }
     }
+  }
+}
+.engine-tag-tree {
+  .el-tree-node__content {
+    height: 32px;
+    overflow: hidden;
   }
 }
 </style>
