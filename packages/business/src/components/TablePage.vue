@@ -59,6 +59,7 @@
             @sort-change="$emit('sort-change', $event)"
             @row-dragstart="handleDragStart"
             @row-dragend="handleDragEnd"
+            @select="onSelectRow"
             v-on="$listeners"
           >
             <slot></slot>
@@ -95,7 +96,7 @@
 </template>
 
 <script>
-import { delayTrigger } from '@tap/shared'
+import { delayTrigger, on, off } from '@tap/shared'
 import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
 import { makeDragNodeImage } from '../shared'
 
@@ -148,11 +149,26 @@ export default {
         dropNode: null,
         allowDrop: true
       },
-      draggingNodeImage: null
+      draggingNodeImage: null,
+      shiftKeyPressed: false
     }
   },
   mounted() {
     this.fetch(1)
+    this.handleKeyDown = ev => {
+      this.shiftKeyPressed = ev.shiftKey
+    }
+    this.handleKeyUp = ev => {
+      setTimeout(() => {
+        this.shiftKeyPressed = false
+      }, 0)
+    }
+    on(document, 'keydown', this.handleKeyDown)
+    on(document, 'keyup', this.handleKeyUp)
+  },
+  beforeDestroy() {
+    off(document, 'keydown', this.handleKeyDown)
+    off(document, 'keyup', this.handleKeyUp)
   },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
@@ -161,6 +177,7 @@ export default {
         this.multipleSelection = []
         this.$emit('selection-change', [])
         this.$refs?.table?.clearSelection()
+        this.lastSelectIndex = undefined
       }
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
@@ -250,6 +267,32 @@ export default {
       this.dragState.dropNode = null
       document.body.removeChild(this.draggingNodeImage)
       this.draggingNodeImage = null
+    },
+    onSelectRow(selection, current) {
+      try {
+        const selected = selection.some(row => row.id === current.id)
+
+        if (this.shiftKeyPressed && this.multipleSelection.length && this.lastSelectIndex !== undefined) {
+          let lastIndex = this.lastSelectIndex
+          let currentIndex = this.list.findIndex(row => row.id === current.id)
+
+          if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
+            const tmp = currentIndex < lastIndex ? -1 : 1
+
+            // 先触发selection-change
+            setTimeout(() => {
+              while (lastIndex !== currentIndex) {
+                this.$refs.table.toggleRowSelection(this.list[lastIndex], selected)
+                lastIndex += tmp
+              }
+            }, 0)
+          }
+        }
+
+        this.lastSelectIndex = selected ? this.list.findIndex(row => row.id === current.id) : undefined
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
