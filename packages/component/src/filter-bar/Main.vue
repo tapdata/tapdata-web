@@ -218,7 +218,7 @@ export default {
         case 'select-inner':
           this.setDefaultValue(item, 'inner-label', item.label)
           this.setDefaultValue(item, 'last-page-text', '')
-          this.setDefaultValue(item, 'none-border', true)
+          this.setDefaultValue(item, 'none-border', !item.border)
           break
         case 'input':
           this.setDefaultValue(item, 'debounce', 800)

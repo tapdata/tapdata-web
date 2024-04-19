@@ -26,7 +26,23 @@
     <ElContainer direction="vertical" class="layout-main position-relative">
       <ElMain class="main rounded-lg">
         <div class="g-panel-container flex-fill overflow-x-hidden flex flex-column">
-          <ElTable ref="table" row-key="id" :data="list" height="100%">
+          <FilterBar
+            v-model="searchParams"
+            class="mb-3 flex flex-wrap align-center"
+            :items="filterItems"
+            :changeRoute="false"
+            @fetch="lazyLoadData(1)"
+          />
+
+          <ElTable
+            ref="table"
+            row-key="id"
+            :data="list"
+            height="100%"
+            v-loading="loading"
+            :default-sort="sort"
+            @sort-change="handleSortTable"
+          >
             <el-table-column :label="$t('packages_business_connection_form_data_source')">
               <template #default="{ row }">
                 {{ row.metadata.type }}<ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
@@ -48,9 +64,13 @@
                 {{ row.phone || row.email }}
               </template>
             </el-table-column>
-            <el-table-column :label="$t('dfs_apply_time')" prop="submitTime"></el-table-column>
+            <el-table-column :label="$t('dfs_apply_time')" prop="submitTime" sortable="custom"></el-table-column>
             <el-table-column :label="$t('dfs_apply_auditor')" prop="reviewer"></el-table-column>
-            <el-table-column :label="$t('dfs_apply_audit_time')" prop="approvalTime"></el-table-column>
+            <el-table-column
+              :label="$t('dfs_apply_audit_time')"
+              prop="approvalTime"
+              sortable="custom"
+            ></el-table-column>
             <el-table-column :label="$t('public_status')" prop="status" width="120">
               <template #default="{ row }">
                 <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type">{{
@@ -91,15 +111,43 @@
 </template>
 
 <script>
-import { TablePage } from '@tap/business'
+import { FilterBar } from '@tap/component'
 import { mapGetters, mapState } from 'vuex'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
+import { escapeRegExp, debounce } from 'lodash'
 
 export default {
   name: 'RequestConnector',
+  components: { FilterBar },
   data() {
+    const statusMap = {
+      PENDING: {
+        text: i18n.t('dfs_status_to_be_approved'),
+        type: 'primary'
+      },
+      APPROVED: {
+        text: i18n.t('dfs_status_approved'),
+        type: 'success'
+      },
+      REJECTED: {
+        text: i18n.t('dfs_status_rejected'),
+        type: 'danger'
+      },
+      EXPIRED: {
+        text: i18n.t('dfs_status_expired'),
+        type: 'warning'
+      }
+    }
+    const statusOptions = Object.keys(statusMap).map(key => {
+      return {
+        value: key,
+        label: statusMap[key].text
+      }
+    })
     return {
+      lazyLoadData: null,
+      loading: false,
       mockUserId: null,
       list: [],
       page: {
@@ -107,28 +155,36 @@ export default {
         size: 20,
         total: 0
       },
+      order: 'submitTime DESC',
+      sort: { prop: 'submitTime', order: 'descending' },
       dayMap: {
         5: i18n.t('packages_business_request_connector_use_time_option1'),
         180: i18n.t('packages_business_request_connector_use_time_option2'),
         365: i18n.t('packages_business_request_connector_use_time_option3')
       },
-      statusMap: {
-        PENDING: {
-          text: i18n.t('dfs_status_to_be_approved'),
-          type: 'primary'
-        },
-        APPROVED: {
-          text: i18n.t('dfs_status_approved'),
-          type: 'success'
-        },
-        REJECTED: {
-          text: i18n.t('dfs_status_rejected'),
-          type: 'danger'
-        },
-        EXPIRED: {
-          text: i18n.t('dfs_status_expired'),
-          type: 'warning'
+      statusMap,
+
+      searchParams: {
+        status: 'PENDING'
+      },
+
+      filterItems: [
+        {
+          label: this.$t('public_status'),
+          key: 'status',
+          border: true,
+          type: 'select-inner',
+          items: statusOptions,
+          debounce: 0
         }
+      ]
+    }
+  },
+  watch: {
+    searchParams: {
+      deep: true,
+      handler() {
+        this.lazyLoadData(1)
       }
     }
   },
@@ -138,21 +194,28 @@ export default {
   },
   created() {
     this.getData()
+    this.lazyLoadData = debounce(this.getData, 200)
   },
   methods: {
     async getData(current = this.page.current) {
       let { size } = this.page
+      let { createUser, status } = this.searchParams
       let filter = {
+        sort: [this.getOrder()],
         limit: size,
         skip: size * (current - 1),
-        sort: ['createAt desc'],
-        where: {}
+        where: {
+          status,
+          createUser: createUser?.trim() ? { like: escapeRegExp(createUser.trim()), options: 'i' } : undefined
+        }
       }
+      this.loading = true
       const result = await this.$axios.get(`api/tcm/feature/connector`, {
         params: {
           filter: JSON.stringify(filter)
         }
       })
+      this.loading = false
       this.list = result.items.map(item => {
         item.submitTime = item.submitTime ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss') : '-'
         item.approvalTime = item.approvalTime ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss') : '-'
@@ -175,6 +238,14 @@ export default {
       })
       this.$message.success('已拒绝')
       this.getData()
+    },
+    getOrder() {
+      const { order, prop } = this.sort
+      return `${order ? prop : 'submitTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+    },
+    handleSortTable({ order, prop }) {
+      Object.assign(this.sort, { order, prop })
+      this.getData(1)
     }
   }
 }
