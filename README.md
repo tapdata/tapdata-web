@@ -16,12 +16,10 @@ pnpm i
 
 3. **Start**
 ```bash
-# 启动开源版本
+# Start the open source version
 pnpm dev:oss
-# 启动 daas
+# Start daas
 pnpm start:daas
-# 启动 dfs
-pnpm start:dfs
 ```
 
 4. **Command Line Arguments**
