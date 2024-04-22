@@ -1,105 +1,64 @@
-# Daas Monorepo
+# Tapdata Web
 
-> Data as a service
 
-## Last Release Branch
-release-v2.7
+## Quick Start
 
-## 快速开始
 
-1. **安装 [pnpm](https://pnpm.io/zh/motivation)**
+1. **Install [pnpm](https://pnpm.io/)**
 ```bash
 npm install -g pnpm
 ```
 
-2. **安装依赖（整个 workspace）**
+2. **Install dependencies (for the entire workspace)**
 ```bash
 pnpm i
 ```
 
-3. **启动应用**
+3. **Start**
 ```bash
+# 启动开源版本
+pnpm dev:oss
 # 启动 daas
 pnpm start:daas
 # 启动 dfs
 pnpm start:dfs
 ```
 
-4. **命令传参**
-常用的参数有 `--port` 和 `--dest`，详见[vue-cli文档](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
+4. **Command Line Arguments**
+Common parameters include `--port` and `--dest`，For more details [vue-cli](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
 ```bash
-# 在根目录，指定端口启动（windows下可能要多加一个--）
-pnpm start:daas -- -- --port=8100
-# 等效于
+# In the root directory, start with a specified port (an additional `--` may be needed on Windows)
+pnpm start:daas --port=8100
+# Equivalent to
 cd apps/daas
-pnpm start:test -- --port=8100
+pnpm start:test --port=8100
 ```
 
-5. **设置淘宝镜像源**
+5. **Set Registry**
 ```bash
-# 使用nrm
+# Using nrm
 npm i -g nrm
 nrm use taobao
-# 或者手动设置
-pnpm set registry https://registry.npm.taobao.org/ 
-# 查看设置的源
+# Or set manually
+pnpm set registry https://registry.npmmirror.com/ 
+# Check the set source
 pnpm get registry
 ```
 
-## 同步老仓库代码
+## Use [git worktree](https://git-scm.com/docs/git-worktree) to develop multiple branches simultaneously
 
-### daas
-
-1. 将frontend-el目录拆成独立分支
-```bash
-# cd 到 daas 项目目录下执行，-P: 目录、-b 分支名，这一步比较耗时
-git subtree split -P frontend-el -b split-frontend-el-2.0
-```
-
-2. 在daas-web下拉取上面拆分好的分支
-```bash
-# cd 到 daas-web 项目目录下执行
-git pull ../daas split-frontend-el-2.0 -r
-```
-
-### dfs
-
-1. 在 daas-web 下设置dfs项目远程地址
-```bash
-git remote add dfs git@e.coding.net:tapdata/dfs/dfs-web.git
-```
-
-2. 拉取 dfs 代码，并检出要同步的分支
-```bash
-git fetch dfs
-git checkout -b import-dfs-to-daas-web dfs/release
-```
-
-3. 调整成 daas-web 的目录结构
-```bash
-# 举个 🌰
-git mv src public README.md vue.config.js package.json .env apps/dfs
-```
-
-4. 上一步调整完提交之后，切换到 daas-web 的主分支，开始合并
-```bash
-git merge import-dfs  --allow-unrelated-historie
-```
-
-## 使用 [git worktree](https://git-scm.com/docs/git-worktree) 同时开发多个分支
-
-- 比如将dfs分支检出到指定目录
+- For example, to check out the ``main`` branch into a specified directory:
 
 ```bash
-git worktree add ../dfs dfs-v2.0.2
+git worktree add ../main main
 
-# 在 dfs 目录下进行开发
-cd ../dfs
+# Develop in the main directory:
+cd ../main
 pnpm i
-pnpm start:dfs
+pnpm dev:oss
 ``` 
 
-- 废弃某个检出的分支
+- Prune an abandoned checked-out branch
 
 ```bash
 rm -rf ../dfs
@@ -109,15 +68,15 @@ git worktree prune
 git worktree remove ../dfs
 ``` 
 
-### worktree 的优点
+### Advantages of worktree
 
-- git worktree 可以快速进行并行开发，同一个项目多个分支同时并行演进
-- git worktree 的提交可以在同一个项目中共享
-- git worktree 和单独 clone 项目相比，节省了硬盘空间，又因为 git worktree 使用 hard link 实现，要远远快于 clone
+- git worktree allows for rapid parallel development, with multiple branches of the same project evolving in parallel.
+- Commits from git worktree can be shared within the same project.
+- Compared to cloning the project separately, git worktree saves hard drive space and, because it uses hard links, is much faster than cloning.
 
 ## pnpm
 
-### [命令行](https://pnpm.io/zh/pnpm-cli)
+### [Command Line](https://pnpm.io/pnpm-cli)
 
 | npm                   | pnpm                   |
 |-----------------------|------------------------|
@@ -127,49 +86,49 @@ git worktree remove ../dfs
 | `npm uninstall <pkg>` | `pnpm remove <pkg>`    |
 | `npm update <pkg>`    | `pnpm update/up <pkg>` |
 
-### [工作空间](https://pnpm.io/zh/workspaces)
+### [Workspace](https://pnpm.io/workspaces)
 
 ```yaml
 # pnpm-workspace.yaml
 packages:
-  # 模块包
+  # Module packages
   - 'packages/*'
-  # 应用包
+  # Application packages
   - 'apps/*'
 ```
 
-### [依赖管理](https://pnpm.io/zh/cli/add)
+### [Dependency Management](https://pnpm.io/cli/add)
 
 | Command              | 含义                          |
 | -------------------- | ----------------------------- |
-| `pnpm add sax`       | 保存到 `dependencies`         |
-| `pnpm add -D sax`    | 保存到 `devDependencies`      |
-| `pnpm add -O sax`    | 保存到 `optionalDependencies` |
-| `pnpm add sax@next`  | 从 `next` tag 下安装          |
-| `pnpm add sax@3.0.0` | 安装指定版本 `3.0.0`          |
+| `pnpm add sax`       | Save to `dependencies`         |
+| `pnpm add -D sax`    | Save to `devDependencies`      |
+| `pnpm add -O sax`    | Save to `optionalDependencies` |
+| `pnpm add sax@next`  | Install from the `next` tag       |
+| `pnpm add sax@3.0.0` | Specify version `3.0.0`          |
 
-- 在 root workspace 添加依赖
+- Add dependencies in the root workspace:
 ```bash
 # -D --> devDependencies
 pnpm add prettier -w -D
 ```
 
-- 在 daas 下添加依赖 [--filter](https://www.pnpm.cn/filtering)
+- Add a dependency in daas with [--filter](https://pnpm.io/filtering)
 ```bash
 pnpm add qs --filter daas
 ```
 
-- 在所有包下添加依赖
+- Add a dependency in all packages:
 ```bash
 pnpm add qs -r
 ```
 
-### 运行命令 package:scripts
+### Run the package:scripts command:
 
 ```bash
 pnpm run start
-# run 可以省略
+# The `run` can be omitted
 pnpm start
-# 局部执行
+# Partial execution
 pnpm start --filter daas
 ```
