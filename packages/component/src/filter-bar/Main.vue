@@ -207,7 +207,7 @@ export default {
       // { width: item.width }
       switch (item.type) {
         case 'input':
-          this.setDefaultValue(obj, 'width', '200px')
+          this.setDefaultValue(obj, 'width', item.width || '200px')
           break
       }
       return obj

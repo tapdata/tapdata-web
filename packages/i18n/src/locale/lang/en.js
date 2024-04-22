@@ -300,5 +300,6 @@ export default {
 
   public_page_title_advanced_features: 'Advanced',
 
-  public_please_wait: 'Please wait a moment...'
+  public_please_wait: 'Please wait a moment...',
+  public_view_all: 'View All'
 }

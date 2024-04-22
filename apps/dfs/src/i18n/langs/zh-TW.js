@@ -1655,8 +1655,11 @@ export default {
   dfs_apply_audit_time: '審核時間',
   dfs_apply_pass: '通過',
   dfs_apply_reject: '拒絕',
+  dfs_apply_comment: '評論',
+  dfs_apply_comment_placeholder: '輸入評論',
   dfs_status_to_be_approved: '待審批',
   dfs_status_approved: '已通過',
   dfs_status_rejected: '已拒絕',
-  dfs_status_expired: '已過期'
+  dfs_status_expired: '已過期',
+  dfs_all_approvals_completed: '已完成全部審批'
 }

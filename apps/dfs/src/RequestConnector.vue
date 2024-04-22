@@ -45,7 +45,8 @@
           >
             <el-table-column :label="$t('packages_business_connection_form_data_source')">
               <template #default="{ row }">
-                {{ row.metadata.type }}<ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
+                {{ row.metadata.type }}
+                <ElTag class="ml-2" type="info">{{ row.metadata.qcType }}</ElTag>
               </template>
             </el-table-column>
             <el-table-column
@@ -73,24 +74,33 @@
             ></el-table-column>
             <el-table-column :label="$t('public_status')" prop="status" width="120">
               <template #default="{ row }">
-                <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type">{{
-                  statusMap[row.status].text
-                }}</ElTag>
+                <ElTag v-if="statusMap[row.status]" :type="statusMap[row.status].type"
+                  >{{ statusMap[row.status].text }}
+                </ElTag>
                 <span v-else>{{ row.status }}</span>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('public_operation')" width="120">
+            <el-table-column :label="$t('public_operation')" width="200">
               <template #default="{ row }">
                 <div class="flex gap-2">
-                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleApprove(row)" type="primary">{{
-                    $t('dfs_apply_pass')
-                  }}</ElLink>
-                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row)" type="danger">{{
-                    $t('dfs_apply_reject')
-                  }}</ElLink>
+                  <ElLink @click="handleApprove(row, $event)" :disabled="row.status !== 'PENDING'" type="primary"
+                    >{{ $t('dfs_apply_pass') }}
+                  </ElLink>
+                  <ElLink :disabled="row.status !== 'PENDING'" @click="handleReject(row, $event)" type="danger"
+                    >{{ $t('dfs_apply_reject') }}
+                  </ElLink>
+                  <ElLink @click="openRemark(row)" type="primary">{{ $t('dfs_apply_comment') }}</ElLink>
                 </div>
               </template>
             </el-table-column>
+
+            <template #empty>
+              <div v-if="searchParams.status === 'PENDING'" class="flex flex-column gap-3 lh-base">
+                👍 {{ $t('dfs_all_approvals_completed') }}
+                <ElLink @click="handleViewAll" type="primary">{{ $t('public_view_all') }}</ElLink>
+              </div>
+              <span v-else>{{ $t('public_data_no_data') }}</span>
+            </template>
           </ElTable>
           <el-pagination
             background
@@ -107,11 +117,44 @@
         </div>
       </ElMain>
     </ElContainer>
+
+    <ElDialog
+      :title="$t('dfs_apply_comment')"
+      :visible="dialog.visible"
+      :close-on-click-modal="false"
+      @update:visible="dialog.visible = $event"
+      @close="handleClose"
+      @closed="afterClose"
+      :append-to-body="true"
+      width="520px"
+    >
+      <el-timeline>
+        <el-timeline-item v-for="(item, i) in dialog.list" :key="i" :timestamp="item.datetime" placement="top">
+          <el-card shadow="hover">
+            <h4 class="text-prewrap">{{ item.remark }}</h4>
+            <p class="mt-3 font-color-sslight" style="font-size: 13px">{{ item.amUser }}</p>
+          </el-card>
+          <IconButton @click="handleDeleteComment(item, i)" class="timeline-btn position-absolute end-0" sm
+            >delete</IconButton
+          >
+        </el-timeline-item>
+      </el-timeline>
+      <div class="">
+        <ElInput v-model="dialog.remark" :placeholder="$t('dfs_apply_comment_placeholder')" type="textarea"></ElInput>
+      </div>
+
+      <template #footer>
+        <el-button @click="handleClose">{{ $t('public_button_cancel') }}</el-button>
+        <el-button type="primary" :loading="dialog.saving" @click="handleSubmit">{{
+          $t('public_button_submit')
+        }}</el-button>
+      </template>
+    </ElDialog>
   </ElContainer>
 </template>
 
 <script>
-import { FilterBar } from '@tap/component'
+import { FilterBar, IconButton } from '@tap/component'
 import { mapGetters, mapState } from 'vuex'
 import dayjs from 'dayjs'
 import i18n from '@/i18n'
@@ -119,7 +162,7 @@ import { escapeRegExp, debounce } from 'lodash'
 
 export default {
   name: 'RequestConnector',
-  components: { FilterBar },
+  components: { FilterBar, IconButton },
   data() {
     const statusMap = {
       PENDING: {
@@ -176,8 +219,21 @@ export default {
           type: 'select-inner',
           items: statusOptions,
           debounce: 0
+        },
+        {
+          placeholder: i18n.t('dfs_apply_user') + '/' + i18n.t('dfs_user_contactus_lianxifangshi'),
+          key: 'createUser',
+          type: 'input',
+          width: '240px'
         }
-      ]
+      ],
+      dialog: {
+        remark: '',
+        list: [],
+        visible: false,
+        saving: false,
+        callback: null
+      }
     }
   },
   watch: {
@@ -205,10 +261,20 @@ export default {
         limit: size,
         skip: size * (current - 1),
         where: {
-          status,
-          createUser: createUser?.trim() ? { like: escapeRegExp(createUser.trim()), options: 'i' } : undefined
+          status
         }
       }
+
+      createUser = createUser?.trim()
+      if (createUser) {
+        createUser = escapeRegExp(createUser)
+        filter.where.$or = [
+          { createUser: { $regex: createUser, $options: 'i' } },
+          { phone: { $regex: createUser, $options: 'i' } },
+          { email: { $regex: createUser, $options: 'i' } }
+        ]
+      }
+
       this.loading = true
       const result = await this.$axios.get(`api/tcm/feature/connector`, {
         params: {
@@ -220,23 +286,47 @@ export default {
         item.submitTime = item.submitTime ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss') : '-'
         item.approvalTime = item.approvalTime ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss') : '-'
         item.reviewer = item.reviewer || '-'
+
+        if (item.returnVisits) {
+          item.returnVisits.forEach(v => {
+            v.datetime = v.datetime ? dayjs(v.datetime).format('YYYY-MM-DD HH:mm:ss') : '-'
+          })
+        }
+
         return item
       })
       this.page.total = result.total
     },
 
-    async handleApprove({ id }) {
-      await this.$axios.post(`api/tcm/feature/connector/approved`, {
-        id
-      })
-      this.$message.success('已审批')
+    async handleApprove(row, ev) {
+      await this.handleOpen(row)
+
+      await this.$axios
+        .post(`api/tcm/feature/connector/approved`, {
+          id: row.id,
+          remark: this.dialog.remark?.trim()
+        })
+        .finally(() => {
+          this.dialog.saving = false
+        })
+
+      this.$message.success(this.$t('dfs_status_approved'))
+      this.handleClose()
       this.getData()
     },
-    async handleReject({ id }) {
-      await this.$axios.post(`api/tcm/feature/connector/rejected`, {
-        id
-      })
-      this.$message.success('已拒绝')
+    async handleReject(row) {
+      await this.handleOpen(row)
+      await this.$axios
+        .post(`api/tcm/feature/connector/rejected`, {
+          id: row.id,
+          remark: this.dialog.remark?.trim()
+        })
+        .finally(() => {
+          this.dialog.saving = false
+        })
+
+      this.$message.success(this.$t('dfs_status_rejected'))
+      this.handleClose()
       this.getData()
     },
     getOrder() {
@@ -246,6 +336,48 @@ export default {
     handleSortTable({ order, prop }) {
       Object.assign(this.sort, { order, prop })
       this.getData(1)
+    },
+    async handleOpen(row) {
+      this.dialog.visible = true
+      this.dialog.rowId = row.id
+      this.dialog.list = row.returnVisits || []
+      await new Promise(resolve => {
+        this.dialog.callback = resolve
+      })
+    },
+    async openRemark(row) {
+      await this.handleOpen(row)
+      await this.$axios
+        .patch(`api/tcm/feature/connector/${row.id}`, {
+          remark: this.dialog.remark?.trim()
+        })
+        .finally(() => {
+          this.dialog.saving = false
+        })
+      this.handleClose()
+      this.getData()
+    },
+    handleClose() {
+      this.dialog.visible = false
+      this.dialog.saving = false
+      this.dialog.remark = ''
+      this.dialog.callback = null
+      this.dialog.rowId = null
+    },
+    afterClose() {},
+    handleSubmit() {
+      this.dialog.saving = true
+      this.dialog.callback()
+    },
+    async handleDeleteComment(item, index) {
+      this.commentLoading = true
+      await this.$axios.delete(`api/tcm/feature/connector/${this.dialog.rowId}/${item.id}`)
+      this.commentLoading = false
+      this.$message.success(this.$t('public_status_deleted'))
+      this.dialog.list.splice(index, 1)
+    },
+    handleViewAll() {
+      this.searchParams.status = undefined
     }
   }
 }
@@ -545,5 +677,17 @@ export default {
       right: 0;
     }
   }
+}
+
+.timeline-btn {
+  top: -2px;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+}
+
+.el-timeline-item:hover .timeline-btn {
+  opacity: 1;
+  visibility: visible;
 }
 </style>

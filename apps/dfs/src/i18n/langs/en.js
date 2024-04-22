@@ -1831,8 +1831,11 @@ export default {
   dfs_apply_audit_time: 'Audit Time',
   dfs_apply_pass: 'Approve',
   dfs_apply_reject: 'Reject',
+  dfs_apply_comment: 'Comment',
+  dfs_apply_comment_placeholder: 'Add your comment here...',
   dfs_status_to_be_approved: 'Pending',
   dfs_status_approved: 'Approved',
   dfs_status_rejected: 'Rejected',
-  dfs_status_expired: 'Expired'
+  dfs_status_expired: 'Expired',
+  dfs_all_approvals_completed: 'All approvals completed.'
 }
