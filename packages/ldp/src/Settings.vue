@@ -243,6 +243,23 @@ export default {
   },
 
   data() {
+    const isCommunity = process.env.VUE_APP_MODE === 'community'
+    const options = [
+      {
+        label: this.$t('packages_business_mongodb_self_hosted_cluster'),
+        value: 'self',
+        tag: 'Add a New Connection'
+      },
+      {
+        label: this.$t('packages_business_mongodb_full_management_cluster'),
+        value: 'full-management'
+      }
+    ]
+
+    if (isCommunity) {
+      options.pop()
+    }
+
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       mode: '',
@@ -258,17 +275,7 @@ export default {
           beta: true
         }
       ],
-      options: [
-        {
-          label: this.$t('packages_business_mongodb_self_hosted_cluster'),
-          value: 'self',
-          tag: 'Add a New Connection'
-        },
-        {
-          label: this.$t('packages_business_mongodb_full_management_cluster'),
-          value: 'full-management'
-        }
-      ],
+      options,
       form: {
         fdmStorageCluster: '',
         fdmStorageConnectionId: '',
