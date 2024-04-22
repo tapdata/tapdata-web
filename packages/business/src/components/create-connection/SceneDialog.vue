@@ -64,19 +64,20 @@
             {{ $t('packages_business_paid_connector') }}
           </div>
 
-          <div
-            v-if="isCommunity"
-            class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
-            @click="openGithub"
-          >
-            <VIcon size="16" class="mr-1">github</VIcon>
-            {{ $t('packages_business_more_free_connector') }}
-            <VIcon size="16" class="ml-1">open-in-new</VIcon>
-          </div>
+          <template v-if="isCommunity">
+            <div
+              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+              @click="openGithub"
+            >
+              <VIcon size="16" class="mr-1">github</VIcon>
+              {{ $t('packages_business_more_free_connector') }}
+              <VIcon size="16" class="ml-1">open-in-new</VIcon>
+            </div>
 
-          <div class="px-2">
-            <ElDivider class="my-2"></ElDivider>
-          </div>
+            <div class="px-2">
+              <ElDivider class="my-2"></ElDivider>
+            </div>
+          </template>
 
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
