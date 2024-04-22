@@ -1267,8 +1267,7 @@ export default {
   packages_business_request_connector_use_time_option1: '5 days',
   packages_business_request_connector_use_time_option2: 'half a year',
   packages_business_request_connector_use_time_option3: '1 year',
-  packages_business_request_connector_success:
-    'We received your request, someone will get in touch shortly/within 24 hours/within 48 hours.',
+  packages_business_request_connector_success: 'We have received your request and someone will contact you shortly.',
   packages_business_view_more_apis: 'View More APIs',
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases'
