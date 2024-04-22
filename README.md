@@ -97,7 +97,7 @@ packages:
 
 ### [Dependency Management](https://pnpm.io/cli/add)
 
-| Command              | 含义                          |
+| Command              | Meaning                          |
 | -------------------- | ----------------------------- |
 | `pnpm add sax`       | Save to `dependencies`         |
 | `pnpm add -D sax`    | Save to `devDependencies`      |
