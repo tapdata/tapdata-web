@@ -376,7 +376,7 @@ export const JsProcessor = observer(
                 </VIcon>
               </ElTooltip>
             </div>
-            <div className="flex align-center">
+            <div class="flex align-center">
               <ElLink class="mr-3" onClick={toggleDoc} type="primary">
                 {i18n.t('packages_dag_api_docs')}
               </ElLink>
@@ -489,7 +489,7 @@ export const JsProcessor = observer(
               }}
             >
               {isDaas ? (
-                <div className="px-4 js-doc-content">
+                <div class="px-4 js-doc-content">
                   {Object.keys(functionGroup.value).map(className => {
                     return [
                       <h2>{className}</h2>,
