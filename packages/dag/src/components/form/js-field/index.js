@@ -1,22 +1,25 @@
-import { defineComponent, ref, reactive, onUnmounted, watch } from '@vue/composition-api'
+import { defineComponent, ref, onUnmounted } from '@vue/composition-api'
 import { useForm, useField } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { observe } from '@formily/reactive'
-import { groupBy } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { FormItem, JsEditor, HighlightCode } from '@tap/form'
+import { FormItem, JsEditor } from '@tap/form'
 import { VIcon, GitBook } from '@tap/component'
-import resize from '@tap/component/src/directives/resize'
-import { javascriptFunctionsApi, taskApi, monitoringLogsApi, metadataInstancesApi, pdkApi } from '@tap/api'
-import Time from '@tap/shared/src/time'
-import { JsDeclare } from '../js-declare'
+import { metadataInstancesApi, pdkApi } from '@tap/api'
 import './style.scss'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 export const JsField = observer(
   defineComponent({
-    props: ['value', 'disabled', 'isStandard'],
+    props: {
+      value: String,
+      disabled: Boolean,
+      tooltip: String,
+      apiBtnText: {
+        type: String,
+        default: i18n.t('packages_dag_api_docs')
+      }
+    },
     setup(props, { emit, root, attrs, refs }) {
       const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
       const { id: taskId, syncType } = root.$store.state.dataflow.taskInfo
@@ -25,14 +28,7 @@ export const JsField = observer(
       const form = formRef.value
       const fullscreen = ref(false)
       const showDoc = ref(false)
-      let timer
       const nodeId = form.values.id
-
-      console.log('fieldRef', fieldRef)
-
-      onUnmounted(() => {
-        clearTimeout(timer)
-      })
 
       const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
@@ -152,7 +148,7 @@ export const JsField = observer(
             </div>
             <div class="flex align-center">
               <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                {i18n.t('packages_dag_api_docs')}
+                {props.apiBtnText}
               </ElLink>
               <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                 <VIcon class="mr-1">fangda</VIcon>
@@ -167,7 +163,7 @@ export const JsField = observer(
             <ElDrawer
               append-to-body
               modal={false}
-              title={i18n.t('packages_dag_api_docs')}
+              title={props.apiBtnText}
               with-header={isDaas}
               size={680}
               visible={showDoc.value}
@@ -190,7 +186,7 @@ export const JsField = observer(
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
                 <div class="js-editor-toolbar-title fs-6 fw-sub flex-1">{fieldRef.value.title}</div>
                 <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                  {i18n.t('packages_dag_api_docs')}
+                  {props.apiBtnText}
                 </ElLink>
                 <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                   <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
