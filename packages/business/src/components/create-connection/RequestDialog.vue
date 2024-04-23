@@ -111,30 +111,15 @@ export default {
   methods: {
     async handleOpen() {
       const requestList = await this.queryRequest()
+      const allowStatus = ['APPROVED', 'PENDING']
 
-      if (requestList.some(item => item.status === 'APPROVED')) {
-        // 审核通过
+      if (requestList.length > 0 && allowStatus.includes(requestList[0].status)) {
         return false
       }
 
       // 先显示Dialog > Form，后面resetFields才能生效
       this.$emit('update:visible', true)
       this.hasRequest = false
-
-      await this.$nextTick()
-
-      const request = requestList.find(item => item.status === 'PENDING')
-
-      if (request) {
-        // 审核中
-        this.hasRequest = true
-        // 填充form
-        Object.assign(this.form, {
-          summary: request.summary,
-          phone: request.phone,
-          email: request.email
-        })
-      }
 
       return true
     },
@@ -168,6 +153,7 @@ export default {
       const result = await this.$axios.get(`api/tcm/feature/connector`, {
         params: {
           filter: JSON.stringify({
+            sort: ['submitTime DESC'],
             where: {
               'metadata.type': this.meta.type
             }
