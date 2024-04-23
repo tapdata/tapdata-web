@@ -42,7 +42,7 @@ export default {
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
   public_status_testing: 'Testing',
-  public_status_wait_run: 'Ready to Start',
+  public_status_wait_run: 'Ready',
   public_status_edit: 'Editing',
   public_status_running: 'Running',
   public_status_starting: 'Starting',
@@ -74,7 +74,10 @@ export default {
   public_status_deleting: 'Deleting',
   public_status_delete_failed: 'Delete Failed',
   public_status_deleted: 'Deleted',
-
+  public_status_task_init: 'Initializing',
+  public_status_do_snapshot: 'Full Sync in Progress',
+  public_status_snapshot_completed: 'Full Sync Completed',
+  public_status_do_cdc: 'Incremental Sync in Progress',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',

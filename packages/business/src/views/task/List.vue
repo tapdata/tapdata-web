@@ -167,6 +167,15 @@
           <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
         </template>
       </el-table-column>
+      <el-table-column
+        prop="syncStatus"
+        :label="$t('packages_dag_components_nodedetaildialog_tongbuzhuangtai')"
+        :min-width="colWidth.status"
+      >
+        <template #default="{ row }">
+          <SyncStatus :status="row.syncStatus" />
+        </template>
+      </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
         <template #default="{ row }">
           {{ formatTime(row.currentEventTimestamp) }}
@@ -369,7 +378,7 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
@@ -394,7 +403,8 @@ export default {
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
-    UpgradeFee
+    UpgradeFee,
+    SyncStatus
   },
 
   mixins: [syncTaskAgent],
