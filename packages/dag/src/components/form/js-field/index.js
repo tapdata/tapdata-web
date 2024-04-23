@@ -29,7 +29,11 @@ export const JsField = observer(
       const form = formRef.value
       const fullscreen = ref(false)
       const showDoc = ref(false)
-      const nodeId = form.values.id
+      const {
+        id: nodeId,
+        attrs: { pdkHash }
+      } = form.values
+      // const pdkHash = form.values.attrs.pdkHash
 
       const toggleFullscreen = () => {
         fullscreen.value = !fullscreen.value
@@ -122,20 +126,30 @@ export const JsField = observer(
       // 模型自动改变
       useAfterTaskSaved(root, formRef.value.values.$inputs, loadFields)
 
+      const loadingApi = ref(false)
+      const showApi = ref(Boolean(pdkHash && props.apiFileName))
       const mdContentRef = ref('')
-      const getPdkDoc = () => {
+      const getApi = () => {
+        loadingApi.value = true
         pdkApi
-          .getStatics('a5af410b12afca476edf4a650c133ddf135bf76542a67787ed6f7f7d53ba712', props.apiFileName)
+          .getStatics(pdkHash, props.apiFileName)
           .then(res => {
             mdContentRef.value = res?.data
           })
+          .finally(() => (loadingApi.value = false))
       }
-      getPdkDoc()
+
+      showApi.value && getApi()
 
       return () => {
         const editorProps = { ...attrs }
         editorProps.options.readOnly = props.disabled
         const tooltip = props.tooltip
+        const apiLink = showApi.value ? (
+          <ElLink class="mr-3" onClick={toggleDoc} type="primary">
+            {props.apiBtnText}
+          </ElLink>
+        ) : null
         const label = (
           <div class="position-absolute flex justify-content-between w-100">
             <div class="flex align-center">
@@ -150,9 +164,7 @@ export const JsField = observer(
               )}
             </div>
             <div class="flex align-center">
-              <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                {props.apiBtnText}
-              </ElLink>
+              {apiLink}
               <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                 <VIcon class="mr-1">fangda</VIcon>
                 {i18n.t('packages_form_js_editor_fullscreen')}
@@ -163,21 +175,23 @@ export const JsField = observer(
 
         return (
           <div class="js-processor font-color-light">
-            <ElDrawer
-              append-to-body
-              modal={false}
-              title={props.apiBtnText}
-              with-header={isDaas}
-              size={680}
-              visible={showDoc.value}
-              on={{
-                ['update:visible']: v => {
-                  showDoc.value = v
-                }
-              }}
-            >
-              <GitBook value={mdContentRef.value}></GitBook>
-            </ElDrawer>
+            {showApi.value && (
+              <ElDrawer
+                append-to-body
+                modal={false}
+                title={props.apiBtnText}
+                size={680}
+                visible={showDoc.value}
+                on={{
+                  ['update:visible']: v => {
+                    showDoc.value = v
+                  }
+                }}
+              >
+                <GitBook v-loading={loadingApi.value} value={mdContentRef.value}></GitBook>
+              </ElDrawer>
+            )}
+
             <div
               class={[
                 'js-processor-editor',
@@ -188,9 +202,7 @@ export const JsField = observer(
             >
               <div class="js-processor-editor-toolbar border-bottom justify-content-between align-center px-4 py-2">
                 <div class="js-editor-toolbar-title fs-6 fw-sub flex-1">{fieldRef.value.title}</div>
-                <ElLink class="mr-3" onClick={toggleDoc} type="primary">
-                  {props.apiBtnText}
-                </ElLink>
+                {apiLink}
                 <ElLink onClick={toggleFullscreen} class="js-editor-fullscreen" type="primary">
                   <VIcon class="mr-1">suoxiao</VIcon> {i18n.t('packages_form_js_editor_exit_fullscreen')}
                 </ElLink>
