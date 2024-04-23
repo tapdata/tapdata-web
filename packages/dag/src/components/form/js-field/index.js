@@ -15,6 +15,7 @@ export const JsField = observer(
       value: String,
       disabled: Boolean,
       tooltip: String,
+      apiFileName: String,
       apiBtnText: {
         type: String,
         default: i18n.t('packages_dag_api_docs')
@@ -123,9 +124,11 @@ export const JsField = observer(
 
       const mdContentRef = ref('')
       const getPdkDoc = () => {
-        pdkApi.doc('5f5a46bfdd6d12449b81f17ffe9e529ce27f8af309b9ca8305d85104203d92d2').then(res => {
-          mdContentRef.value = res?.data
-        })
+        pdkApi
+          .getStatics('a5af410b12afca476edf4a650c133ddf135bf76542a67787ed6f7f7d53ba712', props.apiFileName)
+          .then(res => {
+            mdContentRef.value = res?.data
+          })
       }
       getPdkDoc()
 
