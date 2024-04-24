@@ -64,6 +64,21 @@
             {{ $t('packages_business_paid_connector') }}
           </div>
 
+          <template v-if="isCommunity">
+            <div
+              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+              @click="openGithub"
+            >
+              <VIcon size="16" class="mr-1">github</VIcon>
+              {{ $t('packages_business_more_free_connector') }}
+              <VIcon size="16" class="ml-1">open-in-new</VIcon>
+            </div>
+
+            <div class="px-2">
+              <ElDivider class="my-2"></ElDivider>
+            </div>
+          </template>
+
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
             :class="{ active: (currentScene === item.key || currentScene === item.name) && !search }"
@@ -224,8 +239,10 @@ export default {
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+    const isCommunity = process.env.VUE_APP_MODE === 'community'
     return {
       isDaas,
+      isCommunity,
       search: '',
       formParams: {
         name: '',
@@ -884,6 +901,10 @@ export default {
       }
 
       done()
+    },
+
+    openGithub() {
+      window.open('https://github.com/tapdata/tapdata-connectors', '_blank')
     }
   }
 }
@@ -942,10 +963,10 @@ export default {
     }
 
     .scene-name-list-wrap {
-      width: 196px;
+      min-width: 196px;
 
       &.is-en {
-        width: 218px;
+        min-width: 218px;
       }
     }
 

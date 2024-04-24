@@ -98,6 +98,62 @@ export class UnwindProcessor extends NodeType {
                   tooltip: i18n.t('packages_dag_unwind_preserveNullAndEmptyArrays_tips')
                 }
               },
+              unwindModel: {
+                type: 'string',
+                title: i18n.t('packages_dag_unwind_unwindModel'),
+                default: 'EMBEDDED',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  {
+                    value: 'EMBEDDED',
+                    label: i18n.t('packages_dag_unwind_embedded')
+                  },
+                  {
+                    value: 'FLATTEN',
+                    label: i18n.t('packages_dag_unwind_flatten')
+                  }
+                ],
+                'x-reactions': {
+                  target: '*(arrayModel, joiner)',
+                  fulfill: {
+                    state: {
+                      visible: '{{$self.value === "FLATTEN"}}'
+                    }
+                  }
+                }
+              },
+              arrayModel: {
+                type: 'string',
+                title: i18n.t('packages_dag_unwind_arrayModel'),
+                default: 'OBJECT',
+                'x-decorator': 'FormItem',
+                'x-component': 'Select',
+                enum: [
+                  {
+                    value: 'MIX',
+                    label: i18n.t('packages_dag_unwind_arrayModel_mix')
+                  },
+                  {
+                    value: 'OBJECT',
+                    label: i18n.t('packages_dag_unwind_arrayModel_object')
+                  },
+                  {
+                    value: 'BASIC',
+                    label: i18n.t('packages_dag_unwind_arrayModel_basic')
+                  }
+                ]
+              },
+              joiner: {
+                type: 'string',
+                title: i18n.t('packages_dag_unwind_joiner'),
+                default: '-',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  maxlength: 10
+                }
+              },
 
               schemaPreview: {
                 type: 'void',

@@ -1594,6 +1594,21 @@ export default {
       return error
     },
 
+    validateUnwind() {
+      const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
+      for (let node of nodes) {
+        const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
+        // console.log('childNodes', childNodes)
+        if (childNodes.some(childNode => childNode.dmlPolicy?.insertPolicy !== 'just_insert')) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: i18n.t('packages_dag_unwind_validate_error')
+          })
+          return i18n.t('packages_dag_unwind_validate_error')
+        }
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1627,7 +1642,7 @@ export default {
         this.validateLink,
         this.validateDDL,
         this.validateCustomSql,
-        this.validateTaskType
+        this.validateUnwind
       )
     },
 

@@ -673,6 +673,14 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays: '保留NULL或空數組',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     '如果為true，數組為null或為空數組时輸出文檔。\n如果為false，數組為null或為空數組时不會輸出文檔。',
+  packages_dag_unwind_unwindModel: '展開模式',
+  packages_dag_unwind_embedded: '內嵌對象',
+  packages_dag_unwind_flatten: '平鋪字段',
+  packages_dag_unwind_arrayModel: '數組內元素類型',
+  packages_dag_unwind_arrayModel_mix: '混合類型',
+  packages_dag_unwind_arrayModel_basic: '基本類型',
+  packages_dag_unwind_arrayModel_object: '對象類型',
+  packages_dag_unwind_joiner: '字段連接符',
   packages_dag_btn_disable_node: '禁用節點',
   packages_dag_only_mongodb: '僅支持 MongoDB 數據庫',
   packages_dag_field_inference_list_zidingyileixing: '自訂類型',
@@ -697,5 +705,7 @@ export default {
   packages_dag_ddl_ignore_rules: 'DDL忽略規則',
   packages_dag_ddl_ignore_rules_placeholder: '請輸入正則表達式以忽略特定的DDL',
   packages_dag_ddl_ignore_rules_tip:
-    '當選擇了遇到DDL時任務報錯停止，可以通過正則表達式來配置忽略哪些DDL\n例如：\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)'
+    '當選擇了遇到DDL時任務報錯停止，可以通過正則表達式來配置忽略哪些DDL\n例如：\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
+  packages_dag_just_insert: '僅插入',
+  packages_dag_unwind_validate_error: '當使用Unwind節點時，目標節點寫入策略需要支持僅插入'
 }

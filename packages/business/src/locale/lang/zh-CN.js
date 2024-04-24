@@ -1193,6 +1193,7 @@ export default {
   packages_business__relmig_import_target_connection_placeholder: '请选择您希望数据同步到的目标连接',
   packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它',
   packages_business_paid_connector: '付费数据源',
+  packages_business_more_free_connector: '更多免费数据源',
   packages_business_request_connector_title: '申请试用 Alpha/Beta 数据源',
   packages_business_request_connector_pending: '审批中',
   packages_business_request_connector_pending_desc: '您已提交申请，请等待审批',

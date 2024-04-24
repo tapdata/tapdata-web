@@ -7,6 +7,7 @@
     "start:local": "pnpm --filter dfs start:local",
     "dev:daas": "pnpm --filter daas start:dev",
     "dev:dfs": "pnpm --filter dfs start:dev",
+    "taptest:daas": "pnpm --filter daas taptest",
     "build:daas": "pnpm --filter daas build",
     "build:dfs": "pnpm --filter dfs build",
     "daas": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:test",

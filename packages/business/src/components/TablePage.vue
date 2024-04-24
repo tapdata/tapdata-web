@@ -11,22 +11,33 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify">
-          <Classification
-            :authority="classify.authority"
-            :viewPage="classify.viewPage"
-            :types="classify.types"
-            :title="classify.title"
-            :kai-title="classify.title"
-            @nodeChecked="nodeChecked"
-          ></Classification>
-        </div>
+        <Classification
+          v-if="classify && !hideClassify"
+          :visible="classificationVisible"
+          ref="classification"
+          :comTitle="classify.comTitle"
+          :authority="classify.authority"
+          :viewPage="classify.viewPage"
+          :types="classify.types"
+          :title="classify.title"
+          :kai-title="classify.title"
+          :dragState="dragState"
+          @nodeChecked="nodeChecked"
+          @update:visible="classificationVisible = $event"
+          @drop-in-tag="fetch()"
+        ></Classification>
         <div class="table-page-body">
           <div class="table-page-nav">
             <slot name="nav"></slot>
           </div>
-          <div class="table-page-topbar">
-            <div class="table-page-search-bar">
+          <div class="table-page-topbar py-3" :class="{ 'pl-3': classificationVisible }">
+            <div class="table-page-search-bar flex align-center">
+              <IconButton
+                v-if="classify && !hideClassify && !classificationVisible"
+                class="mx-2 rotate-180"
+                @click="handleToggleClassify"
+                >expand-list</IconButton
+              >
               <slot name="search"></slot>
             </div>
             <div class="table-page-operation-bar">
@@ -37,15 +48,19 @@
             ref="table"
             v-loading="loading"
             class="table-page-table"
+            :row-class-name="classificationVisible ? 'grabbable' : ''"
             height="100%"
             :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"
             :span-method="spanMethod"
             :data="list"
             :default-sort="defaultSort"
-            :draggable="draggable"
+            :draggable="draggable || classificationVisible"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
+            @row-dragstart="handleDragStart"
+            @row-dragend="handleDragEnd"
+            @select="onSelectRow"
             v-on="$listeners"
           >
             <slot></slot>
@@ -82,8 +97,9 @@
 </template>
 
 <script>
-import { delayTrigger } from '@tap/shared'
-import { VIcon, Classification, ProTable } from '@tap/component'
+import { delayTrigger, on, off } from '@tap/shared'
+import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
+import { makeDragNodeImage } from '../shared'
 
 import SelectClassify from './SelectClassify'
 
@@ -92,7 +108,8 @@ export default {
     Classification,
     SelectClassify,
     VIcon,
-    ProTable
+    ProTable,
+    IconButton
   },
   props: {
     title: String,
@@ -126,11 +143,33 @@ export default {
       list: [],
       multipleSelection: [],
       tags: [],
-      classifyDialogVisible: false
+      classificationVisible: false,
+      dragState: {
+        isDragging: false,
+        draggingObjects: [],
+        dropNode: null,
+        allowDrop: true
+      },
+      draggingNodeImage: null,
+      shiftKeyPressed: false
     }
   },
   mounted() {
     this.fetch(1)
+    this.handleKeyDown = ev => {
+      this.shiftKeyPressed = ev.shiftKey
+    }
+    this.handleKeyUp = ev => {
+      setTimeout(() => {
+        this.shiftKeyPressed = false
+      }, 0)
+    }
+    on(document, 'keydown', this.handleKeyDown)
+    on(document, 'keyup', this.handleKeyUp)
+  },
+  beforeDestroy() {
+    off(document, 'keydown', this.handleKeyDown)
+    off(document, 'keyup', this.handleKeyUp)
   },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
@@ -139,6 +178,7 @@ export default {
         this.multipleSelection = []
         this.$emit('selection-change', [])
         this.$refs?.table?.clearSelection()
+        this.lastSelectIndex = undefined
       }
       this.page.current = pageNum || this.page.current
       this.$nextTick(() => {
@@ -199,6 +239,61 @@ export default {
     },
     clearSelection() {
       this.$refs?.table?.clearSelection()
+    },
+    handleToggleClassify() {
+      this.$refs.classification.toggle()
+    },
+    handleDragStart(row, column, ev) {
+      if (!row.id || !row.name) return false
+
+      this.dragState.isDragging = true
+      let selection = this.multipleSelection
+
+      if (selection.find(it => it.id === row.id)) {
+        this.dragState.draggingObjects = selection
+      } else {
+        this.dragState.draggingObjects = [row]
+      }
+
+      this.draggingNodeImage = makeDragNodeImage(
+        ev.currentTarget.querySelector('.tree-item-icon'),
+        row.name,
+        this.dragState.draggingObjects.length
+      )
+      ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
+    },
+    handleDragEnd() {
+      this.dragState.isDragging = false
+      this.dragState.draggingObjects = []
+      this.dragState.dropNode = null
+      document.body.removeChild(this.draggingNodeImage)
+      this.draggingNodeImage = null
+    },
+    onSelectRow(selection, current) {
+      try {
+        const selected = selection.some(row => row.id === current.id)
+
+        if (this.shiftKeyPressed && this.multipleSelection.length && this.lastSelectIndex !== undefined) {
+          let lastIndex = this.lastSelectIndex
+          let currentIndex = this.list.findIndex(row => row.id === current.id)
+
+          if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
+            const tmp = currentIndex < lastIndex ? -1 : 1
+
+            // 先触发selection-change
+            setTimeout(() => {
+              while (lastIndex !== currentIndex) {
+                this.$refs.table.toggleRowSelection(this.list[lastIndex], selected)
+                lastIndex += tmp
+              }
+            }, 0)
+          }
+        }
+
+        this.lastSelectIndex = selected ? this.list.findIndex(row => row.id === current.id) : undefined
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
@@ -264,7 +359,6 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 8px 0 0 0;
     // background-color: map-get($bgColor, white);
     border-radius: 4px;
     .el-table--border {
@@ -274,13 +368,9 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      flex-wrap: wrap-reverse;
-      .table-page-search-bar {
-        margin: 0 5px 12px 0;
-      }
+      //flex-wrap: wrap-reverse;
 
       .table-page-operation-bar {
-        margin-bottom: 10px;
         text-align: right;
       }
     }

@@ -305,11 +305,10 @@ export default {
           name: i18n.t('packages_dag_src_editor_leixingguolu'),
           type: 'field_mod_type_filter_processor'
         },
-        {
-          // name: i18n.t('packages_dag_unwind_name'),
-          name: 'Unwind',
-          type: 'unwind_processor'
-        },
+        // {
+        //   name: 'Unwind',
+        //   type: 'unwind_processor'
+        // },
         {
           name: i18n.t('packages_dag_time_field_injection'),
           type: 'add_date_field_processor'

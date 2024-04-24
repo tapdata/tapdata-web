@@ -266,6 +266,7 @@ export default {
       this.uploading = false
       if (response.code !== 'ok') {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
+        this.importForm.fileList.forEach(file => (file.status = 'ready'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
         this.$emit('success')

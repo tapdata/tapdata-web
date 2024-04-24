@@ -298,5 +298,6 @@ export default {
 
   public_page_title_advanced_features: '高級功能',
 
-  public_please_wait: '請稍等...'
+  public_please_wait: '請稍等...',
+  public_view_all: '查看全部'
 }
