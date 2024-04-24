@@ -634,13 +634,6 @@ export default {
             })
           }
 
-          if (list.length > 3) {
-            list[0].syncStatus = 'task_init'
-            list[1].syncStatus = 'do_snapshot'
-            list[2].syncStatus = 'snapshot_completed'
-            list[3].syncStatus = 'do_cdc'
-          }
-
           return {
             total: data.total,
             data: list
