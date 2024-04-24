@@ -74,6 +74,10 @@ export default {
   public_status_deleting: '删除中',
   public_status_delete_failed: '删除失败',
   public_status_deleted: '已删除',
+  public_status_task_init: '初始化中',
+  public_status_do_snapshot: '全量进行中',
+  public_status_snapshot_completed: '全量已完成',
+  public_status_do_cdc: '增量进行中',
 
   // 按钮
   public_button_edit: '编辑',
