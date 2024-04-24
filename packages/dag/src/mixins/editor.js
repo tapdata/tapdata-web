@@ -143,6 +143,7 @@ export default {
       'toggleConsole',
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
+      'setPdkDoubleActiveMap',
       'setMaterializedViewVisible'
     ]),
 
@@ -2387,6 +2388,7 @@ export default {
         })
       })
       let tagsMap = {}
+      let doubleActiveMap = {}
       let propertiesMap = {}
 
       databaseItems.forEach(({ properties, pdkHash, tags }) => {
@@ -2398,9 +2400,13 @@ export default {
         if (tags?.includes('schema-free')) {
           tagsMap[pdkHash] = true
         }
+        if (tags?.includes('doubleActive')) {
+          doubleActiveMap[pdkHash] = true
+        }
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
+      this.setPdkDoubleActiveMap(doubleActiveMap)
 
       console.log(propertiesMap, tagsMap) // eslint-disable-line
     },

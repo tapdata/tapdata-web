@@ -80,6 +80,7 @@ const getState = () => ({
   showConsole: false,
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
+  pdkDoubleActiveMap: {},
   taskSaving: false,
   materializedViewVisible: false
 })
@@ -936,6 +937,10 @@ const mutations = {
 
   setPdkSchemaFreeMap(state, map) {
     Vue.set(state, 'pdkSchemaFreeMap', map)
+  },
+
+  setPdkDoubleActiveMap(state, map) {
+    Vue.set(state, 'pdkDoubleActiveMap', map)
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {

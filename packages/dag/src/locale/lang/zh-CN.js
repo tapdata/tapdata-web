@@ -712,5 +712,6 @@ export default {
   packages_dag_ddl_ignore_rules_tip:
     '当选择了遇到DDL时任务报错停止，可以通过正则表达式来配置忽略哪些DDL\n例如：\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
   packages_dag_just_insert: '仅插入',
-  packages_dag_unwind_validate_error: '当使用Unwind节点时，目标节点写入策略需要支持仅插入'
+  packages_dag_unwind_validate_error: '当使用Unwind节点时，目标节点写入策略需要支持仅插入',
+  packages_dag_doubleActive: '双活'
 }
