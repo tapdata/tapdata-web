@@ -138,33 +138,38 @@
       </el-table-column>
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name flex">
-            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
+          <div class="dataflow-name flex flex-wrap">
+            <span v-if="handleClickNameDisabled(row)" class="mr-1">{{ row.name }}</span>
             <ElLink
               v-else
               role="ellipsis"
               type="primary"
-              class="justify-content-start ellipsis block"
+              class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
+            <span v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
+              <span class="tag" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType">
-        <template #default="{ row }">
-          <span>
+          </div>
+          <div class="fs-8 font-color-sslight lh-base">
             {{ row.type ? taskType[row.type] : '' }}
-          </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="syncStatus"
+        :label="$t('packages_dag_components_nodedetaildialog_tongbuzhuangtai')"
+        :min-width="colWidth.syncStatus"
+      >
+        <template #default="{ row }">
+          <SyncStatus :status="row.syncStatus" />
         </template>
       </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
@@ -177,7 +182,7 @@
           {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
+      <el-table-column fixed="right" :label="$t('public_operation')" :width="colWidth.operation">
         <div v-if="isDaas" slot="header" class="flex align-center">
           <span>{{ $t('public_operation_available') }}</span>
           <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
@@ -369,7 +374,7 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
@@ -394,7 +399,8 @@ export default {
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
-    UpgradeFee
+    UpgradeFee,
+    SyncStatus
   },
 
   mixins: [syncTaskAgent],
@@ -477,11 +483,13 @@ export default {
         ? {
             taskType: 140,
             status: 145,
+            syncStatus: 180,
             operation: 340
           }
         : {
             taskType: 80,
             status: 110,
+            syncStatus: 110,
             operation: 280
           }
     },
@@ -1235,15 +1243,14 @@ export default {
 
     .dataflow-name {
       .tag {
-        padding: 2px 5px;
+        padding: 0 4px;
         font-style: normal;
         font-weight: 400;
-        font-size: 10px;
-        line-height: 14px;
+        font-size: 12px;
+        line-height: 20px;
         color: map-get($color, tag);
         border: 1px solid map-get($bgColor, tag);
-        border-radius: 2px;
-        margin-left: 5px;
+        border-radius: 4px;
       }
 
       .name {
