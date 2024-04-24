@@ -20,11 +20,7 @@
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
         <!--线下部署-->
-        <div
-          v-if="isDomesticStation"
-          class="command-item cursor-pointer flex align-center gap-1 rounded-4"
-          @click="goOfflineDeploy"
-        >
+        <div class="command-item cursor-pointer flex align-center gap-1 rounded-4" @click="goOfflineDeploy">
           <VIcon size="16">deploy</VIcon>
           <span> {{ $t('dfs_offline_deployment') }} </span>
         </div>
@@ -250,7 +246,12 @@ export default {
       window.open(this.$store.state.config.slackLink, '_blank')
     },
     goOfflineDeploy() {
-      window.open('https://tapdata.net/tapdata-on-prem/demo.html')
+      window.open(
+        this.isDomesticStation
+          ? 'https://tapdata.net/tapdata-on-prem/demo.html'
+          : 'https://tapdata.mike-x.com/lV5o0?m=QkkvTrNtVq6jvQpX',
+        '_blank'
+      )
     },
 
     loadUserMock() {
