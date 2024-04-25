@@ -165,7 +165,7 @@
       </el-table-column>
       <el-table-column
         prop="syncStatus"
-        :label="$t('packages_dag_components_nodedetaildialog_tongbuzhuangtai')"
+        :label="$t('packages_business_task_monitor_mission_milestone')"
         :min-width="colWidth.syncStatus"
       >
         <template #default="{ row }">
@@ -385,7 +385,7 @@ import PermissionseSettingsCreate from '../../components/permissionse-settings/C
 import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
-import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import { makeStatusAndDisabled, STATUS_MAP, MILESTONE_TYPE } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 
 export default {
@@ -547,7 +547,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type, agentId } = this.searchParams
+      let { keyword, status, type, agentId, syncStatus } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -575,7 +575,8 @@ export default {
         shareCdcStop: true,
         shareCdcStopMessage: true,
         taskRetryStartTime: true,
-        errorEvents: true
+        errorEvents: true,
+        syncStatus: true
       }
       let where = {
         syncType
@@ -600,6 +601,9 @@ export default {
       }
       if (agentId) {
         where['agentId'] = agentId
+      }
+      if (syncStatus) {
+        where.syncStatus = syncStatus
       }
       let filter = {
         order: this.order,
@@ -667,6 +671,16 @@ export default {
           key: 'type',
           type: 'select-inner',
           items: this.typeOptions
+        },
+        {
+          label: this.$t('packages_business_task_monitor_mission_milestone'),
+          key: 'syncStatus',
+          type: 'select-inner',
+          items: [
+            { label: this.$t('public_select_option_all'), value: '' },
+            ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key }))
+          ],
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('public_task_name'),

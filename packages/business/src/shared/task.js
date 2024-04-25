@@ -198,3 +198,21 @@ export function makeStatusAndDisabled(item) {
 
   return item
 }
+
+export const MILESTONE_TYPE = {
+  TASK: {
+    text: i18n.t('packages_business_milestone_list_renwudiaodu')
+  },
+  DATA_NODE_INIT: {
+    text: i18n.t('packages_business_milestone_list_shujujiedianchu')
+  },
+  TABLE_INIT: {
+    text: i18n.t('packages_business_milestone_list_biaojiegouqianyi')
+  },
+  SNAPSHOT: {
+    text: i18n.t('packages_business_milestone_list_quanliangshujuqian')
+  },
+  CDC: {
+    text: i18n.t('packages_business_milestone_list_jinruzengliangshu')
+  }
+}
