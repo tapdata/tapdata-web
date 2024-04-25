@@ -417,12 +417,15 @@ import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 
+const isCommunity = process.env.VUE_APP_MODE === 'community'
+
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
   {
     name: 'dataConsole',
     icon: 'process-platform',
-    code: 'v2_data-console'
+    code: 'v2_data-console',
+    hidden: isCommunity
   },
   { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
   {
@@ -465,6 +468,7 @@ let menuSetting = [
     label: 'page_title_data_service',
     icon: 'apiServer_navbar',
     code: 'v2_data-server',
+    hidden: isCommunity,
     children: [
       { name: 'apiApplication', code: 'v2_api-application', parent: 'apiApplication' },
       { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },

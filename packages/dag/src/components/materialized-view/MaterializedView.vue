@@ -10,7 +10,7 @@
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">{{ $t('packages_dag_materialized_view') }}</div>
-        <ElButton v-if="isDaas" type="text" class="ml-4 color-warning" @click="handleOpenHelp"
+        <ElButton v-if="!isDaas" type="text" class="ml-4 color-warning" @click="handleOpenHelp"
           ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
         >
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
