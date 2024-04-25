@@ -195,6 +195,7 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
+              data-testid="start-task"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id], row)"
             >
@@ -205,6 +206,7 @@
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="force-stop-task"
                 :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
@@ -214,6 +216,7 @@
                 v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="stop-task"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
@@ -229,6 +232,7 @@
               v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="edit-task"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
@@ -242,6 +246,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="monitor-task"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="toDetail(row)"
             >
@@ -252,6 +257,7 @@
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="reset-task"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
@@ -266,6 +272,7 @@
               v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="copy-task"
               :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
@@ -280,6 +287,7 @@
               v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="delete-task"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
