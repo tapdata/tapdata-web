@@ -60,21 +60,17 @@
       <ElTableColumn v-if="isDaas" type="selection" width="45" align="center" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
         <template #default="{ row }">
-          <span class="connection-name flex flex-wrap">
-            <img class="connection-img mr-2" :src="getConnectionIcon(row.pdkHash)" alt="" />
-            <ElLink
-              role="ellipsis"
-              type="primary"
-              class="justify-content-start ellipsis block mr-1"
-              style="line-height: 20px"
-              @click.stop="preview(row)"
-            >
-              {{ row.name }}
-            </ElLink>
-            <span v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
-              <span class="tag" v-for="item in row.listtags"> {{ item.value }} </span>
-            </span>
-          </span>
+          <div class="connection-name flex flex-wrap gap-1">
+            <div class="flex gap-1 overflow-hidden">
+              <img class="connection-img" :src="getConnectionIcon(row.pdkHash)" alt="" />
+              <ElLink class="ellipsis block lh-base" type="primary" @click.stop="preview(row)">
+                {{ row.name }}
+              </ElLink>
+            </div>
+            <div v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
+              <span class="tag" v-for="(item, i) in row.listtags" :key="i"> {{ item.value }} </span>
+            </div>
+          </div>
         </template>
       </ElTableColumn>
       <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
