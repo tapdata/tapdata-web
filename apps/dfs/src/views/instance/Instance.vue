@@ -615,7 +615,7 @@ export default {
         },
         {
           label: this.$t('dfs_instance_instance_subscribe_time'),
-          value: 'periodStartTime'
+          value: 'agentCreateTime'
         },
         {
           label: this.$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
