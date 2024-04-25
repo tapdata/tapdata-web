@@ -264,7 +264,7 @@ export default {
   packages_business_connections_databaseform_mingchengguizezhong:
     'Name rules: start with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, dashes, underscores, spaces',
   packages_business_connections_databaseform_zhongyingkaitouge:
-    'Begin with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, underscores, underscores, spaces',
+    'omit the mention of Chinese, 1 to 100 characters, can include Chinese and English, numbers, underscores, underscores, spaces',
   packages_business_connections_list_renwuzongshu: 'Total number of tasks: ',
   packages_business_connections_list_gailianjieyibei:
     'The connection has been invoked by the task listed below. Please either remove the task or adjust the settings and attempt to connect again.',
@@ -1254,8 +1254,8 @@ export default {
   packages_business__relmig_import_target_connection_placeholder:
     'Please select the destination connection you want the data to be synchronized to',
   packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
-  packages_business_paid_connector: 'Paid Data Source',
-  packages_business_more_free_connector: 'More Free Data Sources',
+  packages_business_paid_connector: 'Premium Connectors',
+  packages_business_more_free_connector: 'More Free Connectors',
   packages_business_request_connector_title: 'Apply for Alpha/Beta Data Source Trial',
   packages_business_request_connector_pending: 'Pending Approval',
   packages_business_request_connector_pending_desc: 'You have submitted your application. Please wait for approval.',
