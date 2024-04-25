@@ -126,7 +126,9 @@
           </ElTooltip>
         </div>
         <template slot-scope="scope">
-          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('public_connection_button_test') }} </ElButton>
+          <ElButton data-testid="test-connection" type="text" @click="testConnection(scope.row)"
+            >{{ $t('public_connection_button_test') }}
+          </ElButton>
           <ElDivider direction="vertical"></ElDivider>
           <ElTooltip
             :disabled="!isFileSource(scope.row)"
@@ -136,6 +138,7 @@
             <span>
               <ElButton
                 type="text"
+                data-testid="load-schema"
                 :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
                 @click="handleLoadSchema(scope.row)"
                 >{{ $t('public_connection_button_load_schema') }}
@@ -147,6 +150,7 @@
             v-if="havePermission(scope.row.permissionActions, 'Edit')"
             v-readonlybtn="'datasource_edition'"
             type="text"
+            data-testid="edit-connection"
             :disabled="
               $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
@@ -164,6 +168,7 @@
             v-if="buttonShowMap.copy"
             v-readonlybtn="'datasource_creation'"
             type="text"
+            data-testid="copy-connection"
             :loading="scope.row.copyLoading"
             :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
             @click="copy(scope.row)"
@@ -174,6 +179,7 @@
             v-if="havePermission(scope.row.permissionActions, 'Delete')"
             v-readonlybtn="'datasource_delete'"
             type="text"
+            data-testid="delete-connection"
             :disabled="
               $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
               $disabledReadonlyUserBtn() ||
