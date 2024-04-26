@@ -4,7 +4,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { createForm, onFormInputChange, onFormValuesChange, onFieldValueChange } from '@formily/core'
+import { createForm, onFieldValueChange, onFieldInputValueChange } from '@formily/core'
 import { Path } from '@formily/path'
 
 import { taskApi } from '@tap/api'
@@ -242,25 +242,27 @@ export default {
 
     // 绑定表单事件
     useEffects() {
-      onFormValuesChange(form => {
+      /*onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
         this.updateNodePropsDebounce(form)
       })
 
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
+        this.updateNodeProps(form)
+      })*/
+
+      onFieldInputValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
         this.updateNodeProps(form)
       })
-
-      if (this.scope.$isMonitor) {
-        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
-          this.lazySaveNodeAlarmConfig()
-        })
-      }
+      onFieldValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
+        this.updateNodePropsDebounce(form)
+      })
+      onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
+        this.lazySaveNodeAlarmConfig()
+      })
     },
 
     confirmNodeHasError() {
@@ -272,14 +274,16 @@ export default {
     },
 
     saveNodeAlarmConfig() {
+      const formValues = this.form.values
       this.updateNodeProperties({
-        id: this.form.values.id,
-        properties: JSON.parse(JSON.stringify(this.form.values))
+        id: formValues.id,
+        properties: JSON.parse(JSON.stringify(formValues))
       })
 
-      taskApi.patch({
-        id: this.$store.state.dataflow.taskId,
-        dag: this.$store.state.dataflow.dag
+      taskApi.updateTaskAlarm({
+        nodeId: formValues.id,
+        alarmRules: formValues.alarmRules,
+        alarmSettings: formValues.alarmSettings
       })
     }
   }
