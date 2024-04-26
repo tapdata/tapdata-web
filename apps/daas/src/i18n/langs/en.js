@@ -1880,7 +1880,7 @@ export default {
     'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. ',
   daas_feature_unavailable: 'Restricted Feature',
   daas_feature_unavailable_subtitle:
-    'Sorry, the current version does not support this feature. You can apply for an upgrade to the enterprise version or directly register for the cloud version to use this feature.',
+    'This feature is only available in Enterprise and/or Cloud versions. Please sign up for our cloud version or contact us for Enterprise version.',
   daas_feature_unavailable_upgrade_dec: "By upgrading , you'll get:",
   daas_feature_unavailable_upgrade_dec_li1: 'Data validation (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li2: 'CDC Log Cache',
