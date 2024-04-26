@@ -1393,8 +1393,8 @@ export default observer({
         return
       }
 
-      taskApi.patch({
-        id: values.id,
+      taskApi.updateTaskAlarm({
+        taskId: values.id,
         alarmSettings: values.alarmSettings,
         alarmRules: values.alarmRules
       })
