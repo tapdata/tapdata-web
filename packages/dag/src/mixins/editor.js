@@ -2207,6 +2207,14 @@ export default {
           this.handlePageReturn()
           return
         }
+
+        if (data.errorEvents?.length) {
+          // 清除 stacks
+          data.errorEvents.forEach(event => {
+            delete event.stacks
+          })
+        }
+
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         // 共享缓存
         data.syncType = data.shareCache ? 'shareCache' : data.syncType
@@ -2232,6 +2240,13 @@ export default {
         const data = await taskApi.get(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
+          if (data.errorEvents?.length) {
+            // 清除 stacks
+            data.errorEvents.forEach(event => {
+              delete event.stacks
+            })
+          }
+
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs
 

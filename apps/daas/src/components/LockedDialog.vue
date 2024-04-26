@@ -56,7 +56,7 @@ export default {
     },
     goOP() {
       this.handleClose()
-      window.open('https://tapdata.mike-x.com/xDQ0K')
+      window.open('https://tapdata.mike-x.com/lV5o0?m=3VXe4lCHe9LjBsda')
     },
     goCloud() {
       this.handleClose()
