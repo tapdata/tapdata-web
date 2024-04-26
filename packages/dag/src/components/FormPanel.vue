@@ -281,6 +281,7 @@ export default {
       })
 
       taskApi.updateTaskAlarm({
+        taskId: this.scope.$settings.id,
         nodeId: formValues.id,
         alarmRules: formValues.alarmRules,
         alarmSettings: formValues.alarmSettings
