@@ -599,6 +599,13 @@ export default {
         .then(data => {
           let errorTaskIds = []
           let list = (data?.items || []).map(item => {
+            if (item.errorEvents?.length) {
+              // 清除 stacks
+              item.errorEvents.forEach(event => {
+                delete event.stacks
+              })
+            }
+
             makeStatusAndDisabled(item)
             if (item.status === 'error') {
               errorTaskIds.push(item.id)
