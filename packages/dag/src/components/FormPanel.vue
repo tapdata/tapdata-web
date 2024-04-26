@@ -7,7 +7,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { createForm, onFieldValueChange, onFieldInputValueChange } from '@formily/core'
 import { Path } from '@formily/path'
 
-import { taskApi } from '@tap/api'
+import { alarmApi } from '@tap/api'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
@@ -280,7 +280,7 @@ export default {
         properties: JSON.parse(JSON.stringify(formValues))
       })
 
-      taskApi.updateTaskAlarm({
+      alarmApi.updateTaskAlarm({
         taskId: this.scope.$settings.id,
         nodeId: formValues.id,
         alarmRules: formValues.alarmRules,

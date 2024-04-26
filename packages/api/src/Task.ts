@@ -1,33 +1,6 @@
 import Http from './Http'
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { AxiosResponse } from 'axios'
-
-export interface AlarmRuleVO {
-  /**
-   * -1 小于等于 <= ; 0; 1 大于等于 >=
-   */
-  equalsFlag?: number | null
-  key?: Key
-  /**
-   * 毫秒
-   */
-  ms?: number | null
-  point?: number | null
-  [property: string]: any
-}
-
-export interface AlarmSettingVO {
-  interval?: number | null
-  key?: Key
-  notify?: Notify[] | null
-  open?: boolean | null
-  params?: MapObject
-  sort?: number | null
-  type?: Type
-  unit?: Unit
-  [property: string]: any
-}
 
 export default class Task extends Http {
   constructor() {
@@ -243,15 +216,6 @@ export default class Task extends Http {
 
   skipErrorEvents(taskId, ids) {
     return this.axios.post(`${this.url}/skipErrorEvents/${taskId}`, ids)
-  }
-
-  updateTaskAlarm(params: {
-    alarmRules?: AlarmRuleVO[] | null
-    alarmSettings?: AlarmSettingVO[] | null
-    nodeId?: null | string
-    taskId?: null | string
-  }) {
-    return this.axios.post(`${this.url}/updateTaskAlarm`, params)
   }
 }
 export { Task }

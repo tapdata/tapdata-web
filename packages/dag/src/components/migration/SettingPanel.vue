@@ -1393,7 +1393,7 @@ export default observer({
         return
       }
 
-      taskApi.updateTaskAlarm({
+      alarmApi.updateTaskAlarm({
         taskId: values.id,
         alarmSettings: values.alarmSettings,
         alarmRules: values.alarmRules
