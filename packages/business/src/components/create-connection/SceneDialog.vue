@@ -359,7 +359,7 @@ export default {
               },
               {
                 type: 'Dameng',
-                name: 'Aliyun RDS MySQL',
+                name: 'Dameng',
                 qcType: 'Beta',
                 icon: 'dameng.png',
                 tags: ['Database'],
