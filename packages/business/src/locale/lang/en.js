@@ -1207,7 +1207,7 @@ export default {
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
   packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
   packages_business_notice_list_gonggaobiaoti: 'Notice Title',
-  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission are disabled',
   packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
   packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
   packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',

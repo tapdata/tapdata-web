@@ -16,9 +16,14 @@
             <VIcon size="14">warning</VIcon>
             <span class="content ml-2">{{ $t('daas_notification_alarmnotification_gaojingtongzhi') }}</span>
           </li>
-          <li :class="{ active: activePanel === 'alarm' }" @click="selectPanel('alarm')">
+          <li
+            :class="{ active: activePanel === 'alarm' }"
+            @click="lockedFeature.alarmSetting ? openLocked() : selectPanel('alarm')"
+            class="flex align-center pr-4"
+          >
             <VIcon size="14">notice-system</VIcon>
             <span class="content ml-2">{{ $t('daas_notification_center_xitonggaojing') }}</span>
+            <VIcon v-if="lockedFeature.alarmSetting" size="24">lock-circle</VIcon>
           </li>
         </ul>
       </div>
@@ -40,6 +45,7 @@ import { AlarmNotification } from '@tap/business'
 import { mapState } from 'vuex'
 
 export default {
+  inject: ['lockedFeature', 'openLocked'],
   components: {
     SystemNotification,
     UserNotification,
