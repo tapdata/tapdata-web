@@ -192,7 +192,7 @@ export default {
   module_form_available_query_field: 'Available query field',
   module_form_required_query_field: 'Required query conditions',
   module_form_validator_name:
-    'Can only contain Chinese, letters, numbers, underscores and dollar signs, and numbers cannot start with',
+    'Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start with',
   module_form_create_a_new_record: 'Create a new record',
   module_form_get_record_by_id: 'Get records based on id',
   module_form_update_record_by_id: 'Update record according to id',

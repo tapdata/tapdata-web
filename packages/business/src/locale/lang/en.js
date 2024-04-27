@@ -262,9 +262,9 @@ export default {
   packages_business_connections_databaseform_cicaozuohuidiu:
     'The current connection being established will be lost as a result of this operation.',
   packages_business_connections_databaseform_mingchengguizezhong:
-    'Name rules: start with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, dashes, underscores, spaces',
+    'Name rules: start with letters, 1 to 100 characters, can include letters, numbers, dashes, underscores, spaces',
   packages_business_connections_databaseform_zhongyingkaitouge:
-    'omit the mention of Chinese, 1 to 100 characters, can include Chinese and English, numbers, underscores, underscores, spaces',
+    'Start with letters, 1 to 100 characters, can include letters, numbers, underscores, underscores, spaces',
   packages_business_connections_list_renwuzongshu: 'Total number of tasks: ',
   packages_business_connections_list_gailianjieyibei:
     'The connection has been invoked by the task listed below. Please either remove the task or adjust the settings and attempt to connect again.',
