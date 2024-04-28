@@ -763,5 +763,6 @@ export default {
   packages_dag_just_insert: 'Insert Only',
   packages_dag_unwind_validate_error:
     'When using the Unwind node, the target node write strategy should support "insert-only".',
-  packages_dag_doubleActive: 'Double Active'
+  packages_dag_doubleActive: 'Double Active',
+  packages_dag_time_zone_offset: 'Time Zone Offset'
 }

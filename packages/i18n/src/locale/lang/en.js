@@ -304,5 +304,26 @@ export default {
   public_page_title_advanced_features: 'Advanced',
 
   public_please_wait: 'Please wait a moment...',
-  public_view_all: 'View All'
+  public_view_all: 'View All',
+
+  public_today: 'Today',
+  public_yesterday: 'Yesterday',
+  public_this_hour: 'This Hour',
+  public_this_week: 'This Week',
+  public_this_month: 'This Month',
+  public_this_year: 'This Year',
+  public_last_week: 'Last Week',
+  public_last_month: 'Last Month',
+  public_last_hour: 'Last Hour',
+  public_last_year: 'Last Year',
+  public_date_past: 'Past',
+  public_date_past_val: 'Previous',
+  public_date_current: 'Now',
+  public_date_relative: 'Relative Dates',
+  public_date_specific: 'Specific Dates',
+  public_unit_hour: 'hours',
+  public_unit_day: 'days',
+  public_unit_week: 'weeks',
+  public_unit_month: 'months',
+  public_unit_year: 'years'
 }

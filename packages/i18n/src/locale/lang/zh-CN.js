@@ -304,5 +304,26 @@ export default {
   public_page_title_advanced_features: '高级功能',
 
   public_please_wait: '请稍等...',
-  public_view_all: '查看全部'
+  public_view_all: '查看全部',
+
+  public_today: '今天',
+  public_yesterday: '昨天',
+  public_this_week: '本周',
+  public_this_hour: '当前小时',
+  public_this_month: '本月',
+  public_this_year: '今年',
+  public_last_week: '上周',
+  public_last_month: '上个月',
+  public_last_hour: '上个小时',
+  public_last_year: '去年',
+  public_date_past: '过去',
+  public_date_past_val: '过去',
+  public_date_current: '现在',
+  public_date_relative: '相对日期',
+  public_date_specific: '具体日期',
+  public_unit_hour: '小时',
+  public_unit_day: '天',
+  public_unit_week: '周',
+  public_unit_month: '月',
+  public_unit_year: '年'
 }

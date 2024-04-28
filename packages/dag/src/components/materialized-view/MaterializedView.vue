@@ -216,7 +216,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    isDomesticStation() {
+      return this.$store.getters.isDomesticStation
+    },
     ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
