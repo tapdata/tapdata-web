@@ -2211,11 +2211,18 @@ export default {
         // 共享缓存
         data.syncType = data.shareCache ? 'shareCache' : data.syncType
         this.reformDataflow(data)
-        this.setTaskInfo(this.dataflow)
+        this.setTaskInfo({
+          id: data.id,
+          syncType: data.syncType,
+          testTaskId: data.testTaskId,
+          taskRecordId: data.taskRecordId
+        })
         this.startLoopTask(id)
         this.titleSet()
+        console.log('任务data', data)
         return data
       } catch (e) {
+        console.error(e)
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
         this.handlePageReturn()
       } finally {
