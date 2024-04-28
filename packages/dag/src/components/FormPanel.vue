@@ -4,7 +4,13 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { createForm, onFieldValueChange, onFieldInputValueChange } from '@formily/core'
+import {
+  createForm,
+  onFormValuesChange,
+  onFormInputChange,
+  onFieldValueChange,
+  onFieldInputValueChange
+} from '@formily/core'
 import { Path } from '@formily/path'
 
 import { alarmApi } from '@tap/api'
@@ -242,7 +248,9 @@ export default {
 
     // 绑定表单事件
     useEffects() {
-      /*onFormValuesChange(form => {
+      // FIXME 目前无法区分告警配置的修改，
+      // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
+      onFormValuesChange(form => {
         if (this.stateIsReadonly) return
         this.updateNodePropsDebounce(form)
       })
@@ -250,16 +258,17 @@ export default {
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
         this.updateNodeProps(form)
-      })*/
+      })
 
-      onFieldInputValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+      /*onFieldInputValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
         if (this.stateIsReadonly) return
         this.updateNodeProps(form)
       })
       onFieldValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
         if (this.stateIsReadonly) return
         this.updateNodePropsDebounce(form)
-      })
+      })*/
+
       onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
         this.lazySaveNodeAlarmConfig()
       })
