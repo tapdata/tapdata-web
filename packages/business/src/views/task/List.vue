@@ -576,7 +576,8 @@ export default {
         shareCdcStopMessage: true,
         taskRetryStartTime: true,
         errorEvents: true,
-        syncStatus: true
+        syncStatus: true,
+        restartFlag: true
       }
       let where = {
         syncType
