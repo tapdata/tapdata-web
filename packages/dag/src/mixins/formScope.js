@@ -739,7 +739,7 @@ export default {
         useSyncConnection: async field => {
           const id = field.value
           const form = field.form
-          const connection = await connectionsApi.get(id)
+          const connection = await connectionsApi.getNoSchema(id)
 
           if (!connection) {
             console.error('ConnectionNotFound', id) // eslint-disable-line
