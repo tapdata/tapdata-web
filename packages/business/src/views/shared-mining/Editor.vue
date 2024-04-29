@@ -50,7 +50,9 @@
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
-      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">{{ $t('packages_dag_config_datasource') }}</div>
+      <div v-if="schemaData" class="border-bottom mb-3 fs-6 fw-bold font-color-normal">
+        {{ $t('packages_dag_config_datasource') }}
+      </div>
       <SchemaToForm
         ref="schemaToForm"
         :schema="schemaData"
@@ -69,7 +71,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { logcollectorApi, taskApi, databaseTypesApi } from '@tap/api'
+import { logcollectorApi, taskApi, databaseTypesApi, connectionsApi } from '@tap/api'
 import { SchemaToForm } from '@tap/form'
 
 export default {
@@ -173,37 +175,62 @@ export default {
             this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
           } else if (el.type === 'logCollector') {
             // 获取连接信息
-            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(con => {
+            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(async con => {
               const nodeProperties = con.properties?.node?.properties
-              if (Object.keys(nodeProperties).length) {
-                this.schemaData = {
-                  type: 'object',
-                  'x-component': 'FormLayout',
-                  'x-decorator': 'FormItem',
-                  properties: {
-                    $inputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    $outputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    nodeConfig: {
-                      type: 'object',
-                      properties: nodeProperties
-                    }
+
+              if (!nodeProperties || !Object.keys(nodeProperties).length) {
+                this.schemaData = null
+                return
+              }
+              this.schemaData = {
+                type: 'object',
+                'x-component': 'FormLayout',
+                'x-decorator': 'FormItem',
+                properties: {
+                  $inputs: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    default: []
+                  },
+                  $outputs: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    default: []
+                  },
+                  nodeConfig: {
+                    type: 'object',
+                    properties: nodeProperties
                   }
                 }
               }
 
-              const { nodeConfig } = el
+              const {
+                nodeConfig,
+                attrs,
+                connectionIds: [connectionId]
+              } = el
               if (nodeConfig) {
-                this.$refs.schemaToForm.getForm()?.setValues({
-                  nodeConfig
-                })
+                if (connectionId) {
+                  // FIXME : 临时方案
+                  const connectionInfo = await connectionsApi.getNoSchema(connectionId)
+                  attrs.db_version = connectionInfo.db_version
+                }
+
+                const values = {
+                  nodeConfig,
+                  attrs
+                }
+
+                // FIXME : 监控已经获取了task，可以从store里取
+                const nodeData = this.$store.state.dataflow.NodeMap[el.id]
+                if (nodeData) {
+                  Object.assign(values, {
+                    $inputs: nodeData.$inputs,
+                    $outputs: nodeData.$outputs
+                  })
+                }
+
+                this.$refs.schemaToForm.getForm()?.setValues(values)
               }
             })
           }
