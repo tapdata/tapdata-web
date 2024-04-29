@@ -217,5 +217,16 @@ export default class Task extends Http {
   skipErrorEvents(taskId, ids) {
     return this.axios.post(`${this.url}/skipErrorEvents/${taskId}`, ids)
   }
+
+  getTimeRange(data, params) {
+    return this.axios.get(`${this.url}/calculatedTimeRange`, {
+      data: JSON.stringify(data),
+      params
+    })
+  }
+
+  getCurrentEngineTime() {
+    return this.axios.get(`${this.url}/task/getCurrentEngineTime`)
+  }
 }
 export { Task }

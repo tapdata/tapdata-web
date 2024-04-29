@@ -960,11 +960,17 @@ export class Table extends NodeType {
                             space: {
                               type: 'void',
                               'x-component': 'Space',
+                              'x-component-props': {
+                                class: 'w-100'
+                              },
                               properties: {
                                 key: {
                                   type: 'string',
                                   required: 'true',
                                   'x-decorator': 'FormItem',
+                                  'x-decorator-props': {
+                                    className: 'flex-1'
+                                  },
                                   'x-component': 'FieldSelect',
                                   'x-component-props': {
                                     filterable: true
@@ -1011,8 +1017,7 @@ export class Table extends NodeType {
                                       type: 'void',
                                       'x-component': 'RelativeTimePicker',
                                       'x-component-props': {
-                                        value: '{{$record}}',
-                                        index: '{{$index}}'
+                                        offsetHours: '{{$values.offsetHours}}'
                                       },
                                       'x-reactions': {
                                         dependencies: ['.fastQuery'],
@@ -1028,10 +1033,10 @@ export class Table extends NodeType {
                                 valueWrapper: {
                                   type: 'void',
                                   'x-reactions': {
-                                    dependencies: ['.fastQuery'],
+                                    dependencies: ['nodeSchema', '.key', '.fastQuery'],
                                     fulfill: {
                                       state: {
-                                        display: `{{!$deps[0] ? "visible" :"hidden"}}`
+                                        display: `{{!$deps[2] || !(field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)) ? "visible" :"hidden"}}`
                                       }
                                     }
                                   },
@@ -1072,6 +1077,9 @@ export class Table extends NodeType {
                                       type: 'string',
                                       required: 'true',
                                       'x-decorator': 'FormItem',
+                                      'x-decorator-props': {
+                                        wrapperWidth: 208
+                                      },
                                       'x-component': 'Input',
                                       'x-component-props': {
                                         type: 'datetime',
@@ -1116,7 +1124,7 @@ export class Table extends NodeType {
                       offsetHours: {
                         type: 'number',
                         title: i18n.t('packages_dag_time_zone_offset'),
-                        default: 8,
+                        default: 0,
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber'
                       }
