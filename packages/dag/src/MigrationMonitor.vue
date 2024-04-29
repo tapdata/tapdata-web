@@ -1243,27 +1243,6 @@ export default {
       }, 5000)
     },
 
-    async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true
-          }
-        })
-      })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {})
-      )
-    },
-
     getTime() {
       return Time.now()
     },

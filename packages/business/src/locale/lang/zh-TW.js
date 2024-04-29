@@ -1186,11 +1186,11 @@ export default {
   packages_business_task_tag_placeholder: '為這個任務分配一個標籤，以便您能夠輕鬆找到它',
   packages_business_paid_connector: '付費數據源',
   packages_business_more_free_connector: '更多免費數據源',
-  packages_business_request_connector_title: '申請試用 Alpha/Beta 數據源',
+  packages_business_request_connector_title: '試用 Alpha/Beta 數據源',
   packages_business_request_connector_pending: '審批中',
   packages_business_request_connector_pending_desc: '您已提交申請，請等待審批',
   packages_business_request_connector_alert:
-    '您正在申請使用 {qcType} 版本的 {type} 數據源， 請提供您的聯繫方式並允許我們的支持人員聯繫您以幫助您成功運行任務。',
+    '👋 歡迎試用 {qcType} 版本的 {type} 數據源，填寫表單後即可開始試用。\n💁 為了獲得最佳體驗，請提供準確的聯繫方式。我們將主動聯繫您，提供支援和幫助。',
   packages_business_request_connector_use_plan: '您計劃使用此數據源的場景',
   packages_business_request_connector_use_plan_placeholder: '請填寫您的使用場景',
   packages_business_request_connector_use_time: '預計使用時間',

@@ -17,18 +17,15 @@
         <VIcon class="color-primary" size="48">time</VIcon>
       </template>
     </el-result>
-    <el-alert
-      v-else
-      class="alert-primary text-primary mb-4"
-      type="info"
-      :title="
-        $t('packages_business_request_connector_alert', {
-          ...meta
-        })
-      "
-      :closable="false"
-      show-icon
-    />
+    <el-alert v-else class="alert-primary text-primary mb-4 px-2" type="info" :closable="false">
+      <template #title>
+        <span class="text-prewrap flex-1 lh-base">{{
+          $t('packages_business_request_connector_alert', {
+            ...meta
+          })
+        }}</span>
+      </template>
+    </el-alert>
 
     <ElForm ref="form" :model="form" label-position="top" :disabled="hasRequest" :rules="rules">
       <ElFormItem :label="$t('packages_business_request_connector_use_plan')" prop="summary" required>

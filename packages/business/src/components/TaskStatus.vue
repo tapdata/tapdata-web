@@ -34,7 +34,7 @@
         </template>
       </ElTooltip>
     </template>
-    <template v-if="task.shareCdcStop">
+    <template v-if="task.shareCdcStop && !task.restartFlag">
       <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>

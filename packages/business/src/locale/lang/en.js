@@ -262,9 +262,9 @@ export default {
   packages_business_connections_databaseform_cicaozuohuidiu:
     'The current connection being established will be lost as a result of this operation.',
   packages_business_connections_databaseform_mingchengguizezhong:
-    'Name rules: start with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, dashes, underscores, spaces',
+    'Name rules: start with letters, 1 to 100 characters, can include letters, numbers, dashes, underscores, spaces',
   packages_business_connections_databaseform_zhongyingkaitouge:
-    'Begin with Chinese and English, 1 to 100 characters, can include Chinese and English, numbers, underscores, underscores, spaces',
+    'Start with letters, 1 to 100 characters, can include letters, numbers, underscores, underscores, spaces',
   packages_business_connections_list_renwuzongshu: 'Total number of tasks: ',
   packages_business_connections_list_gailianjieyibei:
     'The connection has been invoked by the task listed below. Please either remove the task or adjust the settings and attempt to connect again.',
@@ -1207,7 +1207,7 @@ export default {
   packages_business_connections_preview_quanxiangguanli: 'Privilege Management',
   packages_business_connections_preview_shujulianjiequan: 'Data connection permissions',
   packages_business_notice_list_gonggaobiaoti: 'Notice Title',
-  packages_business_connections_list_wuquanxiandecao: 'Operations without permission have been hidden',
+  packages_business_connections_list_wuquanxiandecao: 'Operations without permission are disabled',
   packages_business_components_upgradecharges_dingyuexinyinqing: 'Subscribe to new engines',
   packages_business_components_upgradecharges_shengjiguige: 'Upgrade Specifications',
   packages_business_components_upgradecharges_dingyuefangshi: 'Subscription Method',
@@ -1254,13 +1254,13 @@ export default {
   packages_business__relmig_import_target_connection_placeholder:
     'Please select the destination connection you want the data to be synchronized to',
   packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
-  packages_business_paid_connector: 'Paid Data Source',
-  packages_business_more_free_connector: 'More Free Data Sources',
-  packages_business_request_connector_title: 'Apply for Alpha/Beta Data Source Trial',
+  packages_business_paid_connector: 'Premium Connectors',
+  packages_business_more_free_connector: 'More Free Connectors',
+  packages_business_request_connector_title: 'Trial Alpha/Beta Data Source',
   packages_business_request_connector_pending: 'Pending Approval',
   packages_business_request_connector_pending_desc: 'You have submitted your application. Please wait for approval.',
   packages_business_request_connector_alert:
-    'You are applying to use the {qcType} version of the {type} data source. Please provide your contact information and allow our support team to contact you to assist you in successfully running the task.',
+    "👋 Welcome to try the {qcType} version of {type} data source. Simply fill out the form to get started with the trial.\n💁 For the best experience, please provide accurate contact information. We'll reach out to you proactively to offer support and assistance.",
   packages_business_request_connector_use_plan: 'How do you plan to use this data source?',
   packages_business_request_connector_use_plan_placeholder: 'Please fill in your use case',
   packages_business_request_connector_use_time: 'Estimated Time of Use',

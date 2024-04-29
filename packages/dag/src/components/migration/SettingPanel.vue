@@ -719,6 +719,13 @@ export default observer({
                                 },
                                 'x-component': 'Switch'
                               },
+                              doubleActive: {
+                                title: this.$t('packages_dag_doubleActive'), // 双活
+                                type: 'boolean',
+                                default: false,
+                                'x-decorator': 'FormItem',
+                                'x-component': 'Switch'
+                              },
                               accessNodeType: {
                                 type: 'string',
                                 title: this.$t('packages_dag_connection_form_access_node'),
@@ -1209,22 +1216,29 @@ export default observer({
   computed: {
     ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
+    dataNodes() {
+      return this.allNodes.filter(item => item.type === 'database' || item.type === 'table')
+    },
+
+    showDoubleActive() {
+      const map = this.$store.state.dataflow.pdkDoubleActiveMap
+      return this.dataNodes.every(node => map[node.attrs.pdkHash])
+    },
+
     accessNodeProcessIdMap() {
-      return this.allNodes
-        .filter(item => item.type === 'database' || item.type === 'table')
-        .reduce((map, node) => {
-          const { accessNodeProcessId } = node.attrs
-          if (accessNodeProcessId) {
-            let nodeIdArr = map[accessNodeProcessId]
+      return this.dataNodes.reduce((map, node) => {
+        const { accessNodeProcessId } = node.attrs
+        if (accessNodeProcessId) {
+          let nodeIdArr = map[accessNodeProcessId]
 
-            if (!nodeIdArr) {
-              nodeIdArr = map[accessNodeProcessId] = []
-            }
-
-            nodeIdArr.push(node.id)
+          if (!nodeIdArr) {
+            nodeIdArr = map[accessNodeProcessId] = []
           }
-          return map
-        }, {})
+
+          nodeIdArr.push(node.id)
+        }
+        return map
+      }, {})
     },
 
     accessNodeProcessIdArr() {
@@ -1327,6 +1341,16 @@ export default observer({
         return point
       })
       this.settings.syncPoints = syncPoints
+    },
+
+    // 控制双活是否可见
+    showDoubleActive: {
+      handler(val) {
+        this.form.setFieldState('doubleActive', {
+          visible: val
+        })
+      },
+      immediate: true
     }
   },
 
@@ -1369,8 +1393,8 @@ export default observer({
         return
       }
 
-      taskApi.patch({
-        id: values.id,
+      alarmApi.updateTaskAlarm({
+        taskId: values.id,
         alarmSettings: values.alarmSettings,
         alarmRules: values.alarmRules
       })

@@ -74,6 +74,10 @@ export default {
   public_status_deleting: '删除中',
   public_status_delete_failed: '删除失败',
   public_status_deleted: '已删除',
+  public_status_task_init: '初始化中',
+  public_status_do_snapshot: '全量进行中',
+  public_status_snapshot_completed: '全量已完成',
+  public_status_do_cdc: '增量进行中',
 
   // 按钮
   public_button_edit: '编辑',
@@ -300,5 +304,27 @@ export default {
   public_page_title_advanced_features: '高级功能',
 
   public_please_wait: '请稍等...',
-  public_view_all: '查看全部'
+  public_view_all: '查看全部',
+
+  public_today: '今天',
+  public_yesterday: '昨天',
+  public_this_week: '本周',
+  public_this_hour: '当前小时',
+  public_this_month: '本月',
+  public_this_year: '今年',
+  public_last_week: '上周',
+  public_last_month: '上个月',
+  public_last_hour: '上个小时',
+  public_last_year: '去年',
+  public_date_past: '过去',
+  public_date_past_val: '过去',
+  public_date_current: '当前',
+  public_date_current_prefix: '现在，这就是',
+  public_date_relative: '相对日期',
+  public_date_specific: '具体日期',
+  public_unit_hour: '小时',
+  public_unit_day: '天',
+  public_unit_week: '周',
+  public_unit_month: '月',
+  public_unit_year: '年'
 }

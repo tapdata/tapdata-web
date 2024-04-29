@@ -143,6 +143,7 @@ export default {
       'toggleConsole',
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
+      'setPdkDoubleActiveMap',
       'setMaterializedViewVisible'
     ]),
 
@@ -2218,11 +2219,18 @@ export default {
         // 共享缓存
         data.syncType = data.shareCache ? 'shareCache' : data.syncType
         this.reformDataflow(data)
-        this.setTaskInfo(this.dataflow)
+        this.setTaskInfo({
+          id: data.id,
+          syncType: data.syncType,
+          testTaskId: data.testTaskId,
+          taskRecordId: data.taskRecordId
+        })
         this.startLoopTask(id)
         this.titleSet()
+        console.log('任务data', data)
         return data
       } catch (e) {
+        console.error(e)
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
         this.handlePageReturn()
       } finally {
@@ -2402,6 +2410,7 @@ export default {
         })
       })
       let tagsMap = {}
+      let doubleActiveMap = {}
       let propertiesMap = {}
 
       databaseItems.forEach(({ properties, pdkHash, tags }) => {
@@ -2413,9 +2422,13 @@ export default {
         if (tags?.includes('schema-free')) {
           tagsMap[pdkHash] = true
         }
+        if (tags?.includes('doubleActive')) {
+          doubleActiveMap[pdkHash] = true
+        }
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
+      this.setPdkDoubleActiveMap(doubleActiveMap)
 
       console.log(propertiesMap, tagsMap) // eslint-disable-line
     },

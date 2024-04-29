@@ -138,33 +138,38 @@
       </el-table-column>
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name flex">
-            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
+          <div class="dataflow-name flex flex-wrap">
+            <span v-if="handleClickNameDisabled(row)" class="mr-1">{{ row.name }}</span>
             <ElLink
               v-else
               role="ellipsis"
               type="primary"
-              class="justify-content-start ellipsis block"
+              class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
+            <span v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
+              <span class="tag" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
             </span>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType">
-        <template #default="{ row }">
-          <span>
+          </div>
+          <div class="fs-8 font-color-sslight lh-base">
             {{ row.type ? taskType[row.type] : '' }}
-          </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="syncStatus"
+        :label="$t('packages_business_task_monitor_mission_milestone')"
+        :min-width="colWidth.syncStatus"
+      >
+        <template #default="{ row }">
+          <SyncStatus :status="row.syncStatus" />
         </template>
       </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
@@ -177,7 +182,7 @@
           {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
+      <el-table-column fixed="right" :label="$t('public_operation')" :width="colWidth.operation">
         <div v-if="isDaas" slot="header" class="flex align-center">
           <span>{{ $t('public_operation_available') }}</span>
           <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
@@ -190,6 +195,7 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
+              data-testid="start-task"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id], row)"
             >
@@ -200,6 +206,7 @@
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="force-stop-task"
                 :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
@@ -209,6 +216,7 @@
                 v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="stop-task"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
@@ -224,6 +232,7 @@
               v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="edit-task"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
@@ -237,6 +246,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="monitor-task"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="toDetail(row)"
             >
@@ -247,6 +257,7 @@
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="reset-task"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
@@ -261,6 +272,7 @@
               v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="copy-task"
               :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
@@ -275,6 +287,7 @@
               v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="delete-task"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
@@ -369,10 +382,10 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
-import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import { makeStatusAndDisabled, STATUS_MAP, MILESTONE_TYPE } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 
 export default {
@@ -394,7 +407,8 @@ export default {
     TaskStatus,
     PermissionseSettingsCreate,
     UpgradeCharges,
-    UpgradeFee
+    UpgradeFee,
+    SyncStatus
   },
 
   mixins: [syncTaskAgent],
@@ -477,11 +491,13 @@ export default {
         ? {
             taskType: 140,
             status: 145,
+            syncStatus: 180,
             operation: 340
           }
         : {
             taskType: 80,
             status: 110,
+            syncStatus: 110,
             operation: 280
           }
     },
@@ -531,7 +547,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type, agentId } = this.searchParams
+      let { keyword, status, type, agentId, syncStatus } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -559,7 +575,9 @@ export default {
         shareCdcStop: true,
         shareCdcStopMessage: true,
         taskRetryStartTime: true,
-        errorEvents: true
+        errorEvents: true,
+        syncStatus: true,
+        restartFlag: true
       }
       let where = {
         syncType
@@ -584,6 +602,9 @@ export default {
       }
       if (agentId) {
         where['agentId'] = agentId
+      }
+      if (syncStatus) {
+        where.syncStatus = syncStatus
       }
       let filter = {
         order: this.order,
@@ -658,6 +679,16 @@ export default {
           key: 'type',
           type: 'select-inner',
           items: this.typeOptions
+        },
+        {
+          label: this.$t('packages_business_task_monitor_mission_milestone'),
+          key: 'syncStatus',
+          type: 'select-inner',
+          items: [
+            { label: this.$t('public_select_option_all'), value: '' },
+            ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key }))
+          ],
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('public_task_name'),
@@ -1242,15 +1273,14 @@ export default {
 
     .dataflow-name {
       .tag {
-        padding: 2px 5px;
+        padding: 0 4px;
         font-style: normal;
         font-weight: 400;
-        font-size: 10px;
-        line-height: 14px;
+        font-size: 12px;
+        line-height: 20px;
         color: map-get($color, tag);
         border: 1px solid map-get($bgColor, tag);
-        border-radius: 2px;
-        margin-left: 5px;
+        border-radius: 4px;
       }
 
       .name {

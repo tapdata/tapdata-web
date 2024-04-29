@@ -42,7 +42,7 @@ export default {
   public_status_ready: 'Valid',
   public_status_invalid: 'Invalid',
   public_status_testing: 'Testing',
-  public_status_wait_run: 'Ready to Start',
+  public_status_wait_run: 'Ready',
   public_status_edit: 'Editing',
   public_status_running: 'Running',
   public_status_starting: 'Starting',
@@ -74,7 +74,10 @@ export default {
   public_status_deleting: 'Deleting',
   public_status_delete_failed: 'Delete Failed',
   public_status_deleted: 'Deleted',
-
+  public_status_task_init: 'Initializing',
+  public_status_do_snapshot: 'Full Syncing',
+  public_status_snapshot_completed: 'Full Sync Completed',
+  public_status_do_cdc: 'Incremental Syncing',
   // button
   public_button_edit: 'Edit',
   public_button_confirm: 'Ok',
@@ -249,7 +252,7 @@ export default {
   public_task_type_log_collector: 'Shared Mining',
   public_task_type_initial_sync: 'Full Sync',
   public_task_type_cdc: 'Incremental Sync',
-  public_task_type_initial_sync_and_cdc: 'Full and Incremental Sync',
+  public_task_type_initial_sync_and_cdc: 'Full & Incremental Sync',
   public_task_status: 'Task Status',
   public_task_last_run_time: 'Last Run Time',
   public_task_cdc_time_point: 'Last Event Time',
@@ -301,5 +304,27 @@ export default {
   public_page_title_advanced_features: 'Advanced',
 
   public_please_wait: 'Please wait a moment...',
-  public_view_all: 'View All'
+  public_view_all: 'View All',
+
+  public_today: 'Today',
+  public_yesterday: 'Yesterday',
+  public_this_hour: 'This Hour',
+  public_this_week: 'This Week',
+  public_this_month: 'This Month',
+  public_this_year: 'This Year',
+  public_last_week: 'Last Week',
+  public_last_month: 'Last Month',
+  public_last_hour: 'Last Hour',
+  public_last_year: 'Last Year',
+  public_date_past: 'Past',
+  public_date_past_val: 'Previous',
+  public_date_current: 'Current',
+  public_date_current_prefix: 'Right now, this is ',
+  public_date_relative: 'Relative Dates',
+  public_date_specific: 'Specific Dates',
+  public_unit_hour: 'hours',
+  public_unit_day: 'days',
+  public_unit_week: 'weeks',
+  public_unit_month: 'months',
+  public_unit_year: 'years'
 }

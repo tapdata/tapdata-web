@@ -4,10 +4,16 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { createForm, onFormInputChange, onFormValuesChange, onFieldValueChange } from '@formily/core'
+import {
+  createForm,
+  onFormValuesChange,
+  onFormInputChange,
+  onFieldValueChange,
+  onFieldInputValueChange
+} from '@formily/core'
 import { Path } from '@formily/path'
 
-import { taskApi } from '@tap/api'
+import { alarmApi } from '@tap/api'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
@@ -242,25 +248,30 @@ export default {
 
     // 绑定表单事件
     useEffects() {
+      // FIXME 目前无法区分告警配置的修改，
+      // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
         this.updateNodePropsDebounce(form)
       })
 
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
         this.updateNodeProps(form)
       })
 
-      if (this.scope.$isMonitor) {
-        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
-          this.lazySaveNodeAlarmConfig()
-        })
-      }
+      /*onFieldInputValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
+        this.updateNodeProps(form)
+      })
+      onFieldValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
+        this.updateNodePropsDebounce(form)
+      })*/
+
+      onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
+        this.lazySaveNodeAlarmConfig()
+      })
     },
 
     confirmNodeHasError() {
@@ -272,14 +283,17 @@ export default {
     },
 
     saveNodeAlarmConfig() {
+      const formValues = this.form.values
       this.updateNodeProperties({
-        id: this.form.values.id,
-        properties: JSON.parse(JSON.stringify(this.form.values))
+        id: formValues.id,
+        properties: JSON.parse(JSON.stringify(formValues))
       })
 
-      taskApi.patch({
-        id: this.$store.state.dataflow.taskId,
-        dag: this.$store.state.dataflow.dag
+      alarmApi.updateTaskAlarm({
+        taskId: this.scope.$settings.id,
+        nodeId: formValues.id,
+        alarmRules: formValues.alarmRules,
+        alarmSettings: formValues.alarmSettings
       })
     }
   }

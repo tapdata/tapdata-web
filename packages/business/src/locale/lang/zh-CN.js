@@ -1194,11 +1194,11 @@ export default {
   packages_business_task_tag_placeholder: '为这个任务分配一个标签，以便您能够轻松找到它',
   packages_business_paid_connector: '付费数据源',
   packages_business_more_free_connector: '更多免费数据源',
-  packages_business_request_connector_title: '申请试用 Alpha/Beta 数据源',
+  packages_business_request_connector_title: '试用 Alpha/Beta 数据源',
   packages_business_request_connector_pending: '审批中',
   packages_business_request_connector_pending_desc: '您已提交申请，请等待审批',
   packages_business_request_connector_alert:
-    '您正在申请使用 {qcType} 版本的 {type} 数据源， 请提供您的联系方式并允许我们的支持人员联系您以帮助您成功运行任务。',
+    '👋 欢迎试用 {qcType} 版本的 {type} 数据源，填写表单后即可开始试用。\n💁 为了获得最佳体验，请提供准确的联系方式。我们将主动联系您，提供支持和帮助。',
   packages_business_request_connector_use_plan: '您计划使用此数据源的场景',
   packages_business_request_connector_use_plan_placeholder: '请填写您的使用场景',
   packages_business_request_connector_use_time: '预计使用时间',
