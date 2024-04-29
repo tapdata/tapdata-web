@@ -50,7 +50,9 @@
           :min="0"
         ></ElInputNumber>
       </ElFormItem>
-      <div class="border-bottom mb-3 fs-6 fw-bold font-color-normal">{{ $t('packages_dag_config_datasource') }}</div>
+      <div v-if="schemaData" class="border-bottom mb-3 fs-6 fw-bold font-color-normal">
+        {{ $t('packages_dag_config_datasource') }}
+      </div>
       <SchemaToForm
         ref="schemaToForm"
         :schema="schemaData"
@@ -175,26 +177,29 @@ export default {
             // 获取连接信息
             databaseTypesApi.pdkHash(el.attrs.pdkHash).then(async con => {
               const nodeProperties = con.properties?.node?.properties
-              if (Object.keys(nodeProperties).length) {
-                this.schemaData = {
-                  type: 'object',
-                  'x-component': 'FormLayout',
-                  'x-decorator': 'FormItem',
-                  properties: {
-                    $inputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    $outputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    nodeConfig: {
-                      type: 'object',
-                      properties: nodeProperties
-                    }
+
+              if (!nodeProperties || !Object.keys(nodeProperties).length) {
+                this.schemaData = null
+                return
+              }
+              this.schemaData = {
+                type: 'object',
+                'x-component': 'FormLayout',
+                'x-decorator': 'FormItem',
+                properties: {
+                  $inputs: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    default: []
+                  },
+                  $outputs: {
+                    type: 'array',
+                    'x-display': 'hidden',
+                    default: []
+                  },
+                  nodeConfig: {
+                    type: 'object',
+                    properties: nodeProperties
                   }
                 }
               }
