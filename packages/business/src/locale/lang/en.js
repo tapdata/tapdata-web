@@ -1256,11 +1256,11 @@ export default {
   packages_business_task_tag_placeholder: 'Assign a tag to this task so you can easily find it',
   packages_business_paid_connector: 'Premium Connectors',
   packages_business_more_free_connector: 'More Free Connectors',
-  packages_business_request_connector_title: 'Apply for Alpha/Beta Data Source Trial',
+  packages_business_request_connector_title: 'Trial Alpha/Beta Data Source',
   packages_business_request_connector_pending: 'Pending Approval',
   packages_business_request_connector_pending_desc: 'You have submitted your application. Please wait for approval.',
   packages_business_request_connector_alert:
-    'You are applying to use the {qcType} version of the {type} data source. Please provide your contact information and allow our support team to contact you to assist you in successfully running the task.',
+    "👋 Welcome to try the {qcType} version of {type} data source. Simply fill out the form to get started with the trial.\n💁 For the best experience, please provide accurate contact information. We'll reach out to you proactively to offer support and assistance.",
   packages_business_request_connector_use_plan: 'How do you plan to use this data source?',
   packages_business_request_connector_use_plan_placeholder: 'Please fill in your use case',
   packages_business_request_connector_use_time: 'Estimated Time of Use',
