@@ -572,6 +572,27 @@ export default {
           ]
         : [
             {
+              id: 26,
+              type: '',
+              name: 'Tapdata Cloud 3.5.15 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-5-15/',
+              time: '2024-4-24 21:00'
+            },
+            {
+              id: 25,
+              type: '',
+              name: 'Tapdata Cloud 3.5.14 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-5-14/',
+              time: '2024-4-19 21:00'
+            },
+            {
+              id: 24,
+              type: '',
+              name: 'Tapdata Cloud 3.5.13 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-5-13/',
+              time: '2024-3-28 21:00'
+            },
+            {
               id: 23,
               type: '',
               name: 'Tapdata Cloud 3.5.12 Release Notes',
