@@ -1,7 +1,10 @@
-import { defineComponent, reactive, watch } from '@vue/composition-api'
+import { defineComponent, reactive, watch, ref } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@tap/form'
+import { taskApi } from '@tap/api'
+import { dayjs } from '@tap/business/src/shared/dayjs'
 import i18n from '@tap/i18n'
+import Da from 'element-ui/src/locale/lang/da'
 
 export const RelativeTimePicker = observer(
   defineComponent({
@@ -15,6 +18,44 @@ export const RelativeTimePicker = observer(
         form: record.form || 'BEFORE',
         unit: record.unit || 'DAY'
       })
+      const currentDate = ref(new Date())
+      const loadDateRange = async () => {
+        const result = await taskApi.getTimeRange(state)
+      }
+      const loadCurrentEngineTime = () => {
+        const date = taskApi.getCurrentEngineTime()
+        currentDate.value = new Date(date)
+      }
+
+      loadDateRange()
+      loadCurrentEngineTime()
+      const genDatePreview = () => {
+        if (state.form !== 'BEFORE') return ''
+        let start = dayjs(currentDate.value)
+        let end = dayjs(currentDate.value)
+        switch (state.unit) {
+          case 'HOUR':
+            start = end.subtract(state.number, 'hour') // 昨天
+            break
+          case 'DAY':
+            end = end.subtract(1, 'day') // 昨天
+            start = end.subtract(state.number, 'day')
+            break
+          case 'WEEK':
+            end = end.subtract(end.day() || 7, 'd') // 上周
+            start = end.subtract(6, 'day').subtract(state.number - 1, 'w') // 上周一
+            break
+          case 'MONTH':
+            end = end.subtract(1, 'M').endOf('month') // 上个月
+            start = end.startOf('month')
+            break
+          case 'YEAR':
+            end = dayjs().subtract(1, 'year').endOf('year')
+            start = end.startOf('year')
+            break
+        }
+        // const formatStr = 'LL'
+      }
 
       watch(state, val => {
         Object.assign(record, state)
@@ -41,12 +82,6 @@ export const RelativeTimePicker = observer(
         YEAR: { l: i18n.t('public_last_year'), c: i18n.t('public_this_year') }
       }
 
-      const BEFORE_MAP = {
-        DAY: i18n.t('public_today'),
-        WEEK: i18n.t('public_this_week'),
-        MONTH: i18n.t('public_this_month'),
-        YEAR: i18n.t('public_this_year')
-      }
       // FIXME 升级到vue3后， 这里要用children的方式传递具名slot
       return () => {
         const genLabel = () => {
