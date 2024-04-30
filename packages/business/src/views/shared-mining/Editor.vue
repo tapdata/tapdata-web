@@ -182,27 +182,6 @@ export default {
                 this.schemaData = null
                 return
               }
-              this.schemaData = {
-                type: 'object',
-                'x-component': 'FormLayout',
-                'x-decorator': 'FormItem',
-                properties: {
-                  $inputs: {
-                    type: 'array',
-                    'x-display': 'hidden',
-                    default: []
-                  },
-                  $outputs: {
-                    type: 'array',
-                    'x-display': 'hidden',
-                    default: []
-                  },
-                  nodeConfig: {
-                    type: 'object',
-                    properties: nodeProperties
-                  }
-                }
-              }
 
               const {
                 nodeConfig,
@@ -231,6 +210,27 @@ export default {
                 }
 
                 this.$refs.schemaToForm.getForm()?.setValues(values)
+                this.schemaData = {
+                  type: 'object',
+                  'x-component': 'FormLayout',
+                  'x-decorator': 'FormItem',
+                  properties: {
+                    $inputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: []
+                    },
+                    $outputs: {
+                      type: 'array',
+                      'x-display': 'hidden',
+                      default: []
+                    },
+                    nodeConfig: {
+                      type: 'object',
+                      properties: nodeProperties
+                    }
+                  }
+                }
               }
             })
           }
