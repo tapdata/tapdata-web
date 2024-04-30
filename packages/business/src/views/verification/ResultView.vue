@@ -44,7 +44,7 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
+        <img style="height: 30px; margin-right: 5px" :src="require('@tap/assets/images/passed.png')" />
         <span>{{ $t('packages_business_verification_success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
