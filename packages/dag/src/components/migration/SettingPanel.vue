@@ -724,6 +724,9 @@ export default observer({
                                 type: 'boolean',
                                 default: false,
                                 'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  tooltip: i18n.t('packages_dag_doubleActive_tip')
+                                },
                                 'x-component': 'Switch'
                               },
                               accessNodeType: {
@@ -1222,7 +1225,7 @@ export default observer({
 
     showDoubleActive() {
       const map = this.$store.state.dataflow.pdkDoubleActiveMap
-      return this.dataNodes.every(node => map[node.attrs.pdkHash])
+      return this.dataNodes.length ? this.dataNodes.every(node => map[node.attrs.pdkHash]) : false
     },
 
     accessNodeProcessIdMap() {

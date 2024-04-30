@@ -713,6 +713,7 @@ export default {
     '当选择了遇到DDL时任务报错停止，可以通过正则表达式来配置忽略哪些DDL\n例如：\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
   packages_dag_just_insert: '仅插入',
   packages_dag_unwind_validate_error: '当使用Unwind节点时，目标节点写入策略需要支持仅插入',
-  packages_dag_doubleActive: '双活',
+  packages_dag_doubleActive: '双向同步',
+  packages_dag_doubleActive_tip: '当需要进行双向同步，且产生的增量事件不会对自身产生干扰时，请启用此开关。',
   packages_dag_time_zone_offset: '时区偏移量'
 }

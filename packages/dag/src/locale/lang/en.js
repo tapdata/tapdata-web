@@ -763,6 +763,8 @@ export default {
   packages_dag_just_insert: 'Insert Only',
   packages_dag_unwind_validate_error:
     'When using the Unwind node, the target node write strategy should support "insert-only".',
-  packages_dag_doubleActive: 'Double Active',
+  packages_dag_doubleActive: 'Bidirectional Synchronization',
+  packages_dag_doubleActive_tip:
+    'When bidirectional synchronization is required and the generated incremental events do not interfere with the system itself, please turn on this switch.',
   packages_dag_time_zone_offset: 'Time Zone Offset'
 }
