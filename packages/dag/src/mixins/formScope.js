@@ -439,7 +439,8 @@ export default {
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
-              type: item.data_type
+              type: item.data_type,
+              tapType: item.tapType
             }))
             .filter(item => !item.is_deleted)
         },
