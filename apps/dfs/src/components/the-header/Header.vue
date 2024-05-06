@@ -72,7 +72,6 @@
           </div>
 
           <ElDropdownMenu slot="dropdown">
-            <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
             <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()">{{
               $t('the_header_Header_yongHuZhongXin')
             }}</ElDropdownItem>
@@ -99,9 +98,27 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover },
   data() {
+    let officialWebsiteAddress
+    let docUrl
+
+    if (this.$store.getters.isDomesticStation) {
+      officialWebsiteAddress = 'https://tapdata.net'
+      docUrl = 'https://docs.tapdata.net/'
+    } else {
+      officialWebsiteAddress = 'https://tapdata.io'
+      docUrl = 'https://docs.tapdata.io/'
+    }
+
     return {
-      topBarLinks: this.$store.state.config?.topBarLinks,
-      officialWebsiteAddress: this.$store.getters.isDomesticStation ? 'https://tapdata.net' : 'https://tapdata.io',
+      topBarLinks: [
+        {
+          text: 'header_manual', //使用手册
+          link: docUrl,
+          icon: 'send',
+          type: 'handbook'
+        }
+      ],
+      officialWebsiteAddress,
       lang: '',
       languages: langMenu,
       domain: document.domain,
@@ -124,23 +141,6 @@ export default {
 
     this.loadUserMock()
     this.getAgentCount()
-    //如果没有配置topBarLinks 给默认值
-    if (!this.$store.state.config?.topBarLinks) {
-      this.topBarLinks = [
-        {
-          text: 'header_technical_support', //技术支持
-          link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
-          icon: 'question',
-          type: 'support'
-        },
-        {
-          text: 'header_manual', //使用手册
-          link: 'https://docs.tapdata.net/',
-          icon: 'send',
-          type: 'handbook'
-        }
-      ]
-    }
   },
   methods: {
     ...mapMutations(['setUpgradeFeeVisible']),
@@ -151,20 +151,8 @@ export default {
         case 'workbench':
           this.$router.push({ name: 'Home' })
           break
-        case 'help':
-          window.open('https://docs.tapdata.io/', '_blank')
-          break
-        case 'contact-us':
-          window.open('https://cloud.tapdata.net/contact.html', '_blank')
-          break
         case 'home':
           window.open(this.officialWebsiteAddress, '_blank')
-          break
-        case 'v2':
-          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
-          break
-        case 'op':
-          window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
           break
         case 'userCenter':
           this.$router.push({
@@ -187,18 +175,6 @@ export default {
               location.href = './logout'
             }
           })
-          break
-        case 'toCommunity':
-          window.open('https://ask.tapdata.net/', '_blank')
-          break
-        case 'source-center':
-          window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
-          break
-        case 'handbook':
-          window.open('https://docs.tapdata.net', '_blank')
-          break
-        case 'support':
-          window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
           break
       }
     },
