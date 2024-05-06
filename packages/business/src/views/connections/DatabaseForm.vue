@@ -230,7 +230,7 @@ export default {
     docUrl() {
       return `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/cloud/prerequisites/allow-access-network`
+      }/prerequisites/allow-access-network`
     }
   },
   async created() {

@@ -350,9 +350,9 @@ export default {
   created() {
     this.getFilterItems()
     if (!this.$store.getters.isDomesticStation) {
-      this.refundAmount = 'https://docs.tapdata.io/cloud/billing/refund'
+      this.refundAmount = 'https://docs.tapdata.io/billing/refund'
     } else {
-      this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
+      this.refundAmount = 'https://docs.tapdata.net/billing/refund'
     }
     this.remoteMethod()
   },

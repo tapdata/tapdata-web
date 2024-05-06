@@ -17,7 +17,7 @@
     "type": "support"
   },{
     "text": "header_manual", //使用手册
-    "link": "https://docs.tapdata.net/cloud/what-is-tapdata-clou",
+    "link": "https://docs.tapdata.net/what-is-tapdata-clou",
     "icon": "send",
     "type": "handbook"
   }],

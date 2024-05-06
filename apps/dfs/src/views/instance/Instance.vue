@@ -126,7 +126,7 @@
                       {{ $t('dfs_instance_stopped_help_tip_prefix') }}
                       <a
                         target="_blank"
-                        href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                        href="https://docs.tapdata.io/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
                         class="color-primary"
                         >{{ $t('dfs_online_help_docs') }}</a
                       >
