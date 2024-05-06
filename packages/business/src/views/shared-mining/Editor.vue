@@ -165,77 +165,101 @@ export default {
     },
 
     // 获取任务的dag
-    loadDag() {
-      taskApi.get(this.taskId).then(data => {
-        this.dag = data.dag
+    async loadDag() {
+      let dag = this.$store.getters['dataflow/dag']
 
-        this.dag.nodes.forEach((el = {}) => {
-          if (el.type === 'hazelcastIMDG') {
-            this.dagForm.cdcConcurrent = el.cdcConcurrent || false
-            this.dagForm.cdcConcurrentWriteNum = el.cdcConcurrentWriteNum || 4
-          } else if (el.type === 'logCollector') {
-            // 获取连接信息
-            databaseTypesApi.pdkHash(el.attrs.pdkHash).then(async con => {
-              const nodeProperties = con.properties?.node?.properties
+      if (!dag?.edges?.length || !dag?.nodes?.length) {
+        const task = await taskApi.get(this.taskId)
+        const outputsMap = {}
+        const inputsMap = {}
 
-              if (!nodeProperties || !Object.keys(nodeProperties).length) {
-                this.schemaData = null
-                return
-              }
+        dag = task.dag
+        dag.edges.forEach(({ source, target }) => {
+          let _source = outputsMap[source]
+          let _target = inputsMap[target]
 
-              const {
-                nodeConfig,
-                attrs,
-                connectionIds: [connectionId]
-              } = el
-              if (nodeConfig) {
-                if (connectionId) {
-                  // FIXME : 临时方案
-                  const connectionInfo = await connectionsApi.getNoSchema(connectionId)
-                  attrs.db_version = connectionInfo.db_version
-                }
+          if (!_source) {
+            outputsMap[source] = [target]
+          } else {
+            _source.push(target)
+          }
 
-                const values = {
-                  nodeConfig,
-                  attrs
-                }
-
-                // FIXME : 监控已经获取了task，可以从store里取
-                const nodeData = this.$store.state.dataflow.NodeMap[el.id]
-                if (nodeData) {
-                  Object.assign(values, {
-                    $inputs: nodeData.$inputs,
-                    $outputs: nodeData.$outputs
-                  })
-                }
-
-                this.$refs.schemaToForm.getForm()?.setValues(values)
-                this.schemaData = {
-                  type: 'object',
-                  'x-component': 'FormLayout',
-                  'x-decorator': 'FormItem',
-                  properties: {
-                    $inputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    $outputs: {
-                      type: 'array',
-                      'x-display': 'hidden',
-                      default: []
-                    },
-                    nodeConfig: {
-                      type: 'object',
-                      properties: nodeProperties
-                    }
-                  }
-                }
-              }
-            })
+          if (!_target) {
+            inputsMap[target] = [source]
+          } else {
+            _target.push(source)
           }
         })
-      })
+        dag.nodes.forEach(node => {
+          node.$inputs = inputsMap[node.id] || []
+          node.$outputs = outputsMap[node.id] || []
+        })
+      }
+
+      for (const node of dag.nodes) {
+        if (node.type === 'hazelcastIMDG') {
+          this.dagForm.cdcConcurrent = node.cdcConcurrent || false
+          this.dagForm.cdcConcurrentWriteNum = node.cdcConcurrentWriteNum || 4
+        } else if (node.type === 'logCollector') {
+          // 获取连接信息
+          const con = await databaseTypesApi.pdkHash(node.attrs.pdkHash)
+          const nodeProperties = con.properties?.node?.properties
+
+          if (!nodeProperties || !Object.keys(nodeProperties).length) {
+            this.schemaData = null
+            return
+          }
+
+          const {
+            nodeConfig,
+            attrs,
+            connectionIds: [connectionId]
+          } = node
+
+          if (nodeConfig) {
+            if (connectionId) {
+              const connectionInfo = await connectionsApi.getNoSchema(connectionId)
+              attrs.db_version = connectionInfo.db_version
+            }
+
+            const values = {
+              nodeConfig,
+              attrs
+            }
+            const nodeData = this.$store.state.dataflow.NodeMap[node.id]
+
+            if (nodeData) {
+              Object.assign(values, {
+                $inputs: nodeData.$inputs,
+                $outputs: nodeData.$outputs
+              })
+            }
+
+            this.$refs.schemaToForm.getForm()?.setValues(values)
+            this.schemaData = {
+              type: 'object',
+              'x-component': 'FormLayout',
+              'x-decorator': 'FormItem',
+              properties: {
+                $inputs: {
+                  type: 'array',
+                  'x-display': 'hidden',
+                  default: []
+                },
+                $outputs: {
+                  type: 'array',
+                  'x-display': 'hidden',
+                  default: []
+                },
+                nodeConfig: {
+                  type: 'object',
+                  properties: nodeProperties
+                }
+              }
+            }
+          }
+        }
+      }
     },
 
     open(id) {
