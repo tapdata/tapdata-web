@@ -729,7 +729,7 @@ export default {
           for (let pid of parentIds) {
             let parent = this.scope.findNodeById(pid)
 
-            if (parent.type === type) {
+            if (parent?.type === type) {
               return parent
             }
 
