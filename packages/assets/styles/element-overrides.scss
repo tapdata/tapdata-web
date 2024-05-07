@@ -798,6 +798,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
     overflow-wrap: break-word;
     word-break: normal;
   }
+
+  .el-table-column--selection .cell {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 .el-table--small {
   font-size: $fontBaseTitle;

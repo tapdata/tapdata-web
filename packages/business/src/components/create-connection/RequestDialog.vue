@@ -80,7 +80,8 @@ export default {
     meta: Object
   },
   data() {
-    const user = this.$store.state.user
+    const user = this.$store.state.user || {}
+
     return {
       form: {
         phone: user.telephone,

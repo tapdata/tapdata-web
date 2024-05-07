@@ -189,6 +189,7 @@ const routes = [
         // component: Iframe,
         component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connection/List.tsx'),
         meta: {
+          hideTitle: true,
           title: 'tap_connection_management',
           icon: 'connection'
         },
@@ -253,6 +254,7 @@ const routes = [
             name: 'dataflowList',
             component: TaskList,
             meta: {
+              hideTitle: true,
               title: 'task_manage_etl',
               desc: 'task_manage_desc',
               code: 'v2_data_flow'

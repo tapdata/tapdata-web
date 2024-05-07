@@ -194,6 +194,7 @@
     </div>
 
     <RequestDialog
+      v-if="!isDaas"
       ref="requestDialog"
       :visible="requestVisible"
       :meta="requestMeta"
@@ -604,7 +605,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['startingTour', 'pausedGuide']),
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
+    pausedGuide() {
+      return this.$store.getters.pausedGuide
+    },
     sceneMap() {
       return this.sceneList.reduce((obj, item) => {
         obj[item.key || item.name] = item.types

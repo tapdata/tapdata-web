@@ -23,115 +23,55 @@
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
-      <div class="buttons" slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
+      <template #multipleSelectionActions>
+        <ElButton v-if="isDaas" @click="handlePermissionsSettings"
           >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
         </ElButton>
-        <el-button
+        <ElButton
           v-readonlybtn="'SYNC_category_application'"
           :disabled="$disabledReadonlyUserBtn()"
-          size="mini"
-          class="btn"
-          v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
           <span> {{ $t('public_button_bulk_tag') }}</span>
-        </el-button>
-        <el-dropdown
-          class="btn"
-          @command="handleCommand($event)"
-          v-show="multipleSelection.length > 0 && bulkOperation"
-        >
-          <el-button class="btn-dropdowm" size="mini">
-            <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
+        </ElButton>
+        <ElDropdown @command="handleCommand($event)" v-show="bulkOperation">
+          <ElButton>
             <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
             <i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              command="start"
-              v-readonlybtn="'SYNC_job_operation'"
-              :disabled="$disabledReadonlyUserBtn()"
+          </ElButton>
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="start" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
               >{{ $t('packages_business_dataFlow_bulkScheuled') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+            </ElDropdownItem>
+            <ElDropdownItem command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
               >{{ $t('packages_business_dataFlow_bulkStopping') }}
-            </el-dropdown-item>
-            <el-dropdown-item
+            </ElDropdownItem>
+            <ElDropdownItem
               command="initialize"
               v-readonlybtn="'SYNC_job_operation'"
               :disabled="$disabledReadonlyUserBtn()"
               >{{ $t('packages_business_dataFlow_batchRest') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
+            </ElDropdownItem>
+            <ElDropdownItem command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
               >{{ $t('packages_business_dataFlow_batchDelete') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <template>
-          <el-button
-            v-if="buttonShowMap.export"
-            v-show="multipleSelection.length > 0 && isDaas"
-            :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            size="mini"
-            class="btn message-button-cancel"
-            @click="handleCommand('export')"
-          >
-            <!--<i class="iconfont icon-export back-btn-icon"></i>-->
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-if="buttonShowMap.import && isDaas"
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
-          >
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
-          </el-button>
-          <el-button
-            v-if="buttonShowMap.import && $route.name === 'dataflowList'"
-            v-readonlybtn="'SYNC_job_import'"
-            size="mini"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImportRelmig"
-          >
-            <span> {{ $t('packages_business_relmig_import') }}</span>
-          </el-button>
-        </template>
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
         <ElButton
-          v-if="$route.name === 'dataflowList'"
-          class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
-          size="mini"
-          :loading="createBtnLoading"
-          @click="handleCreateMaterializedView"
-        >
-          <VIcon size="28">beta</VIcon>
-          {{ $t('packages_dag_build_materialized_view') }}</ElButton
-        >
-        <el-button
-          v-if="buttonShowMap.create"
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          id="task-list-create"
+          v-if="buttonShowMap.export"
+          v-show="isDaas"
           :disabled="$disabledReadonlyUserBtn()"
-          :loading="createBtnLoading"
-          @click="create()"
+          v-readonlybtn="'SYNC_job_export'"
+          @click="handleCommand('export')"
         >
-          {{ $t('public_button_create') }}
-        </el-button>
-      </div>
+          <span> {{ $t('public_button_export') }}</span>
+        </ElButton>
+      </template>
 
       <el-table-column
         reserve-selection
         type="selection"
-        width="45"
+        width="38"
         align="center"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >

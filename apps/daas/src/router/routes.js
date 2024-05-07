@@ -315,6 +315,7 @@ export default [
             name: 'connectionsList',
             component: ConnectionList,
             meta: {
+              hideTitle: true,
               title: 'page_title_connections',
               code: 'v2_datasource_menu'
             }
@@ -396,6 +397,7 @@ export default [
             name: 'migrateList',
             component: MigrateList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_copy',
               code: 'v2_data_replication'
             }
@@ -417,6 +419,7 @@ export default [
             name: 'dataflowList',
             component: TaskList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_develop',
               code: 'v2_data_flow'
             }

@@ -1,207 +1,214 @@
 <template>
-  <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      :classify="
-        isDaas
-          ? {
-              authority: 'datasource_catalog_management',
-              types: ['database'],
-              viewPage: 'connections',
-              title: $t('public_tags')
-            }
-          : null
-      "
-      :remoteMethod="getData"
-      @selection-change="handleSelectionChange"
-      @classify-submit="handleOperationClassify"
-      @sort-change="handleSortTable"
-    >
-      <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
-          <template #connectionType>
-            <ElRadioGroup v-model="searchParams.databaseModel" size="mini" @change="table.fetch(1)">
-              <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
-              <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
-              <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
-            </ElRadioGroup>
-          </template>
-        </FilterBar>
-      </template>
-      <div slot="operation">
-        <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings">{{
-          $t('packages_business_permissionse_settings_create_quanxianshezhi')
-        }}</ElButton>
-        <ElButton
-          v-if="isDaas"
-          v-show="multipleSelection.length > 0"
-          v-readonlybtn="'datasource_category_application'"
-          size="mini"
-          class="btn"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('public_button_bulk_tag') }}</span>
-        </ElButton>
-        <ElButton
-          v-if="buttonShowMap.create"
-          id="connection-list-create"
-          v-readonlybtn="'datasource_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="mini"
-          :disabled="$disabledReadonlyUserBtn()"
-          @click="checkTestConnectionAvailable"
-        >
-          <span> {{ $t('public_button_create') }}</span>
-        </ElButton>
-      </div>
-      <ElTableColumn v-if="isDaas" type="selection" width="45" align="center" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
-        <template #default="{ row }">
-          <div class="connection-name flex flex-wrap gap-1">
-            <div class="flex gap-1 overflow-hidden">
-              <img class="connection-img" :src="getConnectionIcon(row.pdkHash)" alt="" />
-              <ElLink class="ellipsis block lh-base" type="primary" @click.stop="preview(row)">
-                {{ row.name }}
-              </ElLink>
-            </div>
-            <div v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
-              <span class="tag" v-for="(item, i) in row.listtags" :key="i"> {{ item.value }} </span>
-            </div>
-          </div>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
-        <template slot-scope="scope">
-          {{ scope.row.connectionUrl }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="100">
-        <template #default="{ row }">
-          <div>
-            <span :class="['status-connection-' + row.status, 'status-block']">
-              {{ getStatus(row.status) }}
-            </span>
-          </div>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn width="125" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
-        <template slot-scope="scope">
-          {{ getType(scope.row.connection_type) }}
-        </template>
-      </ElTableColumn>
-      <ElTableColumn min-width="125">
-        <div slot="header" class="flex align-center">
-          <span>{{ $t('public_connection_schema_status') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
-        <template v-else slot-scope="scope">
-          <SchemaProgress :data="scope.row"></SchemaProgress>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn
-        prop="loadSchemaTime"
-        sortable="loadSchemaTime"
-        min-width="180"
-        :label="$t('public_connection_table_structure_update_time')"
+  <PageContainer>
+    <template #actions>
+      <ElButton
+        v-if="buttonShowMap.create"
+        id="connection-list-create"
+        v-readonlybtn="'datasource_creation'"
+        class="btn btn-create"
+        type="primary"
+        size="mini"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="checkTestConnectionAvailable"
       >
-        <template slot-scope="scope">
-          {{ scope.row.loadSchemaTimeLabel }}
+        <span> {{ $t('public_button_create') }}</span>
+      </ElButton>
+    </template>
+    <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
+      <TablePage
+        ref="table"
+        row-key="id"
+        :classify="
+          isDaas
+            ? {
+                authority: 'datasource_catalog_management',
+                types: ['database'],
+                viewPage: 'connections',
+                title: $t('public_tags')
+              }
+            : null
+        "
+        :remoteMethod="getData"
+        @selection-change="handleSelectionChange"
+        @classify-submit="handleOperationClassify"
+        @sort-change="handleSortTable"
+      >
+        <template slot="search">
+          <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
+            <template #connectionType>
+              <ElRadioGroup v-model="searchParams.databaseModel" size="mini" @change="table.fetch(1)">
+                <ElRadioButton label="">{{ $t('public_all') }}</ElRadioButton>
+                <ElRadioButton label="source">{{ $t('public_connection_type_source') }}</ElRadioButton>
+                <ElRadioButton label="target">{{ $t('public_connection_type_target') }}</ElRadioButton>
+              </ElRadioGroup>
+            </template>
+          </FilterBar>
         </template>
-      </ElTableColumn>
-      <ElTableColumn fixed="right" width="320" :label="$t('public_operation')">
-        <div v-if="isDaas" slot="header" class="flex align-center">
-          <span>{{ $t('public_operation_available') }}</span>
-          <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
-            <VIcon class="color-primary" size="14">info</VIcon>
-          </ElTooltip>
-        </div>
-        <template slot-scope="scope">
-          <ElButton data-testid="test-connection" type="text" @click="testConnection(scope.row)"
-            >{{ $t('public_connection_button_test') }}
-          </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElTooltip
-            :disabled="!isFileSource(scope.row)"
-            :content="$t('packages_business_connections_list_wenjianleixingde')"
-            placement="top"
+        <template v-if="isDaas" #multipleSelectionActions>
+          <ElButton @click="handlePermissionsSettings">{{
+            $t('packages_business_permissionse_settings_create_quanxianshezhi')
+          }}</ElButton>
+          <ElButton
+            v-readonlybtn="'datasource_category_application'"
+            class="btn"
+            @click="$refs.table.showClassify(handleSelectTag())"
           >
-            <span>
-              <ElButton
-                type="text"
-                data-testid="load-schema"
-                :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
-                @click="handleLoadSchema(scope.row)"
-                >{{ $t('public_connection_button_load_schema') }}
-              </ElButton>
-            </span>
-          </ElTooltip>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            v-if="havePermission(scope.row.permissionActions, 'Edit')"
-            v-readonlybtn="'datasource_edition'"
-            type="text"
-            data-testid="edit-connection"
-            :disabled="
-              $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
-            "
-            @click="edit(scope.row.id, scope.row)"
-            >{{ $t('public_button_edit') }}
-          </ElButton>
-          <ElDivider
-            v-if="havePermission(scope.row.permissionActions, 'Edit')"
-            direction="vertical"
-            v-readonlybtn="'datasource_edition'"
-          ></ElDivider>
-          <ElButton
-            v-if="buttonShowMap.copy"
-            v-readonlybtn="'datasource_creation'"
-            type="text"
-            data-testid="copy-connection"
-            :loading="scope.row.copyLoading"
-            :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
-            @click="copy(scope.row)"
-            >{{ $t('public_button_copy') }}
-          </ElButton>
-          <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
-          <ElButton
-            v-if="havePermission(scope.row.permissionActions, 'Delete')"
-            v-readonlybtn="'datasource_delete'"
-            type="text"
-            data-testid="delete-connection"
-            :disabled="
-              $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
-              $disabledReadonlyUserBtn() ||
-              scope.row.agentType === 'Cloud'
-            "
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}
+            <i class="iconfont icon-biaoqian back-btn-icon"></i>
+            <span> {{ $t('public_button_bulk_tag') }}</span>
           </ElButton>
         </template>
-      </ElTableColumn>
-    </TablePage>
-    <Preview ref="preview" @test="testConnection"></Preview>
-    <!--    <DatabaseTypeDialog
+        <ElTableColumn
+          v-if="isDaas"
+          type="selection"
+          width="38"
+          align="center"
+          :reserve-selection="true"
+        ></ElTableColumn>
+        <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
+          <template #default="{ row }">
+            <div class="connection-name flex flex-wrap gap-1">
+              <div class="flex gap-1 overflow-hidden">
+                <img class="connection-img" :src="getConnectionIcon(row.pdkHash)" alt="" />
+                <ElLink class="ellipsis block lh-base" type="primary" @click.stop="preview(row)">
+                  {{ row.name }}
+                </ElLink>
+              </div>
+              <div v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
+                <span class="tag" v-for="(item, i) in row.listtags" :key="i"> {{ item.value }} </span>
+              </div>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
+          <template slot-scope="scope">
+            {{ scope.row.connectionUrl }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="status" :label="$t('packages_business_connection_dataBaseStatus')" min-width="100">
+          <template #default="{ row }">
+            <div>
+              <span :class="['status-connection-' + row.status, 'status-block']">
+                {{ getStatus(row.status) }}
+              </span>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn width="125" prop="connection_type" min-width="135" :label="$t('public_connection_type')">
+          <template slot-scope="scope">
+            {{ getType(scope.row.connection_type) }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn min-width="125">
+          <div slot="header" class="flex align-center">
+            <span>{{ $t('public_connection_schema_status') }}</span>
+            <ElTooltip class="ml-2" placement="top" :content="$t('public_connection_schema_status_tip')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+          <div v-if="isFileSource(scope.row)" slot-scope="scope">-</div>
+          <template v-else slot-scope="scope">
+            <SchemaProgress :data="scope.row"></SchemaProgress>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn
+          prop="loadSchemaTime"
+          sortable="loadSchemaTime"
+          min-width="180"
+          :label="$t('public_connection_table_structure_update_time')"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.loadSchemaTimeLabel }}
+          </template>
+        </ElTableColumn>
+        <ElTableColumn fixed="right" width="320" :label="$t('public_operation')">
+          <div v-if="isDaas" slot="header" class="flex align-center">
+            <span>{{ $t('public_operation_available') }}</span>
+            <ElTooltip class="ml-2" placement="top" :content="$t('packages_business_connections_list_wuquanxiandecao')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+          <template slot-scope="scope">
+            <ElButton data-testid="test-connection" type="text" @click="testConnection(scope.row)"
+              >{{ $t('public_connection_button_test') }}
+            </ElButton>
+            <ElDivider direction="vertical"></ElDivider>
+            <ElTooltip
+              :disabled="!isFileSource(scope.row)"
+              :content="$t('packages_business_connections_list_wenjianleixingde')"
+              placement="top"
+            >
+              <span>
+                <ElButton
+                  type="text"
+                  data-testid="load-schema"
+                  :disabled="isFileSource(scope.row) || scope.row.disabledLoadSchema"
+                  @click="handleLoadSchema(scope.row)"
+                  >{{ $t('public_connection_button_load_schema') }}
+                </ElButton>
+              </span>
+            </ElTooltip>
+            <ElDivider direction="vertical"></ElDivider>
+            <ElButton
+              v-if="havePermission(scope.row.permissionActions, 'Edit')"
+              v-readonlybtn="'datasource_edition'"
+              type="text"
+              data-testid="edit-connection"
+              :disabled="
+                $disabledByPermission('datasource_edition_all_data', scope.row.user_id) ||
+                $disabledReadonlyUserBtn() ||
+                scope.row.agentType === 'Cloud'
+              "
+              @click="edit(scope.row.id, scope.row)"
+              >{{ $t('public_button_edit') }}
+            </ElButton>
+            <ElDivider
+              v-if="havePermission(scope.row.permissionActions, 'Edit')"
+              direction="vertical"
+              v-readonlybtn="'datasource_edition'"
+            ></ElDivider>
+            <ElButton
+              v-if="buttonShowMap.copy"
+              v-readonlybtn="'datasource_creation'"
+              type="text"
+              data-testid="copy-connection"
+              :loading="scope.row.copyLoading"
+              :disabled="$disabledReadonlyUserBtn() || scope.row.agentType === 'Cloud'"
+              @click="copy(scope.row)"
+              >{{ $t('public_button_copy') }}
+            </ElButton>
+            <ElDivider v-if="buttonShowMap.copy" direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
+            <ElButton
+              v-if="havePermission(scope.row.permissionActions, 'Delete')"
+              v-readonlybtn="'datasource_delete'"
+              type="text"
+              data-testid="delete-connection"
+              :disabled="
+                $disabledByPermission('datasource_delete_all_data', scope.row.user_id) ||
+                $disabledReadonlyUserBtn() ||
+                scope.row.agentType === 'Cloud'
+              "
+              @click="remove(scope.row)"
+              >{{ $t('public_button_delete') }}
+            </ElButton>
+          </template>
+        </ElTableColumn>
+      </TablePage>
+      <Preview ref="preview" @test="testConnection"></Preview>
+      <!--    <DatabaseTypeDialog
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>-->
-    <SceneDialog
-      :visible.sync="dialogDatabaseTypeVisible"
-      selector-type="source_and_target"
-      @selected="handleDatabaseType"
-    ></SceneDialog>
-    <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
-    <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
-    <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
-  </section>
+      <SceneDialog
+        :visible.sync="dialogDatabaseTypeVisible"
+        selector-type="source_and_target"
+        @selected="handleDatabaseType"
+      ></SceneDialog>
+      <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
+      <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
+      <PermissionseSettingsCreate ref="permissionseSettingsCreate"></PermissionseSettingsCreate>
+    </section>
+  </PageContainer>
 </template>
 <script>
 import i18n from '@tap/i18n'
@@ -220,11 +227,13 @@ import { defaultModel, verify, getConnectionIcon } from './util'
 import { CONNECTION_STATUS_MAP, CONNECTION_TYPE_MAP } from '../../shared'
 import SceneDialog from '../../components/create-connection/SceneDialog.vue'
 import UsedTaskDialog from './UsedTaskDialog'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 
 export default {
   components: {
+    PageContainer,
     SceneDialog,
     TablePage,
     Preview,
