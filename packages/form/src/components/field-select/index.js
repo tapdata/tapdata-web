@@ -44,9 +44,8 @@ const DefineFieldSelect = defineComponent({
     }
 
     const fieldOptions = computed(() => {
-      return props.options.map(option => {
-        option.icon = getIcon(option.tapType)
-        console.log('option.icon', option.icon)
+      return props.options?.map(option => {
+        if (option.tapType) option.icon = getIcon(option.tapType)
         return option
       })
     })
@@ -69,9 +68,11 @@ const DefineFieldSelect = defineComponent({
           scopedSlots={{
             option: ({ option }) => (
               <div class="flex align-center gap-1">
-                <VIcon size="16" title={option.type}>
-                  {option.icon}
-                </VIcon>
+                {option.icon && (
+                  <VIcon size="16" title={option.type}>
+                    {option.icon}
+                  </VIcon>
+                )}
                 {option[itemLabel]}
                 {option.isPrimaryKey && (
                   <VIcon size="12" class="text-warning">

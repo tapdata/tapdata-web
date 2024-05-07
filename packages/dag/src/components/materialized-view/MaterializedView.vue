@@ -294,7 +294,7 @@ export default {
     })
 
     if (!this.isDomesticStation) {
-      this.docUrl = 'https://docs.tapdata.io/cloud/user-guide/data-development/create-materialized-view/'
+      this.docUrl = 'https://docs.tapdata.io/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe
             class="block"
             width="100%"
@@ -306,7 +306,7 @@ export default {
             allowfullscreen
           ></iframe>`
     } else {
-      this.docUrl = 'https://docs.tapdata.net/cloud/user-guide/data-development/create-materialized-view/'
+      this.docUrl = 'https://docs.tapdata.net/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
     }
   },

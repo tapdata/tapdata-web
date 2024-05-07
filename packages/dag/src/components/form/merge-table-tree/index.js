@@ -148,6 +148,7 @@ export const MergeTableTree = observer(
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
             dataSource: fields.map(item => ({
+              tapType: item.tapType,
               label: item.field_name,
               value: item.field_name,
               isPrimaryKey: item.primary_key_position > 0

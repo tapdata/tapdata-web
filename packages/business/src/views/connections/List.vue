@@ -329,28 +329,27 @@ export default {
     }
   },
   created() {
-    let helpUrl = 'https://docs.tapdata.net'
-    let guideDoc =
-      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` +
-      this.$t('packages_business_connection_list_help_doc') +
-      '</a>'
-
-    this.description = this.$t('packages_business_connection_list_desc') + guideDoc
+    // let helpUrl = 'https://docs.tapdata.net'
+    // let guideDoc =
+    //   ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` +
+    //   this.$t('packages_business_connection_list_help_doc') +
+    //   '</a>'
+    //
+    // this.description = this.$t('packages_business_connection_list_desc') + guideDoc
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 10000)
     this.getFilterItems()
 
-    // TODO 百度推广索引
-    console.log('baidu-cookie')
-    Cookie.set('ken_bd_vid', 'kennen')
-    Cookie.set('ken_bd_vid', 'kennen', {
-      domain: 'cloud.tapdata.net'
-    })
-    Cookie.set('ken_bd_vid', 'kennen', {
-      domain: 'tapdata.net'
-    })
+    // console.log('baidu-cookie')
+    // Cookie.set('ken_bd_vid', 'kennen')
+    // Cookie.set('ken_bd_vid', 'kennen', {
+    //   domain: 'cloud.tapdata.net'
+    // })
+    // Cookie.set('ken_bd_vid', 'kennen', {
+    //   domain: 'tapdata.net'
+    // })
   },
   mounted() {
     const { action, create } = this.$route.query || {}
