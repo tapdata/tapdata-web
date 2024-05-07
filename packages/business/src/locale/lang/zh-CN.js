@@ -1208,5 +1208,6 @@ export default {
   packages_business_request_connector_success: '我们收到了您的请求，很快就会有人与您联系。',
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暂不支持异构数据库',
-  packages_business_heterogeneous_database: '异构数据库'
+  packages_business_heterogeneous_database: '异构数据库',
+  packages_business_selected_rows: '已选 {val} 行'
 }

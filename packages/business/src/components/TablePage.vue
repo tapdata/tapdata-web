@@ -76,7 +76,9 @@
             <transition name="el-fade-in-linear">
               <div v-if="multipleSelection.length" class="flex align-center gap-3">
                 <ElCheckbox :value="true" @change="clearSelection"></ElCheckbox>
-                <span class="fw-sub text-nowrap">已选 {{ multipleSelection.length }} 行</span>
+                <span class="fw-sub text-nowrap"
+                  >{{ $t('packages_business_selected_rows', { val: multipleSelection.length }) }}
+                </span>
                 <slot name="multipleSelectionActions"></slot>
               </div>
             </transition>

@@ -1200,5 +1200,6 @@ export default {
   packages_business_request_connector_success: '我們收到了您的請求，很快就會有人與您聯繫。',
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暫不支持異構數據庫',
-  packages_business_heterogeneous_database: '異構數據庫'
+  packages_business_heterogeneous_database: '異構數據庫',
+  packages_business_selected_rows: '已選 {val} 行'
 }

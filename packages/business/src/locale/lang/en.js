@@ -1270,5 +1270,6 @@ export default {
   packages_business_request_connector_success: 'We have received your request and someone will contact you shortly.',
   packages_business_view_more_apis: 'View More APIs',
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
-  packages_business_heterogeneous_database: 'heterogeneous databases'
+  packages_business_heterogeneous_database: 'heterogeneous databases',
+  packages_business_selected_rows: '{val} row(s) selected'
 }
