@@ -89,6 +89,15 @@ export default ({ routes }) => {
     store.commit('setUser', window.__USER_INFO__)
     store.commit('setLanguage', window.__USER_INFO__.locale)
 
+    // Bing Ads
+    window.uetq = window.uetq || []
+    window.uetq.push('set', {
+      pid: {
+        em: window.__USER_INFO__.email,
+        ph: window.__USER_INFO__.telephone
+      }
+    })
+
     window.App = new Vue({
       router,
       store,
