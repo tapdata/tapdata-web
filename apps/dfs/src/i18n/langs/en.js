@@ -581,8 +581,8 @@ export default {
   agent_download_AgentDownloadModal_gongXiNinWanCheng: 'Congratulations on completing the deployment.',
   agent_download_AgentDownloadModal_kaiShiChuangJianLian: 'Start creating connection',
   agent_download_AgentDownloadModal_jinRuGongZuoTai: 'Enter the workbench',
-  agent_download_UpgradeVersion_dOCKE: 'Docker exec - it container ID Bash',
-  agent_download_UpgradeVersion_dOCKE2: 'Docker start container ID',
+  agent_download_UpgradeVersion_dOCKE: 'docker exec - it container ID Bash',
+  agent_download_UpgradeVersion_dOCKE2: 'docker start container ID',
   views_Error_fuWuQiNeiBu: 'Server internal error.',
   views_Error_fanHuiShouYe: 'Return to home page',
   views_Error_zhangHuZanWuQuan:
