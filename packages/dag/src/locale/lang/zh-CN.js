@@ -715,5 +715,7 @@ export default {
   packages_dag_unwind_validate_error: '当使用Unwind节点时，目标节点写入策略需要支持仅插入',
   packages_dag_doubleActive: '双向同步',
   packages_dag_doubleActive_tip: '当需要进行双向同步，且产生的增量事件不会对自身产生干扰时，请启用此开关。',
-  packages_dag_time_zone_offset: '时区偏移量'
+  packages_dag_time_zone_offset: '时区偏移量',
+  packages_dag_dynamic_date_suffix: '动态日期后缀',
+  packages_dag_dynamic_date_suffix_tip: '开启后生成的表名将包含任务运行时的日期后缀，例如: '
 }
