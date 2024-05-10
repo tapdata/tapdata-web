@@ -245,13 +245,6 @@ export class Table extends NodeType {
                             display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                           }
                         }
-                      },
-                      {
-                        target: 'tableName',
-                        effects: ['onFieldInputValueChange'],
-                        fulfill: {
-                          run: '!$self.value && $target.setState({ description: "" })'
-                        }
                       }
                     ]
                   }
@@ -547,10 +540,9 @@ export class Table extends NodeType {
                 'x-component': 'SchemaPreview',
                 'x-component-props': {
                   '@update-table-name': `{{(name) => {
-                    console.log("update-table-name", name)
-                    $values.needDynamicTableName && $form.setFieldState('tableName', {
-                      description: name
-                    })
+                    if (name && $values.tableName && $values.tableName !== name) {
+                      $form.setValuesIn('tableName', name)
+                    }
                   }}}`
                 }
               }
