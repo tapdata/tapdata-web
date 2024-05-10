@@ -1,17 +1,19 @@
 import { defineComponent, ref } from '@vue/composition-api'
 import i18n from '@tap/i18n'
-import { useForm } from '@tap/form'
+import { useForm, useField } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
 import FieldList from '../field-inference/List'
 import './style.scss'
+import { action } from '@formily/reactive'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
   setup(props, { root, refs }) {
     const formRef = useForm()
+    const fieldRef = useField()
     const form = formRef.value
     const treeData = ref([])
     const loading = ref(false)
@@ -25,13 +27,9 @@ export const SchemaPreview = defineComponent({
       const root = { children: [] }
 
       for (const item of data) {
-        if (item.is_deleted) continue
-
         const { field_name } = item
         let parent = root
         const fields = field_name.split('.')
-        item.dataType = item.data_type.replace(/\(.+\)/, '')
-        item.indicesUnique = !!columnsMap[field_name]
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
@@ -58,6 +56,7 @@ export const SchemaPreview = defineComponent({
     const schemaData = ref({})
     const loadSchema = async () => {
       loading.value = true
+      fieldRef.value.loading = fieldRef.value.displayName !== 'VoidField'
       const params = {
         nodeId: form.values.id,
         fields: ['original_name', 'fields', 'qualified_name'],
@@ -68,15 +67,27 @@ export const SchemaPreview = defineComponent({
         // items: [{ fields = [], indices = [] } = {}]
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
-      const { fields = [], indices = [] } = schema
 
-      schemaData.value = mapSchema(schema)
-      columnsMap = indices.reduce((map, item) => {
+      columnsMap = schema.indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
-      treeData.value = createTree(fields.sort((a, b) => a.columnPosition - b.columnPosition))
+
+      schemaData.value = mapSchema(schema)
+
+      const { fields = [] } = schema
+
+      fields.sort((a, b) => a.columnPosition - b.columnPosition)
+
+      treeData.value = createTree(fields)
       loading.value = false
+
+      if (fieldRef.value.displayName !== 'VoidField') {
+        action.bound(() => {
+          fieldRef.value.dataSource = fields
+          fieldRef.value.loading = false
+        })()
+      }
     }
 
     // 加载dataTypesJson
@@ -86,27 +97,37 @@ export const SchemaPreview = defineComponent({
       dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
     }
 
-
     const mapSchema = schema => {
+      schema.fields = schema.fields.filter(item => !item.is_deleted)
       const { fields = [], findPossibleDataTypes = {} } = schema
+      const mapField = field => {
+        field.label = field.field_name
+        field.value = field.field_name
+        field.type = field.data_type
+        field.dataType = field.data_type.replace(/\(.+\)/, '')
+        field.indicesUnique = !!columnsMap[field.field_name]
+        field.isPrimaryKey = field.primary_key_position > 0
+      }
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
-        fields.forEach(el => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-          el.matchedDataTypeLevel = getMatchedDataTypeLevel(
-            el,
-            el.canUseDataTypes,
+        fields.forEach(field => {
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
+          field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          field.matchedDataTypeLevel = getMatchedDataTypeLevel(
+            field,
+            field.canUseDataTypes,
             fieldChangeRules,
             findPossibleDataTypes
           )
+          mapField(field)
         })
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
-        fields.forEach(el => {
-          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[el.field_name] || {}
-          el.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
-          el.matchedDataTypeLevel = errorFiledType(el)
+        fields.forEach(field => {
+          const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
+          field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
+          field.matchedDataTypeLevel = errorFiledType(field)
+          mapField(field)
         })
       }
       return schema

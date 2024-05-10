@@ -28,7 +28,6 @@ export class Table extends NodeType {
           effects: ['onFieldValueChange'],
           fulfill: {
             run: `setTimeout(() => {
-              console.log("updateConditionFields.$inputs")
               $target && $target.visible && $target.validate()
             }, 0)`
           }
@@ -268,7 +267,16 @@ export class Table extends NodeType {
                       }}}`
                     },
                     'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+                      {
+                        dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
+                        fulfill: {
+                          state: {
+                            dataSource: '{{$deps[0]}}',
+                            loading: '{{$deps[1]}}'
+                          }
+                        }
+                      },
+                      // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
                       {
                         effects: ['onFieldMount'],
                         fulfill: {
@@ -503,8 +511,8 @@ export class Table extends NodeType {
                 }
               },
 
-              schemaPreview: {
-                type: 'void',
+              schemaFields: {
+                type: 'array',
                 'x-component': 'SchemaPreview'
               }
             }
