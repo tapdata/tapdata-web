@@ -137,6 +137,7 @@ export class Table extends NodeType {
                 type: 'void',
                 'x-component': 'Space',
                 'x-component-props': {
+                  align: 'start',
                   size: 'middle',
                   class: 'w-100'
                 },
@@ -244,17 +245,14 @@ export class Table extends NodeType {
                             display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                           }
                         }
-                      } /*,
+                      },
                       {
                         target: 'tableName',
                         effects: ['onFieldInputValueChange'],
                         fulfill: {
-                          state: {
-                            value:
-                              '{{$self.value && $values.tableName ? `${$values.tableName}_${new Date().getFullYear()}_${new Date().getMonth() + 1}_${new Date().getDate()}` : $values.tableName ? $values.tableName.replace(/_\\d{4}_\\d+_\\d+$/, "") : $values.tableName}}'
-                          }
+                          run: '!$self.value && $target.setState({ description: "" })'
                         }
-                      }*/
+                      }
                     ]
                   }
                 }
@@ -546,7 +544,15 @@ export class Table extends NodeType {
 
               schemaPreview: {
                 type: 'void',
-                'x-component': 'SchemaPreview'
+                'x-component': 'SchemaPreview',
+                'x-component-props': {
+                  '@update-table-name': `{{(name) => {
+                    console.log("update-table-name", name)
+                    $values.needDynamicTableName && $form.setFieldState('tableName', {
+                      description: name
+                    })
+                  }}}`
+                }
               }
             }
           },

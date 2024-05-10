@@ -10,7 +10,7 @@ import './style.scss'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
-  setup(props, { root, refs }) {
+  setup(props, { root, refs, emit }) {
     const formRef = useForm()
     const form = formRef.value
     const treeData = ref([])
@@ -71,6 +71,7 @@ export const SchemaPreview = defineComponent({
       } = await metadataInstancesApi.nodeSchemaPage(params)
       const { fields = [], indices = [] } = schema
       tableName.value = schema.name
+      emit('update-table-name', tableName.value)
       schemaData.value = mapSchema(schema)
       columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
