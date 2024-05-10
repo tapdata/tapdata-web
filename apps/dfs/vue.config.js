@@ -92,7 +92,10 @@ let localTmProxy = {
 module.exports = {
   pages,
   lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
-  publicPath: './',
+  publicPath:
+    process.env.NODE_ENV === 'production'
+      ? 'https://static.cloud.tapdata.net/' // 替换为你的CDN URL
+      : './',
   productionSourceMap: false,
 
   devServer: {
