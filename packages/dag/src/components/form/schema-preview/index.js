@@ -55,6 +55,7 @@ export const SchemaPreview = defineComponent({
       return root.children
     }
 
+    const tableName = ref(form.values.tableName || form.values.name)
     const schemaData = ref({})
     const loadSchema = async () => {
       loading.value = true
@@ -69,7 +70,7 @@ export const SchemaPreview = defineComponent({
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
       const { fields = [], indices = [] } = schema
-
+      tableName.value = schema.name
       schemaData.value = mapSchema(schema)
       columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
@@ -85,7 +86,6 @@ export const SchemaPreview = defineComponent({
       const pdkHashData = await databaseTypesApi.pdkHash(form.values.attrs?.pdkHash)
       dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
     }
-
 
     const mapSchema = schema => {
       const { fields = [], findPossibleDataTypes = {} } = schema
@@ -166,9 +166,7 @@ export const SchemaPreview = defineComponent({
         <div class="flex justify-content-center">
           {isTreeView.value ? (
             <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
-                {form.values.tableName || form.values.name}
-              </div>
+              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">{tableName.value}</div>
               <div
                 class="schema-card-body"
                 {...{

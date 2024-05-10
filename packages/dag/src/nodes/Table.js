@@ -233,11 +233,29 @@ export class Table extends NodeType {
                     title: i18n.t('packages_dag_dynamic_date_suffix'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      tooltip: `{{\`${i18n.t(
-                        'packages_dag_dynamic_date_suffix_tip'
-                      )}\${$values.tableName}_\${new Date().getFullYear()}_\${new Date().getMonth() + 1}_\${new Date().getDate()}\`}}`
+                      tooltip: i18n.t('packages_dag_dynamic_date_suffix_tip')
                     },
-                    'x-component': 'Switch'
+                    'x-component': 'Switch',
+                    'x-reactions': [
+                      {
+                        dependencies: ['$inputs'],
+                        fulfill: {
+                          state: {
+                            display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
+                          }
+                        }
+                      } /*,
+                      {
+                        target: 'tableName',
+                        effects: ['onFieldInputValueChange'],
+                        fulfill: {
+                          state: {
+                            value:
+                              '{{$self.value && $values.tableName ? `${$values.tableName}_${new Date().getFullYear()}_${new Date().getMonth() + 1}_${new Date().getDate()}` : $values.tableName ? $values.tableName.replace(/_\\d{4}_\\d+_\\d+$/, "") : $values.tableName}}'
+                          }
+                        }
+                      }*/
+                    ]
                   }
                 }
               },

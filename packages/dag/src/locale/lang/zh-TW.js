@@ -712,5 +712,5 @@ export default {
   packages_dag_doubleActive_tip: '當需要進行雙向同步，且產生的增量事件不會對自身產生干擾時，請啓用此開關。',
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
-  packages_dag_dynamic_date_suffix_tip: '開啓後生成的表名將包含任務運行時的日期後綴，例如: '
+  packages_dag_dynamic_date_suffix_tip: '開啓後生成的表名將包含任務運行時的日期後綴'
 }
