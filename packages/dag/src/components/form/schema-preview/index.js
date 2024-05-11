@@ -27,16 +27,16 @@ export const SchemaPreview = defineComponent({
       const root = { children: [] }
 
       for (const item of data) {
-        const { field_name } = item
+        const { label } = item
         let parent = root
-        const fields = field_name.split('.')
+        const fields = label.split('.')
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
-          let child = parent.children.find(c => c.field_name === field)
+          let child = parent.children.find(c => c.label === field)
 
           if (!child) {
-            child = { field_name: field, children: [] }
+            child = { label: field, children: [] }
             parent.children.push(child)
           }
 
@@ -44,7 +44,7 @@ export const SchemaPreview = defineComponent({
 
           if (i === fields.length - 1) {
             Object.assign(parent, item, {
-              field_name: field
+              label: field
             })
           }
         }
@@ -64,7 +64,6 @@ export const SchemaPreview = defineComponent({
         pageSize: 20
       }
       const {
-        // items: [{ fields = [], indices = [] } = {}]
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
 
@@ -75,9 +74,19 @@ export const SchemaPreview = defineComponent({
 
       schemaData.value = mapSchema(schema)
 
-      const { fields = [] } = schema
-
-      fields.sort((a, b) => a.columnPosition - b.columnPosition)
+      const fields = schema.fields
+        .filter(item => !item.is_deleted)
+        .map(field => {
+          return {
+            label: field.field_name,
+            value: field.field_name,
+            isPrimaryKey: field.isPrimaryKey,
+            indicesUnique: field.indicesUnique,
+            type: field.data_type,
+            tapType: field.tapType,
+            dataType: field.data_type.replace(/\(.+\)/, '')
+          }
+        })
 
       treeData.value = createTree(fields)
       loading.value = false
@@ -98,16 +107,16 @@ export const SchemaPreview = defineComponent({
     }
 
     const mapSchema = schema => {
-      schema.fields = schema.fields.filter(item => !item.is_deleted)
       const { fields = [], findPossibleDataTypes = {} } = schema
       const mapField = field => {
-        field.label = field.field_name
-        field.value = field.field_name
-        field.type = field.data_type
-        field.dataType = field.data_type.replace(/\(.+\)/, '')
+        // field.label = field.field_name
+        // field.value = field.field_name
+        // field.type = field.data_type
+        // field.dataType = field.data_type.replace(/\(.+\)/, '')
         field.indicesUnique = !!columnsMap[field.field_name]
         field.isPrimaryKey = field.primary_key_position > 0
       }
+      fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
         fields.forEach(field => {
@@ -136,7 +145,7 @@ export const SchemaPreview = defineComponent({
     const renderContent = (h, { node, data, store }) => {
       let icon
 
-      if (data.primary_key_position > 0) {
+      if (data.isPrimaryKey) {
         icon = (
           <VIcon size="12" class="field-icon position-absolute">
             key
@@ -153,7 +162,7 @@ export const SchemaPreview = defineComponent({
       return (
         <div class="flex flex-1 min-w-0 justify-content-between align-center gap-2 pr-2 position-relative">
           {icon}
-          <span class="ellipsis">{data.field_name}</span>
+          <span class="ellipsis">{data.label}</span>
           <span class="ml-1 font-color-slight">{data.dataType}</span>
         </div>
       )
