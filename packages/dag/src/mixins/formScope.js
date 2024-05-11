@@ -896,7 +896,7 @@ export default {
           // if ($values.attrs.hasCreated ) {
           if ($values.attrs.hasCreated === false) {
             if (!options || !options.length) {
-              options = await this.scope.loadNodeFieldOptions($values.$inputs[0])
+              options = await this.scope.loadNodeFieldOptions($values.id)
             }
 
             if (options && options.length) {
