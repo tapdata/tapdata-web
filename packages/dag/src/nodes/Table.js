@@ -28,7 +28,6 @@ export class Table extends NodeType {
           effects: ['onFieldValueChange'],
           fulfill: {
             run: `setTimeout(() => {
-              console.log("updateConditionFields.$inputs")
               $target && $target.visible && $target.validate()
             }, 0)`
           }
@@ -300,7 +299,16 @@ export class Table extends NodeType {
                       }}}`
                     },
                     'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+                      {
+                        dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
+                        fulfill: {
+                          state: {
+                            dataSource: '{{$deps[0]}}',
+                            loading: '{{$deps[1]}}'
+                          }
+                        }
+                      },
+                      // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
                       {
                         effects: ['onFieldMount'],
                         fulfill: {
@@ -535,8 +543,8 @@ export class Table extends NodeType {
                 }
               },
 
-              schemaPreview: {
-                type: 'void',
+              schemaFields: {
+                type: 'array',
                 'x-component': 'SchemaPreview',
                 'x-component-props': {
                   '@update-table-name': `{{(name) => {
@@ -965,23 +973,15 @@ export class Table extends NodeType {
                         type: 'array',
                         'x-display': 'hidden',
                         'x-reactions': [
-                          `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                           {
-                            target: '*(conditions.*.key,cdcPollingFields.*.field)',
+                            dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
                             fulfill: {
                               state: {
-                                loading: '{{$self.loading}}',
-                                dataSource: '{{$self.value}}'
-                              }
-                            }
-                          },
-                          {
-                            target: '*(readPartitionOptions.enable)',
-                            fulfill: {
-                              state: {
-                                value:
-                                  '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
-                              }
+                                dataSource: '{{$deps[0]}}',
+                                loading: '{{$deps[1]}}'
+                              },
+                              // 不设置字段的 loading，体验不好
+                              run: `{{$form.setFieldState('*(conditions.*.key,cdcPollingFields.*.field)', {dataSource: $self.dataSource})}}`
                             }
                           }
                         ]
@@ -1025,7 +1025,7 @@ export class Table extends NodeType {
                                   type: 'void',
                                   'x-component': 'Space',
                                   'x-reactions': {
-                                    dependencies: ['nodeSchema', '.key'],
+                                    dependencies: ['nodeSchema#dataSource', '.key'],
                                     fulfill: {
                                       state: {
                                         display: `{{Boolean($deps[0] && $deps[1] && $deps[0].find(field=>field.value===$deps[1]&&/timestamp|date|DATE_TIME|datetime/i.test(field.type))) ? "visible" :"hidden"}}`
@@ -1072,7 +1072,7 @@ export class Table extends NodeType {
                                 valueWrapper: {
                                   type: 'void',
                                   'x-reactions': {
-                                    dependencies: ['nodeSchema', '.key', '.fastQuery'],
+                                    dependencies: ['nodeSchema#dataSource', '.key', '.fastQuery'],
                                     fulfill: {
                                       state: {
                                         display: `{{!$deps[2] || !(field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)) ? "visible" :"hidden"}}`
@@ -1126,7 +1126,7 @@ export class Table extends NodeType {
                                         format: 'yyyy-MM-dd HH:mm:ss'
                                       },
                                       'x-reactions': {
-                                        dependencies: ['nodeSchema', '.key'],
+                                        dependencies: ['nodeSchema#dataSource', '.key'],
                                         fulfill: {
                                           schema: {
                                             'x-component':
@@ -1241,6 +1241,14 @@ export class Table extends NodeType {
                             },
                             'x-component': 'Switch',
                             'x-reactions': [
+                              {
+                                fulfill: {
+                                  state: {
+                                    value:
+                                      '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
+                                  }
+                                }
+                              },
                               {
                                 dependencies: ['isFilter', 'enableCustomCommand'],
                                 fulfill: {
