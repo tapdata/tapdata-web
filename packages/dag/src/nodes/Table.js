@@ -1000,7 +1000,8 @@ export class Table extends NodeType {
                               type: 'void',
                               'x-component': 'Space',
                               'x-component-props': {
-                                class: 'w-100'
+                                class: 'w-100',
+                                align: 'start'
                               },
                               properties: {
                                 key: {
