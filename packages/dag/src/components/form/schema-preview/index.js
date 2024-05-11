@@ -11,7 +11,7 @@ import { action } from '@formily/reactive'
 
 export const SchemaPreview = defineComponent({
   props: ['ignoreError', 'disabled'],
-  setup(props, { root, refs }) {
+  setup(props, { root, refs, emit }) {
     const formRef = useForm()
     const fieldRef = useField()
     const form = formRef.value
@@ -53,6 +53,7 @@ export const SchemaPreview = defineComponent({
       return root.children
     }
 
+    const tableName = ref(form.values.tableName || form.values.name)
     const schemaData = ref({})
     const loadSchema = async () => {
       loading.value = true
@@ -66,6 +67,9 @@ export const SchemaPreview = defineComponent({
       const {
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
+      
+      tableName.value = schema.name
+      emit('update-table-name', tableName.value)
 
       columnsMap = schema.indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
@@ -90,6 +94,7 @@ export const SchemaPreview = defineComponent({
 
       treeData.value = createTree(fields)
       loading.value = false
+    }
 
       if (fieldRef.value.displayName !== 'VoidField') {
         action.bound(() => {
@@ -97,7 +102,6 @@ export const SchemaPreview = defineComponent({
           fieldRef.value.loading = false
         })()
       }
-    }
 
     // 加载dataTypesJson
     const dataTypesJson = ref({})
@@ -196,9 +200,7 @@ export const SchemaPreview = defineComponent({
         <div class="flex justify-content-center">
           {isTreeView.value ? (
             <div class="schema-card rounded-lg inline-block overflow-hidden shadow-sm">
-              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">
-                {form.values.tableName || form.values.name}
-              </div>
+              <div class="schema-card-header border-bottom px-3 py-2 fs-7 lh-base text-center">{tableName.value}</div>
               <div
                 class="schema-card-body"
                 {...{

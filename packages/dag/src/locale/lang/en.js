@@ -766,5 +766,8 @@ export default {
   packages_dag_doubleActive: 'Bidirectional Synchronization',
   packages_dag_doubleActive_tip:
     'When bidirectional synchronization is required and the generated incremental events do not interfere with the system itself, please turn on this switch.',
-  packages_dag_time_zone_offset: 'Time Zone Offset'
+  packages_dag_time_zone_offset: 'Time Zone Offset',
+  packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
+  packages_dag_dynamic_date_suffix_tip:
+    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task'
 }

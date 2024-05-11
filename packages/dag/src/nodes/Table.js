@@ -132,88 +132,120 @@ export class Table extends NodeType {
                 }
               },
 
-              tableNameWrap: {
+              tableNameSpace: {
                 type: 'void',
-                title: i18n.t('packages_dag_dag_table'),
-                'x-decorator': 'StageButtonLabel',
-                'x-decorator-props': {
-                  asterisk: true,
-                  feedbackLayout: 'none',
-                  connectionId: '{{$values.connectionId}}',
-                  title: i18n.t('packages_dag_dag_table'),
-                  target: 'tableName'
-                },
-                'x-component': 'FormFlex',
+                'x-component': 'Space',
                 'x-component-props': {
-                  gap: 8,
-                  align: 'start'
-                },
-                'x-reactions': {
-                  dependencies: ['databaseType'],
-                  fulfill: {
-                    state: {
-                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-                    }
-                  }
+                  align: 'start',
+                  size: 'middle',
+                  class: 'w-100'
                 },
                 properties: {
-                  tableName: {
-                    type: 'string',
-                    required: true,
-                    'x-validator': [
-                      {
-                        required: true,
-                        message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                  tableNameWrap: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_dag_table'),
+                    'x-decorator': 'StageButtonLabel',
+                    'x-decorator-props': {
+                      asterisk: true,
+                      feedbackLayout: 'none',
+                      connectionId: '{{$values.connectionId}}',
+                      title: i18n.t('packages_dag_dag_table'),
+                      target: 'tableName',
+                      class: 'flex-1'
+                    },
+                    'x-component': 'FormFlex',
+                    'x-component-props': {
+                      gap: 8,
+                      align: 'start'
+                    },
+                    'x-reactions': {
+                      dependencies: ['databaseType'],
+                      fulfill: {
+                        state: {
+                          display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                        }
                       }
-                    ],
+                    },
+                    properties: {
+                      tableName: {
+                        type: 'string',
+                        required: true,
+                        'x-validator': [
+                          {
+                            required: true,
+                            message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                          }
+                        ],
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          style: {
+                            flex: 1
+                          }
+                        },
+                        'x-component': 'TableSelect',
+                        'x-component-props': {
+                          method: '{{loadTable}}',
+                          connectionId: '{{$values.connectionId}}',
+                          itemType: 'object',
+                          itemQuery: 'value'
+                        },
+                        'x-reactions': [
+                          {
+                            target: 'name',
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
+                            }
+                          },
+                          {
+                            dependencies: ['$inputs'],
+                            fulfill: {
+                              schema: {
+                                // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
+                                'x-component-props.allowCreate': '{{$deps[0].length>0}}'
+                                // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      clipboardButton: {
+                        type: 'void',
+                        'x-component': 'ClipboardButton',
+                        'x-component-props': {
+                          tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
+                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+                        },
+                        'x-reactions': {
+                          dependencies: ['tableName'],
+                          fulfill: {
+                            schema: {
+                              'x-component-props.content': '{{$deps[0]}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+
+                  needDynamicTableName: {
+                    type: 'boolean',
+                    title: i18n.t('packages_dag_dynamic_date_suffix'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      style: {
-                        flex: 1
-                      }
+                      tooltip: i18n.t('packages_dag_dynamic_date_suffix_tip')
                     },
-                    'x-component': 'TableSelect',
-                    'x-component-props': {
-                      method: '{{loadTable}}',
-                      connectionId: '{{$values.connectionId}}',
-                      itemType: 'object',
-                      itemQuery: 'value'
-                    },
+                    'x-component': 'Switch',
                     'x-reactions': [
-                      {
-                        target: 'name',
-                        effects: ['onFieldInputValueChange'],
-                        fulfill: {
-                          run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
-                        }
-                      },
                       {
                         dependencies: ['$inputs'],
                         fulfill: {
-                          schema: {
-                            // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                            'x-component-props.allowCreate': '{{$deps[0].length>0}}'
-                            // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                          state: {
+                            display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                           }
                         }
                       }
                     ]
-                  },
-                  clipboardButton: {
-                    type: 'void',
-                    'x-component': 'ClipboardButton',
-                    'x-component-props': {
-                      tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
-                      finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-                    },
-                    'x-reactions': {
-                      dependencies: ['tableName'],
-                      fulfill: {
-                        schema: {
-                          'x-component-props.content': '{{$deps[0]}}'
-                        }
-                      }
-                    }
                   }
                 }
               },
@@ -513,7 +545,14 @@ export class Table extends NodeType {
 
               schemaFields: {
                 type: 'array',
-                'x-component': 'SchemaPreview'
+                'x-component': 'SchemaPreview',
+                'x-component-props': {
+                  '@update-table-name': `{{(name) => {
+                    if (name && $values.tableName && $values.tableName !== name) {
+                      $form.setValuesIn('tableName', name)
+                    }
+                  }}}`
+                }
               }
             }
           },
