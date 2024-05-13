@@ -52,6 +52,7 @@ export default {
   page_title_user: '用戶管理',
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
+  page_title_webhook_alerts: 'Webhook 告警',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定義節點',
@@ -1837,5 +1838,6 @@ export default {
   daas_cluster_component_view: '組件視圖',
   daas_cluster_engine_hostname: '主機名/IP',
   daas_cluster_connection_count: '連接數',
-  daas_cluser_keyword_placeholder: '搜索主機名'
+  daas_cluser_keyword_placeholder: '搜索主機名',
+  webhook_alerts: 'Webhook 告警'
 }

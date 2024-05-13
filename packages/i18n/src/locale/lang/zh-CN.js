@@ -326,5 +326,8 @@ export default {
   public_unit_day: '天',
   public_unit_week: '周',
   public_unit_month: '月',
-  public_unit_year: '年'
+  public_unit_year: '年',
+
+  public_remark: '备注',
+  public_task_alert: '任务告警'
 }

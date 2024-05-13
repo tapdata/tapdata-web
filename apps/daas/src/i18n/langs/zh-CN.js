@@ -52,6 +52,7 @@ export default {
   page_title_user: '用户管理',
   page_title_role: '角色管理',
   page_title_setting: '系统设置',
+  page_title_webhook_alerts: 'Webhook 告警',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定义节点',
@@ -1842,5 +1843,21 @@ export default {
   daas_cluster_component_view: '组件视图',
   daas_cluster_engine_hostname: '主机名/IP',
   daas_cluster_connection_count: '连接数',
-  daas_cluser_keyword_placeholder: '搜索主机名'
+  daas_cluser_keyword_placeholder: '搜索主机名',
+
+  webhook_alerts: 'Webhook 告警',
+  webhook_alerts_detail: 'Webhook 告警详情',
+  webhook_alerts_add: '新建 Webhook',
+  webhook_address: 'Webhook 地址',
+  webhook_params: '参数',
+  webhook_switch: '事件开关',
+  webhook_send_log: '发送记录',
+  webhook_send_address: '发送地址',
+  webhook_server_url: '服务 URL',
+  webhook_custom_template: '自定义模版',
+  webhook_custom_template_ph: '自定义模板内容，支持参数填充模板，如：${alarm.name}',
+  http_header: 'HTTP 请求头',
+  http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
+  webhook_send_ping: '发送测试 PING 事件',
+  webhook_event_type: '事件类型'
 }

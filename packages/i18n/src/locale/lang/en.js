@@ -326,5 +326,8 @@ export default {
   public_unit_day: 'days',
   public_unit_week: 'weeks',
   public_unit_month: 'months',
-  public_unit_year: 'years'
+  public_unit_year: 'years',
+
+  public_remark: 'Remark',
+  public_task_alert: 'Task Alert'
 }

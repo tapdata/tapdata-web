@@ -52,6 +52,7 @@ export default {
   page_title_user: 'Users',
   page_title_role: 'Roles',
   page_title_setting: 'System settings',
+  page_title_webhook_alerts: 'Webhook Alerts',
   page_title_license: 'License',
   page_title_back_menu: 'Back',
   page_title_custom_node: 'User Defined Processors',
@@ -1895,5 +1896,6 @@ export default {
   daas_cluster_component_view: 'Component View',
   daas_cluster_engine_hostname: 'Hostname/IP',
   daas_cluster_connection_count: 'Connection Count',
-  daas_cluser_keyword_placeholder: 'Search for hostnames'
+  daas_cluser_keyword_placeholder: 'Search for hostnames',
+  webhook_alerts: 'Webhook 告警'
 }
