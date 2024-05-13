@@ -71,14 +71,16 @@ export const SchemaPreview = defineComponent({
       tableName.value = schema.name
       emit('update-table-name', tableName.value)
 
-      columnsMap = schema.indices.reduce((map, item) => {
+      let { indices = [], fields = [] } = schema
+
+      columnsMap = indices.reduce((map, item) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = true))
         return map
       }, {})
 
       schemaData.value = mapSchema(schema)
 
-      const fields = (schema.fields || [])
+      fields = fields
         .filter(item => !item.is_deleted)
         .map(field => {
           return {
