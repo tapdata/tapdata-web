@@ -67,7 +67,7 @@ export const SchemaPreview = defineComponent({
       const {
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
-      
+
       tableName.value = schema.name
       emit('update-table-name', tableName.value)
 
@@ -78,7 +78,7 @@ export const SchemaPreview = defineComponent({
 
       schemaData.value = mapSchema(schema)
 
-      const fields = schema.fields
+      const fields = (schema.fields || [])
         .filter(item => !item.is_deleted)
         .map(field => {
           return {
@@ -94,7 +94,6 @@ export const SchemaPreview = defineComponent({
 
       treeData.value = createTree(fields)
       loading.value = false
-    }
 
       if (fieldRef.value.displayName !== 'VoidField') {
         action.bound(() => {
@@ -102,6 +101,7 @@ export const SchemaPreview = defineComponent({
           fieldRef.value.loading = false
         })()
       }
+    }
 
     // 加载dataTypesJson
     const dataTypesJson = ref({})
