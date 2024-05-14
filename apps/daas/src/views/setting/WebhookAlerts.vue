@@ -226,12 +226,12 @@ export default {
         url: '',
         customTemplate: `{
     "action": "TaskAlter",
-    "hookId": \${hook_id},
-    "actionTime": \${action_time},
+    "hookId": \${hookId},
+    "actionTime": \${actionTime},
     "title": \${title},
     "content": \${content}
     "actionData": {
-        "status": \${status},
+        "status": \${actionData.status},
         "level": \${actionData.level},
         "component":\${actionData.component},
         "type":\${actionData.type},
@@ -245,7 +245,7 @@ export default {
         "recoveryTime": \${actionData.recoveryTime},
         "closeTime": \${actionData.closeTime},
         "closeBy": \${actionData.closeBy},
-        "agentId": \${actionData.agentId},
+        "agentId": \${actionData.agentId}, 
     }
 }`,
         hookTypes: [],
