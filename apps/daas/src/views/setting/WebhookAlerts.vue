@@ -159,7 +159,7 @@
                       <HighlightCode
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.responseResultFmt || '--'"
-                        language="json"
+                        :language="item.responseType"
                       ></HighlightCode>
                     </div>
                   </ElTabPane>
@@ -233,26 +233,26 @@ export default {
         url: '',
         customTemplate: `{
     "action": "TaskAlter",
-    "hookId": \${hookId},
-    "actionTime": \${actionTime},
-    "title": \${title},
-    "content": \${content}
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
     "actionData": {
-        "status": \${actionData.status},
-        "level": \${actionData.level},
-        "component":\${actionData.component},
-        "type":\${actionData.type},
-        "name":\${actionData.name},
-        "node":\${actionData.node},
-        "currentValue": \${actionData.currentValue},
-        "threshold": \${actionData.threshold},
-        "lastOccurrenceTime": \${actionData.lastOccurrenceTime},
-        "tally": \${actionData.tally},
-        "summary": \${actionData.summary},
-        "recoveryTime": \${actionData.recoveryTime},
-        "closeTime": \${actionData.closeTime},
-        "closeBy": \${actionData.closeBy},
-        "agentId": \${actionData.agentId},
+        "status": "\${actionData.status}",
+        "level": "\${actionData.level}",
+        "component":"\${actionData.component}",
+        "type":"\${actionData.type}",
+        "name":"\${actionData.name}",
+        "node":"\${actionData.node}",
+        "currentValue": "\${actionData.currentValue}",
+        "threshold": "\${actionData.threshold}",
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",
+        "tally": "\${actionData.tally}",
+        "summary": "\${actionData.summary}",
+        "recoveryTime": "\${actionData.recoveryTime}",
+        "closeTime": "\${actionData.closeTime}",
+        "closeBy": "\${actionData.closeBy}",
+        "agentId": "\${actionData.agentId}"
     }
 }`,
         hookTypes: [],
@@ -353,7 +353,12 @@ export default {
     mapHistory(item) {
       item.createAtLabel = dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
       if (item.responseResult) {
-        item.responseResultFmt = JSON.stringify(JSON.parse(item.responseResult), null, 2)
+        item.responseResultFmt = item.responseResult
+        item.responseType = 'html'
+        if (item.responseHeaders?.includes('Content-Type: application/json')) {
+          item.responseType = 'json'
+          item.responseResultFmt = JSON.stringify(JSON.parse(item.responseResult), null, 2)
+        }
       }
 
       if (item.requestBody) {
@@ -425,7 +430,7 @@ export default {
     },
 
     handleInit(editor) {
-      editor.getSession().setUseWorker(false) // 禁用错误检查
+      // editor.getSession().setUseWorker(false) // 禁用错误检查
     }
   }
 }
