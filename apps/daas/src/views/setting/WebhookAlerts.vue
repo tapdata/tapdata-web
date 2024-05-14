@@ -33,7 +33,12 @@
       </ElTable>
     </div>
 
-    <ElDrawer :visible="drawerState.visible" @update:visible="drawerState.visible = $event" @closed="afterClose">
+    <ElDrawer
+      :visible="drawerState.visible"
+      :wrapperClosable="false"
+      @update:visible="drawerState.visible = $event"
+      @closed="afterClose"
+    >
       <template #title>
         <span class="fs-6 font-color-dark fw-sub">{{ drawerState.title }}</span>
       </template>
@@ -62,11 +67,18 @@
               <ElInput v-model="form.customHttpHead" :placeholder="$t('http_header_ph')" type="textarea"></ElInput>
             </ElFormItem>
             <ElFormItem :label="$t('webhook_custom_template')" prop="customTemplate">
-              <ElInput
+              <JsonEditor
+                v-model="form.customTemplate"
+                :options="{
+                  options: { showPrintMargin: false, useWrapMode: true }
+                }"
+                @init="handleInit"
+              ></JsonEditor>
+              <!--<ElInput
                 v-model="form.customTemplate"
                 :placeholder="$t('webhook_custom_template_ph')"
                 type="textarea"
-              ></ElInput>
+              ></ElInput>-->
             </ElFormItem>
           </ElForm>
         </div>
@@ -76,37 +88,48 @@
             $t('webhook_send_ping')
           }}</ElButton>
           <ElButton @click="save" :loading="drawerState.saving" type="primary">{{ $t('public_button_save') }}</ElButton>
+          <ElButton @click="drawerState.visible = false">{{ $t('public_button_cancel') }}</ElButton>
         </div>
       </div>
     </ElDrawer>
 
-    <ElDrawer :visible="historyState.visible" @update:visible="historyState.visible = $event" :size="800">
+    <ElDrawer
+      :visible="historyState.visible"
+      :wrapperClosable="false"
+      @update:visible="historyState.visible = $event"
+      :size="800"
+    >
       <template #title>
         <span class="fs-6 font-color-dark fw-sub">{{ $t('webhook_send_log') }}</span>
       </template>
       <div class="flex flex-column h-100" v-loading="historyState.loading">
         <div class="flex-1 px-4 overflow-y-auto">
-          <el-collapse>
+          <el-collapse class="history-collapse" v-if="historyState.list.length">
             <el-collapse-item v-for="(item, i) in historyState.list" :key="i">
               <template #title>
                 <div class="flex align-center flex-1">
-                  <span>{{ item.requestId }}</span>
-                  <span class="ml-auto pr-4">{{ item.requestAt }}</span>
+                  <span>{{ item.id }}</span>
+                  <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
                 </div>
               </template>
-              <div>
+              <div class="position-relative">
                 <ElTabs>
                   <ElTabPane label="请求">
                     <div>
-                      <div>请求头</div>
-                      <div>
-                        <pre><code>{{ item.responseHeard }}
-                        </code></pre>
-                      </div>
+                      <div class="lh-base">请求头</div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.requestHeaders || '--'"
+                        language="http"
+                      ></HighlightCode>
 
-                      <div>请求内容</div>
+                      <div class="lh-base">请求内容</div>
                       <div>
-                        <HighlightCode :code="item.requestBody" language="json"></HighlightCode>
+                        <HighlightCode
+                          class="rounded-lg mt-2 mb-4 overflow-hidden"
+                          :code="item.requestBodyFmt"
+                          language="json"
+                        ></HighlightCode>
                       </div>
                     </div>
                   </ElTabPane>
@@ -114,26 +137,37 @@
                     <template #label>
                       <span>
                         响应
-                        <ElTag type="info" class="rounded-pill">{{ item.responseCode }}</ElTag>
+                        <ElTag size="mini" type="info" class="rounded-pill ml-1">{{ item.responseCode }}</ElTag>
                       </span>
                     </template>
                     <div>
-                      <div>响应头</div>
-                      <div>
-                        <pre><code>{{ item.responseHeard }}
-                        </code></pre>
-                      </div>
+                      <div class="lh-base">响应头</div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.responseHeaders"
+                        language="http"
+                      ></HighlightCode>
 
-                      <div>响应内容</div>
-                      <div>
-                        <HighlightCode :code="item.responseResult" language="json"></HighlightCode>
-                      </div>
+                      <div class="lh-base">响应内容</div>
+                      <HighlightCode
+                        class="rounded-lg mt-2 mb-4 overflow-hidden"
+                        :code="item.responseResultFmt"
+                        language="json"
+                      ></HighlightCode>
                     </div>
                   </ElTabPane>
                 </ElTabs>
+                <ElButton
+                  class="position-absolute tabs-extra-btn flex align-center py-0"
+                  size="mini"
+                  @click="reSend(item)"
+                  >重新发送</ElButton
+                >
               </div>
             </el-collapse-item>
           </el-collapse>
+
+          <VEmpty v-else></VEmpty>
         </div>
         <div class="p-4">
           <el-pagination
@@ -157,12 +191,13 @@
 import i18n from '@tap/i18n'
 import { dayjs } from '@tap/business'
 import { settingsApi, webhookApi } from '@tap/api'
-import { HighlightCode } from '@tap/form'
+import { VEmpty } from '@tap/component'
+import { HighlightCode, JsonEditor } from '@tap/form'
 import ElSelectTree from 'el-select-tree'
 
 export default {
   name: 'WebhookAlerts',
-  components: { ElSelectTree, HighlightCode },
+  components: { ElSelectTree, HighlightCode, VEmpty, JsonEditor },
   data() {
     const validateUrl = (rule, value, callback) => {
       // 正则校验URL
@@ -188,12 +223,34 @@ export default {
       },
       form: {
         id: '',
-        hookId: '',
         url: '',
-        customTemplate: '',
+        customTemplate: `{
+    "action": "TaskAlter",
+    "hookId": \${hook_id},
+    "actionTime": \${action_time},
+    "title": \${title},
+    "content": \${content}
+    "actionData": {
+        "status": \${status},
+        "level": \${actionData.level},
+        "component":\${actionData.component},
+        "type":\${actionData.type},
+        "name":\${actionData.name},
+        "node":\${actionData.node},
+        "currentValue": \${actionData.currentValue},
+        "threshold": \${actionData.threshold},
+        "lastOccurrenceTime": \${actionData.lastOccurrenceTime},
+        "tally": \${actionData.tally},
+        "summary": \${actionData.summary},
+        "recoveryTime": \${actionData.recoveryTime},
+        "closeTime": \${actionData.closeTime},
+        "closeBy": \${actionData.closeBy},
+        "agentId": \${actionData.agentId},
+    }
+}`,
         hookTypes: [],
         mark: '',
-        customHttpHead: ''
+        customHttpHeaders: ''
       },
       rules: {
         mark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
@@ -232,7 +289,7 @@ export default {
       },
       page: {
         current: 1,
-        size: this.defaultPageSize,
+        size: 20,
         total: 0
       }
     }
@@ -279,24 +336,32 @@ export default {
 
       Object.assign(this.form, row)
     },
-    viewHistory({ hookId }) {
+    viewHistory({ id }) {
       this.historyState.visible = true
       this.historyState.loading = true
-      this.historyState.hookId = hookId
+      this.historyState.id = id
       this.loadHistory()
     },
-    loadHistory(pageFrom) {
+    mapHistory(item) {
+      item.createAtLabel = dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
+      if (item.responseResult) {
+        item.responseResultFmt = JSON.stringify(JSON.parse(item.responseResult), null, 2)
+      }
+
+      if (item.requestBody) {
+        item.requestBodyFmt = JSON.stringify(JSON.parse(item.requestBody), null, 2)
+      }
+      return item
+    },
+    loadHistory(pageNum = 1) {
       webhookApi
         .history({
-          hookId: this.historyState.hookId,
-          pageFrom,
+          hookId: this.historyState.id,
+          pageFrom: (pageNum - 1) * this.page.size,
           pageSize: this.page.size
         })
         .then(({ items, total }) => {
-          this.historyState.list = items.map(item => {
-            item.requestAt = dayjs(item.requestAt).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
+          this.historyState.list = items.map(this.mapHistory)
           this.page.total = total
         })
         .finally(() => (this.historyState.loading = false))
@@ -318,8 +383,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.drawerState.saving = true
-          webhookApi
-            .save(this.form)
+          webhookApi[this.form.id ? 'update' : 'save'](this.form)
             .then(() => {
               this.$message.success(this.$t('public_message_save_ok'))
               this.drawerState.visible = false
@@ -330,11 +394,20 @@ export default {
       })
     },
     async handleSwitch(row) {
-      await webhookApi[row.open ? 'close' : 'open'](row.hookId)
+      await webhookApi[row.open ? 'close' : 'open'](row.id)
       row.open = !row.open
       this.$message.success(this.$t('public_message_operation_success'))
     },
-    handleChangePage() {}
+    async reSend(request) {
+      const result = await webhookApi.resend(request)
+      Object.assign(request, this.mapHistory(result))
+      // this.mapHistory(result)
+      this.$message.success('发送成功')
+    },
+
+    handleInit(editor) {
+      editor.getSession().setUseWorker(false) // 禁用错误检查
+    }
   }
 }
 </script>
@@ -387,6 +460,27 @@ $unreadColor: #ee5353;
       }
       .backActive {
         transition: all 1s;
+      }
+    }
+  }
+}
+
+.tabs-extra-btn {
+  top: 0;
+  right: 16px;
+  height: 28px;
+}
+
+.history-collapse {
+  $bg: #f5f7fa;
+  ::v-deep {
+    .el-collapse-item {
+      &.is-active {
+        background-color: $bg;
+      }
+
+      &__header:hover {
+        background-color: $bg;
       }
     }
   }

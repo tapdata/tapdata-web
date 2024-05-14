@@ -1,4 +1,6 @@
 import Http from './Http'
+import Qs from 'qs'
+
 export default class Webhook extends Http {
   constructor() {
     super('/api/webhook')
@@ -28,17 +30,14 @@ export default class Webhook extends Http {
     return this.axios.post(`${this.url}/ping`, data)
   }
 
-  history(data) {
+  history(params) {
     return this.axios.get(`${this.url}/history/list`, {
-      data
+      params
     })
   }
 
-  resend(id, hookId) {
-    return this.axios.post(`${this.url}/re-send`, {
-      id,
-      hookId
-    })
+  resend(data) {
+    return this.axios.post(`${this.url}/history/re-send`, data)
   }
 }
 export { Webhook }

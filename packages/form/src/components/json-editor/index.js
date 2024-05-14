@@ -21,7 +21,7 @@ export const JsonEditor = defineComponent({
     needFormat: Boolean
   },
 
-  setup(props, { emit }) {
+  setup(props, { emit, listeners }) {
     const fieldRef = useField()
     const editorVal = ref(
       props.type === 'object' ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0) : props.value
@@ -53,6 +53,7 @@ export const JsonEditor = defineComponent({
           height={props.height}
           onBlur={onBlur}
           options={options}
+          on={{ ...listeners }}
         />
       )
     }
