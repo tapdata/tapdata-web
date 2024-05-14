@@ -1855,6 +1855,30 @@ export default {
   webhook_send_address: '发送地址',
   webhook_server_url: '服务 URL',
   webhook_custom_template: '自定义模版',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", //标记当前告警的状态,ING,RECOVER,CLOESE
+        "level": "\${actionData.level}", //告警级别RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
+        "component":"\${actionData.component}",//引擎告警组件固定为引擎FE
+        "type":"\${actionData.type}",//告警类型 同步任务告警、共享缓存告警、共享挖掘告警、数据校验告警、精准延迟告警
+        "name":"\${actionData.name}",//具体的任务名
+        "node":"\${actionData.node}",//产生告警的节点名，无节点时为空;当为任务告警时，节点直接放任务名
+        "currentValue": "\${actionData.currentValue}",//触发告警的指标值
+        "threshold": "\${actionData.threshold}",//触发告警的指标阈值
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",//告警最近发生时间
+        "tally": "\${actionData.tally}",//告警发生次数
+        "summary": "\${actionData.summary}",//告警内容
+        "recoveryTime": "\${actionData.recoveryTime}",//告警恢复时间
+        "closeTime": "\${actionData.closeTime}",//告警关闭时间
+        "closeBy": "\${actionData.closeBy}",//告警被谁关闭
+        "agentId": "\${actionData.agentId}", //所属引擎
+    }
+}`,
   webhook_custom_template_ph: '自定义模板内容，支持参数填充模板，如：${alarm.name}',
   http_header: 'HTTP 请求头',
   http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',

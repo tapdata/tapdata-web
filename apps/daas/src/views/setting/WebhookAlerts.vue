@@ -21,6 +21,7 @@
           <template #default="{ row }">
             <div class="flex gap-2 align-center">
               <ElLink @click="viewDetail(row, $event)" type="primary">{{ $t('public_button_details') }} </ElLink>
+              <ElDivider direction="vertical" class="mx-0"></ElDivider>
               <ElLink @click="viewHistory(row, $event)" type="primary">{{ $t('webhook_send_log') }} </ElLink>
               <ElDivider direction="vertical" class="mx-0"></ElDivider>
               <ElLink @click="delWebhook(row, $event)" type="danger">{{ $t('public_button_delete') }} </ElLink>
@@ -42,7 +43,9 @@
       @closed="afterClose"
     >
       <template #title>
-        <span class="fs-6 font-color-dark fw-sub">{{ drawerState.title }}</span>
+        <span class="fs-6 font-color-dark fw-sub">{{
+          $t(form.id ? 'webhook_alerts_detail' : 'webhook_alerts_add')
+        }}</span>
       </template>
       <div class="flex flex-column h-100">
         <div class="flex-1 px-4 overflow-y-auto">
@@ -50,7 +53,7 @@
             <ElFormItem :label="$t('public_remark')" prop="mark">
               <ElInput v-model="form.mark"></ElInput>
             </ElFormItem>
-            <div class="fs-6 font-color-dark my-2">{{ $t('packages_business_peizhi') }}</div>
+            <!--<div class="fs-6 font-color-dark my-2">{{ $t('packages_business_peizhi') }}</div>-->
             <ElFormItem :label="$t('webhook_event_type')" prop="hookTypes">
               <ElSelectTree
                 v-model="form.hookTypes"
@@ -73,7 +76,22 @@
                 :autosize="{ minRows: 2, maxRows: 6 }"
               ></ElInput>
             </ElFormItem>
-            <ElFormItem :label="$t('webhook_custom_template')" prop="customTemplate">
+            <ElFormItem prop="customTemplate">
+              <template #label>
+                <span>
+                  <span class="align-middle">{{ $t('webhook_custom_template') }}</span>
+                  <ElTooltip :content="$t('webhook_custom_template_tip')">
+                    <VIcon class="align-middle ml-1">question-circle</VIcon>
+                    <template #content>
+                      <HighlightCode
+                        theme="atom-one-dark"
+                        :code="$t('webhook_custom_template_tip')"
+                        language="javascript"
+                      ></HighlightCode>
+                    </template>
+                  </ElTooltip>
+                </span>
+              </template>
               <JsonEditor
                 v-model="form.customTemplate"
                 :options="{
@@ -81,11 +99,6 @@
                 }"
                 @init="handleInit"
               ></JsonEditor>
-              <!--<ElInput
-                v-model="form.customTemplate"
-                :placeholder="$t('webhook_custom_template_ph')"
-                type="textarea"
-              ></ElInput>-->
             </ElFormItem>
           </ElForm>
         </div>
@@ -309,7 +322,9 @@ export default {
   methods: {
     async loadData() {
       this.loading = true
-      let filter = {}
+      let filter = {
+        order: 'createTime DESC'
+      }
       const { items = [] } = await webhookApi.list({
         filter: JSON.stringify(filter)
       })
@@ -355,7 +370,7 @@ export default {
       if (item.responseResult) {
         item.responseResultFmt = item.responseResult
         item.responseType = 'html'
-        if (item.responseHeaders?.includes('Content-Type: application/json')) {
+        if (/content-Type: application\/json/i.test(item.responseHeaders)) {
           item.responseType = 'json'
           item.responseResultFmt = JSON.stringify(JSON.parse(item.responseResult), null, 2)
         }
@@ -397,7 +412,8 @@ export default {
           webhookApi
             .ping(this.form)
             .then(() => {
-              this.$message.success(this.$t('public_message_save_ok'))
+              this.$message.success(this.$t('发送成功'))
+              this.viewHistory(this.form)
             })
             .finally(() => (this.drawerState.ping = false))
         }

@@ -110,7 +110,7 @@
 
 <script>
 import { delayTrigger, on, off } from '@tap/shared'
-import { VIcon, Classification, ProTable, IconButton, VExpandXTransition } from '@tap/component'
+import { VIcon, Classification, ProTable, IconButton } from '@tap/component'
 import { makeDragNodeImage } from '../shared'
 
 import SelectClassify from './SelectClassify'
@@ -121,8 +121,7 @@ export default {
     SelectClassify,
     VIcon,
     ProTable,
-    IconButton,
-    VExpandXTransition
+    IconButton
   },
   props: {
     title: String,
