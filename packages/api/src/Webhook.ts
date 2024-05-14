@@ -39,5 +39,9 @@ export default class Webhook extends Http {
   resend(data) {
     return this.axios.post(`${this.url}/history/re-send`, data)
   }
+
+  deleteOne(id) {
+    return this.axios.delete(`${this.url}/deleteOne/${id}`)
+  }
 }
 export { Webhook }

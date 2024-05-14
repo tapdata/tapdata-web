@@ -19,9 +19,11 @@
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="180">
           <template #default="{ row }">
-            <div class="flex gap-2">
+            <div class="flex gap-2 align-center">
               <ElLink @click="viewDetail(row, $event)" type="primary">{{ $t('public_button_details') }} </ElLink>
               <ElLink @click="viewHistory(row, $event)" type="primary">{{ $t('webhook_send_log') }} </ElLink>
+              <ElDivider direction="vertical" class="mx-0"></ElDivider>
+              <ElLink @click="delWebhook(row, $event)" type="danger">{{ $t('public_button_delete') }} </ElLink>
             </div>
           </template>
         </el-table-column>
@@ -64,7 +66,12 @@
               <ElInput v-model="form.url"></ElInput>
             </ElFormItem>
             <ElFormItem :label="$t('http_header')" prop="customHttpHead">
-              <ElInput v-model="form.customHttpHead" :placeholder="$t('http_header_ph')" type="textarea"></ElInput>
+              <ElInput
+                v-model="form.customHttpHead"
+                :placeholder="$t('http_header_ph')"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 6 }"
+              ></ElInput>
             </ElFormItem>
             <ElFormItem :label="$t('webhook_custom_template')" prop="customTemplate">
               <JsonEditor
@@ -137,21 +144,21 @@
                     <template #label>
                       <span>
                         响应
-                        <ElTag size="mini" type="info" class="rounded-pill ml-1">{{ item.responseCode }}</ElTag>
+                        <ElTag size="mini" type="info" class="rounded-pill ml-1">{{ item.responseCode || '--' }}</ElTag>
                       </span>
                     </template>
                     <div>
                       <div class="lh-base">响应头</div>
                       <HighlightCode
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
-                        :code="item.responseHeaders"
+                        :code="item.responseHeaders || '--'"
                         language="http"
                       ></HighlightCode>
 
                       <div class="lh-base">响应内容</div>
                       <HighlightCode
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
-                        :code="item.responseResultFmt"
+                        :code="item.responseResultFmt || '--'"
                         language="json"
                       ></HighlightCode>
                     </div>
@@ -190,7 +197,7 @@
 <script>
 import i18n from '@tap/i18n'
 import { dayjs } from '@tap/business'
-import { settingsApi, webhookApi } from '@tap/api'
+import { clusterApi, settingsApi, webhookApi } from '@tap/api'
 import { VEmpty } from '@tap/component'
 import { HighlightCode, JsonEditor } from '@tap/form'
 import ElSelectTree from 'el-select-tree'
@@ -245,7 +252,7 @@ export default {
         "recoveryTime": \${actionData.recoveryTime},
         "closeTime": \${actionData.closeTime},
         "closeBy": \${actionData.closeBy},
-        "agentId": \${actionData.agentId}, 
+        "agentId": \${actionData.agentId},
     }
 }`,
         hookTypes: [],
@@ -319,12 +326,13 @@ export default {
     },
     afterClose() {
       this.$refs.form.resetFields()
+      this.form.id = ''
     },
     async addWebhook() {
       this.drawerState.visible = true
       this.drawerState.title = this.$t('webhook_alerts_add')
-
-      // await this.$nextTick()
+      this.$refs.form?.clearValidate()
+      await this.$nextTick()
 
       // this.$refs.form.resetFields()
     },
@@ -365,6 +373,17 @@ export default {
           this.page.total = total
         })
         .finally(() => (this.historyState.loading = false))
+    },
+    delWebhook({ id }) {
+      this.$confirm(this.$t('packages_ldp_src_tablepreview_querenshanchu'), {
+        type: 'warning'
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+        await webhookApi.deleteOne(id)
+        this.loadData()
+      })
     },
     sendPing() {
       this.$refs.form.validate(valid => {
