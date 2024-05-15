@@ -9,8 +9,8 @@
 
     <div class="flex-1">
       <ElTable ref="table" row-key="id" :data="list" height="100%" v-loading="loading">
-        <el-table-column :label="$t('public_remark')" prop="mark" width="240"></el-table-column>
         <el-table-column :label="$t('webhook_server_url')" prop="url"> </el-table-column>
+        <el-table-column :label="$t('public_remark')" prop="mark" width="240"></el-table-column>
         <el-table-column :label="$t('public_status')" prop="pingResult" width="100">
           <template #default="{ row }">
             <VIcon v-if="row.pingResult === 'SUCCEED'" size="20" class="color-success">success-filled</VIcon>
@@ -50,10 +50,6 @@
       <div class="flex flex-column h-100">
         <div class="flex-1 px-4 overflow-y-auto">
           <ElForm class="flex-1" label-position="top" :model="form" :rules="rules" ref="form">
-            <ElFormItem :label="$t('public_remark')" prop="mark">
-              <ElInput v-model="form.mark"></ElInput>
-            </ElFormItem>
-            <!--<div class="fs-6 font-color-dark my-2">{{ $t('packages_business_peizhi') }}</div>-->
             <ElFormItem :label="$t('webhook_event_type')" prop="hookTypes">
               <ElSelectTree
                 v-model="form.hookTypes"
@@ -100,6 +96,9 @@
                 @init="handleInit"
               ></JsonEditor>
             </ElFormItem>
+            <ElFormItem :label="$t('public_remark')" prop="mark">
+              <ElInput v-model="form.mark"></ElInput>
+            </ElFormItem>
           </ElForm>
         </div>
 
@@ -118,16 +117,17 @@
       :wrapperClosable="false"
       @update:visible="historyState.visible = $event"
       :size="800"
+      @closed="historyState.collapse = []"
     >
       <template #title>
         <span class="fs-6 font-color-dark fw-sub">{{ $t('webhook_send_log') }}</span>
       </template>
       <div class="flex flex-column h-100" v-loading="historyState.loading">
         <div class="flex-1 px-4 overflow-y-auto">
-          <el-collapse class="history-collapse" v-if="historyState.list.length">
-            <el-collapse-item v-for="(item, i) in historyState.list" :key="i">
+          <el-collapse v-model="historyState.collapse" class="history-collapse" v-if="historyState.list.length">
+            <el-collapse-item v-for="item in historyState.list" :key="item.id" class="rounded-lg">
               <template #title>
-                <div class="flex align-center flex-1">
+                <div class="flex align-center flex-1 pl-3">
                   <span>{{ item.id }}</span>
                   <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
                 </div>
@@ -135,7 +135,7 @@
               <div class="position-relative">
                 <ElTabs>
                   <ElTabPane label="请求">
-                    <div>
+                    <div class="px-4">
                       <div class="lh-base">请求头</div>
                       <HighlightCode
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
@@ -160,7 +160,7 @@
                         <ElTag size="mini" type="info" class="rounded-pill ml-1">{{ item.responseCode || '--' }}</ElTag>
                       </span>
                     </template>
-                    <div>
+                    <div class="px-4">
                       <div class="lh-base">响应头</div>
                       <HighlightCode
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
@@ -273,7 +273,7 @@ export default {
         customHttpHeaders: ''
       },
       rules: {
-        mark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
+        // mark: [{ required: true, message: '请输入备注', trigger: 'blur' }],
         url: [{ required: true, validator: validateUrl, trigger: 'blur' }],
         hookTypes: [{ required: true, message: '请选择事件', trigger: 'change' }]
       },
@@ -305,7 +305,8 @@ export default {
       historyState: {
         visible: false,
         loading: false,
-        list: []
+        list: [],
+        collapse: []
       },
       page: {
         current: 1,
@@ -515,13 +516,29 @@ $unreadColor: #ee5353;
   $bg: #f5f7fa;
   ::v-deep {
     .el-collapse-item {
-      &.is-active {
-        background-color: $bg;
+      &__wrap {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
       }
 
-      &__header:hover {
-        background-color: $bg;
+      &__header {
+        border-radius: 8px;
+        &:hover {
+          background-color: $bg;
+        }
       }
+
+      &.is-active {
+        background-color: $bg;
+        .el-collapse-item__header,
+        .el-collapse-item__wrap {
+          background-color: $bg;
+        }
+      }
+    }
+
+    .hljs {
+      background: #fff !important;
     }
   }
 }
