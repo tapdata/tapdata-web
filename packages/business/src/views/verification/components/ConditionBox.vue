@@ -61,11 +61,6 @@
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.target.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -79,11 +74,6 @@
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.source.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>

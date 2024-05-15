@@ -474,8 +474,8 @@ export default {
         jointField:
           this.$t('packages_business_verification_jointFieldTip') +
           this.$t('packages_dag_components_node_zanbuzhichi') +
-          notSupport['jointField'].join(),
-        hash: this.$t('packages_business_verification_hashTip')
+          notSupport['jointField'].join()
+        // hash: this.$t('packages_business_verification_hashTip')
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -710,10 +710,10 @@ export default {
             }
 
             // hash 不支持异构数据库
-            if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
-              notSupportStr = this.$t('packages_business_heterogeneous_database')
-              break
-            }
+            // if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
+            //   notSupportStr = this.$t('packages_business_heterogeneous_database')
+            //   break
+            // }
           }
 
           if (notSupportStr)
