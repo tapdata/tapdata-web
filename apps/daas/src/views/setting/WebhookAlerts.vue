@@ -66,7 +66,7 @@
             </ElFormItem>
             <ElFormItem :label="$t('http_header')" prop="customHttpHead">
               <ElInput
-                v-model="form.customHttpHead"
+                v-model="form.customHttpHeaders"
                 :placeholder="$t('http_header_ph')"
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 6 }"
