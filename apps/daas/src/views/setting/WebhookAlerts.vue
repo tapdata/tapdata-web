@@ -552,7 +552,9 @@ $unreadColor: #ee5353;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
       }
-
+      &__content {
+        padding-bottom: 0;
+      }
       &__header {
         border-radius: 8px;
         &:hover {
