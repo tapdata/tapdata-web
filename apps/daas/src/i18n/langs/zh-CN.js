@@ -1866,9 +1866,14 @@ export default {
     "content": "\${content}",
     "actionData": {
         "status": "\${actionData.status}", //标记当前告警的状态,ING,RECOVER,CLOESE
+        "statusTxt":"\${actionData.statusTxt}", //标记当前告警的状态文本:正在进行,已恢复,已关闭
         "level": "\${actionData.level}", //告警级别RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
-        "component":"\${actionData.component}",//引擎告警组件固定为引擎FE
-        "type":"\${actionData.type}",//告警类型 同步任务告警、共享缓存告警、共享挖掘告警、数据校验告警、精准延迟告警
+        "component":"\${actionData.component}",//引擎告警组件固定为: FE
+        "componentTxt": "\${actionData.componentTxt}", //引擎告警组件文本值: 引擎
+        "type":"\${actionData.type}",//告警类型  SYNCHRONIZATIONTASK_ALARM,SHARED_CACHE_ALARM,SHARED_MINING_ALARM,DATA_VERIFICATION_ALARM,ACCURATE_DELAY_ALARM,INSPECT_ALARM
+        "typeTxt": "\${actionData.typeTxt}", //告警类型文本值,同步任务告警、共享缓存告警、共享挖掘告警、数据校验告警、精准延迟告警
+        "metric": "\${actionData.metric}",//事件类型: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_EGINGE_UP, SYSTEM_FLOW_EGINGE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
+        "metricTxt": "\${actionData.metricTxt}", //事件类型文本值：任务运行停止，任务运行错误，任务全量完成，任务增量开始，任务校验出错，校验任务遇到错误，数据源无法连接网络，数据源TCP连接完成，数据源连接网络完成，引擎上线，引擎离线，数据源节点的平均处理耗时超过阀值，任务的增量延迟超过阀值，节点的平均处理耗时超过阀值，Count校验结果的差异行数大于阈值，值校验结果的表数据差大于阈值
         "name":"\${actionData.name}",//具体的任务名
         "node":"\${actionData.node}",//产生告警的节点名，无节点时为空;当为任务告警时，节点直接放任务名
         "currentValue": "\${actionData.currentValue}",//触发告警的指标值
