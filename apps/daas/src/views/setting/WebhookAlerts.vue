@@ -124,7 +124,11 @@
       </template>
       <div class="flex flex-column h-100" v-loading="historyState.loading">
         <div class="flex-1 px-4 overflow-y-auto">
-          <el-collapse v-model="historyState.collapse" class="history-collapse" v-if="historyState.list.length">
+          <el-collapse
+            v-model="historyState.collapse"
+            class="history-collapse border-0"
+            v-if="historyState.list.length"
+          >
             <el-collapse-item v-for="item in historyState.list" :key="item.id" class="rounded-lg">
               <template #title>
                 <div class="flex align-center flex-1 pl-3">
