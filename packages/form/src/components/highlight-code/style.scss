@@ -1,0 +1,13 @@
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em !important;
+}
+
+.theme-atom-one-dark {
+  @import 'dark';
+}
+
+.theme-atom-one-light {
+  @import 'light';
+}

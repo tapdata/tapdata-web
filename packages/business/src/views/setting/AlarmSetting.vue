@@ -9,7 +9,7 @@
         $t('packages_business_setting_alarmnotification_morengaojinggui')
       }}</ElLink>
     </header>
-    <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
+    <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false" height="100%">
       <template slot="key" slot-scope="scope">
         <span>{{ keyMapping[scope.row.key] }}</span>
       </template>

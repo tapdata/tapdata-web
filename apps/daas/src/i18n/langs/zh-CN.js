@@ -52,6 +52,7 @@ export default {
   page_title_user: '用户管理',
   page_title_role: '角色管理',
   page_title_setting: '系统设置',
+  page_title_webhook_alerts: 'Webhook 告警',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定义节点',
@@ -1842,5 +1843,49 @@ export default {
   daas_cluster_component_view: '组件视图',
   daas_cluster_engine_hostname: '主机名/IP',
   daas_cluster_connection_count: '连接数',
-  daas_cluser_keyword_placeholder: '搜索主机名'
+  daas_cluser_keyword_placeholder: '搜索主机名',
+
+  webhook_alerts: 'Webhook 告警',
+  webhook_alerts_detail: 'Webhook 告警详情',
+  webhook_alerts_add: '新建 Webhook',
+  webhook_address: 'Webhook 地址',
+  webhook_params: '参数',
+  webhook_switch: '事件开关',
+  webhook_send_log: '发送记录',
+  webhook_send_log_desc: '（只保留最近 200 条记录）',
+  webhook_send_address: '发送地址',
+  webhook_server_url: '服务 URL',
+  webhook_server_url_empty: '请输入服务 URL',
+  webhook_server_url_error: '请输入正确的服务 URL',
+  webhook_custom_template: '自定义模版',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", //标记当前告警的状态,ING,RECOVER,CLOESE
+        "level": "\${actionData.level}", //告警级别RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
+        "component":"\${actionData.component}",//引擎告警组件固定为引擎FE
+        "type":"\${actionData.type}",//告警类型 同步任务告警、共享缓存告警、共享挖掘告警、数据校验告警、精准延迟告警
+        "name":"\${actionData.name}",//具体的任务名
+        "node":"\${actionData.node}",//产生告警的节点名，无节点时为空;当为任务告警时，节点直接放任务名
+        "currentValue": "\${actionData.currentValue}",//触发告警的指标值
+        "threshold": "\${actionData.threshold}",//触发告警的指标阈值
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",//告警最近发生时间
+        "tally": "\${actionData.tally}",//告警发生次数
+        "summary": "\${actionData.summary}",//告警内容
+        "recoveryTime": "\${actionData.recoveryTime}",//告警恢复时间
+        "closeTime": "\${actionData.closeTime}",//告警关闭时间
+        "closeBy": "\${actionData.closeBy}",//告警被谁关闭
+        "agentId": "\${actionData.agentId}", //所属引擎
+    }
+}`,
+  webhook_custom_template_ph: '自定义模板内容，支持参数填充模板，如：${alarm.name}',
+  http_header: 'HTTP 请求头',
+  http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
+  webhook_send_ping: '发送测试 PING 事件',
+  webhook_event_type: '事件类型',
+  webhook_event_type_empty: '请选择事件'
 }

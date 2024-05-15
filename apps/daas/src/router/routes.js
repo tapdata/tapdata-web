@@ -922,6 +922,16 @@ export default [
               code: 'v2_alarm_settings_menu',
               isNotAside: true
             }
+          },
+          /* ---------- Webhook 告警设置  ----------*/
+          {
+            path: 'webhook-alerts',
+            name: 'webhookAlerts',
+            component: () => import('@/views/setting/WebhookAlerts'),
+            meta: {
+              title: 'page_title_webhook_alerts',
+              isNotAside: true
+            }
           }
         ]
       },

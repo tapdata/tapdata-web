@@ -52,6 +52,7 @@ export default {
   page_title_user: '用戶管理',
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
+  page_title_webhook_alerts: 'Webhook 告警',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定義節點',
@@ -1837,5 +1838,49 @@ export default {
   daas_cluster_component_view: '組件視圖',
   daas_cluster_engine_hostname: '主機名/IP',
   daas_cluster_connection_count: '連接數',
-  daas_cluser_keyword_placeholder: '搜索主機名'
+  daas_cluser_keyword_placeholder: '搜索主機名',
+
+  webhook_alerts: 'Webhook 告警',
+  webhook_alerts_detail: 'Webhook 告警詳情',
+  webhook_alerts_add: '新建 Webhook',
+  webhook_address: 'Webhook 地址',
+  webhook_params: '參數',
+  webhook_switch: '事件開關',
+  webhook_send_log: '發送記錄',
+  webhook_send_log_desc: '（只保留最近 200 條記錄）',
+  webhook_send_address: '發送地址',
+  webhook_server_url: '服務 URL',
+  webhook_server_url_empty: '請輸入服務 URL',
+  webhook_server_url_error: '請輸入正確的服務 URL',
+  webhook_custom_template: '自定義模版',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", //標記當前告警的狀態,ING,RECOVER,CLOESE
+        "level": "\${actionData.level}", //告警級別RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
+        "component":"\${actionData.component}",//引擎告警組件固定為引擎FE
+        "type":"\${actionData.type}",//告警類型 同步任務告警、共享緩存告警、共享挖掘告警、數據校驗告警、精准延遲告警
+        "name":"\${actionData.name}",//具體的任務名
+        "node":"\${actionData.node}",//產生告警的節點名，無節點時為空;當為任務告警時，節點直接放任務名
+        "currentValue": "\${actionData.currentValue}",//觸發告警的指標值
+        "threshold": "\${actionData.threshold}",//觸發告警的指標閾值
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",//告警最近發生時間
+        "tally": "\${actionData.tally}",//告警發生次數
+        "summary": "\${actionData.summary}",//告警內容
+        "recoveryTime": "\${actionData.recoveryTime}",//告警恢復時間
+        "closeTime": "\${actionData.closeTime}",//告警關閉時間
+        "closeBy": "\${actionData.closeBy}",//告警被誰關閉
+        "agentId": "\${actionData.agentId}", //所屬引擎
+    }
+}`,
+  webhook_custom_template_ph: '自定義模板內容，支持參數填充模板，如：${alarm.name}',
+  http_header: 'HTTP 請求頭',
+  http_header_ph: 'HTTP 請求頭,多個請求頭請換行輸入,示例:Accept: text/html',
+  webhook_send_ping: '發送測試 PING 事件',
+  webhook_event_type: '事件類型',
+  webhook_event_type_empty: '請選擇事件'
 }

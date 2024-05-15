@@ -390,6 +390,23 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    background: #eff1f4;
+
+    > div {
+      background: #fff;
+    }
+
+    .page-header:has(.breadcrumb) {
+      border-bottom: 0 !important;
+
+      & + div {
+        background: transparent;
+      }
+    }
+
+    .breadcrumb {
+      background: #eff1f4;
+    }
   }
   .expire-msg {
     margin-right: 25px;
