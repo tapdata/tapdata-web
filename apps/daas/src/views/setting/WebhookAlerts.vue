@@ -135,7 +135,7 @@
             <el-collapse-item v-for="item in historyState.list" :key="item.id" class="rounded-lg">
               <template #title>
                 <div class="flex align-center flex-1 pl-3">
-                  <VIcon v-if="item.pingResult === 'SUCCEED'" size="16" class="color-success">success-filled</VIcon>
+                  <VIcon v-if="item.historyStatus === 'SUCCEED'" size="16" class="color-success">success-filled</VIcon>
                   <VIcon v-else class="color-danger" size="16">circle-close-filled</VIcon>
                   <span class="ml-2">{{ item.id }}</span>
                   <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
