@@ -453,8 +453,6 @@ export default {
     },
 
     setUrlParams() {
-      // 上报百度索引
-      const logidUrlCloud = Cookie.get('logidUrlCloud')
       const { guide } = this.$store.state
 
       const bd_vid = getUrlSearch('bd_vid')
@@ -465,11 +463,12 @@ export default {
         guide.tpVid = params.tpVid = tp_vid
       }
 
-      if (bd_vid && !guide.bdVid) {
+      const logidUrlCloud = Cookie.get('logidUrlCloud')
+      if ((bd_vid || logidUrlCloud) && !guide.bdVid) {
         guide.bdVid = params.bdVid = bd_vid
         const conversionTypes = [
           {
-            logidUrl: logidUrlCloud,
+            logidUrl: logidUrlCloud || location.href,
             newType: 25
           }
         ]
