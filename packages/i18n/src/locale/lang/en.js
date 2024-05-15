@@ -153,6 +153,7 @@ export default {
   public_message_network_unconnected: 'An abnormal network connection has been detected',
   public_message_network_connected: 'The network has been successfully restored to its normal operating state',
   public_message_request_timeout: 'Request Timeout',
+  public_message_send_success: 'Send Successfully',
   // drop-down list
   public_select_placeholder: 'Please Select',
   public_select_option_all: 'Select All',
@@ -329,5 +330,12 @@ export default {
   public_unit_year: 'years',
 
   public_remark: 'Remark',
-  public_task_alert: 'Task Alert'
+  public_task_alert: 'Task Alert',
+  public_request: 'Request',
+  public_request_headers: 'Request Headers',
+  public_request_content: 'Request Content',
+  public_response: 'Response',
+  public_response_headers: 'Response Headers',
+  public_response_content: 'Response Content',
+  public_resend: 'Resend'
 }

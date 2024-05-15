@@ -1852,8 +1852,11 @@ export default {
   webhook_params: '参数',
   webhook_switch: '事件开关',
   webhook_send_log: '发送记录',
+  webhook_send_log_desc: '（只保留最近 200 条记录）',
   webhook_send_address: '发送地址',
   webhook_server_url: '服务 URL',
+  webhook_server_url_empty: '请输入服务 URL',
+  webhook_server_url_error: '请输入正确的服务 URL',
   webhook_custom_template: '自定义模版',
   webhook_custom_template_tip: `{
     "action": "TaskAlter",
@@ -1883,5 +1886,6 @@ export default {
   http_header: 'HTTP 请求头',
   http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
   webhook_send_ping: '发送测试 PING 事件',
-  webhook_event_type: '事件类型'
+  webhook_event_type: '事件类型',
+  webhook_event_type_empty: '请选择事件'
 }

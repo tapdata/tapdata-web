@@ -153,6 +153,7 @@ export default {
   public_message_network_unconnected: '網絡連接異常',
   public_message_network_connected: '網絡已恢復',
   public_message_request_timeout: '請求超時',
+  public_message_send_success: '發送成功',
   // 下拉列表
   public_select_placeholder: '請選擇',
   public_select_option_all: '全部',
@@ -328,5 +329,12 @@ export default {
   public_unit_year: '年',
 
   public_remark: '備注',
-  public_task_alert: '任務告警'
+  public_task_alert: '任務告警',
+  public_request: '請求',
+  public_request_headers: '請求頭',
+  public_request_content: '請求內容',
+  public_response: '響應',
+  public_response_headers: '響應頭',
+  public_response_content: '響應內容',
+  public_resend: '重新發送'
 }

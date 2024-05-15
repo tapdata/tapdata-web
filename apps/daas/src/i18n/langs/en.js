@@ -1897,5 +1897,48 @@ export default {
   daas_cluster_engine_hostname: 'Hostname/IP',
   daas_cluster_connection_count: 'Connection Count',
   daas_cluser_keyword_placeholder: 'Search for hostnames',
-  webhook_alerts: 'Webhook 告警'
+
+  webhook_alerts: 'Webhook Alerts',
+  webhook_alerts_detail: 'Webhook Alert Details',
+  webhook_alerts_add: 'Create New Webhook',
+  webhook_address: 'Webhook Address',
+  webhook_params: 'Parameters',
+  webhook_switch: 'Event Switch',
+  webhook_send_log: 'Send Records',
+  webhook_send_log_desc: '(Only the last 200 records are retained)',
+  webhook_send_address: 'Send Address',
+  webhook_server_url: 'Server URL',
+  webhook_server_url_empty: 'Please enter the server URL',
+  webhook_server_url_error: 'Please enter a valid server URL',
+  webhook_custom_template: 'Custom Template',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", // Current alert status: ING, RECOVER, CLOSE
+        "level": "\${actionData.level}", // Alert level: RECOVERY, NORMAL, WARNING, CRITICAL, EMERGENCY, ERROR, WARN, INFO
+        "component": "\${actionData.component}", // Alert component, fixed to engine FE
+        "type": "\${actionData.type}", // Alert type: synchronization task alert, shared cache alert, shared mining alert, data validation alert, precision delay alert
+        "name": "\${actionData.name}", // Specific task name
+        "node": "\${actionData.node}", // Node name generating the alert; empty if no node; for task alerts, the node is the task name
+        "currentValue": "\${actionData.currentValue}", // Metric value triggering the alert
+        "threshold": "\${actionData.threshold}", // Metric threshold triggering the alert
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}", // Most recent alert occurrence time
+        "tally": "\${actionData.tally}", // Number of alert occurrences
+        "summary": "\${actionData.summary}", // Alert content
+        "recoveryTime": "\${actionData.recoveryTime}", // Alert recovery time
+        "closeTime": "\${actionData.closeTime}", // Alert close time
+        "closeBy": "\${actionData.closeBy}", // Who closed the alert
+        "agentId": "\${actionData.agentId}" // Associated engine
+    }
+}`,
+  webhook_custom_template_ph: 'Custom template content, supports parameter-filled templates, e.g., ${alarm.name}',
+  http_header: 'HTTP Request Headers',
+  http_header_ph: 'HTTP request headers, enter multiple headers on separate lines, e.g., Accept: text/html',
+  webhook_send_ping: 'Send Test PING Event',
+  webhook_event_type: 'Event Type',
+  webhook_event_type_empty: 'Please select an event'
 }

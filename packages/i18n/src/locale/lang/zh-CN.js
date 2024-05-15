@@ -154,6 +154,7 @@ export default {
   public_message_network_unconnected: '网络连接异常',
   public_message_network_connected: '网络已恢复',
   public_message_request_timeout: '请求超时',
+  public_message_send_success: '发送成功',
   // 下拉列表
   public_select_placeholder: '请选择',
   public_select_option_all: '全部',
@@ -329,5 +330,12 @@ export default {
   public_unit_year: '年',
 
   public_remark: '备注',
-  public_task_alert: '任务告警'
+  public_task_alert: '任务告警',
+  public_request: '请求',
+  public_request_headers: '请求头',
+  public_request_content: '请求内容',
+  public_response: '响应',
+  public_response_headers: '响应头',
+  public_response_content: '响应内容',
+  public_resend: '重新发送'
 }
