@@ -17,6 +17,11 @@
             <VIcon v-else class="color-danger" size="20">circle-close-filled</VIcon>
           </template>
         </el-table-column>
+        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
+          <template #default="{ row }">
+            <ElSwitch :disabled="switchStateMap[row.id]" :value="row.open" @change="handleSwitch(row)"></ElSwitch>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('public_operation')" width="240">
           <template #default="{ row }">
             <div class="flex gap-2 align-center">
@@ -26,11 +31,6 @@
               <ElDivider direction="vertical" class="mx-0"></ElDivider>
               <ElLink @click="delWebhook(row, $event)" type="danger">{{ $t('public_button_delete') }} </ElLink>
             </div>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
-          <template #default="{ row }">
-            <ElSwitch :disabled="switchStateMap[row.id]" :value="row.open" @change="handleSwitch(row)"></ElSwitch>
           </template>
         </el-table-column>
       </ElTable>
@@ -258,6 +258,7 @@ export default {
       form: {
         id: '',
         url: '',
+        open: true,
         customTemplate: `{
     "action": "TaskAlter",
     "hookId": "\${hookId}",
@@ -265,21 +266,26 @@ export default {
     "title": "\${title}",
     "content": "\${content}",
     "actionData": {
-        "status": "\${actionData.status}",
-        "level": "\${actionData.level}",
-        "component":"\${actionData.component}",
-        "type":"\${actionData.type}",
-        "name":"\${actionData.name}",
-        "node":"\${actionData.node}",
-        "currentValue": "\${actionData.currentValue}",
-        "threshold": "\${actionData.threshold}",
-        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",
-        "tally": "\${actionData.tally}",
-        "summary": "\${actionData.summary}",
-        "recoveryTime": "\${actionData.recoveryTime}",
-        "closeTime": "\${actionData.closeTime}",
-        "closeBy": "\${actionData.closeBy}",
-        "agentId": "\${actionData.agentId}"
+      "status": "\${actionData.status}",
+      "statusTxt":"\${actionData.statusTxt}",
+      "level": "\${actionData.level}",
+      "component":"\${actionData.component}",
+      "componentTxt": "\${actionData.componentTxt}",
+      "type":"\${actionData.type}",
+      "typeTxt": "\${actionData.typeTxt}",
+      "metric": "\${actionData.metric}",
+      "metricTxt": "\${actionData.metricTxt}",
+      "name":"\${actionData.name}",
+      "node":"\${actionData.node}",
+      "currentValue": "\${actionData.currentValue}",
+      "threshold": "\${actionData.threshold}",
+      "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",
+      "tally": "\${actionData.tally}",
+      "summary": "\${actionData.summary}",
+      "recoveryTime": "\${actionData.recoveryTime}",
+      "closeTime": "\${actionData.closeTime}",
+      "closeBy": "\${actionData.closeBy}",
+      "agentId": "\${actionData.agentId}"
     }
 }`,
         hookTypes: [],
@@ -369,7 +375,7 @@ export default {
     },
     async viewDetail(row) {
       this.drawerState.visible = true
-
+      this.drawerState.original = row
       await this.$nextTick()
 
       Object.keys(this.form).forEach(key => {
@@ -434,9 +440,16 @@ export default {
           this.drawerState.ping = true
           webhookApi
             .ping(this.form)
-            .then(() => {
+            .then(data => {
               this.$message.success(this.$t('public_message_send_success'))
-              this.form.id && this.viewHistory(this.form)
+
+              if (this.form.id) {
+                this.viewHistory(this.form)
+
+                if (data?.status && this.drawerState.original) {
+                  this.drawerState.original.pingResult = data.status
+                }
+              }
             })
             .finally(() => (this.drawerState.ping = false))
         }
