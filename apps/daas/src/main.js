@@ -171,27 +171,16 @@ document.addEventListener('visibilitychange', () => {
   }, 50)
 })
 
-// 判断浏览器是否为IE
-// const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
-
-// // 兼容ie iframe切换路由不生效
-// if (isIE) {
-//   window.addEventListener(
-//     'hashchange',
-//     () => {
-//       let currentPath = window.location.hash.slice(1)
-//       let arr = ['/dataFlows', '/connections'] // 匹配的路由：同步任务、连接管理、数据校验
-//       let flag = false // 是否是iframe使用到的路由地址
-//       arr.forEach(el => {
-//         let reg = new RegExp('^' + el)
-//         if (reg.test(currentPath)) {
-//           flag = true
-//         }
-//       })
-//       if (flag && window.App.$route.fullPath !== currentPath) {
-//         window.App.$router.push(currentPath)
-//       }
-//     },
-//     false
-//   )
-// }
+// community add jira issue collector
+if (process.env.VUE_APP_MODE === 'community') {
+  window.ATL_JQ_PAGE_PROPS = {
+    triggerFunction: function (showCollectorDialog) {
+      document.addEventListener('click', function (event) {
+        const target = document.getElementById('add-jira-issue-btn')
+        if (event.target === target || target.contains(event.target)) {
+          showCollectorDialog()
+        }
+      })
+    }
+  }
+}
