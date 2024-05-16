@@ -199,6 +199,7 @@
                   class="position-absolute tabs-extra-btn flex align-center py-0"
                   size="mini"
                   @click="reSend(item)"
+                  :loading="resendStateMap[item.id]"
                   >{{ $t('public_resend') }}</ElButton
                 >
               </div>
@@ -342,7 +343,8 @@ export default {
         size: 20,
         total: 0
       },
-      switchStateMap: {}
+      switchStateMap: {},
+      resendStateMap: {}
     }
   },
   created() {
@@ -506,9 +508,11 @@ export default {
         })
     },
     async reSend(request) {
+      this.$set(this.resendStateMap, request.id, true)
       const result = await webhookApi.resend(request)
       Object.assign(request, this.mapHistory(result))
       this.$message.success(this.$t('public_message_send_success'))
+      this.$delete(this.resendStateMap, request.id)
     },
     afterCloseHistory() {
       this.historyState.collapse = []
