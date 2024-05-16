@@ -9,8 +9,15 @@
 
     <div class="flex-1">
       <ElTable ref="table" row-key="id" :data="list" height="100%" v-loading="loading">
-        <el-table-column :label="$t('webhook_server_url')" prop="url"> </el-table-column>
-        <el-table-column :label="$t('public_remark')" prop="mark" width="240"></el-table-column>
+        <el-table-column show-overflow-tooltip class-name="text-nowrap" :label="$t('webhook_server_url')" prop="url">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          class-name="text-nowrap"
+          :label="$t('public_remark')"
+          prop="mark"
+          width="240"
+        ></el-table-column>
         <el-table-column :label="$t('public_status')" prop="pingResult" width="100">
           <template #default="{ row }">
             <VIcon v-if="row.pingResult === 'SUCCEED'" size="20" class="color-success">success-filled</VIcon>
@@ -91,6 +98,7 @@
               </template>
               <JsonEditor
                 v-model="form.customTemplate"
+                height="320"
                 :options="{
                   options: { showPrintMargin: false, useWrapMode: true }
                 }"
@@ -600,6 +608,13 @@ $unreadColor: #ee5353;
 
     .hljs {
       background: #fff !important;
+    }
+  }
+}
+.el-table {
+  ::v-deep {
+    .text-nowrap .cell {
+      white-space: nowrap;
     }
   }
 }
