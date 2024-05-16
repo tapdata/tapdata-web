@@ -28,4 +28,6 @@ echo "pnpm build:$app --dest $dist --mode $mode"
 echo "pnpm version: "
 pnpm --version
 
+pnpm i
+
 pnpm build:$app --dest $dist --mode $mode
