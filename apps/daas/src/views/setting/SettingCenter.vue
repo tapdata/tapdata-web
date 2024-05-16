@@ -45,15 +45,15 @@ export default {
           size: 20
         },
         {
-          icon: 'webhook',
-          name: this.$t('webhook_alerts'),
-          key: 'webhookAlerts',
-          size: 20
-        },
-        {
           icon: 'alert-filled',
           name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
           key: 'alarmSetting',
+          size: 20
+        },
+        {
+          icon: 'webhook',
+          name: this.$t('webhook_alerts'),
+          key: 'webhookAlerts',
           size: 20
         },
         {
