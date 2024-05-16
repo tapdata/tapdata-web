@@ -436,7 +436,7 @@ export default {
             .ping(this.form)
             .then(() => {
               this.$message.success(this.$t('public_message_send_success'))
-              this.viewHistory(this.form)
+              this.form.id && this.viewHistory(this.form)
             })
             .finally(() => (this.drawerState.ping = false))
         }
