@@ -39,6 +39,7 @@
     <ElDrawer
       :visible="drawerState.visible"
       :wrapperClosable="false"
+      :size="800"
       @update:visible="drawerState.visible = $event"
       @closed="afterClose"
     >
