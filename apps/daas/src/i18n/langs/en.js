@@ -1903,7 +1903,7 @@ export default {
   webhook_alerts_add: 'Create New Webhook',
   webhook_address: 'Webhook Address',
   webhook_params: 'Parameters',
-  webhook_switch: 'Event Switch',
+  webhook_switch: 'Enabled',
   webhook_send_log: 'Send Records',
   webhook_send_log_desc: '(Only the last 200 records are retained)',
   webhook_send_address: 'Send Address',

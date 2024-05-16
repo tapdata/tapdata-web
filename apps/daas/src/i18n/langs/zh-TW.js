@@ -1845,7 +1845,7 @@ export default {
   webhook_alerts_add: '新建 Webhook',
   webhook_address: 'Webhook 地址',
   webhook_params: '參數',
-  webhook_switch: '事件開關',
+  webhook_switch: '是否啓用',
   webhook_send_log: '發送記錄',
   webhook_send_log_desc: '（只保留最近 200 條記錄）',
   webhook_send_address: '發送地址',
