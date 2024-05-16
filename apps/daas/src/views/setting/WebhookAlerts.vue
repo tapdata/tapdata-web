@@ -138,7 +138,7 @@
                 <div class="flex align-center flex-1 pl-3">
                   <VIcon v-if="item.historyStatus === 'SUCCEED'" size="16" class="color-success">success-filled</VIcon>
                   <VIcon v-else class="color-danger" size="16">circle-close-filled</VIcon>
-                  <span class="ml-2">{{ item.id }}</span>
+                  <span class="ml-2">{{ item['x-event'] }}</span>
                   <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
                 </div>
               </template>
@@ -408,6 +408,19 @@ export default {
 
       if (item.requestBody) {
         item.requestBodyFmt = JSON.stringify(JSON.parse(item.requestBody), null, 2)
+      }
+
+      if (item.requestHeaders) {
+        const result = item.requestHeaders.match(/X-Event:\s*(.*)/i)
+        const event = result?.[1] || ''
+
+        item['x-event'] = this.keyMap[event]
+
+        if (item['x-event']) {
+          item['x-event'] = item['x-event'].replace(/^当|When the?|當/, '').replace(/时|時$/, '')
+        } else {
+          item['x-event'] = event || '--'
+        }
       }
       return item
     },
