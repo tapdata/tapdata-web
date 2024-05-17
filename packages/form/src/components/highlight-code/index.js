@@ -1,5 +1,6 @@
 import { defineComponent, nextTick, ref } from 'vue-demi'
 import { Highlight, IconButton } from '@tap/component'
+import { copyToClipboard } from '@tap/shared'
 import i18n from '@tap/i18n'
 import 'highlight.js/styles/atom-one-light.css'
 import './style.scss'
@@ -31,7 +32,7 @@ export const HighlightCode = defineComponent({
   },
   setup(props, { refs }) {
     const copy = async () => {
-      await navigator.clipboard.writeText(props.code)
+      await copyToClipboard(props.code)
       contentRef.value = props.finishTooltip
 
       // 提示内容改变，更新popper位置
