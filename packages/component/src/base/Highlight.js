@@ -64,7 +64,8 @@ export default {
       createElement('code', {
         class: this.className,
         domProps: { innerHTML: this.highlighted }
-      })
+      }),
+      this.$slots.default
     ])
   }
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`

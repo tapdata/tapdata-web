@@ -159,6 +159,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.requestHeaders || '--'"
                         language="http"
+                        copy
                       ></HighlightCode>
 
                       <div class="lh-base">{{ $t('public_request_content') }}</div>
@@ -167,6 +168,7 @@
                           class="rounded-lg mt-2 mb-4 overflow-hidden"
                           :code="item.requestBodyFmt"
                           language="json"
+                          copy
                         ></HighlightCode>
                       </div>
                     </div>
@@ -184,6 +186,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.responseHeaders || '--'"
                         language="http"
+                        copy
                       ></HighlightCode>
 
                       <div class="lh-base">{{ $t('public_response_content') }}</div>
@@ -191,6 +194,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.responseResultFmt || '--'"
                         :language="item.responseType"
+                        copy
                       ></HighlightCode>
                     </div>
                   </ElTabPane>
