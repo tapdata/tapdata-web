@@ -705,7 +705,7 @@ export default {
   packages_dag_task_setting_syncPoint_recent_increment: '最近一次增量所处时间',
   packages_dag_task_setting_syncPoint_from_now: '从此刻开始',
   packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上时该功能才可用`,
-  packages_dag_syncIndex: '同步索引',
+  packages_dag_syncIndex: '建表同步索引',
   packages_dag_syncIndex_desc: '目前仅支持同步唯一索引和普通索引，且索引不能使用函数',
   packages_dag_ddl_ignore_rules: 'DDL忽略规则',
   packages_dag_ddl_ignore_rules_placeholder: '请输入正则表达式以忽略特定的DDL',
