@@ -1,6 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const webpack = require('webpack')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -163,8 +163,13 @@ module.exports = {
           // 其余配置查看compression-webpack-plugin
         }),
 
-        // 分析工具
-        new SpeedMeasurePlugin()
+        // ace editor js 输出到 js/ace 目录
+        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, res => {
+          res.request = res.request.replace(
+            /^file-loader\?esModule=false!/,
+            'file-loader?esModule=false&outputPath=js/ace!'
+          )
+        })
       )
 
       config['performance'] = {

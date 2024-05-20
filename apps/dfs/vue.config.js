@@ -1,5 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const webpack = require('webpack')
 const crypto = require('crypto')
 
 const serveUrlMap = {
@@ -138,6 +139,13 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
+        }),
+        // ace editor js 输出到 js/ace 目录
+        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, res => {
+          res.request = res.request.replace(
+            /^file-loader\?esModule=false!/,
+            'file-loader?esModule=false&outputPath=js/ace!'
+          )
         })
       )
 
