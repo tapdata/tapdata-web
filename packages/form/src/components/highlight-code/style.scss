@@ -1,9 +1,3 @@
-pre code.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 1em !important;
-}
-
 .theme-atom-one-dark {
   @import 'dark';
   --bg-color: #282c34;
@@ -11,11 +5,15 @@ pre code.hljs {
 
 .theme-atom-one-light {
   @import 'light';
-
   --bg-color: #fafafa;
 }
 
 .hljs-pre {
+  code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 12px;
+  }
   .hljs-copy-btn {
     top: 16px;
     right: 16px;
