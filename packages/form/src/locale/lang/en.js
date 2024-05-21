@@ -140,9 +140,8 @@ export default {
   packages_form_js_processor_index_qingqiuchaoshiqing: 'The request has timed out, please try again',
   packages_form_js_processor_index_rengzaipinmingjia: 'Please be patient, the page is still loading',
   packages_form_table_rename_index_qingkong: 'Clear',
-  packages_form_table_rename_index_yingyong: 'Application',
-  packages_form_table_rename_index_gaiwei: 'Change To',
-  packages_form_table_rename_index_tihuan: 'Replace',
+  packages_form_table_rename_search_text: 'Search Text',
+  packages_form_table_rename_replace_with: 'Replace With',
   packages_form_table_rename_index_yixiacaozuojin: 'The following operations will affect all original table names',
   packages_form_table_rename_index_xinbiaoming: 'New table name',
   packages_form_table_rename_index_yuanbiaoming: 'Original table name',
@@ -167,8 +166,7 @@ export default {
   packages_form_field_inference_list_tuiyanchudelei: 'Inference type:',
   packages_form_field_inference_list_ziduanleixingtiao: 'Field type adjustment',
   packages_form_field_inference_main_quanbuhuifumo: 'Restore all defaults',
-  packages_form_field_inference_main_gepiliangxiugai:
-    'The modified batch rule is now active.',
+  packages_form_field_inference_main_gepiliangxiugai: 'The modified batch rule is now active.',
   packages_form_field_inference_main_dangqianyou: 'There is currently',
   packages_form_field_type_rules_main_shijikeyongchang:
     'The precise length available will vary depending on the definition of the target database type, so please adjust it accordingly to meet your requirements.',

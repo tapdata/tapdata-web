@@ -47,7 +47,12 @@ export const TableRename = observer(
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
         transformLoading: root.$store.state.dataflow.transformLoading
       })
+      const ifConfigEmpty = () => {
+        return !config.replaceBefore && !config.replaceAfter && !config.prefix && !config.suffix && !config.transferCase
+      }
       const globalNameMap = computed(() => {
+        if (ifConfigEmpty()) return {}
+
         return tableDataRef.value.reduce((map, n) => {
           let after = n
           after = config.replaceBefore
@@ -62,15 +67,6 @@ export const TableRename = observer(
           if (n !== after) {
             map[n] = after
           }
-
-          /*if (n !== after) {
-              if (nameMap[n] === after) return
-              set(nameMap, n, after)
-              flag = true
-            } else if (n in nameMap) {
-              del(nameMap, n)
-              flag = true
-            }*/
 
           return map
         }, {})
@@ -281,25 +277,25 @@ export const TableRename = observer(
         <div class="table-rename">
           <FormItem.BaseItem label={label}>
             <div class="border border-form px-4 pb-2 rounded-4">
-              <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
-                <div class="flex">
+              <div class="flex gap-4">
+                <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_table_rename_search_text')}>
                   <ElInput
                     v-model={this.config.replaceBefore}
                     disabled={this.disabled}
                     clearable
                     onInput={this.lazyModify}
                   />
-                  <div class="px-4 text-nowrap font-color-light">
-                    {i18n.t('packages_form_table_rename_index_gaiwei')}
-                  </div>
+                </FormItem.BaseItem>
+                <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_table_rename_replace_with')}>
                   <ElInput
                     v-model={this.config.replaceAfter}
                     disabled={this.disabled}
                     clearable
                     onInput={this.lazyModify}
                   />
-                </div>
-              </FormItem.BaseItem>
+                </FormItem.BaseItem>
+              </div>
+
               <div class="flex gap-4">
                 <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
                   <ElSelect
