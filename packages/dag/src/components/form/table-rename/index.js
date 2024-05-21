@@ -22,7 +22,6 @@ export const TableRename = observer(
       const formRef = useForm()
       const form = formRef.value
       const tableDataRef = ref([])
-      let tableMap = {}
       const loading = ref(false)
       let countByName = ref({})
       let nameMap = reactive(
@@ -48,6 +47,34 @@ export const TableRename = observer(
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
         transformLoading: root.$store.state.dataflow.transformLoading
       })
+      const globalNameMap = computed(() => {
+        return tableDataRef.value.reduce((map, n) => {
+          let after = n
+          after = config.replaceBefore
+            ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
+            : after
+          after = config.prefix + after + config.suffix
+
+          if (config.transferCase) {
+            after = after[config.transferCase]()
+          }
+
+          if (n !== after) {
+            map[n] = after
+          }
+
+          /*if (n !== after) {
+              if (nameMap[n] === after) return
+              set(nameMap, n, after)
+              flag = true
+            } else if (n in nameMap) {
+              del(nameMap, n)
+              flag = true
+            }*/
+
+          return map
+        }, {})
+      })
 
       let prevMap = {}
 
@@ -64,15 +91,13 @@ export const TableRename = observer(
             })
             .then(({ items = [] }) => {
               prevMap = {}
-              tableMap = {}
               tableDataRef.value = items.map(item => {
                 prevMap[item.previousTableName] = item.sourceObjectName
-                tableMap[item.previousTableName] = true
 
                 // TM会主动修改表编辑节点,节点不会自动刷新,在这里同步最新的表推演
-                if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
+                /*if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
                   set(nameMap, item.previousTableName, item.sinkObjectName)
-                }
+                }*/
 
                 return item.previousTableName
               })
@@ -133,8 +158,8 @@ export const TableRename = observer(
       })
 
       const doModify = () => {
-        console.log('doModify') // eslint-disable-line
-        const target = tableDataRef.value
+        updateConfig()
+        /*const target = tableDataRef.value
         let flag
         // let skipTableName = []
         target.forEach(n => {
@@ -158,7 +183,7 @@ export const TableRename = observer(
 
         updateConfig()
 
-        flag && emitChange()
+        flag && emitChange()*/
       }
 
       const lazyModify = debounce(doModify, 1000)
@@ -234,11 +259,13 @@ export const TableRename = observer(
         tableData: tableDataRef,
         loading,
         countByName,
-        itemSize
+        itemSize,
+        globalNameMap
       }
     },
 
     render() {
+      console.log('globalNameMap', this.globalNameMap, this.nameMap)
       const label = (
         <div class="inline-flex align-center position-absolute w-100">
           <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
@@ -324,6 +351,7 @@ export const TableRename = observer(
                   buffer={50}
                   countByName={this.countByName}
                   nameMap={this.nameMap}
+                  globalNameMap={this.globalNameMap}
                   tableData={this.tableData}
                   updateName={this.updateName}
                   emitChange={this.emitChange}
