@@ -455,7 +455,7 @@ export default {
     setUrlParams() {
       const { guide } = this.$store.state
 
-      const bd_vid = getUrlSearch('bd_vid')
+      let bd_vid = getUrlSearch('bd_vid')
       const tp_vid = getUrlSearch('tp_vid')
       let params = {}
 
@@ -464,8 +464,25 @@ export default {
       }
 
       const logidUrlCloud = Cookie.get('logidUrlCloud')
-      if ((bd_vid || logidUrlCloud) && !guide.bdVid) {
+      const userReferrer = Cookie.get('userReferrer')
+      const userVirtualId = Cookie.get('userVirtualId')
+
+      if (userVirtualId && !guide.expand?.userVirtualId) {
+        params.expand = {
+          userReferrer,
+          userVirtualId
+        }
+        Object.assign(guide.expand, params.expand)
+      }
+
+      if (logidUrlCloud) {
+        const url = new URL(decodeURIComponent(logidUrlCloud))
+        bd_vid = url.searchParams.get('bd_vid')
+      }
+
+      if (bd_vid && !guide.bdVid) {
         guide.bdVid = params.bdVid = bd_vid
+
         const conversionTypes = [
           {
             logidUrl: logidUrlCloud || location.href,
