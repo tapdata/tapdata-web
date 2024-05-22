@@ -362,7 +362,7 @@ export default {
       if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_sourc', {
+            i18n.t('packages_dag_mixins_editor_source', {
               val1: source.name,
               val2: target.name
             })
