@@ -83,10 +83,6 @@ export class TableProcessor extends NodeType {
                   listStyle: {
                     maxHeight: 'calc((100vh - 120px) * 0.618)'
                   }
-                },
-                'x-validator': {
-                  validator: `{{validateTableNames}}`,
-                  message: i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')
                 }
               }
             }

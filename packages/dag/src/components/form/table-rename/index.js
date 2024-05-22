@@ -6,6 +6,7 @@ import { observer } from '@formily/reactive-vue'
 import { EmptyItem, VIcon, IconButton } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { ifTableNameConfigEmpty, getTableRenameByConfig } from '../../../util'
 import List from './List.vue'
 import './style.scss'
 import { debounce } from 'lodash'
@@ -57,31 +58,12 @@ export const TableRename = observer(
         transferCase: form.values.transferCase || '', // toUpperCase ｜ toLowerCase
         transformLoading: root.$store.state.dataflow.transformLoading
       })
-      const ifConfigEmpty = () => {
-        return !config.replaceBefore && !config.replaceAfter && !config.prefix && !config.suffix && !config.transferCase
-      }
+
       const globalNameMap = computed(() => {
-        if (ifConfigEmpty()) return {}
+        if (ifTableNameConfigEmpty(config)) return {}
 
         return tableDataRef.value.reduce((map, n) => {
-          let after = n
-
-          // 查找替换
-          try {
-            after = config.replaceBefore
-              ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
-              : after
-          } catch (e) {
-            console.error(e)
-          }
-
-          // 前后缀
-          after = config.prefix + after + config.suffix
-
-          // 转大小写
-          if (config.transferCase) {
-            after = after[config.transferCase]()
-          }
+          let after = getTableRenameByConfig(n, config)
 
           if (n !== after) {
             map[n] = after

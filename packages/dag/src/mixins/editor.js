@@ -23,7 +23,7 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
-import { getSchema } from '../util'
+import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
 
 export default {
   directives: {
@@ -1596,6 +1596,8 @@ export default {
     },
 
     validateUnwind() {
+      if (this.dataflow.syncType === 'migrate') return
+
       const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
       for (let node of nodes) {
         const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
@@ -1606,6 +1608,69 @@ export default {
             msg: i18n.t('packages_dag_unwind_validate_error')
           })
           return i18n.t('packages_dag_unwind_validate_error')
+        }
+      }
+    },
+
+    async validateTableRename() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'table_rename_processor')
+
+      // 只允许存在1个表编辑节点
+      if (nodes.length > 1) return i18n.t('packages_dag_table_rename_multiple')
+      if (nodes.length) {
+        // 表重名检查
+        const node = nodes[0]
+        const parents = this.scope.findParentNodes(node.id)
+        let sourceNode = parents?.[0]
+
+        if (sourceNode?.type === 'database') {
+          let tableNames = sourceNode.tableNames
+
+          // 按表达式匹配表
+          if (sourceNode.migrateTableSelectType === 'expression') {
+            const { items } = await taskApi.getNodeTableInfo({
+              taskId: this.dataflow.id,
+              nodeId: node.id,
+              page: 1,
+              pageSize: 10000
+            })
+            tableNames = items.map(item => item.sourceObjectName)
+          }
+
+          const ifConfigEmpty = ifTableNameConfigEmpty(node)
+
+          if (ifConfigEmpty && !node.tableNames?.length) return
+
+          const nameTemp = {}
+          const renameMap = node.tableNames.reduce((obj, item) => {
+            obj[item.previousTableName] = item.currentTableName
+            return obj
+          }, {})
+
+          for (let name of tableNames) {
+            let newName = name
+
+            if (name in renameMap) {
+              newName = renameMap[name]
+            } else if (!ifConfigEmpty) {
+              newName = getTableRenameByConfig(name, node)
+            }
+
+            if (newName in nameTemp) {
+              const msg = `${i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')}: ${newName}`
+
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg
+              })
+
+              return msg
+            }
+
+            nameTemp[newName] = 1
+          }
         }
       }
     },
@@ -1643,7 +1708,8 @@ export default {
         this.validateLink,
         this.validateDDL,
         this.validateCustomSql,
-        this.validateUnwind
+        this.validateUnwind,
+        this.validateTableRename
       )
     },
 
