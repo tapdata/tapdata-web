@@ -353,6 +353,7 @@ export default {
   },
 
   created() {
+    this.tag2Task = {}
     this.debouncedSearch = debounce(this.searchObject, 300)
   },
 
