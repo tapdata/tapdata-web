@@ -275,7 +275,7 @@ export const FieldRename = observer(
                   return (
                     <div class="flex align-center">
                       <span class="flex-1 ellipsis pl-6 font-color-light">{data.field}</span>
-                      <span class="flex-1  ellipsis color-primary">
+                      <span class="flex-1 ellipsis color-primary">
                         <span class="text__inner">{data.operand}</span>
                       </span>
                       <span class="field-ops mr-4">

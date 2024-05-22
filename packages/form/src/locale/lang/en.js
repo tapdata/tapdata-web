@@ -147,6 +147,7 @@ export default {
   packages_form_table_rename_index_yuanbiaoming: 'Original table name',
   packages_form_table_rename_index_sousuobiaoming: 'Search table name',
   packages_form_table_rename_rule_config: 'Rule Configuration',
+  packages_form_table_rename_invalid_operation: 'The following operation did not match the original table name.',
   packages_form_text_file_reader_index_shangchuanwenjianda: 'The upload file size cannot exceed {val1}KB',
   packages_form_src_index_cronbiao: 'Cron expression format is incorrect',
   packages_form_js_editor_fullscreen: 'Full screen',
