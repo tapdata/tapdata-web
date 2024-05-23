@@ -196,6 +196,8 @@ export default {
         })
       }
 
+      this.dag = dag
+
       for (const node of dag.nodes) {
         if (node.type === 'hazelcastIMDG') {
           this.dagForm.cdcConcurrent = node.cdcConcurrent || false
@@ -213,7 +215,9 @@ export default {
           const {
             nodeConfig,
             attrs,
-            connectionIds: [connectionId]
+            connectionIds: [connectionId],
+            $inputs,
+            $outputs
           } = node
 
           if (nodeConfig) {
@@ -224,15 +228,9 @@ export default {
 
             const values = {
               nodeConfig,
-              attrs
-            }
-            const nodeData = this.$store.state.dataflow.NodeMap[node.id]
-
-            if (nodeData) {
-              Object.assign(values, {
-                $inputs: nodeData.$inputs,
-                $outputs: nodeData.$outputs
-              })
+              attrs,
+              $inputs,
+              $outputs
             }
 
             this.$refs.schemaToForm.getForm()?.setValues(values)
