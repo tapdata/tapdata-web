@@ -990,7 +990,7 @@ export class Table extends NodeType {
                         title: i18n.t('packages_dag_nodes_table_zidingyitiaojian'),
                         type: 'array',
                         required: true,
-                        default: [{ key: '', value: '', operator: 5 }],
+                        default: [{ key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }],
                         'x-decorator': 'FormItem',
                         'x-component': 'ArrayItems',
                         items: {
@@ -1156,7 +1156,7 @@ export class Table extends NodeType {
                             title: i18n.t('packages_dag_nodes_table_tianjia'),
                             'x-component': 'ArrayItems.Addition',
                             'x-component-props': {
-                              defaultValue: { key: '', value: '', operator: 5 }
+                              defaultValue: { key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }
                             }
                           }
                         }
