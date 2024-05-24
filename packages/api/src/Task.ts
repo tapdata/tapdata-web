@@ -230,7 +230,7 @@ export default class Task extends Http {
   }
 
   getErrorEvents(taskId) {
-    return this.axios.get(`${this.url}/error/${taskId}`)
+    return this.axios.get(`${this.url}/errors/${taskId}`)
   }
 }
 export { Task }
