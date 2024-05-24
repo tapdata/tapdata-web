@@ -269,16 +269,8 @@ export default {
       })
     },
     getData(cb) {
-      let where = {}
-      if (this.types.length) {
-        where.item_type = {
-          $in: this.types
-        }
-      }
-      let filter = {
-        where
-      }
-      if (this.types[0] === 'user') {
+      const type = this.types[0]
+      if (type === 'user') {
         userGroupsApi
           .get({
             filter: JSON.stringify({
@@ -304,15 +296,11 @@ export default {
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi
-          .childAccount({
-            filter: JSON.stringify(filter)
-          })
-          .then(data => {
-            let items = data?.items || []
-            this.treeData = this.formatData(items)
-            cb && cb(items)
-          })
+        metadataDefinitionsApi.getTags(type).then(data => {
+          let items = data?.items || []
+          this.treeData = this.formatData(items)
+          cb && cb(items)
+        })
       }
     },
     getDataAll(cb) {

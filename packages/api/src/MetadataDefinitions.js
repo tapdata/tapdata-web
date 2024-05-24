@@ -12,5 +12,9 @@ export default class MetadataDefinitions extends Http {
   batchPushListtags(tableName, params) {
     return this.axios.patch(`${this.url}/batchPushListtags/${tableName}`, params)
   }
+
+  getTags(type) {
+    return this.axios.get(`${this.url}/all-tag/${type}`)
+  }
 }
 export { MetadataDefinitions }
