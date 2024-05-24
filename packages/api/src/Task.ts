@@ -228,5 +228,9 @@ export default class Task extends Http {
   getCurrentEngineTime() {
     return this.axios.get(`${this.url}/getCurrentEngineTime`)
   }
+
+  getErrorEvents(taskId) {
+    return this.axios.get(`${this.url}/error/${taskId}`)
+  }
 }
 export { Task }

@@ -68,14 +68,18 @@ export default {
     }
   },
   methods: {
-    checkError(task) {
-      if (task.status === 'error' && task.errorEvents?.length) {
+    async checkError(task) {
+      if (task.status === 'error') {
+        const errorEvents = await taskApi.getErrorEvents(task.id)
+
+        if (!errorEvents?.length) return
+
         this.visible = true
         this.checkAll = false
         this.checkedData = []
         this.taskId = task.id
         this.taskName = task.name
-        this.errorEvents = task.errorEvents
+        this.errorEvents = errorEvents
         this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
         return true
       }
@@ -92,10 +96,8 @@ export default {
       this.checkAll = checkedCount === this.errorEvents.length
     },
     async skipErrorData() {
-      if (this.checkedData.length) {
-        this.skipping = true
-        await taskApi.skipErrorEvents(this.taskId, this.checkedData)
-      }
+      this.skipping = true
+      await taskApi.skipErrorEvents(this.taskId, this.checkedData)
       this.skipping = false
       this.visible = false
       this.$emit('skip', this.taskId)
