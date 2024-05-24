@@ -709,9 +709,9 @@ export default {
     },
 
     async handleStart(skip) {
-      if (!skip && this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
+      const hasError = !skip && (await this.$refs.skipError.checkError(this.dataflow))
+      if (hasError) return
+
       this.isSaving = true
       try {
         this.wsAgentLive()
