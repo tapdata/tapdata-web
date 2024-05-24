@@ -720,7 +720,7 @@ export default {
         this.isSaving = false
         this.isReset = false
         // this.loadDataflow(this.dataflow?.id)
-        this.openDataflow(this.dataflow?.id)
+        await this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
       } catch (e) {
