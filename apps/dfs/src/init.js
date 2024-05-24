@@ -98,6 +98,15 @@ export default ({ routes }) => {
       }
     })
 
+    /*S 万维广告*/
+    const iframe = document.createElement('iframe')
+    iframe.style.height = '0'
+    iframe.style.width = '0'
+    iframe.style.border = '0'
+    iframe.src = 'https://wwads.cn/code/tracking/143?user_id=' + window.__USER_INFO__.id
+    document.body.appendChild(iframe)
+    /*E 万维广告*/
+
     window.App = new Vue({
       router,
       store,

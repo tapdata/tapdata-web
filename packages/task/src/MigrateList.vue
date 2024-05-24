@@ -40,6 +40,7 @@
     <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
       v-else
+      ref="list"
       class="overflow-hidden bg-white rounded-lg pr-4 pb-4"
       :route="route"
       :task-buried="taskBuried"

@@ -303,7 +303,7 @@ export default {
   packages_dag_mixins_editor_shanchulianjie: '删除连接',
   packages_dag_mixins_editor_initV: 'initView-Editor 开启的监听',
   packages_dag_mixins_editor_xinrenwu: '新任务@',
-  packages_dag_mixins_editor_sourc: '「{val1}」不支持该节点「{val2}」作为目标',
+  packages_dag_mixins_editor_source: '「{val1}」不支持该节点「{val2}」作为目标',
   packages_dag_mixins_editor_gaijiedianta: '该节点「{val1}」不支持「{val2}」作为源',
   packages_dag_mixins_editor_gaijiedianyijing: '该节点已经达到最大连线限制',
   packages_dag_mixins_editor_gaijiedianso: '该节点「{val1}」仅支持作为目标',

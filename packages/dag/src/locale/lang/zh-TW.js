@@ -303,7 +303,7 @@ export default {
   packages_dag_mixins_editor_shanchulianjie: '刪除連接',
   packages_dag_mixins_editor_initV: 'initView-dataflowEdit 開啟的監聽',
   packages_dag_mixins_editor_xinrenwu: '新任務@',
-  packages_dag_mixins_editor_sourc: '「{val1}」不支持該節點「{val2}」作為目標',
+  packages_dag_mixins_editor_source: '「{val1}」不支持該節點「{val2}」作為目標',
   packages_dag_mixins_editor_gaijiedianta: '該節點「{val1}」僅支持作為源',
   packages_dag_mixins_editor_gaijiedianyijing: '該節點已經達到最大連線限制',
   packages_dag_mixins_editor_gaijiedianso: '該節點「{val1}」僅支持作為目標',
