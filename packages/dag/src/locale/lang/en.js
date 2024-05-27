@@ -769,5 +769,6 @@ export default {
   packages_dag_time_zone_offset: 'Time Zone Offset',
   packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
   packages_dag_dynamic_date_suffix_tip:
-    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task'
+    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
+  packages_dag_table_rename_multiple: 'In the task, only one table editing node is allowed'
 }
