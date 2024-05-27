@@ -38,7 +38,7 @@ export default class Http {
     if (typeof where === 'string') {
       queryStr = where
     }
-    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(queryStr), attributes)
+    return this.axios.post(this.url + '/execute?where=' + encodeURIComponent(queryStr), attributes)
   }
 
   get(params: unknown, filter: unknown, headers: unknown)
