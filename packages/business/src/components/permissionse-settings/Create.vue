@@ -103,6 +103,28 @@ export default {
             label: i18n.t('public_button_stop'),
             value: 'Stop'
           }
+        ],
+        Inspect: [
+          {
+            label: i18n.t('public_button_check'),
+            value: 'View'
+          },
+          {
+            label: i18n.t('public_button_edit'),
+            value: 'Edit'
+          },
+          {
+            label: i18n.t('public_button_delete'),
+            value: 'Delete'
+          },
+          {
+            label: i18n.t('public_button_start'),
+            value: 'Start'
+          },
+          {
+            label: i18n.t('public_button_stop'),
+            value: 'Stop'
+          }
         ]
       }
 

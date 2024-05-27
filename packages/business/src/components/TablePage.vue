@@ -208,10 +208,6 @@ export default {
                 this.page.total = total
                 this.list = data || []
 
-                // 缓存每页条数
-                let pageData = {}
-                pageData[this.$route.name] = this.page.size
-
                 if (total > 0 && (!data || !data.length)) {
                   clearTimeout(timer)
                   timer = setTimeout(() => {
