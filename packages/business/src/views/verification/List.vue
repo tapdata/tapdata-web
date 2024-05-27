@@ -131,57 +131,82 @@
           min-width="170"
         ></el-table-column>
         <el-table-column :label="$t('public_operation')" width="260">
-          <template slot-scope="scope">
-            <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)"
+          <template v-if="isDaas" #header>
+            <div class="flex align-center">
+              <span>{{ $t('public_operation_available') }}</span>
+              <ElTooltip
+                class="ml-2"
+                placement="top"
+                :content="$t('packages_business_connections_list_wuquanxiandecao')"
+              >
+                <VIcon class="color-primary" size="14">info</VIcon>
+              </ElTooltip>
+            </div>
+          </template>
+
+          <template #default="{ row }">
+            <ElLink type="primary" :disabled="!row.InspectResult" @click="toTableInfo(row.id)"
               >{{ $t('packages_business_verification_result_title') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-            <ElLink
-              v-if="scope.row.status === 'running'"
-              v-readonlybtn="'verify_job_edition'"
-              type="primary"
-              :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
-              @click="stop(scope.row.id)"
-              >{{ $t('public_button_stop') }}
-            </ElLink>
-            <ElLink
-              v-else
-              v-readonlybtn="'verify_job_edition'"
-              type="primary"
-              :disabled="
-                $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
-                ['running', 'scheduling'].includes(scope.row.status)
-              "
-              @click="startTask(scope.row.id)"
-              >{{ $t('packages_business_verification_executeVerifyTip') }}
-            </ElLink>
+
+            <template v-if="havePermission(row.permissionActions, 'Start') && row.status !== 'running'">
+              <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+              <ElLink
+                v-readonlybtn="'verify_job_edition'"
+                type="primary"
+                :disabled="$disabledByPermission('verify_job_edition_all_data', row.user_id)"
+                @click="stop(row.id)"
+                >{{ $t('public_button_stop') }}
+              </ElLink>
+            </template>
+
+            <template v-if="havePermission(row.permissionActions, 'Stop') && row.status === 'running'">
+              <ElDivider direction="vertical"></ElDivider>
+              <ElLink
+                v-readonlybtn="'verify_job_edition'"
+                type="primary"
+                :disabled="
+                  $disabledByPermission('verify_job_edition_all_data', row.user_id) ||
+                  ['running', 'scheduling'].includes(row.status)
+                "
+                @click="startTask(row.id)"
+                >{{ $t('packages_business_verification_executeVerifyTip') }}
+              </ElLink>
+            </template>
+
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'verify_job_edition'"
               type="primary"
-              :disabled="!scope.row.InspectResult"
-              @click="history(scope.row.id)"
+              :disabled="!row.InspectResult"
+              @click="history(row.id)"
               >{{ $t('packages_business_verification_historyTip') }}
             </ElLink>
-            <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-            <ElLink
-              v-readonlybtn="'verify_job_edition'"
-              type="primary"
-              :disabled="
-                $disabledByPermission('verify_job_edition_all_data', scope.row.user_id) ||
-                ['running', 'scheduling'].includes(scope.row.status)
-              "
-              @click="goEdit(scope.row.id, scope.row.flowId)"
-              >{{ $t('packages_business_verification_configurationTip') }}
-            </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink
-              v-readonlybtn="'verify_job_edition'"
-              type="primary"
-              :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
-              @click="remove(scope.row.id, scope.row)"
-              >{{ $t('public_button_delete') }}
-            </ElLink>
+
+            <template v-if="havePermission(row.permissionActions, 'Edit')">
+              <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+              <ElLink
+                v-readonlybtn="'verify_job_edition'"
+                type="primary"
+                :disabled="
+                  $disabledByPermission('verify_job_edition_all_data', row.user_id) ||
+                  ['running', 'scheduling'].includes(row.status)
+                "
+                @click="goEdit(row.id, row.flowId)"
+                >{{ $t('packages_business_verification_configurationTip') }}
+              </ElLink>
+            </template>
+
+            <template v-if="havePermission(row.permissionActions, 'Delete')">
+              <ElDivider direction="vertical"></ElDivider>
+              <ElLink
+                v-readonlybtn="'verify_job_edition'"
+                type="primary"
+                :disabled="$disabledByPermission('verify_job_delete_all_data', row.user_id)"
+                @click="remove(row.id, row)"
+                >{{ $t('public_button_delete') }}
+              </ElLink>
+            </template>
           </template>
         </el-table-column>
       </TablePage>
@@ -214,6 +239,7 @@ export default {
   },
   data() {
     return {
+      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         keyword: '',
         inspectMethod: '',
@@ -493,6 +519,10 @@ export default {
     },
     handleCreate(type) {
       this.$router.push({ name: 'dataVerificationCreate', query: { taskMode: type } })
+    },
+    havePermission(data = [], type = '') {
+      if (!this.isDaas) return true
+      return data.includes(type)
     },
     handlePermissionsSettings() {
       this.$refs.permissionseSettingsCreate.open(this.multipleSelection, 'Inspect')
