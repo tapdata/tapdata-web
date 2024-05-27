@@ -77,7 +77,6 @@ export default {
     }
 
     this.loopLoadAgentCount()
-    this.setUrlParams() // url携带的自定义参数
     let unwatch
 
     // 🎉🥚
@@ -91,6 +90,8 @@ export default {
         this.subscriptionModelVisible = !this.subscriptionModelVisible
       }
     })
+
+    await this.setUrlParams() // url携带的自定义参数
   },
 
   destroyed() {
@@ -452,8 +453,8 @@ export default {
       this.isUnDeploy = val
     },
 
-    setUrlParams() {
-      const { guide } = this.$store.state
+    async setUrlParams() {
+      const { guide, mockUserPromise } = this.$store.state
 
       let bd_vid = getUrlSearch('bd_vid')
       const tp_vid = getUrlSearch('tp_vid')
@@ -466,11 +467,20 @@ export default {
       const logidUrlCloud = Cookie.get('logidUrlCloud')
       const userReferrer = Cookie.get('userReferrer')
       const userVirtualId = Cookie.get('userVirtualId')
+      const userVisitedPages = Cookie.get('userVisitedPages')
+
+      if (mockUserPromise) {
+        const isMock = await mockUserPromise.catch(e => {
+          console.error(e)
+        })
+        if (isMock) return
+      }
 
       if (userVirtualId && !guide.expand?.userVirtualId) {
         params.expand = {
           userReferrer,
-          userVirtualId
+          userVirtualId,
+          userVisitedPages
         }
         Object.assign(guide.expand, params.expand)
       }
