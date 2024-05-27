@@ -231,13 +231,17 @@ export default {
     },
 
     loadUserMock() {
-      this.$axios
+      const mockUserPromise = this.$axios
         .get('api/gw/user', {
           maxRedirects: 0
         })
         .then(data => {
           this.mockUserId = data?.mockUserId || false
+          this.$store.commit('setIsMockUser', this.mockUserId)
+          return this.mockUserId
         })
+
+      this.$store.commit('setMockUserPromise', mockUserPromise)
     }
   }
 }
