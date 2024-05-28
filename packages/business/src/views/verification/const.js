@@ -21,5 +21,6 @@ export const statusMap = {
   scheduling: i18n.t('packages_business_verification_scheduling'),
   error: i18n.t('packages_business_verification_error'),
   done: i18n.t('packages_business_verification_done'),
-  running: i18n.t('packages_business_verification_running')
+  running: i18n.t('packages_business_verification_running'),
+  stopping: i18n.t('public_status_stopping')
 }

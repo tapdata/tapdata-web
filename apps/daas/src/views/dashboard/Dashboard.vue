@@ -33,11 +33,17 @@
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_copy_overview_title') }}</div>
+
                 <ul class="job-list">
-                  <li v-for="task in migrationTaskList" :key="task.label" @click="handleStatus(task.label)">
+                  <li
+                    class="flex align-center"
+                    v-for="task in migrationTaskList"
+                    :key="task.label"
+                    @click="handleStatus(task.label)"
+                  >
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ task.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
+                    <span :title="task.name" class="fw-normal font-color-light flex-1 ellipsis">{{ task.name }}</span
+                    ><span class="num font-color-dark">{{ task.value }}</span>
                   </li>
                 </ul>
               </div>
@@ -64,10 +70,15 @@
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
                 <ul class="job-list">
-                  <li v-for="task in syncTaskList" :key="task.label" @click="handleSyncStatus(task.label)">
+                  <li
+                    class="flex align-center"
+                    v-for="task in syncTaskList"
+                    :key="task.label"
+                    @click="handleSyncStatus(task.label)"
+                  >
                     <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                    <span class="fw-normal font-color-light">{{ task.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(task.value) }}</span>
+                    <span :title="task.name" class="fw-normal font-color-light flex-1 ellipsis">{{ task.name }}</span
+                    ><span class="num font-color-dark">{{ task.value }}</span>
                   </li>
                 </ul>
               </div>
@@ -92,30 +103,33 @@
         </el-row>
         <!-- 数据校验 -->
         <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
-          <el-col :span="12" class="dashboard-col col --dense" v-readonlybtn="'Data_verify_menu'">
-            <div class="dashboard-col-box">
-              <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
-              <div class="chart line-chart flex flex-column">
-                <ul v-if="validBarData.every(item => item.value === 0)">
-                  <li v-for="item in validBarData" :key="item.name">
-                    <span class="font-color-light">{{ item.name }} </span>
-                    <span class="font-color-dark fw-sub"> {{ item.value }}</span>
+          <el-col :span="12" class="dashboard-col col">
+            <div class="charts-list flex flex-row">
+              <div class="charts-list-text">
+                <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
+                <ul class="job-list">
+                  <li class="flex align-center" v-for="task in inspectTaskList" :key="task.key">
+                    <i class="dots mr-3" :style="`background-color: ${task.itemStyle.color};`"></i>
+                    <span :title="task.name" class="fw-normal font-color-light flex-1 ellipsis">{{ task.name }}</span
+                    ><span class="num font-color-dark">{{ task.value }}</span>
                   </li>
                 </ul>
+              </div>
+              <div
+                v-if="inspectTaskList.every(item => item.value === 0)"
+                class="flex justify-content-center align-items-center w-100"
+              >
                 <div
-                  v-if="validBarData.every(item => item.value === 0)"
-                  class="flex justify-content-center align-items-center h-100"
-                >
-                  <div
-                    class="flex justify-content-center align-items-center font-color-slight"
-                    v-html="
-                      $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
-                      ])
-                    "
-                  ></div>
-                </div>
-                <Chart v-else type="bar" class="bar-chart flex-1" :data="validBarData" :options="barOptions"></Chart>
+                  class="flex justify-content-center align-items-center font-color-slight"
+                  v-html="
+                    $t('dashboard_no_statistics', [
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                    ])
+                  "
+                ></div>
+              </div>
+              <div class="chart" v-else>
+                <Chart type="pie" :extend="getPieOption(inspectTaskList)" class="type-chart"></Chart>
               </div>
             </div>
           </el-col>
@@ -124,10 +138,10 @@
               <div class="charts-list-text">
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_transfer_overview') }}</div>
                 <ul class="job-list">
-                  <li v-for="item in transBarData" :key="item.key">
+                  <li class="flex align-center" v-for="item in transBarData" :key="item.key">
                     <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                    <span class="fw-normal font-color-light">{{ item.name }}</span
-                    ><span class="num pl-7 font-color-dark">{{ toThousandsUnit(item.value) }}</span>
+                    <span :title="item.name" class="fw-normal font-color-light flex-1 ellipsis">{{ item.name }}</span
+                    ><span class="num font-color-dark">{{ toThousandsUnit(item.value) }}</span>
                   </li>
                 </ul>
               </div>
@@ -215,6 +229,7 @@
 import { Chart } from '@tap/component'
 import { clusterApi, taskApi } from '@tap/api'
 import { STATUS_MAP } from '@tap/business'
+import { statusMap as InspectStatusMap } from '@tap/business/src/views/verification/const'
 import { toThousandsUnit } from '@/utils/util'
 import { STATUS_MAP as DASHBOARD_STATUS_MAP } from './const'
 
@@ -222,13 +237,24 @@ export default {
   inject: ['lockedFeature'],
   components: { Chart },
   data() {
+    const colorMap = {
+      running: '#82C647',
+      paused: '#AE86C9',
+      wait_run: '#AE86C9',
+      waiting: '#AE86C9',
+      wait_start: '#fdf1c8',
+      scheduling: '#fdf1c8',
+      edit: '#88DBDA',
+      error: '#F7D762',
+      stop: '#E6B450',
+      stopping: '#E6B450',
+      complete: '#2EA0EA',
+      done: '#2EA0EA'
+    }
     return {
       h: this.$createElement,
       copyPieData: [],
-      // copyTaskData: [],
       syncPieData: [],
-      // syncTaskData: [],
-      validBarData: [],
       serverTable: [],
       migrationTaskList: [],
       syncTaskList: [],
@@ -336,7 +362,14 @@ export default {
         { name: this.$t('public_status_complete'), label: 'complete', value: 0 },
         { name: this.$t('public_status_error'), label: 'error', value: 0 }
       ],
-
+      // 数据校验
+      inspectTaskList: Object.entries(InspectStatusMap).map(([key, value]) => ({
+        name: value,
+        value: 0,
+        label: key,
+        key,
+        itemStyle: { color: colorMap[key] }
+      })),
       loading: false,
       migrationTotal: '',
       syncTotal: '',
@@ -346,16 +379,7 @@ export default {
         { name: this.$t('app_Home_incremental'), value: 'cdc' },
         { name: this.$t('app_Home_incrementalLag'), value: 'Lag' }
       ],
-      colorMap: {
-        running: '#82C647',
-        paused: '#AE86C9',
-        wait_run: '#AE86C9',
-        wait_start: '#fdf1c8',
-        edit: '#88DBDA',
-        error: '#F7D762',
-        stop: '#E6B450',
-        complete: '#2EA0EA'
-      },
+      colorMap,
       colorServeMap: {
         starting: '#409EFF',
         running: '#8DC47A',
@@ -377,7 +401,6 @@ export default {
       migrationJobObj: {},
       syncJobStatusObj: {},
       migrationJobStatusObj: {},
-      dataValidationObj: {}, //数据校验
 
       // 传输总览颜色
       transBarData: [
@@ -387,13 +410,7 @@ export default {
         { name: this.$t('dashboard_total_update'), value: 0, key: 'updatedTotal', color: '#F7D762' },
         { name: this.$t('dashboard_total_delete'), value: 0, key: 'deletedTotal', color: '#88DBDA' }
       ],
-      // 数据校验颜色
-      verifyBarData: [
-        { name: this.$t('dashboard_total'), value: 0, key: 'total', color: '#2EA0EA' },
-        { name: this.$t('dashboard_diff'), value: 0, key: 'diff', color: '#2EA0EA' },
-        { name: this.$t('dashboard_can'), value: 0, key: 'can', color: '#2EA0EA' },
-        { name: this.$t('dashboard_error'), value: 0, key: 'error', color: '#2EA0EA' }
-      ],
+
       transBarOptions: {
         barWidth: '100%',
         series: [
@@ -469,8 +486,7 @@ export default {
     },
     // 获取dataflows数据
     getDataFlowApi() {
-      let self = this
-      self.loading = true
+      this.loading = true
       taskApi
         .chart()
         .then(data => {
@@ -487,7 +503,6 @@ export default {
             let copy_total = data?.chart1?.total || 0
             let sync_total = data?.chart3?.total || 0
             let valid_total = data?.chart5?.total || 0
-
             let total = {
               all_total: copy_total + sync_total + valid_total,
               copy_total: copy_total,
@@ -495,6 +510,7 @@ export default {
               valid_total: valid_total
             }
             let result = []
+
             this.taskList.forEach(el => {
               if (this.lockedFeature[el.key]) return
               result.push(
@@ -504,24 +520,23 @@ export default {
               )
             })
             this.taskList = result
-
-            self.migrationTaskList = data.chart1?.items
-              ? self.handleDataProcessing(data.chart1.items, self.statusList)
+            this.migrationTaskList = data.chart1?.items
+              ? this.handleDataProcessing(data.chart1.items, this.statusList)
               : []
-            self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
-
-            console.log('STATUS_MAP', STATUS_MAP) // eslint-disable-line
-
-            self.copyPieData = setColor(self.migrationTaskList)
-            // self.copyTaskData = this.handleChart(data.chart2)
-            self.syncPieData = setColor(self.syncTaskList)
-            // self.syncTaskData = this.handleChart(data.chart4)
-            self.validBarData = this.handleChart(data.chart5, self.verifyBarData)
-            self.transBarData = this.handleChart(data.chart6, self.transBarData)
+            this.syncTaskList = data?.chart3 ? this.handleDataProcessing(data.chart3.items, this.statusList) : []
+            this.copyPieData = setColor(this.migrationTaskList)
+            this.syncPieData = setColor(this.syncTaskList)
+            this.transBarData = this.handleChart(data.chart6, this.transBarData)
+            this.inspectTaskList = data?.chart5
+              ? this.inspectTaskList.map(item => {
+                  item.value = data.chart5[item.key]
+                  return item
+                })
+              : []
           }
         })
         .finally(() => {
-          self.loading = false
+          this.loading = false
         })
     },
 

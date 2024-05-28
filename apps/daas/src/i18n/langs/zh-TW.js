@@ -91,7 +91,7 @@ export default {
   dashboard_copy_status_title: '複製任務狀態',
   dashboard_sync_overview_title: '開發任務概覽',
   dashboard_sync_status_title: '開發任務狀態',
-  dashboard_valid_title: '數據校驗',
+  dashboard_valid_title: '數據校驗概覽',
   dashboard_transfer_overview: '傳輸總覽',
   dashboard_server_title: '集群總覽',
   dashboard_total_valid: '全部校驗任務',
