@@ -34,7 +34,7 @@ export default {
   packages_component_form_builder_file_shangchuanwenjianda: '上传文件大小不能超过 {val1}KB',
   packages_component_src_inlineinput_zifuchangduxian: '字符长度限制{val1}-{val2}个字符',
   packages_component_src_selectlist_meiyougengduoshu: '没有更多数据',
-  packages_component_src_classification_chuangjianfenlei: '创建分类',
+  packages_component_src_classification_chuangjianfenlei: '新建标签',
 
   packages_component_src_upgradefee_dingyuezhuanyeban: '专业版',
   packages_component_src_upgradefee_gaojishouhouzhi: ' 高级售后支持，提供服务SLA',

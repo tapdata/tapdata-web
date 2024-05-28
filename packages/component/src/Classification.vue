@@ -68,14 +68,16 @@
           </span>
         </template>
       </ElTree>
-      <ElButton
-        v-if="treeData && treeData.length === 0 && visible"
-        text
-        v-readonlybtn="authority"
-        @click="showDialog()"
-        class="create"
-        >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
-      >
+      <div class="text-center">
+        <ElButton
+          v-if="treeData && treeData.length === 0 && visible"
+          text
+          v-readonlybtn="authority"
+          @click="showDialog()"
+          class="create"
+          >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
+        >
+      </div>
     </div>
     <ElDialog
       :visible="dialogConfig.visible"

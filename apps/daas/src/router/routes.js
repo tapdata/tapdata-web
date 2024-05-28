@@ -464,6 +464,7 @@ export default [
             name: 'dataVerificationList',
             component: VerificationList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_verify',
               code: 'v2_data_check'
             }
