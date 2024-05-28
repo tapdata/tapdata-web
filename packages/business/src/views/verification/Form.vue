@@ -342,12 +342,13 @@
 import { cloneDeep } from 'lodash'
 
 import i18n from '@tap/i18n'
-import { taskApi, inspectApi } from '@tap/api'
+import { inspectApi, taskApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 
 import ConditionBox from './components/ConditionBox'
 import { TABLE_PARAMS } from './components/const'
-import { statusMap, inspectMethod as inspectMethodMap } from './const'
+import { inspectMethod as inspectMethodMap } from './const'
+
 const FILTER_DATABASE_TYPES = ['Doris']
 
 export default {
@@ -500,33 +501,16 @@ export default {
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
-      const self = this
       let id = this.$route.params.id
-      let where = {
-        status: {
-          inq: ['running', 'stop', 'complete']
-        }
-      }
-      taskApi
-        .get({
-          filter: JSON.stringify({
-            where: where,
-            fields: {
-              id: true,
-              name: true,
-              status: true
-            },
-            order: 'createTime DESC',
-            limit: 999,
-            skip: 0
-          })
-        })
+
+      inspectApi
+        .getTaskList()
         .then(async data => {
-          let list = data?.items || []
-          this.flowOptions = list
+          this.flowOptions = data || []
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
+
           if (id) {
             const details = await this.getData(id)
             if (this.form.taskMode === 'pipeline') {
@@ -534,6 +518,7 @@ export default {
             }
             this.form = Object.assign({}, this.form, details)
           }
+
           this.loading = false
         })
         .catch(() => {
