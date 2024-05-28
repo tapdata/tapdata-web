@@ -612,9 +612,8 @@ export default {
         }
       })
 
-      if (this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
 
       const flag = await this.save(true)
 
