@@ -12397,3 +12397,17 @@
   font-size: 1.125rem; /* 18px */
   line-height: 1.75rem; /* 28px */
 }
+
+.text-sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+// 唯一索引后面的下标
+.fingerprint-sub::before {
+  content: var(--index);
+  zoom: 0.8;
+  line-height: 1;
+  vertical-align: sub;
+  font-size: smaller;
+}
