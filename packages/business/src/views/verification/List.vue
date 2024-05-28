@@ -149,7 +149,7 @@
               >{{ $t('packages_business_verification_result_title') }}
             </ElLink>
 
-            <template v-if="havePermission(row.permissionActions, 'Start') && row.status !== 'running'">
+            <template v-if="havePermission(row.permissionActions, 'Stop') && row.status === 'running'">
               <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
               <ElLink
                 v-readonlybtn="'verify_job_edition'"
@@ -160,14 +160,14 @@
               </ElLink>
             </template>
 
-            <template v-if="havePermission(row.permissionActions, 'Stop') && row.status === 'running'">
+            <template v-if="havePermission(row.permissionActions, 'Start') && row.status !== 'running'">
               <ElDivider direction="vertical"></ElDivider>
               <ElLink
                 v-readonlybtn="'verify_job_edition'"
                 type="primary"
                 :disabled="
                   $disabledByPermission('verify_job_edition_all_data', row.user_id) ||
-                  ['running', 'scheduling'].includes(row.status)
+                  ['running', 'scheduling', 'stopping'].includes(row.status)
                 "
                 @click="startTask(row.id)"
                 >{{ $t('packages_business_verification_executeVerifyTip') }}
