@@ -339,5 +339,6 @@ export default {
   public_response_content: '响应内容',
   public_resend: '重新发送',
 
-  public_unique_index: '唯一索引'
+  public_unique_index: '唯一索引',
+  public_normal_index: '索引'
 }

@@ -16,9 +16,12 @@
           <ElTooltip
             v-else-if="indicesMap[scope.row.field_name]"
             placement="top"
-            :content="`${$t('public_unique_index')}: ` + indicesMap[scope.row.field_name][0]"
+            :content="
+              `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+              indicesMap[scope.row.field_name][0]
+            "
             :open-delay="200"
-            :transition="false"
+            transition="none"
           >
             <span class="flex align-center">
               <VIcon size="12" class="ml-1">fingerprint</VIcon>
@@ -352,7 +355,7 @@ export default {
     indicesMap() {
       const { indices = [] } = this.data
       return indices.reduce((map, item, index) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index]))
+        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
     },

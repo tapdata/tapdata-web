@@ -339,5 +339,6 @@ export default {
   public_response_content: 'Response Content',
   public_resend: 'Resend',
 
-  public_unique_index: 'Unique Index'
+  public_unique_index: 'Unique Index',
+  public_normal_index: 'Index'
 }

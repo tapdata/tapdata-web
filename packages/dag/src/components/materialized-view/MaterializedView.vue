@@ -620,8 +620,8 @@ export default {
     },
 
     setNodeSchema(nodeId, { fields = [], indices = [] }) {
-      let columnsMap = indices.reduce((map, item) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = true))
+      let columnsMap = indices.reduce((map, item, index) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
 
@@ -631,7 +631,7 @@ export default {
         fields
           .map(item => {
             item.dataType = item.data_type.replace(/\(.+\)/, '')
-            item.indicesUnique = !!columnsMap[item.field_name]
+            item.indicesUnique = columnsMap[item.field_name]
             item.isPrimaryKey = item.primary_key_position > 0
             return item
           })
