@@ -456,30 +456,29 @@ const mutations = {
     const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 
     const syncRecursive = (target, source, path = '') => {
-      // 删除 target 中存在但 source 中不存在的属性
       const pathPrefix = path ? `${path}.` : ''
-      // for (const key in target) {
-      //   console.log('path', `${pathPrefix}${key}`)
-      //   if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
-      //     Vue.delete(target, key)
-      //   }
-      // }
+      for (const key in target) {
+        if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
+          Vue.delete(target, key)
+        }
+      }
 
       // 更新或新增 source 中存在的属性到 target
-      /*for (const key in source) {
+      for (const key in source) {
         const sourceValue = source[key]
         const targetValue = target[key]
 
         if (isObject(sourceValue) && targetValue) {
-          syncRecursive(target[key], sourceValue, `${pathPrefix}${key}`)
+          syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
         } else {
           // 如果属性是基本类型，直接更新
           if (targetValue !== sourceValue) {
             Vue.set(target, key, sourceValue)
           }
         }
-      }*/
-      Object.keys(target).forEach(key => {
+      }
+
+      /*Object.keys(target).forEach(key => {
         if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
           Vue.delete(target, key)
         }
@@ -491,7 +490,7 @@ const mutations = {
         } else {
           Vue.set(target, key, value)
         }
-      })
+      })*/
     }
 
     if (node) {

@@ -14,6 +14,7 @@ import {
 import { Path } from '@formily/path'
 
 import { alarmApi } from '@tap/api'
+import { deepEqual } from '@tap/shared'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
@@ -222,7 +223,7 @@ export default {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
-        if (node && JSON.stringify(form.values) !== JSON.stringify(node)) {
+        if (node && !deepEqual(node, form.values)) {
           this.updateNodeProps(form)
         }
       }, 60)

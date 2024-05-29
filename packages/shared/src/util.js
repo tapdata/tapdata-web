@@ -339,3 +339,66 @@ export async function copyToClipboard(textToCopy) {
     }
   }
 }
+export function deepEqual(obj1, obj2, seen = new Map()) {
+  // Handle identical references (including NaN)
+  if (obj1 === obj2) {
+    return true
+  }
+
+  // Handle NaN case
+  if (typeof obj1 === 'number' && typeof obj2 === 'number' && isNaN(obj1) && isNaN(obj2)) {
+    return true
+  }
+
+  // Handle null and undefined
+  if (obj1 == null || obj2 == null) {
+    return obj1 === obj2
+  }
+
+  // Handle functions (if needed)
+  // if (typeof obj1 === 'function' || typeof obj2 === 'function') {
+  //   return false
+  // }
+
+  // Handle different types
+  if (typeof obj1 !== typeof obj2) {
+    return false
+  }
+
+  // Handle dates
+  if (obj1 instanceof Date && obj2 instanceof Date) {
+    return obj1.getTime() === obj2.getTime()
+  }
+
+  // Handle regular expressions
+  if (obj1 instanceof RegExp && obj2 instanceof RegExp) {
+    return obj1.source === obj2.source && obj1.flags === obj2.flags
+  }
+
+  // Handle arrays and objects
+  if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+    // Handle cyclic references
+    if (seen.has(obj1) && seen.get(obj1) === obj2) {
+      return true
+    }
+    seen.set(obj1, obj2)
+
+    const keys1 = Object.keys(obj1)
+    const keys2 = Object.keys(obj2)
+
+    if (keys1.length !== keys2.length) {
+      return false
+    }
+
+    for (const key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key], seen)) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // Default case: not equal
+  return false
+}
