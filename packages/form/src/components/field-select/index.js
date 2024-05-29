@@ -4,6 +4,7 @@ import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { PreviewText } from '@formily/element'
 import { VIcon } from '@tap/component'
 import { computed } from '@vue/composition-api'
+import i18n from '@tap/i18n'
 
 const DefineFieldSelect = defineComponent({
   props: {
@@ -74,11 +75,26 @@ const DefineFieldSelect = defineComponent({
                   </VIcon>
                 )}
                 {option[itemLabel]}
-                {option.isPrimaryKey && (
+                {option.isPrimaryKey ? (
                   <VIcon size="12" class="text-warning">
                     key
                   </VIcon>
-                )}
+                ) : option.indicesUnique && Array.isArray(option.indicesUnique) ? (
+                  <ElTooltip
+                    placement="top"
+                    content={
+                      `${i18n.t(option.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+                      option.indicesUnique[0]
+                    }
+                    open-delay={200}
+                    transition="none"
+                  >
+                    <span class="flex align-center">
+                      <VIcon size="12">fingerprint</VIcon>
+                      <span style={`--index: '${option.indicesUnique[1]}';`} class="fingerprint-sub"></span>
+                    </span>
+                  </ElTooltip>
+                ) : undefined}
               </div>
             )
           }}
