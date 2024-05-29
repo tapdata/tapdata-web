@@ -28,7 +28,12 @@
           </el-col>
         </el-row>
         <!-- 复制任务概览 -->
-        <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
+        <el-row
+          :gutter="20"
+          class="dashboard-row mb-5 align-items-stretch"
+          type="flex"
+          v-readonlybtn="'v2_data_pipeline'"
+        >
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
@@ -102,7 +107,7 @@
           </el-col>
         </el-row>
         <!-- 数据校验 -->
-        <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
+        <el-row :gutter="20" class="dashboard-row mb-5 align-items-stretch" v-if="syncValidFalg" type="flex">
           <el-col :span="12" class="dashboard-col col">
             <div class="charts-list flex flex-row">
               <div class="charts-list-text">
@@ -714,7 +719,7 @@ export default {
       .dashboard-col-box {
         height: 100%;
         padding: 16px;
-        border-radius: 4px;
+        border-radius: 8px;
         background-color: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
@@ -730,7 +735,7 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         background-color: map-get($bgColor, white);
-        border-radius: 3px;
+        border-radius: 8px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
           width: 50%;
