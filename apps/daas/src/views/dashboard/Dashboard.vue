@@ -708,13 +708,8 @@ export default {
     .dashboard-col {
       flex: 1;
       &.col {
-        height: 210px;
         border-radius: 3px;
         box-sizing: border-box;
-
-        &.--dense {
-          height: 200px;
-        }
       }
       .dashboard-col-box {
         height: 100%;
@@ -738,12 +733,13 @@ export default {
         border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
-          float: left;
-          width: 40%;
-          padding: 16px 30px 12px 16px;
+          width: 50%;
+          padding: 16px;
         }
         .job-list {
-          padding: 16px 30px 16px 60px;
+          display: inline-flex;
+          flex-direction: column;
+          padding: 16px 0 0 20%;
           box-sizing: border-box;
           li {
             margin-bottom: 5px;
@@ -757,24 +753,21 @@ export default {
             }
             .num {
               font-weight: 600;
+              min-width: 80px;
+              margin-left: 16px;
             }
             span {
               display: inline-block;
-              width: 60px;
               text-align: left;
               font-size: $fontBaseTitle;
               &::before {
                 content: '';
               }
             }
-            span:not(.num) {
-              width: 72px;
-            }
           }
         }
         .chart {
-          float: left;
-          width: 55%;
+          width: 50%;
           height: 210px;
         }
       }
