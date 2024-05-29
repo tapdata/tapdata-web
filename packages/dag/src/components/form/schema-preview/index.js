@@ -176,7 +176,9 @@ export const SchemaPreview = defineComponent({
 
     useSchemaEffect(root, () => [formRef.value.values.tableName], loadSchema)
 
-    loadSchema()
+    if (!root.$store.state.dataflow.taskSaving) {
+      loadSchema()
+    }
 
     loadDatatypesjson()
 
