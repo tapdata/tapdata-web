@@ -469,6 +469,9 @@ export default {
     },
 
     async loadDatabase(loadMore) {
+      this.connectionCancelSource?.cancel()
+      this.connectionCancelSource = CancelToken.source()
+
       if (loadMore) {
         this.dbPage++
         this.dbLoadingMore = true
@@ -477,7 +480,9 @@ export default {
         this.dbPage = 1
       }
 
-      const data = await connectionsApi.get(this.getDbFilter())
+      const data = await connectionsApi.get(this.getDbFilter(), {
+        cancelToken: this.connectionCancelSource.token
+      })
 
       this.dbTotal = data.total
 

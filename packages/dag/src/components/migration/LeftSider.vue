@@ -191,7 +191,7 @@ import { getInitialValuesInBySchema } from '@tap/form'
 import resize from '@tap/component/src/directives/resize'
 import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
-import { connectionsApi, databaseTypesApi } from '@tap/api'
+import { CancelToken, connectionsApi, databaseTypesApi } from '@tap/api'
 import { Select } from 'element-ui'
 import { OverflowTooltip } from '@tap/component'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
@@ -353,6 +353,9 @@ export default {
     },
 
     async loadDatabase(loadMore) {
+      this.connectionCancelSource?.cancel()
+      this.connectionCancelSource = CancelToken.source()
+
       if (loadMore) {
         this.dbPage++
         this.dbLoadingMore = true
@@ -362,7 +365,9 @@ export default {
         this.dbTotal = 0
       }
 
-      const data = await connectionsApi.get(this.getDbFilter())
+      const data = await connectionsApi.get(this.getDbFilter(), {
+        cancelToken: this.connectionCancelSource.token
+      })
 
       this.dbTotal = data.total
 
