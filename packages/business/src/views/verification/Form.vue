@@ -817,7 +817,7 @@ export default {
         if (this.form.taskMode === 'pipeline') {
           this.form.name = (option.label || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
         }
-        this.getFlowStages(null, this.$refs.conditionBox.autoAddTable)
+        this.getFlowStages(option.value, this.$refs.conditionBox.autoAddTable)
       }
     }
   }
