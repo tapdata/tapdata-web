@@ -79,7 +79,10 @@ export default {
         this.checkedData = []
         this.taskId = task.id
         this.taskName = task.name
-        this.errorEvents = errorEvents
+        this.errorEvents = errorEvents.map(item => {
+          delete item.stacks // stacks is too long
+          return item
+        })
         this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
         return true
       }
