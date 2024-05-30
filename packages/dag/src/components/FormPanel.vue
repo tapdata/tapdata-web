@@ -223,7 +223,7 @@ export default {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
-        if (node && !deepEqual(node, form.values)) {
+        if (node && !deepEqual(form.values, node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
           this.updateNodeProps(form)
         }
       }, 60)
@@ -240,6 +240,7 @@ export default {
       })
       this.updateNodeProperties({
         id: form.values.id,
+        overwrite: !this.stateIsReadonly,
         properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag({ vm: this })

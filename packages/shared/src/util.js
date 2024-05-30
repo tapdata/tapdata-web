@@ -339,7 +339,10 @@ export async function copyToClipboard(textToCopy) {
     }
   }
 }
-export function deepEqual(obj1, obj2, seen = new Map()) {
+
+export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen = new Map()) {
+  const isExcluded = path => excludedPaths.includes(path)
+
   // Handle identical references (including NaN)
   if (obj1 === obj2) {
     return true
@@ -383,15 +386,21 @@ export function deepEqual(obj1, obj2, seen = new Map()) {
     }
     seen.set(obj1, obj2)
 
-    const keys1 = Object.keys(obj1)
-    const keys2 = Object.keys(obj2)
+    let keys1 = Object.keys(obj1)
+    let keys2 = Object.keys(obj2)
+    const pathPrefix = currentPath ? `${currentPath}.` : ''
+
+    if (excludedPaths.length) {
+      keys1 = keys1.filter(key => !isExcluded(pathPrefix + key))
+      keys2 = keys2.filter(key => !isExcluded(pathPrefix + key))
+    }
 
     if (keys1.length !== keys2.length) {
       return false
     }
 
     for (const key of keys1) {
-      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key], seen)) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key], excludedPaths, pathPrefix + key, seen)) {
         return false
       }
     }

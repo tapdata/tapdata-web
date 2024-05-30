@@ -761,10 +761,25 @@ export default {
       // 设置pdk节点配置默认值
       const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
       let nodeConfig
+      const attrs = {
+        connectionName: connection.name,
+        connectionType: connection.connection_type,
+        accessNodeProcessId: connection.accessNodeProcessId,
+        pdkType: connection.pdkType,
+        pdkHash: connection.pdkHash,
+        capabilities: connection.capabilities || [],
+        db_version: connection.db_version,
+        hasCreated: false
+      }
+
       if (pdkProperties) {
         nodeConfig = getInitialValuesInBySchema(
           {
             properties: {
+              attrs: {
+                type: 'object',
+                default: attrs
+              },
               $inputs: {
                 default: [],
                 type: 'array'
@@ -781,6 +796,7 @@ export default {
           },
           {}
         )
+        delete nodeConfig.attrs
         delete nodeConfig.$inputs
         delete nodeConfig.$outputs
       }
@@ -792,23 +808,7 @@ export default {
         connectionId: connection.id,
         tableName,
         nodeConfig,
-        attrs: {
-          connectionName: connection.name,
-          connectionType: connection.connection_type,
-          accessNodeProcessId: connection.accessNodeProcessId,
-          pdkType: connection.pdkType,
-          pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities || [],
-          db_version: connection.db_version,
-          hasCreated: false
-          /*capabilities: [
-            ...(connection.capabilities || []),
-            {
-              id: 'new_field_function',
-              type: 11
-            }
-          ]*/
-        }
+        attrs
       }
     },
 

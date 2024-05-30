@@ -127,7 +127,12 @@ export class Table extends NodeType {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
                     'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
+                    'x-component': 'div',
+                    'x-content': '{{$self.value}}',
+                    'x-component-props': {
+                      class: 'ellipsis',
+                      title: '{{$self.value}}'
+                    }
                   }
                 }
               },
@@ -544,7 +549,7 @@ export class Table extends NodeType {
               },
 
               schemaFields: {
-                type: 'array',
+                type: 'string',
                 'x-component': 'SchemaPreview',
                 'x-component-props': {
                   '@update-table-name': `{{(name) => {
@@ -695,7 +700,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                                display: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function') ? "visible":"hidden"}}`
                               }
                             }
                           },
@@ -704,7 +709,7 @@ export class Table extends NodeType {
                               '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value==="polling"}}'
+                                display: '{{$self.value==="polling"?"visible":"hidden"}}'
                               }
                             }
                           }
@@ -970,7 +975,7 @@ export class Table extends NodeType {
                       },
 
                       nodeSchema: {
-                        type: 'array',
+                        type: 'string',
                         'x-display': 'hidden',
                         'x-reactions': [
                           {

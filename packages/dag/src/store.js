@@ -457,11 +457,14 @@ const mutations = {
 
     const syncRecursive = (target, source, path = '') => {
       const pathPrefix = path ? `${path}.` : ''
-      /*for (const key in target) {
-        if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
-          Vue.delete(target, key)
+
+      if (updateInformation.overwrite) {
+        for (const key in target) {
+          if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
+            Vue.delete(target, key)
+          }
         }
-      }*/
+      }
 
       // 更新或新增 source 中存在的属性到 target
       for (const key in source) {
@@ -477,20 +480,6 @@ const mutations = {
           }
         }
       }
-
-      /*Object.keys(target).forEach(key => {
-        if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
-          Vue.delete(target, key)
-        }
-      })
-
-      Object.entries(source).forEach(([key, value]) => {
-        if (isObject(value) && target[key]) {
-          syncRecursive(target[key], value, `${pathPrefix}${key}`)
-        } else {
-          Vue.set(target, key, value)
-        }
-      })*/
     }
 
     if (node) {
