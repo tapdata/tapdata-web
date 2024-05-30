@@ -18,11 +18,21 @@ export const RelativeTimePicker = connect(
         }
       },
       setup(props) {
-        console.log('disabled', props.disabled)
         const formRef = useForm()
         const fieldRef = useField()
         const recordField = formRef.value.query(`conditions.${fieldRef.value.index}`).take()
         const record = recordField.value
+
+        if (!('number' in record)) {
+          record.number = 1
+        }
+        if (!('unit' in record)) {
+          record.unit = 'DAY'
+        }
+        if (!('form' in record)) {
+          record.form = 'BEFORE'
+        }
+
         const state = reactive({
           number: record.number || 1,
           form: record.form || 'BEFORE',

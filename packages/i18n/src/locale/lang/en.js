@@ -337,5 +337,8 @@ export default {
   public_response: 'Response',
   public_response_headers: 'Response Headers',
   public_response_content: 'Response Content',
-  public_resend: 'Resend'
+  public_resend: 'Resend',
+
+  public_unique_index: 'Unique Index',
+  public_normal_index: 'Index'
 }

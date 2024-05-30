@@ -33,7 +33,7 @@
         @classify-submit="handleOperationClassify"
         @sort-change="handleSortTable"
       >
-        <template slot="search">
+        <template #search>
           <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
             <template #connectionType>
               <ElRadioGroup v-model="searchParams.databaseModel" size="mini" @change="table.fetch(1)">

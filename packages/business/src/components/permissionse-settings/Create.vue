@@ -25,13 +25,9 @@
         prop="checked"
       >
         <ElCheckboxGroup v-model="form.checked" size="mini" class="inline-flex ml-4" @change="handleChange">
-          <ElCheckbox
-            v-for="item in items"
-            :label="item.value"
-            :key="item.value"
-            :disabled="item.value === 'View' && form.checked.length > 1"
-            >{{ item.label }}</ElCheckbox
-          >
+          <ElCheckbox v-for="item in items" :label="item.value" :key="item.value" :disabled="checkDisabled(item)">{{
+            item.label
+          }}</ElCheckbox>
         </ElCheckboxGroup>
       </ElFormItem>
     </ElForm>
@@ -94,6 +90,28 @@ export default {
           {
             label: i18n.t('public_button_reset'),
             value: 'Reset'
+          },
+          {
+            label: i18n.t('public_button_start'),
+            value: 'Start'
+          },
+          {
+            label: i18n.t('public_button_stop'),
+            value: 'Stop'
+          }
+        ],
+        Inspect: [
+          {
+            label: i18n.t('public_button_check'),
+            value: 'View'
+          },
+          {
+            label: i18n.t('public_button_edit'),
+            value: 'Edit'
+          },
+          {
+            label: i18n.t('public_button_delete'),
+            value: 'Delete'
           },
           {
             label: i18n.t('public_button_start'),
@@ -223,6 +241,27 @@ export default {
       let { checked } = this.form
       if (!checked.includes('View') && checked.length) {
         checked.unshift('View')
+      }
+
+      if (
+        this.type === 'Inspect' &&
+        !checked.includes('Edit') &&
+        (checked.includes('Start') || checked.includes('Stop'))
+      ) {
+        checked.unshift('Edit')
+      }
+    },
+
+    checkDisabled(item) {
+      if (item.value === 'View' && this.form.checked.length > 1) {
+        return true
+      }
+      if (
+        this.type === 'Inspect' &&
+        item.value === 'Edit' &&
+        (this.form.checked.includes('Start') || this.form.checked.includes('Stop'))
+      ) {
+        return true
       }
     }
   }

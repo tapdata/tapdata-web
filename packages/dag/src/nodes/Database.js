@@ -111,7 +111,12 @@ export class Database extends NodeType {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
                     'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
+                    'x-component': 'div',
+                    'x-content': '{{$self.value}}',
+                    'x-component-props': {
+                      class: 'ellipsis',
+                      title: '{{$self.value}}'
+                    }
                   }
                 }
               },

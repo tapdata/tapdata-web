@@ -303,7 +303,7 @@ export default {
   packages_dag_mixins_editor_shanchulianjie: '删除连接',
   packages_dag_mixins_editor_initV: 'initView-Editor 开启的监听',
   packages_dag_mixins_editor_xinrenwu: '新任务@',
-  packages_dag_mixins_editor_sourc: '「{val1}」不支持该节点「{val2}」作为目标',
+  packages_dag_mixins_editor_source: '「{val1}」不支持该节点「{val2}」作为目标',
   packages_dag_mixins_editor_gaijiedianta: '该节点「{val1}」不支持「{val2}」作为源',
   packages_dag_mixins_editor_gaijiedianyijing: '该节点已经达到最大连线限制',
   packages_dag_mixins_editor_gaijiedianso: '该节点「{val1}」仅支持作为目标',
@@ -705,7 +705,7 @@ export default {
   packages_dag_task_setting_syncPoint_recent_increment: '最近一次增量所处时间',
   packages_dag_task_setting_syncPoint_from_now: '从此刻开始',
   packages_dag_feature_agent_version_tips: `Agent版本需 {val} 及以上时该功能才可用`,
-  packages_dag_syncIndex: '同步索引',
+  packages_dag_syncIndex: '建表同步索引',
   packages_dag_syncIndex_desc: '目前仅支持同步唯一索引和普通索引，且索引不能使用函数',
   packages_dag_ddl_ignore_rules: 'DDL忽略规则',
   packages_dag_ddl_ignore_rules_placeholder: '请输入正则表达式以忽略特定的DDL',
@@ -717,5 +717,6 @@ export default {
   packages_dag_doubleActive_tip: '当需要进行双向同步，且产生的增量事件不会对自身产生干扰时，请启用此开关。',
   packages_dag_time_zone_offset: '时区偏移量',
   packages_dag_dynamic_date_suffix: '动态日期后缀',
-  packages_dag_dynamic_date_suffix_tip: '开启后生成的表名将包含任务运行时的日期后缀'
+  packages_dag_dynamic_date_suffix_tip: '开启后生成的表名将包含任务运行时的日期后缀',
+  packages_dag_table_rename_multiple: '任务中只允许存在一个表编辑节点'
 }

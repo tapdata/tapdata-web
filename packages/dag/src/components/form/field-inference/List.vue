@@ -13,6 +13,21 @@
         <span class="flex align-center"
           ><span class="ellipsis">{{ scope.row.field_name }}</span>
           <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
+          <ElTooltip
+            v-else-if="indicesMap[scope.row.field_name]"
+            placement="top"
+            :content="
+              `${$t(indicesMap[scope.row.field_name][2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+              indicesMap[scope.row.field_name][0]
+            "
+            :open-delay="200"
+            transition="none"
+          >
+            <span class="flex align-center">
+              <VIcon size="12" class="ml-1">fingerprint</VIcon>
+              <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
+            </span>
+          </ElTooltip>
         </span>
       </template>
       <template slot="dataTypeHeader">
@@ -335,6 +350,14 @@ export default {
       const { fields } = this.data
       let list = (fields || []).sort((a, b) => a.columnPosition - b.columnPosition)
       return this.showDelete ? list : list.filter(t => !t.is_deleted)
+    },
+
+    indicesMap() {
+      const { indices = [] } = this.data
+      return indices.reduce((map, item, index) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
+        return map
+      }, {})
     },
 
     revokeTableDisabled() {
@@ -674,7 +697,7 @@ export default {
         const contentArr = contentStr.split(',')
         contentArr.forEach(el => {
           const key = el.replace(/^\$/, '')
-          let min,max
+          let min, max
           if (typeof item.attrs[key] === 'number') {
             max = typeof item.attrs[key]
           } else if (item.attrs[key] instanceof Array) {

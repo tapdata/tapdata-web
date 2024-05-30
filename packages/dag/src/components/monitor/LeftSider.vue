@@ -540,12 +540,13 @@ export default {
         }
       }
 
+      const { replicateLag = [] } = data
       const open = this.dataflow.alarmSettings?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.open
       const delay = open ? this.dataflow.alarmRules?.find(t => t.key === 'TASK_INCREMENT_DELAY')?.ms || 0 : 60 * 1000
-      const max = Math.max(...data.replicateLag)
+      const max = Math.max(...replicateLag)
       return {
         x: time,
-        value: data.replicateLag,
+        value: replicateLag,
         yAxisMax: Math.max(delay, max)
       }
     },

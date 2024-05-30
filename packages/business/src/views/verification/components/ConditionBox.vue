@@ -58,6 +58,7 @@
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
@@ -71,6 +72,7 @@
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
@@ -1086,6 +1088,7 @@ export default {
             attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
             name: `${nodeName} / ${connectionName}`,
             value: connectionId,
+            id: connectionId,
             label: `${nodeName} / ${connectionName}`,
             databaseType: databaseType
           }

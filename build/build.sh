@@ -10,11 +10,12 @@ usage() {
   exit 0
 }
 
-while getopts 'o:p:m:' OPT; do
+while getopts 'o:p:m:e:' OPT; do
   case $OPT in
   o) dist="$OPTARG" ;;
   p) app="$OPTARG" ;;
   m) mode="$OPTARG" ;;
+  e) env="$OPTARG" ;;
   ?) usage ;;
   esac
 done
@@ -30,4 +31,4 @@ pnpm --version
 
 pnpm i
 
-pnpm build:$app --dest $dist --mode $mode
+pnpm build:$app --dest $dist --mode $mode --env $env

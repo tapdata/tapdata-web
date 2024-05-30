@@ -127,7 +127,12 @@ export class Table extends NodeType {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
                     'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
+                    'x-component': 'div',
+                    'x-content': '{{$self.value}}',
+                    'x-component-props': {
+                      class: 'ellipsis',
+                      title: '{{$self.value}}'
+                    }
                   }
                 }
               },
@@ -544,7 +549,7 @@ export class Table extends NodeType {
               },
 
               schemaFields: {
-                type: 'array',
+                type: 'string',
                 'x-component': 'SchemaPreview',
                 'x-component-props': {
                   '@update-table-name': `{{(name) => {
@@ -695,7 +700,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                                display: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function') ? "visible":"hidden"}}`
                               }
                             }
                           },
@@ -704,7 +709,7 @@ export class Table extends NodeType {
                               '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value==="polling"}}'
+                                display: '{{$self.value==="polling"?"visible":"hidden"}}'
                               }
                             }
                           }
@@ -970,7 +975,7 @@ export class Table extends NodeType {
                       },
 
                       nodeSchema: {
-                        type: 'array',
+                        type: 'string',
                         'x-display': 'hidden',
                         'x-reactions': [
                           {
@@ -990,7 +995,7 @@ export class Table extends NodeType {
                         title: i18n.t('packages_dag_nodes_table_zidingyitiaojian'),
                         type: 'array',
                         required: true,
-                        default: [{ key: '', value: '', operator: 5 }],
+                        default: [{ key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }],
                         'x-decorator': 'FormItem',
                         'x-component': 'ArrayItems',
                         items: {
@@ -1156,7 +1161,7 @@ export class Table extends NodeType {
                             title: i18n.t('packages_dag_nodes_table_tianjia'),
                             'x-component': 'ArrayItems.Addition',
                             'x-component-props': {
-                              defaultValue: { key: '', value: '', operator: 5 }
+                              defaultValue: { key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }
                             }
                           }
                         }
@@ -1636,7 +1641,8 @@ export class Table extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}',
+                              visible:
+                                '{{$settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }

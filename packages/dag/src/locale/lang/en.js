@@ -753,7 +753,7 @@ export default {
   packages_dag_task_setting_syncPoint_recent_increment: 'Time of the most recent increment',
   packages_dag_task_setting_syncPoint_from_now: 'Apply',
   packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`,
-  packages_dag_syncIndex: 'Sync Index',
+  packages_dag_syncIndex: 'Table Creation Synchronize Index',
   packages_dag_syncIndex_desc:
     'Currently, only unique indexes and regular indexes are supported, and functions cannot be used in indexes.',
   packages_dag_ddl_ignore_rules: 'DDL Ignoring Rules',
@@ -769,5 +769,6 @@ export default {
   packages_dag_time_zone_offset: 'Time Zone Offset',
   packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
   packages_dag_dynamic_date_suffix_tip:
-    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task'
+    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
+  packages_dag_table_rename_multiple: 'In the task, only one table editing node is allowed'
 }

@@ -77,7 +77,6 @@ export default {
     }
 
     this.loopLoadAgentCount()
-    this.setUrlParams() // url携带的自定义参数
     let unwatch
 
     // 🎉🥚
@@ -91,6 +90,8 @@ export default {
         this.subscriptionModelVisible = !this.subscriptionModelVisible
       }
     })
+
+    await this.setUrlParams() // url携带的自定义参数
   },
 
   destroyed() {
@@ -452,10 +453,10 @@ export default {
       this.isUnDeploy = val
     },
 
-    setUrlParams() {
-      const { guide } = this.$store.state
+    async setUrlParams() {
+      const { guide, mockUserPromise } = this.$store.state
 
-      const bd_vid = getUrlSearch('bd_vid')
+      let bd_vid = getUrlSearch('bd_vid')
       const tp_vid = getUrlSearch('tp_vid')
       let params = {}
 
@@ -464,8 +465,34 @@ export default {
       }
 
       const logidUrlCloud = Cookie.get('logidUrlCloud')
-      if ((bd_vid || logidUrlCloud) && !guide.bdVid) {
+      const userReferrer = Cookie.get('userReferrer')
+      const userVirtualId = Cookie.get('userVirtualId')
+      const userVisitedPages = Cookie.get('userVisitedPages')
+
+      if (mockUserPromise) {
+        const isMock = await mockUserPromise.catch(e => {
+          console.error(e)
+        })
+        if (isMock) return
+      }
+
+      if (userVirtualId && !guide.expand?.userVirtualId) {
+        params.expand = {
+          userReferrer,
+          userVirtualId,
+          userVisitedPages
+        }
+        Object.assign(guide.expand, params.expand)
+      }
+
+      if (logidUrlCloud) {
+        const url = new URL(decodeURIComponent(logidUrlCloud))
+        bd_vid = url.searchParams.get('bd_vid')
+      }
+
+      if (bd_vid && !guide.bdVid) {
         guide.bdVid = params.bdVid = bd_vid
+
         const conversionTypes = [
           {
             logidUrl: logidUrlCloud || location.href,

@@ -9,12 +9,24 @@
 
     <div class="flex-1">
       <ElTable ref="table" row-key="id" :data="list" height="100%" v-loading="loading">
-        <el-table-column :label="$t('webhook_server_url')" prop="url"> </el-table-column>
-        <el-table-column :label="$t('public_remark')" prop="mark" width="240"></el-table-column>
+        <el-table-column show-overflow-tooltip class-name="text-nowrap" :label="$t('webhook_server_url')" prop="url">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          class-name="text-nowrap"
+          :label="$t('public_remark')"
+          prop="mark"
+          width="240"
+        ></el-table-column>
         <el-table-column :label="$t('public_status')" prop="pingResult" width="100">
           <template #default="{ row }">
             <VIcon v-if="row.pingResult === 'SUCCEED'" size="20" class="color-success">success-filled</VIcon>
             <VIcon v-else class="color-danger" size="20">circle-close-filled</VIcon>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
+          <template #default="{ row }">
+            <ElSwitch :disabled="switchStateMap[row.id]" :value="row.open" @change="handleSwitch(row)"></ElSwitch>
           </template>
         </el-table-column>
         <el-table-column :label="$t('public_operation')" width="240">
@@ -28,17 +40,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('webhook_switch')" prop="open" width="120">
-          <template #default="{ row }">
-            <ElSwitch :disabled="switchStateMap[row.id]" :value="row.open" @change="handleSwitch(row)"></ElSwitch>
-          </template>
-        </el-table-column>
       </ElTable>
     </div>
 
     <ElDrawer
       :visible="drawerState.visible"
       :wrapperClosable="false"
+      :size="800"
       @update:visible="drawerState.visible = $event"
       @closed="afterClose"
     >
@@ -90,6 +98,7 @@
               </template>
               <JsonEditor
                 v-model="form.customTemplate"
+                height="320"
                 :options="{
                   options: { showPrintMargin: false, useWrapMode: true }
                 }"
@@ -137,7 +146,7 @@
                 <div class="flex align-center flex-1 pl-3">
                   <VIcon v-if="item.historyStatus === 'SUCCEED'" size="16" class="color-success">success-filled</VIcon>
                   <VIcon v-else class="color-danger" size="16">circle-close-filled</VIcon>
-                  <span class="ml-2">{{ item.id }}</span>
+                  <span class="ml-2">{{ item['x-event'] }}</span>
                   <span class="ml-auto pr-4">{{ item.createAtLabel }}</span>
                 </div>
               </template>
@@ -150,6 +159,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.requestHeaders || '--'"
                         language="http"
+                        copy
                       ></HighlightCode>
 
                       <div class="lh-base">{{ $t('public_request_content') }}</div>
@@ -158,6 +168,7 @@
                           class="rounded-lg mt-2 mb-4 overflow-hidden"
                           :code="item.requestBodyFmt"
                           language="json"
+                          copy
                         ></HighlightCode>
                       </div>
                     </div>
@@ -175,6 +186,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.responseHeaders || '--'"
                         language="http"
+                        copy
                       ></HighlightCode>
 
                       <div class="lh-base">{{ $t('public_response_content') }}</div>
@@ -182,6 +194,7 @@
                         class="rounded-lg mt-2 mb-4 overflow-hidden"
                         :code="item.responseResultFmt || '--'"
                         :language="item.responseType"
+                        copy
                       ></HighlightCode>
                     </div>
                   </ElTabPane>
@@ -190,6 +203,7 @@
                   class="position-absolute tabs-extra-btn flex align-center py-0"
                   size="mini"
                   @click="reSend(item)"
+                  :loading="resendStateMap[item.id]"
                   >{{ $t('public_resend') }}</ElButton
                 >
               </div>
@@ -258,6 +272,7 @@ export default {
       form: {
         id: '',
         url: '',
+        open: true,
         customTemplate: `{
     "action": "TaskAlter",
     "hookId": "\${hookId}",
@@ -265,21 +280,26 @@ export default {
     "title": "\${title}",
     "content": "\${content}",
     "actionData": {
-        "status": "\${actionData.status}",
-        "level": "\${actionData.level}",
-        "component":"\${actionData.component}",
-        "type":"\${actionData.type}",
-        "name":"\${actionData.name}",
-        "node":"\${actionData.node}",
-        "currentValue": "\${actionData.currentValue}",
-        "threshold": "\${actionData.threshold}",
-        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",
-        "tally": "\${actionData.tally}",
-        "summary": "\${actionData.summary}",
-        "recoveryTime": "\${actionData.recoveryTime}",
-        "closeTime": "\${actionData.closeTime}",
-        "closeBy": "\${actionData.closeBy}",
-        "agentId": "\${actionData.agentId}"
+      "status": "\${actionData.status}",
+      "statusTxt":"\${actionData.statusTxt}",
+      "level": "\${actionData.level}",
+      "component":"\${actionData.component}",
+      "componentTxt": "\${actionData.componentTxt}",
+      "type":"\${actionData.type}",
+      "typeTxt": "\${actionData.typeTxt}",
+      "metric": "\${actionData.metric}",
+      "metricTxt": "\${actionData.metricTxt}",
+      "name":"\${actionData.name}",
+      "node":"\${actionData.node}",
+      "currentValue": "\${actionData.currentValue}",
+      "threshold": "\${actionData.threshold}",
+      "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",
+      "tally": "\${actionData.tally}",
+      "summary": "\${actionData.summary}",
+      "recoveryTime": "\${actionData.recoveryTime}",
+      "closeTime": "\${actionData.closeTime}",
+      "closeBy": "\${actionData.closeBy}",
+      "agentId": "\${actionData.agentId}"
     }
 }`,
         hookTypes: [],
@@ -327,7 +347,8 @@ export default {
         size: 20,
         total: 0
       },
-      switchStateMap: {}
+      switchStateMap: {},
+      resendStateMap: {}
     }
   },
   created() {
@@ -369,7 +390,7 @@ export default {
     },
     async viewDetail(row) {
       this.drawerState.visible = true
-
+      this.drawerState.original = row
       await this.$nextTick()
 
       Object.keys(this.form).forEach(key => {
@@ -401,6 +422,19 @@ export default {
 
       if (item.requestBody) {
         item.requestBodyFmt = JSON.stringify(JSON.parse(item.requestBody), null, 2)
+      }
+
+      if (item.requestHeaders) {
+        const result = item.requestHeaders.match(/X-Event:\s*(.*)/i)
+        const event = result?.[1] || ''
+
+        item['x-event'] = this.keyMap[event]
+
+        if (item['x-event']) {
+          item['x-event'] = item['x-event'].replace(/^当|When the?|當/, '').replace(/时|時$/, '')
+        } else {
+          item['x-event'] = event || '--'
+        }
       }
       return item
     },
@@ -434,9 +468,16 @@ export default {
           this.drawerState.ping = true
           webhookApi
             .ping(this.form)
-            .then(() => {
+            .then(data => {
               this.$message.success(this.$t('public_message_send_success'))
-              this.form.id && this.viewHistory(this.form)
+
+              if (this.form.id) {
+                this.viewHistory(this.form)
+
+                if (data?.status && this.drawerState.original) {
+                  this.drawerState.original.pingResult = data.status
+                }
+              }
             })
             .finally(() => (this.drawerState.ping = false))
         }
@@ -471,9 +512,11 @@ export default {
         })
     },
     async reSend(request) {
+      this.$set(this.resendStateMap, request.id, true)
       const result = await webhookApi.resend(request)
       Object.assign(request, this.mapHistory(result))
       this.$message.success(this.$t('public_message_send_success'))
+      this.$delete(this.resendStateMap, request.id)
     },
     afterCloseHistory() {
       this.historyState.collapse = []
@@ -573,6 +616,13 @@ $unreadColor: #ee5353;
 
     .hljs {
       background: #fff !important;
+    }
+  }
+}
+.el-table {
+  ::v-deep {
+    .text-nowrap .cell {
+      white-space: nowrap;
     }
   }
 }

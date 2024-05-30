@@ -336,5 +336,8 @@ export default {
   public_response: '響應',
   public_response_headers: '響應頭',
   public_response_content: '響應內容',
-  public_resend: '重新發送'
+  public_resend: '重新發送',
+
+  public_unique_index: '唯一索引',
+  public_normal_index: '索引'
 }

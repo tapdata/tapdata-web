@@ -8,7 +8,10 @@
         <span class="expire-msg" v-if="licenseExpireVisible">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
-        <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
+        <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary" size="mini"
+          ><VIcon>bug-outlined</VIcon> New Issue
+        </ElButton>
+        <ElButton v-else-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
@@ -513,6 +516,7 @@ export default {
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
+      isCommunity,
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,

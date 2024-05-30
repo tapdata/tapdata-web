@@ -822,10 +822,11 @@ export default {
       })
     },
 
-    start(ids, task, canNotList = []) {
+    async start(ids, task, canNotList = []) {
       this.buried(this.taskBuried.start)
-      if (ids.length === 1 && task && this.$refs.skipError.checkError(task)) {
-        return
+      if (ids.length === 1 && task) {
+        const flag = await this.$refs.skipError.checkError(task)
+        if (flag) return
       }
 
       this.startTask(ids, canNotList)

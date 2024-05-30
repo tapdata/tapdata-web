@@ -73,8 +73,8 @@ export const SchemaPreview = defineComponent({
 
       let { indices = [], fields = [] } = schema
 
-      columnsMap = indices.reduce((map, item) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = true))
+      columnsMap = indices.reduce((map, item, index) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
 
@@ -115,11 +115,12 @@ export const SchemaPreview = defineComponent({
     const mapSchema = schema => {
       const { fields = [], findPossibleDataTypes = {} } = schema
       const mapField = field => {
-        // field.label = field.field_name
-        // field.value = field.field_name
-        // field.type = field.data_type
-        // field.dataType = field.data_type.replace(/\(.+\)/, '')
-        field.indicesUnique = !!columnsMap[field.field_name]
+        /*if (columnsMap[field.field_name]) {
+          field.indicesUnique = columnsMap[field.field_name][0]
+          field.indicesUniqueIndex = columnsMap[field.field_name][1]
+          field.indicesIfUnique = columnsMap[field.field_name][2]
+        }*/
+        field.indicesUnique = columnsMap[field.field_name]
         field.isPrimaryKey = field.primary_key_position > 0
       }
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
@@ -159,9 +160,20 @@ export const SchemaPreview = defineComponent({
         )
       } else if (data.indicesUnique) {
         icon = (
-          <VIcon size="12" class="field-icon position-absolute">
-            fingerprint
-          </VIcon>
+          <ElTooltip
+            placement="top"
+            content={
+              `${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+              data.indicesUnique[0]
+            }
+            open-delay={200}
+            transition="none"
+          >
+            <span class="flex align-center field-icon position-absolute">
+              <VIcon size="12">fingerprint</VIcon>
+              <span style={`--index: '${data.indicesUnique[1]}';`} class="fingerprint-sub"></span>
+            </span>
+          </ElTooltip>
         )
       }
 
@@ -176,7 +188,9 @@ export const SchemaPreview = defineComponent({
 
     useSchemaEffect(root, () => [formRef.value.values.tableName], loadSchema)
 
-    loadSchema()
+    if (!root.$store.state.dataflow.taskSaving) {
+      loadSchema()
+    }
 
     loadDatatypesjson()
 
