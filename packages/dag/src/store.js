@@ -457,11 +457,11 @@ const mutations = {
 
     const syncRecursive = (target, source, path = '') => {
       const pathPrefix = path ? `${path}.` : ''
-      for (const key in target) {
+      /*for (const key in target) {
         if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
           Vue.delete(target, key)
         }
-      }
+      }*/
 
       // 更新或新增 source 中存在的属性到 target
       for (const key in source) {
