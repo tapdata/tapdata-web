@@ -371,11 +371,13 @@ export default {
           this.$router.push({
             name: 'migrateList'
           })
+          window.name = null
         })
       } else {
         this.$router.push({
           name: 'migrateList'
         })
+        window.name = null
       }
     },
 

@@ -654,6 +654,7 @@ export default {
       this.$router.push({
         name: map[this.dataflow.syncType] || 'dataflowList'
       })
+      window.name = null
     },
 
     handleEdit() {
