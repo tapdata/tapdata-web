@@ -1192,7 +1192,7 @@ export default {
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
           objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
-          tableNames = [targetNode.tableName]
+          tableNames = [el.tableName, targetNode.tableName] // 加上源表名，否则源和目标表名不一致时，源表关联字段不会自动填充
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
           tableNameRelation[el.tableName] = targetNode.tableName
         }
