@@ -1408,7 +1408,7 @@ export default {
 
       const list = []
       for (let row of draggingObjects) {
-        if (!data.agentIds.includes(row.process_id)) {
+        if (!data.agentIds?.includes(row.process_id)) {
           list.push(
             agentGroupApi.addAgent({
               groupId: data.groupId,
