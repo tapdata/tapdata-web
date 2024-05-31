@@ -31,6 +31,7 @@
               item-label="name"
               item-value="id"
               itemQuery="name"
+              :pageSize="10000000000"
               @option-select="handleSelectTask"
             />
           </ElFormItem>
@@ -513,7 +514,8 @@ export default {
               id: filter.where.id,
               name: this.taskName
             }
-          ]
+          ],
+          total: 1
         }
       }
 
@@ -527,7 +529,8 @@ export default {
       query = typeof query === 'object' ? query.like : query
       if (query) {
         query = query.toLowerCase()
-        data = data.filter(item => item.name.toLowerCase().includes(query))
+        const reg = new RegExp(query, 'i')
+        data = data.filter(item => reg.test(item.name))
       }
 
       return {
@@ -807,16 +810,14 @@ export default {
     setVerifyName() {
       // 任务模式
       if (this.form.taskMode === 'pipeline') {
-        let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-        this.form.name = (flow.name || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
+        this.form.name = this.taskName + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
       }
     },
     handleSelectTask(option, byClick) {
       if (byClick) {
         this.form.tasks = []
-        if (this.form.taskMode === 'pipeline') {
-          this.form.name = (option.label || '') + ' - ' + this.inspectMethodMap[this.form.inspectMethod]
-        }
+        this.taskName = option.label
+        this.setVerifyName()
         this.getFlowStages(option.value, this.$refs.conditionBox.autoAddTable)
       }
     }
