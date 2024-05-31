@@ -1487,7 +1487,7 @@ export default {
 }
 
 .clusterManagement-container {
-  height: 100%;
+  min-height: 100%;
   background-color: #eff1f4;
 
   .status {

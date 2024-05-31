@@ -483,7 +483,6 @@ export default {
 
 <style lang="scss" scoped>
 .role {
-  height: 100%;
   box-sizing: border-box;
   .head {
     height: 28px;

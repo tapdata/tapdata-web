@@ -136,17 +136,11 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
-                  'connectionCreate',
                   'users',
                   'customNodeList',
                   'dataConsole',
                   'dataVerificationList',
-                  'dataVerificationCreate',
-                  'dataVerificationEdit',
-                  'dataVerifyDetails',
-                  'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult',
                   'sharedMiningList',
                   'externalStorage'
                 ].includes($route.name)
@@ -159,17 +153,11 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
-                  'connectionCreate',
                   'users',
                   'customNodeList',
                   'dataConsole',
                   'dataVerificationList',
-                  'dataVerificationCreate',
-                  'dataVerificationEdit',
-                  'dataVerifyDetails',
-                  'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult',
                   'sharedMiningList',
                   'externalStorage'
                 ].includes($route.name)
@@ -404,6 +392,9 @@
 
       & + div {
         background: transparent;
+        > .section-wrap {
+          border-radius: 0.5rem;
+        }
       }
     }
 

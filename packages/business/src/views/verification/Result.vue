@@ -47,7 +47,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0 24px 24px 24px;
 
   .section-wrap-box {
     display: -ms-flexbox;
@@ -143,7 +142,7 @@ export default {
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
-              this.$refs.resultView.fetch(1)
+              this.$refs.resultView?.fetch(1)
               if (this.type !== 'row_count' && this.type !== 'hash') {
                 this.$nextTick(() => {
                   this.$refs.singleTable?.setCurrentRow(stats[0])
@@ -196,7 +195,7 @@ export default {
     },
     rowClick(row) {
       this.taskId = row.taskId
-      this.$refs.resultView.fetch(1)
+      this.$refs.resultView?.fetch(1)
     },
     handleOtherVerify(data) {
       if (data.length === 0) {

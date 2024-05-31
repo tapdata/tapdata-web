@@ -1,5 +1,5 @@
 <template>
-  <section class="function-details-wrapper">
+  <section class="function-details-wrapper section-wrap">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
         {{ $t('function_details') }}
@@ -96,6 +96,7 @@ export default {
 
 <style scoped lang="scss">
 .function-details-wrapper {
+  overflow: hidden;
   // display: flex;
   // flex-direction: column;
   // height: 100%;
@@ -110,15 +111,11 @@ export default {
   //   overflow: hidden;
   .details-value {
     color: map-get($fontColor, dark);
-    font-size: 12px;
   }
   ::v-deep {
     .el-form {
       flex: 1;
       overflow-y: auto;
-    }
-    .el-form-item__label {
-      font-size: 12px;
     }
     .el-form-item--mini.el-form-item,
     .el-form-item--small.el-form-item {
