@@ -14,7 +14,7 @@
         <span> {{ $t('public_button_create') }}</span>
       </ElButton>
     </template>
-    <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
+    <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap rounded-lg">
       <TablePage
         ref="table"
         row-key="id"
