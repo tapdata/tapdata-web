@@ -14,7 +14,7 @@
         <span> {{ $t('public_button_create') }}</span>
       </ElButton>
     </template>
-    <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap">
+    <section :class="{ paddingLeft0: isDaas }" class="connection-list-wrap rounded-lg">
       <TablePage
         ref="table"
         row-key="id"
@@ -74,7 +74,9 @@
                 </ElLink>
               </div>
               <div v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
-                <span class="tag" v-for="(item, i) in row.listtags" :key="i"> {{ item.value }} </span>
+                <span class="tag ellipsis" v-for="(item, i) in row.listtags" :key="i" :title="item.value">
+                  {{ item.value }}
+                </span>
               </div>
             </div>
           </template>

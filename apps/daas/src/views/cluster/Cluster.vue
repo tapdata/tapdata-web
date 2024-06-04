@@ -1408,7 +1408,7 @@ export default {
 
       const list = []
       for (let row of draggingObjects) {
-        if (!data.agentIds.includes(row.process_id)) {
+        if (!data.agentIds?.includes(row.process_id)) {
           list.push(
             agentGroupApi.addAgent({
               groupId: data.groupId,
@@ -1487,7 +1487,7 @@ export default {
 }
 
 .clusterManagement-container {
-  height: 100%;
+  min-height: 100%;
   background-color: #eff1f4;
 
   .status {

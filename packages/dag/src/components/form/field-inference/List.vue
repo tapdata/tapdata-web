@@ -257,7 +257,7 @@ export default {
     return {
       columns: [
         {
-          label: i18n.t('packages_form_field_mapping_list_xuhao'),
+          label: '#',
           type: 'index',
           prop: 'index',
           minWidth: '40px'

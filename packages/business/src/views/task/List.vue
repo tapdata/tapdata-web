@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap rounded-lg overflow-hidden" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
@@ -90,7 +90,9 @@
               >{{ row.name }}</ElLink
             >
             <span v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
-              <span class="tag" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
+              <span class="tag ellipsis" v-for="item in row.listtags" :key="item.id" :title="item.value">{{
+                item.value
+              }}</span>
             </span>
           </div>
           <div class="fs-8 font-color-sslight lh-base">

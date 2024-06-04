@@ -6,7 +6,7 @@
           {{ item.name }}
         </ElBreadcrumbItem>
       </ElBreadcrumb>
-      <div class="flex align-items-center px-4 bg-white" v-else>
+      <div class="flex align-items-center px-4 bg-white rounded-lg" v-else>
         <span class="fs-5 py-4 font-color-dark mr-3">{{ $t($route.meta.title) }}</span>
         <slot name="left-actions"></slot>
         <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>

@@ -73,6 +73,7 @@ import {
 } from 'element-ui'
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
+import TableBody from 'element-ui/packages/table/src/table-body'
 
 // 组件默认尺寸为small
 Vue.prototype.$ELEMENT = { size: 'small' }
@@ -80,7 +81,7 @@ Vue.prototype.$ELEMENT = { size: 'small' }
 Tooltip.props.visibleArrow.default = false
 
 // 优化任务名称和标签一起显示，超出显示提示框的逻辑
-Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) {
+TableBody.methods.handleCellMouseEnter = function (event, row) {
   const table = this.table
   const cell = getCell(event)
 
@@ -98,6 +99,7 @@ Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) 
 
   const showTooltip = () => {
     const tooltip = this.$refs.tooltip
+    if (!tooltip) return
     // TODO 会引起整个 Table 的重新渲染，需要优化
     this.tooltipContent = cell.innerText || cell.textContent
     tooltip.referenceElm = cell
@@ -107,27 +109,50 @@ Table.components.TableBody.methods.handleCellMouseEnter = function (event, row) 
     this.activateTooltip(tooltip)
   }
 
-  const $ellipsis = cellChild.querySelector('[role="ellipsis"]')
+  const padding =
+    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
+  const range = document.createRange()
+  let isEllipsisActive
+  let tooltipContent
 
   // 任务名称场景的特殊处理
+  const $ellipsis = cellChild.querySelector('[role="ellipsis"]')
+
   if ($ellipsis) {
-    $ellipsis.scrollWidth > $ellipsis.offsetWidth && showTooltip()
-    return
+    range.setStart($ellipsis, 0)
+    range.setEnd($ellipsis, $ellipsis.childNodes.length)
+    const rangeWidth = range.getBoundingClientRect().width
+    const spacing =
+      (parseInt(getStyle($ellipsis, 'paddingLeft'), 10) || 0) +
+      (parseInt(getStyle($ellipsis, 'paddingRight'), 10) || 0) +
+      (parseInt(getStyle($ellipsis, 'marginLeft'), 10) || 0) +
+      (parseInt(getStyle($ellipsis, 'marginRight'), 10) || 0)
+
+    tooltipContent = $ellipsis.innerText || $ellipsis.textContent
+    isEllipsisActive =
+      rangeWidth + spacing > cellChild.offsetWidth - padding || $ellipsis.scrollWidth > $ellipsis.offsetWidth
+  } else {
+    range.setStart(cellChild, 0)
+    range.setEnd(cellChild, cellChild.childNodes.length)
+    const rangeWidth = range.getBoundingClientRect().width
+
+    let textEl = cellChild.querySelector('.ellipsis') || cellChild
+    tooltipContent = textEl.innerText || textEl.textContent
+    isEllipsisActive = rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth
   }
 
   // use range width instead of scrollWidth to determine whether the text is overflowing
   // to address a potential FireFox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1074543#c3
-  const range = document.createRange()
-  range.setStart(cellChild, 0)
-  range.setEnd(cellChild, cellChild.childNodes.length)
-  const rangeWidth = range.getBoundingClientRect().width
-  const padding =
-    (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0)
-  if (
-    (rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth) &&
-    this.$refs.tooltip
-  ) {
-    showTooltip()
+
+  if (isEllipsisActive && this.$refs.tooltip) {
+    const tooltip = this.$refs.tooltip
+    // TODO 会引起整个 Table 的重新渲染，需要优化
+    this.tooltipContent = tooltipContent
+    tooltip.referenceElm = cell
+    tooltip.$refs.popper && (tooltip.$refs.popper.style.display = 'none')
+    tooltip.doDestroy()
+    tooltip.setExpectedState(true)
+    this.activateTooltip(tooltip)
   }
 }
 

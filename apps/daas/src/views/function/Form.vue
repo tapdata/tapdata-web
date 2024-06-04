@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="loading" class="custom-form-wrapper">
+  <section v-loading="loading" class="custom-form-wrapper section-wrap overflow-hidden bg-white">
     <div class="section-wrap-box overflow-auto">
       <ElForm
         v-if="!$route.params.id || details.id"
@@ -256,7 +256,6 @@ export default {
 .footer {
   background-color: map-get($bgColor, white);
   border-top: 1px solid #f0f0f0;
-  box-shadow: 0px -1px 2px 0px #f6f6f6;
   .btn {
     width: 80px;
   }

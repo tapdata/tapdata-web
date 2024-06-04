@@ -170,7 +170,7 @@ export default defineComponent({
                 }
               ]
             }}
-            class="page-left border-right pt-3 pr-3 overflow-auto"
+            class="page-left border-right pt-3 pr-3 overflow-x-hidden overflow-y-auto"
           >
             <ClassificationTree
               ref="tree"
