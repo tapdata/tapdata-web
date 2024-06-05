@@ -1273,9 +1273,9 @@ export default {
   packages_business_heterogeneous_database: 'heterogeneous databases',
   packages_business_selected_rows: '{val} row(s) selected',
   packages_business_download_analysis_report: 'Download Analysis Report',
-  packages_business_download_analysis_report_title: 'Task analysis report is being generated',
+  packages_business_download_analysis_report_title: 'Task analysis report is being generated...',
   packages_business_download_analysis_report_desc:
-    'After the report is downloaded, please send it to the development team for analysis',
+    'The report generation takes about 60 seconds. After downloading, please send it to the support team for analysis.',
   packages_business_exporting_task: 'Exporting tasks',
   packages_business_exporting_run_history: 'Exporting task run history',
   packages_business_exporting_task_log: 'Exporting task logs',

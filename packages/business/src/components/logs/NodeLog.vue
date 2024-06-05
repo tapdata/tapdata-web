@@ -33,7 +33,7 @@
             :loading="downloadLoading"
             type="primary"
             size="mini"
-            class="ml-4"
+            class="ml-4 ml-download-report"
             @click="handleDownloadAnalysis"
             >{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
@@ -243,6 +243,7 @@
       <template #title>
         <div>
           <div class="el-dialog__title">{{ $t('packages_business_download_analysis_report_title') }}</div>
+          <br/>
           <div class="mt-1 fs-7 font-color-sslight">{{ $t('packages_business_download_analysis_report_desc') }}</div>
         </div>
       </template>
@@ -251,7 +252,8 @@
           {{ downloadAnalysis.steps[downloadAnalysis.currentStep].label }}, {{ $t('packages_business_long_wait')
           }}<span class="dotting"></span>
         </div>
-        <el-progress :percentage="downloadAnalysis.progress"></el-progress>
+        <br/>
+        <el-progress :stroke-width="9" :percentage="downloadAnalysis.progress"></el-progress>
       </div>
     </ElDialog>
   </div>
@@ -978,10 +980,11 @@ export default {
       this.downloadAnalysis.currentStep = 0
       this.downloadAnalysis.progress = 0
       this.countUp = new CountUp({}, 99, {
-        duration: 60,
+        duration: 62,
         plugin: {
           render: this.updateProgress
         },
+        useEasing: false,
         onCompleteCallback: () => {}
       })
       this.countUp.start()
@@ -1138,6 +1141,10 @@ export default {
 .clipboard-button {
   right: 18px;
   top: 30px;
+}
+.ml-download-report {
+  background: cadetblue;
+  border-color: cadetblue;
 }
 </style>
 
