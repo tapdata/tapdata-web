@@ -1209,5 +1209,20 @@ export default {
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库',
-  packages_business_selected_rows: '已选 {val} 行'
+  packages_business_selected_rows: '已选 {val} 行',
+  packages_business_download_analysis_report: '下载分析报告',
+  packages_business_download_analysis_report_title: '任务分析报告生成中',
+  packages_business_download_analysis_report_desc: '在报告下载后, 请发送给研发团队进行分析',
+  packages_business_exporting_task: '正在导出任务',
+  packages_business_exporting_run_history: '正在导出任务运行历史记录',
+  packages_business_exporting_task_log: '正在导出任务日志',
+  packages_business_exporting_metrics: '正在导出监控指标',
+  packages_business_gen_engine_cpu_chart: '正在生成引擎 CPU 分析图',
+  packages_business_gen_tm_cpu_chart: '正在生成管理端 CPU 分析图',
+  packages_business_gen_engine_mem_chart: '正在生成引擎 内存分配 分析图',
+  packages_business_gen_tm_mem_chart: '正在生成管理端 内存分配 分析图',
+  packages_business_exporting_engine_thread: '正在导出引擎线程数据',
+  packages_business_exporting_tm_thread: '正在导出管理端线程数据',
+  packages_business_downloading_file: '正在下载文件',
+  packages_business_long_wait: '请稍候'
 }

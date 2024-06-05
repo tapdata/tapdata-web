@@ -1271,5 +1271,21 @@ export default {
   packages_business_view_more_apis: 'View More APIs',
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
-  packages_business_selected_rows: '{val} row(s) selected'
+  packages_business_selected_rows: '{val} row(s) selected',
+  packages_business_download_analysis_report: 'Download Analysis Report',
+  packages_business_download_analysis_report_title: 'Task analysis report is being generated',
+  packages_business_download_analysis_report_desc:
+    'After the report is downloaded, please send it to the development team for analysis',
+  packages_business_exporting_task: 'Exporting tasks',
+  packages_business_exporting_run_history: 'Exporting task run history',
+  packages_business_exporting_task_log: 'Exporting task logs',
+  packages_business_exporting_metrics: 'Exporting monitoring metrics',
+  packages_business_gen_engine_cpu_chart: 'Generating engine CPU analysis chart',
+  packages_business_gen_tm_cpu_chart: 'Generating management end CPU analysis chart',
+  packages_business_gen_engine_mem_chart: 'Generating engine memory allocation analysis chart',
+  packages_business_gen_tm_mem_chart: 'Generating management end memory allocation analysis chart',
+  packages_business_exporting_engine_thread: 'Exporting engine thread data',
+  packages_business_exporting_tm_thread: 'Exporting management end thread data',
+  packages_business_downloading_file: 'Downloading file',
+  packages_business_long_wait: 'Please wait a moment'
 }

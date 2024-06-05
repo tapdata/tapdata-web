@@ -26,9 +26,17 @@
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="text" size="mini" class="ml-4" @click="handleDownload">{{
+          <ElButton :loading="downloadLoading" type="primary" size="mini" class="ml-4" @click="handleDownload">{{
             $t('public_button_download')
           }}</ElButton>
+          <ElButton
+            :loading="downloadLoading"
+            type="primary"
+            size="mini"
+            class="ml-4"
+            @click="handleDownloadAnalysis"
+            >{{ $t('packages_business_download_analysis_report') }}</ElButton
+          >
           <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
           <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
         </div>
@@ -223,6 +231,29 @@
         </p>
       </template>
     </ElDialog>
+
+    <ElDialog
+      width="437px"
+      custom-class="pro-dialog"
+      :visible.sync="downloadAnalysis.visible"
+      :close-on-click-modal="false"
+      :append-to-body="true"
+      @close="onClose"
+    >
+      <template #title>
+        <div>
+          <div class="el-dialog__title">{{ $t('packages_business_download_analysis_report_title') }}</div>
+          <div class="mt-1 fs-7 font-color-sslight">{{ $t('packages_business_download_analysis_report_desc') }}</div>
+        </div>
+      </template>
+      <div class="pb-6">
+        <div>
+          {{ downloadAnalysis.steps[downloadAnalysis.currentStep].label }}, {{ $t('packages_business_long_wait')
+          }}<span class="dotting"></span>
+        </div>
+        <el-progress :percentage="downloadAnalysis.progress"></el-progress>
+      </div>
+    </ElDialog>
   </div>
 </template>
 
@@ -234,11 +265,11 @@ import { mapGetters } from 'vuex'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { debounce, cloneDeep, uniqBy, escape } from 'lodash'
 
-import { downloadBlob, openUrl } from '@tap/shared'
+import { CountUp, downloadBlob, openUrl } from '@tap/shared'
 import Time from '@tap/shared/src/time'
 import { VIcon, TimeSelect } from '@tap/component'
 import VEmpty from '@tap/component/src/base/v-empty/VEmpty.vue'
-import { monitoringLogsApi, taskApi, proxyApi } from '@tap/api'
+import { monitoringLogsApi, taskApi, proxyApi, CancelToken } from '@tap/api'
 
 import NodeList from '../nodes/List'
 
@@ -371,7 +402,47 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS'
+      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS',
+      downloadAnalysis: {
+        visible: false,
+        progress: 0,
+        currentStep: 0,
+        steps: [
+          {
+            label: i18n.t('packages_business_exporting_task')
+          },
+          {
+            label: i18n.t('packages_business_exporting_run_history')
+          },
+          {
+            label: i18n.t('packages_business_exporting_task_log')
+          },
+          {
+            label: i18n.t('packages_business_exporting_metrics')
+          },
+          {
+            label: i18n.t('packages_business_gen_engine_cpu_chart')
+          },
+          {
+            label: i18n.t('packages_business_gen_tm_cpu_chart')
+          },
+          {
+            label: i18n.t('packages_business_gen_engine_mem_chart')
+          },
+          {
+            label: i18n.t('packages_business_gen_tm_mem_chart')
+          },
+          {
+            label: i18n.t('packages_business_exporting_engine_thread')
+          },
+          {
+            label: i18n.t('packages_business_exporting_tm_thread')
+          },
+          {
+            label: i18n.t('packages_business_downloading_file')
+          }
+        ]
+      }
     }
   },
 
@@ -875,6 +946,55 @@ export default {
 
     onCopy() {
       this.showTooltip = true
+    },
+
+    async handleDownloadAnalysis() {
+      this.downloadAnalysis.progress = 0
+      this.downloadAnalysis.visible = true
+      this.analysisCancelSource = CancelToken.source()
+      this.initSteps()
+
+      const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
+        cancelToken: this.analysisCancelSource.token
+      })
+      downloadBlob(blogData)
+
+      this.completeSteps()
+    },
+
+    onClose() {
+      this.analysisCancelSource?.cancel()
+      this.countUp.reset()
+    },
+
+    updateProgress(temp, val) {
+      val = Number(val)
+
+      this.downloadAnalysis.currentStep = Math.min(Math.floor(val / 9), this.downloadAnalysis.steps.length - 1)
+      this.downloadAnalysis.progress = val
+    },
+
+    initSteps() {
+      this.downloadAnalysis.currentStep = 0
+      this.downloadAnalysis.progress = 0
+      this.countUp = new CountUp({}, 99, {
+        duration: 60,
+        plugin: {
+          render: this.updateProgress
+        },
+        onCompleteCallback: () => {}
+      })
+      this.countUp.start()
+    },
+
+    completeSteps() {
+      this.countUp.pauseResume()
+      this.updateProgress({}, 100)
+      this.$message.success('public_message_download_ok')
+
+      setTimeout(() => {
+        this.downloadAnalysis.visible = false
+      }, 200)
     }
   }
 }
