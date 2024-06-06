@@ -1,5 +1,5 @@
 <template>
-  <section class="dashboard-wrap isCardBox">
+  <section class="dashboard-wrap isCardBox h-100">
     <div class="dashboard-main">
       <el-row :gutter="40" class="section-header py-6">
         <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
