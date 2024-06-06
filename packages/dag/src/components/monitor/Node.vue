@@ -468,6 +468,7 @@ export default defineComponent({
             placement="bottom"
             width="240"
             trigger="hover"
+            close-delay={0}
             popper-class="node-statistic-popover rounded-lg"
           >
             <div slot="reference" class="node-card rounded-lg px-2 pb-2 pt-4 mt-n2">
