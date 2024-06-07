@@ -1826,7 +1826,7 @@ export default {
   daas_role_role_gouxuanxiangyingmo:
     '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。',
 
-  daas_feature_unavailable: '功能暂不可用',
+  daas_feature_unavailable: '升级版本，解锁更多功能！',
   daas_feature_unavailable_subtitle: '这个功能只在企业版和/或云版本中提供。请注册我们的云版本或联系我们获取企业版。',
   daas_feature_unavailable_upgrade_dec: '升级版本，您将获得：',
   daas_feature_unavailable_upgrade_dec_li1: '数据校验（仅企业版）',
@@ -1834,9 +1834,18 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警设置',
   daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
+  daas_feature_unavailable_upgrade_dec_li1_desc:
+    '基于自研技术，Tapdata 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。',
+  daas_feature_unavailable_upgrade_dec_li2_desc:
+    '为减轻源端数据库压力，Tapdata支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。',
+  daas_feature_unavailable_upgrade_dec_li3_desc:
+    'Tapdata 支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。',
+  daas_feature_unavailable_upgrade_dec_li4_desc:
+    '角色是权限合集，可为其授予多权限并授予用户，用户继承所有权限，依此设计可先创角色再赋予用户，无需为每个用户配置权限，以简化运维管理和提升安全性。',
+  daas_feature_unavailable_upgrade_dec_li5_desc: '',
   daas_feature_unavailable_get_enterprise: '申请企业版',
   daas_feature_unavailable_get_cloud: '免费使用云版',
-  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比',
+  daas_feature_unavailable_go_to_compare: '版本功能对比',
   daas_unbind_license: '解绑 License',
   daas_cluster_cluster_lianjieshuliang_detail: '对外建立链接数详情',
   daas_cluster_cluster_view: '集群视图',

@@ -1830,9 +1830,18 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警設置',
   daas_feature_unavailable_upgrade_dec_li4: '權限管理（僅企業版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多數據源',
+  daas_feature_unavailable_upgrade_dec_li1_desc:
+    '基於自研技術，Tapdata 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。',
+  daas_feature_unavailable_upgrade_dec_li2_desc:
+    '為減輕源端數據庫壓力，Tapdata支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。',
+  daas_feature_unavailable_upgrade_dec_li3_desc:
+    'Tapdata 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。',
+  daas_feature_unavailable_upgrade_dec_li4_desc:
+    '角色是權限合集，可為其授予多權限並授予用戶，用戶繼承所有權限，依此設計可先創角色再賦予用戶，無需為每個用戶配置權限，以簡化運維管理和提升安全性。',
+  daas_feature_unavailable_upgrade_dec_li5_desc: '',
   daas_feature_unavailable_get_enterprise: '申請企業版',
   daas_feature_unavailable_get_cloud: '免費使用雲版',
-  daas_feature_unavailable_go_to_compare: '查看各版本詳細功能對比',
+  daas_feature_unavailable_go_to_compare: '版本功能對比',
   daas_unbind_license: '解綁 License',
   daas_cluster_cluster_view: '集群視圖',
   daas_cluster_component_view: '組件視圖',

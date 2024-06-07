@@ -1888,9 +1888,18 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: 'Alarm settings',
   daas_feature_unavailable_upgrade_dec_li4: 'Permission management (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
-  daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
-  daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
-  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions',
+  daas_feature_unavailable_upgrade_dec_li1_desc:
+    'Tapdata ensures data consistency with proprietary technology and supports data table validation to meet production requirements.',
+  daas_feature_unavailable_upgrade_dec_li2_desc:
+    'Tapdata reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.',
+  daas_feature_unavailable_upgrade_dec_li3_desc:
+    'Tapdata sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.',
+  daas_feature_unavailable_upgrade_dec_li4_desc:
+    'Roles are collections of permissions assigned to users. This simplifies management and enhances security by allowing role creation before user assignment.',
+  daas_feature_unavailable_upgrade_dec_li5_desc: '',
+  daas_feature_unavailable_get_enterprise: 'Get TapData Enterprise',
+  daas_feature_unavailable_get_cloud: 'Try TapData Cloud',
+  daas_feature_unavailable_go_to_compare: 'Compare Versions',
   daas_unbind_license: 'Unbind License',
   daas_cluster_cluster_view: 'Cluster View',
   daas_cluster_component_view: 'Component View',
