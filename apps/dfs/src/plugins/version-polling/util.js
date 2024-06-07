@@ -34,14 +34,16 @@ export function createWorkerFunc() {
         method: 'HEAD',
         cache: 'no-cache'
       }).then(function (response) {
-        const etag = response.headers.get('etag')
+        if (response.status === 200) {
+          const etag = response.headers.get('etag')
 
-        if (lastEtag !== etag) {
-          self.postMessage({
-            appETagKey,
-            lastEtag,
-            etag
-          })
+          if (etag && lastEtag !== etag) {
+            self.postMessage({
+              appETagKey,
+              lastEtag,
+              etag
+            })
+          }
         }
       })
     }
