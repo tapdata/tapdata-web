@@ -129,6 +129,10 @@ export default {
           label: i18n.t('packages_business_milestone_list_renwudiaodu')
         },
         {
+          key: 'DEDUCTION',
+          label: i18n.t('packages_business_milestone_list_load_table_structure')
+        },
+        {
           key: 'DATA_NODE_INIT',
           label: i18n.t('packages_business_milestone_list_shujujiedianchu')
         },
@@ -239,6 +243,11 @@ export default {
               case 'TASK':
                 Object.assign(el, {
                   dataDesc: `, ${i18n.t('public_milestone_time_scheduling', { val: agentName })}, ${end}`
+                })
+                break
+              case 'DEDUCTION':
+                Object.assign(el, {
+                  dataDesc: `, ${i18n.t('public_milestone_time_consuming')} ${time}, ${begin} ~ ${end}`
                 })
                 break
               case 'DATA_NODE_INIT':

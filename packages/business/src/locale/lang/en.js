@@ -687,6 +687,7 @@ export default {
   packages_business_milestone_list_zengliangshujuqian: 'Incremental data migration',
   packages_business_milestone_list_quanliangshujuqian: 'Full data replication',
   packages_business_milestone_list_biaojiegouqianyi: 'Table structure copy',
+  packages_business_milestone_list_load_table_structure: 'Load table structure',
   packages_business_milestone_list_shujujiedianchu: 'Connect data sources',
   packages_business_milestone_list_renwudiaodu: 'Task Scheduling',
   packages_business_milestone_list_haoshi: 'Time-Consuming',

@@ -655,6 +655,7 @@ export default {
   packages_business_milestone_list_zengliangshujuqian: '增量数据迁移',
   packages_business_milestone_list_quanliangshujuqian: '全量数据复制',
   packages_business_milestone_list_biaojiegouqianyi: '表结构复制',
+  packages_business_milestone_list_load_table_structure: '加载表结构',
   packages_business_milestone_list_shujujiedianchu: '连接数据源',
   packages_business_milestone_list_renwudiaodu: '任务调度',
   packages_business_milestone_list_haoshi: '耗时',

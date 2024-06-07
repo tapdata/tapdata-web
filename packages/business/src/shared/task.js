@@ -203,6 +203,9 @@ export const MILESTONE_TYPE = {
   TASK: {
     text: i18n.t('packages_business_milestone_list_renwudiaodu')
   },
+  DEDUCTION: {
+    text: i18n.t('packages_business_milestone_list_load_table_structure')
+  },
   DATA_NODE_INIT: {
     text: i18n.t('packages_business_milestone_list_shujujiedianchu')
   },
