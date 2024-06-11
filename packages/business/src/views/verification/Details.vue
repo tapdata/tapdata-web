@@ -12,7 +12,7 @@
             <ElRadioButton label="failed">{{ $t('packages_business_verification_inconsistent') }}</ElRadioButton>
           </ElRadioGroup>
         </div>
-        <div v-if="inspect.inspectMethod !== 'row_count'">
+        <div v-if="!isCountOrHash">
           <div class="flex align-items-center">
             <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
               {{ $t('packages_business_verification_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
@@ -20,11 +20,19 @@
                 $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
             </div>
+
+            <!-- 一键修复 -->
+            <ElButton v-if="showDataCorrection && canStart" type="primary" @click="handleCorrection">{{
+              $t('packages_business_data_correction')
+            }}</ElButton>
+
+            <!-- 差异校验 -->
             <div
               v-if="
                 inspect.result !== 'passed' &&
                 !['running', 'scheduling'].includes(inspect.status) &&
-                !(inspect.status === 'error' && !resultInfo.parentId)
+                !(inspect.status === 'error' && !resultInfo.parentId) &&
+                canStart
               "
               class="flex align-items-center ml-4"
             >
@@ -41,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div v-if="errorMsg && (type === 'row_count' || type === 'hash')" class="error-tips mt-4 px-4">
+      <div v-if="errorMsg && isCountOrHash" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
         <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
         <span>
@@ -59,14 +67,18 @@
       >
         <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView
-          v-if="type !== 'row_count' && type !== 'hash'"
-          ref="resultView"
-          :remoteMethod="getResultData"
-        ></ResultView>
+        <ResultView v-if="!isCountOrHash" ref="resultView" :remoteMethod="getResultData"></ResultView>
         <!--        </template>-->
       </div>
     </div>
+
+    <DataCorrectionDialog
+      v-if="inspect.id"
+      :visible="dataCorrection.visible"
+      :inspectId="inspect.id"
+      @update:visible="dataCorrection.visible = $event"
+      @started="onStarted"
+    ></DataCorrectionDialog>
   </section>
 </template>
 <style lang="scss">
@@ -112,12 +124,13 @@ import i18n from '@tap/i18n'
 
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import DataCorrectionDialog from './components/DataCorrectionDialog'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
 import { inspectMethod as typeMap } from './const'
 
 export default {
-  components: { ResultTable, ResultView },
+  components: { ResultTable, ResultView, DataCorrectionDialog },
   data() {
     return {
       loading: false,
@@ -127,7 +140,10 @@ export default {
       errorMsg: '',
       taskId: null,
       expandErrorMessage: false,
-      resultFilter: ''
+      resultFilter: '',
+      dataCorrection: {
+        visible: false
+      }
     }
   },
   computed: {
@@ -143,6 +159,15 @@ export default {
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod
+    },
+    isCountOrHash() {
+      return this.inspect?.inspectMethod === 'row_count' || this.inspect?.inspectMethod === 'hash'
+    },
+    canStart() {
+      return this.inspect.permissionActions?.includes('Start')
+    },
+    showDataCorrection() {
+      return this.type === 'field' && this.inspect.status === 'done' && this.inspect.result === 'failed'
     }
   },
   created() {
@@ -191,7 +216,7 @@ export default {
                   }
                   this.$nextTick(() => {
                     this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count' && showLoading && this.type !== 'hash') {
+                    if (!this.isCountOrHash && showLoading) {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
                     }
                     if (this.taskId) {
@@ -364,6 +389,15 @@ export default {
         item['details'] = item['details'] || []
         item['details'].push(node)
       })
+    },
+
+    handleCorrection() {
+      this.dataCorrection.visible = true
+    },
+
+    onStarted() {
+      this.dataCorrection.visible = false
+      this.getData()
     }
   }
 }

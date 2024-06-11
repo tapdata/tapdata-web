@@ -1210,5 +1210,19 @@ export default {
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库',
-  packages_business_selected_rows: '已选 {val} 行'
+  packages_business_selected_rows: '已选 {val} 行',
+  packages_business_data_correction: '一键修复',
+  packages_business_confirmExecuteDataRepair: '确认执行数据修复吗？',
+  packages_business_checkTaskInfo: '校验任务信息',
+  packages_business_taskName: '任务名称',
+  packages_business_taskStatus: '任务状态',
+  packages_business_taskIncrementDelay: '任务增量延迟',
+  packages_business_checkDetails: '校验详情',
+  packages_business_diffThreshold: '差异阈值',
+  packages_business_diffTotal: '差异总数',
+  packages_business_diffExceededAlert: '差异总数已超过阈值，超过的部分将不予修复',
+  packages_business_repairDetails: '修复详情',
+  packages_business_repairDataVolume: '修复数据量',
+  packages_business_repairTableCount: '修复表数量',
+  packages_business_correctionTaskStarted: '修复任务已开始'
 }

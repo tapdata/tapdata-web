@@ -80,7 +80,7 @@ export default {
   public_status_do_cdc: 'Incremental Syncing',
   // button
   public_button_edit: 'Edit',
-  public_button_confirm: 'Ok',
+  public_button_confirm: 'OK',
   public_button_cancel: 'Cancel',
   public_button_back: 'Back',
   public_button_save: 'Save',

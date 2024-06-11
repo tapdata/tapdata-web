@@ -1272,5 +1272,19 @@ export default {
   packages_business_view_more_apis: 'View More APIs',
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
-  packages_business_selected_rows: '{val} row(s) selected'
+  packages_business_selected_rows: '{val} row(s) selected',
+  packages_business_data_correction: 'Data Correction',
+  packages_business_confirmExecuteDataRepair: 'Confirm to Execute Data Correction?',
+  packages_business_checkTaskInfo: 'Task Information',
+  packages_business_taskName: 'Task Name',
+  packages_business_taskStatus: 'Task Status',
+  packages_business_taskIncrementDelay: 'Task Increment Delay',
+  packages_business_checkDetails: 'Validation Details',
+  packages_business_diffThreshold: 'Difference Threshold',
+  packages_business_diffTotal: 'Total Differences',
+  packages_business_diffExceededAlert: 'Total differences exceed the threshold, the excess will not be corrected',
+  packages_business_correctionDetails: 'Correction Details',
+  packages_business_correctionDataVolume: 'Correction Data Volume',
+  packages_business_correctionTableCount: 'Correction Table Count',
+  packages_business_correctionTaskStarted: 'Correction Task has Started'
 }

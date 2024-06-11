@@ -1202,5 +1202,19 @@ export default {
   packages_business_view_more_apis: '查看更多API',
   packages_business_verification_hashTip: '暫不支持異構數據庫',
   packages_business_heterogeneous_database: '異構數據庫',
-  packages_business_selected_rows: '已選 {val} 行'
+  packages_business_selected_rows: '已選 {val} 行',
+  packages_business_data_correction: '一鍵修復',
+  packages_business_confirmExecuteDataRepair: '確認執行數據修復嗎？',
+  packages_business_checkTaskInfo: '校驗任務信息',
+  packages_business_taskName: '任務名稱',
+  packages_business_taskStatus: '任務狀態',
+  packages_business_taskIncrementDelay: '任務增量延遲',
+  packages_business_checkDetails: '校驗詳情',
+  packages_business_diffThreshold: '差異閾值',
+  packages_business_diffTotal: '差異總數',
+  packages_business_diffExceededAlert: '差異總數已超過閾值，超過的部分將不予修復',
+  packages_business_repairDetails: '修復詳情',
+  packages_business_repairDataVolume: '修複數據量',
+  packages_business_repairTableCount: '修復表數量',
+  packages_business_correctionTaskStarted: '修復任務已開始'
 }
