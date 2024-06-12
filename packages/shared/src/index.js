@@ -20,3 +20,5 @@ export * from './shared-cache'
 export * from './time'
 
 export * from './directives'
+
+export * from './countUp'

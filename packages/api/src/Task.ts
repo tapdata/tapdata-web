@@ -232,5 +232,12 @@ export default class Task extends Http {
   getErrorEvents(taskId) {
     return this.axios.get(`${this.url}/errors/${taskId}`)
   }
+
+  downloadAnalyze(taskId, params) {
+    return this.axios.post(`${this.url}/analyze/${taskId}`, null, {
+      ...params,
+      responseType: 'blob'
+    })
+  }
 }
 export { Task }
