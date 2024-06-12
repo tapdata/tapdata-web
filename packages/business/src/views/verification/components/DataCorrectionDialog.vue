@@ -20,6 +20,13 @@
             <TaskStatus :task="inspectRecoveryVerifyData"></TaskStatus>
           </span>
 
+          <span class="grid-list-item-label font-color-sslight">{{
+            $t('packages_business_task_monitor_mission_milestone')
+          }}</span>
+          <span class="grid-list-item-content font-color-dark">
+            <SyncStatus :status="inspectRecoveryVerifyData.flowMilestoneStage" />
+          </span>
+
           <span
             class="grid-list-item-label font-color-sslight"
             :class="{
@@ -95,13 +102,14 @@
 </template>
 
 <script>
-import TaskStatus from '../../../components/TaskStatus.vue'
 import { calcTimeUnit } from '@tap/shared'
 import { inspectApi } from '@tap/api'
+import TaskStatus from '../../../components/TaskStatus.vue'
+import SyncStatus from '../../../components/SyncStatus'
 
 export default {
   name: 'DataCorrectionDialog',
-  components: { TaskStatus },
+  components: { SyncStatus, TaskStatus },
   props: {
     visible: Boolean,
     inspectId: String
@@ -119,6 +127,7 @@ export default {
         flowType: '',
         flowStatus: '',
         flowSyncStatus: '',
+        flowMilestoneStage: '',
         flowDelay: null,
         diffLimit: null,
         diffTotals: null,
