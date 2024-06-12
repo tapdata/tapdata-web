@@ -73,12 +73,14 @@
           <span class="grid-list-item-label font-color-sslight">{{
             $t('packages_business_correctionDataVolume')
           }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.diffLimit }}</span>
+          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.recoveryDataTotals }}</span>
 
           <span class="grid-list-item-label font-color-sslight">{{
             $t('packages_business_correctionTableCount')
           }}</span>
-          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.diffTotals }}</span>
+          <span class="grid-list-item-content font-color-dark">{{
+            inspectRecoveryVerifyData.recoveryTableTotals
+          }}</span>
         </div>
       </div>
     </div>
