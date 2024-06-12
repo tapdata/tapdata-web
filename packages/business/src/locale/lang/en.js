@@ -1289,5 +1289,6 @@ export default {
   packages_business_correctionTableCount: 'Correction Table Count',
   packages_business_correctionTaskStarted: 'Correction Task has Started',
   packages_business_sourceOnly: 'Target with Less data',
-  packages_business_targetOnly: 'Target with More Data'
+  packages_business_targetOnly: 'Target with More Data',
+  packages_business_no_data_correction: 'No data available for correction'
 }

@@ -1219,5 +1219,6 @@ export default {
   packages_business_correctionTableCount: '修復表數量',
   packages_business_correctionTaskStarted: '修復任務已開始',
   packages_business_sourceOnly: '目標少數據',
-  packages_business_targetOnly: '目標多數據'
+  packages_business_targetOnly: '目標多數據',
+  packages_business_no_data_correction: '沒有可修復的數據'
 }

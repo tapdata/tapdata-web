@@ -92,18 +92,11 @@
 
     <template #footer>
       <ElButton @click="$emit('update:visible', false)">{{ $t('public_button_cancel') }}</ElButton>
-      <ElButton
-        :disabled="
-          loading ||
-          starting ||
-          !inspectRecoveryVerifyData.canRecovery ||
-          inspectRecoveryVerifyData.errorCodes.length > 0
-        "
-        :loading="starting"
-        type="primary"
-        @click="handleStart"
-        >{{ $t('packages_business_correction') }}</ElButton
-      >
+      <ElTooltip :disabled="!tipContent" :content="tipContent" placement="top">
+        <ElButton :disabled="correctionDisabled" :loading="starting" type="primary" @click="handleStart">{{
+          $t('packages_business_correction')
+        }}</ElButton>
+      </ElTooltip>
     </template>
   </ElDialog>
 </template>
@@ -163,6 +156,21 @@ export default {
             autoHideMs: true
           })
         : '-'
+    },
+    correctionDisabled() {
+      return (
+        this.loading ||
+        this.starting ||
+        !this.inspectRecoveryVerifyData.canRecovery ||
+        this.inspectRecoveryVerifyData.errorCodes.length > 0 ||
+        !this.inspectRecoveryVerifyData.recoveryDataTotals
+      )
+    },
+    tipContent() {
+      if (!this.inspectRecoveryVerifyData.recoveryDataTotals) {
+        return this.$t('packages_business_no_data_correction')
+      }
+      return null
     }
   },
 
