@@ -79,7 +79,12 @@
     <template #footer>
       <ElButton @click="$emit('update:visible', false)">{{ $t('public_button_cancel') }}</ElButton>
       <ElButton
-        :disabled="loading || staring || !inspectRecoveryVerifyData.canRecovery"
+        :disabled="
+          loading ||
+          staring ||
+          !inspectRecoveryVerifyData.canRecovery ||
+          inspectRecoveryVerifyData.errorCodes.length > 0
+        "
         :loading="staring"
         type="primary"
         @click="handleStart"
