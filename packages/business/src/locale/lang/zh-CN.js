@@ -1222,7 +1222,7 @@ export default {
   packages_business_diffTotal: '差异总数',
   packages_business_diffExceededAlert: '差异总数已超过阈值，超过的部分将不予修复',
   packages_business_correctionDetails: '修复详情',
-  packages_business_correctionDataVolume: '修复数据量',
+  packages_business_correctionDataVolume: '修复数据行数',
   packages_business_correctionTableCount: '修复表数量',
   packages_business_correctionTaskStarted: '修复任务已开始'
 }

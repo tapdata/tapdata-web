@@ -1284,7 +1284,7 @@ export default {
   packages_business_diffTotal: 'Total Differences',
   packages_business_diffExceededAlert: 'Total differences exceed the threshold, the excess will not be corrected',
   packages_business_correctionDetails: 'Correction Details',
-  packages_business_correctionDataVolume: 'Correction Data Volume',
+  packages_business_correctionDataVolume: 'Correction Data Row Count',
   packages_business_correctionTableCount: 'Correction Table Count',
   packages_business_correctionTaskStarted: 'Correction Task has Started'
 }
