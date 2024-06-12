@@ -119,7 +119,8 @@ export default {
         diffTotals: null,
         recoveryDataTotals: null,
         recoveryTableTotals: null,
-        canRecovery: true
+        canRecovery: true,
+        errorCodes: []
       }
     }
   },
