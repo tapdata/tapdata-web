@@ -64,6 +64,11 @@
             >{{ inspectRecoveryVerifyData.diffTotals }}
           </span>
 
+          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_sourceOnly') }}</span>
+          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.sourceOnly }}</span>
+          <span class="grid-list-item-label font-color-sslight">{{ $t('packages_business_targetOnly') }}</span>
+          <span class="grid-list-item-content font-color-dark">{{ inspectRecoveryVerifyData.targetOnly }}</span>
+
           <div v-if="diffWarning" class="grid-list-item-block">
             <el-alert :title="$t('packages_business_diffExceededAlert')" type="warning" show-icon :closable="false" />
           </div>
@@ -90,14 +95,14 @@
       <ElButton
         :disabled="
           loading ||
-          staring ||
+          starting ||
           !inspectRecoveryVerifyData.canRecovery ||
           inspectRecoveryVerifyData.errorCodes.length > 0
         "
-        :loading="staring"
+        :loading="starting"
         type="primary"
         @click="handleStart"
-        >{{ $t('public_button_confirm') }}</ElButton
+        >{{ $t('packages_business_correction') }}</ElButton
       >
     </template>
   </ElDialog>
@@ -119,7 +124,7 @@ export default {
   data() {
     return {
       loading: false,
-      staring: false,
+      starting: false,
       inspectRecoveryVerifyData: {
         status: '',
         inspectId: '',
@@ -136,7 +141,9 @@ export default {
         recoveryDataTotals: null,
         recoveryTableTotals: null,
         canRecovery: true,
-        errorCodes: []
+        errorCodes: [],
+        sourceOnly: null,
+        targetOnly: null
       }
     }
   },
@@ -169,12 +176,12 @@ export default {
       Object.assign(this.inspectRecoveryVerifyData, result)
     },
     async handleStart() {
-      this.staring = true
+      this.starting = true
 
       try {
         await inspectApi.startRecovery(this.inspectId)
 
-        this.staring = false
+        this.starting = false
         this.$message.success(this.$t('packages_business_correctionTaskStarted'))
         this.$emit('started')
       } catch (e) {

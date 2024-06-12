@@ -1203,6 +1203,7 @@ export default {
   packages_business_verification_hashTip: '暫不支持異構數據庫',
   packages_business_heterogeneous_database: '異構數據庫',
   packages_business_selected_rows: '已選 {val} 行',
+  packages_business_correction: '修復',
   packages_business_data_correction: '一鍵修復',
   packages_business_confirmExecuteDataRepair: '確認執行數據修復嗎？',
   packages_business_checkTaskInfo: '校驗任務信息',
@@ -1216,5 +1217,7 @@ export default {
   packages_business_correctionDetails: '修復詳情',
   packages_business_correctionDataVolume: '修複數據行數',
   packages_business_correctionTableCount: '修復表數量',
-  packages_business_correctionTaskStarted: '修復任務已開始'
+  packages_business_correctionTaskStarted: '修復任務已開始',
+  packages_business_sourceOnly: '目標少數據',
+  packages_business_targetOnly: '目標多數據'
 }

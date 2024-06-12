@@ -1273,6 +1273,7 @@ export default {
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
   packages_business_selected_rows: '{val} row(s) selected',
+  packages_business_correction: 'Correction',
   packages_business_data_correction: 'Data Correction',
   packages_business_confirmExecuteDataRepair: 'Confirm to Execute Data Correction?',
   packages_business_checkTaskInfo: 'Task Information',
@@ -1286,5 +1287,7 @@ export default {
   packages_business_correctionDetails: 'Correction Details',
   packages_business_correctionDataVolume: 'Correction Data Row Count',
   packages_business_correctionTableCount: 'Correction Table Count',
-  packages_business_correctionTaskStarted: 'Correction Task has Started'
+  packages_business_correctionTaskStarted: 'Correction Task has Started',
+  packages_business_sourceOnly: 'Target with Less data',
+  packages_business_targetOnly: 'Target with More Data'
 }

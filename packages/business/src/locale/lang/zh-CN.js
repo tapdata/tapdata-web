@@ -1211,6 +1211,7 @@ export default {
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库',
   packages_business_selected_rows: '已选 {val} 行',
+  packages_business_correction: '修复',
   packages_business_data_correction: '一键修复',
   packages_business_confirmExecuteDataRepair: '确认执行数据修复吗？',
   packages_business_checkTaskInfo: '校验任务信息',
@@ -1224,5 +1225,7 @@ export default {
   packages_business_correctionDetails: '修复详情',
   packages_business_correctionDataVolume: '修复数据行数',
   packages_business_correctionTableCount: '修复表数量',
-  packages_business_correctionTaskStarted: '修复任务已开始'
+  packages_business_correctionTaskStarted: '修复任务已开始',
+  packages_business_sourceOnly: '目标少数据',
+  packages_business_targetOnly: '目标多数据'
 }
