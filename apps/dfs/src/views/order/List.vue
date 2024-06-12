@@ -82,15 +82,19 @@
                 <div class="w-50">
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight">{{ $t('dfs_user_center_jine') }}:</span>
-                    <span class="li-item__value font-color-dark">{{ formatterPrice(item.currency, row.amount) }}</span>
+                    <span
+                      :class="[row.isFree ? 'color-success' : 'font-color-dark']"
+                      class="li-item__value font-color-dark"
+                      >{{
+                        row.isFree ? $t('dfs_instance_instance_mianfei') : formatterPrice(item.currency, row.amount)
+                      }}</span
+                    >
                   </div>
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight"
                       >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
                     >
-                    <span class="li-item__value" :class="[item.isFree ? 'color-success' : 'font-color-dark']">{{
-                      row.subscriptionMethodLabel
-                    }}</span>
+                    <span class="li-item__value font-color-dark">{{ item.subscriptionMethodLabel }}</span>
                   </div>
                   <div>
                     <span class="li-item__label font-color-sslight"
@@ -135,13 +139,7 @@
                     $t('dfs_change_record')
                   }}</ElButton>
                   <ElButton
-                    v-if="
-                      !(
-                        !['active'].includes(item.status) ||
-                        item.totalAmount === 0 ||
-                        item.subscribeType === 'recurring'
-                      )
-                    "
+                    v-if="!(!['active'].includes(item.status) || row.isFree || item.subscribeType === 'recurring')"
                     type="primary"
                     plain
                     @click="openRenew(item)"
@@ -500,29 +498,39 @@ export default {
         let items = data.items || []
         this.page.total = data.total
         this.subscribeList = items.map(item => {
-          if (item.totalAmount !== 0) {
-            item.isFree = item.subscribeType === 'FreeTier'
-            item.subscriptionMethodLabel =
-              getPaymentMethod(
-                { periodUnit: item.periodUnit, type: item.subscribeType },
-                item.paymentMethod || 'Stripe'
-              ) || '-'
+          /*if (item.totalAmount !== 0) {
+          item.subscriptionMethodLabel =
+            getPaymentMethod(
+              { periodUnit: item.periodUnit, type: item.subscribeType },
+              item.paymentMethod || 'Stripe'
+            ) || '-'
           } else {
             item.isFree = true
             item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
-          }
+          }*/
+
+          item.subscriptionMethodLabel =
+            getPaymentMethod(
+              { periodUnit: item.periodUnit, type: item.subscribeType },
+              item.paymentMethod || 'Stripe'
+            ) || '-'
+
+          const isFreeTier = item.subscribeType === 'FreeTier'
 
           if (item.subscribeItems?.length) {
             item.productType = item.subscribeItems[0].productType
             item.subscribeItems = item.subscribeItems.map(it => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
-              it.subscriptionMethodLabel =
-                it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
+              // it.subscriptionMethodLabel =
+              //   it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
               it.status = it.resource?.status || ''
+              it.isFree = isFreeTier || it.amount === 0
+
               return it
             })
           }
+
           return item
         })
       })
