@@ -10,7 +10,7 @@
     "taptest:daas": "pnpm --filter daas taptest",
     "build:daas": "pnpm --filter daas build",
     "build:dfs": "pnpm --filter dfs build",
-    "daas": "cross-env pnpm --filter daas start:test",
+    "daas": "pnpm --filter daas start:test",
     "dfs": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter dfs start:test",
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules",
     "oss": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm --filter daas start:dev --mode oss",
