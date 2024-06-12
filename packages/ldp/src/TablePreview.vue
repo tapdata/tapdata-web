@@ -66,6 +66,7 @@
                   row="4"
                   class="table-dec-txt mt-2"
                   v-model="detailData.description"
+                  :autosize="{ minRows: 2 }"
                   @blur="saveTableDesc"
                 ></el-input>
               </div>
