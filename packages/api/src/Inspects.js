@@ -13,7 +13,7 @@ export default class Inspect extends Http {
   }
 
   startRecovery(id) {
-    return this.axios.get(`${this.url}/${id}/recovery/start`)
+    return this.axios.put(`${this.url}/${id}/recovery/start`)
   }
 }
 export { Inspect }
