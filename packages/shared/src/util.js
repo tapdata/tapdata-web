@@ -205,7 +205,7 @@ export function downloadBlob(res, name = '') {
     return
   }
   const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
+  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="?([^"]+)"?/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }

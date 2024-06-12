@@ -675,14 +675,24 @@ export default {
       let objects = await this.loadObjects(data)
       node.loading = false
 
-      this.$refs.tree.updateKeyChildren(data.id, objects)
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+
       objects.forEach(item => {
-        if (childrenMap[item.id]) return
+        if (childrenMap[item.id]) {
+          delete childrenMap[item.id]
+          return
+        }
         item.parent_id = data.id
         item.isObject = true
         item.connectionId = item.sourceConId
         this.$refs.tree.append(item, node)
+      })
+
+      // 删除不存在的模型节点
+      Object.entries(childrenMap).forEach(([key, item]) => {
+        if (item.isObject) {
+          this.$refs.tree.remove(key)
+        }
       })
     },
 

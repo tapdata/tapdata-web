@@ -154,6 +154,7 @@ export default {
   public_message_network_connected: 'The network has been successfully restored to its normal operating state',
   public_message_request_timeout: 'Request Timeout',
   public_message_send_success: 'Send Successfully',
+  public_message_download_ok: 'Download Successfully',
   // drop-down list
   public_select_placeholder: 'Please Select',
   public_select_option_all: 'Select All',
