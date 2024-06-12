@@ -1213,8 +1213,8 @@ export default {
   packages_business_diffThreshold: '差異閾值',
   packages_business_diffTotal: '差異總數',
   packages_business_diffExceededAlert: '差異總數已超過閾值，超過的部分將不予修復',
-  packages_business_repairDetails: '修復詳情',
-  packages_business_repairDataVolume: '修複數據量',
-  packages_business_repairTableCount: '修復表數量',
+  packages_business_correctionDetails: '修復詳情',
+  packages_business_correctionDataVolume: '修複數據量',
+  packages_business_correctionTableCount: '修復表數量',
   packages_business_correctionTaskStarted: '修復任務已開始'
 }
