@@ -138,6 +138,7 @@ export default {
             let inspect = result.inspect
             inspect.status = result.status
             inspect.lastStartTimeFmt = dayjs(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+            inspect.id = result.inspect_id
             this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
@@ -160,6 +161,9 @@ export default {
       let task = this.inspect.tasks?.find(item => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
+        const sourceSortColumn = task.source?.sortColumn?.split(',')
+        const targetSortColumn = task.target?.sortColumn?.split(',')
+        const inspectMethod = this.inspect.inspectMethod
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
           taskId,
@@ -188,7 +192,10 @@ export default {
               showAdvancedVerification, // 是否高级校验
               total: data?.total || 0, // 总条数
               statsInfo, // 结果信息
-              resultList // 结果详情
+              resultList, // 结果详情
+              sourceSortColumn, // 源索引字段
+              targetSortColumn, // 目标索引字段
+              inspectMethod
             }
           })
       }
