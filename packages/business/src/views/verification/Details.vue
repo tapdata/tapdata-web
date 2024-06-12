@@ -167,7 +167,12 @@ export default {
       return this.inspect.permissionActions?.includes('Start')
     },
     showDataCorrection() {
-      return this.type === 'field' && this.inspect.status === 'done' && this.inspect.result === 'failed'
+      return (
+        (this.type === 'field' || this.type === 'jointField') &&
+        this.inspect.flowId &&
+        this.inspect.status === 'done' &&
+        this.inspect.result === 'failed'
+      )
     }
   },
   created() {
