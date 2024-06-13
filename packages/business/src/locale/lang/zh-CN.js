@@ -491,7 +491,7 @@ export default {
   packages_business_verification_returnMsg: '返回的message',
   packages_business_verification_returnedData: '返回的data',
   packages_business_verification_sourceTableData: '源表数据',
-  packages_business_verification_success: '恭喜~~~~校验结果源表与目标表内容完全一致，没有错误记录',
+  packages_business_verification_success: '恭喜，校验结果显示源表与目标表内容完全一致。',
   packages_business_verification_clickVerified: '点下方按钮添加校验表',
   packages_business_verification_ChoosePKField: '请选索引或主键字段',
   packages_business_verification_indexField: '关联字段',
@@ -1243,5 +1243,6 @@ export default {
   packages_business_correctionTaskStarted: '修复任务已开始',
   packages_business_sourceOnly: '目标少数据',
   packages_business_targetOnly: '目标多数据',
-  packages_business_no_data_correction: '没有可修复的数据'
+  packages_business_no_data_correction: '没有可修复的数据',
+  packages_business_recovering: '修复中'
 }

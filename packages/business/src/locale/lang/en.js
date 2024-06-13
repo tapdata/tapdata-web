@@ -490,7 +490,7 @@ export default {
   packages_business_verification_Value: 'Value',
   packages_business_verification_inconsistentType: 'Inconsistent Type',
   packages_business_verification_success:
-    'Congratulations~~~~  The field contents of the source table and the target table are identical, no error record here',
+    'Congratulations! The validation results show that the source table and the target table contents are completely consistent.',
   packages_business_verification_chooseJob: 'Choose Task',
   packages_business_verification_frequency: 'Frequency',
   packages_business_verification_startTime: 'Start Time',
@@ -1306,5 +1306,6 @@ export default {
   packages_business_correctionTaskStarted: 'Correction Task has Started',
   packages_business_sourceOnly: 'Target with Less data',
   packages_business_targetOnly: 'Target with More Data',
-  packages_business_no_data_correction: 'No data available for correction'
+  packages_business_no_data_correction: 'No data available for correction',
+  packages_business_recovering: 'Under Correction'
 }

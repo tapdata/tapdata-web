@@ -49,26 +49,34 @@
           </div>
         </div>
       </div>
-      <div v-if="errorMsg && isCountOrHash" class="error-tips mt-4 px-4">
-        <VIcon class="color-danger">error</VIcon>
-        <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
-        <span>
-          <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-            expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
-          }}</ElLink>
-          <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
+      <div v-if="errorMsg && isCountOrHash" class="error-tips mt-4 pl-4 pr-0 rounded-lg">
+        <VIcon size="16" class="color-danger mt-0.5">error</VIcon>
+        <span
+          ref="errorSummary"
+          class="mx-2 flex-1"
+          :class="{ ellipsis: !expandErrorMessage, 'text-pre': expandErrorMessage }"
+          >{{ expandErrorMessage ? errorMsg : errorSummary }}</span
+        >
+        <span class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start" style="background: inherit">
+          <ElLink
+            v-if="hasMoreErrorMsg"
+            class="align-middle"
+            type="danger"
+            @click="expandErrorMessage = !expandErrorMessage"
+            >{{
+              expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+            }}</ElLink
+          >
+          <IconButton class="ml-2 color-info align-middle" size="12" @click="errorMsg = ''" sm>close</IconButton>
         </span>
       </div>
-      <!--        v-loading="['running', 'scheduling'].includes(inspect.status)"-->
       <div
         class="result-table mt-4"
         v-if="inspect"
         :element-loading-text="$t('packages_business_verification_checking')"
       >
-        <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
         <ResultView v-if="!isCountOrHash" ref="resultView" :remoteMethod="getResultData"></ResultView>
-        <!--        </template>-->
       </div>
     </div>
 
@@ -118,6 +126,10 @@
   display: flex;
   overflow: auto;
 }
+.sticky-top-0 {
+  position: sticky;
+  top: 0;
+}
 </style>
 <script>
 import i18n from '@tap/i18n'
@@ -128,9 +140,11 @@ import DataCorrectionDialog from './components/DataCorrectionDialog'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
 import { inspectMethod as typeMap } from './const'
+import { checkEllipsisActive } from '@tap/shared'
+import { IconButton } from '@tap/component'
 
 export default {
-  components: { ResultTable, ResultView, DataCorrectionDialog },
+  components: { ResultTable, ResultView, DataCorrectionDialog, IconButton },
   data() {
     return {
       loading: false,
@@ -143,7 +157,8 @@ export default {
       resultFilter: '',
       dataCorrection: {
         visible: false
-      }
+      },
+      hasMoreErrorMsg: false
     }
   },
   computed: {
@@ -173,6 +188,11 @@ export default {
         this.inspect.status === 'done' &&
         this.inspect.result === 'failed'
       )
+    },
+    errorSummary() {
+      if (this.errorMsg) {
+        return this.errorMsg.split('\n').shift()
+      }
     }
   },
   created() {
@@ -216,6 +236,7 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  this.checkErrorMsg()
                   if (!this.taskId) {
                     this.taskId = stats[0].taskId
                   }
@@ -403,6 +424,13 @@ export default {
     onStarted() {
       this.dataCorrection.visible = false
       this.getData()
+    },
+
+    checkErrorMsg() {
+      this.$nextTick(() => {
+        const dom = this.$refs.errorSummary
+        this.hasMoreErrorMsg = dom ? this.errorMsg.split('\n').length > 1 || checkEllipsisActive(dom) : false
+      })
     }
   }
 }
