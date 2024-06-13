@@ -19,13 +19,17 @@
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
-      <el-table-column
-        sortable
-        min-width="120"
-        :label="$t('packages_business_shared_list_time')"
-        prop="delayTime"
-      ></el-table-column>
-      <el-table-column prop="createTime" min-width="160" :label="$t('public_create_time')" sortable> </el-table-column>
+      <el-table-column sortable min-width="120" :label="$t('packages_business_shared_list_time')" prop="delayTime">
+        <template #header>
+          <div class="inline-flex align-center">
+            <span>{{ $t('packages_business_shared_list_time') }}</span>
+            <ElTooltip class="ml-1" placement="top" :content="$t('packages_dag_monitor_leftsider_shijiancongyuanku')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" min-width="260" :label="$t('public_create_time')" sortable> </el-table-column>
       <el-table-column min-width="110" prop="status" :label="$t('packages_business_shared_list_status')">
         <template #default="{ row }">
           <TaskStatus :task="row" />
@@ -216,7 +220,7 @@ import { TablePage, TaskStatus, makeStatusAndDisabled } from '@tap/business'
 
 import Editor from './Editor'
 import i18n from '@tap/i18n'
-import { openUrl } from '@tap/shared'
+import { calcTimeUnit, openUrl } from '@tap/shared'
 
 let timeout = null
 export default {
@@ -351,7 +355,12 @@ export default {
               }
               item.createTime = dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.logTime = item.logTime ? dayjs(item.logTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-              item.delayTime = item.delayTime < 0 ? '-' : item.delayTime
+              item.delayTime =
+                item.delayTime < 0 || typeof item.delayTime !== 'number'
+                  ? '-'
+                  : calcTimeUnit(item.delayTime, 2, {
+                      autoHideMs: true
+                    })
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {
                 item.btnDisabled.start = false

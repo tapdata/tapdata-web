@@ -154,6 +154,7 @@ export default {
   public_message_network_connected: '網絡已恢復',
   public_message_request_timeout: '請求超時',
   public_message_send_success: '發送成功',
+  public_message_download_ok: '下載成功',
   // 下拉列表
   public_select_placeholder: '請選擇',
   public_select_option_all: '全部',

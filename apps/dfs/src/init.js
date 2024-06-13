@@ -100,6 +100,7 @@ export default ({ routes }) => {
 
     /*S 万维广告*/
     const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
     iframe.style.height = '0'
     iframe.style.width = '0'
     iframe.style.border = '0'

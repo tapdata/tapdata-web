@@ -506,7 +506,10 @@ export default {
   inject: ['lockedFeature', 'openLocked'],
   components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
+    const domain = this.$i18n.locale === 'en' ? 'io' : 'net'
+
     return {
+      domain,
       isCommunity,
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
@@ -660,7 +663,7 @@ export default {
           this.dialogVisible = true
           break
         case 'help':
-          window.open('https://docs.tapdata.net/')
+          window.open(`https://docs.tapdata.${this.domain}/`)
           break
         case 'question':
           this.isShowCustomerService = !this.isShowCustomerService
@@ -681,7 +684,7 @@ export default {
           })
           break
         case 'home':
-          window.open(window._TAPDATA_OPTIONS_.homeUrl, '_blank')
+          window.open(window._TAPDATA_OPTIONS_.homeUrl || `https://tapdata.${this.domain}/`, '_blank')
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
