@@ -75,6 +75,7 @@
       ref="tablePreview"
       @create-single-task="hanldeCreateSingleTask"
       @handle-show-upgrade="handleShowUpgradeDialog"
+      @create-api="handleCreateAPI"
     />
     <ConnectionPreview ref="connectionView" />
 
@@ -588,6 +589,11 @@ export default {
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
+    },
+
+    handleCreateAPI(connection, tableOjb) {
+      console.log('handleCreateAPI', connection, tableOjb)
+      this.$refs.target[0]?.createAPI(connection, tableOjb)
     }
   }
 }

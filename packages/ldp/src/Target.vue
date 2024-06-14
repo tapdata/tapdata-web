@@ -457,6 +457,7 @@ export default {
       }
 
       this.connectionIds = connectionList.map(item => item.id)
+      this.appList = appList
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -920,6 +921,8 @@ export default {
         this.connectionIds.push(item.id)
         this.mapConnection(item)
         this.loadTask([item])
+      } else {
+        this.appList.unshift(item)
       }
 
       this.list.unshift(item)
@@ -950,6 +953,11 @@ export default {
     handleAddApi(data, app) {
       data = this.mapApi(data)
 
+      if (!app) {
+        const appValue = data.listtags[0].id
+        app = this.appList.find(it => it.id === appValue)
+      }
+
       if (!app.modules) this.$set(app, 'modules', [data])
       else app.modules.unshift(data)
     },
@@ -975,6 +983,15 @@ export default {
 
     handleExpandAll(id) {
       this.$set(this.expandState, id, !this.expandState[id])
+    },
+
+    createAPI(connection, tableObj) {
+      if (!this.apiSupportTypes.includes(connection.database_type)) return
+
+      this.apiDialog.from = connection
+      this.apiDialog.tableName = tableObj.name
+      this.apiDialog.to = null
+      this.showApiDialog()
     }
   }
 }

@@ -1217,5 +1217,8 @@ export default {
   packages_business_exporting_engine_thread: '正在導出引擎線程數據',
   packages_business_exporting_tm_thread: '正在導出管理端線程數據',
   packages_business_downloading_file: '正在下載文件',
-  packages_business_long_wait: '請稍候'
+  packages_business_long_wait: '請稍候',
+  packages_business_business_information: '業務信息',
+  packages_business_publish_api: '發佈API',
+  packages_business_field_description: '字段描述'
 }
