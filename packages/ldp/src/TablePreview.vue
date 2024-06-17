@@ -202,7 +202,9 @@
                 </div>
                 <VEmpty small v-if="!detailData.description && !descIsEdit"></VEmpty>
                 <template v-else>
-                  <div v-if="!descIsEdit" class="text-prewrap px-1 py-2 lh-base">{{ detailData.description }}</div>
+                  <div v-if="!descIsEdit" class="text-prewrap px-1 py-2 lh-base overflow-x-auto">
+                    {{ detailData.description }}
+                  </div>
                   <el-input
                     v-else
                     type="textarea"
