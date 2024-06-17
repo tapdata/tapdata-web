@@ -53,7 +53,7 @@
           @load-directory="loadDirectory"
           @preview="handlePreview"
           @find-parent="handleFindParent"
-          @handle-connection="handleConnection"
+          @on-scroll="onScroll"
           @handle-show-upgrade="handleShowUpgradeDialog"
         ></component>
       </template>
@@ -237,6 +237,8 @@ export default {
     window.removeEventListener('keyword', this.handleListenerEsc)
     // 销毁画布实例
     this.jsPlumbIns?.destroy()
+    this.targetDomSet = null
+    this.otherDomSet = null
   },
 
   methods: {
@@ -500,6 +502,9 @@ export default {
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
+      const targetDom = new Set()
+      const otherDom = new Set()
+
       this.$nextTick(() => {
         this.edgsLinks.forEach(el => {
           const { sourceNode, targetNode } = el || {}
@@ -508,6 +513,14 @@ export default {
           // 过滤掉source节点连线到source节点的情况
           if (targetNode.ldpType !== 'source') {
             connectionLines.push([sDom, tDom])
+          }
+
+          otherDom.add(sDom)
+
+          if (targetNode.ldpType === 'target') {
+            targetDom.add(tDom)
+          } else {
+            otherDom.add(tDom)
           }
         })
 
@@ -532,6 +545,10 @@ export default {
             overlays: [['Arrow', { width: 10, length: 10, location: 1, id: 'arrow', foldback: 1, fill: '#2C65FF' }]]
           })
         })
+
+        // 缓存所有dom node
+        this.targetDomSet = targetDom
+        this.otherDomSet = otherDom
       })
     },
 
@@ -592,8 +609,20 @@ export default {
     },
 
     handleCreateAPI(connection, tableOjb) {
-      console.log('handleCreateAPI', connection, tableOjb)
       this.$refs.target[0]?.createAPI(connection, tableOjb)
+    },
+
+    onScroll() {
+      if (this.showParentLineage) {
+        for (let el of this.otherDomSet) {
+          this.jsPlumbIns.revalidate(el)
+        }
+
+        // 后面可对api节点特殊处理
+        for (let el of this.targetDomSet) {
+          this.jsPlumbIns.revalidate(el)
+        }
+      }
     }
   }
 }
