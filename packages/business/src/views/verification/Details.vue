@@ -341,7 +341,8 @@ export default {
       let route = this.$router.resolve({
         name: 'VerifyDiffHistory',
         params: {
-          id: this.resultInfo.firstCheckId
+          id: this.resultInfo.firstCheckId,
+          inspectId: this.resultInfo.inspect_id
         }
       })
       url = route.href

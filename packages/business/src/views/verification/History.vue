@@ -191,6 +191,7 @@ export default {
       }
       if (this.$route.name === 'VerifyDiffHistory') {
         where = {
+          inspect_id: { regexp: `^${this.$route.params.inspectId}$` },
           firstCheckId: { regexp: `^${id}$` }
         }
         delete filter.inspectGroupByFirstCheckId
