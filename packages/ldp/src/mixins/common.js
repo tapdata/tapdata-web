@@ -257,6 +257,13 @@ export default {
         def = arr.pop() + 1
       }
       return `${source}${def}`
+    },
+
+    findParentByClassName(parent, cls) {
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
     }
   }
 }

@@ -926,11 +926,11 @@ export default {
 
     handleFindLineage(data) {
       const el = document.getElementById(`ldp_mdm_table_${data.id}_${data.name}`)
-      this.$emit('find-parent', el, data)
+      this.$emit('find-parent', this.findParentByClassName(el, 'el-tree-node__content'), data)
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      this.$emit('on-scroll')
     }, 200),
 
     openMaterializedDialog() {

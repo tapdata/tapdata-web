@@ -555,11 +555,11 @@ export default {
 
     handleFindTreeDom(val = {}) {
       const el = document.getElementById(`ldp_source_table_${val.connectionId}_${val.table}`)
-      return el
+      return this.findParentByClassName(el, 'el-tree-node__content')
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      this.$emit('on-scroll')
     }, 200),
 
     async searchByKeywordList(val = []) {
