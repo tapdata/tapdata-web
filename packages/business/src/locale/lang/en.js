@@ -1288,5 +1288,8 @@ export default {
   packages_business_exporting_engine_thread: 'Exporting engine thread data',
   packages_business_exporting_tm_thread: 'Exporting management end thread data',
   packages_business_downloading_file: 'Downloading file',
-  packages_business_long_wait: 'Please wait a moment'
+  packages_business_long_wait: 'Please wait a moment',
+  packages_business_business_information: 'Business Information',
+  packages_business_publish_api: 'Publish API',
+  packages_business_field_description: 'Field Description'
 }
