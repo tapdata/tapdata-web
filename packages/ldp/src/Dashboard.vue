@@ -1,5 +1,5 @@
 <template>
-  <div class="swim-lane flex flex-column h-100 position-relative">
+  <div class="swim-lane flex flex-column h-100 position-relative overflow-hidden">
     <div class="page-header-title bg-white box-card flex align-center position-relative">
       <span>{{ $t('page_title_data_hub') }}</span>
       <ElTooltip
@@ -717,6 +717,13 @@ export default {
         width: auto;
       }
     }
+
+    .list__title {
+      z-index: 5;
+    }
+  }
+  .page-header-title {
+    z-index: 5;
   }
 }
 .icon {
