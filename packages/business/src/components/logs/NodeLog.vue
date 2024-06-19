@@ -30,6 +30,7 @@
             $t('public_button_download')
           }}</ElButton>
           <ElButton
+            v-if="isDaas"
             :loading="downloadLoading"
             type="warning"
             size="mini"
@@ -302,7 +303,9 @@ export default {
   },
 
   data() {
+    const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
     return {
+      isDaas,
       activeNodeId: this.nodeId,
       keyword: '',
       checkList: [],
