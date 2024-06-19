@@ -31,9 +31,9 @@
           }}</ElButton>
           <ElButton
             :loading="downloadLoading"
-            type="primary"
+            type="warning"
             size="mini"
-            class="ml-4 ml-download-report"
+            class="ml-4"
             @click="handleDownloadAnalysis"
             >{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
@@ -241,18 +241,14 @@
       @close="onClose"
     >
       <template #title>
-        <div>
-          <div class="el-dialog__title">{{ $t('packages_business_download_analysis_report_title') }}</div>
-          <br/>
-          <div class="mt-1 fs-7 font-color-sslight">{{ $t('packages_business_download_analysis_report_desc') }}</div>
-        </div>
+        <div class="el-dialog__title">{{ $t('packages_business_download_analysis_report_title') }}</div>
       </template>
-      <div class="pb-6">
+      <div class="pb-6 flex flex-column gap-4">
+        <div class="fs-7 font-color-sslight">{{ $t('packages_business_download_analysis_report_desc') }}</div>
         <div>
           {{ downloadAnalysis.steps[downloadAnalysis.currentStep].label }}, {{ $t('packages_business_long_wait')
           }}<span class="dotting"></span>
         </div>
-        <br/>
         <el-progress :stroke-width="9" :percentage="downloadAnalysis.progress"></el-progress>
       </div>
     </ElDialog>
@@ -959,6 +955,14 @@ export default {
       const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
         cancelToken: this.analysisCancelSource.token
       })
+
+      if (blogData.data.type === 'application/json') {
+        this.$message.error(this.$t('packages_business_connections_test_xiazaishibai'))
+        this.countUp.reset()
+        this.downloadAnalysis.visible = false
+        return
+      }
+
       downloadBlob(blogData)
 
       this.completeSteps()
