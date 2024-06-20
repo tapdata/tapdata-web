@@ -181,7 +181,7 @@ export default {
       this.searchIng = true
       const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
       const map = result.reduce((obj, item) => {
-        let id = item.listtags[0].id
+        let id = item.listtags?.[0]?.id || this.directory.id
         let children = obj[id] || []
         children.push(item)
         obj[id] = children
