@@ -148,7 +148,13 @@ export default {
       },
       mode: '',
       selectorType: '',
-      settings: null,
+      settings: {
+        mode: 'integration',
+        fdmStorageCluster: 'self',
+        fdmStorageConnectionId: '',
+        mdmStorageCluster: 'self',
+        mdmStorageConnectionId: ''
+      },
       directoryMap: {},
       fdmConnection: null,
       fdmNotExist: false,
@@ -274,10 +280,11 @@ export default {
 
     handleSettingsSuccess(data) {
       this.mode = data.mode
+      Object.assign(this.settings, data)
     },
 
     handleSettingsInit(settings) {
-      this.settings = settings
+      Object.assign(this.settings, settings)
     },
 
     loadDirectory() {
