@@ -248,8 +248,8 @@
             </div>
           </section>
           <div v-else class="content">
-            <el-row :gutter="20" class="waterfall" v-for="item in waterfallData" :key="item.id">
-              <el-col class="list" :md="12" :sm="24">
+            <el-row :gutter="20" class="waterfall">
+              <el-col class="list" :md="12" :sm="24" v-for="item in waterfallData" :key="item.id">
                 <div class="grid-content list-box rounded-lg">
                   <div class="list-box-header">
                     <div class="list-box-header-left">
@@ -263,7 +263,10 @@
                         <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
                       </div>
                     </div>
-                    <div class="operation-bar flex gap-1 align-items-start" v-readonlybtn="'Cluster_operation'">
+                    <div
+                      class="operation-bar flex gap-1 align-self-start align-center"
+                      v-readonlybtn="'Cluster_operation'"
+                    >
                       <ElButton
                         size="mini"
                         type="danger"
@@ -291,17 +294,12 @@
                       </el-tooltip>
                       <IconButton sm class="text-primary" @click="addServeFn(item)">bg-add</IconButton>
                       <IconButton sm class="text-primary" @click="editAgent(item)">cluster-setting</IconButton>
-                      <!--<VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
-                        >bg-add
-                      </VIcon>-->
-                      <!--<VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>-->
-                      <!-- <i
-                        class="iconfont icon-icon_tianjia"
-                        v-readonlybtn="'Cluster_operation'"
-                        @click="addServeFn(item)"
-                      ></i> -->
-                      <!-- <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i> -->
-                      <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
+                      <template v-if="item.status !== 'running'">
+                        <ElDivider direction="vertical"></ElDivider>
+                        <ElLink size="small" type="danger" @click="delConfirm(item)">{{
+                          $t('public_button_delete')
+                        }}</ElLink>
+                      </template>
                     </div>
                   </div>
                   <div class="list-box-main" v-if="item.metricValues">
