@@ -109,6 +109,7 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
+            @handle-scroll="handleScroll"
           ></VirtualTree>
         </div>
       </div>
@@ -1066,7 +1067,7 @@ export default {
 
     handleFindTreeDom(val = {}, getParent = false) {
       const el = document.getElementById(`fdm_table_${val.connectionId}_${val.table}`) // this.$refs[`table_${val.connectionId}_${val.table}`]
-      return getParent ? el?.parentNode : el
+      return getParent ? el?.parentNode : this.findParentByClassName(el, 'el-tree-node__content')
     },
 
     async searchByKeywordList(val = []) {
@@ -1106,7 +1107,11 @@ export default {
           this.taskDialogConfig.task.crontabExpression = val
         }
       }
-    }
+    },
+
+    handleScroll: debounce(function () {
+      this.$emit('on-scroll')
+    }, 200)
   }
 }
 </script>

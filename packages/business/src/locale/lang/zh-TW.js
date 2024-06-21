@@ -913,7 +913,9 @@ export default {
   packages_business_data_console_mode_service_tooltip_1: '支援數據集成模式全部能力',
   packages_business_data_console_mode_service_tooltip_2: '支援平台快取企業數據',
   packages_business_data_console_mode_service_tooltip_3: '支援多種下游服務集成與發布管理',
-  packages_business_data_console_fdm_mdm_storage: '平台緩存和加工層存儲',
+  packages_business_data_console_fdm_mdm_storage: '数据层存储',
+  packages_business_data_console_fdm_storage: '平台緩存層存儲',
+  packages_business_data_console_mdm_storage: '平台加工層存儲',
   packages_business_data_console_fdm_mdm_storage_tooltip: '請指定用於額外數據層存儲的數據庫連接',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas 集群',
   packages_business_mongodb_self_hosted_cluster: '自托管 MongoDB 集群',
@@ -1235,5 +1237,8 @@ export default {
   packages_business_sourceOnly: '目標少數據',
   packages_business_targetOnly: '目標多數據',
   packages_business_no_data_correction: '沒有可修復的數據',
-  packages_business_recovering: '修復中'
+  packages_business_recovering: '修復中',
+  packages_business_business_information: '業務信息',
+  packages_business_publish_api: '發佈API',
+  packages_business_field_description: '字段描述'
 }

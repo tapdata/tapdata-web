@@ -1,5 +1,6 @@
 <template>
   <ElDialog
+    append-to-body
     custom-class="t-dialog"
     :visible.sync="visible"
     @update:visible="handleVisible"
@@ -28,6 +29,15 @@
           <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged" class="w-100">
             <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
           </ElSelect>
+        </ElFormItem>
+        <ElFormItem
+          v-if="!params.to"
+          class="flex-1"
+          size="small"
+          :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
+          prop="appValue"
+        >
+          <ListSelect :value.sync="form.appValue" :label.sync="form.appLabel"></ListSelect>
         </ElFormItem>
       </div>
       <ElFormItem :label="$t('public_description')" class="flex-1 form-item-name" size="small" prop="description">
@@ -392,6 +402,7 @@ import i18n from '@tap/i18n'
 import { VCodeEditor } from '@tap/component'
 import { applicationApi, connectionsApi, databaseTypesApi, metadataInstancesApi, modulesApi, roleApi } from '@tap/api'
 import { generateId } from '@tap/shared'
+import ListSelect from '@tap/business/src/views/api-application/ListSelect.vue'
 
 export default {
   name: 'CreateRestApi',
@@ -400,7 +411,7 @@ export default {
     value: Boolean,
     params: Object
   },
-  components: { VCodeEditor },
+  components: { ListSelect, VCodeEditor },
   data() {
     const validateParams = (rule, value, callback) => {
       // eslint-disable-next-line no-control-regex
@@ -435,7 +446,9 @@ export default {
         apiVersion: 'v1',
         prefix: '',
         basePath: '',
-        acl: ['admin']
+        acl: ['admin'],
+        appValue: '',
+        appLabel: ''
       },
       tab: 'form',
       isEdit: true,
@@ -448,7 +461,14 @@ export default {
         param: [{ required: true, validator: validateParams, trigger: ['blur', 'change'] }],
         basePath: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
-        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }]
+        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        appValue: [
+          {
+            required: true,
+            message: i18n.t('packages_business_data_server_drawer_qingxuanzesuoshu'),
+            trigger: ['blur', 'change']
+          }
+        ]
       },
       apiTypeMap: {
         defaultApi: i18n.t('packages_business_morenchaxun'),
@@ -537,12 +557,17 @@ export default {
       this.debugMethod = 'GET'
       this.debugResult = ''
       this.allFields = []
-      this.$refs?.form?.clearValidate()
+
       this.formatData(formData || {})
 
       if (!this.data.id) {
         this.edit()
       }
+
+      this.$nextTick(() => {
+        // this.$refs.form?.clearValidate('appValue')
+        this.$refs?.form?.clearValidate()
+      })
     },
     tabChanged() {
       this.isEdit = false
@@ -597,7 +622,9 @@ export default {
         where: path.where || [],
         sort: path.sort || [],
         path: path.path || '',
-        acl: path.acl
+        acl: path.acl,
+        appValue: this.params.to?.id || '',
+        appLabel: this.params.to?.value || ''
       }
       this.form.description = this.data.description
       this.form.acl = path.acl || ['admin']
@@ -664,6 +691,9 @@ export default {
       // 若为新建时，则默认值为 ‘默认查询(defaultApi)’ 的值
       this.form.pathAccessMethod = this.data?.pathAccessMethod || 'default'
 
+      this.form.appValue = this.params.to?.id || ''
+      this.form.appLabel = this.params.to?.value || ''
+
       let baseUrl = this.host + this.form.path
       this.urls = {
         POST: `${baseUrl}/find`,
@@ -715,7 +745,9 @@ export default {
             connectionName,
             apiVersion,
             prefix,
-            pathAccessMethod
+            pathAccessMethod,
+            appValue,
+            appLabel
           } = this.form
 
           if (params.some(it => !it.name.trim())) {
@@ -746,8 +778,8 @@ export default {
             pathAccessMethod: pathAccessMethod, // 冗余老字段
             listtags: [
               {
-                id: this.params.to.id,
-                value: this.params.to.value
+                id: appValue,
+                value: appLabel
               }
             ], // 冗余老字段
 

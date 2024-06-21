@@ -960,6 +960,8 @@ export default {
   packages_business_data_console_mode_service_tooltip_2: 'Data Cache Layer In Platform',
   packages_business_data_console_mode_service_tooltip_3: 'Support Multiple Service Publish',
   packages_business_data_console_fdm_mdm_storage: 'Data Center Storage',
+  packages_business_data_console_fdm_storage: 'Foundation Data Model Storage',
+  packages_business_data_console_mdm_storage: 'Master Data Model Storage',
   packages_business_data_console_fdm_mdm_storage_tooltip:
     'Specify the database connection that will be used for additional data layer storage',
   packages_business_mongodb_atlas_cluster: 'MongoDB Atlas Cluster',
@@ -1307,5 +1309,8 @@ export default {
   packages_business_sourceOnly: 'Target with Less data',
   packages_business_targetOnly: 'Target with More Data',
   packages_business_no_data_correction: 'No data available for correction',
-  packages_business_recovering: 'Under Correction'
+  packages_business_recovering: 'Under Correction',
+  packages_business_business_information: 'Business Information',
+  packages_business_publish_api: 'Publish API',
+  packages_business_field_description: 'Field Description'
 }

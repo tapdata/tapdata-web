@@ -159,6 +159,7 @@ export const SchemaPreview = defineComponent({
           </VIcon>
         )
       } else if (data.indicesUnique) {
+        const indexStr = String(data.indicesUnique[1])
         icon = (
           <ElTooltip
             placement="top"
@@ -171,7 +172,10 @@ export const SchemaPreview = defineComponent({
           >
             <span class="flex align-center field-icon position-absolute">
               <VIcon size="12">fingerprint</VIcon>
-              <span style={`--index: '${data.indicesUnique[1]}';`} class="fingerprint-sub"></span>
+              <span
+                style={`--index: '${indexStr}';--zoom: ${1 - indexStr.length * 0.2};`}
+                class="fingerprint-sub"
+              ></span>
             </span>
           </ElTooltip>
         )

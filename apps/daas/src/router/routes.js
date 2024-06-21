@@ -506,7 +506,7 @@ export default [
             }
           },
           {
-            path: '/dataVerifyResult/:id/history',
+            path: '/dataVerifyResult/:inspectId/:id/history',
             name: 'VerifyDiffHistory',
             component: VerificationHistory,
             meta: {

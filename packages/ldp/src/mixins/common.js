@@ -181,7 +181,7 @@ export default {
       this.searchIng = true
       const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
       const map = result.reduce((obj, item) => {
-        let id = item.listtags[0].id
+        let id = item.listtags?.[0]?.id || this.directory.id
         let children = obj[id] || []
         children.push(item)
         obj[id] = children
@@ -257,6 +257,13 @@ export default {
         def = arr.pop() + 1
       }
       return `${source}${def}`
+    },
+
+    findParentByClassName(parent, cls) {
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
     }
   }
 }

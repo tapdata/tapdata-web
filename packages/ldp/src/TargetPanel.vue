@@ -1104,7 +1104,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      this.$emit('on-scroll')
     }, 200),
 
     searchByKeywordList(val = []) {

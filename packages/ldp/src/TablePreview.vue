@@ -9,7 +9,7 @@
   >
     <header class="px-6 pt-3">
       <div class="mb-2 flex align-center">
-        <span class="table-name inline-block">{{ selected.name }}</span>
+        <span class="table-name inline-block ellipsis">{{ selected.name }}</span>
         <ElTooltip
           v-if="swimType !== 'source'"
           :disabled="!canClickStatus"
@@ -17,15 +17,39 @@
           placement="top"
         >
           <span
-            class="flex align-center justify-center py-1"
-            :class="['status', 'ml-4', 'status-' + tableStatus, { clickable: canClickStatus }]"
+            class="flex align-center justify-center py-1 status mx-3"
+            :class="['status-' + tableStatus, { clickable: canClickStatus }]"
             @click="handleClickStatus"
           >
             <VIcon v-if="canClickStatus" class="mr-1">question-circle</VIcon
             ><span class="lh-1">{{ statusMap[tableStatus] }}</span></span
           >
         </ElTooltip>
-        <ElButton v-if="swimType === 'mdm'" class="ml-auto" size="mini" type="danger" plain @click="handleDelete">
+        <div class="flex-grow-1"></div>
+        <!--<el-button-group>
+          <ElButton plain @click="handleCreateTask">
+            {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
+          </ElButton>
+          <ElButton plain @click="handleCreateAPI"> 发布API </ElButton>
+          <ElButton v-if="swimType === 'mdm'" plain @click="handleDelete">
+            <VIcon class="mr-1">delete</VIcon>
+            {{ $t('public_button_delete') }}
+          </ElButton>
+        </el-button-group>-->
+        <ElButton class="flex-shrink-0" size="mini" type="primary" @click="handleCreateTask">
+          {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
+        </ElButton>
+        <ElButton
+          v-if="apiSupportTypes.includes(connection.database_type)"
+          class="flex-shrink-0"
+          size="mini"
+          type="primary"
+          plain
+          @click="handleCreateAPI"
+        >
+          {{ $t('packages_business_publish_api') }}
+        </ElButton>
+        <ElButton v-if="swimType === 'mdm'" class="flex-shrink-0" size="mini" type="danger" plain @click="handleDelete">
           <VIcon class="mr-1">delete</VIcon>
           {{ $t('public_button_delete') }}
         </ElButton>
@@ -40,61 +64,162 @@
         >
         <template v-if="swimType !== 'source'">
           <span
-            ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}：</span
+            ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}: </span
             ><span class="table-dec-txt text-nowrap">{{ lastDataChangeTime || '-' }}</span></span
           >
           <span
-            ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}：</span
+            ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}: </span
             ><span class="table-dec-txt text-nowrap">{{ cdcDelayTime || '-' }}</span></span
           >
         </template>
       </div>
+      <ElDivider class="my-3"></ElDivider>
+      <el-row>
+        <el-col :span="4">
+          <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
+          <div class="table-dec-txt mt-2">{{ numOfRows || '-' }}</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
+          <div class="table-dec-txt mt-2">{{ tableFields.length }}</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
+          <div class="table-dec-txt mt-2">{{ storageSize || '-' }}</div>
+        </el-col>
+        <el-col :span="12">
+          <div class="table-dec-label">{{ $t('public_connection') }}</div>
+          <div class="table-dec-txt mt-2 flex align-center text-break" v-if="detailData">
+            <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" />
+            <span class="min-w-0">{{ detailData.connectionName }}</span>
+          </div>
+        </el-col>
+      </el-row>
+      <ElDivider class="mt-3 mb-0"></ElDivider>
+      <!--<div class="flex flex-wrap align-center row-gap-2 col-gap-8 mt-4">
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_rows') }}: </span>
+          <span class="table-dec-txt">{{ numOfRows || '-' }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_columns') }}: </span>
+          <span class="table-dec-txt">{{ tableFields.length }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_storage_size') }}: </span>
+          <span class="table-dec-txt">{{ storageSize || '-' }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('public_connection') }}: </span>
+          <span class="table-dec-txt inline-flex align-center text-break" v-if="detailData">
+            <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" />
+            <span class="min-w-0">{{ detailData.connectionName }}</span>
+          </span>
+        </span>
+        <span class="ellipsis">
+          <span class="table-dec-label mb-4">{{ $t('packages_ldp_table_comment') }}：</span>
+          <span class="table-dec-txt">{{ detailData.comment || '-' }}</span>
+        </span>
+      </div>-->
+
+      <!--<div class="table-detail-list align-center">
+        <span class="inline-flex align-center text-uppercase text-nowrap">
+          <VIcon class="mr-1" size="18">table</VIcon> {{ $t('public_table') }}</span
+        >
+        <span class="inline-flex align-center">
+          <VIcon class="mr-1" size="18">database</VIcon>
+          <span class="text-nowrap">{{ databaseName }}</span></span
+        >
+        <template v-if="swimType !== 'source'">
+          <span
+            ><span class="table-dec-label">{{ $t('packages_business_last_data_change_time') }}: </span
+            ><span class="table-dec-txt text-nowrap">{{ lastDataChangeTime || '-' }}</span></span
+          >
+          <span
+            ><span class="table-dec-label">{{ $t('packages_business_cdc_delay_time') }}: </span
+            ><span class="table-dec-txt text-nowrap">{{ cdcDelayTime || '-' }}</span></span
+          >
+        </template>
+
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_rows') }}: </span>
+          <span class="table-dec-txt">{{ numOfRows || '-' }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_columns') }}: </span>
+          <span class="table-dec-txt">{{ tableFields.length }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('packages_business_storage_size') }}: </span>
+          <span class="table-dec-txt">{{ storageSize || '-' }}</span>
+        </span>
+        <span>
+          <span class="table-dec-label">{{ $t('public_connection') }}: </span>
+          <span class="table-dec-txt inline-flex align-center text-break" v-if="detailData">
+            <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" />
+            <span class="min-w-0">{{ detailData.connectionName }}</span>
+          </span>
+        </span>
+      </div>-->
     </header>
     <section class="flex-1 min-h-0 mt-1">
       <el-tabs v-model="activeName" class="h-100 table-preview-tabs tabs-fill">
-        <el-tab-pane :label="$t('packages_business_overview')" name="overView">
+        <el-tab-pane :label="$t('packages_business_business_information')" name="overView">
           <div class="p-4" v-loading="loading">
             <section class="bg-white rounded-lg p-3 border border-gray-200">
-              <div class="mb-4">
+              <!--<div class="flex align-center">
+                <h3 class="fs-6">Table Summary</h3>
+                <ElLink class="ml-auto" type="primary">
+                  <VIcon>edit-outline</VIcon>
+                  {{ $t('public_button_edit') }}
+                </ElLink>
+              </div>-->
+
+              <!--<div class="mb-4">
                 <span class="table-dec-label mb-4">{{ $t('packages_ldp_table_comment') }}：</span>
                 <span class="font-color-sslight">{{ detailData.comment || '-' }}</span>
-              </div>
-              <div class="mb-4">
-                <span class="table-dec-label mb-4">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}：</span>
-                <el-input
-                  type="textarea"
-                  row="4"
-                  class="table-dec-txt mt-2"
-                  v-model="detailData.description"
-                  :autosize="{ minRows: 2 }"
-                  @blur="saveTableDesc"
-                ></el-input>
-              </div>
-              <el-row>
-                <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_rows') }}</div>
-                  <div class="table-dec-txt mt-4">{{ numOfRows || '-' }}</div>
-                </el-col>
-                <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_columns') }}</div>
-                  <div class="table-dec-txt mt-4">{{ tableFields.length }}</div>
-                </el-col>
-                <el-col :span="4">
-                  <div class="table-dec-label">{{ $t('packages_business_storage_size') }}</div>
-                  <div class="table-dec-txt mt-4">{{ storageSize || '-' }}</div>
-                </el-col>
-                <el-col :span="12">
-                  <div class="table-dec-label">{{ $t('public_connection') }}</div>
-                  <div class="table-dec-txt mt-4 flex align-center text-break" v-if="detailData">
-                    <DatabaseIcon v-if="connection" class="mr-1 flex-shrink-0" :item="connection" :size="18" />
-                    <span class="min-w-0">{{ detailData.connectionName }}</span>
+              </div>-->
+              <div>
+                <div class="flex align-center gap-2 px-1 mb-2">
+                  <span class="rounded-lg title-icon-wrap inline-flex align-center justify-center">
+                    <VIcon class="color-primary" size="20">read-outlined</VIcon>
+                  </span>
+
+                  <span class="font-color-dark fs-6 fw-sub">{{ $t('datadiscovery_previewdrawer_yewumiaoshu') }}</span>
+                  <div class="flex-grow-1"></div>
+                  <ElLink v-if="!descIsEdit" type="primary" @click="descIsEdit = true">
+                    <VIcon>edit-outline</VIcon>
+                    {{ $t('public_button_edit') }}
+                  </ElLink>
+                  <template v-else>
+                    <ElLink type="primary" @click="descIsEdit = false">
+                      {{ $t('public_button_save') }}
+                    </ElLink>
+                    <ElLink type="primary" @click="descIsEdit = false">
+                      {{ $t('public_button_cancel') }}
+                    </ElLink>
+                  </template>
+                </div>
+                <VEmpty small v-if="!detailData.description && !descIsEdit"></VEmpty>
+                <template v-else>
+                  <div v-if="!descIsEdit" class="text-prewrap px-1 py-2 lh-base overflow-x-auto">
+                    {{ detailData.description }}
                   </div>
-                </el-col>
-              </el-row>
+                  <el-input
+                    v-else
+                    type="textarea"
+                    row="4"
+                    class="table-dec-txt"
+                    v-model="detailData.description"
+                    :autosize="{ minRows: 2 }"
+                    @blur="saveTableDesc"
+                  ></el-input>
+                </template>
+              </div>
             </section>
             <section class="mt-4 bg-white rounded-lg overflow-hidden border border-gray-200">
               <el-tabs v-model="activeNameItems" class="tabs-fill tabs-as-card">
-                <el-tab-pane :label="$t('packages_business_columns_preview')" name="columnsPreview">
+                <el-tab-pane :label="$t('packages_business_field_description')" name="columnsPreview">
                   <VTable
                     class="discovery-page-table"
                     :columns="columnsPreview"
@@ -512,7 +637,9 @@ export default {
       asTaskType: 'all',
       connection: null,
       taskLoading: false,
-      isTableView: false
+      isTableView: false,
+      descIsEdit: false,
+      apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris']
     }
   },
 
@@ -1001,12 +1128,30 @@ export default {
         const errorTask = this.targetTask.find(task => task.status === 'error')
         errorTask && this.handleClickName(errorTask)
       }
+    },
+
+    handleCreateAPI() {
+      this.$emit('create-api', this.connection, this.selected)
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.col-gap-8 {
+  column-gap: 2rem;
+}
+.row-gap-2 {
+  row-gap: 0.5rem;
+}
+.row-gap-4 {
+  row-gap: 1rem;
+}
+.title-icon-wrap {
+  width: 32px;
+  height: 32px;
+  background: rgba(244, 246, 253, 1);
+}
 .sw-table-drawer {
   ::v-deep {
     .el-tabs__nav-wrap {
@@ -1086,6 +1231,12 @@ export default {
     &:hover {
       background-color: rgb(239, 240, 241);
     }
+  }
+
+  .table-detail-list {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    grid-gap: 16px;
   }
 }
 </style>

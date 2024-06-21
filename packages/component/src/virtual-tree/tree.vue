@@ -12,12 +12,13 @@
     <virtual-list
       v-if="height"
       :class="wrapperClassName"
-      :style="{ 'max-height': height, 'overflow-y': 'auto' }"
+      :style="{ 'max-height': height, 'overflow-y': 'auto', position: 'relative' }"
       :keeps="keeps"
       :data-key="getNodeKey"
       :data-sources="visibleList"
       :data-component="itemComponent"
       :extra-props="{
+        props: props,
         renderAfterExpand,
         showCheckbox,
         renderContent,
