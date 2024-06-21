@@ -46,7 +46,7 @@ export default {
   packages_business_connection_form_source_and_target_tip: `此數據連接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同時作為源和目標使用`,
   packages_business_connection_form_source_tip: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
   packages_business_connection_form_target_tip: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
-  packages_business_connection_form_shared_mining: '共享挖掘',
+  packages_business_connection_form_shared_mining: '使用共享挖掘',
   packages_business_connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
   packages_business_connection_form_access_node: 'agent設置',
@@ -1240,5 +1240,7 @@ export default {
   packages_business_recovering: '修復中',
   packages_business_business_information: '業務信息',
   packages_business_publish_api: '發佈API',
-  packages_business_field_description: '字段描述'
+  packages_business_field_description: '字段描述',
+  packages_business_shared_cache_enforceShareCdc: '當共享挖掘不可用(緩存啓動時)',
+  packages_business_shared_cache_enforceShareCdc_true: '緩存直接報錯停止'
 }

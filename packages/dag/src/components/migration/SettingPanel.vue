@@ -644,6 +644,9 @@ export default observer({
                                 type: 'boolean',
                                 default: false,
                                 'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  tooltip: i18n.t('packages_business_connection_form_shared_mining_tip')
+                                },
                                 'x-component': 'Switch',
                                 'x-reactions': {
                                   dependencies: ['type'],
