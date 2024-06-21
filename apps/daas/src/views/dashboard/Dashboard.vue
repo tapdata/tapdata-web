@@ -179,7 +179,7 @@
                 <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
                 <el-row :gutter="20" v-if="serverTable.length">
                   <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
-                    <div class="server-list-box">
+                    <div class="server-list-box rounded-4">
                       <img src="../../assets/images/serve.svg" />
                       <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
                       <div class="server-main ml-5">
@@ -489,6 +489,30 @@ export default {
       }
       clusterApi.get(params).then(data => {
         let items = data?.items || []
+        items.map(item => {
+          const { management, engine, apiServer } = item
+          const isStopped = item.status !== 'running'
+
+          // 停止了上报状态后，因为不再上报状态了，所以各个服务的状态就不再更新了。
+          if (isStopped) {
+            if (management) {
+              management.status = 'stopped'
+              management.serviceStatus = 'stopped'
+            }
+            if (engine) {
+              engine.status = 'stopped'
+              engine.serviceStatus = 'stopped'
+              engine.netStat = []
+              engine.netStatTotals = 0
+            }
+            if (apiServer) {
+              apiServer.status = 'stopped'
+              apiServer.serviceStatus = 'stopped'
+            }
+          }
+
+          return item
+        })
         this.serverProcess.tableData = items
         this.serverTable = items
       })
