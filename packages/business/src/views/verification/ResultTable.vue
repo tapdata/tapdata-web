@@ -29,9 +29,13 @@
       </template>
     </ElTableColumn>
     <ElTableColumn prop="progress" :label="$t('packages_business_verification_verifyProgress')" width="120px">
-      <template slot-scope="scope">
+      <template #default="{ row }">
         <div>
-          <span>{{ `${scope.row.progress ? Math.floor(scope.row.progress * 100) : 0}%` }}</span>
+          <span v-if="!row.recovering">{{ `${row.progress ? Math.floor(row.progress * 100) : 0}%` }}</span>
+          <template v-else>
+            <img style="width: 26px; vertical-align: middle" :src="require('@tap/assets/icons/loading.svg')" />
+            <span>{{ $t('packages_business_recovering') }}</span>
+          </template>
         </div>
       </template>
     </ElTableColumn>
