@@ -1871,9 +1871,11 @@ function validate(sourceRow){
       if (val !== 'custom') {
         item.source.columns = null
         item.target.columns = null
-        return
+      } else {
+        this.handleCustomFields(item, index)
       }
-      this.handleCustomFields(item, index)
+
+      item.modeType = val // 防止 SchemaToForm 回流
     },
 
     handleChangeFields(data = [], index) {
