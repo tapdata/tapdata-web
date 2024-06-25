@@ -317,7 +317,7 @@ export default {
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
         let filterObj = { like: escapeRegExp(keyword), options: 'i' }
-        where['or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
+        where['$or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
       }
       if (enabled) {
         where.enabled = enabled == 1
