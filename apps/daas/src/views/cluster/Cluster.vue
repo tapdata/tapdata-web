@@ -274,24 +274,15 @@
                         @click="updateFn(item, item.management.status, 'management', 'update')"
                         >{{ $t('cluster_update') }}
                       </ElButton>
-                      <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
-                        <IconButton
-                          sm
-                          class="text-primary"
-                          :disabled="item.management.status !== 'running'"
-                          @click="downServeFn(item)"
-                          >connectors</IconButton
-                        >
-                      </el-tooltip>
-                      <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
-                        <IconButton
-                          sm
-                          class="text-primary"
-                          :disabled="item.management.status !== 'running'"
-                          @click="downConnectorsFn(item)"
-                          >supervisor</IconButton
-                        >
-                      </el-tooltip>
+                      <template v-if="item.engine.status === 'running'">
+                        <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
+                          <IconButton sm class="text-primary" @click="downServeFn(item)">connectors</IconButton>
+                        </el-tooltip>
+                        <el-tooltip :content="$t('instance_details_shujuyuanziyuan')" placement="top">
+                          <IconButton sm class="text-primary" @click="downConnectorsFn(item)">supervisor</IconButton>
+                        </el-tooltip>
+                      </template>
+
                       <IconButton sm class="text-primary" @click="addServeFn(item)">bg-add</IconButton>
                       <IconButton sm class="text-primary" @click="editAgent(item)">cluster-setting</IconButton>
                       <template v-if="item.status !== 'running'">
