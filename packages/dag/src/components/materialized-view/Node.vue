@@ -394,10 +394,6 @@ export default {
     if (this.node && this.ins) {
       this.__init()
     }
-
-    setTimeout(() => {
-      console.log('schema', this.schema)
-    }, 3000)
   },
 
   methods: {
@@ -825,9 +821,13 @@ export default {
     async onChangeTable(table) {
       this.node.tableName = table
       this.dagNode.name = table
-      let result = this.updateDag()
+      // let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })
       this.$emit('load-schema')
+      setTimeout(() => {
+        // 任务保存后，立即查模型可能查不到
+        this.$emit('load-schema')
+      }, 100)
     },
 
     onTableSelect(table) {
