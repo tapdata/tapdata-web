@@ -280,12 +280,12 @@ export const FieldAddDel = connect(
       },
       methods: {
         isRemove(field) {
-          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && v.operand)
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && v.operand === 'true')
           return ops && ops.length > 0
         },
         isRest(field) {
           //撤回删除
-          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && !v.operand)
+          let ops = this.operations.filter(v => v.field === field && v.op === 'REMOVE' && v.operand === 'false')
           return ops && ops.length > 0
         },
         isCreate(field) {
@@ -503,7 +503,7 @@ export const FieldAddDel = connect(
               let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
                 id: field.id,
                 field: field.previousFieldName,
-                operand: !self.deleteAllFieldsData,
+                operand: String(!self.deleteAllFieldsData),
                 table_name: field.table_name,
                 type: field.data_type,
                 primary_key_position: field.primary_key_position,
@@ -515,7 +515,7 @@ export const FieldAddDel = connect(
                 if (index > -1) {
                   operations.splice(index, 1)
                 }
-                op.operand = isReset ? false : true
+                op.operand = isReset ? 'false' : 'true'
               }
               operations.push(op)
               if (field.children) {
