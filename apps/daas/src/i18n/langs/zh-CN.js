@@ -603,7 +603,7 @@ export default {
   cluster_cpu_usage: 'CPU使用率',
   cluster_heap_memory_usage: '堆内存使用率',
   instance_details_shujuyuanziyuan: '数据源资源下载',
-  instance_details_xianchengziyuanxia: '线程资源下载',
+  instance_details_xianchengziyuanxia: '同步治理线程资源下载',
   cluster_update: '更新',
   cluster_running: '运行中',
   cluster_stopped: '已停止',

@@ -605,7 +605,7 @@ export default {
   cluster_sync_gover: '同步治理',
   cluster_manage_sys: '管理後台',
   instance_details_shujuyuanziyuan: '資料源資源下載',
-  instance_details_xianchengziyuanxia: '執行緒資源下載',
+  instance_details_xianchengziyuanxia: '同步治理執行緒資源下載',
   cluster_add_server_mon: '添加服務監控',
   cluster_agentSetting: 'Agent 服務器設置',
   cluster_server_name: '服務器名稱',
