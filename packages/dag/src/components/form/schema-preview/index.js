@@ -108,8 +108,11 @@ export const SchemaPreview = defineComponent({
     // 加载dataTypesJson
     const dataTypesJson = ref({})
     const loadDatatypesjson = async () => {
-      const pdkHashData = await databaseTypesApi.pdkHash(form.values.attrs?.pdkHash)
-      dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+      const pdkHash = form.values.attrs?.pdkHash
+      if (pdkHash) {
+        const pdkHashData = await databaseTypesApi.pdkHash(form.values.attrs?.pdkHash)
+        dataTypesJson.value = pdkHashData ? JSON.parse(pdkHashData?.expression || '{}') : {}
+      }
     }
 
     const mapSchema = schema => {

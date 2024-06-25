@@ -474,7 +474,6 @@ const mutations = {
         if (isObject(sourceValue) && targetValue) {
           syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
         } else {
-          // 如果属性是基本类型，直接更新
           if (targetValue !== sourceValue) {
             Vue.set(target, key, sourceValue)
           }
