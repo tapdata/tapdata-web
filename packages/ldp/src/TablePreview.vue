@@ -327,10 +327,10 @@
                   <ElRadioButton label="source">{{ $t('packages_business_as_source') }}</ElRadioButton>
                   <ElRadioButton label="target">{{ $t('packages_business_as_target') }}</ElRadioButton>
                 </ElRadioGroup>
-                <ElDivider class="mx-3" direction="vertical"></ElDivider>
+                <!--<ElDivider class="mx-3" direction="vertical"></ElDivider>
                 <span class="color-primary cursor-pointer" @click="handleCreateTask">{{
                   $t('packages_business_swimlane_tablepreview_chuangjianrenwu')
-                }}</span>
+                }}</span>-->
               </div>
               <ElDivider class="my-0"></ElDivider>
               <el-table
