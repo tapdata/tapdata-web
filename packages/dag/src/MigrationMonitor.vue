@@ -309,7 +309,8 @@ export default {
       upgradeFeeVisible: false,
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: ''
+      upgradeChargesVisibleTips: '',
+      noNeedRefresh: false // 如果进入页面任务是停止运行状态，无需刷新
     }
   },
 
@@ -359,14 +360,22 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== v2) {
-        this.init()
-      }
       this.watchStatusCount++
+
       if (this.watchStatusCount === 1) {
+        // 进入页面后首次执行
         const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
+        this.noNeedRefresh = ['error', 'schedule_failed', 'stop', 'complete'].includes(v1)
+      } else {
+        // 状态变化，重置自动刷新状态
+        this.noNeedRefresh = false
+        this.extraEnterCount = 0
+      }
+
+      if (v1 !== v2) {
+        this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
     },
@@ -422,7 +431,9 @@ export default {
     polling() {
       if (
         this.isEnterTimer ||
-        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        (!this.noNeedRefresh &&
+          ['error', 'schedule_failed', 'stop', 'complete'].includes(this.dataflow.status) &&
+          ++this.extraEnterCount < 4)
       ) {
         this.startLoadData()
       }
