@@ -7,7 +7,7 @@
     v-loading="loading"
     :element-loading-text="`${$t('packages_business_loading')}...\n${$t('packages_ldp_lineage_loading_tips')}`"
   >
-    <PaperScroller ref="paperScroller">
+    <PaperScroller ref="paperScroller" @change-scale="handleChangeScale">
       <TableNode
         v-for="node in allNodes"
         class="shadow-sm"
@@ -479,6 +479,10 @@ export default {
           )
         })
       }, 15)
+    },
+
+    handleChangeScale(scale) {
+      this.jsPlumbIns.setZoom(scale)
     }
   }
 }

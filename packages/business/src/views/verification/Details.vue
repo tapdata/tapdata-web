@@ -12,7 +12,7 @@
             <ElRadioButton label="failed">{{ $t('packages_business_verification_inconsistent') }}</ElRadioButton>
           </ElRadioGroup>
         </div>
-        <div v-if="inspect.inspectMethod !== 'row_count'">
+        <div v-if="!isCountOrHash">
           <div class="flex align-items-center">
             <div v-if="resultInfo.parentId" class="color-info flex align-items-center" style="font-size: 12px">
               {{ $t('packages_business_verification_last_start_time') }}: {{ inspect.lastStartTimeFmt }}
@@ -20,11 +20,19 @@
                 $t('packages_business_verification_button_diff_task_history')
               }}</ElLink>
             </div>
+
+            <!-- 一键修复 -->
+            <ElButton v-if="inspect.canRecovery && canStart" type="primary" @click="handleCorrection">{{
+              $t('packages_business_data_correction')
+            }}</ElButton>
+
+            <!-- 差异校验 -->
             <div
               v-if="
                 inspect.result !== 'passed' &&
                 !['running', 'scheduling'].includes(inspect.status) &&
-                !(inspect.status === 'error' && !resultInfo.parentId)
+                !(inspect.status === 'error' && !resultInfo.parentId) &&
+                canStart
               "
               class="flex align-items-center ml-4"
             >
@@ -41,32 +49,44 @@
           </div>
         </div>
       </div>
-      <div v-if="errorMsg && (type === 'row_count' || type === 'hash')" class="error-tips mt-4 px-4">
-        <VIcon class="color-danger">error</VIcon>
-        <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
-        <span>
-          <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-            expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
-          }}</ElLink>
-          <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
+      <div v-if="errorMsg && isCountOrHash" class="error-tips mt-4 pl-4 pr-0 rounded-lg">
+        <VIcon size="16" class="color-danger mt-0.5">error</VIcon>
+        <span
+          ref="errorSummary"
+          class="mx-2 flex-1"
+          :class="{ ellipsis: !expandErrorMessage, 'text-pre': expandErrorMessage }"
+          >{{ expandErrorMessage ? errorMsg : errorSummary }}</span
+        >
+        <span class="sticky-top-0 end-0 px-2 flex-shrink-0 align-self-start" style="background: inherit">
+          <ElLink
+            v-if="hasMoreErrorMsg"
+            class="align-middle"
+            type="danger"
+            @click="expandErrorMessage = !expandErrorMessage"
+            >{{
+              expandErrorMessage ? $t('packages_business_verification_details_shouqi') : $t('public_button_expand')
+            }}</ElLink
+          >
+          <IconButton class="ml-2 color-info align-middle" size="12" @click="errorMsg = ''" sm>close</IconButton>
         </span>
       </div>
-      <!--        v-loading="['running', 'scheduling'].includes(inspect.status)"-->
       <div
         class="result-table mt-4"
         v-if="inspect"
         :element-loading-text="$t('packages_business_verification_checking')"
       >
-        <!--        <template v-if="!['running', 'scheduling'].includes(inspect.status)">-->
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView
-          v-if="type !== 'row_count' && type !== 'hash'"
-          ref="resultView"
-          :remoteMethod="getResultData"
-        ></ResultView>
-        <!--        </template>-->
+        <ResultView v-if="!isCountOrHash" ref="resultView" :remoteMethod="getResultData"></ResultView>
       </div>
     </div>
+
+    <DataCorrectionDialog
+      v-if="inspect.id"
+      :visible="dataCorrection.visible"
+      :inspectId="inspect.id"
+      @update:visible="dataCorrection.visible = $event"
+      @started="onStarted"
+    ></DataCorrectionDialog>
   </section>
 </template>
 <style lang="scss">
@@ -106,18 +126,25 @@
   display: flex;
   overflow: auto;
 }
+.sticky-top-0 {
+  position: sticky;
+  top: 0;
+}
 </style>
 <script>
 import i18n from '@tap/i18n'
 
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import DataCorrectionDialog from './components/DataCorrectionDialog'
 import dayjs from 'dayjs'
 import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
 import { inspectMethod as typeMap } from './const'
+import { checkEllipsisActive } from '@tap/shared'
+import { IconButton } from '@tap/component'
 
 export default {
-  components: { ResultTable, ResultView },
+  components: { ResultTable, ResultView, DataCorrectionDialog, IconButton },
   data() {
     return {
       loading: false,
@@ -127,7 +154,11 @@ export default {
       errorMsg: '',
       taskId: null,
       expandErrorMessage: false,
-      resultFilter: ''
+      resultFilter: '',
+      dataCorrection: {
+        visible: false
+      },
+      hasMoreErrorMsg: false
     }
   },
   computed: {
@@ -143,6 +174,25 @@ export default {
     },
     verifyType() {
       return this.resultInfo?.inspect?.inspectMethod
+    },
+    isCountOrHash() {
+      return this.inspect?.inspectMethod === 'row_count' || this.inspect?.inspectMethod === 'hash'
+    },
+    canStart() {
+      return this.inspect.permissionActions?.includes('Start')
+    },
+    showDataCorrection() {
+      return (
+        (this.type === 'field' || this.type === 'jointField') &&
+        this.inspect.flowId &&
+        this.inspect.status === 'done' &&
+        this.inspect.result === 'failed'
+      )
+    },
+    errorSummary() {
+      if (this.errorMsg) {
+        return this.errorMsg.split('\n').shift()
+      }
     }
   },
   created() {
@@ -186,12 +236,13 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  this.checkErrorMsg()
                   if (!this.taskId) {
                     this.taskId = stats[0].taskId
                   }
                   this.$nextTick(() => {
                     this.$refs.resultView?.fetch(1)
-                    if (this.type !== 'row_count' && showLoading && this.type !== 'hash') {
+                    if (!this.isCountOrHash && showLoading) {
                       this.$refs.singleTable?.setCurrentRow(stats[0])
                     }
                     if (this.taskId) {
@@ -341,7 +392,8 @@ export default {
       let route = this.$router.resolve({
         name: 'VerifyDiffHistory',
         params: {
-          id: this.resultInfo.firstCheckId
+          id: this.resultInfo.firstCheckId,
+          inspectId: this.resultInfo.inspect_id
         }
       })
       url = route.href
@@ -363,6 +415,22 @@ export default {
         }
         item['details'] = item['details'] || []
         item['details'].push(node)
+      })
+    },
+
+    handleCorrection() {
+      this.dataCorrection.visible = true
+    },
+
+    onStarted() {
+      this.dataCorrection.visible = false
+      this.getData()
+    },
+
+    checkErrorMsg() {
+      this.$nextTick(() => {
+        const dom = this.$refs.errorSummary
+        this.hasMoreErrorMsg = dom ? this.errorMsg.split('\n').length > 1 || checkEllipsisActive(dom) : false
       })
     }
   }

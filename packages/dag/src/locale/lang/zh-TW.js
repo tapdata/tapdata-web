@@ -45,7 +45,7 @@ export default {
   packages_dag_task_setting_syncPoint_tip: '任務將從該時間點開始收集增量日誌',
   packages_dag_task_setting_automatic_index: '自動創建索引',
   packages_dag_task_setting_stop_on_error: '遇到錯誤停止',
-  packages_dag_connection_form_shared_mining: '共享挖掘',
+  packages_dag_connection_form_shared_mining: '使用共享挖掘',
   packages_dag_task_list_verify: '數據校驗',
   packages_dag_task_setting_is_schedule: '定期調度任務',
   packages_dag_dag_data_setting_expression: '表達式：',

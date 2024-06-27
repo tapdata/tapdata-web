@@ -50,7 +50,7 @@ export default {
   packages_dag_task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
   packages_dag_task_setting_automatic_index: 'Automatically create an index',
   packages_dag_task_setting_stop_on_error: 'Stop on error',
-  packages_dag_connection_form_shared_mining: 'CDC Log Caching',
+  packages_dag_connection_form_shared_mining: 'Using CDC Log Caching',
   packages_dag_task_list_verify: 'Data Validation',
   packages_dag_task_setting_is_schedule: 'Scheduled tasks regularly',
   packages_dag_dag_data_setting_expression: 'Expression:',

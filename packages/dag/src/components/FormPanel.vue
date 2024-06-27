@@ -224,9 +224,10 @@ export default {
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
         if (node && !deepEqual(form.values, node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
+          console.log('还是更新了')
           this.updateNodeProps(form)
         }
-      }, 60)
+      }, 40)
     },
 
     // 更新节点属性
@@ -254,11 +255,13 @@ export default {
       // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
+        console.log('onFormValuesChange')
         this.updateNodePropsDebounce(form)
       })
 
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
+        console.log('onFormInputChange')
         this.updateNodeProps(form)
       })
 

@@ -180,7 +180,6 @@ export default {
       'setActiveNode',
       'addActiveAction',
       'removeActiveAction',
-      '<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>NodeProperties',
       'resetSelectedNodes',
       'setNodeError',
       'clearNodeError'

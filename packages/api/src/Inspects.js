@@ -7,5 +7,13 @@ export default class Inspect extends Http {
   getTaskList() {
     return this.axios.get(`${this.url}/task-list`)
   }
+
+  getVerifyInfo(id) {
+    return this.axios.get(`${this.url}/${id}/recovery/start-verify`)
+  }
+
+  startRecovery(id) {
+    return this.axios.put(`${this.url}/${id}/recovery/start`)
+  }
 }
 export { Inspect }
