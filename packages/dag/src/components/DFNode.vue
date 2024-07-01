@@ -291,15 +291,9 @@ export default {
         }
       })
 
-      this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
+      this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
         uuid: id + '_target'
       })
-
-      // if (this.data.type !== 'table') {
-      //   this.targetPoint.setType('warn')
-      // }
-
-      console.log('targetPoint', this.targetPoint) // eslint-disable-line
 
       const maxOutputs = this.ins.maxOutputs ?? -1
 
