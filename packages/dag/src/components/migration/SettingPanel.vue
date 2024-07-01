@@ -470,118 +470,13 @@ export default observer({
                                   tooltip: this.$t('packages_dag_task_setting_syncPoint_tip'),
                                   feedbackLayout: 'none'
                                 },
-                                'x-component': 'ArrayItems',
+                                'x-component': 'SyncPoints',
                                 'x-decorator': 'FormItem',
                                 'x-reactions': {
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
                                       display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
-                                    }
-                                  }
-                                },
-                                items: {
-                                  type: 'object',
-                                  properties: {
-                                    nodeName: {
-                                      type: 'string',
-                                      'x-component': 'PreviewText.Input',
-                                      'x-reactions': {
-                                        dependencies: ['.connectionName', '.connectionId'],
-                                        fulfill: {
-                                          schema: {
-                                            'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
-                                          },
-                                          state: {
-                                            display: '{{ $deps[1] ? "visible":"hidden"}}'
-                                          }
-                                        }
-                                      }
-                                    },
-                                    hiddenPointType: {
-                                      'x-display': 'hidden',
-                                      type: 'boolean',
-                                      'x-component': 'PreviewText.Input'
-                                    },
-                                    connectionId: {
-                                      'x-display': 'hidden',
-                                      type: 'string'
-                                    },
-                                    connectionName: {
-                                      'x-display': 'hidden',
-                                      type: 'string',
-                                      'x-component': 'PreviewText.Input'
-                                    },
-                                    pointType: {
-                                      type: 'string',
-                                      'x-decorator': 'FormItem',
-                                      'x-component': 'Select',
-                                      'x-component-props': {
-                                        placeholder: i18n.t('public_select_placeholder')
-                                      },
-                                      default: 'current',
-                                      enum: [
-                                        {
-                                          label: this.$t('public_time_user_specified_time'),
-                                          value: 'localTZ'
-                                        },
-                                        /*{
-                                          label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
-                                          value: 'connTZ'
-                                        },*/
-                                        {
-                                          label: this.$t('public_time_current'),
-                                          value: 'current'
-                                        }
-                                      ],
-                                      'x-reactions': [
-                                        {
-                                          dependencies: ['.hiddenPointType'],
-                                          fulfill: {
-                                            state: {
-                                              disabled: `{{$deps[0]}}`
-                                            }
-                                          }
-                                        },
-                                        {
-                                          dependencies: ['.connectionId'],
-                                          fulfill: {
-                                            state: {
-                                              display: '{{ $deps[0] ? "visible":"hidden"}}'
-                                            }
-                                          }
-                                        }
-                                      ]
-                                    },
-                                    dateTime: {
-                                      type: 'string',
-                                      required: true,
-                                      'x-decorator': 'FormItem',
-                                      'x-component': 'DatePicker',
-                                      'x-component-props': {
-                                        type: 'datetime',
-                                        format: 'yyyy-MM-dd HH:mm:ss',
-                                        valueFormat: 'timestamp',
-                                        popperClass: 'setting-panel__dateTimePicker'
-                                      },
-                                      'x-reactions': [
-                                        {
-                                          dependencies: ['.pointType'],
-                                          fulfill: {
-                                            state: {
-                                              visible: '{{$deps[0] !== "current"}}'
-                                            }
-                                          }
-                                        },
-                                        {
-                                          dependencies: ['.pointType'],
-                                          fulfill: {
-                                            schema: {
-                                              'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
-                                            }
-                                          }
-                                        }
-                                      ]
                                     }
                                   }
                                 }
@@ -1343,6 +1238,7 @@ export default observer({
         }
         return point
       })
+      console.log('syncPoints', syncPoints)
       this.settings.syncPoints = syncPoints
     },
 
