@@ -138,7 +138,7 @@
               >
                 <ElOption
                   v-for="item in connectionOptions"
-                  :key="item.name"
+                  :key="item.id"
                   :value="item.name"
                   :label="item.name"
                 ></ElOption>
