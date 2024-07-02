@@ -22,7 +22,7 @@
             </div>
 
             <!-- 一键修复 -->
-            <ElButton v-if="inspect.canRecovery && canStart" type="primary" @click="handleCorrection">{{
+            <ElButton v-if="inspect.canRecovery && canStart" type="primary" class="ml-4" @click="handleCorrection">{{
               $t('packages_business_data_correction')
             }}</ElButton>
 
