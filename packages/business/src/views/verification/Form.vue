@@ -371,12 +371,6 @@ export default {
       return self.form.mode === 'cron'
     }
 
-    const notSupport = {
-      row_count: ['Clickhouse', 'Kafka'],
-      field: ['Kafka'],
-      jointField: ['Kafka'],
-      hash: []
-    }
     return {
       loading: false,
       timeUnitOptions: ['second', 'minute', 'hour', 'day', 'week', 'month'],
@@ -464,22 +458,11 @@ export default {
       edges: [],
       allStages: [],
       flowOptions: [],
-      notSupport,
       inspectMethodMap,
       typTipMap: {
-        row_count:
-          this.$t('packages_business_verification_fastCountTip') +
-          this.$t('packages_dag_components_node_zanbuzhichi') +
-          notSupport['row_count'].join(),
-        field:
-          this.$t('packages_business_verification_contentVerifyTip') +
-          this.$t('packages_dag_components_node_zanbuzhichi') +
-          notSupport['field'].join(),
-        jointField:
-          this.$t('packages_business_verification_jointFieldTip') +
-          this.$t('packages_dag_components_node_zanbuzhichi') +
-          notSupport['jointField'].join()
-        // hash: this.$t('packages_business_verification_hashTip')
+        row_count: this.$t('packages_business_verification_fastCountTip'),
+        field: this.$t('packages_business_verification_contentVerifyTip'),
+        jointField: this.$t('packages_business_verification_jointFieldTip')
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -688,35 +671,6 @@ export default {
               t.source.sortColumn && t.source.sortColumn.split(',').length === t.target.sortColumn.split(',').length
             )
           })
-
-          // 检查校验类型是否支持
-          const notSupportList = this.notSupport[this.form.inspectMethod]
-          let notSupportStr = ''
-
-          for (const t of tasks) {
-            if (notSupportList.includes(t.source.databaseType)) {
-              notSupportStr = t.source.databaseType
-              break
-            }
-            if (notSupportList.includes(t.target.databaseType)) {
-              notSupportStr = t.target.databaseType
-              break
-            }
-
-            // hash 不支持异构数据库
-            // if (this.form.inspectMethod === 'hash' && t.source.databaseType !== t.target.databaseType) {
-            //   notSupportStr = this.$t('packages_business_heterogeneous_database')
-            //   break
-            // }
-          }
-
-          if (notSupportStr)
-            return this.$message.error(
-              this.inspectMethodMap[this.form.inspectMethod] +
-                ', ' +
-                this.$t('packages_dag_components_node_zanbuzhichi') +
-                notSupportStr
-            )
 
           if (!tasks.length) {
             return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
