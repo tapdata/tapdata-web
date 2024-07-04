@@ -713,5 +713,9 @@ export default {
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
   packages_dag_dynamic_date_suffix_tip: '開啓後生成的表名將包含任務運行時的日期後綴',
-  packages_dag_table_rename_multiple: '任務中只允許存在一個表編輯節點'
+  packages_dag_table_rename_multiple: '任務中只允許存在一個表編輯節點',
+  packages_dag_migrate_union: '多表合併',
+  packages_dag_merged_tableName: '合併表名',
+  packages_dag_merged_tableName_ph: '請輸入合併後的表名',
+  packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点'
 }

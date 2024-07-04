@@ -1670,6 +1670,14 @@ export default {
       }
     },
 
+    async validateMigrateUnion() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'migrate_union_processor')
+
+      if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1704,7 +1712,8 @@ export default {
         this.validateDDL,
         this.validateCustomSql,
         this.validateUnwind,
-        this.validateTableRename
+        this.validateTableRename,
+        this.validateMigrateUnion
       )
     },
 
