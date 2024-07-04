@@ -289,7 +289,7 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: '任務加載出錯',
   packages_dag_mixins_editor_renwubucunzai: '任務不存在',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    '任務中含有JS節點、自定義節點、追加合併節點或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
+    '任務中含有JS節點、自定義節點、追加合併節點、多表合併節點或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
   packages_dag_mixins_editor_gaijiedianbuzhi: '該節點不支持在 {val1}（{val2}）上運行',
   packages_dag_mixins_editor_not_support_ddl: '該節點不支持DDL，請關閉',
   packages_dag_mixins_editor_not_support_cdc: '該節點不支持增量，請將任務類型修改為全量',

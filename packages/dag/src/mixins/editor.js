@@ -1542,7 +1542,13 @@ export default {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
-      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
+      let blacklist = [
+        'js_processor',
+        'custom_processor',
+        'migrate_js_processor',
+        'union_processor',
+        'migrate_union_processor'
+      ]
       this.allNodes.forEach(node => {
         // 开启了DDL
         if (node.ddlConfiguration === 'SYNCHRONIZATION') {
