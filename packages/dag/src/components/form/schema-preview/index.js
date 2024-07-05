@@ -68,7 +68,7 @@ export const SchemaPreview = defineComponent({
         items: [schema = {}]
       } = await metadataInstancesApi.nodeSchemaPage(params)
 
-      tableName.value = schema.name
+      tableName.value = schema.name || form.values.tableName || form.values.name
       emit('update-table-name', tableName.value)
 
       let { indices = [], fields = [] } = schema
