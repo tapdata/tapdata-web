@@ -498,7 +498,7 @@ export default {
     getNodeProps(item) {
       // 设置pdk节点配置默认值
       const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[item.pdkHash]
-      let nodeConfig
+      let nodeConfig = {}
       const attrs = {
         connectionName: item.name,
         connectionType: item.connection_type,

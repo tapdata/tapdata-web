@@ -298,8 +298,8 @@ export class Table extends NodeType {
                       allowCreate: true,
                       multiple: true,
                       filterable: true,
-                      onCreate: `{{() => {
-                        // 标记用户创建
+                      onChange: `{{(val) => {
+                         // 只要用户手动选择了字段,就不会自动填充
                         $values.attrs.hasCreated = true
                       }}}`
                     },
