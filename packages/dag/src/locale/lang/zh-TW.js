@@ -289,7 +289,7 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: '任務加載出錯',
   packages_dag_mixins_editor_renwubucunzai: '任務不存在',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    '任務中含有JS節點、自定義節點、追加合併節點或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
+    '任務中含有JS節點、自定義節點、追加合併節點、多表合併節點或節點設置增量自定義SQL，暫不支持DDL，請手動關閉',
   packages_dag_mixins_editor_gaijiedianbuzhi: '該節點不支持在 {val1}（{val2}）上運行',
   packages_dag_mixins_editor_not_support_ddl: '該節點不支持DDL，請關閉',
   packages_dag_mixins_editor_not_support_cdc: '該節點不支持增量，請將任務類型修改為全量',
@@ -713,5 +713,9 @@ export default {
   packages_dag_time_zone_offset: '時區偏移量',
   packages_dag_dynamic_date_suffix: '動態日期後綴',
   packages_dag_dynamic_date_suffix_tip: '開啓後生成的表名將包含任務運行時的日期後綴',
-  packages_dag_table_rename_multiple: '任務中只允許存在一個表編輯節點'
+  packages_dag_table_rename_multiple: '任務中只允許存在一個表編輯節點',
+  packages_dag_migrate_union: '多表合併',
+  packages_dag_merged_tableName: '合併表名',
+  packages_dag_merged_tableName_ph: '請輸入合併後的表名',
+  packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点'
 }

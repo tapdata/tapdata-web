@@ -2,7 +2,15 @@ import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual, isEmpty } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
+import {
+  connectionsApi,
+  metadataInstancesApi,
+  clusterApi,
+  proxyApi,
+  databaseTypesApi,
+  alarmApi,
+  taskApi
+} from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -1049,6 +1057,18 @@ export default {
           } else {
             enableRecord[field.query('.id').value()] = val
           }
+        },
+
+        getNodeTableOptions: async nodeId => {
+          console.log('getNodeTableOptions', nodeId)
+          const { items = [] } = await taskApi.getNodeTableInfo({
+            taskId: this.dataflow.id,
+            nodeId,
+            page: 1,
+            pageSize: 1000000
+          })
+
+          return items.map(item => item.sinkObjectName)
         }
       }
     }

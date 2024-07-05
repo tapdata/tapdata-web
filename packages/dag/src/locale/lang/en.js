@@ -770,5 +770,9 @@ export default {
   packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
   packages_dag_dynamic_date_suffix_tip:
     'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
-  packages_dag_table_rename_multiple: 'In the task, only one table editing node is allowed'
+  packages_dag_table_rename_multiple: 'In the task, only one table editing node is allowed',
+  packages_dag_migrate_union: 'Union',
+  packages_dag_merged_tableName: 'Merged Table Name',
+  packages_dag_merged_tableName_ph: 'Please enter the merged table name',
+  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed'
 }
