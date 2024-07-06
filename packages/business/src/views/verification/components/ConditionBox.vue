@@ -1788,11 +1788,11 @@ export default {
     validateCapabilities(tasks, capability) {
       const noSupportList = new Set()
       tasks.forEach(item => {
-        if (!item.source.capabilities.find(c => c.id === capability)) {
+        if (!item.source.capabilities?.find(c => c.id === capability)) {
           noSupportList.add(item.source.databaseType)
         }
 
-        if (!item.target.capabilities.find(c => c.id === capability)) {
+        if (!item.target.capabilities?.find(c => c.id === capability)) {
           noSupportList.add(item.target.databaseType)
         }
       })
