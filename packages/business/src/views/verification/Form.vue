@@ -532,6 +532,12 @@ export default {
           })
         })
         if (data) {
+          if (this.form.taskMode === 'pipeline' && data.taskDto) {
+            this.taskName = data.taskDto.name
+            this.applyTask(data.taskDto)
+            await this.$nextTick()
+          }
+
           const haveTaskId = data.tasks.some(t => !!t.taskId)
           // 加载数据源的Capabilities
           let capabilitiesMap = {}
@@ -572,11 +578,6 @@ export default {
             }) || []
 
           this.form = Object.assign({}, this.form, data)
-
-          if (this.form.taskMode === 'pipeline' && data.taskDto) {
-            this.taskName = data.taskDto.name
-            this.applyTask(data.taskDto)
-          }
         }
       } catch (e) {
         console.error(e)
