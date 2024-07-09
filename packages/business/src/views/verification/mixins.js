@@ -1,6 +1,13 @@
 import { inspectDetailsApi } from '@tap/api'
+import { downloadBlob } from '@tap/shared'
+import i18n from '@tap/i18n'
 
 export default {
+  data() {
+    return {
+      downloading: false
+    }
+  },
   methods: {
     rowClick(row) {
       this.taskId = row.taskId
@@ -119,6 +126,21 @@ export default {
       })
       url = route.href
       window.open(url, '_blank')
+    },
+
+    async downloadDetails() {
+      this.downloading = true
+
+      const blobData = await inspectDetailsApi.export(this.resultInfo.id).finally(() => {
+        this.downloading = false
+      })
+
+      if (blobData.data.type === 'application/json') {
+        this.$message.error(this.$t('packages_business_connections_test_xiazaishibai'))
+        return
+      }
+
+      downloadBlob(blobData)
     }
   }
 }

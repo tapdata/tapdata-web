@@ -21,21 +21,20 @@
               }}</ElLink>
             </div>
 
+            <!--下载详情-->
+            <ElButton class="ml-4" type="text" :loading="downloading" @click="downloadDetails">{{
+              $t('packages_business_download_details')
+            }}</ElButton>
+
+            <el-divider v-if="showCorrection || showDiffInspect" class="ml-4 mr-0" direction="vertical"></el-divider>
+
             <!-- 一键修复 -->
-            <ElButton v-if="inspect.canRecovery && canStart" type="primary" class="ml-4" @click="handleCorrection">{{
+            <ElButton v-if="showCorrection" type="primary" class="ml-4" @click="handleCorrection">{{
               $t('packages_business_data_correction')
             }}</ElButton>
 
             <!-- 差异校验 -->
-            <div
-              v-if="
-                inspect.result !== 'passed' &&
-                !['running', 'scheduling'].includes(inspect.status) &&
-                !(inspect.status === 'error' && !resultInfo.parentId) &&
-                canStart
-              "
-              class="flex align-items-center ml-4"
-            >
+            <div v-if="showDiffInspect" class="flex align-items-center ml-4">
               <ElButton type="primary" @click="diffInspect">{{
                 $t('packages_business_verification_button_diff_verify')
               }}</ElButton>
@@ -138,7 +137,7 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import DataCorrectionDialog from './components/DataCorrectionDialog'
 import dayjs from 'dayjs'
-import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
+import { inspectResultsApi, inspectApi } from '@tap/api'
 import { inspectMethod as typeMap } from './const'
 import { checkEllipsisActive } from '@tap/shared'
 import { IconButton } from '@tap/component'
@@ -195,6 +194,17 @@ export default {
       if (this.errorMsg) {
         return this.errorMsg.split('\n').shift()
       }
+    },
+    showCorrection() {
+      return this.inspect.canRecovery && this.canStart
+    },
+    showDiffInspect() {
+      return (
+        this.inspect.result !== 'passed' &&
+        !['running', 'scheduling'].includes(this.inspect.status) &&
+        !(this.inspect.status === 'error' && !this.resultInfo.parentId) &&
+        this.canStart
+      )
     }
   },
   created() {

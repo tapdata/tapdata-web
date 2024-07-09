@@ -1252,5 +1252,6 @@ export default {
   packages_business_field_description: '字段描述',
   packages_business_shared_cache_enforceShareCdc: '当共享挖掘不可用(缓存启动时)',
   packages_business_shared_cache_enforceShareCdc_true: '缓存直接报错停止',
-  packages_business_not_support_validation: '{connection} 不支持{method}'
+  packages_business_not_support_validation: '{connection} 不支持{method}',
+  packages_business_download_details: '下载详情'
 }

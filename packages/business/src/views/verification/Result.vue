@@ -1,11 +1,12 @@
 <template>
   <section class="verify-result-wrap section-wrap h-100" v-loading="loading">
     <div class="section-wrap-box">
-      <div class="verify-result-header" v-if="inspect">
+      <div class="verify-result-header align-center" v-if="inspect">
         <div>
           <span style="font-size: 14px">{{ inspect.name }}</span>
           <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
         </div>
+        <div class="flex-grow-1"></div>
         <div v-if="inspect.inspectMethod !== 'row_count' && inspect.inspectMethod !== 'hash'">
           <div class="flex align-items-center">
             <div
@@ -20,6 +21,11 @@
             </div>
           </div>
         </div>
+
+        <!--下载详情-->
+        <ElButton class="ml-4" type="text" :loading="downloading" @click="downloadDetails">{{
+          $t('packages_business_download_details')
+        }}</ElButton>
       </div>
       <div v-if="errorMsg && (type === 'row_count' || type === 'hash')" class="error-tips mt-4 px-4">
         <VIcon class="color-danger">error</VIcon>
@@ -64,7 +70,6 @@
 }
 .verify-result-header {
   display: flex;
-  justify-content: space-between;
 }
 .error-tips {
   background: #fdf6ec;
