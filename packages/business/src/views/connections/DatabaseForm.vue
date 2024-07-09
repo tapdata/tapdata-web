@@ -301,61 +301,66 @@ export default {
     submit() {
       this.buried('connectionSubmit')
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
-      this.schemaFormInstance?.validate().then(() => {
-        this.submitBtnLoading = true
-        // 保存数据源
-        let id = this.$route.params?.id
-        let { pdkOptions } = this
-        let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let { __TAPDATA } = formValues
-        formValues.__connectionType = __TAPDATA.connection_type
-        delete formValues['__TAPDATA']
-        let params = Object.assign(
-          {
-            ...__TAPDATA,
-            database_type: pdkOptions.type,
-            pdkHash: pdkOptions.pdkHash
-          },
-          {
-            status: 'testing',
-            schema: {},
-            retry: 0,
-            nextRetry: null,
-            response_body: {},
-            project: '',
-            submit: true,
-            pdkType: 'pdk'
-          },
-          {
-            config: formValues
+      this.schemaFormInstance?.validate().then(
+        () => {
+          this.submitBtnLoading = true
+          // 保存数据源
+          let id = this.$route.params?.id
+          let { pdkOptions } = this
+          let formValues = this.$refs.schemaToForm?.getFormValues?.()
+          let { __TAPDATA } = formValues
+          formValues.__connectionType = __TAPDATA.connection_type
+          delete formValues['__TAPDATA']
+          let params = Object.assign(
+            {
+              ...__TAPDATA,
+              database_type: pdkOptions.type,
+              pdkHash: pdkOptions.pdkHash
+            },
+            {
+              status: 'testing',
+              schema: {},
+              retry: 0,
+              nextRetry: null,
+              response_body: {},
+              project: '',
+              submit: true,
+              pdkType: 'pdk'
+            },
+            {
+              config: formValues
+            }
+          )
+          let promise = null
+          if (id) {
+            params.id = id
+            promise = connectionsApi.updateById(id, params)
+          } else {
+            const { commandCallbackFunctionId } = this
+            params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+            promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
           }
-        )
-        let promise = null
-        if (id) {
-          params.id = id
-          promise = connectionsApi.updateById(id, params)
-        } else {
-          const { commandCallbackFunctionId } = this
-          params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
+          promise
+            .then(() => {
+              this.buried('connectionSubmit', '', {
+                result: true
+              })
+              this.$message.success(this.$t('public_message_save_ok'))
+              this.gotoBackPath()
+            })
+            .catch(() => {
+              this.buried('connectionSubmit', '', {
+                result: false
+              })
+            })
+            .finally(() => {
+              this.submitBtnLoading = false
+            })
+        },
+        () => {
+          this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
         }
-        promise
-          .then(() => {
-            this.buried('connectionSubmit', '', {
-              result: true
-            })
-            this.$message.success(this.$t('public_message_save_ok'))
-            this.gotoBackPath()
-          })
-          .catch(() => {
-            this.buried('connectionSubmit', '', {
-              result: false
-            })
-          })
-          .finally(() => {
-            this.submitBtnLoading = false
-          })
-      })
+      )
     },
     //开始测试
     async startTest() {
@@ -748,30 +753,48 @@ export default {
             '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}'
           ]
         },
-        accessNodeProcessId: {
-          type: 'string',
-          description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
-            'packages_business_agent_select_not_found_for_rocksdb'
-          )}' : ''}}`,
-          'x-decorator': 'FormItem',
-          'x-decorator-props': {
-            colon: false
-          },
-          'x-component': 'Select',
+        agentWrap: {
+          type: 'void',
+          'x-component': 'Space',
           'x-component-props': {
-            onChange: `{{ () => $self.setSelfErrors('') }}`
+            class: 'w-100 align-items-start'
           },
-          'x-reactions': [
-            // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
-            // 根据下拉数据判断是否存在已选的agent
-            {
-              dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
-              fulfill: {
-                state: {
-                  visible:
-                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-                },
-                run: `
+          'x-reactions': {
+            dependencies: ['.accessNodeType'],
+            fulfill: {
+              state: {
+                visible:
+                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
+              }
+            }
+          },
+          properties: {
+            accessNodeProcessId: {
+              type: 'string',
+              description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
+                'packages_business_agent_select_not_found_for_rocksdb'
+              )}' : ''}}`,
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                colon: false,
+                class: 'flex-1'
+              },
+              'x-component': 'Select',
+              'x-component-props': {
+                onChange: `{{ () => $self.setSelfErrors('') }}`
+              },
+              'x-reactions': [
+                // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
+                // 根据下拉数据判断是否存在已选的agent
+                {
+                  dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
+                  fulfill: {
+                    state: {
+                      title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
+                        'packages_business_choose_agent_group'
+                      )}': '${i18n.t('packages_business_choose_agent')}'}}`
+                    },
+                    run: `
                 console.log('$deps[1]', $deps)
                 if (!$deps[1]) return
                 $self.dataSource = $deps[1].filter(item => item.accessNodeType === $deps[0])
@@ -784,11 +807,11 @@ export default {
                   }
                 }
               }`
-              }
-            }
-          ],
-          // 校验下拉数据判断是否存在已选的agent
-          'x-validator': `{{(value, rule, ctx)=> {
+                  }
+                }
+              ],
+              // 校验下拉数据判断是否存在已选的agent
+              'x-validator': `{{(value, rule, ctx)=> {
             if (!value) {
               let msg = '${this.$t('packages_business_agent_select_placeholder')}'
               const {shareCDCExternalStorageId} = $values.__TAPDATA
@@ -806,7 +829,46 @@ export default {
               }
             }
           }}}`
+            },
+            priorityProcessId: {
+              title: i18n.t('packages_business_priorityProcessId'),
+              type: 'string',
+              default: null,
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                class: 'flex-1'
+              },
+              'x-component': 'Select',
+              'x-reactions': {
+                dependencies: ['.accessNodeType', '.accessNodeOption#dataSource', '.accessNodeProcessId'],
+                fulfill: {
+                  state: {
+                    visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                  },
+                  run: `
+                    let children = []
+                    
+                    if ($deps[1] && $deps[2]) {
+                      children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                    }
+
+                    $self.dataSource = [
+                      {
+                        label:'${i18n.t('packages_business_connection_form_automatic')}',
+                        value: null
+                      }
+                    ].concat(children)
+
+                    if ($self.value && !children.find(item => item.value === $self.value)) {
+                      $self.value = null
+                    }
+                  `
+                }
+              }
+            }
+          }
         },
+
         schemaUpdateHour: {
           type: 'string',
           title: i18n.t('packages_business_connections_databaseform_moxingjiazaipin'),
@@ -1182,6 +1244,15 @@ export default {
         loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
+          const mapNode = item => ({
+            value: item.processId,
+            label: `${item.hostName}（${
+              item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+            }）`,
+            disabled: item.status !== 'running',
+            accessNodeType: item.accessNodeType
+          })
+
           return (
             data
               ?.filter(
@@ -1197,17 +1268,11 @@ export default {
                     label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
                       item.accessNodes?.filter(ii => ii.status === 'running').length || 0
                     }）`,
-                    accessNodeType: item.accessNodeType
+                    accessNodeType: item.accessNodeType,
+                    children: item.accessNodes?.map(mapNode) || []
                   }
                 }
-                return {
-                  value: item.processId,
-                  label: `${item.hostName}（${
-                    item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
-                  }）`,
-                  disabled: item.status !== 'running',
-                  accessNodeType: item.accessNodeType
-                }
+                return mapNode(item)
               }) || []
           )
         },
