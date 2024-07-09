@@ -454,10 +454,11 @@ export default {
   &::before {
     content: '';
     width: $bar-width;
+    height: 1em;
     border-radius: calc($bar-width / 2);
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 50%;
+    transform: translateY(-50%);
     position: absolute;
     background-color: map-get($color, primary);
   }
