@@ -58,5 +58,13 @@ export default class Modules extends Http {
     const href = this.url + `/api/export?id=${ids.join('&id=')}&access_token=${Cookie.get('access_token')}&ip=${ip}`
     window.open(href)
   }
+
+  updatePermissions(data) {
+    return this.axios.patch(`${this.url}/updatePermissions`, data)
+  }
+
+  updateTags(data) {
+    return this.axios.patch(`${this.url}/updateTags`, data)
+  }
 }
 export { Modules }

@@ -79,7 +79,7 @@
               :label="$t('packages_business_data_server_drawer_quanxianfanwei')"
               prop="acl"
             >
-              <ElSelect v-model="form.acl" multiple @change="aclChanged" class="w-100">
+              <ElSelect v-model="form.acl" multiple @change="handleUpdateRole" class="w-100">
                 <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
               </ElSelect>
             </ElFormItem>
@@ -96,7 +96,7 @@
                 class="w-100"
                 :value.sync="form.appValue"
                 :label.sync="form.appLabel"
-                @change="handleChangePermissionsAndSave"
+                @change="handleUpdateApp"
               ></ListSelect>
             </ElFormItem>
           </div>
@@ -108,7 +108,7 @@
               <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
             </ElFormItem>
             <ElFormItem class="flex-1" size="small" :label="$t('packages_business_quanxianfanwei')" prop="acl">
-              <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="aclChanged" class="w-100">
+              <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="handleUpdateRole" class="w-100">
                 <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
               </ElSelect>
             </ElFormItem>
@@ -119,7 +119,11 @@
               :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
               prop="appValue"
             >
-              <ListSelect :value.sync="form.appValue" :label.sync="form.appLabel"></ListSelect>
+              <ListSelect
+                :value.sync="form.appValue"
+                :label.sync="form.appLabel"
+                @change="handleUpdateApp"
+              ></ListSelect>
             </ElFormItem>
           </div>
           <ElFormItem :label="$t('public_description')" class="flex-1 form-item-name" size="small" prop="description">
@@ -1281,6 +1285,28 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
         })
       })
+    },
+
+    async handleUpdateRole() {
+      await modulesApi.updatePermissions({
+        moduleId: this.data.id,
+        acl: this.form.acl
+      })
+      this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    async handleUpdateApp() {
+      const { appLabel, appValue } = this.form
+      await modulesApi.updateTags({
+        moduleId: this.data.id,
+        listtags: [
+          {
+            id: appValue,
+            value: appLabel
+          }
+        ]
+      })
+      this.$message.success(this.$t('public_message_operation_success'))
     }
   }
 }
@@ -1355,10 +1381,11 @@ export default {
   &::before {
     content: '';
     width: $bar-width;
+    height: 1.2em;
     border-radius: calc($bar-width / 2);
     left: 0;
-    top: 2px;
-    bottom: 2px;
+    top: 50%;
+    transform: translateY(-50%);
     position: absolute;
     background-color: map-get($color, primary);
     //background-color: #bcbfc3;
