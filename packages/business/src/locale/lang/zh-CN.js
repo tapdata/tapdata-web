@@ -49,10 +49,13 @@ export default {
   packages_business_connection_form_shared_mining: '使用共享挖掘',
   packages_business_connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
-  packages_business_connection_form_access_node: 'agent设置',
+  packages_business_connection_form_access_node: 'Agent设置',
   packages_business_connection_form_automatic: '平台自动分配',
   packages_business_connection_form_manual: '用户手动指定',
   packages_business_connection_form_group: '按标签分配',
+  packages_business_choose_agent: '选择Agent',
+  packages_business_choose_agent_group: '选择Agent标签',
+  packages_business_priorityProcessId: '标签内调度方式',
   packages_business_connection_form_access_node_tip:
     '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   packages_business_connection_form_give_up: '放弃',
