@@ -833,7 +833,7 @@ export default {
             priorityProcessId: {
               title: i18n.t('packages_business_priorityProcessId'),
               type: 'string',
-              default: null,
+              default: '',
               'x-decorator': 'FormItem',
               'x-decorator-props': {
                 class: 'flex-1'
@@ -855,12 +855,12 @@ export default {
                     $self.dataSource = [
                       {
                         label:'${i18n.t('packages_business_connection_form_automatic')}',
-                        value: null
+                        value: ''
                       }
                     ].concat(children)
 
                     if ($self.value && !children.find(item => item.value === $self.value)) {
-                      $self.value = null
+                      $self.value = ''
                     }
                   `
                 }
@@ -1490,6 +1490,7 @@ export default {
           shareCdcEnable,
           accessNodeType,
           accessNodeProcessId,
+          priorityProcessId,
           openTableExcludeFilter,
           tableExcludeFilter,
           schemaUpdateHour,
@@ -1505,6 +1506,7 @@ export default {
             shareCdcEnable,
             accessNodeType,
             accessNodeProcessId,
+            priorityProcessId,
             openTableExcludeFilter,
             tableExcludeFilter,
             shareCDCExternalStorageId,

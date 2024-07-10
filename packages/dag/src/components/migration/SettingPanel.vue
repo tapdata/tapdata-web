@@ -709,7 +709,7 @@ export default observer({
                                   priorityProcessId: {
                                     title: i18n.t('packages_business_priorityProcessId'),
                                     type: 'string',
-                                    default: null,
+                                    default: '',
                                     'x-decorator': 'FormItem',
                                     'x-decorator-props': {
                                       class: 'flex-1'
@@ -735,7 +735,7 @@ export default observer({
                                           $self.dataSource = [
                                             {
                                               label:'${i18n.t('packages_business_connection_form_automatic')}',
-                                              value: null
+                                              value: ''
                                             }
                                           ].concat(children)
 
