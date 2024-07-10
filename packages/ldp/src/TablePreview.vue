@@ -40,7 +40,7 @@
           {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
         </ElButton>
         <ElButton
-          v-if="apiSupportTypes.includes(connection.database_type)"
+          v-if="apiSupportTypes.includes(connectionType)"
           class="flex-shrink-0"
           size="mini"
           type="primary"
@@ -694,6 +694,10 @@ export default {
 
     canClickStatus() {
       return this.tableStatus === 'error' && this.targetTask.length > 0
+    },
+
+    connectionType() {
+      return this.connection?.database_type || this.detailData.connectionType
     }
   },
 
@@ -771,7 +775,10 @@ export default {
       discoveryApi
         .overViewStorage(row.id)
         .then(res => {
-          this.detailData = res
+          for (const key in res) {
+            this.$set(this.detailData, key, res[key])
+          }
+
           this.detailData['lastUpdAt'] = this.detailData['lastUpdAt']
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
             : '-'
