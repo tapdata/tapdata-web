@@ -14,7 +14,7 @@ export default {
   public_creator: 'Creator',
   public_update_time: 'Update Time',
   public_change_time: 'Modification Time',
-  public_serial_number: 'Serial number',
+  public_serial_number: '#',
   public_query: 'Query',
   public_aggregate: 'Aggregate',
   public_table: 'Table',
