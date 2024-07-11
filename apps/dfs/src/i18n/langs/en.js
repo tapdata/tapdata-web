@@ -1837,5 +1837,12 @@ export default {
   dfs_status_approved: 'Approved',
   dfs_status_rejected: 'Rejected',
   dfs_status_expired: 'Expired',
-  dfs_all_approvals_completed: 'All approvals completed.'
+  dfs_all_approvals_completed: 'All approvals completed.',
+  dfs_traffic_bill: 'Traffic Bill',
+  dfs_bill_number: 'Bill Number',
+  dfs_bill_amount: 'Bill Amount ({currency})',
+  dfs_egress_traffic: 'Egress Traffic',
+  dfs_ingress_traffic: 'Ingress Traffic',
+  dfs_billing_cycle: 'Billing Cycle',
+  dfs_bill_status: 'Status'
 }

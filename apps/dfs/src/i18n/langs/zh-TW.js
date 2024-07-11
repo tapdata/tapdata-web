@@ -1661,5 +1661,12 @@ export default {
   dfs_status_approved: '已通過',
   dfs_status_rejected: '已拒絕',
   dfs_status_expired: '已過期',
-  dfs_all_approvals_completed: '已完成全部審批'
+  dfs_all_approvals_completed: '已完成全部審批',
+  dfs_traffic_bill: '流量賬單',
+  dfs_bill_number: '賬單編號',
+  dfs_bill_amount: '賬單金額({currency})',
+  dfs_egress_traffic: '發送數據量',
+  dfs_ingress_traffic: '接收數據量',
+  dfs_billing_cycle: '賬單週期',
+  dfs_bill_status: '賬單狀態'
 }
