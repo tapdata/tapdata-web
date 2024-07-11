@@ -987,7 +987,7 @@ export default {
   page_title_run_monitor: '运行监控',
   page_title_data_verify: '数据校验',
   page_title_data_difference_details: '差异详情',
-  page_title_data_hub: '实时数据中心',
+  page_title_data_hub: '实时数据平台',
   page_title_subscribe_storage: '订阅数据存储',
   // 自定义节点
   notify_abnormally_stopped: '意外停止',
