@@ -70,7 +70,7 @@
             <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
             <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
-            <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
+            <ElDropdownItem v-if="showHome" command="home">
               {{ $t('app_home') }}
             </ElDropdownItem>
             <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
@@ -203,7 +203,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    background: #212a3b;
+    background: var(--layout-header-bg, #212a3b);
     min-width: 1000px;
     .logo {
       margin-left: 23px;
@@ -534,7 +534,8 @@ export default {
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
       activeMenu: '',
-      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP')
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP'),
+      showHome: !process.env.VUE_APP_HIDE_HOME_MENU && this.$getSettingByKey('SHOW_HOME_BUTTON')
     }
   },
   computed: {

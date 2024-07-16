@@ -1,5 +1,5 @@
 import '@/styles/app.scss'
-
+import { install } from '@/oem/datapp'
 import Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
@@ -106,6 +106,10 @@ if (TOKEN) {
 
 let token = Cookie.get('access_token')
 
+const router = getRouter(i18n)
+
+install(router, store)
+
 let init = settings => {
   window.__settings__ = settings
   let lang = getCurrentLanguage()
@@ -123,7 +127,7 @@ let init = settings => {
   window.App = new Vue({
     el: '#app',
     i18n,
-    router: getRouter(i18n),
+    router,
     store,
     wsOptions: {
       url: wsUrl,

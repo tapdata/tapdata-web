@@ -1,0 +1,39 @@
+@import '~@tap/assets/styles/var';
+
+:root {
+  --layout-header-bg: #BD2828;
+}
+
+
+$color: map-merge($color, (
+        primary: #BD2828
+));
+$--color-primary: map-get($color, primary); // #2c65ff
+//$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+$headerBg: #BD2828;
+
+//@import '~element-ui/packages/theme-chalk/src/index';
+@import '~@tap/assets/styles/utilities';
+@import '~@/styles/overrides';
+
+.layout-header {
+  position: relative;
+  &::before {
+    content: '';
+    width: 222px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #96181C;
+    z-index: 0;
+  }
+  & > * {
+    z-index: 1;
+  }
+}
+
+:where(.expire-msg, .expire-msg + button) {
+  display: none !important;
+}
