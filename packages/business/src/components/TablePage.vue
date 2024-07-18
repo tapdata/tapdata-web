@@ -49,7 +49,7 @@
             v-loading="loading"
             class="table-page-table"
             :row-class-name="classificationVisible ? 'grabbable' : ''"
-            height="100%"
+            :height="ifTableHeightAuto ? null : '100%'"
             :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"
             :span-method="spanMethod"
@@ -163,7 +163,8 @@ export default {
         allowDrop: true
       },
       draggingNodeImage: null,
-      shiftKeyPressed: false
+      shiftKeyPressed: false,
+      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO
     }
   },
   mounted() {

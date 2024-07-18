@@ -198,7 +198,7 @@ module.exports = {
     },
     loaderOptions: {
       scss: {
-        additionalData: `@use "~@tap/assets/styles/var.scss" as *;`
+        additionalData: `@use "${process.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
       }
     }
   }

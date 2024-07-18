@@ -108,7 +108,7 @@ let token = Cookie.get('access_token')
 
 const router = getRouter(i18n)
 
-install(router, store)
+install(router, i18n)
 
 let init = settings => {
   window.__settings__ = settings

@@ -67,7 +67,7 @@
         <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
           <template #default="{ row }">
             <div class="connection-name flex flex-wrap gap-1">
-              <div class="flex gap-1 overflow-hidden">
+              <div class="flex align-center gap-1 overflow-hidden">
                 <img class="connection-img" :src="getConnectionIcon(row.pdkHash)" alt="" />
                 <ElLink class="ellipsis block lh-base" type="primary" @click.stop="preview(row)">
                   {{ row.name }}
@@ -870,6 +870,7 @@ export default {
   }
   .connection-img {
     width: 18px;
+    height: 18px;
   }
 
   .btn-text {

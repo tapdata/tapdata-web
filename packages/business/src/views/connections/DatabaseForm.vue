@@ -960,6 +960,16 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
+            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
+              ? {
+                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+                  fulfill: {
+                    state: {
+                      display: 'none'
+                    }
+                  }
+                }
+              : undefined,
             properties: {
               __TAPDATA: {
                 type: 'object',

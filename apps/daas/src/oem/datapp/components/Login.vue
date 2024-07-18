@@ -6,7 +6,7 @@
 
     <div class="login-main flex flex-1 min-h-0 justify-center align-center">
       <div class="login-form-wrapper flex rounded-lg overflow-hidden">
-        <div class="login-form-left flex justify-center align-center flex-1 p-6 position-relative">
+        <div class="login-form-left flex justify-center align-center flex-1 p-6 position-relative rounded-lg">
           <img src="../images/logo.png" alt="logo" class="login-logo position-absolute" />
           <div class="color-white text-lg">欢迎使用</div>
         </div>
@@ -22,7 +22,7 @@
                 prefix-icon="el-icon-lock"
                 placeholder="请输入密码"
                 type="password"
-                @keyup.enter="submit"
+                @keyup.enter.native="submit"
               ></el-input>
             </el-form-item>
             <el-checkbox class="keep-sign-in" v-model="keepSignIn">
@@ -134,11 +134,11 @@ export default {
 </script>
 <style scoped lang="scss">
 .login-top {
-  height: 52px;
+  height: 60px;
 }
 .login-logo {
   width: auto;
-  height: 32px;
+  height: 40px;
   left: 24px;
   top: 24px;
 }

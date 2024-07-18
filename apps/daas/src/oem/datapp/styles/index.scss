@@ -1,0 +1,85 @@
+:root {
+  --layout-header-bg: #BD2828;
+  --layout-bg: #f4f7fc;
+}
+
+.el-container.layout-container {
+  .el-header.layout-header {
+    position: relative;
+
+    &::before {
+      content: '';
+      width: 222px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background-color: #96181C;
+      z-index: 0;
+    }
+
+    & > * {
+      z-index: 1;
+    }
+  }
+}
+
+
+
+:where(.expire-msg, .expire-msg + button, button.el-button[name="materializedView"]) {
+  display: none !important;
+}
+
+.server-list-box img, .list-box-header-left img {
+  filter: hue-rotate(145deg);
+}
+
+.layout-container .layout-aside .menu {
+  background: #fff;
+}
+
+.layout-container .layout-aside .menu .el-menu-item, .layout-container .layout-aside .menu .el-submenu__title {
+  background: #fff;
+}
+
+.layout-container .layout-aside .menu .el-menu-item.is-active,
+.layout-container .layout-aside .menu .el-menu-item:hover,
+.layout-container .layout-aside .menu .el-submenu__title.is-active,
+.layout-container .layout-aside .menu .el-submenu__title:hover {
+  background-color: #FCF0ED !important;
+}
+
+.layout-container .layout-aside .menu .is-active .el-submenu__title {
+  background-color: #fff;
+  color: map-get($color, primary) !important;
+}
+
+.layout-container .layout-aside .menu .el-menu-item.is-active {
+  &:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: map-get($color, primary);
+  }
+}
+
+// 隐藏RelMig 导入
+button.el-button[name="importRelmig"] {
+  display: none !important;
+}
+
+// 隐藏物化视图
+button.el-button[name="materializedView"] {
+  display: none !important;
+}
+
+
+// 列表页
+.table-page-table {
+  flex: auto !important;
+  flex-grow: 0 !important;
+  min-height: 0;
+}
