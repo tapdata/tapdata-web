@@ -1,5 +1,5 @@
 import routes from '@/router/routes'
-import { MENU, DropdownList } from '@/router/menu'
+import { MENU, DropdownList, SettingList } from '@/router/menu'
 import './styles/index.scss'
 import { setCurrentLanguage } from '@tap/i18n/src/shared/util'
 
@@ -33,6 +33,9 @@ export function install(router, i18n) {
   // 顶部下拉菜单
   DropdownList.find(item => item.name === 'version').route = '/about'
   DropdownList.find(item => item.name === 'license').hidden = true
+
+  // 系统设置
+  SettingList.find(item => item.key === 'webhookAlerts').hidden = true
 
   setCurrentLanguage('zh-CN', i18n)
 

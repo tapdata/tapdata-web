@@ -73,18 +73,37 @@ export const MENU = [
   }
 ]
 
-//   <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
-// <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
-// <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
-// <ElDropdownItem v-if="showHome" command="home">
-//   {{ $t('app_home') }}
-// </ElDropdownItem>
-// <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
-
 export const DropdownList = [
   { name: 'account', label: 'app_account' },
   { name: 'version', label: 'app_version' },
   { name: 'license', label: 'page_title_license' },
   { name: 'home', label: 'app_home' },
   { name: 'signOut', label: 'app_signOut' }
+]
+
+export const SettingList = [
+  {
+    icon: 'bells',
+    name: 'notify_setting',
+    key: 'notificationSetting',
+    size: 20
+  },
+  {
+    icon: 'alert-filled',
+    name: 'daas_setting_settingcenter_gaojingshezhi',
+    key: 'alarmSetting',
+    size: 20
+  },
+  {
+    icon: 'webhook',
+    name: 'webhook_alerts',
+    key: 'webhookAlerts',
+    size: 20
+  },
+  {
+    icon: 'account',
+    name: 'account_accountSettings',
+    key: 'accountSetting',
+    size: 20
+  }
 ]
