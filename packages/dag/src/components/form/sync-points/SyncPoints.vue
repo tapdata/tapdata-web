@@ -21,6 +21,7 @@
             v-model="item.dateTime"
             :disabled="disabled"
             type="datetime"
+            align="right"
             format="yyyy-MM-dd HH:mm:ss"
             valueFormat="timestamp"
             popperClass="setting-panel__dateTimePicker"

@@ -522,6 +522,8 @@ export default {
   setting_server_oversee_url: 'O&M operation control URL',
   setting_system: 'System global',
   setting_licenseNoticeDays: 'license expiration reminder',
+  setting_license_alarm: 'License expiry advance reminder (days)',
+  setting_License_expiry_email_reminder_: 'License expiry advance reminder settings (days)',
   setting_flow_engine_version: 'Flow engine version',
   setting_tapdata_agent_version: 'tapdata agent version',
   setting_doc_base_url: 'Help document URL',

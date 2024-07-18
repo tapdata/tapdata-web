@@ -500,6 +500,8 @@ export default {
   setting_server_oversee_url: ' 運維運控URL',
   setting_system: ' 系統全局',
   setting_licenseNoticeDays: ' license 到期提醒',
+  setting_license_alarm: ' license 到期提前提醒（天）',
+  setting_License_expiry_email_reminder_: 'license 到期提前幾天提醒設置',
   setting_flow_engine_version: ' 流程引擎版本',
   setting_tapdata_agent_version: ' tapdata agent版本',
   setting_doc_base_url: ' 幫助文檔URL',
