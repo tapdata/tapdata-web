@@ -15,6 +15,7 @@
         v-if="buttonShowMap.import && $route.name === 'dataflowList'"
         v-readonlybtn="'SYNC_job_import'"
         size="mini"
+        name="importRelmig"
         class="btn"
         :disabled="$disabledReadonlyUserBtn()"
         @click="refFn('handleImportRelmig')"
@@ -25,6 +26,7 @@
         v-if="$route.name === 'dataflowList'"
         class="--with-icon inline-flex align-center px-2 py-0 gap-1 align-top"
         size="mini"
+        name="materializedView"
         :loading="createBtnLoading"
         @click="refFn('handleCreateMaterializedView')"
       >

@@ -190,6 +190,16 @@ export default observer({
               class: 'config-tabs',
               formTab: '{{formTab}}'
             },
+            'x-reactions': process.env.VUE_APP_HIDE_TASK_SCHEMA
+              ? {
+                  target: process.env.VUE_APP_HIDE_TASK_SCHEMA,
+                  fulfill: {
+                    state: {
+                      display: 'none'
+                    }
+                  }
+                }
+              : undefined,
             properties: {
               tab1: {
                 type: 'void',
