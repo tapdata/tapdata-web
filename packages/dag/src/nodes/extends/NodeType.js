@@ -61,7 +61,7 @@ export class NodeType {
                 },
                 properties: {
                   enableConcurrentProcess: {
-                    title: '开启并发处理',
+                    title: i18n.t('packages_dag_enableConcurrentProcess'),
                     type: 'boolean',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -78,7 +78,7 @@ export class NodeType {
                     }
                   },
                   concurrentNum: {
-                    title: '并发数',
+                    title: i18n.t('packages_dag_concurrentNum'),
                     type: 'number',
                     default: 2,
                     'x-decorator': 'FormItem',
@@ -87,7 +87,7 @@ export class NodeType {
                     },
                     'x-component': 'InputNumber',
                     'x-component-props': {
-                      min: 0
+                      min: 1
                     }
                   }
                 }
