@@ -717,5 +717,7 @@ export default {
   packages_dag_migrate_union: '多表合併',
   packages_dag_merged_tableName: '合併表名',
   packages_dag_merged_tableName_ph: '請輸入合併後的表名',
-  packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点'
+  packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点',
+  packages_dag_enableConcurrentProcess: '開啓併發處理',
+  packages_dag_concurrentNum: '併發數'
 }

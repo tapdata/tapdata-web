@@ -774,5 +774,7 @@ export default {
   packages_dag_migrate_union: 'Union',
   packages_dag_merged_tableName: 'Merged Table Name',
   packages_dag_merged_tableName_ph: 'Please enter the merged table name',
-  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed'
+  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed',
+  packages_dag_enableConcurrentProcess: 'Enable concurrent processing',
+  packages_dag_concurrentNum: 'Number of Concurrent Tasks'
 }
