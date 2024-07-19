@@ -53,13 +53,10 @@ export class NodeType {
             properties: {
               space: {
                 // title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
-                // 'x-decorator': 'FormItem',
-                // 'x-decorator-props': {
-                //   layout: 'horizontal'
-                // },
                 type: 'void',
                 'x-component': 'Space',
                 'x-component-props': {
+                  class: 'py-3',
                   size: 'middle'
                 },
                 properties: {
@@ -67,6 +64,9 @@ export class NodeType {
                     title: '开启并发处理',
                     type: 'boolean',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
                     'x-component': 'Switch',
                     'x-reactions': {
                       target: 'concurrentNum',
@@ -82,6 +82,9 @@ export class NodeType {
                     type: 'number',
                     default: 2,
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal'
+                    },
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       min: 0
