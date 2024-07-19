@@ -92,6 +92,7 @@ import { getConnectionIcon } from '@tap/business/src/views/connections/util'
 import resize from '@tap/component/src/directives/resize'
 import { cloneDeep, isEmpty } from 'lodash'
 import ConnectorDoc from '../ConnectorDoc'
+import mixins from './mixins'
 
 export default {
   name: 'SceneForm',
@@ -100,6 +101,7 @@ export default {
   directives: {
     resize
   },
+  mixins: [mixins],
   props: {
     hideConnectionType: Boolean,
     params: {
@@ -933,6 +935,16 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
+            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
+              ? {
+                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+                  fulfill: {
+                    state: {
+                      display: 'none'
+                    }
+                  }
+                }
+              : undefined,
             properties: {
               __TAPDATA: {
                 type: 'object',
@@ -1181,7 +1193,7 @@ export default {
         if (shareCdcEnable && shareCDCExternalStorageId) {
           this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
         }
-        delete result.properties.START.properties.__TAPDATA.properties.name
+        // delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
       this.setConnectionConfig()
@@ -1457,41 +1469,6 @@ export default {
       }
       this.schemaData = result
       this.loadingFrom = false
-    },
-    getPdkData(id) {
-      connectionsApi.getNoSchema(id).then(data => {
-        this.model = data
-        let {
-          name,
-          connection_type,
-          table_filter,
-          loadAllTables,
-          shareCdcEnable,
-          accessNodeType,
-          accessNodeProcessId,
-          priorityProcessId,
-          openTableExcludeFilter,
-          tableExcludeFilter,
-          schemaUpdateHour
-        } = this.model
-        this.schemaFormInstance.setValues({
-          __TAPDATA: {
-            name,
-            connection_type,
-            table_filter,
-            loadAllTables,
-            shareCdcEnable,
-            accessNodeType,
-            accessNodeProcessId,
-            priorityProcessId,
-            openTableExcludeFilter,
-            tableExcludeFilter,
-            schemaUpdateHour
-          },
-          ...this.model?.config
-        })
-        this.renameData.rename = this.model.name
-      })
     },
     getConnectionIcon() {
       const { pdkHash } = this.params || {}
