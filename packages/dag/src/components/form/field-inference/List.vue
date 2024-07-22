@@ -260,7 +260,7 @@ export default {
           label: '#',
           type: 'index',
           prop: 'index',
-          minWidth: '40px'
+          minWidth: 40
         },
         {
           label: i18n.t('packages_form_field_add_del_index_ziduanmingcheng'),
@@ -290,7 +290,7 @@ export default {
           prop: 'operation',
           slotName: 'operation',
           headerSlot: 'operationHeader',
-          width: '60px'
+          minWidth: 60
         }
       ],
       nullableMap: {
