@@ -774,5 +774,10 @@ export default {
   packages_dag_migrate_union: 'Union',
   packages_dag_merged_tableName: 'Merged Table Name',
   packages_dag_merged_tableName_ph: 'Please enter the merged table name',
-  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed'
+  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed',
+  packages_dag_enableConcurrentProcess: 'Enable concurrent processing',
+  packages_dag_concurrentNum: 'Number of Concurrent Tasks',
+  packages_dag_uniqueIndexEnable: 'Create unique index',
+  packages_dag_uniqueIndexEnable_tip:
+    'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.'
 }

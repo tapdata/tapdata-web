@@ -159,6 +159,8 @@ export default {
   packages_form_field_inference_main_quanbuhuifumo: '全部恢復默認',
   packages_form_field_inference_main_gepiliangxiugai: '批量修改規則正在生效',
   packages_form_field_inference_main_dangqianyou: '當前有',
+  packages_form_batch_rule_active:
+    '<span class="color-warning px-1 fs-6 fw-bold din-font">{val}</span>個批量修改規則正在生效',
   packages_form_field_type_rules_main_shijikeyongchang: '實際可用長度取決於目標數據庫類型定義，請按需設置',
   packages_form_field_type_rules_main_tianjia: '添加',
   packages_form_field_type_rules_main_piliangxiugaizi: '批量修改字段類型',

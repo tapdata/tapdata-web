@@ -283,14 +283,12 @@ export class Database extends NodeType {
                 properties: {
                   fieldMapping: {
                     type: 'void',
-                    title: i18n.t('packages_dag_nodes_database_tuiyanjieguo'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'fieldInference',
-                    'x-component-props': {
-                      style: {
-                        'margin-top': '-36px'
-                      }
-                    }
+                    'x-component': 'fieldInference'
+                  },
+                  uniqueIndexEnable: {
+                    type: 'boolean',
+                    default: true,
+                    'x-display': 'hidden'
                   },
                   existDataProcessMode: {
                     type: 'string',
