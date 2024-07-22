@@ -169,6 +169,8 @@ export default {
   packages_form_field_inference_main_quanbuhuifumo: 'Restore all defaults',
   packages_form_field_inference_main_gepiliangxiugai: 'The modified batch rule is now active.',
   packages_form_field_inference_main_dangqianyou: 'There is currently',
+  packages_form_batch_rule_active:
+    '<span class="color-warning px-1 fs-6 fw-bold din-font">{val}</span>batch rule active',
   packages_form_field_type_rules_main_shijikeyongchang:
     'The precise length available will vary depending on the definition of the target database type, so please adjust it accordingly to meet your requirements.',
   packages_form_field_type_rules_main_tianjia: 'Add',
