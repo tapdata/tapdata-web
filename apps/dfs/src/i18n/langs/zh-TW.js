@@ -1668,5 +1668,7 @@ export default {
   dfs_egress_traffic: '發送數據量',
   dfs_ingress_traffic: '接收數據量',
   dfs_billing_cycle: '賬單週期',
-  dfs_bill_status: '賬單狀態'
+  dfs_bill_status: '賬單狀態',
+  dfs_service_upgrade_notice: 'TapData Cloud 服務升級公告',
+  dfs_service_upgrade_notice_content: `尊敬的用戶：\n為了進一步提升您的使用體驗，我們計劃對 TapData Cloud 進行服務升級。具體升...`
 }

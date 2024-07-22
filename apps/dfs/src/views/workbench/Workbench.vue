@@ -73,6 +73,9 @@
                 :key="index"
                 class="notice-list__item flex align-items-center mb-4 px-1 pointer"
               >
+                <div v-if="item.icon" class="">
+                  <VIcon size="18">{{ item.icon }}</VIcon>
+                </div>
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
@@ -146,6 +149,7 @@ import { VIcon, Chart } from '@tap/component'
 import timeFunction from '@/mixins/timeFunction'
 import CheckLicense from '@/views/aliyun-market/CheckLicnese'
 import { mapMutations } from 'vuex'
+import { UpgradeDialog } from '@/plugins/upgrade-notice'
 
 export default {
   name: 'Workbench',
@@ -343,6 +347,7 @@ export default {
     this.init()
   },
   methods: {
+    UpgradeDialog,
     ...mapMutations(['setUpgradeFeeVisible']),
     init() {
       this.loadAgent() // agent
@@ -410,6 +415,19 @@ export default {
     loadNotices() {
       this.notices = this.isDomesticStation
         ? [
+            {
+              id: 31,
+              handle: 'UpgradeDialog',
+              icon: 'version-rocket',
+              name: i18n.t('dfs_service_upgrade_notice'),
+              time: '2024-7-22 22:00'
+            },
+            {
+              id: 30,
+              name: 'Tapdata Cloud 3.8.0 Release Notes',
+              link: 'https://tapdata.net/cloud_release_notes_3-8-0.html',
+              time: '2024-6-20 21:00'
+            },
             {
               id: 29,
               type: '',
@@ -614,6 +632,19 @@ export default {
           ]
         : [
             {
+              id: 31,
+              handle: 'UpgradeDialog',
+              icon: 'version-rocket',
+              name: i18n.t('dfs_service_upgrade_notice'),
+              time: '2024-7-22 22:00'
+            },
+            {
+              id: 30,
+              name: 'Tapdata Cloud 3.8.0 Release Notes',
+              link: 'https://tapdata.io/blog/tapdata-cloud-3-8-0',
+              time: '2024-6-20 21:00'
+            },
+            {
               id: 29,
               type: '',
               name: 'Tapdata Cloud 3.7.0 Release Notes',
@@ -784,6 +815,8 @@ export default {
         this.showUpgrade = true
       } else if (item?.link) {
         window.open(item.link)
+      } else if (item.handle) {
+        this[item.handle]?.(this)
       } else {
         this.$router.push({
           name: 'WorkbenchNotice',

@@ -1705,5 +1705,7 @@ export default {
   dfs_egress_traffic: '发送数据量',
   dfs_ingress_traffic: '接收数据量',
   dfs_billing_cycle: '账单周期',
-  dfs_bill_status: '账单状态'
+  dfs_bill_status: '账单状态',
+  dfs_service_upgrade_notice: 'TapData Cloud 服务升级公告',
+  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`
 }

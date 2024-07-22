@@ -1844,5 +1844,7 @@ export default {
   dfs_egress_traffic: 'Egress Traffic',
   dfs_ingress_traffic: 'Ingress Traffic',
   dfs_billing_cycle: 'Billing Cycle',
-  dfs_bill_status: 'Status'
+  dfs_bill_status: 'Status',
+  dfs_service_upgrade_notice: 'TapData Cloud Service Upgrade Announcement',
+  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`
 }
