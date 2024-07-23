@@ -153,6 +153,12 @@
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
+
+      <template v-if="!stateIsReadonly && buttonShowMap.Edit">
+        <el-button :loading="schemaLoading" @click="loadSchema" type="text">加载Schema</el-button>
+        <el-divider class="fs-5 ml-4 mr-1" direction="vertical"></el-divider>
+      </template>
+
       <ElButton class="ml-3" size="medium" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
@@ -242,6 +248,7 @@ import { Select } from 'element-ui'
 import { VIcon, TextEditable, VDivider, VEmpty } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
+import { taskApi } from '@tap/api'
 
 export default {
   name: 'TopHeader',
@@ -278,7 +285,8 @@ export default {
       },
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
-      nodeSearchInput: ''
+      nodeSearchInput: '',
+      schemaLoading: false
     }
   },
 
@@ -355,6 +363,13 @@ export default {
     handleClickNode(node) {
       this.showSearchNodePopover = false
       this.$emit('locate-node', node)
+    },
+
+    loadSchema() {
+      this.schemaLoading = true
+      taskApi.refreshSchema(this.dataflow.id).finally(() => {
+        this.schemaLoading = false
+      })
     }
   }
 }

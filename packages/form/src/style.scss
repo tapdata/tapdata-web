@@ -109,3 +109,10 @@
 .field-select-popper .el-select-dropdown__item {
   padding: 0 16px;
 }
+
+.formily-element-form-item-label .el-button {
+  line-height: 1;
+  > *  {
+    line-height: 1;
+  }
+}

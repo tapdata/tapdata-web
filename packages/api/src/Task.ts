@@ -239,5 +239,10 @@ export default class Task extends Http {
       responseType: 'blob'
     })
   }
+
+  refreshSchema(taskId, data) {
+    // /api/task/{id}/re-schemas
+    return this.axios.put(`${this.url}/${taskId}/re-schemas`, data)
+  }
 }
 export { Task }

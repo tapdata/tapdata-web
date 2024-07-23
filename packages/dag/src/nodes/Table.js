@@ -1,8 +1,6 @@
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 import i18n from '@tap/i18n'
-import { RelativeTimePicker } from '@/components/form'
-import { reaction } from '@formily/reactive'
 
 export class Table extends NodeType {
   constructor() {
@@ -126,7 +124,13 @@ export class Table extends NodeType {
                   'attrs.connectionName': {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
-                    'x-decorator': 'FormItem',
+                    // 'x-decorator': 'FormItem',
+                    // 'x-decorator': 'StageButtonLabel',
+                    'x-decorator': 'SchemaFormItem',
+                    'x-decorator-props': {
+                      title: i18n.t('public_connection_name'),
+                      type: 'connection'
+                    },
                     'x-component': 'div',
                     'x-content': '{{$self.value}}',
                     'x-component-props': {
@@ -149,7 +153,7 @@ export class Table extends NodeType {
                   tableNameWrap: {
                     type: 'void',
                     title: i18n.t('packages_dag_dag_table'),
-                    'x-decorator': 'StageButtonLabel',
+                    'x-decorator': 'SchemaFormItem',
                     'x-decorator-props': {
                       asterisk: true,
                       feedbackLayout: 'none',
