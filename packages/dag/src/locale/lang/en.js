@@ -779,5 +779,6 @@ export default {
   packages_dag_concurrentNum: 'Number of Concurrent Tasks',
   packages_dag_uniqueIndexEnable: 'Create unique index',
   packages_dag_uniqueIndexEnable_tip:
-    'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.'
+    'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.',
+  packages_dag_refresh_schema: 'Refresh Schema'
 }

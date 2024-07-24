@@ -2,6 +2,7 @@ import { observer } from '@formily/reactive-vue'
 import { computed, defineComponent, ref } from '@vue/composition-api'
 import { FormItem, useForm } from '@tap/form'
 import { taskApi } from '@tap/api'
+import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 
 export const SchemaFormItem = observer(
@@ -41,7 +42,7 @@ export const SchemaFormItem = observer(
             <span class="mr-2">{props.title}</span>
             {showBtn.value && (
               <el-button onClick={loadSchema} type="text" loading={isLoading.value}>
-                {i18n.t('public_connection_button_load_schema')}
+                {i18n.t('packages_dag_refresh_schema')}
               </el-button>
             )}
           </div>

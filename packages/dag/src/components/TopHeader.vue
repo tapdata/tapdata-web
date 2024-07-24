@@ -155,7 +155,9 @@
       <div class="flex-grow-1"></div>
 
       <template v-if="!stateIsReadonly && buttonShowMap.Edit">
-        <el-button :loading="schemaLoading" @click="loadSchema" type="text">加载Schema</el-button>
+        <el-button :loading="schemaLoading" @click="loadSchema" type="text">{{
+          $t('packages_dag_refresh_schema')
+        }}</el-button>
         <el-divider class="fs-5 ml-4 mr-1" direction="vertical"></el-divider>
       </template>
 
