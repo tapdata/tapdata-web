@@ -112,6 +112,11 @@ export const TableSelect = observer(
 
       const loading = ref(false)
 
+      const loadSelectData = () => {
+        refs.select.query = ''
+        refs.select.loadData()
+      }
+
       const loadSchema = async keys => {
         // refs.select.blur()
         loading.value = true
@@ -124,14 +129,14 @@ export const TableSelect = observer(
             loading.value = false
           })
 
-        refs.select.loadData()
+        loadSelectData()
       }
 
       const unWatch = watch(
         () => root.$store.state.dataflow.schemaRefreshing,
         v => {
           if (!v) {
-            refs.select.loadData()
+            loadSelectData()
           }
         }
       )

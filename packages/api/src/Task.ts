@@ -240,9 +240,10 @@ export default class Task extends Http {
     })
   }
 
-  refreshSchema(taskId, data) {
-    // /api/task/{id}/re-schemas
-    return this.axios.put(`${this.url}/${taskId}/re-schemas`, data)
+  refreshSchema(taskId, params) {
+    return this.axios.put(`${this.url}/${taskId}/re-schemas`, null, {
+      params
+    })
   }
 }
 export { Task }
