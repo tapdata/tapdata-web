@@ -10,14 +10,7 @@
     <div class="flex flex-column overflow-hidden pt-0 h-100">
       <!-- 顶部 标题 Tab -->
       <div v-if="!inDialog" class="flex position-relative" style="line-height: 48px">
-        <div class="position-absolute top-0 start-0 fs-6 fw-sub px-6 font-color-dark">
-          {{
-            data.id
-              ? $t('packages_business_data_server_drawer_fuwuxiangqing')
-              : $t('packages_business_data_server_drawer_chuangjianfuwu')
-          }}
-        </div>
-        <ElTabs v-model="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
+        <ElTabs v-model="tab" ref="tabs" class="data-server__tabs flex-1" @tab-click="tabChanged">
           <ElTabPane :label="$t('packages_business_data_server_drawer_peizhi')" name="form"></ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
@@ -706,6 +699,18 @@ export default {
       if (!v) {
         this.intervalId && clearTimeout(this.intervalId)
       }
+
+      if (v) {
+        this.setTabTitle(
+          this.data.id
+            ? this.$t('packages_business_data_server_drawer_fuwuxiangqing')
+            : this.$t('packages_business_data_server_drawer_chuangjianfuwu')
+        )
+
+        setTimeout(() => {
+          this.$refs.tabs.calcPaneInstances(true)
+        }, 0)
+      }
     }
   },
   mounted() {
@@ -1307,6 +1312,23 @@ export default {
         ]
       })
       this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    setTabTitle(title) {
+      let $title = this.$refs.tabs.$el.querySelector('.el-tabs__nav-title')
+      if (!$title) {
+        // 创建一个新的span元素
+        $title = document.createElement('span')
+        $title.setAttribute('class', 'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark')
+
+        // 获取el-tabs__header元素
+        const tabsHeader = this.$refs.tabs.$el.querySelector('.el-tabs__nav-wrap')
+
+        // 在el-tabs__header元素之前插入新的span元素
+        tabsHeader.insertBefore($title, tabsHeader.firstChild)
+      }
+
+      $title.textContent = title
     }
   }
 }
@@ -1324,9 +1346,6 @@ export default {
 }
 .data-server__tabs {
   ::v-deep {
-    .el-tabs__nav-wrap.is-top {
-      padding-left: 112px;
-    }
     .el-tabs__header.is-top {
       margin: 0;
     }

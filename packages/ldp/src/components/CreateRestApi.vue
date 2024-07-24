@@ -17,6 +17,7 @@
       class="pb-0"
       @update:loading="loading = $event"
       :params="params"
+      :host="host"
       in-dialog
       @save="onSaved"
     ></ApiForm>
