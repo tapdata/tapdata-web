@@ -847,7 +847,7 @@ export class Table extends NodeType {
                             dependencies: ['isFilter', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai2')}':''}}`
                               }
                             }
@@ -982,7 +982,7 @@ export class Table extends NodeType {
                             dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai')}':''}}`
                               }
                             }
