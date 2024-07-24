@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, ref, onMounted, watch } from '@vue/composition-api'
+import { defineComponent, computed, ref, onMounted, watch, onBeforeUnmount } from '@vue/composition-api'
 
 import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -122,11 +122,23 @@ export const TableSelect = observer(
           })
           .finally(() => {
             loading.value = false
-            refs.select.loadData()
           })
 
-        // refs.select.loadData()
+        refs.select.loadData()
       }
+
+      const unWatch = watch(
+        () => root.$store.state.dataflow.schemaRefreshing,
+        v => {
+          if (!v) {
+            refs.select.loadData()
+          }
+        }
+      )
+
+      onBeforeUnmount(() => {
+        unWatch()
+      })
 
       return () => {
         const scopedSlots = {

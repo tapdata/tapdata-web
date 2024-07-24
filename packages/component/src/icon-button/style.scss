@@ -44,10 +44,10 @@
     &[disabled]:active,
     &[disabled]:hover,
     &[disabled][aria-expanded] {
-      color: rgb(187, 191, 196);
-      background: rgba(0, 0, 0, 0);
-      border-color: rgba(0, 0, 0, 0);
-      cursor: not-allowed;
+      color: rgb(187, 191, 196) !important;
+      background: rgba(0, 0, 0, 0) !important;
+      border-color: rgba(0, 0, 0, 0) !important;
+      cursor: not-allowed !important;
     }
 
     &-xs {

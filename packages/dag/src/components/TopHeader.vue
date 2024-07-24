@@ -110,6 +110,13 @@
           <VIcon size="16">list</VIcon>
         </button> </ElTooltip
       ><VDivider class="mx-3" vertical inset></VDivider>
+      <!--信息输出-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_refresh_schema')">
+        <IconButton class="icon-btn" @click="refreshSchema" :loading="refreshing" sm> refresh </IconButton>
+        <!--<button @click="loadSchema" class="icon-btn">
+          <VIcon size="16">refresh</VIcon>
+        </button>--> </ElTooltip
+      ><VDivider class="mx-3" vertical inset></VDivider>
       <!--搜索节点-->
       <ElPopover
         v-model="showSearchNodePopover"
@@ -153,13 +160,6 @@
     <!--复制dag查看不显示-->
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-
-      <template v-if="!stateIsReadonly && buttonShowMap.Edit">
-        <el-button :loading="schemaLoading" @click="loadSchema" type="text">{{
-          $t('packages_dag_refresh_schema')
-        }}</el-button>
-        <el-divider class="fs-5 ml-4 mr-1" direction="vertical"></el-divider>
-      </template>
 
       <ElButton class="ml-3" size="medium" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
@@ -247,7 +247,7 @@
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { Select } from 'element-ui'
-import { VIcon, TextEditable, VDivider, VEmpty } from '@tap/component'
+import { VIcon, TextEditable, VDivider, VEmpty, IconButton } from '@tap/component'
 import { TaskStatus } from '@tap/business'
 import focusSelect from '@tap/component/src/directives/focusSelect'
 import { taskApi } from '@tap/api'
@@ -271,7 +271,15 @@ export default {
     }
   },
 
-  components: { TextEditable, TaskStatus, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar, VEmpty },
+  components: {
+    TextEditable,
+    TaskStatus,
+    VDivider,
+    VIcon,
+    ElScrollbar: Select.components.ElScrollbar,
+    VEmpty,
+    IconButton
+  },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
@@ -288,7 +296,7 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      schemaLoading: false
+      refreshing: false
     }
   },
 
@@ -324,7 +332,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed', 'toggleConsole']),
+    ...mapMutations('dataflow', ['setActiveType', 'toggleShiftKeyPressed', 'toggleConsole', 'setSchemaRefreshing']),
 
     isShowForceStop(data) {
       return data?.length && data.every(t => ['stopping'].includes(t.status))
@@ -367,10 +375,15 @@ export default {
       this.$emit('locate-node', node)
     },
 
-    loadSchema() {
-      this.schemaLoading = true
+    refreshSchema() {
+      if (this.refreshing) return
+
+      this.refreshing = true
+      this.setSchemaRefreshing(true)
+
       taskApi.refreshSchema(this.dataflow.id).finally(() => {
-        this.schemaLoading = false
+        this.refreshing = false
+        this.setSchemaRefreshing(false)
       })
     }
   }

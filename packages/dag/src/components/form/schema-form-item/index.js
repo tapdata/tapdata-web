@@ -22,18 +22,20 @@ export const SchemaFormItem = observer(
 
       const loadSchema = async () => {
         loading.value = true
+        root.$store.commit('dataflow/setSchemaRefreshing', true)
         await taskApi
           .refreshSchema(taskId, {
             nodeIds: activeNodeId,
-            keys: props.type === 'connection' ? undefined : form.values.tableName
+            keys: props.type === 'table' ? form.values.tableName : undefined
           })
           .finally(() => {
             loading.value = false
+            root.$store.commit('dataflow/setSchemaRefreshing', false)
           })
       }
 
       const showBtn = computed(() => {
-        return props.type === 'connection' || form.values.tableName
+        return props.type !== 'table' || form.values.tableName
       })
 
       return () => {
@@ -42,7 +44,7 @@ export const SchemaFormItem = observer(
             <span class="mr-2">{props.title}</span>
             {showBtn.value && (
               <el-button onClick={loadSchema} type="text" loading={isLoading.value}>
-                {i18n.t('packages_dag_refresh_schema')}
+                {i18n.t('public_button_reload')}
               </el-button>
             )}
           </div>

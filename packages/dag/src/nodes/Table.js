@@ -124,13 +124,7 @@ export class Table extends NodeType {
                   'attrs.connectionName': {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
-                    // 'x-decorator': 'FormItem',
-                    // 'x-decorator': 'StageButtonLabel',
-                    'x-decorator': 'SchemaFormItem',
-                    'x-decorator-props': {
-                      title: i18n.t('public_connection_name'),
-                      type: 'connection'
-                    },
+                    'x-decorator': 'FormItem',
                     'x-component': 'div',
                     'x-content': '{{$self.value}}',
                     'x-component-props': {

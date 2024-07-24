@@ -723,5 +723,7 @@ export default {
   packages_dag_uniqueIndexEnable: '自動創建唯一索引',
   packages_dag_uniqueIndexEnable_tip:
     '開啓時，根據更新條件創建唯一索引。關閉時，創建普通索引。注意：更新條件字段相同的記錄在更新時可能丟數，併發寫入有幾率出現重複數據',
-  packages_dag_refresh_schema: '刷新模型'
+  packages_dag_refresh_schema: '刷新模型',
+  packages_dag_switch_to_table_view: '切換至表格視圖',
+  packages_dag_switch_to_tree_view: '切換至樹形視圖'
 }

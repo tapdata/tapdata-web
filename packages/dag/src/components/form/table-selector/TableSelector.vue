@@ -400,6 +400,7 @@ import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
 import { take } from 'lodash/array'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon, VEmpty },
@@ -442,6 +443,8 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('dataflow', ['schemaRefreshing']),
+
     filteredData() {
       let { searchKeyword, tables } = this.table
       try {
@@ -517,6 +520,11 @@ export default {
     },
     filterType() {
       this.handleFilterType()
+    },
+    schemaRefreshing(v) {
+      if (!v) {
+        this.getTables()
+      }
     }
   },
   created() {
@@ -763,6 +771,8 @@ export default {
         .finally(() => {
           this.schemaLoading = false
         })
+
+      this.getTables()
     }
   }
 }

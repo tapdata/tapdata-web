@@ -12239,6 +12239,10 @@
   animation: rotate 5s linear infinite;
 }
 
+.animation-rotate-fast {
+  animation: rotate 1s linear infinite;
+}
+
 @-moz-keyframes rotate {
   0% {
     -moz-transform: rotate(0deg);
