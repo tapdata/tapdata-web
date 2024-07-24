@@ -227,7 +227,7 @@ export const SchemaPreview = defineComponent({
           <span class="inline-flex align-center gap-1">
             {i18n.t('public_schema')}
             <el-tooltip transition="tooltip-fade-in" content={i18n.t('packages_dag_refresh_schema')} placement="top">
-              <IconButton onClick={refreshSchema} loading={refreshing.value}>
+              <IconButton disabled={props.disabled} onClick={refreshSchema} loading={refreshing.value}>
                 refresh
               </IconButton>
             </el-tooltip>
