@@ -2,7 +2,7 @@ import { defineComponent, ref } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm, useField } from '@tap/form'
 import { IconButton } from '@tap/component'
-import { metadataInstancesApi, databaseTypesApi } from '@tap/api'
+import { metadataInstancesApi, databaseTypesApi, taskApi } from '@tap/api'
 import { useSchemaEffect } from '../../../hooks/useAfterTaskSaved'
 import { getCanUseDataTypes, getMatchedDataTypeLevel, errorFiledType } from '../../../util'
 import FieldList from '../field-inference/List'
@@ -206,18 +206,47 @@ export const SchemaPreview = defineComponent({
       fieldChangeRules = rules
     }
 
+    const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
+    const refreshing = ref(false)
+    const refreshSchema = async () => {
+      if (refreshing.value) return
+      refreshing.value = true
+      await taskApi
+        .refreshSchema(taskId, {
+          nodeIds: activeNodeId,
+          keys: form.values.tableName
+        })
+        .finally(() => {
+          refreshing.value = false
+        })
+    }
+
     return () => (
       <div class="schema-preview pb-6">
         <ElDivider class="mt-8">
           <span class="inline-flex align-center gap-1">
             {i18n.t('public_schema')}
-            <IconButton
-              onClick={() => {
-                isTreeView.value = !isTreeView.value
-              }}
+            <el-divider direction="vertical" class="mx-0" staticClass="mx-1" />
+            <el-tooltip transition="tooltip-fade-in" content={i18n.t('packages_dag_refresh_schema')} placement="top">
+              <IconButton disabled={props.disabled} onClick={refreshSchema} loading={refreshing.value}>
+                refresh
+              </IconButton>
+            </el-tooltip>
+            <el-tooltip
+              transition="tooltip-fade-in"
+              content={i18n.t(
+                isTreeView.value ? 'packages_dag_switch_to_table_view' : 'packages_dag_switch_to_tree_view'
+              )}
+              placement="top"
             >
-              {isTreeView.value ? 'table-grid' : 'tree-view'}
-            </IconButton>
+              <IconButton
+                onClick={() => {
+                  isTreeView.value = !isTreeView.value
+                }}
+              >
+                {isTreeView.value ? 'table-grid' : 'tree-view'}
+              </IconButton>
+            </el-tooltip>
           </span>
         </ElDivider>
         <div class="flex justify-content-center">

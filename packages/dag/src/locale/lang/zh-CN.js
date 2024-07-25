@@ -727,5 +727,8 @@ export default {
   packages_dag_concurrentNum: '并发数',
   packages_dag_uniqueIndexEnable: '自动创建唯一索引',
   packages_dag_uniqueIndexEnable_tip:
-    '开启时，根据更新条件创建唯一索引。关闭时，创建普通索引。注意：更新条件字段相同的记录在更新时可能丢数，并发写入有几率出现重复数据'
+    '开启时，根据更新条件创建唯一索引。关闭时，创建普通索引。注意：更新条件字段相同的记录在更新时可能丢数，并发写入有几率出现重复数据',
+  packages_dag_refresh_schema: '刷新模型',
+  packages_dag_switch_to_table_view: '切换至表格视图',
+  packages_dag_switch_to_tree_view: '切换至树形视图'
 }

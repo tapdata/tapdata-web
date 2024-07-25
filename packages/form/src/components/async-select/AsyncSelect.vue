@@ -191,7 +191,7 @@
           <span>{{ loadingTxt }}</span>
         </div>
         <template v-else-if="emptyText && (!allowCreate || (allowCreate && options.length === 0))">
-          <slot name="empty" v-if="$slots.empty"></slot>
+          <slot name="empty" v-if="$slots.empty" :query="selectedLabel"></slot>
           <p class="el-select-dropdown__empty" v-else>
             {{ emptyText }}
           </p>

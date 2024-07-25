@@ -157,8 +157,10 @@ export class Database extends NodeType {
                     title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
                     type: 'string',
                     default: 'custom',
-                    'x-decorator': 'StageButtonLabel',
+                    // 'x-decorator': 'StageButtonLabel',
+                    'x-decorator': 'SchemaFormItem',
                     'x-decorator-props': {
+                      type: 'connection',
                       asterisk: true,
                       feedbackLayout: 'none',
                       connectionId: '{{$values.connectionId}}',
