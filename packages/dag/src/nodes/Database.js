@@ -153,40 +153,45 @@ export class Database extends NodeType {
                   }
                 },
                 properties: {
-                  migrateTableSelectType: {
-                    title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
-                    type: 'string',
-                    default: 'custom',
-                    // 'x-decorator': 'StageButtonLabel',
+                  div1: {
+                    type: 'void',
+                    'x-component': 'div',
+                    properties: {
+                      migrateTableSelectType: {
+                        title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+                        type: 'string',
+                        default: 'custom',
+                        // 'x-decorator': 'StageButtonLabel',
                     'x-decorator': 'SchemaFormItem',
                     'x-decorator-props': {
                       type: 'connection',
-                      asterisk: true,
-                      feedbackLayout: 'none',
-                      connectionId: '{{$values.connectionId}}',
-                      title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
-                      target: ''
-                    },
-                    'x-component': 'Radio.Group',
-                    'x-reactions': {
-                      fulfill: {
-                        schema: {
-                          'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`
-                        }
+                          asterisk: true,
+                          feedbackLayout: 'none',
+                          connectionId: '{{$values.connectionId}}',
+                          title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+                          target: ''
+                        },
+                        'x-component': 'Radio.Group',
+                        'x-reactions': {
+                          fulfill: {
+                            schema: {
+                              'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`
+                            }
+                          }
+                        },
+                        enum: [
+                          {
+                            label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
+                            value: 'custom'
+                          },
+                          {
+                            label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
+                            value: 'expression'
+                          }
+                        ]
                       }
-                    },
-                    enum: [
-                      {
-                        label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
-                        value: 'custom'
-                      },
-                      {
-                        label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
-                        value: 'expression'
-                      }
-                    ]
+                    }
                   },
-
                   noPrimaryKeyTableSelectType: {
                     type: 'string',
                     title: i18n.t('packages_dag_nodes_database_biaoxianshi'),
@@ -199,71 +204,74 @@ export class Database extends NodeType {
                       { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
                     ]
                   },
-
-                  tableNames: {
-                    type: 'array',
-                    default: [],
-                    'x-component': 'TableSelector',
-                    'x-component-props': {
-                      connectionId: '{{$values.connectionId}}',
-                      style: {
-                        marginTop: '8px',
-                        height: 'unset',
-                        minHeight: 0,
-                        maxHeight: 'calc((100vh - 120px) * 0.618)'
-                      },
-                      hideReload: true,
-                      filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
-                    },
-                    'x-reactions': {
-                      dependencies: ['migrateTableSelectType'],
-                      fulfill: {
-                        state: {
-                          display: '{{$deps[0] === "custom" ? "visible":"hidden"}}'
-                        },
-                        schema: {
-                          required: '{{$deps[0] === "custom"}}'
-                        }
-                      }
-                    }
-                  },
-
-                  tableExpression: {
-                    type: 'string',
-                    default: '.*',
-                    required: true,
-                    description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Input',
-                    'x-component-props': {
-                      rows: 1
-                    },
-                    'x-reactions': {
-                      dependencies: ['migrateTableSelectType'],
-                      fulfill: {
-                        state: {
-                          display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
-                        }
-                      }
-                    }
-                  },
-
-                  tableListCard: {
+                  div2: {
                     type: 'void',
-                    'x-decorator': 'FormItem',
-                    'x-component': 'TableListCard',
-                    'x-component-props': {
-                      rows: 1,
-                      title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
-                      connectionId: '{{$values.connectionId}}',
-                      params: '{{ {regex: $values.tableExpression,limit:0} }}',
-                      filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
-                    },
-                    'x-reactions': {
-                      dependencies: ['migrateTableSelectType'],
-                      fulfill: {
-                        state: {
-                          display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                    'x-component': 'div',
+                    properties: {
+                      tableNames: {
+                        type: 'array',
+                        default: [],
+                        'x-component': 'TableSelector',
+                        'x-component-props': {
+                          connectionId: '{{$values.connectionId}}',
+                          style: {
+                            marginTop: '8px',
+                            height: 'unset',
+                            minHeight: 0,
+                            maxHeight: 'calc((100vh - 120px) * 0.618)'
+                          },
+                          hideReload: true,
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                        },
+                        'x-reactions': {
+                          dependencies: ['migrateTableSelectType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "custom" ? "visible":"hidden"}}'
+                            },
+                            schema: {
+                              required: '{{$deps[0] === "custom"}}'
+                            }
+                          }
+                        }
+                      },
+                      tableExpression: {
+                        type: 'string',
+                        default: '.*',
+                        required: true,
+                        description: i18n.t('packages_dag_nodes_database_zhengzebiaodashi'),
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          rows: 1
+                        },
+                        'x-reactions': {
+                          dependencies: ['migrateTableSelectType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      tableListCard: {
+                        type: 'void',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'TableListCard',
+                        'x-component-props': {
+                          rows: 1,
+                          title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
+                          connectionId: '{{$values.connectionId}}',
+                          params: '{{ {regex: $values.tableExpression,limit:0} }}',
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                        },
+                        'x-reactions': {
+                          dependencies: ['migrateTableSelectType'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
+                            }
+                          }
                         }
                       }
                     }
