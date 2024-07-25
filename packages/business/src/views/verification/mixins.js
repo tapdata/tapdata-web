@@ -119,6 +119,25 @@ export default {
       })
       url = route.href
       window.open(url, '_blank')
+    },
+
+    handleLoadIndexField(item, indexArr, sourceColumns, targetColumns) {
+      sourceColumns.forEach((el, i) => {
+        let node = {
+          type: item.type,
+          red: indexArr.includes(i + ''),
+          source: {
+            key: el,
+            value: item.source[el]
+          },
+          target: {
+            key: targetColumns[i],
+            value: item.target[targetColumns[i]]
+          }
+        }
+        item['details'] = item['details'] || []
+        item['details'].push(node)
+      })
     }
   }
 }
