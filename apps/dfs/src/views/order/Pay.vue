@@ -21,6 +21,20 @@
             <VEmpty small></VEmpty>
           </template>
         </VTable>
+
+        <div class="font-color-dark fw-sub text-label mb-2">流量计费</div>
+        <VTable
+          class="border rounded-lg h-auto mb-5"
+          :columns="trafficColumns"
+          :data="trafficItems"
+          ref="table"
+          :has-pagination="false"
+        >
+          <template #empty>
+            <VEmpty small></VEmpty>
+          </template>
+        </VTable>
+
         <ElForm ref="form" label-position="top" :model="payForm">
           <ElFormItem prop="email" :rules="emailRules">
             <span slot="label" class="font-color-dark fw-sub">
@@ -152,6 +166,23 @@ export default {
       priceOff: 0,
       subscriptionMethodLabel: '',
       subscribeItems: [],
+      trafficItems: [],
+      trafficColumns: [
+        {
+          label: i18n.t('dfs_order_list_dingyueleixing'),
+          prop: 'productLabel',
+          width: 360
+        },
+        {
+          label: '计费方式',
+          prop: 'specLabel',
+          width: 180
+        },
+        {
+          label: i18n.t('dfs_user_center_jine'),
+          prop: 'price'
+        }
+      ],
       orderInfo: {},
       emailRules: [
         {
@@ -222,7 +253,7 @@ export default {
             {
               label: i18n.t('dfs_instance_instance_guige'),
               prop: 'specLabel',
-              width: 180
+              width: 360
             },
             {
               label: i18n.t('dfs_instance_createagent_cunchukongjian'),
@@ -247,7 +278,8 @@ export default {
         : [
             {
               label: i18n.t('dfs_order_list_dingyueleixing'),
-              prop: 'productType'
+              prop: 'productType',
+              width: 360
             },
             {
               label: i18n.t('dfs_instance_instance_guige'),
@@ -303,22 +335,31 @@ export default {
         getPaymentMethod({ periodUnit: subscribe.periodUnit, type: subscribe.subscribeType }) || '-'
       this.isRecurring = subscribe.subscribeType === 'recurring'
 
-      let subscribeItems = subscribe.subscribeItems || []
-      this.subscribeItems = subscribeItems.map(it => {
-        it.price = this.formatterPrice(currency, it.amount)
-        it.agentTypeLabel = this.agentTypeMap[it.agentType]
+      let subscribeItems = []
+      let trafficItems = []
 
-        if (it.productType === 'MongoDB') {
-          it.specLabel = `MongoDB Atlas ${it.spec.name}`
-          it.storageSizeLabel = `${it.spec.storageSize} ${it.spec.storageSize || 'GB'}`
+      for (let it of subscribe.subscribeItems) {
+        if (it.productType === 'networkTraffic') {
+          it.productLabel = '免费100G'
+          it.specLabel = '超出按量计费'
+          it.price = `${this.formatterPrice(currency, it.amount)}/GB`
+          trafficItems.push(it)
         } else {
-          it.specLabel = getSpec(it.spec) || '-'
+          if (it.productType === 'MongoDB') {
+            it.specLabel = `MongoDB Atlas ${it.spec.name}`
+            it.storageSizeLabel = `${it.spec.storageSize} ${it.spec.storageSize || 'GB'}`
+          } else {
+            it.specLabel = getSpec(it.spec) || '-'
+          }
+          it.price = this.formatterPrice(currency, it.amount)
+          it.agentTypeLabel = this.agentTypeMap[it.agentType]
+          subscribeItems.push(it)
         }
+      }
 
-        return it
-      })
+      this.subscribeItems = subscribeItems
+      this.trafficItems = trafficItems
 
-      // const subscribe = await this.$axios.get(`api/tcm/subscribe/${this.subscribeId}`)
       const agentUrl = window.App.$router.resolve({
         name: 'Instance',
         query: {
