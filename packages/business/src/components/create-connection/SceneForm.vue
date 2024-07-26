@@ -940,7 +940,7 @@ export default {
                   target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
                   fulfill: {
                     state: {
-                      display: 'none'
+                      display: 'hidden'
                     }
                   }
                 }
