@@ -9,10 +9,14 @@
           <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'v2_data_pipeline'">
             <el-col :span="24 / taskList.length" v-for="item in taskList" :key="item.name" class="dashboard-col">
               <div class="dashboard-col-box">
-                <div class="fs-7 font-color-normal">{{ item.title }}</div>
-                <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
-                  {{ item.desc }}
+                <div class="fs-7 font-color-normal flex align-center gap-2">
+                  <VIcon size="20">{{ item.icon }}</VIcon>
+                  <span class="fs-6 fw-sub font-color-normal">{{ item.desc }}</span>
+                  <!--{{ item.title }}-->
                 </div>
+                <!--<div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
+                  {{ item.desc }}
+                </div>-->
                 <div
                   class="mt-1"
                   :class="[
@@ -61,7 +65,9 @@
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                        '<span class=\'color-primary\' style=\'padding: 0 5px;\'>' +
+                          $t('dashboard_copy_total') +
+                          '</span>'
                       ])
                     "
                   ></div>
@@ -96,7 +102,9 @@
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
+                        '<span class=\'color-primary\' style=\'padding: 0 5px;\'>' +
+                          $t('dashboard_sync_total') +
+                          '</span>'
                       ])
                     "
                   ></div>
@@ -129,7 +137,9 @@
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                        '<span class=\'color-primary\' style=\'padding: 0 5px;\'>' +
+                          $t('dashboard_copy_total') +
+                          '</span>'
                       ])
                     "
                   ></div>
@@ -159,7 +169,7 @@
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' +
+                        '<span class=\'color-primary\' style=\'padding: 0 5px;\'>' +
                           $t('dashboard_transfer_overview') +
                           '</span>'
                       ])
@@ -214,7 +224,9 @@
                     class="flex justify-content-center align-items-center font-color-slight"
                     v-html="
                       $t('dashboard_no_statistics', [
-                        '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
+                        '<span class=\'color-primary\' style=\'padding: 0 5px;\'>' +
+                          $t('dashboard_server_title') +
+                          '</span>'
                       ])
                     "
                   ></div>
@@ -339,24 +351,28 @@ export default {
         (this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu')) && !this.lockedFeature.dataVerificationList,
       taskList: [
         {
+          icon: 'more-app',
           title: this.$t('dashboard_all_total'),
           desc: this.$t('dashboard_current_all_total'),
           key: 'all_total',
           value: 0
         },
         {
+          icon: 'copy-link',
           title: this.$t('dashboard_copy_total'),
           desc: this.$t('dashboard_current_copy_total'),
           key: 'copy_total',
           value: 0
         },
         {
+          icon: 'exchange-four',
           title: this.$t('dashboard_sync_total'),
           desc: this.$t('dashboard_current_sync_total'),
           key: 'sync_total',
           value: 0
         },
         {
+          icon: 'database-search',
           title: this.$t('dashboard_valid_total'),
           desc: this.$t('dashboard_current_valid_total'),
           key: 'valid_total',
@@ -736,7 +752,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard-wrap {
   overflow-y: auto;
-  background-color: #eff1f4;
+  background-color: var(--layout-bg, #eff1f4);
   .dashboard-row {
     .dashboard-col {
       flex: 1;

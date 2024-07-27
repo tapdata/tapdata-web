@@ -1,5 +1,4 @@
 import '@/styles/app.scss'
-
 import Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
@@ -23,6 +22,7 @@ import LoadMore from '@/utils/loadMore'
 
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
+import { installOEM } from '@/oem'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -95,7 +95,6 @@ if (IS_IFRAME) {
 const TOKEN = getUrlSearch('token')
 const URL_LANG = getUrlSearch('lang')
 
-// 西工大的case
 ;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
 
 if (TOKEN) {
@@ -105,6 +104,10 @@ if (TOKEN) {
 }
 
 let token = Cookie.get('access_token')
+
+const router = getRouter(i18n)
+
+installOEM(router, i18n)
 
 let init = settings => {
   window.__settings__ = settings
@@ -123,7 +126,7 @@ let init = settings => {
   window.App = new Vue({
     el: '#app',
     i18n,
-    router: getRouter(i18n),
+    router,
     store,
     wsOptions: {
       url: wsUrl,

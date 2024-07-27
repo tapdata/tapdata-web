@@ -45,11 +45,27 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        pdkSchemaList.forEach(pdkSchema => Object.assign(pdkSchema, pdkProperties))
+        let reactions = process.env.VUE_APP_HIDE_NODE_SCHEMA
+          ? {
+              'x-reactions': {
+                target: process.env.VUE_APP_HIDE_NODE_SCHEMA,
+                fulfill: {
+                  state: {
+                    display: 'hidden'
+                  }
+                }
+              }
+            }
+          : {}
+
+        pdkSchemaList.forEach(pdkSchema => {
+          Object.assign(pdkSchema, pdkProperties, reactions)
+        })
       }
     }
   }
 
+  console.log('newSchema', newSchema)
   return newSchema
 }
 

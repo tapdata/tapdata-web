@@ -190,6 +190,16 @@ export default observer({
               class: 'config-tabs',
               formTab: '{{formTab}}'
             },
+            'x-reactions': process.env.VUE_APP_HIDE_TASK_SCHEMA
+              ? {
+                  target: process.env.VUE_APP_HIDE_TASK_SCHEMA,
+                  fulfill: {
+                    state: {
+                      display: 'none'
+                    }
+                  }
+                }
+              : undefined,
             properties: {
               tab1: {
                 type: 'void',
@@ -470,118 +480,13 @@ export default observer({
                                   tooltip: this.$t('packages_dag_task_setting_syncPoint_tip'),
                                   feedbackLayout: 'none'
                                 },
-                                'x-component': 'ArrayItems',
+                                'x-component': 'SyncPoints',
                                 'x-decorator': 'FormItem',
                                 'x-reactions': {
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
                                       display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
-                                    }
-                                  }
-                                },
-                                items: {
-                                  type: 'object',
-                                  properties: {
-                                    nodeName: {
-                                      type: 'string',
-                                      'x-component': 'PreviewText.Input',
-                                      'x-reactions': {
-                                        dependencies: ['.connectionName', '.connectionId'],
-                                        fulfill: {
-                                          schema: {
-                                            'x-component-props.content': `{{$deps[0] + '('+ $self.value + ')'}}`
-                                          },
-                                          state: {
-                                            display: '{{ $deps[1] ? "visible":"hidden"}}'
-                                          }
-                                        }
-                                      }
-                                    },
-                                    hiddenPointType: {
-                                      'x-display': 'hidden',
-                                      type: 'boolean',
-                                      'x-component': 'PreviewText.Input'
-                                    },
-                                    connectionId: {
-                                      'x-display': 'hidden',
-                                      type: 'string'
-                                    },
-                                    connectionName: {
-                                      'x-display': 'hidden',
-                                      type: 'string',
-                                      'x-component': 'PreviewText.Input'
-                                    },
-                                    pointType: {
-                                      type: 'string',
-                                      'x-decorator': 'FormItem',
-                                      'x-component': 'Select',
-                                      'x-component-props': {
-                                        placeholder: i18n.t('public_select_placeholder')
-                                      },
-                                      default: 'current',
-                                      enum: [
-                                        {
-                                          label: this.$t('public_time_user_specified_time'),
-                                          value: 'localTZ'
-                                        },
-                                        /*{
-                                          label: this.$t('packages_dag_dataFlow_SyncInfo_connTZType'),
-                                          value: 'connTZ'
-                                        },*/
-                                        {
-                                          label: this.$t('public_time_current'),
-                                          value: 'current'
-                                        }
-                                      ],
-                                      'x-reactions': [
-                                        {
-                                          dependencies: ['.hiddenPointType'],
-                                          fulfill: {
-                                            state: {
-                                              disabled: `{{$deps[0]}}`
-                                            }
-                                          }
-                                        },
-                                        {
-                                          dependencies: ['.connectionId'],
-                                          fulfill: {
-                                            state: {
-                                              display: '{{ $deps[0] ? "visible":"hidden"}}'
-                                            }
-                                          }
-                                        }
-                                      ]
-                                    },
-                                    dateTime: {
-                                      type: 'string',
-                                      required: true,
-                                      'x-decorator': 'FormItem',
-                                      'x-component': 'DatePicker',
-                                      'x-component-props': {
-                                        type: 'datetime',
-                                        format: 'yyyy-MM-dd HH:mm:ss',
-                                        valueFormat: 'timestamp',
-                                        popperClass: 'setting-panel__dateTimePicker'
-                                      },
-                                      'x-reactions': [
-                                        {
-                                          dependencies: ['.pointType'],
-                                          fulfill: {
-                                            state: {
-                                              visible: '{{$deps[0] !== "current"}}'
-                                            }
-                                          }
-                                        },
-                                        {
-                                          dependencies: ['.pointType'],
-                                          fulfill: {
-                                            schema: {
-                                              'x-component-props.pickerOptions': `{{$deps[0] === "localTZ" ? getPickerOptionsBeforeTime($self.value, Date.now()) : null}}`
-                                            }
-                                          }
-                                        }
-                                      ]
                                     }
                                   }
                                 }
@@ -762,15 +667,6 @@ export default observer({
                                   },
                                   {
                                     target: 'accessNodeProcessId',
-                                    fulfill: {
-                                      state: {
-                                        visible:
-                                          "{{['MANUALLY_SPECIFIED_BY_THE_USER','MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($self.value)}}"
-                                      }
-                                    }
-                                  },
-                                  {
-                                    target: 'accessNodeProcessId',
                                     effects: ['onFieldInputValueChange'],
                                     fulfill: {
                                       state: {
@@ -781,11 +677,86 @@ export default observer({
                                   }
                                 ]
                               },
-                              accessNodeProcessId: {
-                                type: 'string',
-                                'x-decorator': 'FormItem',
-                                'x-component': 'Select',
-                                'x-reactions': '{{getConnectionNameByAgent}}'
+
+                              agentWrap: {
+                                type: 'void',
+                                'x-component': 'Space',
+                                'x-component-props': {
+                                  class: 'w-100 align-items-start'
+                                },
+                                'x-reactions': {
+                                  dependencies: ['.accessNodeType'],
+                                  fulfill: {
+                                    state: {
+                                      visible:
+                                        "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
+                                    }
+                                  }
+                                },
+                                properties: {
+                                  accessNodeProcessId: {
+                                    type: 'string',
+                                    'x-decorator': 'FormItem',
+                                    'x-decorator-props': {
+                                      class: 'flex-1'
+                                    },
+                                    'x-component': 'Select',
+                                    'x-reactions': [
+                                      '{{getConnectionNameByAgent}}',
+                                      // 根据下拉数据判断是否存在已选的agent
+                                      {
+                                        dependencies: ['.accessNodeType', '.accessNodeOption#dataSource'],
+                                        fulfill: {
+                                          state: {
+                                            title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
+                                              'packages_business_choose_agent_group'
+                                            )}': '${i18n.t('packages_business_choose_agent')}'}}`
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  priorityProcessId: {
+                                    title: i18n.t('packages_business_priorityProcessId'),
+                                    type: 'string',
+                                    default: '',
+                                    'x-decorator': 'FormItem',
+                                    'x-decorator-props': {
+                                      class: 'flex-1'
+                                    },
+                                    'x-component': 'Select',
+                                    'x-reactions': {
+                                      dependencies: [
+                                        '.accessNodeType',
+                                        '.accessNodeProcessId#dataSource',
+                                        '.accessNodeProcessId'
+                                      ],
+                                      fulfill: {
+                                        state: {
+                                          visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                                        },
+                                        run: `
+                                          let children = []
+
+                                          if ($deps[1] && $deps[2]) {
+                                            children = $deps[1].find(item => item.accessNodeType === $deps[0] && item.value === $deps[2]).children || []
+                                          }
+
+                                          $self.dataSource = [
+                                            {
+                                              label:'${i18n.t('packages_business_connection_form_automatic')}',
+                                              value: ''
+                                            }
+                                          ].concat(children)
+
+                                          if ($self.value && !children.find(item => item.value === $self.value)) {
+                                            $self.value = null
+                                          }
+                                        `
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             }
                           }
@@ -1301,6 +1272,21 @@ export default observer({
           this.settings.accessNodeType =
             this.scope.$agentMap[currentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
           this.settings.accessNodeProcessId = currentId
+
+          if (this.settings.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
+            const nodeIds = this.accessNodeProcessIdMap[currentId]
+            let priorityProcessId = null
+
+            nodeIds.some(id => {
+              const node = this.scope.findNodeById(id)
+              if (node && node.attrs.priorityProcessId) {
+                priorityProcessId = node.attrs.priorityProcessId
+                return true
+              }
+            })
+
+            this.settings.priorityProcessId = priorityProcessId
+          }
         }
         if (!this.stateIsReadonly) {
           // 只在编辑模式下禁用或启用
@@ -1346,6 +1332,7 @@ export default observer({
         }
         return point
       })
+      console.log('syncPoints', syncPoints)
       this.settings.syncPoints = syncPoints
     },
 

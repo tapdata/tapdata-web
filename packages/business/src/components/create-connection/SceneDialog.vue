@@ -5,13 +5,13 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="80%"
+    :width="width"
     top="10vh"
     class="dialog-zoom-transition"
     custom-class="connection-dialog ldp-connection-dialog flex flex-column"
     :beforeClose="beforeClose"
-    @open="handleOpen"
     @close="handleClose"
+    @closed="onClosed"
   >
     <div slot="title" class="flex font-color-dark fs-6 fw-sub position-relative align-center">
       <template v-if="!showForm">
@@ -30,7 +30,7 @@
         </ElInput>
       </template>
       <template v-else>
-        <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
+        <IconButton v-if="!onlyForm" @click="showForm = false" class="mr-2">left</IconButton>
         <DatabaseIcon
           key="databaseIcon"
           v-if="formParams.pdkHash"
@@ -236,7 +236,9 @@ export default {
       default: 'scene' // tag
     },
     selectorType: String,
-    fixedPdkId: String
+    fixedPdkId: String,
+    dialogMode: Boolean,
+    width: { type: String, default: '80%' }
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
@@ -246,6 +248,7 @@ export default {
       isCommunity,
       search: '',
       formParams: {
+        id: '',
         name: '',
         pdkHash: null,
         pdkId: null,
@@ -601,7 +604,8 @@ export default {
         type: '',
         version: '',
         qcType: ''
-      }
+      },
+      onlyForm: false
     }
   },
   computed: {
@@ -668,13 +672,14 @@ export default {
     async visible(v) {
       this.showDialog = v
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
+      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
       if (v) {
         this.$refs.dialogWrapper.$refs.dialog.style.transformOrigin = 'center center'
         this.search = ''
         this.currentScene = 'recommend'
 
         if (this.fixedPdkId) {
+          this.onlyForm = true
           this.loading = true
           this.showForm = true
           const pdk = await this.getPdkById(this.fixedPdkId)
@@ -684,6 +689,7 @@ export default {
           this.formParams.pdkHash = pdk.pdkHash
           this.formParams.pdkId = pdk.pdkId
         } else {
+          this.onlyForm = false
           this.getData()
         }
       }
@@ -712,16 +718,28 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
+      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
     },
 
-    handleOpen() {
-      // this.init()
+    editConnection(data) {
+      this.$emit('update:visible', true)
+
+      this.$nextTick(() => {
+        this.showForm = true
+        this.formParams.pdkHash = data.pdkHash
+        this.formParams.pdkId = data.pdkId
+        this.formParams.id = data.id
+        this.onlyForm = true
+      })
     },
 
     handleClose() {
       this.$emit('visible', false)
       this.$emit('update:visible', false)
+    },
+
+    onClosed() {
+      this.showForm = false
     },
 
     async handleSelect(item, isDemo = false) {
@@ -746,7 +764,7 @@ export default {
         if (ifOpen) return
       }
 
-      if (this.selectorType === 'source_and_target') {
+      if (this.selectorType === 'source_and_target' && !this.dialogMode) {
         this.$emit('selected', item)
         return
       }

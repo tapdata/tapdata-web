@@ -1,8 +1,6 @@
 import { NodeType } from './extends/NodeType'
 import { AllLocales } from './locales'
 import i18n from '@tap/i18n'
-import { RelativeTimePicker } from '@/components/form'
-import { reaction } from '@formily/reactive'
 
 export class Table extends NodeType {
   constructor() {
@@ -149,7 +147,7 @@ export class Table extends NodeType {
                   tableNameWrap: {
                     type: 'void',
                     title: i18n.t('packages_dag_dag_table'),
-                    'x-decorator': 'StageButtonLabel',
+                    'x-decorator': 'SchemaFormItem',
                     'x-decorator-props': {
                       asterisk: true,
                       feedbackLayout: 'none',
@@ -285,61 +283,85 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  updateConditionFields: {
-                    title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      asterisk: true,
-                      tooltip: i18n.t('packages_dag_update_conditions_tip')
-                    },
-                    'x-component': 'FieldSelect',
+                  updateConditionFieldsSpace: {
+                    type: 'void',
+                    'x-component': 'Space',
                     'x-component-props': {
-                      allowCreate: true,
-                      multiple: true,
-                      filterable: true,
-                      onCreate: `{{() => {
-                        // 标记用户创建
+                      align: 'start',
+                      size: 'middle',
+                      class: 'w-100'
+                    },
+                    properties: {
+                      updateConditionFields: {
+                        title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
+                        type: 'array',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          class: 'flex-1',
+                          asterisk: true,
+                          tooltip: i18n.t('packages_dag_update_conditions_tip')
+                        },
+                        'x-component': 'FieldSelect',
+                        'x-component-props': {
+                          allowCreate: true,
+                          multiple: true,
+                          filterable: true,
+                          onChange: `{{(val) => {
+                         // 只要用户手动选择了字段,就不会自动填充
                         $values.attrs.hasCreated = true
                       }}}`
-                    },
-                    'x-reactions': [
-                      {
-                        dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
-                        fulfill: {
-                          state: {
-                            dataSource: '{{$deps[0]}}',
-                            loading: '{{$deps[1]}}'
+                        },
+                        'x-reactions': [
+                          {
+                            dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
+                            fulfill: {
+                              state: {
+                                dataSource: '{{$deps[0]}}',
+                                loading: '{{$deps[1]}}'
+                              }
+                            }
+                          },
+                          // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
+                          {
+                            effects: ['onFieldMount'],
+                            fulfill: {
+                              run: '$self.visible && $self.validate()'
+                            }
+                          },
+                          {
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
+                            }
+                          },
+                          {
+                            effects: ['onFieldInit'],
+                            fulfill: {
+                              run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
+                                'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
+                              )}':''`
+                            }
                           }
+                        ],
+                        'x-validator': {
+                          triggerType: 'onBlur',
+                          validator: `{{validateUpdateConditionFields}}`
                         }
                       },
-                      // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
-                      {
-                        effects: ['onFieldMount'],
-                        fulfill: {
-                          run: '$self.visible && $self.validate()'
-                        }
-                      },
-                      {
-                        effects: ['onFieldInputValueChange'],
-                        fulfill: {
-                          run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
-                        }
-                      },
-                      {
-                        effects: ['onFieldInit'],
-                        fulfill: {
-                          run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
-                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
-                          )}':''`
-                        }
+
+                      uniqueIndexEnable: {
+                        type: 'boolean',
+                        title: i18n.t('packages_dag_uniqueIndexEnable'),
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip')
+                        },
+                        'x-component': 'Switch'
                       }
-                    ],
-                    'x-validator': {
-                      triggerType: 'onBlur',
-                      validator: `{{validateUpdateConditionFields}}`
                     }
                   },
+
                   existDataProcessMode: {
                     title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                     type: 'string',
@@ -823,7 +845,7 @@ export class Table extends NodeType {
                             dependencies: ['isFilter', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai2')}':''}}`
                               }
                             }
@@ -958,7 +980,7 @@ export class Table extends NodeType {
                             dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai')}':''}}`
                               }
                             }

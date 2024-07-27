@@ -289,7 +289,7 @@ export default {
   packages_dag_mixins_editor_renwujiazaichu: '任务加载出错',
   packages_dag_mixins_editor_renwubucunzai: '任务不存在',
   packages_dag_mixins_editor_renwuzhonghanyou:
-    '任务中含有JS节点、自定义节点、追加合并节点或节点设置增量自定义SQL，暂不支持DDL，请手动关闭',
+    '任务中含有JS节点、自定义节点、追加合并节点、多表合并节点或节点设置增量自定义SQL，暂不支持DDL，请手动关闭',
   packages_dag_mixins_editor_gaijiedianbuzhi: '该节点不支持在 {val1}（{val2}）上运行',
   packages_dag_mixins_editor_not_support_ddl: '该节点不支持DDL，请关闭',
   packages_dag_mixins_editor_not_support_cdc: '该节点不支持增量，请将任务类型修改为全量',
@@ -718,5 +718,17 @@ export default {
   packages_dag_time_zone_offset: '时区偏移量',
   packages_dag_dynamic_date_suffix: '动态日期后缀',
   packages_dag_dynamic_date_suffix_tip: '开启后生成的表名将包含任务运行时的日期后缀',
-  packages_dag_table_rename_multiple: '任务中只允许存在一个表编辑节点'
+  packages_dag_table_rename_multiple: '任务中只允许存在一个表编辑节点',
+  packages_dag_migrate_union: '多表合并',
+  packages_dag_merged_tableName: '合并表名',
+  packages_dag_merged_tableName_ph: '请输入合并后的表名',
+  packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点',
+  packages_dag_enableConcurrentProcess: '开启并发处理',
+  packages_dag_concurrentNum: '并发数',
+  packages_dag_uniqueIndexEnable: '自动创建唯一索引',
+  packages_dag_uniqueIndexEnable_tip:
+    '开启时，根据更新条件创建唯一索引。关闭时，创建普通索引。注意：更新条件字段相同的记录在更新时可能丢数，并发写入有几率出现重复数据',
+  packages_dag_refresh_schema: '刷新模型',
+  packages_dag_switch_to_table_view: '切换至表格视图',
+  packages_dag_switch_to_tree_view: '切换至树形视图'
 }

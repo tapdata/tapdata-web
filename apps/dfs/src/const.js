@@ -71,4 +71,9 @@ export const INSTANCE_STATUS_MAP = {
     error: { text: i18n.t('public_status_error'), icon: 'cuowu', type: 'danger' },
     finish: { text: i18n.t('public_status_finished'), icon: 'yiwancheng', type: 'success' },
     paused: { text: i18n.t('task_milestone_paused'), icon: 'yizanting', type: 'info' }
+  },
+  BILL_STATUS_MAP = {
+    UNPAID: { text: i18n.t('packages_business_shared_const_weizhifu'), type: 'warning' },
+    PAID: { text: i18n.t('packages_business_shared_const_yizhifu'), type: 'success' },
+    DEPRECATED: { text: i18n.t('dfs_instance_details_status_invalid'), type: 'disable' }
   }

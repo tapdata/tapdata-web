@@ -956,7 +956,7 @@ export default {
   page_title_run_monitor: '運行監控',
   page_title_data_verify: '數據校驗',
   page_title_data_difference_details: '差異詳情',
-  page_title_data_hub: '實時數據中心',
+  page_title_data_hub: '實時數據平台',
   page_title_subscribe_storage: '訂閱數據存儲',
   notify_abnormally_stopped: '意外停止',
   header_upgrade: '訪問舊版本',
@@ -1661,5 +1661,14 @@ export default {
   dfs_status_approved: '已通過',
   dfs_status_rejected: '已拒絕',
   dfs_status_expired: '已過期',
-  dfs_all_approvals_completed: '已完成全部審批'
+  dfs_all_approvals_completed: '已完成全部審批',
+  dfs_traffic_bill: '流量賬單',
+  dfs_bill_number: '賬單編號',
+  dfs_bill_amount: '賬單金額({currency})',
+  dfs_egress_traffic: '發送數據量',
+  dfs_ingress_traffic: '接收數據量',
+  dfs_billing_cycle: '賬單週期',
+  dfs_bill_status: '賬單狀態',
+  dfs_service_upgrade_notice: 'TapData Cloud 服務升級公告',
+  dfs_service_upgrade_notice_content: `尊敬的用戶：\n為了進一步提升您的使用體驗，我們計劃對 TapData Cloud 進行服務升級。具體升...`
 }

@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="table-selector">
     <!-- 候选区 -->
-    <div class="candidate-panel selector-panel">
+    <div class="candidate-panel selector-panel rounded-lg">
       <div class="selector-panel__header">
         <div class="flex-1">
           <ElCheckbox
@@ -71,11 +71,18 @@
           </RecycleScroller>
         </ElCheckboxGroup>
         <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
-          <ElEmpty
+          <VEmpty
+            v-if="!table.searchKeyword"
             :image-size="111"
             :image="require('@tap/assets/images/img_empty.png')"
             :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
-          ></ElEmpty>
+          ></VEmpty>
+          <VEmpty v-else>
+            <span>{{ $t('packages_form_component_table_selector_error_not_exit') }},</span>
+            <el-button class="ml-1" size="mini" type="text" :loading="schemaLoading" @click="loadSchema">
+              {{ $t('packages_form_button_reload') }}
+            </el-button>
+          </VEmpty>
         </div>
       </div>
     </div>
@@ -83,7 +90,7 @@
     <div class="selector-center">
       <div class="selector-btns">
         <span
-          class="btn-transfer"
+          class="btn-transfer rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
             'btn-transfer--primary': table.checked.length > 0 && !isOpenClipMode && !disabled
@@ -93,7 +100,7 @@
           <i class="el-icon-arrow-right"></i>
         </span>
         <span
-          class="btn-transfer mt-4"
+          class="btn-transfer mt-4 rounded-4"
           :class="{
             'btn-transfer--disabled': isOpenClipMode || disabled,
             'btn-transfer--primary': selected.checked.length > 0 && !isOpenClipMode && !disabled
@@ -105,7 +112,7 @@
       </div>
     </div>
     <!-- 已选择区 -->
-    <div class="checked-panel selector-panel">
+    <div class="checked-panel selector-panel rounded-lg">
       <div class="selector-panel__header">
         <div class="flex-1">
           <ElCheckbox
@@ -385,15 +392,18 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 
-import { metadataInstancesApi, connectionsApi, workerApi } from '@tap/api'
+import { metadataInstancesApi, connectionsApi, workerApi, taskApi } from '@tap/api'
+import { VEmpty } from '@tap/component'
 import OverflowTooltip from '@tap/component/src/overflow-tooltip'
 import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
+import { take } from 'lodash/array'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon },
+  components: { RecycleScroller, OverflowTooltip, ConnectionTest, VIcon, VEmpty },
   props: {
     connectionId: {
       type: String,
@@ -428,10 +438,13 @@ export default {
       isOpenClipMode: false,
       clipboardValue: '',
       isFocus: false,
-      tableMap: {}
+      tableMap: {},
+      schemaLoading: false
     }
   },
   computed: {
+    ...mapGetters('dataflow', ['schemaRefreshing']),
+
     filteredData() {
       let { searchKeyword, tables } = this.table
       try {
@@ -507,6 +520,11 @@ export default {
     },
     filterType() {
       this.handleFilterType()
+    },
+    schemaRefreshing(v) {
+      if (!v) {
+        this.getTables()
+      }
     }
   },
   created() {
@@ -740,6 +758,21 @@ export default {
       this.selected.isCheckAll = false
       this.$emit('input', this.selected.tables)
       this.$emit('change', this.selected.tables)
+    },
+
+    loadSchema() {
+      this.schemaLoading = true
+      const { taskId, activeNodeId } = this.$store.state?.dataflow || {}
+      taskApi
+        .refreshSchema(taskId, {
+          nodeIds: activeNodeId,
+          keys: this.table.searchKeyword
+        })
+        .finally(() => {
+          this.schemaLoading = false
+        })
+
+      this.getTables()
     }
   }
 }

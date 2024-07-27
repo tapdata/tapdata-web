@@ -12239,6 +12239,10 @@
   animation: rotate 5s linear infinite;
 }
 
+.animation-rotate-fast {
+  animation: rotate 1s linear infinite;
+}
+
 @-moz-keyframes rotate {
   0% {
     -moz-transform: rotate(0deg);
@@ -12414,4 +12418,11 @@
   line-height: 1;
   vertical-align: sub;
   font-size: smaller;
+}
+
+.leading-5 {
+  line-height: 1.25rem;
+}
+.leading-primary {
+  line-height: 1.375rem;
 }

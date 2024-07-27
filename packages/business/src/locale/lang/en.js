@@ -54,6 +54,9 @@ export default {
   packages_business_connection_form_automatic: 'Platform automatic allocation',
   packages_business_connection_form_manual: 'User specified manually',
   packages_business_connection_form_group: 'Assign by tag',
+  packages_business_choose_agent: 'Select Agent',
+  packages_business_choose_agent_group: 'Select Agent Tag',
+  packages_business_priorityProcessId: 'Tag-Based Scheduling',
   packages_business_connection_form_access_node_tip:
     'When using the automatic mode, the platform will assign nodes for connection access, while in manual mode, the user is responsible for manually specifying the nodes for access',
   packages_business_connection_form_give_up: 'Give Up',
@@ -1314,5 +1317,7 @@ export default {
   packages_business_publish_api: 'Publish API',
   packages_business_field_description: 'Field Description',
   packages_business_shared_cache_enforceShareCdc: 'When shared mining is not available (Cache Start)',
-  packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops'
+  packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops',
+  packages_business_not_support_validation: '{connection} does not support {method}',
+  packages_business_download_details: 'Download'
 }

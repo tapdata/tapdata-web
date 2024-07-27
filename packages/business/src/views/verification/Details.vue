@@ -21,21 +21,20 @@
               }}</ElLink>
             </div>
 
+            <!--下载详情-->
+            <ElButton v-if="showDiffInspect" class="ml-4" type="text" :loading="downloading" @click="downloadDetails">{{
+              $t('packages_business_download_details')
+            }}</ElButton>
+
+            <el-divider v-if="showCorrection || showDiffInspect" class="ml-4 mr-0" direction="vertical"></el-divider>
+
             <!-- 一键修复 -->
-            <ElButton v-if="inspect.canRecovery && canStart" type="primary" @click="handleCorrection">{{
+            <ElButton v-if="showCorrection" type="primary" class="ml-4" @click="handleCorrection">{{
               $t('packages_business_data_correction')
             }}</ElButton>
 
             <!-- 差异校验 -->
-            <div
-              v-if="
-                inspect.result !== 'passed' &&
-                !['running', 'scheduling'].includes(inspect.status) &&
-                !(inspect.status === 'error' && !resultInfo.parentId) &&
-                canStart
-              "
-              class="flex align-items-center ml-4"
-            >
+            <div v-if="showDiffInspect" class="flex align-items-center ml-4">
               <ElButton type="primary" @click="diffInspect">{{
                 $t('packages_business_verification_button_diff_verify')
               }}</ElButton>
@@ -138,12 +137,14 @@ import ResultTable from './ResultTable'
 import ResultView from './ResultView'
 import DataCorrectionDialog from './components/DataCorrectionDialog'
 import dayjs from 'dayjs'
-import { inspectDetailsApi, inspectResultsApi, inspectApi } from '@tap/api'
+import { inspectResultsApi, inspectApi } from '@tap/api'
 import { inspectMethod as typeMap } from './const'
 import { checkEllipsisActive } from '@tap/shared'
 import { IconButton } from '@tap/component'
+import mixins from './mixins'
 
 export default {
+  mixins: [mixins],
   components: { ResultTable, ResultView, DataCorrectionDialog, IconButton },
   data() {
     return {
@@ -193,6 +194,17 @@ export default {
       if (this.errorMsg) {
         return this.errorMsg.split('\n').shift()
       }
+    },
+    showCorrection() {
+      return this.inspect.canRecovery && this.canStart
+    },
+    showDiffInspect() {
+      return (
+        this.inspect.result !== 'passed' &&
+        !['running', 'scheduling'].includes(this.inspect.status) &&
+        !(this.inspect.status === 'error' && !this.resultInfo.parentId) &&
+        this.canStart
+      )
     }
   },
   created() {
@@ -257,52 +269,6 @@ export default {
             })
         })
     },
-    getResultData({ current, size }) {
-      let taskId = this.taskId
-      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
-      if (task) {
-        let showAdvancedVerification = task.showAdvancedVerification
-        const sourceSortColumn = task.source?.sortColumn?.split(',')
-        const targetSortColumn = task.target?.sortColumn?.split(',')
-        const inspectMethod = this.inspect.inspectMethod
-        let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
-        let where = {
-          taskId,
-          inspect_id: this.inspect.id,
-          inspectResultId: this.resultInfo.id
-        }
-        let filter = {
-          where,
-          order: 'createTime DESC',
-          limit: showAdvancedVerification ? 1 : size,
-          skip: (current - 1) * (showAdvancedVerification ? 1 : size)
-        }
-        return inspectDetailsApi
-          .get({
-            filter: JSON.stringify(filter)
-          })
-          .then(data => {
-            let resultList = []
-            if (data?.items) {
-              if (showAdvancedVerification) {
-                resultList = data.items || []
-              } else {
-                resultList = this.handleOtherVerify(data.items)
-              }
-            }
-            return {
-              showAdvancedVerification, // 是否高级校验
-              total: data.total, // 总条数
-              statsInfo, // 结果信息
-              resultList, // 结果详情
-              sourceSortColumn, // 源索引字段
-              targetSortColumn, // 目标索引字段
-              inspectMethod
-            }
-          })
-      }
-      return Promise.reject()
-    },
     diffInspect() {
       let firstCheckId = this.resultInfo.firstCheckId
       if (!firstCheckId) {
@@ -325,97 +291,6 @@ export default {
           this.$message.success(this.$t('packages_business_verification_startVerify'))
           this.getData()
         })
-    },
-    rowClick(row) {
-      this.taskId = row.taskId
-      this.$refs.resultView?.fetch(1)
-    },
-    handleOtherVerify(data) {
-      if (data.length === 0) {
-        return
-      }
-      const findOne = this.tableData.find(t => t.taskId === this.taskId)
-      const sourceColumns = findOne.source?.columns || []
-      const targetColumns = findOne.target?.columns || []
-      data.map(item => {
-        let source = item.source || {}
-        let target = item.target || {}
-        let sourceKeys = Object.keys(source)
-        let targetKeys = Object.keys(target)
-        let key = Array.from(new Set([...sourceKeys, ...targetKeys])) //找出所有的key的并集
-        let message = item.message || ''
-        let diffFields = []
-        let diffFiledIndexs = []
-        if (message.includes('Different fields')) {
-          diffFields = message.split(':')[1].split(',')
-        } else if (message.includes('Different index')) {
-          diffFiledIndexs = message.split(':')[1].split(',')
-        }
-        if (diffFiledIndexs.length) {
-          this.handleLoadIndexField(item, diffFiledIndexs, sourceColumns, targetColumns)
-        } else {
-          key.forEach(i => {
-            let sourceValue = ''
-            let targetValue = ''
-            if (sourceKeys.filter(v => i === v)) {
-              sourceValue = source[i]
-            } else {
-              sourceValue = ''
-            }
-            if (targetKeys.filter(v => i === v)) {
-              targetValue = target[i]
-            } else {
-              targetValue = ''
-            }
-            let isDiff = diffFields.length ? diffFields.includes(i) : sourceValue !== targetValue
-            let node = {
-              type: item.type,
-              red: isDiff,
-              source: {
-                key: i,
-                value: sourceValue
-              },
-              target: {
-                key: i,
-                value: targetValue
-              }
-            }
-            item['details'] = item['details'] || []
-            item['details'].push(node)
-          })
-        }
-      })
-      return data
-    },
-    toDiffHistory() {
-      let url = ''
-      let route = this.$router.resolve({
-        name: 'VerifyDiffHistory',
-        params: {
-          id: this.resultInfo.firstCheckId,
-          inspectId: this.resultInfo.inspect_id
-        }
-      })
-      url = route.href
-      window.open(url, '_blank')
-    },
-    handleLoadIndexField(item, indexArr, sourceColumns, targetColumns) {
-      sourceColumns.forEach((el, i) => {
-        let node = {
-          type: item.type,
-          red: indexArr.includes(i + ''),
-          source: {
-            key: el,
-            value: item.source[el]
-          },
-          target: {
-            key: targetColumns[i],
-            value: item.target[targetColumns[i]]
-          }
-        }
-        item['details'] = item['details'] || []
-        item['details'].push(node)
-      })
     },
 
     handleCorrection() {

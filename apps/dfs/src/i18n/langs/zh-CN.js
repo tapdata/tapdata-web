@@ -987,7 +987,7 @@ export default {
   page_title_run_monitor: '运行监控',
   page_title_data_verify: '数据校验',
   page_title_data_difference_details: '差异详情',
-  page_title_data_hub: '实时数据中心',
+  page_title_data_hub: '实时数据平台',
   page_title_subscribe_storage: '订阅数据存储',
   // 自定义节点
   notify_abnormally_stopped: '意外停止',
@@ -1698,5 +1698,14 @@ export default {
   dfs_status_approved: '已通过',
   dfs_status_rejected: '已拒绝',
   dfs_status_expired: '已过期',
-  dfs_all_approvals_completed: '已完成全部审批'
+  dfs_all_approvals_completed: '已完成全部审批',
+  dfs_traffic_bill: '流量账单',
+  dfs_bill_number: '账单编号',
+  dfs_bill_amount: '账单金额({currency})',
+  dfs_egress_traffic: '发送数据量',
+  dfs_ingress_traffic: '接收数据量',
+  dfs_billing_cycle: '账单周期',
+  dfs_bill_status: '账单状态',
+  dfs_service_upgrade_notice: 'TapData Cloud 服务升级公告',
+  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`
 }

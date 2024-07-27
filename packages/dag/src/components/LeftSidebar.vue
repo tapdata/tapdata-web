@@ -445,6 +445,7 @@ export default {
           accessNodeType: 1,
           accessNodeProcessId: 1,
           accessNodeProcessIdList: 1,
+          priorityProcessId: 1,
           pdkType: 1,
           pdkHash: 1,
           capabilities: 1,
@@ -760,11 +761,12 @@ export default {
     getNodeProps(connection, tableName) {
       // 设置pdk节点配置默认值
       const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
-      let nodeConfig
+      let nodeConfig = {}
       const attrs = {
         connectionName: connection.name,
         connectionType: connection.connection_type,
         accessNodeProcessId: connection.accessNodeProcessId,
+        priorityProcessId: connection.priorityProcessId,
         pdkType: connection.pdkType,
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || [],

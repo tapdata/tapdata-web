@@ -254,6 +254,7 @@ import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
@@ -1690,6 +1691,10 @@ export default {
       // 检查
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'query_by_advance_filter_function')
+        if (message) return message
+
         // 索引字段为空
         const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
         const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
@@ -1771,9 +1776,39 @@ export default {
           this.updateErrorMsg(message, 'error')
           return message
         }
+      } else if (this.inspectMethod === 'row_count') {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'batch_count_function')
+        if (message) return message
       }
 
       this.updateErrorMsg('')
+    },
+
+    validateCapabilities(tasks, capability) {
+      const noSupportList = new Set()
+      tasks.forEach(item => {
+        if (!item.source.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.source.databaseType)
+        }
+
+        if (!item.target.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.target.databaseType)
+        }
+      })
+
+      let message = ''
+
+      if (noSupportList.size) {
+        message = this.$t('packages_business_not_support_validation', {
+          connection: [...noSupportList].join(', '),
+          method: inspectMethodMap[this.inspectMethod]
+        })
+        this.updateErrorMsg(message, 'error')
+        this.$message.error(message)
+      }
+
+      return message
     },
 
     loadDoc() {

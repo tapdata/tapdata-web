@@ -2,7 +2,15 @@ import i18n from '@tap/i18n'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { merge, isEqual, isEmpty } from 'lodash'
-import { connectionsApi, metadataInstancesApi, clusterApi, proxyApi, databaseTypesApi, alarmApi } from '@tap/api'
+import {
+  connectionsApi,
+  metadataInstancesApi,
+  clusterApi,
+  proxyApi,
+  databaseTypesApi,
+  alarmApi,
+  taskApi
+} from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
@@ -750,6 +758,7 @@ export default {
           const connectionType = form.getValuesIn('attrs.connectionType') || ''
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId') || ''
           const accessNodeType = form.getValuesIn('attrs.accessNodeType') || ''
+          const priorityProcessId = form.getValuesIn('attrs.priorityProcessId') || ''
           const connectionName = form.getValuesIn('attrs.connectionName')
           const capabilities = form.getValuesIn('attrs.capabilities')
           const pdkType = form.getValuesIn('attrs.pdkType')
@@ -764,6 +773,8 @@ export default {
             form.setValuesIn('attrs.accessNodeProcessId', connection.accessNodeProcessId)
           accessNodeType !== connection.accessNodeType &&
             form.setValuesIn('attrs.accessNodeType', connection.accessNodeType)
+          priorityProcessId !== connection.priorityProcessId &&
+            form.setValuesIn('attrs.priorityProcessId', connection.priorityProcessId)
           connectionName !== connection.name && form.setValuesIn('attrs.connectionName', connection.name)
           db_version !== connection.db_version && form.setValuesIn('attrs.db_version', connection.db_version)
           !isEqual(capabilities, connection.capabilities) &&
@@ -1049,6 +1060,18 @@ export default {
           } else {
             enableRecord[field.query('.id').value()] = val
           }
+        },
+
+        getNodeTableOptions: async nodeId => {
+          console.log('getNodeTableOptions', nodeId)
+          const { items = [] } = await taskApi.getNodeTableInfo({
+            taskId: this.dataflow.id,
+            nodeId,
+            page: 1,
+            pageSize: 1000000
+          })
+
+          return items.map(item => item.sinkObjectName)
         }
       }
     }
@@ -1067,6 +1090,14 @@ export default {
   methods: {
     async loadAccessNode() {
       const data = await clusterApi.findAccessNodeInfo()
+      const mapNode = item => ({
+        value: item.processId,
+        label: `${item.hostName}（${
+          item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+        }）`,
+        disabled: item.status !== 'running',
+        accessNodeType: item.accessNodeType
+      })
       this.scope.$agents = data.map(item => {
         if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
           return {
@@ -1074,17 +1105,11 @@ export default {
             label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
               item.accessNodes?.filter(ii => ii.status === 'running').length || 0
             }）`,
-            accessNodeType: item.accessNodeType
+            accessNodeType: item.accessNodeType,
+            children: item.accessNodes?.map(mapNode) || []
           }
         }
-        return {
-          value: item.processId,
-          label: `${item.hostName}（${
-            item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
-          }）`,
-          disabled: item.status !== 'running',
-          accessNodeType: item.accessNodeType
-        }
+        return mapNode(item)
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
     },

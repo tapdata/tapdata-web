@@ -82,7 +82,8 @@ const getState = () => ({
   pdkSchemaFreeMap: {},
   pdkDoubleActiveMap: {},
   taskSaving: false,
-  materializedViewVisible: false
+  materializedViewVisible: false,
+  schemaRefreshing: false
 })
 
 // 初始化 state
@@ -100,6 +101,10 @@ const getters = {
 
   transformLoading: state => {
     return state.transformLoading
+  },
+
+  schemaRefreshing: state => {
+    return state.schemaRefreshing
   },
 
   // 判断action是否被标记
@@ -774,6 +779,10 @@ const mutations = {
 
   setTransformLoading(state, loading) {
     state.transformLoading = loading
+  },
+
+  setSchemaRefreshing(state, loading) {
+    state.schemaRefreshing = loading
   },
 
   setDagPromise(state, promise) {

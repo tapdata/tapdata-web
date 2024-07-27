@@ -45,9 +45,9 @@
           </FilterBar>
         </template>
         <template v-if="isDaas" #multipleSelectionActions>
-          <ElButton @click="handlePermissionsSettings">{{
-            $t('packages_business_permissionse_settings_create_quanxianshezhi')
-          }}</ElButton>
+          <ElButton @click="handlePermissionsSettings"
+            >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+          </ElButton>
           <ElButton
             v-readonlybtn="'datasource_category_application'"
             class="btn"
@@ -67,7 +67,7 @@
         <ElTableColumn show-overflow-tooltip prop="name" min-width="250" :label="$t('public_connection_name')">
           <template #default="{ row }">
             <div class="connection-name flex flex-wrap gap-1">
-              <div class="flex gap-1 overflow-hidden">
+              <div class="flex align-center gap-1 overflow-hidden">
                 <img class="connection-img" :src="getConnectionIcon(row.pdkHash)" alt="" />
                 <ElLink class="ellipsis block lh-base" type="primary" @click.stop="preview(row)">
                   {{ row.name }}
@@ -202,9 +202,12 @@
       @databaseType="handleDatabaseType"
     ></DatabaseTypeDialog>-->
       <SceneDialog
+        ref="dialog"
         :visible.sync="dialogDatabaseTypeVisible"
         selector-type="source_and_target"
+        v-bind="connectionDialogProps"
         @selected="handleDatabaseType"
+        @success="table.fetch(1)"
       ></SceneDialog>
       <Test ref="test" :visible.sync="dialogTestVisible" :formData="testData" @returnTestData="returnTestData"></Test>
       <UsedTaskDialog v-model="connectionTaskDialog" :data="connectionTaskData"></UsedTaskDialog>
@@ -248,6 +251,16 @@ export default {
   },
   inject: ['checkAgent', 'buried'],
   data() {
+    let connectionDialogProps = {}
+
+    if (process.env.VUE_APP_CONNECTION_DIALOG_PROPS) {
+      try {
+        connectionDialogProps = JSON.parse(process.env.VUE_APP_CONNECTION_DIALOG_PROPS)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
 
@@ -311,7 +324,9 @@ export default {
         items: [],
         total: 0
       },
-      connectionTaskDialog: false
+      connectionTaskDialog: false,
+
+      connectionDialogProps
     }
   },
   computed: {
@@ -532,6 +547,12 @@ export default {
           if (!resFlag) {
             return
           }
+
+          if (this.connectionDialogProps.dialogMode) {
+            this.$refs.dialog.editConnection(item)
+            return
+          }
+
           this.$router.push({
             name: 'connectionsEdit',
             params: {
@@ -544,6 +565,11 @@ export default {
           })
         })
       } else {
+        if (this.connectionDialogProps.dialogMode) {
+          this.$refs.dialog.editConnection(item)
+          return
+        }
+
         this.$router.push({
           name: 'connectionsEdit',
           params: {
@@ -870,6 +896,7 @@ export default {
   }
   .connection-img {
     width: 18px;
+    height: 18px;
   }
 
   .btn-text {

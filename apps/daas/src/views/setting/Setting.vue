@@ -39,32 +39,13 @@
                             $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                           }}:</span
                         >
-                        <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
+                        <el-tooltip
+                          effect="dark"
+                          placement="top"
+                          v-if="childItem.documentation && $te(`setting_${childItem.documentationKey}`)"
+                        >
                           <div style="max-width: 300px" slot="content">
-                            {{
-                              $t(
-                                'setting_' +
-                                  (childItem.documentation || '')
-                                    .split('/')
-                                    .join('_')
-                                    .split(',')
-                                    .join('_')
-                                    .split(':')
-                                    .join('_')
-                                    .split('，')
-                                    .join('_')
-                                    .split('"')
-                                    .join('_')
-                                    .split(' ')
-                                    .join('_')
-                                    .split('(')
-                                    .join('_')
-                                    .split(')')
-                                    .join('_')
-                                    .split('.')
-                                    .join('_')
-                              )
-                            }}
+                            {{ $t(`setting_${childItem.documentationKey}`) }}
                           </div>
                           <!-- <span
                             class="icon iconfont icon-tishi1"
@@ -259,7 +240,8 @@ export default {
           slotName: 'valueSlot'
         }
       ],
-      email: ''
+      email: '',
+      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY
     }
   },
   created() {
@@ -307,7 +289,37 @@ export default {
           itemsCategories = [],
           cat = []
         data = data || []
-        items = data.map(item => item.category)
+        items = data.map(item => {
+          if (item.documentation) {
+            item.documentationKey = item.documentation
+              .split('/')
+              .join('_')
+              .split(',')
+              .join('_')
+              .split(':')
+              .join('_')
+              .split('，')
+              .join('_')
+              .split('"')
+              .join('_')
+              .split(' ')
+              .join('_')
+              .split('(')
+              .join('_')
+              .split(')')
+              .join('_')
+              .split('.')
+              .join('_')
+          }
+
+          return item.category
+        })
+
+        if (this.filterCategory) {
+          const arr = this.filterCategory.split(',')
+          items = items.filter(item => !arr.includes(item))
+        }
+
         items = uniq(items)
         items.sort((a, b) => {
           return a.sort < b.sort ? -1 : 1

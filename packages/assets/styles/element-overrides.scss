@@ -731,6 +731,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 /* Select
 --------------------------*/
 .el-select-dropdown.el-popper {
+  border-radius: 8px;
   .popper__arrow,
   .popper__arrow::after {
     display: none;

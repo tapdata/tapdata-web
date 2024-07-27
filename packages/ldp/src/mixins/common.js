@@ -82,7 +82,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['startingTour']),
+    startingTour() {
+      return this.$store.getters.startingTour
+    },
     ...mapState(['highlightBoard'])
   },
 

@@ -12,6 +12,7 @@ import {
   onFieldInputValueChange
 } from '@formily/core'
 import { Path } from '@formily/path'
+import { toJS } from '@formily/reactive'
 
 import { alarmApi } from '@tap/api'
 import { deepEqual } from '@tap/shared'
@@ -223,7 +224,7 @@ export default {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
-        if (node && !deepEqual(form.values, node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
+        if (node && !deepEqual(toJS(form.values), node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
           console.log('还是更新了')
           this.updateNodeProps(form)
         }
@@ -233,16 +234,16 @@ export default {
     // 更新节点属性
     updateNodeProps(form) {
       clearTimeout(this.updateTimer)
-      const formValues = JSON.parse(JSON.stringify(form.values))
+      const formValues = toJS(form.values)
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
 
       filterProps.forEach(path => {
-        Path.setIn(formValues, path, undefined)
+        Path.deleteIn(formValues, path)
       })
       this.updateNodeProperties({
         id: form.values.id,
         overwrite: !this.stateIsReadonly,
-        properties: JSON.parse(JSON.stringify(formValues))
+        properties: formValues
       })
       this.updateDag({ vm: this })
       clearTimeout(this.confirmTimer)

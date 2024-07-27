@@ -26,21 +26,11 @@
           >
         </ElTooltip>
         <div class="flex-grow-1"></div>
-        <!--<el-button-group>
-          <ElButton plain @click="handleCreateTask">
-            {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
-          </ElButton>
-          <ElButton plain @click="handleCreateAPI"> 发布API </ElButton>
-          <ElButton v-if="swimType === 'mdm'" plain @click="handleDelete">
-            <VIcon class="mr-1">delete</VIcon>
-            {{ $t('public_button_delete') }}
-          </ElButton>
-        </el-button-group>-->
         <ElButton class="flex-shrink-0" size="mini" type="primary" @click="handleCreateTask">
           {{ $t('packages_business_swimlane_tablepreview_chuangjianrenwu') }}
         </ElButton>
         <ElButton
-          v-if="apiSupportTypes.includes(connection.database_type)"
+          v-if="apiSupportTypes.includes(connectionType)"
           class="flex-shrink-0"
           size="mini"
           type="primary"
@@ -231,7 +221,7 @@
                     <template slot="businessDesc" slot-scope="scope">
                       <ElInput
                         v-model="scope.row.businessDesc"
-                        @input="handleChangeBusinessDesc(arguments[0], scope.row.id)"
+                        @input="handleChangeBusinessDesc(arguments[0], scope.row.id, scope.row.name)"
                       ></ElInput>
                     </template>
                   </VTable>
@@ -257,12 +247,17 @@
                         <el-table-column
                           v-for="(item, index) in sampleHeader"
                           :key="index"
-                          :prop="item"
-                          :label="item"
+                          :prop="item.name"
+                          :label="item.name"
                           min-width="200"
                         >
                           <template #header="{ column }">
-                            <span :title="column.label">{{ column.label }}</span>
+                            <div class="text-wrap lh-1">
+                              <span :title="column.label" class="leading-primary">{{ column.label }}</span>
+                              <span class="inline-flex ml-1 leading-5 fw-normal fs-8 font-color-sslight">{{
+                                item.desc
+                              }}</span>
+                            </div>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -534,13 +529,15 @@ export default {
         {
           label: i18n.t('datadiscovery_previewdrawer_zhujian'),
           slotName: 'primaryKey',
-          align: 'center'
+          align: 'center',
+          minWidth: 100
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_waijian'),
           prop: 'foreignKey',
           slotName: 'foreignKey',
-          align: 'center'
+          align: 'center',
+          minWidth: 100
         },
         {
           label: i18n.t('datadiscovery_previewdrawer_suoyin'),
@@ -694,6 +691,10 @@ export default {
 
     canClickStatus() {
       return this.tableStatus === 'error' && this.targetTask.length > 0
+    },
+
+    connectionType() {
+      return this.connection?.database_type || this.detailData.connectionType
     }
   },
 
@@ -771,7 +772,10 @@ export default {
       discoveryApi
         .overViewStorage(row.id)
         .then(res => {
-          this.detailData = res
+          for (const key in res) {
+            this.$set(this.detailData, key, res[key])
+          }
+
           this.detailData['lastUpdAt'] = this.detailData['lastUpdAt']
             ? dayjs(this.detailData['lastUpdAt']).format('YYYY-MM-DD HH:mm:ss')
             : '-'
@@ -860,7 +864,12 @@ export default {
         .then(res => {
           this.sampleData = res?.sampleData || []
           //schema返回的数据组装数据
-          this.sampleHeader = this.tableFields.map(it => it.name)
+          this.sampleHeader = this.tableFields.map(it => {
+            return {
+              name: it.name,
+              desc: it.businessDesc
+            }
+          })
           // this.storageSize = Math.floor(res?.tableInfo?.storageSize / 1024) || 0
           this.storageSize = calcUnit(res?.tableInfo?.storageSize || 0, 1)
           this.numOfRows = res?.tableInfo?.numOfRows || 0
@@ -1082,7 +1091,13 @@ export default {
       }
     },
 
-    handleChangeBusinessDesc: debounce(function (val, id) {
+    handleChangeBusinessDesc: debounce(function (val, id, name) {
+      const col = this.sampleHeader.find(item => item.name === name)
+
+      if (col) {
+        col.desc = val
+      }
+
       metadataInstancesApi
         .updateTableFieldDesc(this.selected.id, {
           id,

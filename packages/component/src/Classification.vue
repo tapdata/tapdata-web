@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div v-if="visible">
+    <div v-if="visible" class="overflow-auto">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly

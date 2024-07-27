@@ -7,17 +7,10 @@
     :visible.sync="visible"
     @visible="$emit('visible', arguments[0])"
   >
-    <div class="flex flex-column overflow-hidden pt-2 h-100">
+    <div class="flex flex-column overflow-hidden pt-0 h-100">
       <!-- 顶部 标题 Tab -->
-      <div class="flex position-relative">
-        <div class="position-absolute top-0 start-0 fs-7 fw-sub px-6 font-color-dark" style="line-height: 36px">
-          {{
-            data.id
-              ? $t('packages_business_data_server_drawer_fuwuxiangqing')
-              : $t('packages_business_data_server_drawer_chuangjianfuwu')
-          }}
-        </div>
-        <ElTabs v-model="tab" class="data-server__tabs flex-1" @tab-click="tabChanged">
+      <div v-if="!inDialog" class="flex position-relative" style="line-height: 48px">
+        <ElTabs v-model="tab" ref="tabs" class="data-server__tabs flex-1" @tab-click="tabChanged">
           <ElTabPane :label="$t('packages_business_data_server_drawer_peizhi')" name="form"></ElTabPane>
           <ElTabPane
             v-if="data.status === 'active'"
@@ -26,75 +19,118 @@
           ></ElTabPane>
         </ElTabs>
       </div>
+
       <ElForm
         hide-required-asterisk
         label-width="80px"
-        class="data-server__form p-6 overflow-auto flex-1 pb-16"
+        class="data-server__form overflow-auto flex-1"
+        :class="{
+          'p-6 pb-16': !inDialog
+        }"
         ref="form"
-        label-position="left"
+        label-position="top"
         size="mini"
         :model="form"
         :rules="rules"
       >
-        <!-- 服务{{$t('public_name')}} -->
-        <div class="flex justify-content-between align-items-start">
-          <ElFormItem class="flex-1 form-item-name" size="small" prop="name">
-            <ElInput
-              v-if="isEdit"
-              v-model="form.name"
-              type="text"
-              maxlength="50"
-              :placeholder="$t('public_input_placeholder') + $t('public_name')"
-            ></ElInput>
-            <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
-          </ElFormItem>
-          <template v-if="tab === 'form' && data.status !== 'active'">
-            <div v-if="isEdit" class="ml-10">
-              <ElButton v-if="data.id" class="mr-4" size="mini" @click="isEdit = false">{{
-                $t('public_button_cancel')
+        <template v-if="!inDialog">
+          <div class="flex justify-content-between align-items-start">
+            <ElFormItem class="flex-1 form-item-name mb-0" size="small" prop="name">
+              <ElInput
+                v-if="isEdit"
+                v-model="form.name"
+                type="text"
+                maxlength="50"
+                :placeholder="$t('public_input_placeholder') + $t('public_name')"
+              ></ElInput>
+              <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
+            </ElFormItem>
+            <template v-if="tab === 'form' && data.status !== 'active'">
+              <div v-if="isEdit" class="ml-4">
+                <ElButton v-if="data.id" size="mini" @click="isEdit = false">{{ $t('public_button_cancel') }}</ElButton>
+                <ElButton type="primary" class="ml-4" size="mini" @click="save()">{{
+                  $t('public_button_save')
+                }}</ElButton>
+              </div>
+              <ElButton v-else class="ml-4" type="primary" size="mini" @click="edit">{{
+                $t('public_button_edit')
               }}</ElButton>
-              <ElButton type="primary" size="mini" @click="save()">{{ $t('public_button_save') }}</ElButton>
-            </div>
-            <ElButton v-else class="ml-10" type="primary" size="mini" @click="edit">{{
-              $t('public_button_edit')
-            }}</ElButton>
-          </template>
-        </div>
-        <div class="flex-1 mt-4" size="small">
-          <ElInput
-            v-model="form.description"
-            type="textarea"
-            :placeholder="$t('public_input_placeholder') + $t('public_description')"
-            :disabled="!isEdit"
-          ></ElInput>
-        </div>
-        <ElFormItem
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('packages_business_data_server_drawer_quanxianfanwei')"
-          prop="acl"
-        >
-          <ElSelect v-model="form.acl" multiple @change="aclChanged">
-            <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
-          </ElSelect>
-        </ElFormItem>
+            </template>
+          </div>
+          <div class="flex-1 mt-3 mb-3" size="small">
+            <ElInput
+              v-model="form.description"
+              type="textarea"
+              :placeholder="$t('public_input_placeholder') + $t('public_description')"
+              :disabled="!isEdit"
+            ></ElInput>
+          </div>
+          <div class="flex gap-4">
+            <ElFormItem
+              class="flex-1"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_quanxianfanwei')"
+              prop="acl"
+            >
+              <ElSelect v-model="form.acl" multiple @change="handleUpdateRole" class="w-100">
+                <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
+              </ElSelect>
+            </ElFormItem>
 
-        <ElFormItem
-          v-if="tag !== 'div'"
-          class="flex-1 mt-4"
-          size="small"
-          :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
-          prop="appValue"
-        >
-          <ListSelect
-            :value.sync="form.appValue"
-            :label.sync="form.appLabel"
-            @change="handleChangePermissionsAndSave"
-          ></ListSelect>
-        </ElFormItem>
+            <ElFormItem
+              v-if="tag !== 'div'"
+              class="flex-1"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
+              prop="appValue"
+            >
+              <ListSelect
+                :disabled="disableApp"
+                class="w-100"
+                :value.sync="form.appValue"
+                :label.sync="form.appLabel"
+                @change="handleUpdateApp"
+              ></ListSelect>
+            </ElFormItem>
+          </div>
+        </template>
+        <template v-else>
+          <div class="flex gap-4">
+            <ElFormItem :label="$t('public_name')" class="flex-1 form-item-name" size="small" prop="name">
+              <ElInput v-if="isEdit" v-model="form.name" :placeholder="$t('public_input_placeholder_name')"></ElInput>
+              <div v-else class="fw-sub fs-7 font-color-normal">{{ data.name }}</div>
+            </ElFormItem>
+            <ElFormItem class="flex-1" size="small" :label="$t('packages_business_quanxianfanwei')" prop="acl">
+              <ElSelect v-model="form.acl" multiple :disabled="!isEdit" @change="handleUpdateRole" class="w-100">
+                <ElOption v-for="item in roles" :label="item.name" :value="item.name" :key="item.id"></ElOption>
+              </ElSelect>
+            </ElFormItem>
+            <ElFormItem
+              v-if="!params.to"
+              class="flex-1"
+              size="small"
+              :label="$t('packages_business_data_server_drawer_suoshuyingyong')"
+              prop="appValue"
+            >
+              <ListSelect
+                :value.sync="form.appValue"
+                :label.sync="form.appLabel"
+                @change="handleUpdateApp"
+              ></ListSelect>
+            </ElFormItem>
+          </div>
+          <ElFormItem :label="$t('public_description')" class="flex-1 form-item-name" size="small" prop="description">
+            <ElInput
+              v-model="form.description"
+              type="textarea"
+              :placeholder="$t('function_describe_placeholder')"
+              :disabled="!isEdit"
+            ></ElInput>
+          </ElFormItem>
+        </template>
 
         <!-- 基础信息 -->
-        <ul v-if="tab === 'form'" class="flex flex-wrap bg-main p-2 mt-4 rounded-1">
+        <ul v-if="tab === 'form'" class="flex flex-wrap bg-subtle p-2 rounded-lg">
           <li class="data-server-form-base__item">
             <ElFormItem :label="$t('packages_business_data_server_drawer_caozuoleixing')" label-width="86px">
               <div class="text">{{ $t('public_button_inquire') }}</div>
@@ -107,7 +143,7 @@
           </li>
           <li class="data-server-form-base__item">
             <ElFormItem :label="$t('packages_business_data_server_drawer_jiekouleixing')" label-width="86px">
-              <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged">
+              <ElSelect v-if="isEdit" v-model="form.apiType" @change="apiTypeChanged" class="w-100">
                 <ElOption v-for="(label, value) in apiTypeMap" :key="value" :value="value" :label="label"></ElOption>
               </ElSelect>
               <div v-else class="text">{{ apiTypeMap[data.apiType] }}</div>
@@ -118,6 +154,7 @@
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionType"
+                class="w-100"
                 filterable
                 :loading="!databaseTypes"
                 @change="connectionTypeChanged"
@@ -132,13 +169,14 @@
               <ElSelect
                 v-if="isEdit"
                 v-model="form.connectionName"
+                class="w-100"
                 filterable
                 :loading="!connectionOptions"
                 @change="connectionNameChanged"
               >
                 <ElOption
                   v-for="item in connectionOptions"
-                  :key="item.name"
+                  :key="item.id"
                   :value="item.name"
                   :label="item.name"
                 ></ElOption>
@@ -151,6 +189,7 @@
               <ElSelect
                 v-if="isEdit"
                 v-model="form.tableName"
+                class="w-100"
                 filterable
                 :loading="!tableOptions"
                 @change="tableChanged"
@@ -164,69 +203,57 @@
             </ElFormItem>
           </li>
         </ul>
-        <!-- 访问路径设置-->
-        <section v-if="tab === 'form'">
-          <div class="mt-4 fs-7 data-server-panel__title">
-            {{ $t('packages_business_data_server_drawer_aPI_path_Settings') }}
-          </div>
+        <template v-if="tab === 'form'">
+          <!-- 访问路径设置-->
+          <section v-if="isEdit">
+            <div class="fs-7 data-server-panel__title mt-4 mb-3">
+              {{ $t('packages_business_data_server_drawer_aPI_path_Settings') }}
+            </div>
 
-          <ul v-if="data.path && !isEdit" class="data-server-path">
-            <li v-for="(url, method) in urls" :key="method" class="data-server-path__item">
-              <div class="data-server-path__method" :class="'method--' + method">
-                {{ method }}
-              </div>
-              <div class="data-server-path__value line-height">{{ url }}</div>
-            </li>
-          </ul>
-
-          <template v-else="isEdit">
-            <div class="flex-1 mt-4" size="small">
-              <el-radio-group v-model="form.pathAccessMethod" :disabled="!isEdit">
-                <el-radio label="customize">{{ $t('packages_business_data_server_drawer_custom_path') }}</el-radio>
-                <el-radio label="default">{{ $t('packages_business_data_server_drawer_default_path') }}</el-radio>
-              </el-radio-group>
+            <div class="flex gap-4">
+              <ElFormItem
+                class="flex-1"
+                size="small"
+                :label="$t('public_version')"
+                prop="apiVersion"
+                :rules="rules.apiVersion"
+              >
+                <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
+              </ElFormItem>
+              <ElFormItem
+                class="flex-1"
+                size="small"
+                :label="$t('packages_business_data_server_drawer_prefix')"
+                prop="prefix"
+              >
+                <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
+              </ElFormItem>
             </div>
             <ElFormItem
-              class="flex-1 mt-4"
-              size="small"
-              :label="$t('public_version')"
-              prop="apiVersion"
-              :rules="rules.apiVersion"
-              v-if="form.pathAccessMethod === 'customize'"
-            >
-              <ElInput v-model="form.apiVersion" :disabled="!isEdit"></ElInput>
-            </ElFormItem>
-            <ElFormItem
-              class="flex-1 mt-4"
-              size="small"
-              :label="$t('packages_business_data_server_drawer_prefix')"
-              prop="prefix"
-              v-if="form.pathAccessMethod === 'customize'"
-            >
-              <ElInput v-model="form.prefix" :disabled="!isEdit"></ElInput>
-            </ElFormItem>
-            <ElFormItem
-              class="flex-1 mt-4"
+              class="flex-1"
               size="small"
               :label="$t('packages_business_data_server_drawer_base_path')"
               prop="basePath"
-              v-if="form.pathAccessMethod === 'customize'"
             >
               <ElInput v-model="form.basePath" :disabled="!isEdit"></ElInput>
             </ElFormItem>
-            <ElFormItem
-              class="flex-1 mt-4"
-              size="small"
-              :label="$t('packages_business_data_server_drawer_path')"
-              v-if="form.pathAccessMethod === 'customize'"
-            >
-              <ElInput v-model="customizePath" :disabled="true"></ElInput>
-            </ElFormItem>
-          </template>
-        </section>
+          </section>
+          <!--服务访问 -->
+          <div class="data-server-panel__title mt-4 mb-3">
+            <span>{{ $t('packages_business_fuwufangwen') }}</span>
+          </div>
+          <ul class="data-server-path flex flex-column gap-2">
+            <li v-for="item in urlList" :key="item.method" class="data-server-path__item bg-subtle rounded-4 pl-1 py-1">
+              <div class="data-server-path__method rounded-4 mr-4" :class="'method--' + item.method">
+                {{ item.method }}
+              </div>
+              <div class="data-server-path__value line-height">{{ item.url }}</div>
+            </li>
+          </ul>
+        </template>
 
         <!-- 輸入参数 -->
-        <div class="data-server-panel__title">
+        <div class="data-server-panel__title mt-4 mb-3">
           <div>
             <span>{{ $t('packages_business_data_server_drawer_shurucanshu') }}</span>
             <i
@@ -314,7 +341,7 @@
 
         <template v-if="data.apiType === 'customerQuery' || form.apiType === 'customerQuery'">
           <!-- 筛选条件 -->
-          <div class="data-server-panel__title">
+          <div class="data-server-panel__title mt-4 mb-3">
             <div>
               <span>{{ $t('packages_business_data_server_drawer_shaixuantiaojian') }}</span>
               <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('where')"></i>
@@ -364,7 +391,7 @@
           </ul>
 
           <!-- 排列条件 -->
-          <div class="data-server-panel__title">
+          <div class="data-server-panel__title mt-4 mb-3">
             <div>
               <span>{{ $t('packages_business_data_server_drawer_pailietiaojian') }}</span>
               <i v-if="isEdit" class="el-icon-circle-plus icon-button color-primary ml-4" @click="addItem('sort')"></i>
@@ -397,7 +424,9 @@
 
         <!-- 输出结果 -->
         <template v-if="tab === 'form'">
-          <div class="data-server-panel__title">{{ $t('packages_business_data_server_drawer_shuchujieguo') }}</div>
+          <div class="data-server-panel__title mt-4 mb-3">
+            {{ $t('packages_business_data_server_drawer_shuchujieguo') }}
+          </div>
           <ElTable
             ref="fieldTable"
             :data="isEdit ? allFields : data.fields"
@@ -413,13 +442,15 @@
 
         <!-- {{$t('packages_business_data_server_drawer_diaoyongfangshi')}} -->
         <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title">{{ $t('packages_business_data_server_drawer_diaoyongfangshi') }}</div>
+          <div class="data-server-panel__title mt-4 mb-3">
+            {{ $t('packages_business_data_server_drawer_diaoyongfangshi') }}
+          </div>
           <div class="flex">
             <div class="data-server-debug__url flex-1 flex align-center mr-4">
               <ElSelect v-model="debugMethod" class="data-server-debug__method mr-4" style="width: 100px" size="mini">
-                <ElOption v-for="(url, method) in urls" :key="method" :value="method"></ElOption>
+                <ElOption v-for="(item, i) in urlList" :key="i" :value="item.method" />
               </ElSelect>
-              <div>{{ urls[debugMethod] }}</div>
+              <div>{{ urlsMap[debugMethod] }}</div>
             </div>
             <ElButton type="primary" size="mini" :disabled="debugDisabled" @click="debugData">{{
               $t('public_button_submit')
@@ -427,8 +458,11 @@
           </div>
         </template>
         <template v-if="tab === 'debug'">
-          <div class="data-server-panel__title">{{ $t('packages_business_data_server_drawer_fanhuijieguo') }}</div>
+          <div class="data-server-panel__title mt-4 mb-3">
+            {{ $t('packages_business_data_server_drawer_fanhuijieguo') }}
+          </div>
           <VCodeEditor
+            class="rounded-lg"
             height="280"
             lang="json"
             :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
@@ -438,9 +472,14 @@
 
         <!--  {{$t('packages_business_data_server_drawer_shilidaima2')}} -->
         <template v-if="tab === 'debug'">
-          <div class="flex position-relative mt-8 mb-4">
-            <div class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark" style="line-height: 36px">
-              {{ $t('packages_business_data_server_drawer_shilidaima') }}
+          <div class="flex position-relative mt-4 mb-3">
+            <div
+              class="position-absolute top-0 start-0 fs-7 fw-sub font-color-dark flex align-center"
+              style="line-height: 36px; height: 36px"
+            >
+              <span class="data-server-panel__title my-0">
+                {{ $t('packages_business_data_server_drawer_shilidaima') }}
+              </span>
             </div>
             <ElTabs v-model="templateType" class="data-server__tabs flex-1">
               <ElTabPane label="JAVA" name="java"></ElTabPane>
@@ -449,6 +488,7 @@
             </ElTabs>
           </div>
           <VCodeEditor
+            class="rounded-lg"
             height="280"
             :lang="templateType"
             :options="{ printMargin: false, readOnly: true, wrap: 'free' }"
@@ -487,7 +527,10 @@ export default {
     tag: {
       type: String,
       default: 'Drawer'
-    }
+    },
+    inDialog: Boolean,
+    disableApp: Boolean,
+    params: Object
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -499,8 +542,7 @@ export default {
       }
     }
     const validateBasePath = (rule, value, callback) => {
-      // eslint-disable-next-line no-control-regex
-      if (/^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value)) {
+      if (!value || /^[a-zA-Z\$_\u4e00-\u9fa5][a-zA-Z\u4e00-\u9fa5\d\$_]*$/.test(value)) {
         callback()
       } else {
         callback(i18n.t('packages_business_data_server_drawer_validate'))
@@ -564,7 +606,7 @@ export default {
           { validator: validateBasePath, trigger: ['blur', 'change'] }
         ],
         prefix: [{ required: false, validator: validatePrefix, trigger: ['blur', 'change'] }],
-        apiVersion: [{ required: true, validator: validateBasePath, trigger: ['blur', 'change'] }],
+        apiVersion: [{ required: false, validator: validateBasePath, trigger: ['blur', 'change'] }],
         appValue: [
           {
             required: true,
@@ -589,9 +631,6 @@ export default {
       debugParams: null,
       debugMethod: 'GET',
       debugResult: '',
-
-      urls: [],
-
       templates: {},
       templateType: 'java',
 
@@ -621,18 +660,56 @@ export default {
       if (this.form?.basePath && this.form?.basePath !== '') {
         arr.push(this.form?.basePath)
       }
-      this.form.path = '/api/' + arr.join('/')
+      // this.form.path = '/api/' + arr.join('/')
       return '/api/' + arr.join('/')
     },
 
     debugDisabled() {
       return this.workerStatus !== 'running'
+    },
+
+    urlList() {
+      let baseUrl = this.host + this.customizePath
+
+      return [
+        {
+          method: 'POST',
+          url: `${baseUrl}/find`
+        },
+        {
+          method: 'GET',
+          url: `${baseUrl}`
+        },
+        {
+          method: 'TOKEN',
+          url: `${location.origin + location.pathname}oauth/token`
+        }
+      ]
+    },
+
+    urlsMap() {
+      return this.urlList.reduce((acc, item) => {
+        acc[item.method] = item.url
+        return acc
+      }, {})
     }
   },
   watch: {
     visible(v) {
       if (!v) {
         this.intervalId && clearTimeout(this.intervalId)
+      }
+
+      if (v) {
+        this.setTabTitle(
+          this.data.id
+            ? this.$t('packages_business_data_server_drawer_fuwuxiangqing')
+            : this.$t('packages_business_data_server_drawer_chuangjianfuwu')
+        )
+
+        setTimeout(() => {
+          this.$refs.tabs.calcPaneInstances(true)
+        }, 0)
       }
     }
   },
@@ -756,11 +833,6 @@ export default {
       let host = this.host
       let _path = this.data.path
       let baseUrl = host + _path
-      this.urls = {
-        POST: `${baseUrl}/find`,
-        GET: `${baseUrl}`,
-        TOKEN: `${location.origin + location.pathname}oauth/token`
-      }
       if (this.data.status === 'active') {
         this.getAPIServerToken(token => {
           this.templates = getTemplate(baseUrl, token)
@@ -822,14 +894,6 @@ export default {
     save(type) {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          //自定义路径 数据清理
-          if (this.form.pathAccessMethod === 'default') {
-            this.form.prefix = ''
-            this.form.apiVersion = ''
-            if (this.form.basePath) {
-              this.form.path = '/api/' + this.form.basePath
-            }
-          }
           let {
             id,
             name,
@@ -868,6 +932,8 @@ export default {
           fields = fields.filter(f => !!f)
 
           this.loading = true
+          this.$emit('update:loading', true)
+
           let formData = {
             id,
             status,
@@ -922,6 +988,7 @@ export default {
 
           const data = await modulesApi[id ? 'patch' : 'post'](formData).finally(() => {
             this.loading = false
+            this.$emit('update:loading', false)
           })
           data.connection = connectionId
           data.source = {
@@ -930,34 +997,9 @@ export default {
           }
           this.formatData(data || [])
           this.orginData && Object.assign(this.orginData, data)
-          this.$emit('save')
+          this.$emit('save', data)
           this.isEdit = false
         }
-      })
-    },
-    generate() {
-      if (this.data.basePath && this.data.basePath !== '') {
-        this.$confirm(this.$t('packages_business_data_server_drawer_confirm_tip'), {
-          type: 'warning'
-        }).then(resFlag => {
-          if (!resFlag) {
-            return
-          }
-          this.generateHttp()
-        })
-      } else {
-        this.generateHttp()
-      }
-    },
-    generateHttp() {
-      // this.form = cloneDeep(this.data)
-      let basePath = uid(11, 'a')
-      this.form.basePath = basePath
-      this.form.path = `/api/${basePath}`
-      this.form.status = 'pending'
-      this.$nextTick(() => {
-        // save会校验表单项，不加nextTick会导致验证不通过
-        this.save('generate')
       })
     },
     // 获取可选数据源类型
@@ -983,7 +1025,6 @@ export default {
             : {
                 in: this.databaseTypes
               },
-          // 海事局特殊处理
           connection_type:
             process.env.VUE_APP_MODE !== 'msa'
               ? {
@@ -1134,7 +1175,7 @@ export default {
           2
         )
       } else {
-        let url = this.urls[this.debugMethod] + '?access_token=' + this.token
+        let url = this.urlsMap[this.debugMethod] + '?access_token=' + this.token
         for (const key in params) {
           const value = params[key]
           if (!value) {
@@ -1249,6 +1290,45 @@ export default {
           this.$message.success(this.$t('public_message_operation_success'))
         })
       })
+    },
+
+    async handleUpdateRole() {
+      await modulesApi.updatePermissions({
+        moduleId: this.data.id,
+        acl: this.form.acl
+      })
+      this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    async handleUpdateApp() {
+      const { appLabel, appValue } = this.form
+      await modulesApi.updateTags({
+        moduleId: this.data.id,
+        listtags: [
+          {
+            id: appValue,
+            value: appLabel
+          }
+        ]
+      })
+      this.$message.success(this.$t('public_message_operation_success'))
+    },
+
+    setTabTitle(title) {
+      let $title = this.$refs.tabs.$el.querySelector('.el-tabs__nav-title')
+      if (!$title) {
+        // 创建一个新的span元素
+        $title = document.createElement('span')
+        $title.setAttribute('class', 'el-tabs__nav-title mr-4 float-start fs-6 fw-sub font-color-dark')
+
+        // 获取el-tabs__header元素
+        const tabsHeader = this.$refs.tabs.$el.querySelector('.el-tabs__nav-wrap')
+
+        // 在el-tabs__header元素之前插入新的span元素
+        tabsHeader.insertBefore($title, tabsHeader.firstChild)
+      }
+
+      $title.textContent = title
     }
   }
 }
@@ -1266,9 +1346,6 @@ export default {
 }
 .data-server__tabs {
   ::v-deep {
-    .el-tabs__nav-wrap.is-top {
-      padding-left: 112px;
-    }
     .el-tabs__header.is-top {
       margin: 0;
     }
@@ -1276,11 +1353,16 @@ export default {
 }
 .data-server__form {
   ::v-deep {
-    .el-form-item {
-      margin-bottom: 0;
-    }
     .el-form-item__label {
-      line-height: 30px;
+      padding-bottom: 0;
+    }
+    .el-form-item {
+      margin-bottom: 12px;
+      &__content {
+        .el-select {
+          width: 100%;
+        }
+      }
     }
   }
 }
@@ -1290,6 +1372,12 @@ export default {
   .text {
     font-size: 12px;
     word-break: break-word;
+  }
+
+  ::v-deep {
+    .el-form-item {
+      margin-bottom: 0;
+    }
   }
 }
 .data-server-panel__title {
@@ -1304,6 +1392,23 @@ export default {
   font-size: 14px;
   color: map-get($fontColor, dark);
   user-select: none;
+
+  position: relative;
+  padding-left: 12px;
+  $bar-width: 3px;
+
+  &::before {
+    content: '';
+    width: $bar-width;
+    height: 1.2em;
+    border-radius: calc($bar-width / 2);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    background-color: map-get($color, primary);
+    //background-color: #bcbfc3;
+  }
 }
 .data-server-path__item {
   display: flex;
@@ -1314,8 +1419,8 @@ export default {
 .data-server-path__method {
   margin-right: 40px;
   width: 62px;
-  height: 22px;
-  line-height: 22px;
+  height: 28px;
+  line-height: 28px;
   text-align: center;
   border-radius: 2px;
 

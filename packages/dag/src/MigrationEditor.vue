@@ -220,6 +220,10 @@ export default {
     initNodeType() {
       this.addProcessorNode([
         {
+          name: i18n.t('packages_dag_migrate_union'),
+          type: 'migrate_union_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor'
         },

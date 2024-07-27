@@ -330,7 +330,7 @@
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost"></ApiPreview>
+      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost" disableApp />
     </div>
   </div>
 </template>
