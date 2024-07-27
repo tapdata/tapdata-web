@@ -15,13 +15,16 @@
         </ElInput>
       </div>
 
-      <div class="flex-fill min-h-0 overflow-auto p-2 position-relative" @scroll="handleScroll">
-        <!--<draggable v-model="filterList" @start="dragging = true" @end="dragging = false">-->
-        <div
-          v-for="item in filterList"
-          :ref="`wrap__item${item.id}`"
-          :key="item.id"
-          class="wrap__item rounded-lg mb-3 position-relative overflow-hidden"
+      <div
+        v-if="showParentLineage"
+        class="flex-fill min-h-0 overflow-auto p-2 position-relative"
+        @scroll="handleScroll"
+      >
+        <div v-for="(item, index) in filterList" :key="index" class="pb-3">
+          <div
+            :ref="`wrap__item${item.id}`"
+            :key="item.id"
+            class="wrap__item rounded-lg  position-relative overflow-hidden"
           :class="{ 'opacity-50': item.disabled }"
           @dragover="handleDragOver"
           @dragenter.stop="handleDragEnter($event, item)"
@@ -44,7 +47,7 @@
                 <div class="task-list-content">
                   <template v-if="item.modules && item.modules.length">
                     <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
-                      <div :ref="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
+                      <div :id="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
                         <a
                           class="el-link el-link--primary w-100 justify-content-start"
                           :title="m.name"
@@ -94,11 +97,110 @@
                   >
                 </span>
                 <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
-                <!--                <IconButton
-                      v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                      @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                      >open-in-new</IconButton
-                    >-->
+                </div>
+                <div class="mt-2 font-color-light">
+                  {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
+                </div>
+              </div>
+              <TaskList
+                ref="taskList"
+                :key="`${item.id}_task`"
+                :item-id="item.id"
+                :show-all="expandState[item.id]"
+                :list="connectionTaskMap[item.id] || []"
+                @edit-in-dag="handleClickName"
+                @find-parent="handleFindParent"
+                @show-all="handleExpandAll(item.id)"
+              ></TaskList>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <DynamicScroller
+        v-else
+        :items="filterList"
+        :min-item-size="54"
+        class="flex-fill min-h-0 overflow-auto p-2 position-relative"
+      >
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem :item="item" :active="active" :index="index" class="pb-3">
+            <div
+              :ref="`wrap__item${item.id}`"
+              :key="item.id"
+              class="wrap__item rounded-lg position-relative overflow-hidden"
+              :class="{ 'opacity-50': item.disabled }"
+              @dragover="handleDragOver"
+              @dragenter.stop="handleDragEnter($event, item)"
+              @dragleave.stop="handleDragLeave($event, item)"
+              @drop.stop="handleDrop($event, item)"
+            >
+              <template v-if="item.LDP_TYPE === 'app'">
+                <div class="item__header p-3">
+                  <div class="flex align-center gap-2 overflow-hidden">
+                    <VIcon size="20">mini-app</VIcon>
+                    <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{
+                      item.value
+                    }}</span>
+                    <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
+                      </div>
+                  <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
+                </div>
+                <div class="item__content position-relative p-2">
+                  <div class="task-list">
+                    <div class="task-list-content">
+                      <template v-if="item.modules && item.modules.length">
+                        <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
+                          <div class="p-1 ellipsis flex-1 align-center position-relative">
+                            <a
+                              class="el-link el-link--primary w-100 justify-content-start"
+                              :title="m.name"
+                              @click="handlePreviewApi(m)"
+                            >
+                              <span class="ellipsis">{{ m.name }}</span>
+                            </a>
+                          </div>
+                          <div class="p-1">
+                            <span class="status-block" :class="'status-' + m.status">{{ m.statusText }}</span>
+                          </div>
+                        </div>
+                      </template>
+                      <span v-else class="font-color-sslight">{{
+                        $t('packages_business_data_console_target_no_api')
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
+                  :class="{ flex: nonSupportApi }"
+                >
+                  <ElTooltip
+                    placement="top"
+                    :content="$t('packages_ldp_src_target_muqianzhichide') + ':' + apiSupportTypes.join(',')"
+                  >
+                    <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
+                  </ElTooltip>
+                </div>
+              </template>
+              <template v-else>
+                <div class="item__header p-3">
+                  <div class="flex align-center overflow-hidden">
+                    <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
+                    <span
+                      class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
+                      :title="item.name"
+                      ><span class="ellipsis">{{ item.name }}</span>
+                      <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
+                        $t('public_status_invalid')
+                      }}</ElTag>
+                      <ElTagv-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                      size="small"
+                        class="ml-1 px-1 flex align-center clickable"@click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                      ><VIcon class="mr-1" size="14">open-in-new</VIcon
+                        >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
+                    ></span>
+                    <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
               </div>
               <div class="mt-2 font-color-light">
                 {{
@@ -110,17 +212,22 @@
             </div>
             <TaskList
               ref="taskList"
-              :item-id="item.id"
-              :list="connectionTaskMap[item.id] || []"
-              @edit-in-dag="handleClickName"
-              @find-parent="handleFindParent"
-            ></TaskList>
-          </template>
-        </div>
-        <div v-if="!filterList.length" class="el-tree__empty-block">
-          <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
-        </div>
-        <!--</draggable>-->
+              :key="`${item.id}_task`"
+                  :item-id="item.id"
+                  :show-all="expandState[item.id]"
+                  :list="connectionTaskMap[item.id] || []"
+                  @edit-in-dag="handleClickName"
+                  @find-parent="handleFindParent"
+                  @show-all="handleExpandAll(item.id)"
+                ></TaskList>
+              </template>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+
+      <div v-if="!filterList.length" class="el-tree__empty-block">
+        <span class="el-tree__empty-text">{{ $t('public_data_no_data') }}</span>
       </div>
 
       <ElDialog v-model="taskDialogConfig.visible" :close-on-click-modal="false">
@@ -219,7 +326,7 @@
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost"></ApiPreview>
+      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost" disableApp />
     </div>
   </div>
 </template>
@@ -229,8 +336,9 @@ import { h } from 'vue'
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 // import draggable from 'vuedraggable'
 import { debounce, cloneDeep } from 'lodash'
-import { defineComponent, ref } from 'vue'
-
+import { defineComponent } from 'vue'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { apiServerApi, appApi, connectionsApi, modulesApi, proxyApi, taskApi } from '@tap/api'
 import { uuid, generateId } from '@tap/shared'
 import { VIcon, IconButton } from '@tap/component'
@@ -246,12 +354,11 @@ import CreateRestApi from './components/CreateRestApi'
 import commonMix from './mixins/common'
 
 const TaskList = defineComponent({
-  props: ['list'],
+  props: ['list', 'showAll'],
   setup(props, { emit }) {
     const limit = 3
-    const isLimit = ref(true)
     return () => {
-      const list = isLimit.value ? props.list.slice(0, limit) : props.list
+      const list = !props.showAll ? props.list.slice(0, limit) : props.list
       return (
         <div class={['item__content position-relative p-2', { 'has-more': props.list.length > limit }]}>
           {props.list.length ? (
@@ -279,18 +386,6 @@ const TaskList = defineComponent({
                       >
                         open-in-new
                       </IconButton>
-                      /*<ElTag
-
-                        class="ml-1 px-1 flex align-center clickable"
-                        onClick={() => {
-                          window.open(task.website)
-                        }}
-                      >
-                        <VIcon class="mr-1" size="14">
-                          open-in-new
-                        </VIcon>
-                        首页
-                      </ElTag>*/
                     )}
                   </div>
                 ))}{' '}
@@ -302,12 +397,12 @@ const TaskList = defineComponent({
 
           <ElButton
             onClick={() => {
-              isLimit.value = !isLimit.value
+              emit('show-all')
             }}
             round
-            class={['task-list-item-more position-absolute fs-8', { 'is-reverse': !isLimit.value }]}
+            class={['task-list-item-more position-absolute fs-8', { 'is-reverse': props.showAll }]}
           >
-            {i18n.t(isLimit.value ? 'packages_business_view_more' : 'packages_business_view_collapse')}
+            {i18n.t(!props.showAll ? 'packages_business_view_more' : 'packages_business_view_collapse')}
             <VIcon class="ml-1">arrow-down</VIcon>
           </ElButton>
         </div>
@@ -325,7 +420,16 @@ export default {
     showParentLineage: Boolean,
   },
 
-  components: { ApiPreview, CreateRestApi, DatabaseIcon, TaskList, IconButton, VIcon },
+  components: {
+    ApiPreview,
+    CreateRestApi,
+    DatabaseIcon,
+    TaskList,
+    IconButton,
+    VIcon,
+    DynamicScroller,
+    DynamicScrollerItem
+  },
 
   mixins: [commonMix],
 
@@ -368,6 +472,7 @@ export default {
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
       searchKeywordList: [],
+      expandState: {}
     }
   },
 
@@ -451,6 +556,7 @@ export default {
       }
 
       this.connectionIds = connectionList.map((item) => item.id)
+      this.appList = appList
       this.list = appList
         .concat(connectionList)
         .sort((obj1, obj2) => new Date(obj2.createTime) - new Date(obj1.createTime))
@@ -909,6 +1015,8 @@ export default {
         this.connectionIds.push(item.id)
         this.mapConnection(item)
         this.loadTask([item])
+      } else {
+        this.appList.unshift(item)
       }
 
       this.list.unshift(item)
@@ -939,6 +1047,11 @@ export default {
     handleAddApi(data, app) {
       data = this.mapApi(data)
 
+      if (!app) {
+        const appValue = data.listtags[0].id
+        app = this.appList.find(it => it.id === appValue)
+      }
+
       if (!app.modules) app['modules'] = [data]
       else app.modules.unshift(data)
     },
@@ -950,17 +1063,30 @@ export default {
     handleFindTaskDom(val = {}) {
       const modules = Object.values(val.modules) || []
       const app = modules?.[0] || {}
-      const el = this.$refs[`ldp_target_api_${app.id}`]?.[0]
+      const el = document.getElementById(`ldp_target_api_${app.id}`)
       return el?.parentNode
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'handle-connection')
+      $emit(this, 'on-scroll')
     }, 200),
 
     searchByKeywordList(val = []) {
       this.searchKeywordList = val
     },
+
+    handleExpandAll(id) {
+      this.$set(this.expandState, id, !this.expandState[id])
+    },
+
+    createAPI(connection, tableObj) {
+      if (!this.apiSupportTypes.includes(connection.database_type)) return
+
+      this.apiDialog.from = connection
+      this.apiDialog.tableName = tableObj.name
+      this.apiDialog.to = null
+      this.showApiDialog()
+    }
   },
 }
 </script>

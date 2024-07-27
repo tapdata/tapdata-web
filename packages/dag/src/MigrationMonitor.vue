@@ -178,6 +178,8 @@
       ></UpgradeCharges>
 
       <MaterializedView ref="materializedView" v-model:visible="materializedViewVisible" disabled></MaterializedView>
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     </section>
   </section>
 </template>
@@ -196,7 +198,7 @@ import deviceSupportHelpers from '@tap/component/src/mixins/deviceSupportHelpers
 import { titleChange } from '@tap/component/src/mixins/titleChange'
 import { showMessage } from '@tap/component/src/mixins/showMessage'
 import resize from '@tap/component/src/directives/resize'
-import { ALARM_LEVEL_SORT, TASK_STATUS_MAP, UpgradeFee, UpgradeCharges } from '@tap/business'
+import { ALARM_LEVEL_SORT, TASK_STATUS_MAP, UpgradeFee, UpgradeCharges, SkipError } from '@tap/business'
 import Time from '@tap/shared/src/time'
 import SharedMiningEditor from '@tap/business/src/views/shared-mining/Editor'
 import SharedCacheDetails from '@tap/business/src/views/shared-cache/Details'
@@ -230,6 +232,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    SkipError,
     MaterializedView,
     UpgradeFee,
     UpgradeCharges,
@@ -306,6 +309,7 @@ export default {
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
       upgradeChargesVisibleTips: '',
+      noNeedRefresh: false // 如果进入页面任务是停止运行状态，无需刷新
     }
   },
 
@@ -355,14 +359,22 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== v2) {
-        this.init()
-      }
       this.watchStatusCount++
+
       if (this.watchStatusCount === 1) {
+        // 进入页面后首次执行
         const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
+        this.noNeedRefresh = ['error', 'schedule_failed', 'stop', 'complete'].includes(v1)
+      } else {
+        // 状态变化，重置自动刷新状态
+        this.noNeedRefresh = false
+        this.extraEnterCount = 0
+      }
+
+      if (v1 !== v2) {
+        this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
     },
@@ -418,7 +430,9 @@ export default {
     polling() {
       if (
         this.isEnterTimer ||
-        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        (!this.noNeedRefresh &&
+          ['error', 'schedule_failed', 'stop', 'complete'].includes(this.dataflow.status) &&
+          ++this.extraEnterCount < 4)
       ) {
         this.startLoadData()
       }
@@ -650,6 +664,7 @@ export default {
       this.$router.push({
         name: map[this.dataflow.syncType] || 'dataflowList',
       })
+      window.name = null
     },
 
     handleEdit() {
@@ -704,7 +719,10 @@ export default {
       })
     },
 
-    async handleStart() {
+    async handleStart(skip) {
+      const hasError = !skip && (await this.$refs.skipError.checkError(this.dataflow))
+      if (hasError) return
+
       this.isSaving = true
       try {
         this.wsAgentLive()
@@ -713,13 +731,17 @@ export default {
         this.isSaving = false
         this.isReset = false
         // this.loadDataflow(this.dataflow?.id)
-        this.openDataflow(this.dataflow?.id)
+        await this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
       } catch (e) {
         this.handleError(e)
         this.isSaving = false
       }
+    },
+
+    handleSkipAndRun() {
+      this.handleStart(true)
     },
 
     getQuotaFilter(type) {
@@ -1140,7 +1162,7 @@ export default {
           result = [this.firstStartTime, endTimestamp]
           break
         case 'incremental':
-          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 3000, endTimestamp]
+          result = [this.quota.samples?.totalData?.[0].snapshotDoneAt + 10000, endTimestamp]
           break
         default:
           result = [endTimestamp - 5 * 60 * 1000, endTimestamp]
@@ -1239,27 +1261,6 @@ export default {
       setTimeout(() => {
         this.showConsole && this.$refs.console?.autoLoad()
       }, 5000)
-    },
-
-    async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true,
-          },
-        }),
-      })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {}),
-      )
     },
 
     getTime() {

@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap position-relative px-4" v-loading="restLoading">
+  <section class="data-flow-wrap rounded-lg overflow-hidden" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
@@ -23,137 +23,97 @@
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
       </template>
-      <template v-slot:operation>
-        <div class="buttons">
-          <ElButton v-if="isDaas && multipleSelection.length" @click="handlePermissionsSettings"
-            >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+      <template #multipleSelectionActions>
+        <ElButton v-if="isDaas" @click="handlePermissionsSettings"
+          >{{ $t('packages_business_permissionse_settings_create_quanxianshezhi') }}
+        </ElButton>
+        <ElButton
+          v-readonlybtn="'SYNC_category_application'"
+          :disabled="$disabledReadonlyUserBtn()"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <span> {{ $t('public_button_bulk_tag') }}</span>
+        </ElButton>
+        <ElDropdown @command="handleCommand($event)" v-show="bulkOperation">
+          <ElButton>
+            <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
+            <i class="el-icon-arrow-down el-icon--right"></i>
           </ElButton>
-          <el-button
-            v-readonlybtn="'SYNC_category_application'"
-            :disabled="$disabledReadonlyUserBtn()"
-            class="btn"
-            v-show="multipleSelection.length > 0"
-            @click="$refs.table.showClassify(handleSelectTag())"
-          >
-            <!--<i class="iconfont icon-biaoqian back-btn-icon"></i>-->
-            <span> {{ $t('public_button_bulk_tag') }}</span>
-          </el-button>
-          <el-dropdown
-            class="btn"
-            @command="handleCommand($event)"
-            v-show="multipleSelection.length > 0 && bulkOperation"
-          >
-            <el-button class="btn-dropdowm">
-              <!--<i class="iconfont icon-piliang back-btn-icon"></i>-->
-              <span> {{ $t('packages_business_dataFlow_taskBulkOperation') }}</span>
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="start" :disabled="$disabledReadonlyUserBtn()"
-                  >{{ $t('packages_business_dataFlow_bulkScheuled') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="stop" :disabled="$disabledReadonlyUserBtn()"
-                  >{{ $t('packages_business_dataFlow_bulkStopping') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="initialize" :disabled="$disabledReadonlyUserBtn()"
-                  >{{ $t('packages_business_dataFlow_batchRest') }}
-                </el-dropdown-item>
-                <el-dropdown-item command="del" :disabled="$disabledReadonlyUserBtn()"
-                  >{{ $t('packages_business_dataFlow_batchDelete') }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <el-button
-            v-if="buttonShowMap.export"
-            v-show="multipleSelection.length > 0 && isDaas"
-            :disabled="$disabledReadonlyUserBtn()"
-            v-readonlybtn="'SYNC_job_export'"
-            class="btn message-button-cancel"
-            @click="handleCommand('export')"
-          >
-            <span> {{ $t('public_button_export') }}</span>
-          </el-button>
-          <el-button
-            v-if="buttonShowMap.import && isDaas"
-            v-readonlybtn="'SYNC_job_import'"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImport"
-          >
-            <span> {{ $t('packages_business_button_bulk_import') }}</span>
-          </el-button>
-          <el-button
-            v-if="buttonShowMap.import && $route.name === 'dataflowList'"
-            v-readonlybtn="'SYNC_job_import'"
-            class="btn"
-            :disabled="$disabledReadonlyUserBtn()"
-            @click="handleImportRelmig"
-          >
-            <span> {{ $t('packages_business_relmig_import') }}</span>
-          </el-button>
-          <ElButton
-            v-if="$route.name === 'dataflowList'"
-            class="--with-icon inline-flex align-center px-2 py-0 align-top"
-            :loading="createBtnLoading"
-            @click="handleCreateMaterializedView"
-          >
-            <VIcon class="mr-1" size="28">beta</VIcon>
-            {{ $t('packages_dag_build_materialized_view') }}
-          </ElButton>
-          <el-button
-            v-if="buttonShowMap.create"
-            v-readonlybtn="'SYNC_job_creation'"
-            class="btn btn-create"
-            type="primary"
-            id="task-list-create"
-            :disabled="$disabledReadonlyUserBtn()"
-            :loading="createBtnLoading"
-            @click="create()"
-          >
-            {{ $t('public_button_create') }}
-          </el-button>
-        </div>
+          <template #dropdown>
+            <ElDropdownMenu>
+              <ElDropdownItem command="start" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+                >{{ $t('packages_business_dataFlow_bulkScheuled') }}
+              </ElDropdownItem>
+              <ElDropdownItem command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+                >{{ $t('packages_business_dataFlow_bulkStopping') }}
+              </ElDropdownItem>
+              <ElDropdownItem
+                command="initialize"
+                v-readonlybtn="'SYNC_job_operation'"
+                :disabled="$disabledReadonlyUserBtn()"
+                >{{ $t('packages_business_dataFlow_batchRest') }}
+              </ElDropdownItem>
+              <ElDropdownItem command="del" v-readonlybtn="'SYNC_job_delete'" :disabled="$disabledReadonlyUserBtn()"
+                >{{ $t('packages_business_dataFlow_batchDelete') }}
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </template>
+        </ElDropdown>
+        <ElButton
+          v-if="buttonShowMap.export"
+          v-show="isDaas"
+          :disabled="$disabledReadonlyUserBtn()"
+          v-readonlybtn="'SYNC_job_export'"
+          @click="handleCommand('export')"
+        >
+          <span> {{ $t('public_button_export') }}</span>
+        </ElButton>
       </template>
 
       <el-table-column
         reserve-selection
         type="selection"
-        width="45"
+        width="38"
         align="center"
         :selectable="(row) => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
       >
       </el-table-column>
       <el-table-column min-width="240" :label="$t('public_task_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name flex">
-            <span v-if="handleClickNameDisabled(row)">{{ row.name }}</span>
+          <div class="dataflow-name flex flex-wrap">
+            <span v-if="handleClickNameDisabled(row)" class="mr-1">{{ row.name }}</span>
             <ElLink
               v-else
               role="ellipsis"
               type="primary"
-              class="justify-content-start ellipsis block"
+              class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
               >{{ row.name }}</ElLink
             >
-            <span v-if="row.listtags" class="justify-content-start ellipsis block">
-              <span class="tag inline-block" v-for="item in row.listtags" :key="item.id">{{ item.value }}</span>
+            <span v-if="row.listtags" class="justify-content-start ellipsis flex flex-wrap align-center gap-1">
+              <span class="tag ellipsis" v-for="item in row.listtags" :key="item.id" :title="item.value">{{
+                item.value
+              }}</span>
             </span>
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('public_task_type')" :min-width="colWidth.taskType">
-        <template #default="{ row }">
-          <span>
+          </div>
+          <div class="fs-8 font-color-sslight lh-base">
             {{ row.type ? taskType[row.type] : '' }}
-          </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('public_task_status')" :min-width="colWidth.status">
         <template #default="{ row }">
           <TaskStatus :task="row" :agentMap="agentMap" :error-cause="taskErrorCause[row.id]" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="syncStatus"
+        :label="$t('packages_business_task_monitor_mission_milestone')"
+        :min-width="colWidth.syncStatus"
+      >
+        <template #default="{ row }">
+          <SyncStatus :status="row.syncStatus" />
         </template>
       </el-table-column>
       <el-table-column sortable prop="currentEventTimestamp" :label="$t('public_task_cdc_time_point')" min-width="168">
@@ -166,7 +126,7 @@
           {{ formatTime(row.lastStartDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" :width="colWidth.operation">
+      <el-table-column fixed="right" :label="$t('public_operation')" :width="colWidth.operation">
         <template v-slot:header>
           <div v-if="isDaas" class="flex align-center">
             <span>{{ $t('public_operation_available') }}</span>
@@ -181,8 +141,9 @@
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
+              data-testid="start-task"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
-              @click="start([row.id])"
+              @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
             </ElLink>
@@ -191,6 +152,7 @@
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="force-stop-task"
                 :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
@@ -200,6 +162,7 @@
                 v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
+                data-testid="stop-task"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
@@ -215,6 +178,7 @@
               v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="edit-task"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
@@ -228,6 +192,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="monitor-task"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="toDetail(row)"
             >
@@ -238,6 +203,7 @@
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="reset-task"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="initialize([row.id], row)"
             >
@@ -252,6 +218,7 @@
               v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="copy-task"
               :disabled="$disabledReadonlyUserBtn()"
               @click="copy([row.id], row)"
             >
@@ -266,6 +233,7 @@
               v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
+              data-testid="delete-task"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del([row.id], row)"
             >
@@ -275,7 +243,7 @@
         </template>
       </el-table-column>
     </TablePage>
-    <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     <!-- 导入 -->
     <Upload :type="uploadType" ref="upload" @success="table.fetch()"></Upload>
     <!-- 删除任务 pg数据源 slot 删除失败 自定义dialog 提示 -->
@@ -367,10 +335,10 @@ import { taskApi, workerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
-import { makeStatusAndDisabled, STATUS_MAP } from '../../shared'
+import { makeStatusAndDisabled, STATUS_MAP, MILESTONE_TYPE } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
 
 export default {
@@ -393,6 +361,7 @@ export default {
     PermissionseSettingsCreate,
     UpgradeCharges,
     UpgradeFee,
+    SyncStatus
   },
 
   mixins: [syncTaskAgent],
@@ -475,12 +444,14 @@ export default {
         ? {
             taskType: 140,
             status: 145,
-            operation: 340,
+            syncStatus: 180,
+            operation: 340
           }
         : {
             taskType: 80,
             status: 110,
-            operation: 280,
+            syncStatus: 110,
+            operation: 280
           }
     },
 
@@ -529,7 +500,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type, agentId } = this.searchParams
+      let { keyword, status, type, agentId, syncStatus } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -557,6 +528,9 @@ export default {
         shareCdcStop: true,
         shareCdcStopMessage: true,
         taskRetryStartTime: true,
+        errorEvents: true,
+        syncStatus: true,
+        restartFlag: true
       }
       let where = {
         syncType,
@@ -582,6 +556,9 @@ export default {
       if (agentId) {
         where['agentId'] = agentId
       }
+      if (syncStatus) {
+        where.syncStatus = syncStatus
+      }
       let filter = {
         order: this.order,
         limit: size,
@@ -595,7 +572,14 @@ export default {
         })
         .then((data) => {
           let errorTaskIds = []
-          let list = (data?.items || []).map((item) => {
+          let list = (data?.items || []).map(item => {
+            if (item.errorEvents?.length) {
+              // 清除 stacks
+              item.errorEvents.forEach(event => {
+                delete event.stacks
+              })
+            }
+
             makeStatusAndDisabled(item)
             if (item.status === 'error') {
               errorTaskIds.push(item.id)
@@ -648,6 +632,16 @@ export default {
           key: 'type',
           type: 'select-inner',
           items: this.typeOptions,
+        },
+        {
+          label: this.$t('packages_business_task_monitor_mission_milestone'),
+          key: 'syncStatus',
+          type: 'select-inner',
+          items: [
+            { label: this.$t('public_select_option_all'), value: '' },
+            ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key }))
+          ],
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('public_task_name'),
@@ -841,8 +835,17 @@ export default {
       })
     },
 
-    start(ids, node, canNotList = []) {
+    async start(ids, task, canNotList = []) {
       this.buried(this.taskBuried.start)
+      if (ids.length === 1 && task) {
+        const flag = await this.$refs.skipError.checkError(task)
+        if (flag) return
+      }
+
+      this.startTask(ids, canNotList)
+    },
+
+    startTask(ids, canNotList) {
       taskApi
         .batchStart(ids)
         .then((data) => {
@@ -853,6 +856,10 @@ export default {
         .catch(() => {
           this.buried(this.taskBuried.start, '', { result: false })
         })
+    },
+
+    handleSkipAndRun(taskId) {
+      this.startTask([taskId])
     },
 
     copy(ids, node) {
@@ -1218,15 +1225,14 @@ export default {
 
     .dataflow-name {
       .tag {
-        padding: 2px 5px;
+        padding: 0 4px;
         font-style: normal;
         font-weight: 400;
-        font-size: 10px;
-        line-height: 14px;
+        font-size: 12px;
+        line-height: 20px;
         color: map-get($color, tag);
         border: 1px solid map-get($bgColor, tag);
-        border-radius: 2px;
-        margin-left: 5px;
+        border-radius: 4px;
       }
 
       .name {

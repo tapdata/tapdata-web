@@ -268,7 +268,7 @@
             </div>
           </el-scrollbar>
           <template v-if="emptyText && (!allowCreate || loading || (allowCreate && options.size === 0))">
-            <slot v-if="$slots.empty" name="empty" />
+            <slot v-if="$slots.empty" name="empty" :query="selectedLabel" />
             <p v-else :class="nsSelect.be('dropdown', 'empty')">
               {{ emptyText }}
             </p>

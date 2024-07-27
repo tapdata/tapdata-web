@@ -175,6 +175,11 @@ export default {
           prop: 'tableName',
         },
         {
+          label: this.$t('daas_data_server_drawer_path'),
+          'min-width': 130,
+          prop: '_path'
+        },
+        {
           label: this.$t('packages_business_data_server_list_fuwuzhuangtai'),
           'min-width': 100,
           prop: 'statusFmt',
@@ -273,7 +278,7 @@ export default {
           items: this.statusOptions,
         },
         {
-          placeholder: i18n.t('public_input_placeholder') + i18n.t('public_name'),
+          placeholder: i18n.t('public_button_search'),
           key: 'keyword', //输入搜索名称
           type: 'input',
         },
@@ -284,7 +289,8 @@ export default {
       let { type, status, keyword, appId } = this.searchParams
       let where = {}
       if (keyword?.trim()) {
-        where.name = { like: escapeRegExp(keyword), options: 'i' }
+        const obj = { like: escapeRegExp(keyword), options: 'i' }
+        where.or = [{ name: obj }, { tableName: obj }, { basePath: obj }, { prefix: obj }, { apiVersion: obj }]
       }
       if (type) {
         where['connectionType'] = type
@@ -314,6 +320,12 @@ export default {
           let list = (data?.items || []).map((item) => {
             item.statusFmt = this.statusOptions.find((it) => it.value === item.status)?.label || '-'
             item.appName = item.listtags?.[0]?.value || '-'
+
+            const pathJoin = []
+            item.apiVersion && pathJoin.push(item.apiVersion)
+            item.prefix && pathJoin.push(item.prefix)
+            item.basePath && pathJoin.push(item.basePath)
+            item._path = `/${pathJoin.join('/')}`
             return item
           })
           return {

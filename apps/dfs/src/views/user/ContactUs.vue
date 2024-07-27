@@ -121,9 +121,7 @@ export default {
     },
 
     handleDocs() {
-      const url = this.isDomesticStation
-        ? 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud'
-        : 'https://docs.tapdata.io'
+      const url = this.isDomesticStation ? 'https://docs.tapdata.net' : 'https://docs.tapdata.io'
       openUrl(url)
     },
 

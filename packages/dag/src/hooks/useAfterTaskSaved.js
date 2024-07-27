@@ -44,7 +44,6 @@ export const useAfterTaskSaved = (obs, callback) => {
 export const useSchemaEffect = (tracker, callback) => {
   const store = useStore()
   const dispose = reaction(tracker, (...args) => {
-    console.log('args', args) // eslint-disable-line
     let unwatchSaving = watch(
       () => store.state.dataflow.taskSaving,
       (v) => {
@@ -61,7 +60,6 @@ export const useSchemaEffect = (tracker, callback) => {
     () => store.state.dataflow.transformLoading,
     (v) => {
       if (!v) {
-        console.debug(i18n.t('packages_dag_hooks_useaftertasksaved_moxingyishengcheng'))
         callback()
       }
     },

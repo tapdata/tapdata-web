@@ -1,11 +1,12 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const webpack = require('webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
+  taptest: 'http://localhost:13030', // 自动化测试
   jet: 'http://jet.devops.tapdata.net:31613',
   test: 'http://58.251.34.123:3030', // v3.1
 }
@@ -171,8 +172,13 @@ module.exports = {
           // 其余配置查看compression-webpack-plugin
         }),
 
-        // 分析工具
-        new SpeedMeasurePlugin(),
+        // ace editor js 输出到 js/ace 目录
+        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, res => {
+          res.request = res.request.replace(
+            /^file-loader\?esModule=false!/,
+            'file-loader?esModule=false&outputPath=js/ace!'
+          )
+        })
       )
 
       config['performance'] = {
@@ -201,8 +207,8 @@ module.exports = {
     },
     loaderOptions: {
       scss: {
-        additionalData: `@use "~@tap/assets/styles/var.scss" as *;`,
-      },
-    },
-  },
+        additionalData: `@use "${process.env.VUE_APP_THEME_VAR || '~@tap/assets/styles/var.scss'}" as *;`
+      }
+    }
+  }
 }

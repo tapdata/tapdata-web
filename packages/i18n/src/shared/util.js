@@ -7,14 +7,20 @@ export const langKeyMap = {
   en: 'en_US',
 }
 
-export const langMenu = {
-  'zh-CN': '中文 (简)',
-  'zh-TW': '中文 (繁)',
-  en: 'English',
-}
+export const langMenu =
+  process.env.VUE_APP_MODE === 'community'
+    ? {
+        'zh-CN': '中文 (简)',
+        en: 'English'
+      }
+    : {
+        'zh-CN': '中文 (简)',
+        'zh-TW': '中文 (繁)',
+        en: 'English',
+      }
 
 export const getLang = (lang) => {
-  return Object.keys(langKeyMap).includes(lang) ? lang.replace('_', '-') : 'en'
+  return Object.keys(langKeyMap).includes(lang) ? lang : 'en'
 }
 
 export const getCurrentLanguage = () => {

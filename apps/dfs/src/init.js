@@ -17,6 +17,9 @@ import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
 import * as Vue from 'vue'
 import { ElLoadingService } from 'element-plus'
+import { UpgradeNotice } from './plugins/upgrade-notice/index'
+
+Vue.use(VueClipboard)
 
 // window.$vueApp.use(VueClipboard)
 
@@ -59,6 +62,25 @@ export default ({ routes }) => {
     store.commit('setUser', window.__USER_INFO__)
     store.commit('setLanguage', window.__USER_INFO__.locale)
 
+    // Bing Ads
+    window.uetq = window.uetq || []
+    window.uetq.push('set', {
+      pid: {
+        em: window.__USER_INFO__.email,
+        ph: window.__USER_INFO__.telephone
+      }
+    })
+
+    /*S 万维广告*/
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.style.height = '0'
+    iframe.style.width = '0'
+    iframe.style.border = '0'
+    iframe.src = 'https://wwads.cn/code/tracking/143?user_id=' + window.__USER_INFO__.id
+    document.body.appendChild(iframe)
+    /*E 万维广告*/
+
     const app = (window.App = window.$vueApp = Vue.createApp(App))
 
     installAllPlugins(app)
@@ -71,21 +93,7 @@ export default ({ routes }) => {
 
     window.$vueApp.component(VIcon.name, VIcon)
     window.$vueApp.component(VButton.name, VButton)
-
     window.$vueApp.config.globalProperties.$ws = new WSClient(wsUrl)
-    /*window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
-      return new Promise((resolve, reject) => {
-        VConfirm.confirm(message, title, options)
-          .then(() => {
-            resolve(true)
-          })
-          .catch(() => {
-            reject(false)
-          })
-      }).catch(() => {})
-    }*/
-
-    app.mount('#app')
 
     // 版本升级检测
     createVersionPolling({
@@ -164,6 +172,9 @@ export default ({ routes }) => {
         location.reload()
       }
     })
+
+    UpgradeNotice(window.App)
+
     return router
   }
 

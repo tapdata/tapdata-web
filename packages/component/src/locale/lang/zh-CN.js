@@ -18,7 +18,7 @@ export default {
   packages_component_classification_nameExist: '分类名称已存在',
   packages_component_classification_addNode: '新增同级标签',
   packages_component_classification_addChildernNode: '新增子标签',
-  packages_component_classification_nodeName: '请输入分类名称',
+  packages_component_classification_nodeName: '请输入标签名称',
   packages_component_classification_deteleMessage: '此操作会将该标签下存在的子标签都删除，是否删除',
   packages_component_formBuilder_file_placeholder: '请选择文件',
   packages_component_formBuilder_file_button: '选择文件',
@@ -34,7 +34,7 @@ export default {
   packages_component_form_builder_file_shangchuanwenjianda: '上传文件大小不能超过 {val1}KB',
   packages_component_src_inlineinput_zifuchangduxian: '字符长度限制{val1}-{val2}个字符',
   packages_component_src_selectlist_meiyougengduoshu: '没有更多数据',
-  packages_component_src_classification_chuangjianfenlei: '创建分类',
+  packages_component_src_classification_chuangjianfenlei: '新建标签',
 
   packages_component_src_upgradefee_dingyuezhuanyeban: '专业版',
   packages_component_src_upgradefee_gaojishouhouzhi: ' 高级售后支持，提供服务SLA',
@@ -57,4 +57,5 @@ export default {
   packages_component_src_selectlist_qingchuyixuan: '清除已选',
   packages_component_src_selectlist_xiang: '项',
   packages_component_src_selectlist_yixuanze: '已选择',
+  packages_component_data_already_exists: '数据已存在'
 }

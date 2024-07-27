@@ -100,6 +100,7 @@
             :allow-drag="checkAllowDrag"
             @node-drag-start="handleDragStart"
             @node-drag-end="handleDragEnd"
+            @handle-scroll="handleScroll"
           ></ElTree>
         </div>
       </div>
@@ -340,6 +341,7 @@ export default {
     },
   },
   created() {
+    this.tag2Task = {}
     this.debouncedSearch = debounce(this.searchObject, 300)
   },
   mounted() {
@@ -1044,7 +1046,7 @@ export default {
 
     handleFindTreeDom(val = {}, getParent = false) {
       const el = document.getElementById(`fdm_table_${val.connectionId}_${val.table}`) // this.$refs[`table_${val.connectionId}_${val.table}`]
-      return getParent ? el?.parentNode : el
+      return getParent ? el?.parentNode : this.findParentByClassName(el, 'el-tree-node__content')
     },
 
     async searchByKeywordList(val = []) {
@@ -1085,8 +1087,11 @@ export default {
         }
       }
     },
-  },
-  emits: ['preview', 'show-settings', 'node-drag-end', 'load-directory'],
+
+    handleScroll: debounce(function () {
+      this.$emit('on-scroll')
+    }, 200)
+  }
 }
 </script>
 

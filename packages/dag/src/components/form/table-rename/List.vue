@@ -9,11 +9,12 @@
           <InnerInput
             :nameMap="nameMap"
             :readOnly="disabled"
-            :value="nameMap[name] || name"
+            :value="nameMap[name] || globalNameMap[name] || name"
             :class="{
-              'color-primary': !!nameMap[name],
+              'color-primary': !!nameMap[name] || !!globalNameMap[name],
               'color-danger border-danger':
-                (tableData.includes(nameMap[name]) && !nameMap[nameMap[name]]) ||
+                ((tableData.includes(nameMap[name]) || tableData.includes(globalNameMap[name])) &&
+                  !nameMap[nameMap[name]]) ||
                 countByName[nameMap[name] || name] > 1,
             }"
             @change="handleChange(name, $event)"
@@ -68,7 +69,7 @@ const InnerInput = {
 
 export default {
   name: 'List',
-  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled', 'countByName'],
+  props: ['nameMap', 'tableData', 'updateName', 'emitChange', 'disabled', 'countByName', 'globalNameMap'],
   components: { RecycleScroller, InnerInput },
   methods: {
     handleChange(name, event) {

@@ -18,7 +18,7 @@ export default {
   packages_component_classification_nameExist: 'Category name already existed.',
   packages_component_classification_addNode: 'Add tag at the same level',
   packages_component_classification_addChildernNode: 'Add Child Tag',
-  packages_component_classification_nodeName: 'Please enter classification',
+  packages_component_classification_nodeName: 'Please enter tag name',
   packages_component_classification_deteleMessage:
     'This operation will remove all sub-categories currently present in this category. Are you sure you want to proceed with the deletion?',
   packages_component_formBuilder_file_placeholder: 'Please select a file',
@@ -35,7 +35,7 @@ export default {
   packages_component_form_builder_file_shangchuanwenjianda: 'The upload file size cannot exceed {val1}KB',
   packages_component_src_inlineinput_zifuchangduxian: 'Character length limit {val1}-{val2} characters',
   packages_component_src_selectlist_meiyougengduoshu: 'No more data',
-  packages_component_src_classification_chuangjianfenlei: 'Create Classification',
+  packages_component_src_classification_chuangjianfenlei: 'New Tag',
   packages_component_src_discoveryclassification_morenmuluji: 'Default Directory (Technology)',
   packages_component_src_selectlist_qingchuyixuan: 'Clear Selected',
   packages_component_src_selectlist_xiang: 'Item',
@@ -59,4 +59,5 @@ export default {
   packages_component_src_upgradefee_tigongmianfeishi: 'For personal use or testing purposes',
   packages_component_src_upgradefee_jichuban: 'Basic Plan',
   packages_component_src_upgradefee_dingyueshengji: 'Professional Plan',
+  packages_component_data_already_exists: 'Data already exists'
 }

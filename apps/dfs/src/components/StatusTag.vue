@@ -29,6 +29,7 @@ import {
   MDB_STATUS_MAP,
   TICKET_STATUS_MAP,
   ORDER_STATUS_MAP,
+  BILL_STATUS_MAP
 } from '../const'
 export default {
   name: 'StatusTag',
@@ -72,6 +73,7 @@ export default {
           connection_en: CONNECTION_STATUS_MAP_EN,
           ticket: TICKET_STATUS_MAP,
           order: ORDER_STATUS_MAP,
+          bill: BILL_STATUS_MAP
         }[this.target]
       )
     },

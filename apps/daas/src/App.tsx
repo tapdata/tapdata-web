@@ -13,7 +13,8 @@ export default defineComponent({
             dataVerificationList: true,
             alarmSetting: true,
             roleList: true,
-            valid_total: true
+            valid_total: true,
+            webhookAlerts: true
           }
         : {}
 

@@ -34,7 +34,7 @@ export default {
   packages_component_form_builder_file_shangchuanwenjianda: '上傳文件大小不能超過 {val1}KB',
   packages_component_src_inlineinput_zifuchangduxian: '字符長度限制{val1}-{val2}個字符',
   packages_component_src_selectlist_meiyougengduoshu: '沒有更多數據',
-  packages_component_src_classification_chuangjianfenlei: '創建分類',
+  packages_component_src_classification_chuangjianfenlei: '新建標籤',
   packages_component_src_discoveryclassification_morenmuluji: '默認目錄（技術）',
 
   packages_component_src_upgradefee_dingyuezhuanyeban: '專業版',
@@ -58,4 +58,5 @@ export default {
   packages_component_src_selectlist_qingchuyixuan: '清除已選',
   packages_component_src_selectlist_xiang: '項',
   packages_component_src_selectlist_yixuanze: '已選擇',
+  packages_component_data_already_exists: '數據已存在'
 }

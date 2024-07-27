@@ -1,17 +1,5 @@
 <template>
   <div class="field-inference">
-    <div class="field-inference__header flex justify-content-end">
-      <div v-if="batchRuleCounts" class="flex align-items-center cursor-pointer color-primary" @click="visible = true">
-        <VIcon>info</VIcon>
-        <span>{{ $t('packages_form_field_inference_main_dangqianyou') }}</span>
-        <span class="color-warning px-1 fs-6 fw-bold din-font">{{ batchRuleCounts }}</span>
-        <span>{{ $t('packages_form_field_inference_main_ge') }}</span>
-        <span>{{ $t('packages_form_field_inference_main_gepiliangxiugai') }}</span>
-      </div>
-      <ElButton v-if="!readonly" text class="ml-3" @click="rollbackAll">{{
-        $t('packages_form_field_inference_main_quanbuhuifumo')
-      }}</ElButton>
-    </div>
     <div class="field-inference__main flex">
       <div class="field-inference__nav flex flex-column m-3 bg-white rounded-4">
         <div class="nav-filter__list flex text-center lh-1 p-2">
@@ -82,14 +70,24 @@
       </div>
       <div v-loading="fieldsLoading" class="field-inference__content flex-fill flex flex-column p-3">
         <div>
-          <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
-          <ElTooltip
-            transition="tooltip-fade-in"
-            :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
-            class="ml-2"
-          >
-            <VIcon size="16" class="color-primary">info</VIcon>
-          </ElTooltip>
+          <div class="flex align-center">
+            <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
+            <ElTooltip
+              transition="tooltip-fade-in"
+              :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
+              class="ml-2"
+            >
+              <VIcon size="16" class="color-primary">info</VIcon>
+            </ElTooltip>
+            <div class="inline-flex align-center ml-auto gap-1">
+              <span class="font-color-sslight">{{ $t('packages_dag_uniqueIndexEnable') }}</span>
+              <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')" class="mr-1">
+                <VIcon size="16" class="color-primary">info</VIcon>
+              </ElTooltip>
+              <el-switch :value="uniqueIndexEnable" :disabled="readonly" @change="changeUniqueIndexEnable"></el-switch>
+            </div>
+          </div>
+
           <ElSelect
             v-model="updateList"
             :disabled="navLoading"
@@ -111,7 +109,6 @@
         </div>
         <div class="flex-fill flex flex-column bg-white mt-4 rounded-4">
           <div class="flex align-items-center p-2 font-color-dark">
-            <span style="width: 120px">{{ selected.name }}</span>
             <ElInput
               v-model="searchField"
               :placeholder="$t('packages_form_field_mapping_list_qingshuruziduan')"
@@ -173,6 +170,7 @@ export default {
   props: {
     form: Object,
     readOnly: Boolean,
+    uniqueIndexEnable: Boolean
   },
 
   data() {
@@ -345,6 +343,10 @@ export default {
       this.filterFields()
     },
 
+    handleOpen() {
+      this.visible = true
+    },
+
     rollbackAll() {
       this.$confirm(i18n.t('packages_form_field_inference_main_ninquerenyaoquan'), '', {
         type: 'warning',
@@ -414,7 +416,11 @@ export default {
       }
       return data.fields.length ? data.fields : fields
     },
-  },
+
+    changeUniqueIndexEnable(val) {
+      this.form.setValuesIn('uniqueIndexEnable', val)
+    }
+  }
 }
 </script>
 

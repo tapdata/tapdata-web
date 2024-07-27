@@ -32,7 +32,7 @@ export class LogCollector extends NodeType {
         type: 'string',
         'x-display': 'hidden',
       },
-      connectionId: {
+      'connectionIds.0': {
         type: 'string',
         'x-display': 'hidden',
         'x-reactions': '{{useSyncConnection}}',

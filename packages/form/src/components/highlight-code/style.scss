@@ -1,0 +1,31 @@
+.theme-atom-one-dark {
+  @import 'dark';
+  --bg-color: #282c34;
+}
+
+.theme-atom-one-light {
+  @import 'light';
+  --bg-color: #fafafa;
+}
+
+.hljs-pre {
+  code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 12px;
+  }
+  .hljs-copy-btn {
+    top: 16px;
+    right: 16px;
+    background: var(--bg-color, #fff);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  &:hover {
+    .hljs-copy-btn {
+      opacity: 1;
+    }
+  }
+}
+

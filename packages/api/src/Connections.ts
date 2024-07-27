@@ -1,8 +1,24 @@
 import Http from './Http'
+import { isPlainObj } from '@tap/shared'
 
 export default class Connections extends Http {
   constructor() {
     super('/api/Connections')
+  }
+  get(params = {}, filter) {
+    if (Array.isArray(params)) {
+      filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
+      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      return this.axios.get(this.url + '/' + params.join('/') + qs)
+    } else if (typeof params === 'string') {
+      return this.axios.get(this.url + '/' + params, { params: filter })
+    }
+
+    const config = { params }
+    if (isPlainObj(filter)) {
+      Object.assign(config, filter)
+    }
+    return this.axios.get(this.url, config)
   }
   customQuery(id: string, params: { [key: string]: unknown }) {
     let url = `${this.url}/${id}` + '/customQuery?'

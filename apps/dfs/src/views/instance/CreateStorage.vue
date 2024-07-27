@@ -352,7 +352,7 @@ export default {
 
   async created() {
     this.loading = true
-    const currencyType = this.$store.state.config?.currencyType
+    const currencyType = this.$store.getters.currencyType
 
     if (currencyType) {
       this.currencyType = currencyType

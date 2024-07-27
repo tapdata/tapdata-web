@@ -2,6 +2,8 @@
 // TODO 需要重写
 // import TableBody from 'element-plus/lib/components/table/src/table-body'
 // import TableRow from 'element-ui/packages/table/src/table-row'
+
+// console.log('TableRow', TableRow)
 // let TableBody = {}
 // let TableRow = {}
 export default {

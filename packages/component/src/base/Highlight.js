@@ -5,10 +5,14 @@ import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
 import python from 'highlight.js/lib/languages/python'
+import http from 'highlight.js/lib/languages/http'
+import xml from 'highlight.js/lib/languages/xml'
 import { escape } from 'lodash'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
 hljs.registerLanguage('python', python)
+hljs.registerLanguage('http', http)
+hljs.registerLanguage('xml', xml)
 
 function hasValueOrEmptyAttribute(value) {
   return Boolean(value || value === '')
@@ -19,7 +23,7 @@ export default {
   data: function () {
     return {
       detectedLanguage: '',
-      unknownLanguage: false,
+      unknownLanguage: false
     }
   },
   computed: {
@@ -43,7 +47,7 @@ export default {
       } else {
         result = hljs.highlight(this.code, {
           language: this.language,
-          ignoreIllegals: this.ignoreIllegals,
+          ignoreIllegals: this.ignoreIllegals
         })
         this.detectedLanguage = this.language
       }
@@ -54,19 +58,17 @@ export default {
     },
     ignoreIllegals() {
       return true
-    },
+    }
   },
   // this avoids needing to use a whole Vue compilation pipeline just
   // to build Highlight.js
-  render() {
-    return Vue.h('pre', {}, [
-      Vue.h(
-        'code',
-        plantRenderPara({
-          class: this.className,
-          domProps: { innerHTML: this.highlighted },
-        }),
-      ),
+  render(createElement) {
+    return createElement('pre', {}, [
+      createElement('code', {
+        class: this.className,
+        domProps: { innerHTML: this.highlighted }
+      }),
+      this.$slots.default
     ])
   },
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`

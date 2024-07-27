@@ -37,6 +37,7 @@ export default {
   public_tags: '標籤',
   public_phone: '手機號',
   public_email: '郵箱',
+  public_view_details: '查看詳情',
   // 状态
   public_status_ready: '有效',
   public_status_invalid: '無效',
@@ -73,6 +74,10 @@ export default {
   public_status_deleting: '删除中',
   public_status_delete_failed: '刪除失敗',
   public_status_deleted: '已删除',
+  public_status_task_init: '初始化中',
+  public_status_do_snapshot: '全量進行中',
+  public_status_snapshot_completed: '全量已完成',
+  public_status_do_cdc: '增量進行中',
   // 按鈕
   public_button_edit: '編輯',
   public_button_confirm: '確定',
@@ -148,6 +153,8 @@ export default {
   public_message_network_unconnected: '網絡連接異常',
   public_message_network_connected: '網絡已恢復',
   public_message_request_timeout: '請求超時',
+  public_message_send_success: '發送成功',
+  public_message_download_ok: '下載成功',
   // 下拉列表
   public_select_placeholder: '請選擇',
   public_select_option_all: '全部',
@@ -298,4 +305,40 @@ export default {
   public_page_title_advanced_features: '高級功能',
 
   public_please_wait: '請稍等...',
+  public_view_all: '查看全部',
+
+  public_today: '今天',
+  public_yesterday: '昨天',
+  public_this_week: '本週',
+  public_this_hour: '當前小時',
+  public_this_month: '本月',
+  public_this_year: '今年',
+  public_last_week: '上周',
+  public_last_month: '上個月',
+  public_last_hour: '上個小時',
+  public_last_year: '去年',
+  public_date_past: '過去',
+  public_date_past_val: '過去',
+  public_date_current: '當前',
+  public_date_current_prefix: '現在，這就是',
+  public_date_relative: '相對日期',
+  public_date_specific: '具體日期',
+  public_unit_hour: '小時',
+  public_unit_day: '天',
+  public_unit_week: '周',
+  public_unit_month: '月',
+  public_unit_year: '年',
+
+  public_remark: '備注',
+  public_task_alert: '任務告警',
+  public_request: '請求',
+  public_request_headers: '請求頭',
+  public_request_content: '請求內容',
+  public_response: '響應',
+  public_response_headers: '響應頭',
+  public_response_content: '響應內容',
+  public_resend: '重新發送',
+
+  public_unique_index: '唯一索引',
+  public_normal_index: '索引'
 }

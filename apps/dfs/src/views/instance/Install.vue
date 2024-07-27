@@ -254,13 +254,13 @@ export default {
       )
     },
     linuxToAgent() {
-      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
+      window.open('https://docs.tapdata.io/user-guide/manage-agent/', '_blank')
     },
     dockerToInstall() {
       window.open('https://docs.docker.com/get-docker/', '_blank')
     },
     dockerToAgent() {
-      window.open('https://docs.tapdata.io/cloud/user-guide/manage-agent/', '_blank')
+      window.open('https://docs.tapdata.io/user-guide/manage-agent/', '_blank')
     },
     //在线小助手
     hideCustomTip() {
@@ -290,7 +290,7 @@ export default {
       })
       let href = `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
-      }/cloud/quick-start/install-agent/`
+      }/quick-start/install/install-tapdata-agent/`
       window.open(href, '_blank')
     },
     handleComplete() {

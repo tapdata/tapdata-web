@@ -89,6 +89,8 @@
         :buttonShowMap="buttonShowMap"
         @hide="onHideSidebar"
       />
+
+      <SkipError ref="skipError" @skip="handleSkipAndRun"></SkipError>
     </section>
   </section>
 </template>
@@ -118,6 +120,7 @@ import TransformLoading from './components/TransformLoading'
 import { VExpandXTransition, VEmpty } from '@tap/component'
 import ConsolePanel from './components/migration/ConsolePanel'
 import PaperEmpty from './components/PaperEmpty.vue'
+import { SkipError } from '@tap/business'
 
 export default {
   name: 'MigrationEditor',
@@ -129,6 +132,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    SkipError,
     PaperEmpty,
     ConsolePanel,
     VExpandXTransition,
@@ -215,6 +219,10 @@ export default {
   methods: {
     initNodeType() {
       this.addProcessorNode([
+        {
+          name: i18n.t('packages_dag_migrate_union'),
+          type: 'migrate_union_processor'
+        },
         {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor',
@@ -367,11 +375,13 @@ export default {
           this.$router.push({
             name: 'migrateList',
           })
+          window.name = null
         })
       } else {
         this.$router.push({
           name: 'migrateList',
         })
+        window.name = null
       }
     },
 
@@ -437,6 +447,7 @@ export default {
 
     async handleStart() {
       this.buried('migrationStart')
+
       this.unWatchStatus?.()
       this.unWatchStatus = this.$watch('dataflow.status', (v) => {
         if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
@@ -457,6 +468,10 @@ export default {
           }
         }
       })
+
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
+
       const flag = await this.save(true)
       if (flag) {
         this.dataflow.disabledData.edit = true
@@ -469,6 +484,10 @@ export default {
       } else {
         this.buried('taskSubmit', { result: false })
       }
+    },
+
+    handleSkipAndRun() {
+      this.startTask()
     },
 
     checkGotoViewer() {

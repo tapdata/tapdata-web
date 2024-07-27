@@ -85,11 +85,12 @@ export default {
       },
     }
   },
+
   computed: {
-    ...mapState(['highlightBoard']),
     startingTour() {
       return this.$store.getters.startingTour
     },
+    ...mapState(['highlightBoard'])
   },
   unmounted() {
     this.debouncedSearch?.cancel()
@@ -185,7 +186,7 @@ export default {
       this.searchIng = true
       const result = await this.loadObjects(this.directory, false, search, this.cancelSource.token)
       const map = result.reduce((obj, item) => {
-        let id = item.listtags[0].id
+        let id = item.listtags?.[0]?.id || this.directory.id
         let children = obj[id] || []
         children.push(item)
         obj[id] = children
@@ -262,6 +263,12 @@ export default {
       }
       return `${source}${def}`
     },
-  },
-  emits: ['find-parent'],
+
+    findParentByClassName(parent, cls) {
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    }
+  }
 }

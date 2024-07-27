@@ -676,14 +676,24 @@ export default {
       let objects = await this.loadObjects(data)
       node.loading = false
 
-      this.$refs.tree.updateKeyChildren(data.id, objects)
       const childrenMap = data.children ? data.children.reduce((map, item) => ((map[item.id] = true), map), {}) : {}
+
       objects.forEach((item) => {
-        if (childrenMap[item.id]) return
+        if (childrenMap[item.id]) {
+          delete childrenMap[item.id]
+          return
+        }
         item.parent_id = data.id
         item.isObject = true
         item.connectionId = item.sourceConId
         this.$refs.tree.append(item, node)
+      })
+
+      // 删除不存在的模型节点
+      Object.entries(childrenMap).forEach(([key, item]) => {
+        if (item.isObject) {
+          this.$refs.tree.remove(key)
+        }
       })
     },
 
@@ -917,11 +927,11 @@ export default {
 
     handleFindLineage(data) {
       const el = document.getElementById(`ldp_mdm_table_${data.id}_${data.name}`)
-      $emit(this, 'find-parent', el, data)
+      $emit(this, 'find-parent', this.findParentByClassName(el, 'el-tree-node__content'), data)
     },
 
     handleScroll: debounce(function () {
-      $emit(this, 'handle-connection')
+      $emit(this, 'on-scroll')
     }, 200),
 
     openMaterializedDialog() {

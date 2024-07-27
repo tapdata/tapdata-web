@@ -1,5 +1,5 @@
 <template>
-  <section class="function-details-wrapper">
+  <section class="function-details-wrapper section-wrap">
     <div class="section-wrap-box">
       <!-- <div class="container-header">
 						{{ $t('function_details') }}
@@ -98,52 +98,55 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.function-details-wrapper { /*// display: flex;*//*// flex-direction: column;*//*// height: 100%;*//*// background: map-get($bgColor, normal);*//*// .function-details__body {*/
-	//   margin: 30px 24px 0 24px;
-	//   flex: 1;
-	//   display: flex;
-	//   flex-direction: column;
-	//   background-color: map-get($bgColor, white);
-	//   box-shadow: 0px 0px 3px 0px #cccccc;
-	//   overflow: hidden;
-	.details-value {
-		color: map-get($fontColor, dark);
-		font-size: 12px;
-	}
+.function-details-wrapper {
+  overflow: hidden;
+  /*// display: flex;*//*// flex-direction: column;*//*// height: 100%;*//*// background: map-get($bgColor, normal);*//*// .function-details__body {*/
+  //   margin: 30px 24px 0 24px;
+  //   flex: 1;
+  //   display: flex;
+  //   flex-direction: column;
+  //   background-color: map-get($bgColor, white);
+  //   box-shadow: 0px 0px 3px 0px #cccccc;
+  //   overflow: hidden;
+  .details-value {
+    color: map-get($fontColor, dark);
+    font-size: 12px;
+  }
 
-	:deep(.el-form) {
-		flex: 1;
-		overflow-y: auto;
-	}
+  :deep(.el-form) {
+    flex: 1;
+    overflow-y: auto;
+  }
 
-	:deep(.el-form-item__label) {
-		font-size: 12px;
-	}
+  :deep(.el-form-item__label) {
+    font-size: 12px;
+  }
 
-	:deep(.el-form-item--mini.el-form-item), :deep(.el-form-item--small.el-form-item) {
-		margin-bottom: 24px;
-	}
+  :deep(.el-form-item--mini.el-form-item), :deep(.el-form-item--small.el-form-item) {
+    margin-bottom: 24px;
+  }
 
-	.details-panel-title {
-		font-size: 14px;
-	}
+  .details-panel-title {
+    font-size: 14px;
+  }
 
-	.script-editor {
-		max-width: 940px;
-	}
+  .script-editor {
+    max-width: 940px;
+  }
 
-	.main {
-		flex: 1;
-		overflow: auto;
-	}
+  .main {
+    flex: 1;
+    overflow: auto;
+  }
 
-	.footer {
-		border-top: 1px solid #f0f0f0;
-		// box-shadow: 0px -1px 2px 0px #f6f6f6;
-		.btn {
-			width: 80px;
-		}
-	}
+  .footer {
+    border-top: 1px solid #f0f0f0;
+    // box-shadow: 0px -1px 2px 0px #f6f6f6;
+    .btn {
+      width: 80px;
+    }
+  }
+}
 
 // }}
 </style>

@@ -4,7 +4,7 @@
       <div class="flex align-items-center px-4">
         <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title) }}</span>
       </div>
-      <ElDivider class="mt-0 mb-3"></ElDivider>
+      <ElDivider class="my-0"></ElDivider>
       <el-tabs class="header-tabs flex flex-column overflow-hidden flex-1" v-model="activeName">
         <el-tab-pane
           class="order-flex overflow-hidden h-100"
@@ -16,6 +16,11 @@
           :label="$t('dfs_instance_selectlist_shouquanma')"
           name="second"
         ></el-tab-pane>
+        <el-tab-pane
+          class="order-flex flex-column overflow-hidden h-100"
+          :label="$t('dfs_traffic_bill')"
+          name="traffic"
+        ></el-tab-pane>
       </el-tabs>
     </div>
     <section
@@ -23,14 +28,15 @@
       :class="[isEn ? 'is-en' : '']"
       v-if="$route.name === 'order'"
     >
-      <div v-if="activeName !== 'second'" class="main" v-loading="loadingSubscribe">
+      <div v-if="activeName === 'first'" class="main" v-loading="loadingSubscribe">
         <div class="list-operation">
-          <div class="list-operation-left flex justify-content-between">
+          <div class="list-operation-left flex justify-content-between align-center">
             <ul class="flex align-items-center">
               <li
                 v-for="(item, index) in filterArray"
                 :key="index"
-                :class="['filter-li mr-4 px-4 cursor-pointer', { active: activedFilter === item.value }]"
+                class="filter-li mr-4 px-4 cursor-pointer rounded-4"
+                :class="{ active: activedFilter === item.value }"
                 @click="changeActivedFilter(item)"
               >
                 {{ item.label }}
@@ -82,15 +88,19 @@
                 <div class="w-50">
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight">{{ $t('dfs_user_center_jine') }}:</span>
-                    <span class="li-item__value font-color-dark">{{ formatterPrice(item.currency, row.amount) }}</span>
+                    <span
+                      :class="[row.isFree ? 'color-success' : 'font-color-dark']"
+                      class="li-item__value font-color-dark"
+                      >{{
+                        row.isFree ? $t('dfs_instance_instance_mianfei') : formatterPrice(item.currency, row.amount)
+                      }}</span
+                    >
                   </div>
                   <div class="mb-2">
                     <span class="li-item__label font-color-sslight"
                       >{{ $t('dfs_instance_instance_dingyuefangshi') }}:</span
                     >
-                    <span class="li-item__value" :class="[item.isFree ? 'color-success' : 'font-color-dark']">{{
-                      row.subscriptionMethodLabel
-                    }}</span>
+                    <span class="li-item__value font-color-dark">{{ item.subscriptionMethodLabel }}</span>
                   </div>
                   <div>
                     <span class="li-item__label font-color-sslight"
@@ -135,13 +145,7 @@
                     >{{ $t('dfs_change_record') }}
                   </ElButton>
                   <ElButton
-                    v-if="
-                      !(
-                        !['active'].includes(item.status) ||
-                        item.totalAmount === 0 ||
-                        item.subscribeType === 'recurring'
-                      )
-                    "
+                    v-if="!(!['active'].includes(item.status) || row.isFree || item.subscribeType === 'recurring')"
                     type="primary"
                     text
                     @click="openRenew(item)"
@@ -175,7 +179,7 @@
           <VEmpty large class="flex"></VEmpty>
         </div>
       </div>
-      <section v-if="activeName === 'second'" class="flex flex-column overflow-hidden flex-1">
+      <section v-else-if="activeName === 'second'" class="flex flex-column overflow-hidden flex-1">
         <div class="mt-2 flex justify-content-end">
           <el-button class="mr-2" @click="goReceipt">{{ $t('dfs_user_center_kaifapiao') }}</el-button>
           <!--            <el-button type="primary" @click="goLicense">{{-->
@@ -205,6 +209,20 @@
           </template>
         </VTable>
       </section>
+      <div v-else-if="activeName === 'traffic'" class="flex flex-column overflow-hidden flex-1">
+        <VTable
+          :columns="traffic.columns"
+          :remoteMethod="getTrafficBillData"
+          :page-options="{
+            layout: 'total, ->, prev, pager, next, sizes, jumper'
+          }"
+          ref="tableCode"
+        >
+          <template #status="{ row }">
+            <StatusTag type="tag" :status="row.status" target="bill"></StatusTag>
+          </template>
+        </VTable>
+      </div>
 
       <!--转账{{$t('public_button_pay')}}-->
       <transferDialog v-model:visible="showTransferDialogVisible" :price="pricePay"></transferDialog>
@@ -224,7 +242,7 @@ import dayjs from 'dayjs'
 import i18n from '@/i18n'
 import { FilterBar, VEmpty, VTable } from '@tap/component'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
-import { openUrl } from '@tap/shared'
+import { calcUnit, openUrl } from '@tap/shared'
 import Change from '@tap/business/src/views/order/Change'
 import { getPaymentMethod, getSpec } from '@tap/business/src/shared/util'
 import { AGENT_TYPE_MAP } from '@tap/business/src/shared/const'
@@ -247,6 +265,8 @@ export default {
   },
   inject: ['buried'],
   data() {
+    const currency = CURRENCY_SYMBOL_MAP[this.$store.getters.isDomesticStation ? 'cny' : 'usd']
+
     return {
       activeName: 'first',
       loading: true,
@@ -339,6 +359,22 @@ export default {
           slotName: 'operation',
         },
       ],
+      traffic: {
+        columns: [
+          { label: i18n.t('dfs_bill_number'), prop: 'id' },
+          {
+            label: i18n.t('dfs_bill_amount', {
+              currency
+            }),
+            prop: '_amount'
+          },
+          { label: i18n.t('dfs_egress_traffic'), prop: 'transmit' },
+          { label: i18n.t('dfs_ingress_traffic'), prop: 'received' },
+          { label: i18n.t('dfs_billing_cycle'), prop: '_cycle' },
+          { label: i18n.t('dfs_bill_status'), prop: 'status', slotName: 'status' }
+        ],
+        data: []
+      },
       //订阅列表
       subscribeList: [],
       page: {
@@ -354,13 +390,17 @@ export default {
     table() {
       return this.$refs.table
     },
+
+    defaultCurrency() {
+      return this.$store.getters.isDomesticStation ? 'cny' : 'usd'
+    }
   },
   created() {
     this.getFilterItems()
     if (!this.$store.getters.isDomesticStation) {
-      this.refundAmount = 'https://docs.tapdata.io/cloud/billing/refund'
+      this.refundAmount = 'https://docs.tapdata.io/billing/refund'
     } else {
-      this.refundAmount = 'https://docs.tapdata.net/cloud/billing/refund'
+      this.refundAmount = 'https://docs.tapdata.net/billing/refund'
     }
     this.remoteMethod()
   },
@@ -507,30 +547,40 @@ export default {
         this.loadingSubscribe = false
         let items = data.items || []
         this.page.total = data.total
-        this.subscribeList = items.map((item) => {
-          if (item.totalAmount !== 0) {
-            item.isFree = item.subscribeType === 'FreeTier'
-            item.subscriptionMethodLabel =
-              getPaymentMethod(
-                { periodUnit: item.periodUnit, type: item.subscribeType },
-                item.paymentMethod || 'Stripe',
-              ) || '-'
+        this.subscribeList = items.map(item => {
+          /*if (item.totalAmount !== 0) {
+          item.subscriptionMethodLabel =
+            getPaymentMethod(
+              { periodUnit: item.periodUnit, type: item.subscribeType },
+              item.paymentMethod || 'Stripe'
+            ) || '-'
           } else {
             item.isFree = true
             item.subscriptionMethodLabel = i18n.t('dfs_instance_instance_mianfei')
-          }
+          }*/
+
+          item.subscriptionMethodLabel =
+            getPaymentMethod(
+              { periodUnit: item.periodUnit, type: item.subscribeType },
+              item.paymentMethod || 'Stripe'
+            ) || '-'
+
+          const isFreeTier = item.subscribeType === 'FreeTier'
 
           if (item.subscribeItems?.length) {
             item.productType = item.subscribeItems[0].productType
             item.subscribeItems = item.subscribeItems.map((it) => {
               it.specLabel = getSpec(it.spec) || '-'
               it.storageSize = it.spec?.storageSize ? `${it.spec.storageSize} ${it.spec.storageUnit || 'GB'}` : '-'
-              it.subscriptionMethodLabel =
-                it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
+              // it.subscriptionMethodLabel =
+              //   it.amount === 0 ? i18n.t('dfs_instance_instance_mianfei') : item.subscriptionMethodLabel
               it.status = it.resource?.status || ''
+              it.isFree = isFreeTier || it.amount === 0
+
               return it
             })
           }
+
           return item
         })
       })
@@ -656,6 +706,102 @@ export default {
         }
       })
     },
+    async getTrafficBillData() {
+      let filter = {
+        where: {},
+        size: 20,
+        page: 1
+      }
+
+      let data = await this.$axios
+        .get(`api/tcm/billing?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .catch(e => {
+          console.error(e)
+        })
+
+      data = data || {
+        items: [
+          {
+            id: '6682758606cb244e1b213abb',
+            start: '2024-05-31T16:00:00.000Z',
+            end: '2024-06-30T15:59:59.000Z',
+            subscribeId: 'xxxx',
+            invoice: {
+              month: '202406',
+              day: '20240628'
+            },
+            status: 'UNPAID',
+            amounts: [
+              { currency: 'usd', totalAmount: '269' },
+              { currency: 'cny', totalAmount: '1949' }
+            ],
+            details: [
+              {
+                productType: 'Engine',
+                resourceId: '666bf379c1686062d1965d7b',
+                provider: 'GCP',
+                start: '1718350907',
+                end: '1718351448',
+                transmit: '4470',
+                received: '129012',
+                priceId: 'price_1PREejEWLTk9KOyLqI6HxxSt',
+                amounts: [
+                  { currency: 'usd', price: '23', totalAmount: '0' },
+                  { currency: 'cny', price: '167.0', totalAmount: '0' }
+                ]
+              },
+              {
+                productType: 'Engine',
+                resourceId: '666ad5d44e0e3d6ce2a73ee5',
+                provider: 'GCP',
+                start: '1718277787',
+                end: '1719763148',
+                transmit: '8019196496',
+                received: '15040631481',
+                priceId: 'price_1PREejEWLTk9KOyLqI6HxxSt',
+                amounts: [
+                  { currency: 'usd', price: '23', totalAmount: '269' },
+                  { currency: 'cny', price: '167.0', totalAmount: '1949' }
+                ]
+              }
+            ],
+            customerId: '60c06045e18eaf41b9d1ff3e',
+            createAt: '2024-07-01T09:23:17.989Z',
+            createBy: '60c06045e18eaf41b9d1ff3e',
+            createUser: 'leon@tapdata.io',
+            _class: 'com.tapdata.manager.billing.entity.Billing'
+          }
+        ],
+        total: 1
+      }
+
+      const items = data.items || []
+
+      return {
+        total: data.total,
+        data:
+          items.map(t => {
+            let start = dayjs(t.start)
+            let end = dayjs(t.end)
+            let format = start.year() === end.year() ? 'MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm:ss'
+
+            let transmit = t.details.reduce((total, item) => {
+              return total + Number(item.transmit)
+            }, 0)
+
+            let received = t.details.reduce((total, item) => {
+              return total + Number(item.received)
+            }, 0)
+
+            t.transmit = calcUnit(transmit, 'byte')
+            t.received = calcUnit(received, 'byte')
+
+            t._amount = t.amounts.find(it => it.currency === this.defaultCurrency)?.totalAmount
+            t._cycle = `${dayjs(t.start).format(format)} ~ ${dayjs(t.end).format(format)}`
+            return t
+          }) || []
+      }
+    },
     goLicense() {
       this.$router.push({
         name: 'aliyunMarketLicense',
@@ -773,8 +919,12 @@ export default {
 }
 
 :deep(.header-tabs) {
+  line-height: 48px;
   .el-tabs__header {
-    margin-bottom: 0;
+    margin-bottom: 1px;
+  }
+  .el-tabs__nav-wrap::after {
+    content: none;
   }
 }
 

@@ -316,6 +316,8 @@ export default {
         scale = Math.min(1, scale)
       }
 
+      scale = Math.max(0.25, scale)
+
       contentW *= scale
       contentH *= scale
       this.changeScale(scale)

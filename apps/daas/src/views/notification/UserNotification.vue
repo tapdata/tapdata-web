@@ -121,8 +121,8 @@ export default {
         let items = data?.items || []
         this.userOptions = items.map((item) => {
           return {
-            label: item.username,
-            value: item.username,
+            label: item.email,
+            value: item.email
           }
         })
       })

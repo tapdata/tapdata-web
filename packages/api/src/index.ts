@@ -244,6 +244,12 @@ import AlarmMail from './AlarmMail'
 
 const alarmMailApi = new AlarmMail()
 
+import AgentGroup from './AgentGroup'
+const agentGroupApi = new AgentGroup()
+
+import Webhook from './Webhook'
+const webhookApi = new Webhook()
+
 export {
   connectionsApi,
   databaseTypesApi,
@@ -306,6 +312,8 @@ export {
   dataPermissionApi,
   connectorRecordApi,
   alarmMailApi,
+  agentGroupApi,
+  webhookApi
 }
 export * from './ApiClient'
 

@@ -14,16 +14,7 @@
       </div>
     </template>
     <div class="my-n3">
-      <!--<div class="fs-6 mb-4 font-color-dark">Product Capability Mode</div>-->
-      <!--<div class="font-color-sslight">
-            Tapdata可以作为一个实时的数据同步与加工产品使用,也可以作为一个实时数据服务平台使用,当作为服务平台使用时,除了基基本的数据同步与处理
-            能力之外,通过预置的数据存储中心,您可以通过不同的分层模式式,便捷完成数据模型的构建,并支持通过各种终端服务对数据模型进行发布与展示
-          </div>-->
-      <!--<div class="font-color-sslight mb-12">
-            Tapdata can be used as a general data integration tool(ETL) , or as a data as a service platform. The key
-            difference is Data Platform mode requires a storage backend.
-          </div>-->
-      <div class="flex gap-6 justify-content-center p-4 rounded-4 mode-card-container">
+      <div class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container">
         <div
           class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
@@ -77,146 +68,106 @@
         </div>
       </div>
 
-      <!--<ElRadioGroup v-model="mode" class="block" @change="handleSelectMode">
-            <ElRadio
-              v-for="item in modeItems"
-              :label="item.value"
-              :key="item.value"
-              class="w-50 mr-0 inline-flex align-items-center"
-            >
-              <span>{{ item.label }}</span>
-              <VIcon v-if="item.beta" class="ml-1" size="28">beta</VIcon>
-            </ElRadio>
-          </ElRadioGroup>-->
-      <!--<div class="flex">
-            <div class="w-50">
-              <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('integration')">
-                <ElImage :src="require('@tap/assets/images/swimlane/data-integration-mode.svg')"></ElImage>
-                <ul class="mode-ul mt-4">
-                  <li>• Database Replication</li>
-                  <li>• Move data to cloud</li>
-                  <li>• ETL pipelines</li>
-                </ul>
-              </div>
-            </div>
-            <div class="w-50">
-              <div class="mode-desc inline-block pt-4 cursor-pointer" @click="handleSelectMode('service')">
-                <ElImage :src="require('@tap/assets/images/swimlane/data-service-platform-mode.svg')"></ElImage>
-                <ul class="mode-ul mt-4">
-                  <li>• All the Data Integration capability, plus the storage & services</li>
-                  <li>• Data are sync-ed to and cached in centralized data platform</li>
-                  <li>
-                    • Data are then served to operational applications via API or to the analytical application via reverse
-                    ETL
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>-->
       <ElForm :model="form" :rules="rules" ref="form" label-position="top" class="mode-setting-form">
-        <div v-if="mode === 'service'" class="mt-4 px-4 py-3 border rounded-4">
-          <ElFormItem>
-            <template v-slot:label>
-              <span class="inline-flex align-center">
-                <span>{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
-                <ElTooltip
-                  class="ml-2"
-                  placement="top"
-                  :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
-                >
-                  <VIcon size="14">info</VIcon>
-                </ElTooltip>
-              </span>
-            </template>
-            <ElRadioGroup v-model="form.fdmStorageCluster" @change="handleChangeFDMStorage" :disabled="disabled">
-              <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
-                <span>{{ item.label }}</span>
-              </ElRadio>
-            </ElRadioGroup>
-          </ElFormItem>
-
-          <ElFormItem prop="fdmStorageConnectionId">
-            <ElSelect
-              v-if="form.fdmStorageCluster === 'self'"
-              v-model="form.fdmStorageConnectionId"
-              :disabled="disabled"
-              class="w-100"
+        <template v-if="mode === 'service'">
+          <div class="my-4 fs-6 font-color-dark form-title">
+            <span class="align-middle">{{ $t('packages_business_data_console_fdm_mdm_storage') }}</span>
+            <ElTooltip
+              class="ml-1"
+              placement="top"
+              :content="$t('packages_business_data_console_fdm_mdm_storage_tooltip')"
             >
-              <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
-            </ElSelect>
-            <template v-else>
-              <div class="flex align-center gap-4">
-                <span class="preview-text inline-block rounded-4" v-if="fdmConnection">{{ fdmConnection.name }}</span>
-                <ElButton type="primary" @click="handleOrderStorage">{{
-                  $t('packages_ldp_order_fully_managed_storage')
-                }}</ElButton>
-              </div>
-            </template>
-          </ElFormItem>
-
-          <!--<div class="flex align-items-center">
-                <VIcon class="color-primary mr-2" size="14">info</VIcon>
-                &lt;!&ndash;<span class="font-color-sslight"
-                  >If you wish to change this setting later, you must migrate the data to your new database - manually for
-                  now</span
-                >&ndash;&gt;
-                <span class="font-color-sslight"
-                  >Don't have the connection you want? You can add a connection in Connection Management.
-                </span>
-              </div>-->
-          <div v-if="isDaas" class="flex align-items-center">
-            <VIcon class="mr-2" size="14">info</VIcon>
-            <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
+              <VIcon class="color-primary align-middle" size="16">info</VIcon>
+            </ElTooltip>
           </div>
+          <div class="px-4 py-3 rounded-lg border">
+            <ElFormItem prop="fdmStorageConnectionId">
+              <template #label>
+                <span class="inline-flex align-center">
+                  <span>{{ $t('packages_business_data_console_fdm_storage') }}</span>
+                </span>
+              </template>
 
-          <!--<div class="setting-card__header p-4">
-                <span>FDM/MDM Storage Backend</span>
-                <ElTooltip
-                  class="ml-2"
-                  placement="top"
-                  content="Specify the database connection that will be used for LDP data storage"
-                >
-                  <VIcon class="color-primary" size="14">info</VIcon>
-                </ElTooltip>
-              </div>-->
-        </div>
-        <!--<div v-if="mode === 'service'" class="setting-card mt-6">
-              <div class="setting-card__header p-4">
-                <span>FDM Storage Backend</span>
-                <ElTooltip
-                  class="ml-2"
-                  placement="top"
-                  content="Specify the database connection that will be used for additional  data layer storage"
-                >
-                  <VIcon class="color-primary" size="14">info</VIcon>
-                </ElTooltip>
-              </div>
-              <div class="setting-card__content p-4">
-                <ElRadioGroup v-model="form.mdmStorageCluster" @change="handleChangeMDMStorage">
-                  <ElRadio v-for="item in options" :label="item.value" :key="'MDM' + item.value" class="block mb-4">
+              <ElRadioGroup
+                v-if="!isDaas"
+                v-model="form.fdmStorageCluster"
+                @change="handleChangeFDMStorage"
+                :disabled="disabled"
+                class="mb-2"
+              >
+                <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
+                  <span>{{ item.label }}</span>
+                </ElRadio>
+              </ElRadioGroup>
+
+              <ElSelect
+                v-if="form.fdmStorageCluster === 'self'"
+                v-model="form.fdmStorageConnectionId"
+                :disabled="disabled"
+                class="w-100"
+              >
+                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
+              </ElSelect>
+              <template v-else>
+                <div class="flex align-center gap-4">
+                  <span class="preview-text inline-block rounded-4 bg-subtle ellipsis" v-if="fdmConnection">{{
+                    fdmConnection.name
+                  }}</span>
+                  <ElButton class="flex-shrink-0" type="primary" @click="handleOrderStorage">{{
+                    $t('packages_ldp_order_fully_managed_storage')
+                  }}</ElButton>
+                </div>
+              </template>
+            </ElFormItem>
+
+            <ElFormItem prop="mdmStorageConnectionId">
+                <span slot="label" class="inline-flex align-center">
+                <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
+              </span>
+                <ElRadioGroup
+               v-if="!isDaas"
+               class="mb-2"
+                   v-model="form.mdmStorageCluster"
+                @change="handleChangeMDMStorage"
+                  :disabled="disabled"
+              >
+                <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
                     <span>{{ item.label }}</span>
-                    <ElTag class="ml-6 rounded-pill" effect="plain">{{ item.tag }}</ElTag>
-                    <ElFormItem v-if="form.mdmStorageCluster === item.value" prop="mdmStorageConnectionId">
-                      <ElSelect v-model="form.mdmStorageConnectionId" class="block mt-4">
-                        <ElOption
-                          v-for="op in connectionsList"
+                    </ElRadio>
+              </ElRadioGroup>
+
+              <ElSelect
+                    v-if="form.mdmStorageCluster === 'self'"
+                      v-model="form.mdmStorageConnectionId"
+                :disabled="disabled"
+                class="w-100"
+                        >
+                         <ElOption v-for="op in connectionsList"
                           :label="op.label"
                           :value="op.value"
                           :key="op.value"
                         ></ElOption>
                       </ElSelect>
-                    </ElFormItem>
-                  </ElRadio>
-                </ElRadioGroup>
-                <div class="flex align-items-center">
-                  <VIcon class="color-primary mr-2" size="14">info</VIcon>
+                    <template v-else>
+                <div class="flex align-center gap-4">
+                  <span class="preview-text inline-block rounded-4 bg-subtle ellipsis" v-if="mdmConnection">{{
+                    mdmConnection.name
+                  }}</span>
+                  <ElButton class="flex-shrink-0" type="primary" @click="handleOrderStorage">{{
+                    $t('packages_ldp_order_fully_managed_storage')
+                  }}</ElButton>
+                </div>
+              </template>
+            </ElFormItem>
+
+                <div v-if="isDaas" class="flex align-items-center font-color-sslight">
+                  <VIcon class="mr-1" size="14">info</VIcon>
                   <span class="font-color-sslight"
-                    >If you wish to change this setting later, you must migrate the data to your new database - manually for
-                    now</span
-                  >
+                    >{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
+
                 </div>
               </div>
-            </div>-->
+            </template>
       </ElForm>
     </div>
     <template v-slot:footer>
@@ -249,8 +200,26 @@ export default {
       value: Boolean,
     },
     fdmConnection: Object,
+    mdmConnection: Object
   },
   data() {
+    const isCommunity = process.env.VUE_APP_MODE === 'community'
+    const options = [
+      {
+        label: this.$t('packages_business_mongodb_self_hosted_cluster'),
+        value: 'self',
+        tag: 'Add a New Connection'
+      },
+      {
+        label: this.$t('packages_business_mongodb_full_management_cluster'),
+        value: 'full-management'
+      }
+    ]
+
+    if (isCommunity) {
+      options.pop()
+    }
+
     return {
       isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
       mode: '',
@@ -266,17 +235,7 @@ export default {
           beta: true,
         },
       ],
-      options: [
-        {
-          label: this.$t('packages_business_mongodb_self_hosted_cluster'),
-          value: 'self',
-          tag: 'Add a New Connection',
-        },
-        {
-          label: this.$t('packages_business_mongodb_full_management_cluster'),
-          value: 'full-management',
-        },
-      ],
+      options,
       form: {
         fdmStorageCluster: '',
         fdmStorageConnectionId: '',
@@ -377,12 +336,12 @@ export default {
         this.form.fdmStorageCluster = data.fdmStorageCluster || this.form.fdmStorageCluster || options[0]?.value
         this.form.fdmStorageConnectionId =
           data.fdmStorageConnectionId || this.form.fdmStorageConnectionId || connectionsList[0]?.value
-        this.form.mdmStorageCluster = this.form.fdmStorageCluster
-        this.form.mdmStorageConnectionId = this.form.fdmStorageConnectionId
+        this.form.mdmStorageCluster = data.mdmStorageCluster || this.form.mdmStorageCluster || options[0]?.value
+        this.form.mdmStorageConnectionId =
+          data.mdmStorageConnectionId || this.form.mdmStorageConnectionId || connectionsList[0]?.value
       }
 
-      update && $emit(this, 'update:mode', this.mode)
-      update && $emit(this, 'update:fdmStorageConnectionId', this.form.fdmStorageConnectionId)
+      update && this.$emit('update:mode', this.mode)
     },
 
     handleOpen() {
@@ -413,10 +372,6 @@ export default {
         if (!v) return
         const { mode, form, liveDataPlatformId } = this
         this.loading = true
-
-        // FDM & MDM 暂时合并一个
-        form.mdmStorageCluster = form.fdmStorageCluster
-        form.mdmStorageConnectionId = form.fdmStorageConnectionId
 
         liveDataPlatformApi
           .patch({ id: liveDataPlatformId, mode, ...form })
@@ -510,5 +465,23 @@ export default {
   line-height: 32px;
   color: #333c4a;
   border: 1px solid hsla(0, 0%, 86.7%, 0.4);
+}
+
+.form-title {
+  position: relative;
+  padding-left: 12px;
+  $bar-width: 3px;
+
+  &::before {
+    content: '';
+    width: $bar-width;
+    height: 1em;
+    border-radius: calc($bar-width / 2);
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    background-color: map-get($color, primary);
+  }
 }
 </style>

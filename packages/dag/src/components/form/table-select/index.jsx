@@ -1,9 +1,10 @@
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed, ref, onMounted, watch } from 'vue'
+import { defineComponent, computed, ref, onMounted, watch, onBeforeUnmount } from 'vue'
 
+import { VEmpty } from '@tap/component'
 import i18n from '@tap/i18n'
 import { AsyncSelect } from '@tap/form'
-import { metadataInstancesApi } from '@tap/api'
+import { metadataInstancesApi, taskApi } from '@tap/api'
 
 import './style.scss'
 import { useStore } from 'vuex'
@@ -114,6 +115,41 @@ export const TableSelect = observer(
 
       const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(attrs, select, props.connectionId)
 
+      const loading = ref(false)
+
+      const loadSelectData = () => {
+        refs.select.query = ''
+        refs.select.loadData()
+      }
+
+      const loadSchema = async keys => {
+        // refs.select.blur()
+        loading.value = true
+        await taskApi
+          .refreshSchema(root.$store.state.dataflow.taskId, {
+            nodeIds: root.$store.state.dataflow.activeNodeId,
+            keys
+          })
+          .finally(() => {
+            loading.value = false
+          })
+
+        loadSelectData()
+      }
+
+      const unWatch = watch(
+        () => root.$store.state.dataflow.schemaRefreshing,
+        v => {
+          if (!v) {
+            loadSelectData()
+          }
+        }
+      )
+
+      onBeforeUnmount(() => {
+        unWatch()
+      })
+
       return () => {
         const scopedSlots = {
           'created-option': ({ value }) => (
@@ -122,6 +158,26 @@ export const TableSelect = observer(
               <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
             </span>
           ),
+          empty: ({ query }) =>
+            query ? (
+              <div class="pt-2">
+                <VEmpty small>
+                  <span class="fs-7">{i18n.t('packages_form_component_table_selector_error_not_exit')},</span>
+                  <el-button
+                    class="ml-1"
+                    size="mini"
+                    type="text"
+                    onClick={() => {
+                      loadSchema(query)
+                    }}
+                  >
+                    <span class="lh-1">{i18n.t('packages_form_button_reload')}</span>
+                  </el-button>
+                </VEmpty>
+              </div>
+            ) : (
+              <p class="el-select-dropdown__empty">{i18n.t('public_data_no_data')}</p>
+            )
         }
 
         if (showNotExistsTip.value) {
@@ -138,6 +194,7 @@ export const TableSelect = observer(
         return (
           <AsyncSelect
             {...attrs}
+            loading={loading.value}
             class="async-select"
             ref={select}
             onCreate={handleCreated}

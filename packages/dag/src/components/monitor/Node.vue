@@ -467,7 +467,7 @@ export default defineComponent({
               placement="bottom"
               width="auto"
               trigger="hover"
-              popper-class="node-statistic-popover rounded-lg"
+              close-delay={0}popper-class="node-statistic-popover rounded-lg"
             >
               {{
                 reference: () => (

@@ -40,7 +40,7 @@
           class="w-75"
           ref="upload"
           :action="importForm.action"
-          :accept="importForm.accept"
+          :accept="fileAccept"
           :file-list="importForm.fileList"
           :auto-upload="false"
           :on-success="handleSuccess"
@@ -153,7 +153,6 @@ export default {
   },
   data() {
     const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
-    const accept = isDaas ? '.gz,.relmig' : '.relmig' // 云版仅支持 .relmig
     return {
       isDaas,
       // title: '',
@@ -166,7 +165,6 @@ export default {
         fileList: [],
         action: '',
         upsert: 1,
-        accept,
         source: '',
         sink: '',
       },
@@ -190,6 +188,9 @@ export default {
     },
     isRelmig() {
       return this.type === 'relmig'
+    },
+    fileAccept() {
+      return !this.isRelmig ? '.gz' : '.relmig' // 云版仅支持 .relmig
     },
     uploadData() {
       const data = {
@@ -232,11 +233,11 @@ export default {
 
     // 上传文件成功失败钩子
     handleChange(file) {
-      if (file.name.split('.').pop() === 'relmig') {
-        this.isRelmig = true
-      } else {
-        this.resetRelmig()
-      }
+      // if (file.name.split('.').pop() !== 'relmig') {
+      //   this.isRelmig = true
+      // } else {
+      //   this.resetRelmig()
+      // }
 
       this.importForm.fileList = [file]
       const originPath = window.location.origin + window.location.pathname
@@ -271,6 +272,7 @@ export default {
       this.uploading = false
       if (response.code !== 'ok') {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
+        this.importForm.fileList.forEach(file => (file.status = 'ready'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
         $emit(this, 'success')
@@ -299,7 +301,6 @@ export default {
     },
 
     resetRelmig() {
-      this.isRelmig = false
       this.importForm.source = ''
       this.importForm.sink = ''
     },

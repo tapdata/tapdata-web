@@ -8,7 +8,10 @@
         <span class="expire-msg" v-if="licenseExpireVisible">{{
           $t('app_license_expire_warning', [licenseExpire])
         }}</span>
-        <ElButton v-if="creatAuthority" type="primary" @click="command('newDataFlow')">
+        <ElButton v-if="isCommunity" id="add-jira-issue-btn" type="primary" size="mini"
+          ><VIcon>bug-outlined</VIcon> New Issue
+        </ElButton>
+        <ElButton v-else-if="creatAuthority" type="primary" @click="command('newDataFlow')">
           {{ $t('dataFlow_createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
@@ -22,13 +25,7 @@
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
-          class="btn"
-          placement="bottom"
-          @command="command"
-          :show-timeout="0"
-        >
+        <ElDropdown v-if="showSetting" class="btn" placement="bottom" @command="command" :show-timeout="0">
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">shezhi</VIcon>
           </div>
@@ -44,13 +41,7 @@
             </ElDropdownMenu>
           </template>
         </ElDropdown>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_LANGUAGE')"
-          class="btn"
-          placement="bottom"
-          @command="changeLanguage"
-          :show-timeout="0"
-        >
+        <ElDropdown v-if="showLanguage" class="btn" placement="bottom" @command="changeLanguage" :show-timeout="0">
           <div class="flex align-center icon-btn p-2 ml-2">
             <VIcon size="18">language_icon</VIcon>
           </div>
@@ -73,13 +64,10 @@
           </div>
           <template #dropdown>
             <ElDropdownMenu class="no-triangle">
-              <ElDropdownItem command="account">{{ $t('app_account') }}</ElDropdownItem>
-              <ElDropdownItem command="version">{{ $t('app_version') }}</ElDropdownItem>
-              <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
-              <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
-                {{ $t('app_home') }}
-              </ElDropdownItem>
-              <ElDropdownItem command="signOut">{{ $t('app_signOut') }}</ElDropdownItem>
+              <template v-for="item in DropdownList">
+                <ElDropdownItem v-if="!item.route" :command="item.name">{{ $t(item.label) }}</ElDropdownItem>
+                <ElDropdownItem v-else @click.native="$router.push(item.route)">{{ $t(item.label) }}</ElDropdownItem>
+              </template>
             </ElDropdownMenu>
           </template>
         </ElDropdown>
@@ -146,20 +134,15 @@
                   'migrateList',
                   'dataflowList',
                   'connectionsList',
-                  'connectionCreate',
                   'users',
                   'customNodeList',
                   'dataConsole',
                   'dataVerificationList',
-                  'dataVerificationCreate',
-                  'dataVerificationEdit',
-                  'dataVerifyDetails',
-                  'dataVerifyHistory',
                   'VerifyDiffDetails',
-                  'dataVerifyResult',
                   'sharedMiningList',
                   'externalStorage',
-                ].includes($route.name),
+                  'about'
+                ].includes($route.name)
               },
               {
                 'pb-4': ['dataServer'].includes($route.name),
@@ -191,106 +174,10 @@ import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
+import { MENU as menuSetting, DropdownList } from '@/router/menu'
 
-let menuSetting = [
-  { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  {
-    name: 'dataConsole',
-    icon: 'process-platform',
-    code: 'v2_data-console',
-  },
-  {
-    name: 'connectionsList',
-    icon: 'agent',
-    code: 'v2_datasource_menu',
-    parent: 'connections',
-  },
-  {
-    name: 'dataPipeline',
-    label: 'page_title_data_pipeline',
-    icon: 'huowuchuanshu',
-    code: 'v2_data_pipeline',
-    children: [
-      { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
-      { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
-      {
-        name: 'dataVerificationList',
-        code: 'v2_data_check',
-        parent: 'dataVerification',
-      },
-    ],
-  },
-  {
-    name: 'advancedFeatures',
-    label: 'page_title_advanced_features',
-    icon: 'huowuchuanshu',
-    code: 'v2_advanced_features',
-    children: [
-      {
-        name: 'sharedCacheList',
-        code: 'v2_shared_cache',
-        parent: 'sharedCache',
-      }, // PDK暂时不支持共享缓存，暂时屏蔽
-      {
-        name: 'functionList',
-        code: 'v2_function_management',
-        parent: 'function',
-      },
-      { name: 'customNodeList', code: 'v2_custom_node', parent: 'customNode' },
-      {
-        name: 'sharedMiningList',
-        code: 'v2_log_collector',
-        parent: 'sharedMining',
-      },
-      { name: 'HeartbeatTableList', code: '', parent: 'heartbeatTable' },
-    ],
-  },
-  {
-    name: 'discovery',
-    label: 'page_title_data_discovery',
-    icon: 'dataDiscovery_navbar',
-    code: 'v2_data_discovery',
-    hidden: true, // 放开了数据面板，隐藏数据发现
-    children: [
-      { name: 'catalogueList', code: 'v2_data_catalogue', parent: 'catalogue' },
-      // { name: 'objectList', code: 'v2_data_object', parent: 'object' },
-    ],
-  },
-  {
-    name: 'dataService',
-    label: 'page_title_data_service',
-    icon: 'apiServer_navbar',
-    code: 'v2_data-server',
-    children: [
-      {
-        name: 'apiApplication',
-        code: 'v2_api-application',
-        parent: 'apiApplication',
-      },
-      { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
-      {
-        name: 'dataServerAuditList',
-        code: 'v2_data_server_audit',
-        parent: 'dataServerAudit',
-      },
-      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
-      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
-      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' },
-    ],
-  },
-  {
-    name: 'system',
-    label: 'page_title_system',
-    icon: 'system_navbar',
-    code: 'v2_system-management',
-    children: [
-      { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
-      { name: 'users', code: 'v2_user_management_menu', parent: 'users' },
-      { name: 'clusterManagement', code: 'v2_cluster-management_menu' },
-      { name: 'externalStorage', code: 'v2_external-storage_menu' },
-    ],
-  },
-]
+const isCommunity = process.env.VUE_APP_MODE === 'community'
+
 export default {
   inject: ['lockedFeature', 'openLocked'],
   components: {
@@ -301,14 +188,16 @@ export default {
     VIcon,
   },
   data() {
+    const domain = this.$i18n.locale === 'en' ? 'io' : 'net'
+
     return {
+      domain,
+      isCommunity,
       IS_IFRAME: sessionStorage.getItem('IS_IFRAME') === 'true',
 
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
       languages: langMenu,
       lang: getCurrentLanguage(),
-      settingVisibility:
-        this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
       settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
       creatAuthority:
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
@@ -325,10 +214,19 @@ export default {
       isCollapse: false,
       isNotAside: this.$route?.meta?.isNotAside || false,
       activeMenu: '',
-      showHelp: !import.meta.env.VITE_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP'),
+      showHelp: !process.env.VUE_APP_HIDE_QA_AND_HELP && this.$getSettingByKey('SHOW_QA_AND_HELP'),
+      showHome: !process.env.VUE_APP_HIDE_HOME_MENU && this.$getSettingByKey('SHOW_HOME_BUTTON'),
+      showLanguage: !process.env.VUE_APP_HIDE_LANGUAGE && this.$getSettingByKey('SHOW_LANGUAGE'),
+      showSetting:
+        !process.env.VUE_APP_HIDE_SETTING_BUTTON &&
+        this.$getSettingByKey('SHOW_SETTING_BUTTON') &&
+        (this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')))
     }
   },
   computed: {
+    DropdownList() {
+      return DropdownList.filter(item => !item.hidden && (this.showHome || item.name !== 'home'))
+    },
     initials() {
       return this.userName.substring(0, 1)
     },
@@ -454,7 +352,7 @@ export default {
           this.dialogVisible = true
           break
         case 'help':
-          window.open('https://docs.tapdata.net/')
+          window.open(`https://docs.tapdata.${this.domain}/`)
           break
         case 'question':
           this.isShowCustomerService = !this.isShowCustomerService
@@ -475,7 +373,7 @@ export default {
           })
           break
         case 'home':
-          window.open(window._TAPDATA_OPTIONS_.homeUrl, '_blank')
+          window.open(window._TAPDATA_OPTIONS_.homeUrl || `https://tapdata.${this.domain}/`, '_blank')
           break
         case 'signOut':
           this.$confirm(this.$t('app_signOutMsg'), this.$t('app_signOut'), {
@@ -553,35 +451,29 @@ export default {
   line-height: 30px;
   text-align: center;
   cursor: pointer;
-
   [class^='el-icon-'] {
     margin: 0;
     color: map-get($color, danger) !important;
   }
 }
-
 .el-menu--inline .el-menu-item:hover .btn-del-fav-menu {
   display: block;
 }
-
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
-
   .layout-header {
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    background: #212a3b;
+    background: var(--layout-header-bg, #212a3b);
     min-width: 1000px;
-
     .logo {
       margin-left: 23px;
       display: block;
       width: 140px;
-
       img {
         display: block;
         height: 100%;
@@ -589,16 +481,13 @@ export default {
         object-fit: contain;
       }
     }
-
     .button-bar {
       margin-right: 23px;
       display: flex;
       align-items: center;
-
       .icon-btn {
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
-
         i {
           display: inline-block;
           line-height: 28px;
@@ -606,18 +495,15 @@ export default {
           height: 28px;
           width: 28px;
         }
-
         &:hover {
           background-color: rgba(239, 241, 244, 0.23);
           border-radius: 6px;
           // color: map-get($color, primary);
         }
       }
-
       .divider {
         height: 2em;
       }
-
       .user-initials {
         display: inline-block;
         width: 30px;
@@ -629,7 +515,6 @@ export default {
         font-size: 14px;
         color: map-get($fontColor, white);
       }
-
       .menu-user {
         color: rgba(255, 255, 255, 0.85);
         // &:hover {
@@ -638,18 +523,15 @@ export default {
       }
     }
   }
-
   .layout-aside {
     position: relative;
     display: flex;
     height: 100%;
     overflow: hidden;
     border: 1px solid #e1e3e9;
-
     .el-menu--popup .submenu-item .btn-del {
       display: none;
     }
-
     .menu {
       width: 220px;
       //flex: 1;
@@ -659,31 +541,26 @@ export default {
       overflow-y: auto;
       user-select: none;
       border-right: none;
-
       .menu-icon {
         font-size: 12px;
       }
-
       .el-menu-item .el-tooltip {
         outline: none;
       }
 
       &.el-menu--collapse {
         width: 64px;
-
         & > .el-menu-item span,
         & > .el-submenu > .el-submenu__title span {
           visibility: visible;
           overflow: initial;
         }
-
         .el-submenu__title {
           span.title {
             display: none;
           }
         }
       }
-
       .el-menu-item,
       .el-submenu__title {
         display: flex;
@@ -692,35 +569,28 @@ export default {
         line-height: 50px;
         // color: map-get($fontColor, normal);
         background: #f7f8fa;
-
         .submenu-item {
           // color: map-get($fontColor, light);
           padding-left: 12px;
         }
-
         &.is-active,
         &:hover {
           // color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
-
       .submenu-item {
         font-weight: 400;
       }
-
       .is-active .el-submenu__title {
         font-weight: 500;
         background: map-get($bgColor, disable);
       }
-
       .el-menu {
         background-color: initial;
-
         .el-menu-item {
           &.is-active {
             background-color: rgba(44, 101, 255, 0.05);
-
             .submenu-item {
               font-weight: 500;
               // color: map-get($color, primary) !important;
@@ -729,7 +599,6 @@ export default {
         }
       }
     }
-
     .menu-footer {
       position: absolute;
       bottom: 0;
@@ -743,16 +612,13 @@ export default {
       overflow: hidden;
       background: map-get($bgColor, white);
       cursor: pointer;
-
       &:hover {
         background: map-get($bgColor, main);
       }
-
       .btn-collapse {
         padding: 10px;
         color: map-get($fontColor, light);
         transition: all 0.4s;
-
         &.is-collapse {
           padding: 10px 24px;
           transform: rotate(-180deg);
@@ -760,7 +626,6 @@ export default {
       }
     }
   }
-
   .item-badge {
     .el-badge__content {
       height: 16px;
@@ -768,7 +633,6 @@ export default {
       border: 0;
     }
   }
-
   .layout-main {
     position: relative;
     height: 100%;
@@ -778,19 +642,35 @@ export default {
     overflow-y: hidden;
     overflow-x: auto;
   }
-
   .layout-main-body {
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
+    background: var(--layout-bg, #eff1f4);
 
+    > div {
+      background: #fff;
+    }
+
+    .page-header:has(.breadcrumb) {
+      border-bottom: 0 !important;
+
+      & + div {
+        background: transparent;
+        > .section-wrap {
+          border-radius: 0.5rem;
+        }
+      }
+    }
+
+    .breadcrumb {
+      background: var(--layout-bg, #eff1f4);
+    }
+  }
   .expire-msg {
     margin-right: 25px;
     font-size: $fontBaseTitle;
-    font-family:
-      PingFangSC-Medium,
-      PingFang SC;
+    font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;

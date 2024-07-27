@@ -4,9 +4,10 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
-import { VEmpty } from '@tap/component'
+import { VEmpty, VIcon, IconButton } from '@tap/component'
 import { taskApi } from '@tap/api'
 import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
+import { ifTableNameConfigEmpty, getTableRenameByConfig } from '../../../util'
 import List from './List.vue'
 import './style.scss'
 import { debounce } from 'lodash'
@@ -25,23 +26,32 @@ export const TableRename = observer(
       const formRef = useForm()
       const form = formRef.value
       const tableDataRef = ref([])
-      let tableMap = {}
       const loading = ref(false)
-      let countByName = ref({})
+      const valueMap = {}
       let nameMap = reactive(
         props.value
           ? props.value.reduce((obj, item) => {
               obj[item.previousTableName] = item.currentTableName
-
-              if (item.currentTableName in countByName.value) {
-                countByName.value[item.currentTableName]++
-              } else {
-                countByName.value[item.currentTableName] = 1
-              }
+              valueMap[item.previousTableName] = item
               return obj
             }, {})
-          : {},
+          : {}
       )
+      const countByName = computed(() => {
+        return tableDataRef.value.reduce((map, previousTableName) => {
+          const currentTableName = nameMap[previousTableName]
+
+          if (currentTableName) {
+            if (currentTableName in map) {
+              map[currentTableName]++
+            } else {
+              map[currentTableName] = 1
+            }
+          }
+
+          return map
+        }, {})
+      })
       const config = reactive({
         search: '',
         replaceBefore: form.values.replaceBefore, // 替换前
@@ -52,8 +62,22 @@ export const TableRename = observer(
         transformLoading: store.state.dataflow.transformLoading,
       })
 
-      let prevMap = {}
+      const globalNameMap = computed(() => {
+        if (ifTableNameConfigEmpty(config)) return {}
 
+        return tableDataRef.value.reduce((map, n) => {
+          let after = getTableRenameByConfig(n, config)
+
+          if (n !== after) {
+            map[n] = after
+          }
+
+          return map
+        }, {})
+      })
+
+      let prevMap = {}
+      const invalidOperations = ref([])
       const makeTable = () => {
         if (form.values.$inputs?.length) {
           const { taskId } = store.state.dataflow
@@ -67,7 +91,6 @@ export const TableRename = observer(
             })
             .then(({ items = [] }) => {
               prevMap = {}
-              tableMap = {}
               tableDataRef.value = items.map((item) => {
                 prevMap[item.previousTableName] = item.sourceObjectName
                 tableMap[item.previousTableName] = true
@@ -79,6 +102,10 @@ export const TableRename = observer(
                 }
 
                 return item.previousTableName
+              })
+
+              invalidOperations.value = props.value.filter(op => {
+                return !prevMap[op.previousTableName]
               })
 
               // 新创建的源节点按表达式选表，tableNames 为空
@@ -93,18 +120,6 @@ export const TableRename = observer(
                 parents[0].migrateTableSelectType === 'expression'
               ) {
                 parents[0].tableNames = tableDataRef.value.slice()
-              }
-
-              // 将源节点的ID保存在attrs中，用于后续的校验
-              const { sourceId } = form.values.attrs || {}
-              const inputId = parents[0]?.id
-
-              // 检查源节点是否发生变化，如果发生有效变化（新的源节点选了表），重新应用批量规则
-              if (sourceId && sourceId !== inputId && items.length) {
-                form.values.attrs.sourceId = inputId
-                doModify()
-              } else if (!sourceId && inputId) {
-                form.values.attrs.sourceId = inputId
               }
             })
             .finally(() => {
@@ -139,34 +154,7 @@ export const TableRename = observer(
       })
 
       const doModify = () => {
-        console.log('doModify') // eslint-disable-line
-        const target = tableDataRef.value
-        let flag
-        // let skipTableName = []
-        target.forEach((n) => {
-          let after = n
-          after = config.replaceBefore
-            ? after.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
-            : after
-          after = config.prefix + after + config.suffix
-          if (config.transferCase) {
-            after = after[config.transferCase]()
-          }
-          if (n !== after) {
-            if (nameMap[n] === after) return
-            nameMap[n] = after
-            // set(nameMap, n, after)
-            flag = true
-          } else if (n in nameMap) {
-            delete nameMap[n]
-            // del(nameMap, n)
-            flag = true
-          }
-        })
-
         updateConfig()
-
-        flag && emitChange()
       }
 
       const lazyModify = debounce(doModify, 1000)
@@ -196,24 +184,15 @@ export const TableRename = observer(
 
       const emitChange = () => {
         const arr = []
-        let _countByName = {}
         Object.entries(nameMap).forEach(([previousTableName, currentTableName]) => {
-          // tableNames 里面源表名不存在的会被清掉
-          const originTableName = prevMap[previousTableName]
-          if (originTableName) {
-            arr.push({
-              originTableName,
-              previousTableName,
-              currentTableName,
-            })
-            if (currentTableName in _countByName) {
-              _countByName[currentTableName]++
-            } else {
-              _countByName[currentTableName] = 1
-            }
-          }
+          const originTableName = prevMap[previousTableName] || valueMap[previousTableName]?.originTableName // 当表从源节点移除 originTableName 会为 undefined
+
+          arr.push({
+            originTableName,
+            previousTableName,
+            currentTableName,
+          })
         })
-        countByName.value = _countByName
         emit('change', arr)
       }
 
@@ -233,6 +212,18 @@ export const TableRename = observer(
 
       const nameListRef = ref()
 
+      const deleteInvalid = (name, index) => {
+        del(nameMap, name)
+        invalidOperations.value.splice(index, 1)
+        emitChange()
+      }
+
+      const deleteAllInvalid = () => {
+        invalidOperations.value.forEach(item => del(nameMap, item.previousTableName))
+        invalidOperations.value = []
+        emitChange()
+      }
+
       return {
         config,
         filterNames,
@@ -247,7 +238,10 @@ export const TableRename = observer(
         loading,
         countByName,
         itemSize,
-        nameListRef,
+        globalNameMap,
+        invalidOperations,
+        deleteAllInvalid,
+        deleteInvalid
       }
     },
 
@@ -265,27 +259,61 @@ export const TableRename = observer(
       )
       return (
         <div class="table-rename">
+          {!!this.invalidOperations.length && (
+            <div class="p-2 rounded-lg" style="background: #e8f3ff;">
+              <span class="flex align-center gap-1 mb-2">
+                <VIcon size={18} class="color-primary">
+                  info
+                </VIcon>
+                <span class="fs-7">{i18n.t('packages_form_table_rename_invalid_operation')}</span>
+              </span>
+
+              <div class="bg-white rounded-lg px-3 py-2 lh-base">
+                <div class="flex align-center gap-2 fw-sub">
+                  <div class="flex-1">{i18n.t('packages_form_table_rename_index_yuanbiaoming')}</div>
+                  <div class="flex-1">{i18n.t('packages_form_table_rename_index_xinbiaoming')}</div>
+                  <div>
+                    <IconButton onClick={this.deleteAllInvalid}>delete</IconButton>
+                  </div>
+                </div>
+                {this.invalidOperations.map((data, index) => {
+                  return (
+                    <div class="flex align-center gap-2" key={index}>
+                      <span class="flex-1 ellipsis font-color-light">{data.previousTableName}</span>
+                      <span class="flex-1 ellipsis">{data.currentTableName}</span>
+                      <span>
+                        <IconButton onClick={() => this.deleteInvalid(data.previousTableName, index)}>
+                          delete
+                        </IconButton>
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           <FormItem.BaseItem label={label}>
             <div class="border border-form px-4 pb-2 rounded-4">
-              <FormItem.BaseItem label={i18n.t('packages_form_table_rename_index_tihuan')}>
-                <div class="flex">
+              <div class="flex gap-4">
+                <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_table_rename_search_text')}>
                   <ElInput
                     v-model={this.config.replaceBefore}
                     disabled={this.disabled}
                     clearable
                     onInput={this.lazyModify}
                   />
-                  <div class="px-4 text-nowrap font-color-light">
-                    {i18n.t('packages_form_table_rename_index_gaiwei')}
-                  </div>
+                </FormItem.BaseItem>
+                <FormItem.BaseItem class="flex-1" label={i18n.t('packages_form_table_rename_replace_with')}>
                   <ElInput
                     v-model={this.config.replaceAfter}
                     disabled={this.disabled}
                     clearable
                     onInput={this.lazyModify}
                   />
-                </div>
-              </FormItem.BaseItem>
+                </FormItem.BaseItem>
+              </div>
+
               <div class="flex gap-4">
                 <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
                   <ElSelect
@@ -327,7 +355,6 @@ export const TableRename = observer(
           </div>
 
           <div
-            v-loading={this.$store.state.dataflow.transformLoading || this.loading}
             class="name-list flex flex-column border border-form rounded-4 overflow-hidden mt-4"
             style={this.listStyle}
           >
@@ -344,6 +371,7 @@ export const TableRename = observer(
                   buffer={50}
                   countByName={this.countByName}
                   nameMap={this.nameMap}
+                  globalNameMap={this.globalNameMap}
                   tableData={this.tableData}
                   updateName={this.updateName}
                   emitChange={this.emitChange}

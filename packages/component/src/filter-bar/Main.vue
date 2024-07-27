@@ -217,7 +217,7 @@ export default {
       // { width: item.width }
       switch (item.type) {
         case 'input':
-          this.setDefaultValue(obj, 'width', '200px')
+          this.setDefaultValue(obj, 'width', item.width || '200px')
           break
       }
       return obj
@@ -229,7 +229,7 @@ export default {
           // this.setDefaultValue(item, 'label', item.label)
           this.setDefaultValue(item, 'inner-label', item.label)
           this.setDefaultValue(item, 'last-page-text', '')
-          this.setDefaultValue(item, 'none-border', true)
+          this.setDefaultValue(item, 'none-border', !item.border)
           break
         case 'input':
           this.setDefaultValue(item, 'debounce', 800)

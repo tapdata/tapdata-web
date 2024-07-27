@@ -130,19 +130,18 @@ $headerBg: #fff;
     }
   }
 
-  /*:deep(.#{$formNamespace}-form-item-layout-horizontal) {
-    .#{$formNamespace}-form-item-control-content-component > .el-switch {
-      height: 40px;
-      line-height: 40px;
-    }
-
-    .#{$formNamespace}-space-horizontal {
-      .el-switch {
-        height: 32px;
-        line-height: 32px;
+    /*.formily-element-form-item-layout-horizontal {
+      .formily-element-form-item-control-content-component > .el-switch {
+        height: 40px;
+        line-height: 40px;
       }
-    }
-  }*/
+      .formily-element-space-horizontal {
+        .el-switch {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+    }*/
 
   /*:deep(.#{$formNamespace}-form-item-layout-vertical) {
     .#{$formNamespace}-form-item-label-tooltip {
@@ -153,13 +152,13 @@ $headerBg: #fff;
       }
     }
 
-    !*.#{$formNamespace}-space-horizontal {
-      .el-switch {
-        height: 40px;
-        line-height: 40px;
-      }
-    }*!
-  }*/
+      //.formily-element-space-horizontal {
+      //  .el-switch {
+      //    height: 40px;
+      //    line-height: 40px;
+      //  }
+      //}
+    }
 
   /*:deep(.#{$formNamespace}-form-item-control) {
     .#{$formNamespace}-space-horizontal {

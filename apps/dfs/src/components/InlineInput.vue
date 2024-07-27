@@ -19,15 +19,15 @@
       >
         {{ editText }}
       </ElLink>
-      <ElLink
-        v-else
+      <IconButton v-else class="ml-3" :disabled="$disabledReadonlyUserBtn()" @click="editing = true">edit</IconButton>
+      <!--<ElLink
         class="inline-input-link"
         style="margin-left: 5px"
         :disabled="$disabledReadonlyUserBtn()"
         @click="editing = true"
       >
         <VIcon v-bind="iconConfig" color="#999">edit-outline</VIcon>
-      </ElLink>
+      </ElLink>-->
     </span>
     <span class="inline-input-body gap-2" v-show="editing">
       <ElTooltip manual effect="dark" :content="tooltip" placement="top-start" :value="disabled">
@@ -63,10 +63,10 @@
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import i18n from '@/i18n'
 
-import { VIcon } from '@tap/component'
+import { VIcon, IconButton } from '@tap/component'
 
 export default {
-  components: { VIcon },
+  components: { VIcon, IconButton },
   props: {
     value: [String, Number],
     type: String,

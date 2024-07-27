@@ -728,6 +728,7 @@ $--transfer-filter-height: 32px !default;
 /* Select
 --------------------------*/
 .el-select-dropdown.el-popper {
+  border-radius: 8px;
   .popper__arrow,
   .popper__arrow::after {
     display: none;
@@ -794,6 +795,11 @@ $--transfer-filter-height: 32px !default;
   .cell {
     overflow-wrap: break-word;
     word-break: normal;
+  }
+
+  .el-table-column--selection .cell {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 .el-table--small {
@@ -956,5 +962,114 @@ $--transfer-filter-height: 32px !default;
     .el-pager li {
       border-radius: $--border-radius-base;
     }
+  }
+}
+
+.el-tree {
+  &.el-tree.is-dragging .el-tree-node__content {
+    cursor: grabbing;
+  }
+  &.el-tree.is-dragging.is-drop-not-allow .el-tree-node__content {
+    cursor: default;
+  }
+  .el-tree-node {
+    &__expand-icon:not(.is-leaf) {
+      color: #646a73;
+    }
+    &__content {
+      margin-bottom: 1px;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+    //&.is-current > .el-tree-node__content {
+    //  background-color: #eef3ff;
+    //}
+    &.is-drop-inner > .el-tree-node__content {
+      background-color: #d0deff;
+    }
+  }
+}
+
+.drag-node-image {
+  $h: 36px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 240px;
+  height: $h;
+  z-index: 103;
+  background-color: rgba(0, 0, 0, 0);
+  .drag-preview-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 104;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    background-color: #fff;
+
+    .drag-preview-icon {
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+    }
+  }
+
+  .drag-preview-layerEffect {
+    position: absolute;
+    z-index: 102;
+    top: 3px;
+    left: 3px;
+    width: 100%;
+    height: $h;
+    border-radius: 6px;
+    background-color: #fff;
+  }
+
+  .drag-preview-dot {
+    position: absolute;
+    right: -12px;
+    top: -12px;
+    background-color: map-get($color, danger);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 50px;
+    z-index: 104;
+    text-align: center;
+
+    &.expand {
+      width: auto;
+      padding: 0 7px;
+      border-radius: 16px;
+      right: -18px;
+    }
+  }
+}
+
+.el-popover {
+  border-radius: 8px;
+}
+
+.el-dialog.pro-dialog {
+  .el-dialog__header {
+    padding: 20px 24px;
+  }
+  .el-dialog__body {
+    padding: 0 24px;
+  }
+  .el-dialog__footer {
+    padding: 20px 24px;
   }
 }

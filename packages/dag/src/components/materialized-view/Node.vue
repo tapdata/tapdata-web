@@ -193,6 +193,7 @@ import { Path } from '@formily/path'
 import { connectionsApi, metadataInstancesApi } from '@tap/api'
 import { CONNECTION_STATUS_MAP } from '@tap/business/src/shared'
 import { Time, ClickOutside } from '@tap/shared'
+import i18n from '@tap/i18n'
 import { AsyncSelect, FieldSelect } from '@tap/form'
 import { IconButton } from '@tap/component'
 import { TableSelect } from '../form'
@@ -661,9 +662,20 @@ export default {
         )
       } else if (data.indicesUnique) {
         icon = (
-          <VIcon size="12" class="field-icon position-absolute">
-            fingerprint
-          </VIcon>
+          <ElTooltip
+            placement="top"
+            content={
+              `${i18n.t(data.indicesUnique[2] ? 'public_unique_index' : 'public_normal_index')}: ` +
+              data.indicesUnique[0]
+            }
+            open-delay={200}
+            transition="none"
+          >
+            <span class="flex align-center field-icon position-absolute">
+              <VIcon size="12">fingerprint</VIcon>
+              <span style={`--index: '${data.indicesUnique[1]}';`} class="fingerprint-sub"></span>
+            </span>
+          </ElTooltip>
         )
       }
 
@@ -796,9 +808,13 @@ export default {
     async onChangeTable(table) {
       this.node.tableName = table
       this.dagNode.name = table
-      let result = this.updateDag()
+      // let result = this.updateDag()
       await this.updateDag({ vm: this, isNow: true })
       $emit(this, 'load-schema')
+      setTimeout(() => {
+        // 任务保存后，立即查模型可能查不到
+        this.$emit('load-schema')
+      }, 100)
     },
 
     onTableSelect(table) {

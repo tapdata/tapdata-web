@@ -1,5 +1,5 @@
 <template>
-  <div class="section-wrap setting-warp">
+  <div class="section-wrap setting-warp rounded-lg">
     <div class="setting-warp-box h-100">
       <div class="setting-center">
         <div class="setting-left-sidebar">
@@ -13,7 +13,7 @@
             >
               <!-- <i :class="['iconfont', item.icon]"></i> -->
               <VIcon :size="item.size" class="mr-2">{{ item.icon }}</VIcon
-              ><span>{{ item.name }}</span>
+              ><span>{{ $t(item.name) }}</span>
 
               <VIcon v-if="lockedFeature[item.key]" class="ml-2" size="24">lock-circle</VIcon>
             </li>
@@ -32,31 +32,13 @@ import i18n from '@/i18n'
 
 import { VIcon } from '@tap/component'
 import Cookie from '@tap/shared/src/cookie'
+import { SettingList } from '@/router/menu'
+
 export default {
   inject: ['lockedFeature', 'openLocked'],
   components: { VIcon },
   data() {
     return {
-      settingList: [
-        {
-          icon: 'bells',
-          name: this.$t('notify_setting'),
-          key: 'notificationSetting',
-          size: 20,
-        },
-        {
-          icon: 'warning',
-          name: i18n.t('daas_setting_settingcenter_gaojingshezhi'),
-          key: 'alarmSetting',
-          size: 14,
-        },
-        {
-          icon: 'account',
-          name: this.$t('account_accountSettings'),
-          key: 'accountSetting',
-          size: 20,
-        },
-      ],
       activePanel: '',
       authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu'),
     }
@@ -65,6 +47,21 @@ export default {
     breadcrumbName() {
       return this.$t(this.$route.meta?.title)
     },
+
+    settingList() {
+      const list = []
+
+      if (Cookie.get('isAdmin')) {
+        list.push({
+          icon: 'setting',
+          name: 'account_systemSetting',
+          key: 'settings',
+          size: 20
+        })
+      }
+
+      return list.concat(SettingList.filter(item => !item.hidden))
+    }
   },
   watch: {
     $route(route) {
@@ -74,15 +71,6 @@ export default {
   created() {
     this.activePanel = this.$route.name
     //admin才有系统设置权限
-    if (Cookie.get('email') === 'admin@admin.com') {
-      let node = {
-        icon: 'setting',
-        name: this.$t('account_systemSetting'),
-        key: 'settings',
-        size: 20,
-      }
-      this.settingList.unshift(node)
-    }
   },
   methods: {
     changeName(name) {

@@ -43,6 +43,9 @@
         background: rgba(0, 0, 0, 0.1);
       }
     </style>
+    <% if (process.env.VUE_APP_MODE === 'community') { %>
+    <script type="text/javascript" src="https://tapdata.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-vg1gsr/b/9/c95134bc67d3a521bb3f4331beb9b804/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=11deaaeb"></script>
+    <% } %>
   </head>
   <body>
     <div id="app">

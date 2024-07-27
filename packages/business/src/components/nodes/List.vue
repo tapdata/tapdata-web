@@ -7,31 +7,39 @@
     >
       <VIcon size="16" class="mr-2">device</VIcon>{{ label }}
     </div>
-    <div
-      v-for="node in items"
-      :key="node.id"
-      class="node-list-item px-2 mb-1 flex align-center font-color-dark"
-      :class="[{ active: activeNodeId === node.id }, customClass(node)]"
-      @click="changeItem(node.id)"
-    >
-      <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
-      <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
-      <ElTag v-if="showType" class="ml-2" effect="plain">{{ typeMap[node.nodeType] }}</ElTag>
-      <slot name="right"></slot>
-    </div>
+    <RecycleScroller key-field="id" :items="items" :item-size="36" class="scroller" :buffer="72">
+      <template #default="{ item: node, index, active }">
+        <div class="pb-1">
+          <div
+            class="node-list-item px-2 flex align-center font-color-dark"
+            :class="[{ active: activeNodeId === node.id }, customClass(node)]"
+            @click="changeItem(node.id)"
+          >
+            <NodeIcon :node="node" :size="18" class="mr-2 flex-shrink-0" />
+            <OverflowTooltip :text="node.name" placement="left" :enterable="false"></OverflowTooltip>
+            <ElTag v-if="showType" class="ml-2" effect="plain">{{ typeMap[node.nodeType] }}</ElTag>
+            <slot name="right"></slot>
+          </div>
+        </div>
+      </template>
+    </RecycleScroller>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { OverflowTooltip } from '@tap/component'
+import { RecycleScroller } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import i18n from '@tap/i18n'
+import { OverflowTooltip } from '@tap/component'
 import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
 import { NodeIcon } from '../DatabaseIcon'
 
 export default {
   name: 'List',
-  components: { NodeIcon, OverflowTooltip },
+
+  components: { NodeIcon, OverflowTooltip, RecycleScroller },
+
   props: {
     value: {
       type: String,

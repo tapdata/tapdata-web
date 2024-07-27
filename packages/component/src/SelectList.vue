@@ -114,6 +114,7 @@
     <div
       v-else
       ref="reference"
+      class="rounded-4"
       :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
       :validate-event="false"
       @mouseenter="inputHovering = true"

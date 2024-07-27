@@ -7,7 +7,7 @@ export default {
   message_network_connected: '网络已恢复',
   //页面标题
   page_title_overview: '概览',
-  page_title_dashboard: '工作台',
+  page_title_dashboard: '首页',
   page_title_connections: '连接管理',
   page_title_connections_create: '创建连接',
   page_title_connections_edit: '编辑连接',
@@ -52,6 +52,7 @@ export default {
   page_title_user: '用户管理',
   page_title_role: '角色管理',
   page_title_setting: '系统设置',
+  page_title_webhook_alerts: 'Webhook 告警',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定义节点',
@@ -82,15 +83,15 @@ export default {
   dashboard_copy_total: '复制任务',
   dashboard_sync_total: '开发任务',
   dashboard_valid_total: '校验任务',
-  dashboard_current_all_total: '当前全部任务总数',
-  dashboard_current_copy_total: '当前复制任务总数',
-  dashboard_current_sync_total: '当前开发任务总数',
-  dashboard_current_valid_total: '当前校验任务总数',
+  dashboard_current_all_total: '全部任务总数',
+  dashboard_current_copy_total: '复制任务总数',
+  dashboard_current_sync_total: '数据转换任务总数',
+  dashboard_current_valid_total: '校验任务总数',
   dashboard_copy_overview_title: '复制任务概览',
   dashboard_copy_status_title: '复制任务状态',
   dashboard_sync_overview_title: '开发任务概览',
   dashboard_sync_status_title: '开发任务状态',
-  dashboard_valid_title: '数据校验',
+  dashboard_valid_title: '数据校验概览',
   dashboard_transfer_overview: '传输总览',
   dashboard_server_title: '集群总览',
   dashboard_total_valid: '全部校验任务',
@@ -503,9 +504,11 @@ export default {
   setting_server_oversee_url: ' 运维运控URL',
   setting_system: ' 系统全局',
   setting_licenseNoticeDays: ' license 到期提醒',
+  setting_license_alarm: ' license 到期提前提醒（天）',
+  setting_License_expiry_email_reminder_: 'license 到期提前几天提醒设置',
   setting_newMongodbChangeStream: '111111',
   setting_flow_engine_version: ' 流程引擎版本',
-  setting_tapdata_agent_version: ' tapdata agent版本',
+  setting_tapdata_agent_version: `${process.env.VUE_APP_PAGE_TITLE} Agent 版本`,
   setting_doc_base_url: ' 帮助文档URL',
   setting_help: ' 帮助文档',
   setting_Ip_addresses: ' Ipv4地址(多个逗号分隔)',
@@ -602,7 +605,7 @@ export default {
   cluster_cpu_usage: 'CPU使用率',
   cluster_heap_memory_usage: '堆内存使用率',
   instance_details_shujuyuanziyuan: '数据源资源下载',
-  instance_details_xianchengziyuanxia: '线程资源下载',
+  instance_details_xianchengziyuanxia: '同步治理线程资源下载',
   cluster_update: '更新',
   cluster_running: '运行中',
   cluster_stopped: '已停止',
@@ -1134,7 +1137,8 @@ export default {
   dataFlow_uploadInfo: '点击查看详情',
   dataFlow_view: '查看',
   dataFlow_dataFlowExport: '导出',
-  dataFlow_addTag: '添加标签',
+  dataFlow_addTag: '新增标签',
+  dataFlow_editTag: '编辑标签',
   dataFlow_bulkImport: '批量导入',
   dataFlow_overWrite: '覆盖已有数据',
   dataFlow_skipData: '跳过已有数据',
@@ -1830,15 +1834,80 @@ export default {
   daas_role_role_gouxuanxiangyingmo:
     '勾选相应模块表示此导航对当前角色下用户可见，开启【查看全部数据】则表示角色可以查看和操作该模块下所有的数据，不勾选则只能查看和操作自己创建和被授权的数据。',
 
-  daas_feature_unavailable: '功能暂不可用',
-  daas_feature_unavailable_subtitle: '抱歉，当前版本暂不支持该功能，您可申请升级到企业版本或者直接注册云版使用该功能。',
+  daas_feature_unavailable: '升级版本，解锁更多功能！',
+  daas_feature_unavailable_subtitle: '这个功能只在企业版和/或云版本中提供。请注册我们的云版本或联系我们获取企业版。',
   daas_feature_unavailable_upgrade_dec: '升级版本，您将获得：',
   daas_feature_unavailable_upgrade_dec_li1: '数据校验（仅企业版）',
   daas_feature_unavailable_upgrade_dec_li2: '共享挖掘',
   daas_feature_unavailable_upgrade_dec_li3: '告警设置',
   daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
+  daas_feature_unavailable_upgrade_dec_li1_desc:
+    '基于自研技术，Tapdata 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。',
+  daas_feature_unavailable_upgrade_dec_li2_desc:
+    '为减轻源端数据库压力，Tapdata支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。',
+  daas_feature_unavailable_upgrade_dec_li3_desc:
+    'Tapdata 支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。',
+  daas_feature_unavailable_upgrade_dec_li4_desc:
+    '角色是权限合集，可为其授予多权限并授予用户，用户继承所有权限，依此设计可先创角色再赋予用户，无需为每个用户配置权限，以简化运维管理和提升安全性。',
+  daas_feature_unavailable_upgrade_dec_li5_desc: '',
   daas_feature_unavailable_get_enterprise: '申请企业版',
   daas_feature_unavailable_get_cloud: '免费使用云版',
-  daas_feature_unavailable_go_to_compare: '查看各版本详细功能对比',
+  daas_feature_unavailable_go_to_compare: '版本功能对比',
+  daas_unbind_license: '解绑 License',
+  daas_cluster_cluster_lianjieshuliang_detail: '对外建立链接数详情',
+  daas_cluster_cluster_view: '集群视图',
+  daas_cluster_component_view: '组件视图',
+  daas_cluster_engine_hostname: '主机名/IP',
+  daas_cluster_connection_count: '连接数',
+  daas_cluser_keyword_placeholder: '搜索主机名',
+
+  webhook_alerts: 'Webhook 告警',
+  webhook_alerts_detail: 'Webhook 告警详情',
+  webhook_alerts_add: '新建 Webhook',
+  webhook_address: 'Webhook 地址',
+  webhook_params: '参数',
+  webhook_switch: '是否启用',
+  webhook_send_log: '发送记录',
+  webhook_send_log_desc: '（只保留最近 200 条记录）',
+  webhook_send_address: '发送地址',
+  webhook_server_url: '服务 URL',
+  webhook_server_url_empty: '请输入服务 URL',
+  webhook_server_url_error: '请输入正确的服务 URL',
+  webhook_custom_template: '自定义模版',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", //标记当前告警的状态,ING,RECOVER,CLOESE
+        "statusTxt":"\${actionData.statusTxt}", //标记当前告警的状态文本:正在进行,已恢复,已关闭
+        "level": "\${actionData.level}", //告警级别RECOVERY,NORMAL,WARNING,CRITICAL,EMERGENCY,ERROR,WARN,INFO
+        "component":"\${actionData.component}",//引擎告警组件固定为: FE
+        "componentTxt": "\${actionData.componentTxt}", //引擎告警组件文本值: 引擎
+        "type":"\${actionData.type}",//告警类型  SYNCHRONIZATIONTASK_ALARM,SHARED_CACHE_ALARM,SHARED_MINING_ALARM,DATA_VERIFICATION_ALARM,ACCURATE_DELAY_ALARM,INSPECT_ALARM
+        "typeTxt": "\${actionData.typeTxt}", //告警类型文本值,同步任务告警、共享缓存告警、共享挖掘告警、数据校验告警、精准延迟告警
+        "metric": "\${actionData.metric}",//事件类型: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_EGINGE_UP, SYSTEM_FLOW_EGINGE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
+        "metricTxt": "\${actionData.metricTxt}", //事件类型文本值：任务运行停止，任务运行错误，任务全量完成，任务增量开始，任务校验出错，校验任务遇到错误，数据源无法连接网络，数据源TCP连接完成，数据源连接网络完成，引擎上线，引擎离线，数据源节点的平均处理耗时超过阀值，任务的增量延迟超过阀值，节点的平均处理耗时超过阀值，Count校验结果的差异行数大于阈值，值校验结果的表数据差大于阈值
+        "name":"\${actionData.name}",//具体的任务名
+        "node":"\${actionData.node}",//产生告警的节点名，无节点时为空;当为任务告警时，节点直接放任务名
+        "currentValue": "\${actionData.currentValue}",//触发告警的指标值
+        "threshold": "\${actionData.threshold}",//触发告警的指标阈值
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}",//告警最近发生时间
+        "tally": "\${actionData.tally}",//告警发生次数
+        "summary": "\${actionData.summary}",//告警内容
+        "recoveryTime": "\${actionData.recoveryTime}",//告警恢复时间
+        "closeTime": "\${actionData.closeTime}",//告警关闭时间
+        "closeBy": "\${actionData.closeBy}",//告警被谁关闭
+        "agentId": "\${actionData.agentId}", //所属引擎
+    }
+}`,
+  webhook_custom_template_ph: '自定义模板内容，支持参数填充模板，如：${alarm.name}',
+  http_header: 'HTTP 请求头',
+  http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
+  webhook_send_ping: '发送测试 PING 事件',
+  webhook_event_type: '事件类型',
+  webhook_event_type_empty: '请选择事件'
 }

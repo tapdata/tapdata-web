@@ -1,94 +1,113 @@
 <template>
-  <el-dialog :title="$t('packages_business_dataFlow_skipError_title')" v-model="dialogVisible" width="60%">
-    <div class="skip-tip">
-      {{ $t('packages_business_dataFlow_skipError_tip') }}
+  <ElDialog
+    :title="`${$t('packages_business_dataFlow_skipError_title')} - ${taskName}`"
+    :visible="visible"
+    @update:visible="visible = $event"
+    width="60%"
+  >
+    <div class="lh-base mb-3">
+      <ElAlert
+        :title="$t('packages_business_dataFlow_skipError_attention')"
+        :description="$t('packages_business_dataFlow_skipError_tip')"
+        type="warning"
+        :closable="false"
+      ></ElAlert>
     </div>
-    <div class="skip-tip">
-      {{ $t('packages_business_dataFlow_skipError_attention') }}
-    </div>
-    <div class="skip-name">
-      {{ `${$t('packages_business_dataFlow_skipError_taskName')}:` }}
-      <span class="link-primary">{{ task.name }}</span>
-    </div>
-    <ul class="error-list">
+
+    <ul class="error-list rounded-lg bg-subtle">
       <span class="check-all"
         ><el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
           $t('packages_business_dataFlow_selectAll')
         }}</el-checkbox></span
       >
       <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange" class="list-box">
-        <li v-for="(item, index) in errorEvents" :key="item.index">
-          <el-checkbox :label="index">
-            <div class="error-content">
+        <li v-for="item in errorEvents" :key="item.id">
+          <el-checkbox :label="item.id" class="flex">
+            <div class="error-content rounded-4">
               <span class="error-msg"><span style="color: red">[ERROR]</span> {{ item.message }}</span>
             </div>
           </el-checkbox>
         </li>
       </el-checkbox-group>
     </ul>
-    <div class="total">
+    <div class="pt-2">
       {{ errorTotal }} {{ checkedData.length }}
       {{ $t('packages_business_dataFlow_skipError_strip') }}
     </div>
     <template v-slot:footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{ $t('public_button_cancel') }}</el-button>
-        <el-button type="primary" @click="skipErrorData">{{
+        <el-button @click="visible = false" size="mini">{{ $t('public_button_cancel') }}</el-button>
+        <el-button :loading="skipping" type="primary" size="mini" @click="skipErrorData">{{
           $t('packages_business_dataFlow_skipError_startJob')
         }}</el-button>
       </span>
     </template>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../../utils/gogocodeTransfer'
-import { dataFlowsApi } from '@tap/api'
+import { taskApi } from '@tap/api'
 export default {
   name: 'SkipError',
+  props: {
+    // visible: Boolean
+  },
   data() {
     return {
-      dialogVisible: false,
+      skipping: false,
+      taskName: '',
+      taskId: '',
+      visible: false,
       errorEvents: [],
-      isIndeterminate: true,
       checkAll: false,
       checkedData: [],
-      task: {},
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
+    }
+  },
+  computed: {
+    isIndeterminate() {
+      return this.checkedData.length > 0 && this.checkedData.length < this.errorEvents.length
     }
   },
   methods: {
-    async checkError(task, callback) {
-      let errorEvents = []
-      if (!task.status || task.status === 'error') {
-        let data = await dataFlowsApi.get([task.id])
-        data = data || {}
-        if (data.status === 'error' && data.setting.stopOnError && data.errorEvents && data.errorEvents.length > 0) {
-          this.dialogVisible = true
-          this.task = data
-          errorEvents = data.errorEvents
-          this.errorEvents = errorEvents
-          this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
-          return
-        }
-      }
-      if (callback) {
-        callback()
+    async checkError(task) {
+      if (task.status === 'error') {
+        const errorEvents = await taskApi.getErrorEvents(task.id)
+
+        if (!errorEvents?.length) return
+
+        this.visible = true
+        this.checkAll = false
+        this.checkedData = []
+        this.taskId = task.id
+        this.taskName = task.name
+        this.errorEvents = errorEvents.map(item => {
+          delete item.stacks // stacks is too long
+          return item
+        })
+        this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
+        return true
       }
     },
     handleCheckAllChange(val) {
-      let ids = this.errorEvents.map((item, index) => {
-        return index
-      })
-      this.checkedData = val ? ids : []
-      this.isIndeterminate = false
+      this.checkedData = val
+        ? this.errorEvents.map(item => {
+            return item.id
+          })
+        : []
     },
     handleCheckedDataChange(value) {
       let checkedCount = value.length
       this.checkAll = checkedCount === this.errorEvents.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.errorEvents.length
-      this.checkedData = value
     },
+    async skipErrorData() {
+      this.skipping = true
+      await taskApi.skipErrorEvents(this.taskId, this.checkedData)
+      this.skipping = false
+      this.visible = false
+      this.$emit('skip', this.taskId)
+    }
+  }
     skipErrorData() {
       if (this.checkedData.length > 0) {
         let data = []
@@ -126,12 +145,11 @@ export default {
   overflow-x: hidden;
   li {
     margin-top: 10px;
-    margin-left: 10px;
+    margin-left: 12px;
+    margin-right: 12px;
     .error-content {
-      font-size: 12px;
       background-color: map-get($bgColor, white);
       border: 1px solid #dedee4;
-      width: 96%;
       padding: 5px 10px;
     }
     .error-msg {
@@ -141,6 +159,11 @@ export default {
       word-break: normal;
       white-space: normal;
       user-select: text;
+    }
+    ::v-deep {
+      .el-checkbox__label {
+        flex: 1;
+      }
     }
   }
   li:last-child {
@@ -160,12 +183,18 @@ export default {
   margin-top: 18px;
   margin-bottom: 10px;
 }
-.skip-tip {
-  font-size: 12px;
-  color: map-get($fontColor, slight);
-}
-.total {
-  padding-top: 5px;
-  font-size: 12px;
+.task-name-wrapper {
+  position: relative;
+  padding-left: 12px;
+  &::before {
+    position: absolute;
+    content: '';
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 8px;
+    background-color: map-get($color, primary);
+  }
 }
 </style>

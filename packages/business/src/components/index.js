@@ -12,6 +12,7 @@ import DiscoveryClassification from './DiscoveryClassification'
 import StageButton from './StageButton'
 import UpgradeFee from './UpgradeFee'
 import UpgradeCharges from './UpgradeCharges'
+import SyncStatus from './SyncStatus.vue'
 
 export {
   StatusItem,
@@ -28,6 +29,7 @@ export {
   StageButton,
   UpgradeFee,
   UpgradeCharges,
+  SyncStatus
 }
 
 export * from './DatabaseIcon'

@@ -5,13 +5,13 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="80%"
+    :width="width"
     top="10vh"
     :modal-class="modalClass"
     class="ldp-connection-dialog flex flex-column"
     :beforeClose="beforeClose"
-    @open="handleOpen"
     @close="handleClose"
+    @closed="onClosed"
   >
     <template #header>
       <div class="flex font-color-dark fs-6 fw-sub position-relative align-center">
@@ -30,7 +30,7 @@
           </ElInput>
         </template>
         <template v-else>
-          <IconButton v-if="!fixedPdkId" @click="showForm = false" class="mr-2">left</IconButton>
+          <IconButton v-if="!onlyForm" @click="showForm = false" class="mr-2">left</IconButton>
           <DatabaseIcon v-if="formParams.pdkHash" class="mr-2" :size="24" :item="formParams"></DatabaseIcon>
           <VIcon v-else class="mr-2" :size="24">{{ formParams.icon }}</VIcon>
           <span>{{ formParams.name }}</span>
@@ -58,6 +58,21 @@
             <VIcon size="18" class="mr-1">lock-circle</VIcon>
             {{ $t('packages_business_paid_connector') }}
           </div>
+
+          <template v-if="isCommunity">
+            <div
+              class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer flex align-center"
+              @click="openGithub"
+            >
+              <VIcon size="16" class="mr-1">github</VIcon>
+              {{ $t('packages_business_more_free_connector') }}
+              <VIcon size="16" class="ml-1">open-in-new</VIcon>
+            </div>
+
+            <div class="px-2">
+              <ElDivider class="my-2"></ElDivider>
+            </div>
+          </template>
 
           <div
             class="scene-name-item px-4 rounded-4 user-select-none ellipsis cursor-pointer"
@@ -174,6 +189,7 @@
     </div>
 
     <RequestDialog
+      v-if="!isDaas"
       ref="requestDialog"
       :visible="requestVisible"
       :meta="requestMeta"
@@ -217,13 +233,18 @@ export default {
     },
     selectorType: String,
     fixedPdkId: String,
+    dialogMode: Boolean,
+    width: { type: String, default: '80%' }
   },
   data() {
     const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+    const isCommunity = process.env.VUE_APP_MODE === 'community'
     return {
       isDaas,
+      isCommunity,
       search: '',
       formParams: {
+        id: '',
         name: '',
         pdkHash: null,
         pdkId: null,
@@ -338,7 +359,7 @@ export default {
               },
               {
                 type: 'Dameng',
-                name: 'Aliyun RDS MySQL',
+                name: 'Dameng',
                 qcType: 'Beta',
                 icon: 'dameng.png',
                 tags: ['Database'],
@@ -579,8 +600,9 @@ export default {
       requestMeta: {
         type: '',
         version: '',
-        qcType: '',
+        qcType: ''
       },
+      onlyForm: false
     }
   },
   computed: {
@@ -647,13 +669,14 @@ export default {
     async visible(v) {
       this.showDialog = v
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
+      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
       if (v) {
         this.modalClass = ''
         this.search = ''
         this.currentScene = 'recommend'
 
         if (this.fixedPdkId) {
+          this.onlyForm = true
           this.loading = true
           this.showForm = true
           const pdk = await this.getPdkById(this.fixedPdkId)
@@ -663,6 +686,7 @@ export default {
           this.formParams.pdkHash = pdk.pdkHash
           this.formParams.pdkId = pdk.pdkId
         } else {
+          this.onlyForm = false
           this.getData()
         }
       }
@@ -689,16 +713,28 @@ export default {
     getIcon,
     init() {
       this.showForm = false
-      Object.assign(this.formParams, { name: '', pdkHash: null, pdkId: null })
+      Object.assign(this.formParams, { id: '', name: '', pdkHash: null, pdkId: null, pdkOptions: null })
     },
 
-    handleOpen() {
-      // this.init()
+    editConnection(data) {
+      this.$emit('update:visible', true)
+
+      this.$nextTick(() => {
+        this.showForm = true
+        this.formParams.pdkHash = data.pdkHash
+        this.formParams.pdkId = data.pdkId
+        this.formParams.id = data.id
+        this.onlyForm = true
+      })
     },
 
     handleClose() {
       $emit(this, 'visible', false)
       $emit(this, 'update:visible', false)
+    },
+
+    onClosed() {
+      this.showForm = false
     },
 
     async handleSelect(item, isDemo = false) {
@@ -713,13 +749,17 @@ export default {
           type: item.type,
           version: item.version
         })
+        const time = Date.now()
         const msg = this.$message.info(this.$t('public_please_wait'))
         const ifOpen = await this.$refs.requestDialog.handleOpen()
-        msg.close()
+        // 延迟关闭，避免消息一闪而过
+        setTimeout(() => {
+          msg.close()
+        }, Math.max(600 - (Date.now() - time), 0))
         if (ifOpen) return
       }
 
-      if (this.selectorType === 'source_and_target') {
+      if (this.selectorType === 'source_and_target' && !this.dialogMode) {
         $emit(this, 'selected', item)
         return
       }
@@ -889,6 +929,10 @@ export default {
 
       done()
     },
+
+    openGithub() {
+      window.open('https://github.com/tapdata/tapdata-connectors', '_blank')
+    }
   },
   emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
 }
@@ -945,10 +989,10 @@ export default {
   }
 
   .scene-name-list-wrap {
-    width: 196px;
+    min-width: 196px;
 
     &.is-en {
-      width: 218px;
+      min-width: 218px;
     }
   }
 

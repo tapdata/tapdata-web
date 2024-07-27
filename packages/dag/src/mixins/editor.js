@@ -25,7 +25,7 @@ import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
-import { getSchema } from '../util'
+import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
 
 export default {
   directives: {
@@ -139,7 +139,8 @@ export default {
       'toggleConsole',
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
-      'setMaterializedViewVisible',
+      'setPdkDoubleActiveMap',
+      'setMaterializedViewVisible'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -179,14 +180,9 @@ export default {
         node.$outputs = outputsMap[node.id] || []
 
         // 数据兼容
-        const defaultAttrs = {
-          position: [0, 0],
-          capabilities: [],
-        }
-        if (!node.attrs) node.attrs = defaultAttrs
-        else if (!node.attrs.position) Object.assign(node.attrs, defaultAttrs)
-
-        if (!node.attrs.capabilities) node.attrs.capabilities = []
+        node.attrs = node.attrs ?? {}
+        node.attrs.position = node.attrs.position ?? [0, 0]
+        node.attrs.capabilities = node.attrs.capabilities ?? []
 
         const ins = getResourceIns(node)
         Object.defineProperty(node, '__Ctor', {
@@ -361,7 +357,7 @@ export default {
       if (typeof allowTarget === 'function' && !allowTarget(target, source)) {
         showMsg &&
           this.$message.error(
-            i18n.t('packages_dag_mixins_editor_sourc', {
+            i18n.t('packages_dag_mixins_editor_source', {
               val1: source.name,
               val2: target.name,
             }),
@@ -1412,8 +1408,13 @@ export default {
         }
       } else if (accessNodeProcessIdArr.length === 1) {
         // 如果画布上仅有一个所属agent，自动设置为任务的agent
-        this.dataflow['accessNodeType'] = 'MANUALLY_SPECIFIED_BY_THE_USER'
-        this.dataflow['accessNodeProcessId'] = accessNodeProcessIdArr[0]
+        const agentId = accessNodeProcessIdArr[0]
+        this.$set(
+          this.dataflow,
+          'accessNodeType',
+          this.scope.$agentMap[agentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+        )
+        this.$set(this.dataflow, 'accessNodeProcessId', agentId)
       }
       return someErrorMsg
     },
@@ -1546,8 +1547,14 @@ export default {
       let hasEnableDDL
       let hasEnableDDLAndIncreasesql
       let inBlacklist = false
-      let blacklist = ['js_processor', 'custom_processor', 'migrate_js_processor', 'union_processor']
-      this.allNodes.forEach((node) => {
+      let blacklist = [
+        'js_processor',
+        'custom_processor',
+        'migrate_js_processor',
+        'union_processor',
+        'migrate_union_processor'
+      ]
+      this.allNodes.forEach(node => {
         // 开启了DDL
         if (node.ddlConfiguration === 'SYNCHRONIZATION') {
           hasEnableDDL = true
@@ -1581,9 +1588,9 @@ export default {
         }
 
         // 目标是否是弱schema类型
-        if (node.$inputs.length && !node.$outputs.length && !schemaFree[node.attrs.pdkHash]) {
-          notAllowTarget = true
-        }
+        // if (node.$inputs.length && !node.$outputs.length && !schemaFree[node.attrs.pdkHash]) {
+        //   notAllowTarget = true
+        // }
 
         if (enable && notAllowTarget) {
           error = i18n.t('packages_dag_validate_customsql_target_fail')
@@ -1592,6 +1599,94 @@ export default {
       })
 
       return error
+    },
+
+    validateUnwind() {
+      if (this.dataflow.syncType === 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
+      for (let node of nodes) {
+        const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
+        // console.log('childNodes', childNodes)
+        if (childNodes.some(childNode => childNode.dmlPolicy?.insertPolicy !== 'just_insert')) {
+          this.setNodeErrorMsg({
+            id: node.id,
+            msg: i18n.t('packages_dag_unwind_validate_error')
+          })
+          return i18n.t('packages_dag_unwind_validate_error')
+        }
+      }
+    },
+
+    async validateTableRename() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'table_rename_processor')
+
+      // 只允许存在1个表编辑节点
+      if (nodes.length > 1) return i18n.t('packages_dag_table_rename_multiple')
+      if (nodes.length) {
+        // 表重名检查
+        const node = nodes[0]
+        const parents = this.scope.findParentNodes(node.id)
+        let sourceNode = parents?.[0]
+
+        if (sourceNode?.type === 'database') {
+          let tableNames = sourceNode.tableNames
+
+          // 按表达式匹配表
+          if (sourceNode.migrateTableSelectType === 'expression') {
+            const { items } = await taskApi.getNodeTableInfo({
+              taskId: this.dataflow.id,
+              nodeId: node.id,
+              page: 1,
+              pageSize: 10000
+            })
+            tableNames = items.map(item => item.sourceObjectName)
+          }
+
+          const ifConfigEmpty = ifTableNameConfigEmpty(node)
+
+          if (ifConfigEmpty && !node.tableNames?.length) return
+
+          const nameTemp = {}
+          const renameMap = node.tableNames.reduce((obj, item) => {
+            obj[item.previousTableName] = item.currentTableName
+            return obj
+          }, {})
+
+          for (let name of tableNames) {
+            let newName = name
+
+            if (name in renameMap) {
+              newName = renameMap[name]
+            } else if (!ifConfigEmpty) {
+              newName = getTableRenameByConfig(name, node)
+            }
+
+            if (newName in nameTemp) {
+              const msg = `${i18n.t('packages_dag_nodes_tableprocessor_biaomingchongfu')}: ${newName}`
+
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg
+              })
+
+              return msg
+            }
+
+            nameTemp[newName] = 1
+          }
+        }
+      }
+    },
+
+    async validateMigrateUnion() {
+      if (this.dataflow.syncType !== 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'migrate_union_processor')
+
+      if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
     async eachValidate(...fns) {
@@ -1627,7 +1722,9 @@ export default {
         this.validateLink,
         this.validateDDL,
         this.validateCustomSql,
-        this.validateTaskType,
+        this.validateUnwind,
+        this.validateTableRename,
+        this.validateMigrateUnion
       )
     },
 
@@ -2194,15 +2291,30 @@ export default {
           this.handlePageReturn()
           return
         }
+
+        if (data.errorEvents?.length) {
+          // 清除 stacks
+          data.errorEvents.forEach(event => {
+            delete event.stacks
+          })
+        }
+
         data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
         // 共享缓存
         data.syncType = data.shareCache ? 'shareCache' : data.syncType
         this.reformDataflow(data)
-        this.setTaskInfo(this.dataflow)
+        this.setTaskInfo({
+          id: data.id,
+          syncType: data.syncType,
+          testTaskId: data.testTaskId,
+          taskRecordId: data.taskRecordId
+        })
         this.startLoopTask(id)
         this.titleSet()
+        console.log('任务data', data)
         return data
       } catch (e) {
+        console.error(e)
         this.$message.error(i18n.t('packages_dag_mixins_editor_renwujiazaichu'))
         this.handlePageReturn()
       } finally {
@@ -2219,6 +2331,13 @@ export default {
         const data = await taskApi.get(id, {}, { parent_task_sign })
         if (this.destory) return
         if (data) {
+          if (data.errorEvents?.length) {
+            // 清除 stacks
+            data.errorEvents.forEach(event => {
+              delete event.stacks
+            })
+          }
+
           // 同步下任务上的属性，重置后会改变
           this.dataflow.attrs = data.attrs
 
@@ -2378,6 +2497,7 @@ export default {
         }),
       })
       let tagsMap = {}
+      let doubleActiveMap = {}
       let propertiesMap = {}
 
       databaseItems.forEach(({ properties, pdkHash, tags }) => {
@@ -2389,9 +2509,15 @@ export default {
         if (tags?.includes('schema-free')) {
           tagsMap[pdkHash] = true
         }
+        if (tags?.includes('doubleActive')) {
+          doubleActiveMap[pdkHash] = true
+        }
       })
       this.setPdkPropertiesMap(propertiesMap)
       this.setPdkSchemaFreeMap(tagsMap)
+      this.setPdkDoubleActiveMap(doubleActiveMap)
+
+      console.log(propertiesMap, tagsMap) // eslint-disable-line
     },
 
     getIsDataflow() {

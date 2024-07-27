@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :visible="visible" width="520px" @close="handleClose">
+  <ElDialog :visible="visible" width="640px" @close="handleClose" custom-class="pro-dialog">
     <template #title>
       <div class="fs-6 fw-sub font-color-dark flex align-center">
         <VIcon class="mr-2" size="24">lock-circle</VIcon>
@@ -7,38 +7,67 @@
       </div>
     </template>
     <div class="locked-dialog-content lh-base">
-      <p class="mb-4">{{ $t('daas_feature_unavailable_subtitle') }}</p>
+      <p class="mb-2">{{ $t('daas_feature_unavailable_subtitle') }}</p>
+      <p class="mb-2">{{ $t('daas_feature_unavailable_upgrade_dec') }}</p>
       <div class="upgrading-content p-3 border rounded-lg bg-subtle">
-        <p class="mb-2">{{ $t('daas_feature_unavailable_upgrade_dec') }}</p>
-        <ul class="font-color-dark">
-          <li class="flex align-center">
-            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li1') }}
+        <ul class="font-color-dark flex flex-column gap-2">
+          <li class="flex align-start">
+            <VIcon class="mr-2 color-primary mt-1">check-bold</VIcon>
+            <div>
+              <div>{{ $t('daas_feature_unavailable_upgrade_dec_li1') }}</div>
+              <div class="font-color-sslight fs-7.5 mt-1">
+                {{ $t('daas_feature_unavailable_upgrade_dec_li1_desc') }}
+              </div>
+            </div>
           </li>
-          <li class="flex align-center">
-            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li2') }}
+          <li class="flex align-start">
+            <VIcon class="mr-2 color-primary mt-1">check-bold</VIcon>
+            <div>
+              <div>{{ $t('daas_feature_unavailable_upgrade_dec_li2') }}</div>
+              <div class="font-color-sslight fs-7.5 mt-1">
+                {{ $t('daas_feature_unavailable_upgrade_dec_li2_desc') }}
+              </div>
+            </div>
           </li>
-          <li class="flex align-center">
-            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li3') }}
+          <li class="flex align-start">
+            <VIcon class="mr-2 mt-1 color-primary">check-bold</VIcon>
+            <div>
+              <div>{{ $t('daas_feature_unavailable_upgrade_dec_li3') }}</div>
+              <div class="font-color-sslight fs-7.5 mt-1">
+                {{ $t('daas_feature_unavailable_upgrade_dec_li3_desc') }}
+              </div>
+            </div>
           </li>
-          <li class="flex align-center">
-            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li4') }}
+          <li class="flex align-start">
+            <VIcon class="mr-2 mt-1 color-primary">check-bold</VIcon>
+            <div>
+              <div>{{ $t('daas_feature_unavailable_upgrade_dec_li4') }}</div>
+              <div class="font-color-sslight fs-7.5 mt-1">
+                {{ $t('daas_feature_unavailable_upgrade_dec_li4_desc') }}
+              </div>
+            </div>
           </li>
-          <li class="flex align-center">
-            <VIcon class="mr-2 color-primary">check-bold</VIcon>{{ $t('daas_feature_unavailable_upgrade_dec_li5') }}
-          </li>
-
-          <li class="mt-2">
-            <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">{{
-              $t('daas_feature_unavailable_go_to_compare')
-            }}</ElLink>
+          <li class="flex align-start">
+            <VIcon class="mr-2 mt-1 color-primary">check-bold</VIcon>
+            <div>
+              <div>{{ $t('daas_feature_unavailable_upgrade_dec_li5') }}</div>
+              <div class="font-color-sslight fs-7.5 mt-1">
+                {{ $t('daas_feature_unavailable_upgrade_dec_li5_desc') }}
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </div>
     <template #footer>
-      <div>
+      <div class="flex align-center">
+        <ElLink type="primary" href="https://tapdata.io/pricing" target="_blank">
+          <span class="align-middle">{{ $t('daas_feature_unavailable_go_to_compare') }}</span>
+          <VIcon class="ml-1 align-middle" size="16">open-in-new</VIcon></ElLink
+        >
+        <div class="flex-grow-1"></div>
         <ElButton type="primary" @click="goOP">{{ $t('daas_feature_unavailable_get_enterprise') }}</ElButton>
-        <ElButton type="primary" @click="goCloud">{{ $t('daas_feature_unavailable_get_cloud') }}</ElButton>
+        <ElButton type="warning" @click="goCloud">{{ $t('daas_feature_unavailable_get_cloud') }}</ElButton>
       </div>
     </template>
   </ElDialog>
@@ -56,7 +85,7 @@ export default {
     },
     goOP() {
       this.handleClose()
-      window.open('https://tapdata.mike-x.com/xDQ0K')
+      window.open('https://tapdata.mike-x.com/lV5o0?m=3VXe4lCHe9LjBsda')
     },
     goCloud() {
       this.handleClose()

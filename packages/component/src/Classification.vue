@@ -1,5 +1,5 @@
 <template>
-  <div class="classification py-0 pr-3 border-end" v-show="visible">
+  <div class="classification py-0 px-3 border-end" v-show="visible">
     <div class="classification-header">
       <div class="h-32 flex align-center mt-3">
         <IconButton class="mr-2" @click="toggle()"> expand-list </IconButton>
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div v-if="visible">
+    <div v-if="visible" class="overflow-auto">
       <ElTree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -40,10 +40,20 @@
         @check="checkHandler"
       >
         <template v-slot="{ node, data }">
-          <span class="custom-tree-node">
+          <span
+            class="custom-tree-node"
+            @dragenter.stop="handleTreeDragEnter($event, data, node)"
+            @dragover.stop="handleTreeDragOver($event, data, node)"
+            @dragleave.stop="handleTreeDragLeave($event, data, node)"
+            @drop.stop="handleTreeDrop($event, data, node)"
+          >
             <VIcon size="16" class="color-primary mr-1">folder-fill</VIcon>
             <span class="table-label">{{ data.value }}</span>
-            <ElDropdown class="btn-menu" @command="handleRowCommand($event, node)" v-readonlybtn="authority">
+            <ElDropdown
+              class="btn-menu flex align-center"
+              @command="handleRowCommand($event, node)"
+              v-readonlybtn="authority"
+            >
               <IconButton @click.stop sm :disabled="$disabledReadonlyUserBtn()">more</IconButton>
               <template #dropdown>
                 <ElDropdownMenu>
@@ -58,16 +68,22 @@
           </span>
         </template>
       </ElTree>
-      <ElButton
-        v-if="treeData && treeData.length === 0 && visible"
-        text
-        v-readonlybtn="authority"
-        @click="showDialog()"
-        class="create"
-        >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
-      >
+      <div class="text-center">
+        <ElButton
+          v-if="treeData && treeData.length === 0 && visible"
+          text
+          v-readonlybtn="authority"
+          @click="showDialog()"
+          class="create"
+          >{{ $t('packages_component_src_classification_chuangjianfenlei') }}</ElButton
+        >
+      </div>
     </div>
-    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
+    <ElDialog
+      v-model="dialogConfig.visible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
       <template #header="{ titleClass }">
         <span :class="titleClass">{{ dialogConfig.title }}</span>
       </template>
@@ -95,6 +111,7 @@ import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import { IconButton } from './icon-button'
+import { meta } from '@typescript-eslint/parser'
 
 export default {
   components: { IconButton, VIcon },
@@ -113,8 +130,9 @@ export default {
       type: String,
     },
     viewPage: {
-      type: String,
+      type: String
     },
+    dragState: Object
   },
   data() {
     return {
@@ -158,8 +176,8 @@ export default {
       },
       set(value) {
         this.$emit('update:visible', value)
-      },
-    },
+      }
+    }
   },
   mounted() {
     this.getData()
@@ -215,10 +233,11 @@ export default {
   methods: {
     ...mapMutations('classification', ['setTag', 'setPanelFlag']),
     toggle() {
-      this.isExpand = !this.isExpand
+      const _isExpand = !this.isExpand
+      this.isExpand = _isExpand
       this.setPanelFlag({
-        panelFlag: this.isExpand,
-        type: this.viewPage,
+        panelFlag: _isExpand,
+        type: this.viewPage
       })
     },
     clear() {
@@ -238,8 +257,9 @@ export default {
       this.emitCheckedNodes()
     },
     nodeClickHandler(data, node) {
+      let checked = node.checked
       this.clear()
-      node.checked = !node.checked
+      node.checked = !checked
       this.emitCheckedNodes()
     },
     emitCheckedNodes() {
@@ -251,16 +271,8 @@ export default {
       })
     },
     getData(cb) {
-      let where = {}
-      if (this.types.length) {
-        where.item_type = {
-          $in: this.types,
-        }
-      }
-      let filter = {
-        where,
-      }
-      if (this.types[0] === 'user') {
+      const type = this.types[0]
+      if (type === 'user') {
         userGroupsApi
           .get({
             filter: JSON.stringify({
@@ -286,15 +298,11 @@ export default {
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi
-          .childAccount({
-            filter: JSON.stringify(filter),
-          })
-          .then((data) => {
-            let items = data?.items || []
-            this.treeData = this.formatData(items)
-            cb && cb(items)
-          })
+        metadataDefinitionsApi.getTags(type).then(data => {
+          let items = data?.items || []
+          this.treeData = this.formatData(items)
+          cb && cb(items)
+        })
       }
     },
     getDataAll(cb) {
@@ -503,8 +511,83 @@ export default {
         }
       })
     },
-  },
-  emits: ['nodeChecked'],
+    findParentNodeByClassName(el, cls) {
+      let parent = el.parentNode
+      while (parent && !parent.classList.contains(cls)) {
+        parent = parent.parentNode
+      }
+      return parent
+    },
+    handleTreeDragEnter(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly || !this.dragState.isDragging) return
+
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+      dropNode.classList.add('is-drop-inner')
+    },
+
+    handleTreeDragOver(ev) {
+      ev.preventDefault()
+    },
+
+    handleTreeDragLeave(ev, data) {
+      ev.preventDefault()
+
+      if (data.readOnly) return
+
+      if (!ev.currentTarget.contains(ev.relatedTarget)) {
+        const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+        dropNode.classList.remove('is-drop-inner')
+      }
+    },
+
+    async handleTreeDrop(ev, data) {
+      const { draggingObjects } = this.dragState
+      const dropNode = this.findParentNodeByClassName(ev.currentTarget, 'el-tree-node')
+
+      if (!draggingObjects?.length || !dropNode) return
+      dropNode.classList.remove('is-drop-inner')
+
+      const id = draggingObjects
+        .filter(item => {
+          return item.listtags?.length ? item.listtags.every(tag => tag.id !== data.id) : true
+        })
+        .map(item => item.id)
+
+      let tableName
+      switch (this.viewPage) {
+        case 'connections':
+          tableName = 'Connections'
+          break
+        case 'migrate':
+        case 'sync':
+          tableName = 'Task'
+          break
+      }
+
+      if (!tableName) {
+        console.warn('tableName not found')
+        return
+      }
+
+      if (id.length) {
+        await metadataDefinitionsApi.batchPushListtags(tableName, {
+          id,
+          listtags: [
+            {
+              id: data.id,
+              value: data.value
+            }
+          ]
+        })
+        this.$message.success(this.$t('public_message_operation_success'))
+        this.$emit('drop-in-tag')
+      } else {
+        this.$message.info(this.$t('packages_component_data_already_exists'))
+      }
+    }
+  }
 }
 </script>
 
@@ -637,6 +720,7 @@ export default {
       text-overflow: ellipsis;
       max-width: 120px;
     }
+
     .btn-menu button:not([aria-expanded='true']) {
       visibility: hidden;
     }
@@ -649,6 +733,14 @@ export default {
     font-size: $fontBaseTitle;
     // color: map-get($color, primary);
     cursor: pointer;
+  }
+}
+</style>
+<style lang="scss">
+.classification-tree {
+  .el-tree-node__content {
+    height: 32px;
+    overflow: hidden;
   }
 }
 </style>

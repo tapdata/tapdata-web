@@ -11,7 +11,9 @@
         <ElImage :src="imgSrc"></ElImage>
       </slot>
     </div>
-    <p class="empty-desc">{{ description }}</p>
+    <slot name="default">
+      <p class="empty-desc">{{ description }}</p>
+    </slot>
   </div>
 </template>
 

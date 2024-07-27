@@ -1,5 +1,5 @@
 <template>
-  <div class="swim-lane flex flex-column h-100 position-relative">
+  <div class="swim-lane flex flex-column h-100 position-relative overflow-hidden">
     <div class="page-header-title bg-white box-card flex align-center position-relative">
       <span>{{ $t('page_title_data_hub') }}</span>
       <ElTooltip
@@ -52,7 +52,7 @@
           @load-directory="loadDirectory"
           @preview="handlePreview"
           @find-parent="handleFindParent"
-          @handle-connection="handleConnection"
+          @on-scroll="onScroll"
           @handle-show-upgrade="handleShowUpgradeDialog"
         ></component>
       </template>
@@ -67,6 +67,7 @@
       v-model:mode="mode"
       v-model:visible="settingsVisible"
       :fdmConnection="fdmConnection"
+      :mdmConnection="mdmConnection"
       @success="handleSettingsSuccess"
       @init="handleSettingsInit"
     ></Settings>
@@ -74,6 +75,7 @@
       ref="tablePreview"
       @create-single-task="hanldeCreateSingleTask"
       @handle-show-upgrade="handleShowUpgradeDialog"
+      @create-api="handleCreateAPI"
     />
     <ConnectionPreview ref="connectionView" />
 
@@ -145,7 +147,13 @@ export default {
       },
       mode: '',
       selectorType: '',
-      settings: null,
+      settings: {
+        mode: 'integration',
+        fdmStorageCluster: 'self',
+        fdmStorageConnectionId: '',
+        mdmStorageCluster: 'self',
+        mdmStorageConnectionId: ''
+      },
       directoryMap: {},
       fdmConnection: null,
       fdmNotExist: false,
@@ -235,6 +243,8 @@ export default {
     window.removeEventListener('keyword', this.handleListenerEsc)
     // 销毁画布实例
     this.jsPlumbIns?.destroy()
+    this.targetDomSet = null
+    this.otherDomSet = null
   },
 
   methods: {
@@ -269,10 +279,11 @@ export default {
 
     handleSettingsSuccess(data) {
       this.mode = data.mode
+      Object.assign(this.settings, data)
     },
 
     handleSettingsInit(settings) {
-      this.settings = settings
+      Object.assign(this.settings, settings)
     },
 
     loadDirectory() {
@@ -498,6 +509,9 @@ export default {
         this.$refs.fdm[0].searchByKeywordList(keywordOptions.fdm)
       }
 
+      const targetDom = new Set()
+      const otherDom = new Set()
+
       this.$nextTick(() => {
         this.edgsLinks.forEach((el) => {
           const { sourceNode, targetNode } = el || {}
@@ -506,6 +520,14 @@ export default {
           // 过滤掉source节点连线到source节点的情况
           if (targetNode.ldpType !== 'source') {
             connectionLines.push([sDom, tDom])
+          }
+
+          otherDom.add(sDom)
+
+          if (targetNode.ldpType === 'target') {
+            targetDom.add(tDom)
+          } else {
+            otherDom.add(tDom)
           }
         })
 
@@ -542,6 +564,10 @@ export default {
             ],
           })
         })
+
+        // 缓存所有dom node
+        this.targetDomSet = targetDom
+        this.otherDomSet = otherDom
       })
     },
 
@@ -600,7 +626,24 @@ export default {
               : this.handleShowUpgradeCharges(err.message)
           })
     },
-  },
+
+    handleCreateAPI(connection, tableOjb) {
+      this.$refs.target[0]?.createAPI(connection, tableOjb)
+    },
+
+    onScroll() {
+      if (this.showParentLineage) {
+        for (let el of this.otherDomSet) {
+          this.jsPlumbIns.revalidate(el)
+        }
+
+        // 后面可对api节点特殊处理
+        for (let el of this.targetDomSet) {
+          this.jsPlumbIns.revalidate(el)
+        }
+      }
+    }
+  }
 }
 </script>
 
@@ -692,6 +735,13 @@ export default {
     input {
       width: auto;
     }
+
+    .list__title {
+      z-index: 5;
+    }
+  }
+  .page-header-title {
+    z-index: 5;
   }
 }
 .icon {

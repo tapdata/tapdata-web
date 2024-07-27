@@ -444,6 +444,7 @@ export default {
           accessNodeType: 1,
           accessNodeProcessId: 1,
           accessNodeProcessIdList: 1,
+          priorityProcessId: 1,
           pdkType: 1,
           pdkHash: 1,
           capabilities: 1,
@@ -468,6 +469,9 @@ export default {
     },
 
     async loadDatabase(loadMore) {
+      this.connectionCancelSource?.cancel()
+      this.connectionCancelSource = CancelToken.source()
+
       if (loadMore) {
         this.dbPage++
         this.dbLoadingMore = true
@@ -476,7 +480,9 @@ export default {
         this.dbPage = 1
       }
 
-      const data = await connectionsApi.get(this.getDbFilter())
+      const data = await connectionsApi.get(this.getDbFilter(), {
+        cancelToken: this.connectionCancelSource.token
+      })
 
       this.dbTotal = data.total
 
@@ -754,11 +760,27 @@ export default {
     getNodeProps(connection, tableName) {
       // 设置pdk节点配置默认值
       const pdkProperties = this.$store.state.dataflow.pdkPropertiesMap[connection.pdkHash]
-      let nodeConfig
+      let nodeConfig = {}
+      const attrs = {
+        connectionName: connection.name,
+        connectionType: connection.connection_type,
+        accessNodeProcessId: connection.accessNodeProcessId,
+        priorityProcessId: connection.priorityProcessId,
+        pdkType: connection.pdkType,
+        pdkHash: connection.pdkHash,
+        capabilities: connection.capabilities || [],
+        db_version: connection.db_version,
+        hasCreated: false
+      }
+
       if (pdkProperties) {
         nodeConfig = getInitialValuesInBySchema(
           {
             properties: {
+              attrs: {
+                type: 'object',
+                default: attrs
+              },
               $inputs: {
                 default: [],
                 type: 'array',
@@ -775,6 +797,7 @@ export default {
           },
           {},
         )
+        delete nodeConfig.attrs
         delete nodeConfig.$inputs
         delete nodeConfig.$outputs
       }
@@ -786,23 +809,7 @@ export default {
         connectionId: connection.id,
         tableName,
         nodeConfig,
-        attrs: {
-          connectionName: connection.name,
-          connectionType: connection.connection_type,
-          accessNodeProcessId: connection.accessNodeProcessId,
-          pdkType: connection.pdkType,
-          pdkHash: connection.pdkHash,
-          capabilities: connection.capabilities || [],
-          db_version: connection.db_version,
-          hasCreated: false,
-          /*capabilities: [
-          ...(connection.capabilities || []),
-          {
-            id: 'new_field_function',
-            type: 11
-          }
-        ]*/
-        },
+        attrs
       }
     },
 

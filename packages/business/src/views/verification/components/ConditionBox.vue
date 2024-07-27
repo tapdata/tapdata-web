@@ -58,14 +58,10 @@
                   v-model:value="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.target.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -76,14 +72,10 @@
                   v-model:value="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.source.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
@@ -246,84 +238,7 @@
     </ElDialog>
     <FieldDialog ref="fieldDialog" @save="handleChangeFields"></FieldDialog>
 
-    <!--API 抽屉-->
-    <ElDrawer
-      append-to-body
-      :modal="false"
-      :title="$t('packages_dag_api_docs')"
-      :size="680"
-      :visible="showDoc"
-      @update:visible="(val) => (showDoc = val)"
-    >
-      <div class="px-4 condition-js-doc-content">
-        <h2>TimeUpdate</h2>
-        <h3>{{ $t('packages_dag_js_processor_index_fangfa') }}</h3>
-        <h4>$dynamicDate</h4>
-        <ul>
-          <li>
-            {{ $t('packages_dag_js_processor_index_zuoyong') }}
-            校验任务过滤条件中时间参数自动根据配置做值更新，目前该函数仅支持Mongo。改属性包含的参数有：
-            <ol>
-              <li>format: 可变时间格式串，用法如示例</li>
-              <li>
-                subtract: 时间相对减少量，单位毫秒,默认值为0，即当前配置时间，如format中使用了占位符则取当前任务时间
-              </li>
-              <li>toString: 是否输出为时间字符串，可不填默认值为false, false表示输出为时日期对象等价于$date</li>
-            </ol>
-          </li>
-          <li>
-            {{ $t('packages_dag_js_processor_index_yongfa') }}
-          </li>
-        </ul>
-        <ol>
-          <li>固定时间</li>
-        </ol>
-        <HighlightCode
-          language="json"
-          :code="
-            JSON.stringify(
-              {
-                field: {
-                  $gt: {
-                    $dynamicDate: {
-                      format: '2023-03-19 05:00:00',
-                      subtract: 3600000,
-                      toString: false
-                    }
-                  }
-                }
-              },
-              null,
-              2
-            )
-          "
-        ></HighlightCode>
-        <p>
-          以上过滤条件的含义为：查询所有字段field时间大于"2023-03-19 04:00:00"的记录，配置中时间为"2023-03-19
-          05:00:00",时间减少的跨度为3600000
-        </p>
-        <ol start="2">
-          <li>动态天数</li>
-        </ol>
-        <HighlightCode
-          language="json"
-          :code="
-            JSON.stringify(
-              {
-                field: { $gt: { $dynamicDate: { format: '%y-%M-%d 00:00:00', subtract: 86400000, toString: false } } }
-              },
-              null,
-              2
-            )
-          "
-        ></HighlightCode>
-        <p>
-          以上过滤条件的含义为：每次任务启动时查询一天前所有字段field时间0点以后的记录，配置中时间为"%y-%M-%d
-          00:00:00",时间减少的跨度为86400000。%y为年份占位符，使用任务启动时间的年份。%M为月份占位符，使用任务启动的月份，依次类推，还支持的占位符有%d,
-          %h, %m, %s, %S
-        </p>
-      </div>
-    </ElDrawer>
+    <DocsDrawer :visible="showDoc" @update:visible="showDoc = $event"></DocsDrawer>
   </div>
 </template>
 
@@ -342,11 +257,14 @@ import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
+import DocsDrawer from './DocsDrawer.vue'
 
 export default {
   components: {
+    DocsDrawer,
     AsyncSelect,
     DynamicScroller,
     DynamicScrollerItem,
@@ -1173,6 +1091,7 @@ export default {
             },
             name: `${nodeName} / ${connectionName}`,
             value: connectionId,
+            id: connectionId,
             label: `${nodeName} / ${connectionName}`,
             databaseType: databaseType,
           }
@@ -1283,7 +1202,7 @@ export default {
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
           objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
-          tableNames = [targetNode.tableName]
+          tableNames = [el.tableName, targetNode.tableName] // 加上源表名，否则源和目标表名不一致时，源表关联字段不会自动填充
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
           tableNameRelation[el.tableName] = targetNode.tableName
         }
@@ -1781,6 +1700,10 @@ export default {
       // 检查
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'query_by_advance_filter_function')
+        if (message) return message
+
         // 索引字段为空
         const haveIndexFieldArr = tasks.filter((c) => c.source.sortColumn && c.target.sortColumn)
         const noIndexFieldArr = tasks.filter((c) => !c.source.sortColumn || !c.target.sortColumn)
@@ -1862,9 +1785,39 @@ export default {
           this.updateErrorMsg(message, 'error')
           return message
         }
+      } else if (this.inspectMethod === 'row_count') {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'batch_count_function')
+        if (message) return message
       }
 
       this.updateErrorMsg('')
+    },
+
+    validateCapabilities(tasks, capability) {
+      const noSupportList = new Set()
+      tasks.forEach(item => {
+        if (!item.source.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.source.databaseType)
+        }
+
+        if (!item.target.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.target.databaseType)
+        }
+      })
+
+      let message = ''
+
+      if (noSupportList.size) {
+        message = this.$t('packages_business_not_support_validation', {
+          connection: [...noSupportList].join(', '),
+          method: inspectMethodMap[this.inspectMethod]
+        })
+        this.updateErrorMsg(message, 'error')
+        this.$message.error(message)
+      }
+
+      return message
     },
 
     loadDoc() {
@@ -1962,9 +1915,11 @@ return {result: 'failed',message: "记录不一致",data: targetRow}
       if (val !== 'custom') {
         item.source.columns = null
         item.target.columns = null
-        return
+      } else {
+        this.handleCustomFields(item, index)
       }
-      this.handleCustomFields(item, index)
+
+      item.modeType = val // 防止 SchemaToForm 回流
     },
 
     handleChangeFields(data = [], index) {

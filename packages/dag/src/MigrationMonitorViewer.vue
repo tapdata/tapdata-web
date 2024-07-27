@@ -453,6 +453,7 @@ export default {
           name: 'dataflowList',
         })
       }
+      window.name = null
     },
 
     handleEdit() {

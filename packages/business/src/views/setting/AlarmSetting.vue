@@ -1,17 +1,25 @@
 <template>
+  <!--这个页面在云版作为Dialog 使用，调整的时候慎重处理，记得两个版本同时验证-->
   <section class="flex flex-1 flex-column ml-4 mr-4 overflow-hidden">
     <header class="flex mb-4 mt-4 gap-3">
       <div class="flex-1">
         {{ $t('packages_business_setting_alarmnotification_renwugaojingshe') }}
       </div>
-      <ElLink type="primary" @click="showAlarmRecipient"
+      <ElLink v-if="!isDaas" type="primary" @click="showAlarmRecipient"
         >{{ $t('packages_business_setting_alarmnotification_recipient_default') }}
       </ElLink>
       <ElLink type="primary" @click="showAlarmRlues"
         >{{ $t('packages_business_setting_alarmnotification_morengaojinggui') }}
       </ElLink>
     </header>
-    <VTable ref="table" class="table-list" :data="tableData" :columns="columns" :hasPagination="false">
+    <VTable
+      ref="table"
+      class="table-list"
+      :data="tableData"
+      :columns="columns"
+      :hasPagination="false"
+      :height="inDialog ? undefined : '100%'"
+    >
       <template v-slot:key="scope">
         <span>{{ keyMapping[scope.row.key] }}</span>
       </template>
@@ -117,7 +125,7 @@
         </ElFormItem>
       </ElForm>
     </section>
-    <footer class="flex justify-content-end mt-4">
+    <footer class="flex justify-content-end" :class="inDialog ? 'pt-4' : 'py-4'">
       <el-button @click="remoteMethod('close')">{{ $t('public_button_cancel') }}</el-button>
       <el-button type="primary" @click="save()">{{ $t('public_button_save') }}</el-button>
     </footer>
@@ -216,6 +224,9 @@ import { cloneDeep } from 'lodash'
 
 export default {
   name: 'AlarmNotification',
+  props: {
+    inDialog: Boolean
+  },
   components: { VTable },
   data() {
     return {

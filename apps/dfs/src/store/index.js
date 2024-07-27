@@ -92,6 +92,8 @@ const store = Vuex.createStore({
     showReplicationTour: false,
     replicationTourFinish: false,
     taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
+    setIsMockUser: false,
+    mockUserPromise: null
   },
 
   getters: {
@@ -113,6 +115,10 @@ const store = Vuex.createStore({
 
   mutations: {
     setConfig(state, config) {
+      if (!config.slackLink) {
+        config.slackLink =
+          'https://join.slack.com/t/tapdata-workspace/shared_invite/zt-27lvv108h-G7aKWUbgZ2Ms~0MPehAhfg'
+      }
       Object.assign(state.config, config)
     },
 
@@ -216,7 +222,15 @@ const store = Vuex.createStore({
     setTaskLoadedTime(state) {
       state.taskLoadedTime = new Date().getTime()
     },
-  },
+
+    setIsMockUser(state, flag) {
+      state.setIsMockUser = flag
+    },
+
+    setMockUserPromise(state, promise) {
+      state.mockUserPromise = promise
+    }
+  }
 })
 
 export default store

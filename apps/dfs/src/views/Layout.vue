@@ -1,7 +1,7 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader" class="layout-header"></TheHeader>
-    <ElAside class="left-aside" width="220px">
+    <ElAside class="left-aside pl-2" width="220px">
       <ElMenu class="layout-menu border-end-0" :default-active="activeMenu" @select="menuTrigger">
         <div class="flex-1">
           <template v-for="menu in menus">
@@ -86,7 +86,7 @@
       </ElMenu>
     </ElAside>
     <ElContainer direction="vertical" class="layout-main position-relative">
-      <PageHeader class="bg-white rounded-lg mb-4"></PageHeader>
+      <PageHeader class="bg-white rounded-lg mb-4 overflow-hidden"></PageHeader>
       <ElMain class="main rounded-lg">
         <RouterView @agent_no_running="onAgentNoRunning"></RouterView>
       </ElMain>

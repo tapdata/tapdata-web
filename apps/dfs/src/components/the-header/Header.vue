@@ -23,11 +23,7 @@
           <span class="cursor-pointer ml-1">{{ $t('dfs_the_header_header_jiaruSla') }}</span>
         </div>
         <!--线下部署-->
-        <div
-          v-if="isDomesticStation"
-          class="command-item cursor-pointer flex align-center gap-1 rounded-4"
-          @click="goOfflineDeploy"
-        >
+        <div class="command-item cursor-pointer flex align-center gap-1 rounded-4" @click="goOfflineDeploy">
           <VIcon size="16">deploy</VIcon>
           <span> {{ $t('dfs_offline_deployment') }} </span>
         </div>
@@ -80,7 +76,6 @@
 
           <template #dropdown>
             <ElDropdownMenu>
-              <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
               <ElDropdownItem command="userCenter" :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('the_header_Header_yongHuZhongXin') }}
               </ElDropdownItem>
@@ -111,9 +106,27 @@ export default {
   inject: ['buried'],
   components: { VIcon, NotificationPopover },
   data() {
+    let officialWebsiteAddress
+    let docUrl
+
+    if (this.$store.getters.isDomesticStation) {
+      officialWebsiteAddress = 'https://tapdata.net'
+      docUrl = 'https://docs.tapdata.net/'
+    } else {
+      officialWebsiteAddress = 'https://tapdata.io'
+      docUrl = 'https://docs.tapdata.io/'
+    }
+
     return {
-      topBarLinks: this.$store.state.config?.topBarLinks,
-      officialWebsiteAddress: this.$store.state.config?.officialWebsiteAddress || 'https://tapdata.net',
+      topBarLinks: [
+        {
+          text: 'header_manual', //使用手册
+          link: docUrl,
+          icon: 'send',
+          type: 'handbook'
+        }
+      ],
+      officialWebsiteAddress,
       lang: '',
       languages: langMenu,
       domain: document.domain,
@@ -136,23 +149,6 @@ export default {
 
     this.loadUserMock()
     this.getAgentCount()
-    //如果没有配置topBarLinks 给默认值
-    if (!this.$store.state.config?.topBarLinks) {
-      this.topBarLinks = [
-        {
-          text: 'header_technical_support', //技术支持
-          link: 'https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community',
-          icon: 'question',
-          type: 'support',
-        },
-        {
-          text: 'header_manual', //使用手册
-          link: 'https://docs.tapdata.net/cloud/what-is-tapdata-cloud',
-          icon: 'send',
-          type: 'handbook',
-        },
-      ]
-    }
   },
   methods: {
     ...mapMutations(['setUpgradeFeeVisible']),
@@ -163,20 +159,8 @@ export default {
         case 'workbench':
           this.$router.push({ name: 'Home' })
           break
-        case 'help':
-          window.open('https://docs.tapdata.io/', '_blank')
-          break
-        case 'contact-us':
-          window.open('https://cloud.tapdata.net/contact.html', '_blank')
-          break
         case 'home':
           window.open(this.officialWebsiteAddress, '_blank')
-          break
-        case 'v2':
-          window.open('https://cloud.tapdata.net/console/#/workbench/', '_blank')
-          break
-        case 'op':
-          window.open('https://tapdata.net/tapdata-on-prem/demo.html', '_blank')
           break
         case 'userCenter':
           this.$router.push({
@@ -199,18 +183,6 @@ export default {
               location.href = './logout'
             }
           })
-          break
-        case 'toCommunity':
-          window.open('https://ask.tapdata.net/', '_blank')
-          break
-        case 'source-center':
-          window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
-          break
-        case 'handbook':
-          window.open('https://docs.tapdata.net/cloud/what-is-tapdata-cloud', '_blank')
-          break
-        case 'support':
-          window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
           break
       }
     },
@@ -258,15 +230,28 @@ export default {
       window.open(this.$store.state.config.slackLink, '_blank')
     },
     goOfflineDeploy() {
-      window.open('https://tapdata.net/tapdata-on-prem/demo.html')
+      window.open(
+        this.isDomesticStation
+          ? 'https://tapdata.net/tapdata-on-prem/demo.html'
+          : 'https://tapdata.mike-x.com/lV5o0?m=QkkvTrNtVq6jvQpX',
+        '_blank'
+      )
     },
 
     loadUserMock() {
-      this.$axios.get('api/gw/user').then((data) => {
-        this.mockUserId = data?.mockUserId || false
-      })
-    },
-  },
+      const mockUserPromise = this.$axios
+        .get('api/gw/user', {
+          maxRedirects: 0
+        })
+        .then(data => {
+          this.mockUserId = data?.mockUserId || false
+          this.$store.commit('setIsMockUser', this.mockUserId)
+          return this.mockUserId
+        })
+
+      this.$store.commit('setMockUserPromise', mockUserPromise)
+    }
+  }
 }
 </script>
 

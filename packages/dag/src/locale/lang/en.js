@@ -50,7 +50,7 @@ export default {
   packages_dag_task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
   packages_dag_task_setting_automatic_index: 'Automatically create an index',
   packages_dag_task_setting_stop_on_error: 'Stop on error',
-  packages_dag_connection_form_shared_mining: 'CDC Log Caching',
+  packages_dag_connection_form_shared_mining: 'Using CDC Log Caching',
   packages_dag_task_list_verify: 'Data Validation',
   packages_dag_task_setting_is_schedule: 'Scheduled tasks regularly',
   packages_dag_dag_data_setting_expression: 'Expression:',
@@ -334,7 +334,7 @@ export default {
   packages_dag_nodes_database_bucunzaishicha: 'Insert if not exists',
   packages_dag_nodes_database_bucunzaishidayinrizhi: 'Print log if not exists',
   packages_dag_nodes_database_gengxinshijian: 'Update Event',
-  packages_dag_nodes_database_mubiaocunzaishi: 'Update when target exists',
+  packages_dag_nodes_database_mubiaocunzaishi: 'Discard when target exists',
   packages_dag_nodes_database_charushijian: 'Insert Event',
   packages_dag_nodes_database_shujuxieruce: 'Data write strategy',
   packages_dag_nodes_database_baochimubiaoduan: 'Preserve the original table structure and data on the target side',
@@ -725,6 +725,14 @@ export default {
   packages_dag_unwind_preserveNullAndEmptyArrays: 'Preserve Empty and Null Arrays',
   packages_dag_unwind_preserveNullAndEmptyArrays_tips:
     'If true, if the path is null, missing, or an empty array, outputs the document.\nIf false, if path is null, missing, or an empty array, does not output a document.',
+  packages_dag_unwind_unwindModel: 'Unwind Model',
+  packages_dag_unwind_embedded: 'Embedded Object',
+  packages_dag_unwind_flatten: 'Flatten Fields',
+  packages_dag_unwind_arrayModel: 'Array Element Type',
+  packages_dag_unwind_arrayModel_mix: 'Mixed Type',
+  packages_dag_unwind_arrayModel_basic: 'Basic Type',
+  packages_dag_unwind_arrayModel_object: 'Object Type',
+  packages_dag_unwind_joiner: 'Field Joiner',
   packages_dag_btn_disable_node: 'Disable Node',
   packages_dag_only_mongodb: 'Supports MongoDB databases only.',
   packages_dag_field_inference_list_zidingyileixing: 'Custom Type',
@@ -746,4 +754,34 @@ export default {
   packages_dag_task_setting_syncPoint_recent_increment: 'Time of the most recent increment',
   packages_dag_task_setting_syncPoint_from_now: 'Apply',
   packages_dag_feature_agent_version_tips: `Requires Agent version {val} or higher`,
+  packages_dag_syncIndex: 'Table Creation Synchronize Index',
+  packages_dag_syncIndex_desc:
+    'Currently, only unique indexes and regular indexes are supported, and functions cannot be used in indexes.',
+  packages_dag_ddl_ignore_rules: 'DDL Ignoring Rules',
+  packages_dag_ddl_ignore_rules_placeholder: 'Please enter a regular expression to ignore specific DDL',
+  packages_dag_ddl_ignore_rules_tip:
+    'When the option to halt the task with an error upon encountering DDL is selected, it is possible to configure which DDLs to ignore through regular expressions.\nExample:\nALTER\\s+TABLE\\s+"([^"]+)"\\s+ADD\\s+\\("([^"]+)"\\s+[^\\)]+\\)',
+  packages_dag_just_insert: 'Insert Only',
+  packages_dag_unwind_validate_error:
+    'When using the Unwind node, the target node write strategy should support "insert-only".',
+  packages_dag_doubleActive: 'Bidirectional Synchronization',
+  packages_dag_doubleActive_tip:
+    'When bidirectional synchronization is required and the generated incremental events do not interfere with the system itself, please turn on this switch.',
+  packages_dag_time_zone_offset: 'Time Zone Offset',
+  packages_dag_dynamic_date_suffix: 'Dynamic Date Suffix',
+  packages_dag_dynamic_date_suffix_tip:
+    'When enabled, the generated table names will have a date suffix corresponding to the runtime of the task',
+  packages_dag_table_rename_multiple: 'In the task, only one table editing node is allowed',
+  packages_dag_migrate_union: 'Union',
+  packages_dag_merged_tableName: 'Merged Table Name',
+  packages_dag_merged_tableName_ph: 'Please enter the merged table name',
+  packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed',
+  packages_dag_enableConcurrentProcess: 'Enable concurrent processing',
+  packages_dag_concurrentNum: 'Number of Concurrent Tasks',
+  packages_dag_uniqueIndexEnable: 'Create unique index',
+  packages_dag_uniqueIndexEnable_tip:
+    'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.',
+  packages_dag_refresh_schema: 'Refresh Schema',
+  packages_dag_switch_to_table_view: 'Switch to Table View',
+  packages_dag_switch_to_tree_view: 'Switch to Tree View'
 }

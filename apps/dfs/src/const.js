@@ -130,29 +130,14 @@ export const INSTANCE_STATUS_MAP = {
     3: { text: i18n.global.t('dfs_instance_details_status_invalid'), type: 'danger' }, //失效
   },
   MILESTONE_STATUS_MAP = {
-    waiting: {
-      text: i18n.global.t('task_milestone_waiting'),
-      icon: 'daizhixing',
-      type: 'warning',
-    },
-    running: {
-      text: i18n.global.t('task_milestone_running'),
-      icon: 'jinxingzhong',
-      type: 'success',
-    },
-    error: {
-      text: i18n.global.t('public_status_error'),
-      icon: 'cuowu',
-      type: 'danger',
-    },
-    finish: {
-      text: i18n.global.t('public_status_finished'),
-      icon: 'yiwancheng',
-      type: 'success',
-    },
-    paused: {
-      text: i18n.global.t('task_milestone_paused'),
-      icon: 'yizanting',
-      type: 'info',
-    },
+    waiting: { text: i18n.global.t('task_milestone_waiting'), icon: 'daizhixing', type: 'warning' },
+    running: { text: i18n.global.t('task_milestone_running'), icon: 'jinxingzhong', type: 'success' },
+    error: { text: i18n.global.t('public_status_error'), icon: 'cuowu', type: 'danger' },
+    finish: { text: i18n.global.t('public_status_finished'), icon: 'yiwancheng', type: 'success' },
+    paused: { text: i18n.global.t('task_milestone_paused'), icon: 'yizanting', type: 'info' }
+  },
+  BILL_STATUS_MAP = {
+    UNPAID: { text: i18n.global.t('packages_business_shared_const_weizhifu'), type: 'warning' },
+    PAID: { text: i18n.global.t('packages_business_shared_const_yizhifu'), type: 'success' },
+    DEPRECATED: { text: i18n.global.t('dfs_instance_details_status_invalid'), type: 'disable' }
   }

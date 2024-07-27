@@ -17,6 +17,16 @@
           <VIcon class="color-primary cursor-pointer" size="12" @click="startLoadData">icon_table_selector_load</VIcon>
         </ElTooltip>
       </div>
+      <div class="mb-2">
+        <ElInput
+          v-model="tableName"
+          :placeholder="$t('packages_form_table_rename_index_sousuobiaoming')"
+          prefixIcon="el-icon-search"
+          clearable
+          @input="handleInput"
+          style="width: 240px"
+        ></ElInput>
+      </div>
     </template>
     <VTable :remoteMethod="remoteMethod" :columns="columns" height="100%" ref="table" class="table-list">
       <template v-slot:progress="scope">
@@ -36,6 +46,7 @@ import i18n from '@tap/i18n'
 
 import { VTable } from '@tap/component'
 import { measurementApi } from '@tap/api'
+import { debounce } from 'lodash'
 
 export default {
   name: 'InitialList',
@@ -49,6 +60,7 @@ export default {
   },
   data() {
     return {
+      tableName: '',
       visible: false,
       statusMap: {
         NOT_START: {
@@ -113,9 +125,17 @@ export default {
         this.init()
       } else {
         this.clearTimer()
+        this.tableName = ''
       }
     },
   },
+
+  mounted() {
+    this.lazyLoadData = debounce(pageNum => {
+      this.$refs.table?.fetch(pageNum)
+    }, 200)
+  },
+
   methods: {
     init() {
       this.startLoadData()
@@ -145,6 +165,7 @@ export default {
         taskRecordId: this.dataflow?.taskRecordId,
         size,
         page: current,
+        tableName: this.tableName
       }
       return measurementApi.fullStatistics(filter).then((data) => {
         return {
@@ -163,8 +184,11 @@ export default {
     clearTimer() {
       clearInterval(this.timer)
     },
-  },
-  emits: ['update:value'],
+
+    handleInput() {
+      this.lazyLoadData(1)
+    }
+  }
 }
 </script>
 

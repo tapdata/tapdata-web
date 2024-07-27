@@ -1,11 +1,11 @@
 <template>
-  <div v-show="!isHidden">
+  <div v-show="!isHidden" class="page-header">
     <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" :separator-icon="ArrowRight">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
     </ElBreadcrumb>
-    <div class="flex align-items-center px-4" v-else>
+    <div class="bg-white flex align-items-center px-4" v-else>
       <span class="fs-5 py-4 font-color-dark">{{ $t($route.meta.title || '') }}</span>
       <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
       <Desciption
@@ -97,7 +97,7 @@ export default {
 .breadcrumb {
   height: 50px;
   line-height: 50px;
-  margin-left: 24px;
+  padding-left: 24px;
   .el-breadcrumb__item:last-child .el-breadcrumb__inner,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
   .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
