@@ -129,7 +129,7 @@
         sortable="lastStartTime"
         min-width="170"
       ></el-table-column>
-      <el-table-column :label="$t('public_operation')" width="260">
+      <el-table-column :label="$t('public_operation')" width="310">
         <template v-if="isDaas" #header>
           <div class="flex align-center">
             <span>{{ $t('public_operation_available') }}</span>
@@ -140,24 +140,26 @@
         </template>
 
         <template #default="{ row }">
-          <ElLink type="primary" :disabled="!row.InspectResult" @click="toTableInfo(row.id)"
+          <ElButton text type="primary" :disabled="!row.InspectResult" @click="toTableInfo(row.id)"
             >{{ $t('packages_business_verification_result_title') }}
-          </ElLink>
+          </ElButton>
 
           <template v-if="havePermission(row.permissionActions, 'Stop') && row.status === 'running'">
-            <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'verify_job_edition'"
               type="primary"
               :disabled="$disabledByPermission('verify_job_edition_all_data', row.user_id)"
               @click="stop(row.id)"
               >{{ $t('public_button_stop') }}
-            </ElLink>
+            </ElButton>
           </template>
 
           <template v-if="havePermission(row.permissionActions, 'Start') && row.status !== 'running'">
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'verify_job_edition'"
               type="primary"
               :disabled="
@@ -166,21 +168,23 @@
               "
               @click="startTask(row.id)"
               >{{ $t('packages_business_verification_executeVerifyTip') }}
-            </ElLink>
+            </ElButton>
           </template>
 
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton
+            text
             v-readonlybtn="'verify_job_edition'"
             type="primary"
             :disabled="!row.InspectResult"
             @click="history(row.id)"
             >{{ $t('packages_business_verification_historyTip') }}
-          </ElLink>
+          </ElButton>
 
           <template v-if="havePermission(row.permissionActions, 'Edit')">
-            <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'verify_job_edition'"
               type="primary"
               :disabled="
@@ -189,18 +193,19 @@
               "
               @click="goEdit(row.id, row.flowId)"
               >{{ $t('packages_business_verification_configurationTip') }}
-            </ElLink>
+            </ElButton>
           </template>
 
           <template v-if="havePermission(row.permissionActions, 'Delete')">
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'verify_job_edition'"
               type="primary"
               :disabled="$disabledByPermission('verify_job_delete_all_data', row.user_id)"
               @click="remove(row.id, row)"
               >{{ $t('public_button_delete') }}
-            </ElLink>
+            </ElButton>
           </template>
         </template>
       </el-table-column>

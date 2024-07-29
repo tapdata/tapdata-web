@@ -62,16 +62,17 @@
             v-if="row.status !== 'active'"
             :disabled="row.status !== 'pending'"
             text
+            type="primary"
             @click="changeStatus(row)"
             >{{ $t('public_button_public') }}</ElButton
           >
-          <ElButton v-if="row.status === 'active'" text @click="changeStatus(row)">{{
+          <ElButton v-if="row.status === 'active'" text type="primary" @click="changeStatus(row)">{{
             $t('public_button_revoke')
           }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton text @click="output(row)">{{ $t('public_button_export') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton text @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" @click="output(row)">{{ $t('public_button_export') }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" @click="removeServer(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
 
         <template v-slot:empty>

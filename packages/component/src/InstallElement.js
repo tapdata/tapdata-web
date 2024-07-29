@@ -1,4 +1,4 @@
-import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElSelectV2, ElDropdown } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox, ElDialog, ElSelect, ElSelectV2, ElDropdown, ElLink } from 'element-plus'
 import 'element-plus/theme-chalk/src/message.scss'
 import 'element-plus/theme-chalk/src/message-box.scss'
 import { CloseIcon } from './CloseIcon'
@@ -62,4 +62,5 @@ export const installElement = (app) => {
   ElSelect.props.popperOptions.default = getDefault
   ElSelectV2.props.popperOptions.default = getDefault
   ElDropdown.props.popperOptions.default = getDefault
+  ElLink.props.underline.default = false
 }

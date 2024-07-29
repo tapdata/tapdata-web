@@ -129,44 +129,57 @@
             <el-button
               v-readonlybtn="'user_edition'"
               text
+              type="primary"
               v-if="['rejected', 'notActivated'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleActive(scope.row)"
             >
               {{ $t('user_list_activation') }}
             </el-button>
-            <ElDivider v-if="['rejected', 'notActivated'].includes(scope.row.status)" direction="vertical"></ElDivider>
+            <ElDivider
+              class="mx-1"
+              v-if="['rejected', 'notActivated'].includes(scope.row.status)"
+              direction="vertical"
+            ></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               text
+              type="primary"
               v-if="!['rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleFreeze(scope.row)"
             >
               {{ $t('user_list_freeze') }}
             </el-button>
-            <ElDivider v-if="!['rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
+            <ElDivider class="mx-1" v-if="!['rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               text
+              type="primary"
               v-if="['notVerified'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleCheck(scope.row)"
               >{{ $t('user_list_check') }}</el-button
             >
-            <ElDivider v-if="['notVerified'].includes(scope.row.status)" direction="vertical"></ElDivider>
+            <ElDivider class="mx-1" v-if="['notVerified'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               text
+              type="primary"
               v-if="['activated', 'rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="edit(scope.row)"
               >{{ $t('public_button_edit') }}</el-button
             >
-            <ElDivider v-if="['activated', 'rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
+            <ElDivider
+              class="mx-1"
+              v-if="['activated', 'rejected'].includes(scope.row.status)"
+              direction="vertical"
+            ></ElDivider>
             <el-button
               v-readonlybtn="'user_delete'"
               text
+              type="primary"
               :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
               >{{ $t('public_button_delete') }}</el-button

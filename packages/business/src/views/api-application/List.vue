@@ -39,27 +39,29 @@
       <el-table-column width="220" fixed="right" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
-            <ElLink
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               :disabled="row.readOnly"
               type="primary"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="handleDetails(row)">
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton text v-readonlybtn="'SYNC_job_edition'" type="primary" @click="handleDetails(row)">
               {{ $t('public_button_details') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               :disabled="row.readOnly"
               type="primary"
               @click="handleDelete(row)"
             >
               {{ $t('public_button_delete') }}
-            </ElLink>
+            </ElButton>
           </div>
         </template>
       </el-table-column>

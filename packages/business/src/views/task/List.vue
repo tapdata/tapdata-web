@@ -89,6 +89,7 @@
               v-else
               role="ellipsis"
               type="primary"
+              :underline="false"
               class="justify-content-start ellipsis block mr-1"
               :class="['name', { 'has-children': row.hasChildren }]"
               @click.stop="handleClickName(row)"
@@ -140,44 +141,49 @@
         </template>
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
-            <ElLink
+            <ElButton
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop && havePermission(row, 'Start')"
               v-readonlybtn="'SYNC_job_operation'"
+              text
               type="primary"
               data-testid="start-task"
               :disabled="row.btnDisabled.start || $disabledReadonlyUserBtn()"
               @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
-            </ElLink>
+            </ElButton>
             <template v-else>
-              <ElLink
+              <ElButton
                 v-if="row.status === 'stopping' && havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
+                text
                 type="primary"
                 data-testid="force-stop-task"
                 :disabled="row.btnDisabled.forceStop || $disabledReadonlyUserBtn()"
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
-              </ElLink>
-              <ElLink
+              </ElButton>
+              <ElButton
                 v-else-if="havePermission(row, 'Stop')"
                 v-readonlybtn="'SYNC_job_operation'"
+                text
                 type="primary"
                 data-testid="stop-task"
                 :disabled="row.btnDisabled.stop || $disabledReadonlyUserBtn()"
                 @click="stop([row.id], row)"
               >
                 {{ $t('public_button_stop') }}
-              </ElLink>
+              </ElButton>
             </template>
             <ElDivider
+              class="mx-1"
               v-if="havePermission(row, 'Start') || havePermission(row, 'Stop')"
               v-readonlybtn="'SYNC_job_operation'"
               direction="vertical"
             ></ElDivider>
-            <ElLink
+            <ElButton
+              text
               v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -186,13 +192,15 @@
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
-            </ElLink>
+            </ElButton>
             <ElDivider
+              class="mx-1"
               v-if="havePermission(row, 'Edit')"
               v-readonlybtn="'SYNC_job_edition'"
               direction="vertical"
             ></ElDivider>
-            <ElLink
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               data-testid="monitor-task"
@@ -200,9 +208,10 @@
               @click="toDetail(row)"
             >
               {{ $t('packages_business_task_list_button_monitor') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -211,13 +220,15 @@
               @click="initialize([row.id], row)"
             >
               {{ $t('public_button_reset') }}
-            </ElLink>
+            </ElButton>
             <ElDivider
+              class="mx-1"
               v-if="havePermission(row, 'Reset')"
               v-readonlybtn="'SYNC_job_edition'"
               direction="vertical"
             ></ElDivider>
-            <ElLink
+            <ElButton
+              text
               v-if="buttonShowMap.copy"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -226,13 +237,15 @@
               @click="copy([row.id], row)"
             >
               {{ $t('public_button_copy') }}
-            </ElLink>
+            </ElButton>
             <ElDivider
+              class="mx-1"
               v-if="buttonShowMap.copy && havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               direction="vertical"
             ></ElDivider>
-            <ElLink
+            <ElButton
+              text
               v-if="havePermission(row, 'Delete')"
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -241,7 +254,7 @@
               @click="del([row.id], row)"
             >
               {{ $t('public_button_delete') }}
-            </ElLink>
+            </ElButton>
           </div>
         </template>
       </el-table-column>

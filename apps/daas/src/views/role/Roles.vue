@@ -45,37 +45,41 @@
           </ElSwitch>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('public_operation')" width="310">
+      <ElTableColumn :label="$t('public_operation')" width="350">
         <template v-slot="scope">
           <ElButton
             text
+            type="primary"
             v-readonlybtn="'role_edition'"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
             {{ $t('role_list_setting_permissions') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElButton
             text
+            type="primary"
             @click="handleAssociatUsers(scope.row.id)"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_edition'"
           >
             {{ $t('role_list_associat_users') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElButton
             text
+            type="primary"
             v-readonlybtn="'role_edition'"
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
             {{ $t('public_button_edit') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <ElButton
             text
+            type="primary"
             @click="handleDelete(scope.row)"
             :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_delete'"

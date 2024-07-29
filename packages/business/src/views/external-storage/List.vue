@@ -52,14 +52,18 @@
             :disabled="row.defaultStorage"
             @change="handleDefault(row)"
           ></ElSwitch>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton :disabled="row.type === 'memory'" text @click="handleTest(row)"
+          <ElDivider class="ml-2 mr-1" direction="vertical"></ElDivider>
+          <ElButton :disabled="row.type === 'memory'" text type="primary" @click="handleTest(row)"
             >{{ $t('public_connection_button_test') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton text :disabled="!row.canEdit" @click="handleEdit(row)">{{ $t('public_button_edit') }}</ElButton>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElButton text :disabled="!row.canDelete" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" :disabled="!row.canEdit" @click="handleEdit(row)">{{
+            $t('public_button_edit')
+          }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" :disabled="!row.canDelete" @click="remove(row)">{{
+            $t('public_button_delete')
+          }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>

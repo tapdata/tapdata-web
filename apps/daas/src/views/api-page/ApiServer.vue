@@ -46,18 +46,24 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('public_operation')" width="170" fixed="right">
+      <el-table-column :label="$t('public_operation')" width="200" fixed="right">
         <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" text @click="edit(scope.row)">
+          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </el-button>
-          <el-button v-readonlybtn="'API_clients_amangement'" text @click="remove(scope.row)">{{
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="remove(scope.row)">{{
             $t('public_button_delete')
           }}</el-button>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
-            <el-button v-readonlybtn="'API_clients_amangement'" text @click="downloadConfig(scope.row)">{{
-              $t('public_button_download')
-            }}</el-button>
+            <el-button
+              v-readonlybtn="'API_clients_amangement'"
+              text
+              type="primary"
+              @click="downloadConfig(scope.row)"
+              >{{ $t('public_button_download') }}</el-button
+            >
           </el-tooltip>
         </template>
       </el-table-column>

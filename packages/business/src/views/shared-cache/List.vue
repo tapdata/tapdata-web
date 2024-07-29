@@ -74,10 +74,11 @@
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="280" :label="$t('public_operation')">
+      <ElTableColumn width="290" :label="$t('public_operation')">
         <template #default="{ row }">
           <div class="table-operations">
-            <ElLink
+            <ElButton
+              text
               v-if="row.btnDisabled.stop && row.btnDisabled.forceStop"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
@@ -85,9 +86,10 @@
               @click="start([row.id], row)"
             >
               {{ $t('public_button_start') }}
-            </ElLink>
+            </ElButton>
             <template v-else>
-              <ElLink
+              <ElButton
+                text
                 v-if="row.status === 'stopping'"
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
@@ -95,8 +97,9 @@
                 @click="forceStop([row.id], row)"
               >
                 {{ $t('public_button_force_stop') }}
-              </ElLink>
-              <ElLink
+              </ElButton>
+              <ElButton
+                text
                 v-else
                 v-readonlybtn="'SYNC_job_operation'"
                 type="primary"
@@ -104,44 +107,48 @@
                 @click="stop([row.id])"
               >
                 {{ $t('public_button_stop') }}
-              </ElLink>
+              </ElButton>
             </template>
-            <ElDivider v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
-            <ElLink
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_operation'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.edit || $disabledReadonlyUserBtn()"
               @click="handleEditor(row)"
             >
               {{ $t('public_button_edit') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.monitor && !row.lastStartDate"
               @click="handleDetails(row)"
             >
               {{ $t('packages_business_task_list_button_monitor') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.reset || $disabledReadonlyUserBtn()"
               @click="handleReset(row)"
             >
               {{ $t('public_button_reset') }}
-            </ElLink>
-            <ElDivider v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
-            <ElLink
+            </ElButton>
+            <ElDivider class="mx-1" v-readonlybtn="'SYNC_job_edition'" direction="vertical"></ElDivider>
+            <ElButton
+              text
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
               :disabled="row.btnDisabled.delete || $disabledReadonlyUserBtn()"
               @click="del(row)"
             >
               {{ $t('public_button_delete') }}
-            </ElLink>
+            </ElButton>
           </div>
         </template>
       </ElTableColumn>

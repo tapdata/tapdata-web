@@ -63,16 +63,15 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" min-width="120" fixed="right">
         <template v-slot="scope">
-          <ElButton v-readonlybtn="'API_clients_amangement'" text @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_clients_amangement'" text type="primary" @click="edit(scope.row)">
             {{ $t('public_button_edit') }}
           </ElButton>
-          <ElButton
-            v-readonlybtn="'API_clients_amangement'"
-            v-if="scope.row.clientName !== 'Data Explorer'"
-            text
-            @click="remove(scope.row)"
-            >{{ $t('public_button_delete') }}</ElButton
-          >
+          <template v-if="scope.row.clientName !== 'Data Explorer'">
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton v-readonlybtn="'API_clients_amangement'" text type="primary" @click="remove(scope.row)">{{
+              $t('public_button_delete')
+            }}</ElButton>
+          </template>
         </template>
       </el-table-column>
     </TablePage>

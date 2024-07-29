@@ -109,30 +109,34 @@
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'stopped' ? false : true"
                           @click="startFn(row, row.status, 'engine')"
                           >{{ $t('public_button_start') }}
                         </ElButton>
-                        <ElDivider direction="vertical"></ElDivider>
+                        <ElDivider class="mx-1" direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="closeFn(row, row.status, 'engine')"
                           >{{ $t('public_button_close') }}
                         </ElButton>
-                        <ElDivider direction="vertical"></ElDivider>
+                        <ElDivider class="mx-1" direction="vertical"></ElDivider>
                         <ElButton
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'running' ? false : true"
                           @click="restartFn(row, row.status, 'engine')"
                           >{{ $t('public_button_restart') }}
                         </ElButton>
-                        <ElDivider v-if="bindWorkerMap[row.process_id]" direction="vertical"></ElDivider>
+                        <ElDivider class="mx-1" v-if="bindWorkerMap[row.process_id]" direction="vertical"></ElDivider>
                         <ElButton
                           v-if="bindWorkerMap[row.process_id]"
-                          type="text"
+                          text
+                          type="primary"
                           :disabled="row.status == 'stopped' ? false : true"
                           @click="unbind(row, row.status, 'engine')"
                           >{{ $t('daas_unbind_license') }}
@@ -507,9 +511,7 @@
       <template v-slot:footer>
         <div class="dialog-footer">
           <ElButton @click="closeDialogForm()">{{ $t('public_button_cancel') }}</ElButton>
-          <ElButton type="primary" @click="submitForm('ruleForm')"
-            >{{ $t('public_button_confirm') }}
-          </ElButton>
+          <ElButton type="primary" @click="submitForm('ruleForm')">{{ $t('public_button_confirm') }} </ElButton>
         </div>
       </template>
     </el-dialog>
@@ -554,8 +556,7 @@
     <el-dialog
       :title="$t('daas_cluster_cluster_lianjieshuliang_detail')"
       custom-class="serverDialog"
-      :visible="netStatDialog.visible"
-      @update:visible="netStatDialog.visible = $event"
+      v-model="netStatDialog.visible"
       :append-to-body="true"
       width="600px"
     >
@@ -567,7 +568,7 @@
 
     <ElDialog
       :title="tagDialog.title"
-      :visible.sync="tagDialog.visible"
+      v-model="tagDialog.visible"
       width="30%"
       :close-on-click-modal="false"
       @close="hideTagDialog"
@@ -592,13 +593,12 @@
     </ElDialog>
 
     <SetTag
-      :visible="setTagDialog.visible"
+      v-model:visible="setTagDialog.visible"
       :tagData="tagData"
       :tagMap="tagMap"
       :treeProps="treeProps"
       :selection="setTagDialog.selection"
       :tagList="setTagDialog.tagList"
-      @update:visible="setTagDialog.visible = $event"
       @closed="setTagDialog.tagList = []"
       @saved="onSavedTag"
     ></SetTag>
@@ -623,7 +623,7 @@ export default {
     FilterBar,
     IconButton,
     VEmpty,
-    ProTable
+    ProTable,
   },
   data() {
     return {
@@ -664,7 +664,7 @@ export default {
       bindWorkerMap: {},
       viewType: 'cluster',
       netStatDialog: {
-        visible: false
+        visible: false,
       },
       apiServerData: [],
       engineData: [],
@@ -679,17 +679,17 @@ export default {
         rules: {
           value: {
             required: true,
-            message: this.$t('packages_component_classification_nodeName')
-          }
-        }
+            message: this.$t('packages_component_classification_nodeName'),
+          },
+        },
       },
       setTagDialog: {
         visible: false,
         tagList: [],
-        selection: []
+        selection: [],
       },
       treeProps: {
-        label: 'name'
+        label: 'name',
       },
       agentId2Tag: {},
       tagMap: {},
@@ -700,9 +700,9 @@ export default {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        allowDrop: true
+        allowDrop: true,
       },
-      draggingNodeImage: null
+      draggingNodeImage: null,
     }
   },
   computed: {
@@ -723,7 +723,7 @@ export default {
     },
     tagSearch(val) {
       this.$refs.tree.filter(val)
-    }
+    },
   },
   methods: {
     async init() {
@@ -1026,7 +1026,7 @@ export default {
         const info = {
           hostname: item.agentName || item.systemInfo.hostname,
           ip: item.custIP || item.systemInfo.ip,
-          uuid: item.uuid
+          uuid: item.uuid,
         }
 
         engine && engineData.push(Object.assign(engine, info, { process_id: item.systemInfo.process_id }))
@@ -1173,7 +1173,7 @@ export default {
 
     async loadTags() {
       const { items } = await agentGroupApi.get({
-        containWorker: false
+        containWorker: false,
       })
       this.tagMap = {}
       this.agentId2Tag = items.reduce((map, item) => {
@@ -1186,7 +1186,7 @@ export default {
           return acc
         }, map)
 
-        this.$set(this.tagMap, item.groupId, item.name)
+        this.tagMap[item.groupId] = item.name
 
         return map
       }, {})
@@ -1195,34 +1195,30 @@ export default {
     },
 
     mapAgentData() {
-      this.engineData.map(item => {
+      this.engineData.map((item) => {
         const tagIds = this.agentId2Tag[item.process_id]
-        this.$set(
-          item,
-          'tags',
-          tagIds?.length
-            ? tagIds.map(id => {
-                return {
-                  id,
-                  name: this.tagMap[id]
-                }
-              })
-            : []
-        )
+        item.tags = tagIds?.length
+          ? tagIds.map((id) => {
+              return {
+                id,
+                name: this.tagMap[id],
+              }
+            })
+          : []
       })
     },
 
     saveTag() {
-      this.$refs.tagForm.validate(valid => {
+      this.$refs.tagForm.validate((valid) => {
         if (valid) {
           this.tagDialog.saving = true
           const fetch = this.tagDialog.id
             ? agentGroupApi.update({
                 name: this.tagDialog.value,
-                groupId: this.tagDialog.id
+                groupId: this.tagDialog.id,
               })
             : agentGroupApi.save({
-                name: this.tagDialog.value
+                name: this.tagDialog.value,
               })
           fetch
             .then(() => {
@@ -1272,8 +1268,8 @@ export default {
         confirmButtonText: this.$t('public_button_delete'),
         cancelButtonText: this.$t('packages_component_message_cancel'),
         type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
+        closeOnClickModal: false,
+      }).then((resFlag) => {
         if (!resFlag) {
           return
         }
@@ -1329,8 +1325,8 @@ export default {
     handleFilterAgent() {
       const keys = this.$refs.tree?.getCheckedKeys()
       if (keys?.length) {
-        this.filterEngineData = this.engineData.filter(item => {
-          return this.agentId2Tag[item.process_id]?.some(id => keys.includes(id))
+        this.filterEngineData = this.engineData.filter((item) => {
+          return this.agentId2Tag[item.process_id]?.some((id) => keys.includes(id))
         })
       } else {
         this.filterEngineData = this.engineData
@@ -1341,7 +1337,7 @@ export default {
       this.dragState.isDragging = true
       let selection = this.multipleSelection
 
-      if (selection.find(it => it.id === row.id)) {
+      if (selection.find((it) => it.id === row.id)) {
         this.dragState.draggingObjects = selection
       } else {
         this.dragState.draggingObjects = [row]
@@ -1350,7 +1346,7 @@ export default {
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.hostname,
-        this.dragState.draggingObjects.length
+        this.dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
@@ -1408,8 +1404,8 @@ export default {
           list.push(
             agentGroupApi.addAgent({
               groupId: data.groupId,
-              agentId: row.process_id
-            })
+              agentId: row.process_id,
+            }),
           )
         }
       }
@@ -1421,7 +1417,7 @@ export default {
       } else {
         this.$message.info(this.$t('packages_component_data_already_exists'))
       }
-    }
+    },
   },
   unmounted() {
     clearInterval(this.timer)

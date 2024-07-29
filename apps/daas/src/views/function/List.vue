@@ -80,14 +80,14 @@
 
       <ElTableColumn width="180" :label="$t('public_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })">{{
+          <ElButton text type="primary" @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })">{{
             $t('public_button_check')
-          }}</ElLink>
+          }}</ElButton>
           <template v-if="row.type !== 'system'">
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElLink type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton text type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+            <ElDivider class="mx-1" direction="vertical"></ElDivider>
+            <ElButton text type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
           </template>
         </template>
       </ElTableColumn>

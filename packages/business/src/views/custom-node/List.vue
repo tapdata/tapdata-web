@@ -19,9 +19,9 @@
 
       <ElTableColumn width="150" :label="$t('public_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElLink>
+          <ElButton text type="primary" @click="toEdit(row)">{{ $t('public_button_edit') }}</ElButton>
+          <ElDivider class="mx-1" direction="vertical"></ElDivider>
+          <ElButton text type="primary" @click="remove(row)">{{ $t('public_button_delete') }}</ElButton>
         </template>
       </ElTableColumn>
     </TablePage>

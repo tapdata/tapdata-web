@@ -13,9 +13,9 @@ export const IconButton = defineComponent({
     xl: Boolean,
     clickAndRotate: Boolean,
     disabled: Boolean,
-    loading: Boolean
+    loading: Boolean,
   },
-  setup(props, { attrs, listeners, slots }) {
+  setup(props, { attrs, slots }) {
     return () => {
       return (
         <button
@@ -32,7 +32,7 @@ export const IconButton = defineComponent({
             },
           ]}
           type="button"
-          {...{ props: attrs, on: listeners }}
+          {...attrs}
         >
           <VIcon class={{ 'animation-rotate-fast': props.loading }}>{slots.default()}</VIcon>
         </button>

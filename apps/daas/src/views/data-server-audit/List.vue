@@ -50,7 +50,7 @@
       </el-table-column>
       <el-table-column :label="$t('public_operation')" width="100" fixed="right">
         <template v-slot="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" text @click="toDetails(scope.row)">
+          <el-button v-readonlybtn="'API_clients_amangement'" text type="primary" @click="toDetails(scope.row)">
             {{ $t('public_button_details') }}
           </el-button>
         </template>
