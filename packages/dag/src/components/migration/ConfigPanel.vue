@@ -241,7 +241,7 @@ $tabHeight: 44px;
     }
   }
 
-  :deep(.el-tabs[config-tabs]) {
+  :deep(.el-tabs.config-tabs) {
     height: 100%;
 
     > .el-tabs__header {

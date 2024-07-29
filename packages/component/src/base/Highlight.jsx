@@ -23,7 +23,7 @@ export default {
   data: function () {
     return {
       detectedLanguage: '',
-      unknownLanguage: false
+      unknownLanguage: false,
     }
   },
   computed: {
@@ -47,7 +47,7 @@ export default {
       } else {
         result = hljs.highlight(this.code, {
           language: this.language,
-          ignoreIllegals: this.ignoreIllegals
+          ignoreIllegals: this.ignoreIllegals,
         })
         this.detectedLanguage = this.language
       }
@@ -58,18 +58,24 @@ export default {
     },
     ignoreIllegals() {
       return true
-    }
+    },
   },
   // this avoids needing to use a whole Vue compilation pipeline just
   // to build Highlight.js
-  render(createElement) {
-    return createElement('pre', {}, [
-      createElement('code', {
-        class: this.className,
-        domProps: { innerHTML: this.highlighted }
-      }),
-      this.$slots.default
-    ])
+  render() {
+    return (
+      <pre>
+        <code class={this.className} v-html={this.highlighted}></code>
+      </pre>
+    )
+
+    // return createElement('pre', {}, [
+    //   createElement('code', {
+    //     class: this.className,
+    //     domProps: { innerHTML: this.highlighted }
+    //   }),
+    //   this.$slots.default
+    // ])
   },
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
 }
