@@ -98,6 +98,7 @@
       height: 40px;
     }
   }
+
   > .formily-element-form-item-control .formily-element-form-item-control-content .formily-element-form-item-control-content-component .el-switch {
     height: 32px;
     line-height: 32px;
@@ -107,6 +108,7 @@
 
 .#{$formNamespace}-form-item-control-content-component {
   font-size: 0;
+
   > * {
     font-size: 14px;
     vertical-align: middle;
@@ -120,6 +122,7 @@
 .extra-prefix-bar .#{$formNamespace}-form-item-extra {
   position: relative;
   padding-left: 12px;
+
   &::before {
     --n-bar-width: 3px;
     content: "";
@@ -138,9 +141,10 @@
   padding: 0 16px;
 }
 
-.formily-element-form-item-label .el-button {
+.#{$formNamespace}-form-item-label .el-button {
   line-height: 1;
-  > *  {
-    line-height: 1;
+
+  * {
+    line-height: inherit;
   }
 }

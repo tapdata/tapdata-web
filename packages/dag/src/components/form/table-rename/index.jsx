@@ -35,7 +35,7 @@ export const TableRename = observer(
               valueMap[item.previousTableName] = item
               return obj
             }, {})
-          : {}
+          : {},
       )
       const countByName = computed(() => {
         return tableDataRef.value.reduce((map, previousTableName) => {
@@ -93,18 +93,10 @@ export const TableRename = observer(
               prevMap = {}
               tableDataRef.value = items.map((item) => {
                 prevMap[item.previousTableName] = item.sourceObjectName
-                tableMap[item.previousTableName] = true
-
-                // TM会主动修改表编辑节点,节点不会自动刷新,在这里同步最新的表推演
-                if (item.previousTableName !== item.sinkObjectName && !nameMap[item.previousTableName]) {
-                  nameMap[item.previousTableName] = item.sinkObjectName
-                  // set(nameMap, item.previousTableName, item.sinkObjectName)
-                }
-
                 return item.previousTableName
               })
 
-              invalidOperations.value = props.value.filter(op => {
+              invalidOperations.value = props.value.filter((op) => {
                 return !prevMap[op.previousTableName]
               })
 
@@ -213,13 +205,13 @@ export const TableRename = observer(
       const nameListRef = ref()
 
       const deleteInvalid = (name, index) => {
-        del(nameMap, name)
+        delete nameMap[name]
         invalidOperations.value.splice(index, 1)
         emitChange()
       }
 
       const deleteAllInvalid = () => {
-        invalidOperations.value.forEach(item => del(nameMap, item.previousTableName))
+        invalidOperations.value.forEach((item) => delete nameMap[item.previousTableName])
         invalidOperations.value = []
         emitChange()
       }
@@ -241,7 +233,7 @@ export const TableRename = observer(
         globalNameMap,
         invalidOperations,
         deleteAllInvalid,
-        deleteInvalid
+        deleteInvalid,
       }
     },
 
@@ -249,12 +241,10 @@ export const TableRename = observer(
       const label = (
         <div class="inline-flex align-center position-absolute w-100">
           <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-          <ElLink disabled={this.disabled} onClick={this.resetNames} type="primary">
-            <div class="flex align-center px-1">
-              <VIcon class="mr-1">reset</VIcon>
-              {i18n.t('public_button_reset')}
-            </div>
-          </ElLink>
+          <ElButton disabled={this.disabled} onClick={this.resetNames} type="primary" text tag="a">
+            <VIcon class="mr-1">reset</VIcon>
+            {i18n.t('public_button_reset')}
+          </ElButton>
         </div>
       )
       return (
@@ -315,22 +305,17 @@ export const TableRename = observer(
               </div>
 
               <div class="flex gap-4">
-                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')}>
-                  <ElSelect
-                    v-model={this.config.transferCase}
-                    disabled={this.disabled}
-                    onChange={this.doModify}
-                    class="w-auto"
-                  >
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_daxiaoxie')} class="flex-1">
+                  <ElSelect v-model={this.config.transferCase} disabled={this.disabled} onChange={this.doModify}>
                     <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
                     <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
                     <ElOption value="toLowerCase" label={i18n.t('packages_form_field_processor_index_xiaoxie')} />
                   </ElSelect>
                 </FormItem.BaseItem>
-                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')} class="flex-1">
                   <ElInput v-model={this.config.prefix} disabled={this.disabled} clearable onInput={this.lazyModify} />
                 </FormItem.BaseItem>
-                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+                <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')} class="flex-1">
                   <ElInput v-model={this.config.suffix} disabled={this.disabled} clearable onInput={this.lazyModify} />
                 </FormItem.BaseItem>
               </div>

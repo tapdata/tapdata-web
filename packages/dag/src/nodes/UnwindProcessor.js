@@ -24,7 +24,7 @@ export class UnwindProcessor extends NodeType {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
-          'config-tabs': true,
+          class: 'config-tabs',
           formTab: '{{formTab}}',
         },
         properties: {
@@ -107,21 +107,21 @@ export class UnwindProcessor extends NodeType {
                 enum: [
                   {
                     value: 'EMBEDDED',
-                    label: i18n.t('packages_dag_unwind_embedded')
+                    label: i18n.t('packages_dag_unwind_embedded'),
                   },
                   {
                     value: 'FLATTEN',
-                    label: i18n.t('packages_dag_unwind_flatten')
-                  }
+                    label: i18n.t('packages_dag_unwind_flatten'),
+                  },
                 ],
                 'x-reactions': {
                   target: '*(arrayModel, joiner)',
                   fulfill: {
                     state: {
-                      visible: '{{$self.value === "FLATTEN"}}'
-                    }
-                  }
-                }
+                      visible: '{{$self.value === "FLATTEN"}}',
+                    },
+                  },
+                },
               },
               arrayModel: {
                 type: 'string',
@@ -132,17 +132,17 @@ export class UnwindProcessor extends NodeType {
                 enum: [
                   {
                     value: 'MIX',
-                    label: i18n.t('packages_dag_unwind_arrayModel_mix')
+                    label: i18n.t('packages_dag_unwind_arrayModel_mix'),
                   },
                   {
                     value: 'OBJECT',
-                    label: i18n.t('packages_dag_unwind_arrayModel_object')
+                    label: i18n.t('packages_dag_unwind_arrayModel_object'),
                   },
                   {
                     value: 'BASIC',
-                    label: i18n.t('packages_dag_unwind_arrayModel_basic')
-                  }
-                ]
+                    label: i18n.t('packages_dag_unwind_arrayModel_basic'),
+                  },
+                ],
               },
               joiner: {
                 type: 'string',
@@ -151,8 +151,8 @@ export class UnwindProcessor extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-component-props': {
-                  maxlength: 10
-                }
+                  maxlength: 10,
+                },
               },
 
               schemaPreview: {

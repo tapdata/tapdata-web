@@ -481,7 +481,7 @@ export default {
       }
 
       const data = await connectionsApi.get(this.getDbFilter(), {
-        cancelToken: this.connectionCancelSource.token
+        cancelToken: this.connectionCancelSource.token,
       })
 
       this.dbTotal = data.total
@@ -770,7 +770,7 @@ export default {
         pdkHash: connection.pdkHash,
         capabilities: connection.capabilities || [],
         db_version: connection.db_version,
-        hasCreated: false
+        hasCreated: false,
       }
 
       if (pdkProperties) {
@@ -779,7 +779,7 @@ export default {
             properties: {
               attrs: {
                 type: 'object',
-                default: attrs
+                default: attrs,
               },
               $inputs: {
                 default: [],
@@ -809,7 +809,7 @@ export default {
         connectionId: connection.id,
         tableName,
         nodeConfig,
-        attrs
+        attrs,
       }
     },
 
@@ -1031,7 +1031,7 @@ $hoverBg: #eef3ff;
       }
 
       &__content {
-        padding-bottom: 0;
+        padding: 0;
       }
     }
   }

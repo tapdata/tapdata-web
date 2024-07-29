@@ -12,7 +12,7 @@
             <ElCheckbox
               v-model="checkAll"
               :indeterminate="isIndeterminate"
-              @change="handleCheckAll(arguments[0])"
+              @change="handleCheckAll($event)"
             ></ElCheckbox>
           </div>
           <div v-else class="cell">{{ item.label }}</div>
@@ -54,7 +54,7 @@
 
                   <template v-else-if="colItem.type === 'selection'">
                     <ElCheckbox
-                      :value="selections.includes(item)"
+                      :model-value="selections.includes(item)"
                       @change="toggleRowSelection(item, $event)"
                     ></ElCheckbox>
                   </template>

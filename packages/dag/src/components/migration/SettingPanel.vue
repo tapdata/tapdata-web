@@ -196,7 +196,7 @@ export default observer({
             },
             'x-component': 'FormTab',
             'x-component-props': {
-              'config-tabs': true,
+              class: 'config-tabs',
               formTab: '{{formTab}}',
             },
             'x-reactions': process.env.VUE_APP_HIDE_TASK_SCHEMA

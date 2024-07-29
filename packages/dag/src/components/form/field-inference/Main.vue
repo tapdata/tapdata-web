@@ -84,7 +84,11 @@
               <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')" class="mr-1">
                 <VIcon size="16" class="color-primary">info</VIcon>
               </ElTooltip>
-              <el-switch :value="uniqueIndexEnable" :disabled="readonly" @change="changeUniqueIndexEnable"></el-switch>
+              <el-switch
+                :model-value="uniqueIndexEnable"
+                :disabled="readonly"
+                @change="changeUniqueIndexEnable"
+              ></el-switch>
             </div>
           </div>
 
@@ -170,7 +174,7 @@ export default {
   props: {
     form: Object,
     readOnly: Boolean,
-    uniqueIndexEnable: Boolean
+    uniqueIndexEnable: Boolean,
   },
 
   data() {
@@ -297,8 +301,8 @@ export default {
         t.matchedDataTypeLevel = fields.some((f) => f.matchedDataTypeLevel === 'error')
           ? 'error'
           : fields.some((f) => f.matchedDataTypeLevel === 'warning')
-          ? 'warning'
-          : ''
+            ? 'warning'
+            : ''
         return t
       })
 
@@ -419,8 +423,8 @@ export default {
 
     changeUniqueIndexEnable(val) {
       this.form.setValuesIn('uniqueIndexEnable', val)
-    }
-  }
+    },
+  },
 }
 </script>
 

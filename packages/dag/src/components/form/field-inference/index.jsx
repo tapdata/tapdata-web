@@ -1,6 +1,6 @@
 import Main from './Main'
 import { observer } from '@formily/reactive-vue'
-import { computed, defineComponent } from 'vue'
+import { ref, computed, defineComponent } from 'vue'
 import { useForm, FormItem } from '@tap/form'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
@@ -11,20 +11,22 @@ export const fieldInference = connect(
   observer(
     defineComponent({
       props: ['disabled'],
-      setup() {
+      setup(props, { attrs, listeners, refs }) {
         const formRef = useForm()
         const form = formRef.value
 
         const batchRuleCounts = computed(() => {
-          return form.values.fieldChangeRules?.filter(t => t.scope === 'Node').length || 0
+          return form.values.fieldChangeRules?.filter((t) => t.scope === 'Node').length || 0
         })
 
+        const fieldMapping = ref(null)
+
         const rollbackAll = () => {
-          refs.fieldMapping.rollbackAll()
+          fieldMapping.value.rollbackAll()
         }
 
         const open = () => {
-          refs.fieldMapping.handleOpen()
+          fieldMapping.value.handleOpen()
         }
 
         return () => {
@@ -33,20 +35,18 @@ export const fieldInference = connect(
               <span>{i18n.t('packages_dag_nodes_database_tuiyanjieguo')}</span>
 
               {batchRuleCounts.value > 0 && (
-                <div className="flex align-items-center cursor-pointer color-primary" onClick={open}>
+                <div class="flex align-items-center cursor-pointer color-primary" onClick={open}>
                   <VIcon>info</VIcon>
-                  <span
-                    domPropsInnerHTML={i18n.t('packages_form_batch_rule_active', { val: batchRuleCounts.value })}
-                  ></span>
+                  <span v-html={i18n.t('packages_form_batch_rule_active', { val: batchRuleCounts.value })}></span>
                 </div>
               )}
 
-              <ElLink class="ml-auto" disabled={props.disabled} size="mini" type="primary" onClick={rollbackAll}>
+              <ElButton class="ml-auto" disabled={props.disabled} type="primary" text tag="a" onClick={rollbackAll}>
                 <div class="flex align-center px-1">
                   <VIcon class="mr-1">reset</VIcon>
                   {i18n.t('packages_form_field_inference_main_quanbuhuifumo')}
                 </div>
-              </ElLink>
+              </ElButton>
             </div>
           )
 
@@ -64,10 +64,10 @@ export const fieldInference = connect(
             </div>
           )
         }
-      }
-    })
+      },
+    }),
   ),
-  mapProps({ disabled: true })
+  mapProps({ disabled: true }),
 )
 
 export default fieldInference

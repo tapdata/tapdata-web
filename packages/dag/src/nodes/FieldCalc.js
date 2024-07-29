@@ -23,7 +23,7 @@ export class FieldCalc extends NodeType {
         type: 'void',
         'x-component': 'FormTab',
         'x-component-props': {
-          'config-tabs': true,
+          class: 'config-tabs',
           formTab: '{{formTab}}',
         },
         properties: {

@@ -547,12 +547,12 @@ export const FieldRenameProcessor = observer(
         const label = (
           <div class="inline-flex align-center position-absolute w-100">
             <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
-            <ElLink disabled={props.disabled} onClick={doOperationRest} type="primary">
+            <ElButton disabled={props.disabled} onClick={doOperationRest} type="primary" text tag="a">
               <div class="flex align-center px-1">
                 <VIcon class="mr-1">reset</VIcon>
                 {i18n.t('public_button_reset')}
               </div>
-            </ElLink>
+            </ElButton>
           </div>
         )
 
@@ -561,16 +561,17 @@ export const FieldRenameProcessor = observer(
             <FormItem.BaseItem class="mb-4" label={label}>
               <div class="border border-form px-4 pb-2 rounded-4">
                 <div class="flex gap-4">
-                  <FormItem.BaseItem label={i18n.t('packages_form_field_processor_filed_name_daxiaoxie')}>
+                  <FormItem.BaseItem
+                    label={i18n.t('packages_form_field_processor_filed_name_daxiaoxie')}
+                    class="flex-1"
+                  >
                     <ElSelect
-                      value={fieldsOperation.capitalized}
+                      modelValue={fieldsOperation.capitalized}
                       disabled={props.disabled}
                       onChange={(val) => {
                         console.log('fieldsOperation.capitalized', fieldsOperation.capitalized) // eslint-disable-line
                         fieldsOperation.capitalized = val
-                        doModify()
                       }}
-                      class="w-auto"
                     >
                       <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
                       <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
@@ -585,7 +586,7 @@ export const FieldRenameProcessor = observer(
                       />
                     </ElSelect>
                   </FormItem.BaseItem>
-                  <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
+                  <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')} class="flex-1">
                     {/*<FormInput
                       value={fieldsOperation.prefix}
                       disabled={props.disabled}
@@ -595,23 +596,21 @@ export const FieldRenameProcessor = observer(
                       }}
                     ></FormInput>*/}
                     <ElInput
-                      value={fieldsOperation.prefix}
+                      modelValue={fieldsOperation.prefix}
                       disabled={props.disabled}
                       clearable
                       onInput={(val) => {
                         fieldsOperation.prefix = val
-                        doModify()
                       }}
                     />
                   </FormItem.BaseItem>
-                  <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')}>
+                  <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_houzhui')} class="flex-1">
                     <ElInput
-                      value={fieldsOperation.suffix}
+                      modelValue={fieldsOperation.suffix}
                       disabled={props.disabled}
                       clearable
                       onInput={(val) => {
                         fieldsOperation.suffix = val
-                        doModify()
                       }}
                     />
                   </FormItem.BaseItem>
@@ -727,6 +726,7 @@ export const FieldRenameProcessor = observer(
                     <ElButton
                       key="batchRemove"
                       text
+                      type="primary"
                       class="btn-operation"
                       onClick={batchRemove}
                       disabled={
@@ -738,6 +738,7 @@ export const FieldRenameProcessor = observer(
                     <ElButton
                       key="batchShow"
                       text
+                      type="primary"
                       class="btn-operation"
                       onClick={batchShow}
                       disabled={
