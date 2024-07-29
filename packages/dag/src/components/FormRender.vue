@@ -117,7 +117,7 @@ $headerBg: #fff;
     }
 
     .el-input-number {
-      width: 180px;
+      width: 120px;
     }
 
     .el-input-number--small {
@@ -130,7 +130,7 @@ $headerBg: #fff;
     }
   }
 
-    /*.formily-element-form-item-layout-horizontal {
+  /*.formily-element-form-item-layout-horizontal {
       .formily-element-form-item-control-content-component > .el-switch {
         height: 40px;
         line-height: 40px;
