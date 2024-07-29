@@ -98,6 +98,9 @@ export class MigrateDateProcessor extends NodeType {
                   add: {
                     type: 'boolean',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      wrapperWidth: 160,
+                    },
                     'x-component': 'Select',
                     default: true,
                     enum: [

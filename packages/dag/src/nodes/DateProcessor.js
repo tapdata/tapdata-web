@@ -88,7 +88,7 @@ export class DateProcessor extends NodeType {
               },
               space: {
                 type: 'void',
-                title: i18n.t('packages_dag_date_processor_method'),
+                title: i18n.t('packages_dag_date_processor_method') + '666',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
@@ -98,6 +98,9 @@ export class DateProcessor extends NodeType {
                   add: {
                     type: 'boolean',
                     'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      wrapperWidth: 160,
+                    },
                     'x-component': 'Select',
                     default: true,
                     enum: [
