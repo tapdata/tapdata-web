@@ -5,6 +5,7 @@ import { taskApi } from '@tap/api'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { connect, mapProps } from '@formily/vue'
+import { useStore } from 'vuex'
 
 export const SchemaFormItem = connect(
   observer(
@@ -14,19 +15,18 @@ export const SchemaFormItem = connect(
         type: String, // connection | table
       },
       setup(props, { emit, root, attrs, refs, slots }) {
-        const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
+        const store = useStore()
+        const { taskId, activeNodeId } = store.state?.dataflow || {}
         const formRef = useForm()
         const form = formRef.value
         const loading = ref(false)
         const isLoading = computed(() => {
-          return loading.value || root.$store.state?.dataflow?.transformLoading
+          return loading.value || store.state?.dataflow?.transformLoading
         })
-
-        console.log('props', props, attrs)
 
         const loadSchema = async () => {
           loading.value = true
-          root.$store.commit('dataflow/setSchemaRefreshing', true)
+          store.commit('dataflow/setSchemaRefreshing', true)
           await taskApi
             .refreshSchema(taskId, {
               nodeIds: activeNodeId,
@@ -34,7 +34,7 @@ export const SchemaFormItem = connect(
             })
             .finally(() => {
               loading.value = false
-              root.$store.commit('dataflow/setSchemaRefreshing', false)
+              store.commit('dataflow/setSchemaRefreshing', false)
             })
         }
 

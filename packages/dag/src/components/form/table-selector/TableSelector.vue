@@ -84,8 +84,6 @@
         <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
           <VEmpty
             v-if="!table.searchKeyword"
-            :image-size="111"
-            :image="require('@tap/assets/images/img_empty.png')"
             :description="$t('packages_form_component_table_selector_tables_empty') + '~'"
           ></VEmpty>
           <VEmpty v-else>
@@ -195,11 +193,7 @@
           </RecycleScroller>
         </ElCheckboxGroup>
         <div v-if="!isOpenClipMode && !filterSelectedData.length" class="flex-1 flex flex-column justify-center">
-          <ElEmpty
-            :image-size="111"
-            :image="require('@tap/assets/images/img_empty.png')"
-            :description="$t('packages_form_component_table_selector_not_checked') + '~'"
-          ></ElEmpty>
+          <VEmpty :description="$t('packages_form_component_table_selector_not_checked') + '~'"></VEmpty>
         </div>
         <div v-if="isOpenClipMode" class="selector-clipboard flex flex-column">
           <div

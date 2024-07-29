@@ -83,7 +83,7 @@ const getState = () => ({
   pdkDoubleActiveMap: {},
   taskSaving: false,
   materializedViewVisible: false,
-  schemaRefreshing: false
+  schemaRefreshing: false,
 })
 
 // 初始化 state
@@ -103,7 +103,7 @@ const getters = {
     return state.transformLoading
   },
 
-  schemaRefreshing: state => {
+  schemaRefreshing: (state) => {
     return state.schemaRefreshing
   },
 
@@ -458,7 +458,7 @@ const mutations = {
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
     const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
-    const node = state.dag.nodes.find(node => node.id === updateInformation.id)
+    const node = state.dag.nodes.find((node) => node.id === updateInformation.id)
 
     const syncRecursive = (target, source, path = '') => {
       const pathPrefix = path ? `${path}.` : ''
@@ -466,7 +466,7 @@ const mutations = {
       if (updateInformation.overwrite) {
         for (const key in target) {
           if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
-            Vue.delete(target, key)
+            delete target[key]
           }
         }
       }
@@ -480,7 +480,7 @@ const mutations = {
           syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
         } else {
           if (targetValue !== sourceValue) {
-            Vue.set(target, key, sourceValue)
+            target[key] = sourceValue
           }
         }
       }
@@ -957,7 +957,7 @@ const mutations = {
   },
 
   setPdkDoubleActiveMap(state, map) {
-    Vue.set(state, 'pdkDoubleActiveMap', map)
+    state.pdkDoubleActiveMap = map
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {
