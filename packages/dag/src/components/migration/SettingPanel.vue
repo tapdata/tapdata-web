@@ -26,7 +26,7 @@ export default observer({
   },
 
   data() {
-    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     let values = this.settings
     const { id } = values
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
@@ -178,7 +178,7 @@ export default observer({
 
         handleQuicklySyncPoints: () => {
           const { currentEventTimestamp } = this.settings
-          this.settings.syncPoints.forEach(point => {
+          this.settings.syncPoints.forEach((point) => {
             point.pointType = 'localTZ' // 用户自定义时间点
             point.dateTime = currentEventTimestamp
           })
@@ -204,9 +204,9 @@ export default observer({
                   target: process.env.VUE_APP_HIDE_TASK_SCHEMA,
                   fulfill: {
                     state: {
-                      display: 'none'
-                    }
-                  }
+                      display: 'none',
+                    },
+                  },
                 }
               : undefined,
             properties: {
@@ -495,24 +495,24 @@ export default observer({
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}'
-                                    }
-                                  }
-                                }
+                                      display: '{{$deps[0] === "cdc" ? "visible" : "hidden"}}',
+                                    },
+                                  },
+                                },
                               },
                               syncPointsDescWrap: {
                                 type: 'void',
                                 'x-component': 'div',
                                 'x-component-props': {
-                                  class: 'flex align-center gap-2'
+                                  class: 'flex align-center gap-2',
                                 },
                                 'x-reactions': {
                                   dependencies: ['type'],
                                   fulfill: {
                                     state: {
-                                      visible: '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}'
-                                    }
-                                  }
+                                      visible: '{{$deps[0] === "cdc" && !!$values.currentEventTimestampLabel}}',
+                                    },
+                                  },
                                 },
                                 properties: {
                                   syncPointsDesc: {
@@ -520,23 +520,23 @@ export default observer({
                                     'x-component': 'div',
                                     'x-component-props': {
                                       style: {
-                                        color: '#909399'
-                                      }
+                                        color: '#909399',
+                                      },
                                     },
                                     'x-content': `{{'${i18n.t(
-                                      'packages_dag_task_setting_syncPoint_recent_increment'
-                                    )}: ' + $values.currentEventTimestampLabel}}`
+                                      'packages_dag_task_setting_syncPoint_recent_increment',
+                                    )}: ' + $values.currentEventTimestampLabel}}`,
                                   },
                                   syncPointsDescBtn: {
                                     type: 'void',
                                     'x-component': 'Link',
                                     'x-component-props': {
                                       type: 'primary',
-                                      onClick: '{{handleQuicklySyncPoints}}'
+                                      onClick: '{{handleQuicklySyncPoints}}',
                                     },
-                                    'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now')
-                                  }
-                                }
+                                    'x-content': i18n.t('packages_dag_task_setting_syncPoint_from_now'),
+                                  },
+                                },
                               },
 
                               // isAutoCreateIndexS: {
@@ -559,7 +559,7 @@ export default observer({
                                 default: false,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_business_connection_form_shared_mining_tip')
+                                  tooltip: i18n.t('packages_business_connection_form_shared_mining_tip'),
                                 },
                                 'x-component': 'Switch',
                                 'x-reactions': {
@@ -634,7 +634,7 @@ export default observer({
                                 'x-decorator-props': {
                                   tooltip: i18n.t('packages_dag_enableSyncMetricCollector_tip'),
                                 },
-                                'x-component': 'Switch'
+                                'x-component': 'Switch',
                               },
                               doubleActive: {
                                 title: this.$t('packages_dag_doubleActive'), // 双活
@@ -642,9 +642,9 @@ export default observer({
                                 default: false,
                                 'x-decorator': 'FormItem',
                                 'x-decorator-props': {
-                                  tooltip: i18n.t('packages_dag_doubleActive_tip')
+                                  tooltip: i18n.t('packages_dag_doubleActive_tip'),
                                 },
-                                'x-component': 'Switch'
+                                'x-component': 'Switch',
                               },
                               accessNodeType: {
                                 type: 'string',
@@ -659,55 +659,55 @@ export default observer({
                                   },
                                   {
                                     label: this.$t('packages_dag_connection_form_manual'),
-                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER',
                                   },
                                   {
                                     label: this.$t('packages_business_connection_form_group'),
-                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
-                                  }
+                                    value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
+                                  },
                                 ],
                                 'x-reactions': [
                                   {
                                     fulfill: {
                                       state: {
-                                        dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`
-                                      }
-                                    }
+                                        dataSource: `{{$isDaas ? $self.dataSource : $self.dataSource.slice(0,2)}}`,
+                                      },
+                                    },
                                   },
                                   {
                                     target: 'accessNodeProcessId',
                                     effects: ['onFieldInputValueChange'],
                                     fulfill: {
                                       state: {
-                                        value: ''
+                                        value: '',
                                         // '{{$target.value || (item = $target.dataSource.find(item => !item.disabled), item ? item.value:undefined)}}'
-                                      }
-                                    }
-                                  }
-                                ]
+                                      },
+                                    },
+                                  },
+                                ],
                               },
 
                               agentWrap: {
                                 type: 'void',
                                 'x-component': 'Space',
                                 'x-component-props': {
-                                  class: 'w-100 align-items-start'
+                                  class: 'w-100 align-items-start',
                                 },
                                 'x-reactions': {
                                   dependencies: ['.accessNodeType'],
                                   fulfill: {
                                     state: {
                                       visible:
-                                        "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-                                    }
-                                  }
+                                        "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
+                                    },
+                                  },
                                 },
                                 properties: {
                                   accessNodeProcessId: {
                                     type: 'string',
                                     'x-decorator': 'FormItem',
                                     'x-decorator-props': {
-                                      class: 'flex-1'
+                                      class: 'flex-1',
                                     },
                                     'x-component': 'Select',
                                     'x-reactions': [
@@ -718,12 +718,12 @@ export default observer({
                                         fulfill: {
                                           state: {
                                             title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
-                                              'packages_business_choose_agent_group'
-                                            )}': '${i18n.t('packages_business_choose_agent')}'}}`
-                                          }
-                                        }
-                                      }
-                                    ]
+                                              'packages_business_choose_agent_group',
+                                            )}': '${i18n.t('packages_business_choose_agent')}'}}`,
+                                          },
+                                        },
+                                      },
+                                    ],
                                   },
                                   priorityProcessId: {
                                     title: i18n.t('packages_business_priorityProcessId'),
@@ -731,18 +731,18 @@ export default observer({
                                     default: '',
                                     'x-decorator': 'FormItem',
                                     'x-decorator-props': {
-                                      class: 'flex-1'
+                                      class: 'flex-1',
                                     },
                                     'x-component': 'Select',
                                     'x-reactions': {
                                       dependencies: [
                                         '.accessNodeType',
                                         '.accessNodeProcessId#dataSource',
-                                        '.accessNodeProcessId'
+                                        '.accessNodeProcessId',
                                       ],
                                       fulfill: {
                                         state: {
-                                          visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                                          visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
                                         },
                                         run: `
                                           let children = []
@@ -761,19 +761,19 @@ export default observer({
                                           if ($self.value && !children.find(item => item.value === $self.value)) {
                                             $self.value = null
                                           }
-                                        `
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
+                                        `,
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
               tab3: {
                 type: 'void',
@@ -1205,12 +1205,12 @@ export default observer({
     ...mapGetters('dataflow', ['stateIsReadonly', 'allNodes']),
 
     dataNodes() {
-      return this.allNodes.filter(item => item.type === 'database' || item.type === 'table')
+      return this.allNodes.filter((item) => item.type === 'database' || item.type === 'table')
     },
 
     showDoubleActive() {
       const map = this.$store.state.dataflow.pdkDoubleActiveMap
-      return this.dataNodes.length ? this.dataNodes.every(node => map[node.attrs.pdkHash]) : false
+      return this.dataNodes.length ? this.dataNodes.every((node) => map[node.attrs.pdkHash]) : false
     },
 
     accessNodeProcessIdMap() {
@@ -1234,9 +1234,9 @@ export default observer({
     },
 
     accessNodeProcessList() {
-      const agents = this.scope.$agents.filter(item => item.accessNodeType === this.settings.accessNodeType)
+      const agents = this.scope.$agents.filter((item) => item.accessNodeType === this.settings.accessNodeType)
       if (!this.accessNodeProcessIdArr.length) return agents
-      return agents.filter(item => !!this.accessNodeProcessIdMap[item.value])
+      return agents.filter((item) => !!this.accessNodeProcessIdMap[item.value])
     },
 
     sourceNodes() {
@@ -1290,7 +1290,7 @@ export default observer({
             const nodeIds = this.accessNodeProcessIdMap[currentId]
             let priorityProcessId = null
 
-            nodeIds.some(id => {
+            nodeIds.some((id) => {
               const node = this.scope.findNodeById(id)
               if (node && node.attrs.priorityProcessId) {
                 priorityProcessId = node.attrs.priorityProcessId
@@ -1357,11 +1357,11 @@ export default observer({
     showDoubleActive: {
       handler(val) {
         this.form.setFieldState('doubleActive', {
-          visible: val
+          visible: val,
         })
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   created() {

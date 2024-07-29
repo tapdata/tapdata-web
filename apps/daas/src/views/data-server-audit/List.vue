@@ -1,8 +1,8 @@
 <template>
-  <section class="apiaudit-wrap h-100">
+  <PageContainer>
     <!-- 服务审计 -->
     <TablePage ref="table" row-key="id" class="apiaudit-list" :remoteMethod="getData" @sort-change="handleSortTable">
-      <template v-slot:search>
+      <template #search>
         <div class="search-bar">
           <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
         </div>
@@ -56,7 +56,7 @@
         </template>
       </el-table-column>
     </TablePage>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -66,9 +66,11 @@ import { escapeRegExp } from 'lodash'
 import { apiCallsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
   },

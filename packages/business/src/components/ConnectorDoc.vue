@@ -87,7 +87,7 @@ const pdkDocMap = {
   dummy: 'prerequisites/others/dummy',
   'http-receiver': 'prerequisites/others/http-receiver',
   greenplum: 'prerequisites/warehouses-and-lake/greenplum',
-  dws: 'prerequisites/warehouses-and-lake/gaussdb'
+  dws: 'prerequisites/warehouses-and-lake/gaussdb',
 }
 
 // 维护一个DocMap还有一个NameDictionary的原因是，docMap从文档仓库直接复制过来，有些命名和pdkId不一致
@@ -134,7 +134,7 @@ export default {
 
   data() {
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       doc: '',
     }
   },

@@ -78,10 +78,12 @@ export default {
           if (route.meta?.doNotJump) {
             to = null
           }
-          data.push({
-            name: this.$t(route.meta?.title || ''),
-            to,
-          })
+
+          !isHidden &&
+            data.push({
+              name: this.$t(route.meta?.title || ''),
+              to,
+            })
         })
       }
 

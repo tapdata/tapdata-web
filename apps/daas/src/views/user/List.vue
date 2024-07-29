@@ -1,5 +1,42 @@
 <template>
-  <section class="user-list-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-readonlybtn="'user_category_application'"
+        class="btn"
+        v-show="multipleSelection.length > 0"
+        @click="$refs.table.showClassify(handleSelectTag())"
+      >
+        <span> {{ $t('public_button_bulk_tag') }}</span>
+      </el-button>
+      <el-dropdown
+        @command="handleCommand($event)"
+        v-readonlybtn="'user_edition'"
+        v-show="multipleSelection.length > 0"
+      >
+        <el-button class="btn btn-dropdowm">
+          <i class="iconfont icon-piliang back-btn-icon"></i>
+          <span> {{ $t('public_button_bulk_operation') }}</span>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
+              $t('user_list_bulk_activation')
+            }}</el-dropdown-item>
+            <el-dropdown-item command="rejected" v-readonlybtn="'user_edition'">{{
+              $t('user_list_bulk_freeze')
+            }}</el-dropdown-item>
+            <el-dropdown-item command="notActivated" v-readonlybtn="'user_edition'">{{
+              $t('user_list_bulk_check')
+            }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
+        <span>{{ $t('public_button_create') }}</span>
+      </el-button>
+    </template>
+
     <TablePage
       ref="table"
       row-key="id"
@@ -52,49 +89,7 @@
           <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </template>
-      <template v-slot:operation>
-        <div>
-          <el-button
-            v-readonlybtn="'user_category_application'"
-            class="btn"
-            v-show="multipleSelection.length > 0"
-            @click="$refs.table.showClassify(handleSelectTag())"
-          >
-            <span> {{ $t('public_button_bulk_tag') }}</span>
-          </el-button>
-          <el-dropdown
-            @command="handleCommand($event)"
-            v-readonlybtn="'user_edition'"
-            v-show="multipleSelection.length > 0"
-          >
-            <el-button class="btn btn-dropdowm">
-              <i class="iconfont icon-piliang back-btn-icon"></i>
-              <span> {{ $t('public_button_bulk_operation') }}</span>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
-                  $t('user_list_bulk_activation')
-                }}</el-dropdown-item>
-                <el-dropdown-item command="rejected" v-readonlybtn="'user_edition'">{{
-                  $t('user_list_bulk_freeze')
-                }}</el-dropdown-item>
-                <el-dropdown-item command="notActivated" v-readonlybtn="'user_edition'">{{
-                  $t('user_list_bulk_check')
-                }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <el-button
-            v-readonlybtn="'new_model_creation'"
-            class="btn btn-create"
-            type="primary"
-            @click="openCreateDialog"
-          >
-            <span>{{ $t('public_button_create') }}</span>
-          </el-button>
-        </div>
-      </template>
+
       <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
       <el-table-column :label="$t('user_list_user_name')" prop="username" sortable="username">
         <template v-slot="scope">
@@ -217,7 +212,7 @@
         </span>
       </template>
     </el-dialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -227,9 +222,11 @@ import { escapeRegExp } from 'lodash'
 import { usersApi, roleApi, roleMappingsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
   },

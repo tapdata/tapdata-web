@@ -45,13 +45,13 @@ export default {
   packages_business_connection_form_database_owner_tip:
     'Comma-separated list of expressions, use * to represent any character of any length',
   packages_business_connection_form_source_and_target_tip: `This data connection can be used as source and target at the same time in ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   }`,
   packages_business_connection_form_source_tip: `Please note that this data connection is only suitable for use as a source in ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   }, and cannot be used as a target.`,
   packages_business_connection_form_target_tip: `Please note that this data connection is only suitable for use as a target in ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   }, and cannot be used as a source.`,
   packages_business_connection_form_shared_mining: 'Using CDC Log Caching',
   packages_business_connection_form_shared_mining_tip:
@@ -1325,5 +1325,5 @@ export default {
   packages_business_shared_cache_enforceShareCdc: 'When shared mining is not available (Cache Start)',
   packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops',
   packages_business_not_support_validation: '{connection} does not support {method}',
-  packages_business_download_details: 'Download'
+  packages_business_download_details: 'Download',
 }

@@ -1,5 +1,5 @@
 <template>
-  <section class="share-list-wrap h-100">
+  <PageContainer>
     <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
@@ -79,7 +79,7 @@
         </template>
       </el-table-column>
     </TablePage>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -89,11 +89,13 @@ import { taskApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage, TaskStatus } from '../../components'
 import { makeStatusAndDisabled, TASK_TYPE_MAP } from '../../shared'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 export default {
   inject: ['buried'],
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
     TaskStatus,

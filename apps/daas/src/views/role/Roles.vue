@@ -1,18 +1,18 @@
 <template>
-  <section class="roles-list-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton v-readonlybtn="'role_creation'" type="primary" class="btn btn-create" @click="openCreateDialog()">
+        <span>{{ $t('role_list_create') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage ref="table" row-key="id" class="roles-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
         <div class="search-bar">
           <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton v-readonlybtn="'role_creation'" type="primary" class="btn btn-create" @click="openCreateDialog()">
-            <span>{{ $t('role_list_create') }}</span>
-          </ElButton>
-        </div>
-      </template>
+
       <ElTableColumn :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
         <template v-slot="scope">
           <div>{{ scope.row.name }}</div>
@@ -157,7 +157,7 @@
         </span>
       </template>
     </ElDialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -165,9 +165,11 @@ import { escapeRegExp } from 'lodash'
 import { roleApi, usersApi, roleMappingsApi, permissionsApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
   },

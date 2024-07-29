@@ -64,7 +64,7 @@ if (process.env.NODE_ENV === 'development') {
     return token
   }
 
-  process.env.VITE_ACCESS_TOKEN = getToken(process.env.USER_ID || userId)
+  process.env.VUE_APP_ACCESS_TOKEN = getToken(process.env.USER_ID || userId)
 }
 
 export default defineConfig({

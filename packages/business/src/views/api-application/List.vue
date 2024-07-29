@@ -1,5 +1,11 @@
 <template>
-  <section class="share-list-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton v-readonlybtn="'new_model_creation'" type="primary" class="btn btn-create" @click="handleEditor">
+        <span>{{ $t('packages_business_application_list_chuangjianyingyong') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage
       ref="table"
       row-key="id+indexName"
@@ -9,13 +15,6 @@
     >
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton v-readonlybtn="'new_model_creation'" type="primary" class="btn btn-create" @click="handleEditor">
-            <span>{{ $t('packages_business_application_list_chuangjianyingyong') }}</span>
-          </ElButton>
-        </div>
       </template>
       <el-table-column
         min-width="250"
@@ -69,7 +68,7 @@
     <Editor ref="editor" @success="table.fetch(1)"></Editor>
     <Details ref="details" width="380px"></Details>
     <Delete ref="delete" width="380px" @success="table.fetch(1)"></Delete>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -84,11 +83,13 @@ import { TablePage } from '../../components'
 import Editor from './Editor'
 import Details from './Details'
 import Delete from './Delete'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 export default {
   inject: ['buried'],
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
     Editor,

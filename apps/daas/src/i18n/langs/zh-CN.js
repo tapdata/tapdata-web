@@ -1813,13 +1813,13 @@ export default {
   daas_data_server_drawer_confirm_tip: '重新生成会导致原API访问路径发生改变，是否确认重新生成？',
   // 覆盖连接编辑、创建处的国际化文案
   packages_business_connection_form_source_and_target_tip: `此数据连接在 ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   } 中能同时作为源和目标使用`,
   packages_business_connection_form_source_tip: `此数据连接在 ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   } 中只能作为源使用，不能作用为目标`,
   packages_business_connection_form_target_tip: `此数据连接在 ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   } 中只能作为目标使用，不能作用为源`,
   daas_cluster_cluster_lianjieshuliang: '连接数量',
   daas_cluster_cluster_mubiaoIPhe: '目标IP和端口',
@@ -1909,5 +1909,5 @@ export default {
   http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
   webhook_send_ping: '发送测试 PING 事件',
   webhook_event_type: '事件类型',
-  webhook_event_type_empty: '请选择事件'
+  webhook_event_type_empty: '请选择事件',
 }

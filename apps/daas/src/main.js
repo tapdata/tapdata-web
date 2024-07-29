@@ -23,14 +23,14 @@ import 'virtual:svg-icons-register'
 import '@/styles/app.scss'
 
 window._TAPDATA_OPTIONS_ = {
-  version: import.meta.env.VITE_VERSION,
-  logoUrl: new URL(`./assets/images/${import.meta.env.VITE_LOGO_IMG}`, import.meta.url).href,
-  loginUrl: new URL(`./assets/images/${import.meta.env.VITE_LOGIN_IMG}`, import.meta.url).href,
-  loadingImg: new URL(`./assets/icons/${import.meta.env.VITE_LOADING_IMG}`, import.meta.url).href,
-  logoWidth: import.meta.env.VITE_LOGO_WIDTH,
-  logoHeight: import.meta.env.VITE_LOGO_HEIGHT,
-  loginSize: import.meta.env.VITE_LOGIN_IMG_SIZE,
-  homeUrl: import.meta.env.VITE_HOME_URL,
+  version: import.meta.env.VUE_APP_VERSION,
+  logoUrl: new URL(`./assets/images/${import.meta.env.VUE_APP_LOGO_IMG}`, import.meta.url).href,
+  loginUrl: new URL(`./assets/images/${import.meta.env.VUE_APP_LOGIN_IMG}`, import.meta.url).href,
+  loadingImg: new URL(`./assets/icons/${import.meta.env.VUE_APP_LOADING_IMG}`, import.meta.url).href,
+  logoWidth: import.meta.env.VUE_APP_LOGO_WIDTH,
+  logoHeight: import.meta.env.VUE_APP_LOGO_HEIGHT,
+  loginSize: import.meta.env.VUE_APP_LOGIN_IMG_SIZE,
+  homeUrl: import.meta.env.VUE_APP_HOME_URL,
 }
 
 window.getSettingByKey = (key) => {
@@ -40,31 +40,6 @@ window.getSettingByKey = (key) => {
   value = setting.isArray ? setting.value.split(',') : setting.value
   return value
 }
-
-// TODO 可能需要重写适配
-// window.$vueApp.config.globalProperties.$confirm = (message, title, options) => {
-//   return new Promise((resolve, reject) => {
-//     VConfirm.confirm(
-//       message,
-//       title,
-//       Object.assign(
-//         {
-//           cancelButtonText: window.App.$t('public_button_cancel'),
-//           confirmButtonText: window.App.$t('public_button_confirm')
-//         },
-//         options
-//       )
-//     )
-//       .then(() => {
-//         resolve(true)
-//       })
-//       .catch(() => {
-//         reject(false)
-//       })
-//   }).catch(() => {
-//     return false
-//   })
-// }
 
 const IS_IFRAME = (getUrlSearch('frame') || sessionStorage.getItem('IS_IFRAME') || window.self !== window.top) + ''
 if (IS_IFRAME) {
@@ -83,7 +58,7 @@ if (TOKEN) {
 
 let token = Cookie.get('access_token')
 
-const router = getRouter(i18n)
+// const router = getRouter(i18n)
 
 installOEM(router, i18n)
 
@@ -92,7 +67,7 @@ let init = (settings) => {
   let lang = getCurrentLanguage()
   setCurrentLanguage(lang, i18n)
 
-  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env.VITE_PAGE_TITLE || 'Tapdata'
+  document.title = /*window.getSettingByKey('PRODUCT_TITLE') ||*/ import.meta.env.VUE_APP_PAGE_TITLE || 'Tapdata'
 
   var loc = window.location,
     wsUrl = 'ws:'
@@ -171,6 +146,6 @@ if (process.env.VUE_APP_MODE === 'community') {
           showCollectorDialog()
         }
       })
-    }
+    },
   }
 }

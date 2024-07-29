@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-column h-100 overflow-hidden">
-    <div :class="headerClass">
+  <div class="flex flex-column h-100 page-container min-h-0">
+    <div class="page-header" :class="headerClass">
       <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
         <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
           {{ item.name }}
@@ -9,51 +9,131 @@
       <div class="flex align-items-center px-4 bg-white rounded-lg" v-else>
         <span class="fs-5 py-4 font-color-dark mr-3">{{ $t($route.meta.title) }}</span>
         <slot name="left-actions"></slot>
-        <ElDivider v-if="$route.meta.desc" class="mx-4" direction="vertical"></ElDivider>
-        <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$t($route.meta.desc)"></Desciption>
+        <template v-if="$route.meta.desc">
+          <ElDivider class="mx-4" direction="vertical"></ElDivider>
+          <Desciption class="flex align-items-center fs-7 font-color-sslight" :desc="$route.meta.desc"></Desciption>
+        </template>
+
         <div class="flex-1"></div>
         <slot name="actions"></slot>
       </div>
     </div>
-    <slot></slot>
+
+    <div class="page-content" :class="contentClass">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import i18n from '@tap/i18n'
+import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
+const breadcrumbData = ref([])
+const isHidden = ref(false)
+
+const props = defineProps({
+  contentMode: {
+    type: String,
+    default: 'table', // full/auto/table
+  },
+})
+
+const contentClass = computed(() => {
+  const map = {
+    table: 'pb-6 flex-1 min-h-0',
+  }
+  return map[props.contentMode]
+  // return props.contentMode === 'full' ? 'overflow-hidden bg-white shadow-card' : ''
+})
+
+const headerClass = isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
+
+const Desciption = {
+  props: {
+    desc: [String, Function],
+  },
+  render(h) {
+    if (this.desc) {
+      if (Object.prototype.toString.call(this.desc) === '[object Function]') {
+        return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
+      } else {
+        return h('span', this.$t(this.desc))
+      }
+    }
+    return null
+  },
+}
+
+const getBreadcrumb = () => {
+  let matched = route.matched.slice(1)
+  let data = []
+  let _isHidden = false
+  if (matched.length) {
+    matched.forEach((route) => {
+      _isHidden = route.meta?.hideTitle
+      let to = {
+        name: null,
+      }
+      if (route.meta?.doNotJump) {
+        to = null
+      }
+      !_isHidden &&
+        data.push({
+          name: i18n.t(route.meta?.title),
+          to,
+        })
+    })
+  }
+  isHidden.value = Boolean(_isHidden)
+  breadcrumbData.value = data
+
+  console.log('breadcrumbData', breadcrumbData)
+}
+
+watch(() => route.name, getBreadcrumb)
+
+getBreadcrumb()
+</script>
+
+<!--<script>
 export default {
   components: {
     Desciption: {
       props: {
-        desc: [String, Function]
+        desc: [String, Function],
       },
       render(h) {
         if (this.desc) {
           if (Object.prototype.toString.call(this.desc) === '[object Function]') {
             return h('span', { class: 'flex align-items-center' }, [this.desc(h, this.$t.bind(this))])
           } else {
-            return h('span', this.desc)
+            return h('span', this.$t(this.desc))
           }
         }
         return null
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       breadcrumbData: [],
-      isHidden: false
+      isHidden: false,
     }
   },
   computed: {
     headerClass() {
       return this.isDaas ? 'border-bottom' : 'bg-white rounded-lg mb-4'
-    }
+    },
   },
   watch: {
     '$route.name'() {
       this.getBreadcrumb(this.$route)
-    }
+    },
   },
   created() {
     this.getBreadcrumb(this.$route)
@@ -64,34 +144,32 @@ export default {
       let data = []
       let isHidden = false
       if (matched.length) {
-        matched.forEach(route => {
+        matched.forEach((route) => {
           isHidden = route.meta?.hideTitle
-          if (/^\/.*\/$/.test(route.path)) {
-            data.pop()
-          }
           let to = {
             name:
               route.name === this.$route.name
                 ? null
                 : ['settingCenter', 'notification'].includes(route.name)
-                ? 'layout'
-                : route.name
+                  ? 'layout'
+                  : route.name,
           }
           if (route.meta?.doNotJump) {
             to = null
           }
-          data.push({
-            name: this.$t(route.meta?.title),
-            to
-          })
+          !isHidden &&
+            data.push({
+              name: this.$t(route.meta?.title),
+              to,
+            })
         })
       }
       this.isHidden = !!isHidden
       this.breadcrumbData = data
-    }
-  }
+    },
+  },
 }
-</script>
+</script>-->
 <style lang="scss" scoped>
 .breadcrumb {
   height: 50px;

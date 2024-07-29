@@ -93,7 +93,7 @@ const requestInterceptor = (config) => {
     })
   }
   // 本地开发使用header中加__token的方式绕过网关登录
-  const ACCESS_TOKEN = process.env.VITE_ACCESS_TOKEN || ''
+  const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
     let params = { __token: ACCESS_TOKEN }
     config.params = Object.assign({}, config.params, params)

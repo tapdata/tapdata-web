@@ -1,14 +1,13 @@
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { Select } from '../select'
 import { connect, mapProps, mapReadPretty } from '@formily/vue'
 import { PreviewText } from '@formily/element-plus'
 import { VIcon } from '@tap/component'
-import { computed } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 
 const DefineFieldSelect = defineComponent({
   props: {
-    options: Array
+    options: Array,
   },
   setup: (props, { attrs }) => {
     // public static final byte TYPE_DATETIME = 1;
@@ -34,10 +33,10 @@ const DefineFieldSelect = defineComponent({
       8: 'type-number',
       9: '',
       10: 'type-string',
-      11: 'calendar'
+      11: 'calendar',
     }
 
-    const getIcon = tapType => {
+    const getIcon = (tapType) => {
       let match = tapType.match(/"type"\s*:\s*(\d+)/)
       let value = match?.[1]
 
@@ -45,7 +44,7 @@ const DefineFieldSelect = defineComponent({
     }
 
     const fieldOptions = computed(() => {
-      return props.options?.map(option => {
+      return props.options?.map((option) => {
         if (option.tapType) option.icon = getIcon(option.tapType)
         return option
       })
@@ -96,7 +95,7 @@ const DefineFieldSelect = defineComponent({
               </div>
             ),
           }}
-        </Select>
+        />
       )
     }
   },

@@ -1,4 +1,4 @@
-import { defineComponent, reactive, watch, ref, computed } from '@vue/composition-api'
+import { defineComponent, reactive, watch, ref, computed } from 'vue'
 import { observer } from '@formily/reactive-vue'
 import { useForm, useField } from '@tap/form'
 import { VIcon } from '@tap/component'
@@ -14,8 +14,8 @@ export const RelativeTimePicker = connect(
         disabled: Boolean,
         offsetHours: {
           type: Number,
-          default: 0
-        }
+          default: 0,
+        },
       },
       setup(props) {
         const formRef = useForm()
@@ -36,7 +36,7 @@ export const RelativeTimePicker = connect(
         const state = reactive({
           number: record.number || 1,
           form: record.form || 'BEFORE',
-          unit: record.unit || 'DAY'
+          unit: record.unit || 'DAY',
         })
         const engineDate = ref(dayjs())
         const loadCurrentEngineTime = async () => {
@@ -86,7 +86,7 @@ export const RelativeTimePicker = connect(
           return `${start.format(formatStr)} - ${end.format(formatStr)}`
         })
 
-        watch(state, val => {
+        watch(state, (val) => {
           Object.assign(record, state)
         })
 
@@ -95,7 +95,7 @@ export const RelativeTimePicker = connect(
           { value: 'DAY', label: i18n.t('public_unit_day') },
           { value: 'WEEK', label: i18n.t('public_unit_week') },
           { value: 'MONTH', label: i18n.t('public_unit_month') },
-          { value: 'YEAR', label: i18n.t('public_unit_year') }
+          { value: 'YEAR', label: i18n.t('public_unit_year') },
         ]
 
         const unitMap = unitOptions.reduce((result, item) => {
@@ -108,10 +108,10 @@ export const RelativeTimePicker = connect(
           DAY: { l: i18n.t('public_yesterday'), c: i18n.t('public_today') },
           WEEK: { l: i18n.t('public_last_week'), c: i18n.t('public_this_week') },
           MONTH: { l: i18n.t('public_last_month'), c: i18n.t('public_this_month') },
-          YEAR: { l: i18n.t('public_last_year'), c: i18n.t('public_this_year') }
+          YEAR: { l: i18n.t('public_last_year'), c: i18n.t('public_this_year') },
         }
 
-        const getCurrentTip = unit => {
+        const getCurrentTip = (unit) => {
           let current = dayjs(currentDate.value)
           let year = current.year()
           let str, s, e, formatStr
@@ -168,13 +168,13 @@ export const RelativeTimePicker = connect(
                   <ElButton class="py-2" disabled={props.disabled}>
                     {genLabel()} <i class="el-icon-arrow-down el-icon--right"></i>
                   </ElButton>
-                )
+                ),
               }}
             >
               <div>
                 <ElTabs
                   value={state.form}
-                  onInput={val => {
+                  onInput={(val) => {
                     state.form = val
                   }}
                 >
@@ -185,18 +185,18 @@ export const RelativeTimePicker = connect(
                         class="flex-1"
                         controls-position="right"
                         value={state.number}
-                        onInput={val => {
+                        onInput={(val) => {
                           state.number = val
                         }}
                       ></ElInputNumber>
                       <ElSelect
                         class="flex-1"
                         value={state.unit}
-                        onInput={val => {
+                        onInput={(val) => {
                           state.unit = val
                         }}
                       >
-                        {unitOptions.map(option => (
+                        {unitOptions.map((option) => (
                           <ElOption label={option.label} value={option.value}></ElOption>
                         ))}
                       </ElSelect>
@@ -208,7 +208,7 @@ export const RelativeTimePicker = connect(
                   </ElTabPane>
                   <ElTabPane label={i18n.t('public_date_current')} name="CURRENT">
                     <div class="flex flex-wrap gap-3">
-                      {unitOptions.slice(1).map(option => (
+                      {unitOptions.slice(1).map((option) => (
                         <ElTooltip open-delay={500} placement="bottom" content={getCurrentTip(option.value)}>
                           <ElButton
                             class="rounded-pill m-0 min-w-0"
@@ -228,8 +228,8 @@ export const RelativeTimePicker = connect(
             </el-popover>
           )
         }
-      }
-    })
+      },
+    }),
   ),
-  mapProps({ disabled: true })
+  mapProps({ disabled: true }),
 )

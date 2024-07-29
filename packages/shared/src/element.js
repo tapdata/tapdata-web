@@ -104,7 +104,7 @@ export const calcElementLayout = (element) => {
 }
 
 export function makePageTitle(title) {
-  const base = import.meta.env.VITE_PAGE_TITLE || 'Tapdata'
+  const base = import.meta.env.VUE_APP_PAGE_TITLE || 'Tapdata'
   return title ? `${title} - ${base}` : base
 }
 
@@ -114,7 +114,7 @@ export function setPageTitle(title) {
 
 const SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g
 const MOZ_HACK_REGEXP = /^moz([A-Z])/
-const camelCase = name => {
+const camelCase = (name) => {
   return name
     .replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
       return offset ? letter.toUpperCase() : letter

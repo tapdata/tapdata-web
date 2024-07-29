@@ -82,7 +82,7 @@ export default {
       keyword: '',
       visible: false,
       overViewVisible: true,
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       showSceneDialog: false,
       settingsVisible: false,
       dragState: {
@@ -391,14 +391,14 @@ export default {
             sourceNode.type === 'apiserverLineage'
               ? 'target'
               : this.settings.fdmStorageConnectionId === sourceNode.connectionId
-              ? otherLdpType
-              : 'source'
+                ? otherLdpType
+                : 'source'
           targetNode.ldpType =
             targetNode.type === 'apiserverLineage'
               ? 'target'
               : this.settings.fdmStorageConnectionId === targetNode.connectionId
-              ? otherLdpType
-              : 'source'
+                ? otherLdpType
+                : 'source'
           // 记录事件触发的dom和ldpType
           if (sourceNode.table === tableInfo.name) {
             sourceNode.ldpType = ldpType

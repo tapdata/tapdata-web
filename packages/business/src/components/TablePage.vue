@@ -30,7 +30,7 @@
           <div class="table-page-nav">
             <slot name="nav"></slot>
           </div>
-          <div class="table-page-topbar py-3" :class="{ 'pl-3': classificationVisible }">
+          <div class="table-page-topbar p-3">
             <div class="table-page-search-bar flex align-center">
               <IconButton
                 v-if="classify && !hideClassify && !classificationVisible"
@@ -75,7 +75,7 @@
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
-          <div class="pagination-wrapper flex align-center gap-3 pl-3 pt-3">
+          <div class="pagination-wrapper flex align-center gap-3 px-4 pt-4">
             <transition name="el-fade-in-linear">
               <div v-if="multipleSelection.length" class="flex align-center gap-3">
                 <ElCheckbox :value="true" @change="clearSelection"></ElCheckbox>
@@ -90,9 +90,9 @@
               background
               class="table-page-pagination ml-auto mt-0"
               layout="->,total, sizes,  prev, pager, next, jumper"
-              :current-page.sync="page.current"
+              v-model:current-page="page.current"
               :page-sizes="[10, 20, 50, 100]"
-              :page-size.sync="page.size"
+              v-model:page-size="page.size"
               :total="page.total"
               @size-change="fetch(1)"
               @current-change="handleCurrent"
@@ -125,7 +125,7 @@ export default {
     SelectClassify,
     VIcon,
     ProTable,
-    IconButton
+    IconButton,
   },
   props: {
     title: String,
@@ -164,19 +164,19 @@ export default {
         isDragging: false,
         draggingObjects: [],
         dropNode: null,
-        allowDrop: true
+        allowDrop: true,
       },
       draggingNodeImage: null,
       shiftKeyPressed: false,
-      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO
+      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO,
     }
   },
   mounted() {
     this.fetch(1)
-    this.handleKeyDown = ev => {
+    this.handleKeyDown = (ev) => {
       this.shiftKeyPressed = ev.shiftKey
     }
-    this.handleKeyUp = ev => {
+    this.handleKeyUp = (ev) => {
       setTimeout(() => {
         this.shiftKeyPressed = false
       }, 0)
@@ -184,7 +184,7 @@ export default {
     on(document, 'keydown', this.handleKeyDown)
     on(document, 'keyup', this.handleKeyUp)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     off(document, 'keydown', this.handleKeyDown)
     off(document, 'keyup', this.handleKeyUp)
   },
@@ -262,7 +262,7 @@ export default {
       this.dragState.isDragging = true
       let selection = this.multipleSelection
 
-      if (selection.find(it => it.id === row.id)) {
+      if (selection.find((it) => it.id === row.id)) {
         this.dragState.draggingObjects = selection
       } else {
         this.dragState.draggingObjects = [row]
@@ -271,7 +271,7 @@ export default {
       this.draggingNodeImage = makeDragNodeImage(
         ev.currentTarget.querySelector('.tree-item-icon'),
         row.name,
-        this.dragState.draggingObjects.length
+        this.dragState.draggingObjects.length,
       )
       ev.dataTransfer.setDragImage(this.draggingNodeImage, 0, 0)
     },
@@ -284,11 +284,11 @@ export default {
     },
     onSelectRow(selection, current) {
       try {
-        const selected = selection.some(row => row.id === current.id)
+        const selected = selection.some((row) => row.id === current.id)
 
         if (this.shiftKeyPressed && this.multipleSelection.length && this.lastSelectIndex !== undefined) {
           let lastIndex = this.lastSelectIndex
-          let currentIndex = this.list.findIndex(row => row.id === current.id)
+          let currentIndex = this.list.findIndex((row) => row.id === current.id)
 
           if (~lastIndex && ~currentIndex && lastIndex !== currentIndex) {
             const tmp = currentIndex < lastIndex ? -1 : 1
@@ -303,12 +303,12 @@ export default {
           }
         }
 
-        this.lastSelectIndex = selected ? this.list.findIndex(row => row.id === current.id) : undefined
+        this.lastSelectIndex = selected ? this.list.findIndex((row) => row.id === current.id) : undefined
       } catch (e) {
         console.error(e)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

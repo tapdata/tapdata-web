@@ -80,7 +80,7 @@ export default {
   },
   data() {
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       STATUS_MAP,
       showErrorCause: false,
     }

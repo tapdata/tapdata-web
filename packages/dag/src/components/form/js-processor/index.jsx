@@ -23,7 +23,7 @@ export const JsProcessor = observer(
     },
     setup(props, { emit, attrs }) {
       const store = useStore()
-      const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+      const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
       const { id: taskId, syncType } = store.state.dataflow.taskInfo
       const formRef = useForm()
       const form = formRef.value

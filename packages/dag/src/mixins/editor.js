@@ -42,7 +42,7 @@ export default {
 
     return {
       dataflow,
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       buttonShowMap: {
         View: true,
         Edit: true,
@@ -140,7 +140,7 @@ export default {
       'setPdkPropertiesMap',
       'setPdkSchemaFreeMap',
       'setPdkDoubleActiveMap',
-      'setMaterializedViewVisible'
+      'setMaterializedViewVisible',
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -1329,7 +1329,7 @@ export default {
         const { id } = node
         const minInputs = node.__Ctor.minInputs ?? 1
         // 非数据节点至少有一个目标
-        const minOutputs = node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table') ? 1 : 0
+        const minOutputs = (node.__Ctor.minOutputs ?? (node.type !== 'database' && node.type !== 'table')) ? 1 : 0
         const inputNum = node.$inputs.length
         const outputNum = node.$outputs.length
 
@@ -1412,7 +1412,7 @@ export default {
         this.$set(
           this.dataflow,
           'accessNodeType',
-          this.scope.$agentMap[agentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER'
+          this.scope.$agentMap[agentId]?.accessNodeType || 'MANUALLY_SPECIFIED_BY_THE_USER',
         )
         this.$set(this.dataflow, 'accessNodeProcessId', agentId)
       }
@@ -1552,9 +1552,9 @@ export default {
         'custom_processor',
         'migrate_js_processor',
         'union_processor',
-        'migrate_union_processor'
+        'migrate_union_processor',
       ]
-      this.allNodes.forEach(node => {
+      this.allNodes.forEach((node) => {
         // 开启了DDL
         if (node.ddlConfiguration === 'SYNCHRONIZATION') {
           hasEnableDDL = true
@@ -1604,14 +1604,14 @@ export default {
     validateUnwind() {
       if (this.dataflow.syncType === 'migrate') return
 
-      const nodes = this.allNodes.filter(node => node.type === 'unwind_processor')
+      const nodes = this.allNodes.filter((node) => node.type === 'unwind_processor')
       for (let node of nodes) {
-        const childNodes = this.findChildNodes(node.id).filter(child => child.type === 'table')
+        const childNodes = this.findChildNodes(node.id).filter((child) => child.type === 'table')
         // console.log('childNodes', childNodes)
-        if (childNodes.some(childNode => childNode.dmlPolicy?.insertPolicy !== 'just_insert')) {
+        if (childNodes.some((childNode) => childNode.dmlPolicy?.insertPolicy !== 'just_insert')) {
           this.setNodeErrorMsg({
             id: node.id,
-            msg: i18n.t('packages_dag_unwind_validate_error')
+            msg: i18n.t('packages_dag_unwind_validate_error'),
           })
           return i18n.t('packages_dag_unwind_validate_error')
         }
@@ -1621,7 +1621,7 @@ export default {
     async validateTableRename() {
       if (this.dataflow.syncType !== 'migrate') return
 
-      const nodes = this.allNodes.filter(node => node.type === 'table_rename_processor')
+      const nodes = this.allNodes.filter((node) => node.type === 'table_rename_processor')
 
       // 只允许存在1个表编辑节点
       if (nodes.length > 1) return i18n.t('packages_dag_table_rename_multiple')
@@ -1640,9 +1640,9 @@ export default {
               taskId: this.dataflow.id,
               nodeId: node.id,
               page: 1,
-              pageSize: 10000
+              pageSize: 10000,
             })
-            tableNames = items.map(item => item.sourceObjectName)
+            tableNames = items.map((item) => item.sourceObjectName)
           }
 
           const ifConfigEmpty = ifTableNameConfigEmpty(node)
@@ -1669,7 +1669,7 @@ export default {
 
               this.setNodeErrorMsg({
                 id: node.id,
-                msg
+                msg,
               })
 
               return msg
@@ -1684,7 +1684,7 @@ export default {
     async validateMigrateUnion() {
       if (this.dataflow.syncType !== 'migrate') return
 
-      const nodes = this.allNodes.filter(node => node.type === 'migrate_union_processor')
+      const nodes = this.allNodes.filter((node) => node.type === 'migrate_union_processor')
 
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
@@ -1724,7 +1724,7 @@ export default {
         this.validateCustomSql,
         this.validateUnwind,
         this.validateTableRename,
-        this.validateMigrateUnion
+        this.validateMigrateUnion,
       )
     },
 
@@ -2294,7 +2294,7 @@ export default {
 
         if (data.errorEvents?.length) {
           // 清除 stacks
-          data.errorEvents.forEach(event => {
+          data.errorEvents.forEach((event) => {
             delete event.stacks
           })
         }
@@ -2307,7 +2307,7 @@ export default {
           id: data.id,
           syncType: data.syncType,
           testTaskId: data.testTaskId,
-          taskRecordId: data.taskRecordId
+          taskRecordId: data.taskRecordId,
         })
         this.startLoopTask(id)
         this.titleSet()
@@ -2333,7 +2333,7 @@ export default {
         if (data) {
           if (data.errorEvents?.length) {
             // 清除 stacks
-            data.errorEvents.forEach(event => {
+            data.errorEvents.forEach((event) => {
               delete event.stacks
             })
           }

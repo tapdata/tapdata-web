@@ -1,7 +1,7 @@
 <template>
-  <section class="share-list-wrap h-100 px-4 pb-4 bg-white">
+  <PageContainer>
     <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
-      <template v-slot:search>
+      <template #search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <!--外存配置已上，这里关闭，稳定后相关注释代码可去掉-->
@@ -204,7 +204,7 @@
         </div>
       </template>
     </ElDialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -217,11 +217,13 @@ import { makeStatusAndDisabled } from '../../shared'
 import Editor from './Editor'
 import i18n from '@tap/i18n'
 import { calcTimeUnit, openUrl } from '@tap/shared'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 export default {
   inject: ['buried'],
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
     TaskStatus,
@@ -361,7 +363,7 @@ export default {
                 item.delayTime < 0 || typeof item.delayTime !== 'number'
                   ? '-'
                   : calcTimeUnit(item.delayTime, 2, {
-                      autoHideMs: true
+                      autoHideMs: true,
                     })
               makeStatusAndDisabled(item)
               if (item.status === 'edit') {

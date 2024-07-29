@@ -61,13 +61,13 @@ export default {
       errorEvents: [],
       checkAll: false,
       checkedData: [],
-      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
+      errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal'),
     }
   },
   computed: {
     isIndeterminate() {
       return this.checkedData.length > 0 && this.checkedData.length < this.errorEvents.length
-    }
+    },
   },
   methods: {
     async checkError(task) {
@@ -81,7 +81,7 @@ export default {
         this.checkedData = []
         this.taskId = task.id
         this.taskName = task.name
-        this.errorEvents = errorEvents.map(item => {
+        this.errorEvents = errorEvents.map((item) => {
           delete item.stacks // stacks is too long
           return item
         })
@@ -91,7 +91,7 @@ export default {
     },
     handleCheckAllChange(val) {
       this.checkedData = val
-        ? this.errorEvents.map(item => {
+        ? this.errorEvents.map((item) => {
             return item.id
           })
         : []
@@ -106,20 +106,6 @@ export default {
       this.skipping = false
       this.visible = false
       this.$emit('skip', this.taskId)
-    }
-  }
-    skipErrorData() {
-      if (this.checkedData.length > 0) {
-        let data = []
-        this.checkedData.forEach((item) => {
-          data.push(this.errorEvents[item])
-        })
-        this.checkedData = data
-      } else {
-        this.checkedData = []
-      }
-      $emit(this, 'skip', this.task.id, this.checkedData)
-      this.dialogVisible = false
     },
   },
   emits: ['skip'],

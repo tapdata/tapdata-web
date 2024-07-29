@@ -1,5 +1,12 @@
 <template>
-  <section class="apiserver-wrap">
+  <PageContainer>
+    <template #actions>
+      <el-button v-readonlybtn="'API_creation'" type="primary" class="btn btn-create" @click="openCreateDialog">
+        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+        <span>{{ $t('api_server_create') }}</span>
+      </el-button>
+    </template>
+
     <!-- api服务器 -->
     <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
@@ -7,14 +14,7 @@
           <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </template>
-      <template v-slot:operation>
-        <div>
-          <el-button v-readonlybtn="'API_creation'" type="primary" class="btn btn-create" @click="openCreateDialog">
-            <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-            <span>{{ $t('api_server_create') }}</span>
-          </el-button>
-        </div>
-      </template>
+
       <el-table-column
         :label="$t('api_server_user')"
         :show-overflow-tooltip="true"
@@ -78,7 +78,7 @@
         </span>
       </template>
     </el-dialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -88,10 +88,12 @@ import { apiServerApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
 import Cookie from '@tap/shared/src/cookie'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   name: 'ApiServer',
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
   },

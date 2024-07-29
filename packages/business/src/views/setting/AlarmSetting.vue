@@ -225,7 +225,7 @@ import { cloneDeep } from 'lodash'
 export default {
   name: 'AlarmNotification',
   props: {
-    inDialog: Boolean
+    inDialog: Boolean,
   },
   components: { VTable },
   data() {
@@ -288,7 +288,7 @@ export default {
       channelMap: {
         EMAIL: i18n.t('packages_business_notify_email_notification'),
       },
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       alarmRulesVisible: false,
       alarmRecipientVisible: false,
       savingRecipient: false,

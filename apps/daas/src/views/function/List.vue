@@ -1,5 +1,49 @@
 <template>
-  <section class="function-list-wrapper h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton
+        v-if="searchParams.type !== 'custom'"
+        class="ml-4 btn-create"
+        @click="
+          $router.push({
+            name: 'FunctionImport',
+          })
+        "
+      >
+        <span>{{ $t('function_button_import_jar') }}</span>
+      </ElButton>
+      <template v-else>
+        <el-button
+          v-show="multipleSelection.length > 0"
+          :disabled="$disabledReadonlyUserBtn()"
+          v-readonlybtn="'SYNC_job_export'"
+          class="btn message-button-cancel"
+          @click="handleExport"
+        >
+          <span> {{ $t('public_button_export') }}</span>
+        </el-button>
+        <el-button
+          v-readonlybtn="'SYNC_job_import'"
+          class="btn"
+          :disabled="$disabledReadonlyUserBtn()"
+          @click="handleImport"
+        >
+          <span> {{ $t('packages_business_button_bulk_import') }}</span>
+        </el-button>
+      </template>
+      <ElButton
+        class="btn-create"
+        type="primary"
+        @click="
+          $router.push({
+            name: 'FunctionCreate',
+          })
+        "
+      >
+        <span>{{ $t('public_button_create') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage
       ref="table"
       class="h-100"
@@ -8,67 +52,14 @@
       @sort-change="handleSortTable"
       @selection-change="handleSelectionChange"
     >
-      <template v-slot:search>
-        <ul class="search-bar">
-          <li class="item">
-            <ElRadioGroup v-model="searchParams.type" @input="table.fetch(1)" class="button-style-outline">
-              <ElRadioButton label="">{{ $t('public_select_option_all') }}</ElRadioButton>
-              <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value"
-                >{{ label }}
-              </ElRadioButton>
-            </ElRadioGroup>
-          </li>
-          <li class="item">
-            <ElButton plain class="btn-refresh" @click="table.fetch()">
-              <el-icon><el-icon-refresh /></el-icon>
-            </ElButton>
-          </li>
-        </ul>
-      </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton
-            v-if="searchParams.type !== 'custom'"
-            class="ml-4 btn-create"
-            @click="
-              $router.push({
-                name: 'FunctionImport',
-              })
-            "
-          >
-            <span>{{ $t('function_button_import_jar') }}</span>
-          </ElButton>
-          <template v-else>
-            <el-button
-              v-show="multipleSelection.length > 0"
-              :disabled="$disabledReadonlyUserBtn()"
-              v-readonlybtn="'SYNC_job_export'"
-              class="btn message-button-cancel"
-              @click="handleExport"
-            >
-              <span> {{ $t('public_button_export') }}</span>
-            </el-button>
-            <el-button
-              v-readonlybtn="'SYNC_job_import'"
-              class="btn"
-              :disabled="$disabledReadonlyUserBtn()"
-              @click="handleImport"
-            >
-              <span> {{ $t('packages_business_button_bulk_import') }}</span>
-            </el-button>
-          </template>
-          <ElButton
-            class="btn-create"
-            type="primary"
-            @click="
-              $router.push({
-                name: 'FunctionCreate',
-              })
-            "
-          >
-            <span>{{ $t('public_button_create') }}</span>
-          </ElButton>
-        </div>
+      <template #search>
+        <ElRadioGroup v-model="searchParams.type" @input="table.fetch(1)" class="button-style-outline">
+          <ElRadioButton label="">{{ $t('public_select_option_all') }}</ElRadioButton>
+          <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value">{{ label }} </ElRadioButton>
+        </ElRadioGroup>
+        <ElButton plain class="btn-refresh ml-3" @click="table.fetch()">
+          <el-icon><el-icon-refresh /></el-icon>
+        </ElButton>
       </template>
       <el-table-column
         reserve-selection
@@ -103,7 +94,7 @@
     </TablePage>
     <!-- 导入 -->
     <Upload type="Javascript_functions" :show-tag="false" ref="upload" @success="table.fetch(1)"></Upload>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -111,9 +102,11 @@ import dayjs from 'dayjs'
 import { javascriptFunctionsApi } from '@tap/api'
 import { TablePage } from '@tap/business'
 import Upload from '@tap/business/src/components/UploadDialog'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   components: {
+    PageContainer,
     TablePage,
     Upload,
     ElIconRefresh,
@@ -219,14 +212,14 @@ export default {
     .item {
       margin-right: 10px;
     }
-    .btn-refresh {
-      padding: 0;
-      height: 32px;
-      line-height: 32px;
-      width: 32px;
-      min-width: 32px;
-      font-size: 16px;
-    }
   }
+}
+.btn-refresh {
+  padding: 0;
+  height: 32px;
+  line-height: 32px;
+  width: 32px;
+  min-width: 32px;
+  font-size: 16px;
 }
 </style>

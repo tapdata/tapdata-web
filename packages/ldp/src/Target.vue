@@ -24,79 +24,81 @@
           <div
             :ref="`wrap__item${item.id}`"
             :key="item.id"
-            class="wrap__item rounded-lg  position-relative overflow-hidden"
-          :class="{ 'opacity-50': item.disabled }"
-          @dragover="handleDragOver"
-          @dragenter.stop="handleDragEnter($event, item)"
-          @dragleave.stop="handleDragLeave($event, item)"
-          @drop.stop="handleDrop($event, item)"
-        >
-          <template v-if="item.LDP_TYPE === 'app'">
-            <div class="item__header p-3">
-              <div class="flex align-center gap-2 overflow-hidden">
-                <VIcon size="20">mini-app</VIcon>
-                <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{ item.value }}</span>
-                <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
-              </div>
-              <div v-if="item.desc" class="mt-2 font-color-light">
-                {{ item.desc }}
-              </div>
-            </div>
-            <div class="item__content position-relative p-2">
-              <div class="task-list">
-                <div class="task-list-content">
-                  <template v-if="item.modules && item.modules.length">
-                    <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
-                      <div :id="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
-                        <a
-                          class="el-link el-link--primary w-100 justify-content-start"
-                          :title="m.name"
-                          @click="handlePreviewApi(m)"
-                        >
-                          <span class="ellipsis">{{ m.name }}</span>
-                        </a>
-                      </div>
-                      <div class="p-1">
-                        <span class="status-block" :class="'status-' + m.status">{{ m.statusText }}</span>
-                      </div>
-                    </div>
-                  </template>
-                  <span v-else class="font-color-sslight">{{
-                    $t('packages_business_data_console_target_no_api')
+            class="wrap__item rounded-lg position-relative overflow-hidden"
+            :class="{ 'opacity-50': item.disabled }"
+            @dragover="handleDragOver"
+            @dragenter.stop="handleDragEnter($event, item)"
+            @dragleave.stop="handleDragLeave($event, item)"
+            @drop.stop="handleDrop($event, item)"
+          >
+            <template v-if="item.LDP_TYPE === 'app'">
+              <div class="item__header p-3">
+                <div class="flex align-center gap-2 overflow-hidden">
+                  <VIcon size="20">mini-app</VIcon>
+                  <span class="font-color-normal fw-sub fs-6 ellipsis lh-base" :title="item.value">{{
+                    item.value
                   }}</span>
+                  <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
+                </div>
+                <div v-if="item.desc" class="mt-2 font-color-light">
+                  {{ item.desc }}
                 </div>
               </div>
-            </div>
-            <div
-              class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
-              :class="{ flex: nonSupportApi }"
-            >
-              <ElTooltip
-                placement="top"
-                :content="$t('packages_ldp_src_target_muqianzhichide') + ':' + apiSupportTypes.join(',')"
+              <div class="item__content position-relative p-2">
+                <div class="task-list">
+                  <div class="task-list-content">
+                    <template v-if="item.modules && item.modules.length">
+                      <div v-for="(m, i) in item.modules" :key="i" class="task-list-item flex align-center">
+                        <div :id="`ldp_target_api_${m.id}`" class="p-1 ellipsis flex-1 align-center position-relative">
+                          <a
+                            class="el-link el-link--primary w-100 justify-content-start"
+                            :title="m.name"
+                            @click="handlePreviewApi(m)"
+                          >
+                            <span class="ellipsis">{{ m.name }}</span>
+                          </a>
+                        </div>
+                        <div class="p-1">
+                          <span class="status-block" :class="'status-' + m.status">{{ m.statusText }}</span>
+                        </div>
+                      </div>
+                    </template>
+                    <span v-else class="font-color-sslight">{{
+                      $t('packages_business_data_console_target_no_api')
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="drop-mask position-absolute absolute-fill p-2 flex-column justify-content-center align-center gap-2"
+                :class="{ flex: nonSupportApi }"
               >
-                <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
-              </ElTooltip>
-            </div>
-          </template>
-          <template v-else>
-            <div class="item__header p-3">
-              <div class="flex align-center overflow-hidden">
-                <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
-                <span
-                  class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
-                  :title="item.name"
-                  ><span class="ellipsis">{{ item.name }}</span>
-                  <ElTag v-if="item.disabled" class="ml-1" type="info">{{ $t('public_status_invalid') }}</ElTag>
-                  <ElTag
-                    v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                    class="ml-1 px-1 flex align-center clickable"
-                    @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                    ><VIcon class="mr-1" size="14">open-in-new</VIcon
-                    >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
-                  >
-                </span>
-                <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
+                <ElTooltip
+                  placement="top"
+                  :content="$t('packages_ldp_src_target_muqianzhichide') + ':' + apiSupportTypes.join(',')"
+                >
+                  <span> {{ `${$t('packages_dag_components_node_zanbuzhichi')} ${dragDatabaseType}` }}</span>
+                </ElTooltip>
+              </div>
+            </template>
+            <template v-else>
+              <div class="item__header p-3">
+                <div class="flex align-center overflow-hidden">
+                  <DatabaseIcon :item="item" :size="20" class="item__icon flex-shrink-0" />
+                  <span
+                    class="font-color-normal fw-sub fs-6 lh-base flex-1 ml-2 flex align-center overflow-hidden"
+                    :title="item.name"
+                    ><span class="ellipsis">{{ item.name }}</span>
+                    <ElTag v-if="item.disabled" class="ml-1" type="info">{{ $t('public_status_invalid') }}</ElTag>
+                    <ElTag
+                      v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                      class="ml-1 px-1 flex align-center clickable"
+                      @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                      ><VIcon class="mr-1" size="14">open-in-new</VIcon
+                      >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
+                    >
+                  </span>
+                  <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
                 </div>
                 <div class="mt-2 font-color-light">
                   {{ $t('packages_business_data_console_target_connection_desc', { val: item.database_type }) }}
@@ -143,7 +145,7 @@
                       item.value
                     }}</span>
                     <!--<IconButton class="ml-auto" sm>open-in-new</IconButton>-->
-                      </div>
+                  </div>
                   <div v-if="item.desc" class="mt-2 font-color-light">{{ item.desc }}</div>
                 </div>
                 <div class="item__content position-relative p-2">
@@ -194,25 +196,28 @@
                       <ElTag v-if="item.disabled" class="ml-1" type="info" size="small">{{
                         $t('public_status_invalid')
                       }}</ElTag>
-                      <ElTagv-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
-                      size="small"
-                        class="ml-1 px-1 flex align-center clickable"@click="handleOpenWebsite(connectionWebsiteMap[item.id])"
-                      ><VIcon class="mr-1" size="14">open-in-new</VIcon
+                      <ElTag
+                        v-if="item.showConnectorWebsite && connectionWebsiteMap[item.id]"
+                        size="small"
+                        class="ml-1 px-1 flex align-center clickable"
+                        @click="handleOpenWebsite(connectionWebsiteMap[item.id])"
+                        ><VIcon class="mr-1" size="14">open-in-new</VIcon
                         >{{ $t('packages_business_swimlane_target_shouye') }}</ElTag
-                    ></span>
+                      ></span
+                    >
                     <IconButton class="ml-1" @click="$emit('preview', item)">view-details</IconButton>
-              </div>
-              <div class="mt-2 font-color-light">
-                {{
-                  $t('packages_business_data_console_target_connection_desc', {
-                    val: item.database_type,
-                  })
-                }}
-              </div>
-            </div>
-            <TaskList
-              ref="taskList"
-              :key="`${item.id}_task`"
+                  </div>
+                  <div class="mt-2 font-color-light">
+                    {{
+                      $t('packages_business_data_console_target_connection_desc', {
+                        val: item.database_type,
+                      })
+                    }}
+                  </div>
+                </div>
+                <TaskList
+                  ref="taskList"
+                  :key="`${item.id}_task`"
                   :item-id="item.id"
                   :show-all="expandState[item.id]"
                   :list="connectionTaskMap[item.id] || []"
@@ -428,14 +433,14 @@ export default {
     IconButton,
     VIcon,
     DynamicScroller,
-    DynamicScrollerItem
+    DynamicScrollerItem,
   },
 
   mixins: [commonMix],
 
   data() {
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       dragging: false,
       list: [],
       appList: [],
@@ -472,7 +477,7 @@ export default {
       connectionWebsiteMap: {},
       apiSupportTypes: ['Mysql', 'SQL Server', 'Oracle', 'MongoDB', 'PostgreSQL', 'Tidb', 'Doris'],
       searchKeywordList: [],
-      expandState: {}
+      expandState: {},
     }
   },
 
@@ -1049,7 +1054,7 @@ export default {
 
       if (!app) {
         const appValue = data.listtags[0].id
-        app = this.appList.find(it => it.id === appValue)
+        app = this.appList.find((it) => it.id === appValue)
       }
 
       if (!app.modules) app['modules'] = [data]
@@ -1086,7 +1091,7 @@ export default {
       this.apiDialog.tableName = tableObj.name
       this.apiDialog.to = null
       this.showApiDialog()
-    }
+    },
   },
 }
 </script>

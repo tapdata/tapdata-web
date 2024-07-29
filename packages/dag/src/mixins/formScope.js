@@ -9,7 +9,7 @@ import {
   proxyApi,
   databaseTypesApi,
   alarmApi,
-  taskApi
+  taskApi,
 } from '@tap/api'
 import { externalStorageApi } from '@tap/api'
 import { isPlainObj } from '@tap/shared'
@@ -119,7 +119,7 @@ export default {
       })
     }
 
-    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
     return {
       scope: {
@@ -448,7 +448,7 @@ export default {
               isPrimaryKey: item.primary_key_position > 0,
               indicesUnique: !!item.indicesUnique,
               type: item.data_type,
-              tapType: item.tapType
+              tapType: item.tapType,
             }))
             .filter((item) => !item.is_deleted)
         },
@@ -678,7 +678,7 @@ export default {
           }
         },
 
-        useDmlPolicy: field => {
+        useDmlPolicy: (field) => {
           const capabilities = field.query('attrs.capabilities').get('value')
           let insertPolicy
           let updatePolicy
@@ -749,7 +749,7 @@ export default {
           }
         },
 
-        useSyncConnection: async field => {
+        useSyncConnection: async (field) => {
           const id = field.value
           const form = field.form
           const connection = await connectionsApi.getNoSchema(id)
@@ -1077,18 +1077,18 @@ export default {
           }
         },
 
-        getNodeTableOptions: async nodeId => {
+        getNodeTableOptions: async (nodeId) => {
           console.log('getNodeTableOptions', nodeId)
           const { items = [] } = await taskApi.getNodeTableInfo({
             taskId: this.dataflow.id,
             nodeId,
             page: 1,
-            pageSize: 1000000
+            pageSize: 1000000,
           })
 
-          return items.map(item => item.sinkObjectName)
-        }
-      }
+          return items.map((item) => item.sinkObjectName)
+        },
+      },
     }
   },
 
@@ -1105,23 +1105,23 @@ export default {
   methods: {
     async loadAccessNode() {
       const data = await clusterApi.findAccessNodeInfo()
-      const mapNode = item => ({
+      const mapNode = (item) => ({
         value: item.processId,
         label: `${item.hostName}（${
           item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
         }）`,
         disabled: item.status !== 'running',
-        accessNodeType: item.accessNodeType
+        accessNodeType: item.accessNodeType,
       })
-      this.scope.$agents = data.map(item => {
+      this.scope.$agents = data.map((item) => {
         if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
           return {
             value: item.processId,
             label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
-              item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+              item.accessNodes?.filter((ii) => ii.status === 'running').length || 0
             }）`,
             accessNodeType: item.accessNodeType,
-            children: item.accessNodes?.map(mapNode) || []
+            children: item.accessNodes?.map(mapNode) || [],
           }
         }
         return mapNode(item)

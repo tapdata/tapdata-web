@@ -271,13 +271,13 @@ export default {
     VIcon,
     ElScrollbar: Select.components.ElScrollbar,
     VEmpty,
-    IconButton
+    IconButton,
   },
 
   data() {
     const isMacOs = /(ipad|iphone|ipod|mac)/i.test(navigator.platform)
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       commandCode: isMacOs ? '⌘' : 'Ctrl',
       optionCode: isMacOs ? 'Option' : 'Alt',
       name: '',
@@ -289,7 +289,7 @@ export default {
       chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
       showSearchNodePopover: false,
       nodeSearchInput: '',
-      refreshing: false
+      refreshing: false,
     }
   },
   computed: {
@@ -374,7 +374,7 @@ export default {
         this.refreshing = false
         this.setSchemaRefreshing(false)
       })
-    }
+    },
   },
   emits: [
     'page-return',

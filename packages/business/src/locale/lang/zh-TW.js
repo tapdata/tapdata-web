@@ -44,7 +44,7 @@ export default {
   packages_business_connection_form_rename: '改名',
   packages_business_connection_form_database_owner_tip: '逗號分割的表達式列表，使用 * 代表任意長度任意字符',
   packages_business_connection_form_source_and_target_tip: `此數據連接在 ${
-    import.meta.env.VITE_PAGE_TITLE
+    import.meta.env.VUE_APP_PAGE_TITLE
   } 中能同時作為源和目標使用`,
   packages_business_connection_form_source_tip: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
   packages_business_connection_form_target_tip: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
@@ -1249,5 +1249,5 @@ export default {
   packages_business_shared_cache_enforceShareCdc: '當共享挖掘不可用(緩存啓動時)',
   packages_business_shared_cache_enforceShareCdc_true: '緩存直接報錯停止',
   packages_business_not_support_validation: '{connection} 不支持{method}',
-  packages_business_download_details: '下載詳情'
+  packages_business_download_details: '下載詳情',
 }

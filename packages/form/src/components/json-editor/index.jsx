@@ -24,7 +24,7 @@ export const JsonEditor = defineComponent({
   setup(props, { emit, listeners }) {
     const fieldRef = useField()
     const editorVal = computed(() => {
-      return props.type === 'object' ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0) : props.value,
+      return props.type === 'object' ? JSON.stringify(props.value, null, props.needFormat ? 2 : 0) : props.value
     })
     const onBlur = (val) => {
       if (val !== editorVal.value) {

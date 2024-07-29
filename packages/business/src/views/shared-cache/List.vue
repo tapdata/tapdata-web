@@ -1,5 +1,29 @@
 <template>
-  <section class="shared-cache-list-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <el-button
+        v-show="multipleSelection.length > 0 && isDaas"
+        :disabled="$disabledReadonlyUserBtn()"
+        v-readonlybtn="'SYNC_job_export'"
+        class="btn message-button-cancel"
+        @click="handleExport"
+      >
+        <span> {{ $t('public_button_export') }}</span>
+      </el-button>
+      <el-button
+        v-if="isDaas"
+        v-readonlybtn="'SYNC_job_import'"
+        class="btn"
+        :disabled="$disabledReadonlyUserBtn()"
+        @click="handleImport"
+      >
+        <span> {{ $t('packages_business_button_bulk_import') }}</span>
+      </el-button>
+      <ElButton class="btn btn-create" type="primary" @click="create">
+        <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage
       ref="table"
       row-key="id"
@@ -9,33 +33,6 @@
     >
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-      </template>
-      <template v-slot:operation>
-        <div>
-          <template>
-            <el-button
-              v-show="multipleSelection.length > 0 && isDaas"
-              :disabled="$disabledReadonlyUserBtn()"
-              v-readonlybtn="'SYNC_job_export'"
-              class="btn message-button-cancel"
-              @click="handleExport"
-            >
-              <span> {{ $t('public_button_export') }}</span>
-            </el-button>
-            <el-button
-              v-if="isDaas"
-              v-readonlybtn="'SYNC_job_import'"
-              class="btn"
-              :disabled="$disabledReadonlyUserBtn()"
-              @click="handleImport"
-            >
-              <span> {{ $t('packages_business_button_bulk_import') }}</span>
-            </el-button>
-          </template>
-          <ElButton class="btn btn-create" type="primary" @click="create">
-            <span> {{ $t('packages_business_shared_cache_button_create') }}</span>
-          </ElButton>
-        </div>
       </template>
       <el-table-column
         reserve-selection
@@ -153,7 +150,7 @@
     <Details ref="details" width="380px"></Details>
     <!-- 导入 -->
     <Upload v-if="isDaas" type="dataflow" :show-tag="false" ref="upload" @success="table.fetch()"></Upload>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -169,14 +166,15 @@ import { makeStatusAndDisabled } from '../../shared'
 import Editor from './Editor'
 import Details from './Details'
 import Upload from '../../components/UploadDialog'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 export default {
   inject: ['buried'],
-  components: { TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
+  components: { PageContainer, TablePage, FilterBar, TaskStatus, Editor, Details, Upload },
   data() {
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       searchParams: {
         name: '',
         connectionName: '',

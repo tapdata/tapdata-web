@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent, ref } from 'vue'
 import { FormItem, useForm } from '@tap/form'
 import { taskApi } from '@tap/api'
 import { VIcon } from '@tap/component'
@@ -11,7 +11,7 @@ export const SchemaFormItem = connect(
     defineComponent({
       props: {
         disabled: Boolean,
-        type: String // connection | table
+        type: String, // connection | table
       },
       setup(props, { emit, root, attrs, refs, slots }) {
         const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
@@ -30,7 +30,7 @@ export const SchemaFormItem = connect(
           await taskApi
             .refreshSchema(taskId, {
               nodeIds: activeNodeId,
-              keys: props.type === 'table' ? form.values.tableName : undefined
+              keys: props.type === 'table' ? form.values.tableName : undefined,
             })
             .finally(() => {
               loading.value = false
@@ -60,8 +60,8 @@ export const SchemaFormItem = connect(
             </FormItem.BaseItem>
           )
         }
-      }
-    })
+      },
+    }),
   ),
-  mapProps({ disabled: true })
+  mapProps({ disabled: true }),
 )

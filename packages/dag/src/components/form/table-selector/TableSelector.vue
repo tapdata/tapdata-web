@@ -266,7 +266,6 @@ import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
-import { take } from 'lodash/array'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -306,7 +305,7 @@ export default {
       clipboardValue: '',
       isFocus: false,
       tableMap: {},
-      schemaLoading: false
+      schemaLoading: false,
     }
   },
   computed: {
@@ -396,7 +395,7 @@ export default {
       if (!v) {
         this.getTables()
       }
-    }
+    },
   },
   created() {
     let id = this.connectionId
@@ -637,15 +636,15 @@ export default {
       taskApi
         .refreshSchema(taskId, {
           nodeIds: activeNodeId,
-          keys: this.table.searchKeyword
+          keys: this.table.searchKeyword,
         })
         .finally(() => {
           this.schemaLoading = false
         })
 
       this.getTables()
-    }
-  }
+    },
+  },
 }
 </script>
 

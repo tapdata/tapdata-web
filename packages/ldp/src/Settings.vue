@@ -13,17 +13,14 @@
         {{ $t('packages_business_data_console_mode') }}
       </div>
     </template>
-    <div class="my-n3">
+    <div>
       <div class="flex gap-6 justify-content-center p-4 rounded-lg mode-card-container">
         <div
           class="flex-1 rounded-xl bg-white border mode-card overflow-hidden clickable"
           :class="{ active: mode === 'integration' }"
           @click="handleSelectMode('integration')"
         >
-          <ElImage
-            class="px-5 py-2 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-integration-mode.png')"
-          ></ElImage>
+          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataIntegrationModeImg"></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="integration">
               <span class="fs-7 fw-sub">{{ $t('packages_business_data_console_mode_integration') }}</span>
@@ -45,10 +42,7 @@
           :class="{ active: mode === 'service' }"
           @click="handleSelectMode('service')"
         >
-          <ElImage
-            class="px-5 py-2 mode-card-image align-top"
-            :src="require('@tap/assets/images/swimlane/data-service-platform-mode.png')"
-          ></ElImage>
+          <ElImage class="px-5 py-2 mode-card-image align-top" :src="dataServicePlatformModeImg"></ElImage>
           <div class="px-4 flex align-center mode-card-title border-bottom">
             <ElRadio v-model="mode" class="mr-0" label="service">
               <span class="fs-7 fw-sub"
@@ -121,34 +115,32 @@
             </ElFormItem>
 
             <ElFormItem prop="mdmStorageConnectionId">
-                <span slot="label" class="inline-flex align-center">
-                <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
-              </span>
-                <ElRadioGroup
-               v-if="!isDaas"
-               class="mb-2"
-                   v-model="form.mdmStorageCluster"
+              <template v-slot:label>
+                <span class="inline-flex align-center">
+                  <span>{{ $t('packages_business_data_console_mdm_storage') }}</span>
+                </span>
+              </template>
+              <ElRadioGroup
+                v-if="!isDaas"
+                class="mb-2"
+                v-model="form.mdmStorageCluster"
                 @change="handleChangeMDMStorage"
-                  :disabled="disabled"
+                :disabled="disabled"
               >
                 <ElRadio v-for="item in options" :label="item.value" :key="'FDM' + item.value" border class="mr-4 ml-0">
-                    <span>{{ item.label }}</span>
-                    </ElRadio>
+                  <span>{{ item.label }}</span>
+                </ElRadio>
               </ElRadioGroup>
 
               <ElSelect
-                    v-if="form.mdmStorageCluster === 'self'"
-                      v-model="form.mdmStorageConnectionId"
+                v-if="form.mdmStorageCluster === 'self'"
+                v-model="form.mdmStorageConnectionId"
                 :disabled="disabled"
                 class="w-100"
-                        >
-                         <ElOption v-for="op in connectionsList"
-                          :label="op.label"
-                          :value="op.value"
-                          :key="op.value"
-                        ></ElOption>
-                      </ElSelect>
-                    <template v-else>
+              >
+                <ElOption v-for="op in connectionsList" :label="op.label" :value="op.value" :key="op.value"></ElOption>
+              </ElSelect>
+              <template v-else>
                 <div class="flex align-center gap-4">
                   <span class="preview-text inline-block rounded-4 bg-subtle ellipsis" v-if="mdmConnection">{{
                     mdmConnection.name
@@ -160,14 +152,12 @@
               </template>
             </ElFormItem>
 
-                <div v-if="isDaas" class="flex align-items-center font-color-sslight">
-                  <VIcon class="mr-1" size="14">info</VIcon>
-                  <span class="font-color-sslight"
-                    >{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
-
-                </div>
-              </div>
-            </template>
+            <div v-if="isDaas" class="flex align-items-center font-color-sslight">
+              <VIcon class="mr-1" size="14">info</VIcon>
+              <span class="font-color-sslight">{{ $t('packages_business_data_console_setting_saved_tooltip') }}</span>
+            </div>
+          </div>
+        </template>
       </ElForm>
     </div>
     <template v-slot:footer>
@@ -185,6 +175,8 @@
 import { $on, $off, $once, $emit } from '../utils/gogocodeTransfer'
 import i18n from '@tap/i18n'
 import { connectionsApi, liveDataPlatformApi } from '@tap/api'
+import dataIntegrationModeImg from '@tap/assets/images/swimlane/data-integration-mode.png'
+import dataServicePlatformModeImg from '@tap/assets/images/swimlane/data-service-platform-mode.png'
 
 export default {
   name: 'Settings',
@@ -200,7 +192,7 @@ export default {
       value: Boolean,
     },
     fdmConnection: Object,
-    mdmConnection: Object
+    mdmConnection: Object,
   },
   data() {
     const isCommunity = process.env.VUE_APP_MODE === 'community'
@@ -208,12 +200,12 @@ export default {
       {
         label: this.$t('packages_business_mongodb_self_hosted_cluster'),
         value: 'self',
-        tag: 'Add a New Connection'
+        tag: 'Add a New Connection',
       },
       {
         label: this.$t('packages_business_mongodb_full_management_cluster'),
-        value: 'full-management'
-      }
+        value: 'full-management',
+      },
     ]
 
     if (isCommunity) {
@@ -221,7 +213,9 @@ export default {
     }
 
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      dataIntegrationModeImg,
+      dataServicePlatformModeImg,
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       mode: '',
       connectionsList: [],
       modeItems: [

@@ -25,7 +25,7 @@
         label-width="80px"
         class="data-server__form overflow-auto flex-1"
         :class="{
-          'p-6 pb-16': !inDialog
+          'p-6 pb-16': !inDialog,
         }"
         ref="form"
         label-position="top"
@@ -87,8 +87,8 @@
               <ListSelect
                 :disabled="disableApp"
                 class="w-100"
-                :value.sync="form.appValue"
-                :label.sync="form.appLabel"
+                v-model:value="form.appValue"
+                v-model:label="form.appLabel"
                 @change="handleUpdateApp"
               ></ListSelect>
             </ElFormItem>
@@ -531,11 +531,11 @@ export default {
     host: String,
     tag: {
       type: String,
-      default: 'Drawer'
+      default: 'Drawer',
     },
     inDialog: Boolean,
     disableApp: Boolean,
-    params: Object
+    params: Object,
   },
   data() {
     const validateParams = (rule, value, callback) => {
@@ -711,16 +711,16 @@ export default {
       return [
         {
           method: 'POST',
-          url: `${baseUrl}/find`
+          url: `${baseUrl}/find`,
         },
         {
           method: 'GET',
-          url: `${baseUrl}`
+          url: `${baseUrl}`,
         },
         {
           method: 'TOKEN',
-          url: `${location.origin + location.pathname}oauth/token`
-        }
+          url: `${location.origin + location.pathname}oauth/token`,
+        },
       ]
     },
 
@@ -729,7 +729,7 @@ export default {
         acc[item.method] = item.url
         return acc
       }, {})
-    }
+    },
   },
   watch: {
     visible(v) {
@@ -741,14 +741,14 @@ export default {
         this.setTabTitle(
           this.data.id
             ? this.$t('packages_business_data_server_drawer_fuwuxiangqing')
-            : this.$t('packages_business_data_server_drawer_chuangjianfuwu')
+            : this.$t('packages_business_data_server_drawer_chuangjianfuwu'),
         )
 
         setTimeout(() => {
           this.$refs.tabs.calcPaneInstances(true)
         }, 0)
       }
-    }
+    },
   },
   mounted() {
     this.getRoles()
@@ -1353,7 +1353,7 @@ export default {
     async handleUpdateRole() {
       await modulesApi.updatePermissions({
         moduleId: this.data.id,
-        acl: this.form.acl
+        acl: this.form.acl,
       })
       this.$message.success(this.$t('public_message_operation_success'))
     },
@@ -1365,9 +1365,9 @@ export default {
         listtags: [
           {
             id: appValue,
-            value: appLabel
-          }
-        ]
+            value: appLabel,
+          },
+        ],
       })
       this.$message.success(this.$t('public_message_operation_success'))
     },
@@ -1387,8 +1387,8 @@ export default {
       }
 
       $title.textContent = title
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -1415,7 +1415,7 @@ export default {
 .data-server__form {
   :deep(.el-form-item) {
     margin-bottom: 12px;
-    &__content {
+    .el-form-item__content {
       .el-select {
         width: 100%;
       }
@@ -1509,9 +1509,6 @@ export default {
   border: 1px solid map-get($borderColor, form);
   background: map-get($bgColor, form);
   border-radius: 4px;
-  font-family:
-    PingFangSC-Regular,
-    PingFang SC;
 }
 
 .data-server__form {

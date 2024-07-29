@@ -79,11 +79,7 @@
         >
       </div>
     </div>
-    <ElDialog
-      v-model="dialogConfig.visible"
-      width="30%"
-      :close-on-click-modal="false"
-    >
+    <ElDialog v-model="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <template #header="{ titleClass }">
         <span :class="titleClass">{{ dialogConfig.title }}</span>
       </template>
@@ -111,7 +107,6 @@ import VIcon from './base/VIcon.vue'
 import { metadataDefinitionsApi, userGroupsApi } from '@tap/api'
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import { IconButton } from './icon-button'
-import { meta } from '@typescript-eslint/parser'
 
 export default {
   components: { IconButton, VIcon },
@@ -130,9 +125,9 @@ export default {
       type: String,
     },
     viewPage: {
-      type: String
+      type: String,
     },
-    dragState: Object
+    dragState: Object,
   },
   data() {
     return {
@@ -176,8 +171,8 @@ export default {
       },
       set(value) {
         this.$emit('update:visible', value)
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.getData()
@@ -237,7 +232,7 @@ export default {
       this.isExpand = _isExpand
       this.setPanelFlag({
         panelFlag: _isExpand,
-        type: this.viewPage
+        type: this.viewPage,
       })
     },
     clear() {
@@ -298,7 +293,7 @@ export default {
             cb && cb(treeData)
           })
       } else {
-        metadataDefinitionsApi.getTags(type).then(data => {
+        metadataDefinitionsApi.getTags(type).then((data) => {
           let items = data?.items || []
           this.treeData = this.formatData(items)
           cb && cb(items)
@@ -550,10 +545,10 @@ export default {
       dropNode.classList.remove('is-drop-inner')
 
       const id = draggingObjects
-        .filter(item => {
-          return item.listtags?.length ? item.listtags.every(tag => tag.id !== data.id) : true
+        .filter((item) => {
+          return item.listtags?.length ? item.listtags.every((tag) => tag.id !== data.id) : true
         })
-        .map(item => item.id)
+        .map((item) => item.id)
 
       let tableName
       switch (this.viewPage) {
@@ -577,17 +572,17 @@ export default {
           listtags: [
             {
               id: data.id,
-              value: data.value
-            }
-          ]
+              value: data.value,
+            },
+          ],
         })
         this.$message.success(this.$t('public_message_operation_success'))
         this.$emit('drop-in-tag')
       } else {
         this.$message.info(this.$t('packages_component_data_already_exists'))
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

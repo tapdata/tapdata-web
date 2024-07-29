@@ -10,17 +10,18 @@
         <div><slot name="empty"></slot></div>
       </template>
     </ElTable>
-    <ElPagination
-      v-bind="Object.assign({}, options, pageOptions)"
-      v-if="showPage"
-      class="mt-3"
-      v-model:current-page="page.current"
-      v-model:page-size="page.size"
-      :total="page.total"
-      @size-change="fetch(1)"
-      @current-change="fetch"
-    >
-    </ElPagination>
+
+    <div v-if="showPage" class="pt-4 px-4">
+      <ElPagination
+        v-bind="Object.assign({}, options, pageOptions)"
+        v-model:current-page="page.current"
+        v-model:page-size="page.size"
+        :total="page.total"
+        @size-change="fetch(1)"
+        @current-change="fetch"
+      >
+      </ElPagination>
+    </div>
   </div>
 </template>
 

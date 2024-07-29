@@ -51,7 +51,7 @@
             :class="{ active: currentScene === 'locked' && !search }"
             @click="
               handleSelectScene({
-                key: 'locked'
+                key: 'locked',
               })
             "
           >
@@ -193,7 +193,7 @@
       ref="requestDialog"
       :visible="requestVisible"
       :meta="requestMeta"
-      @update:visible="val => (requestVisible = val)"
+      @update:visible="(val) => (requestVisible = val)"
     ></RequestDialog>
   </ElDialog>
 </template>
@@ -234,10 +234,10 @@ export default {
     selectorType: String,
     fixedPdkId: String,
     dialogMode: Boolean,
-    width: { type: String, default: '80%' }
+    width: { type: String, default: '80%' },
   },
   data() {
-    const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+    const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
     const isCommunity = process.env.VUE_APP_MODE === 'community'
     return {
       isDaas,
@@ -355,7 +355,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'aliyun_rds_mssql.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'Dameng',
@@ -363,7 +363,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'dameng.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'DB2',
@@ -371,7 +371,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'db2.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'GBase-8a',
@@ -379,7 +379,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'gbase8a.png',
                 tags: ['Database'],
-                connectionType: 'target'
+                connectionType: 'target',
               },
               {
                 type: 'GBase-8s',
@@ -387,7 +387,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'gbase8s.png',
                 tags: ['Database'],
-                connectionType: 'target'
+                connectionType: 'target',
               },
               {
                 type: 'Informix',
@@ -395,7 +395,7 @@ export default {
                 qcType: 'GA',
                 icon: 'informix.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'KingBaseES-R3',
@@ -403,7 +403,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'kingbaser3.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'KingBaseES-R6',
@@ -411,7 +411,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'kingbaser6.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'Oracle',
@@ -419,7 +419,7 @@ export default {
                 qcType: 'GA',
                 icon: 'oracle.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'SQL Server',
@@ -427,7 +427,7 @@ export default {
                 qcType: 'GA',
                 icon: 'mssql.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'Sybase',
@@ -435,7 +435,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'sybase.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'TencentDB SQL Server',
@@ -443,7 +443,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'tencent_db_mssql.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'TencentDB TD-SQL',
@@ -451,7 +451,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'tencent_db_mysql.png',
                 tags: ['Database'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'Alibaba 1688',
@@ -459,7 +459,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'alibaba.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'BesChannels',
@@ -467,7 +467,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'bes-channels.png',
                 tags: ['SaaS'],
-                connectionType: 'target'
+                connectionType: 'target',
               },
               {
                 type: 'Coding',
@@ -475,7 +475,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'coding.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Feishu-Bitable',
@@ -483,7 +483,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'bitable.png',
                 tags: ['SaaS'],
-                connectionType: 'source_and_target'
+                connectionType: 'source_and_target',
               },
               {
                 type: 'HubSpot',
@@ -491,7 +491,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'hubspot.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Lark Approval',
@@ -499,7 +499,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'task.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Lark Doc',
@@ -507,7 +507,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'lark-doc.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Lark-IM',
@@ -515,7 +515,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'lark.png',
                 tags: ['SaaS'],
-                connectionType: 'target'
+                connectionType: 'target',
               },
               {
                 type: 'LarkTask',
@@ -523,7 +523,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'task.png',
                 tags: ['SaaS'],
-                connectionType: 'target'
+                connectionType: 'target',
               },
               {
                 type: 'Salesforce',
@@ -531,7 +531,7 @@ export default {
                 qcType: 'Beta',
                 icon: 'Salesforce-Logo.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Shein',
@@ -539,7 +539,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'shein.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Zoho-CRM',
@@ -547,7 +547,7 @@ export default {
                 qcType: 'Alpha',
                 icon: 'zoho.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
+                connectionType: 'source',
               },
               {
                 type: 'Zoho-Desk',
@@ -555,8 +555,8 @@ export default {
                 qcType: 'Beta',
                 icon: 'zoho_desk.png',
                 tags: ['SaaS'],
-                connectionType: 'source'
-              }
+                connectionType: 'source',
+              },
             ]
           : [],
       tagList: [
@@ -600,9 +600,9 @@ export default {
       requestMeta: {
         type: '',
         version: '',
-        qcType: ''
+        qcType: '',
       },
-      onlyForm: false
+      onlyForm: false,
     }
   },
   computed: {
@@ -747,15 +747,18 @@ export default {
         Object.assign(this.requestMeta, {
           qcType: item.qcType,
           type: item.type,
-          version: item.version
+          version: item.version,
         })
         const time = Date.now()
         const msg = this.$message.info(this.$t('public_please_wait'))
         const ifOpen = await this.$refs.requestDialog.handleOpen()
         // 延迟关闭，避免消息一闪而过
-        setTimeout(() => {
-          msg.close()
-        }, Math.max(600 - (Date.now() - time), 0))
+        setTimeout(
+          () => {
+            msg.close()
+          },
+          Math.max(600 - (Date.now() - time), 0),
+        )
         if (ifOpen) return
       }
 
@@ -846,7 +849,7 @@ export default {
         const qcTypeLevel = {
           GA: 1,
           Alpha: 2,
-          Beta: 3
+          Beta: 3,
         }
         const o1Level = qcTypeLevel[o1.qcType]
         const o2Level = qcTypeLevel[o2.qcType]
@@ -860,7 +863,7 @@ export default {
 
       // 过滤掉已注册的
       this.lockedTypes = this.lockedTypes
-        .filter(item => {
+        .filter((item) => {
           item.locked = true // 标记上锁
           return (
             !this.databaseTypeMap[item.type] &&
@@ -932,7 +935,7 @@ export default {
 
     openGithub() {
       window.open('https://github.com/tapdata/tapdata-connectors', '_blank')
-    }
+    },
   },
   emits: ['update:visible', 'update:selectorType', 'visible', 'selected', 'success', 'saveAndMore'],
 }
@@ -977,8 +980,9 @@ export default {
       &.active,
       &:hover {
         .img-box {
-          background: rgba(201, 205, 212, 0.3);}
+          background: rgba(201, 205, 212, 0.3);
         }
+      }
 
       &.disable {
         .img-box {

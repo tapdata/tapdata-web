@@ -136,9 +136,7 @@
               <div>{{ item.message }}</div>
             </div>
             <ul class="father-table">
-              <li>
-                {{ $t('packages_business_verification_sourceTableData') }}
-              </li>
+              <li>{{ $t('packages_business_verification_sourceTableData') }}</li>
               <li>{{ $t('packages_business_verification_returnedData') }}</li>
             </ul>
             <ul class="sub-table">
@@ -165,104 +163,6 @@
     </ElPagination>
   </div>
 </template>
-
-<script>
-import JsonViewer from 'vue-json-viewer'
-import { VIcon } from '@tap/component'
-export default {
-  components: {
-    JsonViewer,
-    VIcon,
-  },
-  props: {
-    remoteMethod: Function,
-  },
-  data() {
-    return {
-      loading: false,
-      page: {
-        current: 1,
-        size: 20,
-        total: 0,
-      },
-      showAdvancedVerification: false,
-      statsInfo: {},
-      resultList: [],
-      showType: 'diff',
-      sourceSortColumn: [], // 源索引字段
-      targetSortColumn: [], // 目标索引字段
-      inspectMethod: '',
-    }
-  },
-  computed: {
-    filterResultList() {
-      return this.resultList?.filter((t) => !!t.details) || []
-    },
-  },
-  methods: {
-    fetch(current) {
-      // this.loading = true
-      this.remoteMethod({ current, size: this.page.size })
-        .then(
-          ({
-            statsInfo = {},
-            resultList,
-            total,
-            showAdvancedVerification,
-            sourceSortColumn,
-            targetSortColumn,
-            inspectMethod,
-          }) => {
-            if (statsInfo?.result === 'failed') {
-              let countResultText = ''
-              let contentResultText = ''
-              let diffCount = statsInfo.target_total - statsInfo.source_total
-              let diffCountNum = Math.abs(diffCount)
-              if (diffCount > 0) {
-                countResultText = this.$t('packages_business_verification_result_count_more', [diffCountNum])
-              }
-              if (diffCount < 0) {
-                countResultText = this.$t('packages_business_verification_result_count_less', [diffCountNum])
-              }
-              if (this.type !== 'row_count' && this.type !== 'hash') {
-                let diffContentNum = statsInfo.source_only + statsInfo.target_only + statsInfo.row_failed
-                if (diffContentNum !== 0) {
-                  contentResultText = this.$t('packages_business_verification_result_content_diff', [diffContentNum])
-                }
-              }
-              statsInfo.countResultText = countResultText
-              statsInfo.contentResultText = contentResultText
-            }
-            this.statsInfo = statsInfo
-            this.resultList = resultList
-            this.page.total = total
-            this.showAdvancedVerification = showAdvancedVerification
-            this.sourceSortColumn = sourceSortColumn
-            this.targetSortColumn = targetSortColumn
-            this.inspectMethod = inspectMethod
-          },
-        )
-        .finally(() => {
-          this.loading = false
-        })
-    },
-
-    getDetailsList(data = []) {
-      data.forEach((el) => {
-        if (this.sourceSortColumn.includes(el.source.key)) {
-          el.source.isSortColumn = true
-        }
-        if (this.targetSortColumn.includes(el.target.key)) {
-          el.target.isSortColumn = true
-        }
-      })
-      if (this.showType === 'all') return data
-      return data.filter((t) => !!t.red)
-    },
-  },
-}
-</script>
-
 <style lang="scss" scoped>
 $margin: 10px;
 .verification-result-view {
@@ -497,10 +397,10 @@ import { checkEllipsisActive } from '@tap/shared'
 export default {
   components: {
     JsonViewer,
-    VIcon
+    VIcon,
   },
   props: {
-    remoteMethod: Function
+    remoteMethod: Function,
   },
   data() {
     return {
@@ -508,7 +408,7 @@ export default {
       page: {
         current: 1,
         size: 20,
-        total: 0
+        total: 0,
       },
       showAdvancedVerification: false,
       statsInfo: {},
@@ -518,12 +418,12 @@ export default {
       targetSortColumn: [], // 目标索引字段
       inspectMethod: '',
       expandErrorMessage: false,
-      hasMoreErrorMsg: false
+      hasMoreErrorMsg: false,
     }
   },
   computed: {
     filterResultList() {
-      return this.resultList?.filter(t => !!t.details) || []
+      return this.resultList?.filter((t) => !!t.details) || []
     },
     errorMsg() {
       return this.statsInfo?.errorMsg
@@ -532,7 +432,7 @@ export default {
       if (this.errorMsg) {
         return this.errorMsg.split('\n').shift()
       }
-    }
+    },
   },
   methods: {
     fetch(current) {
@@ -546,7 +446,7 @@ export default {
             showAdvancedVerification,
             sourceSortColumn,
             targetSortColumn,
-            inspectMethod
+            inspectMethod,
           }) => {
             if (statsInfo?.result === 'failed') {
               let countResultText = ''
@@ -577,7 +477,7 @@ export default {
             this.inspectMethod = inspectMethod
 
             this.checkErrorMsg()
-          }
+          },
         )
         .finally(() => {
           this.loading = false
@@ -585,7 +485,7 @@ export default {
     },
 
     getDetailsList(data = []) {
-      data.forEach(el => {
+      data.forEach((el) => {
         if (this.sourceSortColumn.includes(el.source.key)) {
           el.source.isSortColumn = true
         }
@@ -594,7 +494,7 @@ export default {
         }
       })
       if (this.showType === 'all') return data
-      return data.filter(t => !!t.red)
+      return data.filter((t) => !!t.red)
     },
 
     checkErrorMsg() {
@@ -602,7 +502,7 @@ export default {
         const dom = this.$refs.errorSummary
         this.hasMoreErrorMsg = dom ? this.errorMsg.split('\n').length > 1 || checkEllipsisActive(dom) : false
       })
-    }
-  }
+    },
+  },
 }
 </script>

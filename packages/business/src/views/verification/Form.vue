@@ -7,154 +7,6 @@
           $route.params.id ? $t('packages_business_verification_edit') : $t('packages_business_verification_newVerify')
         }}
       </div>
-      <div>
-        <ElForm
-          class="grey"
-          ref="baseForm"
-          label-position="left"
-          label-width="160px"
-          :model="form"
-          :rules="rules"
-          :validate-on-rule-change="false"
-        >
-          <ElFormItem
-            v-if="form.taskMode === 'pipeline'"
-            required
-            class="form-item"
-            prop="flowId"
-            :label="$t('packages_business_verification_chooseJob') + ': '"
-          >
-            <AsyncSelect
-              v-model="form.flowId"
-              class="form-item-width"
-              :method="getTaskOptions"
-              :currentLabel="taskName"
-              item-label="name"
-              item-value="id"
-              itemQuery="name"
-              :pageSize="10000000000"
-              @option-select="handleSelectTask"
-            />
-          </ElFormItem>
-
-          <ElFormItem
-            required
-            class="form-item"
-            prop="name"
-            :label="$t('packages_business_verification_task_name') + ': '"
-          >
-            <ElInput class="form-input" v-model="form.name"></ElInput>
-          </ElFormItem>
-
-          <ElFormItem required class="form-item" :label="$t('packages_business_verification_type') + ': '">
-            <ElRadioGroup v-model="form.inspectMethod" @change="handleChangeInspectMethod">
-              <ElRadioButton label="row_count">{{ inspectMethodMap['row_count'] }}</ElRadioButton>
-              <ElRadioButton label="field">{{ inspectMethodMap['field'] }}</ElRadioButton>
-              <ElRadioButton label="jointField">{{ inspectMethodMap['jointField'] }}</ElRadioButton>
-              <ElRadioButton label="hash">{{ inspectMethodMap['hash'] }}</ElRadioButton>
-              <!-- <ElRadioButton label="cdcCount"
-              >动态校验
-              <ElTooltip
-                class="item"
-                effect="dark"
-                content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
-                placement="top"
-              >
-                <i class="el-icon-warning-outline"></i>
-              </ElTooltip>
-            </ElRadioButton> -->
-            </ElRadioGroup>
-            <div v-if="typTipMap[form.inspectMethod]">
-              <i class="el-icon-info color-primary mr-1"></i>
-              <span style="font-size: 12px">{{ typTipMap[form.inspectMethod] }}</span>
-            </div>
-          </ElFormItem>
-
-          <ElCollapse class="collapse-fill db-list-container" accordion>
-            <ElCollapseItem name="1">
-              <template #title>
-                <span>{{ $t('packages_business_verification_form_gaojipeizhi') }}</span>
-                <span
-                  v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"
-                  class="ml-3 font-color-sslight"
-                  >{{ $t('packages_business_verification_form_zhengzaijiyuren') }}</span
-                >
-                <VIcon
-                  v-if="form.taskMode === 'pipeline' && (autoAddTableLoading || loading)"
-                  class="ml-2 animation-rotate"
-                  size="14"
-                  color="rgb(61, 156, 64)"
-                  >loading-circle
-                </VIcon>
-              </template>
-              <ElFormItem
-                v-if="form.inspectMethod !== 'hash'"
-                class="form-item"
-                prop="inspectDifferenceMode"
-                :label="$t('packages_business_verification_form_jieguoshuchu') + ': '"
-              >
-                <ElSelect filterable class="form-select" v-model="form.inspectDifferenceMode">
-                  <ElOption :label="$t('packages_business_verification_form_shuchusuoyoubu')" value="All"></ElOption>
-                  <ElOption
-                    :label="$t('packages_business_verification_form_zhishuchulaiyuan')"
-                    value="OnSourceExists"
-                  ></ElOption>
-                </ElSelect>
-              </ElFormItem>
-
-              <ElFormItem class="form-item" :label="$t('packages_business_verification_frequency') + ': '">
-                <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
-                  <ElOption :label="$t('packages_business_verification_single')" value="manual"></ElOption>
-                  <ElOption :label="$t('packages_business_verification_repeating')" value="cron"></ElOption>
-                </ElSelect>
-              </ElFormItem>
-              <ElFormItem
-                v-if="form.mode === 'cron'"
-                class="form-item"
-                :label="$t('packages_business_verification_is_enabled') + ': '"
-              >
-                <ElSwitch v-model="form.enabled"></ElSwitch>
-              </ElFormItem>
-              <template v-if="form.mode === 'cron'">
-                <ElFormItem
-                  class="form-item"
-                  prop="timing.start"
-                  :label="$t('packages_business_verification_startAndStopTime') + ': '"
-                >
-                  <ElDatePicker
-                    class="form-input"
-                    :value="[form.timing.start, form.timing.end]"
-                    type="datetimerange"
-                    range-separator="-"
-                    :start-placeholder="$t('date_picker_start_time')"
-                    :end-placeholder="$t('date_picker_end_time')"
-                    align="right"
-                    :default-time="['00:00:00', '23:59:59']"
-                    value-format="timestamp"
-                    @input="timingChangeHandler"
-                  >
-                  </ElDatePicker>
-                </ElFormItem>
-                <ElFormItem
-                  class="form-item"
-                  prop="timing.intervals"
-                  :label="$t('packages_business_verification_verifyInterval') + ': '"
-                >
-                  <ElInput
-                    class="form-input"
-                    v-model="form.timing.intervals"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <template slot="append">
-                      <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
-                        <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
-                      </ElSelect>
-                    </template>
-                  </ElInput>
-                </ElFormItem>
-              </template>
-
       <SchemaToForm
         v-if="!!formSchema"
         :value="form"
@@ -304,7 +156,7 @@ export default {
       typTipMap: {
         row_count: this.$t('packages_business_verification_fastCountTip'),
         field: this.$t('packages_business_verification_contentVerifyTip'),
-        jointField: this.$t('packages_business_verification_jointFieldTip')
+        jointField: this.$t('packages_business_verification_jointFieldTip'),
       },
       jointErrorMessage: '',
       errorMessageLevel: '',
@@ -339,10 +191,10 @@ export default {
           items: [
             {
               id: filter.where.id,
-              name: this.taskName
-            }
+              name: this.taskName,
+            },
           ],
-          total: 1
+          total: 1,
         }
       }
 
@@ -357,12 +209,12 @@ export default {
       if (query) {
         query = query.toLowerCase()
         const reg = new RegExp(query, 'i')
-        data = data.filter(item => reg.test(item.name))
+        data = data.filter((item) => reg.test(item.name))
       }
 
       return {
         items: data,
-        total: data.length
+        total: data.length,
       }
     },
     //获取表单数据
@@ -382,15 +234,15 @@ export default {
             await this.$nextTick()
           }
 
-          const haveTaskId = data.tasks.some(t => !!t.taskId)
+          const haveTaskId = data.tasks.some((t) => !!t.taskId)
           // 加载数据源的Capabilities
           let capabilitiesMap = {}
           if (haveTaskId) {
             capabilitiesMap = this.$refs.conditionBox.getMatchCapabilitiesMap()
           } else {
             capabilitiesMap = await this.$refs.conditionBox.getCapabilities([
-              ...data.tasks.map(t => t.source.connectionId),
-              ...data.tasks.map(t => t.target.connectionId)
+              ...data.tasks.map((t) => t.source.connectionId),
+              ...data.tasks.map((t) => t.target.connectionId),
             ])
           }
           data.tasks = data.tasks.map((t) => {
@@ -455,10 +307,10 @@ export default {
         return { items: [], total: 0 }
       }
       let stages = []
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         let outputLanes = []
         let inputLanes = []
-        edges.forEach(e => {
+        edges.forEach((e) => {
           if (e.source === n.id) {
             outputLanes.push(e.target)
           }
@@ -469,8 +321,8 @@ export default {
         stages.push(
           Object.assign({}, n, {
             outputLanes,
-            inputLanes
-          })
+            inputLanes,
+          }),
         )
       })
 
@@ -514,7 +366,7 @@ export default {
 
         let { tasks } = formValues
         // 自动过滤出完整数据，以及索引字段数量不相等的情况
-        tasks = tasks.filter(t => {
+        tasks = tasks.filter((t) => {
           if (t.webScript) {
             t.webScript = 'function validate(sourceRow){' + t.webScript + '}'
           }
@@ -529,12 +381,8 @@ export default {
             return t.source.table && t.target.table
           }
 
-          return (
-            t.source.sortColumn && t.source.sortColumn.split(',').length === t.target.sortColumn.split(',').length
-          )
+          return t.source.sortColumn && t.source.sortColumn.split(',').length === t.target.sortColumn.split(',').length
         })
-
-
 
         if (!tasks.length) {
           return this.$message.error(this.$t('packages_business_verification_tasksVerifyCondition'))
@@ -566,13 +414,13 @@ export default {
       })
     },
     handleSelectTask(option, byClick) {
-    if (byClick) {
-      this.form.tasks = []
-      this.taskName = option.label
-      this.setVerifyName()
-      this.getFlowStages(option.value, this.$refs.conditionBox.autoAddTable)
-    }
-  }
+      if (byClick) {
+        this.form.tasks = []
+        this.taskName = option.label
+        this.setVerifyName()
+        this.getFlowStages(option.value, this.$refs.conditionBox.autoAddTable)
+      }
+    },
   },
 }
 </script>
@@ -622,14 +470,16 @@ export default {
     flex-direction: column;
     flex: 1;
     .js-fixText {
-      line-height: 25px;}
+      line-height: 25px;
+    }
 
     .js-fixContent {
       margin-left: 60px;
     }
   }
   .example {
-    width: 300px;}
+    width: 300px;
+  }
 
   .js-editor {
     border: 1px solid map-get($borderColor, light);

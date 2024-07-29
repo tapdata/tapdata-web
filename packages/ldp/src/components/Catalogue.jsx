@@ -9,7 +9,7 @@ import { apiServerApi, modulesApi } from '@tap/api'
 import { useRoute } from 'vue-router'
 import './index.scss'
 
-const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
 
 const ICON = {
   folder: 'folder-o',

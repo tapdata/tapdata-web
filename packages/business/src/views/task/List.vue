@@ -41,7 +41,10 @@
           </ElButton>
           <template #dropdown>
             <ElDropdownMenu>
-              <ElDropdownItem command="start" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
+              <ElDropdownItem
+                command="start"
+                v-readonlybtn="'SYNC_job_operation'"
+                :disabled="$disabledReadonlyUserBtn()"
                 >{{ $t('packages_business_dataFlow_bulkScheuled') }}
               </ElDropdownItem>
               <ElDropdownItem command="stop" v-readonlybtn="'SYNC_job_operation'" :disabled="$disabledReadonlyUserBtn()"
@@ -361,7 +364,7 @@ export default {
     PermissionseSettingsCreate,
     UpgradeCharges,
     UpgradeFee,
-    SyncStatus
+    SyncStatus,
   },
 
   mixins: [syncTaskAgent],
@@ -369,7 +372,7 @@ export default {
   data() {
     return {
       STATUS_MAP,
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
@@ -445,13 +448,13 @@ export default {
             taskType: 140,
             status: 145,
             syncStatus: 180,
-            operation: 340
+            operation: 340,
           }
         : {
             taskType: 80,
             status: 110,
             syncStatus: 110,
-            operation: 280
+            operation: 280,
           }
     },
 
@@ -530,7 +533,7 @@ export default {
         taskRetryStartTime: true,
         errorEvents: true,
         syncStatus: true,
-        restartFlag: true
+        restartFlag: true,
       }
       let where = {
         syncType,
@@ -572,10 +575,10 @@ export default {
         })
         .then((data) => {
           let errorTaskIds = []
-          let list = (data?.items || []).map(item => {
+          let list = (data?.items || []).map((item) => {
             if (item.errorEvents?.length) {
               // 清除 stacks
-              item.errorEvents.forEach(event => {
+              item.errorEvents.forEach((event) => {
                 delete event.stacks
               })
             }
@@ -639,9 +642,9 @@ export default {
           type: 'select-inner',
           items: [
             { label: this.$t('public_select_option_all'), value: '' },
-            ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key }))
+            ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key })),
           ],
-          selectedWidth: '200px'
+          selectedWidth: '200px',
         },
         {
           placeholder: this.$t('public_task_name'),
@@ -1173,6 +1176,7 @@ export default {
 <style lang="scss" scoped>
 .data-flow-wrap {
   height: 100%;
+  //padding: 0 24px 24px 0;
   background: #fff;
 
   .btn-refresh {

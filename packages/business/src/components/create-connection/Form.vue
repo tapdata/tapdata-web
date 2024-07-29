@@ -166,7 +166,7 @@ export default {
       }
     }
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -902,7 +902,7 @@ export default {
             expireSeconds: 100000000,
           }
           proxyApi.subscribe(filter).then((data) => {
-            const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {

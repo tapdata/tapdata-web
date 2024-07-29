@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
+// import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -34,10 +34,12 @@ export default defineConfig({
     'process.env': process.env,
   },
 
+  envPrefix: ['VUE_APP_', 'VITE_', 'TAP_'],
+
   plugins: [
     vue(),
     vueJsx(),
-    viteCommonjs(),
+    // viteCommonjs(),
     AutoImport({
       resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
       dts: 'src/auto-imports.d.ts',

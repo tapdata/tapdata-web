@@ -1,5 +1,10 @@
 <template>
-  <section class="applications-wrap h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton v-readonlybtn="'API_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
+        <span>{{ $t('application_create') }}</span>
+      </ElButton>
+    </template>
     <!-- api客户端 -->
     <TablePage
       ref="table"
@@ -13,13 +18,7 @@
           <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         </div>
       </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton v-readonlybtn="'API_creation'" class="btn btn-create" type="primary" @click="openCreateDialog">
-            <span>{{ $t('application_create') }}</span>
-          </ElButton>
-        </div>
-      </template>
+
       <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
         <!-- <template slot-scope="scope"> -->
       </el-table-column>
@@ -131,7 +130,7 @@
         </span>
       </template>
     </ElDialog>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -141,10 +140,12 @@ import { cloneDeep, escapeRegExp } from 'lodash'
 import { roleApi, applicationApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '@tap/business'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
   name: 'Applications',
   components: {
+    PageContainer,
     TablePage,
     FilterBar,
   },

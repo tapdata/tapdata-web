@@ -160,7 +160,7 @@ export default {
     TransformLoading,
     ConsolePanel,
     PaperEmpty,
-    SkipError
+    SkipError,
   },
 
   inject: ['buried'],
@@ -187,7 +187,7 @@ export default {
         connectionData: {},
       },
 
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       scale: 1,
     }
   },
@@ -311,8 +311,8 @@ export default {
         },
         {
           name: i18n.t('packages_dag_time_field_injection'),
-          type: 'add_date_field_processor'
-        }
+          type: 'add_date_field_processor',
+        },
       ]
       //仅企业版有的节点
       if (this.isDaas) {
@@ -760,8 +760,8 @@ export default {
         // 等待主从合并节点的默认配置保存
         this.setMaterializedViewVisible(true)
       }, 120)
-    }
-  }
+    },
+  },
 }
 </script>
 

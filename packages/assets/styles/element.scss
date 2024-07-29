@@ -1,5 +1,8 @@
 :root {
   --el-font-weight-primary: 400;
+  --collapse-padding-primary: 16px;
+  --collapse-padding-sm: 12px;
+  --btn-space: 12px;
 }
 
 // Table
@@ -12,20 +15,37 @@
   }
 
   .cell {
+    --btn-space: 4px;
     overflow-wrap: break-word;
     word-break: normal;
   }
+
+  /*.el-table__inner-wrapper::after {
+      content: "" !important;
+      position: absolute;
+      background-color: var(--el-table-border-color);
+      z-index: calc(var(--el-table-index) + 2);
+
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 1px;
+  }*/
 }
 
 // Tabs
 // css3 var in packages/theme-chalk/src/tabs.scss
 .el-tabs {
   .el-tabs__nav-wrap.is-top {
-    padding: 0 16px;
+    padding: 0;
   }
 
   .el-tabs__item {
     padding: 0 16px;
+  }
+
+  .el-tabs__nav-wrap::after {
+    height: 1px;
   }
 
   &.tabs-fill {
@@ -64,22 +84,6 @@
     --el-tag-text-color: var(--el-text-color-primary);
   }
 }
-.el-select-v2__popper {
-  .el-select-dropdown {
-    &__list {
-      margin: 4px 0 !important;
-    }
-    &__option-item {
-      width: calc(100% - 8px) !important;
-      left: 4px !important;
-      border-radius: map-get($border-radius, base);
-      font-size: var(--el-font-size-base);
-    }
-  }
-  .el-popper__arrow {
-    display: none;
-  }
-}
 
 .el-select__popper {
   .el-select-dropdown {
@@ -93,6 +97,14 @@
   }
   .el-popper__arrow {
     display: none;
+  }
+}
+
+//ElSelectV2
+.el-select-dropdown:has(.el-vl__wrapper) {
+  .el-select-dropdown__item {
+    width: calc(100% - 8px) !important;
+    left: 4px !important;
   }
 }
 
@@ -125,9 +137,6 @@
 // Dialog
 .el-dialog {
   &__header {
-    padding-inline: 24px !important;
-    padding-block: 20px !important;
-
     &:has(.el-dialog__title:empty) {
       display: none;
     }
@@ -136,14 +145,13 @@
     font-weight: 500;
   }
   &__body {
-    padding-block: 0 !important;
-    padding-inline: 24px !important;
     //margin-bottom: var(--el-dialog-padding-primary);
   }
   &__footer {
-    padding-inline: 24px !important;
-    padding-top: 0 !important;
-    margin-top: var(--el-dialog-padding-primary);
+    --el-dialog-padding-primary: 12px;
+    //padding-inline: 24px !important;
+    //padding-top: 0 !important;
+    //margin-top: var(--el-dialog-padding-primary);
   }
   &__headerbtn {
     display: flex;
@@ -183,4 +191,119 @@
 // Message
 .el-message {
   --el-border-radius-base: 8px;
+}
+
+// MessageBox
+.el-message-box {
+  .el-message-box__message {
+    width: 100%;
+  }
+}
+// Button
+.el-button {
+  & + button.el-button {
+    margin-left: var(--btn-space);
+  }
+
+  & + .el-dropdown:has(.el-button) {
+    margin-left: var(--btn-space);
+  }
+
+  // 文字按钮
+  &.is-text:has(> span:only-child) {
+    padding: 2px 4px;
+    height: auto;
+    line-height: 22px;
+
+    &.el-button--primary {
+      --el-fill-color-light: var(--el-color-primary-light-9)
+    }
+
+    &.el-button--danger {
+      --el-fill-color-light: var(--el-color-danger-light-9)
+    }
+
+    &.el-button--small {
+      line-height: 20px;
+    }
+
+    &.el-button--large {
+      line-height: 24px;
+    }
+  }
+
+  // 图标按钮
+  &.is-text:has(> i:only-child) {
+    //--el-fill-color-light: rgba(31, 35, 41, 0.1);
+    --el-fill-color-light: rgba(0, 0, 0, 0.06);
+    padding: 4px;
+    min-width: 0;
+    height: auto;
+    border: none;
+    line-height: 0;
+    font-size: 20px;
+  }
+
+  &.is-text.el-button--small:has(> i:only-child) {
+    font-size: 16px;
+  }
+
+  // 这里的default 介于按钮的 sm/default 之间
+  &.is-text.el-button--default:has(> i:only-child) {
+    font-size: 18px;
+  }
+
+  &.is-text.el-button--large:has(> i:only-child) {
+    font-size: 24px;
+  }
+}
+
+// Descriptions
+.el-descriptions {
+  .el-descriptions__label:not(.is-bordered-label) {
+    color: var(--el-text-color-tertiary);
+  }
+}
+
+// Transfer
+.el-transfer {
+  .el-transfer__buttons {
+    --btn-space: 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding: 0 12px;
+  }
+}
+
+// Collapse
+.el-collapse {
+  .el-collapse-item__header {
+    padding: 0 var(--collapse-padding-primary);
+    .el-collapse-item__arrow {
+      margin-right: 0;
+    }
+  }
+
+  .el-collapse-item__content {
+    padding: 4px var(--collapse-padding-primary) var(--collapse-padding-primary);
+  }
+
+  &.left-arrow {
+    .el-collapse-item__header {
+      .el-collapse-item__arrow {
+        order: -1;
+        margin-right: var(--collapse-padding-sm);
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+// Tag
+.el-tag {
+  .el-tag__content .el-icon {
+    vertical-align: -2px;
+  }
 }

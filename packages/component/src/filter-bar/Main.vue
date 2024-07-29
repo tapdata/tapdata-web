@@ -20,7 +20,9 @@
           @change="search(item, 'change')"
           @clear="fetch()"
         >
-          <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
+          <template v-slot:suffix>
+            <VIcon size="14" class="inline-block">{{ item.icon }}</VIcon>
+          </template>
         </component>
       </template>
     </ElFormItem>
@@ -102,7 +104,7 @@ export default {
       this.getRules()
       let form = {}
       this.items.forEach((el) => {
-        if (hasOwnProperty.call(value, el.key)) {
+        if (Object.hasOwnProperty.call(value, el.key)) {
           el['value'] = value[el.key]
         }
         if (el.type === 'datetimerange') {

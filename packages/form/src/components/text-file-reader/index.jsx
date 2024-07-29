@@ -15,7 +15,7 @@ export const TextFileReader = defineComponent({
         fileName.value = file.name
         if (props.maxFileSize && file.size / 1024 > props.maxFileSize) {
           root.$message.error(
-            i18n.t('packages_form_text_file_reader_index_shangchuanwenjianda', {
+            t('packages_form_text_file_reader_index_shangchuanwenjianda', {
               val1: props.maxFileSize,
             }),
           )
@@ -51,7 +51,7 @@ export const TextFileReader = defineComponent({
       return (
         <ElInput
           value={fileName.value}
-          placeholder={root.$t('packages_form_formBuilder_file_placeholder')}
+          placeholder={i18n.global.t('packages_form_formBuilder_file_placeholder')}
           vOn:clear={() => {
             emit('change', null)
             emit('update:fileName', null)
@@ -73,7 +73,7 @@ export const TextFileReader = defineComponent({
                 },
               }}
             >
-              <ElButton>{root.$t('packages_form_formBuilder_file_button')}</ElButton>
+              <ElButton>{i18n.global.t('packages_form_formBuilder_file_button')}</ElButton>
             </ElUpload>
           </template>
         </ElInput>

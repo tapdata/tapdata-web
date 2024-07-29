@@ -33,27 +33,31 @@
                 <el-row v-if="activePanel === childItem.category">
                   <el-col :span="24">
                     <el-form-item>
-                      <span slot="label">
-                        <span
-                          >{{
-                            $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
-                          }}:</span
-                        >
-                        <el-tooltip
-                          effect="dark"
-                          placement="top"
-                          v-if="childItem.documentation && $te(`setting_${childItem.documentationKey}`)"
-                        >
-                          <div style="max-width: 300px" slot="content">
-                            {{ $t(`setting_${childItem.documentationKey}`) }}
-                          </div>
-                          <!-- <span
+                      <template v-slot:label>
+                        <span>
+                          <span
+                            >{{
+                              $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
+                            }}:</span
+                          >
+                          <el-tooltip
+                            effect="dark"
+                            placement="top"
+                            v-if="childItem.documentation && $te(`setting_${childItem.documentationKey}`)"
+                          >
+                            <template v-slot:content>
+                              <div style="max-width: 300px">
+                                {{ $t(`setting_${childItem.documentationKey}`) }}
+                              </div>
+                            </template>
+                            <!-- <span
                             class="icon iconfont icon-tishi1"
                             style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
                           ></span> -->
-                          <VIcon class="color-primary ml-3" size="14">info</VIcon>
-                        </el-tooltip>
-                      </span>
+                            <VIcon class="color-primary ml-3" size="14">info</VIcon>
+                          </el-tooltip>
+                        </span>
+                      </template>
                       <ElInputNumber
                         v-if="'min' in childItem || 'max' in childItem"
                         v-model="childItem.value"
@@ -191,7 +195,7 @@ export default {
   components: { VIcon },
   data() {
     return {
-      title: import.meta.env.VITE_PAGE_TITLE,
+      title: import.meta.env.VUE_APP_PAGE_TITLE,
       liceseItems: [],
       emailTemplateDialog: false,
       formData: {
@@ -241,7 +245,7 @@ export default {
         },
       ],
       email: '',
-      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY
+      filterCategory: process.env.VUE_APP_HIDE_SETTINGS_CATEGORY,
     }
   },
   created() {
@@ -291,7 +295,7 @@ export default {
           itemsCategories = [],
           cat = []
         data = data || []
-        items = data.map(item => {
+        items = data.map((item) => {
           if (item.documentation) {
             item.documentationKey = item.documentation
               .split('/')
@@ -319,7 +323,7 @@ export default {
 
         if (this.filterCategory) {
           const arr = this.filterCategory.split(',')
-          items = items.filter(item => !arr.includes(item))
+          items = items.filter((item) => !arr.includes(item))
         }
 
         items = uniq(items)

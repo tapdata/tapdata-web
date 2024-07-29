@@ -1,32 +1,34 @@
 <template>
-  <FilterSelect
-    :filterable="filterable"
+  <ElSelectV2
     class="filter-item-select"
-    :popper-class="popperClass"
+    :style="selectStyle"
+    :filterable="filterable"
     :options="options"
-    :popper-options="{
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 4],
-          },
-        },
-      ],
-    }"
-    :popper-style="style"
+    :popper-class="popperClass"
+    :popper-options="popperOptions"
   >
     <template #prefix>
-      <span class="pl-2 lh-base font-color-light">{{ label }}</span>
+      {{ label }}
     </template>
-  </FilterSelect>
+
+    <template #default="{ item }">
+      <slot name="default" :item="item" />
+    </template>
+
+    <!-- <template #label="{ label, value }">
+      <el-tag
+        type="primary"
+      >
+        {{ label }}
+      </el-tag>
+    </template> -->
+  </ElSelectV2>
 </template>
 
 <script setup>
-import { ref, toRefs, computed, onBeforeMount } from 'vue'
+import { computed, onBeforeMount, ref, toRefs } from 'vue'
 import { addUnit } from 'element-plus/es/utils/index.mjs'
 import { isFn } from '@tap/shared'
-import FilterSelect from './FilterSelect.vue'
 // import { ElSelectV2 as FilterSelect } from 'element-plus'
 
 defineOptions({
@@ -37,26 +39,67 @@ const props = defineProps({
   items: [Array, Function],
   label: String,
   filterable: Boolean,
+  width: {
+    type: [String, Number],
+    default: 200,
+  },
   dropdownWidth: [String, Number],
 })
 
 const { items } = toRefs(props)
 
-const style = computed(() => {
-  return [
-    {
-      width: addUnit(props.dropdownWidth),
-    },
-  ]
+const selectStyle = computed(() => {
+  return {
+    width: addUnit(props.width),
+  }
 })
 
 const popperClass = computed(() => {
-  return ['filter-item-select__popper', props.filterable || props.dropdownWidth ? 'is-fixed-width' : '']
+  return ['filter-item-select__popper', props.dropdownWidth ? 'is-fixed-width' : '']
 })
 
-let options = ref([])
+const options = ref([])
 
 const inputValue = ref('')
+
+const popperOptions = computed(() => {
+  const modifiers = [
+    {
+      name: 'offset',
+      options: {
+        offset: [0, 4],
+      },
+    },
+  ]
+
+  if (props.dropdownWidth) {
+    modifiers.push(
+      {
+        name: 'computeStyles',
+        options: {
+          gpuAcceleration: false,
+        },
+      },
+      {
+        name: 'applyStyles',
+        enabled: false, // 禁用默认样式应用
+      },
+      {
+        name: 'customWidthModifier',
+        enabled: true,
+        phase: 'write',
+        fn({ state }) {
+          // 自定义宽度
+          state.styles.popper.width = addUnit(props.dropdownWidth)
+        },
+      },
+    )
+  }
+
+  return {
+    modifiers,
+  }
+})
 
 onBeforeMount(async () => {
   if (isFn(items.value)) {
@@ -69,7 +112,10 @@ onBeforeMount(async () => {
 
 <style lang="scss">
 .filter-item-select {
-  .el-select-v2__input-wrapper {
+  .el-select__prefix {
+    color: var(--el-text-color-secondary);
+  }
+  /*.el-select-v2__input-wrapper {
     display: none;
   }
   .el-select-v2__placeholder {
@@ -88,6 +134,15 @@ onBeforeMount(async () => {
     display: none;
   }
   &.is-fixed-width {
+    .el-select-dropdown__list {
+      width: 100% !important;
+    }
+  }*/
+}
+
+.filter-item-select__popper {
+  &.is-fixed-width {
+    .el-select-dropdown,
     .el-select-dropdown__list {
       width: 100% !important;
     }

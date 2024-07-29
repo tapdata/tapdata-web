@@ -1,16 +1,16 @@
 <template>
-  <section class="px-4 h-100">
+  <PageContainer>
+    <template #actions>
+      <ElButton type="primary" class="btn-create" @click="toCreate">
+        <span>{{ $t('public_button_add') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton type="primary" class="btn-create" @click="toCreate">
-            <span>{{ $t('public_button_add') }}</span>
-          </ElButton>
-        </div>
-      </template>
+
       <ElTableColumn :label="$t('public_node_name')" prop="name"> </ElTableColumn>
       <ElTableColumn :label="$t('public_description')" prop="desc"> </ElTableColumn>
 
@@ -25,7 +25,7 @@
         </template>
       </ElTableColumn>
     </TablePage>
-  </section>
+  </PageContainer>
 </template>
 
 <script lang="jsx">
@@ -34,9 +34,10 @@ import { customNodeApi } from '@tap/api'
 import { FilterBar } from '@tap/component'
 import { TablePage } from '../../components'
 import { makeStatusAndDisabled } from '../../shared'
+import PageContainer from '../../components/PageContainer.vue'
 
 export default {
-  components: { FilterBar, TablePage },
+  components: { PageContainer, FilterBar, TablePage },
   data() {
     return {
       filterItems: [

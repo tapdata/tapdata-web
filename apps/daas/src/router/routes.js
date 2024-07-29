@@ -304,9 +304,9 @@ export default [
       /* ---------- 连接管理  ----------*/
       {
         path: '/connections',
-        name: 'connections',
+        // name: 'connections',
         component: Parent,
-        redirect: 'connections/',
+        // redirect: 'connections/',
         meta: {
           title: 'page_title_connections',
         },
@@ -560,6 +560,7 @@ export default [
             name: 'sharedMiningList',
             component: SharedMiningList,
             meta: {
+              hideTitle: true,
               title: 'page_title_shared_mining',
               code: 'v2_log_collector',
             },
@@ -581,6 +582,7 @@ export default [
             name: 'HeartbeatTableList',
             component: HeartbeatTableList,
             meta: {
+              hideTitle: true,
               title: 'page_title_heartbeat_table',
               code: 'v2_log_collector',
             },
@@ -602,6 +604,7 @@ export default [
             name: 'functionList',
             component: Vue.defineAsyncComponent(() => import('@/views/function/List')),
             meta: {
+              hideTitle: true,
               title: 'page_title_function',
               code: 'v2_function_management',
             },
@@ -659,6 +662,7 @@ export default [
             name: 'customNodeList',
             component: CustomNodeList,
             meta: {
+              hideTitle: true,
               title: 'page_title_custom_node',
               code: 'v2_custom_node',
             },
@@ -670,7 +674,7 @@ export default [
         path: '/shared-cache',
         name: 'sharedCache',
         component: Parent,
-        redirect: 'shared-cache/',
+        // redirect: 'shared-cache/',
         meta: {
           title: 'page_title_shared_cache',
         },
@@ -680,6 +684,7 @@ export default [
             name: 'sharedCacheList',
             component: SharedCacheList,
             meta: {
+              hideTitle: true,
               title: 'page_title_shared_cache',
               code: 'v2_shared_cache',
             },
@@ -760,6 +765,7 @@ export default [
             name: 'dataServerAuditList',
             component: Vue.defineAsyncComponent(() => import('@/views/data-server-audit/List')),
             meta: {
+              hideTitle: true,
               title: 'page_title_api_audit',
               code: 'v2_data_server_audit',
             },
@@ -852,6 +858,7 @@ export default [
             name: 'roleList',
             component: Vue.defineAsyncComponent(() => import('@/views/role/Roles')),
             meta: {
+              hideTitle: true,
               title: 'page_title_role',
               code: 'v2_role_management',
             },
@@ -930,9 +937,9 @@ export default [
             component: () => import('@/views/setting/WebhookAlerts'),
             meta: {
               title: 'page_title_webhook_alerts',
-              isNotAside: true
-            }
-          }
+              isNotAside: true,
+            },
+          },
         ],
       },
 

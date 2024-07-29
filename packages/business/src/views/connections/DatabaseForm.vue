@@ -13,13 +13,13 @@
               <DatabaseIcon class="flex-shrink-0" :item="$route.query" :size="20"></DatabaseIcon>
               <template v-if="!$route.params.id">
                 <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ pdkOptions.name }}</span>
-                <el-button v-if="!$route.params.id" text @click="dialogDatabaseTypeVisible = true">
+                <el-button v-if="!$route.params.id" text type="primary" @click="dialogDatabaseTypeVisible = true">
                   {{ $t('packages_business_connection_form_change') }}
                 </el-button>
               </template>
               <template v-else>
                 <span class="ml-auto font-color-light fw-normal fs-7 ellipsis">{{ model.name }}</span>
-                <el-button text @click="dialogEditNameVisible = true">
+                <el-button text type="primary" @click="dialogEditNameVisible = true">
                   {{ $t('packages_business_connection_form_rename') }}
                 </el-button>
               </template>
@@ -186,7 +186,7 @@ export default {
       }
     }
     return {
-      isDaas: import.meta.env.VITE_PLATFORM === 'DAAS',
+      isDaas: import.meta.env.VUE_APP_PLATFORM === 'DAAS',
       rules: [],
       id: '',
       commandCallbackFunctionId: '',
@@ -238,7 +238,7 @@ export default {
       return `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
       }/prerequisites/allow-access-network`
-    }
+    },
   },
   async created() {
     if (!this.isDaas) {
@@ -322,7 +322,7 @@ export default {
             {
               ...__TAPDATA,
               database_type: pdkOptions.type,
-              pdkHash: pdkOptions.pdkHash
+              pdkHash: pdkOptions.pdkHash,
             },
             {
               status: 'testing',
@@ -332,11 +332,11 @@ export default {
               response_body: {},
               project: '',
               submit: true,
-              pdkType: 'pdk'
+              pdkType: 'pdk',
             },
             {
-              config: formValues
-            }
+              config: formValues,
+            },
           )
           let promise = null
           if (id) {
@@ -350,14 +350,14 @@ export default {
           promise
             .then(() => {
               this.buried('connectionSubmit', '', {
-                result: true
+                result: true,
               })
               this.$message.success(this.$t('public_message_save_ok'))
               this.gotoBackPath()
             })
             .catch(() => {
               this.buried('connectionSubmit', '', {
-                result: false
+                result: false,
               })
             })
             .finally(() => {
@@ -366,7 +366,7 @@ export default {
         },
         () => {
           this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
-        }
+        },
       )
     },
     //开始测试
@@ -725,30 +725,30 @@ export default {
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' }
                   ] : [
                     { label: '${this.$t(
-                      'packages_business_connection_form_automatic'
+                      'packages_business_connection_form_automatic',
                     )}', value: 'AUTOMATIC_PLATFORM_ALLOCATION' },
                     { label: '${this.$t(
-                      'packages_business_connection_form_manual'
+                      'packages_business_connection_form_manual',
                     )}', value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
                     {
                       label: '${this.$t('packages_business_connection_form_group')}',
                       value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
                     }
-                  ]}}`
-                }
-              }
+                  ]}}`,
+                },
+              },
             },
             {
               target: '__TAPDATA.accessNodeProcessId',
               effects: ['onFieldInputValueChange'],
               fulfill: {
                 state: {
-                  value: ''
+                  value: '',
                   // value: `{{console.log("$target.dataSource", $target.dataSource), $target.value ? '' : $target.dataSource && $target.dataSource[0] ? $target.dataSource[0].value : ''}}`
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
         accessNodeOption: {
           type: 'string',
@@ -759,42 +759,42 @@ export default {
               fulfill: {
                 state: {
                   visible:
-                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-                }
-              }
+                    "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
+                },
+              },
             },
-            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}'
-          ]
+            '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
+          ],
         },
         agentWrap: {
           type: 'void',
           'x-component': 'Space',
           'x-component-props': {
-            class: 'w-100 align-items-start'
+            class: 'w-100 align-items-start',
           },
           'x-reactions': {
             dependencies: ['.accessNodeType'],
             fulfill: {
               state: {
                 visible:
-                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}"
-              }
-            }
+                  "{{['MANUALLY_SPECIFIED_BY_THE_USER', 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'].includes($deps[0])}}",
+              },
+            },
           },
           properties: {
             accessNodeProcessId: {
               type: 'string',
               description: `{{$values.__TAPDATA.shareCdcEnable ? '${this.$t(
-                'packages_business_agent_select_not_found_for_rocksdb'
+                'packages_business_agent_select_not_found_for_rocksdb',
               )}' : ''}}`,
               'x-decorator': 'FormItem',
               'x-decorator-props': {
                 colon: false,
-                class: 'flex-1'
+                class: 'flex-1',
               },
               'x-component': 'Select',
               'x-component-props': {
-                onChange: `{{ () => $self.setSelfErrors('') }}`
+                onChange: `{{ () => $self.setSelfErrors('') }}`,
               },
               'x-reactions': [
                 // '{{useAsyncDataSource(loadAccessNode, "dataSource", {value: $self.value})}}',
@@ -804,8 +804,8 @@ export default {
                   fulfill: {
                     state: {
                       title: `{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0] ? '${i18n.t(
-                        'packages_business_choose_agent_group'
-                      )}': '${i18n.t('packages_business_choose_agent')}'}}`
+                        'packages_business_choose_agent_group',
+                      )}': '${i18n.t('packages_business_choose_agent')}'}}`,
                     },
                     run: `
                 console.log('$deps[1]', $deps)
@@ -819,9 +819,9 @@ export default {
                     $self.setSelfErrors('${this.$t('packages_business_agent_select_not_found')}')
                   }
                 }
-              }`
-                  }
-                }
+              }`,
+                  },
+                },
               ],
               // 校验下拉数据判断是否存在已选的agent
               'x-validator': `{{(value, rule, ctx)=> {
@@ -841,7 +841,7 @@ export default {
                 return '${this.$t('packages_business_agent_select_not_found')}'
               }
             }
-          }}}`
+          }}}`,
             },
             priorityProcessId: {
               title: i18n.t('packages_business_priorityProcessId'),
@@ -849,14 +849,14 @@ export default {
               default: '',
               'x-decorator': 'FormItem',
               'x-decorator-props': {
-                class: 'flex-1'
+                class: 'flex-1',
               },
               'x-component': 'Select',
               'x-reactions': {
                 dependencies: ['.accessNodeType', '.accessNodeOption#dataSource', '.accessNodeProcessId'],
                 fulfill: {
                   state: {
-                    visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}"
+                    visible: "{{'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' === $deps[0]}}",
                   },
                   run: `
                     let children = []
@@ -875,11 +875,11 @@ export default {
                     if ($self.value && !children.find(item => item.value === $self.value)) {
                       $self.value = ''
                     }
-                  `
-                }
-              }
-            }
-          }
+                  `,
+                },
+              },
+            },
+          },
         },
 
         schemaUpdateHour: {
@@ -956,7 +956,7 @@ export default {
         })
         endProperties.accessNodeType.enum.push({
           label: this.$t('packages_business_connection_form_group'),
-          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP',
         })
       }
 
@@ -978,9 +978,9 @@ export default {
                   target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
                   fulfill: {
                     state: {
-                      display: 'hidden'
-                    }
-                  }
+                      display: 'hidden',
+                    },
+                  },
                 }
               : undefined,
             properties: {
@@ -995,8 +995,8 @@ export default {
                     'x-component': 'Input',
                     'x-validator': {
                       pattern: /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/,
-                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong')
-                    }
+                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong'),
+                    },
                   },
                   connection_type: {
                     type: 'string',
@@ -1271,32 +1271,32 @@ export default {
         loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
-          const mapNode = item => ({
+          const mapNode = (item) => ({
             value: item.processId,
             label: `${item.hostName}（${
               item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
             }）`,
             disabled: item.status !== 'running',
-            accessNodeType: item.accessNodeType
+            accessNodeType: item.accessNodeType,
           })
 
           return (
             data
               ?.filter(
-                t =>
+                (t) =>
                   t.status === 'running' ||
                   t.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
-                  t.processId === others.value
+                  t.processId === others.value,
               )
-              ?.map(item => {
+              ?.map((item) => {
                 if (item.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP') {
                   return {
                     value: item.processId,
                     label: `${item.accessNodeName}（${i18n.t('public_status_running')}：${
-                      item.accessNodes?.filter(ii => ii.status === 'running').length || 0
+                      item.accessNodes?.filter((ii) => ii.status === 'running').length || 0
                     }）`,
                     accessNodeType: item.accessNodeType,
-                    children: item.accessNodes?.map(mapNode) || []
+                    children: item.accessNodes?.map(mapNode) || [],
                   }
                 }
                 return mapNode(item)
@@ -1348,7 +1348,7 @@ export default {
             expireSeconds: 100000000,
           }
           proxyApi.subscribe(filter).then((data) => {
-            const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}api/proxy/callback/${data.token}`
             if (/^\/\w+/.test(data.token)) {
@@ -1471,7 +1471,7 @@ export default {
             others,
           )
           proxyApi.generateRefreshToken(params).then((data = {}) => {
-            const isDaas = import.meta.env.VITE_PLATFORM === 'DAAS'
+            const isDaas = import.meta.env.VUE_APP_PLATFORM === 'DAAS'
             const p = location.origin + location.pathname
             let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
             if (/^\/\w+/.test(data.token)) {

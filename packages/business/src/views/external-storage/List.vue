@@ -1,16 +1,16 @@
 <template>
-  <section class="external-storage-wrapper px-4 pb-4 bg-white">
+  <PageContainer>
+    <template #actions>
+      <ElButton class="btn btn-create" type="primary" @click="openDialog()">
+        <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
+      </ElButton>
+    </template>
+
     <TablePage ref="table" row-key="id" :remoteMethod="getData">
       <template v-slot:search>
         <FilterBar v-model:value="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
       </template>
-      <template v-slot:operation>
-        <div>
-          <ElButton class="btn btn-create" type="primary" @click="openDialog()">
-            <span>{{ $t('packages_business_external_storage_list_chuangjianwaicun') }}</span>
-          </ElButton>
-        </div>
-      </template>
+
       <ElTableColumn show-overflow-tooltip min-width="180" :label="$t('public_external_memory_name')" prop="name">
         <template #default="{ row }">
           <ElLink style="display: inline" type="primary" @click.stop="checkDetails(row)">{{ row.name }}</ElLink>
@@ -171,7 +171,7 @@
       test-type="testExternalStorage"
       @returnTestData="returnTestData"
     ></Test>
-  </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -187,11 +187,12 @@ import { FilterBar, Drawer } from '@tap/component'
 import { openUrl } from '@tap/shared'
 import { SchemaToForm } from '@tap/form'
 import Test from '../connections/Test'
+import PageContainer from '../../components/PageContainer.vue'
 
 let timeout = null
 
 export default {
-  components: { TablePage, FilterBar, Drawer, SchemaToForm, Test },
+  components: { PageContainer, TablePage, FilterBar, Drawer, SchemaToForm, Test },
   inject: ['checkAgent', 'buried'],
   data() {
     return {

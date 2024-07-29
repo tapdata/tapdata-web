@@ -94,7 +94,7 @@
                   v-if="!cMenu.hidden"
                   :index="cMenu.name"
                   :class="{
-                    'is-locked': lockedFeature[cMenu.name]
+                    'is-locked': lockedFeature[cMenu.name],
                   }"
                 >
                   <div class="submenu-item">{{ cMenu.label }}</div>
@@ -119,11 +119,11 @@
       </ElAside>
       <ElMain class="layout-main">
         <div class="layout-main-body">
-          <PageHeader
+          <!--<PageHeader
             v-if="!['dashboard', 'clusterManagement', 'apiMonitor'].includes($route.name)"
             class="border-bottom"
-          ></PageHeader>
-          <div
+          ></PageHeader>-->
+          <!--<div
             class="flex-fill overflow-auto"
             :class="[
               {
@@ -150,7 +150,9 @@
             ]"
           >
             <RouterView />
-          </div>
+          </div>-->
+
+          <RouterView />
         </div>
       </ElMain>
     </ElContainer>
@@ -220,12 +222,12 @@ export default {
       showSetting:
         !process.env.VUE_APP_HIDE_SETTING_BUTTON &&
         this.$getSettingByKey('SHOW_SETTING_BUTTON') &&
-        (this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')))
+        (this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu'))),
     }
   },
   computed: {
     DropdownList() {
-      return DropdownList.filter(item => !item.hidden && (this.showHome || item.name !== 'home'))
+      return DropdownList.filter((item) => !item.hidden && (this.showHome || item.name !== 'home'))
     },
     initials() {
       return this.userName.substring(0, 1)
@@ -435,7 +437,7 @@ export default {
         this.licenseExpireDate = dayjs(expires_on).format('YYYY-MM-DD HH:mm:ss')
       })
     },
-  }
+  },
 }
 </script>
 
@@ -670,7 +672,9 @@ export default {
   .expire-msg {
     margin-right: 25px;
     font-size: $fontBaseTitle;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-family:
+      PingFangSC-Medium,
+      PingFang SC;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;
