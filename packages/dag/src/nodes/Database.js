@@ -22,25 +22,25 @@ export class Database extends NodeType {
     properties: {
       $inputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       $outputs: {
         type: 'array',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       databaseType: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
       connectionId: {
         type: 'string',
         'x-display': 'hidden',
-        'x-reactions': '{{useSyncConnection}}'
+        'x-reactions': '{{useSyncConnection}}',
       },
 
       type: {
         type: 'string',
-        'x-display': 'hidden'
+        'x-display': 'hidden',
       },
 
       tabs: {
@@ -48,14 +48,14 @@ export class Database extends NodeType {
         'x-component': 'FormTab',
         'x-component-props': {
           class: 'config-tabs',
-          formTab: '{{formTab}}'
+          formTab: '{{formTab}}',
         },
         properties: {
           tab1: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_basic_settings')
+              label: i18n.t('public_basic_settings'),
             },
             properties: {
               nameWrap: {
@@ -64,7 +64,7 @@ export class Database extends NodeType {
                 'x-component-props': {
                   minColumns: 2,
                   maxColumns: 2,
-                  columnGap: 16
+                  columnGap: 16,
                 },
                 properties: {
                   nameWrap: {
@@ -73,12 +73,12 @@ export class Database extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       asterisk: true,
-                      feedbackLayout: 'none'
+                      feedbackLayout: 'none',
                     },
                     'x-component': 'FormFlex',
                     'x-component-props': {
                       gap: 8,
-                      align: 'start'
+                      align: 'start',
                     },
                     properties: {
                       name: {
@@ -87,13 +87,13 @@ export class Database extends NodeType {
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           style: {
-                            flex: 1
-                          }
+                            flex: 1,
+                          },
                         },
                         'x-component': 'Input',
                         'x-component-props': {
-                          onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`
-                        }
+                          onChange: `{{() => { $values.attrs.hasNameEdited = true }}}`,
+                        },
                       },
 
                       clipboardButton: {
@@ -102,10 +102,10 @@ export class Database extends NodeType {
                         'x-component-props': {
                           tooltip: i18n.t('packages_dag_copy_node_id'),
                           finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi'),
-                          content: '{{$values.id}}'
-                        }
-                      }
-                    }
+                          content: '{{$values.id}}',
+                        },
+                      },
+                    },
                   },
                   'attrs.connectionName': {
                     type: 'string',
@@ -115,10 +115,10 @@ export class Database extends NodeType {
                     'x-content': '{{$self.value}}',
                     'x-component-props': {
                       class: 'ellipsis',
-                      title: '{{$self.value}}'
-                    }
-                  }
-                }
+                      title: '{{$self.value}}',
+                    },
+                  },
+                },
               },
 
               'attrs.accessNodeProcessId': {
@@ -126,19 +126,19 @@ export class Database extends NodeType {
                 title: i18n.t('packages_dag_nodes_database_suoshuage'),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  feedbackLayout: 'none'
+                  feedbackLayout: 'none',
                 },
                 'x-component': 'PreviewText.Input',
                 'x-component-props': {
-                  content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`
+                  content: `{{$agentMap[$self.value] ? $values.attrs.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ? \`\${$agentMap[$self.value].accessNodeName} (\${$agentMap[$self.value].processId})\` : \`\${$agentMap[$self.value].hostName}（\${$agentMap[$self.value].ip}）\` : "-"}}`,
                 },
                 'x-reactions': {
                   fulfill: {
                     state: {
-                      display: '{{!$self.value ? "hidden":"visible"}}'
-                    }
-                  }
-                }
+                      display: '{{!$self.value ? "hidden":"visible"}}',
+                    },
+                  },
+                },
               },
 
               sourceConfig: {
@@ -148,9 +148,9 @@ export class Database extends NodeType {
                   fulfill: {
                     state: {
                       display:
-                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
-                    }
-                  }
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   div1: {
@@ -168,28 +168,28 @@ export class Database extends NodeType {
                           feedbackLayout: 'none',
                           connectionId: '{{$values.connectionId}}',
                           title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
-                          target: ''
+                          target: '',
                         },
                         'x-component': 'Radio.Group',
                         'x-reactions': {
                           fulfill: {
                             schema: {
-                              'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`
-                            }
-                          }
+                              'x-decorator-props.target': `{{$self.value==='expression'?'tableListCard':'tableNames'}}`,
+                            },
+                          },
                         },
                         enum: [
                           {
                             label: i18n.t('packages_dag_nodes_database_anbiaomingxuanze'),
-                            value: 'custom'
+                            value: 'custom',
                           },
                           {
                             label: i18n.t('packages_dag_nodes_database_anzhengzebiaoda'),
-                            value: 'expression'
-                          }
-                        ]
-                      }
-                    }
+                            value: 'expression',
+                          },
+                        ],
+                      },
+                    },
                   },
                   noPrimaryKeyTableSelectType: {
                     type: 'string',
@@ -200,8 +200,8 @@ export class Database extends NodeType {
                     enum: [
                       { label: i18n.t('public_select_option_all'), value: 'All' },
                       { label: i18n.t('packages_dag_nodes_database_jinyouzhujianbiao'), value: 'HasKeys' },
-                      { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' }
-                    ]
+                      { label: i18n.t('packages_dag_nodes_database_jinwuzhujianbiao'), value: 'NoKeys' },
+                    ],
                   },
                   div2: {
                     type: 'void',
@@ -217,22 +217,22 @@ export class Database extends NodeType {
                             marginTop: '8px',
                             height: 'unset',
                             minHeight: 0,
-                            maxHeight: 'calc((100vh - 120px) * 0.618)'
+                            maxHeight: 'calc((100vh - 120px) * 0.618)',
                           },
                           hideReload: true,
-                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "custom" ? "visible":"hidden"}}'
+                              display: '{{$deps[0] === "custom" ? "visible":"hidden"}}',
                             },
                             schema: {
-                              required: '{{$deps[0] === "custom"}}'
-                            }
-                          }
-                        }
+                              required: '{{$deps[0] === "custom"}}',
+                            },
+                          },
+                        },
                       },
                       tableExpression: {
                         type: 'string',
@@ -242,16 +242,16 @@ export class Database extends NodeType {
                         'x-decorator': 'FormItem',
                         'x-component': 'Input',
                         'x-component-props': {
-                          rows: 1
+                          rows: 1,
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
-                            }
-                          }
-                        }
+                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                            },
+                          },
+                        },
                       },
                       tableListCard: {
                         type: 'void',
@@ -262,20 +262,20 @@ export class Database extends NodeType {
                           title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
                           connectionId: '{{$values.connectionId}}',
                           params: '{{ {regex: $values.tableExpression,limit:0} }}',
-                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}'
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
+                              display: '{{$deps[0] === "expression" ? "visible":"hidden"}}',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
 
               targetConfig: {
@@ -285,19 +285,19 @@ export class Database extends NodeType {
                   fulfill: {
                     state: {
                       display:
-                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
-                    }
-                  }
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
-                  fieldMapping: {
-                    type: 'void',
-                    'x-component': 'fieldInference'
-                  },
                   uniqueIndexEnable: {
                     type: 'boolean',
                     default: true,
-                    'x-display': 'hidden'
+                    'x-display': 'hidden',
+                  },
+                  fieldMapping: {
+                    type: 'void',
+                    'x-component': 'fieldInference',
                   },
                   existDataProcessMode: {
                     type: 'string',
@@ -306,17 +306,17 @@ export class Database extends NodeType {
                     enum: [
                       {
                         label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
-                        value: 'keepData'
+                        value: 'keepData',
                       },
                       {
                         label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
                         value: 'dropTable',
-                        disabled: true
+                        disabled: true,
                       },
                       {
                         label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
-                        value: 'removeData'
-                      }
+                        value: 'removeData',
+                      },
                     ],
                     'x-decorator': 'FormItem',
                     'x-component': 'Select',
@@ -325,26 +325,26 @@ export class Database extends NodeType {
                         run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $settings.type === "cdc"}}',
                         state: {
                           description: `{{$settings.type === "cdc" ? '${i18n.t(
-                            'packages_dag_nodes_database_setting_cdc_changjing_desc'
-                          )}':''}}`
+                            'packages_dag_nodes_database_setting_cdc_changjing_desc',
+                          )}':''}}`,
                         },
                         schema: {
                           // ⚠️👇表达式依赖enum的顺序
-                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
-                        }
-                      }
-                    }
+                          'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`,
+                        },
+                      },
+                    },
                   },
                   initialConcurrentSpace: {
                     title: i18n.t('packages_dag_nodes_database_quanliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     type: 'void',
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     properties: {
                       initialConcurrent: {
@@ -354,31 +354,31 @@ export class Database extends NodeType {
                           target: '.initialConcurrentWriteNum',
                           fulfill: {
                             state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
+                              visible: '{{!!$self.value}}',
+                            },
+                          },
+                        },
                       },
                       initialConcurrentWriteNum: {
                         type: 'number',
                         default: 8,
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
+                          min: 0,
+                        },
+                      },
+                    },
                   },
                   cdcConcurrentSpace: {
                     type: 'void',
                     title: i18n.t('packages_dag_nodes_database_zengliangduoxiancheng'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     properties: {
                       cdcConcurrent: {
@@ -388,26 +388,26 @@ export class Database extends NodeType {
                           target: '.cdcConcurrentWriteNum',
                           fulfill: {
                             state: {
-                              visible: '{{!!$self.value}}'
-                            }
-                          }
-                        }
+                              visible: '{{!!$self.value}}',
+                            },
+                          },
+                        },
                       },
                       cdcConcurrentWriteNum: {
                         type: 'number',
                         default: 4,
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 0
-                        }
-                      }
-                    }
+                          min: 0,
+                        },
+                      },
+                    },
                   },
                   writeBachSpace: {
                     type: 'void',
                     'x-component': 'Space',
                     'x-component-props': {
-                      size: 'middle'
+                      size: 'middle',
                     },
                     properties: {
                       writeBatchSize: {
@@ -416,13 +416,13 @@ export class Database extends NodeType {
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2')
+                          tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici2'),
                         },
                         'x-component-props': {
                           min: 1,
-                          max: 10000000
+                          max: 10000000,
                         },
-                        default: 100
+                        default: 100,
                       },
                       writeBatchWaitMs: {
                         title: i18n.t('packages_dag_nodes_database_xierumeipizui'), //增量批次读取条数
@@ -430,49 +430,49 @@ export class Database extends NodeType {
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-component-props': {
-                          min: 1
+                          min: 1,
                         },
-                        default: 500
-                      }
-                    }
+                        default: 500,
+                      },
+                    },
                   },
                   'attrs.capabilities': {
                     type: 'array',
                     'x-display': 'hidden',
-                    'x-reactions': '{{useDmlPolicy}}'
-                  }
-                }
-              }
-            }
+                    'x-reactions': '{{useDmlPolicy}}',
+                  },
+                },
+              },
+            },
           },
           advancedTab: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('public_advanced_settings')
+              label: i18n.t('public_advanced_settings'),
             },
             properties: {
               sourceCollapse: {
                 type: 'void',
                 'x-component': 'FormCollapse',
                 'x-component-props': {
-                  class: 'advanced-collapse'
+                  class: 'advanced-collapse',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
                       display:
-                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}'
-                    }
-                  }
+                        '{{(!$deps[0].length && $values.attrs.connectionType.includes("source")) ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   tab1: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_ddl')
+                      title: i18n.t('packages_dag_config_ddl'),
                     },
                     properties: {
                       ddlConfiguration: {
@@ -481,16 +481,16 @@ export class Database extends NodeType {
                         enum: [
                           {
                             label: i18n.t('packages_dag_ddl_stopped_on_error'),
-                            value: 'ERROR'
+                            value: 'ERROR',
                           },
                           {
                             label: i18n.t('packages_dag_ddl_auto_ignore'),
-                            value: 'FILTER'
+                            value: 'FILTER',
                           },
                           {
                             label: i18n.t('packages_dag_ddl_sync_events'),
-                            value: 'SYNCHRONIZATION'
-                          }
+                            value: 'SYNCHRONIZATION',
+                          },
                         ],
                         'x-decorator': 'FormItem',
                         'x-component': 'Radio.Group',
@@ -499,9 +499,9 @@ export class Database extends NodeType {
                             target: 'disabledEvents',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value === "SYNCHRONIZATION"}}'
-                              }
-                            }
+                                visible: '{{$self.value === "SYNCHRONIZATION"}}',
+                              },
+                            },
                           },
                           {
                             when: `{{!$values.attrs.capabilities.filter(item => item.type === 10).length}}`,
@@ -509,51 +509,51 @@ export class Database extends NodeType {
                               state: {
                                 disabled: true,
                                 description: `{{$values.databaseType + ' ${i18n.t(
-                                  'packages_dag_nodes_database_value_zanbuzhiciddl'
-                                )}'}}`
-                              }
-                            }
-                          }
-                        ]
+                                  'packages_dag_nodes_database_value_zanbuzhiciddl',
+                                )}'}}`,
+                              },
+                            },
+                          },
+                        ],
                       },
                       disabledEvents: {
                         type: 'array',
-                        'x-component': 'DdlEventCheckbox'
+                        'x-component': 'DdlEventCheckbox',
                       },
                       ignoredDDLRules: {
                         title: i18n.t('packages_dag_ddl_ignore_rules'),
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          tooltip: i18n.t('packages_dag_ddl_ignore_rules_tip')
+                          tooltip: i18n.t('packages_dag_ddl_ignore_rules_tip'),
                         },
                         'x-component': 'Input',
                         'x-component-props': {
-                          placeholder: i18n.t('packages_dag_ddl_ignore_rules_placeholder')
+                          placeholder: i18n.t('packages_dag_ddl_ignore_rules_placeholder'),
                         },
                         'x-reactions': {
                           dependencies: ['ddlConfiguration'],
                           fulfill: {
                             state: {
-                              visible: '{{$deps[0] === "ERROR"}}'
-                            }
-                          }
-                        }
-                      }
-                    }
+                              visible: '{{$deps[0] === "ERROR"}}',
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   tab2: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_data_read')
+                      title: i18n.t('packages_dag_config_data_read'),
                     },
                     properties: {
                       sizeSpace: {
                         type: 'void',
                         'x-component': 'Space',
                         'x-component-props': {
-                          size: 'middle'
+                          size: 'middle',
                         },
                         properties: {
                           readBatchSize: {
@@ -562,13 +562,13 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici')
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangmeipici'),
                             },
                             'x-component-props': {
                               min: 1,
-                              max: 100000
+                              max: 100000,
                             },
-                            default: 100
+                            default: 100,
                           },
                           increaseReadSize: {
                             title: i18n.t('packages_dag_nodes_database_zengliangmeipici'), //增量批次读取条数
@@ -576,27 +576,27 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 1
+                              min: 1,
                             },
-                            default: 1
-                          }
-                        }
-                      }
-                    }
+                            default: 1,
+                          },
+                        },
+                      },
+                    },
                   },
                   tab3: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_breakpoint_resume')
+                      title: i18n.t('packages_dag_config_breakpoint_resume'),
                     },
                     'x-reactions': {
                       fulfill: {
                         state: {
                           display:
-                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}'
-                        }
-                      }
+                            '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? "visible":"hidden"}}',
+                        },
+                      },
                     },
                     properties: {
                       readPartitionOptions: {
@@ -610,17 +610,17 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               title: i18n.t('packages_dag_nodes_database_quanliangduandianxu'),
                               iconSize: 30,
-                              tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi')
+                              tooltip: i18n.t('packages_dag_nodes_database_quanliangduandianshi'),
                             },
                             'x-component': 'Switch',
                             'x-reactions': {
                               fulfill: {
                                 state: {
                                   display:
-                                    '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
+                                    '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
                           },
                           splitType: {
                             title: i18n.t('packages_dag_nodes_database_fenpianfangshi'),
@@ -629,12 +629,12 @@ export class Database extends NodeType {
                             enum: [
                               {
                                 label: i18n.t('packages_dag_nodes_database_jiyumin'),
-                                value: 10
+                                value: 10,
                               },
                               {
                                 label: i18n.t('packages_dag_nodes_database_jiyucou'),
-                                value: 1
-                              }
+                                value: 1,
+                              },
                             ],
                             'x-decorator': 'FormItem',
                             'x-component': 'Select',
@@ -643,13 +643,13 @@ export class Database extends NodeType {
                               fulfill: {
                                 run: `{{ $values.splitTyp !== 10 && $values.attrs.capabilities.some(t => t.id === 'count_by_partition_filter_function') && $self.setValue(1) }}`,
                                 state: {
-                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}',
                                 },
                                 schema: {
-                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`
-                                }
-                              }
-                            }
+                                  'x-component-props.options': `{{options=[$self.dataSource[0]],$values.attrs.capabilities.some(item => item.id ==='count_by_partition_filter_function') && options.push($self.dataSource[1]),options}}`,
+                                },
+                              },
+                            },
                           },
                           maxRecordInPartition: {
                             title: i18n.t('packages_dag_nodes_database_fenpiandaxiao'),
@@ -658,16 +658,16 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 0
+                              min: 0,
                             },
                             'x-reactions': {
                               dependencies: ['.enable', '.splitType'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
+                                  display: '{{$deps[0] && $deps[1] === 1 ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
                           },
                           minMaxSplitPieces: {
                             title: i18n.t('packages_dag_nodes_database_fenpianshuliang'),
@@ -676,16 +676,16 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 0
+                              min: 0,
                             },
                             'x-reactions': {
                               dependencies: ['.enable', '.splitType'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
+                                  display: '{{$deps[0] && $deps[1] === 10 ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
                           },
                           partitionThreadCount: {
                             title: i18n.t('packages_dag_nodes_database_fenpianbingfaxian'),
@@ -694,16 +694,16 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 0
+                              min: 0,
                             },
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
                           },
                           partitionBatchCount: {
                             title: i18n.t('packages_dag_nodes_database_fenpianyipidu'),
@@ -712,16 +712,16 @@ export class Database extends NodeType {
                             'x-decorator': 'FormItem',
                             'x-component': 'InputNumber',
                             'x-component-props': {
-                              min: 0
+                              min: 0,
                             },
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
                           },
                           hasKVStorage: {
                             type: 'boolean',
@@ -730,71 +730,71 @@ export class Database extends NodeType {
                             'x-component': 'Switch',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian')
+                              tooltip: i18n.t('packages_dag_nodes_database_guanbicigongnenghoufenpian'),
                             },
                             'x-reactions': {
                               dependencies: ['.enable'],
                               fulfill: {
                                 state: {
-                                  display: '{{$deps[0] ? "visible" :"hidden"}}'
-                                }
-                              }
-                            }
-                          }
+                                  display: '{{$deps[0] ? "visible" :"hidden"}}',
+                                },
+                              },
+                            },
+                          },
                         },
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
-                            }
-                          }
-                        }
-                      }
-                    }
+                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}',
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   tab6: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource')
+                      title: i18n.t('packages_dag_config_datasource'),
                     },
                     'x-reactions': {
                       fulfill: {
                         schema: {
                           'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
-                        }
-                      }
+                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
+                        },
+                      },
                     },
                     properties: {
                       nodeConfig: {
-                        type: 'object'
-                      }
-                    }
-                  }
-                }
+                        type: 'object',
+                      },
+                    },
+                  },
+                },
               },
               targetCollapse: {
                 type: 'void',
                 'x-component': 'FormCollapse',
                 'x-component-props': {
-                  class: 'advanced-collapse'
+                  class: 'advanced-collapse',
                 },
                 'x-reactions': {
                   dependencies: ['$inputs'],
                   fulfill: {
                     state: {
                       display:
-                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}'
-                    }
-                  }
+                        '{{$deps[0].length > 0 || $values.attrs.connectionType === "target" ? "visible":"hidden"}}',
+                    },
+                  },
                 },
                 properties: {
                   tab1: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_nodes_database_ddLshijian')
+                      title: i18n.t('packages_dag_nodes_database_ddLshijian'),
                     },
                     properties: {
                       ddlEvents: {
@@ -808,16 +808,16 @@ export class Database extends NodeType {
                         'x-component': 'DdlEventList',
                         'x-component-props': {
                           hideParent: true,
-                          findParentNodes: '{{findParentNodes}}'
-                        }
-                      }
-                    }
+                          findParentNodes: '{{findParentNodes}}',
+                        },
+                      },
+                    },
                   },
                   tab2: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_data_write')
+                      title: i18n.t('packages_dag_config_data_write'),
                     },
                     properties: {
                       writeStrategyObject: {
@@ -826,7 +826,7 @@ export class Database extends NodeType {
                         'x-component-props': {
                           layout: 'horizontal',
                           colon: false,
-                          feedbackLayout: 'none'
+                          feedbackLayout: 'none',
                         },
                         properties: {
                           writeStrategy: {
@@ -836,33 +836,33 @@ export class Database extends NodeType {
                             'x-component': 'Radio.Group',
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
-                              tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2')
+                              tooltip: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie2'),
                             },
                             enum: [
                               {
                                 label: i18n.t('packages_dag_nodes_database_anshijianleixing'),
-                                value: 'updateOrInsert'
+                                value: 'updateOrInsert',
                               },
                               {
                                 label: i18n.t('packages_dag_nodes_database_tongjizhuijiaxie'),
-                                value: 'appendWrite'
-                              }
-                            ]
-                          }
-                        }
+                                value: 'appendWrite',
+                              },
+                            ],
+                          },
+                        },
                       },
                       dmlPolicy: {
                         title: i18n.t('packages_dag_nodes_database_shujuxieruce'),
                         type: 'object',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          feedbackLayout: 'none'
+                          feedbackLayout: 'none',
                         },
                         'x-component': 'FormLayout',
                         'x-component-props': {
                           layout: 'horizontal',
                           colon: false,
-                          feedbackLayout: 'none'
+                          feedbackLayout: 'none',
                         },
                         properties: {
                           insertPolicy: {
@@ -872,23 +872,23 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               className: 'font-color-dark mb-2',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_charushijian')
+                              addonBefore: i18n.t('packages_dag_nodes_database_charushijian'),
                             },
                             default: 'update_on_exists',
                             enum: [
                               {
                                 label: i18n.t('packages_dag_nodes_targetdatabase_mubiaocunzaishi'),
-                                value: 'update_on_exists'
+                                value: 'update_on_exists',
                               },
                               {
                                 label: i18n.t('packages_dag_nodes_database_mubiaocunzaishi'),
-                                value: 'ignore_on_exists'
+                                value: 'ignore_on_exists',
                               },
                               {
                                 label: i18n.t('packages_dag_just_insert'),
-                                value: 'just_insert'
-                              }
-                            ]
+                                value: 'just_insert',
+                              },
+                            ],
                           },
                           updatePolicy: {
                             type: 'string',
@@ -897,23 +897,23 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               className: 'font-color-dark mb-2',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian')
+                              addonBefore: i18n.t('packages_dag_nodes_database_gengxinshijian'),
                             },
                             default: 'ignore_on_nonexists',
                             enum: [
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
-                                value: 'ignore_on_nonexists'
+                                value: 'ignore_on_nonexists',
                               },
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishicha'),
-                                value: 'insert_on_nonexists'
+                                value: 'insert_on_nonexists',
                               },
                               {
                                 label: i18n.t('packages_dag_nodes_database_bucunzaishidayinrizhi'),
-                                value: 'log_on_nonexists'
-                              }
-                            ]
+                                value: 'log_on_nonexists',
+                              },
+                            ],
                           },
                           deletePolicy: {
                             type: 'void',
@@ -921,73 +921,73 @@ export class Database extends NodeType {
                             'x-decorator-props': {
                               className: 'font-color-dark',
                               wrapperWidth: 300,
-                              addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian')
+                              addonBefore: i18n.t('packages_dag_nodes_database_shanchushijian'),
                             },
                             'x-component': 'Tag',
                             'x-content': i18n.t('packages_dag_nodes_database_bucunzaishidiu'),
                             'x-component-props': {
                               type: 'info',
-                              effect: 'light'
-                            }
-                          }
+                              effect: 'light',
+                            },
+                          },
                         },
                         'x-reactions': {
                           dependencies: ['writeStrategy'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}'
-                            }
-                          }
-                        }
+                              display: '{{$deps[0] === "appendWrite" ? "hidden":"visible"}}',
+                            },
+                          },
+                        },
                       },
                       syncIndexEnable: {
                         title: i18n.t('packages_dag_syncIndex'),
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          layout: 'horizontal'
+                          layout: 'horizontal',
                         },
                         'x-component': 'Switch',
                         'x-reactions': {
                           fulfill: {
                             state: {
                               visible: '{{$settings.type !== "cdc"}}',
-                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
-                            }
-                          }
-                        }
-                      }
-                    }
+                              description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`,
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   tab3: {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
                     'x-component-props': {
-                      title: i18n.t('packages_dag_config_datasource')
+                      title: i18n.t('packages_dag_config_datasource'),
                     },
                     'x-reactions': {
                       fulfill: {
                         schema: {
                           'x-component-props.className':
-                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}'
-                        }
-                      }
+                            '{{$hasPdkConfig($values.attrs.pdkHash) && $self.query("nodeConfig.*").map(field => field.visible).includes(true) ? "":"none"}}',
+                        },
+                      },
                     },
                     properties: {
                       nodeConfig: {
-                        type: 'object'
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        type: 'object',
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           tab2: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
-              label: i18n.t('packages_dag_data_schema')
+              label: i18n.t('packages_dag_data_schema'),
             },
             properties: {
               schemaPanel: {
@@ -995,17 +995,17 @@ export class Database extends NodeType {
                 'x-component': 'SchemaPanel',
                 'x-component-props': {
                   class: 'mx-n4 my-n1',
-                  formTab: '{{formTab}}'
-                }
-              }
-            }
+                  formTab: '{{formTab}}',
+                },
+              },
+            },
           },
           tab3: {
             type: 'void',
             'x-component': 'FormTab.TabPane',
             'x-component-props': {
               label: i18n.t('packages_dag_migration_configpanel_gaojingshezhi'),
-              locked: process.env.VUE_APP_MODE === 'community'
+              locked: process.env.VUE_APP_MODE === 'community',
             },
             // 'x-hidden': '{{!$isMonitor}}',
             properties: {
@@ -1019,9 +1019,9 @@ export class Database extends NodeType {
                     key: 'DATANODE_AVERAGE_HANDLE_CONSUME',
                     notify: ['SYSTEM', 'EMAIL'],
                     interval: 300,
-                    unit: 'SECOND'
-                  }
-                ]
+                    unit: 'SECOND',
+                  },
+                ],
               },
               alarmRules: {
                 type: 'array',
@@ -1030,9 +1030,9 @@ export class Database extends NodeType {
                     key: 'DATANODE_AVERAGE_HANDLE_CONSUME',
                     point: 12,
                     equalsFlag: 1,
-                    ms: 5000
-                  }
-                ]
+                    ms: 5000,
+                  },
+                ],
               },
               'alarmSettings.0.open': {
                 title: i18n.t('packages_business_setting_alarmnotification_dangshujuyuanjie'),
@@ -1042,16 +1042,16 @@ export class Database extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
                 'x-component-props': {
-                  onChange: `{{val=>(val && !$values.alarmRules[0].notify.length && ($values.alarmRules[0].notify=["SYSTEM"]))}}`
+                  onChange: `{{val=>(val && !$values.alarmRules[0].notify.length && ($values.alarmRules[0].notify=["SYSTEM"]))}}`,
                 },
                 'x-reactions': {
                   target: 'alarmRules.0.*',
                   fulfill: {
                     state: {
-                      disabled: `{{!$self.value}}`
-                    }
-                  }
-                }
+                      disabled: `{{!$self.value}}`,
+                    },
+                  },
+                },
               },
               'alarmSettings.0.notify': {
                 type: 'array',
@@ -1059,10 +1059,10 @@ export class Database extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-component': 'Checkbox.Group',
                 'x-component-props': {
-                  onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`
+                  onChange: `{{val=>(!val.length && ($values.alarmSettings[0].open=false))}}`,
                 },
                 default: ['SYSTEM', 'EMAIL'],
-                'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}']
+                'x-reactions': ['{{useAsyncOptions(loadAlarmChannels)}}'],
               },
               space: {
                 type: 'void',
@@ -1075,20 +1075,20 @@ export class Database extends NodeType {
                         dependencies: ['._point'],
                         fulfill: {
                           state: {
-                            value: `{{Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12)}}`
-                          }
-                        }
+                            value: `{{Math.ceil($deps[0] * 12) < 1 ? 1 : Math.ceil($deps[0] * 12)}}`,
+                          },
+                        },
                       },
                       {
                         target: 'alarmRules.0._point',
                         effects: ['onFieldInit'],
                         fulfill: {
                           state: {
-                            value: `{{Math.ceil($self.value / 12) < 1 ? 1 : Math.ceil($self.value / 12)}}`
-                          }
-                        }
-                      }
-                    ]
+                            value: `{{Math.ceil($self.value / 12) < 1 ? 1 : Math.ceil($self.value / 12)}}`,
+                          },
+                        },
+                      },
+                    ],
                   },
                   'alarmRules.0._point': {
                     title: i18n.t('packages_dag_migration_alarmpanel_lianxu'),
@@ -1096,16 +1096,16 @@ export class Database extends NodeType {
                     'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       min: 1,
                       precision: 0,
                       style: {
-                        width: '100px'
-                      }
-                    }
+                        width: '100px',
+                      },
+                    },
                   },
                   'alarmRules.0.equalsFlag': {
                     title: i18n.t('public_time_m'),
@@ -1114,32 +1114,32 @@ export class Database extends NodeType {
                     'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     'x-component': 'Select',
                     'x-component-props': {
                       style: {
-                        width: '70px'
-                      }
+                        width: '70px',
+                      },
                     },
                     enum: [
                       {
                         label: '<=',
-                        value: -1
+                        value: -1,
                       },
                       {
                         label: '>=',
-                        value: 1
-                      }
+                        value: 1,
+                      },
                     ],
                     'x-reactions': {
                       dependencies: ['.open'],
                       fulfill: {
                         state: {
-                          disabled: `{{!$deps[0]}}`
-                        }
-                      }
-                    }
+                          disabled: `{{!$deps[0]}}`,
+                        },
+                      },
+                    },
                   },
                   'alarmRules.0.ms': {
                     type: 'number',
@@ -1148,20 +1148,20 @@ export class Database extends NodeType {
                         dependencies: ['._ms'],
                         fulfill: {
                           state: {
-                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`
-                          }
-                        }
+                            value: `{{Math.ceil($deps[0] * 1000) < 1 ? 1 : Math.ceil($deps[0] * 1000)}}`,
+                          },
+                        },
                       },
                       {
                         target: 'alarmRules.0._ms',
                         effects: ['onFieldInit'],
                         fulfill: {
                           state: {
-                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`
-                          }
-                        }
-                      }
-                    ]
+                            value: `{{Math.ceil($self.value / 1000) < 1 ? 1 : Math.ceil($self.value / 1000)}}`,
+                          },
+                        },
+                      },
+                    ],
                   },
                   'alarmRules.0._ms': {
                     title: '',
@@ -1169,16 +1169,16 @@ export class Database extends NodeType {
                     'x-editable': true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
+                      layout: 'horizontal',
                     },
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       min: 1,
                       precision: 0,
                       style: {
-                        width: '100px'
-                      }
-                    }
+                        width: '100px',
+                      },
+                    },
                   },
                   unit: {
                     title: 's',
@@ -1186,21 +1186,21 @@ export class Database extends NodeType {
                     default: 0,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      layout: 'horizontal'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      layout: 'horizontal',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
 
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden'
-      }
-    }
+        'x-display': 'hidden',
+      },
+    },
   }
 
   allowTarget(target, source) {

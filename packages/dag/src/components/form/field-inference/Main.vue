@@ -72,16 +72,12 @@
         <div>
           <div class="flex align-center">
             <span class="font-color-dark">{{ $t('packages_dag_nodes_table_gengxintiaojianzi') }}</span>
-            <ElTooltip
-              transition="tooltip-fade-in"
-              :content="$t('packages_dag_field_inference_main_xuanzemorengeng')"
-              class="ml-2"
-            >
-              <VIcon size="16" class="color-primary">info</VIcon>
+            <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_field_inference_main_xuanzemorengeng')">
+              <VIcon size="16" class="color-primary ml-1">info</VIcon>
             </ElTooltip>
             <div class="inline-flex align-center ml-auto gap-1">
               <span class="font-color-sslight">{{ $t('packages_dag_uniqueIndexEnable') }}</span>
-              <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')" class="mr-1">
+              <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_uniqueIndexEnable_tip')">
                 <VIcon size="16" class="color-primary">info</VIcon>
               </ElTooltip>
               <el-switch
