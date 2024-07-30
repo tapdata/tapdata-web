@@ -432,6 +432,8 @@ export default {
   setting_Email_Send_Address: 'Email sending email address',
   setting_SMTP_Server_Host: 'SMTP Service Host',
   setting_Send_Email_Title_Prefix: 'Send Email title prefix (optional)',
+  setting_SMTP_Proxy_Host: 'SMTP proxy service host (optional）',
+  setting_SMTP_Proxy_Port: 'SMTP proxy service port (optional)',
   setting_Email_Template_Running: 'Task start notification',
   setting_Email_Template_Paused: 'Task Paused Notification',
   setting_Email_Template_Error: 'Task error notification',
