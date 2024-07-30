@@ -35,7 +35,7 @@ export const SchemaPreview = defineComponent({
 
         for (let i = 0; i < fields.length; i++) {
           const field = fields[i]
-          let child = parent.children.find(c => c.label === field)
+          let child = parent.children.find((c) => c.label === field)
 
           if (!child) {
             child = { label: field, children: [] }
@@ -46,7 +46,7 @@ export const SchemaPreview = defineComponent({
 
           if (i === fields.length - 1) {
             Object.assign(parent, item, {
-              label: field
+              label: field,
             })
           }
         }
@@ -67,7 +67,7 @@ export const SchemaPreview = defineComponent({
         pageSize: 20,
       }
       const {
-        items: [schema = {}]
+        items: [schema = {}],
       } = await metadataInstancesApi.nodeSchemaPage(params)
 
       tableName.value = schema.name || form.values.tableName || form.values.name
@@ -83,8 +83,8 @@ export const SchemaPreview = defineComponent({
       schemaData.value = mapSchema(schema)
 
       fields = fields
-        .filter(item => !item.is_deleted)
-        .map(field => {
+        .filter((item) => !item.is_deleted)
+        .map((field) => {
           return {
             label: field.field_name,
             value: field.field_name,
@@ -92,7 +92,7 @@ export const SchemaPreview = defineComponent({
             indicesUnique: field.indicesUnique,
             type: field.data_type,
             tapType: field.tapType,
-            dataType: field.data_type.replace(/\(.+\)/, '')
+            dataType: field.data_type.replace(/\(.+\)/, ''),
           }
         })
 
@@ -117,9 +117,9 @@ export const SchemaPreview = defineComponent({
       }
     }
 
-    const mapSchema = schema => {
+    const mapSchema = (schema) => {
       const { fields = [], findPossibleDataTypes = {} } = schema
-      const mapField = field => {
+      const mapField = (field) => {
         /*if (columnsMap[field.field_name]) {
           field.indicesUnique = columnsMap[field.field_name][0]
           field.indicesUniqueIndex = columnsMap[field.field_name][1]
@@ -131,7 +131,7 @@ export const SchemaPreview = defineComponent({
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
       if (isTarget) {
-        fields.forEach(field => {
+        fields.forEach((field) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
           field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           field.matchedDataTypeLevel = getMatchedDataTypeLevel(
@@ -144,7 +144,7 @@ export const SchemaPreview = defineComponent({
         })
       } else {
         // 源节点 JSON.parse('{\"type\":7}').type==7
-        fields.forEach(field => {
+        fields.forEach((field) => {
           const { dataTypes = [], lastMatchedDataType = '' } = findPossibleDataTypes[field.field_name] || {}
           field.canUseDataTypes = getCanUseDataTypes(dataTypes, lastMatchedDataType) || []
           field.matchedDataTypeLevel = errorFiledType(field)
@@ -197,7 +197,7 @@ export const SchemaPreview = defineComponent({
 
     useSchemaEffect(() => [formRef.value.values.tableName], loadSchema)
 
-    if (!root.$store.state.dataflow.taskSaving) {
+    if (!store.state.dataflow.taskSaving) {
       loadSchema()
     }
 
@@ -208,7 +208,7 @@ export const SchemaPreview = defineComponent({
       fieldChangeRules = rules
     }
 
-    const { taskId, activeNodeId } = root.$store.state?.dataflow || {}
+    const { taskId, activeNodeId } = store.state?.dataflow || {}
     const refreshing = ref(false)
     const refreshSchema = async () => {
       if (refreshing.value) return
@@ -216,7 +216,7 @@ export const SchemaPreview = defineComponent({
       await taskApi
         .refreshSchema(taskId, {
           nodeIds: activeNodeId,
-          keys: form.values.tableName
+          keys: form.values.tableName,
         })
         .finally(() => {
           refreshing.value = false
@@ -237,7 +237,7 @@ export const SchemaPreview = defineComponent({
             <el-tooltip
               transition="tooltip-fade-in"
               content={i18n.t(
-                isTreeView.value ? 'packages_dag_switch_to_table_view' : 'packages_dag_switch_to_tree_view'
+                isTreeView.value ? 'packages_dag_switch_to_table_view' : 'packages_dag_switch_to_tree_view',
               )}
               placement="top"
             >

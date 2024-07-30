@@ -156,75 +156,70 @@ export const RelativeTimePicker = connect(
             return label || i18n.t('public_select_placeholder')
           }
           return (
-            <el-popover
-              disabled={props.disabled}
-              class="align-self-start"
-              placement="bottom"
-              trigger="click"
-              width="240"
-              popper-class="pt-0"
-              scopedSlots={{
+            <el-popover disabled={props.disabled} placement="bottom" trigger="click" width="240" popper-class="pt-0">
+              {{
                 reference: () => (
-                  <ElButton class="py-2" disabled={props.disabled}>
+                  <ElButton class="py-2 align-self-start" disabled={props.disabled}>
                     {genLabel()} <i class="el-icon-arrow-down el-icon--right"></i>
                   </ElButton>
                 ),
-              }}
-            >
-              <div>
-                <ElTabs
-                  value={state.form}
-                  onInput={(val) => {
-                    state.form = val
-                  }}
-                >
-                  <ElTabPane label={i18n.t('public_date_past')} name="BEFORE">
-                    <div class="flex gap-3">
-                      <ElInputNumber
-                        min={1}
-                        class="flex-1"
-                        controls-position="right"
-                        value={state.number}
-                        onInput={(val) => {
-                          state.number = val
-                        }}
-                      ></ElInputNumber>
-                      <ElSelect
-                        class="flex-1"
-                        value={state.unit}
-                        onInput={(val) => {
-                          state.unit = val
-                        }}
-                      >
-                        {unitOptions.map((option) => (
-                          <ElOption label={option.label} value={option.value}></ElOption>
-                        ))}
-                      </ElSelect>
-                    </div>
-                    <div class="flex gap-2 align-center font-color-sslight mt-2">
-                      <VIcon size={16}>calendar</VIcon>
-                      <span class="lh-base">{preview.value}</span>
-                    </div>
-                  </ElTabPane>
-                  <ElTabPane label={i18n.t('public_date_current')} name="CURRENT">
-                    <div class="flex flex-wrap gap-3">
-                      {unitOptions.slice(1).map((option) => (
-                        <ElTooltip open-delay={500} placement="bottom" content={getCurrentTip(option.value)}>
-                          <ElButton
-                            class="rounded-pill m-0 min-w-0"
-                            type={state.unit === option.value ? 'primary' : ''}
-                            onClick={() => {
-                              state.unit = option.value
+                default: () => (
+                  <div>
+                    <ElTabs
+                      modelValue={state.form}
+                      onInput={(val) => {
+                        state.form = val
+                      }}
+                    >
+                      <ElTabPane label={i18n.t('public_date_past')} name="BEFORE">
+                        <div class="flex gap-3">
+                          <ElInputNumber
+                            min={1}
+                            class="flex-1"
+                            controls-position="right"
+                            modelValue={state.number}
+                            onInput={(val) => {
+                              state.number = val
+                            }}
+                          ></ElInputNumber>
+                          <ElSelect
+                            class="flex-1"
+                            modelValue={state.unit}
+                            onInput={(val) => {
+                              state.unit = val
                             }}
                           >
-                            {option.label}
-                          </ElButton>
-                        </ElTooltip>
-                      ))}
-                    </div>
-                  </ElTabPane>
-                </ElTabs>
-              </div>
+                            {unitOptions.map((option) => (
+                              <ElOption label={option.label} value={option.value}></ElOption>
+                            ))}
+                          </ElSelect>
+                        </div>
+                        <div class="flex gap-2 align-center font-color-sslight mt-2">
+                          <VIcon size={16}>calendar</VIcon>
+                          <span class="lh-base">{preview.value}</span>
+                        </div>
+                      </ElTabPane>
+                      <ElTabPane label={i18n.t('public_date_current')} name="CURRENT">
+                        <div class="flex flex-wrap gap-3">
+                          {unitOptions.slice(1).map((option) => (
+                            <ElTooltip open-delay={500} placement="bottom" content={getCurrentTip(option.value)}>
+                              <ElButton
+                                class="rounded-pill m-0 min-w-0"
+                                type={state.unit === option.value ? 'primary' : ''}
+                                onClick={() => {
+                                  state.unit = option.value
+                                }}
+                              >
+                                {option.label}
+                              </ElButton>
+                            </ElTooltip>
+                          ))}
+                        </div>
+                      </ElTabPane>
+                    </ElTabs>
+                  </div>
+                ),
+              }}
             </el-popover>
           )
         }

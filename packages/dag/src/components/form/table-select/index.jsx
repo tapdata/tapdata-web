@@ -118,17 +118,17 @@ export const TableSelect = observer(
       const loading = ref(false)
 
       const loadSelectData = () => {
-        refs.select.query = ''
-        refs.select.loadData()
+        select.value.query = ''
+        select.value.loadData()
       }
 
-      const loadSchema = async keys => {
+      const loadSchema = async (keys) => {
         // refs.select.blur()
         loading.value = true
         await taskApi
-          .refreshSchema(root.$store.state.dataflow.taskId, {
-            nodeIds: root.$store.state.dataflow.activeNodeId,
-            keys
+          .refreshSchema(store.state.dataflow.taskId, {
+            nodeIds: store.state.dataflow.activeNodeId,
+            keys,
           })
           .finally(() => {
             loading.value = false
@@ -138,12 +138,12 @@ export const TableSelect = observer(
       }
 
       const unWatch = watch(
-        () => root.$store.state.dataflow.schemaRefreshing,
-        v => {
+        () => store.state.dataflow.schemaRefreshing,
+        (v) => {
           if (!v) {
             loadSelectData()
           }
-        }
+        },
       )
 
       onBeforeUnmount(() => {
@@ -177,7 +177,7 @@ export const TableSelect = observer(
               </div>
             ) : (
               <p class="el-select-dropdown__empty">{i18n.t('public_data_no_data')}</p>
-            )
+            ),
         }
 
         if (showNotExistsTip.value) {

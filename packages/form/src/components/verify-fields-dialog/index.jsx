@@ -11,7 +11,7 @@ export const VerifyFieldsDialog = defineComponent({
       type: Object,
       default: () => {
         return {}
-      }
+      },
     },
     beforeRegexp: String,
     after: {
@@ -26,7 +26,7 @@ export const VerifyFieldsDialog = defineComponent({
     disabled: Boolean,
     includeBeforeAndAfter: Boolean,
   },
-  setup(props, { emit, root, refs }) {
+  setup(props, { emit }) {
     const visible = ref(false)
     const webScript = ref('')
     const dialogScript = ref('')
@@ -48,7 +48,6 @@ export const VerifyFieldsDialog = defineComponent({
 
     function openDialog() {
       // visible.value = true
-      console.log('openDialog-refs', refs, dialog)
       dialog.value?.open?.(props.option)
     }
 
@@ -64,8 +63,7 @@ export const VerifyFieldsDialog = defineComponent({
       return (
         <div class="verify-fields-dialog">
           <ElLink type="primary" onClick={openDialog}>
-            {i18n.t('packages_business_components_conditionbox_chakanzidingyi')}
-            ({list.value.length})
+            {i18n.t('packages_business_components_conditionbox_chakanzidingyi')}({list.value.length})
           </ElLink>
           <Dialog ref={dialog} onChange={onChange}></Dialog>
         </div>

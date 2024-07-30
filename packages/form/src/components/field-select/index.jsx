@@ -59,11 +59,8 @@ const DefineFieldSelect = defineComponent({
       }
       const itemLabel = newAttrs.itemLabel || 'label'
       return (
-        <Select
-          popper-class="field-select-popper"
-          attrs={{ ...newAttrs }}
-          options={fieldOptions.value}
-          scopedSlots={{
+        <Select popper-class="field-select-popper" attrs={{ ...newAttrs }} options={fieldOptions.value}>
+          {{
             option: ({ option }) => (
               <div class="flex align-center gap-1">
                 {option.icon && (
@@ -95,7 +92,7 @@ const DefineFieldSelect = defineComponent({
               </div>
             ),
           }}
-        />
+        </Select>
       )
     }
   },

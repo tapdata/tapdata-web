@@ -2,7 +2,6 @@ import { observer } from '@formily/reactive-vue'
 import { computed, defineComponent, ref } from 'vue'
 import { FormItem, useForm } from '@tap/form'
 import { taskApi } from '@tap/api'
-import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import { connect, mapProps } from '@formily/vue'
 import { useStore } from 'vuex'
@@ -14,7 +13,7 @@ export const SchemaFormItem = connect(
         disabled: Boolean,
         type: String, // connection | table
       },
-      setup(props, { emit, root, attrs, refs, slots }) {
+      setup(props, { attrs, slots }) {
         const store = useStore()
         const { taskId, activeNodeId } = store.state?.dataflow || {}
         const formRef = useForm()
@@ -47,7 +46,7 @@ export const SchemaFormItem = connect(
             <div class="inline-flex align-center">
               <span class="mr-2">{attrs.title}</span>
               {showBtn.value && (
-                <el-button onClick={loadSchema} type="text" loading={isLoading.value}>
+                <el-button onClick={loadSchema} text type="primary" loading={isLoading.value} tag="a">
                   {i18n.t('public_button_reload')}
                 </el-button>
               )}

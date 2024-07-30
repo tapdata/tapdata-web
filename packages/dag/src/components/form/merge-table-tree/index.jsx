@@ -211,7 +211,7 @@ export const MergeTableTree = observer(
         }
 
         const dragNodeId = dragNode.data.id
-        const dragNodePath = refs.tree.getNodePath(dragNodeId)
+        const dragNodePath = tree.value.getNodePath(dragNodeId)
         const topParentNode = dragNodePath[0]
         const node = nodeMap.value[dragNodeId]
         const targetNode = nodeMap.value[dropNode.key]
