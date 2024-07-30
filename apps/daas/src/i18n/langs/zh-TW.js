@@ -419,6 +419,8 @@ export default {
   setting_Email_Send_Address: 'Email發送郵件地址',
   setting_SMTP_Server_Host: 'SMTP 服務Host',
   setting_Send_Email_Title_Prefix: '發​​送Email標題的前綴（可選）',
+  setting_SMTP_Proxy_Host: 'SMTP 代理服務Host (可選）',
+  setting_SMTP_Proxy_Port: 'SMTP 代理服務端口 (可選）',
   setting_Email_Template_Running: '任務啟動通知',
   setting_Email_Template_Paused: '任務停止通知',
   setting_Email_Template_Error: '任務出錯通知',

@@ -421,6 +421,8 @@ export default {
   setting_Email_Send_Address: 'Email发送邮件地址',
   setting_SMTP_Server_Host: 'SMTP 服务Host',
   setting_Send_Email_Title_Prefix: '发送Email标题的前缀（可选）',
+  setting_SMTP_Proxy_Host: 'SMTP 代理服务Host (可选）',
+  setting_SMTP_Proxy_Port: 'SMTP 代理服务端口 （可选）',
   setting_Email_Template_Running: '任务启动通知',
   setting_Email_Template_Paused: '任务停止通知',
   setting_Email_Template_Error: '任务出错通知',
