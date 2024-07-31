@@ -191,8 +191,6 @@ export default ({ routes }) => {
       }
     })
 
-    UpgradeNotice(window.App)
-
     return router
   }
   loading = window.loading({ fullscreen: true })
