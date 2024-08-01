@@ -117,8 +117,11 @@ export const TableSelect = observer(
         refs.select.loadData()
       }
 
+      let unWatch
+
       const loadSchema = async keys => {
         // refs.select.blur()
+        unWatch?.()
         loading.value = true
         await taskApi
           .refreshSchema(root.$store.state.dataflow.taskId, {
@@ -129,17 +132,24 @@ export const TableSelect = observer(
             loading.value = false
           })
 
-        loadSelectData()
+        refs.select.loadData()
+
+        setTimeout(() => {
+          reWatch()
+        }, 100)
       }
 
-      const unWatch = watch(
-        () => root.$store.state.dataflow.schemaRefreshing,
-        v => {
-          if (!v) {
-            loadSelectData()
+      const reWatch = () => {
+        unWatch?.()
+        unWatch = watch(
+          () => root.$store.state.dataflow.schemaRefreshing,
+          v => {
+            if (!v) {
+              loadSelectData()
+            }
           }
-        }
-      )
+        )
+      }
 
       onBeforeUnmount(() => {
         unWatch()
