@@ -160,11 +160,9 @@
 
         <ElFormItem v-if="platform === 'fullManagement'">
           <div slot="label" class="font-color-dark fw-sub">
-            流量计费
-            <span class="fw-normal font-color-sslight"
-              >除了引擎规格费用外，还会根据您同步数据量的大小来收取流量费用，流量费按月收取。</span
-            >
-            <span class="fw-normal color-warning">(免费流量100GB,超出100G以 {{ trafficPrice }}/GB 计费)</span>
+            {{ $t('dfs_traffic_billing') }}
+            <span class="fw-normal font-color-sslight">{{ $t('dfs_traffic_billing_desc') }}</span>
+            <span class="fw-normal color-warning">{{ $t('dfs_traffic_billing_prefix', { trafficPrice }) }}</span>
           </div>
 
           <el-skeleton :loading="loading" animated>

@@ -9,31 +9,48 @@
 
     <div class="flex-1 overflow-auto rounded-lg flex flex-column gap-4">
       <div class="bg-white rounded-lg p-4">
-        <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_spec_configuration') }}</div>
-        <VTable
-          class="border rounded-lg h-auto mb-5"
-          :columns="columns"
-          :data="subscribeItems"
-          ref="table"
-          :has-pagination="false"
-        >
-          <template #empty>
-            <VEmpty small></VEmpty>
-          </template>
-        </VTable>
+        <template v-if="$route.name !== 'payForBill'">
+          <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_spec_configuration') }}</div>
+          <VTable
+            class="border rounded-lg h-auto mb-5"
+            :columns="columns"
+            :data="subscribeItems"
+            ref="table"
+            :has-pagination="false"
+          >
+            <template #empty>
+              <VEmpty small></VEmpty>
+            </template>
+          </VTable>
 
-        <div class="font-color-dark fw-sub text-label mb-2">流量计费</div>
-        <VTable
-          class="border rounded-lg h-auto mb-5"
-          :columns="trafficColumns"
-          :data="trafficItems"
-          ref="table"
-          :has-pagination="false"
-        >
-          <template #empty>
-            <VEmpty small></VEmpty>
-          </template>
-        </VTable>
+          <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_traffic_bill') }}</div>
+          <VTable
+            class="border rounded-lg h-auto mb-5"
+            :columns="trafficColumns"
+            :data="trafficItems"
+            ref="table"
+            :has-pagination="false"
+          >
+            <template #empty>
+              <VEmpty small></VEmpty>
+            </template>
+          </VTable>
+        </template>
+
+        <template v-else>
+          <div class="font-color-dark fw-sub text-label mb-2">{{ $t('dfs_traffic_bill') }}</div>
+          <VTable
+            class="border rounded-lg h-auto mb-5"
+            :columns="trafficBillColumns"
+            :data="trafficBillItems"
+            ref="table"
+            :has-pagination="false"
+          >
+            <template #empty>
+              <VEmpty small></VEmpty>
+            </template>
+          </VTable>
+        </template>
 
         <ElForm ref="form" label-position="top" :model="payForm">
           <ElFormItem prop="email" :rules="emailRules">
@@ -147,6 +164,7 @@ import i18n from '@/i18n'
 import { VTable, IconButton, VEmpty, VIcon } from '@tap/component'
 import { AGENT_TYPE_MAP, getPaymentMethod, getSpec } from '../instance/utils'
 import { CURRENCY_SYMBOL_MAP } from '@tap/business'
+import { calcUnit } from '@tap/shared'
 
 export default {
   components: {
@@ -157,6 +175,8 @@ export default {
   },
 
   data() {
+    const currency = CURRENCY_SYMBOL_MAP[this.$store.getters.isDomesticStation ? 'cny' : 'usd']
+
     return {
       subscribeId: '',
       subscribeAlterId: '',
@@ -174,7 +194,7 @@ export default {
           width: 360
         },
         {
-          label: '计费方式',
+          label: i18n.t('dfs_traffic_bill_mode'),
           prop: 'specLabel',
           width: 180
         },
@@ -183,6 +203,17 @@ export default {
           prop: 'price'
         }
       ],
+      trafficBillColumns: [
+        {
+          label: i18n.t('dfs_bill_amount', {
+            currency
+          }),
+          prop: '_amount'
+        },
+        { label: i18n.t('dfs_egress_traffic'), prop: 'transmit' },
+        { label: i18n.t('dfs_ingress_traffic'), prop: 'received' }
+      ],
+      trafficBillItems: [],
       orderInfo: {},
       emailRules: [
         {
@@ -310,6 +341,22 @@ export default {
     } else if (routeName === 'payForChange') {
       this.paymentParams.subscribeAlterId = this.subscribeAlterId = this.$route.params.id
       await this.loadAlter()
+    } else if (routeName === 'payForBill') {
+      this.billId = this.$route.params.id
+
+      Object.assign(this.paymentParams, {
+        billingId: this.billId,
+        currency: this.currencyType,
+        successUrl:
+          location.origin +
+          location.pathname +
+          this.$router.resolve({
+            name: 'order'
+          }).href,
+        cancelUrl: location.href
+      })
+
+      await this.loadBill()
     }
 
     await this.loadBankAccount()
@@ -414,6 +461,34 @@ export default {
       this.payForm.cancelUrl = location.href
     },
 
+    async loadBill() {
+      this.isRecurring = false // 显示对公
+
+      const {
+        items: [bill]
+      } = await this.$axios.get(
+        `api/tcm/billing?filter=${encodeURIComponent(
+          JSON.stringify({
+            where: {
+              id: this.billId
+            }
+          })
+        )}`
+      )
+
+      let totalAmount = 0
+      this.trafficBillItems = bill.details.map(item => {
+        item.transmit = calcUnit(item.transmit, 'byte')
+        item.received = calcUnit(item.received, 'byte')
+        let _total = item.amounts.find(it => it.currency === this.currencyType)?.totalAmount
+        item._amount = this.formatterPrice(this.currencyType, _total)
+        totalAmount += _total
+        return item
+      })
+
+      this.price = this.formatterPrice(this.currencyType, totalAmount)
+    },
+
     validateForm(ref) {
       return new Promise(resolve => {
         this.$refs[ref].validate(valid => {
@@ -429,7 +504,10 @@ export default {
 
       this.submitLoading = true
       const { paymentUrl } = await this.postPayment()
-      window.open(paymentUrl, '_self')
+
+      if (paymentUrl) {
+        window.open(paymentUrl, '_self')
+      }
     },
 
     formatterPrice(currency, price) {
@@ -473,13 +551,21 @@ export default {
       Object.assign(this.accountInfo, info)
     },
 
-    handleChangePayMethod(method) {
-      if (method === 'Balance') this.createAccount()
+    async handleChangePayMethod(method) {
+      if (method === 'Balance') {
+        await this.createAccount()
+      }
 
-      this.postPayment()
+      await this.postPayment()
     },
 
     async postPayment() {
+      if (this.$route.name === 'payForBill') {
+        return await this.$axios.post('api/tcm/billing/pay', {
+          ...this.payForm,
+          ...this.paymentParams
+        })
+      }
       return await this.$axios.post('api/tcm/subscribe/payment', {
         ...this.payForm,
         ...this.paymentParams

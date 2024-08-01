@@ -428,6 +428,15 @@ const routes = [
             }
           },
           {
+            path: 'bill/pay/:id',
+            name: 'payForBill',
+            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
             path: 'change/pay/:id',
             name: 'payForChange',
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
