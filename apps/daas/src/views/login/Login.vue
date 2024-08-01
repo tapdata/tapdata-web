@@ -25,7 +25,7 @@
               autocomplete="current-password"
               :placeholder="$t('app_signIn_password_placeholder')"
               v-model="form.password"
-              @keyup.Enter="submit"
+              @keyup.enter="submit"
             />
           </form>
           <el-checkbox class="keep-sign-in" v-model="keepSignIn">
