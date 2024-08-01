@@ -152,8 +152,10 @@ export const TableSelect = observer(
         )
       }
 
+      reWatch()
+
       onBeforeUnmount(() => {
-        unWatch()
+        unWatch?.()
       })
 
       return () => {
