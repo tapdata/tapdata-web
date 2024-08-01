@@ -117,9 +117,13 @@ export const TableSelect = observer(
         refs.select.loadData()
       }
 
+      let unWatch
+
       const loadSchema = async keys => {
         // refs.select.blur()
+        unWatch?.()
         loading.value = true
+        refs.select.setSoftFocus() // 设置输入框 focus，防止加载完输入框失焦，触发setSelect 导致输入框内容还原成搜索前的选项
         await taskApi
           .refreshSchema(root.$store.state.dataflow.taskId, {
             nodeIds: root.$store.state.dataflow.activeNodeId,
@@ -129,17 +133,24 @@ export const TableSelect = observer(
             loading.value = false
           })
 
-        loadSelectData()
+        refs.select.loadData()
+
+        setTimeout(() => {
+          reWatch()
+        }, 100)
       }
 
-      const unWatch = watch(
-        () => root.$store.state.dataflow.schemaRefreshing,
-        v => {
-          if (!v) {
-            loadSelectData()
+      const reWatch = () => {
+        unWatch?.()
+        unWatch = watch(
+          () => root.$store.state.dataflow.schemaRefreshing,
+          v => {
+            if (!v) {
+              loadSelectData()
+            }
           }
-        }
-      )
+        )
+      }
 
       onBeforeUnmount(() => {
         unWatch()
