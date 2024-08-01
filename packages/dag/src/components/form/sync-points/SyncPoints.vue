@@ -25,7 +25,7 @@
             format="yyyy-MM-dd HH:mm:ss"
             valueFormat="timestamp"
             popperClass="setting-panel__dateTimePicker"
-            :pickerOptions="getPickerOptionsBeforeTime(item.dataTime, Date.now())"
+            :pickerOptions="getPickerOptionsBeforeTime(item.dateTime, Date.now())"
           ></ElDatePicker>
         </div>
       </template>
