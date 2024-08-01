@@ -123,6 +123,7 @@ export const TableSelect = observer(
         // refs.select.blur()
         unWatch?.()
         loading.value = true
+        refs.select.setSoftFocus() // 设置输入框 focus，防止加载完输入框失焦，触发setSelect 导致输入框内容还原成搜索前的选项
         await taskApi
           .refreshSchema(root.$store.state.dataflow.taskId, {
             nodeIds: root.$store.state.dataflow.activeNodeId,
