@@ -220,6 +220,10 @@ export default {
     initNodeType() {
       this.addProcessorNode([
         {
+          name: i18n.t('packages_dag_migrate_union'),
+          type: 'migrate_union_processor'
+        },
+        {
           name: i18n.t('packages_dag_src_migrationeditor_biaobianji'),
           type: 'table_rename_processor'
         },
@@ -371,11 +375,13 @@ export default {
           this.$router.push({
             name: 'migrateList'
           })
+          window.name = null
         })
       } else {
         this.$router.push({
           name: 'migrateList'
         })
+        window.name = null
       }
     },
 
@@ -463,9 +469,8 @@ export default {
         }
       })
 
-      if (this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
 
       const flag = await this.save(true)
       if (flag) {

@@ -10,7 +10,7 @@
       <header class="px-4 h-48 flex align-center position-relative">
         <IconButton @click="handleUpdateVisible(false)">close</IconButton>
         <div class="fs-6 font-color-dark ml-1">{{ $t('packages_dag_materialized_view') }}</div>
-        <ElButton v-if="isDaas" type="text" class="ml-4 color-warning" @click="handleOpenHelp"
+        <ElButton v-if="!isDaas" type="text" class="ml-4 color-warning" @click="handleOpenHelp"
           ><VIcon class="mr-1">question-circle</VIcon>{{ $t('public_button_help') }}</ElButton
         >
         <div class="operation-center flex align-center position-absolute translate-middle-x start-50">
@@ -216,7 +216,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isDomesticStation']),
+    isDomesticStation() {
+      return this.$store.getters.isDomesticStation
+    },
     ...mapGetters('dataflow', ['allNodes', 'activeNode', 'nodeById', 'transformLoading']),
     ...mapState('dataflow', ['taskSaving']),
 
@@ -292,7 +294,7 @@ export default {
     })
 
     if (!this.isDomesticStation) {
-      this.docUrl = 'https://docs.tapdata.io/cloud/user-guide/data-development/create-materialized-view/'
+      this.docUrl = 'https://docs.tapdata.io/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe
             class="block"
             width="100%"
@@ -304,7 +306,7 @@ export default {
             allowfullscreen
           ></iframe>`
     } else {
-      this.docUrl = 'https://docs.tapdata.net/cloud/user-guide/data-development/create-materialized-view/'
+      this.docUrl = 'https://docs.tapdata.net/user-guide/data-pipeline/data-development/create-materialized-view/'
       this.iframeHtml = `<iframe class="block" width="100%" height="360" src="//player.bilibili.com/player.html?bvid=BV1eN411T7wG&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>`
     }
   },
@@ -618,8 +620,8 @@ export default {
     },
 
     setNodeSchema(nodeId, { fields = [], indices = [] }) {
-      let columnsMap = indices.reduce((map, item) => {
-        item.columns.forEach(({ columnName }) => (map[columnName] = true))
+      let columnsMap = indices.reduce((map, item, index) => {
+        item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
 
@@ -629,7 +631,7 @@ export default {
         fields
           .map(item => {
             item.dataType = item.data_type.replace(/\(.+\)/, '')
-            item.indicesUnique = !!columnsMap[item.field_name]
+            item.indicesUnique = columnsMap[item.field_name]
             item.isPrimaryKey = item.primary_key_position > 0
             return item
           })

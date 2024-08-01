@@ -230,7 +230,7 @@
         :host="apiServerHost"
         @save="handleAddApi"
       ></CreateRestApi>
-      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost"></ApiPreview>
+      <ApiPreview v-if="isDaas" ref="apiPreview" :host="apiServerHost" disableApp />
     </div>
   </div>
 </template>
@@ -1104,7 +1104,7 @@ export default {
     },
 
     handleScroll: debounce(function () {
-      this.$emit('handle-connection')
+      this.$emit('on-scroll')
     }, 200),
 
     searchByKeywordList(val = []) {

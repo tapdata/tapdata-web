@@ -1,7 +1,6 @@
 import Http from './Http'
 import { isPlainObj } from '@tap/shared'
 import Cookie from '@tap/shared/src/cookie'
-import { AxiosResponse } from 'axios'
 
 export default class Task extends Http {
   constructor() {
@@ -217,6 +216,34 @@ export default class Task extends Http {
 
   skipErrorEvents(taskId, ids) {
     return this.axios.post(`${this.url}/skipErrorEvents/${taskId}`, ids)
+  }
+
+  getTimeRange(data, params) {
+    return this.axios.get(`${this.url}/calculatedTimeRange`, {
+      data: JSON.stringify(data),
+      params
+    })
+  }
+
+  getCurrentEngineTime() {
+    return this.axios.get(`${this.url}/getCurrentEngineTime`)
+  }
+
+  getErrorEvents(taskId) {
+    return this.axios.get(`${this.url}/errors/${taskId}`)
+  }
+
+  downloadAnalyze(taskId, params) {
+    return this.axios.post(`${this.url}/analyze/${taskId}`, null, {
+      ...params,
+      responseType: 'blob'
+    })
+  }
+
+  refreshSchema(taskId, params) {
+    return this.axios.put(`${this.url}/${taskId}/re-schemas`, null, {
+      params
+    })
   }
 }
 export { Task }

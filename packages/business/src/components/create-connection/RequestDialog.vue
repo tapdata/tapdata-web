@@ -17,18 +17,15 @@
         <VIcon class="color-primary" size="48">time</VIcon>
       </template>
     </el-result>
-    <el-alert
-      v-else
-      class="alert-primary text-primary mb-4"
-      type="info"
-      :title="
-        $t('packages_business_request_connector_alert', {
-          ...meta
-        })
-      "
-      :closable="false"
-      show-icon
-    />
+    <el-alert v-else class="alert-primary text-primary mb-4 px-2" type="info" :closable="false">
+      <template #title>
+        <span class="text-prewrap flex-1 lh-base">{{
+          $t('packages_business_request_connector_alert', {
+            ...meta
+          })
+        }}</span>
+      </template>
+    </el-alert>
 
     <ElForm ref="form" :model="form" label-position="top" :disabled="hasRequest" :rules="rules">
       <ElFormItem :label="$t('packages_business_request_connector_use_plan')" prop="summary" required>
@@ -83,7 +80,8 @@ export default {
     meta: Object
   },
   data() {
-    const user = this.$store.state.user
+    const user = this.$store.state.user || {}
+
     return {
       form: {
         phone: user.telephone,
@@ -111,30 +109,15 @@ export default {
   methods: {
     async handleOpen() {
       const requestList = await this.queryRequest()
+      const allowStatus = ['APPROVED', 'PENDING']
 
-      if (requestList.some(item => item.status === 'APPROVED')) {
-        // 审核通过
+      if (requestList.length > 0 && allowStatus.includes(requestList[0].status)) {
         return false
       }
 
       // 先显示Dialog > Form，后面resetFields才能生效
       this.$emit('update:visible', true)
       this.hasRequest = false
-
-      await this.$nextTick()
-
-      const request = requestList.find(item => item.status === 'PENDING')
-
-      if (request) {
-        // 审核中
-        this.hasRequest = true
-        // 填充form
-        Object.assign(this.form, {
-          summary: request.summary,
-          phone: request.phone,
-          email: request.email
-        })
-      }
 
       return true
     },
@@ -168,6 +151,7 @@ export default {
       const result = await this.$axios.get(`api/tcm/feature/connector`, {
         params: {
           filter: JSON.stringify({
+            sort: ['submitTime DESC'],
             where: {
               'metadata.type': this.meta.type
             }

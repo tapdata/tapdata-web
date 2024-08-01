@@ -26,7 +26,6 @@ export class Table extends NodeType {
           effects: ['onFieldValueChange'],
           fulfill: {
             run: `setTimeout(() => {
-              console.log("updateConditionFields.$inputs")
               $target && $target.visible && $target.validate()
             }, 0)`
           }
@@ -126,93 +125,130 @@ export class Table extends NodeType {
                     type: 'string',
                     title: i18n.t('public_connection_name'),
                     'x-decorator': 'FormItem',
-                    'x-component': 'PreviewText.Input'
+                    'x-component': 'div',
+                    'x-content': '{{$self.value}}',
+                    'x-component-props': {
+                      class: 'ellipsis',
+                      title: '{{$self.value}}'
+                    }
                   }
                 }
               },
 
-              tableNameWrap: {
+              tableNameSpace: {
                 type: 'void',
-                title: i18n.t('packages_dag_dag_table'),
-                'x-decorator': 'StageButtonLabel',
-                'x-decorator-props': {
-                  asterisk: true,
-                  feedbackLayout: 'none',
-                  connectionId: '{{$values.connectionId}}',
-                  title: i18n.t('packages_dag_dag_table'),
-                  target: 'tableName'
-                },
-                'x-component': 'FormFlex',
+                'x-component': 'Space',
                 'x-component-props': {
-                  gap: 8,
-                  align: 'start'
-                },
-                'x-reactions': {
-                  dependencies: ['databaseType'],
-                  fulfill: {
-                    state: {
-                      display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
-                    }
-                  }
+                  align: 'start',
+                  size: 'middle',
+                  class: 'w-100'
                 },
                 properties: {
-                  tableName: {
-                    type: 'string',
-                    required: true,
-                    'x-validator': [
-                      {
-                        required: true,
-                        message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                  tableNameWrap: {
+                    type: 'void',
+                    title: i18n.t('packages_dag_dag_table'),
+                    'x-decorator': 'SchemaFormItem',
+                    'x-decorator-props': {
+                      asterisk: true,
+                      feedbackLayout: 'none',
+                      connectionId: '{{$values.connectionId}}',
+                      title: i18n.t('packages_dag_dag_table'),
+                      target: 'tableName',
+                      class: 'flex-1'
+                    },
+                    'x-component': 'FormFlex',
+                    'x-component-props': {
+                      gap: 8,
+                      align: 'start'
+                    },
+                    'x-reactions': {
+                      dependencies: ['databaseType'],
+                      fulfill: {
+                        state: {
+                          display: '{{ !["CSV","EXCEL","JSON","XML"].includes($deps[0]) ? "visible":"hidden"}}'
+                        }
                       }
-                    ],
+                    },
+                    properties: {
+                      tableName: {
+                        type: 'string',
+                        required: true,
+                        'x-validator': [
+                          {
+                            required: true,
+                            message: i18n.t('packages_dag_nodes_table_qingxuanzebiao')
+                          }
+                        ],
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          style: {
+                            flex: 1
+                          }
+                        },
+                        'x-component': 'TableSelect',
+                        'x-component-props': {
+                          method: '{{loadTable}}',
+                          connectionId: '{{$values.connectionId}}',
+                          itemType: 'object',
+                          itemQuery: 'value'
+                        },
+                        'x-reactions': [
+                          {
+                            target: 'name',
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
+                            }
+                          },
+                          {
+                            dependencies: ['$inputs'],
+                            fulfill: {
+                              schema: {
+                                // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
+                                'x-component-props.allowCreate': '{{$deps[0].length>0}}'
+                                // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      clipboardButton: {
+                        type: 'void',
+                        'x-component': 'ClipboardButton',
+                        'x-component-props': {
+                          tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
+                          finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
+                        },
+                        'x-reactions': {
+                          dependencies: ['tableName'],
+                          fulfill: {
+                            schema: {
+                              'x-component-props.content': '{{$deps[0]}}'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+
+                  needDynamicTableName: {
+                    type: 'boolean',
+                    title: i18n.t('packages_dag_dynamic_date_suffix'),
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      style: {
-                        flex: 1
-                      }
+                      tooltip: i18n.t('packages_dag_dynamic_date_suffix_tip')
                     },
-                    'x-component': 'TableSelect',
-                    'x-component-props': {
-                      method: '{{loadTable}}',
-                      connectionId: '{{$values.connectionId}}',
-                      itemType: 'object',
-                      itemQuery: 'value'
-                    },
+                    'x-component': 'Switch',
                     'x-reactions': [
-                      {
-                        target: 'name',
-                        effects: ['onFieldInputValueChange'],
-                        fulfill: {
-                          run: `{{ $self.value && !$values.attrs.hasNameEdited && ($target.value = $self.value) }}`
-                        }
-                      },
                       {
                         dependencies: ['$inputs'],
                         fulfill: {
-                          schema: {
-                            // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                            'x-component-props.allowCreate': '{{$deps[0].length>0}}'
-                            // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                          state: {
+                            display: '{{$deps[0].length > 0 ? "visible":"hidden"}}'
                           }
                         }
                       }
                     ]
-                  },
-                  clipboardButton: {
-                    type: 'void',
-                    'x-component': 'ClipboardButton',
-                    'x-component-props': {
-                      tooltip: i18n.t('packages_dag_nodes_table_fuzhibiaoming'),
-                      finishTooltip: i18n.t('packages_dag_nodes_table_yifuzhi')
-                    },
-                    'x-reactions': {
-                      dependencies: ['tableName'],
-                      fulfill: {
-                        schema: {
-                          'x-component-props.content': '{{$deps[0]}}'
-                        }
-                      }
-                    }
                   }
                 }
               },
@@ -247,52 +283,85 @@ export class Table extends NodeType {
                   }
                 },
                 properties: {
-                  updateConditionFields: {
-                    title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
-                    type: 'array',
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      asterisk: true,
-                      tooltip: i18n.t('packages_dag_update_conditions_tip')
-                    },
-                    'x-component': 'FieldSelect',
+                  updateConditionFieldsSpace: {
+                    type: 'void',
+                    'x-component': 'Space',
                     'x-component-props': {
-                      allowCreate: true,
-                      multiple: true,
-                      filterable: true,
-                      onCreate: `{{() => {
-                        // 标记用户创建
+                      align: 'start',
+                      size: 'middle',
+                      class: 'w-100'
+                    },
+                    properties: {
+                      updateConditionFields: {
+                        title: i18n.t('packages_dag_nodes_table_gengxintiaojianzi'),
+                        type: 'array',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          class: 'flex-1',
+                          asterisk: true,
+                          tooltip: i18n.t('packages_dag_update_conditions_tip')
+                        },
+                        'x-component': 'FieldSelect',
+                        'x-component-props': {
+                          allowCreate: true,
+                          multiple: true,
+                          filterable: true,
+                          onChange: `{{(val) => {
+                         // 只要用户手动选择了字段,就不会自动填充
                         $values.attrs.hasCreated = true
                       }}}`
-                    },
-                    'x-reactions': [
-                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
-                      {
-                        effects: ['onFieldMount'],
-                        fulfill: {
-                          run: '$self.visible && $self.validate()'
+                        },
+                        'x-reactions': [
+                          {
+                            dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
+                            fulfill: {
+                              state: {
+                                dataSource: '{{$deps[0]}}',
+                                loading: '{{$deps[1]}}'
+                              }
+                            }
+                          },
+                          // `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.id)}}`,
+                          {
+                            effects: ['onFieldMount'],
+                            fulfill: {
+                              run: '$self.visible && $self.validate()'
+                            }
+                          },
+                          {
+                            effects: ['onFieldInputValueChange'],
+                            fulfill: {
+                              run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
+                            }
+                          },
+                          {
+                            effects: ['onFieldInit'],
+                            fulfill: {
+                              run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
+                                'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
+                              )}':''`
+                            }
+                          }
+                        ],
+                        'x-validator': {
+                          triggerType: 'onBlur',
+                          validator: `{{validateUpdateConditionFields}}`
                         }
                       },
-                      {
-                        effects: ['onFieldInputValueChange'],
-                        fulfill: {
-                          run: '$self.value && $self.value.length && $form.clearErrors("updateConditionFields")'
-                        }
-                      },
-                      {
-                        effects: ['onFieldInit'],
-                        fulfill: {
-                          run: `let parents = findParentNodes(($values.id));$self.description = parents.some(node => node.databaseType==='MongoDB') ? '${i18n.t(
-                            'packages_dag_nodes_table_isDaa_ruguoyuanweimongodb'
-                          )}':''`
-                        }
+
+                      uniqueIndexEnable: {
+                        type: 'boolean',
+                        title: i18n.t('packages_dag_uniqueIndexEnable'),
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip')
+                        },
+                        'x-component': 'Switch'
                       }
-                    ],
-                    'x-validator': {
-                      triggerType: 'onBlur',
-                      validator: `{{validateUpdateConditionFields}}`
                     }
                   },
+
                   existDataProcessMode: {
                     title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                     type: 'string',
@@ -501,9 +570,16 @@ export class Table extends NodeType {
                 }
               },
 
-              schemaPreview: {
-                type: 'void',
-                'x-component': 'SchemaPreview'
+              schemaFields: {
+                type: 'string',
+                'x-component': 'SchemaPreview',
+                'x-component-props': {
+                  '@update-table-name': `{{(name) => {
+                    if (name && $values.tableName && $values.tableName !== name) {
+                      $form.setValuesIn('tableName', name)
+                    }
+                  }}}`
+                }
               }
             }
           },
@@ -646,7 +722,7 @@ export class Table extends NodeType {
                           {
                             fulfill: {
                               state: {
-                                visible: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function')}}`
+                                display: `{{$settings.type !== "initial_sync" && $values.attrs.capabilities.some(item => item.id === 'query_by_advance_filter_function') ? "visible":"hidden"}}`
                               }
                             }
                           },
@@ -655,7 +731,7 @@ export class Table extends NodeType {
                               '*(cdcPollingFields,cdcPollingFieldsDefaultValues,cdcPollingInterval,cdcPollingBatchSize)',
                             fulfill: {
                               state: {
-                                visible: '{{$self.value==="polling"}}'
+                                display: '{{$self.value==="polling"?"visible":"hidden"}}'
                               }
                             }
                           }
@@ -769,7 +845,7 @@ export class Table extends NodeType {
                             dependencies: ['isFilter', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai2')}':''}}`
                               }
                             }
@@ -904,13 +980,13 @@ export class Table extends NodeType {
                             dependencies: ['enableCustomCommand', 'readPartitionOptions.enable'],
                             fulfill: {
                               state: {
-                                disabled: `{{!!$deps[0] || !!$deps[1] ? true : $self.disabled}}`,
+                                disabled: `{{$form.disabled || !!$deps[0] || !!$deps[1]}}`,
                                 description: `{{!!$deps[1] ? '${i18n.t('packages_dag_nodes_table_depskai')}':''}}`
                               }
                             }
                           },
                           {
-                            target: '*(conditions)',
+                            target: '*(conditions,offsetHours)',
                             fulfill: {
                               state: {
                                 visible: '{{$self.value===true}}'
@@ -921,36 +997,27 @@ export class Table extends NodeType {
                       },
 
                       nodeSchema: {
-                        type: 'array',
+                        type: 'string',
                         'x-display': 'hidden',
                         'x-reactions': [
-                          `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true, fieldName: 'value'}, $values.id, $values.tableName)}}`,
                           {
-                            target: '*(conditions.*.key,cdcPollingFields.*.field)',
+                            dependencies: ['schemaFields#dataSource', 'schemaFields#loading'],
                             fulfill: {
                               state: {
-                                loading: '{{$self.loading}}',
-                                dataSource: '{{$self.value}}'
-                              }
-                            }
-                          },
-                          {
-                            target: '*(readPartitionOptions.enable)',
-                            fulfill: {
-                              state: {
-                                value:
-                                  '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
-                              }
+                                dataSource: '{{$deps[0]}}',
+                                loading: '{{$deps[1]}}'
+                              },
+                              // 不设置字段的 loading，体验不好
+                              run: `{{$form.setFieldState('*(conditions.*.key,cdcPollingFields.*.field)', {dataSource: $self.dataSource})}}`
                             }
                           }
                         ]
                       },
-
                       conditions: {
                         title: i18n.t('packages_dag_nodes_table_zidingyitiaojian'),
                         type: 'array',
                         required: true,
-                        default: [{ key: '', value: '', operator: 5 }],
+                        default: [{ key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }],
                         'x-decorator': 'FormItem',
                         'x-component': 'ArrayItems',
                         items: {
@@ -959,11 +1026,18 @@ export class Table extends NodeType {
                             space: {
                               type: 'void',
                               'x-component': 'Space',
+                              'x-component-props': {
+                                class: 'w-100',
+                                align: 'start'
+                              },
                               properties: {
                                 key: {
                                   type: 'string',
                                   required: 'true',
                                   'x-decorator': 'FormItem',
+                                  'x-decorator-props': {
+                                    className: 'flex-1'
+                                  },
                                   'x-component': 'FieldSelect',
                                   'x-component-props': {
                                     filterable: true
@@ -975,53 +1049,118 @@ export class Table extends NodeType {
                                     }
                                   }
                                 },
-                                operator: {
-                                  type: 'number',
-                                  required: 'true',
-                                  enum: [
-                                    {
-                                      label: '>',
-                                      value: 1
-                                    },
-                                    {
-                                      label: '>=',
-                                      value: 2
-                                    },
-                                    {
-                                      label: '<',
-                                      value: 3
-                                    },
-                                    {
-                                      label: '<=',
-                                      value: 4
-                                    },
-                                    {
-                                      label: '=',
-                                      value: 5
-                                    }
-                                  ],
-                                  'x-decorator': 'FormItem',
-                                  'x-decorator-props': {
-                                    wrapperWidth: 100
-                                  },
-                                  'x-component': 'Select'
-                                },
-                                value: {
-                                  type: 'string',
-                                  required: 'true',
-                                  'x-decorator': 'FormItem',
-                                  'x-component': 'Input',
-                                  'x-component-props': {
-                                    type: 'datetime',
-                                    align: 'right',
-                                    format: 'yyyy-MM-dd HH:mm:ss'
-                                  },
+                                timeFilter: {
+                                  type: 'void',
+                                  'x-component': 'Space',
                                   'x-reactions': {
-                                    dependencies: ['nodeSchema', '.key'],
+                                    dependencies: ['nodeSchema#dataSource', '.key'],
                                     fulfill: {
-                                      schema: {
-                                        'x-component':
-                                          '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                      state: {
+                                        display: `{{Boolean($deps[0] && $deps[1] && $deps[0].find(field=>field.value===$deps[1]&&/timestamp|date|DATE_TIME|datetime/i.test(field.type))) ? "visible" :"hidden"}}`
+                                      }
+                                    }
+                                  },
+                                  properties: {
+                                    fastQuery: {
+                                      type: 'boolean',
+                                      default: false,
+                                      enum: [
+                                        {
+                                          label: i18n.t('public_date_specific'),
+                                          value: false
+                                        },
+                                        {
+                                          label: i18n.t('public_date_relative'),
+                                          value: true
+                                        }
+                                      ],
+                                      'x-decorator': 'FormItem',
+                                      'x-decorator-props': {
+                                        wrapperWidth: 140
+                                      },
+                                      'x-component': 'Select'
+                                    },
+                                    RelativeTimePicker: {
+                                      type: 'void',
+                                      'x-component': 'RelativeTimePicker',
+                                      'x-component-props': {
+                                        offsetHours: '{{$values.offsetHours}}'
+                                      },
+                                      'x-reactions': {
+                                        dependencies: ['.fastQuery'],
+                                        fulfill: {
+                                          state: {
+                                            display: `{{!!$deps[0] ? "visible" :"hidden"}}`
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                valueWrapper: {
+                                  type: 'void',
+                                  'x-reactions': {
+                                    dependencies: ['nodeSchema#dataSource', '.key', '.fastQuery'],
+                                    fulfill: {
+                                      state: {
+                                        display: `{{!$deps[2] || !(field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)) ? "visible" :"hidden"}}`
+                                      }
+                                    }
+                                  },
+                                  properties: {
+                                    operator: {
+                                      type: 'number',
+                                      required: 'true',
+                                      default: 5,
+                                      enum: [
+                                        {
+                                          label: '>',
+                                          value: 1
+                                        },
+                                        {
+                                          label: '>=',
+                                          value: 2
+                                        },
+                                        {
+                                          label: '<',
+                                          value: 3
+                                        },
+                                        {
+                                          label: '<=',
+                                          value: 4
+                                        },
+                                        {
+                                          label: '=',
+                                          value: 5
+                                        }
+                                      ],
+                                      'x-decorator': 'FormItem',
+                                      'x-decorator-props': {
+                                        wrapperWidth: 66
+                                      },
+                                      'x-component': 'Select'
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      required: 'true',
+                                      'x-decorator': 'FormItem',
+                                      'x-decorator-props': {
+                                        wrapperWidth: 208
+                                      },
+                                      'x-component': 'Input',
+                                      'x-component-props': {
+                                        type: 'datetime',
+                                        align: 'right',
+                                        format: 'yyyy-MM-dd HH:mm:ss'
+                                      },
+                                      'x-reactions': {
+                                        dependencies: ['nodeSchema#dataSource', '.key'],
+                                        fulfill: {
+                                          schema: {
+                                            'x-component':
+                                              '{{field=$deps[0] && $deps[0].find(item=>item.value===$deps[1]),field&&/timestamp|date|DATE_TIME|datetime/i.test(field.type)?"DatePicker":"Input"}}'
+                                          }
+                                        }
                                       }
                                     }
                                   }
@@ -1044,10 +1183,17 @@ export class Table extends NodeType {
                             title: i18n.t('packages_dag_nodes_table_tianjia'),
                             'x-component': 'ArrayItems.Addition',
                             'x-component-props': {
-                              defaultValue: { key: '', value: '', operator: 5 }
+                              defaultValue: { key: '', value: '', operator: 5, number: 1, form: 'BEFORE', unit: 'DAY' }
                             }
                           }
                         }
+                      },
+                      offsetHours: {
+                        type: 'number',
+                        title: i18n.t('packages_dag_time_zone_offset'),
+                        default: 0,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'InputNumber'
                       }
                     }
                   },
@@ -1123,6 +1269,14 @@ export class Table extends NodeType {
                             },
                             'x-component': 'Switch',
                             'x-reactions': [
+                              {
+                                fulfill: {
+                                  state: {
+                                    value:
+                                      '{{$values.attrs.capabilities.some(item => item.id === "get_read_partitions_function") && ($settings.type !== "cdc") ? $values.readPartitionOptions.enable:false}}'
+                                  }
+                                }
+                              },
                               {
                                 dependencies: ['isFilter', 'enableCustomCommand'],
                                 fulfill: {
@@ -1509,7 +1663,8 @@ export class Table extends NodeType {
                         'x-reactions': {
                           fulfill: {
                             state: {
-                              visible: '{{$settings.type !== "cdc"}}',
+                              visible:
+                                '{{$settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
                             }
                           }

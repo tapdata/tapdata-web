@@ -2,10 +2,14 @@ import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
 import python from 'highlight.js/lib/languages/python'
+import http from 'highlight.js/lib/languages/http'
+import xml from 'highlight.js/lib/languages/xml'
 import { escape } from 'lodash'
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
 hljs.registerLanguage('python', python)
+hljs.registerLanguage('http', http)
+hljs.registerLanguage('xml', xml)
 
 function hasValueOrEmptyAttribute(value) {
   return Boolean(value || value === '')
@@ -60,7 +64,8 @@ export default {
       createElement('code', {
         class: this.className,
         domProps: { innerHTML: this.highlighted }
-      })
+      }),
+      this.$slots.default
     ])
   }
   // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`

@@ -315,6 +315,7 @@ export default [
             name: 'connectionsList',
             component: ConnectionList,
             meta: {
+              hideTitle: true,
               title: 'page_title_connections',
               code: 'v2_datasource_menu'
             }
@@ -396,6 +397,7 @@ export default [
             name: 'migrateList',
             component: MigrateList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_copy',
               code: 'v2_data_replication'
             }
@@ -417,6 +419,7 @@ export default [
             name: 'dataflowList',
             component: TaskList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_develop',
               code: 'v2_data_flow'
             }
@@ -461,6 +464,7 @@ export default [
             name: 'dataVerificationList',
             component: VerificationList,
             meta: {
+              hideTitle: true,
               title: 'page_title_data_verify',
               code: 'v2_data_check'
             }
@@ -502,7 +506,7 @@ export default [
             }
           },
           {
-            path: '/dataVerifyResult/:id/history',
+            path: '/dataVerifyResult/:inspectId/:id/history',
             name: 'VerifyDiffHistory',
             component: VerificationHistory,
             meta: {
@@ -917,6 +921,16 @@ export default [
             meta: {
               title: 'page_title_setting',
               code: 'v2_alarm_settings_menu',
+              isNotAside: true
+            }
+          },
+          /* ---------- Webhook 告警设置  ----------*/
+          {
+            path: 'webhook-alerts',
+            name: 'webhookAlerts',
+            component: () => import('@/views/setting/WebhookAlerts'),
+            meta: {
+              title: 'page_title_webhook_alerts',
               isNotAside: true
             }
           }

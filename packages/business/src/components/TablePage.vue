@@ -49,7 +49,7 @@
             v-loading="loading"
             class="table-page-table"
             :row-class-name="classificationVisible ? 'grabbable' : ''"
-            height="100%"
+            :height="ifTableHeightAuto ? null : '100%'"
             :element-loading-text="$t('packages_business_dataFlow_dataLoading')"
             :row-key="rowKey"
             :span-method="spanMethod"
@@ -72,18 +72,30 @@
           <div class="table-footer">
             <slot name="tableFooter"></slot>
           </div>
-          <el-pagination
-            background
-            class="table-page-pagination mt-3"
-            layout="->,total, sizes,  prev, pager, next, jumper"
-            :current-page.sync="page.current"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size.sync="page.size"
-            :total="page.total"
-            @size-change="fetch(1)"
-            @current-change="handleCurrent"
-          >
-          </el-pagination>
+          <div class="pagination-wrapper flex align-center gap-3 pl-3 pt-3">
+            <transition name="el-fade-in-linear">
+              <div v-if="multipleSelection.length" class="flex align-center gap-3">
+                <ElCheckbox :value="true" @change="clearSelection"></ElCheckbox>
+                <span class="fw-sub text-nowrap"
+                  >{{ $t('packages_business_selected_rows', { val: multipleSelection.length }) }}
+                </span>
+                <slot name="multipleSelectionActions"></slot>
+              </div>
+            </transition>
+
+            <el-pagination
+              background
+              class="table-page-pagination ml-auto mt-0"
+              layout="->,total, sizes,  prev, pager, next, jumper"
+              :current-page.sync="page.current"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size.sync="page.size"
+              :total="page.total"
+              @size-change="fetch(1)"
+              @current-change="handleCurrent"
+            >
+            </el-pagination>
+          </div>
         </div>
       </div>
     </div>
@@ -151,7 +163,8 @@ export default {
         allowDrop: true
       },
       draggingNodeImage: null,
-      shiftKeyPressed: false
+      shiftKeyPressed: false,
+      ifTableHeightAuto: !!process.env.VUE_APP_TABLE_HEIGHT_AUTO
     }
   },
   mounted() {
@@ -195,10 +208,6 @@ export default {
               .then(({ data, total }) => {
                 this.page.total = total
                 this.list = data || []
-
-                // 缓存每页条数
-                let pageData = {}
-                pageData[this.$route.name] = this.page.size
 
                 if (total > 0 && (!data || !data.length)) {
                   clearTimeout(timer)
@@ -385,6 +394,9 @@ export default {
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式
       // }
+      .el-table::before {
+        height: 1px;
+      }
       .el-table__fixed-body-wrapper {
         background-color: map-get($bgColor, white);
       }
@@ -411,6 +423,13 @@ export default {
     .table-page-pagination {
       margin-top: 5px;
     }
+  }
+}
+
+.pagination-wrapper {
+  min-height: 46px;
+  .el-button + .el-button {
+    margin-left: 0;
   }
 }
 </style>

@@ -1,5 +1,4 @@
 import '@/styles/app.scss'
-
 import Vue from 'vue'
 import App from '@/App.tsx'
 import store from '@/vuex' // 引入全局数据控制
@@ -23,6 +22,7 @@ import LoadMore from '@/utils/loadMore'
 
 import '@/plugins/axios.ts'
 import { configUser, getUrlSearch } from '@/utils/util'
+import { installOEM } from '@/oem'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -95,7 +95,6 @@ if (IS_IFRAME) {
 const TOKEN = getUrlSearch('token')
 const URL_LANG = getUrlSearch('lang')
 
-// 西工大的case
 ;['zh-CN', 'zh-TW', 'en'].includes(URL_LANG) && localStorage.setItem('lang', URL_LANG)
 
 if (TOKEN) {
@@ -105,6 +104,10 @@ if (TOKEN) {
 }
 
 let token = Cookie.get('access_token')
+
+const router = getRouter(i18n)
+
+installOEM(router, i18n)
 
 let init = settings => {
   window.__settings__ = settings
@@ -123,7 +126,7 @@ let init = settings => {
   window.App = new Vue({
     el: '#app',
     i18n,
-    router: getRouter(i18n),
+    router,
     store,
     wsOptions: {
       url: wsUrl,
@@ -171,27 +174,16 @@ document.addEventListener('visibilitychange', () => {
   }, 50)
 })
 
-// 判断浏览器是否为IE
-// const isIE = /MSIE (\d+\.\d+);/.test(navigator.userAgent) || ~navigator.userAgent.indexOf('Trident/')
-
-// // 兼容ie iframe切换路由不生效
-// if (isIE) {
-//   window.addEventListener(
-//     'hashchange',
-//     () => {
-//       let currentPath = window.location.hash.slice(1)
-//       let arr = ['/dataFlows', '/connections'] // 匹配的路由：同步任务、连接管理、数据校验
-//       let flag = false // 是否是iframe使用到的路由地址
-//       arr.forEach(el => {
-//         let reg = new RegExp('^' + el)
-//         if (reg.test(currentPath)) {
-//           flag = true
-//         }
-//       })
-//       if (flag && window.App.$route.fullPath !== currentPath) {
-//         window.App.$router.push(currentPath)
-//       }
-//     },
-//     false
-//   )
-// }
+// community add jira issue collector
+if (process.env.VUE_APP_MODE === 'community') {
+  window.ATL_JQ_PAGE_PROPS = {
+    triggerFunction: function (showCollectorDialog) {
+      document.addEventListener('click', function (event) {
+        const target = document.getElementById('add-jira-issue-btn')
+        if (event.target === target || target.contains(event.target)) {
+          showCollectorDialog()
+        }
+      })
+    }
+  }
+}

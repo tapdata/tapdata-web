@@ -126,7 +126,7 @@
                       {{ $t('dfs_instance_stopped_help_tip_prefix') }}
                       <a
                         target="_blank"
-                        href="https://docs.tapdata.io/cloud/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
+                        href="https://docs.tapdata.io/faq/agent-installation#agent-%E6%98%BE%E7%A4%BA%E7%A6%BB%E7%BA%BF%E5%A6%82%E4%BD%95%E9%87%8D%E5%90%AF"
                         class="color-primary"
                         >{{ $t('dfs_online_help_docs') }}</a
                       >
@@ -615,7 +615,7 @@ export default {
         },
         {
           label: this.$t('dfs_instance_instance_subscribe_time'),
-          value: 'periodStartTime'
+          value: 'agentCreateTime'
         },
         {
           label: this.$t('dfs_agent_download_subscriptionmodeldialog_tuoguanfangshi'),
@@ -904,7 +904,7 @@ export default {
             const { subscribeDto = {} } = item.orderInfo
             const { endAt } = subscribeDto || {}
 
-            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YY-MM-DD  HH:mm:ss') : '-'
+            item.expiredTimeLabel = endAt ? dayjs(endAt).format('YYYY-MM-DD  HH:mm:ss') : '-'
             item.scopeLabel = this.scopeMap[item.scope]
             item.specLabel = getSpec(item.spec) || '-'
             item.providerName = item.providerName || '-'
@@ -1032,21 +1032,24 @@ export default {
               item.subscriptionMethodLabel = '-'
             }
             item.periodLabel =
-              dayjs(startAt).format('YY-MM-DD HH:mm:ss') + ' - ' + dayjs(endAt).format('YY-MM-DD HH:mm:ss')
+              dayjs(startAt).format('YYYY-MM-DD HH:mm:ss') + ' - ' + dayjs(endAt).format('YYYY-MM-DD HH:mm:ss')
             //订阅时间
-            item.periodStartTime = dayjs(startAt).format('YY-MM-DD HH:mm:ss')
+            item.agentCreateTime = dayjs(item.agentCreateTime).format('YYYY-MM-DD HH:mm:ss')
+            item.periodStartTime = dayjs(startAt).format('YYYY-MM-DD HH:mm:ss')
             item.content = `${item.subscriptionMethodLabel} ${item.specLabel} ${i18n.t('public_agent')}`
             //过期时间
             if (item.publicAgent) {
-              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD HH:mm:ss') : '-'
             } else if (chargeProvider === 'Aliyun') {
               item.expiredTime = license.expiredTime
               item.expiredTimeLabel = item.expiredTime
-                ? dayjs(new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()).format('YY-MM-DD HH:mm:ss')
+                ? dayjs(new Date(item.expiredTime.replace('Z', '+08:00')).toLocaleString()).format(
+                    'YYYY-MM-DD HH:mm:ss'
+                  )
                 : '-'
             } else if (chargeProvider === 'Stripe') {
               item.expiredTime = endAt
-              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YY-MM-DD  HH:mm:ss') : '-'
+              item.expiredTimeLabel = item.expiredTime ? dayjs(item.expiredTime).format('YYYY-MM-DD  HH:mm:ss') : '-'
             } else {
               item.expiredTime = ''
               item.expiredTimeLabel = '-'
@@ -1138,7 +1141,7 @@ export default {
     },
     handlePingTime(row) {
       let pingTime = row?.tmInfo?.pingTime
-      return pingTime ? dayjs(pingTime).format('YY-MM-DD HH:mm:ss') : '-'
+      return pingTime ? dayjs(pingTime).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
     getImg(name) {
       return require(`../../../public/images/agent/${name}.png`)
@@ -1626,14 +1629,14 @@ export default {
         return ''
       }
 
-      row.expiredTimeLabel = dayjs(expiredTime).format('YY-MM-DD')
+      row.expiredTimeLabel = dayjs(expiredTime).format('YYYY-MM-DD')
 
       const t = new Date(expiredTime).getTime()
       if (Time.now() > t) return 'expired'
       if (Time.now() > t - 7 * 24 * 3600000) {
         // 过期前24h，显示详细时间
         if (Time.now() > t - 24 * 3600000) {
-          row.expiredTimeLabel = dayjs(expiredTime).format('YY-MM-DD HH:mm')
+          row.expiredTimeLabel = dayjs(expiredTime).format('YYYY-MM-DD HH:mm')
         }
         return 'expiringSoon'
       }

@@ -205,7 +205,7 @@ export function downloadBlob(res, name = '') {
     return
   }
   const { data, headers } = res
-  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
+  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="?([^"]+)"?/, '$1')
   const blob = new Blob([data], { type: headers['content-type'] })
   openUrl(window.URL.createObjectURL(blob), '_blank', fileName)
 }
@@ -312,4 +312,102 @@ export function onCopy(value) {
   input.select() // 这里会触发ElTooltip -> Button 的blur，下面要主动focus
   document.execCommand?.('copy')
   document.body.removeChild(input)
+}
+
+export async function copyToClipboard(textToCopy) {
+  // Navigator clipboard api needs a secure context (https)
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(textToCopy)
+  } else {
+    // Use the 'out of viewport hidden text area' trick
+    const textArea = document.createElement('textarea')
+    textArea.value = textToCopy
+
+    // Move textarea out of the viewport so it's not visible
+    textArea.style.position = 'absolute'
+    textArea.style.left = '-999999px'
+
+    document.body.prepend(textArea)
+    textArea.select()
+
+    try {
+      document.execCommand('copy')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      textArea.remove()
+    }
+  }
+}
+
+export function deepEqual(obj1, obj2, excludedPaths = [], currentPath = '', seen = new Map()) {
+  const isExcluded = path => excludedPaths.includes(path)
+
+  // Handle identical references (including NaN)
+  if (obj1 === obj2) {
+    return true
+  }
+
+  // Handle NaN case
+  if (typeof obj1 === 'number' && typeof obj2 === 'number' && isNaN(obj1) && isNaN(obj2)) {
+    return true
+  }
+
+  // Handle null and undefined
+  if (obj1 == null || obj2 == null) {
+    return obj1 === obj2
+  }
+
+  // Handle functions (if needed)
+  // if (typeof obj1 === 'function' || typeof obj2 === 'function') {
+  //   return false
+  // }
+
+  // Handle different types
+  if (typeof obj1 !== typeof obj2) {
+    return false
+  }
+
+  // Handle dates
+  if (obj1 instanceof Date && obj2 instanceof Date) {
+    return obj1.getTime() === obj2.getTime()
+  }
+
+  // Handle regular expressions
+  if (obj1 instanceof RegExp && obj2 instanceof RegExp) {
+    return obj1.source === obj2.source && obj1.flags === obj2.flags
+  }
+
+  // Handle arrays and objects
+  if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+    // Handle cyclic references
+    if (seen.has(obj1) && seen.get(obj1) === obj2) {
+      return true
+    }
+    seen.set(obj1, obj2)
+
+    let keys1 = Object.keys(obj1)
+    let keys2 = Object.keys(obj2)
+    const pathPrefix = currentPath ? `${currentPath}.` : ''
+
+    if (excludedPaths.length) {
+      keys1 = keys1.filter(key => !isExcluded(pathPrefix + key))
+      keys2 = keys2.filter(key => !isExcluded(pathPrefix + key))
+    }
+
+    if (keys1.length !== keys2.length) {
+      return false
+    }
+
+    for (const key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key], excludedPaths, pathPrefix + key, seen)) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // Default case: not equal
+  return false
 }

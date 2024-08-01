@@ -21,8 +21,7 @@
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
           <span class="font-color-dark">
-            <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon
-            >{{
+            {{
               $t('packages_business_task_status_agent_tooltip_time', {
                 time: pingTime
               })
@@ -34,7 +33,7 @@
         </template>
       </ElTooltip>
     </template>
-    <template v-if="task.shareCdcStop">
+    <template v-if="task.shareCdcStop && !task.restartFlag">
       <ElTooltip placement="top" popper-class="agent-tooltip__popper" :visible-arrow="false" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
@@ -56,9 +55,8 @@
       <ElTooltip key="retrying" placement="top" popper-class="agent-tooltip__popper" effect="light">
         <VIcon size="16" class="color-warning">warning</VIcon>
         <template #content>
-          <span class="font-color-dark py-2">
-            <VIcon size="16" class="mr-1 color-warning align-text-top"> warning </VIcon>
-            <span class="fs-8">{{ taskRetryStartTimeTip }}</span>
+          <span class="font-color-dark">
+            {{ taskRetryStartTimeTip }}
           </span>
         </template>
       </ElTooltip>

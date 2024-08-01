@@ -11,13 +11,14 @@ export const IconButton = defineComponent({
     lg: Boolean,
     xl: Boolean,
     clickAndRotate: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    loading: Boolean
   },
   setup(props, { attrs, listeners, slots }) {
     return () => {
       return (
         <button
-          disabled={props.disabled}
+          disabled={props.disabled || props.loading}
           staticClass="t-button t-button--icon"
           class={{
             't-button--icon-xs': props.xs,
@@ -30,7 +31,7 @@ export const IconButton = defineComponent({
           type="button"
           {...{ props: attrs, on: listeners }}
         >
-          <VIcon>{slots.default()}</VIcon>
+          <VIcon class={{ 'animation-rotate-fast': props.loading }}>{slots.default()}</VIcon>
         </button>
       )
     }

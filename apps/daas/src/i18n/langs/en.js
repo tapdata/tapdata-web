@@ -13,13 +13,13 @@ export default {
   page_title_connections_edit: 'Edit connection',
   page_title_data_pipeline: 'Data Pipelines',
   page_title_advanced_features: 'Advanced',
-  page_title_data_copy: 'Replications',
+  page_title_data_copy: 'Data Replications',
   page_title_task_edit: 'Edit task',
   page_title_task_details: 'Task details',
   page_title_task_stat: 'Task statistics',
   page_title_run_monitor: 'Run Monitoring',
-  page_title_data_develop: 'Transforms',
-  page_title_data_verify: 'Validations',
+  page_title_data_develop: 'Data Transformation',
+  page_title_data_verify: 'Data Validation',
   page_title_data_difference_details: 'Difference Details',
   page_title_data_verification_result: 'Verification Result',
   page_title_diff_verification_history: 'Diff verification history',
@@ -52,8 +52,9 @@ export default {
   page_title_user: 'Users',
   page_title_role: 'Roles',
   page_title_setting: 'System settings',
+  page_title_webhook_alerts: 'Webhook Alerts',
   page_title_license: 'License',
-  page_title_back_menu: 'Back menu',
+  page_title_back_menu: 'Back',
   page_title_custom_node: 'User Defined Processors',
   page_title_account: 'Personal settings',
   page_title_external_storage: 'External Storage Settings',
@@ -81,18 +82,18 @@ export default {
   dashboard_status_paused: 'Paused',
   dashboard_status_wait_run: 'Scheduled',
   dashboard_all_total: 'All tasks',
-  dashboard_copy_total: 'Copy task',
-  dashboard_sync_total: 'Development tasks',
-  dashboard_valid_total: 'Validation task',
-  dashboard_current_all_total: 'Total total of all current tasks',
-  dashboard_current_copy_total: 'Total number of current copy tasks',
-  dashboard_current_sync_total: 'Total number of current development tasks',
-  dashboard_current_valid_total: 'Total number of current validation tasks',
-  dashboard_copy_overview_title: 'Copy task overview',
-  dashboard_copy_status_title: 'Copy task status',
-  dashboard_sync_overview_title: 'Development task overview',
-  dashboard_sync_status_title: 'Development task status',
-  dashboard_valid_title: 'Data validation',
+  dashboard_copy_total: 'Replication Task',
+  dashboard_sync_total: 'Transformation Task',
+  dashboard_valid_total: 'Validation Task',
+  dashboard_current_all_total: 'Total total of all tasks',
+  dashboard_current_copy_total: 'Total number of replication tasks',
+  dashboard_current_sync_total: 'Total number of transformation tasks',
+  dashboard_current_valid_total: 'Total number of validation tasks',
+  dashboard_copy_overview_title: 'Replication task overview',
+  dashboard_copy_status_title: 'Replication task status',
+  dashboard_sync_overview_title: 'Transformation task overview',
+  dashboard_sync_status_title: 'Transformation task status',
+  dashboard_valid_title: 'Data validation overview',
   dashboard_transfer_overview: 'Transfer overview',
   dashboard_server_title: 'Cluster overview',
   dashboard_total_valid: 'All verification tasks',
@@ -192,7 +193,7 @@ export default {
   module_form_available_query_field: 'Available query field',
   module_form_required_query_field: 'Required query conditions',
   module_form_validator_name:
-    'Can only contain Chinese, letters, numbers, underscores and dollar signs, and numbers cannot start with',
+    'Can only contain letters, numbers, underscores and dollar signs, and numbers cannot start with',
   module_form_create_a_new_record: 'Create a new record',
   module_form_get_record_by_id: 'Get records based on id',
   module_form_update_record_by_id: 'Update record according to id',
@@ -431,6 +432,8 @@ export default {
   setting_Email_Send_Address: 'Email sending email address',
   setting_SMTP_Server_Host: 'SMTP Service Host',
   setting_Send_Email_Title_Prefix: 'Send Email title prefix (optional)',
+  setting_SMTP_Proxy_Host: 'SMTP proxy service host (optional）',
+  setting_SMTP_Proxy_Port: 'SMTP proxy service port (optional)',
   setting_Email_Template_Running: 'Task start notification',
   setting_Email_Template_Paused: 'Task Paused Notification',
   setting_Email_Template_Error: 'Task error notification',
@@ -521,6 +524,8 @@ export default {
   setting_server_oversee_url: 'O&M operation control URL',
   setting_system: 'System global',
   setting_licenseNoticeDays: 'license expiration reminder',
+  setting_license_alarm: 'License expiry advance reminder (days)',
+  setting_License_expiry_email_reminder_: 'License expiry advance reminder settings (days)',
   setting_flow_engine_version: 'Flow engine version',
   setting_tapdata_agent_version: 'tapdata agent version',
   setting_doc_base_url: 'Help document URL',
@@ -626,7 +631,7 @@ export default {
   cluster_update: 'Update',
   cluster_running: 'running',
   cluster_stopped: 'stopped',
-  cluster_sync_gover: 'Sync Governance',
+  cluster_sync_gover: 'Flow Engine',
   cluster_manage_sys: 'Management Backend',
   cluster_add_server_mon: 'Add service monitoring',
   cluster_agentSetting: 'Agent server settings',
@@ -646,7 +651,7 @@ export default {
   cluster_server_nickname: 'server name',
   cluster_command: 'command',
   instance_details_shujuyuanziyuan: 'Data Source Resource Download',
-  instance_details_xianchengziyuanxia: 'Thread Resource Download',
+  instance_details_xianchengziyuanxia: 'Flow Engine Thread Resource Download',
   license_node_name: 'Node name',
   license_node_sid: 'node sid',
   license_status: 'License status',
@@ -705,7 +710,7 @@ export default {
   notify_api_sever_stop_failed: 'The API service failed to stop',
   notify_sync_sever_stop_failed: 'The synchronization management service failed to stop',
   notify_api_sever_abnormally_stopped: 'The API service stopped unexpectedly',
-  notify_sync_sever_abnormally_stopped: 'The sync governance service stopped unexpectedly',
+  notify_sync_sever_abnormally_stopped: 'Flow Engine service unexpectedly stopped',
   notify_manage_sever_abnormally_Stopped: 'The service on the management side stopped unexpectedly',
   notify_manage_sever_started_successfully: 'The management service has been started',
   notify_api_sever_started_successfully: 'API service has been started',
@@ -820,7 +825,7 @@ export default {
   role_name_datasource_delete: 'Connection management delete',
   role_name_datasource_edition: 'Connection management editor',
   role_name_data_transmission: 'Data pipeline',
-  role_name_Data_SYNC: 'Browse and copy development tasks',
+  role_name_Data_SYNC: 'Browse replication and transformation tasks',
   role_name_SYNC_category_management: 'Task classification management',
   role_name_SYNC_category_application: 'Task classification application',
   role_name_SYNC_job_delete: 'Delete job',
@@ -1878,22 +1883,80 @@ export default {
   daas_role_role_gongnengmokuai: 'Function Module',
   daas_role_role_gouxuanxiangyingmo:
     'Check the corresponding module to indicate that the navigation is visible to users under the current role, and enable [View All Data] to indicate that the role can view and operate all the data under this module, and if it is not checked, it can only view and operate the data created and authorized by itself data. ',
-  daas_feature_unavailable: 'Feature Locked',
+  daas_feature_unavailable: 'Restricted Feature',
   daas_feature_unavailable_subtitle:
-    'Sorry, the current version does not support this feature. You can apply for an upgrade to the enterprise version or directly register for the cloud version to use this feature.',
+    'This feature is only available in Enterprise and/or Cloud versions. Please sign up for our cloud version or contact us for Enterprise version.',
   daas_feature_unavailable_upgrade_dec: "By upgrading , you'll get:",
   daas_feature_unavailable_upgrade_dec_li1: 'Data validation (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li2: 'CDC Log Cache',
   daas_feature_unavailable_upgrade_dec_li3: 'Alarm settings',
   daas_feature_unavailable_upgrade_dec_li4: 'Permission management (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
-  daas_feature_unavailable_get_enterprise: 'Get Tapdata Enterprise',
-  daas_feature_unavailable_get_cloud: 'Try Tapdata Cloud',
-  daas_feature_unavailable_go_to_compare: 'View detailed feature comparisons between versions',
+  daas_feature_unavailable_upgrade_dec_li1_desc:
+    'Tapdata ensures data consistency with proprietary technology and supports data table validation to meet production requirements.',
+  daas_feature_unavailable_upgrade_dec_li2_desc:
+    'Tapdata reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.',
+  daas_feature_unavailable_upgrade_dec_li3_desc:
+    'Tapdata sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.',
+  daas_feature_unavailable_upgrade_dec_li4_desc:
+    'Roles are collections of permissions assigned to users. This simplifies management and enhances security by allowing role creation before user assignment.',
+  daas_feature_unavailable_upgrade_dec_li5_desc: '',
+  daas_feature_unavailable_get_enterprise: 'Get TapData Enterprise',
+  daas_feature_unavailable_get_cloud: 'Try TapData Cloud',
+  daas_feature_unavailable_go_to_compare: 'Compare Versions',
   daas_unbind_license: 'Unbind License',
   daas_cluster_cluster_view: 'Cluster View',
   daas_cluster_component_view: 'Component View',
   daas_cluster_engine_hostname: 'Hostname/IP',
   daas_cluster_connection_count: 'Connection Count',
-  daas_cluser_keyword_placeholder: 'Search for hostnames'
+  daas_cluser_keyword_placeholder: 'Search for hostnames',
+
+  webhook_alerts: 'Webhook Alerts',
+  webhook_alerts_detail: 'Webhook Alert Details',
+  webhook_alerts_add: 'Create New Webhook',
+  webhook_address: 'Webhook Address',
+  webhook_params: 'Parameters',
+  webhook_switch: 'Enabled',
+  webhook_send_log: 'Send Records',
+  webhook_send_log_desc: '(Only the last 200 records are retained)',
+  webhook_send_address: 'Send Address',
+  webhook_server_url: 'Server URL',
+  webhook_server_url_empty: 'Please enter the server URL',
+  webhook_server_url_error: 'Please enter a valid server URL',
+  webhook_custom_template: 'Custom Template',
+  webhook_custom_template_tip: `{
+    "action": "TaskAlter",
+    "hookId": "\${hookId}",
+    "actionTime": "\${actionTime}",
+    "title": "\${title}",
+    "content": "\${content}",
+    "actionData": {
+        "status": "\${actionData.status}", // Indicates the current alarm status: ING (ongoing), RECOVER (recovered), CLOSE (closed)
+        "statusTxt": "\${actionData.statusTxt}", // Indicates the current alarm status text: ongoing, recovered, closed
+        "level": "\${actionData.level}", // Alarm level: RECOVERY, NORMAL, WARNING, CRITICAL, EMERGENCY, ERROR, WARN, INFO
+        "component": "\${actionData.component}", // Engine alarm component, fixed as: FE
+        "componentTxt": "\${actionData.componentTxt}", // Engine alarm component text value: Engine
+        "type": "\${actionData.type}", // Alarm type: SYNCHRONIZATIONTASK_ALARM, SHARED_CACHE_ALARM, SHARED_MINING_ALARM, DATA_VERIFICATION_ALARM, ACCURATE_DELAY_ALARM, INSPECT_ALARM
+        "typeTxt": "\${actionData.typeTxt}", // Alarm type text value: synchronization task alarm, shared cache alarm, shared mining alarm, data verification alarm, accurate delay alarm
+        "metric": "\${actionData.metric}", // Event type: TASK_STATUS_STOP, TASK_STATUS_ERROR, TASK_FULL_COMPLETE, TASK_INCREMENT_START, TASK_INSPECT_ERROR, INSPECT_TASK_ERROR, DATANODE_CANNOT_CONNECT, DATANODE_TCP_CONNECT_CONSUME, DATANODE_HTTP_CONNECT_CONSUME, SYSTEM_FLOW_ENGINE_UP, SYSTEM_FLOW_ENGINE_DOWN, DATANODE_AVERAGE_HANDLE_CONSUME, TASK_INCREMENT_DELAY, PROCESSNODE_AVERAGE_HANDLE_CONSUME, INSPECT_COUNT_ERROR, INSPECT_VALUE_ERROR
+        "metricTxt": "\${actionData.metricTxt}", // Event type text value: task stopped, task error, task fully completed, task increment started, task inspection error, inspection task error, data node cannot connect, data node TCP connection completed, data node HTTP connection completed, engine online, engine offline, data node average handling time exceeded threshold, task increment delay exceeded threshold, node average handling time exceeded threshold, count inspection result row difference exceeded threshold, value inspection result data difference exceeded threshold
+        "name": "\${actionData.name}", // Specific task name
+        "node": "\${actionData.node}", // Node name that generated the alarm, empty if no node; for task alarms, the node is the task name
+        "currentValue": "\${actionData.currentValue}", // Value of the metric that triggered the alarm
+        "threshold": "\${actionData.threshold}", // Threshold of the metric that triggered the alarm
+        "lastOccurrenceTime": "\${actionData.lastOccurrenceTime}", // Time when the alarm last occurred
+        "tally": "\${actionData.tally}", // Number of times the alarm has occurred
+        "summary": "\${actionData.summary}", // Alarm content
+        "recoveryTime": "\${actionData.recoveryTime}", // Alarm recovery time
+        "closeTime": "\${actionData.closeTime}", // Alarm close time
+        "closeBy": "\${actionData.closeBy}", // Who closed the alarm
+        "agentId": "\${actionData.agentId}" // Belonging engine
+    }
+}`,
+  webhook_custom_template_ph: 'Custom template content, supports parameter-filled templates, e.g., ${alarm.name}',
+  http_header: 'HTTP Request Headers',
+  http_header_ph: 'HTTP request headers, enter multiple headers on separate lines, e.g., Accept: text/html',
+  webhook_send_ping: 'Send Test PING Event',
+  webhook_event_type: 'Event Type',
+  webhook_event_type_empty: 'Please select an event'
 }

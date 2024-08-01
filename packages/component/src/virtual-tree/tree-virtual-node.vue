@@ -29,7 +29,7 @@
         v-if="!source.loading"
         @click.stop="handleExpandIconClick"
         :class="[
-          { 'is-leaf': source.isLeaf, expanded: !source.isLeaf && expanded },
+          { 'is-leaf': isLeaf, expanded: !isLeaf && expanded },
           'el-tree-node__expand-icon',
           tree.iconClass ? tree.iconClass : 'el-icon-caret-right'
         ]"
@@ -64,6 +64,7 @@ export default {
         return {};
       }
     },
+    props: {},
     renderContent: Function,
     showCheckbox: {
       type: Boolean,
@@ -108,11 +109,15 @@ export default {
   computed: {
     node() {
       return this.source
-    }
+    },
+
+    isLeaf () {
+      const {isLeaf: leafKey} = this.props
+      return leafKey ? this.source.data[leafKey] : this.source.isLeaf
+    },
   },
 
   watch: {
-
     'source.indeterminate'(val) {
       this.handleSelectChange(this.source.checked, val);
     },

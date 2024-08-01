@@ -77,7 +77,7 @@
       :close-on-click-modal="false"
       destroy-on-close
     >
-      <AlarmSetting @updateVisible="dialogVisible = false"></AlarmSetting>
+      <AlarmSetting in-dialog @updateVisible="dialogVisible = false"></AlarmSetting>
     </ElDialog>
   </div>
 </template>

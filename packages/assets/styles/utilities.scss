@@ -12216,6 +12216,10 @@
   font-size: 0.875rem !important;
 }
 
+.fs-7\.5 {
+  font-size: 0.8125rem !important;
+}
+
 .fs-8 {
   font-size: 0.75rem !important;
 }
@@ -12233,6 +12237,10 @@
 // 动画类
 .animation-rotate {
   animation: rotate 5s linear infinite;
+}
+
+.animation-rotate-fast {
+  animation: rotate 1s linear infinite;
 }
 
 @-moz-keyframes rotate {
@@ -12396,4 +12404,25 @@
 .text-lg {
   font-size: 1.125rem; /* 18px */
   line-height: 1.75rem; /* 28px */
+}
+
+.text-sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+// 唯一索引后面的下标
+.fingerprint-sub::before {
+  content: var(--index);
+  zoom: var(--zoom, 0.8);
+  line-height: 1;
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+.leading-5 {
+  line-height: 1.25rem;
+}
+.leading-primary {
+  line-height: 1.375rem;
 }

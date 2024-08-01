@@ -1,5 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const webpack = require('webpack')
 const crypto = require('crypto')
 
 const serveUrlMap = {
@@ -16,6 +17,7 @@ const serveUrlMap = {
 // const userId = '64ba40c389c61b08683c71b0' // xf
 const userId = '64be2c812c268c9dd5afaf25' // devin
 let origin
+let ENV // 区分打包生产环境和开发测试环境，默认是生产
 const { argv } = process
 const { SERVE_ENV = 'mock' } = process.env
 
@@ -24,6 +26,11 @@ if (~argv.indexOf('--origin')) {
   origin = argv[argv.indexOf('--origin') + 1]
   origin && (origin = origin.replace(/^(?!http)/, 'http://'))
 }
+
+if (~argv.indexOf('--env')) {
+  ENV = argv[argv.indexOf('--env') + 1]
+}
+
 const proxy = {
   target: process.env.SERVER_URI || origin || serveUrlMap[SERVE_ENV],
   changeOrigin: true
@@ -92,7 +99,12 @@ let localTmProxy = {
 module.exports = {
   pages,
   lintOnSave: SERVE_ENV !== 'dev' && process.env.NODE_ENV !== 'production', // 打包时关闭lint输出
-  publicPath: './',
+  publicPath:
+    process.env.NODE_ENV === 'production'
+      ? !ENV || ENV === 'prod'
+        ? 'https://static.cloud.tapdata.net/'
+        : './' // 替换为你的CDN URL
+      : './',
   productionSourceMap: false,
 
   devServer: {
@@ -135,6 +147,13 @@ module.exports = {
           // 大于10kb的会压缩
           threshold: 10240
           // 其余配置查看compression-webpack-plugin
+        }),
+        // ace editor js 输出到 js/ace 目录
+        new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!\.\/src-noconflict(.*)/, res => {
+          res.request = res.request.replace(
+            /^file-loader\?esModule=false!/,
+            'file-loader?esModule=false&outputPath=js/ace!'
+          )
         })
       )
 

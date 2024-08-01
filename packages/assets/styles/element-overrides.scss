@@ -731,6 +731,7 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
 /* Select
 --------------------------*/
 .el-select-dropdown.el-popper {
+  border-radius: 8px;
   .popper__arrow,
   .popper__arrow::after {
     display: none;
@@ -797,6 +798,11 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
   .cell {
     overflow-wrap: break-word;
     word-break: normal;
+  }
+
+  .el-table-column--selection .cell {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 .el-table--small {
@@ -1044,5 +1050,21 @@ $--font-path: '~element-ui/lib/theme-chalk/fonts';
       border-radius: 16px;
       right: -18px;
     }
+  }
+}
+
+.el-popover {
+  border-radius: 8px;
+}
+
+.el-dialog.pro-dialog {
+  .el-dialog__header {
+    padding: 20px 24px;
+  }
+  .el-dialog__body {
+    padding: 0 24px;
+  }
+  .el-dialog__footer {
+    padding: 20px 24px;
   }
 }

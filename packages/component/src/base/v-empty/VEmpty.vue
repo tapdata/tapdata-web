@@ -11,7 +11,9 @@
         <ElImage :src="require('./empty.svg')"></ElImage>
       </slot>
     </div>
-    <p class="empty-desc">{{ props.description }}</p>
+    <slot name="default">
+      <p class="empty-desc">{{ props.description }}</p>
+    </slot>
   </div>
 </template>
 

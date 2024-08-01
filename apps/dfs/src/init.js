@@ -20,6 +20,7 @@ import Time from '@tap/shared/src/time'
 import WSClient from '@tap/business/src/shared/ws-client'
 import { Notification } from 'element-ui'
 import { createVersionPolling } from './plugins/version-polling'
+import { UpgradeNotice } from './plugins/upgrade-notice/index'
 
 Vue.config.productionTip = false
 Vue.use(VueClipboard)
@@ -88,6 +89,25 @@ export default ({ routes }) => {
 
     store.commit('setUser', window.__USER_INFO__)
     store.commit('setLanguage', window.__USER_INFO__.locale)
+
+    // Bing Ads
+    window.uetq = window.uetq || []
+    window.uetq.push('set', {
+      pid: {
+        em: window.__USER_INFO__.email,
+        ph: window.__USER_INFO__.telephone
+      }
+    })
+
+    /*S 万维广告*/
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.style.height = '0'
+    iframe.style.width = '0'
+    iframe.style.border = '0'
+    iframe.src = 'https://wwads.cn/code/tracking/143?user_id=' + window.__USER_INFO__.id
+    document.body.appendChild(iframe)
+    /*E 万维广告*/
 
     window.App = new Vue({
       router,
@@ -170,6 +190,9 @@ export default ({ routes }) => {
         location.reload()
       }
     })
+
+    UpgradeNotice(window.App)
+
     return router
   }
   loading = window.loading({ fullscreen: true })

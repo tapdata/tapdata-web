@@ -191,6 +191,7 @@ export default {
       }
       if (this.$route.name === 'VerifyDiffHistory') {
         where = {
+          inspect_id: { regexp: `^${this.$route.params.inspectId}$` },
           firstCheckId: { regexp: `^${id}$` }
         }
         delete filter.inspectGroupByFirstCheckId
@@ -231,7 +232,7 @@ export default {
 <style lang="scss" scoped>
 .data-verify-history-wrap {
   height: 100%;
-  padding: 0 24px 24px 24px;
+  overflow: hidden;
   .section-wrap-box {
     display: -ms-flexbox;
     display: flex;

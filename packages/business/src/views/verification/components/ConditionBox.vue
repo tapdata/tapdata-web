@@ -58,14 +58,10 @@
                   v-model="item.source.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'sourceConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.target.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.source, arguments[1])"
                 >
                 </AsyncSelect>
@@ -76,14 +72,10 @@
                   v-model="item.target.connectionId"
                   :method="getConnectionsListMethod"
                   itemQuery="name"
+                  itemValue="id"
                   filterable
                   class="item-select"
                   :key="'targetConnectionId' + item.id"
-                  :params="
-                    inspectMethod === 'hash'
-                      ? { where: { database_type: item.source.databaseType || undefined } }
-                      : undefined
-                  "
                   @change="handleChangeConnection(arguments[0], item.target, arguments[1])"
                 >
                 </AsyncSelect>
@@ -262,6 +254,7 @@ import { GitBook, VCodeEditor } from '@tap/component'
 import resize from '@tap/component/src/directives/resize'
 
 import { TABLE_PARAMS, META_INSTANCE_FIELDS, DATA_NODE_TYPES } from './const'
+import { inspectMethod as inspectMethodMap } from '../const'
 import MultiSelection from '../MultiSelection'
 import FieldDialog from './FieldDialog'
 import DocsDrawer from './DocsDrawer.vue'
@@ -1096,6 +1089,7 @@ export default {
             attrs: { nodeId, nodeName, connectionId, connectionName, databaseType },
             name: `${nodeName} / ${connectionName}`,
             value: connectionId,
+            id: connectionId,
             label: `${nodeName} / ${connectionName}`,
             databaseType: databaseType
           }
@@ -1199,7 +1193,7 @@ export default {
           tableNameRelation = targetNode.syncObjects?.[0]?.tableNameRelation || []
           objectNames = targetNode.syncObjects?.[0]?.objectNames || []
         } else if (targetNode.type === 'table') {
-          tableNames = [targetNode.tableName]
+          tableNames = [el.tableName, targetNode.tableName] // 加上源表名，否则源和目标表名不一致时，源表关联字段不会自动填充
           updateConditionFieldMap[targetNode.tableName] = targetNode.updateConditionFields || []
           tableNameRelation[el.tableName] = targetNode.tableName
         }
@@ -1697,6 +1691,10 @@ export default {
       // 检查
       const SHOW_COUNT = 20
       if (['field', 'jointField'].includes(this.inspectMethod)) {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'query_by_advance_filter_function')
+        if (message) return message
+
         // 索引字段为空
         const haveIndexFieldArr = tasks.filter(c => c.source.sortColumn && c.target.sortColumn)
         const noIndexFieldArr = tasks.filter(c => !c.source.sortColumn || !c.target.sortColumn)
@@ -1778,9 +1776,39 @@ export default {
           this.updateErrorMsg(message, 'error')
           return message
         }
+      } else if (this.inspectMethod === 'row_count') {
+        // 检查数据源的能力
+        message = this.validateCapabilities(tasks, 'batch_count_function')
+        if (message) return message
       }
 
       this.updateErrorMsg('')
+    },
+
+    validateCapabilities(tasks, capability) {
+      const noSupportList = new Set()
+      tasks.forEach(item => {
+        if (!item.source.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.source.databaseType)
+        }
+
+        if (!item.target.capabilities?.find(c => c.id === capability)) {
+          noSupportList.add(item.target.databaseType)
+        }
+      })
+
+      let message = ''
+
+      if (noSupportList.size) {
+        message = this.$t('packages_business_not_support_validation', {
+          connection: [...noSupportList].join(', '),
+          method: inspectMethodMap[this.inspectMethod]
+        })
+        this.updateErrorMsg(message, 'error')
+        this.$message.error(message)
+      }
+
+      return message
     },
 
     loadDoc() {
@@ -1878,9 +1906,11 @@ function validate(sourceRow){
       if (val !== 'custom') {
         item.source.columns = null
         item.target.columns = null
-        return
+      } else {
+        this.handleCustomFields(item, index)
       }
-      this.handleCustomFields(item, index)
+
+      item.modeType = val // 防止 SchemaToForm 回流
     },
 
     handleChangeFields(data = [], index) {

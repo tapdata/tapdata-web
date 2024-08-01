@@ -1,6 +1,8 @@
 <script>
 import TableBody from 'element-ui/packages/table/src/table-body'
 import TableRow from 'element-ui/packages/table/src/table-row'
+
+// console.log('TableRow', TableRow)
 // let TableBody = {}
 // let TableRow = {}
 export default {

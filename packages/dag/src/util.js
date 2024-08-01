@@ -45,11 +45,27 @@ export function getSchema(schema, values, pdkPropertiesMap) {
     if (pdkProperties) {
       const pdkSchemaList = takeFieldValue(newSchema, 'nodeConfig')
       if (pdkSchemaList?.length) {
-        pdkSchemaList.forEach(pdkSchema => Object.assign(pdkSchema, pdkProperties))
+        let reactions = process.env.VUE_APP_HIDE_NODE_SCHEMA
+          ? {
+              'x-reactions': {
+                target: process.env.VUE_APP_HIDE_NODE_SCHEMA,
+                fulfill: {
+                  state: {
+                    display: 'hidden'
+                  }
+                }
+              }
+            }
+          : {}
+
+        pdkSchemaList.forEach(pdkSchema => {
+          Object.assign(pdkSchema, pdkProperties, reactions)
+        })
       }
     }
   }
 
+  console.log('newSchema', newSchema)
   return newSchema
 }
 
@@ -95,4 +111,40 @@ export function getPrimaryKeyTablesByType(data = [], filterType = 'All', map = {
       ? result.filter(t => !!t.primaryKeyCounts || !!t.uniqueIndexCounts)
       : result.filter(t => !t.primaryKeyCounts && !t.uniqueIndexCounts)
   return list.map(t => t.tableName)
+}
+
+/**
+ * 表改名全局配置检查是否为空
+ * @param config
+ * @returns {boolean}
+ */
+export const ifTableNameConfigEmpty = config => {
+  return !config.replaceBefore && !config.replaceAfter && !config.prefix && !config.suffix && !config.transferCase
+}
+
+/**
+ * 获取表改名
+ * @param tableName
+ * @param config
+ * @returns {*}
+ */
+export const getTableRenameByConfig = (tableName, config) => {
+  // 查找替换
+  try {
+    tableName = config.replaceBefore
+      ? tableName.replace(new RegExp(config.replaceBefore, 'g'), config.replaceAfter)
+      : tableName
+  } catch (e) {
+    console.error(e)
+  }
+
+  // 前后缀
+  tableName = config.prefix + tableName + config.suffix
+
+  // 转大小写
+  if (config.transferCase) {
+    tableName = tableName[config.transferCase]()
+  }
+
+  return tableName
 }

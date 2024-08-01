@@ -309,7 +309,8 @@ export default {
       upgradeFeeVisible: false,
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
-      upgradeChargesVisibleTips: ''
+      upgradeChargesVisibleTips: '',
+      noNeedRefresh: false // 如果进入页面任务是停止运行状态，无需刷新
     }
   },
 
@@ -359,14 +360,22 @@ export default {
       v && this.init()
     },
     'dataflow.status'(v1, v2) {
-      if (v1 !== v2) {
-        this.init()
-      }
       this.watchStatusCount++
+
       if (this.watchStatusCount === 1) {
+        // 进入页面后首次执行
         const flag = ['renewing', 'renew_failed'].includes(v1)
         this.toggleConsole(flag)
         this.handleBottomPanel(!flag)
+        this.noNeedRefresh = ['error', 'schedule_failed', 'stop', 'complete'].includes(v1)
+      } else {
+        // 状态变化，重置自动刷新状态
+        this.noNeedRefresh = false
+        this.extraEnterCount = 0
+      }
+
+      if (v1 !== v2) {
+        this.init()
       }
       this.toggleConnectionRun(v1 === 'running')
     },
@@ -422,7 +431,9 @@ export default {
     polling() {
       if (
         this.isEnterTimer ||
-        (['error', 'schedule_failed'].includes(this.dataflow.status) && ++this.extraEnterCount < 3)
+        (!this.noNeedRefresh &&
+          ['error', 'schedule_failed', 'stop', 'complete'].includes(this.dataflow.status) &&
+          ++this.extraEnterCount < 4)
       ) {
         this.startLoadData()
       }
@@ -654,6 +665,7 @@ export default {
       this.$router.push({
         name: map[this.dataflow.syncType] || 'dataflowList'
       })
+      window.name = null
     },
 
     handleEdit() {
@@ -709,9 +721,9 @@ export default {
     },
 
     async handleStart(skip) {
-      if (!skip && this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
+      const hasError = !skip && (await this.$refs.skipError.checkError(this.dataflow))
+      if (hasError) return
+
       this.isSaving = true
       try {
         this.wsAgentLive()
@@ -720,7 +732,7 @@ export default {
         this.isSaving = false
         this.isReset = false
         // this.loadDataflow(this.dataflow?.id)
-        this.openDataflow(this.dataflow?.id)
+        await this.openDataflow(this.dataflow?.id)
         this.toggleConsole(false)
         this.handleBottomPanel(true)
       } catch (e) {
@@ -1241,27 +1253,6 @@ export default {
       setTimeout(() => {
         this.showConsole && this.$refs.console?.autoLoad()
       }, 5000)
-    },
-
-    async initPdkProperties() {
-      const databaseItems = await databaseTypesApi.get({
-        filter: JSON.stringify({
-          fields: {
-            messages: true,
-            pdkHash: true,
-            properties: true
-          }
-        })
-      })
-      this.setPdkPropertiesMap(
-        databaseItems.reduce((map, item) => {
-          const properties = item.properties?.node
-          if (properties) {
-            map[item.pdkHash] = properties
-          }
-          return map
-        }, {})
-      )
     },
 
     getTime() {

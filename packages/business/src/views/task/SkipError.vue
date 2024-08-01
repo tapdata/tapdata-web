@@ -54,9 +54,9 @@ export default {
     return {
       skipping: false,
       taskName: '',
+      taskId: '',
       visible: false,
       errorEvents: [],
-      // isIndeterminate: true,
       checkAll: false,
       checkedData: [],
       errorTotal: this.$t('packages_business_dataFlow_skipError_errorTotal')
@@ -68,14 +68,21 @@ export default {
     }
   },
   methods: {
-    checkError(task) {
-      if (task.status === 'error' && task.errorEvents?.length) {
+    async checkError(task) {
+      if (task.status === 'error') {
+        const errorEvents = await taskApi.getErrorEvents(task.id)
+
+        if (!errorEvents?.length) return
+
         this.visible = true
         this.checkAll = false
         this.checkedData = []
-        this.task = task
+        this.taskId = task.id
         this.taskName = task.name
-        this.errorEvents = task.errorEvents
+        this.errorEvents = errorEvents.map(item => {
+          delete item.stacks // stacks is too long
+          return item
+        })
         this.errorTotal = this.errorTotal.replace('XX', this.errorEvents.length)
         return true
       }
@@ -92,13 +99,11 @@ export default {
       this.checkAll = checkedCount === this.errorEvents.length
     },
     async skipErrorData() {
-      if (this.checkedData.length) {
-        this.skipping = true
-        await taskApi.skipErrorEvents(this.task.id, this.checkedData)
-      }
+      this.skipping = true
+      await taskApi.skipErrorEvents(this.taskId, this.checkedData)
       this.skipping = false
       this.visible = false
-      this.$emit('skip', this.task.id)
+      this.$emit('skip', this.taskId)
     }
   }
 }

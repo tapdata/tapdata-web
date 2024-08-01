@@ -111,3 +111,37 @@ export function makePageTitle(title) {
 export function setPageTitle(title) {
   window.document.title = makePageTitle(title)
 }
+
+const SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g
+const MOZ_HACK_REGEXP = /^moz([A-Z])/
+const camelCase = name => {
+  return name
+    .replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
+      return offset ? letter.toUpperCase() : letter
+    })
+    .replace(MOZ_HACK_REGEXP, 'Moz$1')
+}
+
+export const getStyle = (element, styleName) => {
+  if (!element || !styleName) return null
+  styleName = camelCase(styleName)
+  if (styleName === 'float') {
+    styleName = 'cssFloat'
+  }
+  try {
+    const computed = document.defaultView.getComputedStyle(element, '')
+    return element.style[styleName] || computed ? computed[styleName] : null
+  } catch (e) {
+    return element.style[styleName]
+  }
+}
+
+export function checkEllipsisActive(dom) {
+  const padding = (parseInt(getStyle(dom, 'paddingLeft'), 10) || 0) + (parseInt(getStyle(dom, 'paddingRight'), 10) || 0)
+  const range = document.createRange()
+  range.setStart(dom, 0)
+  range.setEnd(dom, dom.childNodes.length)
+  const rangeWidth = range.getBoundingClientRect().width
+
+  return rangeWidth + padding > dom.offsetWidth || dom.scrollWidth > dom.offsetWidth
+}

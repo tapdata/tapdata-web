@@ -10,24 +10,25 @@ usage() {
   exit 0
 }
 
-while getopts 'o:p:m:' OPT; do
+while getopts 'o:p:m:e:' OPT; do
   case $OPT in
   o) dist="$OPTARG" ;;
   p) app="$OPTARG" ;;
   m) mode="$OPTARG" ;;
+  e) env="$OPTARG" ;;
   ?) usage ;;
   esac
 done
 
 sed -i.bak "s|DAAS_BUILD_NUMBER|$DAAS_BUILD_NUMBER|g" $base/apps/$app/.env
 
-if [[ `pnpm -v` != "7.30.5" ]]; then
-  npm i pnpm@7.30.5 -g
-fi
+npm i pnpm@^8.0.1  -g
 
 echo "pnpm build:$app --dest $dist --mode $mode"
 
 echo "pnpm version: "
 pnpm --version
 
-pnpm i --frozen-lockfile && pnpm build:$app --dest $dist --mode $mode
+pnpm i
+
+pnpm build:$app --dest $dist --mode $mode --env $env

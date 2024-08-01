@@ -32,7 +32,7 @@ export const JsProcessor = observer(
       const showDoc = ref(false)
       const isMigrate = syncType === 'migrate'
       const showJsonArea = ref(false)
-      const docSrc = `https://docs.tapdata.${root.$store.getters.isDomesticStation ? 'net' : 'io'}/cloud/appendix/${
+      const docSrc = `https://docs.tapdata.${root.$store.getters.isDomesticStation ? 'net' : 'io'}/appendix/${
         props.isStandard ? 'standard' : 'enhanced'
       }-js?from=cloud`
 

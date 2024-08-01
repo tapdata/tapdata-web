@@ -39,7 +39,7 @@ export default {
         }
         return res
       }, {})
-      console.log('result', items, map) // eslint-disable-line
+      // console.log('result', items, map) // eslint-disable-line
       this.agentMap = map
     },
 

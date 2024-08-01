@@ -2,7 +2,7 @@ import { connect, useForm } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from '@vue/composition-api'
 import { Highlight } from '@tap/component'
-import 'highlight.js/styles/atom-one-light.css'
+// import 'highlight.js/styles/atom-one-light.css'
 
 export const ArrayAggregate = connect(
   observer(

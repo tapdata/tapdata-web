@@ -94,7 +94,9 @@ const store = new Vuex.Store({
 
     showReplicationTour: false,
     replicationTourFinish: false,
-    taskLoadedTime: null // 记录TargetPanel任务列表加载时间
+    taskLoadedTime: null, // 记录TargetPanel任务列表加载时间
+    setIsMockUser: false,
+    mockUserPromise: null
   },
 
   getters: {
@@ -222,6 +224,14 @@ const store = new Vuex.Store({
 
     setTaskLoadedTime(state) {
       state.taskLoadedTime = new Date().getTime()
+    },
+
+    setIsMockUser(state, flag) {
+      state.setIsMockUser = flag
+    },
+
+    setMockUserPromise(state, promise) {
+      state.mockUserPromise = promise
     }
   }
 })

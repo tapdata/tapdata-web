@@ -180,7 +180,6 @@ export default {
       'setActiveNode',
       'addActiveAction',
       'removeActiveAction',
-      '<VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>NodeProperties',
       'resetSelectedNodes',
       'setNodeError',
       'clearNodeError'
@@ -292,15 +291,9 @@ export default {
         }
       })
 
-      this.targetPoint = this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
+      this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
         uuid: id + '_target'
       })
-
-      // if (this.data.type !== 'table') {
-      //   this.targetPoint.setType('warn')
-      // }
-
-      console.log('targetPoint', this.targetPoint) // eslint-disable-line
 
       const maxOutputs = this.ins.maxOutputs ?? -1
 

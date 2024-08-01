@@ -581,8 +581,8 @@ export default {
   agent_download_AgentDownloadModal_gongXiNinWanCheng: 'Congratulations on completing the deployment.',
   agent_download_AgentDownloadModal_kaiShiChuangJianLian: 'Start creating connection',
   agent_download_AgentDownloadModal_jinRuGongZuoTai: 'Enter the workbench',
-  agent_download_UpgradeVersion_dOCKE: 'Docker exec - it container ID Bash',
-  agent_download_UpgradeVersion_dOCKE2: 'Docker start container ID',
+  agent_download_UpgradeVersion_dOCKE: 'docker exec - it container ID Bash',
+  agent_download_UpgradeVersion_dOCKE2: 'docker start container ID',
   views_Error_fuWuQiNeiBu: 'Server internal error.',
   views_Error_fanHuiShouYe: 'Return to home page',
   views_Error_zhangHuZanWuQuan:
@@ -1837,5 +1837,14 @@ export default {
   dfs_status_approved: 'Approved',
   dfs_status_rejected: 'Rejected',
   dfs_status_expired: 'Expired',
-  dfs_all_approvals_completed: 'All approvals completed.'
+  dfs_all_approvals_completed: 'All approvals completed.',
+  dfs_traffic_bill: 'Traffic Bill',
+  dfs_bill_number: 'Bill Number',
+  dfs_bill_amount: 'Bill Amount ({currency})',
+  dfs_egress_traffic: 'Egress Traffic',
+  dfs_ingress_traffic: 'Ingress Traffic',
+  dfs_billing_cycle: 'Billing Cycle',
+  dfs_bill_status: 'Status',
+  dfs_service_upgrade_notice: 'TapData Cloud Service Upgrade Announcement',
+  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`
 }

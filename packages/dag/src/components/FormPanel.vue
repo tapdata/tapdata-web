@@ -4,10 +4,18 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { createForm, onFormInputChange, onFormValuesChange, onFieldValueChange } from '@formily/core'
+import {
+  createForm,
+  onFormValuesChange,
+  onFormInputChange,
+  onFieldValueChange,
+  onFieldInputValueChange
+} from '@formily/core'
 import { Path } from '@formily/path'
+import { toJS } from '@formily/reactive'
 
-import { taskApi } from '@tap/api'
+import { alarmApi } from '@tap/api'
+import { deepEqual } from '@tap/shared'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 
 import FormRender from './FormRender'
@@ -216,24 +224,26 @@ export default {
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {
         const node = this.nodeById(form.values.id)
-        if (node && JSON.stringify(form.values) !== JSON.stringify(node)) {
+        if (node && !deepEqual(toJS(form.values), node, ['alarmRules.0._ms', 'alarmRules.0._point'])) {
+          console.log('还是更新了')
           this.updateNodeProps(form)
         }
-      }, 60)
+      }, 40)
     },
 
     // 更新节点属性
     updateNodeProps(form) {
       clearTimeout(this.updateTimer)
-      const formValues = JSON.parse(JSON.stringify(form.values))
+      const formValues = toJS(form.values)
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
 
       filterProps.forEach(path => {
-        Path.setIn(formValues, path, undefined)
+        Path.deleteIn(formValues, path)
       })
       this.updateNodeProperties({
         id: form.values.id,
-        properties: JSON.parse(JSON.stringify(formValues))
+        overwrite: !this.stateIsReadonly,
+        properties: formValues
       })
       this.updateDag({ vm: this })
       clearTimeout(this.confirmTimer)
@@ -242,25 +252,32 @@ export default {
 
     // 绑定表单事件
     useEffects() {
+      // FIXME 目前无法区分告警配置的修改，
+      // 放弃了onFieldInputValueChange(*)方案，因为有些字段没有主动在schema中定义
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log(`🚗onFormValuesChange`, JSON.parse(JSON.stringify(form.values)))
+        console.log('onFormValuesChange')
         this.updateNodePropsDebounce(form)
       })
 
       onFormInputChange(form => {
         if (this.stateIsReadonly) return
-        // eslint-disable-next-line no-console
-        console.log('🚄onFormInputChange', JSON.parse(JSON.stringify(form.values)))
+        console.log('onFormInputChange')
         this.updateNodeProps(form)
       })
 
-      if (this.scope.$isMonitor) {
-        onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
-          this.lazySaveNodeAlarmConfig()
-        })
-      }
+      /*onFieldInputValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
+        this.updateNodeProps(form)
+      })
+      onFieldValueChange('*(!alarmSettings.*,alarmRules.*)', (field, form) => {
+        if (this.stateIsReadonly) return
+        this.updateNodePropsDebounce(form)
+      })*/
+
+      onFieldValueChange('*(alarmSettings.0.*,alarmRules.0.*(!_point,_ms))', (field, form) => {
+        this.lazySaveNodeAlarmConfig()
+      })
     },
 
     confirmNodeHasError() {
@@ -272,14 +289,17 @@ export default {
     },
 
     saveNodeAlarmConfig() {
+      const formValues = this.form.values
       this.updateNodeProperties({
-        id: this.form.values.id,
-        properties: JSON.parse(JSON.stringify(this.form.values))
+        id: formValues.id,
+        properties: JSON.parse(JSON.stringify(formValues))
       })
 
-      taskApi.patch({
-        id: this.$store.state.dataflow.taskId,
-        dag: this.$store.state.dataflow.dag
+      alarmApi.updateTaskAlarm({
+        taskId: this.scope.$settings.id,
+        nodeId: formValues.id,
+        alarmRules: formValues.alarmRules,
+        alarmSettings: formValues.alarmSettings
       })
     }
   }

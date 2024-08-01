@@ -80,8 +80,10 @@ const getState = () => ({
   showConsole: false,
   pdkPropertiesMap: {},
   pdkSchemaFreeMap: {},
+  pdkDoubleActiveMap: {},
   taskSaving: false,
-  materializedViewVisible: false
+  materializedViewVisible: false,
+  schemaRefreshing: false
 })
 
 // 初始化 state
@@ -99,6 +101,10 @@ const getters = {
 
   transformLoading: state => {
     return state.transformLoading
+  },
+
+  schemaRefreshing: state => {
+    return state.schemaRefreshing
   },
 
   // 判断action是否被标记
@@ -451,29 +457,37 @@ const mutations = {
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
+    const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
     const node = state.dag.nodes.find(node => node.id === updateInformation.id)
 
-    const updateObjVal = (target, obj) => {
-      Object.entries(obj).forEach(([key, value]) => {
-        if (isObject(value) && target[key]) {
-          updateObjVal(target[key], value)
-        } else {
-          Vue.set(target, key, value)
+    const syncRecursive = (target, source, path = '') => {
+      const pathPrefix = path ? `${path}.` : ''
+
+      if (updateInformation.overwrite) {
+        for (const key in target) {
+          if (!source.hasOwnProperty(key) && !filterProps.includes(`${pathPrefix}${key}`)) {
+            Vue.delete(target, key)
+          }
         }
-      })
+      }
+
+      // 更新或新增 source 中存在的属性到 target
+      for (const key in source) {
+        const sourceValue = source[key]
+        const targetValue = target[key]
+
+        if (isObject(sourceValue) && targetValue) {
+          syncRecursive(targetValue, sourceValue, `${pathPrefix}${key}`)
+        } else {
+          if (targetValue !== sourceValue) {
+            Vue.set(target, key, sourceValue)
+          }
+        }
+      }
     }
 
     if (node) {
-      updateObjVal(node, updateInformation.properties)
-      /*Object.entries(updateInformation.properties).forEach(([key, value]) => {
-        if (isObject(value)) {
-        } else {
-          Vue.set(node, key, value)
-        }
-      })*/
-      /*for (const key of Object.keys(updateInformation.properties)) {
-        Vue.set(node, key, updateInformation.properties[key])
-      }*/
+      syncRecursive(node, updateInformation.properties)
     }
   },
 
@@ -767,6 +781,10 @@ const mutations = {
     state.transformLoading = loading
   },
 
+  setSchemaRefreshing(state, loading) {
+    state.schemaRefreshing = loading
+  },
+
   setDagPromise(state, promise) {
     state.dagPromise = promise
   },
@@ -936,6 +954,10 @@ const mutations = {
 
   setPdkSchemaFreeMap(state, map) {
     Vue.set(state, 'pdkSchemaFreeMap', map)
+  },
+
+  setPdkDoubleActiveMap(state, map) {
+    Vue.set(state, 'pdkDoubleActiveMap', map)
   },
 
   toggleTaskSaving(state, flag = !state.taskSaving) {

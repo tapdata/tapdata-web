@@ -306,7 +306,6 @@ export default {
           type: 'field_mod_type_filter_processor'
         },
         {
-          // name: i18n.t('packages_dag_unwind_name'),
           name: 'Unwind',
           type: 'unwind_processor'
         },
@@ -565,11 +564,13 @@ export default {
           this.$router.push({
             name: 'dataflowList'
           })
+          window.name = null
         })
       } else {
         this.$router.push({
           name: 'dataflowList'
         })
+        window.name = null
       }
     },
 
@@ -613,9 +614,8 @@ export default {
         }
       })
 
-      if (this.$refs.skipError.checkError(this.dataflow)) {
-        return
-      }
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
 
       const flag = await this.save(true)
 
@@ -740,17 +740,16 @@ export default {
 
       // 因为有节流，等一个$nextTick
       await this.$nextTick()
-      console.log('this.taskSaving', this.taskSaving)
       await this.afterTaskSaved()
-      console.log('this.taskSaving', this.taskSaving)
       // 打开主从合并节点
       this.setActiveNode(mergeTableNode.id)
 
       // 等待主从合并节点的默认配置生成（渲染一次表单）
       setTimeout(() => {
         // 显示物化视图
+        // 等待主从合并节点的默认配置保存
         this.setMaterializedViewVisible(true)
-      }, 50)
+      }, 120)
     }
   }
 }
