@@ -356,6 +356,8 @@ import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP, MILESTONE_TYPE } from '../../shared'
 import syncTaskAgent from '../../mixins/syncTaskAgent'
+import InfiniteSelect from '@tap/form/src/components/infinite-select/InfiniteSelect.vue'
+import { generateId } from '@tap/shared'
 
 export default {
   name: 'List',
@@ -369,6 +371,7 @@ export default {
   inject: ['checkAgent', 'buried'],
 
   components: {
+    InfiniteSelect,
     FilterBar,
     TablePage,
     SkipError,
@@ -1181,6 +1184,19 @@ export default {
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
+    },
+
+    async loadMore() {
+      const items = [
+        ...Array.from({ length: 20 }, (_, i) => ({
+          name: length + i,
+          id: generateId(),
+        })),
+      ]
+      return {
+        items,
+        total: 50,
+      }
     },
   },
 }

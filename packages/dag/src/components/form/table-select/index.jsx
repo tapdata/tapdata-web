@@ -8,6 +8,7 @@ import { metadataInstancesApi, taskApi } from '@tap/api'
 
 import './style.scss'
 import { useStore } from 'vuex'
+import { connect, mapProps } from '@formily/vue'
 
 const useTableExist = (attrs, selectRef, connectionId) => {
   if (!attrs.allowCreate) {
@@ -96,118 +97,122 @@ const useTableExist = (attrs, selectRef, connectionId) => {
   }
 }
 
-export const TableSelect = observer(
-  defineComponent({
-    name: 'TableSelect',
-    props: ['reloadTime', 'connectionId'],
-    setup(props, { attrs }) {
-      const select = ref(null)
-      const store = useStore()
-      const params = computed(() => {
-        return {
-          reloadTime: props.reloadTime,
-          where: {
-            'source.id': props.connectionId,
-            taskId: store.state.dataflow.taskId,
-          },
-        }
-      })
+export const TableSelect = connect(
+  observer(
+    defineComponent({
+      name: 'TableSelect',
+      props: ['reloadTime', 'connectionId', 'modelValue'],
+      setup(props, { attrs }) {
+        console.log('props.modelValue', props.modelValue, attrs)
 
-      const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(attrs, select, props.connectionId)
-
-      const loading = ref(false)
-
-      const loadSelectData = () => {
-        select.value.query = ''
-        select.value.loadData()
-      }
-
-      const loadSchema = async (keys) => {
-        // refs.select.blur()
-        loading.value = true
-        await taskApi
-          .refreshSchema(store.state.dataflow.taskId, {
-            nodeIds: store.state.dataflow.activeNodeId,
-            keys,
-          })
-          .finally(() => {
-            loading.value = false
-          })
-
-        loadSelectData()
-      }
-
-      const unWatch = watch(
-        () => store.state.dataflow.schemaRefreshing,
-        (v) => {
-          if (!v) {
-            loadSelectData()
+        const select = ref(null)
+        const store = useStore()
+        const params = computed(() => {
+          return {
+            reloadTime: props.reloadTime,
+            where: {
+              'source.id': props.connectionId,
+              taskId: store.state.dataflow.taskId,
+            },
           }
-        },
-      )
+        })
 
-      onBeforeUnmount(() => {
-        unWatch()
-      })
+        const { showNotExistsTip, leftPosition, handleCreated } = useTableExist(attrs, select, props.connectionId)
 
-      return () => {
-        const scopedSlots = {
-          'created-option': ({ value }) => (
-            <span class="flex align-center gap-1">
-              {value}
-              <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
-            </span>
-          ),
-          empty: ({ query }) =>
-            query ? (
-              <div class="pt-2">
-                <VEmpty small>
-                  <span class="fs-7">{i18n.t('packages_form_component_table_selector_error_not_exit')},</span>
-                  <el-button
-                    class="ml-1"
-                    size="mini"
-                    type="text"
-                    onClick={() => {
-                      loadSchema(query)
-                    }}
-                  >
-                    <span class="lh-1">{i18n.t('packages_form_button_reload')}</span>
-                  </el-button>
-                </VEmpty>
-              </div>
-            ) : (
-              <p class="el-select-dropdown__empty">{i18n.t('public_data_no_data')}</p>
-            ),
+        const loading = ref(false)
+
+        const loadSelectData = () => {
+          select.value.loadDataList(1)
         }
 
-        if (showNotExistsTip.value) {
-          scopedSlots.prefix = () => (
-            <ElTag
-              class="position-absolute translate-middle-y top-50 m-0 prefix-tag"
-              style={{ left: leftPosition.value }}
+        const loadSchema = async (keys) => {
+          loading.value = true
+          await taskApi
+            .refreshSchema(store.state.dataflow.taskId, {
+              nodeIds: store.state.dataflow.activeNodeId,
+              keys,
+            })
+            .finally(() => {
+              loading.value = false
+            })
+
+          loadSelectData()
+        }
+
+        const unWatch = watch(
+          () => store.state.dataflow.schemaRefreshing,
+          (v) => {
+            if (!v) {
+              loadSelectData()
+            }
+          },
+        )
+
+        onBeforeUnmount(() => {
+          unWatch()
+        })
+
+        return () => {
+          const scopedSlots = {
+            'created-option': ({ value }) => (
+              <span class="flex align-center gap-1">
+                {value}
+                <ElTag class="ml-1">{i18n.t('packages_dag_table_not_exist')}</ElTag>
+              </span>
+            ),
+            empty: ({ query }) =>
+              query ? (
+                <div class="pt-2">
+                  <VEmpty small>
+                    <span class="fs-7">{i18n.t('packages_form_component_table_selector_error_not_exit')},</span>
+                    <el-button
+                      class="ml-1"
+                      size="mini"
+                      type="text"
+                      onClick={() => {
+                        loadSchema(query)
+                      }}
+                    >
+                      <span class="lh-1">{i18n.t('packages_form_button_reload')}</span>
+                    </el-button>
+                  </VEmpty>
+                </div>
+              ) : (
+                <p class="el-select-dropdown__empty">{i18n.t('public_data_no_data')}</p>
+              ),
+          }
+
+          if (showNotExistsTip.value) {
+            scopedSlots.prefix = () => (
+              <ElTag
+                class="position-absolute translate-middle-y top-50 m-0 prefix-tag"
+                style={{ left: leftPosition.value }}
+              >
+                {i18n.t('packages_dag_table_not_exist')}
+              </ElTag>
+            )
+          }
+
+          return (
+            <AsyncSelect
+              {...attrs}
+              modelValue={props.modelValue}
+              loading={loading.value}
+              class="async-select"
+              ref={select}
+              onCreate={handleCreated}
+              itemType={attrs.itemType || 'string'}
+              itemQuery={attrs.itemQuery || 'original_name'}
+              params={params.value}
             >
-              {i18n.t('packages_dag_table_not_exist')}
-            </ElTag>
+              {scopedSlots}
+            </AsyncSelect>
           )
         }
-
-        return (
-          <AsyncSelect
-            {...attrs}
-            loading={loading.value}
-            class="async-select"
-            ref={select}
-            onCreate={handleCreated}
-            itemType={attrs.itemType || 'string'}
-            itemQuery={attrs.itemQuery || 'original_name'}
-            params={params.value}
-          >
-            {scopedSlots}
-          </AsyncSelect>
-        )
-      }
-    },
-  }),
+      },
+    }),
+  ),
+  mapProps({ value: 'modelValue' }),
 )
 
 export default TableSelect

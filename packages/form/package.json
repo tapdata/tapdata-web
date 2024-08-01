@@ -23,6 +23,7 @@
     "@tap/component": "workspace:^1.0.0",
     "@tap/i18n": "workspace:^1.0.0",
     "@tap/shared": "workspace:^",
+    "@vue/shared": "^3.4.35",
     "@vueuse/core": "^10.5.0",
     "ace-builds": "^1.4.13",
     "core-js": "^3.8.3",

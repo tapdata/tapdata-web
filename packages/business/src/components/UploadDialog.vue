@@ -22,9 +22,11 @@
         show-icon
         :closable="false"
       >
-        <span slot="title" class="inline-block lh-sm align-middle">
-          {{ $t('packages_business_relmig_import_desc') }}
-        </span>
+        <template v-slot:title>
+          <span class="inline-block lh-sm align-middle">
+            {{ $t('packages_business_relmig_import_desc') }}
+          </span>
+        </template>
       </ElAlert>
 
       <ElFormItem v-if="!isRelmig" prop="upsert" :label="$t('packages_business_modules_dialog_condition')">
@@ -272,7 +274,7 @@ export default {
       this.uploading = false
       if (response.code !== 'ok') {
         this.$message.error(response.message || this.$t('packages_business_message_upload_fail'))
-        this.importForm.fileList.forEach(file => (file.status = 'ready'))
+        this.importForm.fileList.forEach((file) => (file.status = 'ready'))
       } else {
         this.$message.success(this.$t('packages_business_message_upload_success'))
         $emit(this, 'success')
