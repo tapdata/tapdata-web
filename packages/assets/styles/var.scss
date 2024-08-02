@@ -105,7 +105,8 @@ $tag-icon-span-gap: (
   ),
   $dialog: (
     'border-radius': 10px,
-    'title-font-size': var(--el-font-size-medium),
+    'padding-primary': 24px,
+    //'title-font-size': var(--el-font-size-medium),
   ),
   $table: (
     'header-bg-color': #fafafa,

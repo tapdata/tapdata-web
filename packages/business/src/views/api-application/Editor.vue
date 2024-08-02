@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="taskId ? $t('public_button_edit') : $t('public_button_create')"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"

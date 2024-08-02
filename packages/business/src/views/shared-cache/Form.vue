@@ -41,11 +41,11 @@
         <el-col :span="12">
           <ElFormItem prop="tableName" :label="$t('packages_business_shared_cache_column_table') + ':'">
             <VirtualSelect
-              v-model:value="form.tableName"
+              v-model="form.tableName"
               filterable
               class="form-input"
               :item-size="34"
-              :items="tableOptions"
+              :options="tableOptions"
               :loading="tableOptionsLoading"
               :placeholder="$t('packages_business_shared_cache_placeholder_table')"
               @input="tableInputHandler"
@@ -293,7 +293,7 @@ export default {
         maxMemory: 500,
         externalStorageId: '',
         shareCdcEnable: false,
-        enforceShareCdc: true
+        enforceShareCdc: true,
       }
       if (this.taskId) {
         await this.getData(this.taskId)
@@ -323,7 +323,7 @@ export default {
             maxMemory: data.maxMemory,
             externalStorageId,
             shareCdcEnable: data.shareCdcEnable,
-            enforceShareCdc: data.enforceShareCdc
+            enforceShareCdc: data.enforceShareCdc,
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
@@ -453,7 +453,7 @@ export default {
             maxMemory,
             externalStorageId,
             shareCdcEnable,
-            enforceShareCdc
+            enforceShareCdc,
           } = this.form
           let id = this.taskId
           const needCreateIndex = cacheKeys

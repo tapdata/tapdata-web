@@ -126,19 +126,25 @@ export const JoinExpression = observer(
             return (
               <div class="flex join-expression-row" key={i}>
                 <div class="join-field flex-1">{left}</div>
-                <FormItem class="join-operator">=</FormItem>
+                <FormItem class="join-operator">
+                  <span>=</span>
+                </FormItem>
                 <div class="join-field  flex-1">{right}</div>
                 <FormItem>
-                  <ElButton class="ml-3 align-middle" text onClick={() => handleAdd()}>
-                    <VIcon size={16}>plus</VIcon>
+                  <ElButton class="ml-1 align-middle" text onClick={() => handleAdd()}>
+                    {{
+                      icon: () => <VIcon size={16}>plus</VIcon>,
+                    }}
                   </ElButton>
                   <ElButton
-                    class="ml-3 align-middle"
+                    class="ml-1 align-middle"
                     text
                     disabled={fieldArr.length < 2}
                     onClick={() => handleRemove(i)}
                   >
-                    <VIcon size={16}>delete</VIcon>
+                    {{
+                      icon: () => <VIcon size={16}>delete</VIcon>,
+                    }}
                   </ElButton>
                 </FormItem>
               </div>
@@ -153,9 +159,11 @@ export const JoinExpression = observer(
                 {leftTitle}：<OverflowTooltip class="ml-1" placement="top" text={leftNodeName}></OverflowTooltip>
               </div>
               <div class="join-operator">
-                <VIcon onClick={handleExchange} size={16}>
-                  exchange
-                </VIcon>
+                <ElButton text onClick={handleExchange} type="primary">
+                  {{
+                    icon: () => <VIcon size={16}>exchange</VIcon>,
+                  }}
+                </ElButton>
               </div>
               <div class="join-name flex text-nowrap flex-1">
                 {rightTitle}：<OverflowTooltip class="ml-1" placement="top" text={rightNodeName}></OverflowTooltip>

@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :visible="visible"
+    :model-value="visible"
     @open="onOpen"
     @update:visible="$emit('update:visible', $event)"
     :title="$t('packages_business_confirmExecuteDataRepair')"
@@ -30,14 +30,14 @@
           <span
             class="grid-list-item-label font-color-sslight"
             :class="{
-              'color-warning': delayWarning
+              'color-warning': delayWarning,
             }"
             >{{ $t('packages_business_taskIncrementDelay') }}</span
           >
           <span
             class="grid-list-item-content font-color-dark"
             :class="{
-              'color-warning': delayWarning
+              'color-warning': delayWarning,
             }"
             >{{ replicateLag }}</span
           >
@@ -52,14 +52,14 @@
           <span
             class="grid-list-item-label font-color-sslight"
             :class="{
-              'color-warning': diffWarning
+              'color-warning': diffWarning,
             }"
             >{{ $t('packages_business_diffTotal') }}</span
           >
           <span
             class="grid-list-item-content font-color-dark"
             :class="{
-              'color-warning': diffWarning
+              'color-warning': diffWarning,
             }"
             >{{ inspectRecoveryVerifyData.diffTotals }}
           </span>
@@ -112,7 +112,7 @@ export default {
   components: { SyncStatus, TaskStatus },
   props: {
     visible: Boolean,
-    inspectId: String
+    inspectId: String,
   },
   data() {
     return {
@@ -136,8 +136,8 @@ export default {
         canRecovery: true,
         errorCodes: [],
         sourceOnly: null,
-        targetOnly: null
-      }
+        targetOnly: null,
+      },
     }
   },
 
@@ -153,7 +153,7 @@ export default {
 
       return replicateLag != null
         ? calcTimeUnit(replicateLag, 2, {
-            autoHideMs: true
+            autoHideMs: true,
           })
         : '-'
     },
@@ -171,7 +171,7 @@ export default {
         return this.$t('packages_business_no_data_correction')
       }
       return null
-    }
+    },
   },
 
   methods: {
@@ -195,8 +195,8 @@ export default {
       } catch (e) {
         console.error(e)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

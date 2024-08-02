@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"

@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :visible="visible"
+    :model-value="visible"
     width="812px"
     :show-close="false"
     :close-on-click-modal="false"

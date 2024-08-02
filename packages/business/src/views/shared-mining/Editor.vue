@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="$t('packages_business_shared_list_edit_title')"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
@@ -15,7 +15,6 @@
       label-width="160px"
       :model="editForm"
       :rules="rulesEdit"
-      class="my-n6"
     >
       <ElFormItem :label="$t('packages_business_shared_form_edit_name')" prop="name">
         <ElInput clearable v-model="editForm.name"></ElInput>
@@ -196,7 +195,7 @@ export default {
             _target.push(source)
           }
         })
-        dag.nodes.forEach(node => {
+        dag.nodes.forEach((node) => {
           node.$inputs = inputsMap[node.id] || []
           node.$outputs = outputsMap[node.id] || []
         })
@@ -223,7 +222,7 @@ export default {
             attrs,
             connectionIds: [connectionId],
             $inputs,
-            $outputs
+            $outputs,
           } = node
 
           if (nodeConfig) {
@@ -236,7 +235,7 @@ export default {
               nodeConfig,
               attrs,
               $inputs,
-              $outputs
+              $outputs,
             }
 
             this.$refs.schemaToForm.getForm()?.setValues(values)
@@ -248,18 +247,18 @@ export default {
                 $inputs: {
                   type: 'array',
                   'x-display': 'hidden',
-                  default: []
+                  default: [],
                 },
                 $outputs: {
                   type: 'array',
                   'x-display': 'hidden',
-                  default: []
+                  default: [],
                 },
                 nodeConfig: {
                   type: 'object',
-                  properties: nodeProperties
-                }
-              }
+                  properties: nodeProperties,
+                },
+              },
             }
           }
         }

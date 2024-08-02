@@ -1,14 +1,16 @@
 <template>
   <ElDialog
     custom-class="t-dialog"
-    :visible.sync="visible"
-    @update:visible="handleVisible"
+    v-model="visible"
+    @update:model-value="handleVisible"
     width="600"
     :close-on-click-modal="false"
   >
-    <span slot="title" class="fs-6 fw-sub font-color-dark">
-      {{ $t('packages_business_chuangjianfuwu') }}
-    </span>
+    <template v-slot:title>
+      <span class="fs-6 fw-sub font-color-dark">
+        {{ $t('packages_business_chuangjianfuwu') }}
+      </span>
+    </template>
 
     <ApiForm
       tag="div"
@@ -51,7 +53,7 @@ export default {
   data() {
     return {
       loading: false,
-      visible: this.value
+      visible: this.value,
     }
   },
   watch: {
@@ -75,7 +77,7 @@ export default {
         tableName: this.params.tableName,
         pathAccessMethod: this.data?.pathAccessMethod || 'default',
         appValue: this.params.to?.id || '',
-        appLabel: this.params.to?.value || ''
+        appLabel: this.params.to?.value || '',
       }
       this.$nextTick(() => {
         this.$refs.apiForm.open(formData)
@@ -97,8 +99,8 @@ export default {
       this.loading = false
       this.handleVisible(false)
       this.$emit('save', data, this.params.to)
-    }
-  }
+    },
+  },
 }
 </script>
 

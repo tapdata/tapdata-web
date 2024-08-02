@@ -234,7 +234,7 @@
     <ElDialog
       width="437px"
       custom-class="pro-dialog"
-      :visible.sync="downloadAnalysis.visible"
+      v-model="downloadAnalysis.visible"
       :close-on-click-modal="false"
       :append-to-body="true"
       @close="onClose"
@@ -413,40 +413,40 @@ export default {
         currentStep: 0,
         steps: [
           {
-            label: i18n.t('packages_business_exporting_task')
+            label: i18n.t('packages_business_exporting_task'),
           },
           {
-            label: i18n.t('packages_business_exporting_run_history')
+            label: i18n.t('packages_business_exporting_run_history'),
           },
           {
-            label: i18n.t('packages_business_exporting_task_log')
+            label: i18n.t('packages_business_exporting_task_log'),
           },
           {
-            label: i18n.t('packages_business_exporting_metrics')
+            label: i18n.t('packages_business_exporting_metrics'),
           },
           {
-            label: i18n.t('packages_business_gen_engine_cpu_chart')
+            label: i18n.t('packages_business_gen_engine_cpu_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_tm_cpu_chart')
+            label: i18n.t('packages_business_gen_tm_cpu_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_engine_mem_chart')
+            label: i18n.t('packages_business_gen_engine_mem_chart'),
           },
           {
-            label: i18n.t('packages_business_gen_tm_mem_chart')
+            label: i18n.t('packages_business_gen_tm_mem_chart'),
           },
           {
-            label: i18n.t('packages_business_exporting_engine_thread')
+            label: i18n.t('packages_business_exporting_engine_thread'),
           },
           {
-            label: i18n.t('packages_business_exporting_tm_thread')
+            label: i18n.t('packages_business_exporting_tm_thread'),
           },
           {
-            label: i18n.t('packages_business_downloading_file')
-          }
-        ]
-      }
+            label: i18n.t('packages_business_downloading_file'),
+          },
+        ],
+      },
     }
   },
   computed: {
@@ -953,7 +953,7 @@ export default {
       this.initSteps()
 
       const blogData = await taskApi.downloadAnalyze(this.dataflow.id, {
-        cancelToken: this.analysisCancelSource.token
+        cancelToken: this.analysisCancelSource.token,
       })
 
       if (blogData.data.type === 'application/json') {
@@ -986,10 +986,10 @@ export default {
       this.countUp = new CountUp({}, 99, {
         duration: 62,
         plugin: {
-          render: this.updateProgress
+          render: this.updateProgress,
         },
         useEasing: false,
-        onCompleteCallback: () => {}
+        onCompleteCallback: () => {},
       })
       this.countUp.start()
     },
@@ -1002,8 +1002,8 @@ export default {
       setTimeout(() => {
         this.downloadAnalysis.visible = false
       }, 200)
-    }
-  }
+    },
+  },
 }
 </script>
 

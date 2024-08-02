@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="$t('packages_business_components_fielddialog_zidingyiziduan')"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="1200px"
     top="10vh"
@@ -51,9 +51,9 @@
                     {{ fIndex + 1 }}
                   </div>
                   <VirtualSelect
-                    v-model:value="fItem.source"
+                    v-model="fItem.source"
                     :item-size="30"
-                    :items="sourceFields"
+                    :options="sourceFields"
                     :class="['flex-fill', { 'empty-data': !fItem.source }]"
                     :allow-create="sourceDynamicSchema"
                     :placeholder="
@@ -63,9 +63,9 @@
                     class="flex-fill"
                   />
                   <VirtualSelect
-                    v-model:value="fItem.target"
+                    v-model="fItem.target"
                     :item-size="34"
-                    :items="targetFields"
+                    :options="targetFields"
                     :class="['flex-fill ml-5', { 'empty-data': !fItem.target }]"
                     :allow-create="targetDynamicSchema"
                     :placeholder="

@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="taskId ? $t('packages_business_shared_cache_edit') : $t('packages_business_shared_cache_create')"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
     width="1200px"
@@ -9,7 +9,7 @@
     class="connection-dialog ldp-conection-dialog flex flex-column"
     @close="handleClose"
   >
-    <Form ref="form" :task-id="taskId" v-model:loading="loading" class="mt-n6" @success="handleSuccess"></Form>
+    <Form ref="form" :task-id="taskId" v-model:loading="loading" @success="handleSuccess"></Form>
     <template v-slot:footer>
       <span class="dialog-footer">
         <ElButton @click="handleClose">{{ $t('public_button_cancel') }}</ElButton>

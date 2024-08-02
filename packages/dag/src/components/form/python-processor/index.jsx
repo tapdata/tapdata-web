@@ -394,15 +394,12 @@ export const PythonProcessor = observer(
               >
                 <VirtualSelect
                   disabled={props.disabled}
-                  value={params.tableName}
+                  v-model={params.tableName}
                   filterable
                   class="form-input"
                   item-size={34}
-                  items={tableList.value}
+                  options={tableList.value}
                   loading={tableLoading.value}
-                  onInput={(val) => {
-                    params.tableName = val
-                  }}
                 />
               </FormItem.BaseItem>
             )}

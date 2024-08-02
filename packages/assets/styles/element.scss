@@ -136,7 +136,10 @@
 
 // Dialog
 .el-dialog {
+  padding-block: 20px;
   &__header {
+    //padding-bottom: calc(var(--el-dialog-padding-primary) / 2);
+    padding-bottom: 16px;
     &:has(.el-dialog__title:empty) {
       display: none;
     }
@@ -148,7 +151,8 @@
     //margin-bottom: var(--el-dialog-padding-primary);
   }
   &__footer {
-    --el-dialog-padding-primary: 12px;
+    //padding-top: calc(var(--el-dialog-padding-primary) / 2);
+    padding-top: 16px;
     //padding-inline: 24px !important;
     //padding-top: 0 !important;
     //margin-top: var(--el-dialog-padding-primary);
@@ -242,6 +246,10 @@
     border: none;
     line-height: 0;
     font-size: 20px;
+
+    &.el-button--primary {
+      --el-fill-color-light: var(--el-color-primary-light-9);
+    }
   }
 
   &.is-text.el-button--small:has(> i:only-child) {

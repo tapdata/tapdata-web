@@ -18,13 +18,33 @@
 </template>
 
 <script>
-import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
 import ace from 'ace-builds'
-import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import 'ace-builds/src-noconflict/ext-searchbox'
 import 'ace-builds/src-noconflict/theme-one_dark'
+import 'ace-builds/src-noconflict/theme-chrome'
+import 'ace-builds/src-noconflict/theme-sqlserver'
 import 'ace-builds/src-noconflict/ext-beautify'
+
+import extSearchboxUrl from 'ace-builds/src-noconflict/ext-searchbox?url'
+import modeJavascriptUrl from 'ace-builds/src-noconflict/mode-javascript?url'
+import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url'
+import modeSqlUrl from 'ace-builds/src-noconflict/mode-sql?url'
+import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url'
+
+import workerJavascriptUrl from 'ace-builds/src-noconflict/worker-javascript?url'
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'
+
+import snippetsJsUrl from 'ace-builds/src-noconflict/snippets/javascript?url'
+import snippetsJsonUrl from 'ace-builds/src-noconflict/snippets/json?url'
+import snippetsSqlUrl from 'ace-builds/src-noconflict/snippets/sql?url'
+import snippetsPythonUrl from 'ace-builds/src-noconflict/snippets/python?url'
+
+const MAP = {
+  javascript: [modeJavascriptUrl, snippetsJsUrl, workerJavascriptUrl],
+  json: [modeJsonUrl, snippetsJsonUrl, workerJsonUrl],
+  sql: [modeSqlUrl, snippetsSqlUrl],
+  python: [modePythonUrl, snippetsPythonUrl],
+}
 
 const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
 
@@ -69,11 +89,17 @@ export default {
     let lang = this.lang || 'text'
     let theme = this.theme
     let editor = (this.editor = ace.edit(this.$el.firstElementChild))
+
+    ace.config.setModuleUrl('ace/ext/searchbox', extSearchboxUrl)
+    ace.config.setModuleUrl(`ace/mode/${lang}`, MAP[lang]?.[0])
+    ace.config.setModuleUrl(`ace/snippets/${lang}`, MAP[lang]?.[1])
+    ace.config.setModuleUrl(`ace/mode/${lang}_worker`, MAP[lang]?.[2])
+
     const reqHandler = ace.require
     let tools = reqHandler('ace/ext/language_tools')
     var beautify = reqHandler('ace/ext/beautify') // get reference to extension
-    reqHandler('ace/ext/searchbox')
-    $emit(this, 'init', editor, tools, beautify)
+
+    this.$emit('init', editor, tools, beautify)
 
     editor.$blockScrolling = Infinity
     let session = editor.getSession()
@@ -87,18 +113,18 @@ export default {
     if (this.options) {
       session.setUseWrapMode(this.options.useWrapMode) // 自动换行
       editor.setOptions(this.options)
-      $emit(this, 'initOptions', editor, tools, beautify)
+      this.$emit('initOptions', editor, tools, beautify)
     }
 
     editor.on('change', () => {
       let content = editor.getValue()
-      $emit(this, 'update:value', content)
+      this.$emit('update:value', content)
       this.contentBackup = content
     })
 
     ACTION_EVENTS.forEach((ev) => {
       editor.on(ev, (event, editor) => {
-        $emit(this, ev, editor.getValue(), event, editor)
+        this.$emit(ev, editor.getValue(), event, editor)
       })
     })
   },

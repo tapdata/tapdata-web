@@ -58,20 +58,26 @@ export const JsDeclare = defineComponent({
                     append-to-body
                     width="800"
                   >
-                    <div class="">
-                      <div class="fs-6 mb-4">TapType</div>
-                      <HighlightCode
-                        class="m-0"
-                        code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
-                      ></HighlightCode>
-                      <div class="fs-6 my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
-                      <HighlightCode class="m-0" code={codeExample}></HighlightCode>
-                    </div>
-                    <span slot="footer" class="dialog-footer">
-                      <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
-                        {i18n.t('packages_dag_js_declare_index_queding')}
-                      </el-button>
-                    </span>
+                    {{
+                      default: () => (
+                        <>
+                          <div class="mb-4">TapType</div>
+                          <HighlightCode
+                            class="m-0"
+                            code="type TapType = 'TapNumber' | 'TapString' | 'TapBoolean' | 'TapBinary' | 'TapDate' | 'TapDateTime' | 'TapTime' | 'TapYear' | 'TapRaw' | 'TapArray' | 'TapMap'"
+                          ></HighlightCode>
+                          <div class="my-4">{i18n.t('packages_dag_js_declare_index_shilidaima')}</div>
+                          <HighlightCode class="m-0" code={codeExample}></HighlightCode>
+                        </>
+                      ),
+                      footer: () => (
+                        <span class="dialog-footer">
+                          <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
+                            {i18n.t('packages_dag_js_declare_index_queding')}
+                          </el-button>
+                        </span>
+                      ),
+                    }}
                   </el-dialog>
                 </>
               ),

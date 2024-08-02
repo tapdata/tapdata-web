@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="$t('packages_business_request_connector_title')"
-    :visible="visible"
+    :model-value="visible"
     @close="handleClose"
     @closed="afterClose"
     :append-to-body="true"
@@ -21,7 +21,7 @@
       <template #title>
         <span class="text-prewrap flex-1 lh-base">{{
           $t('packages_business_request_connector_alert', {
-            ...meta
+            ...meta,
           })
         }}</span>
       </template>
@@ -77,7 +77,7 @@ export default {
   name: 'RequestDialog',
   props: {
     visible: Boolean,
-    meta: Object
+    meta: Object,
   },
   data() {
     const user = this.$store.state.user || {}
@@ -90,19 +90,19 @@ export default {
         hoursOfAvailability: 365,
         contactTime: {
           start: null,
-          end: null
-        }
+          end: null,
+        },
       },
       rules: {
         summary: {
           required: true,
           message: this.$t('packages_business_request_connector_use_plan_placeholder'),
-          trigger: 'blur'
-        }
+          trigger: 'blur',
+        },
       },
 
       saving: false,
-      hasRequest: false
+      hasRequest: false,
     }
   },
 
@@ -130,13 +130,13 @@ export default {
     },
 
     handleSubmit() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate((valid) => {
         if (valid) {
           this.saving = true
           this.$axios
             .post('api/tcm/feature/connector', {
               ...this.form,
-              metadata: this.meta
+              metadata: this.meta,
             })
             .then(() => {
               this.handleClose()
@@ -153,15 +153,15 @@ export default {
           filter: JSON.stringify({
             sort: ['submitTime DESC'],
             where: {
-              'metadata.type': this.meta.type
-            }
-          })
-        }
+              'metadata.type': this.meta.type,
+            },
+          }),
+        },
       })
 
       return result?.items || []
-    }
-  }
+    },
+  },
 }
 </script>
 

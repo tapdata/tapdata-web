@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="`${$t('packages_business_dataFlow_skipError_title')} - ${taskName}`"
-    :visible="visible"
+    :model-value="visible"
     @update:visible="visible = $event"
     width="60%"
   >

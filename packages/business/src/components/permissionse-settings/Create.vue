@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     :title="title"
-    :visible="visible"
+    :model-value="visible"
     :append-to-body="true"
     width="800px"
     top="10vh"
@@ -87,25 +87,25 @@ export default {
           },
           {
             label: i18n.t('public_button_start'),
-            value: 'Start'
+            value: 'Start',
           },
           {
             label: i18n.t('public_button_stop'),
-            value: 'Stop'
-          }
+            value: 'Stop',
+          },
         ],
         Inspect: [
           {
             label: i18n.t('public_button_check'),
-            value: 'View'
+            value: 'View',
           },
           {
             label: i18n.t('public_button_edit'),
-            value: 'Edit'
+            value: 'Edit',
           },
           {
             label: i18n.t('public_button_delete'),
-            value: 'Delete'
+            value: 'Delete',
           },
           {
             label: i18n.t('public_button_start'),
@@ -257,7 +257,7 @@ export default {
       ) {
         return true
       }
-    }
-  }
+    },
+  },
 }
 </script>

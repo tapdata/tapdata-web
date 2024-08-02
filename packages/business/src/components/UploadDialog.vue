@@ -17,7 +17,7 @@
     >
       <ElAlert
         v-if="isRelmig"
-        class="bg-color-primary-light-9 my-2 text-primary"
+        class="bg-color-primary-light-9 mb-2 text-primary"
         type="info"
         show-icon
         :closable="false"

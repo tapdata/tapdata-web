@@ -2,7 +2,7 @@
   <ElDialog
     width="700px"
     class="simple-scene"
-    :visible="dialogVisible"
+    :model-value="dialogVisible"
     :title="$t('new_advanced_mode')"
     :before-close="handleClose"
     :close-on-click-modal="false"

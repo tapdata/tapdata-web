@@ -20,7 +20,7 @@
               filterable
               clearable
               :item-size="34"
-              :items="tableNameSelectConfig.options"
+              :options="tableNameSelectConfig.options"
               :loading="tableNameSelectConfig.loading"
               :disabled="tableNameSelectConfig.disabled"
               :placeholder="tableNameSelectConfig.placeholder"

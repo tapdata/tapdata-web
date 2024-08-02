@@ -118,7 +118,7 @@
 
     <ElDialog
       :title="$t('dfs_apply_comment')"
-      :visible="dialog.visible"
+      :model-value="dialog.visible"
       :close-on-click-modal="false"
       @update:visible="dialog.visible = $event"
       @close="handleClose"
@@ -165,25 +165,25 @@ export default {
     const statusMap = {
       PENDING: {
         text: i18n.t('dfs_status_to_be_approved'),
-        type: 'primary'
+        type: 'primary',
       },
       APPROVED: {
         text: i18n.t('dfs_status_approved'),
-        type: 'success'
+        type: 'success',
       },
       REJECTED: {
         text: i18n.t('dfs_status_rejected'),
-        type: 'danger'
+        type: 'danger',
       },
       EXPIRED: {
         text: i18n.t('dfs_status_expired'),
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     }
-    const statusOptions = Object.keys(statusMap).map(key => {
+    const statusOptions = Object.keys(statusMap).map((key) => {
       return {
         value: key,
-        label: statusMap[key].text
+        label: statusMap[key].text,
       }
     })
     return {
@@ -194,19 +194,19 @@ export default {
       page: {
         current: 1,
         size: 20,
-        total: 0
+        total: 0,
       },
       order: 'submitTime DESC',
       sort: { prop: 'submitTime', order: 'descending' },
       dayMap: {
         5: i18n.t('packages_business_request_connector_use_time_option1'),
         180: i18n.t('packages_business_request_connector_use_time_option2'),
-        365: i18n.t('packages_business_request_connector_use_time_option3')
+        365: i18n.t('packages_business_request_connector_use_time_option3'),
       },
       statusMap,
 
       searchParams: {
-        status: 'PENDING'
+        status: 'PENDING',
       },
 
       filterItems: [
@@ -216,22 +216,22 @@ export default {
           border: true,
           type: 'select-inner',
           items: statusOptions,
-          debounce: 0
+          debounce: 0,
         },
         {
           placeholder: i18n.t('dfs_apply_user') + '/' + i18n.t('dfs_user_contactus_lianxifangshi'),
           key: 'createUser',
           type: 'input',
-          width: '240px'
-        }
+          width: '240px',
+        },
       ],
       dialog: {
         remark: '',
         list: [],
         visible: false,
         saving: false,
-        callback: null
-      }
+        callback: null,
+      },
     }
   },
   watch: {
@@ -239,8 +239,8 @@ export default {
       deep: true,
       handler() {
         this.lazyLoadData(1)
-      }
-    }
+      },
+    },
   },
   computed: {
     ...mapGetters(['isDomesticStation']),
@@ -259,8 +259,8 @@ export default {
         limit: size,
         skip: size * (current - 1),
         where: {
-          status
-        }
+          status,
+        },
       }
 
       createUser = createUser?.trim()
@@ -269,7 +269,7 @@ export default {
         filter.where.$or = [
           { createUser: { $regex: createUser, $options: 'i' } },
           { phone: { $regex: createUser, $options: 'i' } },
-          { email: { $regex: createUser, $options: 'i' } }
+          { email: { $regex: createUser, $options: 'i' } },
         ]
       }
 
@@ -280,13 +280,13 @@ export default {
         },
       })
       this.loading = false
-      this.list = result.items.map(item => {
+      this.list = result.items.map((item) => {
         item.submitTime = item.submitTime ? dayjs(item.submitTime).format('YYYY-MM-DD HH:mm:ss') : '-'
         item.approvalTime = item.approvalTime ? dayjs(item.approvalTime).format('YYYY-MM-DD HH:mm:ss') : '-'
         item.reviewer = item.reviewer || '-'
 
         if (item.returnVisits) {
-          item.returnVisits.forEach(v => {
+          item.returnVisits.forEach((v) => {
             v.datetime = v.datetime ? dayjs(v.datetime).format('YYYY-MM-DD HH:mm:ss') : '-'
           })
         }
@@ -302,7 +302,7 @@ export default {
       await this.$axios
         .post(`api/tcm/feature/connector/approved`, {
           id: row.id,
-          remark: this.dialog.remark?.trim()
+          remark: this.dialog.remark?.trim(),
         })
         .finally(() => {
           this.dialog.saving = false
@@ -317,7 +317,7 @@ export default {
       await this.$axios
         .post(`api/tcm/feature/connector/rejected`, {
           id: row.id,
-          remark: this.dialog.remark?.trim()
+          remark: this.dialog.remark?.trim(),
         })
         .finally(() => {
           this.dialog.saving = false
@@ -339,7 +339,7 @@ export default {
       this.dialog.visible = true
       this.dialog.rowId = row.id
       this.dialog.list = row.returnVisits || []
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         this.dialog.callback = resolve
       })
     },
@@ -347,7 +347,7 @@ export default {
       await this.handleOpen(row)
       await this.$axios
         .patch(`api/tcm/feature/connector/${row.id}`, {
-          remark: this.dialog.remark?.trim()
+          remark: this.dialog.remark?.trim(),
         })
         .finally(() => {
           this.dialog.saving = false
@@ -376,8 +376,8 @@ export default {
     },
     handleViewAll() {
       this.searchParams.status = undefined
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -680,7 +680,9 @@ export default {
   top: -2px;
   visibility: hidden;
   opacity: 0;
-  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s;
+  transition:
+    0.3s cubic-bezier(0.25, 0.8, 0.5, 1),
+    visibility 0s;
 }
 
 .el-timeline-item:hover .timeline-btn {
