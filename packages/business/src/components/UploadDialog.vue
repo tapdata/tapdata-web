@@ -11,7 +11,7 @@
       ref="form"
       :rules="rules"
       :model="importForm"
-      class="applications-form mt-n4"
+      class="applications-form"
       label-position="top"
       label-width="100px"
     >

@@ -11,9 +11,18 @@
     @visible-change="onVisibleChange"
     @change="onChange"
   >
+    <template #prefix>
+      <el-icon v-if="showLoading" class="el-select-loading__icon is-select-loading"><ElIconLoading /></el-icon>
+    </template>
+
     <template #label="{ label, value }">
       <span>{{ getLabel(value, label) }}</span>
     </template>
+
+    <el-option v-if="showLoading" class="el-select-loading">
+      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
+      <span class="el-select-loading__tips">{{ loadingText || '正在加载' }}</span>
+    </el-option>
 
     <div v-show="!showLoading">
       <el-option
@@ -24,15 +33,12 @@
       />
     </div>
 
-    <el-option v-if="showLoading" class="el-select-loading">
-      <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
-      <span class="el-select-loading__tips">{{ loadingText || '正在加载' }}</span>
-    </el-option>
-
     <ElSelectLoading
       v-if="optionTotal !== 0 && !showLoading"
       :page="page"
       :loading="loadingMore"
+      :loading-text="loadingText"
+      :no-more-text="noMoreText"
       :hasMore="hasMore"
       @loadMore="handleLoadMore"
     />
@@ -53,7 +59,7 @@ const page = ref(0)
 const loadingData = ref(false)
 const loadingMore = ref(false)
 const hasMore = ref(true)
-const query = ref('')
+const query = ref(null) // 初始值为空，用于触发第一次进入remoteMethod请求
 const selectRef = ref(null)
 const optionTotal = ref(-1)
 
@@ -75,6 +81,8 @@ interface Props {
   lazy?: boolean
   loading?: boolean
   cache?: boolean
+  loadingText?: string
+  noMoreText?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -282,5 +290,11 @@ onMounted(() => {
       transform: rotate(360deg);
     }
   }
+}
+.is-select-loading {
+  position: absolute;
+  right: 12px;
+  background-color: var(--el-fill-color-blank);
+  z-index: 2;
 }
 </style>

@@ -1,6 +1,6 @@
 <!-- 监听 el-select 的滚动，并提供触底加载数据的回调 -->
 <template>
-  <el-option ref="el" class="el-select-loading" value="" v-show="hasMore">
+  <el-option ref="el" class="el-select-loading" v-show="hasMore">
     <template v-if="hasMore">
       <el-icon class="el-select-loading__icon"><ElIconLoading /></el-icon>
       <span class="el-select-loading__tips">{{ loadingText || '正在加载' }}</span>
