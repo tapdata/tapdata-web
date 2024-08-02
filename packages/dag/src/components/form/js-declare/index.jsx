@@ -71,11 +71,9 @@ export const JsDeclare = defineComponent({
                         </>
                       ),
                       footer: () => (
-                        <span class="dialog-footer">
-                          <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
-                            {i18n.t('packages_dag_js_declare_index_queding')}
-                          </el-button>
-                        </span>
+                        <el-button type="primary" onClick={() => (dialogVisible.value = false)}>
+                          {i18n.t('packages_dag_js_declare_index_queding')}
+                        </el-button>
                       ),
                     }}
                   </el-dialog>

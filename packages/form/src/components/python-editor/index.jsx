@@ -7,6 +7,7 @@ import './style.scss'
 
 export const PythonEditor = connect(
   {
+    emits: ['change', 'init'],
     props: {
       value: String,
       before: {
