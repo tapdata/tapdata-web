@@ -268,6 +268,7 @@
 
 <script>
 import { $on, $off, $once, $emit } from '../../utils/gogocodeTransfer'
+import { markRaw } from 'vue'
 import { mapGetters } from 'vuex'
 import { debounce, escapeRegExp } from 'lodash'
 import { useResizeObserver } from '@vueuse/core'
@@ -659,12 +660,16 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
         const ins = getResourceIns(node)
-        // 设置属性__Ctor不可枚举
+
         Object.defineProperty(node, '__Ctor', {
-          value: ins,
+          value: markRaw(ins),
           enumerable: false,
+          configurable: true,
         })
       }
+
+      console.log('onProcessorStart', node)
+
       this.dragNode = node
       this.dragStarting = true
       this.dragMoving = false

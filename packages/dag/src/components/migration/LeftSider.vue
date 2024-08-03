@@ -438,10 +438,11 @@ export default {
       const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       if (!item.__Ctor) {
         const ins = getResourceIns(node)
-        // 设置属性__Ctor不可枚举
+
         Object.defineProperty(node, '__Ctor', {
-          value: ins,
+          value: markRaw(ins),
           enumerable: false,
+          configurable: true,
         })
       }
       this.dragNode = node

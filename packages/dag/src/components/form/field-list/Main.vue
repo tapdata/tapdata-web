@@ -63,8 +63,10 @@
               <ElIcon><ElIconSearch /></ElIcon>
             </template>
           </ElInput>
-          <ElButton plain class="btn-refresh ml-2" @click="refresh">
-            <VIcon>refresh</VIcon>
+          <ElButton circle class="ml-2 rounded-4" @click="refresh">
+            <template #icon>
+              <VIcon>refresh</VIcon>
+            </template>
           </ElButton>
         </div>
         <List ref="list" :data="selected" class="content__list flex-fill"></List>

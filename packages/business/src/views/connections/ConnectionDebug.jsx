@@ -188,7 +188,7 @@ export const ConnectionDebug = observer(
                   feedbackLayout="none"
                 >
                   <ElRadioGroup
-                    value={params.connectType}
+                    modelValue={params.connectType}
                     onInput={(val) => {
                       params.connectType = val
                       form.values.__TAPDATA.connection_type = val
@@ -211,7 +211,7 @@ export const ConnectionDebug = observer(
                 >
                   <ElInputNumber
                     style="width: 100px;"
-                    value={params.timeout}
+                    modelValue={params.timeout}
                     min={5}
                     max={60}
                     onInput={(val) => {

@@ -75,19 +75,13 @@ export const FieldValue = connect(
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
-            <div class={['mb-2', 'flex']}>
-              <ElInput
-                placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-                v-model={this.searchFiledName}
-                suffix-icon={ElIconSearch}
-              ></ElInput>
-              <ElButton
-                class={['ml-2']}
-                type={'default'}
-                onClick={() => this.handleInput('')}
-                icon={ElIconRefresh}
-              ></ElButton>
-            </div>
+            <ElInput
+              class="mb-3"
+              placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
+              v-model={this.searchFiledName}
+              prefix-icon={ElIconSearch}
+              clearable
+            ></ElInput>
             <div class="field-processor-operation flex">
               <span class="flex-1 text inline-block ml-6">
                 {i18n.t('packages_form_field_add_del_index_ziduanmingcheng')}
@@ -140,13 +134,7 @@ export const FieldValue = connect(
               </ElTree>
             </div>
             <ElDialog
-              title={
-                i18n.t('packages_form_field_value_index_ziduanfuzhi') +
-                this.scriptDialog.tableName +
-                '[' +
-                this.scriptDialog.fieldName +
-                '])'
-              }
+              title={`${i18n.t('packages_form_field_value_index_ziduanfuzhi')}: ${this.scriptDialog.tableName}[${this.scriptDialog.fieldName}]`}
               modelValue={this.scriptDialog.open}
               append-to-body
               class="scriptDialog"

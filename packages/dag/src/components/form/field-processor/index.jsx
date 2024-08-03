@@ -51,7 +51,7 @@ const FormInput = defineComponent({
 
     return () => (
       <ElInput
-        value={input.value}
+        modelValue={input.value}
         onInput={(val) => {
           input.value = val
         }}
@@ -624,7 +624,7 @@ export const FieldRenameProcessor = observer(
                   <ElInput
                     placeholder={i18n.t('packages_form_field_mapping_list_qingshurubiaoming')}
                     clearable
-                    value={config.searchTable}
+                    modelValue={config.searchTable}
                     onInput={(val) => {
                       config.searchTable = val
                       doSearchTables()
@@ -707,7 +707,7 @@ export const FieldRenameProcessor = observer(
                     <ElInput
                       placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
                       clearable
-                      value={config.searchField}
+                      modelValue={config.searchField}
                       onInput={(val) => {
                         config.searchField = val
                         doSearchField()

@@ -50,9 +50,9 @@ export const TextFileReader = defineComponent({
     return () => {
       return (
         <ElInput
-          value={fileName.value}
+          modelValue={fileName.value}
           placeholder={i18n.global.t('packages_form_formBuilder_file_placeholder')}
-          vOn:clear={() => {
+          onClear={() => {
             emit('change', null)
             emit('update:fileName', null)
           }}

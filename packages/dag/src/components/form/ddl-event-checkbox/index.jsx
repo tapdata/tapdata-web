@@ -38,7 +38,7 @@ export const DdlEventCheckbox = observer(
         return (
           <ElCheckboxGroup
             disabled={props.disabled}
-            value={selected.value}
+            modelValue={selected.value}
             onInput={(value) => {
               selected.value = value
             }}
@@ -79,7 +79,7 @@ export const DdlEventList = observer(
         .findParentNodes(form.values.id)
         .filter(
           (parent) =>
-            (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION'
+            (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION',
         )
 
       const parentEnable = ref(!!parents.length)

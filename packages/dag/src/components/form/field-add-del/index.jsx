@@ -98,9 +98,9 @@ export const FieldAddDel = connect(
         let formValues = { ...this.form.values }
         this.deleteAllFieldsData = formValues?.deleteAllFields || false
         return (
-          <div class="field-processors-tree-warp bg-body pt-2" v-loading={this.loading}>
+          <div class="field-processors-tree-warp bg-body mt-2" v-loading={this.loading}>
             <ElInput
-              class="my-2"
+              class="mb-3"
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
               v-model={this.searchFiledName}
               clearable

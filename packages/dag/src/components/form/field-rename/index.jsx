@@ -297,12 +297,11 @@ export const FieldRename = observer(
             )}
             <FormItem.BaseItem label={i18n.t('packages_form_field_processor_filed_name_daxiaoxie')}>
               <ElSelect
-                value={capitalized.value}
+                modelValue={capitalized.value}
                 disabled={props.disabled || transformLoading.value}
                 onChange={(val) => {
                   changeCapitalized(val)
                 }}
-                class="w-auto"
               >
                 <ElOption value="" label={i18n.t('packages_form_field_processor_index_bubian')} />
                 <ElOption value="toUpperCase" label={i18n.t('packages_form_field_processor_index_daxie')} />
@@ -315,7 +314,7 @@ export const FieldRename = observer(
             <ElInput
               class="mb-2"
               placeholder={i18n.t('packages_form_field_mapping_list_qingshuruziduan')}
-              value={searchFiledName.value}
+              modelValue={searchFiledName.value}
               onInput={(val) => {
                 searchFiledName.value = val
               }}

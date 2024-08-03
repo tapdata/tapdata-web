@@ -220,7 +220,7 @@ export const JsDebug = observer(
                       <ElInputNumber
                         disabled={props.disabled}
                         style="width: 100px;"
-                        value={params.rows}
+                        modelValue={params.rows}
                         min={1}
                         max={10}
                         onInput={(val) => {

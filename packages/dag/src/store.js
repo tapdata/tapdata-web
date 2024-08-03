@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import * as Vue from 'vue'
+import { markRaw } from 'vue'
 import { debounce } from 'lodash'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
@@ -345,10 +345,10 @@ const actions = {
 
         insArr.push(ins)
 
-        // 设置属性__Ctor不可枚举
         Object.defineProperty(node, '__Ctor', {
-          value: ins,
+          value: markRaw(ins),
           enumerable: false,
+          configurable: true,
         })
 
         return node
