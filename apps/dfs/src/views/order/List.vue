@@ -223,7 +223,12 @@
             <StatusTag type="tag" :status="row.status" target="bill"></StatusTag>
           </template>
           <template #operation="{ row }">
-            <ElButton type="text" @click="handlePayBill(row)">{{ $t('public_button_pay') }} </ElButton>
+            <ElButton
+              :disabled="row.subscribe.subscribeType !== 'one_time' || row.status !== 'UNPAID'"
+              type="text"
+              @click="handlePayBill(row)"
+              >{{ $t('public_button_pay') }}
+            </ElButton>
           </template>
         </VTable>
       </div>
@@ -356,7 +361,7 @@ export default {
       ],
       traffic: {
         columns: [
-          { label: i18n.t('dfs_bill_number'), prop: 'id', width: 220 },
+          { label: i18n.t('dfs_bill_number'), prop: 'id', width: 228 },
           {
             label: i18n.t('dfs_bill_amount', {
               currency
@@ -367,7 +372,7 @@ export default {
           { label: i18n.t('dfs_ingress_traffic'), prop: 'received' },
           { label: i18n.t('dfs_billing_cycle'), prop: '_cycle' },
           { label: i18n.t('dfs_bill_status'), prop: 'status', slotName: 'status' },
-          { label: i18n.t('public_operation'), slotName: 'operation' }
+          { label: i18n.t('public_operation'), slotName: 'operation', width: 100 }
         ],
         data: []
       },

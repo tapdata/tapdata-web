@@ -1851,5 +1851,9 @@ export default {
   dfs_billing_cycle: 'Billing Cycle',
   dfs_bill_status: 'Status',
   dfs_service_upgrade_notice: 'TapData Cloud Service Upgrade Announcement',
-  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`
+  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`,
+  dfs_payment_progress: 'Payment in Progress',
+  dfs_payment_progress_desc: 'If you have already made the payment, please click “Payment Completed”.',
+  dfs_retry_payment: 'Repay',
+  dfs_complete_payment: 'Payment Completed'
 }

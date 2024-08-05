@@ -250,6 +250,10 @@ export default {
   computed: {
     ...mapGetters(['isDomesticStation', 'currencyType']),
 
+    isPayForBill() {
+      return this.$route.name === 'payForBill'
+    },
+
     payMethods() {
       const payMethods = [
         {
@@ -505,8 +509,11 @@ export default {
       this.submitLoading = true
       const { paymentUrl } = await this.postPayment()
 
-      if (paymentUrl) {
-        window.open(paymentUrl, '_self')
+      if (this.isPayForBill) {
+        this.$router.push({ name: 'waitPayForBill' })
+        paymentUrl && window.open(paymentUrl, '_target')
+      } else {
+        paymentUrl && window.open(paymentUrl, '_self')
       }
     },
 

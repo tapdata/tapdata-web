@@ -1711,5 +1711,9 @@ export default {
   dfs_billing_cycle: '账单周期',
   dfs_bill_status: '账单状态',
   dfs_service_upgrade_notice: 'TapData Cloud 服务升级公告',
-  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`
+  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`,
+  dfs_payment_progress: '支付中',
+  dfs_payment_progress_desc: '如果您已支付，请点击支付完成',
+  dfs_retry_payment: '重新支付',
+  dfs_complete_payment: '支付完成'
 }
