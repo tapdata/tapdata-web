@@ -158,6 +158,29 @@
           </el-skeleton>
         </ElFormItem>
 
+        <ElFormItem v-if="platform === 'fullManagement'">
+          <div slot="label" class="font-color-dark fw-sub">
+            {{ $t('dfs_traffic_billing') }}
+            <span class="fw-normal font-color-sslight">{{ $t('dfs_traffic_billing_desc') }}</span>
+            <span class="fw-normal color-warning">{{ $t('dfs_traffic_billing_prefix', { trafficPrice }) }}</span>
+          </div>
+
+          <el-skeleton :loading="loading" animated>
+            <template slot="template">
+              <div class="flex gap-4">
+                <el-skeleton-item v-for="i in 1" :key="i" class="rounded-4 h-32" variant="button" />
+              </div>
+            </template>
+            <template>
+              <ElRadioGroup value="true" class="flex gap-4">
+                <ElRadio label="true" border class="subscription-radio m-0 position-relative">
+                  <span class="inline-flex align-center"> {{ trafficPrice }}/GB </span>
+                </ElRadio>
+              </ElRadioGroup>
+            </template>
+          </el-skeleton>
+        </ElFormItem>
+
         <ElFormItem>
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_instance_instance_dingyuefangshi') }}
@@ -291,7 +314,8 @@ export default {
           'cn-beijing': 'Beijing',
           'cn-hongkong': 'Hong Kong'
         }
-      }
+      },
+      trafficPriceList: []
     }
   },
 
@@ -307,6 +331,28 @@ export default {
     },
     defaultCurrencyType() {
       return this.$store.getters.isDomesticStation ? 'cny' : 'usd'
+    },
+
+    trafficPriceObj() {
+      // 目前流量计费只区分云厂商
+      return this.trafficPriceList.find(item => item.provider === this.provider)
+    },
+
+    trafficPrice() {
+      const priceObj = this.trafficPriceObj
+      let amount
+      if (priceObj) {
+        amount = priceObj.currencyOption?.find(it => it.currency === this.currencyType)?.amount
+      }
+
+      if (amount) {
+        amount = (amount / 100).toLocaleString('zh', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })
+      }
+
+      return `${CURRENCY_SYMBOL_MAP[this.currencyType]} ${amount || '-'}`
     }
     // freeAgentCount() {
     //   return this.$store.state.agentCount.freeTierAgentCount
@@ -382,6 +428,14 @@ export default {
       })
     },
 
+    async loadTrafficPrice() {
+      const [{ paidPrice }] = await this.$axios.get('api/tcm/orders/paid/price', {
+        params: { productType: 'networkTraffic' }
+      })
+      console.log('data', paidPrice, this.currencyType)
+      this.trafficPriceList = paidPrice
+    },
+
     getSuggestPipelineNumber(cpu, memory) {
       if (memory == 2) {
         return 3
@@ -412,6 +466,7 @@ export default {
 
       if (this.platform === 'fullManagement') {
         await this.getCloudProvider()
+        await this.loadTrafficPrice()
       } else {
         await this.getPrice()
       }
@@ -524,6 +579,8 @@ export default {
         this.currency = item
       }
       this.buried('changeSubscriptionMethod')
+
+      console.log('currentPackage', this.currentPackage, this.selected)
     },
 
     //切换币种
@@ -647,6 +704,13 @@ export default {
         zone: this.mdbZone || '' // 可用区，按需填写（阿里云存储需要根据资源余量选择出可用区）
       }
       params.subscribeItems.push(base)
+
+      if (this.platform === 'fullManagement' && this.trafficPriceObj) {
+        params.subscribeItems.push({
+          productType: 'networkTraffic',
+          priceId: this.trafficPriceObj.priceId
+        })
+      }
 
       this.buried('newAgentStripe', '', {
         type
