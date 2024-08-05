@@ -2,28 +2,38 @@ const isCommunity = process.env.VUE_APP_MODE === 'community'
 
 export const MENU = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
+  { name: 'migrateList', icon: 'migrate', code: 'v2_data_replication', parent: 'migrate' },
+  { name: 'dataflowList', icon: 'task', code: 'v2_data_flow', parent: 'dataflow' },
+  { name: 'dataVerificationList', icon: 'data-validation', code: 'v2_data_check', parent: 'dataVerification' },
   {
     name: 'dataConsole',
     icon: 'process-platform',
     code: 'v2_data-console',
     hidden: isCommunity
   },
-  { name: 'connectionsList', icon: 'agent', code: 'v2_datasource_menu', parent: 'connections' },
+
+  { name: 'connectionsList', icon: 'agent', group: 'bottom', code: 'v2_datasource_menu', parent: 'connections' },
   {
-    name: 'dataPipeline',
-    label: 'page_title_data_pipeline',
-    icon: 'task',
-    code: 'v2_data_pipeline',
+    name: 'dataService',
+    label: 'page_title_data_service',
+    icon: 'apiServer_navbar',
+    group: 'bottom',
+    code: 'v2_data-server',
+    hidden: isCommunity,
     children: [
-      { name: 'migrateList', code: 'v2_data_replication', parent: 'migrate' },
-      { name: 'dataflowList', code: 'v2_data_flow', parent: 'dataflow' },
-      { name: 'dataVerificationList', code: 'v2_data_check', parent: 'dataVerification' }
+      { name: 'apiApplication', code: 'v2_api-application', parent: 'apiApplication' },
+      { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
+      { name: 'dataServerAuditList', code: 'v2_data_server_audit', parent: 'dataServerAudit' },
+      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
+      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
+      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' }
     ]
   },
   {
     name: 'advancedFeatures',
     label: 'page_title_advanced_features',
     icon: 'vip-one',
+    group: 'bottom',
     code: 'v2_advanced_features',
     children: [
       { name: 'sharedCacheList', code: 'v2_shared_cache', parent: 'sharedCache' }, // PDK暂时不支持共享缓存，暂时屏蔽
@@ -37,6 +47,7 @@ export const MENU = [
     name: 'discovery',
     label: 'page_title_data_discovery',
     icon: 'dataDiscovery_navbar',
+    group: 'bottom',
     code: 'v2_data_discovery',
     hidden: true, // 放开了数据面板，隐藏数据发现
     children: [
@@ -44,25 +55,12 @@ export const MENU = [
       // { name: 'objectList', code: 'v2_data_object', parent: 'object' },
     ]
   },
-  {
-    name: 'dataService',
-    label: 'page_title_data_service',
-    icon: 'apiServer_navbar',
-    code: 'v2_data-server',
-    hidden: isCommunity,
-    children: [
-      { name: 'apiApplication', code: 'v2_api-application', parent: 'apiApplication' },
-      { name: 'dataServer', code: 'v2_data-server-list', parent: 'dataServer' },
-      { name: 'dataServerAuditList', code: 'v2_data_server_audit', parent: 'dataServerAudit' },
-      { name: 'apiMonitor', code: 'v2_api_monitor', parent: 'apiMonitor' },
-      { name: 'apiClient', code: 'v2_api-client', parent: 'apiClient' },
-      { name: 'apiServer', code: 'v2_api-servers', parent: 'apiServer' }
-    ]
-  },
+
   {
     name: 'system',
     label: 'page_title_system',
     icon: 'setting',
+    group: 'bottom',
     code: 'v2_system-management',
     children: [
       { name: 'roleList', code: 'v2_role_management', parent: 'roleList' },
