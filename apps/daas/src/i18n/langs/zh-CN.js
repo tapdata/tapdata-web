@@ -519,7 +519,7 @@ export default {
   setting_hint_PingTimeout: ' 当超过该设置，认为设备无法连通',
   setting_Job_field_replacement: ' 非法字符替换为',
   setting_A_replacement_for_the_invalid_field_name:
-    ' 一些数据库对于字段名称有特殊要求，tapdata将非法的字符在同步时自动做替换。MongoDB[含有".", "$"作为开头]',
+    ' 一些数据库对于字段名称有特殊要求，系统将非法的字符在同步时自动做替换。MongoDB[含有".", "$"作为开头]',
   setting_true__store_log_to_cloud__false__only_store_to_local_log_file_:
     'true：将日志存储到云，false：仅存储到本地日志文件。',
   setting_When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
@@ -580,8 +580,8 @@ export default {
   user_list_bulk_freeze: '批量冻结',
   user_list_bulk_check: '批量校验',
   user_list_del_user: '删除用户 {0} 后，此用户将无法恢复',
-  user_list_activetion_user: ' 激活用户 {0} 后，此用户将可以使用 TAPDATA 系统',
-  user_list_freeze_user: '冻结用户 {0} 后，此用户将不可以使用 TAPDATA 系统',
+  user_list_activetion_user: `激活用户 {0} 后，此用户将可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系统`,
+  user_list_freeze_user: `冻结用户 {0} 后，此用户将不可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系统`,
   user_list_check_user: '通过校验用户 {0} 的邮箱后，此用户可以被激活',
   user_list_activetion_success: '激活成功',
   user_list_activetion_error: '激活失败',
@@ -1838,12 +1838,9 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警设置',
   daas_feature_unavailable_upgrade_dec_li4: '权限管理（仅企业版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多数据源',
-  daas_feature_unavailable_upgrade_dec_li1_desc:
-    '基于自研技术，Tapdata 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。',
-  daas_feature_unavailable_upgrade_dec_li2_desc:
-    '为减轻源端数据库压力，Tapdata支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。',
-  daas_feature_unavailable_upgrade_dec_li3_desc:
-    'Tapdata 支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。',
+  daas_feature_unavailable_upgrade_dec_li1_desc: `基于自研技术，${process.env.VUE_APP_PAGE_TITLE} 能最大程度保障数据一致性，还支持数据表数据校验，以验证和确保数据流转正确，满足生产环境要求。`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `为减轻源端数据库压力，${process.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日志缓存，开启此功能的任务可直接从缓存中获取增量事件，无需重复读取源库增量日志。`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${process.env.VUE_APP_PAGE_TITLE}支持通过 SMTP 协议发告警邮件，让用户在常用邮箱及时接收异常通知，助其感知异常，保障任务运行稳定可靠。`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     '角色是权限合集，可为其授予多权限并授予用户，用户继承所有权限，依此设计可先创角色再赋予用户，无需为每个用户配置权限，以简化运维管理和提升安全性。',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',

@@ -505,7 +505,7 @@ export default {
   setting_license_alarm: ' license 到期提前提醒（天）',
   setting_License_expiry_email_reminder_: 'license 到期提前幾天提醒設置',
   setting_flow_engine_version: ' 流程引擎版本',
-  setting_tapdata_agent_version: ' tapdata agent版本',
+  setting_tapdata_agent_version: `${process.env.VUE_APP_PAGE_TITLE}  agent版本`,
   setting_doc_base_url: ' 幫助文檔URL',
   setting_help: ' 幫助文檔',
   setting_Ip_addresses: ' Ipv4地址(多個逗號分隔)',
@@ -514,7 +514,7 @@ export default {
   setting_hint_PingTimeout: ' 當超過該設置，認為設備無法連通',
   setting_Job_field_replacement: ' 非法字符替換為',
   setting_A_replacement_for_the_invalid_field_name:
-    ' 一些數據庫對於字段名稱有特殊要求，tapdata將非法的字符在同步時自動做替換。 MongoDB[含有".", "$"作為開頭]',
+    ' 一些數據庫對於字段名稱有特殊要求，系統將非法的字符在同步時自動做替換。 MongoDB[含有".", "$"作為開頭]',
   setting_true__store_log_to_cloud__false__only_store_to_local_log_file_:
     'true：將日誌存儲到雲，false：僅存儲到本地日誌文件。 ',
   setting_When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
@@ -577,8 +577,8 @@ export default {
   user_list_bulk_freeze: '批量凍結',
   user_list_bulk_check: '批量校驗',
   user_list_del_user: '刪除用戶 {0} 後，此用戶將無法恢復',
-  user_list_activetion_user: ' 激活用戶 {0} 後，此用戶將可以使用 TAPDATA 系統',
-  user_list_freeze_user: '凍結用戶 {0} 後，此用戶將不可以使用 TAPDATA 系統',
+  user_list_activetion_user: `激活用戶 {0} 後，此用戶將可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系統`,
+  user_list_freeze_user: `凍結用戶 {0} 後，此用戶將不可以使用 ${process.env.VUE_APP_PAGE_TITLE} 系統`,
   user_list_check_user: '通過校驗用戶 {0} 的郵箱後，此用戶可以被激活',
   user_list_activetion_success: '激活成功',
   user_list_activetion_error: '激活失敗',
@@ -1834,12 +1834,9 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: '告警設置',
   daas_feature_unavailable_upgrade_dec_li4: '權限管理（僅企業版）',
   daas_feature_unavailable_upgrade_dec_li5: '更多數據源',
-  daas_feature_unavailable_upgrade_dec_li1_desc:
-    '基於自研技術，Tapdata 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。',
-  daas_feature_unavailable_upgrade_dec_li2_desc:
-    '為減輕源端數據庫壓力，Tapdata支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。',
-  daas_feature_unavailable_upgrade_dec_li3_desc:
-    'Tapdata 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。',
+  daas_feature_unavailable_upgrade_dec_li1_desc: `基於自研技術，${process.env.VUE_APP_PAGE_TITLE} 能最大程度保障數據一致性，還支持數據表數據校驗，以驗證和確保數據流轉正確，滿足生產環境要求。`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `為減輕源端數據庫壓力，${process.env.VUE_APP_PAGE_TITLE} 支持共享挖掘增量日誌緩存，開啓此功能的任務可直接從緩存中獲取增量事件，無需重復讀取源庫增量日誌。`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${process.env.VUE_APP_PAGE_TITLE} 支持通過 SMTP 協議發告警郵件，讓用戶在常用郵箱及時接收異常通知，助其感知異常，保障任務運行穩定可靠。`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     '角色是權限合集，可為其授予多權限並授予用戶，用戶繼承所有權限，依此設計可先創角色再賦予用戶，無需為每個用戶配置權限，以簡化運維管理和提升安全性。',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',
