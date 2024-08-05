@@ -725,5 +725,7 @@ export default {
     '開啓時，根據更新條件創建唯一索引。關閉時，創建普通索引。注意：更新條件字段相同的記錄在更新時可能丟數，併發寫入有幾率出現重複數據',
   packages_dag_refresh_schema: '刷新模型',
   packages_dag_switch_to_table_view: '切換至表格視圖',
-  packages_dag_switch_to_tree_view: '切換至樹形視圖'
+  packages_dag_switch_to_tree_view: '切換至樹形視圖',
+  packages_dag_syncIndexTip: '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
+  packages_dag_updateConditionFields_alert: '為了保證性能，系統會自動給更新條件字段創建索引'
 }

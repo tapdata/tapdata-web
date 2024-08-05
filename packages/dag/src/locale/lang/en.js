@@ -740,7 +740,7 @@ export default {
   packages_dag_enableSyncMetricCollector_tip:
     'If enabled, the sync metrics of the task will be automatically collected. After the task stops, the corresponding metric information will be output for analysis.',
   packages_dag_update_conditions_tip:
-    'Note: Tapdata will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
+    'Note: System will automatically create indexes for update condition fields to optimize performance. Consider manually creating indexes before running tasks to avoid impacting the target database.',
   packages_dag_existDataProcessMode_desc:
     'This action will directly delete the target table and data, potentially impacting the database. Please use with caution.',
   packages_dag_ddl_events_collapse_tip:
@@ -782,5 +782,8 @@ export default {
     'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.',
   packages_dag_refresh_schema: 'Refresh Schema',
   packages_dag_switch_to_table_view: 'Switch to Table View',
-  packages_dag_switch_to_tree_view: 'Switch to Tree View'
+  packages_dag_switch_to_tree_view: 'Switch to Tree View',
+  packages_dag_syncIndexTip:
+    'Enabling this capability will automatically synchronize the source index to the target. This action may impact the target database, so please enable it with caution.',
+  packages_dag_updateConditionFields_alert: 'To ensure performance, the system will auto-index updated fields.'
 }

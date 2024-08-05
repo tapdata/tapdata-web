@@ -730,5 +730,7 @@ export default {
     '开启时，根据更新条件创建唯一索引。关闭时，创建普通索引。注意：更新条件字段相同的记录在更新时可能丢数，并发写入有几率出现重复数据',
   packages_dag_refresh_schema: '刷新模型',
   packages_dag_switch_to_table_view: '切换至表格视图',
-  packages_dag_switch_to_tree_view: '切换至树形视图'
+  packages_dag_switch_to_tree_view: '切换至树形视图',
+  packages_dag_syncIndexTip: '开启该能力后，会自动将源的索引同步到目标，该行为可能会对目标数据库造成影响，请谨慎开启',
+  packages_dag_updateConditionFields_alert: '为了保证性能，系统会自动给更新条件字段创建索引'
 }
