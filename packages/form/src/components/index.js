@@ -25,5 +25,6 @@ export * from './json-editor'
 export * from './form-collapse'
 export * from './table-field-select'
 export * from './form-tab'
+export * from './switch' // 为了扩展开关的二次确认
 
 export * from '@formily/element'

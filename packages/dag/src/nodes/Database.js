@@ -948,6 +948,11 @@ export class Database extends NodeType {
                           layout: 'horizontal'
                         },
                         'x-component': 'Switch',
+                        'x-component-props': {
+                          confirm: {
+                            title: i18n.t('packages_dag_syncIndexTip')
+                          }
+                        },
                         'x-reactions': {
                           fulfill: {
                             state: {
