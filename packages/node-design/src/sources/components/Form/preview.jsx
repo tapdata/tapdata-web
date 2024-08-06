@@ -19,7 +19,7 @@ export const Form = observer(
       )
 
       return () => (
-        <BaseForm {...{ attrs: { ...attrs } }} class={prefix} form={form}>
+        <BaseForm {...attrs} class={prefix} form={form}>
           {slots.default?.()}
         </BaseForm>
       )

@@ -1,5 +1,5 @@
 import { FormPath } from '@formily/core'
-import { toJS } from '@formily/reactive'
+import { toJS, raw } from '@formily/reactive'
 import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@tap/form'
@@ -31,7 +31,7 @@ const SchemaStateMap = {
   'x-visible': 'visible',
   'x-hidden': 'hidden',
   'x-display': 'display',
-  'x-pattern': 'pattern'
+  'x-pattern': 'pattern',
 }
 
 const NeedShownExpression = {
@@ -39,12 +39,12 @@ const NeedShownExpression = {
   description: true,
   default: true,
   'x-content': true,
-  'x-value': true
+  'x-value': true,
 }
 
-const isExpression = val => isStr(val) && /^\{\{.*\}\}$/.test(val)
+const isExpression = (val) => isStr(val) && /^\{\{.*\}\}$/.test(val)
 
-const filterExpression = val => {
+const filterExpression = (val) => {
   if (typeof val === 'object') {
     const isArray = isArr(val)
     const results = reduce(
@@ -62,7 +62,7 @@ const filterExpression = val => {
           return buf
         }
       },
-      isArray ? [] : {}
+      isArray ? [] : {},
     )
     return results
   }
@@ -86,6 +86,7 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
       props[fieldKey] = filterExpression(value)
     }
   })
+  console.log('raw', raw(components), toJS(components))
   if (!components['FormItem']) {
     components['FormItem'] = FormItem
   }
@@ -129,21 +130,21 @@ export const Field = observer(
         if (attrs.type === 'object') {
           return (
             <Container>
-              <ObjectField attrs={fieldProps} name={node.id}>
+              <ObjectField {...fieldProps} name={node.id}>
                 {slots.default?.()}
               </ObjectField>
             </Container>
           )
         } else if (attrs.type === 'array') {
-          return <ArrayField attrs={fieldProps} name={node.id} />
+          return <ArrayField {...fieldProps} name={node.id} />
         } else if (node.props.type === 'void') {
           return (
-            <VoidField attrs={fieldProps} name={node.id}>
+            <VoidField {...fieldProps} name={node.id}>
               {slots.default?.()}
             </VoidField>
           )
         }
-        return <InternalField attrs={fieldProps} name={node.id} />
+        return <InternalField {...fieldProps} name={node.id} />
         /*return CreateElement(
           InternalField,
           {
@@ -156,12 +157,12 @@ export const Field = observer(
           {}
         )*/
       }
-    }
-  })
+    },
+  }),
 )
 
 Field.Behavior = createBehavior({
   name: 'Field',
   selector: 'Field',
-  designerLocales: AllLocales.Field
+  designerLocales: AllLocales.Field,
 })

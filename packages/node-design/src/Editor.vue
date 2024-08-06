@@ -81,6 +81,7 @@ import {
   // DrawerSetter,
   CollapseItem,
 } from './components'
+import { markRaw } from 'vue'
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({
@@ -127,7 +128,7 @@ export default {
     return {
       sources: [Input, Select, InputNumber, Checkbox, Radio],
       businessSources: [FieldSelect],
-      components: {
+      components: markRaw({
         Field,
         Input,
         Select,
@@ -137,15 +138,15 @@ export default {
         Checkbox,
         Radio,
         FieldSelect,
-      },
-      settingsFormComponents: {
+      }),
+      settingsFormComponents: markRaw({
         SizeInput,
         DisplayStyleSetter,
         FlexStyleSetter,
         Slider,
         CollapseItem,
         ValueInput,
-      },
+      }),
     }
   },
 }

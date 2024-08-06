@@ -27,15 +27,17 @@ export const TextWidget = observer(
         return token
       }
 
-      let txt = ref()
+      let txt
 
       if (ctx.slots.default) {
         // console.log('ctx.slots.default', ctx.slots.default)
-        txt.value = computed(() => {
+        txt = computed(() => {
           const slot = ctx.slots.default?.()
           // console.log('TextWidget', slot[0]?.text)
-          return slot[0]?.text
+          return slot[0]?.children
         })
+      } else {
+        txt = ref()
       }
 
       return () => (

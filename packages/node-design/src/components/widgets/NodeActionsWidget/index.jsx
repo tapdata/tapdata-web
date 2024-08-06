@@ -1,4 +1,4 @@
-import { ElSpace as Space, ElTypography as Typography, ElDivider as Divider } from 'element-plus'
+import { ElSpace as Space, ElLink, ElDivider as Divider } from 'element-plus'
 import { observer } from '@formily/reactive-vue'
 import { usePrefix, useTreeNode, useSelected } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
@@ -29,12 +29,12 @@ NodeActionsWidget.Action = defineComponent({
   setup: ({ icon, title, ...props }) => {
     const prefix = usePrefix('node-actions-item')
     return () => (
-      <Typography.Link {...props} class={prefix} data-click-stop-propagation="true">
-        <span className={prefix + '-text'}>
+      <ElLink {...props} class={prefix} data-click-stop-propagation="true">
+        <span class={prefix + '-text'}>
           <IconWidget infer={icon} />
           <TextWidget>{title}</TextWidget>
         </span>
-      </Typography.Link>
+      </ElLink>
     )
   },
 })

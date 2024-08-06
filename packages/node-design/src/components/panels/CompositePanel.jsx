@@ -10,7 +10,7 @@ const parseItems = (children) => {
     items.push({
       key: child['key'] ?? index,
       ...child.componentOptions?.propsData,
-      ...child.data.attrs,
+      ...child.props,
       children: child.children || child.componentOptions?.children,
     })
   })
@@ -40,14 +40,13 @@ export const CompositePanel = defineComponent({
     direction: String,
     onChange: Function,
   },
-  setup(props, { emit }) {
-    const { slots } = getCurrentInstance()
+  setup(props, { emit, slots }) {
     const prefix = usePrefix('composite-panel')
-    const activeKeyRef = ref(props.defaultActiveKey ?? getDefaultKey(slots.default))
+    const activeKeyRef = ref(props.defaultActiveKey ?? getDefaultKey(slots.default()))
     const pinningRef = ref(props.defaultPinning ?? false)
     const visibleRef = ref(props.defaultOpen ?? true)
 
-    const items = parseItems(slots.default)
+    const items = parseItems(slots.default())
     const currentItem = findItem(items, activeKeyRef.value)
     const content = currentItem?.children
 
@@ -173,6 +172,6 @@ export const CompositePanel = defineComponent({
 
 CompositePanel.Item = defineComponent({
   setup(props, { slots }) {
-    return () => <FragmentComponent>{slots.default?.()}</FragmentComponent>
+    return () => slots.default
   },
 })

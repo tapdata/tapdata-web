@@ -50,7 +50,7 @@ export const TreeNodeWidget = observer(
             // eslint-disable-next-line
             console.log('renderComponent', style, attrs)
             return (
-              <Com attrs={attrs} style={style} key={node.id}>
+              <Com {...attrs} style={style} key={node.id}>
                 {renderChildren()}
               </Com>
             )
@@ -87,7 +87,7 @@ export const ComponentTreeWidget = observer(
       })
 
       return () => (
-        <div style={{ ...treeRef.value?.props?.style }} class={prefix} attrs={dataId}>
+        <div style={{ ...treeRef.value?.props?.style }} class={prefix} dataId={dataId}>
           <DesignerComponentsContext.Provider value={props.components}>
             <TreeNodeWidget node={treeRef.value} />
           </DesignerComponentsContext.Provider>

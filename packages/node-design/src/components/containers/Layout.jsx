@@ -1,4 +1,4 @@
-import { defineComponent, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { each, useContext } from '@tap/shared'
 import { DesignerLayoutContext } from '../../context'
 
@@ -18,15 +18,16 @@ export const Layout = defineComponent({
     },
     variables: Array,
   },
-  setup: (props, { slots, refs }) => {
+  setup: (props, { slots }) => {
     const layoutRef = useContext(DesignerLayoutContext)
+    const root = ref(null)
 
     watch(
       () => props.variables,
       () => {
-        if (refs.root) {
+        if (root.value) {
           each(props.variables, (value, key) => {
-            refs.root.style.setProperty(`--${key}`, value)
+            root.value.style.setProperty(`--${key}`, value)
           })
         }
       },
@@ -38,7 +39,7 @@ export const Layout = defineComponent({
 
     return () => (
       <div
-        ref="root"
+        ref={root}
         class={{
           [`${props.prefixCls}app`]: true,
           [`${props.prefixCls}${props.theme}`]: props.theme,

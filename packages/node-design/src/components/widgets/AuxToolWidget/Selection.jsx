@@ -21,6 +21,7 @@ export const SelectionBox = defineComponent({
     const prefix = usePrefix('aux-selection-box')
     const innerPrefix = usePrefix('aux-selection-box-inner')
     const nodeRectRef = useValidNodeOffsetRect(props.node)
+
     return () => {
       const nodeRect = nodeRectRef.value
       const createSelectionStyle = () => {
@@ -47,7 +48,7 @@ export const SelectionBox = defineComponent({
       }
 
       return (
-        <div attrs={selectionId} class={prefix} style={createSelectionStyle()}>
+        <div selectionId={selectionId} class={prefix} style={createSelectionStyle()}>
           <div class={innerPrefix}></div>
           <ResizeHandler node={props.node} />
           <TranslateHandler node={props.node} />
@@ -69,14 +70,14 @@ export const Selection = observer(
         if (cursor.value.status !== 'NORMAL' && viewportDragonRef.value.touchNode) return null
         const selection = selectionRef.value
         return (
-          <FragmentComponent>
+          <>
             {selection.selected.map((id) => {
               const node = treeRef.value.findById(id)
               if (!node) return
               if (node.hidden) return
               return <SelectionBox key={id} node={node} showHelpers={selection.selected.length === 1} />
             })}
-          </FragmentComponent>
+          </>
         )
       }
     },

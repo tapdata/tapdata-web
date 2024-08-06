@@ -15,6 +15,7 @@ export const EmptyWidget = observer(
 
       return () => {
         const tree = treeRef.value
+        console.log('tree', tree)
         const renderEmpty = () => {
           return (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -41,7 +42,8 @@ export const EmptyWidget = observer(
           )
         }
         if (!tree?.children?.length) {
-          return <div class={prefix}>{slots.default ? slots.default() : renderEmpty()}</div>
+          console.log('slots.default()', slots.default(), !slots.default())
+          return <div class={prefix}>{slots.default()[0]?.children || renderEmpty()}</div>
         }
         return null
       }

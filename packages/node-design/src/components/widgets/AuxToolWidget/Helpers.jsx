@@ -10,13 +10,14 @@ const HELPER_DEBOUNCE_TIMEOUT = 100
 
 export const Helpers = defineComponent({
   props: ['node', 'nodeRect'],
-  setup: (props, { refs }) => {
+  setup: (props) => {
     const node = props.node
     const nodeRect = props.nodeRect
     const prefix = usePrefix('aux-helpers')
     const viewportRef = useViewport()
     const unmountRef = ref(false)
     const position = ref('top-right')
+    const root = ref(null)
 
     useEffect(
       () => {
@@ -52,7 +53,7 @@ export const Helpers = defineComponent({
         }
 
         const update = () => {
-          const helpersRect = refs.root?.getBoundingClientRect()
+          const helpersRect = root.value?.getBoundingClientRect()
           if (!helpersRect || !nodeRect) return
           if (unmountRef.value) return
           position.value = getYInViewport(nodeRect, helpersRect) + '-' + getXInViewport(nodeRect, helpersRect)
@@ -90,7 +91,7 @@ export const Helpers = defineComponent({
               [position.value]: true,
             },
           ]}
-          ref="root"
+          ref={root}
         >
           <div class={prefix + '-content'}>
             <Selector node={node} />

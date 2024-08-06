@@ -7,18 +7,21 @@ import { customNodeApi } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 import { TextEditable } from '@tap/component'
+import { useRouter } from 'vue-router'
+import i18n from '@tap/i18n'
 
 export const StudioHeader = observer(
   defineComponent({
     directives: { focusSelect },
-    setup: (props, { root }) => {
+    setup: (props) => {
       const workbenchRef = useWorkbench()
       const designerRef = useDesigner()
       const customNodeRef = useCustomNode()
       const saving = ref(false)
+      const router = useRouter()
 
       watch(
-        () => root.$route,
+        router.currentRoute,
         async (route) => {
           if (route.params?.id) {
             if (route.params.action === 'nodeSave') return
@@ -37,7 +40,7 @@ export const StudioHeader = observer(
       const save = async () => {
         const customNode = customNodeRef.value
         if (!customNode.name) {
-          root.$message.warning(root.$t('packages_nodeDesign_custom_node_name_required'))
+          ElMessage.warning(i18n.global.t('packages_nodeDesign_custom_node_name_required'))
           return
         }
         saving.value = true
@@ -46,12 +49,12 @@ export const StudioHeader = observer(
 
           if (!customNode.id) {
             customNode.id = data.id
-            root.$router.replace({
+            router.replace({
               name: 'NodeEditor',
               params: { id: data.id, action: 'nodeSave' },
             })
           }
-          root.$message.success(root.$t('public_message_save_ok'))
+          ElMessage.success(i18n.global.t('public_message_save_ok'))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)
@@ -64,7 +67,7 @@ export const StudioHeader = observer(
           <div class="panel-header-nav text-center">
             <button
               onClick={() => {
-                root.$router.push({
+                router.push({
                   name: 'customNodeList',
                 })
               }}

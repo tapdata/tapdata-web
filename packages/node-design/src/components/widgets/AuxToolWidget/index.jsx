@@ -5,17 +5,18 @@ import { FreeSelection } from './FreeSelection'
 import { Cover } from './Cover'
 import { DashedBox } from './DashedBox'
 import './styles.scss'
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 
 export const AuxToolWidget = defineComponent({
-  setup: (props, { refs }) => {
+  setup: (props) => {
     const engine = useDesigner()
     const viewportRef = useViewport()
     const prefix = usePrefix('auxtool')
+    const root = ref(null)
 
     engine.value.subscribeWith('viewport:scroll', () => {
-      if (viewportRef.value.isIframe && refs.root) {
-        refs.root.style.transform = `perspective(1px) translate3d(${-viewportRef.value.scrollX}px,${-viewportRef.value
+      if (viewportRef.value.isIframe && root.value) {
+        root.value.style.transform = `perspective(1px) translate3d(${-viewportRef.value.scrollX}px,${-viewportRef.value
           .scrollY}px,0)`
       }
     })
@@ -23,7 +24,7 @@ export const AuxToolWidget = defineComponent({
     return () => {
       if (!viewportRef.value) return null
       return (
-        <div ref="root" class={prefix}>
+        <div ref={root} class={prefix}>
           <Insertion />
           <DashedBox />
           <Selection />

@@ -1,3 +1,4 @@
+import { markRaw } from 'vue'
 import { isArr } from '@tap/shared'
 import { TreeNode, Engine } from './models'
 import { mergeLocales } from './internals'
@@ -54,13 +55,14 @@ export const createDesigner = (props = {}) => {
   const drivers = props.drivers || []
   const effects = props.effects || []
   const shortcuts = props.shortcuts || []
-  return untracked(
-    () =>
+  return untracked(() =>
+    markRaw(
       new Engine({
         ...props,
         effects: [...effects, ...DEFAULT_EFFECTS],
         drivers: [...drivers, ...DEFAULT_DRIVERS],
         shortcuts: [...shortcuts],
       }),
+    ),
   )
 }

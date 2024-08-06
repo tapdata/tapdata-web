@@ -7,14 +7,13 @@ import { requestIdle } from '@tap/shared'
 export const SettingsPanel = observer(
   defineComponent({
     props: ['title', 'extra'],
-    setup: (props, { slots }) => {
+    setup(props, { slots }) {
+      // const prefixRef = usePrefix('settings-panel')
       const prefix = usePrefix('settings-panel')
       const workbenchRef = useWorkbench()
       const innerVisible = ref(true)
+      const pinning = ref(false)
       const visible = ref(true)
-      const currentWorkspace = workbenchRef.value?.activeWorkspace || workbenchRef.value?.currentWorkspace
-      const currentWorkspaceId = currentWorkspace?.id
-      const nodeRef = useCurrentNode(currentWorkspaceId)
 
       watchEffect(() => {
         if (visible.value || workbenchRef.value.type === 'DESIGNABLE') {
@@ -29,9 +28,22 @@ export const SettingsPanel = observer(
       })
 
       return () => {
-        if (workbenchRef.value.type !== 'DESIGNABLE' || nodeRef.value?.isRoot) {
+        if (workbenchRef.value.type !== 'DESIGNABLE') {
           if (innerVisible.value) innerVisible.value = false
           return null
+        }
+        if (!visible.value) {
+          if (innerVisible.value) innerVisible.value = false
+          return (
+            <div
+              class={prefixRef.value + '-opener'}
+              onClick={() => {
+                visible.value = true
+              }}
+            >
+              <IconWidget infer="Setting" size={'20px'} />
+            </div>
+          )
         }
 
         return (

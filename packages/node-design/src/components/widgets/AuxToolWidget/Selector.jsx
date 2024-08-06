@@ -34,11 +34,12 @@ const useMouseHover = (elRef, enter, leave) => {
 export const Selector = observer(
   defineComponent({
     props: ['node'],
-    setup: (props, { refs }) => {
+    setup: (props) => {
       const node = props.node
       const hoverRef = useHover()
       const expand = ref(false)
-      const elRef = computed(() => refs.ref)
+      const root = ref(null)
+      const elRef = computed(() => root.value)
       const selectionRef = useSelection()
       const prefix = usePrefix('aux-selector')
       const renderIcon = (node) => {
@@ -102,7 +103,7 @@ export const Selector = observer(
       return () => {
         const hover = hoverRef.value
         return (
-          <div ref="ref" class={prefix}>
+          <div ref={root} class={prefix}>
             <Button
               class={prefix + '-title'}
               type="primary"

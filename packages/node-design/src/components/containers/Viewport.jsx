@@ -8,7 +8,7 @@ export const Viewport = defineComponent({
     placeholder: {},
     dragTipsDirection: {},
   },
-  setup: (props, { slots, refs }) => {
+  setup: (props, { slots }) => {
     const placeholder = props.placeholder
     const dragTipsDirection = props.dragTipsDirection
     const loaded = ref(false)
@@ -17,9 +17,10 @@ export const Viewport = defineComponent({
     // const ref = useRef<HTMLDivElement>()
     const viewportRef = ref()
     const isFrameRef = ref(false)
+    const root = ref(null)
 
     onMounted(() => {
-      const frameElement = refs.root?.querySelector('iframe')
+      const frameElement = root.value?.querySelector('iframe')
       if (!_viewportRef.value) return
       if (viewportRef.value && viewportRef.value !== _viewportRef.value) {
         viewportRef.value.onUnmount()
@@ -33,7 +34,7 @@ export const Viewport = defineComponent({
           })
         })
       } else {
-        _viewportRef.value.onMount(refs.root, window)
+        _viewportRef.value.onMount(root.value, window)
         requestIdle(() => {
           isFrameRef.value = false
           loaded.value = true
@@ -48,7 +49,7 @@ export const Viewport = defineComponent({
     return () => (
       <div
         props={props}
-        ref="root"
+        ref={root}
         class={prefix}
         style={{
           opacity: !loaded.value ? 0 : 1,

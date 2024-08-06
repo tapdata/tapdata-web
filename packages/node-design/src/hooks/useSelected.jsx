@@ -1,10 +1,15 @@
 import { useSelection } from './useSelection'
-import { toJS, observe } from '@formily/reactive'
-import { onBeforeUnmount, ref } from 'vue'
+import { toJS } from '@formily/reactive'
+import { computed as reactiveComputed } from '../shared'
 
 export const useSelected = (workspaceId) => {
   const selectionRef = useSelection(workspaceId)
-  const res = ref(toJS(selectionRef.value?.selected) || [])
+
+  return reactiveComputed(() => {
+    return toJS(selectionRef.value?.selected)
+  })
+
+  /*const res = ref(toJS(selectionRef.value?.selected) || [])
 
   const dispose = observe(selectionRef.value, () => {
     res.value = toJS(selectionRef.value.selected)
@@ -14,5 +19,5 @@ export const useSelected = (workspaceId) => {
     dispose()
   })
 
-  return res
+  return res*/
 }

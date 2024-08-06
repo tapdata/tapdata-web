@@ -9,8 +9,7 @@ import { defineComponent, ref, unref, onBeforeUnmount } from 'vue'
 
 export const GhostWidget = observer(
   defineComponent({
-    setup: (props, setupContext) => {
-      const refs = setupContext.refs
+    setup: () => {
       const designer = useDesigner()
       const cursorRef = useCursor()
       const root = ref(null)
@@ -20,8 +19,8 @@ export const GhostWidget = observer(
         const transform = `perspective(1px) translate3d(${cursor.position?.topClientX - 18}px,${
           cursor.position?.topClientY - 12
         }px,0) scale(0.8)`
-        if (!refs.root) return
-        refs.root.style.transform = transform
+        if (!root.value) return
+        root.value.style.transform = transform
       })
 
       onBeforeUnmount(() => {
@@ -46,7 +45,7 @@ export const GhostWidget = observer(
           </span>
         )
       }
-      if (!firstNode || this.cursor.status !== CursorStatus.Dragging) return Vue.h
+      if (!firstNode || this.cursor.status !== CursorStatus.Dragging) return null
       return (
         <div id="Ghost" ref="root" class={this.prefix}>
           {renderNodes()}

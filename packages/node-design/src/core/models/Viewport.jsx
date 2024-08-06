@@ -1,3 +1,4 @@
+import { markRaw } from 'vue'
 import { calcBoundingRect, calcElementLayout, isHTMLElement, isPointInRect, requestIdle, cancelIdle } from '@tap/shared'
 import { action, define, observable } from '@formily/reactive'
 import { Selector } from './Selector'
@@ -34,7 +35,7 @@ export class Viewport {
     this.viewportElement = props.viewportElement
     this.contentWindow = props.contentWindow
     this.nodeIdAttrName = props.nodeIdAttrName
-    this.selector = new Selector()
+    this.selector = markRaw(new Selector())
     this.digestViewport()
     this.makeObservable()
     this.attachEvents()
