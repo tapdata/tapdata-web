@@ -11,31 +11,25 @@
   >
     <template #title>
       <div class="test-result">
-        <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'">
+        <div v-if="testData.testLogs && !testData.testLogs.length && wsError === 'ERROR'">
           <div class="flex align-center gap-2">
-            <VIcon class="color-danger" size="16">error</VIcon>
-            <span class="color-danger fs-6 fw-sub">{{
-              wsErrorMsg || $t('packages_business_dataForm_test_error')
-            }}</span>
-            <el-button @click="switchShowStack" type="text"
+            <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+            <span class="fs-6 fw-sub">{{ wsErrorMsg || $t('packages_business_dataForm_test_error') }}</span>
+            <el-button class="px-1 py-0.5" @click="switchShowStack" type="text"
               >{{ showStack ? $t('public_button_fold') : $t('public_button_expand')
               }}<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
-          </div>
-
-          <div v-show="showStack" class="px-4 py-2 el-alert el-alert--error is-light rounded-lg overflow-hidden">
-            <pre class="font-color-dark" style="font-size: 13px; overflow-x: auto">{{ wsErrorStack }}</pre>
           </div>
         </div>
 
         <template v-else>
           <div class="flex align-center gap-2" v-if="status === 'ready'">
-            <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
+            <VIcon class="color-success" size="18">check-circle-fill</VIcon>
             <span class="fs-6 fw-sub">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
           </div>
 
           <div class="flex align-center gap-2" v-else-if="['invalid', 'ERROR'].includes(status)">
-            <VIcon :style="{ color: colorMap[status] }" size="16">error</VIcon>
+            <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
             <span class="fs-6 fw-sub">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
           </div>
 
@@ -53,6 +47,16 @@
       </div>
     </template>
 
+    <el-collapse-transition>
+      <div v-show="showStack">
+        <pre
+          class="m-0 px-4 py-2 font-color-dark rounded-lg"
+          style="font-size: 13px; overflow-x: auto; background: #fff2f0; border: 1px solid #ffccc7"
+          >{{ wsErrorStack }}</pre
+        >
+      </div>
+    </el-collapse-transition>
+
     <div v-show="showProgress && fileInfo.progress">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
@@ -63,7 +67,9 @@
       </div>
       <ElProgress class="my-2" :show-text="false" :percentage="fileInfo.progress"></ElProgress>
     </div>
+
     <el-table
+      v-if="!(testData.testLogs && !testData.testLogs.length && wsError === 'ERROR')"
       :data="testData.testLogs"
       style="width: 100%"
       max-height="500"
@@ -109,7 +115,7 @@
     <ElDialog width="786px" :visible.sync="errorDialog.open" append-to-body>
       <template #title>
         <div class="flex align-center gap-2">
-          <VIcon class="color-danger" size="16">error</VIcon>
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
           <span class="fs-6 fw-sub">{{ errorDialog.title }}</span>
         </div>
       </template>
@@ -141,7 +147,7 @@
       ></div>
 
       <template v-if="errorDialog.solution">
-        <div class="fw-sub mb-3 ml-4 font-color-dark">解决方案</div>
+        <div class="fw-sub mb-3 ml-4 font-color-dark">{{ $t('packages_business_solution') }}</div>
         <div
           v-if="errorDialog.solution"
           v-html="errorDialog.solution"
@@ -150,10 +156,10 @@
       </template>
     </ElDialog>
 
-    <tempalte #footer>
+    <template #footer>
       <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
       <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
-    </tempalte>
+    </template>
   </el-dialog>
 </template>
 
@@ -200,12 +206,12 @@ export default {
         unTest: '#aaaaaa'
       },
       iconMap: {
-        ready: 'success',
-        invalid: 'error',
+        ready: 'check-circle-fill',
+        invalid: 'circle-close-filled',
         testing: '',
-        passed: 'success',
+        passed: 'check-circle-fill',
         waiting: 'question-fill',
-        failed: 'error',
+        failed: 'circle-close-filled',
         unTest: ''
       },
       statusMap: {
@@ -255,6 +261,7 @@ export default {
           let result = data.result || []
           this.wsError = data.status
           this.wsErrorMsg = data.error
+          this.wsErrorStack = data.stack
           clearTimeout(this.timer)
           this.timer = null
           let testData = {
@@ -263,16 +270,13 @@ export default {
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
             let details = validate_details.filter(item => item.status !== 'waiting')
-            // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
             if (details.length === 0) {
               validate_details = validate_details.map(item => {
                 item.status = 'unTest'
                 return item
               })
             }
-            // if (unPassedNums.length === 0) {
-            // 	this.hideTableInfo = true;
-            // }
+
             this.testData.testLogs = validate_details
             testData['testLogs '] = validate_details
             testData['status'] = result.status

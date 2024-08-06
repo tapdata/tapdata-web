@@ -1313,5 +1313,6 @@ export default {
   packages_business_shared_cache_enforceShareCdc: 'When shared mining is not available (Cache Start)',
   packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops',
   packages_business_not_support_validation: '{connection} does not support {method}',
-  packages_business_download_details: 'Download'
+  packages_business_download_details: 'Download',
+  packages_business_solution: 'Solution'
 }

@@ -74,6 +74,7 @@ import {
 import { getCell, getColumnByCell } from 'element-ui/packages/table/src/util'
 import { getStyle, hasClass } from 'element-ui/src/utils/dom'
 import TableBody from 'element-ui/packages/table/src/table-body'
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 // 组件默认尺寸为small
 Vue.prototype.$ELEMENT = { size: 'small' }
@@ -299,3 +300,4 @@ Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = Message
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$notify = Notification
+Vue.component(CollapseTransition.name, CollapseTransition)
