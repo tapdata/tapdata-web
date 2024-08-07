@@ -961,6 +961,23 @@ export class Database extends NodeType {
                             }
                           }
                         }
+                      },
+                      syncPartitionTableEnable: {
+                        title: i18n.t('packages_dag_syncPartitionTableEnable'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
+                            }
+                          }
+                        }
                       }
                     }
                   },

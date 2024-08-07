@@ -366,7 +366,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'Alert',
                     'x-component-props': {
-                      class: 'lh-base',
+                      class: 'lh-base mb-2',
                       title: i18n.t('packages_dag_updateConditionFields_alert'),
                       type: 'warning',
                       showIcon: true,
@@ -1683,6 +1683,23 @@ export class Table extends NodeType {
                               visible:
                                 '{{$settings.type !== "cdc" && $values.attrs.capabilities.filter(item => ["get_table_info_function", "create_index_function", "query_indexes_function"].includes(item.id)).length === 3}}',
                               description: `{{$self.value ? '${i18n.t('packages_dag_syncIndex_desc')}' : ''}}`
+                            }
+                          }
+                        }
+                      },
+                      syncPartitionTableEnable: {
+                        title: i18n.t('packages_dag_syncPartitionTableEnable'),
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          layout: 'horizontal'
+                        },
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              visible:
+                                '{{$values.attrs.capabilities.some(item => item.id==="target_support_partition")}}'
                             }
                           }
                         }
