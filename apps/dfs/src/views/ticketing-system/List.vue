@@ -190,6 +190,18 @@ export default {
     this.getFilterItems()
     this.getTask()
     this.getConnection()
+
+    if (this.$route.query?.form) {
+      try {
+        let form = JSON.parse(decodeURIComponent(this.$route.query.form))
+        Object.assign(this.createForm, form)
+        this.createDialog = true
+      } catch (e) {
+        console.error(e)
+      }
+
+      this.$router.replace({ name: 'TicketSystem', query: {} })
+    }
   },
   watch: {
     $route(route) {

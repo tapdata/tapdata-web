@@ -5,7 +5,7 @@ import i18n from '@tap/i18n'
 import './index.scss'
 import { copyToClipboard } from '@tap/shared'
 
-function renderUpgrade(h, stack) {
+function renderDialog(h, stack) {
   return (
     <div>
       <div class="flex align-center mb-4">
@@ -37,7 +37,7 @@ function renderUpgrade(h, stack) {
   )
 }
 
-function renderMessage(stack) {
+function renderMessage(message, stack) {
   return h('div', null, [
     h(
       'div',
@@ -45,14 +45,14 @@ function renderMessage(stack) {
         class: 'el-message__content'
       },
       [
-        h('span', null, 'System Error'),
+        h('span', null, message),
         h(
           'el-button',
           {
             class: 'px-1 py-0.5',
             on: {
               click: () => {
-                ErrorMessage(stack)
+                ErrorMessage(stack, message)
               }
             },
             props: {
@@ -67,26 +67,50 @@ function renderMessage(stack) {
   ])
 }
 
-export function ErrorMessage(stack) {
+export function ErrorMessage(stack, message) {
   MessageBox({
     title: '',
     showClose: true,
     customClass: 'message-dialog w-80 max-w-1000 rounded-lg',
-    message: renderUpgrade(h, stack),
-    confirmButtonText: i18n.t('public_button_close')
+    message: renderDialog(h, stack),
+    confirmButtonText: i18n.t('public_button_close'),
+    ...(process.env.VUE_APP_PLATFORM === 'DAAS'
+      ? {}
+      : {
+          showCancelButton: true,
+          cancelButtonText: i18n.t('public_button_close'),
+          confirmButtonText: i18n.t('dfs_user_contactus_chuangjiangongdan'),
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') {
+              done()
+              window.App.$router.push({
+                name: 'TicketSystem',
+                query: {
+                  form: encodeURIComponent(
+                    JSON.stringify({
+                      subject: message,
+                      description: stack
+                    })
+                  )
+                }
+              })
+            } else {
+              done()
+            }
+          }
+        })
   })
 }
 
 export function showErrorMessage(error) {
-  let message
+  let message = error?.message || error?.msg || i18n.t('public_message_request_error')
   let duration = 3000
   let showClose = false
+
   if (error?.stack) {
-    message = renderMessage(error.stack)
+    message = renderMessage(message, error.stack)
     duration = 4000
     showClose = true
-  } else {
-    message = error.message || i18n.t('public_message_request_error')
   }
 
   Message.error({
