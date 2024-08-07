@@ -34,3 +34,5 @@ export {
 
 export * from './DatabaseIcon'
 export * from './create-connection'
+
+export * from './error-message'

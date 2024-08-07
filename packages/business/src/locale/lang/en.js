@@ -88,8 +88,7 @@ export default {
   packages_business_connection_reloadTittle: 'Reload Schema',
   packages_business_connection_reloadMsg:
     'Reloading the schema of the database may take a significant amount of time. Are you sure you want to proceed with the schema reload?',
-  packages_business_dataForm_primaryTest:
-    'The connection test service is being initiated. Please wait a moment for the process to complete',
+  packages_business_dataForm_primaryTest: 'Starting the connection detection service, please wait…',
   packages_business_dataForm_testing: 'Testing, please wait for a while ...',
   packages_business_dataForm_test_testResultFail: 'Connection test failed',
   packages_business_dataForm_test_testResultSuccess: 'Connection test successful',
@@ -1313,5 +1312,7 @@ export default {
   packages_business_shared_cache_enforceShareCdc: 'When shared mining is not available (Cache Start)',
   packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops',
   packages_business_not_support_validation: '{connection} does not support {method}',
-  packages_business_download_details: 'Download'
+  packages_business_download_details: 'Download',
+  packages_business_solution: 'Solution',
+  packages_business_error_details: 'Error Details'
 }

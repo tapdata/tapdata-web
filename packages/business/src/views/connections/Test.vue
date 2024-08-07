@@ -2,42 +2,70 @@
   <el-dialog
     class="connection-test-dialog"
     :visible="visible"
-    width="770px"
+    width="780px"
     :show-close="false"
     append-to-body
     :before-close="handleClose"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
   >
-    <div class="test-result">
+    <template #title>
+      <div class="test-result">
+        <div v-if="testData.testLogs && !testData.testLogs.length && wsError === 'ERROR'">
+          <div class="flex align-center gap-2">
+            <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+            <span class="fs-6 fw-sub">{{ wsErrorMsg || $t('packages_business_dataForm_test_error') }}</span>
+            <el-button class="px-1 py-0.5" @click="switchShowStack" type="text"
+              >{{ showStack ? $t('public_button_fold') : $t('public_button_expand')
+              }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+          </div>
+        </div>
+
+        <template v-else>
+          <div class="flex align-center gap-2" v-if="status === 'ready'">
+            <VIcon class="color-success" size="18">check-circle-fill</VIcon>
+            <span class="fs-6 fw-sub">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
+          </div>
+
+          <div class="flex align-center gap-2" v-else-if="['invalid', 'ERROR'].includes(status)">
+            <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+            <span class="fs-6 fw-sub">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
+          </div>
+
+          <div class="flex align-center gap-2" v-else>
+            <el-image
+              style="width: 20px; height: 20px; vertical-align: bottom"
+              :src="require('@tap/assets/images/loading.gif')"
+            ></el-image>
+            <span v-if="testData.testLogs.length === 0" class="fs-6 fw-sub">{{
+              $t('packages_business_dataForm_primaryTest')
+            }}</span>
+            <span v-else class="fs-6 fw-sub">{{ $t('packages_business_dataForm_testing') }}</span>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <el-collapse-transition>
       <div
-        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
-        style="color: #d54e21"
-        class="flex align-items-start"
+        v-show="showStack"
+        class="position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
+        style="background: #fff2f0; border: 1px solid #ffccc7"
       >
-        <i class="el-icon-warning" style="color: #d54e21"></i>
-        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0 text-prewrap"></pre>
-        <span v-else>{{ $t('packages_business_dataForm_test_error') }}</span>
+        <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+          <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
+            <VIcon class="mr-1">copy</VIcon>
+            <span class="">{{ $t('public_button_copy') }}</span>
+          </el-button>
+        </div>
+
+        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto">{{
+          wsErrorStack
+        }}</pre>
       </div>
-      <div v-else>
-        <div class="test-status flex align-items-center" v-if="['invalid', 'ERROR'].includes(status)">
-          <VIcon :style="{ color: colorMap[status] }" size="16">error</VIcon>
-          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultFail') }}</span>
-        </div>
-        <div class="test-status flex align-items-center" v-if="['ready'].includes(status)">
-          <i class="el-icon-success" :style="{ color: colorMap[status] }"></i>
-          <span class="test-title">{{ $t('packages_business_dataForm_test_testResultSuccess') }}</span>
-        </div>
-        <div class="test-status" v-if="!['ready', 'invalid', 'ERROR'].includes(status)">
-          <el-image
-            style="width: 20px; height: 20px; vertical-align: bottom"
-            :src="require('@tap/assets/images/loading.gif')"
-          ></el-image>
-          <span v-if="testData.testLogs.length === 0">{{ $t('packages_business_dataForm_primaryTest') }}</span>
-          <span v-else>{{ $t('packages_business_dataForm_testing') }}</span>
-        </div>
-      </div>
-    </div>
+    </el-collapse-transition>
+
     <div v-show="showProgress && fileInfo.progress">
       <div>
         <span class="mr-2">{{ $t('packages_business_connections_test_xiazaijindu') }}</span>
@@ -48,13 +76,16 @@
       </div>
       <ElProgress class="my-2" :show-text="false" :percentage="fileInfo.progress"></ElProgress>
     </div>
+
     <el-table
+      v-if="!(testData.testLogs && !testData.testLogs.length && wsError === 'ERROR')"
       :data="testData.testLogs"
       style="width: 100%"
       max-height="500"
       class="test-block"
       :row-style="rowStyleHandler"
       v-loading="testData.testLogs && !testData.testLogs.length"
+      element-loading-background="#fff"
     >
       <el-table-column prop="show_msg" :label="$t('packages_business_dataForm_test_items')">
         <template slot-scope="scope">
@@ -64,40 +95,86 @@
       <el-table-column prop="status" :label="$t('packages_business_dataForm_test_result')" width="150">
         <template slot-scope="scope">
           <!--当前检查项失败 但是不影响此次测试结果 -->
-          <span v-if="scope.row.status === 'failed' && !scope.row.required">
-            <VIcon size="16" :style="{ color: colorMap['warning'] }">warning</VIcon>
-            <!--<i class="el-icon-warning" :style="{ color: colorMap[status] }"></i>-->
+          <span v-if="scope.row.status === 'failed' && !scope.row.required" class="flex align-center gap-1">
+            <VIcon size="14" :style="{ color: colorMap['warning'] }">warning</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
-          <span v-else-if="scope.row.status === 'unTest'">
+          <span v-else-if="scope.row.status === 'unTest'" class="flex align-center gap-1">
             <el-image
               style="width: 20px; height: 20px; vertical-align: bottom"
               :src="require('@tap/assets/images/loading.gif')"
             ></el-image>
             {{ statusMap[scope.row.status] }}
           </span>
-          <span v-else>
-            <VIcon size="16" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
+          <span v-else class="flex align-center gap-1">
+            <VIcon size="14" :style="{ color: colorMap[scope.row.status] }">{{ iconMap[scope.row.status] }}</VIcon>
             {{ statusMap[scope.row.status] }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="fail_message"
-        :label="$t('packages_business_dataForm_test_information')"
-        width="308"
-      ></el-table-column>
+      <el-table-column prop="fail_message" :label="$t('packages_business_dataForm_test_information')" width="308">
+        <template #default="{ row }">
+          <span v-if="!row.item_exception || row.status === 'passed'">{{ row.fail_message }}</span>
+          <el-button v-else type="text" @click="showError(row)">{{ $t('public_view_details') }}</el-button>
+        </template>
+      </el-table-column>
     </el-table>
-    <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
-    <span slot="footer" class="dialog-footer">
+
+    <!--错误详情-->
+    <ElDialog width="786px" :visible.sync="errorDialog.open" append-to-body>
+      <template #title>
+        <div class="flex align-center gap-2">
+          <VIcon class="color-danger" size="18">circle-close-filled</VIcon>
+          <span class="fs-6 fw-sub">{{ errorDialog.title }}</span>
+        </div>
+      </template>
+
+      <div
+        v-if="errorDialog.message"
+        v-html="errorDialog.message"
+        class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
+      ></div>
+
+      <div v-if="errorDialog.stack" class="mb-3 ml-4 flex justify-content-between align-items-end">
+        <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+        <ElTooltip
+          placement="top"
+          manual
+          :content="$t('public_message_copied')"
+          popper-class="copy-tooltip"
+          :value="showTooltip"
+        >
+          <span v-clipboard:copy="errorDialog.stack" v-clipboard:success="onCopy" @mouseleave="showTooltip = false">
+            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
+          </span>
+        </ElTooltip>
+      </div>
+      <div
+        v-if="errorDialog.stack"
+        v-html="errorDialog.stack"
+        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4"
+      ></div>
+
+      <template v-if="errorDialog.solution">
+        <div class="fw-sub mb-3 ml-4 font-color-dark">{{ $t('packages_business_solution') }}</div>
+        <div
+          v-if="errorDialog.solution"
+          v-html="errorDialog.solution"
+          class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4"
+        ></div>
+      </template>
+    </ElDialog>
+
+    <template #footer>
       <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
       <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
-    </span>
+    </template>
   </el-dialog>
 </template>
 
 <script>
 import { VIcon } from '@tap/component'
+import { copyToClipboard } from '@tap/shared'
 export default {
   name: 'Test',
   components: { VIcon },
@@ -122,6 +199,8 @@ export default {
       },
       wsError: '',
       wsErrorMsg: '',
+      wsErrorStack: '',
+      showStack: false,
       status: '',
       timer: null,
       isTimeout: true,
@@ -137,12 +216,12 @@ export default {
         unTest: '#aaaaaa'
       },
       iconMap: {
-        ready: 'success',
-        invalid: 'error',
+        ready: 'check-circle-fill',
+        invalid: 'circle-close-filled',
         testing: '',
-        passed: 'success',
+        passed: 'check-circle-fill',
         waiting: 'question-fill',
-        failed: 'error',
+        failed: 'circle-close-filled',
         unTest: ''
       },
       statusMap: {
@@ -159,7 +238,15 @@ export default {
         fileSize: 0,
         progress: 0,
         status: ''
-      }
+      },
+      errorDialog: {
+        open: false,
+        stack: '',
+        solution: '',
+        message: '',
+        reason: ''
+      },
+      showTooltip: false
     }
   },
   mounted() {
@@ -184,6 +271,7 @@ export default {
           let result = data.result || []
           this.wsError = data.status
           this.wsErrorMsg = data.error
+          this.wsErrorStack = data.stack
           clearTimeout(this.timer)
           this.timer = null
           let testData = {
@@ -192,16 +280,13 @@ export default {
           if (result.response_body) {
             let validate_details = result.response_body.validate_details || []
             let details = validate_details.filter(item => item.status !== 'waiting')
-            // let unPassedNums = validate_details.filter(item => item.status !== 'passed');
             if (details.length === 0) {
               validate_details = validate_details.map(item => {
                 item.status = 'unTest'
                 return item
               })
             }
-            // if (unPassedNums.length === 0) {
-            // 	this.hideTableInfo = true;
-            // }
+
             this.testData.testLogs = validate_details
             testData['testLogs '] = validate_details
             testData['status'] = result.status
@@ -245,6 +330,8 @@ export default {
       delete data.schema
       delete data.response_body
       this.wsError = ''
+      this.wsErrorStack = ''
+      this.showStack = false
       this.testData.testLogs = []
 
       if (this.testType === 'testExternalStorage') {
@@ -353,6 +440,25 @@ export default {
 
     startLoadTestItems() {
       this.startByConnection(...arguments)
+    },
+
+    showError(row) {
+      Object.assign(this.errorDialog, row.item_exception)
+      this.errorDialog.title = row.show_msg
+      this.errorDialog.open = true
+    },
+
+    onCopy() {
+      this.showTooltip = true
+    },
+
+    switchShowStack() {
+      this.showStack = !this.showStack
+    },
+
+    handleCopyStack(stack) {
+      copyToClipboard(stack)
+      this.$message.success(this.$t('public_message_copy_success'))
     }
   }
 }
@@ -365,7 +471,7 @@ export default {
     }
 
     .test-title {
-      font-size: 14px;
+      //font-size: 14px;
       font-weight: bold;
       vertical-align: bottom;
       margin-left: 10px;
