@@ -1252,5 +1252,6 @@ export default {
   packages_business_shared_cache_enforceShareCdc_true: '缓存直接报错停止',
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下载详情',
-  packages_business_solution: '解决方案'
+  packages_business_solution: '解决方案',
+  packages_business_error_details: '错误详情'
 }

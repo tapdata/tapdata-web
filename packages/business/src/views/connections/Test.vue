@@ -48,12 +48,21 @@
     </template>
 
     <el-collapse-transition>
-      <div v-show="showStack">
-        <pre
-          class="m-0 px-4 py-2 font-color-dark rounded-lg"
-          style="font-size: 13px; overflow-x: auto; background: #fff2f0; border: 1px solid #ffccc7"
-          >{{ wsErrorStack }}</pre
-        >
+      <div
+        v-show="showStack"
+        class="position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
+        style="background: #fff2f0; border: 1px solid #ffccc7"
+      >
+        <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+          <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
+            <VIcon class="mr-1">copy</VIcon>
+            <span class="">{{ $t('public_button_copy') }}</span>
+          </el-button>
+        </div>
+
+        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto">{{
+          wsErrorStack
+        }}</pre>
       </div>
     </el-collapse-transition>
 
@@ -165,6 +174,7 @@
 
 <script>
 import { VIcon } from '@tap/component'
+import { copyToClipboard } from '@tap/shared'
 export default {
   name: 'Test',
   components: { VIcon },
@@ -444,6 +454,11 @@ export default {
 
     switchShowStack() {
       this.showStack = !this.showStack
+    },
+
+    handleCopyStack(stack) {
+      copyToClipboard(stack)
+      this.$message.success(this.$t('public_message_copy_success'))
     }
   }
 }
