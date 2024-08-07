@@ -48,11 +48,7 @@
     </template>
 
     <el-collapse-transition>
-      <div
-        v-show="showStack"
-        class="position-relative rounded-lg overflow-hidden error-stack-pre-wrap"
-        style="background: #fff2f0; border: 1px solid #ffccc7"
-      >
+      <div v-show="showStack" class="position-relative rounded-lg overflow-hidden error-stack-pre-wrap">
         <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
           <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
             <VIcon class="mr-1">copy</VIcon>
@@ -115,7 +111,12 @@
       <el-table-column prop="fail_message" :label="$t('packages_business_dataForm_test_information')" width="308">
         <template #default="{ row }">
           <span v-if="!row.item_exception || row.status === 'passed'">{{ row.fail_message }}</span>
-          <el-button v-else type="text" @click="showError(row)">{{ $t('public_view_details') }}</el-button>
+          <div v-else class="flex align-center">
+            <span class="ellipsis">
+              {{ row.item_exception.message }}
+            </span>
+            <el-button type="text" @click="showError(row)">{{ $t('public_view_details') }}</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -132,37 +133,42 @@
       <div
         v-if="errorDialog.message"
         v-html="errorDialog.message"
-        class="text-prewrap mt-n4 mb-6 ml-4 font-color-light"
+        class="text-prewrap mt-n4 mb-6 font-color-light"
       ></div>
 
-      <div v-if="errorDialog.stack" class="mb-3 ml-4 flex justify-content-between align-items-end">
-        <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
-        <ElTooltip
-          placement="top"
-          manual
-          :content="$t('public_message_copied')"
-          popper-class="copy-tooltip"
-          :value="showTooltip"
-        >
-          <span v-clipboard:copy="errorDialog.stack" v-clipboard:success="onCopy" @mouseleave="showTooltip = false">
-            <ElButton type="primary" size="mini">{{ $t('packages_business_logs_nodelog_yijianfuzhi') }}</ElButton>
-          </span>
-        </ElTooltip>
-      </div>
-      <div
-        v-if="errorDialog.stack"
-        v-html="errorDialog.stack"
-        class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4"
-      ></div>
+      <template v-if="errorDialog.reason">
+        <div class="fw-sub mb-3 font-color-dark">{{ $t('public_task_reasons_for_error') }}</div>
+        <div
+          v-if="errorDialog.reason"
+          v-html="errorDialog.reason"
+          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
+        ></div>
+      </template>
 
       <template v-if="errorDialog.solution">
-        <div class="fw-sub mb-3 ml-4 font-color-dark">{{ $t('packages_business_solution') }}</div>
+        <div class="fw-sub mb-3 font-color-dark">{{ $t('packages_business_solution') }}</div>
         <div
           v-if="errorDialog.solution"
           v-html="errorDialog.solution"
-          class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4"
+          class="error-stack-wrap text-prewrap mb-6 font-color-light border overflow-y-auto bg-subtle rounded-lg p-4 lh-base"
         ></div>
       </template>
+
+      <div v-if="errorDialog.stack" class="mb-3 flex justify-content-between align-items-end">
+        <span class="fw-sub font-color-dark">{{ $t('packages_business_logs_nodelog_cuowuduizhan') }}</span>
+      </div>
+      <div v-if="errorDialog.stack" class="error-stack-pre-wrap position-relative mb-6 font-color-light rounded-lg">
+        <div class="position-absolute end-0 top-0 px-2 pt-1 error-stack-actions">
+          <el-button @click="handleCopyStack(wsErrorStack)" type="text" class="px-1 py-0.5 font-color-dark">
+            <VIcon class="mr-1">copy</VIcon>
+            <span class="">{{ $t('public_button_copy') }}</span>
+          </el-button>
+        </div>
+
+        <pre class="m-0 p-4 pt-0 mt-6 font-color-dark" style="max-height: 60vh; font-size: 13px; overflow-x: auto">{{
+          errorDialog.stack
+        }}</pre>
+      </div>
     </ElDialog>
 
     <template #footer>
