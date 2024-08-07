@@ -603,6 +603,10 @@
   width: 75% !important;
 }
 
+.w-80 {
+  width: 80% !important;
+}
+
 .w-100 {
   width: 100% !important;
 }
@@ -12430,4 +12434,8 @@
 }
 .leading-primary {
   line-height: 1.375rem;
+}
+
+.max-w-1000 {
+  max-width: 1000px;
 }

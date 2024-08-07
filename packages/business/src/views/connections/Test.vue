@@ -122,7 +122,7 @@
     </el-table>
 
     <!--错误详情-->
-    <ElDialog width="786px" :visible.sync="errorDialog.open" append-to-body>
+    <ElDialog width="80%" custom-class="max-w-1000" :visible.sync="errorDialog.open" append-to-body>
       <template #title>
         <div class="flex align-center gap-2">
           <VIcon class="color-danger" size="18">circle-close-filled</VIcon>

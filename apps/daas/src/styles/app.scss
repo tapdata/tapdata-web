@@ -264,3 +264,18 @@
   opacity: 1;
   cursor: help;
 }
+
+.error-stack-pre-wrap {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+
+  .error-stack-actions {
+    display: none;
+  }
+
+  &:hover {
+    .error-stack-actions {
+      display: block;
+    }
+  }
+}

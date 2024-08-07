@@ -71,7 +71,7 @@ export function ErrorMessage(stack) {
   MessageBox({
     title: '',
     showClose: true,
-    customClass: 'service-upgrade-dialog rounded-lg',
+    customClass: 'message-dialog w-80 max-w-1000 rounded-lg',
     message: renderUpgrade(h, stack),
     confirmButtonText: i18n.t('public_button_close')
   })
