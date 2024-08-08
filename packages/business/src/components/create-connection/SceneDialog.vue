@@ -848,8 +848,8 @@ export default {
       const sortFn = (o1, o2) => {
         const qcTypeLevel = {
           GA: 1,
-          Alpha: 2,
-          Beta: 3,
+          Beta: 2,
+          Alpha: 3,
         }
         const o1Level = qcTypeLevel[o1.qcType]
         const o2Level = qcTypeLevel[o2.qcType]

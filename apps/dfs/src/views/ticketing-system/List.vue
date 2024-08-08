@@ -90,6 +90,7 @@
               v-model="createForm.description"
               @change="createForm.description = createForm.description.trim()"
               type="textarea"
+              :autosize="{ minRows: 2, maxRows: 8 }"
               :placeholder="$t('dfs_ticketing_system_list_qingmiaoshuninde')"
               required
             ></el-input>
@@ -206,14 +207,21 @@ export default {
     this.getFilterItems()
     this.getTask()
     this.getConnection()
+
+    this.hasForm(this.$route.query)
   },
   watch: {
-    $route(route) {
+    $route(route, preRoute) {
       if (route.name === 'TicketSystem') {
         let query = route.query
-        this.searchParams.keyword = query.keyword || ''
-        let pageNum = query === '{}' ? undefined : 1
-        this.table.fetch(pageNum)
+
+        if (!query?.form && !preRoute.query?.form) {
+          this.searchParams.keyword = query.keyword || ''
+          let pageNum = query === '{}' ? undefined : 1
+          this.table.fetch(pageNum)
+        }
+
+        this.hasForm(query)
       }
     },
   },
@@ -353,7 +361,21 @@ export default {
       this.$refs?.createForm?.resetFields()
       this.createDialog = false
     },
-  },
+
+    hasForm(query) {
+      if (query?.form) {
+        try {
+          let form = JSON.parse(decodeURIComponent(query.form))
+          Object.assign(this.createForm, form)
+          this.createDialog = true
+        } catch (e) {
+          console.error(e)
+        }
+
+        this.$router.replace({ name: 'TicketSystem', query: { ...query, form: undefined } })
+      }
+    }
+  }
 }
 </script>
 

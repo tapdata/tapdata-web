@@ -603,6 +603,10 @@
   width: 75% !important;
 }
 
+.w-80 {
+  width: 80% !important;
+}
+
 .w-100 {
   width: 100% !important;
 }
@@ -2109,6 +2113,11 @@
 .py-0 {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem !important;
+  padding-bottom: 0.125rem !important;
 }
 
 .py-1 {
@@ -12429,4 +12438,8 @@
 }
 .leading-primary {
   line-height: 1.375rem;
+}
+
+.max-w-1000 {
+  max-width: 1000px;
 }

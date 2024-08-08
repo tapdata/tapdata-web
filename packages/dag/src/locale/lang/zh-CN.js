@@ -574,7 +574,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa:
     '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
-    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联。\n注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
+    '选择默认更新条件字段时默认优先按照主键字段关联，无主键的按照唯一索引字段关联，无主键且无唯一索引的按照全字段关联。选择指定字段时将按照指定更新条件字段进行关联。\n注意：为了保证性能，系统会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
   packages_dag_nodes_table_zidingyichaxun: '全量自定义查询',
   packages_dag_field_inference_main_gaibiaocunzaibu: '该表存在不支持的数据类型',
   packages_dag_validate_customsql_fail: '当开启了全量自定义查询后，处理节点仅支持使用JS节点',
@@ -694,7 +694,7 @@ export default {
   packages_dag_enableSyncMetricCollector_title: '同步指标收集',
   packages_dag_enableSyncMetricCollector_tip: '打开后会自动收集任务的同步指标，任务停止后会输出对应的指标信息用于分析',
   packages_dag_update_conditions_tip:
-    '注意：为了保证性能，Tapdata 会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
+    '注意：为了保证性能，系统会自动给更新条件字段创建索引，为避免对目标数据库造成影响，您可以在运行任务前先手动创建索引',
   packages_dag_existDataProcessMode_desc: '该行为会直接删除目标表和数据，可能会对数据库造成影响，请谨慎使用。',
   packages_dag_ddl_events_collapse_tip:
     '开启该能力后，会自动将源的DDL操作在目标数据库应用，可能会对目标数据库造成影响，请谨慎开启',
@@ -731,5 +731,7 @@ export default {
     '开启时，根据更新条件创建唯一索引。关闭时，创建普通索引。注意：更新条件字段相同的记录在更新时可能丢数，并发写入有几率出现重复数据',
   packages_dag_refresh_schema: '刷新模型',
   packages_dag_switch_to_table_view: '切换至表格视图',
-  packages_dag_switch_to_tree_view: '切换至树形视图'
+  packages_dag_switch_to_tree_view: '切换至树形视图',
+  packages_dag_syncIndexTip: '开启该能力后，会自动将源的索引同步到目标，该行为可能会对目标数据库造成影响，请谨慎开启',
+  packages_dag_updateConditionFields_alert: '为了保证性能，系统会自动给更新条件字段创建索引'
 }

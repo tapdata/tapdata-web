@@ -31,5 +31,6 @@ export * from './json-editor'
 export * from './table-field-select'
 export * from './verify-fields-dialog'
 export * from './infinite-select'
+export * from './switch' // 为了扩展开关的二次确认
 
 export * from '@formily/element-plus'

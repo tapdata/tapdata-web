@@ -77,15 +77,42 @@
       <ElAside v-if="!isNotAside && !IS_IFRAME" class="layout-aside" width="auto">
         <ElMenu
           unique-opened
-          class="menu"
+          class="menu flex flex-column"
           :default-active="activeMenu"
           :collapse="isCollapse"
           :collapse-transition="false"
           @select="menuHandler"
         >
-          <template v-for="menu in menus">
-            <ElSubMenu v-if="menu.children && !menu.hidden" :index="menu.name">
+          <template v-for="menu in menusGroup.top">
+            <ElSubMenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template #title>
+                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                <span slot="title" class="ml-4 title">{{ menu.label }}</span>
+              </template>
+              <template v-for="cMenu in menu.children">
+                <ElMenuItem
+                  v-if="!cMenu.hidden"
+                  :key="cMenu.label"
+                  :index="cMenu.name"
+                  :class="{
+                    'is-locked': lockedFeature[cMenu.name]
+                  }"
+                >
+                  <div class="submenu-item">{{ cMenu.label }}</div>
+
+                  <VIcon v-if="lockedFeature[cMenu.name]" class="ml-2" size="24">lock-circle</VIcon>
+                </ElMenuItem>
+              </template>
+            </ElSubMenu>
+            <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
+              <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+              <span slot="title" class="ml-4 title">{{ menu.label }}</span>
+            </ElMenuItem>
+          </template>
+          <div class="flex-grow-1 border-bottom"></div>
+          <template v-for="menu in menusGroup.bottom">
+            <ElSubMenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
+              <template slot="title">
                 <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
                 <span class="ml-4 title">{{ menu.label }}</span>
               </template>
@@ -205,6 +232,10 @@ export default {
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
       menus: [],
+      menusGroup: {
+        top: [],
+        bottom: []
+      },
       userName: '',
       email: '',
       dialogVisible: false,
@@ -337,6 +368,14 @@ export default {
       }
       let menus = JSON.parse(JSON.stringify(menuSetting))
       this.menus = formatMenu(menus)
+
+      this.menus.forEach(m => {
+        if (m.group) {
+          this.menusGroup.bottom.push(m)
+        } else {
+          this.menusGroup.top.push(m)
+        }
+      })
     },
     command(command) {
       switch (command) {

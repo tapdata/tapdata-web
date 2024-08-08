@@ -221,6 +221,14 @@
           <template #status="{ row }">
             <StatusTag type="tag" :status="row.status" target="bill"></StatusTag>
           </template>
+          <template #operation="{ row }">
+            <ElButton
+              :disabled="row.subscribe.subscribeType !== 'one_time' || row.status !== 'UNPAID'"
+              type="text"
+              @click="handlePayBill(row)"
+              >{{ $t('public_button_pay') }}
+            </ElButton>
+          </template>
         </VTable>
       </div>
 
@@ -361,7 +369,7 @@ export default {
       ],
       traffic: {
         columns: [
-          { label: i18n.t('dfs_bill_number'), prop: 'id' },
+          { label: i18n.t('dfs_bill_number'), prop: 'id', width: 228 },
           {
             label: i18n.t('dfs_bill_amount', {
               currency
@@ -371,7 +379,8 @@ export default {
           { label: i18n.t('dfs_egress_traffic'), prop: 'transmit' },
           { label: i18n.t('dfs_ingress_traffic'), prop: 'received' },
           { label: i18n.t('dfs_billing_cycle'), prop: '_cycle' },
-          { label: i18n.t('dfs_bill_status'), prop: 'status', slotName: 'status' }
+          { label: i18n.t('dfs_bill_status'), prop: 'status', slotName: 'status' },
+          { label: i18n.t('public_operation'), slotName: 'operation', width: 100 }
         ],
         data: []
       },
@@ -673,6 +682,15 @@ export default {
         })
       }*/
     },
+    handlePayBill(row) {
+      this.buried('payBill')
+      this.$router.push({
+        name: 'payForBill',
+        params: {
+          id: row.id
+        }
+      })
+    },
     handleCreateAgent() {
       this.$router.push({
         name: 'createAgent',
@@ -781,9 +799,10 @@ export default {
         total: data.total,
         data:
           items.map(t => {
-            let start = dayjs(t.start)
-            let end = dayjs(t.end)
-            let format = start.year() === end.year() ? 'MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm:ss'
+            // let start = dayjs(t.start)
+            // let end = dayjs(t.end)
+            let format = 'MMM D, YYYY'
+            // let format = start.year() === end.year() ? 'MMM D, YYYY' : 'MMM D, YYYY'
 
             let transmit = t.details.reduce((total, item) => {
               return total + Number(item.transmit)
@@ -796,7 +815,10 @@ export default {
             t.transmit = calcUnit(transmit, 'byte')
             t.received = calcUnit(received, 'byte')
 
-            t._amount = t.amounts.find(it => it.currency === this.defaultCurrency)?.totalAmount
+            t._amount = this.formatPrice(
+              this.defaultCurrency,
+              t.amounts.find(it => it.currency === this.defaultCurrency)?.totalAmount
+            )
             t._cycle = `${dayjs(t.start).format(format)} ~ ${dayjs(t.end).format(format)}`
             return t
           }) || []

@@ -361,6 +361,18 @@ export class Table extends NodeType {
                     },
                   },
 
+                  updateConditionFieldsAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'lh-base',
+                      title: i18n.t('packages_dag_updateConditionFields_alert'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false
+                    }
+                  },
+
                   existDataProcessMode: {
                     title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
                     type: 'string',
@@ -1659,6 +1671,11 @@ export class Table extends NodeType {
                           layout: 'horizontal',
                         },
                         'x-component': 'Switch',
+                        'x-component-props': {
+                          confirm: {
+                            title: i18n.t('packages_dag_syncIndexTip')
+                          }
+                        },
                         'x-reactions': {
                           fulfill: {
                             state: {

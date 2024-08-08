@@ -13,7 +13,7 @@ export default {
   page_title_connections_edit: 'Edit connection',
   page_title_data_pipeline: 'Data Pipelines',
   page_title_advanced_features: 'Advanced',
-  page_title_data_copy: 'Data Replications',
+  page_title_data_copy: 'Data Replication',
   page_title_task_edit: 'Edit task',
   page_title_task_details: 'Task details',
   page_title_task_stat: 'Task statistics',
@@ -432,6 +432,8 @@ export default {
   setting_Email_Send_Address: 'Email sending email address',
   setting_SMTP_Server_Host: 'SMTP Service Host',
   setting_Send_Email_Title_Prefix: 'Send Email title prefix (optional)',
+  setting_SMTP_Proxy_Host: 'SMTP proxy service host (optional）',
+  setting_SMTP_Proxy_Port: 'SMTP proxy service port (optional)',
   setting_Email_Template_Running: 'Task start notification',
   setting_Email_Template_Paused: 'Task Paused Notification',
   setting_Email_Template_Error: 'Task error notification',
@@ -525,7 +527,7 @@ export default {
   setting_license_alarm: 'License expiry advance reminder (days)',
   setting_License_expiry_email_reminder_: 'License expiry advance reminder settings (days)',
   setting_flow_engine_version: 'Flow engine version',
-  setting_tapdata_agent_version: 'tapdata agent version',
+  setting_tapdata_agent_version: `${process.env.VUE_APP_PAGE_TITLE}  agent version`,
   setting_doc_base_url: 'Help document URL',
   setting_help: 'Help document',
   setting_Ip_addresses: 'Ipv4 addresses (separated by multiple commas)',
@@ -534,7 +536,7 @@ export default {
   setting_hint_PingTimeout: 'When this setting is exceeded, it is considered that the device cannot be connected',
   setting_Job_field_replacement: 'Illegal characters replaced with',
   setting_A_replacement_for_the_invalid_field_name:
-    'Some databases have special requirements for field names, tapdata will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
+    'Some databases have special requirements for field names, System will automatically replace illegal characters during synchronization. MongoDB[Contains ".", "$" as the beginning]',
   setting_true__store_log_to_cloud__false__only_store_to_local_log_file_:
     'true: store log to cloud, false: only store to local log file.',
   setting_When_one_document_may_be_updated_frequently_within_very_short_period_a_few_updates_within_one_second__for_instance___the_change_stream_event_received_by_downstream_processor_may_return_the__fullDocument__that_is_inconsistent_with_the_actual_version_when_the_update_was_applied_to_that_document__To_avoid_this_inconsistency__enable_this_option_to_store_the_full_document_along_with_the_update_operation__This_will_at_the_expense_of_additional_storage_and_degraded_performance_:
@@ -601,8 +603,8 @@ export default {
   user_list_bulk_freeze: 'Bulk freeze',
   user_list_bulk_check: 'Bulk check',
   user_list_del_user: 'After deleting user {0}, this user cannot be recovered',
-  user_list_activetion_user: 'After activating user {0}, this user will be able to use the TAPDATA system',
-  user_list_freeze_user: 'After freezing user {0}, this user will not be able to use the TAPDATA system',
+  user_list_activetion_user: `After activating user {0}, this user will be able to use the ${process.env.VUE_APP_PAGE_TITLE} system`,
+  user_list_freeze_user: `After freezing user {0}, this user will not be able to use the ${process.env.VUE_APP_PAGE_TITLE} system`,
   user_list_check_user: 'After checking the mailbox of user {0}, this user can be activated',
   user_list_activetion_success: 'Activation successful',
   user_list_freeze_success: 'Freeze successful',
@@ -1890,12 +1892,9 @@ export default {
   daas_feature_unavailable_upgrade_dec_li3: 'Alarm settings',
   daas_feature_unavailable_upgrade_dec_li4: 'Permission management (Enterprise edition only)',
   daas_feature_unavailable_upgrade_dec_li5: 'More data sources',
-  daas_feature_unavailable_upgrade_dec_li1_desc:
-    'Tapdata ensures data consistency with proprietary technology and supports data table validation to meet production requirements.',
-  daas_feature_unavailable_upgrade_dec_li2_desc:
-    'Tapdata reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.',
-  daas_feature_unavailable_upgrade_dec_li3_desc:
-    'Tapdata sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.',
+  daas_feature_unavailable_upgrade_dec_li1_desc: `${process.env.VUE_APP_PAGE_TITLE} ensures data consistency with proprietary technology and supports data table validation to meet production requirements.`,
+  daas_feature_unavailable_upgrade_dec_li2_desc: `${process.env.VUE_APP_PAGE_TITLE} reduces source database load by supporting shared incremental log cache, fetching events directly from the cache without repeated reads.`,
+  daas_feature_unavailable_upgrade_dec_li3_desc: `${process.env.VUE_APP_PAGE_TITLE} sends alert emails via SMTP, allowing users to promptly receive anomaly notifications and ensure task stability.`,
   daas_feature_unavailable_upgrade_dec_li4_desc:
     'Roles are collections of permissions assigned to users. This simplifies management and enhances security by allowing role creation before user assignment.',
   daas_feature_unavailable_upgrade_dec_li5_desc: '',

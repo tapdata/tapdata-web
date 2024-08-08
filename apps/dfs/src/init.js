@@ -17,7 +17,6 @@ import { ElNotification as Notification } from 'element-plus'
 import { createVersionPolling } from './plugins/version-polling'
 import * as Vue from 'vue'
 import { ElLoadingService } from 'element-plus'
-import { UpgradeNotice } from './plugins/upgrade-notice/index'
 
 Vue.use(VueClipboard)
 
@@ -172,8 +171,6 @@ export default ({ routes }) => {
         location.reload()
       }
     })
-
-    UpgradeNotice(window.App)
 
     return router
   }

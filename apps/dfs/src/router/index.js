@@ -415,14 +415,32 @@ const routes = [
         name: 'order',
         component: () => import('../views/order/List.vue'),
         meta: {
-          title: i18n.global.t('dfs_router_index_dingyuezhongxin'),
-          hideTitle: true,
+          title: 'dfs_router_index_dingyuezhongxin',
+          hideTitle: true
         },
         children: [
           {
             path: 'pay/:id',
             name: 'pay',
             component: () => import('../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: 'dfs_router_index_zhifuqingdan'
+            }
+          },
+          {
+            path: 'bill/pay/:id',
+            name: 'payForBill',
+            component: () => import('../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'bill/pay/:id/wait',
+            name: 'waitPayForBill',
+            component: () => import('../views/order/WaitPay'),
             meta: {
               hideTitle: true,
               title: i18n.global.t('dfs_router_index_zhifuqingdan'),

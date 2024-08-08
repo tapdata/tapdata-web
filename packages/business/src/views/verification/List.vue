@@ -99,7 +99,7 @@
             <div v-else-if="scope.row.status === 'error'" class="data-verify__status">
               <i class="data-verify__icon el-icon-error"></i>
               <span>{{ $t('public_status_error') }}</span>
-              <ElLink type="primary" class="ml-2" @click="handleError(scope.row)"
+              <ElLink v-if="scope.row.errorMsg" type="primary" class="ml-2" @click="handleError(scope.row)"
                 >{{ $t('public_button_check') }}
               </ElLink>
             </div>
@@ -226,6 +226,7 @@ import { inspectApi, metadataInstancesApi } from '@tap/api'
 import { statusMap, inspectMethod, typeList as verifyTypeList } from './const'
 import PageContainer from '../../components/PageContainer.vue'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
+import { ErrorMessage } from '../../components/error-message'
 import loadingImg from '@tap/assets/icons/loading.svg'
 
 let timeout = null
@@ -519,12 +520,7 @@ export default {
       ]
     },
     handleError(row = {}) {
-      this.$confirm(row.errorMsg, i18n.t('packages_business_milestone_list_cuowuxinxi'), {
-        type: 'warning',
-        closeOnClickModal: false,
-        customClass: 'verify-list-error-msg',
-        width: '600px',
-      })
+      ErrorMessage(row.errorMsg)
     },
     getInspectName(row = {}) {
       if (row.tasks?.some((t) => !!t.source.columns || !!t.target.columns)) {
