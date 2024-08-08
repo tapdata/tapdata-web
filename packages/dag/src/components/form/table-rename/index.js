@@ -19,6 +19,7 @@ export const TableRename = observer(
   defineComponent({
     props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
     setup(props, { emit, root, refs }) {
+      const { taskId } = root.$store.state.dataflow
       const itemSize = 38
       const formRef = useForm()
       const form = formRef.value
@@ -76,8 +77,7 @@ export const TableRename = observer(
       let prevMap = {}
       const invalidOperations = ref([])
       const makeTable = (...args) => {
-        if (form.values.$inputs?.length) {
-          const { taskId } = root.$store.state.dataflow
+        if (form.values.$inputs?.length && taskId && form.values.id) {
           loading.value = true
           taskApi
             .getNodeTableInfo({
