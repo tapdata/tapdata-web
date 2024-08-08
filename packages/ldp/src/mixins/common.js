@@ -191,22 +191,24 @@ export default {
       }, {})
 
       const filterTree = node => {
-        const { children } = node
+        const newNode = { ...node }
 
-        if (children?.length) {
-          node.children = children.filter(child => {
-            filterTree(child)
-            return child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length)
-          })
+        if (node.children?.length) {
+          newNode.children = node.children
+            .map(child => filterTree(child))
+            .filter(child => child.LDP_TYPE === 'folder' && (child.name.includes(search) || child.children.length))
+        } else {
+          newNode.children = []
         }
 
         if (map[node.id]) {
-          node.children.push(...map[node.id])
+          newNode.children.push(...map[node.id].map(child => ({ ...child })))
         }
+
+        return newNode
       }
 
-      let root = { ...this.directory }
-      filterTree(root)
+      let root = filterTree(this.directory)
       this.searchIng = false
       this.filterTreeData = root.children
     },
