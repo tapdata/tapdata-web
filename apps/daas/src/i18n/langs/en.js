@@ -13,7 +13,7 @@ export default {
   page_title_connections_edit: 'Edit connection',
   page_title_data_pipeline: 'Data Pipelines',
   page_title_advanced_features: 'Advanced',
-  page_title_data_copy: 'Data Replications',
+  page_title_data_copy: 'Data Replication',
   page_title_task_edit: 'Edit task',
   page_title_task_details: 'Task details',
   page_title_task_stat: 'Task statistics',
