@@ -86,6 +86,7 @@ export const BatchAddField = defineComponent({
     const loading = ref(false)
 
     const handleOpenDialog = () => {
+      refs.form?.resetFields()
       visible.value = true
       Object.assign(form, {
         ...def
