@@ -88,8 +88,7 @@ export default {
   packages_business_connection_reloadTittle: 'Reload Schema',
   packages_business_connection_reloadMsg:
     'Reloading the schema of the database may take a significant amount of time. Are you sure you want to proceed with the schema reload?',
-  packages_business_dataForm_primaryTest:
-    'The connection test service is being initiated. Please wait a moment for the process to complete',
+  packages_business_dataForm_primaryTest: 'Starting the connection detection service, please wait…',
   packages_business_dataForm_testing: 'Testing, please wait for a while ...',
   packages_business_dataForm_test_testResultFail: 'Connection test failed',
   packages_business_dataForm_test_testResultSuccess: 'Connection test successful',
@@ -109,8 +108,6 @@ export default {
   packages_business_task_monitor_sync_type: 'Sync Type',
   packages_business_task_monitor_run_connection: 'Connection',
   packages_business_task_monitor_history_run_record: 'History run record',
-  packages_business_task_info_subtasks_tip:
-    'When creating a task in Tapdata, each designated target node will be established as a subtask. You can access the details of each respective subtask below.',
   packages_business_task_details_sub_task: 'Subtask',
   packages_business_dataFlow_importantReminder: 'Important notice',
   packages_business_dataFlow_modifyEditText: 'If the task is modified after editing',
@@ -360,12 +357,10 @@ export default {
   packages_business_agent_select_not_found_for_rocksdb:
     'When using RocksDB as the shared mining storage, you need to manually specify an agent.',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: 'My Data Source',
-  packages_business_components_connectiontypeselectorsort_jiaoyouTap:
-    'Let Tapdata conduct a comprehensive quality test to ensure the stability and quality of the plugin',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `Let ${process.env.VUE_APP_PAGE_TITLE} conduct a comprehensive quality test to ensure the stability and quality of the plugin`,
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     'Note: here is the data source plugin uploaded by yourself, if you want to use it for production tasks, please submit the source code on GitHub',
-  packages_business_components_connectiontypeselectorsort_zhuyiBet:
-    "Note: Beta data sources have not passed Tapdata's certification testing process, and Tapdata does not guarantee the stable operation of these data sources for the time being",
+  packages_business_components_connectiontypeselectorsort_zhuyiBet: `Note: Beta data sources have not passed ${process.env.VUE_APP_PAGE_TITLE}'s certification testing process, and ${process.env.VUE_APP_PAGE_TITLE} does not guarantee the stable operation of these data sources for the time being`,
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu:
     'Stay tuned for the following data sources to open',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta data source',
@@ -922,8 +917,7 @@ export default {
   packages_business_task_created_success: 'Task created successfully, click to view',
   packages_business_task_created_fail_no_primary_key:
     'The task has been created, but since your table does not have a primary key, you need to enter the task editor to manually set the update condition field. Click to view the task.',
-  packages_business_fdm_create_task_dialog_desc_prefix:
-    'Tapdata will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected',
+  packages_business_fdm_create_task_dialog_desc_prefix: `${process.env.VUE_APP_PAGE_TITLE}  will automatically create a cloning pipeline task, which will automatically copy the structure and data of the selected`,
   packages_business_fdm_create_task_dialog_desc_suffix:
     'to the Cache layer of the data platform and keep the source database and Cache layer data in real-time synchronization and automatic validation. In most cases, the structure changes (DDL) of the source database will also be copied to the Cache layer. You can monitor the running status of the pipeline task by clicking the ICON on the right side of the database name in the Cache layer. You can also choose to modify the physical table name prefix in the Cache layer now.',
   packages_business_mdm_create_task_dialog_desc_prefix:
@@ -940,8 +934,8 @@ export default {
     'Please enter the table name to be newly constructed in the Curated layer. If the table name already exists, the existing data will be overwritten by default.',
   packages_business_save_and_run_now: 'Save and Run',
   packages_business_save_only: 'Only Save',
-  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata will create a cloning pipeline task to sync',
-  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata will create a sync pipeline task to sync',
+  packages_business_target_create_task_dialog_desc_prefix_clone: `${process.env.VUE_APP_PAGE_TITLE}  will create a cloning pipeline task to sync`,
+  packages_business_target_create_task_dialog_desc_prefix_sync: `${process.env.VUE_APP_PAGE_TITLE}  will create a sync pipeline task to sync`,
   packages_business_target_create_task_dialog_desc_to: 'to',
   packages_business_target_create_task_dialog_desc_suffix:
     'Please click button below to continue. You can also change the task name',
@@ -1251,8 +1245,7 @@ export default {
   packages_business_connections_test_xiazaijindu: 'Download Progress',
   packages_business_connections_test_xiazaishibai: 'Download Failed',
   packages_business_relmig_import: 'MongoDB Relmig Import',
-  packages_business_relmig_import_desc:
-    'This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into Tapdata. After the relmig file is imported, Tapdata will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.',
+  packages_business_relmig_import_desc: `This feature is designed to seamlessly import MongoDB Relational Migrator-exportd relmig project files into ${process.env.VUE_APP_PAGE_TITLE}. After the relmig file is imported, ${process.env.VUE_APP_PAGE_TITLE} will automatically create a task to  perform real time data synchronization from source database and transform into JSON data format in MongoDB database.`,
   packages_business_relmig_upload: 'Upload relmig file',
   packages_business__relmig_import_connection_tip: "Click here to create one if you haven't done so already.",
   packages_business__relmig_import_source_connection_placeholder:
@@ -1319,5 +1312,7 @@ export default {
   packages_business_shared_cache_enforceShareCdc: 'When shared mining is not available (Cache Start)',
   packages_business_shared_cache_enforceShareCdc_true: 'The cache reports an error and stops',
   packages_business_not_support_validation: '{connection} does not support {method}',
-  packages_business_download_details: 'Download'
+  packages_business_download_details: 'Download',
+  packages_business_solution: 'Solution',
+  packages_business_error_details: 'Error Details'
 }

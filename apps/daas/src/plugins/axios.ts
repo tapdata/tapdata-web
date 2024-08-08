@@ -4,6 +4,7 @@ import { signOut } from '../utils/util'
 import { Message } from '@/plugins/element'
 import i18n from '@/i18n'
 import Qs from 'qs'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 type AxiosRequestConfigPro = AxiosRequestConfig & {
   silenceMessage?: boolean
@@ -131,36 +132,46 @@ axios.interceptors.response.use((response: AxiosResponse) => {
     if (response?.config?.responseType === 'blob') {
       return resolve(response)
     }
+
     if (code === 'ok') {
       return resolve(response.data.data)
-    } else if (code === 'SystemError') {
-      Message.error(response.data.message || i18n.t('public_message_request_error').toString())
-      reject(response)
-    } else {
-      if ((response.config as AxiosRequestConfigPro).silenceMessage) {
-        return reject(response)
-      }
-
-      switch (code) {
-        case 'SystemError':
-          if (data.message === 'System error: null') {
-            Message.error({
-              message: i18n.t('public_message_request_error').toString()
-            })
-          } else {
-            Message.error({
-              message: data.message
-            })
-          }
-          throw response
-        default:
-          Message.error({
-            message: data.message
-          })
-          throw response
-      }
     }
-    reject(response)
+
+    if ((response.config as AxiosRequestConfigPro).silenceMessage) {
+      return reject(response)
+    }
+
+    showErrorMessage(response.data)
+    return reject(response)
+
+    // if (code === 'SystemError') {
+    //   Message.error(response.data.message || i18n.t('public_message_request_error').toString())
+    //   reject(response)
+    // } else {
+    //   if ((response.config as AxiosRequestConfigPro).silenceMessage) {
+    //     return reject(response)
+    //   }
+    //
+    //   switch (code) {
+    //     case 'SystemError':
+    //       if (data.message === 'System error: null') {
+    //         Message.error({
+    //           message: i18n.t('public_message_request_error').toString()
+    //         })
+    //       } else {
+    //         Message.error({
+    //           message: data.message
+    //         })
+    //       }
+    //       throw response
+    //     default:
+    //       Message.error({
+    //         message: data.message
+    //       })
+    //       throw response
+    //   }
+    // }
+    // reject(response)
   })
 }, errorCallback)
 

@@ -414,7 +414,7 @@ const routes = [
         name: 'order',
         component: () => import(/* webpackChunkName: "instance" */ '../views/order/List.vue'),
         meta: {
-          title: i18n.t('dfs_router_index_dingyuezhongxin'),
+          title: 'dfs_router_index_dingyuezhongxin',
           hideTitle: true
         },
         children: [
@@ -424,13 +424,31 @@ const routes = [
             component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
             meta: {
               hideTitle: true,
+              title: 'dfs_router_index_zhifuqingdan'
+            }
+          },
+          {
+            path: 'bill/pay/:id',
+            name: 'payForBill',
+            component: () => import('../views/order/Pay'),
+            meta: {
+              hideTitle: true,
+              title: i18n.t('dfs_router_index_zhifuqingdan')
+            }
+          },
+          {
+            path: 'bill/pay/:id/wait',
+            name: 'waitPayForBill',
+            component: () => import('../views/order/WaitPay'),
+            meta: {
+              hideTitle: true,
               title: i18n.t('dfs_router_index_zhifuqingdan')
             }
           },
           {
             path: 'change/pay/:id',
             name: 'payForChange',
-            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            component: () => import('../views/order/Pay'),
             meta: {
               hideTitle: true,
               title: i18n.t('dfs_router_index_zhifuqingdan')
@@ -439,7 +457,7 @@ const routes = [
           {
             path: 'renew/pay/:id',
             name: 'payForRenew',
-            component: () => import(/* webpackChunkName: "instance" */ '../views/order/Pay'),
+            component: () => import('../views/order/Pay'),
             meta: {
               hideTitle: true,
               title: i18n.t('dfs_router_index_zhifuqingdan')
@@ -448,7 +466,7 @@ const routes = [
           {
             path: '/user/order/changeList',
             name: 'changeList',
-            component: () => import(/* webpackChunkName: "instance" */ '../views/order/ChangeList.vue'),
+            component: () => import('../views/order/ChangeList.vue'),
             meta: {
               title: i18n.t('dfs_change_record'),
               code: ''

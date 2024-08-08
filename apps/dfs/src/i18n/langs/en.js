@@ -1839,6 +1839,11 @@ export default {
   dfs_status_expired: 'Expired',
   dfs_all_approvals_completed: 'All approvals completed.',
   dfs_traffic_bill: 'Traffic Bill',
+  dfs_traffic_billing: 'Traffic Billing',
+  dfs_traffic_billing_desc:
+    'Apart from the engine specification fees, traffic fees will also be charged based on the amount of data you synchronize. These traffic fees are billed monthly.',
+  dfs_traffic_billing_prefix: '(Free traffic of 100GB, any excess over 100GB will be charged at {trafficPrice}/GB)',
+  dfs_traffic_bill_mode: 'Billing Method',
   dfs_bill_number: 'Bill Number',
   dfs_bill_amount: 'Bill Amount ({currency})',
   dfs_egress_traffic: 'Egress Traffic',
@@ -1846,5 +1851,9 @@ export default {
   dfs_billing_cycle: 'Billing Cycle',
   dfs_bill_status: 'Status',
   dfs_service_upgrade_notice: 'TapData Cloud Service Upgrade Announcement',
-  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`
+  dfs_service_upgrade_notice_content: `Dear User,\nTo further enhance your experience, we plan to upgrade the TapData Cloud service.`,
+  dfs_payment_progress: 'Payment in Progress',
+  dfs_payment_progress_desc: 'If you have already made the payment, please click “Payment Completed”.',
+  dfs_retry_payment: 'Repay',
+  dfs_complete_payment: 'Payment Completed'
 }

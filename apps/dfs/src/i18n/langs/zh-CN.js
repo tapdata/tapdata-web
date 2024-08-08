@@ -1700,6 +1700,10 @@ export default {
   dfs_status_expired: '已过期',
   dfs_all_approvals_completed: '已完成全部审批',
   dfs_traffic_bill: '流量账单',
+  dfs_traffic_billing: '流量计费',
+  dfs_traffic_billing_desc: '除了引擎规格费用外，还会根据您同步数据量的大小来收取流量费用，流量费按月收取。',
+  dfs_traffic_billing_prefix: '(免费流量100GB,超出100G以 {trafficPrice}/GB 计费)',
+  dfs_traffic_bill_mode: '计费方式',
   dfs_bill_number: '账单编号',
   dfs_bill_amount: '账单金额({currency})',
   dfs_egress_traffic: '发送数据量',
@@ -1707,5 +1711,9 @@ export default {
   dfs_billing_cycle: '账单周期',
   dfs_bill_status: '账单状态',
   dfs_service_upgrade_notice: 'TapData Cloud 服务升级公告',
-  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`
+  dfs_service_upgrade_notice_content: `尊敬的用户：\n为了进一步提升您的使用体验，我们计划对 TapData Cloud 进行服务升级。具体升...`,
+  dfs_payment_progress: '支付中',
+  dfs_payment_progress_desc: '如果您已支付，请点击支付完成',
+  dfs_retry_payment: '重新支付',
+  dfs_complete_payment: '支付完成'
 }

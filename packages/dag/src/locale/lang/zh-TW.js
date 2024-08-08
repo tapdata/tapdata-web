@@ -569,7 +569,7 @@ export default {
   packages_dag_field_inference_list_gaiziduanwufa:
     '该字段类型暂不支持，为避免数据处理故障，可以使用字段编辑功能将该字段屏蔽。',
   packages_dag_field_inference_main_xuanzemorengeng:
-    '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯。\n注意：為了保證性能，Tapdata 會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引。',
+    '選擇默認更新條件字段時默認優先按照主鍵字段關聯，無主鍵的按照唯一索引字段關聯，無主鍵且無唯一索引的按照全字段關聯。選擇指定字段時將按照指定更新條件字段進行關聯。\n注意：為了保證性能，系統會自動給更新條件字段創建索引，為避免對目標數據庫造成影響，您可以在運行任務前先手動創建索引。',
   packages_dag_nodes_table_zidingyichaxun: '自定義查詢',
   packages_dag_field_inference_main_gaibiaocunzaibu: '該表存在不支持的數據類型',
   packages_dag_validate_customsql_fail: '當啟用全量自定義查詢後，處理節點僅支持使用JS節點',
@@ -725,5 +725,7 @@ export default {
     '開啓時，根據更新條件創建唯一索引。關閉時，創建普通索引。注意：更新條件字段相同的記錄在更新時可能丟數，併發寫入有幾率出現重複數據',
   packages_dag_refresh_schema: '刷新模型',
   packages_dag_switch_to_table_view: '切換至表格視圖',
-  packages_dag_switch_to_tree_view: '切換至樹形視圖'
+  packages_dag_switch_to_tree_view: '切換至樹形視圖',
+  packages_dag_syncIndexTip: '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
+  packages_dag_updateConditionFields_alert: '為了保證性能，系統會自動給更新條件字段創建索引'
 }

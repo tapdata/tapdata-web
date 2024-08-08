@@ -1,0 +1,28 @@
+.message-dialog {
+  width: 680px;
+  padding-bottom: 0;
+  .el-message-box__header {
+    padding: 0 !important;
+  }
+  .el-message-box__content {
+    padding: 20px 24px;
+  }
+  .el-message-box__btns {
+    padding: 0 24px 20px;
+  }
+}
+
+.error-stack-pre-wrap {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+
+  .error-stack-actions {
+    display: none;
+  }
+
+  &:hover {
+    .error-stack-actions {
+      display: block;
+    }
+  }
+}

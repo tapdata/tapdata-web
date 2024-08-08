@@ -44,8 +44,8 @@ export default {
   packages_business_connection_form_rename: '改名',
   packages_business_connection_form_database_owner_tip: '逗號分割的表達式列表，使用 * 代表任意長度任意字符',
   packages_business_connection_form_source_and_target_tip: `此數據連接在 ${process.env.VUE_APP_PAGE_TITLE} 中能同時作為源和目標使用`,
-  packages_business_connection_form_source_tip: '此數據連接在Tapdata 中只能作為源使用，不能作用為目標',
-  packages_business_connection_form_target_tip: '此數據連接在Tapdata 中只能作為目標使用，不能作用為源',
+  packages_business_connection_form_source_tip: `此數據連接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作為源使用，不能作用為目標`,
+  packages_business_connection_form_target_tip: `此數據連接在 ${process.env.VUE_APP_PAGE_TITLE} 中只能作為目標使用，不能作用為源`,
   packages_business_connection_form_shared_mining: '使用共享挖掘',
   packages_business_connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
@@ -104,8 +104,6 @@ export default {
   packages_business_task_monitor_sync_type: '同步類型',
   packages_business_task_monitor_run_connection: '連接',
   packages_business_task_monitor_history_run_record: '歷史運行記錄',
-  packages_business_task_info_subtasks_tip:
-    '在Tapdata中你創建任務裡的每個目標節點均會被定義為子任務 您可以在下方查看每個子任務詳情',
   packages_business_task_details_sub_task: '子任務',
   packages_business_dataFlow_importantReminder: '重要提醒',
   packages_business_dataFlow_modifyEditText: '編輯任務如果修改了',
@@ -354,12 +352,10 @@ export default {
   packages_business_agent_select_not_found: '該agent已不存在，請選擇其他agent',
   packages_business_agent_select_not_found_for_rocksdb: '選用RocksDB作為共享挖掘外存時，需要手動指定一個Agent',
   packages_business_components_connectiontypeselectorsort_wodeshujuyuan: '我的數據源',
-  packages_business_components_connectiontypeselectorsort_jiaoyouTap:
-    '交由Tapdata進行全面的質量測試，以保證插件的穩定性和質量',
+  packages_business_components_connectiontypeselectorsort_jiaoyouTap: `交由 ${process.env.VUE_APP_PAGE_TITLE} 進行全面的質量測試，以保證插件的穩定性和質量`,
   packages_business_components_connectiontypeselectorsort_zhuyizhelishi:
     '注意：這裡是您自己上傳的數據源插件，如果要用於生產任務，請在GitHub上提交源代碼',
-  packages_business_components_connectiontypeselectorsort_zhuyiBet:
-    '注意：Beta 數據源尚未通過Tapdata的認證測試流程，Tapdata暫不保證這些數據源的穩定運行',
+  packages_business_components_connectiontypeselectorsort_zhuyiBet: `注意：Beta 數據源尚未通過 ${process.env.VUE_APP_PAGE_TITLE} 的認證測試流程，${process.env.VUE_APP_PAGE_TITLE}暫不保證這些數據源的穩定運行`,
   packages_business_components_connectiontypeselectorsort_shiyongbanzanbu: '敬請期待以下數據源開放',
   packages_business_components_connectiontypeselectorsort_betashu: 'Beta数据源',
   packages_business_components_connectiontypeselectorsort_renzhengshujuyuan: 'GA数据源',
@@ -884,7 +880,7 @@ export default {
   packages_business_task_created_success: '任務創建成功，點擊查看',
   packages_business_task_created_fail_no_primary_key:
     '任務已經創建，但由於您的表沒有主鍵，需要進入任務編輯手動設置更新條件字段，點擊查看任務',
-  packages_business_fdm_create_task_dialog_desc_prefix: 'Tapdata 將自動創建一個數據複製管道任務，將您選擇的',
+  packages_business_fdm_create_task_dialog_desc_prefix: `${process.env.VUE_APP_PAGE_TITLE}  將自動創建一個數據複製管道任務，將您選擇的`,
   packages_business_fdm_create_task_dialog_desc_suffix:
     '的結構和數據自動複製到數據平台的 Cache 層並保持源庫和Cache 層數據的准實時同步及自動校驗。在大部分時候源庫的結構改動(DDL)也會被複製到Cache 層。您可以在通過點擊Cache 層裡面的庫名右側的ICON來監控該管道任務的運行狀態。您也可以選擇現在修改在Cache 層的物理表名前綴。',
   packages_business_mdm_create_task_dialog_desc_prefix:
@@ -898,8 +894,8 @@ export default {
     '請輸入打算新構建在Curated 層裡面的表名。如果該表名已經存在，默認將覆蓋已有的數據',
   packages_business_save_and_run_now: '保存並運行',
   packages_business_save_only: '僅保存',
-  packages_business_target_create_task_dialog_desc_prefix_clone: 'Tapdata將創建一個數據複製任務，將',
-  packages_business_target_create_task_dialog_desc_prefix_sync: 'Tapdata將創建一個數據開發任務，將',
+  packages_business_target_create_task_dialog_desc_prefix_clone: `${process.env.VUE_APP_PAGE_TITLE} 將創建一個數據複製任務，將`,
+  packages_business_target_create_task_dialog_desc_prefix_sync: `${process.env.VUE_APP_PAGE_TITLE} 將創建一個數據開發任務，將`,
   packages_business_target_create_task_dialog_desc_to: '同步到',
   packages_business_target_create_task_dialog_desc_suffix: '請點擊下面的按鈕繼續,您也可以更改任務名稱。',
   packages_business_fdm_empty_text: '請將<strong>源數據層</strong>中的表拖拽至此<br/>即可開始複製數據',
@@ -1182,8 +1178,7 @@ export default {
   packages_business_connections_test_xiazaijindu: '下載進度',
   packages_business_connections_test_xiazaishibai: '下載失敗',
   packages_business_relmig_import: 'MongoDB Relmig 導入',
-  packages_business_relmig_import_desc:
-    '這個功能旨在無縫導入 MongoDB 關係遷移器導出的 relmig 項目文件到 Tapdata。在 relmig 文件被導入後，Tapdata 將自動創建一個任務來執行源數據庫的實時數據同步，並將其轉換為 MongoDB 數據庫中的 JSON 數據格式。',
+  packages_business_relmig_import_desc: `這個功能旨在無縫導入 MongoDB 關係遷移器導出的 relmig 項目文件到 ${process.env.VUE_APP_PAGE_TITLE} 。在 relmig 文件被導入後，${process.env.VUE_APP_PAGE_TITLE} 將自動創建一個任務來執行源數據庫的實時數據同步，並將其轉換為 MongoDB 數據庫中的 JSON 數據格式。`,
   packages_business_relmig_upload: '上傳 relmig 文件',
   packages_business__relmig_import_connection_tip: '如果您還沒有創建，請點擊這裡',
   packages_business__relmig_import_source_connection_placeholder: '請選擇包含您在 relmig 項目中使用的源表的源連接',
@@ -1247,5 +1242,7 @@ export default {
   packages_business_shared_cache_enforceShareCdc: '當共享挖掘不可用(緩存啓動時)',
   packages_business_shared_cache_enforceShareCdc_true: '緩存直接報錯停止',
   packages_business_not_support_validation: '{connection} 不支持{method}',
-  packages_business_download_details: '下載詳情'
+  packages_business_download_details: '下載詳情',
+  packages_business_solution: '解決方案',
+  packages_business_error_details: '錯誤詳情'
 }
