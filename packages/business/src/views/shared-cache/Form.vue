@@ -65,7 +65,11 @@
                 <i class="el-icon-info color-primary ml-1"></i>
               </el-tooltip>
             </template>
-            <ElSwitch v-model="form.autoCreateIndex"></ElSwitch>
+            <ConfirmSwitch
+              :value="form.autoCreateIndex"
+              :confirm="{ title: $t('packages_business_shared_cache_cache_key_auto_create_tip') }"
+              @change="form.autoCreateIndex = $event"
+            ></ConfirmSwitch>
           </ElFormItem>
         </el-col>
       </el-row>
@@ -190,6 +194,7 @@
 
 <script>
 import { VirtualSelect } from '@tap/component'
+import { Switch as ConfirmSwitch } from '@tap/form'
 import FieldSelector from './FieldSelector'
 import CodeView from './CodeView.vue'
 import { sharedCacheApi, metadataInstancesApi, externalStorageApi } from '@tap/api'
@@ -197,7 +202,7 @@ import i18n from '@tap/i18n'
 import ConnectionListSelect from '@tap/business/src/views/connections/ListSelect'
 
 export default {
-  components: { VirtualSelect, FieldSelector, CodeView, ConnectionListSelect },
+  components: { VirtualSelect, FieldSelector, CodeView, ConnectionListSelect, ConfirmSwitch },
   props: {
     taskId: {
       type: String
