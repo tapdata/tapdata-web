@@ -296,8 +296,25 @@ export class Database extends NodeType {
                   },
                   uniqueIndexEnable: {
                     type: 'boolean',
+                    title: i18n.t('packages_dag_migration_uniqueIndexEnable'),
                     default: true,
-                    'x-display': 'hidden'
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      layout: 'horizontal',
+                      tooltip: i18n.t('packages_dag_uniqueIndexEnable_tip')
+                    },
+                    'x-component': 'Switch'
+                  },
+                  updateConditionFieldsAlert: {
+                    type: 'void',
+                    'x-component': 'Alert',
+                    'x-component-props': {
+                      class: 'mb-2 lh-base',
+                      title: i18n.t('packages_dag_updateConditionFields_alert'),
+                      type: 'warning',
+                      showIcon: true,
+                      closable: false
+                    }
                   },
                   existDataProcessMode: {
                     type: 'string',

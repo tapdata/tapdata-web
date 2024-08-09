@@ -366,7 +366,7 @@ export class Table extends NodeType {
                     type: 'void',
                     'x-component': 'Alert',
                     'x-component-props': {
-                      class: 'lh-base',
+                      class: 'mb-2 lh-base',
                       title: i18n.t('packages_dag_updateConditionFields_alert'),
                       type: 'warning',
                       showIcon: true,
