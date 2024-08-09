@@ -777,7 +777,7 @@ export default {
   packages_dag_migrate_union_multiple: 'In the task, only one Union node is allowed',
   packages_dag_enableConcurrentProcess: 'Enable concurrent processing',
   packages_dag_concurrentNum: 'Number of Concurrent Tasks',
-  packages_dag_uniqueIndexEnable: 'Create unique index',
+  packages_dag_uniqueIndexEnable: 'Index with unique identifier',
   packages_dag_uniqueIndexEnable_tip:
     'When on, creates unique index based on update conditions. When off, creates normal index. Note: Records with the same update fields may lose data during updates, and concurrent writes may cause duplicates.',
   packages_dag_refresh_schema: 'Refresh Schema',

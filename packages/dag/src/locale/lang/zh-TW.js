@@ -720,7 +720,7 @@ export default {
   packages_dag_migrate_union_multiple: '任务中只允许存在一个多表合并节点',
   packages_dag_enableConcurrentProcess: '開啓併發處理',
   packages_dag_concurrentNum: '併發數',
-  packages_dag_uniqueIndexEnable: '自動創建唯一索引',
+  packages_dag_uniqueIndexEnable: '索引增加唯一標識',
   packages_dag_uniqueIndexEnable_tip:
     '開啓時，根據更新條件創建唯一索引。關閉時，創建普通索引。注意：更新條件字段相同的記錄在更新時可能丟數，併發寫入有幾率出現重複數據',
   packages_dag_refresh_schema: '刷新模型',
