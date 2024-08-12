@@ -13,7 +13,7 @@ export const Switch = connect(
         type: Object,
       },
     },
-    setup(props, { emit, attrs, listeners }) {
+    setup(props, { emit, attrs }) {
       const onConfirm = () => {
         emit('change', !props.value)
       }
@@ -32,14 +32,11 @@ export const Switch = connect(
                 <ElSwitch
                   modelValue={props.value}
                   {...attrs}
-                  on={{
-                    ...listeners,
-                    input: () => {},
-                    change: (val) => {
-                      if (!val) {
-                        emit('change', val)
-                      }
-                    },
+                  onInput={() => {}}
+                  onChange={(val) => {
+                    if (!val) {
+                      emit('change', val)
+                    }
                   }}
                 />
               ),
