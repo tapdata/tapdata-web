@@ -128,55 +128,10 @@ axios.interceptors.response.use((response: AxiosResponse) => {
   return new Promise((resolve, reject) => {
     removePending(response.config)
     const code = response.data.code
-    const data = response.data
+
     if (response?.config?.responseType === 'blob') {
       return resolve(response)
     }
-
-    showErrorMessage({
-      message: '🔧 测试测试',
-      stack: `<-- Error Message -->
-java.lang.RuntimeException: java.lang.IllegalStateException: BinaryLogClient is already connected
-
-<-- Simple Stack Trace -->
-Caused by: java.lang.IllegalStateException: BinaryLogClient is already connected
-\tcom.github.shyiko.mysql.binlog.BinaryLogClient.connect(BinaryLogClient.java:566)
-\tcom.github.shyiko.mysql.binlog.BinaryLogClient$6.run(BinaryLogClient.java:959)
-\tjava.lang.Thread.run(Thread.java:748)
-
-<-- Full Stack Trace -->
-java.lang.RuntimeException: java.lang.IllegalStateException: BinaryLogClient is already connected
-\tat io.tapdata.pdk.core.monitor.PDKInvocationMonitor.invokePDKMethodPrivate(PDKInvocationMonitor.java:186)
-\tat io.tapdata.pdk.core.monitor.PDKInvocationMonitor.lambda$invokePDKMethod$12(PDKInvocationMonitor.java:153)
-\tat io.tapdata.pdk.core.api.Node.applyClassLoaderContext(Node.java:27)
-\tat io.tapdata.pdk.core.monitor.PDKInvocationMonitor.invokePDKMethod(PDKInvocationMonitor.java:153)
-\tat io.tapdata.pdk.core.monitor.PDKInvocationMonitor.invoke(PDKInvocationMonitor.java:95)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.data.pdk.HazelcastSourcePdkDataNode.lambda$doNormalCDC$33(HazelcastSourcePdkDataNode.java:762)
-\tat io.tapdata.aspect.utils.AspectUtils.executeDataFuncAspect(AspectUtils.java:67)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.HazelcastBaseNode.executeDataFuncAspect(HazelcastBaseNode.java:148)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.data.pdk.HazelcastSourcePdkDataNode.doNormalCDC(HazelcastSourcePdkDataNode.java:752)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.data.pdk.HazelcastSourcePdkDataNode.doCdc(HazelcastSourcePdkDataNode.java:641)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.data.pdk.HazelcastSourcePdkDataNode.startSourceRunner(HazelcastSourcePdkDataNode.java:205)
-\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-\tat java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266)
-\tat java.util.concurrent.FutureTask.run(FutureTask.java)
-\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-\tat java.lang.Thread.run(Thread.java:748)
-Caused by: java.lang.RuntimeException: java.lang.IllegalStateException: BinaryLogClient is already connected
-\tat io.tapdata.common.exception.AbstractExceptionCollector.collectCdcConfigInvalid(AbstractExceptionCollector.java:63)
-\tat io.tapdata.connector.mysql.MysqlExceptionCollector.collectCdcConfigInvalid(MysqlExceptionCollector.java:159)
-\tat io.tapdata.connector.mysql.MysqlReader.readBinlog(MysqlReader.java:390)
-\tat io.tapdata.connector.mysql.MysqlConnector.streamRead(MysqlConnector.java:680)
-\tat io.tapdata.flow.engine.V2.node.hazelcast.data.pdk.HazelcastSourcePdkDataNode.lambda$doNormalCDC$31(HazelcastSourcePdkDataNode.java:741)
-\tat io.tapdata.pdk.core.monitor.PDKInvocationMonitor.invokePDKMethodPrivate(PDKInvocationMonitor.java:164)
-\t... 16 more
-Caused by: java.lang.IllegalStateException: BinaryLogClient is already connected
-\tat com.github.shyiko.mysql.binlog.BinaryLogClient.connect(BinaryLogClient.java:566)
-\tat com.github.shyiko.mysql.binlog.BinaryLogClient$6.run(BinaryLogClient.java:959)
-\t... 1 more
-`,
-    })
 
     if (code === 'ok') {
       return resolve(response.data.data)
