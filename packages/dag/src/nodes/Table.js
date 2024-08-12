@@ -1687,7 +1687,7 @@ export class Table extends NodeType {
                           }
                         }
                       },
-                      syncPartitionTableEnable: {
+                      syncTargetPartitionTableEnable: {
                         title: i18n.t('packages_dag_syncPartitionTableEnable'),
                         type: 'boolean',
                         'x-decorator': 'FormItem',

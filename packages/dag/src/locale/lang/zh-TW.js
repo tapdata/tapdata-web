@@ -728,5 +728,7 @@ export default {
   packages_dag_switch_to_tree_view: '切換至樹形視圖',
   packages_dag_syncIndexTip: '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
   packages_dag_updateConditionFields_alert: '為了保證性能，系統會自動給更新條件字段創建索引',
-  packages_dag_syncPartitionTableEnable: '同步分區表'
+  packages_dag_syncPartitionTableEnable: '同步分區表',
+  packages_dag_syncSourcePartitionTableEnable: '同步分區主表',
+  packages_dag_syncSourcePartitionTableEnable_tip: '開啓時會過濾掉子表，關閉時會過濾掉主表。'
 }

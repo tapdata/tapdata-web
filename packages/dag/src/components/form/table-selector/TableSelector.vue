@@ -399,7 +399,6 @@ import VIcon from '@tap/component/src/base/VIcon'
 import ConnectionTest from '@tap/business/src/views/connections/Test'
 
 import { getPrimaryKeyTablesByType } from '../../../util'
-import { take } from 'lodash/array'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -413,7 +412,9 @@ export default {
     disabled: Boolean,
     hideReload: Boolean,
     reloadTime: [String, Number],
-    filterType: String
+    filterType: String,
+    syncPartitionTableEnable: Boolean,
+    hasPartition: Boolean
   },
   data() {
     return {
@@ -525,6 +526,9 @@ export default {
       if (!v) {
         this.getTables()
       }
+    },
+    syncPartitionTableEnable() {
+      this.getTables()
     }
   },
   created() {
@@ -628,25 +632,31 @@ export default {
     getTables() {
       this.loading = true
       const { connectionId } = this
-      metadataInstancesApi
-        .pageTables({ connectionId, limit: 0 })
-        .then((res = {}) => {
-          let data = res.items || []
-          let tables = data.map(it => it.tableName)
-          let map = {}
-          data.forEach((el = {}) => {
-            const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
-            if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
-              map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
-            }
+
+      const fn = this.hasPartition
+        ? metadataInstancesApi.pagePartitionTables({
+            connectionId,
+            limit: 0,
+            syncPartitionTableEnable: this.syncPartitionTableEnable
           })
-          this.tableMap = map
-          tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-          this.table.tables = Object.freeze(tables)
+        : metadataInstancesApi.pageTables({ connectionId, limit: 0 })
+
+      fn.then((res = {}) => {
+        let data = res.items || []
+        let tables = data.map(it => it.tableName)
+        let map = {}
+        data.forEach((el = {}) => {
+          const { tableName, tableComment, primaryKeyCounts = 0, uniqueIndexCounts = 0 } = el
+          if (tableComment || primaryKeyCounts || uniqueIndexCounts) {
+            map[tableName] = { tableComment, primaryKeyCounts, uniqueIndexCounts }
+          }
         })
-        .finally(() => {
-          this.loading = false
-        })
+        this.tableMap = map
+        tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+        this.table.tables = Object.freeze(tables)
+      }).finally(() => {
+        this.loading = false
+      })
     },
     //重新加载模型
     async reload() {
