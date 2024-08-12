@@ -144,6 +144,10 @@
 .#{$formNamespace}-form-item-label .el-button {
   line-height: 1;
 
+  &.is-text {
+    line-height: 22px;
+  }
+
   * {
     line-height: inherit;
   }
