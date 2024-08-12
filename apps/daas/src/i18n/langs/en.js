@@ -551,6 +551,7 @@ export default {
   setting_job_cdc_share_only_doc:
     'When the incremental synchronization task sharing mode is turned on and a sharable log cannot be found, the task will be stopped',
   setting_test_email_success: 'The test email has been sent, please log in to the receiving mailbox to check it',
+  setting_test_email_failed: 'Failed to send test email, please check email information configuration',
   setting_test_email_countdown: 'The operation is too frequent, please try again later',
   setting_email_template_from: 'From',
   setting_email_template_to: 'Recipient',

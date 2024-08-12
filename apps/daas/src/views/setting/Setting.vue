@@ -398,9 +398,13 @@ export default {
         title: `Tapdata Notification:`,
         text: 'This is a test email'
       }
-      settingsApi.testEmail(params).then(() => {
+      settingsApi.testEmail(params).then(data => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
-        this.$message.success(this.$t('setting_test_email_success'))
+        if (data == true) {
+          this.$message.success(this.$t('setting_test_email_success'))
+        } else {
+          this.$message.error(this.$t('setting_test_email_failed'))
+        }
       })
     }
   }

@@ -532,6 +532,7 @@ export default {
   setting_job_cdc_share_only: '增量任务强制使用共享模式',
   setting_job_cdc_share_only_doc: '当增量同步任务共享模式开启，并且无法找到一个可共享的日志，将会停止任务',
   setting_test_email_success: '测试邮件已发送，请登录接收邮箱查收',
+  setting_test_email_failed: '测试邮件发送失败，请检查邮箱信息配置',
   setting_test_email_countdown: '操作太频繁了，请稍后重试',
   setting_email_template_from: '发件人',
   setting_email_template_to: '收件人',
