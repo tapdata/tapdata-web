@@ -7,12 +7,15 @@ export {}
 declare global {
   const ElButton: typeof import('element-plus/es')['ElButton']
   const ElIconArrowRight: typeof import('@element-plus/icons-vue')['ArrowRight']
+  const ElIconCopyDocument: typeof import('@element-plus/icons-vue')['CopyDocument']
   const ElIconRefresh: typeof import('@element-plus/icons-vue')['Refresh']
   const ElIconSearch: typeof import('@element-plus/icons-vue')['Search']
   const ElInput: typeof import('element-plus/es')['ElInput']
   const ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
+  const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const ElOption: typeof import('element-plus/es')['ElOption']
   const ElSelect: typeof import('element-plus/es')['ElSelect']
   const ElTabs: typeof import('element-plus/es')['ElTabs']
+  const ElTag: typeof import('element-plus/es')['ElTag']
 }

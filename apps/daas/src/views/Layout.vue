@@ -95,7 +95,7 @@
                   :key="cMenu.label"
                   :index="cMenu.name"
                   :class="{
-                    'is-locked': lockedFeature[cMenu.name]
+                    'is-locked': lockedFeature[cMenu.name],
                   }"
                 >
                   <div class="submenu-item">{{ cMenu.label }}</div>
@@ -106,13 +106,15 @@
             </ElSubMenu>
             <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-              <span slot="title" class="ml-4 title">{{ menu.label }}</span>
+              <template v-slot:title>
+                <span class="ml-4 title">{{ menu.label }}</span>
+              </template>
             </ElMenuItem>
           </template>
           <div class="flex-grow-1 border-bottom"></div>
           <template v-for="menu in menusGroup.bottom">
             <ElSubMenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
-              <template slot="title">
+              <template #title>
                 <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
                 <span class="ml-4 title">{{ menu.label }}</span>
               </template>
@@ -234,7 +236,7 @@ export default {
       menus: [],
       menusGroup: {
         top: [],
-        bottom: []
+        bottom: [],
       },
       userName: '',
       email: '',
@@ -369,7 +371,7 @@ export default {
       let menus = JSON.parse(JSON.stringify(menuSetting))
       this.menus = formatMenu(menus)
 
-      this.menus.forEach(m => {
+      this.menus.forEach((m) => {
         if (m.group) {
           this.menusGroup.bottom.push(m)
         } else {

@@ -4,10 +4,11 @@ import { Space } from './space'
 import { Input } from './input'
 import { Radio } from './radio'
 import { FormTab } from './form-tab'
+import { Switch } from './switch'
 import { FormCollapse, FormCollapseItem } from './form-collapse'
 
 export { Alert, Link }
-export { Space, Input, FormCollapse, FormCollapseItem, Radio, FormTab }
+export { Space, Input, FormCollapse, FormCollapseItem, Radio, FormTab, Switch }
 export * from './js-editor'
 export * from './js-editor-dialog'
 export * from './python-editor'
@@ -31,6 +32,6 @@ export * from './json-editor'
 export * from './table-field-select'
 export * from './verify-fields-dialog'
 export * from './infinite-select'
-export * from './switch' // 为了扩展开关的二次确认
+// export * from './switch' // 为了扩展开关的二次确认
 
 export * from '@formily/element-plus'

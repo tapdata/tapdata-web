@@ -195,6 +195,11 @@
 // Message
 .el-message {
   --el-border-radius-base: 8px;
+  --el-message-border-color: var(--el-message-text-color);
+  box-shadow: 0 8px 24px 8px rgba(31, 35, 41, 0.04), 0 6px 12px 0 rgba(31, 35, 41, 0.04), 0 4px 8px -8px rgba(31, 35, 41, 0.06);
+  &__content {
+    --el-message-text-color: var(--el-text-color-primary) !important;
+  }
 }
 
 // MessageBox
@@ -214,17 +219,23 @@
   }
 
   // 文字按钮
-  &.is-text:has(> span:only-child) {
+  &.is-text {
     padding: 2px 4px;
     height: auto;
     line-height: 22px;
 
+    //--el-fill-color-light: rgba(0, 0, 0, 0.06);
+    --el-fill-color-light: rgba(31, 35, 41, 0.1);
+    --el-fill-color: rgba(31, 35, 41, 0.1);
+
     &.el-button--primary {
-      --el-fill-color-light: var(--el-color-primary-light-9)
+      --el-fill-color-light: #{rgba(map-get($color, primary), 0.1)};
+      --el-fill-color: #{rgba(map-get($color, primary), 0.2)};
     }
 
     &.el-button--danger {
-      --el-fill-color-light: var(--el-color-danger-light-9)
+      --el-fill-color-light: #{rgba(map-get($color, danger), 0.1)};
+      --el-fill-color: #{rgba(map-get($color, danger), 0.2)};
     }
 
     &.el-button--small {
@@ -238,8 +249,8 @@
 
   // 图标按钮
   &.is-text:has(> i:only-child) {
-    //--el-fill-color-light: rgba(31, 35, 41, 0.1);
-    --el-fill-color-light: rgba(0, 0, 0, 0.06);
+    --el-fill-color-light: rgba(31, 35, 41, 0.1);
+    //--el-fill-color-light: rgba(0, 0, 0, 0.06);
     padding: 4px;
     min-width: 0;
     height: auto;
@@ -249,6 +260,7 @@
 
     &.el-button--primary {
       --el-fill-color-light: var(--el-color-primary-light-9);
+      --el-fill-color: var(--el-color-primary-light-8);
     }
   }
 

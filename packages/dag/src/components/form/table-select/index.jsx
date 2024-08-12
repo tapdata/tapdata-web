@@ -103,16 +103,15 @@ export const TableSelect = connect(
       name: 'TableSelect',
       props: ['reloadTime', 'connectionId', 'modelValue'],
       setup(props, { attrs }) {
-        console.log('props.modelValue', props.modelValue, attrs)
-
         const select = ref(null)
         const store = useStore()
+        const { taskId, activeNodeId } = store.state.dataflow
         const params = computed(() => {
           return {
             reloadTime: props.reloadTime,
             where: {
               'source.id': props.connectionId,
-              taskId: store.state.dataflow.taskId,
+              taskId,
             },
           }
         })
@@ -128,8 +127,8 @@ export const TableSelect = connect(
         const loadSchema = async (keys) => {
           loading.value = true
           await taskApi
-            .refreshSchema(store.state.dataflow.taskId, {
-              nodeIds: store.state.dataflow.activeNodeId,
+            .refreshSchema(taskId, {
+              nodeIds: activeNodeId,
               keys,
             })
             .finally(() => {

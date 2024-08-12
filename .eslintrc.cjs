@@ -12,4 +12,8 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
   },
+  rules: {
+    'no-undef': 'off', // 禁用 no-undef 规则
+    // 其他规则...
+  },
 }

@@ -77,6 +77,7 @@
   },
 
   "include": [
+    "apps/daas/src/**/*.ts",
     "packages/*/src/**/*.ts",
     "packages/*/src/**/*.tsx",
     "packages/*/src/**/*.vue"

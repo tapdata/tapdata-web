@@ -470,7 +470,7 @@ export default {
             taskType: 80,
             status: 110,
             syncStatus: 110,
-            operation: 280,
+            operation: 300,
           }
     },
 

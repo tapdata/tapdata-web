@@ -18,7 +18,7 @@ $color: (
   disprimary: #94bfff,
   success: #00b42a,
   lsuccess: #e8ffea,
-  danger: #f53f3f,
+  danger: #f54a45,
   warning: #ff7d00,
   info: #75849b,
   linfo: #e9edf2,
@@ -89,6 +89,9 @@ $tag-icon-span-gap: (
     'warning': (
       'base': map-get($color, warning),
     ),
+    'danger': (
+      'base': map-get($color, danger),
+    )
   ),
   $text-color: (
     'primary': rgba(0, 0, 0, 0.88),
@@ -104,8 +107,8 @@ $tag-icon-span-gap: (
     'circle': 100%,
   ),
   $dialog: (
-    'border-radius': 10px,
     'padding-primary': 24px,
+    'border-radius': 10px,
     //'title-font-size': var(--el-font-size-medium),
   ),
   $table: (
@@ -125,6 +128,7 @@ $tag-icon-span-gap: (
     'border-radius': 6px,
   ),
   $messagebox: (
+    'padding-primary': 24px,
     'border-radius': 10px,
   ),
   $card: (
