@@ -120,6 +120,7 @@
             ignore-error
             class="content__list flex-fill"
             @update-rules="handleUpdateRules"
+            @open-update-rules="handleOpen"
           ></List>
         </div>
       </div>
