@@ -297,8 +297,10 @@ export class Database extends NodeType {
                           rows: 1,
                           title: i18n.t('packages_dag_nodes_database_pipeidaodebiao'),
                           connectionId: '{{$values.connectionId}}',
-                          params: '{{ {regex: $values.tableExpression,limit:0} }}',
-                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`
+                          params:
+                            '{{ {regex: $values.tableExpression,limit:0, syncPartitionTableEnable: $values.syncSourcePartitionTableEnable} }}',
+                          filterType: `{{ $values.noPrimaryKeyTableSelectType }}`,
+                          hasPartition: `{{$values.attrs.capabilities.some(item => item.id==="source_support_partition")}}`
                         },
                         'x-reactions': {
                           dependencies: ['migrateTableSelectType'],
