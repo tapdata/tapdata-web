@@ -1612,7 +1612,7 @@ export default {
   dfs_agent_information: '引擎信息',
   dfs_agent_download_type: '请选择您的服务器类型',
   dfs_agent_deploy_success: '部署完成',
-  dfs_agent_deploy_success_subtitle: '引擎部署完成，5秒后自动返回资源管理页面',
+  dfs_agent_deploy_success_subtitle: '返回资源管理页面',
   dfs_change_instance_title: '变更实例规格',
   dfs_change_instance_tip: '规格变更仅支持由小规格向大规格变更，如需将大规格变更为小规格，请先退订后再重新订购。',
   dfs_change_instance_object: '变更对象',
@@ -1715,5 +1715,6 @@ export default {
   dfs_payment_progress: '支付中',
   dfs_payment_progress_desc: '如果您已支付，请点击支付完成',
   dfs_retry_payment: '重新支付',
-  dfs_complete_payment: '支付完成'
+  dfs_complete_payment: '支付完成',
+  dfs_tm_address_alert: '如果您的服务器进行了访问限制，请开放网络策略以确保服务器可以访问到 TapData Cloud 管理端：'
 }
