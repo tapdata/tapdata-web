@@ -425,7 +425,7 @@ export default {
         }))
       )
 
-      this.$message.success('public_message_publish_successful')
+      this.$message.success(this.$t('public_message_publish_successful'))
       this.fetch()
     }
   }
