@@ -68,7 +68,7 @@ export default class Modules extends Http {
   }
 
   batchUpdate(modules) {
-    return this.axios.patch(`${this.url}/batchUpdate`, { modules })
+    return this.axios.patch(`${this.url}/batchUpdate`, modules)
   }
 }
 export { Modules }
