@@ -417,7 +417,13 @@ export default {
     async batchPublish() {
       if (!this.pendingSelection.length) return
 
-      await modulesApi.batchUpdate(this.pendingSelection)
+      await modulesApi.batchUpdate(
+        this.pendingSelection.map(item => ({
+          id: item.id,
+          status: 'active',
+          tableName: item.tableName
+        }))
+      )
 
       this.$message.success('public_message_publish_successful')
       this.fetch()
