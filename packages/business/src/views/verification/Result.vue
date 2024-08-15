@@ -42,6 +42,8 @@
           v-if="type !== 'row_count' && type !== 'hash'"
           ref="resultView"
           :remoteMethod="getResultData"
+          :show-type="showType"
+          @update:showType="showType = $event"
         ></ResultView>
       </div>
     </div>

@@ -77,7 +77,7 @@
 
       <template v-if="statsInfo.result !== 'passed'">
         <div v-if="inspectMethod !== 'jointField'" class="flex justify-content-between p-4">
-          <ElRadioGroup v-model="showType">
+          <ElRadioGroup :value="showType" @input="$emit('update:showType', $event)">
             <ElRadio label="diff">{{ $t('packages_business_verification_details_jinxianshichayi') }}</ElRadio>
             <ElRadio label="all">{{ $t('packages_business_verification_details_xianshiwanzhengzi') }}</ElRadio>
           </ElRadioGroup>
@@ -399,7 +399,8 @@ export default {
     VIcon
   },
   props: {
-    remoteMethod: Function
+    remoteMethod: Function,
+    showType: String
   },
   data() {
     return {
@@ -412,7 +413,6 @@ export default {
       showAdvancedVerification: false,
       statsInfo: {},
       resultList: [],
-      showType: 'diff',
       sourceSortColumn: [], // 源索引字段
       targetSortColumn: [], // 目标索引字段
       inspectMethod: '',
