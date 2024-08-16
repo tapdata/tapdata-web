@@ -23,6 +23,7 @@ export const SchemaPreview = defineComponent({
     const readonly = ref(props.disabled || root.$store.state.dataflow?.stateIsReadonly || !isTarget)
     let fieldChangeRules = form.values.fieldChangeRules || []
     let columnsMap = {}
+    let partitionFieldMap = {}
     const createTree = data => {
       const root = { children: [] }
 
@@ -71,12 +72,17 @@ export const SchemaPreview = defineComponent({
       tableName.value = schema.name || form.values.tableName || form.values.name
       emit('update-table-name', tableName.value)
 
-      let { indices = [], fields = [] } = schema
+      let { indices = [], fields = [], partitionInfo: { partitionFields = [] } = { partitionFields: [] } } = schema
 
       columnsMap = indices.reduce((map, item, index) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
         return map
       }, {})
+
+      partitionFields.reduce((map, item) => {
+        map[item.name] = true
+        return map
+      }, partitionFieldMap)
 
       schemaData.value = mapSchema(schema)
 
@@ -125,6 +131,7 @@ export const SchemaPreview = defineComponent({
         }*/
         field.indicesUnique = columnsMap[field.field_name]
         field.isPrimaryKey = field.primary_key_position > 0
+        field.isPartitionKey = partitionFieldMap[field.field_name]
       }
       fields.sort((a, b) => a.columnPosition - b.columnPosition)
       //如果findPossibleDataTypes = {}，不做类型校验
@@ -181,6 +188,12 @@ export const SchemaPreview = defineComponent({
               ></span>
             </span>
           </ElTooltip>
+        )
+      } else if (data.isPartitionKey) {
+        icon = (
+          <VIcon size="14" class="field-icon position-absolute">
+            circle-dashed-letter-p
+          </VIcon>
         )
       }
 

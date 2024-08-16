@@ -11,7 +11,7 @@
     >
       <template slot="field_name" slot-scope="scope">
         <span class="flex align-center"
-          ><span class="ellipsis">{{ scope.row.field_name }}</span>
+          ><span class="ellipsis align-middle">{{ scope.row.field_name }}</span>
           <VIcon v-if="scope.row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
           <ElTooltip
             v-else-if="indicesMap[scope.row.field_name]"
@@ -28,6 +28,9 @@
               <span :style="`--index: '${indicesMap[scope.row.field_name][1]}';`" class="fingerprint-sub"></span>
             </span>
           </ElTooltip>
+          <VIcon v-else-if="partitionMap[scope.row.field_name]" size="14" class="ml-1 align-middle"
+            >circle-dashed-letter-p</VIcon
+          >
         </span>
       </template>
       <template slot="dataTypeHeader">
@@ -356,6 +359,15 @@ export default {
       const { indices = [] } = this.data
       return indices.reduce((map, item, index) => {
         item.columns.forEach(({ columnName }) => (map[columnName] = [item.indexName, index, item.unique]))
+        return map
+      }, {})
+    },
+
+    partitionMap() {
+      let { partitionInfo: { partitionFields = [] } = { partitionFields: [] } } = this.data
+
+      return partitionFields.reduce((map, item) => {
+        map[item.name] = true
         return map
       }, {})
     },
