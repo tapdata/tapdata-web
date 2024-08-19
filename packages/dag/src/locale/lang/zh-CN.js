@@ -733,5 +733,9 @@ export default {
   packages_dag_switch_to_table_view: '切换至表格视图',
   packages_dag_switch_to_tree_view: '切换至树形视图',
   packages_dag_syncIndexTip: '开启该能力后，会自动将源的索引同步到目标，该行为可能会对目标数据库造成影响，请谨慎开启',
-  packages_dag_updateConditionFields_alert: '为了保证性能，系统会自动给更新条件字段创建索引'
+  packages_dag_updateConditionFields_alert: '为了保证性能，系统会自动给更新条件字段创建索引',
+  packages_dag_enableConcurrentRead: '开启多表并发读取',
+  packages_dag_enableConcurrentRead_tips:
+    '启用后，系统将同时读取并同步多张表的数据，适用于小表较多的场景，有助于提升性能。\n注意：启用后无法同步新增表。请根据资源合理设置目标节点并发线程数，以确保系统稳定。',
+  packages_dag_concurrentReadThreadNumber: '读取表数量'
 }
