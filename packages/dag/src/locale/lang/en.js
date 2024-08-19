@@ -789,6 +789,6 @@ export default {
   packages_dag_updateConditionFields_alert: 'To ensure performance, the system will auto-index updated fields.',
   packages_dag_enableConcurrentRead: 'Enable Concurrent Table Reading',
   packages_dag_enableConcurrentRead_tips:
-    'Enabling this will allow the system to read and sync multiple tables simultaneously, ideal for scenarios with many small tables to improve performance. \nNote: Newly added tables won’t sync once enabled. Adjust the target node concurrent thread count based on available resources to maintain stability.',
+    'Enabling this will allow the system to read and sync multiple tables simultaneously, ideal for scenarios with many small tables to improve performance. \nNote: In full-sync mode, newly added tables won’t sync once enabled. Adjust the target node concurrent thread count based on available resources to maintain stability.',
   packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read'
 }
