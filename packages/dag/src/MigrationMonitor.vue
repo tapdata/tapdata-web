@@ -361,7 +361,7 @@ export default {
 
       const sourceNode = this.allNodes.find(node => !node.$inputs.length && node.type === 'database')
 
-      return sourceNode.enableConcurrentRead
+      return sourceNode?.enableConcurrentRead
     }
   },
 

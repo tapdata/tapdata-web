@@ -77,7 +77,7 @@
               </div>
               <div
                 v-if="
-                  dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && ifEnableConcurrentRead
+                  dataflow.syncType === 'migrate' && totalData.currentSnapshotTableRowTotal && !ifEnableConcurrentRead
                 "
                 class="mb-4 flex align-items-center"
               >
