@@ -49,6 +49,7 @@
           :verifyTotals="verifyTotals"
           :timeFormat="timeFormat"
           :range="timeSelectRange"
+          :if-enable-concurrent-read="ifEnableConcurrentRead"
           @load-data="init"
           @move-node="handleDragMoveNode"
           @drop-node="handleAddNodeByDrag"
@@ -154,6 +155,7 @@
         :quotaTime="quotaTime"
         :quotaTimeType="quotaTimeType"
         :getTimeRange="getTimeRange"
+        :if-enable-concurrent-read="ifEnableConcurrentRead"
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
@@ -352,6 +354,14 @@ export default {
         end = firstStartTime + 5 * 60 * 1000
       }
       return [firstStartTime, end || Time.now()]
+    },
+
+    ifEnableConcurrentRead() {
+      if (this.dataflow.syncType !== 'migrate') return false
+
+      const sourceNode = this.allNodes.find(node => !node.$inputs.length && node.type === 'database')
+
+      return sourceNode.enableConcurrentRead
     }
   },
 
