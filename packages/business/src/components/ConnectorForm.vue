@@ -21,6 +21,7 @@
         layout="vertical"
         feedbackLayout="terse"
       />
+      <slot name="footer"></slot>
     </div>
     <div class="flex-1 bg-white rounded-lg overflow-hidden">
       <ConnectorDoc :pdk-hash="pdkHash" :pdk-id="pdkId"></ConnectorDoc>
