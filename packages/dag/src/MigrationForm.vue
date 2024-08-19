@@ -17,7 +17,7 @@
       </el-steps>
     </div>
 
-    <div class="rounded-lg">
+    <div class="rounded-lg flex-1 min-h-0">
       <SourceStep></SourceStep>
     </div>
   </section>

@@ -12502,3 +12502,10 @@
     //background-color: #bcbfc3;
   }
 }
+
+.backdrop-filter-light {
+  background-color: rgba(255, 255, 255, 0.6);
+  //border-block-start: 1px solid rgba(5, 5, 5, 0.06);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}

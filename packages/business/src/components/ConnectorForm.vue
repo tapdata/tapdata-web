@@ -1,27 +1,32 @@
 <template>
-  <div class="flex gap-4">
-    <div class="p-4 flex-1 bg-white rounded-lg">
-      <slot name="header"></slot>
-      <ElAlert v-if="showIpTips" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
-        <template #title>
-          <span class="inline-block lh-sm align-middle">
-            {{ $t('packages_business_agent_ip_tips_prefix')
-            }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-              $t('packages_business_agent_ip_tips_suffix')
-            }}</a>
-          </span>
-        </template>
-      </ElAlert>
-      <slot name="prepend"></slot>
-      <SchemaToForm
-        class="pdk-schema-form"
-        ref="schemaToForm"
-        :schema="schema"
-        :scope="scope"
-        layout="vertical"
-        feedbackLayout="terse"
-      />
-      <slot name="footer"></slot>
+  <div class="flex gap-4 h-100">
+    <div class="flex-1 bg-white rounded-lg min-h-0 overflow-y-auto overflow-x-hidden">
+      <div class="p-4">
+        <slot name="header"></slot>
+        <ElAlert v-if="showIpTips" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
+          <template #title>
+            <span class="inline-block lh-sm align-middle">
+              {{ $t('packages_business_agent_ip_tips_prefix')
+              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
+                $t('packages_business_agent_ip_tips_suffix')
+              }}</a>
+            </span>
+          </template>
+        </ElAlert>
+        <slot name="prepend"></slot>
+        <SchemaToForm
+          class="pdk-schema-form"
+          ref="schemaToForm"
+          :schema="schema"
+          :scope="scope"
+          layout="vertical"
+          feedbackLayout="terse"
+        />
+      </div>
+
+      <div class="position-sticky bottom-0 p-4 border-top backdrop-filter-light text-center">
+        <slot name="footer"></slot>
+      </div>
     </div>
     <div class="flex-1 bg-white rounded-lg overflow-hidden">
       <ConnectorDoc :pdk-hash="pdkHash" :pdk-id="pdkId"></ConnectorDoc>
