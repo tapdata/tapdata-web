@@ -3,12 +3,14 @@
     <div v-if="showFilter" class="flex justify-content-between my-2">
       <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       <div>
+        <ElButton v-show="pendingSelection.length > 0" size="mini" @click="batchPublish">
+          <span> {{ $t('public_batch_publish') }}</span>
+        </ElButton>
         <ElButton
           v-show="multipleSelection.length > 0"
           :disabled="$disabledReadonlyUserBtn()"
           v-readonlybtn="'SYNC_job_export'"
           size="mini"
-          class="btn message-button-cancel"
           @click="handleExport"
         >
           <span> {{ $t('public_button_export') }}</span>
@@ -16,7 +18,6 @@
         <ElButton
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
-          class="btn"
           :disabled="$disabledReadonlyUserBtn()"
           @click="handleImport"
         >
@@ -25,13 +26,12 @@
         <ElButton
           v-readonlybtn="'SYNC_job_export'"
           size="mini"
-          class="btn"
           :disabled="$disabledReadonlyUserBtn() || !multipleSelectionActive.length"
           @click="handleExportApiDoc"
         >
           <span>{{ $t('packages_business_data_server_list_apIwendang') }}</span>
         </ElButton>
-        <ElButton class="btn btn-create" type="primary" size="mini" @click.stop="showDrawer()">
+        <ElButton type="primary" size="mini" @click.stop="showDrawer()">
           <span>{{ $t('packages_business_data_server_drawer_chuangjianfuwu') }}</span>
         </ElButton>
       </div>
@@ -201,6 +201,10 @@ export default {
     // 选中的已发布数据
     multipleSelectionActive() {
       return this.multipleSelection.filter(t => t.status === 'active')
+    },
+
+    pendingSelection() {
+      return this.multipleSelection.filter(t => t.status === 'pending')
     }
   },
   watch: {
@@ -409,6 +413,20 @@ export default {
     handleExportApiDoc() {
       const ids = this.multipleSelectionActive.map(t => t.id)
       modulesApi.apiExport(ids, this.apiServerHost)
+    },
+    async batchPublish() {
+      if (!this.pendingSelection.length) return
+
+      await modulesApi.batchUpdate(
+        this.pendingSelection.map(item => ({
+          id: item.id,
+          status: 'active',
+          tableName: item.tableName
+        }))
+      )
+
+      this.$message.success(this.$t('public_message_publish_successful'))
+      this.fetch()
     }
   }
 }

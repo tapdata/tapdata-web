@@ -155,6 +155,7 @@ export default {
   public_message_request_timeout: 'Request Timeout',
   public_message_send_success: 'Send Successfully',
   public_message_download_ok: 'Download Successfully',
+  public_message_publish_successful: 'Publish Successful',
   // drop-down list
   public_select_placeholder: 'Please Select',
   public_select_option_all: 'Select All',
@@ -341,5 +342,6 @@ export default {
   public_resend: 'Resend',
 
   public_unique_index: 'Unique Index',
-  public_normal_index: 'Index'
+  public_normal_index: 'Index',
+  public_batch_publish: 'Batch Publish'
 }
