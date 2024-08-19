@@ -598,6 +598,54 @@ export class Database extends NodeType {
                             default: 1
                           }
                         }
+                      },
+
+                      enableConcurrentReadSpace: {
+                        title: i18n.t('packages_dag_enableConcurrentRead'),
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: i18n.t('packages_dag_enableConcurrentRead_tips')
+                        },
+                        type: 'void',
+                        'x-component': 'Space',
+                        'x-component-props': {
+                          size: 'middle'
+                        },
+                        'x-reactions': {
+                          fulfill: {
+                            state: {
+                              display: '{{$settings.type === "cdc" ? "hidden":"visible"}}'
+                            }
+                          }
+                        },
+                        properties: {
+                          enableConcurrentRead: {
+                            type: 'boolean',
+                            'x-component': 'Switch',
+                            'x-reactions': {
+                              target: '.concurrentReadThreadNumber',
+                              fulfill: {
+                                state: {
+                                  visible: '{{!!$self.value}}'
+                                }
+                              }
+                            }
+                          },
+                          concurrentReadThreadNumber: {
+                            title: i18n.t('packages_dag_concurrentReadThreadNumber'),
+                            type: 'number',
+                            default: 2,
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              layout: 'horizontal',
+                              feedbackLayout: 'none'
+                            },
+                            'x-component': 'InputNumber',
+                            'x-component-props': {
+                              min: 1
+                            }
+                          }
+                        }
                       }
                     }
                   },

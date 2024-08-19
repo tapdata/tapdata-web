@@ -786,5 +786,9 @@ export default {
   packages_dag_switch_to_tree_view: 'Switch to Tree View',
   packages_dag_syncIndexTip:
     'Enabling this capability will automatically synchronize the source index to the target. This action may impact the target database, so please enable it with caution.',
-  packages_dag_updateConditionFields_alert: 'To ensure performance, the system will auto-index updated fields.'
+  packages_dag_updateConditionFields_alert: 'To ensure performance, the system will auto-index updated fields.',
+  packages_dag_enableConcurrentRead: 'Enable Concurrent Reading for Multiple Tables',
+  packages_dag_enableConcurrentRead_tips:
+    'When enabled, if the task is only a full load, dynamically added tables cannot be synchronized.',
+  packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read Concurrently'
 }
