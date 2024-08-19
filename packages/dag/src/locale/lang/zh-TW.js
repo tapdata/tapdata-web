@@ -730,6 +730,7 @@ export default {
   packages_dag_syncIndexTip: '開啓該能力後，會自動將源的索引同步到目標，該行為可能會對目標數據庫造成影響，請謹慎開啓',
   packages_dag_updateConditionFields_alert: '為了保證性能，系統會自動給更新條件字段創建索引',
   packages_dag_enableConcurrentRead: '開啓多表併發讀取',
-  packages_dag_enableConcurrentRead_tips: '當開啓時，如果任務僅全量則無法同步動態新增表',
+  packages_dag_enableConcurrentRead_tips:
+    '啓用後，系統將同時讀取並同步多張表的數據，適用於小表較多的場景，有助於提升性能。\n注意：啓用後無法同步新增表。請根據資源合理設置目標節點併發線程數，以確保系統穩定。',
   packages_dag_concurrentReadThreadNumber: '讀取表數量'
 }
