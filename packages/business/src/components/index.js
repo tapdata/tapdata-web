@@ -13,6 +13,7 @@ import StageButton from './StageButton'
 import UpgradeFee from './UpgradeFee'
 import UpgradeCharges from './UpgradeCharges'
 import SyncStatus from './SyncStatus.vue'
+import ConnectorForm from './ConnectorForm.vue'
 
 export {
   StatusItem,
@@ -29,7 +30,8 @@ export {
   StageButton,
   UpgradeFee,
   UpgradeCharges,
-  SyncStatus
+  SyncStatus,
+  ConnectorForm
 }
 
 export * from './DatabaseIcon'

@@ -17,6 +17,11 @@ const MigrationEditor = async () => {
   return MigrationEditor
 }
 
+const MigrationForm = async () => {
+  const { MigrationForm } = await import('@tap/dag')
+  return MigrationForm
+}
+
 const ConnectionForm = async () => {
   const { ConnectionForm } = await import('@tap/business')
   return ConnectionForm
@@ -233,6 +238,16 @@ const routes = [
               title: 'task_manage_migrate',
               desc: 'task_manage_migrate_desc',
               code: 'v2_data_replication',
+              hideTitle: true
+            }
+          },
+
+          {
+            path: 'form',
+            name: 'MigrateForm',
+            component: MigrationForm,
+            meta: {
+              title: 'task_manage_migrate',
               hideTitle: true
             }
           }
