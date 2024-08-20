@@ -1,5 +1,5 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, reactive, set, del, computed } from '@vue/composition-api'
+import { defineComponent, ref, reactive, set, del, computed, inject } from '@vue/composition-api'
 import { useForm } from '@tap/form'
 import { FormItem } from '@tap/form'
 import { observer } from '@formily/reactive-vue'
@@ -10,6 +10,7 @@ import { ifTableNameConfigEmpty, getTableRenameByConfig } from '../../../util'
 import List from './List.vue'
 import './style.scss'
 import { debounce } from 'lodash'
+import { SchemaExpressionScopeSymbol } from '@formily/vue'
 
 // 源节点改变，表编辑按照批量配置重新应用，重新应用的场景如下：
 // 1. 记录源节点id，表编辑节点渲染时进行判断，如果源节点和上次记录的不同，重新应用批量规则
@@ -17,9 +18,11 @@ import { debounce } from 'lodash'
 
 export const TableRename = observer(
   defineComponent({
-    props: ['findParentNodes', 'value', 'listStyle', 'disabled'],
+    props: ['findParentNodes', 'value', 'listStyle', 'disabled', 'taskId'],
     setup(props, { emit, root, refs }) {
-      const { taskId } = root.$store.state.dataflow
+      const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
+      let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow
+      console.log('taskId', taskId)
       const itemSize = 38
       const formRef = useForm()
       const form = formRef.value
@@ -231,7 +234,7 @@ export const TableRename = observer(
     render() {
       const label = (
         <div class="inline-flex align-center position-absolute w-100">
-          <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
+          <span class="mr-2">{i18n.t('packages_form_table_rename_rule_config')}</span>
           <ElLink disabled={this.disabled} onClick={this.resetNames} size="mini" type="primary">
             <div class="flex align-center px-1">
               <VIcon class="mr-1">reset</VIcon>

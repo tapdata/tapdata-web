@@ -29,7 +29,7 @@ export default {
   components: { SourceStep, TargetStep, TaskStep },
   data() {
     return {
-      currentStep: 0,
+      currentStep: 2,
       steps: [
         {
           title: '创建源连接',

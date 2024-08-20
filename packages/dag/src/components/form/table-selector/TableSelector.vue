@@ -127,13 +127,16 @@
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
-        <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
-          <div class="flex align-center">
-            <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
-            <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
-            <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
-          </div>
-        </ElLink>
+
+        <slot name="right-extra">
+          <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
+            <div class="flex align-center">
+              <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
+              <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
+              <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
+            </div>
+          </ElLink>
+        </slot>
       </div>
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">

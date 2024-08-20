@@ -24,7 +24,7 @@
         />
       </div>
 
-      <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light text-center z-10">
+      <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
         <slot name="footer"></slot>
       </div>
     </div>

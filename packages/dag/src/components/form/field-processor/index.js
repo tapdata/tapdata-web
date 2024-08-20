@@ -538,7 +538,7 @@ export const FieldRenameProcessor = observer(
       return () => {
         const label = (
           <div class="inline-flex align-center position-absolute w-100">
-            <span class="mr-2 flex-1">{i18n.t('packages_form_table_rename_rule_config')}</span>
+            <span class="mr-2">{i18n.t('packages_form_table_rename_rule_config')}</span>
             <ElLink disabled={props.disabled} onClick={doOperationRest} size="mini" type="primary">
               <div class="flex align-center px-1">
                 <VIcon class="mr-1">reset</VIcon>
