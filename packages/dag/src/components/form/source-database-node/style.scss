@@ -1,0 +1,36 @@
+.source-database-node {
+  $card-bg: #f1f2f4;
+  .el-tabs {
+    border-radius: 8px;
+    .el-tabs__nav-wrap.is-top {
+      padding: 0;
+    }
+    &.el-tabs--card {
+      >.el-tabs__header {
+        margin-bottom: 0;
+        border-bottom: 0;
+        .el-tabs__nav {
+          border-radius: 8px 8px 0 0;
+        }
+        .el-tabs__item {
+          border-bottom-color: #e4e7ed;
+        }
+        .el-tabs__item:first-child {
+          border-top-left-radius: 8px;
+        }
+        .el-tabs__item:last-child {
+          border-top-right-radius: 8px;
+        }
+        .el-tabs__item.is-active {
+          background-color: $card-bg;
+          border-bottom-color: $card-bg;
+        }
+      }
+      .el-tabs__content {
+        padding: 1rem;
+        background-color: $card-bg;
+        border-radius: 0 8px 8px 8px;
+      }
+    }
+  }
+}

@@ -2,14 +2,14 @@
   <div class="h-100">
     <ConnectorForm :pdk-hash="pdkHash" :pdk-id="pdkId" show-ip-tips>
       <template #header>
-        <div class="title-prefix-bar mb-4">创建源连接</div>
+        <div class="title-prefix-bar mb-4">创建目标连接</div>
       </template>
       <template #prepend>
         <ConnectorFormItem :pdk-hash="pdkHash" :connector-name="connectorName"></ConnectorFormItem>
       </template>
       <template #footer>
         <div>
-          <el-button>上一步</el-button>
+          <el-button @click="$emit('prev')">上一步</el-button>
           <el-button type="primary" @click="$emit('next')">测试连接以进行下一步</el-button>
         </div>
       </template>

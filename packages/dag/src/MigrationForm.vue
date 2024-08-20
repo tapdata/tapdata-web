@@ -9,29 +9,53 @@
       <el-divider class="my-4"></el-divider>
 
       <el-steps class="form-steps gap-4" :active="currentStep">
-        <el-step title="创建数据源"></el-step>
-        <el-step title="创建目标"></el-step>
-        <el-step title="配置数据复制任务"></el-step>
-        <!--<el-step title="高级设置"></el-step>-->
-        <el-step title="任务启动运行"></el-step>
+        <el-step v-for="(step, index) in steps" :key="index" :title="step.title"></el-step>
       </el-steps>
     </div>
 
     <div class="rounded-lg flex-1 min-h-0">
-      <SourceStep></SourceStep>
+      <component :is="steps[currentStep].component" @prev="prevStep" @next="nextStep"></component>
     </div>
   </section>
 </template>
 
 <script>
 import SourceStep from './components/steps/SourceStep.vue'
+import TargetStep from './components/steps/TargetStep.vue'
+import TaskStep from './components/steps/TaskStep.vue'
 
 export default {
   name: 'MigrationForm',
-  components: { SourceStep },
+  components: { SourceStep, TargetStep, TaskStep },
   data() {
     return {
-      currentStep: 0
+      currentStep: 0,
+      steps: [
+        {
+          title: '创建源连接',
+          component: SourceStep
+        },
+        {
+          title: '创建目标连接',
+          component: TargetStep
+        },
+        {
+          title: '配置数据复制任务',
+          component: TaskStep
+        },
+        {
+          title: '任务启动运行',
+          component: SourceStep
+        }
+      ]
+    }
+  },
+  methods: {
+    prevStep() {
+      this.currentStep -= 1
+    },
+    nextStep() {
+      this.currentStep += 1
     }
   }
 }
