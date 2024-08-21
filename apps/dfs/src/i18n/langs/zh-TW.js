@@ -1678,5 +1678,6 @@ export default {
   dfs_payment_progress: '支付中',
   dfs_payment_progress_desc: '如果您已支付，請點擊支付完成',
   dfs_retry_payment: '重新支付',
-  dfs_complete_payment: '支付完成'
+  dfs_complete_payment: '支付完成',
+  dfs_tm_address_alert: '如果您的服務器進行了訪問限制，請開放網絡策略以確保服務器可以訪問到 TapData Cloud 管理端：'
 }
