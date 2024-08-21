@@ -29,8 +29,14 @@
       </div>
     </div>
     <div class="flex-1 bg-white rounded-lg overflow-hidden">
-      <ConnectorDoc :pdk-hash="pdkHash" :pdk-id="pdkId"></ConnectorDoc>
+      <ConnectorDoc v-if="pdkOptions" :pdk-hash="pdkOptions.pdkHash" :pdk-id="pdkOptions.pdkId"></ConnectorDoc>
     </div>
+
+    <Test ref="test" :visible.sync="dialogTestVisible" :formData="model" @returnTestData="returnTestData">
+      <template #cancel="scope">
+        <slot name="test-cancel" v-bind="scope"></slot>
+      </template>
+    </Test>
   </div>
 </template>
 
@@ -42,15 +48,17 @@ import i18n from '@tap/i18n'
 import { isEmpty } from 'lodash'
 import { submitForm, uuid } from '@tap/shared'
 import ConnectorDoc from './ConnectorDoc.vue'
+import Test from '../views/connections/Test.vue'
 
 export default {
   name: 'ConnectorForm',
-  components: { ConnectorDoc, SchemaToForm },
+  components: { Test, ConnectorDoc, SchemaToForm },
   props: {
     pdkHash: String,
     pdkId: String,
     id: String,
-    showIpTips: Boolean
+    showIpTips: Boolean,
+    connector: Object
   },
   inject: ['checkAgent', 'buried', 'lockedFeature'],
   data() {
@@ -63,6 +71,7 @@ export default {
         total: 0
       },
       schema: null,
+      pdkOptions: null,
       scope: {
         $isDaas: isDaas,
         isEdit: !!this.id,
@@ -313,6 +322,11 @@ export default {
           const data = await proxyApi.host()
           return data?.host
         }
+      },
+      status: '',
+      dialogTestVisible: false,
+      model: {
+        config: null
       }
     }
   },
@@ -321,16 +335,69 @@ export default {
       return `https://docs.tapdata.${
         !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en' ? 'io' : 'net'
       }/prerequisites/allow-access-network`
+    },
+    schemaFormInstance() {
+      return this.$refs.schemaToForm.getForm?.()
     }
   },
   async created() {
     this.getPdkForm()
   },
   methods: {
+    async startTest() {
+      this.buried('connectionTest')
+      this.checkAgent(() => {
+        this.schemaFormInstance.validate().then(
+          () => {
+            this.startTestPdk()
+          },
+          () => {
+            this.$el.querySelector('.formily-element-form-item-error').scrollIntoView()
+          }
+        )
+      }).catch(() => {
+        this.buried('connectionTestAgentFail')
+      })
+    },
+
+    startTestPdk() {
+      let formValues = this.$refs.schemaToForm?.getFormValues?.()
+      let { __TAPDATA } = formValues
+      formValues.__connectionType = __TAPDATA.connection_type
+      Object.assign(this.model, __TAPDATA)
+      delete formValues['__TAPDATA']
+      this.model.config = formValues
+      this.model.pdkType = 'pdk'
+      this.model.pdkHash = this.pdkOptions.pdkHash
+      this.model.database_type = this.pdkOptions.pdkId
+      this.dialogTestVisible = true
+      if (this.$route.params.id) {
+        //编辑需要特殊标识 updateSchema = false editTest = true
+        this.$refs.test.start(false, true)
+      } else {
+        delete this.model.id
+        this.$refs.test.start(false)
+      }
+    },
+
+    returnTestData(data) {
+      if (!data.status || data.status === null) return
+      this.status = data.status
+      this.buried('connectionTest', '', {
+        result: data.status === 'ready'
+      })
+    },
+
     async getPdkForm() {
-      const data = await databaseTypesApi.pdkHash(this.pdkHash)
+      if (this.connector) {
+        this.pdkOptions = this.connector
+      } else {
+        this.pdkOptions = await databaseTypesApi.pdkHash(this.pdkHash)
+      }
+
+      // const data = await databaseTypesApi.pdkHash(this.pdkHash)
       let id = this.id
-      this.pdkOptions = data || {}
+      // this.pdkOptions = data || {}
 
       if (this.pdkOptions.capabilities?.some(t => t.id === 'command_callback_function')) {
         this.commandCallbackFunctionId = await proxyApi.getId()
@@ -813,7 +880,7 @@ export default {
         })
       }
 
-      const connectionProperties = data?.properties?.connection?.properties || {}
+      const connectionProperties = this.pdkOptions?.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
 

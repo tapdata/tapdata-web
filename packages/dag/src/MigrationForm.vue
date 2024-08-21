@@ -13,7 +13,7 @@
       </el-steps>
     </div>
 
-    <div class="rounded-lg flex-1 min-h-0" v-if="task">
+    <div class="rounded-lg flex-1 min-h-0" v-if="hasTask">
       <component :is="steps[currentStep].component" @prev="prevStep" @next="nextStep"></component>
     </div>
   </section>
@@ -32,7 +32,8 @@ import { debounce } from 'lodash'
 import { genDatabaseNode, genProcessorNode } from './util'
 import { observable } from '@formily/reactive'
 import { DEFAULT_SETTINGS } from './constants'
-// import { computed as reactiveComputed } from '@tap/shared'
+import { computed as reactiveComputed } from '@tap/form'
+import { observer } from '@formily/vue'
 
 export default defineComponent({
   name: 'MigrationForm',
@@ -104,9 +105,11 @@ export default defineComponent({
         component: SourceStep
       }
     ])
-    let taskObs = null
+    // let taskObs = observable({})
+    let taskRef = ref(null)
+    let hasTask = ref(false)
 
-    const taskRef = reactiveComputed(() => taskObs)
+    // const taskRef = reactiveComputed(() => taskObs)
 
     const prevStep = () => {
       currentStep.value -= 1
@@ -296,17 +299,19 @@ export default defineComponent({
       richTask(task)
 
       formScope.$taskId = task.id
-      taskObs = observable(task)
+      taskRef.value = observable(task)
 
-      console.log('task', taskObs)
+      hasTask.value = true
+      console.log('task', taskRef.value)
     }
 
     initTask()
 
-    provide('task', taskObs)
+    provide('task', taskRef)
 
     return {
       task: taskRef,
+      hasTask,
       currentStep,
       steps,
       loading,

@@ -269,7 +269,7 @@ export default {
     initForm() {
       console.log('ttttask', this.task)
       this.form = createForm({
-        values: this.task
+        values: this.task.value
       })
     }
   }

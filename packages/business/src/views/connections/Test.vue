@@ -173,7 +173,9 @@
 
     <template #footer>
       <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('public_button_retry') }}</el-button>
-      <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+      <slot name="cancel" :close="handleClose" :status="status">
+        <el-button size="mini" type="primary" @click="handleClose()">{{ $t('public_button_close') }}</el-button>
+      </slot>
     </template>
   </el-dialog>
 </template>
