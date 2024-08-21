@@ -155,6 +155,7 @@ export default {
   public_message_request_timeout: '請求超時',
   public_message_send_success: '發送成功',
   public_message_download_ok: '下載成功',
+  public_message_publish_successful: '發佈成功',
   // 下拉列表
   public_select_placeholder: '請選擇',
   public_select_option_all: '全部',
@@ -340,5 +341,6 @@ export default {
   public_resend: '重新發送',
 
   public_unique_index: '唯一索引',
-  public_normal_index: '索引'
+  public_normal_index: '索引',
+  public_batch_publish: '批量發佈'
 }

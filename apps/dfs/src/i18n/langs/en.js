@@ -1855,5 +1855,6 @@ export default {
   dfs_payment_progress: 'Payment in Progress',
   dfs_payment_progress_desc: 'If you have already made the payment, please click “Payment Completed”.',
   dfs_retry_payment: 'Repay',
-  dfs_complete_payment: 'Payment Completed'
+  dfs_complete_payment: 'Payment Completed',
+  dfs_tm_address_alert: 'If your server has access restrictions, please allow access for TapData Cloud management to:'
 }

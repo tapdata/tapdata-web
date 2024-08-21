@@ -75,7 +75,13 @@
         :element-loading-text="$t('packages_business_verification_checking')"
       >
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-        <ResultView v-if="!isCountOrHash" ref="resultView" :remoteMethod="getResultData"></ResultView>
+        <ResultView
+          v-if="!isCountOrHash"
+          ref="resultView"
+          :remoteMethod="getResultData"
+          :show-type="showType"
+          @update:showType="showType = $event"
+        />
       </div>
     </div>
 

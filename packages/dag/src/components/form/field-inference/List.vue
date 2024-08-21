@@ -600,6 +600,7 @@ export default {
       const f = this.findInRulesById(row.changeRuleId)
       if (!f) return
       if (f.scope === 'Node') {
+        this.$emit('open-update-rules')
         return
       }
       if (f.scope === 'Field') {

@@ -1,7 +1,7 @@
 import Main from './Main'
 import { observer } from '@formily/reactive-vue'
 import { computed, defineComponent } from '@vue/composition-api'
-import { useForm, FormItem } from '@tap/form'
+import { useForm, FormItem, computed as reactiveComputed } from '@tap/form'
 import { VIcon } from '@tap/component'
 import i18n from '@tap/i18n'
 import SchemaFieldList from './List.vue'
@@ -15,7 +15,7 @@ export const fieldInference = connect(
         const formRef = useForm()
         const form = formRef.value
 
-        const batchRuleCounts = computed(() => {
+        const batchRuleCounts = reactiveComputed(() => {
           return form.values.fieldChangeRules?.filter(t => t.scope === 'Node').length || 0
         })
 
@@ -33,7 +33,7 @@ export const fieldInference = connect(
               <span>{i18n.t('packages_dag_nodes_database_tuiyanjieguo')}</span>
 
               {batchRuleCounts.value > 0 && (
-                <div className="flex align-items-center cursor-pointer color-primary" onClick={open}>
+                <div class="flex align-items-center cursor-pointer color-primary" onClick={open}>
                   <VIcon>info</VIcon>
                   <span
                     domPropsInnerHTML={i18n.t('packages_form_batch_rule_active', { val: batchRuleCounts.value })}
