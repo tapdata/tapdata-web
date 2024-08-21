@@ -27,6 +27,10 @@ export default {
   components: {
     SchemaForm
   },
+  inject: ['task'],
+  /*props: {
+    task: Object
+  },*/
   data() {
     let repeatNameMessage = this.$t('packages_dag_task_form_error_name_duplicate')
     const handleCheckName = debounce(function (resolve, value) {
@@ -42,7 +46,6 @@ export default {
 
     return {
       form: null,
-      task: null,
       schema: {
         type: 'object',
         properties: {
@@ -185,7 +188,7 @@ export default {
     }
   },
   created() {
-    this.initTask()
+    // this.initTask()
     this.initForm()
   },
   methods: {
@@ -264,6 +267,7 @@ export default {
     },
 
     initForm() {
+      console.log('ttttask', this.task)
       this.form = createForm({
         values: this.task
       })

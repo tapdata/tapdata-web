@@ -243,7 +243,7 @@ const routes = [
           },
 
           {
-            path: 'form',
+            path: 'form/:id?',
             name: 'MigrateForm',
             component: MigrationForm,
             meta: {
