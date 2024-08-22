@@ -215,7 +215,7 @@
         v-html="codeDialog.data.errorStack"
         class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
       ></div>
-      <template v-if="!isIKAS">
+      <template v-if="!hideSeeAlso">
         <div
           v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
           class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
@@ -403,7 +403,7 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS',
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       downloadAnalysis: {
         visible: false,
         progress: 0,
