@@ -6,7 +6,7 @@
     </div>
 
     <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
-      <el-button>上一步</el-button>
+      <el-button click="$emit('prev')">上一步</el-button>
       <el-button type="primary" @click="$emit('next')">启动任务</el-button>
     </div>
   </div>

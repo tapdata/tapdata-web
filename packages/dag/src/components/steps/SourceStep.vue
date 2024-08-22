@@ -81,7 +81,7 @@
         <!--<el-button type="primary" @click="$emit('next')">启动任务</el-button>-->
       </div>
     </div>
-    <ConnectorForm v-else ref="connectorForm" :connector="connectorSelected" show-ip-tips>
+    <ConnectorForm v-else ref="connectorForm" :connector="connectorSelected" show-ip-tips :connection-type="type">
       <template #header>
         <div class="title-prefix-bar mb-4 flex align-center gap-2">
           <span class="flex-1">创建源连接</span>
@@ -89,12 +89,6 @@
           <span class="fw-normal">{{ connectorSelected.name }}</span>
         </div>
       </template>
-      <!--<template #prepend>
-        <ConnectorFormItem
-          :pdk-hash="connectorSelected.pdkHash"
-          :connector-name="connectorSelected.name"
-        ></ConnectorFormItem>
-      </template>-->
       <template #footer>
         <div>
           <el-button @click="handleCancelCreate">返回</el-button>
@@ -105,7 +99,7 @@
       </template>
 
       <template #test-cancel="{ status, close }">
-        <el-button v-if="status === 'ready'" type="primary">下一步</el-button>
+        <el-button v-if="status === 'ready'" type="primary" @click="handleSaveAndNext">下一步</el-button>
         <el-button v-else type="primary" @click="close">关闭</el-button>
       </template>
     </ConnectorForm>
@@ -115,8 +109,9 @@
 <script>
 import { defineComponent, ref, computed, nextTick, provide, inject } from '@vue/composition-api'
 import { ConnectorForm, DatabaseIcon } from '@tap/business'
-import { databaseTypesApi } from '@tap/api'
+import { connectionsApi, databaseTypesApi } from '@tap/api'
 import ConnectorFormItem from './ConnectorFormItem.vue'
+import { getInitialValuesInBySchema } from '../../../../form'
 
 export default defineComponent({
   name: 'SourceStep',
@@ -127,7 +122,7 @@ export default defineComponent({
     }
   },
   components: { DatabaseIcon, ConnectorForm, ConnectorFormItem },
-  setup(props, { refs, root }) {
+  setup(props, { refs, root, emit }) {
     const pdkHash = ref('')
     const pdkId = ref('')
     const connectorName = ref('')
@@ -215,11 +210,41 @@ export default defineComponent({
       connectorSelected.value = null
     }
 
+    const taskRef = inject('task')
+    const nodeRef = inject(props.type)
+
     const buried = inject('buried')
     const checkAgent = inject('checkAgent')
 
     const handleTest = () => {
       refs.connectorForm.startTest()
+    }
+
+    const handleSaveAndNext = async () => {
+      const data = await refs.connectorForm.save()
+
+      console.log('data', data)
+
+      const attrs = {
+        connectionName: data.name,
+        connectionType: data.connection_type,
+        accessNodeProcessId: data.accessNodeProcessId,
+        priorityProcessId: data.priorityProcessId,
+        pdkType: data.pdkType,
+        pdkHash: data.pdkHash,
+        capabilities: data.capabilities || [],
+        db_version: data.db_version
+      }
+
+      Object.assign(nodeRef.value, {
+        name: data.name,
+        databaseType: data.database_type,
+        connectionId: data.id,
+        migrateTableSelectType: 'custom',
+        attrs
+      })
+
+      emit('next')
     }
 
     const options = ref([
@@ -252,7 +277,8 @@ export default defineComponent({
       handleConnectorSelect,
       handleSearchInput,
       handleCancelCreate,
-      handleTest
+      handleTest,
+      handleSaveAndNext
     }
   }
 })

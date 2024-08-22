@@ -14,7 +14,13 @@
     </div>
 
     <div class="rounded-lg flex-1 min-h-0" v-if="hasTask">
-      <component :is="steps[currentStep].component" @prev="prevStep" @next="nextStep"></component>
+      <component
+        :is="steps[currentStep].component"
+        :key="currentStep"
+        v-bind="steps[currentStep].props"
+        @prev="prevStep"
+        @next="nextStep"
+      ></component>
     </div>
   </section>
 </template>
@@ -87,14 +93,31 @@ export default defineComponent({
     }
     const loading = ref(false)
     const currentStep = ref(0)
+
+    const onSourceNext = () => {
+      currentStep.value += 1
+    }
+
+    const onTargetNext = () => {
+      currentStep.value += 1
+    }
+
     const steps = ref([
       {
         title: '创建源连接',
-        component: SourceStep
+        component: SourceStep,
+        props: {
+          type: 'source'
+        },
+        onNext: onSourceNext
       },
       {
         title: '创建目标连接',
-        component: TargetStep
+        component: SourceStep,
+        props: {
+          type: 'target'
+        },
+        onNext: onTargetNext
       },
       {
         title: '配置数据复制任务',
@@ -107,6 +130,8 @@ export default defineComponent({
     ])
     // let taskObs = observable({})
     let taskRef = ref(null)
+    let sourceNodeRef = ref(null)
+    let targetNodeRef = ref(null)
     let hasTask = ref(false)
 
     // const taskRef = reactiveComputed(() => taskObs)
@@ -300,6 +325,8 @@ export default defineComponent({
 
       formScope.$taskId = task.id
       taskRef.value = observable(task)
+      sourceNodeRef.value = taskRef.value.dag.nodes[0]
+      targetNodeRef.value = taskRef.value.dag.nodes[1]
 
       hasTask.value = true
       console.log('task', taskRef.value)
@@ -308,6 +335,8 @@ export default defineComponent({
     initTask()
 
     provide('task', taskRef)
+    provide('source', sourceNodeRef)
+    provide('target', targetNodeRef)
 
     return {
       task: taskRef,

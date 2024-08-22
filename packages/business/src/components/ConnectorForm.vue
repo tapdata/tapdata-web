@@ -58,7 +58,8 @@ export default {
     pdkId: String,
     id: String,
     showIpTips: Boolean,
-    connector: Object
+    connector: Object,
+    connectionType: String
   },
   inject: ['checkAgent', 'buried', 'lockedFeature'],
   data() {
@@ -327,7 +328,8 @@ export default {
       dialogTestVisible: false,
       model: {
         config: null
-      }
+      },
+      commandCallbackFunctionId: ''
     }
   },
   computed: {
@@ -341,7 +343,7 @@ export default {
     }
   },
   async created() {
-    this.getPdkForm()
+    await this.getPdkForm()
   },
   methods: {
     async startTest() {
@@ -403,7 +405,14 @@ export default {
         this.commandCallbackFunctionId = await proxyApi.getId()
       }
 
-      const { connectionType } = this.pdkOptions
+      let { connectionType } = this.pdkOptions
+      let hideConnectionType = false
+
+      if (this.connectionType) {
+        hideConnectionType = true
+        connectionType = this.connectionType
+      }
+
       let typeEnum = ['source', 'target'].includes(connectionType)
         ? [
             {
@@ -922,8 +931,9 @@ export default {
                     type: 'string',
                     title: this.$t('public_connection_type'),
                     required: true,
-                    default: this.pdkOptions.connectionType || 'source_and_target',
+                    default: connectionType,
                     enum: typeEnum,
+                    'x-hidden': hideConnectionType,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       feedbackLayout: 'none'
@@ -1154,6 +1164,64 @@ export default {
 
       this.schema = result
       this.loading = false
+    },
+
+    async save() {
+      this.buried('connectionSubmit')
+      await this.schemaFormInstance?.validate()
+      // 保存数据源
+      let id = this.id
+      let { pdkOptions } = this
+      let formValues = this.$refs.schemaToForm?.getFormValues?.()
+      let { __TAPDATA } = formValues
+
+      formValues.__connectionType = __TAPDATA.connection_type
+      delete formValues['__TAPDATA']
+
+      let params = {
+        ...__TAPDATA,
+        database_type: pdkOptions.type,
+        pdkHash: pdkOptions.pdkHash,
+        status: 'testing',
+        schema: {},
+        retry: 0,
+        nextRetry: null,
+        response_body: {},
+        project: '',
+        submit: true,
+        pdkType: 'pdk',
+        config: formValues
+      }
+
+      let promise = null
+
+      if (id) {
+        params.id = id
+        promise = connectionsApi.updateById(id, params)
+      } else {
+        const { commandCallbackFunctionId } = this
+        params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+        promise = connectionsApi.create(params, { id: commandCallbackFunctionId })
+      }
+
+      return promise
+        .then(data => {
+          this.buried('connectionSubmit', '', {
+            result: true
+          })
+          this.$message.success(this.$t('public_message_save_ok'))
+          this.$emit('saved', data)
+          return data
+        })
+        .catch(() => {
+          this.buried('connectionSubmit', '', {
+            result: false
+          })
+        })
+        .finally(() => {
+          this.submitBtnLoading = false
+          this.saveAndMoreLoading = false
+        })
     }
   }
 }
