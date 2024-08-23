@@ -1,5 +1,5 @@
 <template>
-  <div class="connection-from rounded-lg" v-loading="loadingFrom" :class="{ 'bg-white': isDaas }">
+  <div class="connection-from rounded-lg" v-loading="loadingFrom">
     <div class="connection-from-body gap-4">
       <main class="connection-from-main bg-white rounded-lg overflow-hidden">
         <div class="connection-from-title p-4">

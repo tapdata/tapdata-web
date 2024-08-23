@@ -141,19 +141,25 @@ export default {
 
   computed: {
     docUrl() {
-      // const map = this.$store.state.config?.docLinkDictionary || pdkDocMap
       const map = pdkDocMap // config.json 维护目前意义不大，每次还是得重新打包
       return map[pdkNameDictionary[this.pdkId] || this.pdkId]
     },
     src() {
-      const domain =
-        !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
-          ? 'https://docs.tapdata.io/'
-          : 'https://docs.tapdata.net/'
+      let domain
+
+      if (this.isDaas) {
+        domain = this.$i18n.locale === 'en' ? '/docs/en/' : '/docs/'
+      } else {
+        domain =
+          !this.$store.getters.isDomesticStation || this.$i18n.locale === 'en'
+            ? 'https://docs.tapdata.io/'
+            : 'https://docs.tapdata.net/'
+      }
+
       return domain + this.docUrl + '?from=cloud'
     },
     showIframe() {
-      return !this.isDaas && this.docUrl
+      return !!this.docUrl
     }
   },
 
