@@ -131,7 +131,7 @@ const SourceDatabaseNode = observer(
         )
           .forOpen((payload, next) => {
             next({
-              values: form.values.dag.nodes[2]
+              values: form.values.dag.nodes[1]
             })
           })
           .forConfirm((payload, next) => {
@@ -155,7 +155,7 @@ const SourceDatabaseNode = observer(
         )
           .forOpen((payload, next) => {
             next({
-              values: form.values.dag.nodes[3]
+              values: form.values.dag.nodes[2]
             })
           })
           .forConfirm((payload, next) => {

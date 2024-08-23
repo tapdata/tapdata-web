@@ -99,7 +99,10 @@
       </template>
 
       <template #test-cancel="{ status, close }">
-        <el-button v-if="status === 'ready'" type="primary" @click="handleSaveAndNext">下一步</el-button>
+        <div style="display: contents" v-if="status === 'ready'">
+          <el-button @click="close">关闭</el-button>
+          <el-button type="primary" @click="handleSaveAndNext">下一步</el-button>
+        </div>
         <el-button v-else type="primary" @click="close">关闭</el-button>
       </template>
     </ConnectorForm>

@@ -90,7 +90,7 @@ export default {
           },
 
           // 目标节点
-          'dag.nodes.1': {
+          'dag.nodes.3': {
             type: 'object',
             properties: {
               existDataProcessMode: {
@@ -124,7 +124,7 @@ export default {
                     },
                     schema: {
                       // TODO 根据能力改变dataSource
-                      'x-component-props.options': `{{options=[$self.dataSource[0]],$values.dag.nodes[1].attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.dag.nodes[1].attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
+                      'x-component-props.options': `{{options=[$self.dataSource[0]],$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
                     }
                   }
                 }

@@ -94,12 +94,30 @@ export default defineComponent({
     const loading = ref(false)
     const currentStep = ref(0)
 
-    const onSourceNext = () => {
-      currentStep.value += 1
+    const pageVersion = ref(Date.now().toString())
+
+    const patchTask = async () => {
+      const data = await taskApi.patch(
+        {
+          id: taskRef.value.id,
+          editVersion: taskRef.value.editVersion,
+          pageVersion: pageVersion.value,
+          dag: taskRef.value.dag
+        },
+        {
+          silenceMessage: true
+        }
+      )
+
+      taskRef.value.editVersion = data.editVersion
     }
 
-    const onTargetNext = () => {
-      currentStep.value += 1
+    const onSourceNext = async () => {
+      await patchTask()
+    }
+
+    const onTargetNext = async () => {
+      await patchTask()
     }
 
     const steps = ref([
@@ -140,7 +158,11 @@ export default defineComponent({
       currentStep.value -= 1
     }
 
-    const nextStep = () => {
+    const nextStep = async () => {
+      if (steps.value[currentStep.value]?.onNext) {
+        await steps.value[currentStep.value].onNext()
+      }
+
       currentStep.value += 1
     }
 
@@ -289,7 +311,7 @@ export default defineComponent({
             target: targetNode.id
           }
         ],
-        nodes: [sourceNode, targetNode, tableEditNode, fieldEditNode]
+        nodes: [sourceNode, tableEditNode, fieldEditNode, targetNode]
       })
 
       const task = {
@@ -326,7 +348,7 @@ export default defineComponent({
       formScope.$taskId = task.id
       taskRef.value = observable(task)
       sourceNodeRef.value = taskRef.value.dag.nodes[0]
-      targetNodeRef.value = taskRef.value.dag.nodes[1]
+      targetNodeRef.value = taskRef.value.dag.nodes[3]
 
       hasTask.value = true
       console.log('task', taskRef.value)
