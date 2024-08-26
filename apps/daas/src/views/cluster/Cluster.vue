@@ -257,7 +257,7 @@
                       <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
                       <div class="list-box-header-main">
                         <h2 class="name fs-6">
-                          {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+                          {{ item.agentName || item.systemInfo.hostname }}
                         </h2>
                         <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
                         <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
@@ -1114,6 +1114,8 @@ export default {
       this.ips = item.systemInfo.ips || []
       this.agentName = item.agentName || item.systemInfo.hostname
       this.currentNde = item.systemInfo
+
+      this.editAgentItem = item
     },
     //提交编辑
     submitEditAgent() {
@@ -1128,7 +1130,9 @@ export default {
       }
       clusterApi.editAgent(this.custId, data).then(() => {
         this.editAgentDialog = false
-        this.$message.success(this.$t('public_message_delete_ok'))
+        this.$message.success(this.$t('public_message_save_ok'))
+
+        this.$set(this.editAgentItem, 'agentName', this.agentName)
       })
       // .catch(() => {
       // })

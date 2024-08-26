@@ -784,11 +784,16 @@ export default {
           label: i18n.t('packages_business_connections_databaseform_system'),
           value: 'default'
         })
+        endProperties.accessNodeType.enum.push({
+          label: this.$t('packages_business_connection_form_group'),
+          value: 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP'
+        })
       }
 
       const connectionProperties = this.pdkOptions.properties?.connection?.properties || {}
       const { OPTIONAL_FIELDS } = connectionProperties
       delete connectionProperties.OPTIONAL_FIELDS
+
       let result = {
         type: 'object',
         'x-component-props': {
@@ -798,6 +803,16 @@ export default {
           START: {
             type: 'void',
             'x-index': 0,
+            'x-reactions': process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA
+              ? {
+                  target: process.env.VUE_APP_HIDE_CONNECTOR_SCHEMA,
+                  fulfill: {
+                    state: {
+                      display: 'hidden'
+                    }
+                  }
+                }
+              : undefined,
             properties: {
               __TAPDATA: {
                 type: 'object',
@@ -807,7 +822,11 @@ export default {
                     title: this.$t('public_connection_name'),
                     required: true,
                     'x-decorator': 'FormItem',
-                    'x-component': 'Input'
+                    'x-component': 'Input',
+                    'x-validator': {
+                      pattern: /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-.]|[\u4e00-\u9fa5])*$/,
+                      message: i18n.t('packages_business_connections_databaseform_mingchengguizezhong')
+                    }
                   },
                   connection_type: {
                     type: 'string',
@@ -913,7 +932,7 @@ export default {
                   }
                 }
               },
-              ssl: this.pdkOptions.tags.includes('ssl')
+              ssl: this.pdkOptions.tags?.includes('ssl')
                 ? {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
@@ -938,6 +957,9 @@ export default {
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
                         fileNameField: 'sslCAFile'
                       },
                       sslCert: {
@@ -946,6 +968,9 @@ export default {
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
                         fileNameField: 'sslCertFile'
                       },
                       sslKey: {
@@ -954,6 +979,9 @@ export default {
                         type: 'string',
                         'x-decorator': 'FormItem',
                         'x-component': 'TextFileReader',
+                        'x-component-props': {
+                          base64: true
+                        },
                         fileNameField: 'sslKeyFile'
                       },
                       sslKeyPassword: {
@@ -966,7 +994,7 @@ export default {
                     }
                   }
                 : undefined,
-              ssh: this.pdkOptions.tags.includes('ssh')
+              ssh: this.pdkOptions.tags?.includes('ssh')
                 ? {
                     type: 'void',
                     'x-component': 'FormCollapse.Item',
@@ -977,7 +1005,7 @@ export default {
                       __TAPDATA: {
                         type: 'object',
                         properties: {
-                          enableSSH: {
+                          useSSH: {
                             // 使用 SSH 隧道
                             title: i18n.t('packages_business_use_ssh'),
                             type: 'boolean',
@@ -1027,12 +1055,19 @@ export default {
       }
 
       if (id) {
-        this.getPdkData(id)
-        delete result.properties.START.properties.__TAPDATA.properties.name
+        await this.getPdkData(id)
+        // 开启了共享挖掘
+        const { shareCdcEnable, shareCDCExternalStorageId } = this.model
+        if (shareCdcEnable && shareCDCExternalStorageId) {
+          this.connectionLogCollectorTaskData = await connectionsApi.usingDigginTaskByConnectionId(id)
+        }
+        // delete result.properties.START.properties.__TAPDATA.properties.name
       }
 
       this.setConnectionConfig()
+
       this.schemaScope = {
+        $isDaas: this.isDaas,
         isEdit: !!id,
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
@@ -1063,19 +1098,27 @@ export default {
             )
           }
         },
-        loadAccessNode: async () => {
+        loadAccessNode: async (fieldName, others = {}) => {
           const data = await clusterApi.findAccessNodeInfo()
 
+          const mapNode = item => ({
+            value: item.processId,
+            label: `${item.agentName || item.hostName}（${
+              item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
+            }）`,
+            disabled: item.status !== 'running',
+            accessNodeType: item.accessNodeType
+          })
+
           return (
-            data?.map(item => {
-              return {
-                value: item.processId,
-                label: `${item.hostName}（${
-                  item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
-                }）`,
-                disabled: item.status !== 'running'
-              }
-            }) || []
+            data
+              ?.filter(
+                t =>
+                  t.status === 'running' ||
+                  t.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER_AGENT_GROUP' ||
+                  t.processId === others.value
+              )
+              ?.map(mapNode) || []
           )
         },
         loadCommandList: async (filter, val) => {
@@ -1089,6 +1132,7 @@ export default {
               pdkHash,
               connectionId: id || this.commandCallbackFunctionId,
               connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
+              subscribeIds,
               command,
               type: 'connection',
               action: search ? 'search' : 'list',
@@ -1127,17 +1171,21 @@ export default {
             $form.setValuesIn(field.name, str)
           })
         },
-        getCommandAndSetValue: async ($form, others) => {
+        getCommandAndSetValue: async ($form, others = {}) => {
           const getState = $form.getState()
           const { pdkHash } = this.pdkOptions
           const { __TAPDATA, ...formValues } = getState?.values || {}
-          const { command } = others
           const getValues = Object.assign({}, this.model?.config || {}, formValues)
+          let subscribeIds = []
+          if (__TAPDATA.accessNodeProcessId) {
+            subscribeIds = [`processId_${__TAPDATA.accessNodeProcessId}`]
+          }
           let params = {
             pdkHash,
             connectionId: this.model?.id || this.commandCallbackFunctionId,
             connectionConfig: isEmpty(formValues) ? this.model?.config || {} : getValues,
-            command,
+            ...others,
+            subscribeIds,
             type: 'connection'
           }
           proxyApi.command(params).then(data => {
@@ -1149,11 +1197,23 @@ export default {
             }
           })
         },
-        async loadExternalStorage() {
+        async loadExternalStorage(id) {
           try {
-            const { items = [] } = await externalStorageApi.list()
+            let filter = {
+              where: {},
+              limit: 1000,
+              skip: 0
+            }
+            if (id) {
+              const ext = await externalStorageApi.get(id)
+              filter.where.type = ext?.type
+            }
+            const { items = [] } = await externalStorageApi.list({
+              filter: JSON.stringify(filter)
+            })
             return items.map(item => {
               return {
+                type: item.type,
                 label: item.name,
                 value: item.id,
                 isDefault: item.defaultStorage
@@ -1203,43 +1263,64 @@ export default {
             }
           })
           submitForm(params?.target, data)
+        },
+        shareCDCExternalStorageIdOnChange: (val, $form) => {
+          $form.setFieldState('__TAPDATA.shareCDCExternalStorageIdTips', state => {
+            state.display =
+              this.connectionLogCollectorTaskData.total && val !== this.model.shareCDCExternalStorageId
+                ? 'visible'
+                : 'hidden'
+          })
+        },
+        getShareCDCExternalStorageIdDisabled: () => {
+          return !!this.connectionLogCollectorTaskData.total
+        },
+        handleLogCollectorTaskDialog: async () => {
+          this.connectionLogCollectorTaskDialog = true
+        },
+        handleJsDebug: (path = []) => {
+          const properties = this.schemaData?.properties || {}
+          let fieldObj = {}
+          path.forEach(p => {
+            const { key, data } = this.getOptionByPath(properties, p)
+            fieldObj[key] = data
+          })
+          this.jsDebugSchemaData = fieldObj
+          this.showJsDebug = true
+        },
+        handleGetGenerateRefreshToken: ($index, $record, items, others) => {
+          if (items.filter((t, i) => i !== $index).some(t => t.supplierKey === $record.supplierKey)) {
+            return this.$message.error(this.$t('packages_form_message_exists_name'))
+          }
+          const params = Object.assign(
+            {
+              supplierKey: $record.supplierKey,
+              randomId: $record.randomId,
+              subscribeId: `source#${this.model?.id || this.commandCallbackFunctionId}`,
+              service: 'engine'
+            },
+            others
+          )
+          proxyApi.generateRefreshToken(params).then((data = {}) => {
+            const isDaas = process.env.VUE_APP_PLATFORM === 'DAAS'
+            const p = location.origin + location.pathname
+            let str = `${p}${isDaas ? '' : 'tm/'}${data.path}/${data.token}`
+            if (/^\/\w+/.test(data.token)) {
+              str = `${p.replace(/\/$/, '')}${data.token}`
+            }
+            $record.refreshURL = str
+          })
+        },
+        getUid: () => {
+          return uuid()
+        },
+        getHost: async () => {
+          const data = await proxyApi.host()
+          return data?.host
         }
       }
       this.schemaData = result
       this.loadingFrom = false
-    },
-    getPdkData(id) {
-      connectionsApi.getNoSchema(id).then(data => {
-        this.model = data
-        let {
-          name,
-          connection_type,
-          table_filter,
-          loadAllTables,
-          shareCdcEnable,
-          accessNodeType,
-          accessNodeProcessId,
-          openTableExcludeFilter,
-          tableExcludeFilter,
-          schemaUpdateHour
-        } = this.model
-        this.schemaFormInstance.setValues({
-          __TAPDATA: {
-            name,
-            connection_type,
-            table_filter,
-            loadAllTables,
-            shareCdcEnable,
-            accessNodeType,
-            accessNodeProcessId,
-            openTableExcludeFilter,
-            tableExcludeFilter,
-            schemaUpdateHour
-          },
-          ...this.model?.config
-        })
-        this.renameData.rename = this.model.name
-      })
     },
     getConnectionIcon() {
       const { pdkHash } = this.params || {}
