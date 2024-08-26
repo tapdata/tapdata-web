@@ -146,13 +146,10 @@ export default defineComponent({
         component: SourceStep
       }
     ])
-    // let taskObs = observable({})
     let taskRef = ref(null)
     let sourceNodeRef = ref(null)
     let targetNodeRef = ref(null)
     let hasTask = ref(false)
-
-    // const taskRef = reactiveComputed(() => taskObs)
 
     const prevStep = () => {
       currentStep.value -= 1
@@ -195,13 +192,32 @@ export default defineComponent({
         }
       })
 
+      const nodeTypeMap = {}
+
       nodes.forEach(node => {
         node.$inputs = inputsMap[node.id] || []
         node.$outputs = outputsMap[node.id] || []
+
+        if (node.type === 'database') {
+          if (!node.$inputs.length) {
+            nodeTypeMap.source = node
+          } else if (!node.$outputs.length) {
+            nodeTypeMap.target = node
+          }
+        } else {
+          nodeTypeMap[node.type] = node
+        }
       })
 
+      console.log('nodeTypeMap', nodeTypeMap)
+
       return {
-        nodes,
+        nodes: [
+          nodeTypeMap.source,
+          nodeTypeMap['table_rename_processor'],
+          nodeTypeMap['migrate_field_rename_processor'],
+          nodeTypeMap.target
+        ],
         edges
       }
     }
@@ -215,7 +231,9 @@ export default defineComponent({
         data.currentEventTimestampLabel = dayjs(data.currentEventTimestamp).format('YYYY-MM-DD HH:mm:ss')
       }
 
-      richDag(data.dag)
+      data.dag = richDag(data.dag)
+
+      return data
     }
 
     const getTask = async id => {
@@ -223,7 +241,7 @@ export default defineComponent({
         const { parent_task_sign } = root.$route.query || {}
         const data = await taskApi.get(id, null, { parent_task_sign })
 
-        if (!data) {
+        if (!data || ['deleted', 'deleting', 'delete_failed'].includes(data.status)) {
           root.$message.error(i18n.t('packages_dag_mixins_editor_renwubucunzai'))
           handlePageReturn()
           return
@@ -317,6 +335,7 @@ export default defineComponent({
       const task = {
         ...DEFAULT_SETTINGS,
         name: '',
+        desc: 'form',
         status: '',
         dag
       }
@@ -343,7 +362,7 @@ export default defineComponent({
         task = await getNewTask()
       }
 
-      richTask(task)
+      task = richTask(task)
 
       formScope.$taskId = task.id
       taskRef.value = observable(task)
@@ -352,6 +371,14 @@ export default defineComponent({
 
       hasTask.value = true
       console.log('task', taskRef.value)
+
+      if (!sourceNodeRef.value.connectionId) {
+        currentStep.value = 0
+      } else if (!targetNodeRef.value.connectionId) {
+        currentStep.value = 1
+      } else {
+        currentStep.value = 2
+      }
     }
 
     initTask()

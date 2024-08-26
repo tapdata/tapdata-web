@@ -31,7 +31,7 @@
           <span>选择一个连接器</span>
 
           <ElInput
-            v-model="connectorSearch"
+            v-model="search"
             class="position-absolute start-50 top-50 translate-middle"
             style="width: 400px"
             size="small"
@@ -46,7 +46,32 @@
         </div>
 
         <div class="bg-slight p-4 rounded-lg">
-          <div class="connector-list grid gap-4">
+          <div v-if="optionSelected === 'has-connection'" class="connector-list grid gap-4">
+            <div
+              v-for="item in connectionList"
+              :key="item.type"
+              class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+              @click="handleConnectionSelect(item)"
+            >
+              <div class="flex gap-3 align-center">
+                <DatabaseIcon :size="38" :item="item"></DatabaseIcon>
+                <div class="connector-item-content flex-1 overflow-hidden lh-base">
+                  <div class="flex align-center font-color-dark ellipsis">
+                    <span class="fs-6 ellipsis mr-1">{{ item.name }}</span>
+                    <span
+                      class="ml-auto rounded-4 p-1 lh-1 min-w-0"
+                      :class="['status-connection-' + item.status, 'status-block']"
+                    >
+                      {{ getStatus(item.status) }}
+                    </span>
+                  </div>
+                  <div class="font-color-sslight ellipsis">{{ item.connectionString }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="connector-list grid gap-4">
             <div
               v-for="item in connectorList"
               :key="item.type"
@@ -110,11 +135,12 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, nextTick, provide, inject } from '@vue/composition-api'
-import { ConnectorForm, DatabaseIcon } from '@tap/business'
+import { defineComponent, ref, computed, nextTick, provide, inject, reactive } from '@vue/composition-api'
+import { ConnectorForm, DatabaseIcon, verify, CONNECTION_STATUS_MAP } from '@tap/business'
 import { connectionsApi, databaseTypesApi } from '@tap/api'
 import ConnectorFormItem from './ConnectorFormItem.vue'
 import { getInitialValuesInBySchema } from '../../../../form'
+import dayjs from 'dayjs'
 
 export default defineComponent({
   name: 'SourceStep',
@@ -131,15 +157,16 @@ export default defineComponent({
     const connectorName = ref('')
     const hasConnector = ref(true)
     const optionSelected = ref('has-connector')
-    const connectorSearch = ref('')
+    const search = ref('')
     const connectorList = ref([])
+    const connectionList = ref([])
     const connectorSelected = ref()
 
     const filterConnectorList = computed(() => {
       const list = optionSelected.value !== 'has-connector' ? demoConnectorList.value : connectorList.value
 
-      if (connectorSearch.value) {
-        let search = connectorSearch.value.toLowerCase()
+      if (search.value) {
+        let search = search.value.toLowerCase()
         return list.filter(db => db.name.toLowerCase().includes(search))
       }
       return list
@@ -186,6 +213,72 @@ export default defineComponent({
       connectorList.value = data.sort(sortFn)
     }
 
+    const connectionPage = reactive({
+      page: 1,
+      size: 20
+    })
+
+    const loadConnectionList = async () => {
+      let { page, size } = connectionPage
+      let where = {
+        createType: {
+          $ne: 'System'
+        },
+        connection_type: {
+          $ne: props.type === 'source' ? 'target' : 'source'
+        }
+      }
+      let filter = {
+        page,
+        size,
+        noSchema: 1,
+        where
+      }
+
+      if (search.value.trim()) {
+        where.name = { like: search.value, options: 'i' }
+      }
+
+      const data = await connectionsApi.get({
+        filter: JSON.stringify(filter)
+      })
+
+      let list = data?.items || []
+
+      list = list.map(item => {
+        if (item.connectionString) {
+          item.connectionUrl = item.connectionString
+        } else {
+          if (item.config?.uri) {
+            const regResult =
+              /mongodb:\/\/(?:(?<username>[^:/?#[\]@]+)(?::(?<password>[^:/?#[\]@]+))?@)?(?<host>[\w.-]+(?::\d+)?(?:,[\w.-]+(?::\d+)?)*)(?:\/(?<database>[\w.-]+))?(?:\?(?<query>[\w.-]+=[\w.-]+(?:&[\w.-]+=[\w.-]+)*))?/gm.exec(
+                item.config.uri
+              )
+            if (regResult && regResult.groups && regResult.groups.password) {
+              const { username, host, database, query } = regResult.groups
+              item.connectionUrl = `mongodb://${username}:***@${host}/${database}${query ? '/' + query : ''}`
+            } else {
+              item.connectionUrl = item.config.uri
+            }
+          } else if (item.config) {
+            const { host, port, database, schema } = item.config
+            item.connectionUrl = host
+              ? `${host}${port ? `:${port}` : ''}${database ? `/${database}` : ''}${schema ? `/${schema}` : ''}`
+              : ''
+          }
+        }
+
+        item.lastUpdateTime = item.last_updated = item.last_updated
+          ? dayjs(item.last_updated).format('YY-MM-DD HH:mm:ss')
+          : '-'
+        item.loadSchemaTimeLabel = item.loadSchemaTime ? dayjs(item.loadSchemaTime).format('YY-MM-DD HH:mm:ss') : '-'
+        item.disabledLoadSchema = false
+        return item
+      })
+
+      connectionList.value = list
+    }
+
     const handleConnectorSelect = item => {
       connectorSelected.value = item
 
@@ -207,6 +300,10 @@ export default defineComponent({
       }
     }
 
+    const handleConnectionSelect = data => {
+      setNodeConnection(data)
+    }
+
     const handleSearchInput = () => {}
 
     const handleCancelCreate = () => {
@@ -223,11 +320,7 @@ export default defineComponent({
       refs.connectorForm.startTest()
     }
 
-    const handleSaveAndNext = async () => {
-      const data = await refs.connectorForm.save()
-
-      console.log('data', data)
-
+    const setNodeConnection = data => {
       const attrs = {
         connectionName: data.name,
         connectionType: data.connection_type,
@@ -250,7 +343,20 @@ export default defineComponent({
       emit('next')
     }
 
+    const handleSaveAndNext = async () => {
+      const data = await refs.connectorForm.save()
+
+      console.log('data', data)
+
+      setNodeConnection(data)
+    }
+
     const options = ref([
+      {
+        key: 'has-connection',
+        title: '选择已有数据源',
+        desc: '自己创建的连接/数据源'
+      },
       {
         key: 'has-connector',
         title: '添加我自己的数据源',
@@ -264,6 +370,11 @@ export default defineComponent({
     ])
 
     loadConnectorList()
+    loadConnectionList()
+
+    const getStatus = status => {
+      return CONNECTION_STATUS_MAP[status]?.text || '-'
+    }
 
     return {
       pdkHash,
@@ -272,16 +383,19 @@ export default defineComponent({
       options,
       hasConnector,
       optionSelected,
-      connectorSearch,
+      search,
       connectorSelected,
       connectorList: filterConnectorList,
       demoConnectorList,
+      connectionList,
 
       handleConnectorSelect,
       handleSearchInput,
       handleCancelCreate,
       handleTest,
-      handleSaveAndNext
+      handleSaveAndNext,
+      getStatus,
+      handleConnectionSelect
     }
   }
 })
@@ -299,12 +413,15 @@ export default defineComponent({
   .is-active {
     display: none;
   }
+
   &.active {
     $primary: map-get($color, primary);
     border-color: $primary !important;
     box-shadow: 0 2px 16px rgba(44, 101, 255, 0.2);
+
     .is-active {
       display: block;
+
       &-triangle {
         width: 0;
         height: 0;
@@ -313,6 +430,7 @@ export default defineComponent({
         border-bottom: 18px solid transparent;
         border-right: 18px solid $primary;
       }
+
       &-icon {
         position: absolute;
         top: 4px;

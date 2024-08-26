@@ -192,84 +192,11 @@ export default {
     this.initForm()
   },
   methods: {
-    richDag({ edges, nodes }) {
-      if (!nodes?.length) return {}
-      const outputsMap = {}
-      const inputsMap = {}
-
-      edges.forEach(({ source, target }) => {
-        let _source = outputsMap[source]
-        let _target = inputsMap[target]
-
-        if (!_source) {
-          outputsMap[source] = [target]
-        } else {
-          _source.push(target)
-        }
-
-        if (!_target) {
-          inputsMap[target] = [source]
-        } else {
-          _target.push(source)
-        }
-      })
-
-      nodes.forEach(node => {
-        node.$inputs = inputsMap[node.id] || []
-        node.$outputs = outputsMap[node.id] || []
-      })
-
-      return {
-        nodes,
-        edges
-      }
-    },
-
-    initTask() {
-      const sourceNode = genDatabaseNode({
-        connectionId: '66bd9a8f19386b3dd185fd9e'
-      })
-      const targetNode = genDatabaseNode()
-      const tableEditNode = genProcessorNode('table_rename_processor')
-      const fieldEditNode = genProcessorNode('migrate_field_rename_processor')
-
-      const dag = this.richDag({
-        edges: [
-          {
-            source: sourceNode.id,
-            target: tableEditNode.id
-          },
-          {
-            source: tableEditNode.id,
-            target: fieldEditNode.id
-          },
-          {
-            source: fieldEditNode.id,
-            target: targetNode.id
-          }
-        ],
-        nodes: [sourceNode, targetNode, tableEditNode, fieldEditNode]
-      })
-
-      const task = observable({
-        ...DEFAULT_SETTINGS,
-        id: '66aa08de37cc734b6f359e1c',
-        name: '',
-        status: '',
-        dag
-      })
-
-      console.log('task', task)
-
-      this.task = task
-
-      this.scope.$taskId = task.id
-    },
-
     initForm() {
-      console.log('ttttask', this.task)
+      const task = this.task.value
+      this.scope.$taskId = task.id
       this.form = createForm({
-        values: this.task.value
+        values: task
       })
     }
   }
