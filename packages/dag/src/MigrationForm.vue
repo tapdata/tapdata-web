@@ -155,8 +155,8 @@ export default defineComponent({
       currentStep.value -= 1
     }
 
-    const nextStep = async () => {
-      if (steps.value[currentStep.value]?.onNext) {
+    const nextStep = async slient => {
+      if (!slient && steps.value[currentStep.value]?.onNext) {
         await steps.value[currentStep.value].onNext()
       }
 
@@ -383,6 +383,7 @@ export default defineComponent({
 
     initTask()
 
+    provide('currentStep', currentStep)
     provide('task', taskRef)
     provide('source', sourceNodeRef)
     provide('target', targetNodeRef)

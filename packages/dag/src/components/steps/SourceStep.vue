@@ -46,6 +46,52 @@
         </div>
 
         <div class="bg-slight p-4 rounded-lg">
+          <template v-if="connectionIdSelected && optionSelected === 'has-connection'">
+            <div class="mb-4">
+              <span class="fw-sub">当前已选</span>
+            </div>
+
+            <div class="connector-list grid gap-4 mb-4">
+              <el-skeleton :loading="!connectionSelected" animated>
+                <template #template>
+                  <div class="rounded-lg p-3 overflow-hidden bg-white flex gap-3 align-center">
+                    <el-skeleton-item variant="image" style="width: 38px; height: 38px" />
+                    <div class="flex-1">
+                      <div class="flex align-center justify-content-between gap-3 mb-2">
+                        <el-skeleton-item variant="h3" />
+                        <el-skeleton-item variant="h3" style="width: 28%" />
+                      </div>
+                      <el-skeleton-item variant="text" style="width: 50%" />
+                    </div>
+                  </div>
+                </template>
+                <template>
+                  <div
+                    v-if="connectionSelected"
+                    class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
+                  >
+                    <div class="flex gap-3 align-center">
+                      <DatabaseIcon :size="38" :item="connectionSelected"></DatabaseIcon>
+                      <div class="connector-item-content flex-1 overflow-hidden lh-base">
+                        <div class="flex align-center font-color-dark ellipsis">
+                          <span class="fs-6 ellipsis mr-1">{{ connectionSelected.name }}</span>
+                          <span
+                            class="ml-auto rounded-4 p-1 lh-1 min-w-0"
+                            :class="['status-connection-' + connectionSelected.status, 'status-block']"
+                          >
+                            {{ getStatus(connectionSelected.status) }}
+                          </span>
+                        </div>
+                        <div class="font-color-sslight ellipsis">{{ connectionSelected.connectionString }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </el-skeleton>
+            </div>
+            <el-divider></el-divider>
+          </template>
+
           <div v-if="optionSelected === 'has-connection'" class="connector-list grid gap-4">
             <div
               v-for="item in connectionList"
@@ -102,10 +148,12 @@
       </div>
 
       <div class="position-sticky z-index bottom-0 p-4 rounded-lg backdrop-filter-light z-10">
-        <el-button>取消</el-button>
-        <!--<el-button type="primary" @click="$emit('next')">启动任务</el-button>-->
+        <!--<el-button>取消</el-button>-->
+        <el-button v-if="currentStep > 0" @click="handlePrev">上一步</el-button>
+        <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">下一步</el-button>
       </div>
     </div>
+
     <ConnectorForm v-else ref="connectorForm" :connector="connectorSelected" show-ip-tips :connection-type="type">
       <template #header>
         <div class="title-prefix-bar mb-4 flex align-center gap-2">
@@ -156,11 +204,20 @@ export default defineComponent({
     const pdkId = ref('')
     const connectorName = ref('')
     const hasConnector = ref(true)
-    const optionSelected = ref('has-connector')
     const search = ref('')
     const connectorList = ref([])
     const connectionList = ref([])
     const connectorSelected = ref()
+
+    const taskRef = inject('task')
+    const nodeRef = inject(props.type)
+    const currentStepRef = inject('currentStep')
+    console.log('nodeRef', nodeRef.value)
+    // const buried = inject('buried')
+    // const checkAgent = inject('checkAgent')
+    const optionSelected = ref(nodeRef.value.connectionId ? 'has-connection' : 'has-connector')
+    const connectionIdSelected = ref(nodeRef.value.connectionId)
+    const connectionSelected = ref(null)
 
     const filterConnectorList = computed(() => {
       const list = optionSelected.value !== 'has-connector' ? demoConnectorList.value : connectorList.value
@@ -279,6 +336,14 @@ export default defineComponent({
       connectionList.value = list
     }
 
+    const loadConnection = async () => {
+      const id = nodeRef.value.connectionId
+      if (id) {
+        const connection = await connectionsApi.getNoSchema(id)
+        connectionSelected.value = connection
+      }
+    }
+
     const handleConnectorSelect = item => {
       connectorSelected.value = item
 
@@ -310,12 +375,6 @@ export default defineComponent({
       connectorSelected.value = null
     }
 
-    const taskRef = inject('task')
-    const nodeRef = inject(props.type)
-
-    const buried = inject('buried')
-    const checkAgent = inject('checkAgent')
-
     const handleTest = () => {
       refs.connectorForm.startTest()
     }
@@ -345,9 +404,6 @@ export default defineComponent({
 
     const handleSaveAndNext = async () => {
       const data = await refs.connectorForm.save()
-
-      console.log('data', data)
-
       setNodeConnection(data)
     }
 
@@ -371,9 +427,18 @@ export default defineComponent({
 
     loadConnectorList()
     loadConnectionList()
+    loadConnection()
 
     const getStatus = status => {
       return CONNECTION_STATUS_MAP[status]?.text || '-'
+    }
+
+    const handlePrev = () => {
+      emit('prev')
+    }
+
+    const handleNext = () => {
+      emit('next')
     }
 
     return {
@@ -388,6 +453,9 @@ export default defineComponent({
       connectorList: filterConnectorList,
       demoConnectorList,
       connectionList,
+      connectionSelected,
+      currentStep: currentStepRef,
+      connectionIdSelected,
 
       handleConnectorSelect,
       handleSearchInput,
@@ -395,7 +463,9 @@ export default defineComponent({
       handleTest,
       handleSaveAndNext,
       getStatus,
-      handleConnectionSelect
+      handleConnectionSelect,
+      handlePrev,
+      handleNext
     }
   }
 })

@@ -6,8 +6,8 @@
     </div>
 
     <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
-      <el-button click="$emit('prev')">上一步</el-button>
-      <el-button type="primary" @click="$emit('next')">启动任务</el-button>
+      <el-button @click="handlePrev">上一步</el-button>
+      <el-button type="primary" @click="handleNext">启动任务</el-button>
     </div>
   </div>
 </template>
@@ -17,18 +17,20 @@ import i18n from '@tap/i18n'
 import { taskApi } from '@tap/api'
 import { debounce, merge } from 'lodash'
 import { createForm, onFormValuesChange, onFieldValueChange } from '@formily/core'
-import { observable, action, untracked, raw } from '@formily/reactive'
+import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
 import { DEFAULT_SETTINGS } from '../../constants'
 import { genDatabaseNode, genProcessorNode } from '../../util'
-import { defineComponent, inject, nextTick, ref } from '@vue/composition-api'
+import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
 
 export default defineComponent({
   name: 'TaskStep',
   components: {
     SchemaForm
   },
-  setup(props, { root }) {
+  setup(props, { emit, root }) {
+    console.log('TaskStep')
+
     let repeatNameMessage = i18n.t('packages_dag_task_form_error_name_duplicate')
     const handleCheckName = debounce(function (resolve, value) {
       taskApi
@@ -43,6 +45,8 @@ export default defineComponent({
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
     const form = ref(null)
+
+    console.log('taskRef', taskRef)
 
     const schema = {
       type: 'object',
@@ -201,9 +205,20 @@ export default defineComponent({
       rawObj.editVersion = data.editVersion
     }, 100)
 
+    observe(taskRef.value, () => {
+      console.log('observe.task')
+    })
+
+    autorun(() => {
+      console.log('autorun', { ...taskRef.value })
+    })
+
     const initForm = () => {
       const task = taskRef.value
       scope.$taskId = task.id
+
+      console.log('isObservable', isObservable(task))
+
       form.value = createForm({
         values: task
       })
@@ -211,29 +226,44 @@ export default defineComponent({
       // 防止挂载表单时触发valueChange
       setTimeout(() => {
         form.value.addEffects('watchForm', () => {
-          onFormValuesChange(form => {
-            onTaskChange()
-            console.log('onFormValuesChange', form.values)
-          })
-
-          onFieldValueChange('dag.nodes', field => {
-            console.log('onFieldValueChange', field)
-            // onTaskChange()
-          })
-
-          onFieldValueChange('*', field => {
-            console.log('onTableRenameValueChange*', field)
-          })
+          // onFormValuesChange(form => {
+          //   // onTaskChange()
+          //   console.log('onFormValuesChange', form.values)
+          // })
+          // onFieldValueChange('dag.nodes', field => {
+          //   console.log('onFieldValueChange', field)
+          //   // onTaskChange()
+          // })
+          //
+          // onFieldValueChange('*', field => {
+          //   console.log('onTableRenameValueChange*', field)
+          // })
         })
       }, 100)
     }
 
     initForm()
 
+    const handlePrev = () => {
+      emit('prev')
+    }
+
+    const handleNext = () => {
+      emit('next')
+    }
+
+    onBeforeUnmount(() => {
+      console.log('卸载')
+      form.value.onUnmount()
+    })
+
     return {
       form,
       schema,
-      scope
+      scope,
+
+      handlePrev,
+      handleNext
     }
   }
 })
