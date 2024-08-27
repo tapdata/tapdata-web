@@ -386,6 +386,7 @@ export default defineComponent({
     provide('task', taskRef)
     provide('source', sourceNodeRef)
     provide('target', targetNodeRef)
+    provide('pageVersion', pageVersion)
 
     return {
       task: taskRef,
