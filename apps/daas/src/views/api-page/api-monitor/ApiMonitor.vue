@@ -249,7 +249,7 @@ export default {
   },
   computed: {
     visitTotalCountText() {
-      let count = this.previewData.warningVisitTotalCount - this.previewData.warningApiCount
+      let count = this.previewData.visitTotalCount - this.previewData.warningVisitTotalCount
       if (isNaN(count)) return 0
       return count < 0 ? 0 : count
     }
