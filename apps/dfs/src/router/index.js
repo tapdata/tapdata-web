@@ -603,6 +603,11 @@ const routes = [
     ]
   },
   {
+    path: '/welcome',
+    name: 'Welcome',
+    component: () => import(/* webpackChunkName: "layout" */ '../views/Welcome.vue')
+  },
+  {
     path: '/migrate/monitor/simple/:id',
     name: 'MigrationMonitorSimple',
     component: MigrationMonitorSimple,

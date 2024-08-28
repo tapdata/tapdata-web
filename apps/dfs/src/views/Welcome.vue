@@ -1,0 +1,478 @@
+<template>
+  <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]" class="position-relative">
+    <TheHeader ref="theHeader" class="layout-header"></TheHeader>
+    <ElContainer direction="vertical" class="layout-main p-0">
+      <div class="flex absolute-fill">
+        <div class="flex-1 flex flex-column justify-center align-center my-8">
+          <div class="text-center">
+            <div class="fs-2 fw-sub">
+              <span class="text-gradient">连接</span>您的数据，<span class="text-gradient">同步</span>至您的目的地</span>
+            </div>
+            <div class="font-color-sslight">平台提供<span class="text-gradient">免费15天</span>的全托管引擎和Demo数据源进行功能场景试用</div>
+          </div>
+
+
+        </div>
+        <div class="flex-1"></div>
+      </div>
+    </ElContainer>
+  </ElContainer>
+</template>
+
+<script>
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import TheHeader from '@/components/the-header'
+import { VIcon } from '@tap/component'
+import { PageHeader, SceneDialog as ConnectionTypeDialog, UpgradeFee } from '@tap/business'
+
+import Cookie from '@tap/shared/src/cookie'
+import tour from '@/mixins/tour'
+
+export default {
+  inject: ['checkAgent', 'buried'],
+  components: {
+    TheHeader,
+    PageHeader,
+  },
+  mixins: [tour],
+  data() {
+    const $t = this.$t.bind(this)
+    return {
+      activeMenu: '',
+      menus: [],
+      sortMenus: [
+        {
+          name: 'Dashboard',
+          title: 'Dashboard',
+          icon: 'workbench'
+        },
+        {
+          name: 'migrate',
+          title: $t('task_manage_migrate'),
+          icon: 'migrate'
+        },
+        {
+          name: 'dataflow',
+          title: $t('task_manage_etl'),
+          icon: 'task'
+        },
+        {
+          name: 'dataVerification',
+          title: $t('page_title_data_verify'),
+          icon: 'data-validation'
+        },
+        {
+          name: 'dataConsole',
+          title: this.$t('page_title_data_hub'),
+          icon: 'datastore',
+          beta: true
+        }
+        // {
+        //   name: 'customNodeList',
+        //   title: $t('page_title_custom_node'),
+        //   icon: 'custom',
+        //   beta: true
+        // },
+      ],
+      subMenu: [],
+      dialogVisible: false,
+      agentDownload: {
+        visible: false,
+        data: {}
+      },
+      bindPhoneVisible: false,
+      agentGuideDialog: false,
+      showAgentWarning: false,
+      agentRunningCount: 0,
+      subscriptionModelVisible: false,
+      userInfo: '',
+      // aliyunMaketVisible: false,
+      isDemoEnv: document.domain === 'demo.cloud.tapdata.net'
+    }
+  },
+
+  computed: {
+    ...mapState(['upgradeFeeVisible']),
+    ...mapGetters(['isDomesticStation'])
+  },
+
+  created() {
+    if (!this.$store.state.config?.disabledOnlineChat) {
+      this.loadChat()
+    }
+    if (this.$store.state.config?.disabledDataService) {
+      //海外版隐藏数据服务
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
+    }
+    if (this.$store.state.config?.disabledDataVerify) {
+      //生产环境隐藏数据校验
+      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
+    }
+
+    let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
+    const findRoute = name => {
+      return children.find(item => item.name === name)
+    }
+    this.menus = this.sortMenus.map(el => {
+      if (el.children?.length) {
+        el.children.forEach((cMenu, idx) => {
+          el.children[idx].path = findRoute(cMenu.name).path
+        })
+      } else {
+        let findOne = findRoute(el.name)
+        el.path = findOne.path
+      }
+      return el
+    })
+    let subMenu = [
+      {
+        name: 'connections',
+        title: this.$t('connection_manage'),
+        icon: 'connection'
+      },
+      {
+        name: 'Instance',
+        title: this.$t('tap_agent_management'),
+        icon: 'agent'
+      },
+      {
+        name: 'order',
+        title: this.$t('dfs_the_header_header_dingyuezhongxin'),
+        icon: 'icon_subscription'
+      },
+      {
+        name: 'OperationLog',
+        title: this.$t('operation_log_manage'),
+        icon: 'operation-log'
+      },
+      {
+        name: 'advancedFeatures',
+        title: this.$t('public_page_title_advanced_features'),
+        icon: 'vip-one',
+        code: 'v2_advanced_features',
+        children: [
+          {
+            name: 'sharedMining',
+            title: this.$t('public_shared_mining'),
+            icon: 'cdc-log',
+            beta: true
+          },
+          {
+            name: 'externalStorage',
+            title: this.$t('public_external_storage'),
+            icon: 'wcgl',
+            beta: true
+          }
+        ]
+      }
+    ]
+    this.subMenu = subMenu.map(el => {
+      if (el.children?.length) {
+        el.children.forEach((cMenu, idx) => {
+          el.children[idx].path = findRoute(cMenu.name).path
+        })
+      } else {
+        let findOne = findRoute(el.name)
+        el.path = findOne.path
+      }
+      return el
+    })
+    this.$root.$on('select-connection-type', this.selectConnectionType)
+    this.$root.$on('show-guide', this.showGuide)
+    this.$root.$on('get-user', this.getUser)
+
+    this.setActiveMenu()
+  },
+  mounted() {
+    //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
+    let user = window.__USER_INFO__
+    this.userInfo = user
+    //检查是云市场用户授权码有效期
+    // if (user?.enableLicense) {
+    //   this.checkLicense(user)
+    // }
+    let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
+    if (Cookie.get('deployLater') == 1 && isCurrentUser) return
+  },
+  beforeDestroy() {
+    clearTimeout(this.loopLoadAgentCountTimer)
+  },
+  watch: {
+    $route() {
+      this.setActiveMenu()
+    }
+  },
+  methods: {
+    ...mapMutations(['setUpgradeFeeVisible']),
+    //监听agent引导页面
+    openAgentDownload() {
+      this.agentGuideDialog = false
+      this.agentDownload.visible = true
+    },
+    createConnection(item) {
+      this.dialogVisible = false
+      this.buried('connectionCreate')
+      const { pdkHash, pdkId } = item
+      this.$router.push({
+        name: 'connectionCreate',
+        query: { pdkHash, pdkId }
+      })
+    },
+    showGuide() {
+      this.$refs.theHeader?.showGuide?.()
+    },
+    getUser() {
+      this.$refs.theHeader?.getUser?.()
+    },
+    selectConnectionType() {
+      this.dialogVisible = true
+    },
+    menuTrigger(path) {
+      if (['goDemo'].includes(path)) {
+        this.goDemo()
+        return
+      }
+      if (['goGuide'].includes(path)) {
+        this.goGuide()
+        return
+      }
+      if (this.$route.path === path) {
+        return
+      }
+      this.$router.push(path)
+    },
+    back() {
+      this.$router.back()
+    },
+    // 检查微信用户，是否绑定手机号
+    checkWechatPhone() {
+      let user = window.__USER_INFO__
+      if (this.$store.state.config?.disabledBindingPhone) {
+        //海外版不强制绑定手机号
+        return
+      }
+      this.bindPhoneVisible =
+        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
+      return this.bindPhoneVisible
+    },
+    hideCustomTip() {
+      setTimeout(() => {
+        let tDom = document.getElementById('titlediv')
+        if (tDom) {
+          tDom.style.display = 'none'
+        } else {
+          this.hideCustomTip()
+        }
+      }, 5000)
+    },
+
+    loadChat() {
+      let $zoho = $zoho || {}
+      const { isDomesticStation } = this
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: isDomesticStation
+          ? '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f'
+          : 'siqc6975654b695513072e7c944c1b63ce0561c932c06ea37e561e3a2f7fe5ae1f7',
+        values: {},
+        ready: function () {}
+      }
+      window.$zoho = $zoho
+      let d = document
+      let s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = isDomesticStation ? 'https://salesiq.zoho.com.cn/widget' : 'https://salesiq.zohopublic.com/widget'
+      let t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+      this.hideCustomTip()
+
+      $zoho.salesiq.ready = function () {
+        const user = window.__USER_INFO__
+        $zoho.salesiq.visitor.contactnumber(user.telephone)
+        $zoho.salesiq.visitor.info({
+          tapdata_username: user.nickname || user.username,
+          tapdata_phone: user.telephone,
+          tapdata_email: user.email
+        })
+
+        $zoho.salesiq.onload = function () {
+          let siqiframe = document.getElementById('siqiframe')
+
+          if (siqiframe) {
+            let style = document.createElement('style')
+            style.type = 'text/css'
+            style.innerHTML = `.botactions em { white-space: nowrap; }`
+            siqiframe.contentWindow.document.getElementsByTagName('head').item(0).appendChild(style)
+          }
+        }
+      }
+    },
+
+    onAgentNoRunning(flag) {
+      this.showAgentWarning = flag
+    },
+
+    //检查云市场用户授权码是否过期
+    checkLicense(user) {
+      //未激活
+      var licenseCodes = user?.licenseCodes || []
+      if (!user?.licenseValid && licenseCodes?.length === 0) {
+        //未激活
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'license',
+          nearExpiration: []
+        }
+      }
+      //已过期
+      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
+      if (!user?.licenseValid && expired?.length > 0) {
+        //授权码不可用 存在有临近授权码
+        this.aliyunMaketVisible = true
+        this.userInfo = {
+          showNextProcessing: false,
+          licenseType: 'checkCode',
+          data: expired
+        }
+      }
+    },
+
+    goDemo() {
+      this.buried('agentGuideDemo')
+      window.open('https://demo.cloud.tapdata.net/console/v3/')
+    },
+    goGuide() {
+      this.buried('agentGuideDemo')
+      this.$router.push({
+        name: 'productDemo'
+      })
+    },
+
+    setActiveMenu() {
+      this.activeMenu = this.$route.meta.activeMenu || this.$route.matched.find(item => !!item.path).path
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.layout-main {
+  padding: 0 16px 16px 16px;
+}
+.layout-wrap {
+  height: 100%;
+  padding-top: 52px;
+  word-wrap: break-word;
+  word-break: break-word;
+  background: map-get($color, submenu);
+  .left-aside {
+    // border-right: 1px map-get($borderColor, aside) solid;
+    background: map-get($color, submenu);
+    .el-menu {
+      background-color: map-get($color, submenu);
+    }
+    ::v-deep {
+      .el-menu-item,
+      .el-submenu__title {
+        height: 50px;
+        line-height: 50px;
+        .v-icon {
+          color: map-get($iconFillColor, normal);
+        }
+        &.is-active,
+        &:hover {
+          background-color: map-get($color, white);
+          color: map-get($color, primary);
+          border-radius: 8px;
+        }
+        &.is-active,
+        &:hover {
+          ::v-deep .v-icon {
+            color: map-get($color, primary);
+          }
+        }
+
+        .submenu-item {
+          padding-left: 12px;
+        }
+      }
+    }
+
+    .product-name {
+      padding-left: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 60px;
+      color: map-get($fontColor, normal);
+    }
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 0%;
+    margin: 0;
+    padding: 0;
+    //background: rgba(239, 241, 244, 1);
+  }
+  .breadcrumb {
+    padding: 24px 0 24px 24px;
+    //height: 40px;
+    box-sizing: border-box;
+    &.one-breadcrumb {
+      font-size: 18px;
+      ::v-deep {
+        .el-breadcrumb__inner {
+          color: #000;
+        }
+      }
+    }
+    ::v-deep {
+      .el-breadcrumb__separator {
+        color: map-get($fontColor, sub);
+      }
+    }
+  }
+  .btn-back {
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .el-menu-item.is-active .agent-warning-icon {
+    display: none;
+  }
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #3B47E5 2.08%, #9747FF 97.92%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+</style>
+
+<style>
+.zsiqfanim,
+.zsiqfanim *,
+.siqanim,
+.siqanim * {
+  pointer-events: all;
+}
+.driver-popover {
+  max-width: 520px;
+}
+.replication-driver-popover {
+  .driver-popover-footer {
+    margin-top: 8px;
+  }
+}
+</style>
