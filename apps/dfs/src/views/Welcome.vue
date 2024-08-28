@@ -5,10 +5,10 @@
       <div class="flex absolute-fill">
         <div class="flex-1 flex flex-column justify-center align-center my-8">
           <div class="text-center">
-            <div class="fs-2 fw-sub">
+            <div class="fs-2 fw-sub lh-sm mb-4">
               <span class="text-gradient">连接</span>您的数据，<span class="text-gradient">同步</span>至您的目的地</span>
             </div>
-            <div class="font-color-sslight">平台提供<span class="text-gradient">免费15天</span>的全托管引擎和Demo数据源进行功能场景试用</div>
+            <div class="font-color-sslight lh-base">平台提供<span class="text-gradient">免费15天</span>的全托管引擎和Demo数据源进行功能场景试用</div>
           </div>
 
 
