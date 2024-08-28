@@ -4,7 +4,7 @@ import { defineComponent, ref, inject } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm, FormDialog, FormLayout, useFormLayout, createSchemaField, components } from '@tap/form'
 import './style.scss'
-import { createForm } from '@formily/core'
+import { createForm, onFieldValueChange } from '@formily/core'
 import * as _components from '../index'
 
 const { SchemaField } = createSchemaField({
@@ -130,7 +130,12 @@ const SourceDatabaseNode = defineComponent({
       )
         .forOpen((payload, next) => {
           next({
-            values: form.values.dag.nodes[1]
+            values: form.values.dag.nodes[1],
+            effects() {
+              onFieldValueChange('*', field => {
+                form.notify('dialog-form-values-change')
+              })
+            }
           })
         })
         .forConfirm((payload, next) => {
@@ -154,7 +159,12 @@ const SourceDatabaseNode = defineComponent({
       )
         .forOpen((payload, next) => {
           next({
-            values: form.values.dag.nodes[2]
+            values: form.values.dag.nodes[2],
+            effects() {
+              onFieldValueChange('*', field => {
+                form.notify('dialog-form-values-change')
+              })
+            }
           })
         })
         .forConfirm((payload, next) => {

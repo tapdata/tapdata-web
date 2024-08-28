@@ -16,12 +16,17 @@
 import i18n from '@tap/i18n'
 import { taskApi } from '@tap/api'
 import { debounce, merge } from 'lodash'
-import { createForm, onFormValuesChange, onFieldValueChange } from '@formily/core'
+import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
 import { DEFAULT_SETTINGS } from '../../constants'
 import { genDatabaseNode, genProcessorNode } from '../../util'
 import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
+
+// 自定义 Dialog 表单内的 value 变化事件
+const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
+  listener(payload, form)
+})
 
 export default defineComponent({
   name: 'TaskStep',
@@ -56,18 +61,18 @@ export default defineComponent({
           type: 'string',
           required: true,
           'x-decorator': 'FormItem',
-          'x-component': 'Input',
-          'x-validator': `{{(value) => {
-                    return new Promise((resolve) => {
-                      checkName(value).then(data => {
-                        if(data === true) {
-                          resolve('${repeatNameMessage}')
-                        } else {
-                          resolve()
-                        }
-                      })
-                    })
-                  }}}`
+          'x-component': 'Input'
+          // 'x-validator': `{{(value) => {
+          //           return new Promise((resolve) => {
+          //             checkName(value).then(data => {
+          //               if(data === true) {
+          //                 resolve('${repeatNameMessage}')
+          //               } else {
+          //                 resolve()
+          //               }
+          //             })
+          //           })
+          //         }}}`
         },
         type: {
           title: i18n.t('packages_dag_task_setting_sync_type'),
@@ -201,44 +206,46 @@ export default defineComponent({
       )
 
       // 防止触发 FormValuesChange
-      const rawObj = raw(taskRef.value)
-      rawObj.editVersion = data.editVersion
+      // const rawObj = raw(taskRef.value)
+      taskRef.value.editVersion = data.editVersion
 
       console.log('onTaskChange')
     }, 100)
+
+    setTimeout(() => {
+      taskRef.value.a = 123
+    }, 3000)
 
     let dispose
 
     const initForm = () => {
       const task = taskRef.value
       scope.$taskId = task.id
-
-      console.log('isObservable', isObservable(task))
-
       form.value = createForm({
         values: task
       })
 
       // 防止挂载表单时触发valueChange
       setTimeout(() => {
-        dispose = observe(taskRef.value, () => {
-          console.log('observe.task')
-          onTaskChange()
-        })
+        // dispose = observe(taskRef.value, () => {
+        //   console.log('observe.task')
+        //   onTaskChange()
+        // })
 
         form.value.addEffects('watchForm', () => {
           // onFormValuesChange(form => {
           //   // onTaskChange()
           //   console.log('onFormValuesChange', form.values)
           // })
-          // onFieldValueChange('dag.nodes', field => {
-          //   console.log('onFieldValueChange', field)
-          //   // onTaskChange()
-          // })
-          //
-          // onFieldValueChange('*', field => {
-          //   console.log('onTableRenameValueChange*', field)
-          // })
+          onFieldValueChange('*', field => {
+            onTaskChange()
+            console.log('onFieldValueChange', field)
+          })
+
+          onDialogFormValuesChange((payload, form) => {
+            onTaskChange()
+            console.log('onDialogFormValuesChange')
+          })
         })
       }, 100)
     }
