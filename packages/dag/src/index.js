@@ -1,6 +1,7 @@
 import Editor from './Editor'
 import MigrationEditor from './MigrationEditor'
 import MigrationMonitor from './MigrationMonitor'
+import MigrationMonitorSimple from './MigrationMonitorSimple'
 import MigrationMonitorViewer from './MigrationMonitorViewer'
 import NodeViewer from './nodeView'
 import langs from './locale'
@@ -14,6 +15,7 @@ export {
   Editor,
   MigrationEditor,
   MigrationMonitor,
+  MigrationMonitorSimple,
   MigrationMonitorViewer,
   langs,
   NodeViewer,

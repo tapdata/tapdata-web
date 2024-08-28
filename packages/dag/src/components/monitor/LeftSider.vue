@@ -949,10 +949,4 @@ export default {
     font-feature-settings: 'tnum';
   }
 }
-.line-chart__box {
-  .line-chart {
-    margin-top: 8px;
-    height: 110px;
-  }
-}
 </style>

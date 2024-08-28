@@ -203,15 +203,11 @@ export default defineComponent({
       // 防止触发 FormValuesChange
       const rawObj = raw(taskRef.value)
       rawObj.editVersion = data.editVersion
+
+      console.log('onTaskChange')
     }, 100)
 
-    observe(taskRef.value, () => {
-      console.log('observe.task')
-    })
-
-    autorun(() => {
-      console.log('autorun', { ...taskRef.value })
-    })
+    let dispose
 
     const initForm = () => {
       const task = taskRef.value
@@ -225,6 +221,11 @@ export default defineComponent({
 
       // 防止挂载表单时触发valueChange
       setTimeout(() => {
+        dispose = observe(taskRef.value, () => {
+          console.log('observe.task')
+          onTaskChange()
+        })
+
         form.value.addEffects('watchForm', () => {
           // onFormValuesChange(form => {
           //   // onTaskChange()
@@ -255,6 +256,8 @@ export default defineComponent({
     onBeforeUnmount(() => {
       console.log('卸载')
       form.value.onUnmount()
+      dispose?.()
+      dispose = null
     })
 
     return {

@@ -41,6 +41,12 @@ const MigrationMonitor = async () => {
   const { MigrationMonitor } = await import('@tap/dag')
   return MigrationMonitor
 }
+
+const MigrationMonitorSimple = async () => {
+  const { MigrationMonitorSimple } = await import('@tap/dag')
+  return MigrationMonitorSimple
+}
+
 const MigrationMonitorViewer = async () => {
   const { MigrationMonitorViewer } = await import('@tap/dag')
   return MigrationMonitorViewer
@@ -595,6 +601,14 @@ const routes = [
         }
       }
     ]
+  },
+  {
+    path: '/migrate/monitor/simple/:id',
+    name: 'MigrationMonitorSimple',
+    component: MigrationMonitorSimple,
+    meta: {
+      title: 'page_title_run_monitor'
+    }
   },
   {
     path: '/migrate/monitor/:id',

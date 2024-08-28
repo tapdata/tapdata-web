@@ -28,8 +28,8 @@
         <div class="flex align-center gap-3">
           <el-badge is-dot>
             <el-button
-              v-readonlybtn="'SYNC_job_creation'"
-              class="btn btn-create"
+              class="flex align-center"
+              style="height: 32px"
               type="primary"
               plain
               size="mini"
@@ -38,7 +38,8 @@
               :loading="quickCreateBtnLoading"
               @click="useFormCreate"
             >
-              快速创建任务
+              <VIcon size="18" class="align-middle mr-1">dynamic-form-outline</VIcon>
+              <span class="align-middle">快速创建任务</span>
             </el-button>
           </el-badge>
           <el-button
@@ -122,7 +123,7 @@ export default {
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor'
+        monitor: 'MigrationMonitorSimple'
       },
       createBtnLoading: false,
       quickCreateBtnLoading: false
