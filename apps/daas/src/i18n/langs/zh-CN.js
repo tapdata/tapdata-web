@@ -565,6 +565,7 @@ export default {
   setting_agent_log_file_save_time: '引擎日志留存时长(天)',
   setting_agent_log_file_save_size: '引擎日志留存大小(MB)',
   setting_agent_log_file_save_count: '引擎日志留存份数',
+  setting_INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT: '增量延迟系数',
   user_list_user_name_email: '请输入用户名 / 邮箱',
   user_list_change_time: ' 修改时间',
   user_list_creat_user: '创建用户',

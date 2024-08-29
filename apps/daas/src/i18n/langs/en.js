@@ -588,6 +588,7 @@ export default {
   setting_agent_log_file_save_time: 'Agent log retention time (days)',
   setting_agent_log_file_save_size: 'Agent log retention size (MB)',
   setting_agent_log_file_save_count: 'Agent log retention total count',
+  setting_INCREMENTAL_DELAY_LINE_DATA_COEFFICIENT: 'Incremental delay line data coefficient',
   user_list_user_name_email: 'Please enter username/email',
   user_list_change_time: 'Modification time',
   user_list_creat_user: 'Create user',
