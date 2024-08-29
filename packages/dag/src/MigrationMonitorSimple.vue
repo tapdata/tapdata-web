@@ -100,20 +100,28 @@
               <ElTabPane label="任务监控">
                 <div class="flex flex-column gap-4 mt-4">
                   <div class="rounded-lg bg-white p-4">
-                    <span class="font-color-dark fs-6 fw-sub mb-3">性能指标</span>
-                    <div class="flex align-items-center mb-3">
-                      <TimeSelect
-                        :options="timeOptions"
-                        :range="timeSelectRange"
-                        ref="timeSelect"
-                        class="mb-1 w-100"
-                        @change="changeTimeSelect"
-                      ></TimeSelect>
-                      <Frequency :range="timeSelectRange" class="flex-1" @change="changeFrequency"></Frequency>
-                      <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
-                        <IconButton class="color-primary" @click="$emit('load-data')"> refresh </IconButton>
-                      </ElTooltip>
+                    <div class="flex gap-3 align-center mb-3">
+                      <span class="font-color-dark fs-6 fw-sub">性能指标</span>
+                      <div class="inline-flex align-items-center">
+                        <TimeSelect
+                          :options="timeOptions"
+                          :range="timeSelectRange"
+                          ref="timeSelect"
+                          style="width: 300px"
+                          @change="changeTimeSelect"
+                        ></TimeSelect>
+                        <Frequency :range="timeSelectRange" style="width: 200px" @change="changeFrequency"></Frequency>
+                        <ElTooltip transition="tooltip-fade-in" :content="$t('public_button_refresh')">
+                          <IconButton class="color-primary" @click="$emit('load-data')"> refresh </IconButton>
+                        </ElTooltip>
+                      </div>
+
+                      <div class="flex ml-auto">
+                        <span>{{ $t('public_task_heartbeat_time') }}:</span>
+                        <span>{{ heartbeatTime }}</span>
+                      </div>
                     </div>
+
                     <div class="flex gap-3">
                       <div v-if="dataflow.type !== 'cdc'" class="info-box flex-1 sync-info border rounded-lg p-3">
                         <div class="flex justify-content-between mb-2">
@@ -223,7 +231,7 @@
                         </template>
                       </div>
 
-                      <div v-if="!hideTotalData" class="info-box border flex-1 p-4 bg-white rounded-lg">
+                      <div v-if="!hideTotalData" class="info-box border flex-1 p-3 bg-white rounded-lg">
                         <div class="flex justify-content-between mb-2">
                           <span class="fw-sub fs-7 font-color-normal">{{
                             $t('packages_dag_monitor_leftsider_renwushijiantong')
@@ -305,7 +313,7 @@
                                   : $t('packages_dag_monitor_leftsider_qpSshizhi2')
                               "
                             >
-                              <span class="inline-flex align-items-center">
+                              <span class="inline-flex align-items-center align-self-start">
                                 <span class="mr-2 font-color-dark fw-sub">QPS(Q/S)</span>
                                 <VIcon size="16" class="color-primary">info</VIcon>
                               </span>
