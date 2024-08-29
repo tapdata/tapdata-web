@@ -311,8 +311,12 @@ export default defineComponent({
     const getNewTask = async () => {
       const sourceNode = genDatabaseNode()
       const targetNode = genDatabaseNode()
-      const tableEditNode = genProcessorNode('table_rename_processor')
-      const fieldEditNode = genProcessorNode('migrate_field_rename_processor')
+      const tableEditNode = genProcessorNode('table_rename_processor', {
+        name: i18n.t('packages_dag_src_migrationeditor_biaobianji')
+      })
+      const fieldEditNode = genProcessorNode('migrate_field_rename_processor', {
+        name: i18n.t('packages_dag_src_migrationeditor_ziduanbianji')
+      })
 
       const dag = richDag({
         edges: [

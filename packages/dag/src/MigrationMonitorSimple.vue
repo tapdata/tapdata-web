@@ -49,7 +49,6 @@
         >
           <PaperScroller
             ref="paperScroller"
-            class="cursor-pointer"
             :nav-lines="navLines"
             scrollDisabled
             @add-node="handleAddNodeToPos"
@@ -95,7 +94,7 @@
             @showBottomPanel="handleAlarmShowBottomPanel"
           />
 
-          <div class="p-4 pt-0 position-absolute start-0 end-0 bottom-0" style="top: 120px">
+          <div class="p-4 pt-0 position-absolute start-0 end-0 bottom-0" style="top: 140px">
             <ElTabs class="nav-no-padding main-tabs tabs-fill">
               <ElTabPane label="任务监控">
                 <div class="flex flex-column gap-4 mt-4">
@@ -493,9 +492,13 @@
                   ></NodeLog>
                 </div>
               </ElTabPane>
-              <!--<ElTabPane label="运行记录"> </ElTabPane>-->
-              <!--<ElTabPane label="告警列表"> </ElTabPane>-->
-              <ElTabPane label="基本信息"> </ElTabPane>
+              <ElTabPane label="基本信息" lazy>
+                <TaskReadPretty class="mt-4" :task="dataflow"></TaskReadPretty>
+                <!--<div class="p-4 mt-4 bg-white rounded-lg">-->
+                <!--  <div class="title-prefix-bar mb-4">配置任务</div>-->
+                <!--  &lt;!&ndash;<SchemaForm :form="form" :schema="schema" :scope="scope" />&ndash;&gt;-->
+                <!--</div>-->
+              </ElTabPane>
               <ElTabPane label="高级设置"> </ElTabPane>
             </ElTabs>
           </div>
@@ -590,6 +593,9 @@ import dayjs from 'dayjs'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 import { getDataflowCorners } from './helpers'
 import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
+import SchemaForm from './components/SchemaForm.vue'
+import { createForm, onFieldValueChange } from '@formily/core'
+import TaskReadPretty from './components/steps/TaskReadPretty.vue'
 
 export default {
   name: 'MigrationMonitor',
@@ -601,6 +607,8 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    TaskReadPretty,
+    SchemaForm,
     NodeLog,
     TimeSelect,
     IconButton,
@@ -632,6 +640,140 @@ export default {
       status: '',
       attrs: {}
     })
+
+    const root = this
+
+    const schema = {
+      type: 'object',
+      properties: {
+        name: {
+          title: i18n.t('public_task_name'), //任务名称
+          type: 'string',
+          required: true,
+          'x-decorator': 'FormItem',
+          'x-component': 'Input'
+          // 'x-validator': `{{(value) => {
+          //           return new Promise((resolve) => {
+          //             checkName(value).then(data => {
+          //               if(data === true) {
+          //                 resolve('${repeatNameMessage}')
+          //               } else {
+          //                 resolve()
+          //               }
+          //             })
+          //           })
+          //         }}}`
+        },
+        type: {
+          title: i18n.t('packages_dag_task_setting_sync_type'),
+          type: 'string',
+          'x-decorator': 'FormItem',
+          'x-component': 'Radio.Group',
+          default: 'initial_sync+cdc',
+          enum: [
+            {
+              label: i18n.t('packages_dag_task_setting_initial_sync_cdc'), //全量+增量
+              value: 'initial_sync+cdc'
+            },
+            {
+              label: i18n.t('public_task_type_initial_sync'), //全量
+              value: 'initial_sync'
+            },
+            {
+              label: i18n.t('public_task_type_cdc'), //增量
+              value: 'cdc'
+            }
+          ]
+        },
+
+        // 目标节点
+        'dag.nodes.3': {
+          type: 'object',
+          properties: {
+            existDataProcessMode: {
+              type: 'string',
+              title: i18n.t('packages_dag_nodes_database_chongfuchulice'),
+              default: 'keepData',
+              enum: [
+                {
+                  label: i18n.t('packages_dag_nodes_database_baochimubiaoduan'),
+                  value: 'keepData'
+                },
+                {
+                  label: i18n.t('packages_dag_nodes_database_qingchumubiaoduan'),
+                  value: 'dropTable',
+                  disabled: true
+                },
+                {
+                  label: i18n.t('packages_dag_nodes_targetdatabase_baochimubiaoduan'),
+                  value: 'removeData'
+                }
+              ],
+              'x-decorator': 'FormItem',
+              'x-component': 'Radio.Group',
+              'x-reactions': {
+                fulfill: {
+                  run: '{{$self.dataSource[1].disabled = $self.dataSource[2].disabled = $values.type === "cdc"}}',
+                  state: {
+                    description: `{{$values.type === "cdc" ? '${i18n.t(
+                      'packages_dag_nodes_database_setting_cdc_changjing_desc'
+                    )}':''}}`
+                  },
+                  schema: {
+                    // TODO 根据能力改变dataSource
+                    'x-component-props.options': `{{options=[$self.dataSource[0]],$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='drop_table_function') && options.push($self.dataSource[1]),$values.dag.nodes[3].attrs.capabilities.find(item => item.id ==='clear_table_function') && options.push($self.dataSource[2]),options}}`
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        // 源节点
+        'dag.nodes.0': {
+          title: i18n.t('packages_dag_task_setting_sync_type'),
+          type: 'object',
+          'x-decorator': 'FormItem',
+          'x-component': 'SourceDatabaseNode'
+        },
+
+        'dag.nodes.0.migrateTableSelectType': {
+          title: i18n.t('packages_dag_nodes_database_xuanzebiao'),
+          type: 'string',
+          default: 'custom',
+          'x-display': 'hidden'
+        }
+      }
+    }
+    const scope = {
+      findNodeById: id => {
+        return root.$store.state.dataflow.NodeMap[id]
+      },
+
+      findParentNodes: (id, ifMyself) => {
+        let node = scope.findNodeById(id)
+        const parents = []
+
+        if (!node) return parents
+
+        let parentIds = node.$inputs || []
+        if (ifMyself && !parentIds.length) return [node]
+        parentIds.forEach(pid => {
+          let parent = scope.findNodeById(pid)
+          if (parent) {
+            if (parent.$inputs?.length) {
+              parent.$inputs.forEach(ppid => {
+                parents.push(...scope.findParentNodes(ppid, true))
+              })
+            } else {
+              parents.push(parent)
+            }
+          }
+        })
+
+        return parents
+      }
+    }
 
     return {
       NODE_PREFIX,
@@ -690,7 +832,10 @@ export default {
         externalStorage: {}
       },
       infoList: [],
-      qpsChartsType: 'count'
+      qpsChartsType: 'count',
+
+      schema,
+      scope
     }
   },
 
@@ -1776,14 +1921,14 @@ export default {
       let contentH = 94
       let scale = Math.min(width / contentW, height / contentH)
 
+      console.log('scale', scale, scale * 24)
+
       scale = Math.min(1, scale)
       scale = Math.max(0.25, scale)
 
       contentW *= scale
       contentH *= scale
       this.$refs.paperScroller.changeScale(scale)
-
-      console.log('--', (height - contentH) / 2)
 
       const scrollLeft = paperOffset.left + (minX + paperReverseSize.w) * scale - (width - contentW) / 2
       const scrollTop = paperOffset.top + (minY + paperReverseSize.h) * scale - 24 /* - (height - contentH) / 2*/
@@ -2091,6 +2236,14 @@ export default {
             }
           ]
         })
+      })
+    },
+
+    initForm() {
+      this.scope.$taskId = this.dataflow.id
+      this.baseForm = createForm({
+        readPretty: true,
+        values: this.dataflow
       })
     }
   }

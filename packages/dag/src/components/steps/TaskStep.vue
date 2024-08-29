@@ -7,7 +7,7 @@
 
     <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
       <el-button @click="handlePrev">上一步</el-button>
-      <el-button type="primary" @click="handleNext">启动任务</el-button>
+      <el-button type="primary" @click="handleStart">启动任务</el-button>
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ import SchemaForm from '../SchemaForm.vue'
 import { DEFAULT_SETTINGS } from '../../constants'
 import { genDatabaseNode, genProcessorNode } from '../../util'
 import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
+import { task } from '@vue/cli-plugin-eslint/ui/taskDescriptor'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
@@ -260,6 +261,94 @@ export default defineComponent({
       emit('next')
     }
 
+    const save = async () => {
+      // this.isSaving = true
+      // const errorMsg = await this.validate()
+      // if (errorMsg) {
+      //   if (this.destory) return
+      //   this.$message.error(errorMsg)
+      //   this.isSaving = false
+      //   return
+      // }
+
+      // if (!this.dataflow.id) {
+      //   return this.saveAsNewDataflow()
+      // }
+
+      // const data = this.getDataflowDataToSave()
+      let isOk = false
+
+      try {
+        // this.initWS()
+        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        const result = await taskApi.saveAndStart(taskRef.value, {
+          silenceMessage: true
+        })
+        // this.reformDataflow(result)
+        // this.setEditVersion(result.editVersion)
+        // this.isSaving = false
+        isOk = true
+
+        root.$router.push({
+          name: 'MigrationMonitorSimple',
+          params: {
+            id: taskRef.value.id
+          }
+        })
+      } catch (e) {
+        // this.handleError(e)
+      }
+      // this.isSaving = false
+      // this.toggleConsole(true)
+      // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
+      return isOk
+    }
+
+    const start = async () => {
+      this.buried('migrationStart')
+
+      this.unWatchStatus?.()
+      this.unWatchStatus = this.$watch('dataflow.status', v => {
+        if (['error', 'complete', 'running', 'stop', 'schedule_failed'].includes(v)) {
+          this.$refs.console?.loadData()
+          if (v !== 'running') {
+            this.$refs.console?.stopAuto()
+          } else {
+            this.toggleConsole(false)
+            this.gotoViewer(false)
+          }
+          // this.unWatchStatus()
+        }
+        if (['MigrateViewer'].includes(this.$route.name)) {
+          if (['renewing'].includes(v)) {
+            this.handleConsoleAutoLoad()
+          } else {
+            this.toggleConsole(false)
+          }
+        }
+      })
+
+      const hasError = await this.$refs.skipError.checkError(this.dataflow)
+      if (hasError) return
+
+      const flag = await this.save(true)
+      if (flag) {
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        // this.gotoViewer()
+        this.beforeStartTask()
+        this.buried('taskSubmit', { result: true })
+      } else {
+        this.buried('taskSubmit', { result: false })
+      }
+    }
+
+    const handleStart = () => {
+      save()
+    }
+
     onBeforeUnmount(() => {
       console.log('卸载')
       form.value.onUnmount()
@@ -273,7 +362,8 @@ export default defineComponent({
       scope,
 
       handlePrev,
-      handleNext
+      handleNext,
+      handleStart
     }
   }
 })

@@ -1,7 +1,7 @@
 <template>
   <div
     class="paper-scroller hide-scrollbar"
-    :class="{ grabbable: !shiftKeyPressed }"
+    :class="{ grabbable: !shiftKeyPressed && !scrollDisabled }"
     tabindex="0"
     @mousedown="mouseDown"
     @wheel="wheelScroll"
