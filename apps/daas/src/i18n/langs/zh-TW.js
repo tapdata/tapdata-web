@@ -244,7 +244,7 @@ export default {
   api_monitor_total_api_list_status_active: '已發布',
   api_monitor_total_api_list_status_pending: '待發布',
   api_monitor_total_api_list_status_generating: '待生成',
-  api_monitor_detail_visitTotalCount: 'API訪問次數',
+  api_monitor_detail_visitTotalCount: 'API訪問成功次數',
   api_monitor_detail_visitQuantity: 'API傳輸量',
   api_monitor_detail_timeConsuming: 'API訪問耗時',
   api_monitor_detail_visitTotalLine: 'API訪問行數',

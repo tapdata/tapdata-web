@@ -4,7 +4,16 @@
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.totalCount }}/{{ detail.visitTotalCount || 0 }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.visitTotalCount || detail.visitTotalCount < 1000"
+            :content="`${detail.totalCount}/${detail.visitTotalCount || 0}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">
+              {{ calcUnit(detail.totalCount) }}/{{ calcUnit(detail.visitTotalCount || 0) }}
+            </div>
+          </el-tooltip>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
@@ -18,7 +27,14 @@
       <div class="flex flex-direction flex-1 pb-5 mt-8">
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!detail.visitTotalLine || detail.visitTotalLine < 1000"
+            :content="`${detail.visitTotalLine}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.visitTotalLine || 0) }}</div>
+          </el-tooltip>
         </div>
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>

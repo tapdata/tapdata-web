@@ -13,18 +13,39 @@
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningVisitCount') }}</header>
           <div class="api-monitor-total__text din-font">
-            <span>{{ calcUnit(previewData.warningVisitTotalCount) }}</span>
+            <el-tooltip
+              :open-delay="400"
+              :disabled="!previewData.warningVisitTotalCount || previewData.warningVisitTotalCount < 1000"
+              :content="`${previewData.warningVisitTotalCount}`"
+              placement="bottom"
+            >
+              <span>{{ calcUnit(previewData.warningVisitTotalCount) }}</span>
+            </el-tooltip>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
           <div class="api-monitor-total__text din-font">
-            <span>{{ calcUnit(previewData.visitTotalCount) }}</span>
+            <el-tooltip
+              :open-delay="400"
+              :disabled="!previewData.visitTotalCount || previewData.visitTotalCount < 1000"
+              :content="`${previewData.visitTotalCount}`"
+              placement="bottom"
+            >
+              <span>{{ calcUnit(previewData.visitTotalCount) }}</span>
+            </el-tooltip>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine || 0 }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!previewData.visitTotalLine || previewData.visitTotalLine < 1000"
+            :content="`${previewData.visitTotalLine}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-total__text din-font">{{ calcUnit(previewData.visitTotalLine || 0) }}</div>
+          </el-tooltip>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
