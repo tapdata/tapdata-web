@@ -81,6 +81,13 @@
             </div>
           </template>
         </ElTableColumn>
+        <ElTableColumn show-overflow-tooltip label="实例信息" min-width="160">
+          <template #default="{ row }">
+            <el-tag>
+              {{ row.datasourceInstanceInfo ? row.datasourceInstanceInfo.tag : '-' }}
+            </el-tag>
+          </template>
+        </ElTableColumn>
         <ElTableColumn show-overflow-tooltip :label="$t('public_connection_information')" min-width="160">
           <template slot-scope="scope">
             {{ scope.row.connectionUrl }}

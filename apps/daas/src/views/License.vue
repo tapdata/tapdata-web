@@ -15,6 +15,19 @@
           <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
         </template>
       </ElTableColumn>
+      <ElTableColumn label="授权类型" min-width="150">
+        <template #default="{ row }">
+          <span>{{ TYPE_MAP[row.licenseType] }}</span>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn label="数据源通道数量" min-width="150">
+        <template #default="{ row }">
+          <div class="flex gap-2 align-center">
+            <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
+            <span>{{ row.datasourcePipelineInUse }} / {{ row.datasourcePipelineLimit }}</span>
+          </div>
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
       <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
     </TablePage>
@@ -38,7 +51,13 @@ import Time from '@tap/shared/src/time'
 export default {
   components: { TablePage },
   data() {
+    const TYPE_MAP = {
+      OP: '标准',
+      PIPELINE: '通道授权'
+    }
+
     return {
+      TYPE_MAP,
       copyLoading: false,
       dialogVisible: false,
       dialogLoading: false,
@@ -93,6 +112,13 @@ export default {
               }[status]
               item.expirationDateFmt = item.expirationDate ? expirationDate.format('YYYY-MM-DD HH:mm:ss') : ''
               item.lastUpdatedFmt = item.last_updated ? dayjs(item.last_updated).format('YYYY-MM-DD HH:mm:ss') : ''
+
+              if (item.licenseType === 'PIPELINE' && item.datasourcePipelineLimit > 0) {
+                item.pipelinePercentage = Math.floor(
+                  (item.datasourcePipelineInUse / item.datasourcePipelineLimit) * 100
+                )
+              }
+
               return item
             })
           }
