@@ -23,6 +23,13 @@ export const DdlEventCheckbox = observer(
     props: ['value', 'disabled'],
     setup(props, { emit }) {
       const formRef = useForm()
+      const fieldRef = useField()
+      console.log(
+        'fieldRef',
+        fieldRef.value,
+        fieldRef.value.query('.attrs.capabilities').get('value'),
+        fieldRef.value.query('.ignoredDDLRules').take()
+      )
       const form = formRef.value
       const events = ref([])
       const selected = ref([])

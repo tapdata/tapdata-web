@@ -499,7 +499,9 @@
                 <!--  &lt;!&ndash;<SchemaForm :form="form" :schema="schema" :scope="scope" />&ndash;&gt;-->
                 <!--</div>-->
               </ElTabPane>
-              <ElTabPane label="高级设置"> </ElTabPane>
+              <ElTabPane label="高级设置" lazy>
+                <TaskSettingsReadPretty class="mt-4" :task="dataflow"></TaskSettingsReadPretty>
+              </ElTabPane>
             </ElTabs>
           </div>
         </main>
@@ -596,6 +598,7 @@ import NodeLog from '@tap/business/src/components/logs/NodeLog.vue'
 import SchemaForm from './components/SchemaForm.vue'
 import { createForm, onFieldValueChange } from '@formily/core'
 import TaskReadPretty from './components/steps/TaskReadPretty.vue'
+import TaskSettingsReadPretty from './components/steps/TaskSettingsReadPretty.vue'
 
 export default {
   name: 'MigrationMonitor',
@@ -630,7 +633,8 @@ export default {
     SharedMiningEditor,
     SharedCacheDetails,
     SharedCacheEditor,
-    Frequency
+    Frequency,
+    TaskSettingsReadPretty
   },
 
   data() {
