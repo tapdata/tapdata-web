@@ -228,7 +228,8 @@ export default {
   application_create: 'Create a client',
   //api 监控
   api_monitor_total_totalCount: 'Total number of APIs',
-  api_monitor_total_warningApiCount: 'Total API access',
+  api_monitor_total_warningApiCount: 'Total API Access',
+  api_monitor_total_warningVisitCount: 'Total API Access Warning',
   api_monitor_total_visitTotalLine: 'The total number of API access lines',
   api_monitor_total_transmitTotal: 'API transmission total',
   api_monitor_total_warningCount: 'API warning count',

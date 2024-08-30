@@ -11,10 +11,15 @@
           <div class="api-monitor-total__text din-font">{{ previewData.totalCount || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningVisitCount') }}</header>
+          <div class="api-monitor-total__text din-font">
+            <span>{{ calcUnit(previewData.warningVisitTotalCount) }}</span>
+          </div>
+        </div>
+        <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
           <div class="api-monitor-total__text din-font">
-            <span v-if="visitTotalCountText === 0">0</span>
-            <span v-else> {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span>
+            <span>{{ calcUnit(previewData.visitTotalCount) }}</span>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">

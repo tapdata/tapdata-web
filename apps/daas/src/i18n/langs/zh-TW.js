@@ -226,6 +226,7 @@ export default {
   //api 监控
   api_monitor_total_totalCount: 'API總數',
   api_monitor_total_warningApiCount: 'API訪問總數',
+  api_monitor_total_warningVisitCount: 'API訪問告警總數',
   api_monitor_total_visitTotalLine: 'API訪問總行數',
   api_monitor_total_transmitTotal: 'API傳輸總量',
   api_monitor_total_warningCount: 'API告警數',
