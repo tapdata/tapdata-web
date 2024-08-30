@@ -15,12 +15,12 @@
           <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn label="授权类型" min-width="150">
+      <ElTableColumn v-if="showLicenseType" :label="$t('daas_licenseType')" min-width="150">
         <template #default="{ row }">
           <span>{{ TYPE_MAP[row.licenseType] }}</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn label="数据源通道数量" min-width="150">
+      <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="150">
         <template #default="{ row }">
           <div class="flex gap-2 align-center">
             <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
@@ -52,8 +52,8 @@ export default {
   components: { TablePage },
   data() {
     const TYPE_MAP = {
-      OP: '标准',
-      PIPELINE: '通道授权'
+      OP: this.$t('daas_licenseType_op'),
+      PIPELINE: this.$t('daas_licenseType_pipeline')
     }
 
     return {
@@ -61,7 +61,8 @@ export default {
       copyLoading: false,
       dialogVisible: false,
       dialogLoading: false,
-      license: ''
+      license: '',
+      showLicenseType: process.env.VUE_APP_LICENSE_TYPE || process.env.NODE_ENV === 'development'
     }
   },
   methods: {

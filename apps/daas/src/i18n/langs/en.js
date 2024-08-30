@@ -1955,5 +1955,9 @@ export default {
   http_header_ph: 'HTTP request headers, enter multiple headers on separate lines, e.g., Accept: text/html',
   webhook_send_ping: 'Send Test PING Event',
   webhook_event_type: 'Event Type',
-  webhook_event_type_empty: 'Please select an event'
+  webhook_event_type_empty: 'Please select an event',
+  daas_licenseType: 'Type',
+  daas_licenseType_pipeline: 'Pipeline',
+  daas_licenseType_op: 'Standard',
+  daas_datasourcePipelineLimit: 'Pipeline Number'
 }

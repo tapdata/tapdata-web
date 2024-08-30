@@ -81,7 +81,12 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="实例信息" min-width="160">
+        <ElTableColumn
+          v-if="showInstanceInfo"
+          show-overflow-tooltip
+          :label="$t('packages_business_instance_info')"
+          min-width="160"
+        >
           <template #default="{ row }">
             <el-tag>
               {{ row.datasourceInstanceInfo ? row.datasourceInstanceInfo.tag : '-' }}
@@ -270,6 +275,7 @@ export default {
 
     return {
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
 
       filterItems: [],
       user_id: Cookie.get('user_id'),
