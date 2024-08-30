@@ -62,7 +62,7 @@ export default {
       dialogVisible: false,
       dialogLoading: false,
       license: '',
-      showLicenseType: process.env.VUE_APP_LICENSE_TYPE || process.env.NODE_ENV === 'development'
+      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development'
     }
   },
   methods: {
