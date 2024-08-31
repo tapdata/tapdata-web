@@ -6,13 +6,11 @@
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
           <el-tooltip
             :open-delay="400"
-            :disabled="!detail.visitTotalCount || detail.visitTotalCount < 1000"
-            :content="`${detail.totalCount}/${detail.visitTotalCount || 0}`"
+            :disabled="!detail.totalCount || detail.totalCount < 1000"
+            :content="`${detail.totalCount}`"
             placement="bottom"
           >
-            <div class="api-monitor-detail-wrap__value">
-              {{ calcUnit(detail.totalCount) }}/{{ calcUnit(detail.visitTotalCount || 0) }}
-            </div>
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }} }}</div>
           </el-tooltip>
         </div>
         <div class="flex-1">
