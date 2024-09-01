@@ -223,8 +223,8 @@ export default defineComponent({
       const list = optionSelected.value !== 'has-connector' ? demoConnectorList.value : connectorList.value
 
       if (search.value) {
-        let search = search.value.toLowerCase()
-        return list.filter(db => db.name.toLowerCase().includes(search))
+        let query = search.value.toLowerCase()
+        return list.filter(db => db.name.toLowerCase().includes(query))
       }
       return list
     })

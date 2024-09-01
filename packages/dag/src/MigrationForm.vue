@@ -356,6 +356,29 @@ export default defineComponent({
       return newTask
     }
 
+    const handleEditFlush = result => {
+      if (result.data) {
+        if (result.data.id !== taskRef.value.id) {
+          console.debug(i18n.t('packages_dag_mixins_editor_wsshoudaole'), result.data)
+          return
+        }
+        // reformDataflow(result.data, true)
+        root.$store.commit('dataflow/setTransformLoading', !result.data.transformed)
+      }
+    }
+
+    const initWS = task => {
+      root.$ws.off('editFlush', handleEditFlush)
+      root.$ws.on('editFlush', handleEditFlush)
+      root.$ws.send({
+        type: 'editFlush',
+        taskId: task.id,
+        data: {
+          opType: 'subscribe'
+        }
+      })
+    }
+
     const initTask = async () => {
       const { id } = root.$route.params
       let task
@@ -375,6 +398,8 @@ export default defineComponent({
 
       hasTask.value = true
       console.log('task', taskRef.value)
+
+      initWS(task)
 
       if (!sourceNodeRef.value.connectionId) {
         currentStep.value = 0

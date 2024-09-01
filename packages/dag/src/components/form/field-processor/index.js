@@ -74,7 +74,7 @@ export const FieldRenameProcessorPreview = defineComponent({
       suffix: '',
       capitalized: ''
     }
-    let fieldsOperation = form.values.fieldsOperation || { ...defaultOperation }
+    let fieldsOperation = { ...(form.values.fieldsOperation || defaultOperation) }
 
     const config = reactive({
       visible: false,
@@ -304,67 +304,6 @@ export const FieldRenameProcessorPreview = defineComponent({
       doUpdateField(row, 'rename', name)
     }
 
-    //批量操作
-    const doOperationSave = () => {
-      /*let map = mapping(fieldsMapping)
-    if (config.checkedTables?.length > 0) {
-      //表级别
-      config.checkedTables.forEach(t => {
-        map[t?.sourceQualifiedName] = {
-          qualifiedName: t?.sourceQualifiedName,
-          originTableName: t?.sourceObjectName,
-          previousTableName: t?.sinkObjectName,
-          operation: cloneDeep(config.operation),
-          fields: []
-        }
-      })
-      fieldsMapping = toList(map)
-      emit('change', fieldsMapping)
-      setTimeout(() => {
-        loadData(true)
-      }, 2000)
-    }
-    if (config.checkedFields?.length > 0) {
-      //字段级别
-      config.checkedFields.forEach(t => {
-        let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
-        if (config.operation.capitalized) {
-          const map = {
-            toUpperCase,
-            toLowerCase,
-            toSnakeCase: camelToSnake,
-            toCamelCase: snakeToCamel
-          }
-          newField = map[config.operation.capitalized](newField)
-        }
-        updateFieldViews(t?.sourceFieldName, newField)
-        doUpdateField(t, 'rename', newField)
-      })
-    }
-    nextTick(() => {
-      refs.table?.clearSelection()
-      config.checkedTables = []
-      config.checkAll = false
-      Object.assign(config.operation, restOp)
-    })
-    doVisible('visible', false)*/
-    }
-
-    //重置
-    const doOperationRest = () => {
-      fieldsMapping = []
-      Object.assign(fieldsOperation, defaultOperation)
-      metadataInstancesApi
-        .resetTable({
-          taskId: root.$route.params.id,
-          nodeId: props.nodeId
-        })
-        .then(() => {
-          resetParams()
-          loadData() //更新整个数据
-        })
-    }
-
     //单个删除字段
     const doShowRow = row => {
       for (let i = 0; i < tableList.value.length; i++) {
@@ -500,17 +439,9 @@ export const FieldRenameProcessorPreview = defineComponent({
       })
 
       table.fields = toList(fieldMap)
-      form.fieldsMapping = fieldsMapping
+      // form.fieldsMapping = fieldsMapping
       emit('change', fieldsMapping)
       updateDeletedNum(config.selectTableRow)
-    }
-
-    const batchRemove = () => {
-      updateFieldsShow(false)
-    }
-
-    const batchShow = () => {
-      updateFieldsShow(true)
     }
 
     watch(
@@ -742,6 +673,7 @@ export const FieldRenameProcessor = connect(
           suffix: '',
           capitalized: ''
         }
+        console.log('form.values.fieldsOperation', form.values.fieldsOperation || form.values)
         let fieldsOperation = form.values.fieldsOperation || { ...defaultOperation }
 
         const config = reactive({
@@ -981,52 +913,6 @@ export const FieldRenameProcessor = connect(
           doUpdateField(row, 'rename', name)
         }
 
-        //批量操作
-        const doOperationSave = () => {
-          /*let map = mapping(fieldsMapping)
-      if (config.checkedTables?.length > 0) {
-        //表级别
-        config.checkedTables.forEach(t => {
-          map[t?.sourceQualifiedName] = {
-            qualifiedName: t?.sourceQualifiedName,
-            originTableName: t?.sourceObjectName,
-            previousTableName: t?.sinkObjectName,
-            operation: cloneDeep(config.operation),
-            fields: []
-          }
-        })
-        fieldsMapping = toList(map)
-        emit('change', fieldsMapping)
-        setTimeout(() => {
-          loadData(true)
-        }, 2000)
-      }
-      if (config.checkedFields?.length > 0) {
-        //字段级别
-        config.checkedFields.forEach(t => {
-          let newField = config.operation.prefix + t?.sourceFieldName + config.operation.suffix
-          if (config.operation.capitalized) {
-            const map = {
-              toUpperCase,
-              toLowerCase,
-              toSnakeCase: camelToSnake,
-              toCamelCase: snakeToCamel
-            }
-            newField = map[config.operation.capitalized](newField)
-          }
-          updateFieldViews(t?.sourceFieldName, newField)
-          doUpdateField(t, 'rename', newField)
-        })
-      }
-      nextTick(() => {
-        refs.table?.clearSelection()
-        config.checkedTables = []
-        config.checkAll = false
-        Object.assign(config.operation, restOp)
-      })
-      doVisible('visible', false)*/
-        }
-
         //重置
         const doOperationRest = () => {
           fieldsMapping = []
@@ -1190,6 +1076,12 @@ export const FieldRenameProcessor = connect(
           updateFieldsShow(true)
         }
 
+        const updateOperation = () => {
+          form.setValuesIn('fieldsOperation', {
+            ...fieldsOperation
+          })
+        }
+
         watch(
           () => root.$store.state.dataflow.transformLoading,
           v => {
@@ -1227,7 +1119,7 @@ export const FieldRenameProcessor = connect(
                         onChange={val => {
                           console.log('fieldsOperation.capitalized', fieldsOperation.capitalized) // eslint-disable-line
                           fieldsOperation.capitalized = val
-                          doModify()
+                          updateOperation()
                         }}
                         class="w-auto"
                       >
@@ -1245,21 +1137,13 @@ export const FieldRenameProcessor = connect(
                       </ElSelect>
                     </FormItem.BaseItem>
                     <FormItem.BaseItem label={i18n.t('packages_form_field_processor_index_qianzhui')}>
-                      {/*<FormInput
-                      value={fieldsOperation.prefix}
-                      disabled={props.disabled}
-                      onChange={val => {
-                        fieldsOperation.prefix = val
-                        doModify()
-                      }}
-                    ></FormInput>*/}
                       <ElInput
                         value={fieldsOperation.prefix}
                         disabled={props.disabled}
                         clearable
                         onInput={val => {
                           fieldsOperation.prefix = val
-                          doModify()
+                          updateOperation()
                         }}
                       />
                     </FormItem.BaseItem>
@@ -1270,7 +1154,7 @@ export const FieldRenameProcessor = connect(
                         clearable
                         onInput={val => {
                           fieldsOperation.suffix = val
-                          doModify()
+                          updateOperation()
                         }}
                       />
                     </FormItem.BaseItem>

@@ -499,7 +499,7 @@
                 <!--  &lt;!&ndash;<SchemaForm :form="form" :schema="schema" :scope="scope" />&ndash;&gt;-->
                 <!--</div>-->
               </ElTabPane>
-              <ElTabPane label="高级设置" lazy>
+              <ElTabPane label="任务设置" lazy>
                 <TaskSettingsReadPretty class="mt-4" :task="dataflow"></TaskSettingsReadPretty>
               </ElTabPane>
             </ElTabs>
@@ -521,6 +521,8 @@
         ref="nodeDetailDialog"
         @load-data="init"
       ></NodeDetailDialog>
+
+      <InitialList v-model="initialListDialog" :dataflow="dataflow" ref="initialList"></InitialList>
 
       <UpgradeFee
         :visible.sync="upgradeFeeVisible"
@@ -599,6 +601,7 @@ import SchemaForm from './components/SchemaForm.vue'
 import { createForm, onFieldValueChange } from '@formily/core'
 import TaskReadPretty from './components/steps/TaskReadPretty.vue'
 import TaskSettingsReadPretty from './components/steps/TaskSettingsReadPretty.vue'
+import InitialList from './components/monitor/components/InitialList.vue'
 
 export default {
   name: 'MigrationMonitor',
@@ -610,6 +613,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope, editor],
 
   components: {
+    InitialList,
     TaskReadPretty,
     SchemaForm,
     NodeLog,
@@ -1255,6 +1259,27 @@ export default {
       if (data) {
         if (this.destory) return
         const { dag } = data
+        const nodeMap = {}
+
+        dag.nodes.forEach(node => {
+          if (node.type === 'database') {
+            if (dag.edges.some(item => item.source === node.id)) {
+              nodeMap.source = node
+            } else if (dag.edges.some(item => item.target === node.id)) {
+              nodeMap.target = node
+            }
+          } else {
+            nodeMap[node.type] = node
+          }
+        })
+
+        dag.nodes = [
+          nodeMap.source,
+          nodeMap['table_rename_processor'],
+          nodeMap['migrate_field_rename_processor'],
+          nodeMap.target
+        ]
+
         this.setTaskId(data.id)
         this.setEdges(dag.edges)
         this.setEditVersion(data.editVersion)

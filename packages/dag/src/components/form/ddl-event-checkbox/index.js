@@ -20,7 +20,7 @@ const EVENT_MAP = {
 
 export const DdlEventCheckbox = observer(
   defineComponent({
-    props: ['value', 'disabled'],
+    props: ['value', 'disabled', 'formValues'],
     setup(props, { emit }) {
       const formRef = useForm()
       const fieldRef = useField()
@@ -33,7 +33,8 @@ export const DdlEventCheckbox = observer(
       const form = formRef.value
       const events = ref([])
       const selected = ref([])
-      const capabilities = form.values.attrs.capabilities || []
+      const values = props.formValues || form.values
+      const capabilities = values.attrs.capabilities || []
       const unselected = ref(props.value || [])
 
       events.value = capabilities.filter(item => item.type === 10).map(item => item.id)
@@ -75,15 +76,16 @@ export const DdlEventCheckbox = observer(
 
 export const DdlEventList = observer(
   defineComponent({
-    props: ['value', 'findParentNode', 'findParentNodes', 'hideParent'],
+    props: ['value', 'findParentNode', 'findParentNodes', 'hideParent', 'formValues'],
     setup(props) {
       const formRef = useForm()
       const fieldRef = useField()
       const form = formRef.value
       const list = ref([])
+      const values = props.formValues ?? form.values
       // 开启DDL的源节点
       const parents = props
-        .findParentNodes(form.values.id)
+        .findParentNodes(values.id)
         .filter(
           parent =>
             (parent.type === 'database' || parent.type === 'table') && parent.ddlConfiguration === 'SYNCHRONIZATION'
@@ -92,7 +94,7 @@ export const DdlEventList = observer(
       const parentEnable = ref(!!parents.length)
 
       if (parents.length) {
-        const functions = form.values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
+        const functions = values.attrs.capabilities.filter(item => item.type === 11).map(item => item.id)
         parents.forEach(parent => {
           const disabledEvents = parent.disabledEvents || []
           let events = parent.attrs.capabilities

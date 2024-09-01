@@ -4,7 +4,7 @@ import { defineComponent, ref, inject } from '@vue/composition-api'
 import i18n from '@tap/i18n'
 import { useForm, FormDialog, FormLayout, useFormLayout, createSchemaField, components } from '@tap/form'
 import './style.scss'
-import { createForm, onFieldValueChange } from '@formily/core'
+import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core'
 import * as _components from '../index'
 
 const { SchemaField } = createSchemaField({
