@@ -349,7 +349,10 @@ export default defineComponent({
       if (newTask) {
         await root.$router.replace({
           name: 'MigrateForm',
-          params: { id: newTask.id }
+          params: { id: newTask.id },
+          query: {
+            ...root.$route.query
+          }
         })
       }
 

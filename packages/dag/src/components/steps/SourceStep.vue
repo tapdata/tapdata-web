@@ -147,8 +147,10 @@
         </div>
       </div>
 
-      <div class="position-sticky z-index bottom-0 p-4 rounded-lg backdrop-filter-light z-10">
-        <!--<el-button>取消</el-button>-->
+      <div
+        v-if="currentStep > 0 || connectionIdSelected"
+        class="position-sticky z-index bottom-0 p-4 rounded-lg backdrop-filter-light z-10"
+      >
         <el-button v-if="currentStep > 0" @click="handlePrev">上一步</el-button>
         <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">下一步</el-button>
       </div>
@@ -424,6 +426,12 @@ export default defineComponent({
         desc: 'TapDat提供 2个数据源和2个目的地的Demo库'
       }
     ])
+
+    if (root.$route.query.guide) {
+      options.value.shift()
+    } else {
+      options.value.pop()
+    }
 
     loadConnectorList()
     loadConnectionList()

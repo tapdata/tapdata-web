@@ -30,7 +30,8 @@
                 <path
                   d="M149 101.43H102.046C93.4902 101.103 76.3782 103.391 76.3782 115.156C76.3782 126.921 76.3782 148.382 76.3782 168.754C76.3782 175.617 71.3697 181.5 46.3277 181.5C21.2857 181.5 5.00841 181.5 1.78814e-06 181.5"
                   stroke="#C9CDD4" stroke-width="2" stroke-dasharray="6 6"/>
-                <path d="M149 101.429H102.046C67 101.429 41.2875 101.5 0 101.5" stroke="#C9CDD4" stroke-width="2" stroke-dasharray="6 6"/>
+                <path d="M149 101.429H102.046C67 101.429 41.2875 101.5 0 101.5" stroke="#C9CDD4" stroke-width="2"
+                      stroke-dasharray="6 6"/>
                 <g filter="url(#filter0_dd_21257_9136)">
                   <rect x="149" y="50.8638" width="100" height="100" rx="16" fill="white" shape-rendering="crispEdges"/>
                   <path fill-rule="evenodd" clip-rule="evenodd"
@@ -53,11 +54,20 @@
                   d="M149 101.371H102.046C93.4902 101.701 76.3782 99.3905 76.3782 87.5075C76.3782 75.6244 76.3782 53.9487 76.3782 33.3734C76.3782 20.5 71.3698 20.5 46.3277 20.5C21.2857 20.5 5.0084 20.5 0 20.5"
                   stroke="#FE9E1E" stroke-width="2"/>
 
-                <path transform="translate(8, 8) rotate(180 0 0)" d="M5.07051 6.65677C5.46151 7.04777 5.46151 7.68078 5.07051 8.07078L-1.2935 14.4348C-1.6835 14.8258 -2.3165 14.8258 -2.7075 14.4348C-3.0975 14.0448 -3.0975 13.4118 -2.7075 13.0208L2.94951 7.36377L-2.7075 1.70707C-3.0975 1.31657 -3.0975 0.683475 -2.7075 0.292875C-2.3165 -0.097625 -1.6835 -0.097625 -1.2935 0.292875L5.07051 6.65677Z" fill="#FE9E1E">
-                  <animateMotion dur="3s" repeatCount="indefinite" rotate="auto" keyTimes="0;1" calcMode="linear" keyPoints="1;0"><mpath data-v-e4731dd0="" xlink:href="#source1"></mpath></animateMotion>
+                <path transform="translate(8, 8) rotate(180 0 0)"
+                      d="M5.07051 6.65677C5.46151 7.04777 5.46151 7.68078 5.07051 8.07078L-1.2935 14.4348C-1.6835 14.8258 -2.3165 14.8258 -2.7075 14.4348C-3.0975 14.0448 -3.0975 13.4118 -2.7075 13.0208L2.94951 7.36377L-2.7075 1.70707C-3.0975 1.31657 -3.0975 0.683475 -2.7075 0.292875C-2.3165 -0.097625 -1.6835 -0.097625 -1.2935 0.292875L5.07051 6.65677Z"
+                      fill="#FE9E1E">
+                  <animateMotion dur="3s" repeatCount="indefinite" rotate="auto" keyTimes="0;1" calcMode="linear"
+                                 keyPoints="1;0">
+                    <mpath data-v-e4731dd0="" xlink:href="#source1"></mpath>
+                  </animateMotion>
                 </path>
-                <path transform="translate(-8, -8)" d="M8.07051 6.65677C8.46151 7.04777 8.46151 7.68078 8.07051 8.07078L1.7065 14.4348C1.3165 14.8258 0.6835 14.8258 0.2925 14.4348C-0.0975 14.0448 -0.0975 13.4118 0.2925 13.0208L5.94951 7.36377L0.2925 1.70707C-0.0975 1.31657 -0.0975 0.683475 0.2925 0.292875C0.6835 -0.097625 1.3165 -0.097625 1.7065 0.292875L8.07051 6.65677Z" fill="#3B47E5">
-                  <animateMotion dur="3s" repeatCount="indefinite" rotate="auto" ><mpath xlink:href="#target2"></mpath></animateMotion>
+                <path transform="translate(-8, -8)"
+                      d="M8.07051 6.65677C8.46151 7.04777 8.46151 7.68078 8.07051 8.07078L1.7065 14.4348C1.3165 14.8258 0.6835 14.8258 0.2925 14.4348C-0.0975 14.0448 -0.0975 13.4118 0.2925 13.0208L5.94951 7.36377L0.2925 1.70707C-0.0975 1.31657 -0.0975 0.683475 0.2925 0.292875C0.6835 -0.097625 1.3165 -0.097625 1.7065 0.292875L8.07051 6.65677Z"
+                      fill="#3B47E5">
+                  <animateMotion dur="3s" repeatCount="indefinite" rotate="auto">
+                    <mpath xlink:href="#target2"></mpath>
+                  </animateMotion>
                 </path>
                 <defs>
                   <filter id="filter0_dd_21257_9136" x="86.5" y="0.863765" width="225" height="200"
@@ -103,9 +113,14 @@
             <div class="fs-4 fw-sub lh-sm mb-10">您想通过本产品完成您的什么需求呢?</div>
 
             <ElRadioGroup v-model="continueUse" class="flex flex-column gap-4 text-start mb-4" size="medium">
-              <ElRadio label="project_evaluation" class="m-0 bg-white" border>我有项目需要评估 TapData 的适用性</ElRadio>
-              <ElRadio label="interest_in_tech" class="m-0 bg-white" border>我对新技术感兴趣，想了解 TapData 的数据同步能力</ElRadio>
-              <ElRadio label="best_practices_learning" class="m-0 bg-white" border>我在寻找数据同步的最佳实践，想通过 TapData 学习</ElRadio>
+              <ElRadio label="project_evaluation" class="m-0 bg-white" border>我有项目需要评估 TapData 的适用性
+              </ElRadio>
+              <ElRadio label="interest_in_tech" class="m-0 bg-white" border>我对新技术感兴趣，想了解 TapData
+                的数据同步能力
+              </ElRadio>
+              <ElRadio label="best_practices_learning" class="m-0 bg-white" border>我在寻找数据同步的最佳实践，想通过
+                TapData 学习
+              </ElRadio>
               <ElRadio label="other" class="m-0 bg-white" border>{{
                   $t('dfs_replication_tour_dialog_finished_option_other')
                 }}
@@ -127,7 +142,8 @@
 
 
             <div class="mt-10">
-              <ElButton class="btn-shadow" size="medium" type="primary" :disabled="!continueUse || (continueUse === 'other' && !suggestion)"
+              <ElButton class="btn-shadow" size="medium" type="primary"
+                        :disabled="!continueUse || (continueUse === 'other' && !suggestion)"
                         @click="handleCreateTask">创建您的第一个复制任务
               </ElButton>
             </div>
@@ -464,6 +480,9 @@ export default {
 
       this.$router.replace({
         name: 'MigrateForm',
+        query: {
+          guide: true,
+        },
       })
     },
   },
