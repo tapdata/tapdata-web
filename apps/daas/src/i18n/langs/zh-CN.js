@@ -1904,5 +1904,9 @@ export default {
   http_header_ph: 'HTTP 请求头,多个请求头请换行输入,示例:Accept: text/html',
   webhook_send_ping: '发送测试 PING 事件',
   webhook_event_type: '事件类型',
-  webhook_event_type_empty: '请选择事件'
+  webhook_event_type_empty: '请选择事件',
+  daas_licenseType: '授权类型',
+  daas_licenseType_pipeline: '通道授权',
+  daas_licenseType_op: '标准',
+  daas_datasourcePipelineLimit: '数据源通道数量'
 }

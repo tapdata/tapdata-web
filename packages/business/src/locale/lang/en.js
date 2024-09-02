@@ -1314,5 +1314,6 @@ export default {
   packages_business_not_support_validation: '{connection} does not support {method}',
   packages_business_download_details: 'Download',
   packages_business_solution: 'Solution',
-  packages_business_error_details: 'Error Details'
+  packages_business_error_details: 'Error Details',
+  packages_business_instance_info: 'Instance Info'
 }

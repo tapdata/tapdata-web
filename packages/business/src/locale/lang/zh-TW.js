@@ -1244,5 +1244,6 @@ export default {
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下載詳情',
   packages_business_solution: '解決方案',
-  packages_business_error_details: '錯誤詳情'
+  packages_business_error_details: '錯誤詳情',
+  packages_business_instance_info: '實例信息'
 }

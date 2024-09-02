@@ -1899,5 +1899,9 @@ export default {
   http_header_ph: 'HTTP 請求頭,多個請求頭請換行輸入,示例:Accept: text/html',
   webhook_send_ping: '發送測試 PING 事件',
   webhook_event_type: '事件類型',
-  webhook_event_type_empty: '請選擇事件'
+  webhook_event_type_empty: '請選擇事件',
+  daas_licenseType: '授權類型',
+  daas_licenseType_pipeline: '通道授權',
+  daas_licenseType_op: '標準',
+  daas_datasourcePipelineLimit: '數據源通道數量'
 }
