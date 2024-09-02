@@ -10,7 +10,7 @@
             :content="`${detail.totalCount}`"
             placement="bottom"
           >
-            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }} }}</div>
+            <div class="api-monitor-detail-wrap__value">{{ calcUnit(detail.totalCount) }}</div>
           </el-tooltip>
         </div>
         <div class="flex-1">
