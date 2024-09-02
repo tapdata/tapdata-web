@@ -1,6 +1,36 @@
 <template>
   <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]" class="position-relative">
-    <TheHeader ref="theHeader" class="layout-header bg-transparent z-10"></TheHeader>
+    <ElHeader class="layout-header bg-transparent z-10 dfs-header">
+      <div class="dfs-header__body flex">
+        <ElLink class="logo ml-2">
+          <img src="../assets/image/logo.svg" alt="logo" />
+        </ElLink>
+        <div class="dfs-header__button button-bar pr-4 fs-7 flex gap-4 align-center">
+          <ElDropdown class="command-item menu-user rounded-4" placement="bottom" :show-timeout="0" @command="command">
+            <div class="username flex align-items-center">
+              <img
+                v-if="user.avatar"
+                :src="user.avatar"
+                alt=""
+                class="mr-2"
+                style="width: 30px; height: 30px; border-radius: 50%"
+              />
+              <VIcon v-else class="mr-2" size="20">account</VIcon>
+              <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
+            </div>
+
+            <template #dropdown>
+              <ElDropdownMenu slot="dropdown">
+                <ElDropdownItem command="signOut" :disabled="$disabledReadonlyUserBtn()">
+                  {{ $t('header_sign_out') }}
+                </ElDropdownItem>
+              </ElDropdownMenu>
+            </template>
+          </ElDropdown>
+        </div>
+      </div>
+    </ElHeader>
+
     <ElContainer direction="vertical" class="layout-main p-0">
       <div class="flex absolute-fill">
         <div class="flex-1 flex flex-column justify-center align-center my-8">
@@ -165,16 +195,12 @@ import { getIcon } from '@tap/assets/icons'
 
 export default {
   inject: ['checkAgent', 'buried'],
-  components: {
-    TheHeader,
-  },
   mixins: [guide],
   data () {
     const $t = this.$t.bind(this)
     return {
       continueUse: '',
       suggestion: '',
-
       sourceList: [
         {
           type: 'mysql',
@@ -189,7 +215,6 @@ export default {
           icon: getIcon('mongodb'),
         },
       ],
-
       targetList: [
         {
           type: 'mysql',
@@ -208,96 +233,18 @@ export default {
   },
 
   computed: {
-    ...mapState(['upgradeFeeVisible']),
     ...mapGetters(['isDomesticStation']),
+    ...mapState(['user']),
   },
 
   created () {
     if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
     }
-    if (this.$store.state.config?.disabledDataService) {
-      //海外版隐藏数据服务
-      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataServerList')
-    }
-    if (this.$store.state.config?.disabledDataVerify) {
-      //生产环境隐藏数据校验
-      this.sortMenus = this.sortMenus.filter(item => item.name !== 'dataVerification')
-    }
 
-    let children = this.$router.options.routes.find(r => r.path === '/')?.children || []
-    const findRoute = name => {
-      return children.find(item => item.name === name)
-    }
-    this.menus = this.sortMenus.map(el => {
-      if (el.children?.length) {
-        el.children.forEach((cMenu, idx) => {
-          el.children[idx].path = findRoute(cMenu.name).path
-        })
-      } else {
-        let findOne = findRoute(el.name)
-        el.path = findOne.path
-      }
-      return el
-    })
-    let subMenu = [
-      {
-        name: 'connections',
-        title: this.$t('connection_manage'),
-        icon: 'connection',
-      },
-      {
-        name: 'Instance',
-        title: this.$t('tap_agent_management'),
-        icon: 'agent',
-      },
-      {
-        name: 'order',
-        title: this.$t('dfs_the_header_header_dingyuezhongxin'),
-        icon: 'icon_subscription',
-      },
-      {
-        name: 'OperationLog',
-        title: this.$t('operation_log_manage'),
-        icon: 'operation-log',
-      },
-      {
-        name: 'advancedFeatures',
-        title: this.$t('public_page_title_advanced_features'),
-        icon: 'vip-one',
-        code: 'v2_advanced_features',
-        children: [
-          {
-            name: 'sharedMining',
-            title: this.$t('public_shared_mining'),
-            icon: 'cdc-log',
-            beta: true,
-          },
-          {
-            name: 'externalStorage',
-            title: this.$t('public_external_storage'),
-            icon: 'wcgl',
-            beta: true,
-          },
-        ],
-      },
-    ]
-    this.subMenu = subMenu.map(el => {
-      if (el.children?.length) {
-        el.children.forEach((cMenu, idx) => {
-          el.children[idx].path = findRoute(cMenu.name).path
-        })
-      } else {
-        let findOne = findRoute(el.name)
-        el.path = findOne.path
-      }
-      return el
-    })
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
     this.$root.$on('get-user', this.getUser)
-
-    this.setActiveMenu()
   },
   mounted () {
     //获取cookie 是否用户有操作过 稍后部署 且缓存是当前用户 不在弹窗
@@ -310,78 +257,7 @@ export default {
     let isCurrentUser = Cookie.get('deployLaterUser') === user?.userId
     if (Cookie.get('deployLater') == 1 && isCurrentUser) return
   },
-  beforeDestroy () {
-    clearTimeout(this.loopLoadAgentCountTimer)
-  },
-  watch: {
-    $route () {
-      this.setActiveMenu()
-    },
-  },
   methods: {
-    ...mapMutations(['setUpgradeFeeVisible']),
-    //监听agent引导页面
-    openAgentDownload () {
-      this.agentGuideDialog = false
-      this.agentDownload.visible = true
-    },
-    createConnection (item) {
-      this.dialogVisible = false
-      this.buried('connectionCreate')
-      const { pdkHash, pdkId } = item
-      this.$router.push({
-        name: 'connectionCreate',
-        query: { pdkHash, pdkId },
-      })
-    },
-    showGuide () {
-      this.$refs.theHeader?.showGuide?.()
-    },
-    getUser () {
-      this.$refs.theHeader?.getUser?.()
-    },
-    selectConnectionType () {
-      this.dialogVisible = true
-    },
-    menuTrigger (path) {
-      if (['goDemo'].includes(path)) {
-        this.goDemo()
-        return
-      }
-      if (['goGuide'].includes(path)) {
-        this.goGuide()
-        return
-      }
-      if (this.$route.path === path) {
-        return
-      }
-      this.$router.push(path)
-    },
-    back () {
-      this.$router.back()
-    },
-    // 检查微信用户，是否绑定手机号
-    checkWechatPhone () {
-      let user = window.__USER_INFO__
-      if (this.$store.state.config?.disabledBindingPhone) {
-        //海外版不强制绑定手机号
-        return
-      }
-      this.bindPhoneVisible =
-        ['basic:email', 'basic:email-code', 'social:wechatmp-qrcode'].includes(user?.registerSource) && !user?.telephone
-      return this.bindPhoneVisible
-    },
-    hideCustomTip () {
-      setTimeout(() => {
-        let tDom = document.getElementById('titlediv')
-        if (tDom) {
-          tDom.style.display = 'none'
-        } else {
-          this.hideCustomTip()
-        }
-      }, 5000)
-    },
-
     loadChat () {
       let $zoho = $zoho || {}
       const { isDomesticStation } = this
@@ -425,51 +301,6 @@ export default {
       }
     },
 
-    onAgentNoRunning (flag) {
-      this.showAgentWarning = flag
-    },
-
-    //检查云市场用户授权码是否过期
-    checkLicense (user) {
-      //未激活
-      var licenseCodes = user?.licenseCodes || []
-      if (!user?.licenseValid && licenseCodes?.length === 0) {
-        //未激活
-        this.aliyunMaketVisible = true
-        this.userInfo = {
-          showNextProcessing: false,
-          licenseType: 'license',
-          nearExpiration: [],
-        }
-      }
-      //已过期
-      let expired = licenseCodes.filter(it => it.licenseStatus === 'EXPIRED')
-      if (!user?.licenseValid && expired?.length > 0) {
-        //授权码不可用 存在有临近授权码
-        this.aliyunMaketVisible = true
-        this.userInfo = {
-          showNextProcessing: false,
-          licenseType: 'checkCode',
-          data: expired,
-        }
-      }
-    },
-
-    goDemo () {
-      this.buried('agentGuideDemo')
-      window.open('https://demo.cloud.tapdata.net/console/v3/')
-    },
-    goGuide () {
-      this.buried('agentGuideDemo')
-      this.$router.push({
-        name: 'productDemo',
-      })
-    },
-
-    setActiveMenu () {
-      this.activeMenu = this.$route.meta.activeMenu || this.$route.matched.find(item => !!item.path).path
-    },
-
     handleCreateTask () {
       const { expand } = this.$store.state.guide
 
@@ -485,6 +316,40 @@ export default {
           guide: true,
         },
       })
+    },
+
+    command(command) {
+      // let downloadUrl = '';
+      switch (command) {
+        case 'workbench':
+          this.$router.push({ name: 'Home' })
+          break
+        case 'home':
+          window.open(this.officialWebsiteAddress, '_blank')
+          break
+        case 'userCenter':
+          this.$router.push({
+            name: 'userCenter'
+          })
+          break
+        case 'order':
+          this.$router.push({
+            name: 'order'
+          })
+          break
+        case 'signOut':
+          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
+            type: 'warning',
+            confirmButtonText: this.$t('public_button_confirm'),
+            cancelButtonText: this.$t('public_button_cancel')
+          }).then(res => {
+            if (res) {
+              this.clearCookie()
+              location.href = './logout'
+            }
+          })
+          break
+      }
     },
   },
 }
@@ -627,6 +492,103 @@ export default {
 
 .btn-shadow {
   box-shadow: 0px 5px 10px 0px #3B47E54D;
+}
+.dfs-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 52px !important;
+  padding: 0 7px;
+  background: map-get($color, submenu);
+  box-sizing: border-box;
+  .logo {
+    display: block;
+    width: auto;
+    height: 30px;
+    img {
+      display: block;
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+    }
+  }
+  .button-bar {
+    display: flex;
+    align-items: center;
+    .command-item {
+      padding: 4px 8px;
+      cursor: pointer;
+      color: map-get($fontColor, light);
+      &:hover {
+        color: map-get($color, primary);
+        background-color: map-get($color, white);
+        border-radius: 4px;
+        &.icon {
+          color: map-get($color, primary);
+        }
+      }
+    }
+    .agent-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-right: 5px;
+      padding: 0 15px 0 10px;
+      height: 24px;
+      line-height: 24px;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.1);
+      i.status-color {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+        vertical-align: middle;
+        border-radius: 50%;
+      }
+    }
+    .btn-create {
+      margin-right: 20px;
+    }
+    .btn {
+      margin-left: 8px;
+      color: #999;
+      cursor: pointer;
+      i {
+        display: inline-block;
+        line-height: 28px;
+        text-align: center;
+        height: 28px;
+        width: 28px;
+        font-size: 18px;
+      }
+      &:hover {
+        color: #fff;
+      }
+    }
+    .menu-user {
+      .menu-button {
+        color: rgba(204, 204, 204, 1);
+        background: rgba(85, 85, 85, 1);
+        border: none;
+      }
+    }
+    .img {
+      width: 17px;
+      height: 17px;
+    }
+  }
+}
+.dfs-header__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 52px !important;
 }
 </style>
 
