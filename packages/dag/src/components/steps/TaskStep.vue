@@ -7,7 +7,7 @@
 
     <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
       <el-button @click="handlePrev">上一步</el-button>
-      <el-button type="primary" @click="handleStart">启动任务</el-button>
+      <el-button :loading="starting" type="primary" @click="handleStart">启动任务</el-button>
     </div>
   </div>
 </template>
@@ -35,8 +35,6 @@ export default defineComponent({
     SchemaForm
   },
   setup(props, { emit, root }) {
-    console.log('TaskStep')
-
     let repeatNameMessage = i18n.t('packages_dag_task_form_error_name_duplicate')
     const handleCheckName = debounce(function (resolve, value) {
       taskApi
@@ -51,6 +49,7 @@ export default defineComponent({
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
     const form = ref(null)
+    const starting = ref(false)
 
     console.log('taskRef', taskRef)
 
@@ -276,6 +275,7 @@ export default defineComponent({
       // }
 
       // const data = this.getDataflowDataToSave()
+      starting.value = true
       let isOk = false
 
       try {
@@ -297,6 +297,8 @@ export default defineComponent({
         })
       } catch (e) {
         // this.handleError(e)
+      } finally {
+        starting.value = false
       }
       // this.isSaving = false
       // this.toggleConsole(true)

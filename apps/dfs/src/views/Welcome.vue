@@ -160,6 +160,7 @@ import TheHeader from '@/components/the-header'
 
 import Cookie from '@tap/shared/src/cookie'
 import tour from '@/mixins/tour'
+import guide from '@/mixins/guide'
 import { getIcon } from '@tap/assets/icons'
 
 export default {
@@ -167,7 +168,7 @@ export default {
   components: {
     TheHeader,
   },
-  mixins: [tour],
+  mixins: [guide],
   data () {
     const $t = this.$t.bind(this)
     return {
