@@ -60,17 +60,19 @@
         >
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()"></Chart>
-          <div class="flex ml-8 mb-8 mt-5">
+          <div class="flex ml-8 mb-8 mt-5 lh-sm">
             <div>
               <div class="mb-2">
-                <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span>
+                <i class="circle-total mr-3 align-middle"></i
+                ><span class="mr-8 align-middle">{{ $t('api_monitor_total_successCount') }}</span>
               </div>
               <div>
-                <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span>
+                <i class="circle-waring mr-3 align-middle" style="background: #f7d762"></i
+                ><span class="mr-6 align-middle">{{ $t('api_monitor_total_warningCount') }}</span>
               </div>
             </div>
             <div>
-              <div class="mb-2">{{ previewData.totalCount }}</div>
+              <div class="mb-2">{{ previewData.totalCount - previewData.warningApiCount }}</div>
               <div>{{ previewData.warningApiCount }}</div>
             </div>
           </div>
@@ -357,12 +359,12 @@ export default {
             color: '#8FD8C0'
           },
           label: 'totalCount',
-          name: this.$t('api_monitor_total_totalCount'),
-          value: this.previewData?.totalCount
+          name: this.$t('api_monitor_total_successCount'),
+          value: this.previewData?.totalCount - this.previewData?.warningApiCount
         },
         {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#f7d762'
           },
           label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
@@ -371,6 +373,9 @@ export default {
       ]
       this.chartData = data
       return {
+        grid: {
+          containLabel: true
+        },
         series: [
           {
             type: 'pie',
