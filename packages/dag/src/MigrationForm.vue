@@ -43,6 +43,14 @@ import { observer } from '@formily/vue'
 
 export default defineComponent({
   name: 'MigrationForm',
+
+  props: {
+    editRouteName: {
+      type: String,
+      default: 'MigrateForm'
+    }
+  },
+
   components: { SourceStep, TargetStep, TaskStep },
 
   setup(props, { root }) {
@@ -348,7 +356,7 @@ export default defineComponent({
 
       if (newTask) {
         await root.$router.replace({
-          name: 'MigrateForm',
+          name: props.editRouteName,
           params: { id: newTask.id },
           query: {
             ...root.$route.query

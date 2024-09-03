@@ -604,8 +604,22 @@ const routes = [
   },
   {
     path: '/welcome',
-    name: 'Welcome',
-    component: () => import(/* webpackChunkName: "layout" */ '../views/Welcome.vue')
+    component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/WelcomeLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Welcome',
+        component: () => import(/* webpackChunkName: "layout" */ '../views/welcome/Welcome.vue')
+      },
+      {
+        path: 'task/:id?',
+        name: 'WelcomeTask',
+        component: MigrationForm,
+        props: {
+          editRouteName: 'WelcomeTask'
+        }
+      }
+    ]
   },
   {
     path: '/migrate/monitor/simple/:id',

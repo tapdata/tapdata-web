@@ -66,10 +66,7 @@
                   </div>
                 </template>
                 <template>
-                  <div
-                    v-if="connectionSelected"
-                    class="connector-item rounded-lg p-3 overflow-hidden bg-white clickable"
-                  >
+                  <div v-if="connectionSelected" class="connector-item rounded-lg p-3 overflow-hidden bg-white">
                     <div class="flex gap-3 align-center">
                       <DatabaseIcon :size="38" :item="connectionSelected"></DatabaseIcon>
                       <div class="connector-item-content flex-1 overflow-hidden lh-base">
@@ -409,29 +406,35 @@ export default defineComponent({
       setNodeConnection(data)
     }
 
-    const options = ref([
-      {
-        key: 'has-connection',
-        title: '选择已有数据源',
-        desc: '自己创建的连接/数据源'
-      },
-      {
-        key: 'has-connector',
-        title: '添加我自己的数据源',
-        desc: '从TapData的连接列表中配置新的数据源'
-      },
-      {
-        key: 'no-connector',
-        title: '我没有数据源',
-        desc: 'TapDat提供 2个数据源和2个目的地的Demo库'
+    const options = computed(() => {
+      if (root.$route.query.guide && !connectionIdSelected.value) {
+        return [
+          {
+            key: 'has-connector',
+            title: '添加我自己的数据源',
+            desc: '从TapData的连接列表中配置新的数据源'
+          },
+          {
+            key: 'no-connector',
+            title: '我没有数据源',
+            desc: 'TapDat提供 2个数据源和2个目的地的Demo库'
+          }
+        ]
       }
-    ])
 
-    if (root.$route.query.guide) {
-      options.value.shift()
-    } else {
-      options.value.pop()
-    }
+      return [
+        {
+          key: 'has-connection',
+          title: '选择已有连接',
+          desc: '自己创建的连接/数据源'
+        },
+        {
+          key: 'has-connector',
+          title: '添加我自己的数据源',
+          desc: '从TapData的连接列表中配置新的数据源'
+        }
+      ]
+    })
 
     loadConnectorList()
     loadConnectionList()
