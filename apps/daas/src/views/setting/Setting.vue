@@ -185,6 +185,7 @@ import { getCurrentLanguage } from '@tap/i18n/src/shared/util'
 import { licensesApi, settingsApi, alarmRuleApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import Cookie from '@tap/shared/src/cookie'
+import { showErrorMessage } from '@tap/business'
 
 export default {
   name: 'Setting',
@@ -398,9 +399,14 @@ export default {
         title: `Tapdata Notification:`,
         text: 'This is a test email'
       }
-      settingsApi.testEmail(params).then(() => {
+      settingsApi.testEmail(params).then(data => {
         localStorage.setItem('Tapdata_settings_email_countdown', now)
-        this.$message.success(this.$t('setting_test_email_success'))
+
+        if (data?.result) {
+          this.$message.success(this.$t('setting_test_email_success'))
+        } else {
+          showErrorMessage(data)
+        }
       })
     }
   }
