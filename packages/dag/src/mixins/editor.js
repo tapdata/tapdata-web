@@ -24,6 +24,7 @@ import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
 import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 export default {
   directives: {
@@ -2111,8 +2112,7 @@ export default {
       } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
         this.handleShowUpgradeDialog(error.data)
       } else {
-        const msg = error?.data?.message || msg
-        this.$message.error(msg)
+        showErrorMessage(error?.data)
       }
     },
 
@@ -2526,13 +2526,16 @@ export default {
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
       taskApi
-        .batchStart([this.dataflow.id])
+        .batchStart([this.dataflow.id], {
+          silenceMessage: true
+        })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
         })
-        .catch(() => {
+        .catch(e => {
           this.buried(buriedCode, { result: false })
+          this.handleError(e)
         })
     },
     // 获取任务的按钮权限

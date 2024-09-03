@@ -737,7 +737,9 @@ export default {
       this.isSaving = true
       try {
         this.wsAgentLive()
-        await taskApi.start(this.dataflow.id)
+        await taskApi.start(this.dataflow.id, {
+          silenceMessage: true
+        })
         this.$message.success(this.$t('public_message_operation_success'))
         this.isSaving = false
         this.isReset = false
