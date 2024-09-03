@@ -162,7 +162,7 @@
           <div slot="label" class="font-color-dark fw-sub">
             {{ $t('dfs_traffic_billing') }}
             <span class="fw-normal font-color-sslight">{{ $t('dfs_traffic_billing_desc') }}</span>
-            <span class="fw-normal color-warning">{{ $t('dfs_traffic_billing_prefix', { trafficPrice }) }}</span>
+            <!--<span class="fw-normal color-warning">{{ $t('dfs_traffic_billing_prefix', { trafficPrice }) }}</span>-->
           </div>
 
           <el-skeleton :loading="loading" animated>
