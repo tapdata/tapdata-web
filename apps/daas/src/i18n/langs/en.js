@@ -250,7 +250,7 @@ export default {
   api_monitor_total_api_list_status_generating: 'Generating',
   api_monitor_detail_visitTotalCount: 'Number of Successful API visits',
   api_monitor_detail_visitQuantity: 'API transfer amount',
-  api_monitor_detail_timeConsuming: 'Recent access time',
+  api_monitor_detail_timeConsuming: 'API access time',
   api_monitor_detail_visitTotalLine: 'Number of API access lines',
   api_monitor_detail_speed: 'API transfer rate',
   api_monitor_detail_responseTime: 'API response time',
