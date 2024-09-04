@@ -55,10 +55,10 @@
       <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
         <div
-          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pl-5 pt-5"
+          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pt-5"
           v-loading="loadingTotal"
         >
-          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
+          <div class="api-monitor-chart__text mb-2 pl-5">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()"></Chart>
           <div class="flex ml-8 mb-8 mt-5 lh-sm">
             <div>
@@ -72,8 +72,12 @@
               </div>
             </div>
             <div>
-              <div class="mb-2">{{ previewData.totalCount - previewData.warningApiCount }}</div>
-              <div>{{ previewData.warningApiCount }}</div>
+              <div class="mb-2">
+                <span class="align-middle">{{ previewData.totalCount - previewData.warningApiCount }}</span>
+              </div>
+              <div>
+                <span class="align-middle">{{ previewData.warningApiCount }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -358,30 +362,34 @@ export default {
           itemStyle: {
             color: '#8FD8C0'
           },
-          label: 'totalCount',
+          // label: 'totalCount',
           name: this.$t('api_monitor_total_successCount'),
-          value: this.previewData?.totalCount - this.previewData?.warningApiCount
+          value: 22
         },
         {
           itemStyle: {
             color: '#f7d762'
           },
-          label: 'warningApiCount',
+          // label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
-          value: this.previewData?.warningApiCount
+          value: 22
         }
       ]
       this.chartData = data
       return {
-        grid: {
-          containLabel: true
-        },
         series: [
           {
             type: 'pie',
-            avoidLabelOverlap: false,
             data: data,
-            radius: ['40%', '70%']
+            radius: ['40%', '60%'],
+            label: {
+              overflow: 'break',
+              fontSize: 10
+            },
+            labelLine: {
+              length: 10, // 缩短引导线长度
+              length2: 10 // 控制引导线第二段长度
+            }
           }
         ]
       }

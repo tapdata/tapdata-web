@@ -40,10 +40,10 @@
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
         </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
+        <!--<div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
-        </div>
+        </div>-->
       </div>
     </div>
     <div class="flex-1 pt-3">
