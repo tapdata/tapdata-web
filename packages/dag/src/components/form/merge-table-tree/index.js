@@ -275,6 +275,7 @@ export const MergeTableTree = observer(
               label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
               tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
+              <el-input placeholder="输入关键字进行过滤" value={filterText}></el-input>
               <ElTree
                 ref="tree"
                 indent={8}

@@ -14,7 +14,7 @@
       <div class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"></FilterBar>
       </div>
-      <div class="main">
+      <div class="main" v-loading="loading">
         <template v-if="waterfallData.length">
           <section v-if="viewType === 'component'">
             <div class="border rounded-lg mb-4">
@@ -697,7 +697,8 @@ export default {
         dropNode: null,
         allowDrop: true
       },
-      draggingNodeImage: null
+      draggingNodeImage: null,
+      loading: false
     }
   },
   computed: {
@@ -826,7 +827,7 @@ export default {
           server: server,
           operation: 'start'
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+        this.$confirm(`${this.$t('cluster_confirm_text')}${this.$t('cluster_start_server')}?`, {
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -853,7 +854,7 @@ export default {
           server: server,
           operation: 'stop'
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_closeSever') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_closeSever') + '?', {
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -865,21 +866,13 @@ export default {
       }
     },
     restartFn(item, status, server) {
-      let name
-      if (server === 'apiServer') {
-        name = 'API SEVER'
-      } else if (server === 'engine') {
-        name = this.$t('cluster_sync_gover')
-      } else {
-        name = this.$t('cluster_manage_sys')
-      }
       if (status === 'running') {
         let data = {
           uuid: item.uuid,
           server: server,
           operation: 'restart'
         }
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_restart_server') + '?', {
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -892,16 +885,8 @@ export default {
     },
     // 解绑
     unbind(item, status, server) {
-      let name
-      if (server === 'apiServer') {
-        name = 'API SEVER'
-      } else if (server === 'engine') {
-        name = this.$t('cluster_sync_gover')
-      } else {
-        name = this.$t('cluster_manage_sys')
-      }
       if (status === 'stopped') {
-        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_unbind_server') + '?', {
+        this.$confirm(this.$t('cluster_confirm_text') + this.$t('cluster_unbind_server') + '?', {
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -994,10 +979,14 @@ export default {
           }
         }
       }
+      this.loading = true
       let clusterData = await clusterApi.get(params)
       clusterData = clusterData?.items || []
       let processId = clusterData.map(it => it?.systemInfo?.process_id)
       let workerData = await this.getUsageRate(processId)
+
+      this.loading = false
+
       //处理worker 数据
       workerData = workerData?.items || []
       let metricValuesData = {}
