@@ -299,7 +299,10 @@ export default {
       type: Array,
       default: () => []
     },
-    nodeId: String
+    nodeId: {
+      type: String,
+      default: ''
+    }
   },
 
   data() {

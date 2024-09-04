@@ -1,7 +1,7 @@
 <template>
   <div v-show="!isHidden" class="page-header">
     <ElBreadcrumb class="breadcrumb" v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
-      <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
+      <ElBreadcrumbItem v-for="(item, i) in breadcrumbData" :key="i" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
     </ElBreadcrumb>

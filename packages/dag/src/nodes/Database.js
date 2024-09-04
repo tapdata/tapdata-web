@@ -212,9 +212,9 @@ export class Database extends NodeType {
                         default: [],
                         'x-component': 'TableSelector',
                         'x-component-props': {
+                          class: 'mt-4',
                           connectionId: '{{$values.connectionId}}',
                           style: {
-                            marginTop: '8px',
                             height: 'unset',
                             minHeight: 0,
                             maxHeight: 'calc((100vh - 120px) * 0.618)'

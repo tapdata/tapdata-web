@@ -127,13 +127,16 @@
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
-        <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
-          <div class="flex align-center">
-            <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
-            <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
-            <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
-          </div>
-        </ElLink>
+
+        <slot name="right-extra">
+          <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
+            <div class="flex align-center">
+              <span v-if="!isOpenClipMode">{{ $t('packages_form_component_table_selector_bulk_name') }}</span>
+              <span v-else>{{ $t('packages_form_component_table_selector_bulk_pick') }}</span>
+              <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
+            </div>
+          </ElLink>
+        </slot>
       </div>
       <div class="selector-panel__body" :class="{ isOpenClipMode }">
         <div v-show="!isOpenClipMode" class="selector-panel__search">
@@ -542,7 +545,7 @@ export default {
         //保留当前选中 以及当前所手动输入
         this.selected.tables = Array.from(new Set([...this.selected.tables, ...this.clipboardTables.concat()]))
         this.$emit('input', this.selected.tables)
-        this.$emit('change', this.selected.tables)
+        // this.$emit('change', this.selected.tables)
       }
     },
     add() {
@@ -554,7 +557,7 @@ export default {
         tables = Array.from(new Set(tables))
         this.selected.tables = Object.freeze(tables)
         this.$emit('input', this.selected.tables)
-        this.$emit('change', this.selected.tables)
+        // this.$emit('change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
@@ -569,7 +572,7 @@ export default {
         this.selected.checked = []
         this.selected.isCheckAll = false
         this.$emit('input', this.selected.tables)
-        this.$emit('change', this.selected.tables)
+        // this.$emit('change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('packages_form_component_table_selector_not_checked'))
       }
@@ -581,7 +584,7 @@ export default {
       } else {
         this.selected.tables = Object.freeze(this.selected.tables.filter(t => !this.errorTables[t]))
         this.$emit('input', this.selected.tables)
-        this.$emit('change', this.selected.tables)
+        // this.$emit('change', this.selected.tables)
       }
     },
     getErrorTables(tables) {
@@ -757,7 +760,7 @@ export default {
       )
       this.selected.isCheckAll = false
       this.$emit('input', this.selected.tables)
-      this.$emit('change', this.selected.tables)
+      // this.$emit('change', this.selected.tables)
     },
 
     loadSchema() {

@@ -1,7 +1,7 @@
 <template>
   <div
     class="paper-scroller hide-scrollbar"
-    :class="{ grabbable: !shiftKeyPressed }"
+    :class="{ grabbable: !shiftKeyPressed && !scrollDisabled }"
     tabindex="0"
     @mousedown="mouseDown"
     @wheel="wheelScroll"
@@ -48,7 +48,7 @@ export default {
   name: 'PaperScroller',
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
-  props: { navLines: Array },
+  props: { navLines: Array, scrollDisabled: Boolean },
 
   data() {
     return {
@@ -469,7 +469,7 @@ export default {
     },
 
     mouseDown(e) {
-      if (this.inputFilter(e, this.$el)) return
+      if (this.scrollDisabled || this.inputFilter(e, this.$el)) return
 
       this.initState(e)
       on(window, 'mousemove', this.mouseMove)
@@ -575,6 +575,11 @@ export default {
     },
 
     wheelScroll(e) {
+      if (this.scrollDisabled) {
+        e.preventDefault()
+        return false
+      }
+
       if (this.isCtrlKeyPressed(e) || e.ctrlKey) {
         e.preventDefault()
         if (e.deltaY > 0) {
@@ -585,7 +590,13 @@ export default {
       }
     },
 
-    handleScroll({ target }) {
+    handleScroll(e) {
+      if (this.scrollDisabled) {
+        e.preventDefault()
+        return false
+      }
+
+      let { target } = e
       this.scrollPosition.x = target.scrollLeft
       this.scrollPosition.y = target.scrollTop
     },

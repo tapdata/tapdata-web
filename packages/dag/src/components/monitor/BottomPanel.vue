@@ -18,7 +18,7 @@
             ref="milestoneList"
           ></MilestoneList>
         </ElTabPane>
-        <ElTabPane :label="$t('public_task_log')" name="log">
+        <ElTabPane v-if="!hideLog" :label="$t('public_task_log')" name="log">
           <NodeLog
             v-if="currentTab === 'log'"
             :nodeId.sync="nodeId"
@@ -84,7 +84,8 @@ export default {
     onlyLog: {
       type: Boolean,
       default: false
-    }
+    },
+    hideLog: Boolean
   },
 
   data() {

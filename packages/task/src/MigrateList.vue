@@ -23,19 +23,39 @@
       >
         <span> {{ $t('packages_business_button_bulk_import') }}</span>
       </el-button>
-      <el-button
-        v-if="buttonShowMap.create"
-        v-readonlybtn="'SYNC_job_creation'"
-        class="btn btn-create"
-        type="primary"
-        size="mini"
-        id="task-list-create"
-        :disabled="$disabledReadonlyUserBtn()"
-        :loading="createBtnLoading"
-        @click="refFn('create')"
-      >
-        {{ $t('public_button_create') }}
-      </el-button>
+
+      <template v-if="buttonShowMap.create">
+        <div class="flex align-center gap-3">
+          <el-badge is-dot>
+            <el-button
+              class="flex align-center"
+              style="height: 32px"
+              type="primary"
+              plain
+              size="mini"
+              id="task-list-create"
+              :disabled="$disabledReadonlyUserBtn()"
+              :loading="quickCreateBtnLoading"
+              @click="useFormCreate"
+            >
+              <VIcon size="18" class="align-middle mr-1">dynamic-form-outline</VIcon>
+              <span class="align-middle">快速创建任务</span>
+            </el-button>
+          </el-badge>
+          <el-button
+            v-readonlybtn="'SYNC_job_creation'"
+            class="btn btn-create"
+            type="primary"
+            size="mini"
+            id="task-list-create"
+            :disabled="$disabledReadonlyUserBtn()"
+            :loading="createBtnLoading"
+            @click="refFn('create')"
+          >
+            {{ $t('public_button_create') }}
+          </el-button>
+        </div>
+      </template>
     </template>
     <ReplicationBoard v-if="viewType === 'board'" class="bg-white rounded-lg overflow-hidden"></ReplicationBoard>
     <List
@@ -86,6 +106,8 @@ import PageContainer from '@tap/business/src/components/PageContainer.vue'
 export default {
   name: 'MigrateList',
 
+  inject: ['checkAgent', 'buried'],
+
   components: { PageContainer, List, ReplicationBoard },
 
   data() {
@@ -101,9 +123,10 @@ export default {
       route: {
         new: 'MigrateCreate',
         editor: 'MigrateEditor',
-        monitor: 'MigrationMonitor'
+        monitor: 'MigrationMonitorSimple'
       },
-      createBtnLoading: false
+      createBtnLoading: false,
+      quickCreateBtnLoading: false
     }
   },
 
@@ -151,6 +174,20 @@ export default {
   methods: {
     refFn(method) {
       this.$refs.list[method]?.()
+    },
+
+    useFormCreate() {
+      this.buried('migrationFormCreate')
+      this.quickCreateBtnLoading = true
+      this.checkAgent(async () => {
+        await this.$router.push({
+          name: 'MigrateForm'
+        })
+        this.quickCreateBtnLoading = false
+      }).catch(() => {
+        this.quickCreateBtnLoading = false
+        this.buried('migrationFormCreateAgentFail')
+      })
     }
   }
 }
