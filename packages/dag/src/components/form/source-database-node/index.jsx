@@ -2,10 +2,12 @@ import { observer } from '@formily/reactive-vue'
 import { RecursionField, SchemaExpressionScopeSymbol } from '@formily/vue'
 import { defineComponent, ref, inject } from '@vue/composition-api'
 import i18n from '@tap/i18n'
+import { taskApi } from '@tap/api'
 import { useForm, FormDialog, FormLayout, useFormLayout, createSchemaField, components } from '@tap/form'
 import './style.scss'
 import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core'
 import * as _components from '../index'
+import { useAfterTaskSaved } from '../../../hooks/useAfterTaskSaved'
 
 const { SchemaField } = createSchemaField({
   components: {
@@ -24,6 +26,11 @@ const TableEditForm = {
     const schema = {
       type: 'object',
       properties: {
+        replaceBefore: { type: 'string', 'x-display': 'hidden' },
+        replaceAfter: { type: 'string', 'x-display': 'hidden' },
+        prefix: { type: 'string', 'x-display': 'hidden' },
+        suffix: { type: 'string', 'x-display': 'hidden' },
+        transferCase: { type: 'string', 'x-display': 'hidden' },
         tableNames: {
           type: 'array',
           'x-component': 'TableRename',
@@ -95,7 +102,7 @@ const SourceDatabaseNode = defineComponent({
   props: {
     value: Object
   },
-  setup(props, { attrs, listeners }) {
+  setup(props, { attrs, listeners, root }) {
     const formRef = useForm()
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
     const form = formRef.value
@@ -191,6 +198,40 @@ const SourceDatabaseNode = defineComponent({
       )
     }
 
+    const RightItem = ({ props }) => {
+      return <span>{tableMap.value[props.row] || props.row}</span>
+    }
+
+    const loading = ref(false)
+    const tableMap = ref({})
+    const loadTable = (...args) => {
+      const taskId = form.values.id
+      if (taskId) {
+        loading.value = true
+        taskApi
+          .getNodeTableInfo({
+            taskId,
+            nodeId: form.values.dag.nodes[1].id,
+            page: 1,
+            pageSize: 10000
+          })
+          .then(({ items = [] }) => {
+            const map = items.reduce((acc, item) => {
+              acc[item.previousTableName] = item.sinkObjectName
+              return acc
+            }, {})
+            tableMap.value = map
+          })
+          .finally(() => {
+            loading.value = false
+          })
+      }
+    }
+
+    loadTable()
+
+    useAfterTaskSaved(root, [], loadTable)
+
     return () => {
       const active = typeEnum.indexOf(form.values.dag.nodes[0].migrateTableSelectType)
 
@@ -274,7 +315,8 @@ const SourceDatabaseNode = defineComponent({
                       filterType: `{{ $values.dag.nodes[0].noPrimaryKeyTableSelectType }}`
                     },
                     'x-content': {
-                      'right-extra': RightExtra
+                      'right-extra': RightExtra,
+                      'right-item': RightItem
                     },
                     'x-reactions': {
                       dependencies: ['.migrateTableSelectType'],
