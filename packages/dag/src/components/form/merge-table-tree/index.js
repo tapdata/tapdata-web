@@ -265,6 +265,16 @@ export const MergeTableTree = observer(
         }
       })
 
+      const filterText = ref('')
+      const filterNode = (value, data) => {
+        if (!value) return true
+        return data.tableName.indexOf(value) !== -1
+      }
+      const handleFilter = val => {
+        filterText.value = val
+        refs.tree.filter(val)
+      }
+
       return () => {
         return (
           <div class="merge-table-tree-space flex overflow-hidden">
@@ -275,9 +285,20 @@ export const MergeTableTree = observer(
               label={i18n.t('packages_dag_merge_table_tree_index_biaomingchengzhichi')}
               tooltip={i18n.t('packages_dag_merge_table_tree_index_biaozhijianketong')}
             >
+              {formRef.value.values.$inputs.length > 5 && (
+                <el-input
+                  class="mb-2"
+                  placeholder={i18n.t('packages_form_table_rename_index_sousuobiaoming')}
+                  value={filterText.value}
+                  onInput={handleFilter}
+                  clearable
+                ></el-input>
+              )}
+
               <ElTree
                 ref="tree"
                 indent={8}
+                filter-node-method={filterNode}
                 data={treeRef.value}
                 nodeKey="id"
                 defaultExpandAll={true}
