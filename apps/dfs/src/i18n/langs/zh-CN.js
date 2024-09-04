@@ -1702,7 +1702,7 @@ export default {
   dfs_traffic_bill: '流量账单',
   dfs_traffic_billing: '流量计费',
   dfs_traffic_billing_desc: '除了引擎规格费用外，还会根据您同步数据量的大小来收取流量费用，流量费按月收取。',
-  dfs_traffic_billing_prefix: '(免费流量100GB,超出100G以 {trafficPrice}/GB 计费)',
+  dfs_traffic_billing_prefix: '(每月赠送 {gift}GB 免费流量，超出以 {trafficPrice}/GB 计费)',
   dfs_traffic_bill_mode: '计费方式',
   dfs_bill_number: '账单编号',
   dfs_bill_amount: '账单金额({currency})',

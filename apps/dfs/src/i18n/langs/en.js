@@ -1842,7 +1842,8 @@ export default {
   dfs_traffic_billing: 'Traffic Billing',
   dfs_traffic_billing_desc:
     'Apart from the engine specification fees, traffic fees will also be charged based on the amount of data you synchronize. These traffic fees are billed monthly.',
-  dfs_traffic_billing_prefix: '(Free traffic of 100GB, any excess over 100GB will be charged at {trafficPrice}/GB)',
+  dfs_traffic_billing_prefix:
+    '(Receive {gift}GB of free traffic per month. Excess usage will be charged at {trafficPrice} per GB.)',
   dfs_traffic_bill_mode: 'Billing Method',
   dfs_bill_number: 'Bill Number',
   dfs_bill_amount: 'Bill Amount ({currency})',
