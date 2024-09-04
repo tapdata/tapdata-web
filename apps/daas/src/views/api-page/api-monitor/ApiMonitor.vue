@@ -362,17 +362,15 @@ export default {
           itemStyle: {
             color: '#8FD8C0'
           },
-          // label: 'totalCount',
           name: this.$t('api_monitor_total_successCount'),
-          value: 22
+          value: this.previewData?.totalCount - this.previewData?.warningApiCount
         },
         {
           itemStyle: {
             color: '#f7d762'
           },
-          // label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
-          value: 22
+          value: this.previewData?.warningApiCount
         }
       ]
       this.chartData = data
