@@ -89,7 +89,7 @@
         >
           <template #default="{ row }">
             <el-tag>
-              {{ row.datasourceInstanceInfo ? row.datasourceInstanceInfo.tag : '-' }}
+              {{ row.datasourceInstanceTag || '-' }}
             </el-tag>
           </template>
         </ElTableColumn>
