@@ -1,9 +1,9 @@
 import i18n from '@tap/i18n'
-import { defineComponent, ref, watch, onMounted, nextTick } from '@vue/composition-api'
+import { defineComponent, ref, onMounted, nextTick, reactive, set, del } from '@vue/composition-api'
 import { observer } from '@formily/reactive-vue'
 import { observe } from '@formily/reactive'
 import { FormItem, h as createElement, useFieldSchema, useForm, RecursionField } from '@tap/form'
-import { OverflowTooltip, IconButton } from '@tap/component'
+import { OverflowTooltip, IconButton, VIcon } from '@tap/component'
 import { metadataInstancesApi } from '@tap/api'
 import './style.scss'
 import NodeIcon from '../../NodeIcon'
@@ -109,6 +109,7 @@ export const MergeTableTree = observer(
 
       const renderNode = ({ data }) => {
         const dagNode = props.findNodeById(data.id)
+
         if (!dagNode) return
 
         return (
@@ -123,6 +124,11 @@ export const MergeTableTree = observer(
             <IconButton onClick={() => emit('center-node', data.id)} class="merge-table-tree-node-action">
               location
             </IconButton>
+            {data.hasWarning && (
+              <ElTooltip content={i18n.t('packages_dag_missing_primary_key_or_index')} placement="right">
+                <VIcon class="color-warning mx-1">warning</VIcon>
+              </ElTooltip>
+            )}
           </div>
         )
       }
@@ -161,6 +167,18 @@ export const MergeTableTree = observer(
         const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
         props.loadFieldsMethod(selfId).then(fields => {
+          const noWarning = fields.some(item => {
+            return item.isPrimaryKey || item.indicesUnique
+          })
+
+          const treeNode = refs.tree.getNode(selfId)
+
+          if (!noWarning) {
+            set(treeNode.data, 'hasWarning', true)
+          } else {
+            del(treeNode.data, 'hasWarning')
+          }
+
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields

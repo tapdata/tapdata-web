@@ -732,5 +732,6 @@ export default {
   packages_dag_enableConcurrentRead: '開啓多表併發讀取',
   packages_dag_enableConcurrentRead_tips:
     '啓用後，系統將同時讀取並同步多張表的數據，適用於小表較多的場景，有助於提升性能。\n注意：啓用後，任務僅全量時無法同步新增表。請根據資源合理設置目標節點併發線程數，以確保系統穩定。',
-  packages_dag_concurrentReadThreadNumber: '讀取表數量'
+  packages_dag_concurrentReadThreadNumber: '讀取表數量',
+  packages_dag_missing_primary_key_or_index: '缺少主鍵或唯一索引'
 }

@@ -442,6 +442,7 @@ export default {
         loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
           return fields
+            .filter(item => !item.is_deleted)
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -450,7 +451,6 @@ export default {
               type: item.data_type,
               tapType: item.tapType
             }))
-            .filter(item => !item.is_deleted)
         },
 
         loadDateFieldOptions: async nodeId => {

@@ -790,5 +790,6 @@ export default {
   packages_dag_enableConcurrentRead: 'Enable Concurrent Table Reading',
   packages_dag_enableConcurrentRead_tips:
     'Enabling this will allow the system to read and sync multiple tables simultaneously, ideal for scenarios with many small tables to improve performance. \nNote: In full-sync mode, newly added tables won’t sync once enabled. Adjust the target node concurrent thread count based on available resources to maintain stability.',
-  packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read'
+  packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read',
+  packages_dag_missing_primary_key_or_index: 'Missing Primary Key or Unique Index'
 }

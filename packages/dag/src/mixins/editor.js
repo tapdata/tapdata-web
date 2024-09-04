@@ -1685,6 +1685,16 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType === 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
+
+      for (let node of nodes) {
+        this.formScope.loadNodeFieldOptions()
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
