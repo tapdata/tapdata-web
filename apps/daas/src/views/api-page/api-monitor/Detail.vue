@@ -36,10 +36,10 @@
             {{ detail.speed ? calcUnit(detail.speed, 'b') + '/S' : '0 M/S' }}
           </div>
         </div>
-        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
+        <!--<div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
-        </div>
+        </div>-->
         <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
