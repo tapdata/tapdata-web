@@ -738,5 +738,7 @@ export default {
   packages_dag_enableConcurrentRead_tips:
     '启用后，系统将同时读取并同步多张表的数据，适用于小表较多的场景，有助于提升性能。\n注意：启用后，任务仅全量时无法同步新增表。请根据资源合理设置目标节点并发线程数，以确保系统稳定。',
   packages_dag_concurrentReadThreadNumber: '读取表数量',
-  packages_dag_missing_primary_key_or_index: '缺少主键或唯一索引'
+  packages_dag_missing_primary_key_or_index: '缺少主键或唯一索引',
+  packages_dag_merge_table_missing_key_or_index:
+    '当前节点模型缺少主键或唯一索引。为确保主从合并的准确性和数据一致性，请为源节点添加主键或唯一索引后重试。'
 }

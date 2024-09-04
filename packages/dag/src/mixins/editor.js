@@ -1689,9 +1689,37 @@ export default {
       if (this.dataflow.syncType === 'migrate') return
 
       const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
+      const allPromise = []
+
+      const handle = async input => {
+        const fields = await this.scope.loadNodeFieldOptions(input)
+
+        if (
+          fields?.length &&
+          !fields.some(item => {
+            return item.isPrimaryKey || item.indicesUnique
+          })
+        ) {
+          // 缺少主键或唯一索引
+          return Promise.reject(input)
+        }
+      }
 
       for (let node of nodes) {
-        this.formScope.loadNodeFieldOptions()
+        for (let input of node.$inputs) {
+          allPromise.push(handle(input))
+        }
+      }
+
+      try {
+        await Promise.all(allPromise)
+      } catch (id) {
+        this.setNodeErrorMsg({
+          id,
+          msg: i18n.t('packages_dag_missing_primary_key_or_index')
+        })
+        this.handleLocateNode(this.nodeById(id))
+        return i18n.t('packages_dag_merge_table_missing_key_or_index')
       }
     },
 
@@ -1730,7 +1758,8 @@ export default {
         this.validateCustomSql,
         this.validateUnwind,
         this.validateTableRename,
-        this.validateMigrateUnion
+        this.validateMigrateUnion,
+        this.validateMergeTableProcessor
       )
     },
 
