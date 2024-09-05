@@ -711,7 +711,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   packages_business_shared_list_name: '挖掘名稱',
-  packages_business_shared_list_time_excavation: '挖掘所處時間點(數據庫時間)',
+  packages_business_shared_list_time_excavation: '挖掘所處時間點',
   packages_business_shared_list_time: '挖掘延遲',
   packages_business_shared_list_setting: '挖掘設置',
   packages_business_shared_list_status: '狀態',

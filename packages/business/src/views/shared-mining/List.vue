@@ -15,6 +15,15 @@
         </template>
       </el-table-column>
       <el-table-column min-width="160" :label="$t('packages_business_shared_list_time_excavation')">
+        <template #header>
+          <div class="inline-flex align-center">
+            <span>{{ $t('packages_business_shared_list_time_excavation') }}</span>
+            <ElTooltip class="ml-1" placement="top" :content="$t('public_database_time')">
+              <VIcon class="color-primary" size="14">info</VIcon>
+            </ElTooltip>
+          </div>
+        </template>
+
         <template slot-scope="scope">
           {{ scope.row.logTime }}
         </template>

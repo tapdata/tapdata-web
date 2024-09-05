@@ -343,5 +343,6 @@ export default {
 
   public_unique_index: 'Unique Index',
   public_normal_index: 'Index',
-  public_batch_publish: 'Batch Publish'
+  public_batch_publish: 'Batch Publish',
+  public_database_time: 'Database Time'
 }
