@@ -635,7 +635,7 @@ export default {
   cluster_running: 'running',
   cluster_stopped: 'stopped',
   cluster_sync_gover: 'Flow Engine',
-  cluster_manage_sys: 'Management Backend',
+  cluster_manage_sys: 'Backend Admin',
   cluster_add_server_mon: 'Add service monitoring',
   cluster_agentSetting: 'Agent server settings',
   cluster_server_name: 'server name',
