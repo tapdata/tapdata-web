@@ -1271,7 +1271,7 @@ export default {
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
   packages_business_selected_rows: '{val} row(s) selected',
-  packages_business_download_analysis_report: 'Download Analysis Report',
+  packages_business_download_analysis_report: 'Analysis Report',
   packages_business_download_analysis_report_title: 'Task analysis report is being generated...',
   packages_business_download_analysis_report_desc:
     'The report generation takes about 60 seconds. After downloading, please send it to the support team for analysis.',

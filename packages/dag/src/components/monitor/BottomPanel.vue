@@ -208,7 +208,7 @@ $headerHeight: 40px;
         max-width: 100%;
         overflow-x: auto;
         > div {
-          min-width: 1200px;
+          //min-width: 1200px;
         }
         //.milestone-main, .node-log-main, .record-wrap, .alert-main {
         //  width: 0;
