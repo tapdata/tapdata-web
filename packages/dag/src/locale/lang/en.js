@@ -409,8 +409,8 @@ export default {
   packages_dag_components_alert_dangqianrenwuyi:
     'The current task has been stopped with an error, please pay attention.',
   packages_dag_components_alert_gaojingfashengci: 'Number of alert occurrences',
-  packages_dag_components_alert_gaojingzuijinfa: 'The last time the alert occurred',
-  packages_dag_components_alert_gaojingshoucifa: 'The time when the alert first occurred',
+  packages_dag_components_alert_gaojingzuijinfa: 'Last Occurred',
+  packages_dag_components_alert_gaojingshoucifa: 'First Occurred',
   packages_dag_components_alert_gaojingmiaoshu: 'Alert Description',
   packages_dag_components_alert_gaojingzhuangtai: 'Alert Status',
   packages_dag_components_alert_gaojingjibie: 'Alert Level',
