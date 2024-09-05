@@ -293,7 +293,7 @@ export default {
   packages_dag_src_migrationeditor_zhuangtaijanting: 'Status monitoring',
   packages_dag_src_migrationmonitor_gaijiedianbuzhi: 'This node does not support',
   packages_dag_src_migrationmonitor_cunzaibuzhichi: 'There is a node that does not support {val1}',
-  packages_dag_src_migrationmonitor_noden: "'{val1}' does not have any connections",
+  packages_dag_src_migrationmonitor_noden: "'{val1}' Configuration Error",
   packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: 'This replication task has no subtasks',
   packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: 'This node does not support',
   packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: 'There is a node that does not support {val1}',

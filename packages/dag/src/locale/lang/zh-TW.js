@@ -281,7 +281,7 @@ export default {
   packages_dag_src_migrationeditor_zhuangtaijianting: '狀態監聽',
   packages_dag_src_migrationmonitor_gaijiedianbuzhi: '該節點不支持',
   packages_dag_src_migrationmonitor_cunzaibuzhichi: '存在不支持{val1}的節點',
-  packages_dag_src_migrationmonitor_noden: '「 {val1} 」沒有任何連線',
+  packages_dag_src_migrationmonitor_noden: '「 {val1} 」配置異常',
   packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: '該複製任務沒有子任務',
   packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: '該節點不支持',
   packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: '存在不支持{val1}的節點',
