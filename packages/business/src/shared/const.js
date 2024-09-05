@@ -39,7 +39,7 @@ export const TASK_STATUS_MAP = {
 export const TASK_TYPE_MAP = {
   initial_sync: i18n.t('public_task_type_initial_sync'),
   cdc: i18n.t('public_task_type_cdc'),
-  'initial_sync+cdc': i18n.t('public_task_type_initial_sync') + '+' + i18n.t('public_task_type_cdc')
+  'initial_sync+cdc': i18n.t('public_task_type_initial_sync_and_cdc')
 }
 
 export const TASK_SYNC_TYPE_MAP = {

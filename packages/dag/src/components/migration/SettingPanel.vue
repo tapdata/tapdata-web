@@ -1144,7 +1144,7 @@ export default observer({
                           type: 'void',
                           'x-component': 'ArrayTable.Column',
                           'x-component-props': {
-                            width: 80,
+                            width: 90,
                             title: i18n.t('public_operation'),
                             align: 'center'
                           },

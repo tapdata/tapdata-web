@@ -180,7 +180,7 @@
 
     <ElDialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" class="fs-6 fw-sub">{{ dialogConfig.title }}</span>
-      <ElForm ref="form" :model="dialogConfig" label-width="90px">
+      <ElForm ref="form" :model="dialogConfig" label-width="90px" label-position="top">
         <ElFormItem :label="$t('packages_component_src_discoveryclassification_mulumingcheng')">
           <ElInput
             size="mini"

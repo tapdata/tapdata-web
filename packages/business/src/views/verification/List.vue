@@ -130,7 +130,7 @@
           sortable="lastStartTime"
           min-width="170"
         ></el-table-column>
-        <el-table-column :label="$t('public_operation')" width="260">
+        <el-table-column :label="$t('public_operation')" width="300" fixed="right">
           <template v-if="isDaas" #header>
             <div class="flex align-center">
               <span>{{ $t('public_operation_available') }}</span>

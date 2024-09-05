@@ -377,7 +377,7 @@ export default {
   task_monitor_end_time: 'End Time',
   task_monitor_cdc_time: 'The time point of the increment',
   task_monitor_run_log: 'Run Log',
-  task_monitor_mission_milestone: 'Mission Milestone',
+  task_monitor_mission_milestone: 'Task Milestone',
   task_monitor_no_milestone_data:
     'This task has either not started or has been reset, and therefore there is no milestone data currently in progress.',
   task_monitor_task_details: 'Task Details',

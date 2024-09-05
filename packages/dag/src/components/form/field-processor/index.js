@@ -781,7 +781,7 @@ export const FieldRenameProcessor = connect(
             width: 140
           },
           {
-            label: i18n.t('public_operation'),
+            label: i18n.t('public_operation_abb'),
             prop: 'operation',
             // width: 60,
             slot: 'operation'
