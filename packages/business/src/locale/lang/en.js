@@ -746,7 +746,7 @@ export default {
   packages_business_shared_cdc_setting_message_edit_save:
     'Save successfully, it will take effect after restarting the task',
   packages_business_shared_list_name: 'Mining name',
-  packages_business_shared_list_time_excavation: 'Excavation time point',
+  packages_business_shared_list_time_excavation: 'Excavation Time',
   packages_business_shared_list_setting: 'Mining settings',
   packages_business_shared_list_status: 'Status',
   packages_business_shared_list_time: 'Mining Delay',
@@ -828,8 +828,8 @@ export default {
   packages_business_data_server_list_quedingfabugai: 'Are you sure you want to publish the service?',
   packages_business_data_server_list_querenshanchufu: 'Are you sure you want to delete the service?',
   packages_business_data_server_list_huoqufuwuyu: 'Get the service domain name Failed.',
-  packages_business_data_server_list_fuwuzhuangtai: 'Service Status',
-  packages_business_data_server_list_guanlianduixiang: 'Associated Object',
+  packages_business_data_server_list_fuwuzhuangtai: 'Status',
+  packages_business_data_server_list_guanlianduixiang: 'Related Object',
   packages_business_data_server_list_fuwumingcheng: 'Service Name',
   packages_business_data_server_drawer_geshicuowu: 'Format error',
   packages_business_data_server_drawer_validate:
