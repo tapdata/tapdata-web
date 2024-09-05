@@ -1758,8 +1758,8 @@ export default {
         this.validateCustomSql,
         this.validateUnwind,
         this.validateTableRename,
-        this.validateMigrateUnion,
-        this.validateMergeTableProcessor
+        this.validateMigrateUnion
+        // this.validateMergeTableProcessor
       )
     },
 
