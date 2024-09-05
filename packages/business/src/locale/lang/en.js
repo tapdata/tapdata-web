@@ -186,7 +186,7 @@ export default {
   packages_business_task_info_throughputpop:
     'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
   packages_business_task_monitor_time: 'Time',
-  packages_business_task_monitor_mission_milestone: 'Mission Milestone',
+  packages_business_task_monitor_mission_milestone: 'Task Milestone',
   packages_business_task_monitor_no_milestone_data:
     'Either this task has not yet been initiated or it has been reset, and as a result, there is no milestone data currently in progress.',
   packages_business_task_info_milestone: 'Milestone',
