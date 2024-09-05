@@ -96,7 +96,8 @@
             </span>
           </div>
           <div class="fs-8 font-color-sslight lh-base">
-            {{ row.type ? taskType[row.type] : '' }}
+            <span class="align-middle">{{ row.type ? taskType[row.type] : '' }}</span>
+            <VIcon v-if="row.desc === 'form'" size="18" class="align-middle ml-1">dynamic-form-outline</VIcon>
           </div>
         </template>
       </el-table-column>
@@ -519,7 +520,8 @@ export default {
         taskRetryStartTime: true,
         errorEvents: true,
         syncStatus: true,
-        restartFlag: true
+        restartFlag: true,
+        attrs: true
       }
       let where = {
         syncType
@@ -815,11 +817,11 @@ export default {
       })
     },
 
-    handleEditor({ id }) {
+    handleEditor(row) {
       this.openRoute({
-        name: this.route.editor,
+        name: row.desc === 'form' ? 'MigrateForm' : this.route.editor,
         params: {
-          id
+          id: row.id
         }
       })
     },

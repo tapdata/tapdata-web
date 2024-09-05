@@ -55,6 +55,7 @@
       }"
       hide-on-single-page
       @selection-change="handleSelectionChange"
+      @sort-change="handleSortTable"
     >
       <template #name="{ row }">
         <ElTooltip
@@ -173,7 +174,9 @@ export default {
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jinriwajue'),
-          prop: 'todayCount'
+          prop: 'todayCount',
+          sortable: true,
+          minWidth: 160
         },
         {
           label: i18n.t('packages_business_shared_mining_table_jiaruwajueshi'),
@@ -216,7 +219,8 @@ export default {
       recoverLoading: false,
       selectedConnectionId: '',
       connectionsList: [],
-      listTotal: 0
+      listTotal: 0,
+      order: ''
     }
   },
   watch: {
@@ -251,7 +255,8 @@ export default {
         connectionId: this.selectedConnectionId,
         keyword,
         page: current,
-        size: size
+        size: size,
+        order: this.order
       }
       return logcollectorApi[this.currentTab === 'running' ? 'tableInfos' : 'excludeTableInfos'](filter).then(data => {
         const total = data.total || 0
@@ -372,6 +377,11 @@ export default {
         }
       })
       openUrl(routeUrl.href)
+    },
+
+    handleSortTable({ order, prop }) {
+      this.order = order ? `${prop} ${order === 'ascending' ? 'ASC' : 'DESC'}` : ''
+      this.fetch(1)
     }
   }
 }

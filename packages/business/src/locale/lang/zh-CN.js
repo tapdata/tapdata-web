@@ -714,7 +714,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '请选择日志保存时长',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   packages_business_shared_list_name: '挖掘名称',
-  packages_business_shared_list_time_excavation: '挖掘所处时间点(数据库时间)',
+  packages_business_shared_list_time_excavation: '挖掘所处时间点',
   packages_business_shared_list_setting: '挖掘设置',
   packages_business_shared_list_status: '状态',
   packages_business_shared_list_time: '挖掘延迟',
@@ -1211,7 +1211,7 @@ export default {
   packages_business_verification_hashTip: '暂不支持异构数据库',
   packages_business_heterogeneous_database: '异构数据库',
   packages_business_selected_rows: '已选 {val} 行',
-  packages_business_download_analysis_report: '下载分析报告',
+  packages_business_download_analysis_report: '分析报告',
   packages_business_download_analysis_report_title: '任务分析报告生成中...',
   packages_business_download_analysis_report_desc: '报告生成大约需要 60s, 在下载后, 请发送给支持团队进行分析',
   packages_business_exporting_task: '正在导出任务',
@@ -1253,5 +1253,6 @@ export default {
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下载详情',
   packages_business_solution: '解决方案',
-  packages_business_error_details: '错误详情'
+  packages_business_error_details: '错误详情',
+  packages_business_instance_info: '实例信息'
 }

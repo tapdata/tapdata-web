@@ -398,8 +398,8 @@ export default {
   packages_dag_node_only_as_target: '该节点「{val1}」仅支持作为目标',
   packages_dag_components_alert_dangqianrenwuyi: '当前任务已报错停止，请关注!',
   packages_dag_components_alert_gaojingfashengci: '告警发生次数',
-  packages_dag_components_alert_gaojingzuijinfa: '告警最近发生时间',
-  packages_dag_components_alert_gaojingshoucifa: '告警首次发生时间',
+  packages_dag_components_alert_gaojingzuijinfa: '最近发生时间',
+  packages_dag_components_alert_gaojingshoucifa: '首次发生时间',
   packages_dag_components_alert_gaojingmiaoshu: '告警描述',
   packages_dag_components_alert_gaojingzhuangtai: '告警状态',
   packages_dag_components_alert_gaojingjibie: '告警级别',
@@ -737,5 +737,8 @@ export default {
   packages_dag_enableConcurrentRead: '开启多表并发读取',
   packages_dag_enableConcurrentRead_tips:
     '启用后，系统将同时读取并同步多张表的数据，适用于小表较多的场景，有助于提升性能。\n注意：启用后，任务仅全量时无法同步新增表。请根据资源合理设置目标节点并发线程数，以确保系统稳定。',
-  packages_dag_concurrentReadThreadNumber: '读取表数量'
+  packages_dag_concurrentReadThreadNumber: '读取表数量',
+  packages_dag_missing_primary_key_or_index: '缺少主键或唯一索引',
+  packages_dag_merge_table_missing_key_or_index:
+    '当前节点模型缺少主键或唯一索引。为确保主从合并的准确性和数据一致性，请为源节点添加主键或唯一索引后重试。'
 }

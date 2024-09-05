@@ -9,7 +9,7 @@
     ></NodeList>
     <div class="main node-log-main flex-fill flex flex-column px-4 py-3">
       <div class="flex mb-2 align-items-center justify-content-between">
-        <div class="flex align-items-center">
+        <div class="flex align-items-center gap-3">
           <TimeSelect
             :options="timeOptions"
             :range="[firstStartTime, lastStopTime || getTime()]"
@@ -17,7 +17,7 @@
             @change="changeTime"
           ></TimeSelect>
           <ElInput
-            class="search-input ml-4"
+            class="search-input"
             v-model="keyword"
             prefix-icon="el-icon-search"
             :placeholder="$t('packages_dag_components_log_qingshururizhi')"
@@ -26,31 +26,23 @@
             style="width: 240px"
             @input="searchFnc"
           ></ElInput>
-          <ElButton :loading="downloadLoading" type="primary" size="mini" class="ml-4" @click="handleDownload">{{
-            $t('public_button_download')
-          }}</ElButton>
+
+          <el-button :loading="downloadLoading" class="min-w-0" type="primary" size="mini" @click="handleDownload">
+            <VIcon>download</VIcon>
+          </el-button>
+
           <ElButton
             v-if="isDaas"
             :loading="downloadLoading"
             type="warning"
             size="mini"
-            class="ml-4"
+            class="ml-0"
             @click="handleDownloadAnalysis"
-            >{{ $t('packages_business_download_analysis_report') }}</ElButton
+            ><VIcon class="mr-1">download</VIcon>{{ $t('packages_business_download_analysis_report') }}</ElButton
           >
-          <ElSwitch v-model="switchData.timestamp" class="ml-3 mr-1" @change="command('timestamp')"></ElSwitch>
-          <span>{{ $t('packages_business_logs_nodelog_xianshishijianchuo') }}</span>
-        </div>
-        <div class="pt-3">
-          <span class="color-primary cursor-pointer" @click="handleFullScreen">
-            <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
-            <span>{{
-              fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
-            }}</span>
-          </span>
         </div>
       </div>
-      <div class="level-line mb-2">
+      <div class="level-line mb-2 flex">
         <ElCheckboxGroup
           v-model="checkList"
           :disabled="loading"
@@ -67,6 +59,19 @@
             >{{ item.text }}</ElCheckbox
           >
         </ElCheckboxGroup>
+
+        <el-divider class="mx-4" direction="vertical"></el-divider>
+
+        <ElCheckbox v-model="switchData.timestamp" @change="command('timestamp')">{{
+          $t('packages_business_logs_nodelog_xianshishijianchuo')
+        }}</ElCheckbox>
+
+        <span class="color-primary cursor-pointer ml-auto" @click="handleFullScreen">
+          <VIcon class="mr-1">{{ fullscreen ? 'suoxiao' : 'fangda' }}</VIcon>
+          <span>{{
+            fullscreen ? $t('packages_form_js_editor_exit_fullscreen') : $t('packages_form_js_editor_fullscreen')
+          }}</span>
+        </span>
       </div>
       <div v-loading="loading" class="log-list flex-1 rounded-2" style="height: 0">
         <DynamicScroller
@@ -215,7 +220,7 @@
         v-html="codeDialog.data.errorStack"
         class="error-stack-wrap text-prewrap mb-6 ml-4 font-color-light border overflow-y-auto bg-color-normal p-4"
       ></div>
-      <template v-if="!isIKAS">
+      <template v-if="!hideSeeAlso">
         <div
           v-if="codeDialog.data.seeAlso && codeDialog.data.seeAlso.length"
           class="fw-bold fs-6 mb-3 ml-4 font-color-dark"
@@ -299,7 +304,10 @@ export default {
       type: Array,
       default: () => []
     },
-    nodeId: String
+    nodeId: {
+      type: String,
+      default: ''
+    }
   },
 
   data() {
@@ -403,7 +411,7 @@ export default {
       },
       fullscreen: false,
       showTooltip: false,
-      isIKAS: process.env.VUE_APP_PAGE_TITLE === 'IKAS',
+      hideSeeAlso: process.env.VUE_APP_PAGE_TITLE === 'IKAS' || process.env.VUE_APP_HIDE_LOG_SEE_ALSO,
       downloadAnalysis: {
         visible: false,
         progress: 0,

@@ -186,7 +186,7 @@ export default {
   packages_business_task_info_throughputpop:
     'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
   packages_business_task_monitor_time: 'Time',
-  packages_business_task_monitor_mission_milestone: 'Mission Milestone',
+  packages_business_task_monitor_mission_milestone: 'Task Milestone',
   packages_business_task_monitor_no_milestone_data:
     'Either this task has not yet been initiated or it has been reset, and as a result, there is no milestone data currently in progress.',
   packages_business_task_info_milestone: 'Milestone',
@@ -456,7 +456,7 @@ export default {
   packages_business_verification_verifyName: 'Verify name',
   packages_business_verification_sourceTotalRows: 'Verfify Rows',
   packages_business_verification_targetTotalRows: 'Target Rows',
-  packages_business_verification_verifyStatus: 'Validation Status',
+  packages_business_verification_verifyStatus: 'Status',
   packages_business_verification_completeTime: 'Completion Time',
   packages_business_verification_verifyTime: 'Last Run Time',
   packages_business_verification_rowVerify: 'Count Validation',
@@ -746,7 +746,7 @@ export default {
   packages_business_shared_cdc_setting_message_edit_save:
     'Save successfully, it will take effect after restarting the task',
   packages_business_shared_list_name: 'Mining name',
-  packages_business_shared_list_time_excavation: 'Excavation time point(Database Time)',
+  packages_business_shared_list_time_excavation: 'Excavation Time',
   packages_business_shared_list_setting: 'Mining settings',
   packages_business_shared_list_status: 'Status',
   packages_business_shared_list_time: 'Mining Delay',
@@ -828,8 +828,8 @@ export default {
   packages_business_data_server_list_quedingfabugai: 'Are you sure you want to publish the service?',
   packages_business_data_server_list_querenshanchufu: 'Are you sure you want to delete the service?',
   packages_business_data_server_list_huoqufuwuyu: 'Get the service domain name Failed.',
-  packages_business_data_server_list_fuwuzhuangtai: 'Service Status',
-  packages_business_data_server_list_guanlianduixiang: 'Associated Object',
+  packages_business_data_server_list_fuwuzhuangtai: 'Status',
+  packages_business_data_server_list_guanlianduixiang: 'Related Object',
   packages_business_data_server_list_fuwumingcheng: 'Service Name',
   packages_business_data_server_drawer_geshicuowu: 'Format error',
   packages_business_data_server_drawer_validate:
@@ -971,7 +971,7 @@ export default {
   packages_business_shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
   packages_business_shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
   packages_business_shared_cache_button_create: 'New Cache',
-  packages_business_shared_cache_name: 'Cache Name',
+  packages_business_shared_cache_name: 'Name',
   packages_business_shared_cache_status: 'Cache Status',
   packages_business_shared_cache_time: 'Cache Time',
   packages_business_shared_cache_keys: 'Cache Keys',
@@ -1271,7 +1271,7 @@ export default {
   packages_business_verification_hashTip: 'Currently does not support heterogeneous databases.',
   packages_business_heterogeneous_database: 'heterogeneous databases',
   packages_business_selected_rows: '{val} row(s) selected',
-  packages_business_download_analysis_report: 'Download Analysis Report',
+  packages_business_download_analysis_report: 'Analysis Report',
   packages_business_download_analysis_report_title: 'Task analysis report is being generated...',
   packages_business_download_analysis_report_desc:
     'The report generation takes about 60 seconds. After downloading, please send it to the support team for analysis.',
@@ -1314,5 +1314,6 @@ export default {
   packages_business_not_support_validation: '{connection} does not support {method}',
   packages_business_download_details: 'Download',
   packages_business_solution: 'Solution',
-  packages_business_error_details: 'Error Details'
+  packages_business_error_details: 'Error Details',
+  packages_business_instance_info: 'Instance Info'
 }

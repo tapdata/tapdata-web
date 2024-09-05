@@ -24,6 +24,7 @@ import resize from '@tap/component/src/directives/resize'
 import { observable } from '@formily/reactive'
 import { setPageTitle } from '@tap/shared'
 import { getSchema, getTableRenameByConfig, ifTableNameConfigEmpty } from '../util'
+import { showErrorMessage } from '@tap/business/src/components/error-message'
 
 export default {
   directives: {
@@ -1684,6 +1685,44 @@ export default {
       if (nodes.length > 1) return i18n.t('packages_dag_migrate_union_multiple')
     },
 
+    async validateMergeTableProcessor() {
+      if (this.dataflow.syncType === 'migrate') return
+
+      const nodes = this.allNodes.filter(node => node.type === 'merge_table_processor')
+      const allPromise = []
+
+      const handle = async input => {
+        const fields = await this.scope.loadNodeFieldOptions(input)
+
+        if (
+          fields?.length &&
+          !fields.some(item => {
+            return item.isPrimaryKey || item.indicesUnique
+          })
+        ) {
+          // 缺少主键或唯一索引
+          return Promise.reject(input)
+        }
+      }
+
+      for (let node of nodes) {
+        for (let input of node.$inputs) {
+          allPromise.push(handle(input))
+        }
+      }
+
+      try {
+        await Promise.all(allPromise)
+      } catch (id) {
+        this.setNodeErrorMsg({
+          id,
+          msg: i18n.t('packages_dag_missing_primary_key_or_index')
+        })
+        this.handleLocateNode(this.nodeById(id))
+        return i18n.t('packages_dag_merge_table_missing_key_or_index')
+      }
+    },
+
     async eachValidate(...fns) {
       for (let fn of fns) {
         let result = fn()
@@ -1720,6 +1759,7 @@ export default {
         this.validateUnwind,
         this.validateTableRename,
         this.validateMigrateUnion
+        // this.validateMergeTableProcessor
       )
     },
 
@@ -2111,8 +2151,7 @@ export default {
       } else if (['Task.ScheduleLimit', 'Task.ManuallyScheduleLimit'].includes(code)) {
         this.handleShowUpgradeDialog(error.data)
       } else {
-        const msg = error?.data?.message || msg
-        this.$message.error(msg)
+        showErrorMessage(error?.data)
       }
     },
 
@@ -2526,13 +2565,16 @@ export default {
     startTask() {
       const buriedCode = this.getIsDataflow() ? 'taskStart' : 'migrationStart'
       taskApi
-        .batchStart([this.dataflow.id])
+        .batchStart([this.dataflow.id], {
+          silenceMessage: true
+        })
         .then(() => {
           this.buried(buriedCode, { result: true })
           this.gotoViewer()
         })
-        .catch(() => {
+        .catch(e => {
           this.buried(buriedCode, { result: false })
+          this.handleError(e)
         })
     },
     // 获取任务的按钮权限

@@ -710,7 +710,8 @@ export default [
         component: DataServerList,
         meta: {
           title: 'page_title_data_server_list',
-          code: 'v2_data-server-list'
+          code: 'v2_data-server-list',
+          hideTitle: true
         }
       },
       /* ---------- 应用管理  ----------*/

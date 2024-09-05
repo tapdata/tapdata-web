@@ -711,7 +711,7 @@ export default {
   packages_business_shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
   packages_business_shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   packages_business_shared_list_name: '挖掘名稱',
-  packages_business_shared_list_time_excavation: '挖掘所處時間點(數據庫時間)',
+  packages_business_shared_list_time_excavation: '挖掘所處時間點',
   packages_business_shared_list_time: '挖掘延遲',
   packages_business_shared_list_setting: '挖掘設置',
   packages_business_shared_list_status: '狀態',
@@ -1202,7 +1202,7 @@ export default {
   packages_business_verification_hashTip: '暫不支持異構數據庫',
   packages_business_heterogeneous_database: '異構數據庫',
   packages_business_selected_rows: '已選 {val} 行',
-  packages_business_download_analysis_report: '下載分析報告',
+  packages_business_download_analysis_report: '分析報告',
   packages_business_download_analysis_report_title: '任務分析報告生成中...',
   packages_business_download_analysis_report_desc: '報告產生大約需要 60s, 在下載後, 請發送給支援團隊進行分析',
   packages_business_exporting_task: '正在導出任務',
@@ -1244,5 +1244,6 @@ export default {
   packages_business_not_support_validation: '{connection} 不支持{method}',
   packages_business_download_details: '下載詳情',
   packages_business_solution: '解決方案',
-  packages_business_error_details: '錯誤詳情'
+  packages_business_error_details: '錯誤詳情',
+  packages_business_instance_info: '實例信息'
 }

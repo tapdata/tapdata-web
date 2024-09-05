@@ -281,7 +281,7 @@ export default {
   packages_dag_src_migrationeditor_zhuangtaijianting: '狀態監聽',
   packages_dag_src_migrationmonitor_gaijiedianbuzhi: '該節點不支持',
   packages_dag_src_migrationmonitor_cunzaibuzhichi: '存在不支持{val1}的節點',
-  packages_dag_src_migrationmonitor_noden: '「 {val1} 」沒有任何連線',
+  packages_dag_src_migrationmonitor_noden: '「 {val1} 」配置異常',
   packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: '該複製任務沒有子任務',
   packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: '該節點不支持',
   packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: '存在不支持{val1}的節點',
@@ -324,7 +324,7 @@ export default {
   packages_dag_nodes_database_mubiaocunzaishi: '目標存在時丟棄',
   packages_dag_nodes_database_charushijian: '插入事件',
   packages_dag_nodes_database_shujuxieruce: '數據寫入策略',
-  packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構，清除數據',
+  packages_dag_nodes_database_baochimubiaoduan: '保持目標端原有表結構和數據',
   packages_dag_nodes_database_qingchumubiaoduan: '清除目標端原有表結構及數據',
   packages_dag_nodes_database_chongfuchulice: '如果目標表存在',
   packages_dag_nodes_database_tuiyanjieguo: '目標表結構',
@@ -398,8 +398,8 @@ export default {
   packages_dag_node_only_as_target: '該節點「{val1}」僅支持作為目標',
   packages_dag_components_alert_dangqianrenwuyi: '當前任務已報錯停止，請關注!',
   packages_dag_components_alert_gaojingfashengci: '告警發生次數',
-  packages_dag_components_alert_gaojingzuijinfa: '告警最近發生時間',
-  packages_dag_components_alert_gaojingshoucifa: '告警首次發生時間',
+  packages_dag_components_alert_gaojingzuijinfa: '最近發生時間',
+  packages_dag_components_alert_gaojingshoucifa: '首次發生時間',
   packages_dag_components_alert_gaojingmiaoshu: '告警描述',
   packages_dag_components_alert_gaojingzhuangtai: '告警狀態',
   packages_dag_components_alert_gaojingjibie: '告警級別',
@@ -732,5 +732,8 @@ export default {
   packages_dag_enableConcurrentRead: '開啓多表併發讀取',
   packages_dag_enableConcurrentRead_tips:
     '啓用後，系統將同時讀取並同步多張表的數據，適用於小表較多的場景，有助於提升性能。\n注意：啓用後，任務僅全量時無法同步新增表。請根據資源合理設置目標節點併發線程數，以確保系統穩定。',
-  packages_dag_concurrentReadThreadNumber: '讀取表數量'
+  packages_dag_concurrentReadThreadNumber: '讀取表數量',
+  packages_dag_missing_primary_key_or_index: '缺少主鍵或唯一索引',
+  packages_dag_merge_table_missing_key_or_index:
+    '當前節點模型缺少主鍵或唯一索引。為確保主從合併的準確性和數據一致性，請為源節點添加主鍵或唯一索引後重試。'
 }

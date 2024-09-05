@@ -1,0 +1,71 @@
+.source-database-node {
+  background-color: #f5f6f7;
+
+  .tab-bar-list {
+    height: 40px;
+
+    &-item {
+      margin: 0;
+      color: map-get($fontColor, light);
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: color .1s ease-in,background-color .1s ease-in,border-color .1s ease-in,width .2s ease-in;
+
+
+      &:not(.tab-bar-list-item--active):hover {
+        background-color: rgba(31,35, 41, .05);
+        color: map-get($fontColor, normal);
+
+        .tab-bar-list-item__arc-angle {
+          display: block;
+          fill: rgba(31,35, 41, .05);
+        }
+
+        &.hover-radius-left {
+          border-bottom-left-radius: 8px;
+        }
+
+        &.hover-radius-right {
+          border-bottom-right-right: 8px;
+        }
+      }
+
+      &--active {
+        background-color: #fff;
+        color: map-get($color, primary);
+
+        .tab-bar-list-item__arc-angle {
+          display: block;
+        }
+      }
+
+      &__arc-angle {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        width: 8px;
+        height: 8px;
+        fill: #fff;
+
+        &--left {
+          left: -8px;
+          transform: rotate(-90deg);
+        }
+
+        &--right {
+          right: -8px;
+        }
+      }
+    }
+  }
+
+  .tab-content {
+    border-radius: 0 8px 8px 8px;
+  }
+}
+
+.schema-form-dialog {
+  .el-dialog__body {
+    padding-top: 0;
+  }
+}

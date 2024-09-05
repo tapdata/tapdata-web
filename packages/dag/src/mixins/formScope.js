@@ -442,6 +442,7 @@ export default {
         loadNodeFieldOptions: async nodeId => {
           const fields = await this.scope.loadNodeFieldsById(nodeId)
           return fields
+            .filter(item => !item.is_deleted)
             .map(item => ({
               label: item.field_name,
               value: item.field_name,
@@ -450,7 +451,6 @@ export default {
               type: item.data_type,
               tapType: item.tapType
             }))
-            .filter(item => !item.is_deleted)
         },
 
         loadDateFieldOptions: async nodeId => {
@@ -1092,7 +1092,7 @@ export default {
       const data = await clusterApi.findAccessNodeInfo()
       const mapNode = item => ({
         value: item.processId,
-        label: `${item.hostName}（${
+        label: `${item.agentName || item.hostName}（${
           item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
         }）`,
         disabled: item.status !== 'running',

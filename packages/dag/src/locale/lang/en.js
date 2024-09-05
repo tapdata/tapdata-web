@@ -234,7 +234,7 @@ export default {
   packages_dag_monitor_leftsider_renwujiaoyan: 'Task Validation',
   packages_dag_monitor_leftsider_biaotongbuzongjin: 'Total progress of table synchronization',
   packages_dag_monitor_leftsider_yujiquanliangwan: 'It is expected to be completed in full:',
-  packages_dag_monitor_leftsider_quanliangwanchengshi: 'Full completion time:',
+  packages_dag_monitor_leftsider_quanliangwanchengshi: 'Full Completion',
   packages_dag_monitor_leftsider_quanliangxinxi: 'Full Information',
   packages_dag_monitor_node_zengliangzhuangtai: 'Incremental Status',
   packages_dag_monitor_node_quanliangzhuangtai: 'Full Status',
@@ -293,7 +293,7 @@ export default {
   packages_dag_src_migrationeditor_zhuangtaijanting: 'Status monitoring',
   packages_dag_src_migrationmonitor_gaijiedianbuzhi: 'This node does not support',
   packages_dag_src_migrationmonitor_cunzaibuzhichi: 'There is a node that does not support {val1}',
-  packages_dag_src_migrationmonitor_noden: "'{val1}' does not have any connections",
+  packages_dag_src_migrationmonitor_noden: "'{val1}' Configuration Error",
   packages_dag_src_migrationmonitorviewer_gaifuzhirenwu: 'This replication task has no subtasks',
   packages_dag_src_migrationmonitorviewer_gaijiedianbuzhi: 'This node does not support',
   packages_dag_src_migrationmonitorviewer_cunzaibuzhichi: 'There is a node that does not support {val1}',
@@ -409,8 +409,8 @@ export default {
   packages_dag_components_alert_dangqianrenwuyi:
     'The current task has been stopped with an error, please pay attention.',
   packages_dag_components_alert_gaojingfashengci: 'Number of alert occurrences',
-  packages_dag_components_alert_gaojingzuijinfa: 'The last time the alert occurred',
-  packages_dag_components_alert_gaojingshoucifa: 'The time when the alert first occurred',
+  packages_dag_components_alert_gaojingzuijinfa: 'Last Occurred',
+  packages_dag_components_alert_gaojingshoucifa: 'First Occurred',
   packages_dag_components_alert_gaojingmiaoshu: 'Alert Description',
   packages_dag_components_alert_gaojingzhuangtai: 'Alert Status',
   packages_dag_components_alert_gaojingjibie: 'Alert Level',
@@ -419,8 +419,8 @@ export default {
   packages_dag_components_nodedetaildialog_zengliangduquyan: 'Incremental read latency',
   packages_dag_components_nodedetaildialog_pingjunduquhao: 'Average read time',
   packages_dag_components_nodedetaildialog_zengliangshijiandian2: 'Incremental time:',
-  packages_dag_components_nodedetaildialog_dangqianbiaotongbu: 'Current table synchronization progress',
-  packages_dag_components_nodedetaildialog_quanliangkaishishi: 'Full start time:',
+  packages_dag_components_nodedetaildialog_dangqianbiaotongbu: 'Table Progress',
+  packages_dag_components_nodedetaildialog_quanliangkaishishi: 'Full Start',
   packages_dag_components_timeselect_renwuzuijinyi: 'From the last task activation until now',
   packages_dag_monitor_leftsider_shanchu: 'Delete:',
   packages_dag_monitor_leftsider_gengxin: 'Update:',
@@ -790,5 +790,8 @@ export default {
   packages_dag_enableConcurrentRead: 'Enable Concurrent Table Reading',
   packages_dag_enableConcurrentRead_tips:
     'Enabling this will allow the system to read and sync multiple tables simultaneously, ideal for scenarios with many small tables to improve performance. \nNote: In full-sync mode, newly added tables won’t sync once enabled. Adjust the target node concurrent thread count based on available resources to maintain stability.',
-  packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read'
+  packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read',
+  packages_dag_missing_primary_key_or_index: 'Missing Primary Key or Unique Index',
+  packages_dag_merge_table_missing_key_or_index:
+    'The current node lacks a primary key or unique index. Please add one to ensure accurate and consistent merging, then try again.'
 }

@@ -11,15 +11,41 @@
           <div class="api-monitor-total__text din-font">{{ previewData.totalCount || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningVisitCount') }}</header>
+          <div class="api-monitor-total__text din-font">
+            <el-tooltip
+              :open-delay="400"
+              :disabled="!previewData.warningVisitTotalCount || previewData.warningVisitTotalCount < 1000"
+              :content="`${previewData.warningVisitTotalCount}`"
+              placement="bottom"
+            >
+              <span>{{ calcUnit(previewData.warningVisitTotalCount) }}</span>
+            </el-tooltip>
+          </div>
+        </div>
+        <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
           <div class="api-monitor-total__text din-font">
-            <span v-if="visitTotalCountText === 0">0</span>
-            <span v-else> {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span>
+            <el-tooltip
+              :open-delay="400"
+              :disabled="!previewData.visitTotalCount || previewData.visitTotalCount < 1000"
+              :content="`${previewData.visitTotalCount}`"
+              placement="bottom"
+            >
+              <span>{{ calcUnit(previewData.visitTotalCount) }}</span>
+            </el-tooltip>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine || 0 }}</div>
+          <el-tooltip
+            :open-delay="400"
+            :disabled="!previewData.visitTotalLine || previewData.visitTotalLine < 1000"
+            :content="`${previewData.visitTotalLine}`"
+            placement="bottom"
+          >
+            <div class="api-monitor-total__text din-font">{{ calcUnit(previewData.visitTotalLine || 0) }}</div>
+          </el-tooltip>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
@@ -29,23 +55,29 @@
       <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
         <div
-          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pl-5 pt-5"
+          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pt-5"
           v-loading="loadingTotal"
         >
-          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
+          <div class="api-monitor-chart__text mb-2 pl-5">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()"></Chart>
-          <div class="flex ml-8 mb-8 mt-5">
+          <div class="flex ml-8 mb-8 mt-5 lh-sm">
             <div>
               <div class="mb-2">
-                <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span>
+                <i class="circle-total mr-3 align-middle"></i
+                ><span class="mr-8 align-middle">{{ $t('api_monitor_total_successCount') }}</span>
               </div>
               <div>
-                <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span>
+                <i class="circle-waring mr-3 align-middle" style="background: #f7d762"></i
+                ><span class="mr-6 align-middle">{{ $t('api_monitor_total_warningCount') }}</span>
               </div>
             </div>
             <div>
-              <div class="mb-2">{{ previewData.totalCount }}</div>
-              <div>{{ previewData.warningApiCount }}</div>
+              <div class="mb-2">
+                <span class="align-middle">{{ previewData.totalCount - previewData.warningApiCount }}</span>
+              </div>
+              <div>
+                <span class="align-middle">{{ previewData.warningApiCount }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -249,7 +281,7 @@ export default {
   },
   computed: {
     visitTotalCountText() {
-      let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      let count = this.previewData.visitTotalCount - this.previewData.warningVisitTotalCount
       if (isNaN(count)) return 0
       return count < 0 ? 0 : count
     }
@@ -330,15 +362,13 @@ export default {
           itemStyle: {
             color: '#8FD8C0'
           },
-          label: 'totalCount',
-          name: this.$t('api_monitor_total_totalCount'),
-          value: this.previewData?.totalCount
+          name: this.$t('api_monitor_total_successCount'),
+          value: this.previewData?.totalCount - this.previewData?.warningApiCount
         },
         {
           itemStyle: {
-            color: '#2C65FF'
+            color: '#f7d762'
           },
-          label: 'warningApiCount',
           name: this.$t('api_monitor_total_warningCount'),
           value: this.previewData?.warningApiCount
         }
@@ -348,9 +378,16 @@ export default {
         series: [
           {
             type: 'pie',
-            avoidLabelOverlap: false,
             data: data,
-            radius: ['40%', '70%']
+            radius: ['40%', '60%'],
+            label: {
+              overflow: 'break',
+              fontSize: 10
+            },
+            labelLine: {
+              length: 10, // 缩短引导线长度
+              length2: 10 // 控制引导线第二段长度
+            }
           }
         ]
       }

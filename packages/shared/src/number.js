@@ -23,7 +23,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
       case 'kb':
       case 'byte':
         sp = [1024]
-        list = ['B', 'KB', 'M', 'G', 'T', 'P']
+        list = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
         break
       // 时间
       case '2':
@@ -33,7 +33,7 @@ export function calcUnit(val, type, fix = 1, sp = [1000]) {
         break
       // 数量
       default:
-        list = ['', 'K', 'M', 'T']
+        list = ['', 'K', 'M', 'B', 'T']
         break
     }
   }

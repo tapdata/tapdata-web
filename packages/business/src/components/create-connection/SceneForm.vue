@@ -1235,7 +1235,7 @@ export default {
 
           const mapNode = item => ({
             value: item.processId,
-            label: `${item.hostName}（${
+            label: `${item.agentName || item.hostName}（${
               item.status === 'running' ? i18n.t('public_status_running') : i18n.t('public_agent_status_offline')
             }）`,
             disabled: item.status !== 'running',
