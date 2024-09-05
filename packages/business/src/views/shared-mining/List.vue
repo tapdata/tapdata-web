@@ -28,7 +28,7 @@
           {{ scope.row.logTime }}
         </template>
       </el-table-column>
-      <el-table-column sortable min-width="120" :label="$t('packages_business_shared_list_time')" prop="delayTime">
+      <el-table-column sortable min-width="160" :label="$t('packages_business_shared_list_time')" prop="delayTime">
         <template #header>
           <div class="inline-flex align-center">
             <span>{{ $t('packages_business_shared_list_time') }}</span>

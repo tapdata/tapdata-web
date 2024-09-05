@@ -77,7 +77,7 @@
           {{ scope.row.cacheTimeAtFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="280" :label="$t('public_operation')">
+      <ElTableColumn width="280" :label="$t('public_operation')" fixed="right">
         <template #default="{ row }">
           <div class="table-operations">
             <ElLink
