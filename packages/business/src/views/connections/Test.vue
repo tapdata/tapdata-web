@@ -450,7 +450,18 @@ export default {
       this.startByConnection(...arguments)
     },
 
+    replaceKeyword(str) {
+      return str ? str.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD) : ''
+    },
+
     showError(row) {
+      if (process.env.VUE_APP_KEYWORD && row.item_exception) {
+        row.item_exception.stack = this.replaceKeyword(row.item_exception.stack)
+        row.item_exception.solution = this.replaceKeyword(row.item_exception.solution)
+        row.item_exception.message = this.replaceKeyword(row.item_exception.message)
+        row.item_exception.reason = this.replaceKeyword(row.item_exception.reason)
+      }
+
       Object.assign(this.errorDialog, row.item_exception)
       this.errorDialog.title = row.show_msg
       this.errorDialog.open = true
