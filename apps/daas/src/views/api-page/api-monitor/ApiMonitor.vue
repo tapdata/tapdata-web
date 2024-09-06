@@ -3,7 +3,12 @@
     <main class="api-monitor-main">
       <!--api 统计 -->
       <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="isCard-title">{{ $t($route.meta.title) }}</el-col>
+        <el-col :span="18" class="isCard-title"
+          >{{ $t($route.meta.title)
+          }}<span class="fs-7 ml-3 font-color-sslight">
+            {{ $t('public_data_update_time') }}: {{ previewData.lastUpdAt }}</span
+          ></el-col
+        >
       </el-row>
       <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
@@ -213,6 +218,7 @@
 <script>
 import { escapeRegExp } from 'lodash'
 import { Chart, FilterBar, VTable } from '@tap/component'
+import { dayjs } from '@tap/business'
 import { apiMonitorApi } from '@tap/api'
 import { calcTimeUnit, calcUnit } from '@tap/shared'
 
@@ -333,6 +339,7 @@ export default {
       return apiMonitorApi
         .preview()
         .then(data => {
+          data.lastUpdAt = data.lastUpdAt ? dayjs(data.lastUpdAt).format('YYYY-MM-DD HH:mm:ss') : '-'
           this.previewData = data
         })
         .finally(() => {

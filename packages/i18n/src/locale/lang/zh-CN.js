@@ -345,5 +345,6 @@ export default {
   public_unique_index: '唯一索引',
   public_normal_index: '索引',
   public_batch_publish: '批量发布',
-  public_database_time: '数据库时间'
+  public_database_time: '数据库时间',
+  public_data_update_time: '数据更新时间'
 }
