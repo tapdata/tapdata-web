@@ -41,8 +41,10 @@ export default {
     const unwatch = this.$watch('$route', () => {
       unwatch()
       this.$nextTick(async () => {
-        if (this.$route.query?.tour) {
-          const guide = await this.$axios.get('api/tcm/user_guide')
+        const { $route } = this
+        if ($route.name === 'MigrationMonitorSimple' && $route.query?.guide) {
+          this.openCompleteReplicationTour()
+          /*const guide = await this.$axios.get('api/tcm/user_guide')
           // 查询是否有查看监控的行为
           const behavior = guide?.tour?.behavior
           if (behavior && behavior !== 'view-monitor') {
@@ -54,7 +56,7 @@ export default {
                 behaviorAt: Date.now()
               }
             })
-          }
+          }*/
         }
       })
     })

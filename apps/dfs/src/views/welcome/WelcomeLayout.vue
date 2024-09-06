@@ -93,9 +93,9 @@ export default {
   },
 
   created() {
-    if (!this.$store.state.config?.disabledOnlineChat) {
+    /*if (!this.$store.state.config?.disabledOnlineChat) {
       this.loadChat()
-    }
+    }*/
 
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)

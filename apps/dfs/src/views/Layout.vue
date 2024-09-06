@@ -105,7 +105,7 @@
     ></ConnectionTypeDialog>
     <!--    <AgentGuideDialog :visible.sync="agentGuideDialog" @openAgentDownload="openAgentDownload"></AgentGuideDialog>-->
     <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
-    <AgentGuide
+    <!--<AgentGuide
       :visible.sync="subscriptionModelVisible"
       :step="step"
       :agent="agent"
@@ -114,10 +114,10 @@
       :guideLoading="guideLoading"
       @changeIsUnDeploy="changeIsUnDeploy"
       @open-guide="handleOpenGuide"
-    ></AgentGuide>
+    ></AgentGuide>-->
     <!--    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>-->
     <!--    <CheckLicense :visible.sync="aliyunMaketVisible" :user="userInfo"></CheckLicense>-->
-    <TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>
+    <!--<TaskAlarmTour v-model="showAlarmTour"></TaskAlarmTour>-->
     <!--付费-->
     <UpgradeFee :visible="upgradeFeeVisible" @update:visible="setUpgradeFeeVisible"></UpgradeFee>
     <MarketplaceGuide
