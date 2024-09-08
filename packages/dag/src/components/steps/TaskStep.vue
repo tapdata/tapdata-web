@@ -289,6 +289,8 @@ export default defineComponent({
         // this.isSaving = false
         isOk = true
 
+        root.$store.dispatch('setGuideComplete')
+
         root.$router.push({
           name: 'MigrationMonitorSimple',
           params: {
@@ -362,6 +364,7 @@ export default defineComponent({
       form,
       schema,
       scope,
+      starting,
 
       handlePrev,
       handleNext,

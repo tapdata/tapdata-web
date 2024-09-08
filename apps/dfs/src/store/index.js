@@ -5,6 +5,8 @@ import classification from '@tap/component/src/store'
 import overView from '@tap/ldp/src/store'
 import { getCurrentLanguage, setCurrentLanguage } from '@tap/i18n/src/shared/util'
 import i18n from '../i18n'
+import { axios } from '../plugins/axios'
+import { merge } from 'lodash'
 
 Vue.use(Vuex)
 
@@ -55,22 +57,23 @@ const store = new Vuex.Store({
     },
     // 新人引导
     guide: {
-      activeStep: '',
-      userId: '',
-      bdVid: '',
-      tpVid: '',
-      installStep: 1,
-      demand: [],
-      selectAgentType: '',
-      spec: '',
-      subscribeId: '',
+      installStep: -1,
+      demand: [''],
+      selectAgentType: 'fullManagement',
       agentId: '',
-      steps: [],
-      behavior: '',
-      behaviorAt: null,
+      // steps: [],
+      subscribeId: '',
+      // spec: '',
+      // behavior: '',
+      tour: {
+        view: 'list', // board, list
+        taskId: '',
+        status: 'starting' // starting, completed
+      },
       expand: {
-        enableGuide: null,
-        guideStatus: '' // starting, completed, paused
+        suggestion: '',
+        version: ''
+        // version: '3.13.0'
       }
     },
     agentCount: {
@@ -232,6 +235,128 @@ const store = new Vuex.Store({
 
     setMockUserPromise(state, promise) {
       state.mockUserPromise = promise
+    }
+  },
+
+  actions: {
+    async getFreeTier() {
+      const [priceList] = await axios.get('api/tcm/orders/paid/price', {
+        params: {
+          productType: 'fullManagement'
+        }
+      })
+
+      return priceList.paidPrice.find(item => item.price === 0)
+    },
+
+    async subscribe({ state, commit }, freeTier) {
+      const data = await axios.post('api/tcm/orders/subscribeV2', {
+        price: 0,
+        subscribeType: 'one_time',
+        platform: 'fullManagement',
+        subscribeItems: [
+          {
+            priceId: freeTier.priceId,
+            quantity: 1,
+            productType: 'Engine',
+            agentType: 'Cloud',
+            provider: '',
+            region: ''
+          }
+        ],
+        email: state.user.email
+      })
+      const guideData = {
+        agentId: data?.subscribeItems?.[0].resourceId,
+        subscribeId: data?.subscribe
+      }
+
+      commit('setGuide', guideData)
+
+      axios.post('api/tcm/user_guide', guideData)
+    },
+
+    async initGuide({ commit, dispatch, state }, router) {
+      let guide = await axios.get('api/tcm/user_guide')
+
+      if (!guide) {
+        guide = await axios.post(
+          'api/tcm/user_guide',
+          merge({}, state.guide, {
+            expand: {
+              version: '3.13.0'
+            }
+          })
+        )
+      }
+
+      commit('setGuide', guide)
+
+      if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return
+
+      if (guide.installStep === -1) {
+        const freeTier = await dispatch('getFreeTier')
+
+        if (freeTier) {
+          await dispatch('subscribe', freeTier)
+        }
+
+        router.replace({
+          name: 'Welcome'
+        })
+      } else if (guide.installStep > -1) {
+        router.push({
+          name: 'WelcomeTask',
+          params: {
+            id: guide.tour.taskId
+          }
+        })
+      }
+    },
+
+    startGuideTask({ commit, state }, { demand, suggestion }) {
+      state.guide.demand = [demand, suggestion]
+
+      axios.post('api/tcm/user_guide', {
+        demand: state.guide.demand
+      })
+    },
+
+    setGuideTask({ commit, state }, taskId) {
+      state.guide.installStep = 0
+      state.guide.tour.taskId = taskId
+      axios.post('api/tcm/user_guide', {
+        installStep: state.guide.installStep,
+        tour: state.guide.tour
+      })
+    },
+
+    setGuideStep({ commit, state }, step) {
+      state.guide.installStep = step
+      axios.post('api/tcm/user_guide', {
+        installStep: state.guide.installStep
+      })
+    },
+
+    setGuideComplete({ commit, state }) {
+      state.guide.tour.status = 'completed'
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
+    },
+
+    setGuideViewTaskMonitor({ commit, state }) {
+      if (state.guide.tour.behavior === 'view-monitor') return
+
+      if (state.guide.expand.version !== '3.13.0' || state.guide.tour.status !== 'completed') return
+
+      state.guide.tour.behavior = 'view-monitor'
+
+      axios.post('api/tcm/user_guide', {
+        tour: state.guide.tour
+      })
+
+      commit('openCompleteReplicationTour')
     }
   }
 })

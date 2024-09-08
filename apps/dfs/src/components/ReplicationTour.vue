@@ -7,63 +7,15 @@
     :close-on-press-escape="false"
     :custom-class="customClass"
   >
-    <template v-if="!finish">
-      <div class="text-center title-cover" slot="title">
-        <ElImage :src="require('@/assets/image/tour-cover.png')"></ElImage>
-      </div>
+    <div class="text-center font-color-dark">
+      <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
+      <div class="mt-4 fs-5 color-primary">恭喜您创建了第一个复制任务</div>
+      <div class="mt-2">接下来可以使用我们的产品进行数据库的复制、迁移等工作啦。</div>
+    </div>
 
-      <div class="lh-base font-color-dark text-center mt-n4">
-        <h1 class="fs-5 fw-sub font-color-dark mb-2">Welcome to Tapdata Cloud.</h1>
-        <p class="lh-base">{{ $t('dfs_replication_tour_dialog_desc') }}</p>
-
-        <p class="text-primary fw-sub my-2">{{ $t('dfs_replication_tour_dialog_steps') }}</p>
-        <p>{{ $t('dfs_replication_tour_dialog_lets_go') }}</p>
-      </div>
-
-      <div slot="footer" class="text-center">
-        <el-button @click="$emit('start')" type="primary">{{ $t('dfs_replication_tour_dialog_start') }}</el-button>
-      </div>
-    </template>
-
-    <template v-else>
-      <div class="text-center font-color-dark">
-        <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
-        <div class="mt-4 fs-5 color-primary">{{ $t('dfs_replication_tour_dialog_finished') }}</div>
-        <div class="mt-2">{{ $t('dfs_replication_tour_dialog_finished_subtitle') }}</div>
-        <div class="mt-12 fw-sub">{{ $t('dfs_replication_tour_dialog_finished_survey_title') }}</div>
-        <ElRadioGroup v-model="continueUse" class="flex flex-column gap-2 mt-4 text-start px-6">
-          <ElRadio label="yes" class="m-0 bg-white" border>{{
-            $t('dfs_replication_tour_dialog_finished_option_yes')
-          }}</ElRadio>
-          <ElRadio label="no_plan_no_sure" class="m-0 bg-white" border>{{
-            $t('dfs_replication_tour_dialog_finished_option_no_plan_1')
-          }}</ElRadio>
-          <ElRadio label="no_plan_no_project" class="m-0 bg-white" border>{{
-            $t('dfs_replication_tour_dialog_finished_option_no_plan_2')
-          }}</ElRadio>
-          <ElRadio label="no_plan_data_security" class="m-0 bg-white" border>{{
-            $t('dfs_replication_tour_dialog_finished_option_no_plan_3')
-          }}</ElRadio>
-          <ElRadio label="other" class="m-0 bg-white" border>{{
-            $t('dfs_replication_tour_dialog_finished_option_other')
-          }}</ElRadio>
-        </ElRadioGroup>
-        <div class="px-6 mt-2" v-if="continueUse === 'other'">
-          <ElInput
-            v-model="suggestion"
-            type="textarea"
-            :placeholder="$t('dfs_replication_tour_dialog_finished_survey_placeholder')"
-            :rows="2"
-            :maxlength="200"
-            show-word-limit
-          ></ElInput>
-        </div>
-      </div>
-
-      <div slot="footer" class="text-center">
-        <el-button key="doneBtn" :disabled="!continueUse" @click="handleDone" type="primary">{{
-          $t('dfs_replication_tour_dialog_finish')
-        }}</el-button>
+    <template #footer>
+      <div class="text-center">
+        <el-button key="doneBtn" @click="handleDone" type="primary">进入首页</el-button>
       </div>
     </template>
   </ElDialog>
@@ -161,14 +113,7 @@ export default {
 
     handleDone() {
       this.$emit('finish')
-
-      const { expand } = this.$store.state.guide
-
-      Object.assign(expand, { continueUse: this.continueUse, suggestion: this.suggestion })
-
-      this.$axios.post('api/tcm/user_guide', {
-        expand
-      })
+      this.$router.push('/')
     }
   }
 }

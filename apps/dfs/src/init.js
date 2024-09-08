@@ -89,6 +89,8 @@ export default ({ routes }) => {
     store.commit('setUser', window.__USER_INFO__)
     store.commit('setLanguage', window.__USER_INFO__.locale)
 
+    store.dispatch('initGuide', router)
+
     // Bing Ads
     window.uetq = window.uetq || []
     window.uetq.push('set', {

@@ -169,6 +169,8 @@ export default defineComponent({
       }
 
       currentStep.value += 1
+
+      root.$store.dispatch('setGuideStep', currentStep.value)
     }
 
     const handlePageReturn = () => {
@@ -398,6 +400,10 @@ export default defineComponent({
         task = await getTask(id)
       } else {
         task = await getNewTask()
+
+        if (root.$route.name === 'WelcomeTask') {
+          root.$store.dispatch('setGuideTask', task.id)
+        }
       }
 
       task = richTask(task)

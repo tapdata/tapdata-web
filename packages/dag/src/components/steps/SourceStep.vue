@@ -407,7 +407,7 @@ export default defineComponent({
     }
 
     const options = computed(() => {
-      if (root.$route.query.guide && !connectionIdSelected.value) {
+      if (root.$route.name === 'WelcomeTask' && !connectionIdSelected.value) {
         return [
           {
             key: 'has-connector',
@@ -417,7 +417,7 @@ export default defineComponent({
           {
             key: 'no-connector',
             title: '我没有数据源',
-            desc: 'TapDat提供 2个数据源和2个目的地的Demo库'
+            desc: 'TapData提供 2个数据源和2个目的地的Demo库'
           }
         ]
       }

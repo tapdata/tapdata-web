@@ -109,7 +109,7 @@
       <div class="flex flex-column">
         <div class="fs-4 fw-sub lh-sm mb-10">您想通过本产品完成您的什么需求呢?</div>
 
-        <ElRadioGroup v-model="continueUse" class="flex flex-column gap-4 text-start mb-4" size="medium">
+        <ElRadioGroup v-model="demand" class="flex flex-column gap-4 text-start mb-4" size="medium">
           <ElRadio label="project_evaluation" class="m-0 bg-white" border>我有项目需要评估 TapData 的适用性
           </ElRadio>
           <ElRadio label="interest_in_tech" class="m-0 bg-white" border>我对新技术感兴趣，想了解 TapData
@@ -125,7 +125,7 @@
         </ElRadioGroup>
 
         <el-collapse-transition>
-          <div v-if="continueUse === 'other'">
+          <div v-if="demand === 'other'">
             <ElInput
               v-model="suggestion"
               type="textarea"
@@ -140,7 +140,7 @@
 
         <div class="mt-10">
           <ElButton class="btn-shadow" size="medium" type="primary"
-                    :disabled="!continueUse || (continueUse === 'other' && !suggestion)"
+                    :disabled="!demand || (demand === 'other' && !suggestion)"
                     @click="handleCreateTask">创建您的第一个复制任务
           </ElButton>
         </div>
@@ -160,11 +160,11 @@ import { getIcon } from '@tap/assets/icons'
 
 export default {
   inject: ['checkAgent', 'buried'],
-  mixins: [guide],
+  // mixins: [guide],
   data () {
     const $t = this.$t.bind(this)
     return {
-      continueUse: '',
+      demand: '',
       suggestion: '',
       sourceList: [
         {
@@ -264,23 +264,17 @@ export default {
     },
 
     handleCreateTask () {
-      const { expand } = this.$store.state.guide
-
-      Object.assign(expand, { continueUse: this.continueUse, suggestion: this.suggestion })
-
-      this.$axios.post('api/tcm/user_guide', {
-        expand,
+      this.$store.dispatch('startGuideTask', {
+        demand: this.demand,
+        suggestion: this.suggestion,
       })
 
       this.$router.replace({
-        name: 'WelcomeTask',
-        query: {
-          guide: true,
-        },
+        name: 'WelcomeTask'
       })
     },
 
-    command(command) {
+    command (command) {
       // let downloadUrl = '';
       switch (command) {
         case 'workbench':
@@ -291,19 +285,19 @@ export default {
           break
         case 'userCenter':
           this.$router.push({
-            name: 'userCenter'
+            name: 'userCenter',
           })
           break
         case 'order':
           this.$router.push({
-            name: 'order'
+            name: 'order',
           })
           break
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
             type: 'warning',
             confirmButtonText: this.$t('public_button_confirm'),
-            cancelButtonText: this.$t('public_button_cancel')
+            cancelButtonText: this.$t('public_button_cancel'),
           }).then(res => {
             if (res) {
               this.clearCookie()
@@ -455,6 +449,7 @@ export default {
 .btn-shadow {
   box-shadow: 0px 5px 10px 0px #3B47E54D;
 }
+
 .dfs-header {
   position: absolute;
   top: 0;
@@ -464,10 +459,12 @@ export default {
   padding: 0 7px;
   background: map-get($color, submenu);
   box-sizing: border-box;
+
   .logo {
     display: block;
     width: auto;
     height: 30px;
+
     img {
       display: block;
       height: 100%;
@@ -475,22 +472,27 @@ export default {
       object-fit: contain;
     }
   }
+
   .button-bar {
     display: flex;
     align-items: center;
+
     .command-item {
       padding: 4px 8px;
       cursor: pointer;
       color: map-get($fontColor, light);
+
       &:hover {
         color: map-get($color, primary);
         background-color: map-get($color, white);
         border-radius: 4px;
+
         &.icon {
           color: map-get($color, primary);
         }
       }
     }
+
     .agent-status {
       display: flex;
       align-items: center;
@@ -504,6 +506,7 @@ export default {
       border-radius: 20px;
       cursor: pointer;
       background-color: rgba(255, 255, 255, 0.1);
+
       i.status-color {
         display: inline-block;
         width: 12px;
@@ -513,13 +516,16 @@ export default {
         border-radius: 50%;
       }
     }
+
     .btn-create {
       margin-right: 20px;
     }
+
     .btn {
       margin-left: 8px;
       color: #999;
       cursor: pointer;
+
       i {
         display: inline-block;
         line-height: 28px;
@@ -528,10 +534,12 @@ export default {
         width: 28px;
         font-size: 18px;
       }
+
       &:hover {
         color: #fff;
       }
     }
+
     .menu-user {
       .menu-button {
         color: rgba(204, 204, 204, 1);
@@ -539,12 +547,14 @@ export default {
         border: none;
       }
     }
+
     .img {
       width: 17px;
       height: 17px;
     }
   }
 }
+
 .dfs-header__body {
   display: flex;
   align-items: center;

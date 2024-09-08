@@ -37,20 +37,7 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {
-      console.log('$route', to) // eslint-disable-line
-    },
-    '$store.state.guide.expand.guideStatus'() {
-      this.$axios.post('api/tcm/user_guide', {
-        expand: this.$store.state.guide.expand
-      })
-    }
-  },
-
   async created() {
-    await this.loadGuide()
-
     if (this.isGCPMarketplaceUser) {
       // GCP Marketplace 用户，直接跳过引导
       let { total = 0 } = await this.$axios.get(`api/tcm/subscribe`)
@@ -58,39 +45,9 @@ export default {
         // 显示正在创建实例的提示
         this.marketplaceGuideVisible = true
       }
-
-      if (!this.replicationTour.enable) {
-        this.$store.commit('setReplicationTour', {
-          enable: true,
-          activeIndex: null,
-          behavior: '',
-          status: '',
-          view: 'board'
-        })
-
-        this.$axios.post('api/tcm/user_guide', {
-          tour: this.replicationTour
-        })
-      }
-    } else if (!this.pausedGuide) {
-      await this.checkGuide()
     }
 
-    this.loopLoadAgentCount()
-    let unwatch
-
-    // 🎉🥚
-    Mousetrap.bind('up up down down left right left right', () => {
-      unwatch?.()
-      if (this.startingTour) {
-        this.setShowReplicationTour(false)
-        this.completeTour()
-        this.destroyDriver()
-      } else {
-        this.subscriptionModelVisible = !this.subscriptionModelVisible
-      }
-    })
-
+    // this.loopLoadAgentCount()
     await this.setUrlParams() // url携带的自定义参数
   },
 

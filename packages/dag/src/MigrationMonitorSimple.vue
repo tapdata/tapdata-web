@@ -1200,6 +1200,8 @@ export default {
     })
 
     this.timeSelectLabel = this.$refs.timeSelect?.getPeriod()?.label
+
+    this.$store.dispatch('setGuideViewTaskMonitor')
   },
 
   beforeDestroy() {

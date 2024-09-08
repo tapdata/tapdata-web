@@ -40,17 +40,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import TheHeader from '@/components/the-header'
+import { mapGetters, mapState } from 'vuex'
 
 import Cookie from '@tap/shared/src/cookie'
-import tour from '@/mixins/tour'
-import guide from '@/mixins/guide'
 import { getIcon } from '@tap/assets/icons'
 
 export default {
   inject: ['checkAgent', 'buried'],
-  mixins: [guide],
   data() {
     const $t = this.$t.bind(this)
     return {
