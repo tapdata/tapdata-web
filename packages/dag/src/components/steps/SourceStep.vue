@@ -26,9 +26,9 @@
         </div>
       </div>
 
-      <div class="p-4 bg-white rounded-lg">
+      <div class="p-4 rounded-lg">
         <div class="title-prefix-bar mb-4 position-relative">
-          <span>选择一个连接器</span>
+          <span>选择一个数据源</span>
 
           <ElInput
             v-model="search"
@@ -36,7 +36,7 @@
             style="width: 400px"
             size="small"
             clearable
-            placeholder="搜索连接器"
+            placeholder="搜索数据源"
             @input="handleSearchInput"
           >
             <template #prefix>
@@ -45,7 +45,7 @@
           </ElInput>
         </div>
 
-        <div class="bg-slight p-4 rounded-lg">
+        <div class="rounded-lg">
           <template v-if="connectionIdSelected && optionSelected === 'has-connection'">
             <div class="mb-4">
               <span class="fw-sub">当前已选</span>
@@ -66,7 +66,7 @@
                   </div>
                 </template>
                 <template>
-                  <div v-if="connectionSelected" class="connector-item rounded-lg p-3 overflow-hidden bg-white">
+                  <div v-if="connectionSelected" class="connector-item rounded-lg p-3 overflow-hidden bg-white border">
                     <div class="flex gap-3 align-center">
                       <DatabaseIcon :size="38" :item="connectionSelected"></DatabaseIcon>
                       <div class="connector-item-content flex-1 overflow-hidden lh-base">
