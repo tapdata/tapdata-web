@@ -166,7 +166,7 @@ export default {
       sortMenus: [
         {
           name: 'Dashboard',
-          title: 'Dashboard',
+          title: $t('tap_home'),
           icon: 'workbench'
         },
         {
