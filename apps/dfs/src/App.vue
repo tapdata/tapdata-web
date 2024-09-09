@@ -38,7 +38,9 @@ export default {
   computed: {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
-  mounted() {},
+  mounted() {
+    // this.initMenuTour()
+  },
   methods: {
     ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
 
@@ -72,7 +74,7 @@ export default {
           element: '#menu-Instance',
           popover: {
             showButtons: ['next', 'previous'],
-            description: '在这里可以订阅半托管引擎部署在您本地，详细了解半托管引擎'
+            description: `在这里可以订阅半托管引擎部署在您本地，<a href="https://docs.tapdata.net/quick-start/install/install-tapdata-agent/agent-on-selfhosted" target="_blank">详细了解半托管引擎</a>`
           }
         },
         {
@@ -85,7 +87,7 @@ export default {
         {
           element: '#task-list-create',
           popover: {
-            showButtons: ['next', 'previous', 'close'],
+            showButtons: ['next', 'previous'],
             description: '点击这个可以尝试创建更高级的复制同步任务。'
           }
         }
@@ -96,9 +98,13 @@ export default {
       this.menuTour = driver({
         allowClose: false,
         allowKeyboardControl: false,
+        disableActiveInteraction: true,
         showProgress: true,
+        prevBtnText: '上一步',
+        nextBtnText: '下一步',
+        doneBtnText: '我知道啦',
         steps,
-        popoverClass: 'replication-driver-popover p-3',
+        popoverClass: 'menu-tour-popover p-4 rounded-lg',
         onPopoverRender: (popover, { config, state }) => {},
         onHighlightStarted: (element, step, { state }) => {}
       })
@@ -114,7 +120,10 @@ export default {
       }
     },
 
-    startMenuTour() {
+    async startMenuTour() {
+      if (this.$route.name !== 'migrateList') {
+        await this.$router.push({ name: 'migrateList' })
+      }
       this.menuTour.drive(0)
     }
   }
