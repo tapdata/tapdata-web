@@ -705,6 +705,41 @@ export default {
 
     updateMarketplaceGuide(val) {
       this.marketplaceGuideVisible = false
+    },
+
+    initMenuTour() {
+      const steps = [
+        {
+          element: '#menu-Instance',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以订阅半托管引擎部署在您本地，详细了解半托管引擎'
+          }
+        },
+        {
+          element: '#menu-connections',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以管理和添加您的数据源/目标库'
+          }
+        },
+        {
+          element: '#task-list-create',
+          popover: {
+            showButtons: ['next', 'previous', 'close'],
+            description: '点击这个可以尝试创建更高级的复制同步任务。'
+          }
+        }
+      ]
+      this.menuTour = driver({
+        allowClose: false,
+        allowKeyboardControl: false,
+        showProgress: true,
+        steps,
+        popoverClass: 'replication-driver-popover p-3',
+        onPopoverRender: (popover, { config, state }) => {},
+        onHighlightStarted: (element, step, { state }) => {}
+      })
     }
   }
 }

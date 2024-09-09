@@ -15,7 +15,7 @@
 
     <template #footer>
       <div class="text-center">
-        <el-button key="doneBtn" @click="handleDone" type="primary">进入首页</el-button>
+        <el-button key="doneBtn" @click="handleDone" type="primary">进入任务列表</el-button>
       </div>
     </template>
   </ElDialog>
@@ -113,7 +113,9 @@ export default {
 
     handleDone() {
       this.$emit('finish')
-      this.$router.push('/')
+      this.$router.push({
+        name: 'migrateList'
+      })
     }
   }
 }

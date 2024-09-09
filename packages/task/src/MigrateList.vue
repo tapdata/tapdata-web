@@ -33,7 +33,7 @@
               type="primary"
               plain
               size="mini"
-              id="task-list-create"
+              id="task-list-quick-create"
               :disabled="$disabledReadonlyUserBtn()"
               :loading="quickCreateBtnLoading"
               @click="useFormCreate"

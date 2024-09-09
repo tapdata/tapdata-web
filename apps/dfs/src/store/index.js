@@ -277,6 +277,15 @@ const store = new Vuex.Store({
     },
 
     async initGuide({ commit, dispatch, state }, router) {
+      // if (state.user.loginsCount === 0) {
+      //   router.push({
+      //     name: 'WelcomeTask',
+      //     params: {
+      //       id: guide.tour.taskId
+      //     }
+      //   })
+      // }
+
       let guide = await axios.get('api/tcm/user_guide')
 
       if (!guide) {
@@ -295,15 +304,19 @@ const store = new Vuex.Store({
       if (guide.expand.version !== '3.13.0' || guide.tour.status === 'completed') return
 
       if (guide.installStep === -1) {
+        router.replace({
+          name: 'Welcome'
+        })
+
         const freeTier = await dispatch('getFreeTier')
 
         if (freeTier) {
           await dispatch('subscribe', freeTier)
         }
 
-        router.replace({
-          name: 'Welcome'
-        })
+        // router.replace({
+        //   name: 'Welcome'
+        // })
       } else if (guide.installStep > -1) {
         router.push({
           name: 'WelcomeTask',

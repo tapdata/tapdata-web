@@ -17,6 +17,7 @@ import ReplicationTour from '@/components/ReplicationTour'
 import { buried } from '@/plugins/buried'
 import { mapMutations, mapState } from 'vuex'
 import { provide } from '@vue/composition-api'
+import { driver } from 'driver.js'
 export default {
   name: 'app',
   provide: {
@@ -37,28 +38,7 @@ export default {
   computed: {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
-  mounted() {
-    const unwatch = this.$watch('$route', () => {
-      unwatch()
-      this.$nextTick(async () => {
-        if (this.$route.query?.tour) {
-          const guide = await this.$axios.get('api/tcm/user_guide')
-          // 查询是否有查看监控的行为
-          const behavior = guide?.tour?.behavior
-          if (behavior && behavior !== 'view-monitor') {
-            this.openCompleteReplicationTour()
-            this.$axios.post('api/tcm/user_guide', {
-              tour: {
-                ...guide.tour,
-                behavior: 'view-monitor',
-                behaviorAt: Date.now()
-              }
-            })
-          }
-        }
-      })
-    })
-  },
+  mounted() {},
   methods: {
     ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
 
@@ -69,6 +49,73 @@ export default {
     },
     handleFinishTour() {
       this.setShowReplicationTour(false)
+
+      this.$nextTick(() => {
+        this.initMenuTour()
+      })
+    },
+
+    waitForElement(selector, callback) {
+      const observer = new MutationObserver((mutationsList, observer) => {
+        if (document.querySelector(selector)) {
+          observer.disconnect()
+          callback()
+        }
+      })
+
+      observer.observe(document.body, { childList: true, subtree: true })
+    },
+
+    initMenuTour() {
+      const steps = [
+        {
+          element: '#menu-Instance',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以订阅半托管引擎部署在您本地，详细了解半托管引擎'
+          }
+        },
+        {
+          element: '#menu-connections',
+          popover: {
+            showButtons: ['next', 'previous'],
+            description: '在这里可以管理和添加您的数据源/目标库'
+          }
+        },
+        {
+          element: '#task-list-create',
+          popover: {
+            showButtons: ['next', 'previous', 'close'],
+            description: '点击这个可以尝试创建更高级的复制同步任务。'
+          }
+        }
+      ]
+
+      const targetElement = document.querySelector(steps[0].element)
+
+      this.menuTour = driver({
+        allowClose: false,
+        allowKeyboardControl: false,
+        showProgress: true,
+        steps,
+        popoverClass: 'replication-driver-popover p-3',
+        onPopoverRender: (popover, { config, state }) => {},
+        onHighlightStarted: (element, step, { state }) => {}
+      })
+
+      if (targetElement) {
+        this.startMenuTour()
+      } else {
+        this.waitForElement(steps[0].element, () => {
+          setTimeout(() => {
+            this.startMenuTour()
+          }, 500)
+        })
+      }
+    },
+
+    startMenuTour() {
+      this.menuTour.drive(0)
     }
   }
 }
