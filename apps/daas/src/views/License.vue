@@ -1,45 +1,47 @@
 <template>
-  <section class="license-wrapper h-100">
-    <TablePage ref="table" row-key="id" :remoteMethod="getData">
-      <div slot="operation">
-        <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{
-          $t('public_button_copy')
-        }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
-      </div>
-      <ElTableColumn type="selection" width="45"></ElTableColumn>
-      <ElTableColumn prop="hostname" :label="$t('license_node_name')" min-width="150"></ElTableColumn>
-      <ElTableColumn prop="sid" :label="$t('license_node_sid')" min-width="150"></ElTableColumn>
-      <ElTableColumn :label="$t('license_status')" min-width="150">
-        <template #default="{ row }">
-          <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn v-if="showLicenseType" :label="$t('daas_licenseType')" min-width="150">
-        <template #default="{ row }">
-          <span>{{ TYPE_MAP[row.licenseType] }}</span>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="150">
-        <template #default="{ row }">
-          <div class="flex gap-2 align-center">
-            <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
-            <span>{{ row.datasourcePipelineInUse }} / {{ row.datasourcePipelineLimit }}</span>
-          </div>
-        </template>
-      </ElTableColumn>
-      <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
-      <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
-    </TablePage>
-    <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
-      <ElInput v-model.trim="license" type="textarea"></ElInput>
-      <div slot="footer">
-        <ElButton type="primary" size="mini" :disabled="!license" :loading="dialogLoading" @click="updateLicense">{{
-          $t('public_event_update')
-        }}</ElButton>
-      </div>
-    </ElDialog>
-  </section>
+  <PageContainer>
+    <template #actions>
+      <ElButton :loading="copyLoading" class="btn" size="mini" @click="copySid">{{
+        $t('public_button_copy')
+      }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
+    </template>
+    <section class="license-wrapper h-100 pb-6 pr-6">
+      <TablePage ref="table" row-key="id" :remoteMethod="getData">
+        <ElTableColumn type="selection" width="45"></ElTableColumn>
+        <ElTableColumn prop="hostname" :label="$t('license_node_name')" min-width="150"></ElTableColumn>
+        <ElTableColumn prop="sid" :label="$t('license_node_sid')" min-width="150"></ElTableColumn>
+        <ElTableColumn :label="$t('license_status')" min-width="150">
+          <template #default="{ row }">
+            <span :class="'color-' + row.status.color">{{ row.status.text }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn v-if="showLicenseType" :label="$t('daas_licenseType')" min-width="150">
+          <template #default="{ row }">
+            <span>{{ TYPE_MAP[row.licenseType] }}</span>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="150">
+          <template #default="{ row }">
+            <div v-if="row.licenseType === 'PIPELINE'" class="flex gap-2 align-center">
+              <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
+              <span>{{ row.datasourcePipelineInUse }} / {{ row.datasourcePipelineLimit }}</span>
+            </div>
+          </template>
+        </ElTableColumn>
+        <ElTableColumn prop="expirationDateFmt" :label="$t('license_expire_date')" min-width="160"></ElTableColumn>
+        <ElTableColumn prop="lastUpdatedFmt" :label="$t('license_update_time')" min-width="160"></ElTableColumn>
+      </TablePage>
+      <ElDialog append-to-body :title="$t('license_renew_dialog')" :visible.sync="dialogVisible">
+        <ElInput v-model.trim="license" type="textarea"></ElInput>
+        <div slot="footer">
+          <ElButton type="primary" size="mini" :disabled="!license" :loading="dialogLoading" @click="updateLicense">{{
+            $t('public_event_update')
+          }}</ElButton>
+        </div>
+      </ElDialog>
+    </section>
+  </PageContainer>
 </template>
 
 <script>
@@ -47,9 +49,10 @@ import { TablePage } from '@tap/business'
 import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
+import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
-  components: { TablePage },
+  components: { PageContainer, TablePage },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
@@ -180,5 +183,10 @@ export default {
 <style scoped lang="scss">
 .license-wrapper {
   height: 100%;
+  ::v-deep {
+    .table-page-topbar {
+      padding: 0 !important;
+    }
+  }
 }
 </style>
