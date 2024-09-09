@@ -1,6 +1,6 @@
 <template>
   <div class="h-100">
-    <div v-if="!connectorSelected" class="flex flex-column gap-4">
+    <div v-if="!connectorSelected" class="flex flex-column gap-4 h-100">
       <div class="p-4 bg-white rounded-lg">
         <div class="flex gap-6 lh-base">
           <div
@@ -145,11 +145,14 @@
       </div>
 
       <div
-        v-if="currentStep > 0 || connectionIdSelected"
-        class="position-sticky z-index bottom-0 p-4 rounded-lg backdrop-filter-light z-10"
+        class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto rounded-lg backdrop-filter-light z-10 border"
       >
-        <el-button v-if="currentStep > 0" @click="handlePrev">上一步</el-button>
-        <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">下一步</el-button>
+        <el-button v-if="currentStep > 0" @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
+        <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">{{
+          $t('public_button_next')
+        }}</el-button>
+        <el-divider class="mx-4" direction="vertical"></el-divider>
+        <slot name="help"></slot>
       </div>
     </div>
 
@@ -248,7 +251,7 @@ export default defineComponent({
 
       let data = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
 
-      data = data.filter(item => item.connectionType.includes('source'))
+      data = data.filter(item => item.connectionType.includes(props.type))
 
       const sortFn = (o1, o2) => {
         const qcTypeLevel = {

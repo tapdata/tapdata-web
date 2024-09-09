@@ -345,5 +345,9 @@ export default {
   public_normal_index: '索引',
   public_batch_publish: '批量發佈',
   public_database_time: '數據庫時間',
-  public_data_update_time: '數據更新時間'
+  public_data_update_time: '數據更新時間',
+
+  public_create_source_connection: '創建源連接',
+  public_create_target_connection: '創建目標連接',
+  public_configuration_task: '配置任務'
 }

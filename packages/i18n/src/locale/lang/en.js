@@ -250,7 +250,7 @@ export default {
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
-  public_task_type_migrate: 'Data Copy',
+  public_task_type_migrate: 'Data Replication',
   public_task_type_sync: 'Data Development',
   public_task_type_heartbeat: 'Heartbeat Task',
   public_task_type_log_collector: 'Shared Mining',
@@ -346,5 +346,9 @@ export default {
   public_normal_index: 'Index',
   public_batch_publish: 'Batch Publish',
   public_database_time: 'Database Time',
-  public_data_update_time: 'Last Updated'
+  public_data_update_time: 'Last Updated',
+
+  public_create_source_connection: 'Create Source Connection',
+  public_create_target_connection: 'Create Target Connection',
+  public_configuration_task: 'Configuration Task'
 }

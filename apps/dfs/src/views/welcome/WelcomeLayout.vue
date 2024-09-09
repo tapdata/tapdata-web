@@ -32,7 +32,7 @@
     </ElHeader>
 
     <ElContainer direction="vertical" class="layout-main p-0">
-      <ElMain class="main rounded-lg p-4">
+      <ElMain class="main rounded-lg p-4 pb-0 mb-4">
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
@@ -90,7 +90,7 @@ export default {
 
   created() {
     if (!this.$store.state.config?.disabledOnlineChat) {
-      this.loadChat()
+      // this.loadChat()
     }
 
     this.$root.$on('select-connection-type', this.selectConnectionType)

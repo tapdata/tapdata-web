@@ -1716,5 +1716,15 @@ export default {
   dfs_payment_progress_desc: '如果您已支付，请点击支付完成',
   dfs_retry_payment: '重新支付',
   dfs_complete_payment: '支付完成',
-  dfs_tm_address_alert: '如果您的服务器进行了访问限制，请开放网络策略以确保服务器可以访问到 TapData Cloud 管理端：'
+  dfs_tm_address_alert: '如果您的服务器进行了访问限制，请开放网络策略以确保服务器可以访问到 TapData Cloud 管理端：',
+
+  welcome_page_title: `<span class="text-gradient">连接</span>您的数据，<span class="text-gradient">同步</span>至您的目的地</span>`,
+  welcome_page_subtitle: `平台提供<span class="text-gradient">免费15天</span>的全托管引擎和Demo数据源进行功能场景试用`,
+  welcome_datasource: '数据源',
+  welcome_target_source: '目标源',
+  welcome_demand_collection: '您想通过本产品完成您的什么需求呢?',
+  welcome_demand_collection_1: '我有项目需要评估 TapData 的适用性',
+  welcome_demand_collection_2: '我对新技术感兴趣，想了解 TapData 的数据同步能力',
+  welcome_demand_collection_3: '我在寻找数据同步的最佳实践，想通过 TapData 学习',
+  welcome_create_task: '创建您的第一个复制任务'
 }

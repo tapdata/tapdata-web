@@ -1857,5 +1857,15 @@ export default {
   dfs_payment_progress_desc: 'If you have already made the payment, please click “Payment Completed”.',
   dfs_retry_payment: 'Repay',
   dfs_complete_payment: 'Payment Completed',
-  dfs_tm_address_alert: 'If your server has access restrictions, please allow access for TapData Cloud management to:'
+  dfs_tm_address_alert: 'If your server has access restrictions, please allow access for TapData Cloud management to:',
+
+  welcome_page_title: `<span class="text-gradient">Connect</span> your data, <span class="text-gradient">sync</span> to your destination</span>`,
+  welcome_page_subtitle: `Get a <span class="text-gradient">15-day free</span> trial with a fully managed engine and demo data source`,
+  welcome_datasource: 'Data Source',
+  welcome_target_source: 'Target Source',
+  welcome_demand_collection: 'What do you want to achieve with this product?',
+  welcome_demand_collection_1: 'Assess TapData for a project',
+  welcome_demand_collection_2: 'Explore TapData’s data synchronization capabilities',
+  welcome_demand_collection_3: 'Learn best practices in data synchronization with TapData',
+  welcome_create_task: 'Create Your First Replication Task'
 }

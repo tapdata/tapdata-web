@@ -5,9 +5,15 @@
       <SchemaForm :form="form" :schema="schema" :scope="scope" />
     </div>
 
-    <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
-      <el-button @click="handlePrev">上一步</el-button>
-      <el-button :loading="starting" type="primary" @click="handleStart">启动任务</el-button>
+    <div
+      class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto border-top backdrop-filter-light z-10"
+    >
+      <el-button @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
+      <el-button :loading="starting" type="primary" @click="handleStart">{{
+        $('packages_business_task_start_task')
+      }}</el-button>
+      <el-divider class="mx-4" direction="vertical"></el-divider>
+      <slot name="help"></slot>
     </div>
   </div>
 </template>
