@@ -1315,5 +1315,5 @@ export default {
   packages_business_download_details: 'Download',
   packages_business_solution: 'Solution',
   packages_business_error_details: 'Error Details',
-  packages_business_instance_info: 'Instance Info'
+  packages_business_instance_info: 'Unique Identifier'
 }
