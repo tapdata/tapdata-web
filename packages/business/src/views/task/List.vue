@@ -21,7 +21,64 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)" />
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)">
+          <template #pipeline v-if="showInstanceInfo">
+            <SelectList
+              menuMinWidth="400px"
+              selectedWidth="200px"
+              :items="pipelineOptions"
+              inner-label="数据源通道"
+              none-border
+              last-page-text=""
+              :item-size="54"
+              clearable
+              v-model="pipelineSelected"
+              @change="handleSelectPipeline"
+              @visible-change="handlePipelineSelectVisible"
+            >
+              <template #label v-if="pipeline">
+                <span class="inline-flex align-center position-relative ml-2">
+                  <span class="inline-flex gap-1 align-center">
+                    <DatabaseIcon
+                      :key="pipeline.instanceInfos[0].pdkHash"
+                      class="flex-shrink-0"
+                      :size="16"
+                      :item="pipeline.instanceInfos[0]"
+                    ></DatabaseIcon>
+                    <span>{{ pipeline.instanceInfos[0].tag }}</span>
+                  </span>
+                  <span class="mx-1">-</span>
+                  <span class="inline-flex gap-1 align-center">
+                    <DatabaseIcon
+                      :key="pipeline.instanceInfos[1].pdkHash"
+                      class="flex-shrink-0"
+                      :size="16"
+                      :item="pipeline.instanceInfos[1]"
+                    ></DatabaseIcon>
+                    <span>{{ pipeline.instanceInfos[1].tag }}</span>
+                  </span>
+                </span>
+              </template>
+              <template #default="{ item }">
+                <ElOption style="height: 54px" :value="item.id" :label="item.id">
+                  <div class="flex align-center gap-2 h-100 fw-normal">
+                    <div
+                      v-for="(info, i) in item.instanceInfos"
+                      class="flex align-center gap-2 flex-1 min-w-0"
+                      :key="i"
+                    >
+                      <DatabaseIcon :key="info.pdkHash" class="flex-shrink-0" :size="24" :item="info"></DatabaseIcon>
+                      <div class="lh-sm min-w-0">
+                        <div class="font-color-dark">{{ info.pdkName }}</div>
+                        <div class="font-color-light ellipsis fs-7" :title="info.tag">{{ info.tag || '--' }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </ElOption>
+              </template>
+            </SelectList>
+          </template>
+        </FilterBar>
       </template>
       <template #multipleSelectionActions>
         <ElButton v-if="isDaas" @click="handlePermissionsSettings"
@@ -321,11 +378,11 @@
 import { escapeRegExp } from 'lodash'
 import dayjs from 'dayjs'
 import i18n from '@tap/i18n'
-import { taskApi, workerApi } from '@tap/api'
-import { FilterBar } from '@tap/component'
+import { databaseTypesApi, licensesApi, taskApi, workerApi } from '@tap/api'
+import { FilterBar, SelectList } from '@tap/component'
 import PermissionseSettingsCreate from '../../components/permissionse-settings/Create'
 
-import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus } from '../../components'
+import { TablePage, TaskStatus, UpgradeFee, UpgradeCharges, SyncStatus, DatabaseIcon } from '../../components'
 import SkipError from './SkipError'
 import Upload from '../../components/UploadDialog'
 import { makeStatusAndDisabled, STATUS_MAP, MILESTONE_TYPE } from '../../shared'
@@ -343,7 +400,9 @@ export default {
   inject: ['checkAgent', 'buried'],
 
   components: {
+    DatabaseIcon,
     FilterBar,
+    SelectList,
     TablePage,
     SkipError,
     Upload,
@@ -360,6 +419,7 @@ export default {
     return {
       STATUS_MAP,
       isDaas: process.env.VUE_APP_PLATFORM === 'DAAS',
+      showInstanceInfo: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
       dataFlowId: '',
       isShowDetails: false,
       previewLoading: false,
@@ -392,6 +452,7 @@ export default {
         }
       ],
       searchParams: {
+        pipelineId: '',
         keyword: '',
         status: '',
         type: ''
@@ -408,7 +469,9 @@ export default {
       upgradeFeeVisibleTips: '',
       upgradeChargesVisible: false,
       upgradeChargesVisibleTips: '',
-      uploadType: 'dataflow'
+      uploadType: 'dataflow',
+      pipelineOptions: [],
+      pipelineSelected: ''
     }
   },
 
@@ -461,6 +524,12 @@ export default {
         import: this.$has('v2_data_replication_import'),
         export: this.$has('v2_data_replication_export')
       }
+    },
+
+    pipeline() {
+      if (!this.pipelineSelected) return
+
+      return this.pipelineOptions.find(item => item.value === this.pipelineSelected)
     }
   },
 
@@ -490,7 +559,7 @@ export default {
     getData({ page, tags }) {
       let { current, size } = page
       const { syncType } = this
-      let { keyword, status, type, agentId, syncStatus } = this.searchParams
+      let { keyword, status, type, agentId, syncStatus, id } = this.searchParams
       let fields = {
         id: true,
         name: true,
@@ -525,6 +594,12 @@ export default {
       }
       let where = {
         syncType
+      }
+
+      if (this.pipelineSelected && this.pipeline?.taskIds?.length) {
+        where.id = {
+          in: this.pipeline.taskIds
+        }
       }
       if (keyword && keyword.trim()) {
         where.name = { like: escapeRegExp(keyword), options: 'i' }
@@ -633,6 +708,22 @@ export default {
             ...Object.entries(MILESTONE_TYPE).map(([key, value]) => ({ label: value.text, value: key }))
           ],
           selectedWidth: '200px'
+        },
+        {
+          label: '数据源通道',
+          key: 'id',
+          slotName: 'pipeline',
+          type: 'select-inner',
+          items: async () => {
+            let data = await licensesApi.getPipelineDetails()
+            data = data || []
+            return data.map(item => {
+              return {
+                label: item.name,
+                value: item.type
+              }
+            })
+          }
         },
         {
           placeholder: this.$t('public_task_name'),
@@ -1157,6 +1248,29 @@ export default {
               ? this.handleShowUpgradeFee(err.message)
               : this.handleShowUpgradeCharges(err.message)
           })
+    },
+
+    async loadPipelineOptions() {
+      const data = await licensesApi.getPipelineDetails()
+
+      this.pipelineOptions = data.map(item => {
+        return {
+          label: item.id,
+          value: item.id,
+          ...item
+        }
+      })
+    },
+
+    handlePipelineSelectVisible(val) {
+      if (val) {
+        this.loadPipelineOptions()
+      }
+    },
+
+    handleSelectPipeline(val) {
+      // this.searchParams.id = this.pipeline ? this.pipeline.taskIds : undefined
+      this.table.fetch(1)
     }
   }
 }
