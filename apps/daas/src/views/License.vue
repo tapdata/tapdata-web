@@ -21,11 +21,15 @@
             <span>{{ TYPE_MAP[row.licenseType] }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="150">
+        <ElTableColumn v-if="showLicenseType" :label="$t('daas_datasourcePipelineLimit')" min-width="160"
+          >e
           <template #default="{ row }">
             <div v-if="row.licenseType === 'PIPELINE'" class="flex gap-2 align-center">
               <el-progress class="flex-1" :percentage="row.pipelinePercentage" :show-text="false"></el-progress>
               <span>{{ row.datasourcePipelineInUse }} / {{ row.datasourcePipelineLimit }}</span>
+              <el-button @click="openPipelineDetails" size="mini" type="text">{{
+                $t('public_button_details')
+              }}</el-button>
             </div>
           </template>
         </ElTableColumn>
@@ -41,18 +45,65 @@
         </div>
       </ElDialog>
     </section>
+
+    <ElDialog append-to-body title="通道使用详情" :visible.sync="detailsDialog.show" width="600px">
+      <div class="flex flex-column gap-4" v-loading="detailsDialog.loading">
+        <div class="bg-white border rounded-xl p-2" v-for="(item, i) in detailsDialog.data" :key="i">
+          <div class="bg-subtle rounded-xl p-2 flex justify-center align-center gap-2">
+            <template v-for="(info, i) in item.instanceInfos">
+              <div v-if="i > 0" :key="i" class="connector-line bg-primary position-relative px-4" style="height: 2px">
+                <el-tag class="text-center" style="min-width: 80px; transform: translateY(-50%)"
+                  >{{ item.taskIds.length }} 个任务</el-tag
+                >
+                <span
+                  class="connector-line-dot rounded-circle position-absolute bg-primary"
+                  style="width: 6px; height: 6px; left: -2px; top: -2px"
+                ></span>
+
+                <span
+                  class="connector-line-dot rounded-circle position-absolute bg-primary"
+                  style="width: 6px; height: 6px; right: -2px; top: -2px"
+                ></span>
+              </div>
+              <div class="connector-wrap bg-white rounded-lg p-2 shadow-sm flex align-center gap-2 flex-1 min-w-0">
+                <DatabaseIcon class="flex-shrink-0" :size="24" :item="info"></DatabaseIcon>
+                <div class="lh-sm min-w-0">
+                  <div class="font-color-dark">{{ info.pdkName }}</div>
+                  <div class="font-color-light ellipsis fs-7" :title="info.tag">{{ info.tag || '--' }}</div>
+                </div>
+              </div>
+            </template>
+          </div>
+          <!--<div class="mt-4">
+            <div class="fw-sub font-color-dark mb-3">任务明细</div>
+            <div class="task-list">
+              <div
+                class="task-list-item flex align-center justify-content-between py-2 border-top"
+                v-for="(task, i) in item.tasks"
+                :key="task.id"
+              >
+                <a class="el-link el-link&#45;&#45;primary justify-content-start" :title="task.name">
+                  <span class="ellipsis">{{ task.name }}</span>
+                </a>
+                <TaskStatus :task="task"></TaskStatus>
+              </div>
+            </div>
+          </div>-->
+        </div>
+      </div>
+    </ElDialog>
   </PageContainer>
 </template>
 
 <script>
-import { TablePage } from '@tap/business'
+import { DatabaseIcon, TablePage, TaskStatus } from '@tap/business'
 import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
 
 export default {
-  components: { PageContainer, TablePage },
+  components: { DatabaseIcon, PageContainer, TablePage, TaskStatus },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
@@ -65,7 +116,12 @@ export default {
       dialogVisible: false,
       dialogLoading: false,
       license: '',
-      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development'
+      showLicenseType: process.env.VUE_APP_LICENSE_TYPE === 'PIPELINE' || process.env.NODE_ENV === 'development',
+      detailsDialog: {
+        show: false,
+        loading: false,
+        data: []
+      }
     }
   },
   methods: {
@@ -175,6 +231,14 @@ export default {
             this.dialogLoading = false
           })
       }
+    },
+    async openPipelineDetails() {
+      this.detailsDialog.show = true
+      this.detailsDialog.loading = true
+      const data = await licensesApi.getPipelineDetails()
+      this.detailsDialog.loading = false
+      this.detailsDialog.data = data
+      console.log('data', data)
     }
   }
 }
