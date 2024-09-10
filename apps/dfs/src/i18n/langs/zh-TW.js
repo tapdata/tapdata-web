@@ -1689,5 +1689,9 @@ export default {
   welcome_demand_collection_1: '我有项目需要评估 TapData 的适用性',
   welcome_demand_collection_2: '我对新技术感兴趣，想了解 TapData 的数据同步能力',
   welcome_demand_collection_3: '我在寻找数据同步的最佳实践，想通过 TapData 学习',
-  welcome_create_task: '創建您的第一個複製任務'
+  welcome_create_task: '創建您的第一個複製任務',
+  menu_tour_instance: '在這裡可以訂閱半托管引擎部署在您本地',
+  menu_tour_instance_link: '詳細瞭解半托管引擎',
+  menu_tour_connection: '在這裡可以管理和添加您的數據源/目標源',
+  menu_tour_create_task: '點擊這個可以嘗試創建更高級的複製同步任務'
 }

@@ -39,7 +39,7 @@ export default {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
   mounted() {
-    // this.initMenuTour()
+    this.initMenuTour()
   },
   methods: {
     ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
@@ -74,21 +74,25 @@ export default {
           element: '#menu-Instance',
           popover: {
             showButtons: ['next', 'previous'],
-            description: `在这里可以订阅半托管引擎部署在您本地，<a href="https://docs.tapdata.net/quick-start/install/install-tapdata-agent/agent-on-selfhosted" target="_blank">详细了解半托管引擎</a>`
+            description: `${this.$t(
+              'menu_tour_instance'
+            )}，<a href="https://docs.tapdata.net/quick-start/install/install-tapdata-agent/agent-on-selfhosted" target="_blank">${this.$t(
+              'menu_tour_instance_link'
+            )}</a>`
           }
         },
         {
           element: '#menu-connections',
           popover: {
             showButtons: ['next', 'previous'],
-            description: '在这里可以管理和添加您的数据源/目标库'
+            description: this.$t('menu_tour_connection')
           }
         },
         {
           element: '#task-list-create',
           popover: {
             showButtons: ['next', 'previous'],
-            description: '点击这个可以尝试创建更高级的复制同步任务。'
+            description: this.$t('menu_tour_create_task')
           }
         }
       ]
@@ -96,13 +100,14 @@ export default {
       const targetElement = document.querySelector(steps[0].element)
 
       this.menuTour = driver({
+        overlayOpacity: 0.5,
         allowClose: false,
         allowKeyboardControl: false,
         disableActiveInteraction: true,
         showProgress: true,
-        prevBtnText: '上一步',
-        nextBtnText: '下一步',
-        doneBtnText: '我知道啦',
+        prevBtnText: this.$t('public_button_previous'),
+        nextBtnText: this.$t('public_button_next'),
+        doneBtnText: this.$t('public_button_understand'),
         steps,
         popoverClass: 'menu-tour-popover p-4 rounded-lg',
         onPopoverRender: (popover, { config, state }) => {},

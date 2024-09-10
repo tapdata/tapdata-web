@@ -133,6 +133,7 @@ export default {
   public_button_execute: 'Execute',
   public_button_obtain: 'Obtain',
   public_button_help: 'Help',
+  public_button_understand: 'Finish',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -352,5 +353,9 @@ export default {
   public_create_target_connection: 'Create Target Connection',
   public_configuration_task: 'Configuration Task',
   public_need_help: 'Need Help?',
-  public_test_and_continue: 'Test Connection and Continue'
+  public_test_and_continue: 'Test Connection and Continue',
+  menu_tour_instance: 'Here you can subscribe to the semi-managed engine deployed locally',
+  menu_tour_instance_link: 'Learn More About Semi-Managed Engines',
+  menu_tour_connection: 'Manage and Add Your Data Sources/Targets Here',
+  menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks'
 }
