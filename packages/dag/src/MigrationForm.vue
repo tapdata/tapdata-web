@@ -24,7 +24,7 @@
         <template #help>
           <el-button type="text"
             ><VIcon class="mr-1 align-middle" size="18">customer</VIcon
-            ><span class="align-middle">我需要帮助</span></el-button
+            ><span class="align-middle">{{ $t('public_need_help') }}</span></el-button
           >
         </template>
       </component>

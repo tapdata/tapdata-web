@@ -1,7 +1,7 @@
 <template>
   <div class="position-relative h-100 bg-white rounded-lg min-h-0 overflow-y-auto">
     <div class="p-4">
-      <div class="title-prefix-bar mb-4">配置任务</div>
+      <div class="title-prefix-bar mb-4">{{ $t('public_configuration_task') }}</div>
       <SchemaForm :form="form" :schema="schema" :scope="scope" />
     </div>
 
@@ -10,7 +10,7 @@
     >
       <el-button @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
       <el-button :loading="starting" type="primary" @click="handleStart">{{
-        $('packages_business_task_start_task')
+        $t('packages_business_task_start_task')
       }}</el-button>
       <el-divider class="mx-4" direction="vertical"></el-divider>
       <slot name="help"></slot>

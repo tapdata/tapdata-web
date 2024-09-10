@@ -9,13 +9,15 @@
   >
     <div class="text-center font-color-dark">
       <VIcon size="64" class="color-success mt-3">check-circle-fill</VIcon>
-      <div class="mt-4 fs-5 color-primary">恭喜您创建了第一个复制任务</div>
-      <div class="mt-2">接下来可以使用我们的产品进行数据库的复制、迁移等工作啦。</div>
+      <div class="mt-4 fs-5 color-primary">{{ $t('packages_dag_tour_task_success') }}</div>
+      <div class="mt-2">{{ $t('packages_dag_tour_task_success_desc') }}</div>
     </div>
 
     <template #footer>
       <div class="text-center">
-        <el-button key="doneBtn" @click="handleDone" type="primary">进入任务列表</el-button>
+        <el-button key="doneBtn" @click="handleDone" type="primary">{{
+          $t('packages_dag_access_task_list')
+        }}</el-button>
       </div>
     </template>
   </ElDialog>

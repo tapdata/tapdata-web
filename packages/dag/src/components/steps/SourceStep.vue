@@ -28,7 +28,11 @@
 
       <div class="p-4 rounded-lg">
         <div class="title-prefix-bar mb-4 position-relative">
-          <span>选择一个数据源</span>
+          <span>{{
+            $t(
+              optionSelected === 'has-connection' ? 'packages_dag_select_connection' : 'packages_dag_select_datasource'
+            )
+          }}</span>
 
           <ElInput
             v-model="search"
@@ -36,7 +40,13 @@
             style="width: 400px"
             size="small"
             clearable
-            placeholder="搜索数据源"
+            :placeholder="
+              $t(
+                optionSelected === 'has-connection'
+                  ? 'packages_dag_search_connection'
+                  : 'packages_dag_search_datasource'
+              )
+            "
             @input="handleSearchInput"
           >
             <template #prefix>
@@ -48,7 +58,7 @@
         <div class="rounded-lg">
           <template v-if="connectionIdSelected && optionSelected === 'has-connection'">
             <div class="mb-4">
-              <span class="fw-sub">当前已选</span>
+              <span class="fw-sub">{{ $t('packages_dag_current_selected') }}</span>
             </div>
 
             <div class="connector-list grid gap-4 mb-4">
@@ -159,26 +169,28 @@
     <ConnectorForm v-else ref="connectorForm" :connector="connectorSelected" show-ip-tips :connection-type="type">
       <template #header>
         <div class="title-prefix-bar mb-4 flex align-center gap-2">
-          <span class="flex-1">创建源连接</span>
+          <span class="flex-1">{{
+            $t(type === 'source' ? 'public_create_source_connection' : 'public_create_target_connection')
+          }}</span>
           <DatabaseIcon :pdk-hash="connectorSelected.pdkHash" :size="20"></DatabaseIcon>
           <span class="fw-normal">{{ connectorSelected.name }}</span>
         </div>
       </template>
       <template #footer>
         <div>
-          <el-button @click="handleCancelCreate">返回</el-button>
-          <!--<el-button>上一步</el-button>-->
-          <el-button type="primary" @click="handleTest">测试连接以进行下一步</el-button>
-          <!--<el-button type="primary" @click="$emit('next')">测试连接以进行下一步</el-button>-->
+          <el-button @click="handleCancelCreate">{{ $t('public_button_back') }}</el-button>
+          <el-button type="primary" @click="handleTest">{{ $t('public_test_and_continue') }}</el-button>
+          <el-divider class="mx-4" direction="vertical"></el-divider>
+          <slot name="help"></slot>
         </div>
       </template>
 
       <template #test-cancel="{ status, close }">
         <div style="display: contents" v-if="status === 'ready'">
-          <el-button @click="close">关闭</el-button>
-          <el-button type="primary" @click="handleSaveAndNext">下一步</el-button>
+          <el-button @click="close">{{ $t('public_button_close') }}</el-button>
+          <el-button type="primary" @click="handleSaveAndNext">{{ $t('public_button_next') }}</el-button>
         </div>
-        <el-button v-else type="primary" @click="close">关闭</el-button>
+        <el-button v-else type="primary" @click="close">{{ $t('public_button_close') }}</el-button>
       </template>
     </ConnectorForm>
   </div>
@@ -191,6 +203,7 @@ import { connectionsApi, databaseTypesApi } from '@tap/api'
 import ConnectorFormItem from './ConnectorFormItem.vue'
 import { getInitialValuesInBySchema } from '../../../../form'
 import dayjs from 'dayjs'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   name: 'SourceStep',
@@ -414,13 +427,13 @@ export default defineComponent({
         return [
           {
             key: 'has-connector',
-            title: '添加我自己的数据源',
-            desc: '从TapData的连接列表中配置新的数据源'
+            title: i18n.t('packages_dag_add_own_datasource'),
+            desc: i18n.t('packages_dag_add_own_datasource_desc')
           },
           {
             key: 'no-connector',
-            title: '我没有数据源',
-            desc: 'TapData提供 2个数据源和2个目的地的Demo库'
+            title: i18n.t('packages_dag_no_datasource'),
+            desc: i18n.t('packages_dag_no_datasource_desc')
           }
         ]
       }
@@ -428,13 +441,13 @@ export default defineComponent({
       return [
         {
           key: 'has-connection',
-          title: '选择已有连接',
-          desc: '自己创建的连接/数据源'
+          title: i18n.t('packages_dag_have_connection'),
+          desc: i18n.t('packages_dag_have_connection_desc')
         },
         {
           key: 'has-connector',
-          title: '添加我自己的数据源',
-          desc: '从TapData的连接列表中配置新的数据源'
+          title: i18n.t('packages_dag_add_own_datasource'),
+          desc: i18n.t('packages_dag_add_own_datasource_desc')
         }
       ]
     })

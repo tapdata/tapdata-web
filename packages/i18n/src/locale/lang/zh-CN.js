@@ -350,5 +350,7 @@ export default {
 
   public_create_source_connection: '创建源连接',
   public_create_target_connection: '创建目标连接',
-  public_configuration_task: '配置任务'
+  public_configuration_task: '配置任务',
+  public_need_help: '需要帮助？',
+  public_test_and_continue: '测试连接，继续下一步'
 }

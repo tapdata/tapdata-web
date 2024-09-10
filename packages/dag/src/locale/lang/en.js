@@ -595,7 +595,7 @@ export default {
   packages_dag_src_editor_jixuqidong: 'Continue to start',
   packages_dag_src_editor_renwubaocunjianceshi:
     'An alert was detected while saving the task, which may result in abnormal task execution. It is advisable to resolve the alert before starting the task',
-  packages_dag_monitor_leftsider_jibenxinxi: 'Basic information',
+  packages_dag_monitor_leftsider_jibenxinxi: 'Basic Information',
   packages_dag_nodes_aggregate_waicunpeizhi: 'External storage configuration',
   packages_dag_field_inference_main_tuiyanyichang: 'Deduction exception',
   packages_dag_field_inference_main_gengxintiaojianyi: 'The update condition is abnormal',
@@ -793,5 +793,20 @@ export default {
   packages_dag_concurrentReadThreadNumber: 'Number of Tables to Read',
   packages_dag_missing_primary_key_or_index: 'Missing Primary Key or Unique Index',
   packages_dag_merge_table_missing_key_or_index:
-    'The current node lacks a primary key or unique index. Please add one to ensure accurate and consistent merging, then try again.'
+    'The current node lacks a primary key or unique index. Please add one to ensure accurate and consistent merging, then try again.',
+  packages_dag_add_own_datasource: 'Add My Own Data Source',
+  packages_dag_add_own_datasource_desc: 'Configure a new data source from the list of connectors in TapData',
+  packages_dag_no_datasource: 'I Don’t Have a Data Source',
+  packages_dag_no_datasource_desc: 'TapData provides a demo library with 2 sources and 2 targets.',
+  packages_dag_have_connection: 'Select Existing Connection',
+  packages_dag_have_connection_desc: 'Connections or data sources you have previously created.',
+  packages_dag_select_datasource: 'Select Data Source',
+  packages_dag_select_connection: 'Select Connection',
+  packages_dag_search_connection: 'Search Connection',
+  packages_dag_search_datasource: 'Search Data Source',
+  packages_dag_tour_task_success: 'Congratulations on successfully creating your first replication task!',
+  packages_dag_tour_task_success_desc:
+    'You can now use our product for database replication, migration, and other tasks.',
+  packages_dag_access_task_list: 'Access Task List',
+  packages_dag_current_selected: 'Currently Selected'
 }

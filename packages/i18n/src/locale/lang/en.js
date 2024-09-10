@@ -350,5 +350,7 @@ export default {
 
   public_create_source_connection: 'Create Source Connection',
   public_create_target_connection: 'Create Target Connection',
-  public_configuration_task: 'Configuration Task'
+  public_configuration_task: 'Configuration Task',
+  public_need_help: 'Need Help?',
+  public_test_and_continue: 'Test Connection and Continue'
 }
