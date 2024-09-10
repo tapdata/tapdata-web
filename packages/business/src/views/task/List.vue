@@ -27,7 +27,7 @@
               menuMinWidth="400px"
               selectedWidth="200px"
               :items="pipelineOptions"
-              inner-label="数据源通道"
+              :inner-label="$t('daas_datasourcePipeline')"
               none-border
               last-page-text=""
               :item-size="54"

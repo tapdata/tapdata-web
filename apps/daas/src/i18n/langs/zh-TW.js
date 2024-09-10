@@ -1904,5 +1904,6 @@ export default {
   daas_licenseType: '授權類型',
   daas_licenseType_pipeline: '通道授權',
   daas_licenseType_op: '標準',
+  daas_datasourcePipeline: '數據源通道',
   daas_datasourcePipelineLimit: '數據源通道數量'
 }
