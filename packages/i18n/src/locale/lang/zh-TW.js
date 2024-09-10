@@ -100,6 +100,7 @@ export default {
   public_button_close: '關閉',
   public_button_reset: '重置',
   public_button_create: '創建',
+  public_button_quickly_create_task: '快速創建任務',
   public_button_export: '導出',
   public_button_download: '下載',
   public_button_add: '新增',

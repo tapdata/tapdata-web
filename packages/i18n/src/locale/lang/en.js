@@ -100,6 +100,7 @@ export default {
   public_button_close: 'Close',
   public_button_reset: 'Reset',
   public_button_create: 'Create',
+  public_button_quickly_create_task: 'Quickly Create Task',
   public_button_export: 'Export',
   public_button_download: 'Download',
   public_button_add: 'New',

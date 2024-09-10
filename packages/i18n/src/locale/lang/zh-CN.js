@@ -101,6 +101,7 @@ export default {
   public_button_close: '关闭',
   public_button_reset: '重置',
   public_button_create: '创建',
+  public_button_quickly_create_task: '快速创建任务',
   public_button_export: '导出',
   public_button_download: '下载',
   public_button_add: '新增',
