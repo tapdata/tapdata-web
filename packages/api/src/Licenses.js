@@ -20,5 +20,9 @@ export default class Licenses extends Http {
   updateLicense(params) {
     return this.axios.post(`${this.url}/upload`, params)
   }
+
+  getPipelineDetails() {
+    return this.axios.get(`${this.url}/pipelineDetails`)
+  }
 }
 export { Licenses }

@@ -20,6 +20,7 @@
           :schema="schema"
           :scope="scope"
           layout="vertical"
+          labelWidth="100%"
           feedbackLayout="terse"
         />
       </div>

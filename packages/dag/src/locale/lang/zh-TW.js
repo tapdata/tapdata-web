@@ -735,5 +735,19 @@ export default {
   packages_dag_concurrentReadThreadNumber: '讀取表數量',
   packages_dag_missing_primary_key_or_index: '缺少主鍵或唯一索引',
   packages_dag_merge_table_missing_key_or_index:
-    '當前節點模型缺少主鍵或唯一索引。為確保主從合併的準確性和數據一致性，請為源節點添加主鍵或唯一索引後重試。'
+    '當前節點模型缺少主鍵或唯一索引。為確保主從合併的準確性和數據一致性，請為源節點添加主鍵或唯一索引後重試。',
+  packages_dag_add_own_datasource: '添加我自己的數據源',
+  packages_dag_add_own_datasource_desc: '從 TapData 的連接器列表中配置新的數據源',
+  packages_dag_no_datasource: '我沒有數據源',
+  packages_dag_no_datasource_desc: 'TapData 提供包含 2 個數據源和 2 個目標源的 Demo 庫',
+  packages_dag_have_connection: '選擇已有連接',
+  packages_dag_have_connection_desc: '選擇您已創建的連接',
+  packages_dag_select_datasource: '選擇數據源',
+  packages_dag_select_connection: '選擇連接',
+  packages_dag_search_connection: '搜索連接',
+  packages_dag_search_datasource: '搜索數據源',
+  packages_dag_tour_task_success: '恭喜您創建了第一個複製任務',
+  packages_dag_tour_task_success_desc: '接下來可以使用我們的產品進行數據庫的複製、遷移等工作啦。',
+  packages_dag_access_task_list: '進入任務列表',
+  packages_dag_current_selected: '當前已選'
 }

@@ -156,7 +156,8 @@
                   'VerifyDiffDetails',
                   'sharedMiningList',
                   'externalStorage',
-                  'about'
+                  'about',
+                  'License'
                 ].includes($route.name)
               },
               {
@@ -175,7 +176,8 @@
                   'VerifyDiffDetails',
                   'sharedMiningList',
                   'externalStorage',
-                  'about'
+                  'about',
+                  'License'
                 ].includes($route.name)
               }
             ]"

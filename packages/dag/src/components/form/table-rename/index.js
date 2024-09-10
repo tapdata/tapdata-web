@@ -21,7 +21,7 @@ export const TableRenamePreview = defineComponent({
   setup(props, { emit, root, refs }) {
     console.log('TableRenamePreview')
     const SchemaExpressionScopeContext = inject(SchemaExpressionScopeSymbol)
-    let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow
+    let taskId = SchemaExpressionScopeContext.value.$taskId || root.$store.state.dataflow.id
     const itemSize = 38
     const formRef = useForm()
     const form = formRef.value

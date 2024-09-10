@@ -108,6 +108,10 @@ export function showErrorMessage(error) {
   let showClose = false
 
   if (error?.stack) {
+    if (process.env.VUE_APP_KEYWORD) {
+      error.stack = error.stack.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+    }
+
     message = renderMessage(message, error.stack)
     duration = 4000
     showClose = true

@@ -100,6 +100,7 @@ export default {
   public_button_close: 'Close',
   public_button_reset: 'Reset',
   public_button_create: 'Create',
+  public_button_quickly_create_task: 'Quickly Create Task',
   public_button_export: 'Export',
   public_button_download: 'Download',
   public_button_add: 'New',
@@ -133,6 +134,7 @@ export default {
   public_button_execute: 'Execute',
   public_button_obtain: 'Obtain',
   public_button_help: 'Help',
+  public_button_understand: 'Finish',
   // information
   public_message_title_prompt: 'Prompt',
   public_message_delete_confirm: 'Delete',
@@ -250,7 +252,7 @@ export default {
   public_task_name: 'Task Name',
   public_task_type: 'Task Type',
   public_task_sync_type: 'Sync Type',
-  public_task_type_migrate: 'Data Copy',
+  public_task_type_migrate: 'Data Replication',
   public_task_type_sync: 'Data Development',
   public_task_type_heartbeat: 'Heartbeat Task',
   public_task_type_log_collector: 'Shared Mining',
@@ -345,5 +347,17 @@ export default {
   public_unique_index: 'Unique Index',
   public_normal_index: 'Index',
   public_batch_publish: 'Batch Publish',
-  public_database_time: 'Database Time'
+  public_database_time: 'Database Time',
+  public_data_update_time: 'Last Updated',
+
+  public_create_source_connection: 'Create Source Connection',
+  public_create_target_connection: 'Create Target Connection',
+  public_configuration_task: 'Configuration Task',
+  public_need_help: 'Need Help?',
+  public_test_and_continue: 'Test Connection and Continue',
+  menu_tour_instance: 'Here you can subscribe to the semi-managed engine deployed locally',
+  menu_tour_instance_link: 'Learn More About Semi-Managed Engines',
+  menu_tour_connection: 'Manage and Add Your Data Sources/Targets Here',
+  menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks',
+  public_task_count: '{val} tasks'
 }

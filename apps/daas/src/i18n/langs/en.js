@@ -1962,5 +1962,7 @@ export default {
   daas_licenseType: 'Type',
   daas_licenseType_pipeline: 'Pipeline',
   daas_licenseType_op: 'Standard',
-  daas_datasourcePipelineLimit: 'Pipeline Number'
+  daas_datasourcePipeline: 'Pipeline',
+  daas_datasourcePipelineLimit: 'Pipeline Number',
+  daas_datasourcePipeUsageDetails: 'Pipeline Usage Details'
 }

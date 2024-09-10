@@ -1,6 +1,6 @@
 <template>
   <div class="h-100">
-    <div v-if="!connectorSelected" class="flex flex-column gap-4">
+    <div v-if="!connectorSelected" class="flex flex-column gap-4 h-100">
       <div class="p-4 bg-white rounded-lg">
         <div class="flex gap-6 lh-base">
           <div
@@ -26,9 +26,13 @@
         </div>
       </div>
 
-      <div class="p-4 bg-white rounded-lg">
+      <div class="p-4 rounded-lg">
         <div class="title-prefix-bar mb-4 position-relative">
-          <span>选择一个连接器</span>
+          <span>{{
+            $t(
+              optionSelected === 'has-connection' ? 'packages_dag_select_connection' : 'packages_dag_select_datasource'
+            )
+          }}</span>
 
           <ElInput
             v-model="search"
@@ -36,7 +40,13 @@
             style="width: 400px"
             size="small"
             clearable
-            placeholder="搜索连接器"
+            :placeholder="
+              $t(
+                optionSelected === 'has-connection'
+                  ? 'packages_dag_search_connection'
+                  : 'packages_dag_search_datasource'
+              )
+            "
             @input="handleSearchInput"
           >
             <template #prefix>
@@ -45,10 +55,10 @@
           </ElInput>
         </div>
 
-        <div class="bg-slight p-4 rounded-lg">
+        <div class="rounded-lg">
           <template v-if="connectionIdSelected && optionSelected === 'has-connection'">
             <div class="mb-4">
-              <span class="fw-sub">当前已选</span>
+              <span class="fw-sub">{{ $t('packages_dag_current_selected') }}</span>
             </div>
 
             <div class="connector-list grid gap-4 mb-4">
@@ -66,7 +76,7 @@
                   </div>
                 </template>
                 <template>
-                  <div v-if="connectionSelected" class="connector-item rounded-lg p-3 overflow-hidden bg-white">
+                  <div v-if="connectionSelected" class="connector-item rounded-lg p-3 overflow-hidden bg-white border">
                     <div class="flex gap-3 align-center">
                       <DatabaseIcon :size="38" :item="connectionSelected"></DatabaseIcon>
                       <div class="connector-item-content flex-1 overflow-hidden lh-base">
@@ -145,37 +155,42 @@
       </div>
 
       <div
-        v-if="currentStep > 0 || connectionIdSelected"
-        class="position-sticky z-index bottom-0 p-4 rounded-lg backdrop-filter-light z-10"
+        class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto rounded-lg backdrop-filter-light z-10 border"
       >
-        <el-button v-if="currentStep > 0" @click="handlePrev">上一步</el-button>
-        <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">下一步</el-button>
+        <el-button v-if="currentStep > 0" @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
+        <el-button v-if="connectionIdSelected" @click="$emit('next', true)" type="primary">{{
+          $t('public_button_next')
+        }}</el-button>
+        <el-divider class="mx-4" direction="vertical"></el-divider>
+        <slot name="help"></slot>
       </div>
     </div>
 
     <ConnectorForm v-else ref="connectorForm" :connector="connectorSelected" show-ip-tips :connection-type="type">
       <template #header>
         <div class="title-prefix-bar mb-4 flex align-center gap-2">
-          <span class="flex-1">创建源连接</span>
+          <span class="flex-1">{{
+            $t(type === 'source' ? 'public_create_source_connection' : 'public_create_target_connection')
+          }}</span>
           <DatabaseIcon :pdk-hash="connectorSelected.pdkHash" :size="20"></DatabaseIcon>
           <span class="fw-normal">{{ connectorSelected.name }}</span>
         </div>
       </template>
       <template #footer>
         <div>
-          <el-button @click="handleCancelCreate">返回</el-button>
-          <!--<el-button>上一步</el-button>-->
-          <el-button type="primary" @click="handleTest">测试连接以进行下一步</el-button>
-          <!--<el-button type="primary" @click="$emit('next')">测试连接以进行下一步</el-button>-->
+          <el-button @click="handleCancelCreate">{{ $t('public_button_back') }}</el-button>
+          <el-button type="primary" @click="handleTest">{{ $t('public_test_and_continue') }}</el-button>
+          <el-divider class="mx-4" direction="vertical"></el-divider>
+          <slot name="help"></slot>
         </div>
       </template>
 
       <template #test-cancel="{ status, close }">
         <div style="display: contents" v-if="status === 'ready'">
-          <el-button @click="close">关闭</el-button>
-          <el-button type="primary" @click="handleSaveAndNext">下一步</el-button>
+          <el-button @click="close">{{ $t('public_button_close') }}</el-button>
+          <el-button type="primary" @click="handleSaveAndNext">{{ $t('public_button_next') }}</el-button>
         </div>
-        <el-button v-else type="primary" @click="close">关闭</el-button>
+        <el-button v-else type="primary" @click="close">{{ $t('public_button_close') }}</el-button>
       </template>
     </ConnectorForm>
   </div>
@@ -188,6 +203,7 @@ import { connectionsApi, databaseTypesApi } from '@tap/api'
 import ConnectorFormItem from './ConnectorFormItem.vue'
 import { getInitialValuesInBySchema } from '../../../../form'
 import dayjs from 'dayjs'
+import i18n from '@tap/i18n'
 
 export default defineComponent({
   name: 'SourceStep',
@@ -248,7 +264,7 @@ export default defineComponent({
 
       let data = await databaseTypesApi.getDatabases({ filter: JSON.stringify(params) })
 
-      data = data.filter(item => item.connectionType.includes('source'))
+      data = data.filter(item => item.connectionType.includes(props.type))
 
       const sortFn = (o1, o2) => {
         const qcTypeLevel = {
@@ -407,17 +423,17 @@ export default defineComponent({
     }
 
     const options = computed(() => {
-      if (root.$route.query.guide && !connectionIdSelected.value) {
+      if (root.$route.name === 'WelcomeTask' && !connectionIdSelected.value) {
         return [
           {
             key: 'has-connector',
-            title: '添加我自己的数据源',
-            desc: '从TapData的连接列表中配置新的数据源'
+            title: i18n.t('packages_dag_add_own_datasource'),
+            desc: i18n.t('packages_dag_add_own_datasource_desc')
           },
           {
             key: 'no-connector',
-            title: '我没有数据源',
-            desc: 'TapDat提供 2个数据源和2个目的地的Demo库'
+            title: i18n.t('packages_dag_no_datasource'),
+            desc: i18n.t('packages_dag_no_datasource_desc')
           }
         ]
       }
@@ -425,13 +441,13 @@ export default defineComponent({
       return [
         {
           key: 'has-connection',
-          title: '选择已有连接',
-          desc: '自己创建的连接/数据源'
+          title: i18n.t('packages_dag_have_connection'),
+          desc: i18n.t('packages_dag_have_connection_desc')
         },
         {
           key: 'has-connector',
-          title: '添加我自己的数据源',
-          desc: '从TapData的连接列表中配置新的数据源'
+          title: i18n.t('packages_dag_add_own_datasource'),
+          desc: i18n.t('packages_dag_add_own_datasource_desc')
         }
       ]
     })

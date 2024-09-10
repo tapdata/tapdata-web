@@ -1,13 +1,19 @@
 <template>
   <div class="position-relative h-100 bg-white rounded-lg min-h-0 overflow-y-auto">
     <div class="p-4">
-      <div class="title-prefix-bar mb-4">配置任务</div>
+      <div class="title-prefix-bar mb-4">{{ $t('public_configuration_task') }}</div>
       <SchemaForm :form="form" :schema="schema" :scope="scope" />
     </div>
 
-    <div class="position-sticky z-index bottom-0 p-4 border-top backdrop-filter-light z-10">
-      <el-button @click="handlePrev">上一步</el-button>
-      <el-button :loading="starting" type="primary" @click="handleStart">启动任务</el-button>
+    <div
+      class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto border-top backdrop-filter-light z-10"
+    >
+      <el-button @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
+      <el-button :loading="starting" type="primary" @click="handleStart">{{
+        $t('packages_business_task_start_task')
+      }}</el-button>
+      <el-divider class="mx-4" direction="vertical"></el-divider>
+      <slot name="help"></slot>
     </div>
   </div>
 </template>
@@ -289,6 +295,8 @@ export default defineComponent({
         // this.isSaving = false
         isOk = true
 
+        root.$store.dispatch('setGuideComplete')
+
         root.$router.push({
           name: 'MigrationMonitorSimple',
           params: {
@@ -362,6 +370,7 @@ export default defineComponent({
       form,
       schema,
       scope,
+      starting,
 
       handlePrev,
       handleNext,

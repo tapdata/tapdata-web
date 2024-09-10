@@ -985,7 +985,8 @@ export default [
         name: 'License',
         component: () => import('@/views/License'),
         meta: {
-          title: 'page_title_license'
+          title: 'page_title_license',
+          hideTitle: true
         }
       },
       {
