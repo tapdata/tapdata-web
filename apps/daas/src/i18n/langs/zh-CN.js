@@ -1910,5 +1910,6 @@ export default {
   daas_licenseType_pipeline: '通道授权',
   daas_licenseType_op: '标准',
   daas_datasourcePipeline: '数据源通道',
-  daas_datasourcePipelineLimit: '数据源通道数量'
+  daas_datasourcePipelineLimit: '数据源通道数量',
+  daas_datasourcePipeUsageDetails: '通道使用详情'
 }

@@ -46,15 +46,20 @@
       </ElDialog>
     </section>
 
-    <ElDialog append-to-body title="通道使用详情" :visible.sync="detailsDialog.show" width="600px">
+    <ElDialog
+      append-to-body
+      :title="$t('daas_datasourcePipeUsageDetails')"
+      :visible.sync="detailsDialog.show"
+      width="600px"
+    >
       <div class="flex flex-column gap-4" v-loading="detailsDialog.loading">
         <div class="bg-white border rounded-xl p-2" v-for="(item, i) in detailsDialog.data" :key="i">
           <div class="bg-subtle rounded-xl p-2 flex justify-center align-center gap-2">
             <template v-for="(info, i) in item.instanceInfos">
               <div v-if="i > 0" :key="i" class="connector-line bg-primary position-relative px-4" style="height: 2px">
-                <el-tag class="text-center" style="min-width: 80px; transform: translateY(-50%)"
-                  >{{ item.taskIds.length }} 个任务</el-tag
-                >
+                <el-tag class="text-center" style="min-width: 80px; transform: translateY(-50%)">{{
+                  $t('public_task_count', { val: item.taskIds.length })
+                }}</el-tag>
                 <span
                   class="connector-line-dot rounded-circle position-absolute bg-primary"
                   style="width: 6px; height: 6px; left: -2px; top: -2px"

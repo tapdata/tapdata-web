@@ -354,5 +354,6 @@ export default {
   public_create_target_connection: '创建目标连接',
   public_configuration_task: '配置任务',
   public_need_help: '需要帮助？',
-  public_test_and_continue: '测试连接，继续下一步'
+  public_test_and_continue: '测试连接，继续下一步',
+  public_task_count: '{val} 个任务'
 }

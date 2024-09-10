@@ -358,5 +358,6 @@ export default {
   menu_tour_instance: 'Here you can subscribe to the semi-managed engine deployed locally',
   menu_tour_instance_link: 'Learn More About Semi-Managed Engines',
   menu_tour_connection: 'Manage and Add Your Data Sources/Targets Here',
-  menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks'
+  menu_tour_create_task: 'Click Here to Try Creating Advanced Replication and Synchronization Tasks',
+  public_task_count: '{val} tasks'
 }

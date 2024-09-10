@@ -353,5 +353,6 @@ export default {
   public_create_target_connection: '創建目標連接',
   public_configuration_task: '配置任務',
   public_need_help: '需要幫助？',
-  public_test_and_continue: '測試連接，繼續下一步'
+  public_test_and_continue: '測試連接，繼續下一步',
+  public_task_count: '{val} 個任務'
 }
