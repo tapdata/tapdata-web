@@ -22,7 +22,7 @@
         @next="nextStep"
       >
         <template #help>
-          <el-button type="text"
+          <el-button @click="openChat" type="text"
             ><VIcon class="mr-1 align-middle" size="18">customer</VIcon
             ><span class="align-middle">{{ $t('public_need_help') }}</span></el-button
           >
@@ -435,6 +435,10 @@ export default defineComponent({
       }
     }
 
+    const openChat = () => {
+      window.$zoho.salesiq.chat.start?.()
+    }
+
     initTask()
 
     provide('currentStep', currentStep)
@@ -453,7 +457,8 @@ export default defineComponent({
 
       // API
       prevStep,
-      nextStep
+      nextStep,
+      openChat
     }
   }
 })

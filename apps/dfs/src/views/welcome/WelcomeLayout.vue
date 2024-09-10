@@ -90,7 +90,7 @@ export default {
 
   created() {
     if (!this.$store.state.config?.disabledOnlineChat) {
-      // this.loadChat()
+      this.loadChat()
     }
 
     this.$root.$on('select-connection-type', this.selectConnectionType)
