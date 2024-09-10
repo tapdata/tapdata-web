@@ -38,9 +38,9 @@ export default {
   computed: {
     ...mapState(['showReplicationTour', 'replicationTourFinish'])
   },
-  mounted() {
-    this.initMenuTour()
-  },
+  // mounted() {
+  //   this.initMenuTour()
+  // },
   methods: {
     ...mapMutations(['setShowReplicationTour', 'startTour', 'openCompleteReplicationTour']),
 
