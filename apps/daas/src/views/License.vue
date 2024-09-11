@@ -79,22 +79,9 @@
               </div>
             </template>
           </div>
-          <!--<div class="mt-4">
-            <div class="fw-sub font-color-dark mb-3">任务明细</div>
-            <div class="task-list">
-              <div
-                class="task-list-item flex align-center justify-content-between py-2 border-top"
-                v-for="(task, i) in item.tasks"
-                :key="task.id"
-              >
-                <a class="el-link el-link&#45;&#45;primary justify-content-start" :title="task.name">
-                  <span class="ellipsis">{{ task.name }}</span>
-                </a>
-                <TaskStatus :task="task"></TaskStatus>
-              </div>
-            </div>
-          </div>-->
         </div>
+
+        <VEmpty v-if="!detailsDialog.data.length"></VEmpty>
       </div>
     </ElDialog>
   </PageContainer>
@@ -106,9 +93,10 @@ import dayjs from 'dayjs'
 import { licensesApi } from '@tap/api'
 import Time from '@tap/shared/src/time'
 import PageContainer from '@tap/business/src/components/PageContainer.vue'
+import { VEmpty } from '@tap/component'
 
 export default {
-  components: { DatabaseIcon, PageContainer, TablePage, TaskStatus },
+  components: { VEmpty, DatabaseIcon, PageContainer, TablePage, TaskStatus },
   data() {
     const TYPE_MAP = {
       OP: this.$t('daas_licenseType_op'),
