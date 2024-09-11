@@ -6,7 +6,7 @@
       }}</ElButton>
       <ElButton class="btn" type="primary" size="mini" @click="openDialog">{{ $t('public_event_update') }}</ElButton>
     </template>
-    <section class="license-wrapper h-100 pb-6 pr-6">
+    <section class="license-wrapper h-100 overflow-hidden pb-6 pr-6">
       <TablePage
         ref="table"
         row-key="id"

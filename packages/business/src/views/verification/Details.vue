@@ -254,6 +254,11 @@ export default {
                 let stats = result.stats
                 if (stats.length) {
                   this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+
+                  if (process.env.VUE_APP_KEYWORD && this.errorMsg) {
+                    this.errorMsg = this.errorMsg.replace(/tapdata\s?/gi, process.env.VUE_APP_KEYWORD)
+                  }
+
                   this.checkErrorMsg()
                   if (!this.taskId) {
                     this.taskId = stats[0].taskId

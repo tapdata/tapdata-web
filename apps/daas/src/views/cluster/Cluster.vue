@@ -274,7 +274,7 @@
                         @click="updateFn(item, item.management.status, 'management', 'update')"
                         >{{ $t('cluster_update') }}
                       </ElButton>
-                      <template v-if="item.engine.status === 'running'">
+                      <template v-if="item.engine.status === 'running' && !hideDownload">
                         <el-tooltip :content="$t('instance_details_xianchengziyuanxia')" placement="top">
                           <IconButton sm class="text-primary" @click="downServeFn(item)">connectors</IconButton>
                         </el-tooltip>
@@ -622,6 +622,7 @@ export default {
   },
   data() {
     return {
+      hideDownload: process.env.VUE_APP_HIDE_CLUSTER_DOWNLOAD,
       waterfallData: [],
       currentData: null,
       dialogForm: false,

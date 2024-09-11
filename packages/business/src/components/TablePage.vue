@@ -74,7 +74,7 @@
           </div>
           <div
             class="pagination-wrapper flex align-center gap-3 pl-3 pt-3"
-            :style="ifTableHeightAuto ? `position: sticky; bottom: 0; z-index: 1000000000; background: #fff;` : ''"
+            :style="ifTableHeightAuto ? `position: sticky; bottom: 0; z-index: 10; background: #fff;` : ''"
           >
             <transition name="el-fade-in-linear">
               <div v-if="multipleSelection.length" class="flex align-center gap-3">
