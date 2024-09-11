@@ -1,16 +1,19 @@
 <template>
-  <div class="position-relative h-100 bg-white rounded-lg min-h-0 overflow-y-auto">
-    <div class="p-4">
+  <div class="position-relative flex flex-column gap-4 h-100 min-h-0 overflow-y-auto">
+    <div class="p-4 bg-white rounded-lg">
       <div class="title-prefix-bar mb-4">{{ $t('public_configuration_task') }}</div>
       <SchemaForm :form="form" :schema="schema" :scope="scope" />
     </div>
 
     <div
-      class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto border-top backdrop-filter-light z-10"
+      class="step-footer flex align-center position-sticky z-index bottom-0 p-4 mt-auto border backdrop-filter-light z-10 rounded-lg"
     >
       <el-button @click="handlePrev">{{ $t('public_button_previous') }}</el-button>
-      <el-button :loading="starting" type="primary" @click="handleStart">{{
+      <el-button v-if="isGuide" :loading="starting" type="primary" @click="handleStart">{{
         $t('packages_business_task_start_task')
+      }}</el-button>
+      <el-button v-else :loading="starting" type="primary" @click="handleNext">{{
+        $t('public_button_next')
       }}</el-button>
       <el-divider class="mx-4" direction="vertical"></el-divider>
       <slot name="help"></slot>
@@ -25,10 +28,7 @@ import { debounce, merge } from 'lodash'
 import { createForm, onFormValuesChange, onFieldValueChange, createEffectHook } from '@formily/core'
 import { observable, action, untracked, raw, isObservable, observe, autorun } from '@formily/reactive'
 import SchemaForm from '../SchemaForm.vue'
-import { DEFAULT_SETTINGS } from '../../constants'
-import { genDatabaseNode, genProcessorNode } from '../../util'
-import { defineComponent, inject, nextTick, ref, onBeforeUnmount } from '@vue/composition-api'
-import { task } from '@vue/cli-plugin-eslint/ui/taskDescriptor'
+import { defineComponent, inject, ref, onBeforeUnmount } from '@vue/composition-api'
 
 // 自定义 Dialog 表单内的 value 变化事件
 const onDialogFormValuesChange = createEffectHook('dialog-form-values-change', (payload, form) => listener => {
@@ -54,6 +54,7 @@ export default defineComponent({
     }, 500)
     const taskRef = inject('task')
     const pageVersionRef = inject('pageVersion')
+    const isGuide = inject('isGuide')
     const form = ref(null)
     const starting = ref(false)
 
@@ -262,56 +263,9 @@ export default defineComponent({
       emit('prev')
     }
 
-    const handleNext = () => {
+    const handleNext = async () => {
+      await form.value.validate()
       emit('next')
-    }
-
-    const save = async () => {
-      // this.isSaving = true
-      // const errorMsg = await this.validate()
-      // if (errorMsg) {
-      //   if (this.destory) return
-      //   this.$message.error(errorMsg)
-      //   this.isSaving = false
-      //   return
-      // }
-
-      // if (!this.dataflow.id) {
-      //   return this.saveAsNewDataflow()
-      // }
-
-      // const data = this.getDataflowDataToSave()
-      starting.value = true
-      let isOk = false
-
-      try {
-        // this.initWS()
-        // const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
-        const result = await taskApi.saveAndStart(taskRef.value, {
-          silenceMessage: true
-        })
-        // this.reformDataflow(result)
-        // this.setEditVersion(result.editVersion)
-        // this.isSaving = false
-        isOk = true
-
-        root.$store.dispatch('setGuideComplete')
-
-        root.$router.push({
-          name: 'MigrationMonitorSimple',
-          params: {
-            id: taskRef.value.id
-          }
-        })
-      } catch (e) {
-        // this.handleError(e)
-      } finally {
-        starting.value = false
-      }
-      // this.isSaving = false
-      // this.toggleConsole(true)
-      // this.$refs.console?.startAuto('checkDag') // 信息输出自动加载
-      return isOk
     }
 
     const start = async () => {
@@ -355,12 +309,34 @@ export default defineComponent({
       }
     }
 
-    const handleStart = () => {
-      save()
+    const handleStart = async () => {
+      starting.value = true
+      await form.value.validate()
+
+      let isOk = false
+      try {
+        await taskApi.saveAndStart(taskRef.value, {
+          silenceMessage: true
+        })
+
+        isOk = true
+
+        root.$store.dispatch('setGuideComplete')
+
+        root.$router.push({
+          name: 'MigrationMonitorSimple',
+          params: {
+            id: taskRef.value.id
+          }
+        })
+      } catch (e) {
+        // this.handleError(e)
+      } finally {
+        starting.value = false
+      }
     }
 
     onBeforeUnmount(() => {
-      console.log('卸载')
       form.value.onUnmount()
       dispose?.()
       dispose = null
@@ -371,6 +347,7 @@ export default defineComponent({
       schema,
       scope,
       starting,
+      isGuide,
 
       handlePrev,
       handleNext,

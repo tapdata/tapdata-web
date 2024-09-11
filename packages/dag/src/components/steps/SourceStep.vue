@@ -1,6 +1,6 @@
 <template>
   <div class="h-100">
-    <div v-if="!connectorSelected" class="flex flex-column gap-4 h-100">
+    <div v-if="!connectorSelected" class="flex flex-column gap-4 h-100 overflow-y-auto">
       <div class="p-4 bg-white rounded-lg">
         <div class="flex gap-6 lh-base">
           <div
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="p-4 rounded-lg">
+      <div class="rounded-lg">
         <div class="title-prefix-bar mb-4 position-relative">
           <span style="line-height: 32px">{{
             $t(
@@ -55,7 +55,7 @@
           </ElInput>
         </div>
 
-        <div class="rounded-lg">
+        <div class="rounded-lg px-4">
           <template v-if="connectionIdSelected && optionSelected === 'has-connection'">
             <div class="mb-4">
               <span class="fw-sub">{{ $t('packages_dag_current_selected') }}</span>
@@ -225,6 +225,7 @@ export default defineComponent({
     const connectorSelected = ref()
 
     const taskRef = inject('task')
+    const isGuide = inject('isGuide')
     const nodeRef = inject(props.type)
     const currentStepRef = inject('currentStep')
     console.log('nodeRef', nodeRef.value)
@@ -423,7 +424,7 @@ export default defineComponent({
     }
 
     const options = computed(() => {
-      if (root.$route.name === 'WelcomeTask' && !connectionIdSelected.value) {
+      if (isGuide.value && !connectionIdSelected.value) {
         return [
           {
             key: 'has-connector',

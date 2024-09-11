@@ -37,6 +37,7 @@ import { defineComponent, ref, provide } from '@vue/composition-api'
 import SourceStep from './components/steps/SourceStep.vue'
 import TargetStep from './components/steps/TargetStep.vue'
 import TaskStep from './components/steps/TaskStep.vue'
+import AdvancedSettingsStep from './components/steps/AdvancedSettingsStep.vue'
 import { taskApi } from '@tap/api'
 import i18n from '@tap/i18n'
 import { makeStatusAndDisabled } from '@tap/business'
@@ -136,6 +137,8 @@ export default defineComponent({
       await patchTask()
     }
 
+    const isGuide = ref(root.$route.name === 'WelcomeTask')
+
     const steps = ref([
       {
         title: i18n.t('public_create_source_connection'),
@@ -162,6 +165,14 @@ export default defineComponent({
         component: SourceStep
       }
     ])
+
+    if (!isGuide.value) {
+      steps.value.splice(steps.value.length - 1, 0, {
+        title: i18n.t('packages_dag_task_stetting_basic_setting'),
+        component: AdvancedSettingsStep
+      })
+    }
+
     let taskRef = ref(null)
     let sourceNodeRef = ref(null)
     let targetNodeRef = ref(null)
@@ -446,6 +457,7 @@ export default defineComponent({
     provide('source', sourceNodeRef)
     provide('target', targetNodeRef)
     provide('pageVersion', pageVersion)
+    provide('isGuide', isGuide)
 
     return {
       task: taskRef,
@@ -473,6 +485,7 @@ export default defineComponent({
       .el-step {
         display: flex !important;
         align-items: center;
+        overflow: hidden;
         .el-step__head {
           position: static;
           width: auto;
@@ -486,12 +499,16 @@ export default defineComponent({
           }
         }
         .el-step__main {
+          overflow: hidden;
           padding-inline: 8px 16px;
           background-color: #fff;
           z-index: 1;
         }
         .el-step__title {
           line-height: 24px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
           &.is-process {
             color: map-get($color, primary);
           }
