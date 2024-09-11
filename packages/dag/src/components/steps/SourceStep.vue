@@ -28,7 +28,7 @@
 
       <div class="p-4 rounded-lg">
         <div class="title-prefix-bar mb-4 position-relative">
-          <span>{{
+          <span style="line-height: 32px">{{
             $t(
               optionSelected === 'has-connection' ? 'packages_dag_select_connection' : 'packages_dag_select_datasource'
             )
