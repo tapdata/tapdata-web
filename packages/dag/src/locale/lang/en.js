@@ -809,5 +809,7 @@ export default {
     'You can now use our product for database replication, migration, and other tasks.',
   packages_dag_access_task_list: 'Access Task List',
   packages_dag_current_selected: 'Currently Selected',
-  packages_dag_task_monitor: 'Task Monitoring'
+  packages_dag_task_monitor: 'Task Monitoring',
+  packages_dag_select_HasKeys_alert:
+    'Only tables with primary keys or unique indexes are synced. To sync tables without primary keys, please switch manually.'
 }
