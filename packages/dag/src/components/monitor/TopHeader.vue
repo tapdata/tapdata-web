@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="flex align-center">
+    <div v-if="!hideOperation" class="flex align-center">
       <!--内容居中-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('packages_dag_button_center_content') + '(Shift + 1)'">
         <button @click="$emit('center-content')" class="icon-btn">
@@ -90,7 +90,7 @@
     </div>
     <div class="flex-grow-1"></div>
     <div class="flex align-center ml-2">
-      <ElButton v-if="!hideSetting" class="ml-3" size="medium" @click="$emit('showSettings')">
+      <ElButton v-if="!hideSetting && !hideOperation" class="ml-3" size="medium" @click="$emit('showSettings')">
         <VIcon class="mr-1">cog-o</VIcon>{{ $t('public_button_setting') }}
       </ElButton>
       <template v-if="!hideMenus.includes('operation')">
@@ -174,6 +174,7 @@ export default {
     dataflow: Object,
     scale: Number,
     showBottomPanel: Boolean,
+    hideOperation: Boolean,
     hideMenus: {
       type: Array,
       default: () => []

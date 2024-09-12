@@ -2,6 +2,7 @@
   <section class="dataflow-editor layout-wrap vh-100 migrate-monitor-simple">
     <!--头部-->
     <TopHeader
+      hide-operation
       :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
@@ -1397,26 +1398,10 @@ export default {
     },
 
     handleEdit() {
-      switch (this.dataflow.syncType) {
-        case 'migrate':
-          this.$router.push({
-            name: 'MigrateEditor',
-            params: { id: this.dataflow.id }
-          })
-          break
-        case 'sync':
-          this.$router.push({
-            name: 'DataflowEditor',
-            params: { id: this.dataflow.id }
-          })
-          break
-        case 'logCollector':
-          this.$refs.sharedMiningEditor.open(this.dataflow.id)
-          break
-        case 'shareCache':
-          this.$refs.sharedCacheEditor.open(this.dataflow.id)
-          break
-      }
+      this.$router.push({
+        name: 'MigrateForm',
+        params: { id: this.dataflow.id }
+      })
     },
 
     handleShowVerify() {
