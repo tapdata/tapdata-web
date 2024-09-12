@@ -282,7 +282,7 @@ const SourceDatabaseNode = defineComponent({
               )
             })}
           </ul>
-          <div class="tab-content p-4 bg-white">
+          <div class="tab-content p-4 bg-white" style={active > 0 ? 'border-top-left-radius: 8px' : ''}>
             <RecursionField
               schema={{
                 type: 'object',
