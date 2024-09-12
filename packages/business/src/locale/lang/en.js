@@ -1228,7 +1228,7 @@ export default {
     'It has been detected that you have not bound your email address, so email notification cannot be enabled.',
   packages_business_verification_form_zhengzaijiyuren: 'Generating validation conditions based on tasks in progress',
   packages_business_agent_ip_tips_prefix:
-    "Please ensure that your database's network security policy allows access from the IP address where the fully managed agent is located. ",
+    'Please allow these TapData IPs in your firewall for database port access and ensure correct permissions',
   packages_business_agent_ip_tips_suffix: 'Click to view the IP address information for the fully managed agent.',
   packages_business_demo_database_desc:
     'Demo data source, allows for quick creation of data source information, with no need to prepare database details for an immediate experience.',

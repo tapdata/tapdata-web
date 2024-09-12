@@ -3,25 +3,33 @@
     <div class="flex flex-column gap-4 flex-1 rounded-lg min-h-0 overflow-y-auto overflow-x-hidden">
       <div class="p-4 bg-white rounded-lg">
         <slot name="header"></slot>
-        <ElAlert v-if="showIpTips" class="alert-primary text-primary mt-2" type="info" show-icon :closable="false">
-          <template #title>
-            <span class="inline-block lh-sm align-middle">
-              {{ $t('packages_business_agent_ip_tips_prefix')
-              }}<a :href="docUrl" target="_blank" class="text-decoration-underline text-primary">{{
-                $t('packages_business_agent_ip_tips_suffix')
-              }}</a>
-            </span>
-          </template>
-        </ElAlert>
+        <div v-if="showIpTips" class="flex flex-column gap-2 mb-4 rounded-lg p-2 bg-color-primary-light-9">
+          <div class="flex align-items-start gap-1">
+            <div class="p-1">
+              <VIcon class="color-primary" :size="22">info</VIcon>
+            </div>
+            <div class="lh-base p-1 fw-sub">{{ $t('packages_business_agent_ip_tips_prefix') }}:</div>
+          </div>
+
+          <el-collapse value="1" class="rounded-lg overflow-hidden rounded-collapse">
+            <el-collapse-item title="TapData IP addresses" name="1">
+              <ul class="ml-6 font-color-dark">
+                <li>47.93.190.224</li>
+                <li>47.242.251.110</li>
+              </ul>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+
         <slot name="prepend"></slot>
         <SchemaToForm
-          class="pdk-schema-form"
+          class="pdk-schema-form form-wrap"
           ref="schemaToForm"
           :schema="schema"
           :scope="scope"
           layout="vertical"
           labelWidth="100%"
-          feedbackLayout="terse"
+          feedbackLayout="loose"
         />
       </div>
 
@@ -1228,4 +1236,127 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.rounded-collapse {
+  ::v-deep {
+    .el-collapse-item__header {
+      height: 38px;
+      padding: 0 16px;
+      gap: 8px;
+      font-weight: 400;
+      &.is-active {
+        color: map-get($color, primary);
+      }
+    }
+    .el-collapse-item__arrow {
+      order: -1;
+      margin: 0;
+    }
+    .el-collapse-item__content {
+      padding: 0 16px 16px;
+    }
+  }
+}
+.form-wrap {
+  ::v-deep {
+    .formily-element-form-item-feedback-layout-loose {
+      margin-bottom: 20px;
+    }
+
+    .formily-element-form-item-layout-vertical {
+      > .formily-element-form-item-label {
+        margin-bottom: 8px;
+
+        .formily-element-form-item-label-content {
+          min-height: unset;
+          height: unset;
+        }
+
+        .formily-element-form-item-label-tooltip {
+          margin-left: 4px;
+          height: unset;
+        }
+
+        * {
+          line-height: 22px;
+        }
+      }
+    }
+
+    .formily-element-form-collapse {
+      &.border-bottom-0 {
+        .el-collapse-item__header {
+          border-bottom: none;
+        }
+      }
+
+      .el-collapse-item__content {
+        padding-bottom: 0;
+      }
+    }
+
+    // 覆盖数字输入框的宽度
+    .formily-element-form-item {
+      font-size: $fontBaseTitle;
+      &-label {
+        label {
+          color: map-get($fontColor, light);
+        }
+      }
+      .el-input-number {
+        width: 180px;
+      }
+      .el-input-number--small {
+        width: 130px;
+      }
+
+      &-help,
+      &-extra {
+        white-space: pre-wrap;
+      }
+    }
+
+    .formily-element-form-item-layout-vertical {
+      .formily-element-form-item-label-tooltip {
+        height: 40px;
+
+        i {
+          line-height: 1;
+        }
+      }
+    }
+
+    .formily-element-form-item-control {
+      .formily-element-space-horizontal {
+        vertical-align: top;
+      }
+    }
+
+    .formily-element-form-item:not(.form-item-text) + .form-item-text {
+      margin-top: 16px;
+    }
+
+    .form-item-dense
+      .formily-element-form-item-control
+      .formily-element-form-item-control-content
+      .formily-element-form-item-control-content-component {
+      min-height: unset;
+      line-height: normal;
+    }
+
+    .form-item-text {
+      & + .form-item-text {
+        margin-top: 8px;
+      }
+      margin-bottom: 0;
+      .formily-element-form-item-label-content {
+        min-height: unset;
+        line-height: 1;
+        label {
+          line-height: 1;
+        }
+      }
+    }
+  }
+}
+</style>

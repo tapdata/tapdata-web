@@ -808,5 +808,6 @@ export default {
   packages_dag_tour_task_success_desc:
     'You can now use our product for database replication, migration, and other tasks.',
   packages_dag_access_task_list: 'Access Task List',
-  packages_dag_current_selected: 'Currently Selected'
+  packages_dag_current_selected: 'Currently Selected',
+  packages_dag_task_monitor: 'Task Monitoring'
 }
